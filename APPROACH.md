@@ -138,9 +138,14 @@ rankings by default (visible in the diff view, excluded from the rollup).
 
 ## 8. Open questions for Frank (rule before build starts)
 
-1. **Set format**: extend pcrec's .rxt (proven, importable, but bench needs
-   per-case tags/metadata .rxt doesn't carry) vs a bench-native format with
-   an .rxt importer. Lean: bench-native JSONL with an importer.
+1. **Set format**: RESOLVED IN DIRECTION 2026-08-17 — owned by pcrec's
+   plan row [DD-13], the unified pattern-source/test file format (grown
+   from .rxt; named patterns with subroutine referencing, options/config
+   blocks, exemplar file references, file includes, engine/configuration
+   awareness). Requirements → design → adversarial critique are staged
+   there before any parser exists; this repo contributes its requirements
+   (feature tags, hazard classes, per-case verification method,
+   per-engine/config sections) to [DD-13a].
 2. **Artifact format**: JSONL vs TSV. Lean: JSONL, schema-versioned, with a
    tiny validator the comparator shares.
 3. **Timing depth in v1**: wall-clock match throughput only, or also
