@@ -147,9 +147,14 @@ Per (pattern, testee) the record states an OUTCOME from a closed set:
 engine notes say this engine cannot express the intention). Per
 (pattern, subject): `matched-as-expected` / `did-not-match-as-expected`
 / `wrong-span-or-captures` / `truncated-subject` / `crashed` /
-`timed-out` (the last two added at the [B2] merge, 2026-08-25: a
-per-SUBJECT hang or crash is the bench's headline hazard class and
-"which subject" must be recorded) (the engine consumed
+`timed-out` / `gave-up` (crashed/timed-out added at the [B2] merge,
+2026-08-25: a per-SUBJECT hang or crash is the bench's headline hazard
+class and "which subject" must be recorded; `gave-up` added at schema
+v1.1 the same day: the engine refused the subject on one of its OWN
+resource limits — pcrec's STEPS/FRAMES/RECURSE give-ups, pcre2's
+match/depth limits — with the engine's code in the diagnostic; not
+timed, and counted apart from wrong answers, because a give-up is the
+result the bench most wants to see) (the engine consumed
 fewer bytes than offered — `consumed_length` is recorded whenever the
 API exposes it, and a large-subject cell without it is marked
 unverified-for-truncation). None is an error of the harness; all are
