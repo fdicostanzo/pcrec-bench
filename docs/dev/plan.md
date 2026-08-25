@@ -33,13 +33,7 @@ proposed first cut ("M1 = set format ruled + schema ruled + two adapters
 requirements discussion ([B1]) may reorder, merge, split or strike them;
 none is a commitment until Frank rules the requirements.
 
-- [B2] STATE:started (2026-08-25, lane/b2schema, worktrees/b2schema, opus, brief scratchpad/brief_b2schema.md) — THE RECORD SCHEMA (APPROACH §3, §8 Q2; requirements.md §2, §4.2-4.4, §6):
-  the versioned per-testee output file — environment header (CPU, kernel,
-  compiler, load/quiet-box attestation, per-core occupancy), per-case
-  compile outcome / match outcome / correctness verdict / timings with
-  COMPILE and MATCH separated — plus the tiny validator the comparator
-  shares. Design note → panel → ruled.
-- [B3] STATE:not-started — THE HARNESS CORE: the sub-bench DIRECTORY
+- [B3] STATE:started (2026-08-25 ~00:0x, lane/b3harness with [B4], worktrees/b3harness, opus, brief scratchpad/brief_b3harness.md; pin 8da6120 building in build/pcrec-8da6120) — THE HARNESS CORE: the sub-bench DIRECTORY
   conventions (goal, canonical patterns, generated subjects + manifest,
   expectations with verification method, tags, engine notes and
   declared variants, regime declaration), the run-cells driver (one
@@ -52,11 +46,11 @@ none is a commitment until Frank rules the requirements.
   as-is and wrap the email specimen's files as the first sub-bench with
   a plain per-sub-bench sidecar (R-BENCH-1..9 fields, no grammar);
   under the BROAD reading it wraps the specimen's files only.
-- [B4] STATE:not-started — TESTEE ADAPTERS, first two (plus OD-B10, the large-subject size measured at 1 MB vs 8 MB): pcrec (as its
+- [B4] STATE:started (2026-08-25, rides lane/b3harness) — TESTEE ADAPTERS, first two (plus OD-B10, the large-subject size measured at 1 MB vs 8 MB): pcrec (as its
   several configuration testees, pinned by commit) and libpcre2 (interp AND
   jit as separate testees). Each pins its version and records build flags;
   "unsupported" is a first-class per-case result.
-- [B5] STATE:not-started — THE COMPARATOR MVP: static over two or more
+- [B5] STATE:started (2026-08-25 ~00:0x, lane/b5report, worktrees/b5report, sonnet, brief scratchpad/brief_b5report.md) — THE REPORTER MVP: static over two or more
   artifacts — per-case diffs, per-tag rollups, correctness disagreement
   tables, rankings that exclude wrong answers by default. Never runs an
   engine.

@@ -19,15 +19,20 @@ BAD      = $(EXAMPLES)/bad
 # nothing).
 #
 #   1. the design note's field tables vs the JSON Schema, field for field;
-#   2. every record in examples/ must be ACCEPTED (with --check-filename, so
+#   2. the design note's RULE table vs examples/bad/'s directory listing --
+#      every rule must have a control and every control must name a rule.
+#      Five rules reached v1.1 with none, because a human was the only thing
+#      checking a claim in prose;
+#   3. every record in examples/ must be ACCEPTED (with --check-filename, so
 #      the file-name rule X4 is exercised by the good examples too);
-#   3. every record in examples/bad/ must be REJECTED, and rejected FOR THE
+#   4. every record in examples/bad/ must be REJECTED, and rejected FOR THE
 #      RULE ITS NAME CLAIMS -- the file name's leading token (`x11-...`,
 #      `schema-...`) is the rule id the run requires to fire. A control that
 #      rejects for an unrelated reason is not a control.
 check-schema:
 	@echo "== check-schema =="
 	@$(PYTHON) schema/check_fields.py
+	@$(PYTHON) schema/check_rules.py
 	@echo
 	@echo "-- good examples (must be ACCEPTED) --"
 	@$(VALIDATE) --check-filename $(EXAMPLES)/*.jsonl

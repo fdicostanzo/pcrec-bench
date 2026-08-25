@@ -11,6 +11,13 @@ They exist to (a) show what a record looks like, and (b) be the
 ACCEPT half of `make check-schema` — a validator that only ever rejects
 is as useless as one that only ever accepts.
 
+Between them they are also the accept-side coverage of the newer rules:
+the v8 record is the one that exercises `calibration_note` (X21's
+escape hatch, used honestly — a lazy JIT probed on its cold tier cannot
+predict its warmed loop), the `lazy-jit` compile row's `derivation`,
+and the older-MINOR branch is covered on the reject side instead
+(`bad/x10-cost-class-mismatch.jsonl`, stamped 1.0; see note §4.1).
+
 ## Files
 
 File names are not chosen: rule X4 makes the name the record id plus
@@ -26,12 +33,31 @@ File names are not chosen: rule X4 makes the name the record id plus
   `unsupported-by-declaration` cell (the backreference pattern, with the
   `declaration_ref` that outcome requires); a `truncated-subject` row on
   the 1 MB subject; and a `wrong-span-or-captures` row carrying
-  `observed` and NO timing.
+  `observed` and NO timing. At v1.1 it also carries the evidence
+  fields: `seq` on every result row, `calibration` on every timed one,
+  `load`/`occupancy` sampled before AND after with their raw text, and
+  `run.clock_source` + `run.driver_build_flags`. Its `pinning.mode` is
+  `chrt+taskset` and the v8 record's is `taskset`, so both spellings
+  have a live example. It also carries a `gave-up` cell — the engine
+  refused `s-pathological` on its own frame budget and named the code —
+  because that outcome is the bench's headline result on a hazard
+  pattern and an example that omits it teaches the wrong shape. And it
+  carries BOTH forms: seven `plain` compile rows plus six
+  `whole-subject` ones, with the match-compliance rows keyed to the
+  second artifact and the search/throughput rows to the first — which
+  is what pcrec, having no end-anchored mode, actually has to do.
 - `email-specimen@0.1__v8-regexp_13.4.0_default-caps-simdna__example-box__20260825T034500Z.jsonl`
   — the second, small record: a `lazy-jit` testee (compile rows carry
   `derivation`, never a number the harness invented) whose record status
   is `inconclusive-load` — the box got busy partway through, so the
-  numbers exist and the record says do not trust them.
+  numbers exist and the record says do not trust them. Its
+  `engine_metadata_declaration` is deliberately EMPTY: the `tier` pair
+  this example used to declare had no adapter mechanism behind it
+  anywhere in `docs/design/harness_contract.md` §3, and a declaration
+  the contract cannot produce is an invented capability dressed as an
+  example. The consequence is that no ACCEPTED example exercises
+  `scope: match`; `bad/x15-metadata-wrong-scope.jsonl` covers that
+  branch instead.
 
 ## Editing one
 
