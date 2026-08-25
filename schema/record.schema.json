@@ -116,7 +116,14 @@
       "enum": ["pass", "fail", "unavailable"]
     },
     "load_verdict": { "enum": ["quiet", "loaded"] },
-    "pinning_mode": { "enum": ["taskset", "none", "unavailable"] },
+    "pinning_mode": {
+      "description": "How the run was pinned. `chrt+taskset` is the one token carrying a `+`: it names a COMPOSITION of two tools (a real-time class AND a CPU mask), and `chrt-taskset` would read as one tool's name.",
+      "enum": ["taskset", "chrt+taskset", "none", "unavailable"]
+    },
+    "clock_source": {
+      "description": "Which clock the timing driver read. Absolute numbers are not comparable across clocks, so this is recorded, never assumed.",
+      "enum": ["clock_monotonic", "clock_monotonic_raw", "other"]
+    },
 
     "named_value": {
       "type": "object",
@@ -197,7 +204,7 @@
     "subject_entry": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["subject_id", "role", "n_subjects", "bytes_offered"],
+      "required": ["subject_id", "role", "n_subjects", "bytes_offered", "sha256"],
       "properties": {
         "subject_id": { "$ref": "#/$defs/slug" },
         "role": { "enum": ["single", "set"] },
@@ -237,13 +244,17 @@
         "run": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["run_id", "timestamp", "harness_version", "harness_commit", "command_line"],
+          "required": ["run_id", "timestamp", "harness_version", "harness_commit", "command_line",
+                       "clock_source", "driver_build_flags", "driver_compiler"],
           "properties": {
             "run_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*$", "maxLength": 64 },
             "timestamp": { "$ref": "#/$defs/rfc3339_utc" },
             "harness_version": { "$ref": "#/$defs/version_string" },
             "harness_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$|^unknown$" },
             "command_line": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "clock_source": { "$ref": "#/$defs/clock_source" },
+            "driver_build_flags": { "$ref": "#/$defs/free_text" },
+            "driver_compiler": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$", "maxLength": 128 },
             "env": {
               "type": "object",
               "propertyNames": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
@@ -284,7 +295,7 @@
             },
             "engine_name": { "$ref": "#/$defs/slug" },
             "engine_version": { "$ref": "#/$defs/version_string" },
-            "engine_commit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{7,40}$" },
+            "engine_commit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{40}$" },
             "execution_model": { "$ref": "#/$defs/execution_model" },
             "automaton_class": { "$ref": "#/$defs/automaton_class" },
             "openness": { "$ref": "#/$defs/openness" },
@@ -323,6 +334,7 @@
             "hostname": { "type": "string", "maxLength": 255 },
             "cpu_model": { "$ref": "#/$defs/slug" },
             "cpu_model_raw": { "$ref": "#/$defs/free_text" },
+            "cpu_mhz": { "type": "number", "exclusiveMinimum": 0 },
             "cores": { "type": "integer", "minimum": 1 },
             "kernel": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$", "maxLength": 128 },
             "kernel_raw": { "$ref": "#/$defs/free_text" },

@@ -6,7 +6,7 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X21 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X22 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
@@ -54,6 +54,12 @@ RESERVED_KINDS = {
                   "no shape is defined yet",
 }
 SIMD_SLUG = {"on": "simd", "off": "nosimd", "n-a": "simdna"}
+
+# docs/design/record_schema.md 6.2. A RELEASE TAG is a plain dotted version,
+# optionally with a single trailing letter revision (`8.45a`). Anything else --
+# a `git describe` string, an `-rc1`, a `+build` -- is not a release, and a
+# testee that is not on a release must carry the commit that IS its identity.
+RELEASE_TAG_RE = re.compile(r"^\d+\.\d+(\.\d+)?[a-z]?\d*$")
 
 
 class Problem:
@@ -273,6 +279,17 @@ class RecordValidator:
                             f"is {stored.get('value')} but the file's bytes hash "
                             f"to {want_h} (edited, truncated or restamped?)",
                             "X6"))
+
+        # X22 a version that is not a release tag must carry its commit
+        ev = str(testee.get("engine_version", ""))
+        ec = testee.get("engine_commit")
+        if ev and not RELEASE_TAG_RE.match(ev):
+            if not (isinstance(ec, str) and re.fullmatch(r"[0-9a-f]{40}", ec)):
+                add(Problem(path, 1, "testee.engine_commit",
+                            f"engine_version {ev!r} is not a release-tag shape "
+                            f"(a plain dotted version), so the testee is "
+                            f"pinned to a revision and the full 40-hex commit "
+                            f"is what pins it; got {ec!r}", "X22"))
 
         # X16 lazy-jit warm-up
         if testee.get("execution_model") == "lazy-jit" and \
@@ -519,7 +536,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X21 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X22 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")

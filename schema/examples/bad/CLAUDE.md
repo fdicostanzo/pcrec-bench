@@ -37,6 +37,10 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x20-verdict-quiet-but-loaded.jsonl` | X20 | `load.verdict: quiet` beside a peak `load1` of 11.4 against a limit of 6.0. X13 alone is satisfied by this record, which is why X20 exists |
 | `x21-calibration-below-target.jsonl` | X21 | a probe that predicts a 20 ms loop recorded as having chosen an iteration count for a 50 ms target, with no `calibration_note` — the short loop that reads as a fast engine |
 | `schema-missing-calibration.jsonl` | SCHEMA | a timed match row with `iterations` in the hundreds of thousands and no `calibration` object saying who chose that number |
+| `schema-missing-clock-source.jsonl` | SCHEMA | `run.clock_source` deleted — nanoseconds from an unnamed clock |
+| `schema-missing-driver-build-flags.jsonl` | SCHEMA | `run.driver_build_flags` deleted — the engine's build is pinned and the timing driver's is not |
+| `schema-missing-subject-sha256.jsonl` | SCHEMA | a subject roster entry with no `sha256`: the bytes that produced the numbers are unidentified |
+| `x22-unpinned-engine-version.jsonl` | X22 | `engine_version: 0.9.0-g1a2b3c4` — a `git describe` string, not a release — with `engine_commit: null`. §6.2 has always said the version must be reproducible from the commit; this is the first time anything checks it |
 | `x14-missing-compile-row.jsonl` | X14 | `status: measured` with a pattern that has no compile row at all |
 | `x15-metadata-wrong-scope.jsonl` | X15 | the `engine` pair — declared `scope: pattern` — stamped on a MATCH row. The scope half of X15 has no good-example coverage now that the v8 example's undescribed `tier` pair is gone (note §7), so this control is the only thing holding it |
 | `x15-undeclared-engine-metadata.jsonl` | X15 | an `engine_metadata` pair the testee never declared |

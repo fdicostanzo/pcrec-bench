@@ -154,6 +154,13 @@ separated by `-`. This is the ONE transformation applied to the
 requirements' spellings, so that a filter expression never has to guess
 casing. The mapping is 1:1 and total:
 
+There is exactly one exception, and it is deliberate:
+`pinning.mode = chrt+taskset`. The `+` is doing work a `-` cannot — the
+token names a COMPOSITION of two tools (a real-time scheduling class AND
+a CPU mask), where `chrt-taskset` would read as the name of one tool.
+An exception admitted once, in writing, is cheaper than a rule everyone
+quietly stops believing.
+
 | requirements §4.3/§4.4/§3/§6 spelling | token |
 |---|---|
 | interpretive / compiled-AOT / eager-JIT / lazy-JIT | `interpretive` `compiled-aot` `eager-jit` `lazy-jit` |
@@ -180,7 +187,8 @@ The enums, in full:
 | `variant.kind` | `syntax-only` `restructured` | §4.5 (OD-B5: informational) |
 | `occupancy.verdict` | `pass` `fail` `unavailable` | §9(b) |
 | `load.verdict` | `quiet` `loaded` | §9(a), naming the existing gate |
-| `pinning.mode` | `taskset` `none` `unavailable` | §9(d) |
+| `pinning.mode` | `taskset` `chrt+taskset` `none` `unavailable` | §9(d) |
+| `clock_source` | `clock_monotonic` `clock_monotonic_raw` `other` | ADDITION (§9(e)) |
 | `hazard_class` | `none` `exponential-backtracking` `ambiguous-decomposition` `exact-minimum-boundary` `large-count` `wide-alternation` | §5 list + APPROACH §3 |
 | `size_class` | `tiny` `small` `medium` `large` `huge` | APPROACH §3 |
 | `role` (subject) | `single` `set` | §6 ("subject-or-subject-set") |
@@ -245,6 +253,16 @@ entry with its pcrec commit pinned") — `engine_commit` carries the full
 string. The binding rule: **`engine_version` must be reproducible from
 `engine_commit`**; where it is not, the version is not a version and
 the testee is not pinned.
+
+That rule is now CHECKED, which required naming what a release looks
+like. **RELEASE-TAG SHAPE** is `^\d+\.\d+(\.\d+)?$`, optionally with a
+single trailing letter revision (`8.45a`): `10.46`, `1.11.0`, `13.4.0`.
+Anything else — a `git describe` string (`0.9.0-g1a2b3c4`), an `-rc1`,
+a `+build` suffix — is NOT a release, and rule X22 then requires
+`engine_commit` to carry the full 40-hex commit. The conservative call
+is deliberate: a pre-release is exactly the kind of build that is worth
+pinning, so making `1.0-rc1` require its commit costs an adapter one
+field and buys a testee that can be rebuilt.
 
 ### 6.3 `engine_mode`
 
@@ -416,6 +434,9 @@ reverse: what is filtered must be enumerated or normalized.
 | `run.harness_version` | string | R | FILTERABLE | §6 "the harness's own version" |
 | `run.harness_commit` | 40-hex or `unknown` | R | FILTERABLE | as above; the version alone does not pin a working tree |
 | `run.command_line` | array of string | R | REPRODUCIBILITY-ONLY | §6 "command lines and flags as run" |
+| `run.clock_source` | enum | R | `clock_monotonic`/`clock_monotonic_raw`/`other`; FILTERABLE | ADDITION: §9(e)'s batched in-process loop is timed by SOME clock, and `_RAW` (no NTP slew) and `_COARSE`-class clocks do not produce the same nanoseconds. Two records timed by different clocks are not comparable, and nothing else in the record says which was used |
+| `run.driver_build_flags` | string | R | REPRODUCIBILITY-ONLY — never filtered; `not-compiled` when the driver needs no compiler | ADDITION: `testee.build_flags` records how the ENGINE was built. The timing DRIVER is the other half of every number — `-O0` around a loop measures the loop, and `harness_contract.md` §3 requires both drivers to follow one protocol precisely so their numbers compare. The protocol is nothing without the command line that realized it |
+| `run.driver_compiler` | string | R | §6.7's normalization, or `n-a` when `driver_build_flags` is `not-compiled` | ADDITION: as above, and separate from `environment.compiler` — the box's toolchain and the toolchain that built THIS driver are the same today and will not be once a testee arrives with its own |
 | `run.env` | map string→string | o | REPRODUCIBILITY-ONLY | the env overrides that changed the run (`BENCH_TRIALS`, `CC`, …) |
 
 #### `subbench` — what was measured
@@ -438,7 +459,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `testee.testee_id` | string | R | DERIVED, §6.4; FILTERABLE | §2 identity; the triple must be in the id |
 | `testee.engine_name` | slug | R | §6.1; FILTERABLE | OD-B4(b) |
 | `testee.engine_version` | version string | R | §6.2; FILTERABLE | OD-B4(b); §2 the triple |
-| `testee.engine_commit` | 7-40 hex or null | o | FILTERABLE | §4.2 "each just another roster entry with its pcrec commit pinned" |
+| `testee.engine_commit` | 40 hex or null | c | REQUIRED when `engine_version` is not a release-tag shape (X22); FILTERABLE | §4.2 "each just another roster entry with its pcrec commit pinned". Full 40 hex only: a 7-hex prefix is a convenience for humans and an ambiguity for a pin |
 | `testee.execution_model` | enum | R | FILTERABLE | §4.3 fixed enum; §3 selects the compile-cost protocol from it |
 | `testee.automaton_class` | enum | R | FILTERABLE | §4.3 fixed enum |
 | `testee.openness` | enum | R | FILTERABLE | §4.3; §8's worked query is "only open-source" |
@@ -466,6 +487,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `environment.hostname` | string | o | DIAGNOSTIC | evidence behind the `machine_id` assignment |
 | `environment.cpu_model` | slug | R | §6.6; FILTERABLE | §4.3 normalized identifier; A11 |
 | `environment.cpu_model_raw` | string | o | REPRODUCIBILITY-ONLY | the un-canonicalised `/proc/cpuinfo` line |
+| `environment.cpu_mhz` | number >0 | o | `/proc/cpuinfo` `cpu MHz` at RUN START | ADDITION: `governor` and `turbo` record the frequency POLICY; this records what the clock was actually doing when the run began. A thermally-throttled box under a `performance` governor looks identical in the policy fields and is not the same machine |
 | `environment.cores` | integer ≥1 | R | FILTERABLE | the load threshold is a function of it (`compare.sh`'s `max(2.0, cores/2)`) |
 | `environment.kernel` | string | R | §6.7; FILTERABLE | §4.3 |
 | `environment.kernel_raw` | string | o | REPRODUCIBILITY-ONLY | as above |
@@ -497,7 +519,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `environment.occupancy.after.max_busy_pct` | number/null | R | as above | as above |
 | `environment.occupancy.after.raw` | string | R | as above | as above |
 | `environment.pinning` | object | R | — | §9(d) "pinned cores after the occupancy check" |
-| `environment.pinning.mode` | enum | R | `taskset`/`none`/`unavailable` | pcrec degrades quietly when unprivileged (`compare.sh` `PIN_NOTE`); the record must say which |
+| `environment.pinning.mode` | enum | R | `taskset`/`chrt+taskset`/`none`/`unavailable` | pcrec degrades quietly when unprivileged (`compare.sh` `PIN_NOTE`); the record must say which |
 | `environment.pinning.cpu` | integer/null | o | the pinned core | as above |
 | `environment.governor` | string/null | o | DIAGNOSTIC | `compare.sh`'s machine-context table records it; frequency policy changes absolute numbers |
 | `environment.turbo` | string/null | o | DIAGNOSTIC | as above |
@@ -537,7 +559,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `subjects[].n_subjects` | integer ≥1 | R | 1 when `role` = `single` | lets the reporter compute per-subject cost without re-reading the sub-bench |
 | `subjects[].bytes_offered` | integer ≥0 | R | total bytes OFFERED to the engine in one iteration | the denominator of throughput, and the number `consumed_length` is compared against (§4.4 truncation) |
 | `subjects[].size_band` | string | o | RESERVED — becomes an enum when OD-B2 rules the cut points | §3's match regime "10 through 1000 bytes in bands (OD-B2)". Unruled, so no cut points are invented here |
-| `subjects[].sha256` | hex64 | o | REPRODUCIBILITY-ONLY | pins a generated subject against its manifest (§5) |
+| `subjects[].sha256` | hex64 | R | pins the exact bytes offered | §5's generated subjects are reproducible only if something says WHICH bytes. Optional made it the field a harness skips on the day the generator changes, which is the day it matters; §10.1's copied-facts risk applies to `bytes_offered` too and this is its only detectable half |
 
 ### FIELD TABLE: match
 
@@ -627,6 +649,7 @@ lesson: a check with no failing case proves nothing).
 | X19 | Each load sample's `load1`/`load5`/`load15` equal the first three numbers of its own `loadavg_raw` | §9(a); the evidence rule — a parsed number that disagrees with the line it came from is the whole point of keeping the line |
 | X20 | `load.verdict` is `loaded` iff either sample's `load1` exceeds `limit`, `quiet` otherwise | §9(a). Without it X13 is inert: a harness that stamps `quiet` beside a `load1` of 9.8 satisfies X13 and the record claims to be measured |
 | X21 | `calibration.probe_elapsed_ns / probe_iterations × timing.iterations ≥ calibration.target_ns`, or `calibration_note` says why not | §3's batched-loop protocol; `harness_contract.md` §3's auto-calibration. A loop that fell short of its target is a shorter measurement than the record claims to have taken |
+| X22 | `testee.engine_commit` is present and full 40-hex whenever `testee.engine_version` is not a release-tag shape (§6.2) | §4.2's "pinned"; §6.2's binding rule, which until now nothing enforced |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each
