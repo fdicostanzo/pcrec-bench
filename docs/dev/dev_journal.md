@@ -253,3 +253,40 @@ b2fix, brief_b2fix.md): schema version 1.0 → 1.1, one named control per
 new rule, ≥ 25 sabotages. b3harness and b5report told what is coming.
 critS1 went idle without delivering; asked to resend. Watchdog covers
 three lanes.
+
+## 2026-08-25 (EDT, ~00:4x), first session (part 8) — [B3]+[B4] DELIVERED (lane/b3harness 36c77ad); [B5] delivered with the set grain; v1.1 nearly done
+
+b3harness (opus, ~45 min, 11 commits, +6085): pcrecbench/ (subbench,
+quiet, env, adapters, driverrun, record, harness, store, CLI run/index),
+bench/email/ (the specimen wrapped: sidecar, both patterns, generators
+copied, manifests with sha256, 330 expectations re-derived from libpcre2
+10.46 by gen_expectations.py --check, NOTES.md with the objective),
+testees/pcre2 (dlopen driver, interp + jit) and testees/pcrec (driver +
+shim, pin.sh reusing the manager's build, three configs), tools/
+selfcheck.py = `make check` 15/15 with controls (manifest byte-diff,
+wrong-expectation fixture, subject-timeout by name, TWO-PATTERNS
+control). Manager re-ran make check in the worktree: 15/15, pcrec's
+tree untouched. FINDINGS worth the record: (1) a hidden bug — both
+patterns compiled into one workdir, the second measured under the
+first's handle; the email expectations could not see it (both patterns
+agree everywhere); found via engine_metadata (orig reporting VM
+give-ups when it selects DFA); fixed by pattern_id in the interface and
+guarded by the two-patterns control — the class of bug only a
+mechanism check can see; (2) OD-B8 MEASURED under pcrecdev1's load:
+load1 1.28-1.47 never tripped a 2.0 gate while per-core occupancy
+refused 12/12 samples (worst core 62-81% idle) — occupancy is the
+DETECTOR, load1 the backstop; proposed MAX_BUSY_PCT 10, LOAD1 2.0,
+re-measure on a quiet box; (3) the smokes reproduce srEmail from
+scratch (330/330 oracle agreement; five FRAMES give-ups on factored;
+DFA+prefilter vs VM). Twelve contract deviations written up in
+docs/design/harness_notes.md; RULED at review: sidecar extension
+accepted; match regime = the engine's own whole-subject test (pcrec has
+no end-anchored entry — raised with pcrecdev1 as a candidate finding);
+give-ups get their own schema outcome `gave-up` (fix 21 to b2fix).
+b5report (sonnet): reporter MVP eafb68f → 156da15 with `--grain
+set|subject` (default set: per-trial sum of per-subject ns/call over the
+set), 16/16 tests, fixtures restamped; holding for v1.1. b2fix: fixes
+1-11 landed (23 rules, 36 controls, check_rules.py — five rules had had
+no control through a merge and a panel), fixes 13-21 in progress.
+Merge order: b2fix → b3harness (adapt records to v1.1) → b5report
+(restamp) → cells on the quiet window → report.
