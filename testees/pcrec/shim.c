@@ -32,6 +32,18 @@
  * emitted on VM artifacts ONLY (record_schema.md 7: "an ABSENT pair is not an
  * error; an UNDECLARED one is"). A DFA artifact links a shim whose
  * `pb_has_vm_stamps()` returns 0, and the adapter forwards no VM pairs.
+ *
+ * THE CALLER-PROVIDED FRAME BUFFER (pcrec docs/spec/match_api.md 10,
+ * [DD-14.FB], abi 3). The `pb_*_in` entries and the five sizing getters are
+ * guarded the same way, on `RX_BUFFER_ALIGN` -- the macro every artifact
+ * emitted at or after pcrec 17469b6 carries, on BOTH engines. Against an
+ * older artifact (abi 2, no `_in` surface) `pb_has_in_entries()` returns 0,
+ * every sizing getter returns 0, and the two `_in` wrappers return
+ * PB_UNSUPPORTED (a value far below PCREC_ERR_FLOOR that no artifact can
+ * produce) -- the driver refuses `--buffer-*` up front on such an artifact,
+ * so the sentinel is a belt under that brace, never a code that reaches a
+ * record. The descriptor (`rx_buffers`) is built HERE, so driver.c still
+ * declares no pcrec type.
  */
 
 #include <stddef.h>
@@ -51,6 +63,20 @@
 #ifndef PB_INFO
 #define PB_INFO        rx_info
 #endif
+#ifndef PB_SEARCH_IN
+#define PB_SEARCH_IN      rx_search_in
+#endif
+#ifndef PB_MATCH_CAPS_IN
+#define PB_MATCH_CAPS_IN  rx_match_caps_in
+#endif
+#ifndef PB_BUFFERS
+#define PB_BUFFERS        rx_buffers
+#endif
+
+/* Returned by the `_in` wrappers ONLY when the artifact has no `_in` surface
+ * at all. Far below PCREC_ERR_FLOOR (-5) and PCREC_ERR_INTERNAL (-6): not a
+ * give-up, not an internal code, nothing the harness could mistake for one. */
+#define PB_UNSUPPORTED (-1000000)
 
 /* ------------------------------------------------- reflection (rx_info) */
 
@@ -180,4 +206,116 @@ long long pb_match_caps(const unsigned char *s, size_t n, size_t pos,
     ctx.caps = (const ptrdiff_t (*)[2])0;
     ctx.user = (void *)0;
     return (long long)PB_MATCH_CAPS(&ctx, caps);
+}
+
+/* ----------------------------- the caller-provided frame buffer (10) */
+
+/* The sizing surface, READ from the macros the artifact's header publishes
+ * (match_api.md 10.4): `<PREFIX>_RESUME_FRAMES` / `_TRAIL_FRAMES` are the
+ * stamped DEFAULT capacities, `_RESUME_FRAME_SIZE` / `_TRAIL_FRAME_SIZE` the
+ * bytes per frame / per trail entry FOR THIS ARTIFACT (24 B on a call-free VM
+ * artifact, 40 on a call-bearing one -- never hardcode), `_BUFFER_ALIGN` the
+ * alignment both regions need. At abi 3 the same four counts are also
+ * `rx_info` fields; the macros are what the artifact _Static_asserts against
+ * its real sizeof/_Alignof, so they are the copy read here.
+ *
+ * A STAMPED SIZE OF 0 MEANS "THIS ENGINE TAKES NO BUFFERS" (every DFA
+ * artifact). Dividing by it is the documented mistake; the driver tests the
+ * size before it sizes anything and passes no descriptor when it is 0. */
+
+int pb_has_in_entries(void) {
+#ifdef RX_BUFFER_ALIGN
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_buffer_align(void) {
+#ifdef RX_BUFFER_ALIGN
+    return (long long)RX_BUFFER_ALIGN;
+#else
+    return 0;
+#endif
+}
+
+long long pb_resume_frames(void) {
+#ifdef RX_RESUME_FRAMES
+    return (long long)RX_RESUME_FRAMES;
+#else
+    return 0;
+#endif
+}
+
+long long pb_trail_frames(void) {
+#ifdef RX_TRAIL_FRAMES
+    return (long long)RX_TRAIL_FRAMES;
+#else
+    return 0;
+#endif
+}
+
+long long pb_resume_frame_size(void) {
+#ifdef RX_RESUME_FRAME_SIZE
+    return (long long)RX_RESUME_FRAME_SIZE;
+#else
+    return 0;
+#endif
+}
+
+long long pb_trail_frame_size(void) {
+#ifdef RX_TRAIL_FRAME_SIZE
+    return (long long)RX_TRAIL_FRAME_SIZE;
+#else
+    return 0;
+#endif
+}
+
+/* `<prefix>_search_in` with a descriptor built here from the driver's two
+ * regions and two CAPACITIES (frames and entries, never bytes -- 10.2).
+ * Same return space as pb_search(). 10.3's promises the driver relies on:
+ * a NULL descriptor is exactly the plain call; a give-up is retryable; the
+ * regions are pure scratch; PCREC_ERR_FRAMES does not say whose buffer ran
+ * out. Both regions are required when either is given. */
+int pb_search_in(const unsigned char *s, size_t n, size_t pos,
+                 ptrdiff_t (*caps)[2],
+                 void *frames, size_t nframes, void *trail, size_t ntrail) {
+#ifdef RX_BUFFER_ALIGN
+    PB_BUFFERS buf;
+    if (!frames && !trail) return PB_SEARCH_IN(s, n, pos, caps, (const PB_BUFFERS *)0);
+    buf.frames = frames; buf.nframes = nframes;
+    buf.trail = trail;   buf.ntrail = ntrail;
+    return PB_SEARCH_IN(s, n, pos, caps, &buf);
+#else
+    (void)s; (void)n; (void)pos; (void)caps;
+    (void)frames; (void)nframes; (void)trail; (void)ntrail;
+    return PB_UNSUPPORTED;
+#endif
+}
+
+/* `<prefix>_match_caps_in`: pb_match_caps() with the descriptor. Same
+ * whole-subject caveat as pb_match_caps(). */
+long long pb_match_caps_in(const unsigned char *s, size_t n, size_t pos,
+                           ptrdiff_t (*caps)[2],
+                           void *frames, size_t nframes,
+                           void *trail, size_t ntrail) {
+#ifdef RX_BUFFER_ALIGN
+    PB_BUFFERS buf;
+    rx_ctx ctx;
+    ctx.subject = s;
+    ctx.len = n;
+    ctx.pos = pos;
+    ctx.ncap = 0;
+    ctx.caps = (const ptrdiff_t (*)[2])0;
+    ctx.user = (void *)0;
+    if (!frames && !trail)
+        return (long long)PB_MATCH_CAPS_IN(&ctx, caps, (const PB_BUFFERS *)0);
+    buf.frames = frames; buf.nframes = nframes;
+    buf.trail = trail;   buf.ntrail = ntrail;
+    return (long long)PB_MATCH_CAPS_IN(&ctx, caps, &buf);
+#else
+    (void)s; (void)n; (void)pos; (void)caps;
+    (void)frames; (void)nframes; (void)trail; (void)ntrail;
+    return PB_UNSUPPORTED;
+#endif
 }

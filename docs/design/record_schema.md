@@ -427,7 +427,7 @@ Lowercase slug, per-engine registry:
 
 | engine | `engine_mode` values |
 |---|---|
-| `pcrec` | `auto`, `dfa`, `vm` (pcrec's `--engine=`; `lib/pcrec.h` `PCREC_ENGINE_AUTO/_DFA/_VM`) |
+| `pcrec` | `auto`, `dfa`, `vm` (pcrec's `--engine=`; `lib/pcrec.h` `PCREC_ENGINE_AUTO/_DFA/_VM`); `auto-in`, `vm-in` (the same engine choice matched through the `_in` entries with a caller-provided frame buffer, pcrec match_api.md §10 — a separate configuration triple, requirements §4.2; `testees/pcrec/configs.toml`) |
 | `libpcre2` | `interp`, `jit` |
 | others | declared when the adapter lands |
 

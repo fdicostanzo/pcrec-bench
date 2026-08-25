@@ -1,7 +1,22 @@
 """testees/pcrec/adapter.py -- the pcrec adapter (harness contract 3).
 
-Provides `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm`, all at the pin in
+Provides `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm`, and the caller-provided
+frame-buffer variants `pcrec-auto-in` / `pcrec-vm-in`, all at the pin in
 `configs.toml`.
+
+THE `_in` TESTEES (pcrec docs/spec/match_api.md 10, [DD-14.FB]): a config
+carrying `buffer_frames = N` and `buffer_trail = M` -- CAPACITIES in frames
+and trail entries, never bytes -- makes the driver allocate two regions once
+per run and call `<prefix>_search_in` / `<prefix>_match_caps_in` with them in
+every regime. The sizes are THE KNOB and they go in the record twice: as
+`testee.runtime_options` (the configuration) and as the `buffer_frames` /
+`buffer_trail` engine_metadata pairs on the compile row (what the driver
+actually ran with; ABSENT means the stamped default storage ran, which is
+also what happens on a DFA artifact, whose stamped frame size is 0 and which
+takes no buffers at all -- 10.4). requirements 4.2: it is a separate
+(engine, version, configuration) triple, hence a separate roster entry with
+its own engine_mode slug (`auto-in`, `vm-in`) so the derived testee_id is
+distinct.
 
 COMPILE COST -- AOT, THREE PHASES (requirements 3: "pattern -> C -> gcc ->
 loadable object, all phases, each timed"):
@@ -103,6 +118,58 @@ METADATA_DECL = {
         "source": "<PREFIX>_VM_PRUNES, read through pb_vm_prunes()",
         "description": "length-prune form, per quantifier",
     },
+    # -- the caller-provided frame buffer's sizing surface (match_api.md
+    # 10.4, abi 3). Stamped on EVERY artifact at abi 3, both engines; a DFA
+    # artifact stamps 0 for all four ("this engine takes no buffers").
+    "resume_frames": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_RESUME_FRAMES (== rx_info.resume_frames at abi 3), "
+                  "read through pb_resume_frames()",
+        "description": "the stamped DEFAULT resume-stack capacity, in FRAMES; "
+                       "0 on a DFA artifact",
+    },
+    "trail_frames": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_TRAIL_FRAMES (== rx_info.trail_frames at abi 3), "
+                  "read through pb_trail_frames()",
+        "description": "the stamped DEFAULT trail capacity, in ENTRIES; 0 on "
+                       "a DFA artifact",
+    },
+    "resume_frame_size": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_RESUME_FRAME_SIZE (== rx_info.resume_frame_size "
+                  "at abi 3), read through pb_resume_frame_size()",
+        "description": "bytes per resume frame FOR THIS ARTIFACT (per-artifact: "
+                       "24 or 40 measured so far); 0 = the engine takes no "
+                       "buffers",
+    },
+    "trail_frame_size": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_TRAIL_FRAME_SIZE (== rx_info.trail_frame_size at "
+                  "abi 3), read through pb_trail_frame_size()",
+        "description": "bytes per trail entry FOR THIS ARTIFACT; 0 = the "
+                       "engine takes no buffers",
+    },
+    # -- what the driver actually ran with. Present ONLY when a caller-
+    # provided buffer was in use for this artifact.
+    "buffer_frames": {
+        "type": "integer", "scope": "pattern",
+        "source": "the driver's --buffer-frames, from configs.toml "
+                  "`buffer_frames`, echoed as `info buffer_frames` only when "
+                  "the regions were allocated and the _in entries used",
+        "description": "the caller-provided resume-frame CAPACITY (frames, "
+                       "not bytes) this testee ran with; ABSENT means the "
+                       "default stamped buffers were used",
+    },
+    "buffer_trail": {
+        "type": "integer", "scope": "pattern",
+        "source": "the driver's --buffer-trail, from configs.toml "
+                  "`buffer_trail`, echoed as `info buffer_trail` only when "
+                  "the regions were allocated and the _in entries used",
+        "description": "the caller-provided trail CAPACITY (entries, not "
+                       "bytes) this testee ran with; ABSENT means the default "
+                       "stamped buffers were used",
+    },
 }
 
 # The bit VALUES, from pcrec docs/spec/match_api.md 2 (the emitted
@@ -121,7 +188,37 @@ MASK_BITS = {
                   ("PCREC_VM_PRUNE_UNCLAMPED", 0x2)],
 }
 INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "step_budget",
-             "work_budget", "frame_capacity", "subject_ceiling")
+             "work_budget", "frame_capacity", "subject_ceiling",
+             "resume_frames", "trail_frames", "resume_frame_size",
+             "trail_frame_size", "buffer_frames", "buffer_trail")
+
+
+def buffer_capacities(cfg):
+    """-> (frames, trail) from a config's `buffer_frames` / `buffer_trail`,
+    or None when the config has neither. Both or neither: a non-NULL
+    descriptor requires BOTH regions (match_api.md 10.2), and the trail is
+    the array that binds first, so a frames-only knob would be inert."""
+    f, t = cfg.get("buffer_frames"), cfg.get("buffer_trail")
+    if f is None and t is None:
+        return None
+    if f is None or t is None:
+        raise _ad.AdapterError(
+            "buffer_frames and buffer_trail go together (match_api.md 10.2: "
+            "both regions are required); got frames=%r trail=%r" % (f, t))
+    if not (isinstance(f, int) and isinstance(t, int)) or f < 1 or t < 1:
+        raise _ad.AdapterError(
+            "buffer_frames / buffer_trail must be positive integers -- "
+            "CAPACITIES in frames and entries, never bytes; got %r / %r"
+            % (f, t))
+    return f, t
+
+
+def buffer_args(cfg):
+    """The driver's `--buffer-frames N --buffer-trail M`, or []."""
+    caps = buffer_capacities(cfg)
+    if caps is None:
+        return []
+    return ["--buffer-frames", str(caps[0]), "--buffer-trail", str(caps[1])]
 
 
 def _mask_names(name, value):
@@ -189,6 +286,19 @@ class Adapter(_ad.Adapter):
     def describe(self, testee_id, workdir=None):
         cfg = self.config(testee_id)
         full, desc = self.pin_provenance()
+        caps = buffer_capacities(cfg)
+        buffer_note = ""
+        runtime = [{"name": f.split("=")[0], "value":
+                    f.split("=", 1)[1] if "=" in f else True}
+                   for f in cfg.get("flags", []) if f.startswith("--")]
+        if caps:
+            buffer_note = ("; caller-provided frame buffer (match_api.md 10): "
+                           "%d resume frames, %d trail entries -- CAPACITIES, "
+                           "sized per artifact from its stamped frame sizes; "
+                           "the _in entries used in every regime"
+                           % caps)
+            runtime += [{"name": "buffer_frames", "value": caps[0]},
+                        {"name": "buffer_trail", "value": caps[1]}]
         # record_schema.md 6.2: where a testee is pinned to a VCS revision
         # rather than a release -- "which is pcrec ALWAYS" -- engine_commit
         # carries the 40-hex and engine_version a git-describe-shaped string,
@@ -212,12 +322,10 @@ class Adapter(_ad.Adapter):
             "engine_mode": cfg["engine_mode"],
             "simd": "n-a",
             "build_flags": "pin %s (%s); pcrec flags %s; artifact built with "
-                           "$CC -O2 -fPIC -shared"
-                           % (self.pin(), desc, " ".join(cfg.get("flags", []))),
-            "runtime_options": [{"name": f.split("=")[0], "value":
-                                 f.split("=", 1)[1] if "=" in f else True}
-                                for f in cfg.get("flags", [])
-                                if f.startswith("--")],
+                           "$CC -O2 -fPIC -shared%s"
+                           % (self.pin(), desc, " ".join(cfg.get("flags", [])),
+                              buffer_note),
+            "runtime_options": runtime,
             "compile_cost_definition": (
                 "AOT (requirements 3): every phase from pattern text to a "
                 "loadable object, each timed -- `emit-c` (the pcrec CLI), "
@@ -274,6 +382,7 @@ class Adapter(_ad.Adapter):
         drv = build_driver(os.path.join(HERE, "driver.c"),
                            os.path.join(workdir, "pcrec_driver"), extra=["-ldl"])
         cc = os.environ.get("CC", "gcc")
+        bufargs = buffer_args(cfg)
 
         phase_seconds = []
         libs = []
@@ -321,7 +430,10 @@ class Adapter(_ad.Adapter):
                                % (" ".join(gargv), gproc.stderr))
 
             # phase 3: load, timed by the driver -----------------------------
-            out = run_driver([drv, "--lib", so, "--trial", str(t)],
+            # The buffer options ride along so the load-only run's `info`
+            # block -- which is where the compile row's engine_metadata comes
+            # from -- says what the measuring runs will actually use.
+            out = run_driver([drv, "--lib", so, "--trial", str(t)] + bufargs,
                              timeout=120, cwd=cdir)
             if out.returncode != 0:
                 return _ad.CompileResult("crashed",
@@ -341,7 +453,8 @@ class Adapter(_ad.Adapter):
                 artifact_bytes = os.path.getsize(so)
 
         handle = {"driver": drv, "lib": libs[0],
-                  "giveup_range": getattr(self, "_giveup_bounds", (-5, -2))}
+                  "giveup_range": getattr(self, "_giveup_bounds", (-5, -2)),
+                  "buffer_args": bufargs}
         return _ad.CompileResult("compiled", phase_seconds=phase_seconds,
                                  engine_metadata=meta, handle=handle,
                                  artifact_bytes=artifact_bytes,
@@ -373,6 +486,7 @@ class Adapter(_ad.Adapter):
                 "--mode", REGIME_MODE[regime], "--iters", str(iters)]
         if regime == "throughput":
             argv.append("--find-all")
+        argv += list(handle.get("buffer_args") or [])
         return per_trial(argv, subjects, trials, timeout=timeout,
                          pin=handle.get("pin"),
                          subject_timeout=handle.get("subject_timeout"))

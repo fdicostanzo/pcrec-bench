@@ -36,7 +36,7 @@ One thing that is deliberately NOT a variant: pcrec's `--features all`.
 pcrec's default feature set (`std1`) excludes the `named-groups` and
 `recursion` modules, so `factored.rx` is refused under the default with
 `requires module 'named-groups'` (MEASURED 2026-08-25 against pin
-8da6120). `--features all` is a build/run flag of the TESTEE — it changes
+8da6120, re-verified at 692c2e8). `--features all` is a build/run flag of the TESTEE — it changes
 which modules the compiler has, not what the pattern says — and the
 pattern text handed to pcrec is identical either way. It lives in
 `testees/pcrec/configs.toml` flags and in `testee.build_flags`.
@@ -51,14 +51,22 @@ pattern text handed to pcrec is identical either way. It lives in
   the patterns. Two behaviours a reader of the numbers should expect,
   both already measured by pcrec's own srEmail lane and neither a
   correctness problem with this sub-bench:
-  - `orig.rx` selects pcrec's DFA engine; `factored.rx` selects the VM
-    (the `{0}` definitions' named groups are captures, which forces VM),
-    with no prefilter. The `pcrec-nocaps` testee is the axis that
-    recovers a DFA artifact for a group-bearing pattern.
+  - **Engine selection moved between pins.** At pin 8da6120 `orig.rx`
+    selected pcrec's DFA and `factored.rx` the VM (the `{0}` definitions'
+    named groups were captures, which forced VM, with no prefilter). At
+    pin 692c2e8 (pcrec wave G: dead-capture elision, prefilter restored
+    for call-bearing patterns) **both patterns select the DFA under
+    `pcrec-auto` and `pcrec-nocaps`, in both forms** — MEASURED
+    2026-08-25, `testees/pcrec/CLAUDE.md` has the table. Only `pcrec-vm`
+    still runs a VM artifact here. A before/after of `factored` across
+    the two pins compares two engines, not two versions of one.
   - the pathological subjects and the `t-c-long-atom-run` throughput
-    subject can exhaust pcrec's step/frame budgets. A budget give-up is
-    recorded as `did-not-match-as-expected` with the give-up code in the
-    row's `diagnostic` — see "give-ups" below.
+    subject can exhaust pcrec's step/frame budgets — on a VM artifact.
+    At 692c2e8 that is `pcrec-vm` only: five deep subjects (s-058,
+    s-059, s-061, s-063, s-064) give up with `PCREC_ERR_FRAMES` on
+    `factored` in the match regime (MEASURED); `pcrec-auto` gives up
+    nowhere. A budget give-up is recorded as `gave-up` with the give-up
+    code in the row's `diagnostic` — see "give-ups" below.
 
 ## The match regime runs a SECOND pcrec artifact
 
@@ -76,8 +84,9 @@ For a reader of THIS sub-bench's numbers, three consequences:
    its search/throughput compile cost. The record labels which; do not
    reduce them together.
 2. **`orig`'s `\z` form still selects the DFA engine** (MEASURED against
-   pin 8da6120, both `pcrec-auto` and `pcrec-nocaps`), so the match
-   regime is not secretly measuring the VM for the inlined pattern.
+   pin 8da6120 and re-verified at 692c2e8, both `pcrec-auto` and
+   `pcrec-nocaps`; at 692c2e8 `factored`'s `\z` form does too), so the
+   match regime is not secretly measuring the VM for the inlined pattern.
 3. **The `\z` form's byte-class skip prefilter is present but weaker**:
    the same `rx_can_begin_match` table, but a skip loop that can never
    skip the final byte and cannot early-exit, because the end-of-subject

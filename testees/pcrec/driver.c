@@ -15,6 +15,28 @@
  * high-water mark, so the claim is "no byte was withheld", never "the engine
  * looked at every byte" -- the same convention as the pcre2 driver, stated in
  * testees/pcrec/CLAUDE.md.
+ *
+ * THE CALLER-PROVIDED FRAME BUFFER (`--buffer-frames N --buffer-trail M`,
+ * pcrec match_api.md 10). N and M are CAPACITIES -- frames and trail
+ * entries, never bytes. When both are given the driver allocates the two
+ * regions ONCE per run, aligned to pb_buffer_align() and sized
+ * N * pb_resume_frame_size() and M * pb_trail_frame_size() bytes, touches
+ * every page once OUTSIDE any timed loop (so no timed loop pays a first-touch
+ * page fault), and then uses the `_in` entries in ALL THREE modes with the
+ * same protocol lines and the same give-up propagation. Without the options
+ * the driver's behaviour and output are byte-identical to before they
+ * existed. Two facts a reader of the info lines needs:
+ *
+ *   - `info resume_frames/trail_frames/resume_frame_size/trail_frame_size`
+ *     are printed whenever the artifact STAMPS them (every artifact at abi
+ *     3, both engines); `info buffer_frames/buffer_trail` ONLY when the
+ *     buffers were actually used, so an ABSENT pair in a record means the
+ *     stamped default storage was what ran.
+ *   - a stamped frame size of 0 means the engine takes no buffers (every
+ *     DFA artifact, 10.4). The options are then accepted but INERT: nothing
+ *     is allocated, no `buffer_*` pair is printed, the plain entries run,
+ *     and `info buffer_inert stamped-size-0` says so. Dividing by the 0 is
+ *     the documented mistake and is never done.
  */
 
 #define _GNU_SOURCE
@@ -54,6 +76,53 @@ static int       (*pb_search)(const unsigned char *, size_t, size_t,
                               ptrdiff_t (*)[2]);
 static long long (*pb_match_caps)(const unsigned char *, size_t, size_t,
                                   ptrdiff_t (*)[2]);
+static int       (*pb_has_in_entries)(void);
+static long long (*pb_buffer_align)(void);
+static long long (*pb_resume_frames)(void);
+static long long (*pb_trail_frames)(void);
+static long long (*pb_resume_frame_size)(void);
+static long long (*pb_trail_frame_size)(void);
+static int       (*pb_search_in)(const unsigned char *, size_t, size_t,
+                                 ptrdiff_t (*)[2], void *, size_t, void *,
+                                 size_t);
+static long long (*pb_match_caps_in)(const unsigned char *, size_t, size_t,
+                                     ptrdiff_t (*)[2], void *, size_t,
+                                     void *, size_t);
+
+/* The caller-provided regions, when in use (see the header comment). */
+static void  *buf_frames, *buf_trail;
+static size_t buf_nframes, buf_ntrail;
+static int    use_buffers;
+
+/* One call site per entry, so the three mode loops below read the same
+ * whether the buffers are in use or not. */
+static inline int do_search(const unsigned char *s, size_t n, size_t pos,
+                            ptrdiff_t (*caps)[2]) {
+    return use_buffers
+        ? pb_search_in(s, n, pos, caps, buf_frames, buf_nframes,
+                       buf_trail, buf_ntrail)
+        : pb_search(s, n, pos, caps);
+}
+
+static inline long long do_match_caps(const unsigned char *s, size_t n,
+                                      size_t pos, ptrdiff_t (*caps)[2]) {
+    return use_buffers
+        ? pb_match_caps_in(s, n, pos, caps, buf_frames, buf_nframes,
+                           buf_trail, buf_ntrail)
+        : pb_match_caps(s, n, pos, caps);
+}
+
+static void *alloc_region(size_t align, size_t bytes) {
+    void *p = NULL;
+    if (align < sizeof(void *)) align = sizeof(void *);
+    /* posix_memalign wants a power-of-two multiple of sizeof(void*), which
+     * every alignment an artifact stamps is. */
+    if (posix_memalign(&p, align, bytes ? bytes : 1) != 0) return NULL;
+    /* Touch every page ONCE, here, so the first timed loop does not pay the
+     * page faults for storage the match may never fill. */
+    memset(p, 0, bytes);
+    return p;
+}
 
 static double now(void) {
     struct timespec ts;
@@ -144,6 +213,7 @@ int main(int argc, char **argv) {
     const char *lib_path = NULL, *list_path = NULL, *mode = "search";
     volatile long iters = 1, subject_timeout = 0, skip = 0;
     long trial = 1;
+    long long buffer_frames = -1, buffer_trail = -1;
     volatile int find_all = 0;
 
     for (int i = 1; i < argc; i++) {
@@ -156,10 +226,22 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--subject-timeout") && i + 1 < argc) subject_timeout = strtol(argv[++i], NULL, 10);
         else if (!strcmp(a, "--skip") && i + 1 < argc)           skip = strtol(argv[++i], NULL, 10);
         else if (!strcmp(a, "--find-all"))                       find_all = 1;
+        else if (!strcmp(a, "--buffer-frames") && i + 1 < argc)  buffer_frames = strtoll(argv[++i], NULL, 10);
+        else if (!strcmp(a, "--buffer-trail") && i + 1 < argc)   buffer_trail = strtoll(argv[++i], NULL, 10);
         else { printf("error\tunknown argument %s\n", a); return 2; }
     }
     if (!lib_path) { printf("error\t--lib is required\n"); return 2; }
     if (iters < 1) iters = 1;
+    if ((buffer_frames >= 0) != (buffer_trail >= 0)) {
+        printf("error\t--buffer-frames and --buffer-trail go together: both "
+               "regions are required by a non-NULL descriptor (match_api.md "
+               "10.2)\n");
+        return 2;
+    }
+    if (buffer_frames == 0 || buffer_trail == 0) {
+        printf("error\ta buffer capacity of 0 is not a buffer\n");
+        return 2;
+    }
 
     setvbuf(stdout, NULL, _IOLBF, 0);
 
@@ -180,6 +262,10 @@ int main(int argc, char **argv) {
     SYM(pb_has_vm_stamps); SYM(pb_vm_prefilter); SYM(pb_vm_rungs);
     SYM(pb_vm_strats); SYM(pb_vm_prunes); SYM(pb_engine_stamp);
     SYM(pb_search); SYM(pb_match_caps);
+    SYM(pb_has_in_entries); SYM(pb_buffer_align);
+    SYM(pb_resume_frames); SYM(pb_trail_frames);
+    SYM(pb_resume_frame_size); SYM(pb_trail_frame_size);
+    SYM(pb_search_in); SYM(pb_match_caps_in);
 
     /* engine_metadata, `pattern`-scoped: read from the artifact's STRUCTURED
      * fields, never from the prose RX_ENGINE_WHY (requirements 4.2). The
@@ -212,6 +298,48 @@ int main(int argc, char **argv) {
     }
     const char *es = pb_engine_stamp();
     if (es) printf("info\tengine_stamp\t%s\n", es);
+
+    /* The frame-buffer sizing surface (match_api.md 10.4), whenever the
+     * artifact stamps it -- both engines at abi 3; a DFA artifact stamps
+     * zeros, which is its honest "no buffers" signal and is recorded as
+     * such. */
+    if (pb_has_in_entries()) {
+        printf("info\tresume_frames\t%lld\n", pb_resume_frames());
+        printf("info\ttrail_frames\t%lld\n", pb_trail_frames());
+        printf("info\tresume_frame_size\t%lld\n", pb_resume_frame_size());
+        printf("info\ttrail_frame_size\t%lld\n", pb_trail_frame_size());
+        printf("info\tbuffer_align\t%lld\n", pb_buffer_align());
+    }
+
+    if (buffer_frames > 0) {
+        if (!pb_has_in_entries()) {
+            printf("error\t--buffer-frames/--buffer-trail given but this "
+                   "artifact has no _in surface (pcrec before [DD-14.FB], "
+                   "abi < 3)\n");
+            return 2;
+        }
+        long long fs = pb_resume_frame_size(), ts = pb_trail_frame_size();
+        if (fs <= 0 || ts <= 0) {
+            /* 10.4: a stamped 0 means the engine takes no buffers. NEVER
+             * divide by it; pass no descriptor. */
+            printf("info\tbuffer_inert\tstamped-size-0\n");
+        } else {
+            size_t align = (size_t)pb_buffer_align();
+            buf_nframes = (size_t)buffer_frames;
+            buf_ntrail  = (size_t)buffer_trail;
+            buf_frames = alloc_region(align, buf_nframes * (size_t)fs);
+            buf_trail  = alloc_region(align, buf_ntrail * (size_t)ts);
+            if (!buf_frames || !buf_trail) {
+                printf("error\tcould not allocate the frame buffer: %lld "
+                       "frames x %lld B + %lld entries x %lld B\n",
+                       buffer_frames, fs, buffer_trail, ts);
+                return 2;
+            }
+            use_buffers = 1;
+            printf("info\tbuffer_frames\t%lld\n", buffer_frames);
+            printf("info\tbuffer_trail\t%lld\n", buffer_trail);
+        }
+    }
 
     if (!list_path) { fflush(stdout); return 0; }   /* load-only run */
 
@@ -249,7 +377,7 @@ int main(int argc, char **argv) {
                     /* whole-subject: anchored at 0 AND ending at n. See
                      * shim.c's pb_match_caps comment for the asymmetry this
                      * carries against PCRE2_ENDANCHORED. */
-                    long long r = pb_match_caps(s->buf, s->len, 0, caps);
+                    long long r = do_match_caps(s->buf, s->len, 0, caps);
                     if (r < 0) {
                         if (r < -1) giveup = (int)r;
                     } else if ((size_t)r == s->len) {
@@ -261,7 +389,7 @@ int main(int argc, char **argv) {
                     size_t pos = 0;
                     long count = 0;
                     for (;;) {
-                        int r = pb_search(s->buf, s->len, pos, caps);
+                        int r = do_search(s->buf, s->len, pos, caps);
                         if (r == 0) break;
                         if (r < 0) { if (count == 0) giveup = r; break; }
                         if (first_s < 0) {
@@ -276,7 +404,7 @@ int main(int argc, char **argv) {
                     }
                     nmatch = count;
                 } else {
-                    int r = pb_search(s->buf, s->len, 0, caps);
+                    int r = do_search(s->buf, s->len, 0, caps);
                     if (r == 1) {
                         first_s = (long)caps[0][0];
                         first_e = (long)caps[0][1];
