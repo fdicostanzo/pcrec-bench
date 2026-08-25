@@ -35,6 +35,9 @@ decisions) so cross-references between the two repos are never ambiguous.
   R2 (2026-08-25): the merged record schema, 22 findings, all carried
   by the schema v1.1 lane.
 
+- `feedback_pcrecdev1_2026-08-25.md` — the pcrec manager session's
+  feedback on the first production sample (what is missing to act on an
+  outlier; what it distrusts; five ranked sub-bench areas), for Frank.
 - `upstream_findings.md` — findings about OTHER engines with the record
   that shows them (U1 2026-08-25: pcre2-jit's 60 s timeout on the
   factored email pattern over 1 MB of `a`). Findings about pcrec go to

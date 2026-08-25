@@ -472,3 +472,24 @@ harness_contract + harness_notes (D6); OD-B10 (1 MB vs 8 MB spread);
 OD-B11/B12/B13; a re-pin of pcrec after wave G merges; the second
 sub-bench (Frank's call after pcrecdev1's list); no remote configured
 (branch `master`). Session closes here; Frank reviews next session.
+
+## 2026-08-25 (EDT, ~03:3x), first session (part 16, addendum after close) — pcrecdev1's feedback on the sample, recorded for Frank
+
+pcrecdev1 answered before I closed (docs/dev/feedback_pcrecdev1_2026-08-25.md,
+verbatim in substance). Actionable: yes; missing — the artifact's
+strategy stamps as bucket COLUMNS (the records carry them; the reporter
+does not show them yet), give-ups as first-class with the SIZE at which
+they first fire (a size-sweep design item), the compile axis SPLIT by
+phase (the phases are in the rows; reporter), a per-call FLOOR control
+pattern in every short-subject set. Distrust: the 2.3× "VM beats DFA"
+on compliance is a REGIME ARTIFACT of the \z form's weaker skip loop —
+bucket it so, keep it out of the outlier queue until [OS-4]; short-
+search ratios sit near the timer floor; factored's 5.4× loss is
+PRE-wave-G and should collapse on the re-pin (if not: the first real
+outlier); U1 needs the discriminating measurement — the interpreter with
+PCRE2_NO_START_OPTIMIZE on the same cell. RANKED sub-bench areas: (1)
+log-line search 256 B–4 KB, (2) wide alternations / keyword tries, (3)
+lookaround + backreference real-world shapes, (4) bounded-repeat /
+ambiguous-decomposition band, (5) UTF-8 classes/properties. Re-pin:
+wait for its battery-green SHA. Nothing acted on tonight — Frank
+decides next session.
