@@ -36,7 +36,7 @@ older candidates. Proposed order (Frank confirms): [B8] → [B10] (ruled
 "after the re-pin", in its (a)(b)(c) order) ∥ [B9] (a disjoint reporter
 lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
 
-- [B9] STATE:not-started — REPORTER FOLLOW-UPS from pcrecdev1's feedback
+- [B9] STATE:started — REPORTER FOLLOW-UPS from pcrecdev1's feedback
   (feedback_pcrecdev1_2026-08-25.md §1a/§1c/§2a) + the open OD-Bs:
   (1a) the artifact's strategy stamps (`RX_ENGINE`, `RX_ENGINE_WHY`,
   `RX_VM_PREFILTER`, `RX_VM_RUNGS/STRATS/PRUNES`, `RX_VM_CALL_*`) as
@@ -68,7 +68,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   regressed) + a worst-subject line per cell; mechanism stamps incl.
   the ENTRY used and buffer sizes; compile phases split; a "stddev >
   median = timer jitter" flag on compile rows.
-- [B10] STATE:not-started — THE EDIT-TEST LOOP (inbox I-4, Frank's
+- [B10] STATE:started — THE EDIT-TEST LOOP (inbox I-4, Frank's
   ruling; AFTER [B8]; in this order): (a) a SCRATCH TIER for records —
   same schema, one setup field (`tier: scratch` + what the binary was),
   a scratch store the reporter can read but that NEVER enters `store/`,
