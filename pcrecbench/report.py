@@ -47,7 +47,13 @@ Design decisions this module makes that the contract leaves to [B5]
   other compile-cost class -- but never pooled with an AOT or interpreter
   class's `cost.total_ns` numbers (requirements 3: "Reports never reduce
   compile costs of different classes into one cell without labelling the
-  class").
+  class"). NOT YET CORRECTED for schema v1.1 (manager, 2026-08-25): once a
+  per-row `seq` field exists, the rule becomes "the pattern's GLOBALLY-first
+  match row (lowest seq) minus steady state" -- one derivation per
+  (pattern, testee), not per (subject, regime) sub-cell. See the TODO on
+  `_lazy_jit_derivation` for the exact change; not applied here because
+  schema 1.0 (what this worktree's fixtures validate against) has no `seq`
+  to key on yet.
 """
 
 from __future__ import annotations
@@ -343,7 +349,25 @@ def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
 def _lazy_jit_derivation(match_rows_for_pattern_testee):
     """trial-1-minus-steady-state (record_schema.md 8), per (subject,
     regime) sub-cell that has a timed trial 1 AND at least one later timed
-    trial; each sub-cell contributes one derived ns/call value."""
+    trial; each sub-cell contributes one derived ns/call value.
+
+    TODO (schema v1.1, per the manager 2026-08-25 -- NOT YET APPLIED,
+    schema 1.0 has no `seq` field to key on): the correct rule is "the
+    GLOBALLY-FIRST match row of the PATTERN (lowest `seq`) minus steady
+    state", not "trial 1 of each (subject, regime) sub-cell" as coded
+    below. That is a different, simpler grain -- ONE derivation per
+    (pattern, testee), not one per (subject, regime) sub-cell reduced
+    together afterwards -- and it means the "first" row may not even be
+    trial 1 of whichever (subject, regime) it belongs to once rows are
+    ordered by a cross-cell `seq` rather than per-cell `trial`. When v1.1
+    lands: replace the per-cell grouping below with a single sort of
+    every timed row for (pattern, testee) by `seq`; the first sorted row
+    is the one-time JIT warm-up cost; its ns/call minus the median ns/call
+    of every OTHER timed row is the one derived value for that
+    (pattern, testee) -- update reduce_compile_cell's `lazy_jit_derivation_source`
+    caller and this function's signature/tests together, since
+    test_report.py's known-reduction-style assertions will need a new
+    hand-computed lazy-jit fixture to match."""
     by_cell = defaultdict(list)
     for r in match_rows_for_pattern_testee:
         if r.get("match_outcome") != "matched-as-expected" or "timing" not in r:
