@@ -1,0 +1,4 @@
+id	len	sha256	description
+t-a-valid-addrs	1048576	e408283db8afef78b119794c8bac5b38bd4fa927279d1e5b14bb29b7dc4cdefc	1 MB of valid dot-atom addresses separated by spaces
+t-b-no-at	1048576	543b4587f6c8256d58e3e961ae708f24dc314b60d51359155063647fcc3ef867	1 MB of prose with no '@' anywhere (the prefilter case)
+t-c-long-atom-run	1048576	9bc1b2a288b26af7257a36277ae3816a7d4f16e89c1e7e77d0a5c48bad62b360	1 MB of 'a' -- one unbroken atom-class run, no '@'
