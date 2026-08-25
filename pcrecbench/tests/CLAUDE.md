@@ -1,8 +1,15 @@
 # pcrecbench/tests/ -- the reporter's own test suite
 
-Tests ONLY `pcrecbench.report`. No engine is run here, no other lane's
-code is imported (`b5report`'s brief: "you never run an engine and never
-depend on the other lane's code").
+Tests ONLY `pcrecbench.report`. No engine is run here (`b5report`'s
+brief: "you never run an engine"). UPDATE at [B9] (2026-08-25): that
+brief's further "never depend on the other lane's code" no longer holds
+-- `report.py` now imports `pcrecbench.reduce` (lane b10loop's shared
+set-grain reduction, R5: "the comparable `quick` prints inline must be
+the SAME arithmetic the reporter uses") by name, on the manager's
+explicit instruction once b10loop landed it. This suite therefore
+requires `pcrecbench/reduce.py` to be importable -- it fails with
+`ModuleNotFoundError` on a tree where lane b10loop has not merged yet,
+which is expected and not a bug in this suite.
 
 ## Files
 

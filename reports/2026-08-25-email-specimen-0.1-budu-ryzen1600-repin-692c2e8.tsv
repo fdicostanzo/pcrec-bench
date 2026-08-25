@@ -4,11 +4,11 @@ not_ranked	factored	(set)	large-subject-throughput	plain	same program	libpcre2_1
 excluded	factored	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	0	0	0	
 not_ranked	factored	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-caps-simdna	inconclusive-load	pinned		pass_rate	1.0000	3	1.0000	0	0	0	
 not_ranked	factored	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-nocaps-simdna	inconclusive-load	pinned		pass_rate	1.0000	3	1.0000	0	0	0	
-excluded	factored	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
-excluded	factored	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
-excluded	factored	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
-excluded	factored	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-nocaps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
-excluded	factored	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_vm-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
+excluded	factored	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	-2:PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
+excluded	factored	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	-2:PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
+excluded	factored	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	-2:PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
+excluded	factored	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-nocaps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	-2:PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
+excluded	factored	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_vm-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	-2:PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
 rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	1	median_ns	464407.789833	85	1.0000	0	0		
 rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	1	min_ns	462303.063628	85	1.0000	0	0		
 rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	1	max_ns	474574.601036	85	1.0000	0	0		
@@ -24,10 +24,10 @@ rank	factored	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-
 not_ranked	factored	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	inconclusive-load	pinned		pass_rate	1.0000	85	1.0000	0	0	0	
 not_ranked	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_auto-caps-simdna	inconclusive-load	pinned		pass_rate	1.0000	85	1.0000	0	0	0	
 not_ranked	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_auto-nocaps-simdna	inconclusive-load	pinned		pass_rate	1.0000	85	1.0000	0	0	0	
-excluded	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna	measured	pinned		pass_rate	0.9412	85	0.9412	25	0	PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)	
-excluded	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_8da6120_auto-caps-simdna	measured	pinned		pass_rate	0.9412	85	0.9412	25	0	PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)	
-excluded	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_8da6120_auto-nocaps-simdna	measured	pinned		pass_rate	0.9412	85	0.9412	25	0	PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)	
-excluded	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_8da6120_vm-caps-simdna	measured	pinned		pass_rate	0.9412	85	0.9412	25	0	PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)	
+excluded	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna	measured	pinned		pass_rate	0.9412	85	0.9412	25	0	-3:PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)	
+excluded	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_8da6120_auto-caps-simdna	measured	pinned		pass_rate	0.9412	85	0.9412	25	0	-3:PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)	
+excluded	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_8da6120_auto-nocaps-simdna	measured	pinned		pass_rate	0.9412	85	0.9412	25	0	-3:PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)	
+excluded	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_8da6120_vm-caps-simdna	measured	pinned		pass_rate	0.9412	85	0.9412	25	0	-3:PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)	
 rank	factored	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	15364.232426	77	1.0000	0	0		
 rank	factored	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	15305.978749	77	1.0000	0	0		
 rank	factored	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	15389.171579	77	1.0000	0	0		
@@ -88,9 +88,9 @@ rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-n
 not_ranked	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	inconclusive-load	pinned		pass_rate	1.0000	3	1.0000	0	0	0	
 not_ranked	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-caps-simdna	inconclusive-load	pinned		pass_rate	1.0000	3	1.0000	0	0	0	
 not_ranked	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-nocaps-simdna	inconclusive-load	pinned		pass_rate	1.0000	3	1.0000	0	0	0	
-excluded	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	PCREC_ERR_WORK×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
-excluded	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	PCREC_ERR_WORK×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
-excluded	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_vm-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	PCREC_ERR_WORK×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
+excluded	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	-4:PCREC_ERR_WORK×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
+excluded	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	-4:PCREC_ERR_WORK×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
+excluded	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_vm-caps-simdna	measured	pinned		pass_rate	0.6667	3	0.6667	5	0	-4:PCREC_ERR_WORK×1 (smallest: t-c-long-atom-run, 1,048,576 B)	
 rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	1	median_ns	62732.301756	85	1.0000	0	0		
 rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	1	min_ns	62494.656666	85	1.0000	0	0		
 rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	1	max_ns	62927.865076	85	1.0000	0	0		

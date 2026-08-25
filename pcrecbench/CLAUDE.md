@@ -94,10 +94,18 @@ pcrec manager's repin-report feedback), stamped as `reporter: v2
   exists in the schema yet; the note says so rather than inventing one.
 - **R7/OD-B11 — give-ups and hazard outcomes by name.** A set cell's
   give-up count is shown as `gave-up: <CODE>x<n subjects> (smallest:
-  <id>, <bytes> B)`, grouped by the diagnostic's own code, counted in
-  SUBJECTS not trials (`_gave_up_cell_summary`); `crashed`/`timed-out`
-  get their own name in the per-subject failure label
-  (`_failure_label`), never folded into an unnamed "(other)".
+  <id>, <bytes> B)`, grouped by the DOMINANT code
+  (`_gave_up_cell_summary`), counted in SUBJECTS not trials; `crashed`/
+  `timed-out` get their own name in the per-subject failure label
+  (`_failure_label`), never folded into an unnamed "(other)". The CODE
+  itself comes from `pcrecbench.reduce.giveup_code` (lane b10loop's
+  SHARED extractor, imported by name once b10loop landed it) -- it
+  keeps a pcrec diagnostic's numeric code alongside its name
+  (`-3:PCREC_ERR_FRAMES`) and falls back to the raw diagnostic
+  (truncated to 64 chars) for an engine whose diagnostic never carries
+  the `giveup:` protocol token (pcre2 today); this reporter groups by
+  whatever string that function returns rather than reformatting it, so
+  `quick`'s inline printout and this table read the same code.
 - **R8 — cross-pin Δ.** Two testee_ids sharing (engine, config) at
   different `version_slug`s (record_schema.md 6.4) get a `Δ vs previous
   version` column (SET grain only): `unchanged (within spread)` when the

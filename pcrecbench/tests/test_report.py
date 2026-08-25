@@ -884,23 +884,29 @@ def test_near_floor_columns_r6():
 def test_gave_up_cell_summary_r7():
     """[B9] R7/OD-B11: a set cell's give-ups shown by CODE, counted in
     SUBJECTS not trials, with the smallest firing subject named --
-    `_extract_diagnostic_code` and `_gave_up_cell_summary` directly,
-    then the existing fixture's single gave-up subject end-to-end."""
-    _check(report._extract_diagnostic_code(
-               "the engine gave up rather than answering: giveup:-4:PCREC_ERR_WORK")
-           == "PCREC_ERR_WORK", "expected PCREC_ERR_WORK extracted")
-    _check(report._extract_diagnostic_code(
-               "pcre2: PCRE2_ERROR_MATCHLIMIT (match limit exceeded) -- FIXTURE")
-           == "PCRE2_ERROR_MATCHLIMIT",
-           "a trailing all-caps WORD with no underscore (FIXTURE) must not be mistaken for the code")
-    _check(report._extract_diagnostic_code(None) is None, "no diagnostic -> no code")
+    `pcrecbench.reduce.giveup_code` (the SHARED extractor `quick` also
+    uses, R5 -- imported by name here since [B10] landed it) and
+    `_gave_up_cell_summary` directly, then the existing fixture's single
+    gave-up subject end-to-end."""
+    _check(report.giveup_code(
+               {"match_outcome": "gave-up",
+                "diagnostic": "the engine gave up rather than answering: giveup:-4:PCREC_ERR_WORK"})
+           == "-4:PCREC_ERR_WORK",
+           "expected the driver-protocol token's numeric code AND name extracted")
+    _check(report.giveup_code(
+               {"match_outcome": "gave-up",
+                "diagnostic": "pcre2: PCRE2_ERROR_MATCHLIMIT (match limit exceeded) -- FIXTURE"})
+           == "pcre2: PCRE2_ERROR_MATCHLIMIT (match limit exceeded) -- FIXTURE",
+           "an engine whose diagnostic never carries the giveup: token falls back to the raw text")
+    _check(report.giveup_code({"match_outcome": "matched-as-expected"}) is None,
+           "a non-gave-up row has no give-up code")
 
     def _mkc(n_gave_up, code):
-        codes = Counter({code: n_gave_up}) if n_gave_up else Counter()
+        codes = {code: n_gave_up} if n_gave_up else {}
         return report.MatchCellReduction(
             n_trials=n_gave_up, n_timed=0, median_ns=None, min_ns=None, max_ns=None,
             stddev_ns=None, iters=[], outcome_counts={"gave-up": n_gave_up} if n_gave_up else {},
-            pass_rate=0.0, n_gave_up=n_gave_up, n_wrong=0, gave_up_codes=codes)
+            pass_rate=0.0, n_gave_up=n_gave_up, n_wrong=0, giveup_codes=codes)
 
     failing_detail = {
         "big": _mkc(3, "PCREC_ERR_STEPS"),
@@ -919,8 +925,10 @@ def test_gave_up_cell_summary_r7():
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
     excl = md.split("Excluded from ranking")[1].split("## Compile cost")[0]
-    _check("PCRE2_ERROR_MATCHLIMIT×1 (smallest: s-give-up-1, 3 B)" in excl,
-           f"expected the fixture's gave-up subject formatted by R7's rule:\n{excl}")
+    expected_code = "pcre2: PCRE2_ERROR_MATCHLIMIT (match limit exceeded) -- FIXTURE"
+    _check(f"{expected_code}×1 (smallest: s-give-up-1, 3 B)" in excl,
+           f"expected the fixture's gave-up subject formatted by R7's rule, reduce.py's "
+           f"raw-diagnostic-fallback spelling and all:\n{excl}")
 
 
 def test_cross_pin_delta_r8():

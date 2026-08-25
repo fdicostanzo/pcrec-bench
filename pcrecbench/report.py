@@ -13,6 +13,15 @@ renders a self-describing report in markdown (default) or TSV.
 It never runs an engine (harness_contract.md 5: "it never runs an engine")
 -- it only reads records that already exist, real or synthetic.
 
+DEPENDS ON `pcrecbench.reduce` (lane b10loop, [B10]'s R5) for the SET-GRAIN
+reduction (`reduce_match_cell`, `reduce_set_cell`, `cells_from_record`,
+`giveup_code` -- imported by name below, near where they replace this
+module's own former implementations): the comparable `pcrecbench quick`
+prints inline must be the SAME arithmetic this reporter ranks by, so it
+lives in one shared module both import rather than two hand-synchronized
+copies. This means `report.py` does not import cleanly on a tree where
+b10loop has not merged yet -- expected, not a bug.
+
 REPORTER_VERSION below is stamped into every rendered report's header
 (the [B9] brief: "the header carries the reporter's version") -- bump it
 whenever rendering changes so a reader can tell two reports produced by
@@ -377,188 +386,40 @@ def _pstdev_safe(values):
     return statistics.pstdev(values) if len(values) > 1 else 0.0
 
 
-# The outcomes that mean "the engine answered, and the answer disagreed
-# with the expectation" -- as opposed to `gave-up` (the engine refused to
-# answer, on its OWN resource limit) or the hazard outcomes `crashed` /
-# `timed-out` (the harness's own limit, not the engine's). schema v1.1,
-# record_schema.md 5 ADDITIONS 2: "did-not-match-as-expected is the
-# tempting one [to lump gave-up into] and it is the worst".
-WRONG_ANSWER_OUTCOMES = frozenset({
-    "did-not-match-as-expected", "wrong-span-or-captures", "truncated-subject",
-})
-
-# TODO(manager, [B9]->[B10] merge): lane/b10loop (unmerged as of this
-# session, commit 897b68f "pcrecbench/reduce.py, the set-grain reduction
-# quick and the reporter share (R5)") places a SHARED reduce_match_cell/
-# reduce_set_cell/giveup_code in pcrecbench/reduce.py, explicitly so
-# `quick`'s inline comparable and this reporter's never disagree about
-# "faster". It was not on master when this lane finished, so
-# reduce_match_cell/reduce_set_cell below (and _extract_diagnostic_code,
-# the analogue of reduce.py's giveup_code) are this lane's OWN
-# implementations -- replace all four with `from pcrecbench.reduce import
-# reduce_match_cell, reduce_set_cell, giveup_code` at merge time, keeping
-# only what reduce.py does not cover (the R1-R9 rendering above it).
-# FLAG FOR RECONCILIATION: the two `giveup_code` functions format
-# DIFFERENTLY today -- reduce.py's regex-matches the `giveup:<n>:<NAME>`
-# driver-protocol token and keeps the NUMERIC code too
-# (`-3:PCREC_ERR_FRAMES`), falling back to a 64-char truncated raw
-# diagnostic when that token is absent (e.g. pcre2's diagnostics, which
-# never carry it); `_extract_diagnostic_code` below instead pattern-matches
-# any trailing ALL-CAPS_WITH_UNDERSCORE token generically, dropping the
-# numeric code, which is what lets it read BOTH engines' diagnostics with
-# one rule. Importing reduce.py's `giveup_code` as-is would change every
-# `gave-up: <CODE>x...` cell this lane's R7 renders (pcre2 diagnostics in
-# particular would start showing a truncated sentence instead of a bare
-# code) -- worth a decision at merge, not a silent adoption.
-
-# [B9] R7: a diagnostic's engine-specific CODE -- an ALL-CAPS token with at
-# least one underscore-separated segment (`PCREC_ERR_WORK`,
-# `PCRE2_ERROR_MATCHLIMIT`), so a plain all-caps English word swept up in
-# the sentence around it (e.g. a fixture's trailing "FIXTURE") never
-# qualifies. The LAST such token in the diagnostic is taken -- both
-# engines' diagnostic strings put the specific code at the end.
-_CODE_RE = re.compile(r"[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+")
-
-
-def _extract_diagnostic_code(diagnostic):
-    if not diagnostic:
-        return None
-    matches = _CODE_RE.findall(diagnostic)
-    return matches[-1] if matches else None
-
-
-@dataclass
-class MatchCellReduction:
-    n_trials: int
-    n_timed: int
-    median_ns: float | None
-    min_ns: float | None
-    max_ns: float | None
-    stddev_ns: float | None
-    iters: list
-    outcome_counts: dict
-    pass_rate: float
-    n_gave_up: int      # match_outcome == "gave-up" -- the engine's OWN limit, not a wrong answer
-    n_wrong: int         # WRONG_ANSWER_OUTCOMES -- an answer that disagreed with the expectation
-    gave_up_codes: Counter = field(default_factory=Counter)  # [B9] R7: per-trial diagnostic codes
-
-    @property
-    def expectation_failing(self):
-        return self.n_trials == 0 or self.pass_rate < 1.0
-
-
-def reduce_match_cell(rows):
-    total = len(rows)
-    outcome_counts = Counter(r.get("match_outcome") for r in rows)
-    timed = [r for r in rows
-             if r.get("match_outcome") == "matched-as-expected" and "timing" in r]
-    ns = [r["timing"]["elapsed_ns"] / r["timing"]["iterations"] for r in timed
-          if r["timing"].get("iterations")]
-    iters = sorted({r["timing"]["iterations"] for r in timed})
-    n = len(ns)
-    pass_rate = (outcome_counts.get("matched-as-expected", 0) / total) if total else 0.0
-    n_gave_up = outcome_counts.get("gave-up", 0)
-    n_wrong = sum(outcome_counts.get(o, 0) for o in WRONG_ANSWER_OUTCOMES)
-    gave_up_codes = Counter(
-        _extract_diagnostic_code(r.get("diagnostic"))
-        for r in rows if r.get("match_outcome") == "gave-up")
-    return MatchCellReduction(
-        n_trials=total,
-        n_timed=n,
-        median_ns=statistics.median(ns) if n else None,
-        min_ns=min(ns) if n else None,
-        max_ns=max(ns) if n else None,
-        stddev_ns=_pstdev_safe(ns) if n else None,
-        iters=iters,
-        outcome_counts=dict(sorted(outcome_counts.items())),
-        pass_rate=pass_rate,
-        n_gave_up=n_gave_up,
-        n_wrong=n_wrong,
-        gave_up_codes=gave_up_codes,
-    )
-
-
-def _timed_ns_by_trial(rows):
-    """{trial: ns/call} for the `matched-as-expected` + timed rows of one
-    (pattern, subject, regime, testee) cell -- the raw material `--grain
-    set` sums across subjects, trial by trial."""
-    out = {}
-    for r in rows:
-        if r.get("match_outcome") != "matched-as-expected" or "timing" not in r:
-            continue
-        t = r["timing"]
-        if not t.get("iterations"):
-            continue
-        out[r.get("trial")] = t["elapsed_ns"] / t["iterations"]
-    return out
-
-
-@dataclass
-class SetCellReduction:
-    """The `--grain set` reduction for one (pattern, regime, testee):
-    reduces over the WHOLE subject set, not one subject at a time
-    (manager change request, 2026-08-25)."""
-    n_subjects: int
-    n_agreeing: int
-    pass_rate: float           # n_agreeing / n_subjects
-    failing_subjects: list     # subject_ids not fully agreeing (empty iff pass_rate == 1.0)
-    failing_detail: dict       # failing subject_id -> its own MatchCellReduction
-    n_trials: int              # trials contributing to the sum (0 if excluded/no data)
-    n_gave_up: int             # sum of n_gave_up over every subject in the set
-    n_wrong: int                # sum of n_wrong over every subject in the set
-    median_ns: float | None
-    min_ns: float | None
-    max_ns: float | None
-    stddev_ns: float | None
-
-    @property
-    def expectation_failing(self):
-        return self.n_subjects == 0 or self.pass_rate < 1.0
-
-
-def reduce_set_cell(rows_by_subject):
-    """`rows_by_subject`: {subject_id: [match rows]} for one (sb, testee,
-    pattern, regime, form). A subject "fails" if its own
-    reduce_match_cell() is expectation_failing (any trial not
-    matched-as-expected); if ANY subject in the set fails, the WHOLE set
-    cell is excluded (manager: "excluded from ranking if ANY subject cell
-    fails"), and the failing subject_ids (with their own reductions, so
-    a caller can tell a `gave-up` failure from a wrong-answer one) are
-    recorded rather than averaged away. Otherwise, per trial number
-    common to every subject, sum the per-subject ns/call, then reduce
-    (median/min/max/stddev) over those per-trial sums -- "time to process
-    the whole set once per call-set"."""
-    n_subjects = len(rows_by_subject)
-    per_subject = {sid: reduce_match_cell(rows) for sid, rows in rows_by_subject.items()}
-    failing = sorted(sid for sid, red in per_subject.items() if red.expectation_failing)
-    n_agreeing = n_subjects - len(failing)
-    pass_rate = (n_agreeing / n_subjects) if n_subjects else 0.0
-    n_gave_up = sum(red.n_gave_up for red in per_subject.values())
-    n_wrong = sum(red.n_wrong for red in per_subject.values())
-    failing_detail = {sid: per_subject[sid] for sid in failing}
-
-    if failing or not n_subjects:
-        return SetCellReduction(
-            n_subjects=n_subjects, n_agreeing=n_agreeing, pass_rate=pass_rate,
-            failing_subjects=failing, failing_detail=failing_detail, n_trials=0,
-            n_gave_up=n_gave_up, n_wrong=n_wrong,
-            median_ns=None, min_ns=None, max_ns=None, stddev_ns=None,
-        )
-
-    per_subject_trials = {sid: _timed_ns_by_trial(rows) for sid, rows in rows_by_subject.items()}
-    trial_sets = [set(d) for d in per_subject_trials.values()]
-    common_trials = sorted(set.intersection(*trial_sets)) if trial_sets else []
-    sums = [sum(per_subject_trials[sid][t] for sid in rows_by_subject) for t in common_trials]
-    n = len(sums)
-    return SetCellReduction(
-        n_subjects=n_subjects, n_agreeing=n_agreeing, pass_rate=pass_rate,
-        failing_subjects=[], failing_detail={}, n_trials=n,
-        n_gave_up=n_gave_up, n_wrong=n_wrong,
-        median_ns=statistics.median(sums) if n else None,
-        min_ns=min(sums) if n else None,
-        max_ns=max(sums) if n else None,
-        stddev_ns=_pstdev_safe(sums) if n else None,
-    )
+# [B9]->[B10]: the set-grain reduction is SHARED with `pcrecbench quick`
+# (lane b10loop's own R5: "the comparable `quick` prints inline must be
+# the SAME arithmetic the reporter uses, or a loop that watches one
+# number and a report that ranks another will disagree about what
+# 'faster' means"). `reduce_match_cell`/`reduce_set_cell`/`giveup_code`
+# used to be this module's own implementations (this lane's [B9] R1-R9
+# work started before pcrecbench/reduce.py existed); now imported by
+# name, per the manager's instruction once b10loop landed the shared
+# module, so this reporter and `quick` are provably reading the same
+# arithmetic rather than two hand-synchronized copies of it.
+#
+# CONSEQUENCE FOR R7 kept in mind, not fought: reduce.py's `giveup_code`
+# keeps the engine's numeric code alongside its name for the
+# `giveup:<n>:<NAME>` driver-protocol token pcrec's diagnostics carry
+# (`-3:PCREC_ERR_FRAMES`, not just `PCREC_ERR_FRAMES`), and falls back to
+# the raw diagnostic (truncated to 64 chars) for an engine whose
+# diagnostic never carries that token (pcre2 today). `_gave_up_cell_summary`
+# below groups by WHATEVER STRING `giveup_code` returns -- it does not
+# parse or reformat it further -- so R7's rendered `gave-up: <CODE>x...`
+# cells now show reduce.py's spelling verbatim, which is the point of
+# sharing: `quick`'s inline printout and this table read the same code.
+#
+# `WRONG_ANSWER_OUTCOMES` is ALSO imported from reduce.py rather than
+# redefined -- it is reduce.py's own frozenset now, this module no longer
+# keeps a second copy that could silently drift from it.
+from pcrecbench.reduce import (  # noqa: E402
+    MatchCell as MatchCellReduction,
+    SetCell as SetCellReduction,
+    WRONG_ANSWER_OUTCOMES,
+    cells_from_record,
+    giveup_code,
+    reduce_match_cell,
+    reduce_set_cell,
+)
 
 
 def _failure_label(red: "MatchCellReduction"):
@@ -587,14 +448,18 @@ def _failure_label(red: "MatchCellReduction"):
 def _gave_up_cell_summary(failing_detail, subject_bytes):
     """[B9] R7: the excluded-cells table's give-up cell, by CODE (never a
     bare trial count) -- 'gave-up: <CODE>x<n subjects> (smallest: <id>,
-    <bytes> B)', one clause per distinct code seen, sorted by code for a
+    <bytes> B)', one clause per distinct code seen (reduce.py's
+    `giveup_code` spelling -- see the import block above), sorted for a
     deterministic render. The count is SUBJECTS that gave up (each
-    counted once, by its DOMINANT code), not trials."""
+    counted once, by its DOMINANT code -- reduce.py's `MatchCell.
+    giveup_codes` is a plain dict, so the max-count code is picked by
+    hand rather than `Counter.most_common`), not trials."""
     by_code = defaultdict(list)  # code -> [(subject_id, bytes_or_None)]
     for sid, red in failing_detail.items():
         if not red.n_gave_up:
             continue
-        code = red.gave_up_codes.most_common(1)[0][0] if red.gave_up_codes else "UNKNOWN"
+        codes = red.giveup_codes or {}
+        code = max(codes.items(), key=lambda kv: kv[1])[0] if codes else "UNKNOWN"
         by_code[code or "UNKNOWN"].append((sid, subject_bytes.get(sid)))
     if not by_code:
         return "0"
@@ -1031,6 +896,7 @@ def build_report(loaded, args):
                                               # NOT split by form -- record_schema.md 8's "the rest"
                                               # is not form-scoped, and no fixture here crosses a
                                               # lazy-jit testee with a whole-subject form to test it)
+    set_rows_by_key = defaultdict(dict)      # (sb, testee, pattern, regime, form) -> {subject_id: rows}
 
     for r in valid:
         s = r.setup
@@ -1051,18 +917,33 @@ def build_report(loaded, args):
         for subj in s.get("subjects", []) or []:
             subject_bytes[subj["subject_id"]] = subj.get("bytes_offered")
 
+        # Match rows: grouped by `pcrecbench.reduce.cells_from_record` --
+        # the SAME (pattern_id, regime, form) -> {subject_id: [rows]}
+        # grouping `quick` uses for one record's rows (`form` absent
+        # reads as `plain`) -- then threaded with THIS record's (sb,
+        # testee_id) into the report's own cross-record dicts (a single
+        # record has no sb/testee_id of its own to key by; that is what
+        # this reporter adds on top of the shared per-record grouping).
+        for (pattern_id, regime, form), by_subject in cells_from_record(r.rows).items():
+            forms_seen.add(form)
+            if args.regime and regime != args.regime:
+                continue
+            set_dst = set_rows_by_key.setdefault((sb, testee_id, pattern_id, regime, form), {})
+            for subject_id, rows in by_subject.items():
+                match_rows_by_key[(sb, testee_id, pattern_id, subject_id, regime, form)].extend(rows)
+                match_rows_by_pt[(sb, testee_id, pattern_id)].extend(rows)
+                set_dst.setdefault(subject_id, []).extend(rows)
+
+        # Compile rows: `cells_from_record` only groups `kind == "match"`
+        # rows -- reduce.py has no compile-cost model (this reporter's
+        # own, R9's mechanism stamps and phase split included) -- so
+        # loop them directly, as before.
         for row in r.rows:
+            if row.get("kind") != "compile":
+                continue
             form = row.get("form") or "plain"
             forms_seen.add(form)
-            if row["kind"] == "match":
-                if args.regime and row.get("regime") != args.regime:
-                    continue
-                key = (sb, testee_id, row["pattern_id"], row["subject_id"], row["regime"], form)
-                match_rows_by_key[key].append(row)
-                match_rows_by_pt[(sb, testee_id, row["pattern_id"])].append(row)
-            else:
-                key = (sb, testee_id, row["pattern_id"], form)
-                compile_rows_by_key[key].append(row)
+            compile_rows_by_key[(sb, testee_id, row["pattern_id"], form)].append(row)
 
     match_cells = {}
     for key, rows in match_rows_by_key.items():
@@ -1070,9 +951,6 @@ def build_report(loaded, args):
         match_cells[key] = (testee_id, reduce_match_cell(rows))
 
     # --grain set: reduce over the whole subject set per (pattern, regime, form).
-    set_rows_by_key = defaultdict(dict)  # (sb, testee, pattern, regime, form) -> {subject_id: rows}
-    for (sb, testee_id, pattern_id, subject_id, regime, form), rows in match_rows_by_key.items():
-        set_rows_by_key[(sb, testee_id, pattern_id, regime, form)][subject_id] = rows
     set_cells = {}
     for key, rows_by_subject in set_rows_by_key.items():
         sb, testee_id, pattern_id, regime, form = key
