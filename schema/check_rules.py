@@ -6,10 +6,10 @@ name a rule that exists.
 The note has claimed since draft 1 that "each has at least one positive control
 in `schema/examples/bad/`". At v1.1 that claim was found to be FALSE for five
 of the rules that existed at that moment (X5, X7, X8, X12, X16), which had
-never been seen to fire. The claim survived a merge and a critic panel because a human was the
-only thing checking it -- which is pcrec's check-design lesson exactly, one
-level up: a check with no failing case proves nothing, and a CLAIM that every
-check has a failing case is itself a check, so it needs one too.
+never been seen to fire. The claim survived a merge and a critic panel because
+a human was the only thing checking it -- which is pcrec's check-design lesson
+exactly, one level up: a check with no failing case proves nothing, and a CLAIM
+that every check has a failing case is itself a check, so it needs one too.
 
 This is that check. Its own failing case: delete any file from
 `examples/bad/` and `make check-schema` fails.
@@ -100,9 +100,9 @@ def main():
     for tok in sorted(set(have) - set(rules)):
         if tok.lower() in NON_RULE_TOKENS:
             continue
-        print(f"check_rules: {', '.join(have[tok])} claim{'s' if len(have[tok]) == 1 else ''} "
-              f"rule {tok}, which is not in the note's §9 table",
-              file=sys.stderr)
+        names = ", ".join(have[tok])
+        print(f"check_rules: {names} names rule {tok}, which is not in the "
+              f"note's §9 table", file=sys.stderr)
         bad += 1
     if bad:
         print(f"check_rules: FAIL -- {bad} rule(s) without a control, or "
