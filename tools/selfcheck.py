@@ -34,6 +34,9 @@ must reject, in the same run that exercises it against one it must accept.
                 artifact could be silently unused.
   v1.1 fields   every v1.1 provenance field is POPULATED in a real record --
                 the validator can only reject what is present and wrong.
+  X21           the chosen iteration count MEETS its target -- checked both
+                as arithmetic over ratios that floor wrongly, and as X21's
+                own expression over a real record's rows.
   run smoke     a full `run` of one cell into a SCRATCH store, validated.
 
 Everything runs under gnutimeout with LC_ALL=C. Nothing here writes into the
@@ -636,6 +639,132 @@ def check_whole_subject_form():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def check_calibration_meets_target():
+    """THE CONTROL FOR X21, written from the case that slipped past it.
+
+    A full-window rehearsal had a pcre2-jit record REJECTED: a 24.79 ms probe
+    against a 50 ms target chose 2 iterations (49.58 ms predicted, just
+    under), because the count was floored where the rule needs a ceiling.
+    Two bugs, and the second is the one a re-run would not have found:
+
+      1. floor vs ceil;
+      2. `probe_elapsed_ns` was the SUM over the probe sweep while `iters`
+         came from the MEDIAN subject -- so X21's recomputation and the
+         harness's decision were about different quantities, and agreed only
+         because one subject happened to dominate.
+
+    So this checks BOTH, and checks them the way X21 does rather than the way
+    the harness does:
+
+      (a) the arithmetic, over ratios chosen to sit just above an integer
+          (the shape that floors wrongly) and at the exact boundary;
+      (b) a REAL record, over a regime whose subjects differ by orders of
+          magnitude (search_short: 77 subjects), asserting X21's own
+          expression on every emitted row;
+      (c) that the recorded probe describes ONE SUBJECT and not the whole
+          sweep.
+
+    (c) needs saying, because it is NOT implied by (a) or (b). Once the count
+    is derived from the same integers the record carries, X21 passes for
+    ANY probe -- including the old sum-over-all-subjects one, which was
+    MEASURED to slip past (a) and (b) both. The damage it does is to
+    fidelity rather than validity: a count chosen from the sweep total makes
+    each subject's loop about total/N of the target, so `target_ns` claims a
+    target the individual loops never meet. The discriminator is scale --
+    a sum over 77 subjects is far above the slowest single subject, so the
+    probe's per-iteration cost is compared against the per-iteration costs
+    the record's own timed rows show."""
+    print("-- the calibration meets its target (X21) --")
+    from pcrecbench.harness import _iters_meeting_target, TARGET_LOOP_SECONDS
+    from pcrecbench import harness as _h
+
+    target = int(TARGET_LOOP_SECONDS * 1e9)
+    # Just above an integer ratio is the shape that floors wrongly: 50/24.79
+    # is 2.017, so a floor picks 2 and predicts UNDER target.
+    cases = [(24788929, 1, "the case that slipped: 50/24.79 = 2.017"),
+             (25000000, 1, "an exact ratio: 50/25 = 2, no rounding either way"),
+             (16666667, 1, "just above 3: 50/16.67 = 2.9999"),
+             (49999999, 1, "just under one full loop"),
+             (24788929, 2, "the same ratio with a 2-iteration probe")]
+    bad_cases = []
+    for probe_ns, probe_n, why in cases:
+        it = _iters_meeting_target(target, probe_ns, probe_n)
+        est = probe_ns / probe_n * it
+        if est < target:
+            bad_cases.append("%s -> iters=%d predicts %.0fns < %d"
+                             % (why, it, est, target))
+        # and it must be the SMALLEST such count -- an over-estimate would
+        # pass X21 while quietly making every cell slower than asked.
+        if it > 1 and probe_ns / probe_n * (it - 1) >= target:
+            bad_cases.append("%s -> iters=%d is larger than necessary"
+                             % (why, it))
+    if bad_cases:
+        bad("calibration arithmetic", "; ".join(bad_cases))
+    else:
+        ok("calibration arithmetic",
+           "%d ratio(s), each the smallest count that MEETS the target"
+           % len(cases))
+
+    # (b) a real record, on the regime with the widest subject spread.
+    scratch = os.path.join(ROOT, "build", "selfcheck-x21-store")
+    shutil.rmtree(scratch, ignore_errors=True)
+    try:
+        res = _h.run_cell("email", "pcre2-interp", regimes=["search_short"],
+                          trials=1, iters=None, force_unquiet=True,
+                          store_root=scratch, machine_id="selfcheck-box",
+                          synthetic=True,
+                          note="make check X21 control -- NOT a measurement")
+    except Exception as e:                                 # noqa: BLE001
+        bad("calibration on a real record", "%s" % e)
+        return
+
+    checked = failed = 0
+    observed = []
+    probe_per_iter = None
+    for row in res.rows:
+        cal = row.get("calibration")
+        timing = row.get("timing")
+        if not cal or not timing:
+            continue
+        checked += 1
+        est = cal["probe_elapsed_ns"] / cal["probe_iterations"] * \
+            timing["iterations"]
+        if est < cal["target_ns"] and not cal.get("calibration_note"):
+            failed += 1
+        observed.append(timing["elapsed_ns"] / timing["iterations"])
+        probe_per_iter = cal["probe_elapsed_ns"] / cal["probe_iterations"]
+    if failed:
+        bad("calibration on a real record",
+            "%d of %d timed row(s) predict UNDER target with no "
+            "calibration_note -- X21 would reject this record"
+            % (failed, checked))
+    elif not checked:
+        bad("calibration on a real record",
+            "no timed row carried a calibration, so nothing was checked")
+    else:
+        ok("calibration on a real record",
+           "X21's own expression holds on %d timed row(s) "
+           "(auto-calibrated, 77-subject spread)" % checked)
+
+    # (c) the probe describes ONE SUBJECT, not the sweep.
+    if probe_per_iter is None or not observed:
+        bad("the probe describes one subject", "no timed row to compare with")
+    else:
+        slowest = max(observed)
+        if probe_per_iter > slowest * 1.5:
+            bad("the probe describes one subject",
+                "the recorded probe is %.0f ns/iteration but the SLOWEST "
+                "single subject in the cell is %.0f ns/iteration -- the probe "
+                "is an aggregate over %d subjects, so `target_ns` claims a "
+                "target no individual loop meets"
+                % (probe_per_iter, slowest, len(observed)))
+        else:
+            ok("the probe describes one subject",
+               "probe %.0f ns/iter sits within the cell's own per-subject "
+               "range (slowest %.0f)" % (probe_per_iter, slowest))
+    shutil.rmtree(scratch, ignore_errors=True)
+
+
 def check_run_smoke():
     """A full `run` of ONE cell into a SCRATCH store, validated. Not a
     measurement: --trials 1 --iters 1, one regime, --force-unquiet, and the
@@ -675,6 +804,7 @@ def main():
     check_store_race()
     check_whole_subject_form()
     check_v11_fields()
+    check_calibration_meets_target()
     check_run_smoke()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"

@@ -218,7 +218,30 @@ def calibrate(adapter, handle, regime, subjects, requested, timeout,
     clock's resolution. The chosen `iters` is then capped so the PREDICTED
     total sweep stays inside TRIAL_BUDGET_SECONDS -- one pathological subject
     must not turn a cell into an overnight run -- and the number that was
-    actually used lands in every row's `timing.iterations`."""
+    actually used lands in every row's `timing.iterations`.
+
+    TWO THINGS THIS FUNCTION GOT WRONG, both found by X21 rejecting a real
+    record (pcre2-jit, factored, large-subject-throughput, 2026-08-25):
+
+    1. **The count was floored, and the rule needs a ceiling.** A probe of
+       24.79 ms against a 50 ms target gives 2.017, and `int()` chose 2 --
+       predicting 49.58 ms, just under target. `iters` is now the smallest
+       count that MEETS the target, computed by ceiling division.
+
+    2. **The recorded probe described a different quantity from the one the
+       decision was made on.** `probe_elapsed_ns` was the SUM over every
+       subject in the probe sweep, while `iters` came from the MEDIAN
+       subject. X21 recomputes `probe_elapsed_ns / probe_iterations x
+       iterations` and compares it to the target, so those two have to be the
+       same quantity or the rule is checking arithmetic the harness never
+       did. They coincided in the failing case only because one 24.8 ms
+       subject dominated two sub-0.1 ms siblings, which is what made it look
+       like pure rounding. The probe recorded now is the MEDIAN SUBJECT'S own
+       elapsed and its own iteration count -- a real measurement of the
+       subject that actually chose the number.
+
+    The count is then verified against X21's exact expression before it is
+    returned, so the two can never silently drift apart again."""
     target_ns = int(TARGET_LOOP_SECONDS * 1e9)
     if requested is not None and int(requested) <= 1:
         # Rule X21 asks for a calibration on any row whose loop RAN more than
@@ -230,9 +253,25 @@ def calibrate(adapter, handle, regime, subjects, requested, timeout,
     rows_by_trial, _info, _notes = adapter.measure(
         handle, regime, subjects, probe_iters, 1, timeout=timeout)
     rows = rows_by_trial[0] if rows_by_trial else []
-    probe_elapsed_ns = int(round(sum(r.seconds for r in rows) * 1e9))
-    cal = {"target_ns": target_ns, "probe_iterations": probe_iters,
-           "probe_elapsed_ns": probe_elapsed_ns}
+
+    # Sort by per-iteration cost, keeping the ROW, so the median's own
+    # measurement -- not a statistic over all of them -- becomes the record.
+    timed = sorted(((r.seconds / max(r.iters, 1), r) for r in rows
+                    if r.seconds > 0 and r.iters),
+                   key=lambda pair: pair[0])
+    if not timed:
+        cal = {"target_ns": target_ns, "probe_iterations": max(probe_iters, 1),
+               "probe_elapsed_ns": 0,
+               "calibration_note": "the probe produced no usable timing, so "
+                                   "the count fell back to 1"}
+        return 1, "the probe run produced no timing; falling back to iters=1", cal
+
+    median_per_iter, median_row = timed[len(timed) // 2]
+    probe_n = max(int(median_row.iters), 1)
+    probe_ns = max(int(round(median_row.seconds * 1e9)), 1)
+    cal = {"target_ns": target_ns, "probe_iterations": probe_n,
+           "probe_elapsed_ns": probe_ns}
+
     if requested is not None:
         # A FIXED count still gets a REAL probe, because X21 compares the
         # probe against the target and a fabricated probe would be a number
@@ -241,29 +280,43 @@ def calibrate(adapter, handle, regime, subjects, requested, timeout,
             "iterations fixed at %d on the command line; the probe was run "
             "for provenance and did not choose the count" % int(requested))
         return int(requested), "requested on the command line", cal
-    per_iter = sorted(r.seconds / max(r.iters, 1) for r in rows
-                      if r.seconds > 0 and r.iters)
-    if not per_iter:
-        cal["calibration_note"] = ("the probe produced no usable timing, so "
-                                   "the count fell back to 1")
-        return 1, "the probe run produced no timing; falling back to iters=1", cal
-    median = per_iter[len(per_iter) // 2]
-    total = sum(per_iter)
-    iters = max(1, int(TARGET_LOOP_SECONDS / median))
+
+    iters = _iters_meeting_target(target_ns, probe_ns, probe_n)
+    total = sum(per_iter for per_iter, _row in timed)
     capped = max(1, int(TRIAL_BUDGET_SECONDS / total)) if total > 0 else iters
     if capped < iters:
-        why = ("median subject would need iters=%d for %.0f ms, capped to %d "
-               "by the %.0f s per-trial budget"
+        why = ("the median subject would need iters=%d for %.0f ms, capped to "
+               "%d by the %.0f s per-trial budget"
                % (iters, TARGET_LOOP_SECONDS * 1000, capped,
                   TRIAL_BUDGET_SECONDS))
         # X21: the target was NOT met, and the record must say why rather
         # than leave a reader to infer it from two numbers.
         cal["calibration_note"] = why
         return capped, why, cal
-    return iters, ("median per-iteration %.3f us over %d subject(s) -> "
-                   "iters=%d for a %.0f ms loop"
-                   % (median * 1e6, len(per_iter), iters,
+    return iters, ("median per-iteration %.3f us (subject %s) -> iters=%d for "
+                   "a %.0f ms loop"
+                   % (median_per_iter * 1e6, median_row.subject_id, iters,
                       TARGET_LOOP_SECONDS * 1000)), cal
+
+
+def _iters_meeting_target(target_ns, probe_ns, probe_n):
+    """The smallest iteration count whose PREDICTED loop meets `target_ns`.
+
+    Computed with X21's own expression -- `probe_elapsed_ns /
+    probe_iterations x iterations` -- from the same integers the record will
+    carry, rather than from the floats the probe produced. That is the point:
+    a count chosen from one arithmetic and validated by another is how the
+    original bug survived, so the prediction is made here in exactly the terms
+    the rule will re-make it in.
+
+    Ceiling division, then a defensive re-check: the ceiling is exact for
+    integers, and the loop costs nothing when it is already right, but it
+    means the returned count CANNOT fail X21 even if either side's rounding
+    changes."""
+    iters = max(1, -(-target_ns * probe_n // probe_ns))
+    while probe_ns / probe_n * iters < target_ns:
+        iters += 1
+    return iters
 
 
 # ----------------------------------------------------------------- the run
