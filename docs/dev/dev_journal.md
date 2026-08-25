@@ -493,3 +493,21 @@ lookaround + backreference real-world shapes, (4) bounded-repeat /
 ambiguous-decomposition band, (5) UTF-8 classes/properties. Re-pin:
 wait for its battery-green SHA. Nothing acted on tonight — Frank
 decides next session.
+
+## 2026-08-25 (EDT, 07:45), post-close note — the re-pin target from pcrecdev1: ae9c98c (battery-green [DD-14] tree)
+
+pcrecdev1: RE-PIN TO ae9c98c — compiler byte-identical to 17469b6 (the
+[DD-14.FB] merge; everything after is tests/docs); evidence on that
+compiler: full sabotage matrix 180 rows, make test 26,843/0 (the two
+red checks = the load-sensitive 45 s resource-cap cells, solo 19/0),
+make san clean both axes. What changed for the bench since 8da6120:
+wave G (subroutine SPLICE + dead-capture elision + prefilter restored —
+the email specimen's factored form now compiles to the SAME DFA artifact
+as orig, so the factored/short-search 82 µs row should collapse to
+orig's on re-measurement); wave FB (three `_in` entries taking a
+caller-provided frame buffer; rx_info abi 2→3 with four sizing fields;
+`<P>_*_FRAMES`/`_FRAME_SIZE` macros — a stamped 0 means no buffers,
+check before dividing). ACTION FOR THE NEXT SESSION (not done tonight):
+testees/pcrec/configs.toml pin → ae9c98c; any `abi == 2` read in the
+adapter → 3; pin.sh builds the new snapshot; re-run the five cells in a
+new window; the report over both pins is the first before/after.
