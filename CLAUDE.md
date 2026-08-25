@@ -6,14 +6,17 @@ as several pinned testees — on a harder and wider set than the usual
 microbenchmarks, emits standardized per-testee artifacts, compares them
 statically, and feeds the outliers back to pcrec as optimization work.
 
-STATUS (2026-08-25): charter seeded 2026-08-17 (APPROACH.md); the
-requirements note ADOPTED ([B1], docs/design/requirements.md v3); the RECORD
-SCHEMA and its validator landed at **v1.1** ([B2], `schema/`); the HARNESS
-CORE, the first sub-bench and the first two adapters landed ([B3]+[B4]:
-`pcrecbench/`, `bench/email/`, `testees/pcre2/`, `testees/pcrec/`) and are
-adapted to v1.1. `make check` is green (2/53/0 and 21/21).
-The REPORTER ([B5], `pcrecbench/report.py`) is the open step — `python3 -m
-pcrecbench report` is a stub that says so. Manager sessions start with the
+STATUS (2026-08-25): M1 COMPLETE — charter (APPROACH.md), requirements v3
+([B1]), record schema v1.1 ([B2], `schema/`), the harness core, the
+`bench/email/` specimen, the pcre2 and pcrec adapters ([B3]+[B4]), the
+reporter ([B5], `pcrecbench/report.py`, `--grain set|subject`), and the
+first production sample in `store/` + `reports/` ([B6], pcrec pin
+8da6120). M2 is in progress: [B8] re-pinned pcrec to **692c2e8** and added
+the caller-provided frame-buffer testees (`pcrec-vm-in` measured,
+`pcrec-auto-in` defined); the [B8] window run and before/after report are
+next; then [B10] (scratch tier / `quick` / `pcrec-local`), [B9] (reporter
+columns), [B11] (sub-bench #2, log-line search). `make check` is green
+(2/53/0, 31/31, 20/20). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -102,7 +105,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 21 checks: the generators reproduce their committed
+    make check-harness  # 31 checks: the generators reproduce their committed
                         # manifests byte for byte, the expectations re-derive
                         # from the libpcre2 oracle, both drivers smoke, the
                         # deliberately-wrong fixture yields the outcome it
@@ -113,7 +116,11 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # answer a constructed case differently from the
                         # plain one, every v1.1 provenance field is shown
                         # populated, and a full `run` of one cell into a
-                        # SCRATCH store is validator-accepted
+                        # SCRATCH store is validator-accepted, and the
+                        # caller-provided frame-buffer path (`_in` entries)
+                        # agrees with the plain one, a tiny buffer gives
+                        # up PCREC_ERR_FRAMES BY NAME where the configured
+                        # one matches, and a DFA artifact takes no buffer
                         # (~3 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets

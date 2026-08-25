@@ -7,8 +7,8 @@ Provides five testees, all at the commit pinned in `configs.toml`:
 | `pcrec-auto` | `--features all` | the defaults: engine chosen automatically, captures on |
 | `pcrec-nocaps` | `+ --no-captures` | the axis that recovers a pure-DFA artifact for a group-bearing pattern |
 | `pcrec-vm` | `+ --engine=vm` | the VM forced, prefilter off, so the VM derives the whole span independently |
-| `pcrec-auto-in` | `--features all` + `buffer_frames = 32768`, `buffer_trail = 131072` | the defaults, matched through the `_in` entries with a caller-provided frame buffer (ruled by Frank / both managers). INERT wherever `auto` picks the DFA — which at pin 692c2e8 is every artifact of `bench/email` |
-| `pcrec-vm-in` | `+ --engine=vm` + the same two capacities | PROPOSED by lane [B8], pending ruling: the VM forced with the buffer, the one entry on `bench/email` where the depth path is reachable and the capacities were measured |
+| `pcrec-auto-in` | `--features all` + `buffer_frames = 32768`, `buffer_trail = 131072` | the defaults, matched through the `_in` entries with a caller-provided frame buffer. INERT wherever `auto` picks the DFA — which at pin 692c2e8 is every artifact of `bench/email`, so it is DEFINED but NOT MEASURED there (the checks use it; it goes live on a sub-bench with VM-selected patterns under `auto`) |
+| `pcrec-vm-in` | `+ --engine=vm` + the same two capacities | RULED 2026-08-25 (manager + pcrec manager; Frank's word pending via the inbox): the VM forced with the buffer, the one entry on `bench/email` where the depth path is reachable and the capacities were measured — the sixth cell of the [B8] window |
 
 | file | role |
 |---|---|

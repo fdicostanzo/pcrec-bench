@@ -78,11 +78,16 @@ buffer_frames = 32768
 buffer_trail = 131072
 description = "pcrec defaults with a caller-provided frame buffer (the _in entries, match_api.md 10): engine selected automatically, captures on, 32768 resume frames / 131072 trail entries. INERT on a DFA artifact, which takes no buffers"
 
-# PROPOSED (lane [B8], 2026-08-25), pending the manager's ruling: at 692c2e8
-# both email patterns select the DFA under `auto`, so `pcrec-auto-in` builds
-# no artifact that reads its buffer on this sub-bench. This is the entry on
-# which the capacities above were measured and the only one where the depth
-# path is reachable.
+# RULED (manager, 2026-08-25, with the pcrec manager's concurrence): at
+# 692c2e8 both email patterns select the DFA under `auto`, so `pcrec-auto-in`
+# builds no artifact that reads its buffer on bench/email -- it is DEFINED
+# (the checks use it to prove the DFA-artifact NULL path, and it becomes live
+# on a sub-bench with VM-selected patterns under `auto`, e.g. lookaround +
+# backreference) but it is NOT MEASURED on bench/email: an entry that measures
+# the same artifact as `pcrec-auto` is a trap for a reader of the report.
+# `pcrec-vm-in` is the roster entry that runs here: the entry on which the
+# capacities above were measured and the only one where the depth path is
+# reachable.
 [testees.pcrec-vm-in]
 engine_mode = "vm-in"
 captures = "on"
