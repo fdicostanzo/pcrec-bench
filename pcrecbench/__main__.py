@@ -4,7 +4,7 @@
     index    regenerate store/index.tsv
     quiet    sample the box and print the quiet-box verdict (OD-B8)
     testees  list the testees the adapters provide
-    report   [B5]'s, not built here
+    report   the query -> report reducer (pcrecbench/report.py, [B5])
 """
 
 import argparse
@@ -81,15 +81,10 @@ def cmd_testees(args):
 
 
 def cmd_report(args):
-    print("pcrecbench report: not built here.\n"
-          "The reporter is milestone [B5] (harness contract 5): filter /\n"
-          "group / reduce over the store, ratios to libpcre2-interp, N and\n"
-          "pass-rate whenever coverage is below 100%. It builds against\n"
-          "schema/examples/ plus its own fixtures and never runs an engine.\n"
-          "`python3 -m pcrecbench index` regenerates the index it reads.",
-          file=sys.stderr)
-    return 2
-
+    # Never reached: main() dispatches `report` to pcrecbench.report.main
+    # before argparse so the reporter owns its own flags.
+    from pcrecbench import report
+    return report.main([])
 
 def regimes_arg(s):
     from .subbench import REGIME_TO_ENUM
@@ -187,12 +182,16 @@ checks (rule X5). `python3 -m pcrecbench testees` lists the config ids.""")
     t = sub.add_parser("testees", help="list the testees the adapters provide")
     t.set_defaults(func=cmd_testees)
 
-    rep = sub.add_parser("report", help="[B5]'s; not built here")
+    rep = sub.add_parser("report", help="the query -> report reducer (pcrecbench/report.py); its flags: python3 -m pcrecbench report --help")
     rep.set_defaults(func=cmd_report)
     return p
 
 
 def main(argv=None):
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv and argv[0] == "report":
+        from pcrecbench import report
+        return report.main(argv[1:])
     args = build_parser().parse_args(argv)
     return args.func(args)
 

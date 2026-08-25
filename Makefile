@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check check-schema check-harness deps help
+.PHONY: check check-schema check-harness check-report deps help
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -61,7 +61,7 @@ check-schema:
 	 echo "check-schema: $$ngood example(s) accepted, $$bad sabotage(s) rejected for the intended rule, $$good sabotage(s) WRONG"; \
 	 test "$$good" -eq 0
 
-## check: every self-check -- the schema's and the harness's (contract 6)
+## check: every self-check -- the schema's, the harness's and the reporter's (contract 6)
 #
 # check-schema is [B2]'s (the record schema, its examples, its 15 sabotages).
 # check-harness is [B3]'s: the sub-bench generators reproduce their committed
@@ -73,7 +73,7 @@ check-schema:
 # It is a SMOKE SUITE, not a measurement: --trials 1 --iters 1, one regime,
 # --force-unquiet, and every record it writes is marked `synthetic`. Nothing
 # here may be read as a number.
-check: check-schema check-harness
+check: check-schema check-harness check-report
 
 ## check-harness: the harness self-checks (tools/selfcheck.py)
 check-harness:
@@ -91,6 +91,47 @@ deps:
 	@command -v taskset >/dev/null && echo "taskset      present (--pin)"              || echo "taskset      MISSING -- pinning is recorded 'unavailable'"
 	@command -v gnutimeout >/dev/null && echo "gnutimeout   present"                   || echo "gnutimeout   MISSING -- driver processes run unguarded"
 	@echo "$(CC)          $$($(CC) --version 2>/dev/null | head -1)"
+
+## check-report: the reporter's own suite ([B5], pcrecbench/report.py)
+#
+# python3 + jsonschema only (schema/validate.py, shared), no pytest
+# required -- pytest is the declared dev dependency but is not installed
+# on this box, so the suite is a plain runnable module
+# (pcrecbench/tests/test_report.py). Runs:
+#   1. the test module itself (store discovery both ways, the
+#      hand-computed reduction, expectation-failing exclusion,
+#      unsupported-by-declaration, filter semantics, the mixed-schema-
+#      version refusal, invalid-record handling, deterministic
+#      rendering);
+#   2. every fixture in pcrecbench/tests/fixtures/store/, /store_walk_only/
+#      and the two "ok" halves of mixed_version/{major_mismatch,minor_pair}/
+#      (but NOT their deliberately-invalid halves -- a v1.1-future 2.0 file
+#      and a pre-v1.1 schema-1.0-SHAPED file respectively; see
+#      fixtures/mixed_version/CLAUDE.md) independently accepted by
+#      schema/validate.py, as a second, independent check that the
+#      fixtures are what they claim to be;
+#   3. a smoke report over fixtures/store in both formats and both
+#      --grain values, so a CLI regression (a crash, an empty query the
+#      harness would otherwise swallow) fails the gate even if the unit
+#      tests import around it.
+check-report:
+	@echo "== check-report =="
+	@$(PYTHON) -m pcrecbench.tests.test_report
+	@echo
+	@echo "-- fixtures independently accepted by schema/validate.py --"
+	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store/records/*/*/*.jsonl
+	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store_walk_only/records/*/*/*.jsonl
+	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/mixed_version/major_mismatch/records/*110000Z.jsonl
+	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/mixed_version/minor_pair/records/*090500Z.jsonl
+	@echo
+	@echo "-- CLI smoke: a report over fixtures/store, both formats, both grains --"
+	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
+	    --include-synthetic --format md > /dev/null
+	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
+	    --include-synthetic --format tsv > /dev/null
+	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
+	    --include-synthetic --grain subject --format md > /dev/null
+	@echo "check-report: OK"
 
 ## help: list the targets
 help:
