@@ -1,8 +1,15 @@
 # pcrecbench/tests/ -- the reporter's own test suite
 
-Tests ONLY `pcrecbench.report`. No engine is run here, no other lane's
-code is imported (`b5report`'s brief: "you never run an engine and never
-depend on the other lane's code").
+Tests ONLY `pcrecbench.report`. No engine is run here (`b5report`'s
+brief: "you never run an engine"). UPDATE at [B9] (2026-08-25): that
+brief's further "never depend on the other lane's code" no longer holds
+-- `report.py` now imports `pcrecbench.reduce` (lane b10loop's shared
+set-grain reduction, R5: "the comparable `quick` prints inline must be
+the SAME arithmetic the reporter uses") by name, on the manager's
+explicit instruction once b10loop landed it. This suite therefore
+requires `pcrecbench/reduce.py` to be importable -- it fails with
+`ModuleNotFoundError` on a tree where lane b10loop has not merged yet,
+which is expected and not a bug in this suite.
 
 ## Files
 
@@ -61,6 +68,37 @@ depend on the other lane's code").
   specific wrong value, and that the fixture was then restored -- the
   check-design lesson this project inherits from pcrec CLAUDE.md: "a
   check with no failing case proves nothing".
+
+  **[B9] additions (2026-08-25, 11 new tests, 31 total)**: one test per
+  R1-R9 ruling plus OD-B13, each exercising both the rule FIRING and the
+  case where it does not (`test_status_gate_r1`,
+  `test_duplicate_record_dedup_r2`,
+  `test_duplicate_record_dedup_prefers_measured_r2` (the manager's R2
+  amendment before merge: measured-older beats unmeasured-newer,
+  unmeasured-only still shows, and both at once), `test_scratch_tier_gate_r3`,
+  `test_form_fact_and_mixed_regime_note_r4`, `test_two_ratio_columns_r5`,
+  `test_near_floor_columns_r6`, `test_gave_up_cell_summary_r7`,
+  `test_cross_pin_delta_r8`, `test_mechanism_stamp_columns_r9`,
+  `test_subbench_dir_alias_od_b13`). R1/R2/R3/R8 (status, duplicate
+  dedup, tier, cross-pin) go through `report.build_report`/
+  `report.LoadedRecord` directly with HAND-BUILT setup dicts
+  (`_mini_setup`/`_mini_row`/`_mk_loaded` helpers above the tests),
+  bypassing `schema/validate.py` entirely -- the same technique
+  `test_lazy_jit_derivation_uses_lowest_seq_not_trial_one` already uses.
+  This is not a shortcut of convenience for R3 in particular: `tier` is
+  an optional schema v1.2 field lane b10loop is adding that the shared
+  validator does not know about yet, and `setup` is
+  `additionalProperties: false` -- a real fixture FILE carrying `tier`
+  would be REJECTED before ever reaching the tier-exclusion logic under
+  test. R4-R7/R9 are exercised against the EXISTING `fixtures/store/`
+  (no new fixture files were needed -- its pcrec `whole-subject` testee,
+  gave-up subject and mixed-form `p-digits`/match-compliance cell
+  already cover them) plus direct unit tests of the pure helper
+  functions (`_form_fact`, `_gave_up_cell_summary`,
+  `report.giveup_code` (lane b10loop's shared extractor -- see the note
+  above), `_mechanism_stamp_columns`,
+  `_jitter_flag`, `_cross_pin_verdict`, `_parse_testee_config`,
+  `report.resolve_subbench_arg`).
 - `fixtures/` -- the synthetic store this suite reads. See its own
   CLAUDE.md.
 - `__init__.py` -- makes this a package so

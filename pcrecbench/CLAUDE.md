@@ -74,6 +74,91 @@ any subject fails); `quick` applies it to the record it just wrote, and
 derivation is the check-design failure pcrec has paid for repeatedly: the
 check and the thing it checks must not share an author's second guess.
 
+## The reporter, [B9] columns/rulings (2026-08-25)
+
+`report.py` gained nine rulings on top of the [B5] MVP below (docs/dev/
+plan.md row [B9]; requirements.md OD-B11, OD-B13, OD-B14, OD-B15; the
+pcrec manager's repin-report feedback), stamped as `reporter: v2
+(2026-08-25)` in every render:
+
+- **R1/OD-B14 — status.** Every ranking row carries the record's
+  `status`; a non-`measured` row is excluded from ranking by default
+  (listed under its table as `not ranked: <testee> -- <status>
+  (<excerpt>)`), `--include-unmeasured` ranks it with status shown.
+- **R2/OD-B15 — duplicate testee_id, AMENDED (manager, 2026-08-25,
+  before merge).** The NEWEST *MEASURED* record per (subbench@version,
+  testee_id, machine) ranks by default — not merely the newest by
+  `run.timestamp`, because a non-measured record is not evidence against
+  a measured one of the same testee and version (pcre2 does not change
+  between two runs of the identical pin). Older-than-kept records are
+  SUPERSEDED (named in the header, never pooled); a NEWER-than-kept
+  record that is not `measured` does NOT supersede it and is listed
+  separately as "newer, not measured"; only when no record in the group
+  is measured does the newest overall stand (itself unranked per R1
+  unless `--include-unmeasured`). `--all-records` is unchanged by the
+  amendment: every record still shows as its own row, testee id suffixed
+  `@<compact-timestamp>`.
+- **R3 — `tier` (ahead of schema v1.2).** Coded as "absent = pinned"
+  before lane b10loop's optional `tier` setup field lands in the shared
+  validator; a `scratch` row excludes from ranking by default (listed as
+  `scratch: <testee>`), `--include-scratch` ranks it with a `tier`
+  column. Untestable through a real fixture file until the schema knows
+  the field (`additionalProperties: false` on `setup`) -- tested
+  directly against `build_report`/`LoadedRecord`, bypassing the
+  validator, same technique as the lazy-JIT unit test.
+- **R4 — `fact`.** A column beside `form`: `whole-subject` restates as
+  `separate artifact`, `plain` as `same program` (record_schema.md 5
+  ADDITIONS 3 makes this a restatement, not a lookup -- rule X27
+  guarantees the two coincide). A ranking table whose rankable rows mix
+  both facts carries a note under its title (the "regime artifact"
+  bucket is a stated fact, not a footnote).
+- **R5 — two ratios.** `vs baseline` (the reference testee, ALSO named
+  in the table title) and `vs best` (best measured row = 1.000x).
+- **R6 — near-floor.** `short-subject-search` tables (SET grain) always
+  carry `n subjects` and `per-subject mean ns`, plus a `floor: n/a (no
+  floor pattern in this set yet)` note -- no field for a real number
+  exists in the schema yet; the note says so rather than inventing one.
+- **R7/OD-B11 — give-ups and hazard outcomes by name.** A set cell's
+  give-up count is shown as `gave-up: <CODE>x<n subjects> (smallest:
+  <id>, <bytes> B)`, grouped by the DOMINANT code
+  (`_gave_up_cell_summary`), counted in SUBJECTS not trials; `crashed`/
+  `timed-out` get their own name in the per-subject failure label
+  (`_failure_label`), never folded into an unnamed "(other)". The CODE
+  itself comes from `pcrecbench.reduce.giveup_code` (lane b10loop's
+  SHARED extractor, imported by name once b10loop landed it) -- it
+  keeps a pcrec diagnostic's numeric code alongside its name
+  (`-3:PCREC_ERR_FRAMES`) and falls back to the raw diagnostic
+  (truncated to 64 chars) for an engine whose diagnostic never carries
+  the `giveup:` protocol token (pcre2 today); this reporter groups by
+  whatever string that function returns rather than reformatting it, so
+  `quick`'s inline printout and this table read the same code.
+- **R8 — cross-pin Δ.** Two testee_ids sharing (engine, config) at
+  different `version_slug`s (record_schema.md 6.4) get a `Δ vs previous
+  version` column (SET grain only): `unchanged (within spread)` when the
+  medians differ by no more than 2x the larger stddev, else `faster/
+  slower xN.NN`; a per-row "worst subject" note; a cell excluded at the
+  previous pin and ranked now reads `now measured (was: <reason>)`. Two
+  records of the SAME version (e.g. `--all-records`'s two rows of one
+  identical pin) are explicitly NOT a cross-pin pair.
+- **R9 — mechanism stamps.** pcrec's own compile-row `engine_metadata`
+  (never `diagnostic`) rendered as columns on the `compiled-aot` table:
+  `engine`, `entry` (`_in` when a buffer-capacity pair is present, else
+  `plain entry` -- DERIVED, no field is named `entry`), `prefilter` (a
+  DFA row states `(no stamp -- pcrec I-3)`, never a blank), `vm_rungs`
+  (bit names joined by `|`), `buffer_frames`/`buffer_trail`,
+  `resume_frame_size`; the table also splits by phase (`emit-c ns`/`gcc
+  ns`/`load ns`) and flags `stddev > median` rows `timer jitter`.
+  OD-B13: `--subbench` now also accepts the sub-bench DIRECTORY name
+  (`email`), resolved via `bench/<dir>/subbench.toml`'s own `id`.
+
+Details, worked examples and the exact verdict rules are in
+`report.py`'s module docstring (the authoritative version) and its
+per-function docstrings (`_gave_up_cell_summary`, `_cross_pin_verdict`,
+`_mechanism_stamp_columns`, `_form_fact`, `resolve_subbench_arg`, etc.).
+`pcrecbench/tests/test_report.py` has one test per ruling (11 new tests,
+31 total). `reports/*` regenerated against `reporter: v2` -- see
+`reports/CLAUDE.md`.
+
 ## The reporter ([B5], merged 2026-08-25)
 
 STATUS (this worktree, lane/b5report): only `report.py` and its package
