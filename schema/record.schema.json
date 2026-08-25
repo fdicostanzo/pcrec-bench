@@ -103,8 +103,8 @@
       "enum": ["compiled", "did-not-compile", "crashed", "timed-out", "unsupported-by-declaration"]
     },
     "match_outcome": {
-      "description": "requirements.md 4.4, the per-(pattern, subject) set, verbatim, PLUS `crashed`/`timed-out` re-used verbatim from the sibling set (see the note, ADDITIONS).",
-      "enum": ["matched-as-expected", "did-not-match-as-expected", "wrong-span-or-captures", "truncated-subject", "crashed", "timed-out"]
+      "description": "requirements.md 4.4, the per-(pattern, subject) set, verbatim, PLUS `crashed`/`timed-out` re-used verbatim from the sibling set and `gave-up` (see the note, ADDITIONS).",
+      "enum": ["matched-as-expected", "did-not-match-as-expected", "wrong-span-or-captures", "truncated-subject", "crashed", "timed-out", "gave-up"]
     },
     "truncation_check": {
       "description": "requirements.md 4.4: a large-subject cell with no consumed_length is marked unverified-for-truncation.",
@@ -484,6 +484,17 @@
             "required": ["match_outcome"]
           },
           "then": { "required": ["observed"] }
+        },
+        {
+          "$comment": "A `gave-up` row is only a finding if it names WHICH limit was hit -- pcrec's PCREC_ERR_STEPS/FRAMES/RECURSE, pcre2's match-limit or depth-limit. Without the code it is indistinguishable from a wrong answer, which is the confusion the outcome exists to end.",
+          "if": {
+            "properties": { "match_outcome": { "const": "gave-up" } },
+            "required": ["match_outcome"]
+          },
+          "then": {
+            "required": ["diagnostic"],
+            "properties": { "diagnostic": { "type": "string", "minLength": 1 } }
+          }
         },
         {
           "$comment": "requirements.md 4.4: a large-subject cell without a truncation check `is marked unverified-for-truncation` -- which is only meaningful if the field must BE there to carry the mark. Absent, the cell is not marked, it is silent.",

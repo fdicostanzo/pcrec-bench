@@ -38,7 +38,10 @@ File names are not chosen: rule X4 makes the name the record id plus
   `load`/`occupancy` sampled before AND after with their raw text, and
   `run.clock_source` + `run.driver_build_flags`. Its `pinning.mode` is
   `chrt+taskset` and the v8 record's is `taskset`, so both spellings
-  have a live example.
+  have a live example. It also carries a `gave-up` cell — the engine
+  refused `s-pathological` on its own frame budget and named the code —
+  because that outcome is the bench's headline result on a hazard
+  pattern and an example that omits it teaches the wrong shape.
 - `email-specimen@0.1__v8-regexp_13.4.0_default-caps-simdna__example-box__20260825T034500Z.jsonl`
   — the second, small record: a `lazy-jit` testee (compile rows carry
   `derivation`, never a number the harness invented) whose record status

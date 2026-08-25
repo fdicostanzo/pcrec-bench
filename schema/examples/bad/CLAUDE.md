@@ -26,6 +26,7 @@ rejected for some OTHER reason fails the build. The rules are defined in
 
 | file | rule | the sabotage |
 |---|---|---|
+| `schema-gave-up-without-diagnostic.jsonl` | SCHEMA | a `gave-up` row with no `diagnostic` — a refusal that does not say which budget was exhausted, which is indistinguishable from a wrong answer |
 | `schema-index-map-missing.jsonl` | SCHEMA | `capture_correspondence.mode: by-index-map` with no `index_map` — the mode NAMES a map |
 | `schema-iterations-zero.jsonl` | SCHEMA | `timing.iterations: 0` — the reporter's per-call cost is `elapsed_ns / iterations` |
 | `schema-missing-calibration.jsonl` | SCHEMA | a timed match row with `iterations` in the hundreds of thousands and no `calibration` object saying who chose that number |

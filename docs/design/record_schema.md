@@ -257,7 +257,7 @@ The enums, in full:
 | `regime` | `large-subject-throughput` `short-subject-search` `match-compliance` | §3 |
 | `status` | `measured` `harness-failure` `inconclusive-load` | §6 |
 | `compile_outcome` | `compiled` `did-not-compile` `crashed` `timed-out` `unsupported-by-declaration` | §4.4 |
-| `match_outcome` | `matched-as-expected` `did-not-match-as-expected` `wrong-span-or-captures` `truncated-subject` + `crashed` `timed-out` | §4.4 + ADDITION |
+| `match_outcome` | `matched-as-expected` `did-not-match-as-expected` `wrong-span-or-captures` `truncated-subject` + `crashed` `timed-out` `gave-up` | §4.4 + ADDITIONS |
 | `truncation_check` | `verified` `unverified-for-truncation` `not-applicable` | §4.4 + ADDITION |
 | `variant.kind` | `syntax-only` `restructured` | §4.5 (OD-B5: informational) |
 | `occupancy.verdict` | `pass` `fail` `unavailable` | §9(b) |
@@ -283,18 +283,37 @@ The enums, in full:
    drop the row (silently deleting the most interesting datum in the
    bench). The two tokens are re-used verbatim from the sibling set
    rather than invented. **ACCEPTED at the [B2] merge (2026-08-25): requirements.md §4.4 is amended to carry `crashed`/`timed-out` per subject; see §11.1 (closed).**
-2. **`truncation_check` gains `not-applicable`.** §4.4 gives
+2. **`match_outcome` gains `gave-up`.** ADOPTED at v1.1 (2026-08-25)
+   from the harness lane's first real records. The engine did not
+   crash, did not time out and did not answer wrongly: it REFUSED the
+   subject on one of its own resource limits and said so — pcrec's
+   `PCREC_ERR_STEPS` / `_FRAMES` / `_RECURSE`, pcre2's match-limit and
+   depth-limit errors. Every other value in the set is a lie about that
+   event. `did-not-match-as-expected` is the tempting one and it is the
+   worst: it says the engine gave a wrong ANSWER, when the engine gave
+   no answer at all and told you which budget it ran out of — and it
+   buries the result under the pile a reporter is trained to skim. The
+   email sub-bench's five `FRAMES` give-ups on the factored pattern are
+   the HEADLINE result of that cell, not a footnote to it: a give-up is
+   an engine's own statement about its cost model, which is the thing
+   this bench exists to compare. The row carries the engine's code or
+   name in `diagnostic` (required, enforced), it is never timed
+   (X11's rule is unchanged — timing exists only for
+   `matched-as-expected`), and the reporter counts give-ups in their
+   own column, apart from wrong answers. requirements §4.4 is amended
+   at the merge to list it.
+3. **`truncation_check` gains `not-applicable`.** §4.4 gives
    `unverified-for-truncation` for a large-subject cell whose API does
    not expose the consumed length; the third state is a cell where the
    question does not arise (a match-compliance row over a 40-byte
    subject). Folding it into `unverified-for-truncation` would inflate
    the count of a flag that exists to be alarming.
-3. **`hazard_class` / `size_class` are enumerated at all.** The
+4. **`hazard_class` / `size_class` are enumerated at all.** The
    requirements name these as sub-bench TAGS without fixing a
    vocabulary. They are filterable, and "filterable = enumerated or
    normalized", so a vocabulary had to be chosen; the values are §5's
    own hazard-family list. Growing either is a MINOR bump (§4).
-4. **`load.verdict`, `pinning.mode`, `role`, and the two
+5. **`load.verdict`, `pinning.mode`, `role`, and the two
    `engine_metadata_declaration` enums** are new names for facts §9,
    §6 and §4.2 require to be recorded but do not name.
 
@@ -723,7 +742,7 @@ One row per (pattern × subject-or-subject-set × regime × trial)
 | `observed.span` | `[int,int]`/null | o | — | §4.4 `wrong-span-or-captures` |
 | `observed.captures` | array of `[int,int]`/null | o | `-1` for an unset slot | as above; the capture correspondence (§4.5) is what makes this comparable across a variant |
 | `engine_metadata` | map | o | every name declared with `scope` = `match` | §4.2, §7 rule 2 |
-| `diagnostic` | string/null | o | DIAGNOSTIC, UNINDEXED | §4.2: pcrec's prose `RX_ENGINE_WHY` is "kept only as an unindexed diagnostic string" |
+| `diagnostic` | string/null | c | REQUIRED and non-empty when `match_outcome` = `gave-up` — it must name the engine's own limit code; DIAGNOSTIC, UNINDEXED otherwise | §4.2: pcrec's prose `RX_ENGINE_WHY` is "kept only as an unindexed diagnostic string". The condition is §5 ADDITIONS 2: a give-up that does not say WHICH budget was exhausted is indistinguishable from a wrong answer, which is the confusion the outcome exists to end |
 
 ### FIELD TABLE: compile
 
