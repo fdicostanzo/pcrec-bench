@@ -80,6 +80,10 @@ Do not start a new milestone unprompted — milestones start with Frank
 - Every directory has a CLAUDE.md; a lane that adds/removes files or
   changes a file's role updates the owning directory's CLAUDE.md in the
   same change.
+- **APPROACH.md is MAINTAINED** (Frank, 2026-08-25): it is the high-level
+  statement of mission, how the bench works, architecture and focus.
+  When a requirement or design changes something it states, update it
+  in the same change; keep details in the files it references.
 
 ## 3. Measurement discipline (the product IS numbers)
 

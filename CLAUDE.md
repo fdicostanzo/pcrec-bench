@@ -43,8 +43,8 @@ subjects, real-world shapes), one thin adapter per open-source engine, a
 standardized per-testee output artifact with compile and match time
 separated and its environment recorded, and a static comparator over
 artifacts whose scoreboard excludes wrong answers. Read APPROACH.md first
-— it carries the four founding principles, the architecture sketch, the
-candidate roster, the correctness policy and the open questions (§8).
+— the maintained high-level statement — then docs/design/requirements.md
+for every ruling in detail.
 
 What it is NOT: pcrec's regression gate (pcrec keeps its own absolute
 floors in tests/bench/compare). Dependencies (engines, build systems,
@@ -52,7 +52,9 @@ bindings) live here, vendored or system, pinned either way.
 
 ## Where things are
 
-- `APPROACH.md` — the charter.
+- `APPROACH.md` — the MAINTAINED high-level statement (mission, how the
+  bench works, architecture, focus); kept current with the requirements,
+  details in the files it references (Frank, 2026-08-25).
 - `pyproject.toml`, `requirements.txt` — the python project files (BD4).
 - `docs/dev/` — plan.md (grep'able `[Bn] STATE:` rows), plan_completed.md,
   dev_journal.md (append-only), decisions.md (BDn), pcrec_references.md

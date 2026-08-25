@@ -1,159 +1,152 @@
-# pcrec-bench — a comparative regex-engine benchmark, seeded 2026-08-17
+# pcrec-bench — a comparative regex-engine benchmark
 
-STATUS: SEED. Charter written at project creation (Frank's four principles,
-2026-08-17); no code yet. Build begins after pcrec's scale work ([M4.6]/
-[M4.7]) completes. Frank rules on the open questions in §8 before the first
-runner is written.
+MAINTAINED high-level statement of what the bench is, how it works, its
+architecture and its focus (Frank, 2026-08-25: keep this current with the
+requirements; keep details in the referenced files). Seeded 2026-08-17;
+rewritten 2026-08-25 after the requirements were adopted. Detail lives
+in: `docs/design/requirements.md` (the adopted requirements, every
+ruling cited), `docs/design/record_schema.md` (the record), later design
+notes per component, `docs/dev/decisions.md` (BD1..), and
+`docs/dev/pcrec_references.md` (what this project builds on in pcrec).
 
-## 1. Mission
+## 1. Mission and focus
 
-Measure regex engines against each other — pcrec among them — on a test set
-that is deliberately HARDER and WIDER than the usual microbenchmark fare,
-and do it in a way that feeds engineering: every result must be traceable to
-a case, a testee version, and a test-set version, so "X is fast at Y" is a
-reproducible, inspectable claim rather than a chart bar.
+Measure regex engines against each other — pcrec, the ahead-of-time
+PCRE→C compiler, among them — on a test population that is deliberately
+harder and wider than the usual microbenchmark fare, and produce
+RELATABLE DATA TO TAKE ACTION ON.
 
-This repo is NOT pcrec's regression gate. pcrec keeps its own internal
-floors (tests/bench/compare, the D12 discipline) guarding its own changes.
-pcrec-bench is positioning, comparison, and cross-engine learning; it runs
-on a different cadence and its numbers are attributable to pinned versions.
+The first customer is pcrec's optimization loop: gather data across
+implementations over a variety of patterns → find the outliers where
+pcrec loses → find GENERAL optimizations in pcrec → repeat. Positioning
+and cross-engine learning come second. Every result is attributable to
+a sub-bench version, a testee version, a machine and a timestamp, so
+"X is fast at Y" is a reproducible, inspectable claim.
+
+This repo is NOT pcrec's regression gate — pcrec keeps its own absolute
+floors (its tests/bench/compare). pcrec-bench runs on its own cadence;
+its numbers are comparisons between pinned versions.
 
 ## 2. The four founding principles (Frank, 2026-08-17)
 
 1. **A larger test set than normal.** Not just `a+b` over a log file:
-   backrefs and the full feature spread, plus the difficult classes —
-   ambiguous-decomposition shapes (pcrec's K23 class), catastrophic-
-   backtracking shapes, exact-minimum boundaries, large-count quantifiers,
-   big subjects, pathological alternations. Cases where engines genuinely
-   diverge in approach are the interesting ones.
-2. **Standardized per-testee output artifacts, compared statically.** Each
-   testee run emits one artifact in a fixed, versioned schema. Comparison
-   is an OFFLINE operation over artifacts — no live head-to-head required,
-   artifacts from different machines/dates are first-class citizens (with
-   their environment recorded), and pcrec's own artifact is just one more
-   file in the pile.
-3. **Favor open source.** When a testee wins a case, we want to open its
-   source and learn why. Closed engines may be admitted later but the core
-   roster is open: the point is transferable understanding, not a
-   scoreboard.
-4. **Agreed, versioned test sets — and versioned testees.** Results only
-   compare within the same test-set version. A testee is an (engine,
-   version, build-configuration) triple — pcrec itself will appear as
-   several testees (scalar vs simd, DFA vs VM vs auto, captures on/off),
-   and that axis is first-class, not a footnote.
+   the full feature spread including backrefs and subroutines, and the
+   difficult classes — ambiguous decomposition, catastrophic
+   backtracking, exact-minimum boundaries, large counts, big subjects,
+   pathological alternations. Cases where engines genuinely diverge in
+   approach are the interesting ones.
+2. **Standardized per-testee output artifacts, compared statically.**
+   Each measurement emits one record in a fixed, versioned schema.
+   Comparison is an offline operation over records; records from
+   different machines and dates are first-class (their environment is
+   recorded); pcrec's record is just one more file in the pile.
+3. **Favor open source.** When a testee wins a case we want to open its
+   source and learn why. Closed engines may be admitted later, tagged.
+4. **Agreed, versioned test units — and versioned testees.** Results
+   compare only within the same sub-bench version. A testee is an
+   (engine, version, build/run configuration) triple; pcrec appears as
+   several testees (engine mode, captures on/off, later SIMD on/off),
+   and that axis is first-class.
 
-## 3. Architecture sketch
+## 3. How the bench works
 
-Four components, deliberately decoupled:
+The unit of work is the **sub-bench**: a self-contained directory with
+a declared OBJECTIVE (the mechanism it exists to exercise), one or
+several related canonical patterns, generated subjects with a manifest,
+oracle-verified expectations, tags, and per-engine notes. Applying one
+sub-bench to one **testee** on one machine produces one **record** — a
+general-setup layer (testee, environment, load, timestamp) plus raw
+per-trial results — saved into the **store** and never edited. Records
+are gathered one cell at a time, never "the whole gamut". A **report**
+answers a query over the store ("sub-bench A1, open-source, compilers
+only"), filtering on the recorded dimensions and reducing raw trials to
+comparables. Details and vocabulary: requirements.md §2.
 
-- **The test set** (`set/`): versioned corpora of (pattern, subject,
-  expectation, tags). Tags carry: feature tier (base / captures / backrefs
-  / lookaround / unicode / ...), hazard class (none / exponential-
-  backtracking / ambiguous-decomposition / ...), size class, and the
-  expectation's verification method (which oracle, or a derived law — see
-  §5). Grows partly by import from pcrec's oracle-verified .rxt corpora
-  (including the D27 blinded sets), partly by cases written here.
-- **Testee adapters** (`testees/<name>/`): one thin shim per engine that
-  compiles/loads a pattern, runs the set, and emits the standard artifact.
-  Each adapter pins its engine version and records the exact build flags.
-  Adapters are allowed to say "unsupported" per case — a first-class
-  result, never an error (an engine that refuses backrefs is not wrong
-  about backrefs; it is honest, exactly pcrec's "requires module X"
-  philosophy).
-- **The artifact** (`schema/`): one file per (testee, test-set-version,
-  machine, date). Records, per case: compile outcome, match outcome
-  (match/nomatch + spans + captures where supported), correctness verdict
-  against the expectation, and timing — with COMPILE TIME and MATCH TIME
-  separated (pcrec is AOT and pays gcc once; JITs pay at first use;
-  interpreters pay per compile — collapsing these axes would make the
-  comparison meaningless). Plus an environment header: CPU, kernel,
-  compiler, quiet-box attestation, per-core-occupancy check (the lesson
-  from pcrec's poisoned-pinned-core incident travels here).
-- **The comparator** (`compare/`): pure static analysis over two or more
-  artifacts — rankings, per-case diffs, per-tag rollups, correctness
-  disagreement tables. Never runs an engine. Disagreement output is
-  designed to feed pcrec's docs/dev/upstream_issues.md / known_issues.md
-  flow directly.
+Three subject regimes are measured (requirements §3): large-subject
+throughput; short-subject search (~256 B, per-call cost); and
+match/compliance over 10..1000 B subjects. Compile/setup cost is its own
+axis, defined per execution model (AOT / eager JIT / lazy JIT /
+interpreter) and never folded into match time.
 
-## 4. Candidate testee roster (open source first)
+Not every rx fits every engine. Per (pattern, testee) the record states
+an OUTCOME (compiled / did-not-compile / crashed / timed-out /
+unsupported-by-declaration; per subject: as-expected / not /
+wrong-span-or-captures / truncated-subject) — first-class results,
+never harness errors. An engine that is not PCRE2-exact may run a
+DECLARED VARIANT of a canonical pattern, under two constraints: the
+results must be identical on every subject, and the sub-bench's
+objective must still be exercised (requirements §4.4-4.5).
 
-- libpcre2 (interpreted AND jit as separate testees) — the compatibility
-  reference.
-- RE2 — the linear-time reference; leftmost-first on the backref-free tier.
-- Rust `regex` crate — the other linear-time reference, different lineage.
-- Oniguruma — the other mainstream backtracker lineage.
-- TRE — POSIX, approximate-match heritage; different semantics, admitted
-  with its semantics tagged.
-- Vectorscan (Hyperscan lineage) — SIMD multi-pattern; SEMANTICS CAVEAT:
-  reports all match ends, no leftmost-first, no captures — only comparable
-  on the tags where its semantics align; the adapter must record this,
-  not paper over it.
-- pcrec — several testees per §2.4 (engine × options × scalar/simd once
-  [SIMD-META] work exists).
-- python `re` / others — cheap to add as adapters, useful as semantic
-  cross-checks even where slow.
+Correctness gates the scoreboard: a timing for a wrong answer is
+excluded from rankings by default and shown in the diff; every
+expectation carries its verification method; matching conventions
+(Perl leftmost-first, POSIX leftmost-longest, all-ends) are tagged per
+case and testees are scored against their own (requirements §7).
 
-## 5. Correctness before speed
+## 4. Architecture
 
-A timing for a wrong answer is worse than no timing: every case's
-expectation carries its verification method, imported from pcrec's oracle
-discipline — python `re` where it terminates, libpcre2 differential,
-linear-time engines (RE2/rust) for the bands where backtrackers explode,
-and derived-law-plus-induction where no engine terminates (the K23-region
-method: prove a closed-form law by exhaustive small-N induction, generate
-expectations from the law, re-verify independently). Where engines
-LEGITIMATELY disagree (POSIX leftmost-longest vs Perl leftmost-first), the
-case is tagged with which convention its expectation follows and testees
-are scored only against their own convention.
+Four decoupled components, each with its own design note when built:
 
-The artifact's correctness verdict is per-case and blocking for the
-scoreboard: a testee's timing on a case it got WRONG is excluded from
-rankings by default (visible in the diff view, excluded from the rollup).
+- **Sub-benches** (`bench/<name>/`) — the versioned units above. Their
+  pattern/case FORMAT is owned by pcrec's unified format work ([DD-13],
+  grown from .rxt) and is not invented here; until it lands, today's
+  .rxt is parsed as-is and per-sub-bench metadata lives in a plain
+  sidecar of fields (no grammar) — requirements §5.
+- **Testee adapters** (`testees/<name>/`) — one thin shim per engine
+  that compiles a pattern, runs the sub-bench's regimes with batched
+  in-process timing, and emits the record. Each pins its engine version
+  and records build flags and runtime options; pcrec's adapters also
+  record the artifact's mechanism stamps (engine, prefilter, rungs) as
+  enumerated `engine_metadata` pairs so outliers bucket by mechanism.
+  Adapters may need their engine's own build machinery; dependencies
+  live here, never in pcrec.
+- **The record** (`schema/`) — JSONL, schema-versioned, with a
+  validator the reporter shares. Setup layer + MATCH rows + COMPILE
+  rows; raw trials, no statistics. Design: docs/design/record_schema.md.
+- **The store and the reporter** (`store/`, `report/`) — the store is
+  the accumulated records with an index; the reporter is pure static
+  analysis over records: filter, group, reduce to comparables, show N
+  and pass-rate beside every number whose coverage is below 100%,
+  self-describing output. It never runs an engine.
 
-## 6. Relationship to pcrec
+## 5. Testee roster
 
-- pcrec-bench PINS pcrec by tag/commit, like every other testee. Bumping
-  the pin is a deliberate, attributable event.
-- The oracle-audit loop: with all engines built here anyway, this repo is
-  the natural place to run large-scale differential sweeps over pcrec's
-  corpora; findings flow back to pcrec as upstream_issues/known_issues
-  rows with archived transcripts (pcrec's D35 style: stable-named verbatim
-  output with a source-information header).
-- Dependencies stay HERE. pcrec keeps its plain-GNU-make, stranger's-make-
-  must-work posture (its D2/R5-Q1); this repo may use whatever build
-  machinery its testees demand (cmake, cargo, meson...), vendored or
-  system, pinned either way.
+The harness comes first; the roster grows over time and includes
+regex-to-code compilers as well as libraries. Committed for the first
+cut: libpcre2 (interp and JIT as separate testees) and pcrec (several
+configurations). Design population: RE2 and Rust `regex` (linear-time;
+also the terminating-oracle tier for hazard bands), Oniguruma, TRE
+(POSIX, tagged), Vectorscan (all-ends semantics, tagged), python `re`,
+perl. A hand-written-C ceiling arm (pcrec's [BENCH-CEIL]) is a natural
+later testee; not in the first cut.
 
-## 7. Process conventions (inherited from pcrec where they apply)
+## 6. Measurement discipline
 
-- Every directory gets a CLAUDE.md describing purpose and files.
-- Measurement discipline travels: quiet-box runs, median/spread not
-  single-shot, per-core occupancy checked before pinned runs, `timeout` on
-  every command of uncertain length, artifacts record their environment.
-- Decision log and journal start when build work starts (dev/ mirroring
-  pcrec's docs/dev/ shape, lighter weight).
-- Subagent rules (worktrees for writers, scope mandate restated in briefs)
-  apply across BOTH repos now — the mandate is ~/pcrec + ~/pcrec-bench
-  (Frank, 2026-08-17).
+Inherited from pcrec (its docs/dev/learnings.md §1-3, D12/D14/D15/D17/
+D35) and binding: wait until the box is quiet, sample load before AND
+after, per-core occupancy checked machine-readably, medians of N with
+spread, batched in-process timing for short regimes, `gnutimeout` only
+on the outer process, `LC_ALL=C`, environment recorded in every record,
+harness failures counted apart from slow results, controls that share
+no source with what they control. Requirements §9; BD3 for the
+shared-box rules.
 
-## 8. Open questions for Frank (rule before build starts)
+## 7. Relationship to pcrec
 
-1. **Set format**: RESOLVED IN DIRECTION 2026-08-17 — owned by pcrec's
-   plan row [DD-13], the unified pattern-source/test file format (grown
-   from .rxt; named patterns with subroutine referencing, options/config
-   blocks, exemplar file references, file includes, engine/configuration
-   awareness). Requirements → design → adversarial critique are staged
-   there before any parser exists; this repo contributes its requirements
-   (feature tags, hazard classes, per-case verification method,
-   per-engine/config sections) to [DD-13a].
-2. **Artifact format**: JSONL vs TSV. Lean: JSONL, schema-versioned, with a
-   tiny validator the comparator shares.
-3. **Timing depth in v1**: wall-clock match throughput only, or also
-   memory high-water and compile-artifact size? Lean: throughput + compile
-   time in v1; memory later.
-4. **Public posture**: is pcrec-bench public from the start (like pcrec)
-   and are published rankings a goal, or is it an internal engineering
-   tool first? Affects how much methodology prose §3's artifact needs.
-5. **First milestone cut**: proposed M1 = set format ruled + schema ruled +
-   two adapters (pcrec, libpcre2) + comparator MVP producing its first
-   honest diff. Everything else follows.
+pcrec-bench pins pcrec by commit like every other testee; bumping the
+pin is a deliberate, logged event. Findings flow back as reports
+(case by case until the working model is clear) that become pcrec plan
+rows with the bench case as the exercising case. Findings about other
+engines are filed here (docs/dev/upstream_findings.md, archived
+transcripts); findings about pcrec go to the pcrec manager. pcrec is
+read-only from this project (BD2). Process conventions are pcrec's,
+lighter (BD1): a CLAUDE.md per directory, the plan's grep'able STATE
+rows, an append-only journal, a decision log, adversarial critic panels
+on designs.
+
+## 8. Status and open decisions
+
+Status is `docs/dev/plan.md` ([B2] the record schema in progress as of
+2026-08-25). The open decisions are requirements.md §12 (OD-B1..B10);
+the disposition of this document's original open questions is
+requirements.md §11. The project language is python 3 (BD4).
