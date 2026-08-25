@@ -390,20 +390,42 @@ compilers, the hand-C arm: after ([B7]).
   non-PCRE2 adapter; input to [DD-13b].
 - OD-B10 — the standard large-subject size: spread at 1 MB vs 8 MB
   measured on this box — at [B4] (not yet measured; the sample used 1 MB).
-- OD-B11 — reporter labels: `timed-out`/`crashed` cells show as "(other)"
+- OD-B11 — CLOSED [B9] 2026-08-25: `_failure_label` (pcrecbench/report.py)
+  now checks `crashed`/`timed-out` counts directly and names them (they
+  combine with `+` when more than one reason applies to a subject's
+  trials); `did-not-match-as-expected`-class outcomes still label
+  `wrong`, `gave-up` still labels `gave-up`, and only a truly unnamed
+  case (n_trials==0 with none of the above) falls back to `no-data`/
+  `other`. Was: reporter labels `timed-out`/`crashed` cells as "(other)"
   in the excluded table; give each outcome its label (found 2026-08-25).
 - OD-B12 — the occupancy gate's 10 % per-core limit vs the two manager
   sessions' own activity: two of six gate attempts in the first window
   were refused on 1-s transients (12 %, 29 %, 15 % on one core — the
   claude processes); a `--wait-quiet N` retry in the harness, and/or a
   2-3-sample gate, before the limit is loosened (found 2026-08-25).
-- OD-B13 — `--subbench` takes the sidecar id (`email-specimen`), not the
-  directory name (`email`); accept either, or rename the directory.
-- OD-B14 — the reporter shows no record `status`; `inconclusive-load`
-  records rank unmarked beside `measured` ones (seen in the [B8] sample,
-  2026-08-25). Owner: [B9].
-- OD-B15 — two records of one testee_id in a query: pooled or newest?
-  Unstated; must be ruled and printed in the report header. Owner: [B9].
+- OD-B13 — CLOSED [B9] 2026-08-25: `report.resolve_subbench_arg`
+  accepts EITHER the sidecar id (`email-specimen`) or the sub-bench
+  DIRECTORY name (`email`), resolving the directory form via
+  `bench/<dir>/subbench.toml`'s own `id` field (never a duplicated
+  mapping); an unresolvable value passes through unchanged (matches
+  nothing, same as before this ruling). Was: `--subbench` takes the
+  sidecar id (`email-specimen`), not the directory name (`email`);
+  accept either, or rename the directory.
+- OD-B14 — CLOSED [B9] 2026-08-25 (R1): every ranking row shows the
+  record's `status`; a row whose status is not `measured` is excluded
+  from ranking by default (listed under its table as `not ranked:
+  <testee> -- <status> (<status_detail excerpt>)`), and
+  `--include-unmeasured` ranks it instead with `status` shown. Was: the
+  reporter shows no record `status`; `inconclusive-load` records rank
+  unmarked beside `measured` ones (seen in the [B8] sample, 2026-08-25).
+- OD-B15 — CLOSED [B9] 2026-08-25 (R2): NEWEST by default, never
+  pooled. The NEWEST record per (subbench@version, testee_id, machine)
+  by `run.timestamp` ranks; older ones are SUPERSEDED and named by
+  record id in the report header, never silently pooled into one
+  reduction; `--all-records` shows every record as its own row, its
+  testee id suffixed `@<compact-timestamp>`. Was: two records of one
+  testee_id in a query: pooled or newest? Unstated; must be ruled and
+  printed in the report header.
 
 
 ## 13. For the next panel — attack list (v2)
