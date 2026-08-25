@@ -81,8 +81,12 @@ testees/pcrec/
   configs.toml   # pcrec-auto, pcrec-nocaps, pcrec-vm — each with
                  #   pin = "<commit>", flags = [...]
   pin.sh         # git archive <commit> from /home/duxevents/pcrec into
-                 #   build/pcrec-<commit>/ (gitignored) and make it there
-                 #   (-j4, gnutimeout 900); NEVER builds in pcrec's tree
+                 #   $PCRECBENCH_BUILD_ROOT/pcrec-<commit>/ (default: the
+                 #   repo root's build/, gitignored) and make it there
+                 #   (-j4, gnutimeout 900); reuses an existing build;
+                 #   NEVER builds in pcrec's tree. First pin: 8da6120
+                 #   (pcrecdev1, 2026-08-25: same compiler as main HEAD,
+                 #   battery-run tree)
 ```
 
 ```python
@@ -145,7 +149,9 @@ per-core, refuse (exit 3, message) unless quiet or `--force-unquiet`
 (4) load sampled after; (5) build the record (setup + rows), VALIDATE it
 with schema/validate.py (a record that fails validation is never
 written — the failure is a harness bug); (6) write
-`store/records/<subbench>@<version>/<testee-id>/<UTC ts, basic ISO>-<hash8>.jsonl`;
+`store/records/<subbench>@<version>/<testee_id>/<record_id>.jsonl` where
+the file name IS the record_id per record_schema.md §2-§3 (validate.py
+`--check-filename` enforces it);
 (7) `python3 -m pcrecbench index` regenerates `store/index.tsv` (one
 line per record: path, subbench, version, testee, machine, timestamp,
 status, rows) — committed with the records.

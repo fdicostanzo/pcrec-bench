@@ -146,7 +146,10 @@ Per (pattern, testee) the record states an OUTCOME from a closed set:
 `crashed` / `timed-out` / `unsupported-by-declaration` (the sub-bench's
 engine notes say this engine cannot express the intention). Per
 (pattern, subject): `matched-as-expected` / `did-not-match-as-expected`
-/ `wrong-span-or-captures` / `truncated-subject` (the engine consumed
+/ `wrong-span-or-captures` / `truncated-subject` / `crashed` /
+`timed-out` (the last two added at the [B2] merge, 2026-08-25: a
+per-SUBJECT hang or crash is the bench's headline hazard class and
+"which subject" must be recorded) (the engine consumed
 fewer bytes than offered — `consumed_length` is recorded whenever the
 API exposes it, and a large-subject cell without it is marked
 unverified-for-truncation). None is an error of the harness; all are
