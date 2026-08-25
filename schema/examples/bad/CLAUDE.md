@@ -41,6 +41,7 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `schema-missing-driver-build-flags.jsonl` | SCHEMA | `run.driver_build_flags` deleted — the engine's build is pinned and the timing driver's is not |
 | `schema-missing-subject-sha256.jsonl` | SCHEMA | a subject roster entry with no `sha256`: the bytes that produced the numbers are unidentified |
 | `x22-unpinned-engine-version.jsonl` | X22 | `engine_version: 0.9.0-g1a2b3c4` — a `git describe` string, not a release — with `engine_commit: null`. §6.2 has always said the version must be reproducible from the commit; this is the first time anything checks it |
+| `schema-quiet-attestation-present.jsonl` | SCHEMA | the DROPPED `quiet_attestation` field, still present. `additionalProperties: false` is what makes a removal stick, and this is the control that proves it does |
 | `x14-missing-compile-row.jsonl` | X14 | `status: measured` with a pattern that has no compile row at all |
 | `x15-metadata-wrong-scope.jsonl` | X15 | the `engine` pair — declared `scope: pattern` — stamped on a MATCH row. The scope half of X15 has no good-example coverage now that the v8 example's undescribed `tier` pair is gone (note §7), so this control is the only thing holding it |
 | `x15-undeclared-engine-metadata.jsonl` | X15 | an `engine_metadata` pair the testee never declared |

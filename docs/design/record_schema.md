@@ -523,7 +523,6 @@ reverse: what is filtered must be enumerated or normalized.
 | `environment.pinning.cpu` | integer/null | o | the pinned core | as above |
 | `environment.governor` | string/null | o | DIAGNOSTIC | `compare.sh`'s machine-context table records it; frequency policy changes absolute numbers |
 | `environment.turbo` | string/null | o | DIAGNOSTIC | as above |
-| `environment.quiet_attestation` | boolean | R | the harness's own claim that it waited for quiet | §6 "quiet-box attestation"; distinct from `load.verdict`, which is measured — a claim and a measurement that disagree is a finding |
 
 #### `patterns[]` — the roster the rows reference
 
@@ -722,6 +721,17 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
   says "the measured quantity with its unit"; a unit carried as DATA
   means two rows in one cell can differ in unit, which is precisely
   what a reducer cannot handle safely.
+- **Hugepage / THP state.** Considered at the v1.1 panel (2026-08-25)
+  and deliberately NOT added. Transparent hugepages are a real confound
+  for the large-subject regime — a 1 MB subject's TLB behaviour is not
+  the same under `always` and `never` — but no instrument in
+  `harness_contract.md` samples `/sys/kernel/mm/transparent_hugepage/*`,
+  and a field no described mechanism fills is a claim wearing a
+  schema's clothes (the same argument that removed the v8 example's
+  `tier` pair, §7). It is listed HERE so its absence is a decision on
+  the record rather than an oversight, and so the day a throughput
+  outlier resists explanation, the first question has somewhere to
+  start. Adding it later is a MINOR bump.
 - **A coverage or `n` field.** §8 requires N and pass-rate beside every
   number when coverage < 100% (B5) — the reporter computes both from
   the roster (expected rows) against the rows present. Storing a count
@@ -770,4 +780,13 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
 8. **`quiet_attestation` vs `load.verdict`** — a claim beside a
    measurement. Deliberate (a disagreement is a finding), but it is
    also a field a harness could set to `true` unconditionally, which
-   would make it noise.
+   would make it noise. RULED at the v1.1 panel 2026-08-25: the field
+   is DROPPED — closed. The panel's argument is the stronger form of
+   the doubt above: the "finding" the field was supposed to produce
+   requires a harness that lies in one place and tells the truth in
+   another, and the same harness writes both. `status` is already gated
+   on the MEASURED verdicts (X13, X20), so nothing the field claimed is
+   unrecorded and nothing it claimed was checkable. It is the exact
+   shape pcrec's own check-design lesson warns about — a control whose
+   source is the thing it controls. requirements §6's "quiet-box
+   attestation" is discharged by `load` + `occupancy` + `status`.

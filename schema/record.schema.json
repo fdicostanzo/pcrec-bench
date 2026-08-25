@@ -328,7 +328,7 @@
           "type": "object",
           "additionalProperties": false,
           "required": ["machine_id", "cpu_model", "cores", "kernel", "compiler",
-                       "load", "occupancy", "pinning", "quiet_attestation"],
+                       "load", "occupancy", "pinning"],
           "properties": {
             "machine_id": { "$ref": "#/$defs/slug" },
             "hostname": { "type": "string", "maxLength": 255 },
@@ -371,8 +371,7 @@
               }
             },
             "governor": { "type": ["string", "null"], "maxLength": 64 },
-            "turbo": { "type": ["string", "null"], "maxLength": 64 },
-            "quiet_attestation": { "type": "boolean" }
+            "turbo": { "type": ["string", "null"], "maxLength": 64 }
           }
         },
 
