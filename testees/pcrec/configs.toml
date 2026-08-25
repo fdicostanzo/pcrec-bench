@@ -95,3 +95,32 @@ flags = ["--features", "all", "--engine=vm"]
 buffer_frames = 32768
 buffer_trail = 131072
 description = "pcrec --engine=vm with a caller-provided frame buffer (the _in entries, match_api.md 10): the VM forced, 32768 resume frames / 131072 trail entries, sized so bench/email's five deep subjects complete instead of giving up PCREC_ERR_FRAMES"
+
+# ---------------------------------------------------------------------------
+# THE LOCAL TESTEE (Frank's I-4 (c), [B10]): a PROVIDED binary, no pin.sh.
+#
+#   PCREC_BIN=/path/to/pcrec [PCREC_LOCAL_FLAGS="--engine=vm ..."] \
+#       python3 -m pcrecbench quick --testee pcrec-local --vs pcre2-jit ...
+#
+# `binary` names the environment variable that must hold the path (REQUIRED
+# at run time; a missing or non-executable path is a clean AdapterError
+# naming the variable). `flags` is the base set; whatever $PCREC_LOCAL_FLAGS
+# adds (split on whitespace) is appended, and BOTH land in build_flags /
+# runtime_options. `engine_mode` and `captures` below are the DEFAULTS the
+# adapter overrides from the effective flags -- `--engine=vm` makes the mode
+# `vm`, `--no-captures` makes captures `off` -- so the derived testee_id is
+# honest about what ran.
+#
+# SCRATCH-TIER BY CONSTRUCTION: describe() reports `tier: scratch`,
+# engine_version is `local:<sha256 prefix>[+<git describe --dirty>]`, and the
+# store refuses the record into the canonical tree. Everything else --
+# emit-c / gcc / load, the shim, the driver, the metadata, the _in buffers --
+# is the same code path as the pinned testees (no forked compile path).
+[testees.pcrec-local]
+local = true
+binary = "PCREC_BIN"
+extra_flags = "PCREC_LOCAL_FLAGS"
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all"]
+description = "a PROVIDED pcrec binary ($PCREC_BIN, + $PCREC_LOCAL_FLAGS): the edit-test loop's testee, scratch tier by construction, never pinned, never ranked"

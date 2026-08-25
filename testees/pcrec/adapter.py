@@ -2,7 +2,23 @@
 
 Provides `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm`, and the caller-provided
 frame-buffer variants `pcrec-auto-in` / `pcrec-vm-in`, all at the pin in
-`configs.toml`.
+`configs.toml` -- and `pcrec-local`, a PROVIDED binary at no pin at all.
+
+THE LOCAL TESTEE (Frank's I-4 (c), [B10]; record_schema.md 6.2 and 6.8).
+`$PCREC_BIN` names the binary, `$PCREC_LOCAL_FLAGS` adds flags; pin.sh is
+never called. `describe()` reports `engine_version = local:<first 12 hex of
+the binary's sha256>`, plus `+<git describe --always --dirty --tags>` when a
+repository sits beside the binary (walking up from its directory to a `.git`
+FILE or directory -- a pcrec worktree has a file; a `git archive` pin has a
+`PIN.tsv` and no repository, and the walk stops there), `engine_commit` =
+HEAD when that tree is clean and null when it is dirty, `tier: scratch`, and
+`testee.binary` = {path, sha256}. SCRATCH BY CONSTRUCTION: the harness reads
+`tier()` before it gates or measures, and the store refuses the record into
+the canonical tree. `engine_mode` and `captures` are DERIVED from the
+effective flags (`--engine=vm` -> `vm`, `--no-captures` -> `off`) so the
+testee_id says what ran. Everything after describe() -- emit-c / gcc / load,
+shim.c, driver.c, the metadata, the `_in` buffers -- is the same code path as
+the pinned testees: `binary_for()` is the one place the binary is chosen.
 
 THE `_in` TESTEES (pcrec docs/spec/match_api.md 10, [DD-14.FB]): a config
 carrying `buffer_frames = N` and `buffer_trail = M` -- CAPACITIES in frames
@@ -53,6 +69,10 @@ from pcrecbench.driverrun import (C_ENV, build_driver,       # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 PIN_SH = os.path.join(HERE, "pin.sh")
 PCREC_SRC = os.environ.get("PCREC_SRC", "/home/duxevents/pcrec")
+BENCH_ROOT = os.path.dirname(os.path.dirname(HERE))
+
+# record_schema.md 6.3's registry for pcrec: what `--engine=` may name.
+ENGINE_MODES = ("auto", "dfa", "vm")
 
 # record_schema.md 7's worked example, as a DECLARATION. Every pair the
 # driver can emit is here with its type, scope and SOURCE; an undeclared pair
@@ -232,8 +252,138 @@ def _mask_names(name, value):
     return out
 
 
+def _find_repo_beside(start):
+    """The repository a binary sits in, or None: walk UP from `start` to a
+    directory holding `.git` (a FILE in a worktree, a directory in a main
+    tree). Two stops, both deliberate: a directory holding `PIN.tsv` is a
+    `git archive` snapshot pin.sh made, which has no repository by design
+    (the walk must not climb out of it into whatever tree holds build/);
+    and this bench's own checkout is never "the repository beside a pcrec
+    binary", however the binary got under it."""
+    bench_tops = set()
+    for d in (BENCH_ROOT,):
+        try:
+            proc = subprocess.run(["git", "-C", d, "rev-parse", "--show-toplevel",
+                                   "--git-common-dir"], capture_output=True,
+                                  text=True, env=C_ENV, timeout=30)
+            for line in (proc.stdout or "").splitlines():
+                line = line.strip()
+                if line:
+                    if not os.path.isabs(line):
+                        line = os.path.join(d, line)
+                    bench_tops.add(os.path.realpath(
+                        line[:-5] if line.endswith("/.git") else line))
+        except (OSError, subprocess.SubprocessError):
+            pass
+        bench_tops.add(os.path.realpath(d))
+    d = os.path.realpath(start)
+    while True:
+        if os.path.exists(os.path.join(d, "PIN.tsv")):
+            return None
+        if os.path.realpath(d) in bench_tops:
+            return None
+        if os.path.exists(os.path.join(d, ".git")):
+            return d
+        parent = os.path.dirname(d)
+        if parent == d:
+            return None
+        d = parent
+
+
+def _git_at(repo, *args):
+    """A READ-ONLY git query against the repository beside a local binary
+    (BD2: pcrec's tree is never written from here; `describe` and
+    `rev-parse` read)."""
+    try:
+        proc = subprocess.run(["git", "-C", repo] + list(args),
+                              capture_output=True, text=True, env=C_ENV,
+                              timeout=60)
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    return proc.stdout.strip() if proc.returncode == 0 else ""
+
+
+def local_provenance(binary):
+    """-> (engine_version, engine_commit, describe_raw, repo) for a provided
+    binary (record_schema.md 6.2, the `local:` shape)."""
+    sha = _ad.sha256_file(binary)
+    version = "local:" + sha[:12]
+    repo = _find_repo_beside(os.path.dirname(os.path.realpath(binary)))
+    commit = None
+    desc = ""
+    if repo:
+        desc = _git_at(repo, "describe", "--always", "--dirty", "--tags")
+        if desc:
+            dirty = desc.endswith("-dirty")
+            slug = re.sub(r"[^a-z0-9._+-]", "-", desc.lower()).strip("-")
+            version = (version + "+" + slug)[:64].rstrip("+-.")
+            if not dirty:
+                head = _git_at(repo, "rev-parse", "HEAD")
+                commit = head if re.fullmatch(r"[0-9a-f]{40}", head) else None
+    return version, commit, desc, repo
+
+
 class Adapter(_ad.Adapter):
     name = "pcrec"
+
+    # ------------------------------------------------------- local vs pinned
+
+    def is_local(self, testee_id):
+        return bool(_ad.Adapter.config(self, testee_id).get("local"))
+
+    def config(self, testee_id):
+        """The EFFECTIVE config. For a local testee the flags are the base
+        list plus `$<extra_flags>` split on whitespace, and `engine_mode` /
+        `captures` are DERIVED from them, so every consumer of `flags`,
+        `engine_mode` and `captures` -- describe(), the compile phases, the
+        buffer plumbing -- sees one truth and the derived testee_id says
+        what actually ran."""
+        cfg = dict(_ad.Adapter.config(self, testee_id))
+        if not cfg.get("local"):
+            return cfg
+        flags = list(cfg.get("flags", []))
+        extra_var = cfg.get("extra_flags")
+        if extra_var:
+            flags += os.environ.get(extra_var, "").split()
+        cfg["flags"] = flags
+        mode = cfg.get("engine_mode", "auto")
+        for f in flags:
+            if f.startswith("--engine="):
+                mode = f.split("=", 1)[1].strip().lower()
+        if mode not in ENGINE_MODES:
+            raise _ad.AdapterError(
+                "%s: --engine=%s is not a pcrec engine mode this adapter "
+                "knows (%s; record_schema.md 6.3)"
+                % (testee_id, mode, ", ".join(ENGINE_MODES)))
+        cfg["engine_mode"] = mode
+        cfg["captures"] = "off" if "--no-captures" in flags else "on"
+        return cfg
+
+    def local_binary(self, testee_id):
+        """`$PCREC_BIN` (the variable is named by the config), checked."""
+        cfg = _ad.Adapter.config(self, testee_id)
+        var = cfg.get("binary") or "PCREC_BIN"
+        path = os.environ.get(var, "")
+        if not path:
+            raise _ad.AdapterError(
+                "%s needs $%s: the path of the pcrec binary to bench "
+                "(e.g. %s=/home/you/pcrec/worktrees/x/build/pcrec). It is "
+                "not set." % (testee_id, var, var))
+        if not os.path.isfile(path) or not os.access(path, os.X_OK):
+            raise _ad.AdapterError(
+                "%s: $%s=%r is not an executable file" % (testee_id, var, path))
+        return os.path.abspath(path)
+
+    def binary_for(self, testee_id):
+        """THE ONE PLACE the pcrec binary is chosen: the provided one for a
+        local testee, the pin's for every other. Everything downstream
+        (emit-c, gcc, load, the driver) is one code path."""
+        if self.is_local(testee_id):
+            return self.local_binary(testee_id)
+        return self.pin_binary()
+
+    def tier(self, testee_id):
+        return "scratch" if self.is_local(testee_id) else "pinned"
 
     # ------------------------------------------------------------- the pin
 
@@ -282,16 +432,24 @@ class Adapter(_ad.Adapter):
         return proc.stdout.strip() if proc.returncode == 0 else ""
 
     def binary_identity(self, testee_id, workdir=None):
-        """`testee.binary` (schema v1.2, X29): the pinned `pcrec` the pin
-        script built, and its sha256."""
-        path = self.pin_binary()
+        """`testee.binary` (schema v1.2, X29): the `pcrec` this testee runs
+        -- the pin script's build, or the provided one -- and its sha256."""
+        path = self.binary_for(testee_id)
         return {"path": os.path.realpath(path), "sha256": _ad.sha256_file(path)}
 
     # ------------------------------------------------------------- describe
 
     def describe(self, testee_id, workdir=None):
         cfg = self.config(testee_id)
-        full, desc = self.pin_provenance()
+        local = self.is_local(testee_id)
+        if local:
+            binary = self.local_binary(testee_id)
+            version, full, desc_raw, repo = local_provenance(binary)
+            desc = ("%s (%s, %s)" % (desc_raw, "DIRTY" if desc_raw.endswith("-dirty")
+                                     else "clean", repo)
+                    if desc_raw else "no repository beside the binary")
+        else:
+            full, desc = self.pin_provenance()
         caps = buffer_capacities(cfg)
         buffer_note = ""
         runtime = [{"name": f.split("=")[0], "value":
@@ -310,8 +468,15 @@ class Adapter(_ad.Adapter):
         # carries the 40-hex and engine_version a git-describe-shaped string,
         # and the binding rule is that the version be REPRODUCIBLE from the
         # commit. `git describe --always` is exactly that function of it.
-        version = re.sub(r"[^A-Za-z0-9._+-]", "-", desc)
-        return {
+        # A LOCAL binary has no such commit: its version is the `local:`
+        # shape (the binary's own digest), computed above.
+        if not local:
+            version = re.sub(r"[^A-Za-z0-9._+-]", "-", desc)
+        provenance = ("local binary $%s=%s (sha256 %s); %s"
+                      % (_ad.Adapter.config(self, testee_id).get("binary", "PCREC_BIN"),
+                         binary, _ad.sha256_file(binary)[:16], desc)
+                      if local else "pin %s (%s)" % (self.pin(), desc))
+        block = {
             "engine_name": "pcrec",
             "engine_version": version,
             "engine_commit": full or None,
@@ -327,9 +492,9 @@ class Adapter(_ad.Adapter):
             "captures": cfg.get("captures", "on"),
             "engine_mode": cfg["engine_mode"],
             "simd": "n-a",
-            "build_flags": "pin %s (%s); pcrec flags %s; artifact built with "
+            "build_flags": "%s; pcrec flags %s; artifact built with "
                            "$CC -O2 -fPIC -shared%s"
-                           % (self.pin(), desc, " ".join(cfg.get("flags", [])),
+                           % (provenance, " ".join(cfg.get("flags", [])),
                               buffer_note),
             "runtime_options": runtime,
             "compile_cost_definition": (
@@ -344,13 +509,19 @@ class Adapter(_ad.Adapter):
             "warmup_trials": 0,
             "engine_metadata_declaration": dict(METADATA_DECL),
         }
+        if local:
+            # SCRATCH BY CONSTRUCTION (record_schema.md 6.8, X28/X29): the
+            # harness lifts `tier` to the setup layer; `binary` stays here.
+            block["tier"] = "scratch"
+            block["binary"] = self.binary_identity(testee_id, workdir)
+        return block
 
     # -------------------------------------------------------------- prepare
 
     def prepare(self, testee_id, workdir):
         self.config(testee_id)
         os.makedirs(workdir, exist_ok=True)
-        self.pin_binary()
+        self.binary_for(testee_id)
         build_driver(os.path.join(HERE, "driver.c"),
                      os.path.join(workdir, "pcrec_driver"), extra=["-ldl"])
 
@@ -384,7 +555,7 @@ class Adapter(_ad.Adapter):
                      workdir):
         import time
         cfg = self.config(testee_id)
-        pcrec = self.pin_binary()
+        pcrec = self.binary_for(testee_id)
         drv = build_driver(os.path.join(HERE, "driver.c"),
                            os.path.join(workdir, "pcrec_driver"), extra=["-ldl"])
         cc = os.environ.get("CC", "gcc")

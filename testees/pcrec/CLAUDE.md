@@ -1,6 +1,7 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides five testees, all at the commit pinned in `configs.toml`:
+Provides five testees at the commit pinned in `configs.toml`, and one —
+`pcrec-local` — at no pin at all:
 
 | config id | pcrec flags | what it is for |
 |---|---|---|
@@ -9,14 +10,15 @@ Provides five testees, all at the commit pinned in `configs.toml`:
 | `pcrec-vm` | `+ --engine=vm` | the VM forced, prefilter off, so the VM derives the whole span independently |
 | `pcrec-auto-in` | `--features all` + `buffer_frames = 32768`, `buffer_trail = 131072` | the defaults, matched through the `_in` entries with a caller-provided frame buffer. INERT wherever `auto` picks the DFA — which at pin 692c2e8 is every artifact of `bench/email`, so it is DEFINED but NOT MEASURED there (the checks use it; it goes live on a sub-bench with VM-selected patterns under `auto`) |
 | `pcrec-vm-in` | `+ --engine=vm` + the same two capacities | RULED 2026-08-25 (manager + pcrec manager; Frank's word pending via the inbox): the VM forced with the buffer, the one entry on `bench/email` where the depth path is reachable and the capacities were measured — the sixth cell of the [B8] window |
+| `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
 | file | role |
 |---|---|
-| `adapter.py` | the five configs; the pin; the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
+| `adapter.py` | the six configs; the pin; `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
 | `pin.sh` | `git archive <commit>` from pcrec into the build root, and `make` THERE |
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
-| `configs.toml` | the config ids, `pin = "<commit>"`, and the `_in` testees' capacities with the measurement that chose them |
+| `configs.toml` | the config ids, `pin = "<commit>"`, the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 
 ## `pin.sh` never writes inside pcrec
 
@@ -31,6 +33,43 @@ bench number can never come from a dirty working tree. An existing build is
 REUSED — the test is "the binary exists", which a half-finished extraction
 cannot satisfy. `PIN.tsv` beside the tree carries the full commit, because a
 `git archive` snapshot has no `.git` to ask.
+
+## `pcrec-local`: a provided binary, scratch by construction ([B10])
+
+    PCREC_BIN=~/pcrec/worktrees/mylane/build/pcrec \
+    PCREC_LOCAL_FLAGS="--engine=vm" \
+    python3 -m pcrecbench quick --subbench email --pattern orig \
+        --regime search --testee pcrec-local --vs pcre2-jit
+
+`$PCREC_BIN` is REQUIRED at run time (a missing or non-executable path
+is a clean `AdapterError` naming the variable); `pin.sh` is never
+called. The effective flags are `--features all` plus whatever
+`$PCREC_LOCAL_FLAGS` adds (split on whitespace), recorded in
+`build_flags` and `runtime_options`; `engine_mode` is DERIVED from them
+(`--engine=vm` → `vm`, else `auto`) and `captures` from `--no-captures`,
+so the derived `testee_id` says what ran. `describe()` reports:
+
+- `engine_version` = `local:<first 12 hex of the binary's sha256>`, and
+  when a git repository sits beside the binary — walking up from its
+  directory to a `.git` FILE (a worktree) or directory — `+<git describe
+  --always --dirty --tags>`, lowercased and sanitised. A `git archive`
+  pin has a `PIN.tsv` and no repository, and the walk STOPS there (it
+  must not climb into the tree that holds `build/`); this bench's own
+  checkout is never taken as "the repository beside a pcrec binary". The
+  queries are READ-ONLY (BD2): `describe` and `rev-parse`, nothing else.
+- `engine_commit` = `git rev-parse HEAD` when the tree is clean, `null`
+  when `describe` said `-dirty` — a dirty tree has no single commit.
+- `tier: scratch` and `testee.binary = {path, sha256}` (schema v1.2,
+  X28/X29). The harness reads `tier()` BEFORE it gates or measures, so
+  `run --testee pcrec-local --store store` is refused with nothing
+  touched; with no `--store` the record goes to the scratch store.
+
+Everything after `describe()` — emit-c / gcc / load, `shim.c`,
+`driver.c`, the metadata, the `_in` buffers — is the SAME code path as
+the pinned testees: `binary_for()` is the only branch. `make
+check-harness`'s `pcrec-local` block proves the five claims above
+(missing variable; the pin's binary with no `+`; a scratch-built
+repository clean then dirty; a quick cell; the canonical refusal).
 
 ## `shim.c` includes the artifact's `.c`, and that is load-bearing
 

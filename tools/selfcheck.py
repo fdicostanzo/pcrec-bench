@@ -1282,6 +1282,183 @@ def check_quick():
     shutil.rmtree(scratch, ignore_errors=True)
 
 
+# --------------------------------------------------------- 12 pcrec-local
+
+def check_pcrec_local():
+    """THE PROVIDED-BINARY TESTEE ([B10] (c)), with the case for each claim:
+
+      1. $PCREC_BIN unset -> a clean AdapterError NAMING the variable.
+      2. PCREC_BIN = the 692c2e8 pin (a `git archive` snapshot, PIN.tsv, no
+         repository): describes as `local:<sha12>` with NO `+` suffix, tier
+         scratch, testee.binary's sha256 is the file's.
+      3. A tiny repository built in scratch around a COPY of that binary:
+         CLEAN -> `+<sha>` and engine_commit == HEAD (40 hex); then one
+         tracked file modified -> `+<sha>-dirty` and engine_commit null.
+      4. A `quick` cell runs on it (the same emit-c/gcc/load path as the
+         pinned testees), and its record is scratch with a local: version.
+      5. `run --testee pcrec-local --store <a canonical store>` is REFUSED
+         before anything is written -- proven against a temp store carrying
+         the marker (so a broken refusal cannot touch the real one), with
+         the real store/ asserted to carry the same marker."""
+    print("-- pcrec-local: a provided binary, scratch by construction --")
+    from pcrecbench import store as _store
+    from pcrecbench import reduce as _rd
+    import glob as _glob
+    import re as _re
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("pcrec-local", "no pcrec adapter")
+        return
+    pin = adapter.pin_binary()
+    env0 = dict(os.environ)
+    env0.pop("PCREC_BIN", None)
+    env0.pop("PCREC_LOCAL_FLAGS", None)
+
+    # 1. missing variable
+    saved = dict(os.environ)
+    os.environ.pop("PCREC_BIN", None)
+    os.environ.pop("PCREC_LOCAL_FLAGS", None)
+    try:
+        adapter.describe("pcrec-local")
+        bad("a missing $PCREC_BIN is a clean error naming the variable",
+            "describe() did not raise")
+    except _ad.AdapterError as e:
+        if "PCREC_BIN" in str(e):
+            ok("a missing $PCREC_BIN is a clean error naming the variable",
+               str(e).split(":")[0])
+        else:
+            bad("a missing $PCREC_BIN is a clean error naming the variable",
+                str(e)[:200])
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+
+    # 2. the archive pin: no repository beside it
+    os.environ["PCREC_BIN"] = pin
+    os.environ.pop("PCREC_LOCAL_FLAGS", None)
+    try:
+        d = adapter.describe("pcrec-local")
+        want_sha = _ad.sha256_file(pin)
+        ev = d["engine_version"]
+        if (ev == "local:" + want_sha[:12] and "+" not in ev
+                and d.get("tier") == "scratch"
+                and d.get("binary", {}).get("sha256") == want_sha
+                and d.get("engine_commit") is None
+                and adapter.tier("pcrec-local") == "scratch"):
+            ok("the pin's binary describes as local:<sha12>, no +describe",
+               "%s (PIN.tsv stops the repository walk)" % ev)
+        else:
+            bad("the pin's binary describes as local:<sha12>, no +describe",
+                "%s commit=%s tier=%s" % (ev, d.get("engine_commit"),
+                                         d.get("tier")))
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+
+    # 3. a repository beside a copy: clean, then dirty
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-local-")
+    genv = dict(C_ENV, GIT_AUTHOR_NAME="selfcheck", GIT_AUTHOR_EMAIL="s@x",
+                GIT_COMMITTER_NAME="selfcheck", GIT_COMMITTER_EMAIL="s@x",
+                HOME=tmp, GIT_CONFIG_NOSYSTEM="1")
+    try:
+        repo = os.path.join(tmp, "repo")
+        os.makedirs(os.path.join(repo, "build"))
+        copied = os.path.join(repo, "build", "pcrec")
+        shutil.copy2(pin, copied)
+        readme = os.path.join(repo, "README")
+        with open(readme, "w") as f:
+            f.write("a tiny repository beside a copied pcrec binary\n")
+
+        def git(*a):
+            return subprocess.run(["git", "-C", repo] + list(a),
+                                  capture_output=True, text=True, env=genv,
+                                  timeout=60)
+        git("init", "-q")
+        git("add", "README")
+        git("commit", "-q", "-m", "one")
+        head = git("rev-parse", "HEAD").stdout.strip()
+        os.environ["PCREC_BIN"] = copied
+        os.environ.pop("PCREC_LOCAL_FLAGS", None)
+        d = adapter.describe("pcrec-local")
+        ev = d["engine_version"]
+        if (_re.fullmatch(r"local:[0-9a-f]{12}\+[0-9a-f]{7,}", ev)
+                and d.get("engine_commit") == head and len(head) == 40):
+            ok("beside a CLEAN repository: +<describe>, engine_commit = HEAD",
+               "%s, commit %s" % (ev, head[:12]))
+        else:
+            bad("beside a CLEAN repository: +<describe>, engine_commit = HEAD",
+                "%s commit=%s (HEAD %s)" % (ev, d.get("engine_commit"), head))
+        with open(readme, "a") as f:
+            f.write("edited, not committed\n")
+        d = adapter.describe("pcrec-local")
+        ev = d["engine_version"]
+        if ev.endswith("-dirty") and d.get("engine_commit") is None \
+                and d.get("tier") == "scratch":
+            ok("beside a DIRTY repository: +...-dirty, engine_commit null",
+               ev)
+        else:
+            bad("beside a DIRTY repository: +...-dirty, engine_commit null",
+                "%s commit=%s" % (ev, d.get("engine_commit")))
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # 4. a quick cell runs on the pin's binary
+    scratch = os.path.join(ROOT, "build", "selfcheck-local-store")
+    shutil.rmtree(scratch, ignore_errors=True)
+    env1 = dict(env0, PCREC_BIN=pin)
+    proc = subprocess.run(
+        ["gnutimeout", "300", sys.executable, "-m", "pcrecbench", "quick",
+         "--subbench", "email", "--pattern", "orig", "--regime", "search",
+         "--testee", "pcrec-local", "--subjects", "5", "--trials", "1",
+         "--store", scratch, "--synthetic", "--quiet-output"],
+        capture_output=True, text=True, env=env1, cwd=ROOT, timeout=330)
+    files = _glob.glob(os.path.join(scratch, "records", "*", "*", "*.jsonl"))
+    if proc.returncode == 0 and len(files) == 1:
+        setup, rows = _rd.read_record(files[0])
+        ev = setup["testee"]["engine_version"]
+        if setup.get("tier") == "scratch" and ev.startswith("local:") \
+                and "_local-" in os.path.basename(files[0]):
+            ok("a quick cell runs on pcrec-local",
+               "%s -> %s, %s" % (ev, setup["status"],
+                                 proc.stdout.splitlines()[2].split()[0:1]))
+        else:
+            bad("a quick cell runs on pcrec-local",
+                "tier %s version %s" % (setup.get("tier"), ev))
+    else:
+        bad("a quick cell runs on pcrec-local",
+            "exit %d, %d file(s): %s"
+            % (proc.returncode, len(files),
+               (proc.stderr or proc.stdout).strip()[-300:]))
+    shutil.rmtree(scratch, ignore_errors=True)
+
+    # 5. into a canonical store: REFUSED, nothing written
+    canon = tempfile.mkdtemp(prefix="pcrecbench-canon-")
+    try:
+        with open(os.path.join(canon, _store.CANONICAL_MARKER), "w") as f:
+            f.write("canonical\n")
+        proc = subprocess.run(
+            ["gnutimeout", "120", sys.executable, "-m", "pcrecbench", "run",
+             "--subbench", "email", "--testee", "pcrec-local",
+             "--trials", "1", "--iters", "1", "--regimes", "match",
+             "--store", canon, "--quiet-output"],
+            capture_output=True, text=True, env=env1, cwd=ROOT, timeout=150)
+        written = [f for f in os.listdir(canon) if f != _store.CANONICAL_MARKER]
+        if proc.returncode != 0 and "REFUSED" in proc.stderr and not written \
+                and _store.is_canonical(_store.DEFAULT_STORE):
+            ok("run --testee pcrec-local --store <canonical> is REFUSED",
+               "exit %d, nothing written; store/ carries the same marker"
+               % proc.returncode)
+        else:
+            bad("run --testee pcrec-local --store <canonical> is REFUSED",
+                "exit %d; written %s; %s"
+                % (proc.returncode, written, proc.stderr.strip()[-200:]))
+    finally:
+        shutil.rmtree(canon, ignore_errors=True)
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -1300,6 +1477,7 @@ def main():
     check_store_tier_refusal()
     check_reduction()
     check_quick()
+    check_pcrec_local()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))
