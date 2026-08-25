@@ -203,12 +203,14 @@ def test_known_reduction():
 
 
 def test_expectation_failing_cell_is_excluded_from_ranking():
+    """--grain subject: the original per-(pattern,subject,regime) exclusion."""
     loaded, _paths, _source = _load_store(STORE)
-    args = _args(store=STORE, include_synthetic=True)
+    args = _args(store=STORE, include_synthetic=True, grain="subject")
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
+    _check(rd.grain == "subject", f"expected rd.grain == 'subject', got {rd.grain!r}")
 
-    groups = report._ranking_groups(rd)
+    groups = report._ranking_groups(rd, grain="subject")
     failing_key = None
     for k, entries in groups.items():
         sb, pattern_id, subject_id, regime = k
@@ -232,6 +234,95 @@ def test_expectation_failing_cell_is_excluded_from_ranking():
     _check("Excluded from ranking" in md, "markdown report must have an excluded-cells section")
     _check(TESTEE_B in md.split("Excluded from ranking")[1].split("## Compile cost")[0],
            "testee B's failing cell must be listed under Excluded from ranking")
+
+
+def test_set_grain_sums_per_subject_ns_per_call():
+    """--grain set (default), manager change request 2026-08-25: p-digits/
+    match-compliance has TWO subjects (s-num-1, s-num-2) for every testee.
+    HAND-COMPUTED for testee A: s-num-1 ns/call=[100,110,90] (trials 1,2,3),
+    s-num-2 ns/call=[50,90,160] -> per-trial SUMS=[150,200,250]
+    -> median 200, min 150, max 250, n_subjects=2, pass_rate=1.0."""
+    loaded, _paths, _source = _load_store(STORE)
+    args = _args(store=STORE, include_synthetic=True)  # grain defaults to 'set'
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    _check(rd.grain == "set", f"expected the default grain to be 'set', got {rd.grain!r}")
+
+    key = next((k for k in rd.set_cells
+                if k[1] == TESTEE_A and k[2] == "p-digits" and k[3] == "match-compliance"), None)
+    _check(key is not None, "expected a set cell for (testee A, p-digits, match-compliance)")
+    _testee_id, red = rd.set_cells[key]
+
+    sums = [150.0, 200.0, 250.0]
+    expected_median = statistics.median(sums)
+    expected_min = min(sums)
+    expected_max = max(sums)
+    expected_stddev = statistics.pstdev(sums)
+
+    _check(red.n_subjects == 2, f"expected n_subjects == 2, got {red.n_subjects}")
+    _check(red.n_agreeing == 2, f"expected n_agreeing == 2, got {red.n_agreeing}")
+    _check(red.pass_rate == 1.0, f"expected pass_rate == 1.0, got {red.pass_rate}")
+    _check(red.failing_subjects == [], f"expected no failing subjects, got {red.failing_subjects}")
+    _check(red.n_trials == 3, f"expected n_trials == 3, got {red.n_trials}")
+    _check(red.median_ns == expected_median,
+           f"set-grain known-sum check failed: expected median_ns == {expected_median}, "
+           f"got {red.median_ns} (cell p-digits/match-compliance, testee A, "
+           f"summing s-num-1 + s-num-2 per trial)")
+    _check(red.min_ns == expected_min, f"expected min_ns == {expected_min}, got {red.min_ns}")
+    _check(red.max_ns == expected_max, f"expected max_ns == {expected_max}, got {red.max_ns}")
+    _check(abs(red.stddev_ns - expected_stddev) < 1e-9,
+           f"expected stddev_ns == {expected_stddev}, got {red.stddev_ns}")
+
+    # p-digits/short-subject-search has exactly one subject (s-num-1) for
+    # every testee -- set and subject grain must agree there.
+    single_key = next((k for k in rd.set_cells
+                        if k[1] == TESTEE_A and k[2] == "p-digits"
+                        and k[3] == "short-subject-search"), None)
+    _check(single_key is not None, "expected the single-subject set cell to exist")
+    _tid, single_red = rd.set_cells[single_key]
+    subj_key = (single_key[0], TESTEE_A, "p-digits", "s-num-1", "short-subject-search")
+    _check(subj_key in rd.match_cells, "expected the matching subject cell to exist")
+    _tid2, subj_red = rd.match_cells[subj_key]
+    _check(single_red.n_subjects == 1, f"expected n_subjects == 1, got {single_red.n_subjects}")
+    _check(single_red.median_ns == subj_red.median_ns,
+           "a single-subject set cell must equal its subject-grain counterpart: "
+           f"set={single_red.median_ns} subject={subj_red.median_ns}")
+    _check("short-subject-search" in rd.single_subject_regimes,
+           f"expected short-subject-search in single_subject_regimes, got "
+           f"{rd.single_subject_regimes}")
+
+
+def test_set_grain_excludes_whole_set_when_any_subject_fails():
+    """Testee B's p-word set has TWO subjects: s-word-1 (fails, all 3
+    trials did-not-match-as-expected) and s-mix-set (passes). Per the
+    manager's rule, the WHOLE set cell must be excluded, not averaged
+    through, and s-word-1 must be named as the failing subject."""
+    loaded, _paths, _source = _load_store(STORE)
+    args = _args(store=STORE, include_synthetic=True)  # grain='set'
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+
+    # p-word's two subjects (s-word-1, s-mix-set) sit under DIFFERENT
+    # regimes in this fixture (match-compliance vs short-subject-search
+    # respectively -- see fixtures/CLAUDE.md), so the set that actually
+    # fails is (p-word, match-compliance), whose only subject IS
+    # s-word-1: a single-subject set that fails is still a set-grain
+    # exclusion (n_subjects=1, pass_rate=0.0), and it exercises the same
+    # "any subject fails -> whole set excluded" rule as a larger set would.
+    key = next((k for k in rd.set_cells
+                if k[1] == TESTEE_B and k[2] == "p-word" and k[3] == "match-compliance"), None)
+    _check(key is not None, "expected a (testee B, p-word, match-compliance) set cell")
+    _tid, red = rd.set_cells[key]
+    _check(red.expectation_failing, "the set cell must be flagged expectation_failing")
+    _check(red.failing_subjects == ["s-word-1"],
+           f"expected failing_subjects == ['s-word-1'], got {red.failing_subjects}")
+    _check(red.pass_rate == 0.0, f"expected pass_rate 0.0 (1 subject, 0 agreeing), got {red.pass_rate}")
+    _check(red.n_trials == 0, f"an excluded set cell must carry no reduced trials, got {red.n_trials}")
+
+    md = report.render_markdown(rd)
+    _check("SET grain" in md, "the set-grain report must label itself as such")
+    _check("s-word-1" in md.split("Excluded from ranking")[1].split("## Compile cost")[0],
+           "the failing subject must be named in the set-grain excluded table")
 
 
 def test_unsupported_by_declaration_outcome():
@@ -376,6 +467,8 @@ TESTS = [
     test_all_fixtures_validate,
     test_known_reduction,
     test_expectation_failing_cell_is_excluded_from_ranking,
+    test_set_grain_sums_per_subject_ns_per_call,
+    test_set_grain_excludes_whole_set_when_any_subject_fails,
     test_unsupported_by_declaration_outcome,
     test_where_filter_dotted_path,
     test_regime_filter_restricts_match_rows_only,

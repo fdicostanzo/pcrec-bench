@@ -18,10 +18,16 @@ depend on the other lane's code").
 
   Covers: store discovery (index-present vs walk-fallback), that every
   non-mixed_version fixture validates cleanly against
-  `schema/validate.py`, a HAND-COMPUTED reduction (median/min/max/stddev
-  for a specific cell, worked out by hand against the fixture's raw
-  trials -- see `test_known_reduction`'s docstring for the arithmetic),
-  the expectation-failing-cell exclusion from ranking,
+  `schema/validate.py`, a HAND-COMPUTED `--grain subject` reduction
+  (median/min/max/stddev for a specific cell, worked out by hand against
+  the fixture's raw trials -- see `test_known_reduction`'s docstring for
+  the arithmetic), a HAND-COMPUTED `--grain set` reduction (summing two
+  subjects' ns/call per trial --
+  `test_set_grain_sums_per_subject_ns_per_call`), that a set cell is
+  excluded WHOLESALE when any one subject in it fails rather than
+  averaged through
+  (`test_set_grain_excludes_whole_set_when_any_subject_fails`), the
+  subject-grain expectation-failing-cell exclusion from ranking,
   `unsupported-by-declaration` handling, `--where`/`--regime`/
   `--subbench`/`--version` filter semantics, the default exclusion of
   `synthetic: true` records, the mixed-schema-major-version refusal, that

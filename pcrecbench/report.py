@@ -23,10 +23,19 @@ Design decisions this module makes that the contract leaves to [B5]
   testees; per-call time is. `iters` is carried alongside the reduction for
   transparency, per the brief's comparable set (median, min, max, stddev,
   n trials, iters).
-* Ranking operates at the (pattern, subject, regime) grain -- the same
-  grain the reduction itself uses -- rather than pooling different
-  subjects under one (pattern, regime) number, which would silently
-  average unlike things.
+* Ranking has two grains, `--grain set` (default) and `--grain subject`
+  (manager, 2026-08-25, accepted as a change request on the original
+  (pattern, subject, regime) MVP grain below). `set` reduces over the
+  whole SUBJECT SET per (pattern, regime): per trial, sum the per-subject
+  ns/call over every subject in the set (time to process the set once
+  per call-set), then median/min/max/stddev over trials; a set cell is
+  excluded from ranking if ANY subject in it fails its own expectation
+  check (listed with its failing subjects, not folded into an average).
+  `subject` gives the finer (pattern, subject, regime) tables this module
+  used before the change request -- the drill-down once a set cell looks
+  wrong. Regimes with exactly one subject per pattern (typically
+  large-subject-throughput) are identical at both grains; the header
+  says so when it applies.
 * `synthetic: true` records are excluded by default (schema/examples/
   CLAUDE.md: "the reporter excludes such records from every query"); the
   `--include-synthetic` flag overrides this. It exists because every
@@ -297,6 +306,79 @@ def reduce_match_cell(rows):
     )
 
 
+def _timed_ns_by_trial(rows):
+    """{trial: ns/call} for the `matched-as-expected` + timed rows of one
+    (pattern, subject, regime, testee) cell -- the raw material `--grain
+    set` sums across subjects, trial by trial."""
+    out = {}
+    for r in rows:
+        if r.get("match_outcome") != "matched-as-expected" or "timing" not in r:
+            continue
+        t = r["timing"]
+        if not t.get("iterations"):
+            continue
+        out[r.get("trial")] = t["elapsed_ns"] / t["iterations"]
+    return out
+
+
+@dataclass
+class SetCellReduction:
+    """The `--grain set` reduction for one (pattern, regime, testee):
+    reduces over the WHOLE subject set, not one subject at a time
+    (manager change request, 2026-08-25)."""
+    n_subjects: int
+    n_agreeing: int
+    pass_rate: float           # n_agreeing / n_subjects
+    failing_subjects: list     # subject_ids not fully agreeing (empty iff pass_rate == 1.0)
+    n_trials: int              # trials contributing to the sum (0 if excluded/no data)
+    median_ns: float | None
+    min_ns: float | None
+    max_ns: float | None
+    stddev_ns: float | None
+
+    @property
+    def expectation_failing(self):
+        return self.n_subjects == 0 or self.pass_rate < 1.0
+
+
+def reduce_set_cell(rows_by_subject):
+    """`rows_by_subject`: {subject_id: [match rows]} for one (sb, testee,
+    pattern, regime). A subject "fails" if its own reduce_match_cell()
+    is expectation_failing (any trial not matched-as-expected); if ANY
+    subject in the set fails, the WHOLE set cell is excluded (manager:
+    "excluded from ranking if ANY subject cell fails"), and the failing
+    subject_ids are recorded rather than averaged away. Otherwise, per
+    trial number common to every subject, sum the per-subject ns/call,
+    then reduce (median/min/max/stddev) over those per-trial sums --
+    "time to process the whole set once per call-set"."""
+    n_subjects = len(rows_by_subject)
+    per_subject = {sid: reduce_match_cell(rows) for sid, rows in rows_by_subject.items()}
+    failing = sorted(sid for sid, red in per_subject.items() if red.expectation_failing)
+    n_agreeing = n_subjects - len(failing)
+    pass_rate = (n_agreeing / n_subjects) if n_subjects else 0.0
+
+    if failing or not n_subjects:
+        return SetCellReduction(
+            n_subjects=n_subjects, n_agreeing=n_agreeing, pass_rate=pass_rate,
+            failing_subjects=failing, n_trials=0,
+            median_ns=None, min_ns=None, max_ns=None, stddev_ns=None,
+        )
+
+    per_subject_trials = {sid: _timed_ns_by_trial(rows) for sid, rows in rows_by_subject.items()}
+    trial_sets = [set(d) for d in per_subject_trials.values()]
+    common_trials = sorted(set.intersection(*trial_sets)) if trial_sets else []
+    sums = [sum(per_subject_trials[sid][t] for sid in rows_by_subject) for t in common_trials]
+    n = len(sums)
+    return SetCellReduction(
+        n_subjects=n_subjects, n_agreeing=n_agreeing, pass_rate=pass_rate,
+        failing_subjects=[], n_trials=n,
+        median_ns=statistics.median(sums) if n else None,
+        min_ns=min(sums) if n else None,
+        max_ns=max(sums) if n else None,
+        stddev_ns=_pstdev_safe(sums) if n else None,
+    )
+
+
 @dataclass
 class CompileCellReduction:
     cost_class: str
@@ -400,9 +482,13 @@ class ReportData:
     subbench_versions: set
     machines: set
     schema_versions: set
-    match_cells: dict       # key -> (testee_id, MatchCellReduction)
+    match_cells: dict       # (sb,testee,pattern,subject,regime) -> (testee_id, MatchCellReduction)
+    set_cells: dict         # (sb,testee,pattern,regime) -> (testee_id, SetCellReduction)
     compile_cells: dict     # key -> (testee_id, CompileCellReduction)
     reference_testee_pred: str
+    grain: str              # 'set' (default) or 'subject' -- which the renderer shows
+    single_subject_regimes: list  # regimes where every (pattern) cell has <=1 subject:
+                                   # set and subject grain render identically there
 
 
 def build_report(loaded, args):
@@ -471,6 +557,21 @@ def build_report(loaded, args):
         sb, testee_id, pattern_id, subject_id, regime = key
         match_cells[key] = (testee_id, reduce_match_cell(rows))
 
+    # --grain set: reduce over the whole subject set per (pattern, regime).
+    set_rows_by_key = defaultdict(dict)  # (sb, testee, pattern, regime) -> {subject_id: rows}
+    for (sb, testee_id, pattern_id, subject_id, regime), rows in match_rows_by_key.items():
+        set_rows_by_key[(sb, testee_id, pattern_id, regime)][subject_id] = rows
+    set_cells = {}
+    for key, rows_by_subject in set_rows_by_key.items():
+        sb, testee_id, pattern_id, regime = key
+        set_cells[key] = (testee_id, reduce_set_cell(rows_by_subject))
+
+    regime_subject_counts = defaultdict(set)
+    for (sb, testee_id, pattern_id, regime), (tid, red) in set_cells.items():
+        regime_subject_counts[regime].add(red.n_subjects)
+    single_subject_regimes = sorted(
+        r for r, counts in regime_subject_counts.items() if counts and max(counts) <= 1)
+
     compile_cells = {}
     for key, rows in compile_rows_by_key.items():
         sb, testee_id, pattern_id = key
@@ -496,8 +597,11 @@ def build_report(loaded, args):
         machines=machines,
         schema_versions=schema_versions,
         match_cells=match_cells,
+        set_cells=set_cells,
         compile_cells=compile_cells,
         reference_testee_pred="libpcre2 engine_mode=interp",
+        grain=args.grain,
+        single_subject_regimes=single_subject_regimes,
     ), None
 
 
@@ -515,11 +619,30 @@ def _is_reference(testee_setup_by_id, testee_id):
     return testee_id.startswith("libpcre2_") and "_interp-" in testee_id
 
 
-def _ranking_groups(rd: ReportData):
-    groups = defaultdict(list)  # (sb, pattern, subject, regime) -> [(testee_id, reduction)]
-    for (sb, testee_id, pattern_id, subject_id, regime), (tid, red) in rd.match_cells.items():
-        groups[(sb, pattern_id, subject_id, regime)].append((testee_id, red))
+def _ranking_groups(rd: ReportData, grain):
+    """grain='subject': keys are (sb, pattern, subject, regime), values are
+    [(testee_id, MatchCellReduction)]. grain='set': keys are (sb, pattern,
+    regime), values are [(testee_id, SetCellReduction)]."""
+    groups = defaultdict(list)
+    if grain == "subject":
+        for (sb, testee_id, pattern_id, subject_id, regime), (tid, red) in rd.match_cells.items():
+            groups[(sb, pattern_id, subject_id, regime)].append((testee_id, red))
+    else:
+        for (sb, testee_id, pattern_id, regime), (tid, red) in rd.set_cells.items():
+            groups[(sb, pattern_id, regime)].append((testee_id, red))
     return groups
+
+
+def _partial_coverage(r):
+    """True iff `r` (a MatchCellReduction or SetCellReduction) has less
+    than full coverage -- triggers the N + pass-rate columns."""
+    return r.pass_rate < 1.0 or getattr(r, "n_trials", 1) == 0
+
+
+def _n_and_pass_rate(r, grain):
+    if grain == "subject":
+        return r.n_trials, r.pass_rate
+    return r.n_subjects, r.pass_rate
 
 
 def render_markdown(rd: ReportData):
@@ -539,6 +662,15 @@ def render_markdown(rd: ReportData):
     out.append(f"- sub-bench version(s): {', '.join(sorted(rd.subbench_versions)) or '(none)'}")
     out.append(f"- machine(s): {', '.join(sorted(rd.machines)) or '(none)'}")
     out.append(f"- schema version(s): {', '.join(sorted(rd.schema_versions)) or '(none)'}")
+    out.append(f"- grain: {rd.grain} "
+                + ("(sum of per-subject ns/call over the whole subject set, "
+                   "reduced over trials; a set cell is excluded if ANY "
+                   "subject in it fails)" if rd.grain == "set" else
+                   "(per pattern x subject x regime; the drill-down)"))
+    if rd.single_subject_regimes:
+        out.append("- regime(s) with exactly one subject per pattern "
+                    "(set and subject grain render identically there): "
+                    + ", ".join(f"`{r}`" for r in rd.single_subject_regimes))
     out.append("- reduction: median/min/max/stddev (population) over "
                 "per-trial `elapsed_ns / iterations`; lazy-JIT compile cost "
                 "is DERIVED as trial-1-minus-steady-state from timed match "
@@ -550,27 +682,37 @@ def render_markdown(rd: ReportData):
         out.append("_No cells matched this query._\n")
         return "\n".join(out) + "\n"
 
-    out.append("## Ranking (per pattern x subject x regime; best median first)\n")
-    groups = _ranking_groups(rd)
+    grain = rd.grain
+    if grain == "subject":
+        out.append("## Ranking (per pattern x subject x regime; best median first)\n")
+    else:
+        out.append("## Ranking (per pattern x regime, SET grain: sum over the "
+                    "subject set; best median first)\n")
+    groups = _ranking_groups(rd, grain)
     excluded_cells = []
     for gkey in sorted(groups):
-        sb, pattern_id, subject_id, regime = gkey
         entries = groups[gkey]
-        rankable = [(t, r) for t, r in entries if not r.expectation_failing and r.n_timed]
+        rankable = [(t, r) for t, r in entries
+                    if not r.expectation_failing and getattr(r, "n_timed", r.n_trials)]
         failing = [(t, r) for t, r in entries if r.expectation_failing]
         for t, r in failing:
-            excluded_cells.append((sb, pattern_id, subject_id, regime, t, r))
+            excluded_cells.append((gkey, t, r))
         if not rankable:
             continue
         rankable.sort(key=lambda tr: tr[1].median_ns)
         ref = next((r for t, r in rankable if _is_reference(None, t)), None)
         ref_ns = ref.median_ns if ref else rankable[0][1].median_ns
-        any_partial = any(r.pass_rate < 1.0 or r.n_trials == 0 for _t, r in entries)
+        any_partial = any(_partial_coverage(r) for _t, r in entries)
 
-        out.append(f"### `{pattern_id}` / `{subject_id}` / `{regime}` ({sb})\n")
+        if grain == "subject":
+            sb, pattern_id, subject_id, regime = gkey
+            out.append(f"### `{pattern_id}` / `{subject_id}` / `{regime}` ({sb})\n")
+        else:
+            sb, pattern_id, regime = gkey
+            out.append(f"### `{pattern_id}` / `{regime}` ({sb})\n")
         header = ["rank", "testee", "median ns/call", "min", "max", "stddev", "ratio"]
         if any_partial:
-            header += ["n", "pass-rate"]
+            header += (["n subjects", "pass-rate"] if grain == "set" else ["n", "pass-rate"])
         out.append("| " + " | ".join(header) + " |")
         out.append("|" + "|".join(["---"] * len(header)) + "|")
         for i, (t, r) in enumerate(rankable, start=1):
@@ -578,18 +720,29 @@ def render_markdown(rd: ReportData):
             row = [str(i), f"`{t}`", _fmt_ns(r.median_ns), _fmt_ns(r.min_ns),
                    _fmt_ns(r.max_ns), _fmt_ns(r.stddev_ns), f"{ratio:.3f}x"]
             if any_partial:
-                row += [str(r.n_trials), f"{r.pass_rate*100:.0f}%"]
+                n, pr = _n_and_pass_rate(r, grain)
+                row += [str(n), f"{pr*100:.0f}%"]
             out.append("| " + " | ".join(row) + " |")
         out.append("")
 
     if excluded_cells:
         out.append("## Excluded from ranking (expectation-failing cells)\n")
-        out.append("| pattern | subject | regime | testee | n | pass-rate | outcomes |")
-        out.append("|---|---|---|---|---|---|---|")
-        for sb, pattern_id, subject_id, regime, t, r in sorted(excluded_cells):
-            outcomes = ", ".join(f"{k}={v}" for k, v in r.outcome_counts.items())
-            out.append(f"| `{pattern_id}` | `{subject_id}` | `{regime}` | `{t}` | "
-                        f"{r.n_trials} | {r.pass_rate*100:.0f}% | {outcomes} |")
+        if grain == "subject":
+            out.append("| pattern | subject | regime | testee | n | pass-rate | outcomes |")
+            out.append("|---|---|---|---|---|---|---|")
+            for gkey, t, r in sorted(excluded_cells):
+                sb, pattern_id, subject_id, regime = gkey
+                outcomes = ", ".join(f"{k}={v}" for k, v in r.outcome_counts.items())
+                out.append(f"| `{pattern_id}` | `{subject_id}` | `{regime}` | `{t}` | "
+                            f"{r.n_trials} | {r.pass_rate*100:.0f}% | {outcomes} |")
+        else:
+            out.append("| pattern | regime | testee | n subjects | pass-rate | failing subjects |")
+            out.append("|---|---|---|---|---|---|")
+            for gkey, t, r in sorted(excluded_cells):
+                sb, pattern_id, regime = gkey
+                failing_list = ", ".join(f"`{s}`" for s in r.failing_subjects) or "(none timed)"
+                out.append(f"| `{pattern_id}` | `{regime}` | `{t}` | "
+                            f"{r.n_subjects} | {r.pass_rate*100:.0f}% | {failing_list} |")
         out.append("")
 
     out.append("## Compile cost (by execution-model class; never pooled across classes)\n")
@@ -614,6 +767,7 @@ def render_markdown(rd: ReportData):
 
 
 def render_tsv(rd: ReportData):
+    grain = rd.grain
     lines = []
     lines.append("# " + "; ".join(
         [f"filters: {', '.join(rd.query_desc) or '(none)'}",
@@ -622,31 +776,40 @@ def render_tsv(rd: ReportData):
          f"excluded_invalid: {len(rd.excluded_invalid)}",
          f"subbench_versions: {','.join(sorted(rd.subbench_versions))}",
          f"machines: {','.join(sorted(rd.machines))}",
-         f"schema_versions: {','.join(sorted(rd.schema_versions))}"]))
+         f"schema_versions: {','.join(sorted(rd.schema_versions))}",
+         f"grain: {grain}",
+         f"single_subject_regimes: {','.join(rd.single_subject_regimes)}"]))
     lines.append("\t".join(["section", "pattern", "subject_or_na", "regime_or_na",
                              "testee", "rank_or_na", "metric", "value", "n", "pass_rate"]))
 
-    groups = _ranking_groups(rd)
+    groups = _ranking_groups(rd, grain)
     for gkey in sorted(groups):
-        sb, pattern_id, subject_id, regime = gkey
+        if grain == "subject":
+            sb, pattern_id, subject_id, regime = gkey
+        else:
+            sb, pattern_id, regime = gkey
+            subject_id = "(set)"
         entries = groups[gkey]
-        rankable = [(t, r) for t, r in entries if not r.expectation_failing and r.n_timed]
+        rankable = [(t, r) for t, r in entries
+                    if not r.expectation_failing and getattr(r, "n_timed", r.n_trials)]
         rankable.sort(key=lambda tr: tr[1].median_ns)
         ref = next((r for t, r in rankable if _is_reference(None, t)), None)
         ref_ns = ref.median_ns if ref else (rankable[0][1].median_ns if rankable else None)
         for i, (t, r) in enumerate(rankable, start=1):
             ratio = (r.median_ns / ref_ns) if ref_ns else float("nan")
+            n, pr = _n_and_pass_rate(r, grain)
             for metric, val in (("median_ns", r.median_ns), ("min_ns", r.min_ns),
                                  ("max_ns", r.max_ns), ("stddev_ns", r.stddev_ns),
                                  ("ratio", ratio)):
                 lines.append("\t".join(["rank", pattern_id, subject_id, regime, t, str(i),
                                          metric, f"{val:.6f}" if val is not None else "",
-                                         str(r.n_trials), f"{r.pass_rate:.4f}"]))
+                                         str(n), f"{pr:.4f}"]))
         for t, r in entries:
             if r.expectation_failing:
+                n, pr = _n_and_pass_rate(r, grain)
                 lines.append("\t".join(["excluded", pattern_id, subject_id, regime, t, "",
                                          "pass_rate", f"{r.pass_rate:.4f}",
-                                         str(r.n_trials), f"{r.pass_rate:.4f}"]))
+                                         str(n), f"{pr:.4f}"]))
 
     for (sb, testee_id, pattern_id), (t, r) in sorted(rd.compile_cells.items()):
         metric = "derived_trial1_minus_steady_state_ns" if r.derived else "median_total_ns"
@@ -678,6 +841,14 @@ def build_argparser():
                      help="filter on a dotted setup-layer path, e.g. "
                           "testee.openness=open-source; repeatable (AND)")
     ap.add_argument("--format", choices=["md", "tsv"], default="md")
+    ap.add_argument("--grain", choices=["set", "subject"], default="set",
+                     help="ranking grain (manager change request, 2026-08-25): "
+                          "'set' (default) reduces over the whole subject set "
+                          "per (pattern, regime) -- per trial, sum the "
+                          "per-subject ns/call over the set, then reduce over "
+                          "trials; a set cell excludes if ANY subject in it "
+                          "fails. 'subject' gives the finer (pattern, subject, "
+                          "regime) drill-down tables.")
     ap.add_argument("--include-synthetic", action="store_true",
                      help="ADDITION beyond requirements/harness_contract: "
                           "include synthetic:true records (excluded by "
