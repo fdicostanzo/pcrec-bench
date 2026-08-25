@@ -1,0 +1,24 @@
+# testees/pcre2/configs.toml -- the testees this adapter provides.
+#
+# The keys here are CONFIG IDS: what `--testee` takes and what the adapter
+# indexes. They are NOT the record's `testee_id`, which record_schema.md 6.4
+# DERIVES from (engine_name, engine_version, engine_mode, captures, simd) and
+# rule X5 checks -- `pcre2-jit` becomes `libpcre2_10.46_jit-caps-simdna` in
+# the record and in the store path. Two id spaces on purpose: one a human
+# types, one a machine derives and can verify.
+#
+# No version is written here. It is PROBED from the loaded library
+# (`pcre2_config(PCRE2_CONFIG_VERSION)`) on every run: a hand-typed version
+# would silently rename the testee the day the distro package moves.
+
+[testees.pcre2-interp]
+engine_mode = "interp"
+jit = false
+captures = "on"
+description = "libpcre2 8-bit, the interpreter (pcre2_match on a plain compiled pattern)"
+
+[testees.pcre2-jit]
+engine_mode = "jit"
+jit = true
+captures = "on"
+description = "libpcre2 8-bit with pcre2_jit_compile(PCRE2_JIT_COMPLETE) -- an EAGER JIT: the compile cost is a separable call and is timed as a second phase"
