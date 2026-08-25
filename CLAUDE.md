@@ -6,11 +6,14 @@ as several pinned testees — on a harder and wider set than the usual
 microbenchmarks, emits standardized per-testee artifacts, compares them
 statically, and feeds the outliers back to pcrec as optimization work.
 
-STATUS (2026-08-25): charter seeded 2026-08-17 (APPROACH.md); housekeeping
-done; the requirements note ADOPTED ([B1], docs/design/requirements.md v3);
-the RECORD SCHEMA and its validator are the open step ([B2], `schema/`). No
-set, adapter or reporter code exists yet. Manager sessions start
-with the `pcrec-bench-manager` skill (.claude/skills/).
+STATUS (2026-08-25): charter seeded 2026-08-17 (APPROACH.md); the
+requirements note ADOPTED ([B1], docs/design/requirements.md v3); the RECORD
+SCHEMA and its validator landed ([B2], `schema/`); the HARNESS CORE, the
+first sub-bench and the first two adapters landed ([B3]+[B4]: `pcrecbench/`,
+`bench/email/`, `testees/pcre2/`, `testees/pcrec/`). `make check` is green.
+The REPORTER ([B5], `pcrecbench/report.py`) is the open step — `python3 -m
+pcrecbench report` is a stub that says so. Manager sessions start with the
+`pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
 
@@ -68,9 +71,21 @@ bindings) live here, vendored or system, pinned either way.
   share), `check_fields.py`, and `examples/` + `examples/bad/` (records
   that must validate, and sabotaged ones that must not). Designed in
   `docs/design/record_schema.md`. See its CLAUDE.md.
+- `pcrecbench/` — the HARNESS package: `harness.py` (run a cell),
+  `subbench.py`, `adapters.py` (the interface + **the driver protocol, in
+  full, at the top of the file**), `driverrun.py`, `record.py`, `store.py`,
+  `quiet.py`, `env.py`, `oracle_pcre2.py`, `__main__.py` (the CLI).
+  Specified by `docs/design/harness_contract.md`. See its CLAUDE.md.
+- `bench/<name>/` — the SUB-BENCHES: sidecar, patterns, deterministic
+  generators + sha256 manifests, oracle-verified expectations, engine
+  notes. `bench/email/` is the RFC 5322 specimen. See its CLAUDE.md.
+- `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
+  (auto, nocaps, vm, at a pinned commit). See their CLAUDE.mds.
+- `store/` — the record store: `records/<subbench>@<version>/<testee_id>/
+  <record_id>.jsonl`, `index.tsv`, `machines.tsv`. See its CLAUDE.md.
+- `tools/` — `selfcheck.py`, the harness half of `make check`.
 - `.claude/skills/pcrec-bench-manager/` — the manager-session skill.
-- Planned (not yet created): `set/`, `testees/<name>/`, `compare/` per
-  APPROACH.md §3 — created when their plan rows start.
+- Planned (not yet created): `pcrecbench/report.py` ([B5]).
 
 ## Build & test
 
@@ -80,17 +95,42 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
 .venv && .venv/bin/pip install -r requirements.txt`).
 
     make                # == make check-schema (the default target)
+    make check          # EVERYTHING: check-schema + check-harness
     make check-schema   # the record schema: the design note's field tables
                         # against the JSON Schema, every schema/examples/
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
+    make check-harness  # the sub-bench generators reproduce their committed
+                        # manifests byte for byte, the expectations re-derive
+                        # from the libpcre2 oracle, both drivers smoke, the
+                        # deliberately-wrong fixture yields the outcome it
+                        # must, the two patterns are shown NOT to be one
+                        # artifact, and a full `run` of one cell into a
+                        # SCRATCH store is written and validator-accepted
+                        # (~2 min; needs libpcre2-8-0 and a C compiler)
+    make deps           # what the harness needs, and whether this box has it
     make help           # list the targets
 
+`make check` is a SMOKE SUITE, never a measurement: `--trials 1 --iters 1`,
+one regime, `--force-unquiet`, every record it writes marked `synthetic`
+and written under `build/`. Nothing it prints is a number.
+
+Measuring one cell:
+
+    python3 -m pcrecbench testees            # the config ids
+    python3 -m pcrecbench quiet --samples 5  # is the box quiet? (OD-B8)
+    python3 -m pcrecbench run --subbench email --testee pcre2-jit --trials 5
+    python3 -m pcrecbench index
+
+The subject trees are GENERATED and gitignored — run
+`python3 bench/email/gen_subjects.py` and
+`python3 bench/email/gen_throughput_subjects.py` before the first run
+(`make check` does it for you).
+
 Plain GNU make for what is ours (pcrec's D2 posture: a stranger's `make`
-must work); `make check` (all self-checks) lands with [B3]. Each testee
-adapter under testees/<name>/ may use whatever its engine demands (C
-shims, cmake, cargo), pinned there.
+must work). Each testee adapter under testees/<name>/ may use whatever its
+engine demands (C shims, cmake, cargo), pinned there.
 
 ## Conventions (inherited from pcrec where they apply)
 
