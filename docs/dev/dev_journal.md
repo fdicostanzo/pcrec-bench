@@ -290,3 +290,34 @@ set), 16/16 tests, fixtures restamped; holding for v1.1. b2fix: fixes
 no control through a merge and a panel), fixes 13-21 in progress.
 Merge order: b2fix → b3harness (adapt records to v1.1) → b5report
 (restamp) → cells on the quiet window → report.
+
+## 2026-08-25 (EDT, ~00:5x), first session (part 9) — the whole-subject idiom measured; two pcrec findings filed; v1.1 at fix 21; window ~02:50
+
+pcrecdev1 answered the whole-subject question from pcrec's docs, not
+memory: PCRE2_ENDANCHORED is a RATIFIED, UNBUILT generation axis (D38,
+[OS-4]); the bench is now its first named customer; the intended idiom
+is `(?:P)\z` under the anchored entry (never `$` — it matches before a
+final newline at options=0), a DIFFERENT artifact that must never share
+a row with the plain one. Adopted: schema v1.1 fix 22 = `form` (plain |
+whole-subject) on compile and match rows; pcre2 omits it (runtime flags
+on the plain compile); pcrec compiles both forms and times both.
+b3harness MEASURED it on 8da6120: orig's `\z` form keeps DFA (+12.4%
+emitted C), factored stays VM; the `a|ab`/`ab` control proves the plain
+anchored `==n` stand-in answers wrongly vs the oracle (the email corpus
+never hits it). TWO pcrec FINDINGS from that measurement, sent to
+pcrecdev1 as candidates: (1) the DFA prefilter has NO structured stamp
+(RX_VM_PREFILTER is VM-only; DFA artifacts define only RX_ALTCLS_*), so
+the email specimen's headline mechanism cannot be bucketed on DFA
+records — request a DFA-side stamp; (2) the `\z` form's skip loop
+cannot skip the final byte or early-exit (the end-of-subject view
+state must be evaluated) — a slightly higher match-regime scan cost,
+documented so it is not misread. b3harness also: store writes now
+O_EXCL-claimed + staged + validated + os.replace (its own 8-writer race
+control caught a shared staging dir: 6/8 → 8/8); occupancy sampled at
+both ends, verdict = the worse; all v1.1 fields already MEASURED behind
+a projection switch with a three-leg control; pin.sh's build path
+exercised (cold 3.47 s, reuse 0.01 s, both pin binaries emit
+byte-identical artifacts). b2fix: my first three messages never
+reached it (lane inbox delivery unreliable tonight — ask for ACKs);
+the consolidated resend landed; at fix 21 of 22. pcrecdev1: window
+slips to ~02:50 (srG's rows at 0.8/min). Chain unchanged.
