@@ -409,3 +409,26 @@ worktrees/b3fix (ceil + a note when the sweep cap lowers the count + a
 control at the just-above-integer ratio). The reporter renders the four
 real records (set grain, form shown, compile costs by class, excluded
 table) — first sight of real numbers, none of them a measurement.
+
+## 2026-08-25 (EDT, ~01:4x), first session (part 14) — both rehearsal findings fixed and merged (11d91d6, 7cf98b3); make check 24/24 + 20/20 + 2/53/0; staged for the window
+
+Reporter (lane b5fix 5bf987b): `form` was a SPLIT key in the ranking, so
+pcre2 (plain, runtime flags) and pcrec (whole-subject artifact) never
+shared a compliance table — the regime's whole point; now form is a
+per-row column within (pattern, regime) and a key only for compile-cost
+cells; tests 20/20; the rehearsal report now ranks all four testees on
+orig/match-compliance in one table. Harness (lane b3fix 46d44df): TWO
+bugs under the X21 rejection — floor→ceil, and the recorded probe was
+the sweep SUM while the count came from the MEDIAN subject; now the
+count is chosen by X21's own expression over the integers the record
+carries (smallest meeting the target) and the probe describes the
+median subject; a three-leg control, sabotage-validated. The lane
+corrected its own diagnosis en route: bug (2) was a FIDELITY bug, not a
+validity one — with the count derived from the recorded integers X21
+passes for any probe — found only by sabotaging the fixed code and
+watching a leg pass that should have failed. Lesson for learnings: a
+control is proven by the sabotage that makes it fire, not by the
+diagnosis that motivated it. Also from the rehearsal: pcrec-vm posted
+the fastest compliance number on orig (single trial, loaded box — NOT a
+measurement; the window decides). Window ~02:50; run_window.sh staged
+(5 cells, --trials 5, --pin 11; expect ~20-40 min).
