@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check-schema help
+.PHONY: check check-schema check-harness deps help
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -55,6 +55,37 @@ check-schema:
 	 ngood=$$(ls -1 $(EXAMPLES)/*.jsonl | wc -l); \
 	 echo "check-schema: $$ngood example(s) accepted, $$bad sabotage(s) rejected for the intended rule, $$good sabotage(s) WRONG"; \
 	 test "$$good" -eq 0
+
+## check: every self-check -- the schema's and the harness's (contract 6)
+#
+# check-schema is [B2]'s (the record schema, its examples, its 15 sabotages).
+# check-harness is [B3]'s: the sub-bench generators reproduce their committed
+# manifests, the expectations re-derive from the libpcre2 oracle, each driver
+# smokes, the deliberately-wrong fixture yields the outcome it must, the two
+# patterns are shown NOT to be one artifact, and a full `run` of one cell into
+# a SCRATCH store is written and validator-accepted.
+#
+# It is a SMOKE SUITE, not a measurement: --trials 1 --iters 1, one regime,
+# --force-unquiet, and every record it writes is marked `synthetic`. Nothing
+# here may be read as a number.
+check: check-schema check-harness
+
+## check-harness: the harness self-checks (tools/selfcheck.py)
+check-harness:
+	@LC_ALL=C $(PYTHON) tools/selfcheck.py
+
+## deps: report what the harness needs and whether this box has it
+deps:
+	@echo "== deps =="
+	@LC_ALL=C $(PYTHON) -c "import sys; print('python      ', sys.version.split()[0], '(3.11+ needed for tomllib)')"
+	@LC_ALL=C $(PYTHON) -c "import jsonschema; print('jsonschema  ', jsonschema.__version__)" \
+	    || echo "jsonschema   MISSING -- pip install -r requirements.txt"
+	@LC_ALL=C $(PYTHON) -c "import ctypes; ctypes.CDLL('libpcre2-8.so.0'); print('libpcre2-8   present (the expectation ORACLE and one testee)')" \
+	    || echo "libpcre2-8   MISSING -- expectations cannot be re-derived and the pcre2 testee cannot run"
+	@command -v mpstat  >/dev/null && echo "mpstat       present (the occupancy gate)" || echo "mpstat       MISSING -- occupancy is recorded 'unavailable', never skipped"
+	@command -v taskset >/dev/null && echo "taskset      present (--pin)"              || echo "taskset      MISSING -- pinning is recorded 'unavailable'"
+	@command -v gnutimeout >/dev/null && echo "gnutimeout   present"                   || echo "gnutimeout   MISSING -- driver processes run unguarded"
+	@echo "$(CC)          $$($(CC) --version 2>/dev/null | head -1)"
 
 ## help: list the targets
 help:
