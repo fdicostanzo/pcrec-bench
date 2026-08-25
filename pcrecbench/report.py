@@ -387,6 +387,30 @@ WRONG_ANSWER_OUTCOMES = frozenset({
     "did-not-match-as-expected", "wrong-span-or-captures", "truncated-subject",
 })
 
+# TODO(manager, [B9]->[B10] merge): lane/b10loop (unmerged as of this
+# session, commit 897b68f "pcrecbench/reduce.py, the set-grain reduction
+# quick and the reporter share (R5)") places a SHARED reduce_match_cell/
+# reduce_set_cell/giveup_code in pcrecbench/reduce.py, explicitly so
+# `quick`'s inline comparable and this reporter's never disagree about
+# "faster". It was not on master when this lane finished, so
+# reduce_match_cell/reduce_set_cell below (and _extract_diagnostic_code,
+# the analogue of reduce.py's giveup_code) are this lane's OWN
+# implementations -- replace all four with `from pcrecbench.reduce import
+# reduce_match_cell, reduce_set_cell, giveup_code` at merge time, keeping
+# only what reduce.py does not cover (the R1-R9 rendering above it).
+# FLAG FOR RECONCILIATION: the two `giveup_code` functions format
+# DIFFERENTLY today -- reduce.py's regex-matches the `giveup:<n>:<NAME>`
+# driver-protocol token and keeps the NUMERIC code too
+# (`-3:PCREC_ERR_FRAMES`), falling back to a 64-char truncated raw
+# diagnostic when that token is absent (e.g. pcre2's diagnostics, which
+# never carry it); `_extract_diagnostic_code` below instead pattern-matches
+# any trailing ALL-CAPS_WITH_UNDERSCORE token generically, dropping the
+# numeric code, which is what lets it read BOTH engines' diagnostics with
+# one rule. Importing reduce.py's `giveup_code` as-is would change every
+# `gave-up: <CODE>x...` cell this lane's R7 renders (pcre2 diagnostics in
+# particular would start showing a truncated sentence instead of a bare
+# code) -- worth a decision at merge, not a silent adoption.
+
 # [B9] R7: a diagnostic's engine-specific CODE -- an ALL-CAPS token with at
 # least one underscore-separated segment (`PCREC_ERR_WORK`,
 # `PCRE2_ERROR_MATCHLIMIT`), so a plain all-caps English word swept up in
