@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check-schema help
+.PHONY: check-schema check-report help
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -55,6 +55,41 @@ check-schema:
 	 ngood=$$(ls -1 $(EXAMPLES)/*.jsonl | wc -l); \
 	 echo "check-schema: $$ngood example(s) accepted, $$bad sabotage(s) rejected for the intended rule, $$good sabotage(s) WRONG"; \
 	 test "$$good" -eq 0
+
+## check-report: the reporter's own suite ([B5], pcrecbench/report.py)
+#
+# python3 + jsonschema only (schema/validate.py, shared), no pytest
+# required -- pytest is the declared dev dependency but is not installed
+# on this box, so the suite is a plain runnable module
+# (pcrecbench/tests/test_report.py). Runs:
+#   1. the test module itself (store discovery both ways, the
+#      hand-computed reduction, expectation-failing exclusion,
+#      unsupported-by-declaration, filter semantics, the mixed-schema-
+#      version refusal, invalid-record handling, deterministic
+#      rendering);
+#   2. every fixture in pcrecbench/tests/fixtures/store/ and
+#      /store_walk_only/ (but NOT /mixed_version/, whose second file is
+#      INTENTIONALLY schema-invalid by construction -- see its
+#      CLAUDE.md) independently accepted by schema/validate.py, as a
+#      second, independent check that the fixtures are what they claim
+#      to be;
+#   3. a smoke report over fixtures/store in both formats, so a CLI
+#      regression (a crash, an empty query the harness would otherwise
+#      swallow) fails the gate even if the unit tests import around it.
+check-report:
+	@echo "== check-report =="
+	@$(PYTHON) -m pcrecbench.tests.test_report
+	@echo
+	@echo "-- fixtures independently accepted by schema/validate.py --"
+	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store/records/*/*/*.jsonl
+	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store_walk_only/records/*/*/*.jsonl
+	@echo
+	@echo "-- CLI smoke: a report over fixtures/store, both formats --"
+	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
+	    --include-synthetic --format md > /dev/null
+	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
+	    --include-synthetic --format tsv > /dev/null
+	@echo "check-report: OK"
 
 ## help: list the targets
 help:
