@@ -596,8 +596,35 @@ lesson: a check with no failing case proves nothing).
 | X16 | `testee.warmup_trials` ≥ 1 when `execution_model` = `lazy-jit` | §3 (A6) |
 | X17 | Across files given to one invocation: no two differing MAJOR `schema_version`s | §4, A10 |
 
-Messages name the line number (1-based, as an editor counts) and the
-field path.
+Messages name the line number (1-based, as an editor counts), the field
+path, and the RULE ID in brackets. The rule id is not decoration: each
+rule has a sabotaged record in `schema/examples/bad/` whose FILE NAME is
+the rule it must fire (`x11-timing-on-uncompiled-cell.jsonl`,
+`schema-wrong-enum.jsonl`), and `make check-schema` fails a control that
+is rejected for some other reason. A control that rejects for the wrong
+reason proves nothing about the rule it was written for — which is the
+same failure mode as a check with no failing case, one level up. Every
+sabotage is the good example with exactly ONE thing wrong and its hash
+RESTAMPED, so X6 does not fire alongside the intended rule and mask it.
+
+Two corollaries worth stating because they surprised the author:
+
+- **X11 bites a pattern with no compile row at all.** "Every compile row
+  for that pattern says `compiled`" is false when there are none, so a
+  timed match row for a pattern the record never recorded compiling is
+  rejected. That is intended: a timing whose compile the record does not
+  witness is a timing with no provenance. It also means X14's control
+  fires X11 as well, which is honest rather than noisy.
+- **X6 makes the examples restampable, not editable.**
+  `validate.py --print-hash FILE` prints the value an edited example
+  needs. Records in the STORE are never edited (requirements §6); the
+  examples are documents, and this is the one place the distinction
+  matters.
+
+The check-schema harness was itself sabotage-validated on 2026-08-25: a
+valid record placed in `examples/bad/` makes it fail, and so does a
+control renamed to claim a rule it does not fire. A gate that has never
+been seen to fail is not known to be a gate.
 
 ## 10. Denormalization, extension points, what is absent
 
