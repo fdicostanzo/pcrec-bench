@@ -189,3 +189,135 @@ run on a quiet box in a window agreed with pcrecdev1 → the report sent
 to pcrecdev1 as a production sample with a feedback request and the
 question of higher-priority sub-bench areas → journal, wake.md, close.
 Open questions are saved to the OD ledger, recommendations taken.
+
+## 2026-08-25 (EDT, ~00:0x), first session (part 6) — [B2] MERGED (the record schema); [B3]+[B4] and [B5] lanes open; pin 8da6120 building; a quiet window promised ~03:00
+
+Lane b2schema (opus) delivered in ~40 min: record_schema.md (718
+lines — identity tuple + content hash with the circularity broken,
+file name = record_id, schema versioning + mixing policy, OD-B4
+answered in both halves, per-testee engine_metadata declarations with
+pcrec worked from rx_info/RX_VM_* masks as bit-name arrays, 131 fields
+checked field-for-field against the JSON Schema by check_fields.py,
+cross-line rules X1-X17), validate.py, 2 synthetic examples, 15
+sabotages each named for the rule it must fire (`--expect-rule`), the
+gate itself sabotage-validated. Manager ran the gate (2/15/0 WRONG) and
+merged. MERGE INCIDENT: two CLAUDE.md conflicts + a command chain that
+continued past a heredoc committed a merge WITH CONFLICT MARKERS
+(285cb39, never pushed); caught within a minute by grepping for
+markers, reset to 64f4655, merged again by hand, verified. Lesson: a
+`&&` chain does not extend across a heredoc terminator — commit steps
+get their own command. Accepted at merge (Frank: go with
+recommendations): per-subject `crashed`/`timed-out` (requirements §4.4
+amended), dense trial numbering, the lazy-JIT compile row carrying a
+derivation and no number. Post-merge panel: critS1 (data model vs
+consumers; new sabotages the 15 controls miss), critS2 (provenance:
+how each environment field is obtained on this box; what compare.sh
+records that the schema lacks).
+
+docs/design/harness_contract.md written (manager): package layout,
+bench/<name>/ with a subbench.toml SIDECAR (fields only), the adapter
+interface + a shared DRIVER PROTOCOL (batched in-process loops, phases
+timed, TSV), store path = record_id.jsonl, CLI run/index/report, the
+quiet instrument (OD-B8 measured at [B3]), self-checks. Lanes opened
+from 7b57ad0: b3harness (opus: harness core + bench/email/ + pcre2 and
+pcrec adapters) and b5report (sonnet: the reporter over fixtures).
+pcrecdev1: PIN = 8da6120 (its diff-stat vs main over src/lib/cli/
+Makefile is EMPTY — same compiler; battery-run tree); the pin build
+started 00:00 (-j4, gnutimeout 900, build/pcrec-8da6120/, log in the
+scratchpad) inside its 20-minute ask; QUIET WINDOW promised after wave
+G's merge battery (~03:00 est.): it sends "WINDOW OPEN" with the load
+reading, I reply "WINDOW CLOSED"; nothing heavy of its runs between.
+Watchdog re-armed for both lanes + the build.
+
+## 2026-08-25 (EDT, ~00:2x), first session (part 7) — the schema panel's S2 report: four provenance HIGHs; schema v1.1 lane opened
+
+critS2 (measurement provenance) returned 13 findings + one example
+defect. HIGH: (1) the lazy-JIT "trial 1 minus steady state" derivation
+is NOT computable from a record — trial numbering restarts per
+(pattern, subject, regime) and row order is declared insignificant, so
+nothing identifies the chronologically first row that paid the JIT
+cost (fix: a per-row `seq`; derive over the lowest seq); (2) `load` has
+no raw evidence — `status: measured` is claimable on fabricated
+numbers (fix: /proc/loadavg raw + timestamp per sample); (3) occupancy
+is sampled ONCE while load is before/after — the poisoned-core lesson
+re-opened for the dimension that caught it (fix: before/after); (4) the
+harness contract promises the iteration calibration is "recorded in
+the record" and no field exists (fix: a per-row calibration object).
+MEDIUM: engine_commit optional despite "pcrec ALWAYS pinned"; no
+driver build flags; subject sha256 optional vs pattern sha256 required;
+`quiet_attestation` provably inert and used inconsistently in the
+lane's own example (dropped); the §6 normalization rules are prose,
+unchecked. LOW: cpu MHz, clock source, hugepages, chrt+taskset pinning.
+All accepted (Frank: recommendations) → lane b2fix (opus, worktrees/
+b2fix, brief_b2fix.md): schema version 1.0 → 1.1, one named control per
+new rule, ≥ 25 sabotages. b3harness and b5report told what is coming.
+critS1 went idle without delivering; asked to resend. Watchdog covers
+three lanes.
+
+## 2026-08-25 (EDT, ~00:4x), first session (part 8) — [B3]+[B4] DELIVERED (lane/b3harness 36c77ad); [B5] delivered with the set grain; v1.1 nearly done
+
+b3harness (opus, ~45 min, 11 commits, +6085): pcrecbench/ (subbench,
+quiet, env, adapters, driverrun, record, harness, store, CLI run/index),
+bench/email/ (the specimen wrapped: sidecar, both patterns, generators
+copied, manifests with sha256, 330 expectations re-derived from libpcre2
+10.46 by gen_expectations.py --check, NOTES.md with the objective),
+testees/pcre2 (dlopen driver, interp + jit) and testees/pcrec (driver +
+shim, pin.sh reusing the manager's build, three configs), tools/
+selfcheck.py = `make check` 15/15 with controls (manifest byte-diff,
+wrong-expectation fixture, subject-timeout by name, TWO-PATTERNS
+control). Manager re-ran make check in the worktree: 15/15, pcrec's
+tree untouched. FINDINGS worth the record: (1) a hidden bug — both
+patterns compiled into one workdir, the second measured under the
+first's handle; the email expectations could not see it (both patterns
+agree everywhere); found via engine_metadata (orig reporting VM
+give-ups when it selects DFA); fixed by pattern_id in the interface and
+guarded by the two-patterns control — the class of bug only a
+mechanism check can see; (2) OD-B8 MEASURED under pcrecdev1's load:
+load1 1.28-1.47 never tripped a 2.0 gate while per-core occupancy
+refused 12/12 samples (worst core 62-81% idle) — occupancy is the
+DETECTOR, load1 the backstop; proposed MAX_BUSY_PCT 10, LOAD1 2.0,
+re-measure on a quiet box; (3) the smokes reproduce srEmail from
+scratch (330/330 oracle agreement; five FRAMES give-ups on factored;
+DFA+prefilter vs VM). Twelve contract deviations written up in
+docs/design/harness_notes.md; RULED at review: sidecar extension
+accepted; match regime = the engine's own whole-subject test (pcrec has
+no end-anchored entry — raised with pcrecdev1 as a candidate finding);
+give-ups get their own schema outcome `gave-up` (fix 21 to b2fix).
+b5report (sonnet): reporter MVP eafb68f → 156da15 with `--grain
+set|subject` (default set: per-trial sum of per-subject ns/call over the
+set), 16/16 tests, fixtures restamped; holding for v1.1. b2fix: fixes
+1-11 landed (23 rules, 36 controls, check_rules.py — five rules had had
+no control through a merge and a panel), fixes 13-21 in progress.
+Merge order: b2fix → b3harness (adapt records to v1.1) → b5report
+(restamp) → cells on the quiet window → report.
+
+## 2026-08-25 (EDT, ~00:5x), first session (part 9) — the whole-subject idiom measured; two pcrec findings filed; v1.1 at fix 21; window ~02:50
+
+pcrecdev1 answered the whole-subject question from pcrec's docs, not
+memory: PCRE2_ENDANCHORED is a RATIFIED, UNBUILT generation axis (D38,
+[OS-4]); the bench is now its first named customer; the intended idiom
+is `(?:P)\z` under the anchored entry (never `$` — it matches before a
+final newline at options=0), a DIFFERENT artifact that must never share
+a row with the plain one. Adopted: schema v1.1 fix 22 = `form` (plain |
+whole-subject) on compile and match rows; pcre2 omits it (runtime flags
+on the plain compile); pcrec compiles both forms and times both.
+b3harness MEASURED it on 8da6120: orig's `\z` form keeps DFA (+12.4%
+emitted C), factored stays VM; the `a|ab`/`ab` control proves the plain
+anchored `==n` stand-in answers wrongly vs the oracle (the email corpus
+never hits it). TWO pcrec FINDINGS from that measurement, sent to
+pcrecdev1 as candidates: (1) the DFA prefilter has NO structured stamp
+(RX_VM_PREFILTER is VM-only; DFA artifacts define only RX_ALTCLS_*), so
+the email specimen's headline mechanism cannot be bucketed on DFA
+records — request a DFA-side stamp; (2) the `\z` form's skip loop
+cannot skip the final byte or early-exit (the end-of-subject view
+state must be evaluated) — a slightly higher match-regime scan cost,
+documented so it is not misread. b3harness also: store writes now
+O_EXCL-claimed + staged + validated + os.replace (its own 8-writer race
+control caught a shared staging dir: 6/8 → 8/8); occupancy sampled at
+both ends, verdict = the worse; all v1.1 fields already MEASURED behind
+a projection switch with a three-leg control; pin.sh's build path
+exercised (cold 3.47 s, reuse 0.01 s, both pin binaries emit
+byte-identical artifacts). b2fix: my first three messages never
+reached it (lane inbox delivery unreliable tonight — ask for ACKs);
+the consolidated resend landed; at fix 21 of 22. pcrecdev1: window
+slips to ~02:50 (srG's rows at 0.8/min). Chain unchanged.

@@ -48,13 +48,30 @@ tags: feature tier, hazard class, size class, convention), `[subjects]`
 `[testees.<id>]` optional per-testee: `variant` (file), `variant_kind`
 (`syntax-only` / `restructured`), `objective_preserved` (prose,
 required with a variant), `capture_map`, `options` (engine-native
-runtime options), `unsupported = "reason"`. Nothing else; a new field
-is a design change.
+runtime options), `unsupported = "reason"`. `[subjects]` also carries
+`throughput_generator`, `throughput_manifest` and
+`short_search_max_bytes` (declared by [B3], 2026-08-25 — the layout
+below mandates the second subject tree). Nothing else; a new field is
+a design change.
 
 Regime → subject mapping: `throughput` uses `throughput/` subjects with
 SEARCH semantics; `search_short` uses `subjects/` entries ≤ 256 B with
 SEARCH semantics; `match` uses `subjects/` with MATCH (anchored, whole-
 subject) semantics. Expectations are per (pattern, subject, regime).
+The record spells the regimes `large-subject-throughput` /
+`short-subject-search` / `match-compliance` (record_schema.md); the
+mapping lives in one place, `pcrecbench/subbench.py`.
+
+WHOLE-SUBJECT MATCH PER ENGINE (ruled 2026-08-25 with the pcrec
+manager): libpcre2 = `PCRE2_ANCHORED|PCRE2_ENDANCHORED` on the plain
+compile; pcrec has NO end-anchored mode (a ratified, unbuilt generation
+axis, pcrec [OS-4]; this bench is its first customer), so the pcrec
+adapter compiles a SECOND artifact from `(?:<pattern>)\z` (`\z`, never
+`$` — `$` also matches before a final newline at options=0; the `(?:)`
+wrap binds a top-level alternation) and uses the anchored entry on it.
+Rows carry `form` = `plain` | `whole-subject` (schema v1.1); the two
+artifacts never share a row, and the adapter measures whether the `\z`
+form keeps the plain form's engine selection.
 
 The email sub-bench (`bench/email/`) is the specimen from pcrec
 docs/design/subroutines_measurements/email_specimen/ (read-only source;
@@ -146,12 +163,17 @@ artifact's match entry; captures per config.
 (1) load the sub-bench; (2) `quiet.check()` — load1 sampled, mpstat
 per-core, refuse (exit 3, message) unless quiet or `--force-unquiet`
 (then status `inconclusive-load`); (3) prepare + compile + measure;
-(4) load sampled after; (5) build the record (setup + rows), VALIDATE it
+(4) load AND per-core occupancy re-sampled after (raw text kept;
+`measured` requires both occupancy verdicts `pass` — `unavailable` or
+`fail` on either sample ⇒ `inconclusive-load`, schema v1.1 X13);
+(5) build the record (setup + rows), VALIDATE it
 with schema/validate.py (a record that fails validation is never
 written — the failure is a harness bug); (6) write
 `store/records/<subbench>@<version>/<testee_id>/<record_id>.jsonl` where
 the file name IS the record_id per record_schema.md §2-§3 (validate.py
-`--check-filename` enforces it);
+`--check-filename` enforces it); the file is claimed ATOMICALLY
+(`open(path, 'x')`; on EEXIST apply the schema's `-<n>` disambiguator
+and retry) so two invocations racing on one cell never clobber;
 (7) `python3 -m pcrecbench index` regenerates `store/index.tsv` (one
 line per record: path, subbench, version, testee, machine, timestamp,
 status, rows) — committed with the records.

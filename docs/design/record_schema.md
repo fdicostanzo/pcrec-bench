@@ -58,9 +58,16 @@ the validator rejects a second one, which is what a concatenation of
 two records looks like and is the realistic way two schema versions
 end up in one file (§4).
 
-Row ORDER is not significant and the validator does not require one.
-Writing compile rows before match rows is the natural harness order and
-what the examples do.
+Row ORDER IN THE FILE is free; `seq` carries the order. Every result
+row carries a `seq` — dense and unique 1..N over ALL result rows of the
+record, in EMISSION order (rule X18). File order and emission order are
+therefore separable: a reader may sort the rows however it likes, and a
+tool that rewrites a file cannot silently lose which measurement
+happened first. That matters for more than tidiness: a lazy JIT's
+compile cost is defined as its FIRST match minus steady state (§3 of the
+requirements), and "first" has to mean something the file cannot
+scramble. Writing compile rows before match rows is the natural harness
+order and what the examples do; nothing depends on it any more.
 
 **File name = `record_id` + `.jsonl`, verbatim.** The record id is
 built from the identity tuple (§3) with `__` between components, and
@@ -106,10 +113,46 @@ contains its own hash; canonicalising line 1 only (rows are hashed as
 written) keeps the rule cheap for a file with thousands of rows while
 still pinning every byte that carries a number.
 
-The hash is a TAMPER/TRUNCATION check, not a de-duplication key: two
-records of the same cell differ in their timestamps and therefore in
-their ids regardless of hash. `schema/examples/bad/tampered-hash.jsonl`
-is the positive control.
+**What the hash proves, and what it does not.** It proves POST-WRITE
+BYTE INTEGRITY: that the file has not been edited, truncated or
+reordered since it was written. It proves nothing whatever about
+whether the fields were TRUE when they were written. A harness that
+records a `cpu_model` it never read, a `load1` it invented or a
+`compile_outcome` that flatters its testee produces a record whose hash
+verifies perfectly. That is not a defect in the hash — no digest can
+attest to a claim's truth — but it is the reason the X-rules exist:
+each of them relates a self-declared field to another self-declared
+field, so that a lie has to be told CONSISTENTLY in several places
+before it validates. The hash guards the file; the rules guard the
+record's internal agreement; neither guards honesty, and §11 is where
+that is admitted rather than papered over.
+
+It is also not a de-duplication key: two records of the same cell differ
+in their timestamps and therefore in their ids regardless of hash.
+`schema/examples/bad/x6-tampered-hash.jsonl` is the positive control.
+
+**Row lines are hashed AS WRITTEN, which makes the format fragile in
+exactly one direction.** Line 1 is canonicalised before hashing; every
+result row is hashed byte for byte. So anything that rewrites bytes on
+the way into or out of version control — `core.autocrlf`, a CRLF
+checkout, an editor that normalizes line endings on save, a formatter
+run over a `.jsonl` — changes the hash of a file nobody edited, and it
+presents as X6: "edited, truncated or restamped?". The repository's
+root `.gitattributes` marks `*.jsonl` as `-text` to disable EOL
+conversion for exactly this reason. A reader who sees X6 fire across
+MANY records at once should suspect the transport, not the harness; a
+single record is the other way round.
+
+**The `-<n>` disambiguator's never-clobber rule is the WRITER's
+obligation, not the schema's.** §3 defines what the suffix means; it
+cannot make the assignment safe. Two harness processes that both see
+`…T031800Z.jsonl` missing will both write it, and the loser's
+measurement is gone — which is the precise failure `compare.sh`'s rule
+exists to prevent. The writer must therefore create the file with
+`O_EXCL` (python: `open(path, "x")`) and, on `FileExistsError`, retry at
+the next `-<n>`. `validate.py` sees one file at a time and can never
+detect a clobber that already happened, so this is stated here as a
+contract on the store, not as a rule with a control.
 
 ## 4. Schema version, mixing, migration
 
@@ -136,9 +179,48 @@ migration exists. Concretely, and enforced by `validate.py`:
   an error (`--allow-mixed-versions` to override, for the migration
   author). Differing MINORs are accepted — that is what "additive"
   buys.
-- A MIGRATION is a documented, reviewed entry in this note (there are
-  none; the schema is at 1.0) naming the two versions and the rewrite.
-  Absent one, a major-version boundary is a hard stop, not a warning.
+- A MIGRATION is a documented, reviewed entry in this note naming the
+  two versions and the rewrite. Absent one, a major-version boundary is
+  a hard stop, not a warning.
+
+### 4.1 Version history
+
+| version | date | what |
+|---|---|---|
+| 1.0 | 2026-08-25 | draft 1, merged |
+| 1.1 | 2026-08-25 | the post-merge panel's twelve findings (§11) |
+
+**1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
+the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
+(`seq`, `run.clock_source`, `run.driver_build_flags`,
+`run.driver_compiler`, `subjects[].sha256`, the new `load`/`occupancy`
+sample shapes, `calibration` when `iterations` > 1), narrows one
+(`testee.engine_commit` from 7-40 hex to 40), renames one enum value
+(the lazy-JIT `derivation` const) and REMOVES one field
+(`quiet_attestation`). Every one of those is a major change by §4's own
+definition, and the definition is not being softened.
+
+The exception is that MINOR exists to protect a POPULATION — readers on
+an older minor that must keep accepting files — and on 2026-08-25 that
+population is empty. No record has been written to any store: 1.0 was
+merged the same day and the harness lane is writing its first records
+against 1.1. A major bump would announce a migration for zero records
+and would spend the 2.0 boundary, which is worth keeping for the first
+change that breaks a record someone has actually measured.
+
+The exception is one-time and expires the moment the first record is
+stored. After that, §4's table is the whole rule and a change of this
+shape is 2.0 with a migration entry beside it.
+
+One consequence is load-bearing: a 1.0-stamped file is NOT readable as
+1.1 (it will lack required fields), even though the minor-version rule
+says a reader must accept it. That contradiction is real, it is a
+property of this exception rather than of the schema, and it is
+harmless only because no such file exists. `validate.py` still accepts
+an older MINOR — `schema/examples/bad/x10-cost-class-mismatch.jsonl` is
+stamped `1.0` while carrying 1.1's fields, deliberately, so that branch
+has a live example and nobody "fixes" the minor comparison into
+strictness.
 
 ## 5. The fixed enums (OD-B4 (a))
 
@@ -146,6 +228,13 @@ migration exists. Concretely, and enforced by `validate.py`:
 separated by `-`. This is the ONE transformation applied to the
 requirements' spellings, so that a filter expression never has to guess
 casing. The mapping is 1:1 and total:
+
+There is exactly one exception, and it is deliberate:
+`pinning.mode = chrt+taskset`. The `+` is doing work a `-` cannot — the
+token names a COMPOSITION of two tools (a real-time scheduling class AND
+a CPU mask), where `chrt-taskset` would read as the name of one tool.
+An exception admitted once, in writing, is cheaper than a rule everyone
+quietly stops believing.
 
 | requirements §4.3/§4.4/§3/§6 spelling | token |
 |---|---|
@@ -168,12 +257,14 @@ The enums, in full:
 | `regime` | `large-subject-throughput` `short-subject-search` `match-compliance` | §3 |
 | `status` | `measured` `harness-failure` `inconclusive-load` | §6 |
 | `compile_outcome` | `compiled` `did-not-compile` `crashed` `timed-out` `unsupported-by-declaration` | §4.4 |
-| `match_outcome` | `matched-as-expected` `did-not-match-as-expected` `wrong-span-or-captures` `truncated-subject` + `crashed` `timed-out` | §4.4 + ADDITION |
+| `match_outcome` | `matched-as-expected` `did-not-match-as-expected` `wrong-span-or-captures` `truncated-subject` + `crashed` `timed-out` `gave-up` | §4.4 + ADDITIONS |
 | `truncation_check` | `verified` `unverified-for-truncation` `not-applicable` | §4.4 + ADDITION |
 | `variant.kind` | `syntax-only` `restructured` | §4.5 (OD-B5: informational) |
 | `occupancy.verdict` | `pass` `fail` `unavailable` | §9(b) |
 | `load.verdict` | `quiet` `loaded` | §9(a), naming the existing gate |
-| `pinning.mode` | `taskset` `none` `unavailable` | §9(d) |
+| `pinning.mode` | `taskset` `chrt+taskset` `none` `unavailable` | §9(d) |
+| `form` | `plain` `whole-subject` | ADDITION (§5) |
+| `clock_source` | `clock_monotonic` `clock_monotonic_raw` `other` | ADDITION (§9(e)) |
 | `hazard_class` | `none` `exponential-backtracking` `ambiguous-decomposition` `exact-minimum-boundary` `large-count` `wide-alternation` | §5 list + APPROACH §3 |
 | `size_class` | `tiny` `small` `medium` `large` `huge` | APPROACH §3 |
 | `role` (subject) | `single` `set` | §6 ("subject-or-subject-set") |
@@ -192,20 +283,72 @@ The enums, in full:
    lie (`did-not-match-as-expected` is a wrong answer, not a hang) or
    drop the row (silently deleting the most interesting datum in the
    bench). The two tokens are re-used verbatim from the sibling set
-   rather than invented. **This is the one place the schema exceeds
-   requirements §4.4 and it is flagged for the panel (§11.1).**
-2. **`truncation_check` gains `not-applicable`.** §4.4 gives
+   rather than invented. **ACCEPTED at the [B2] merge (2026-08-25): requirements.md §4.4 is amended to carry `crashed`/`timed-out` per subject; see §11.1 (closed).**
+2. **`match_outcome` gains `gave-up`.** ADOPTED at v1.1 (2026-08-25)
+   from the harness lane's first real records. The engine did not
+   crash, did not time out and did not answer wrongly: it REFUSED the
+   subject on one of its own resource limits and said so — pcrec's
+   `PCREC_ERR_STEPS` / `_FRAMES` / `_RECURSE`, pcre2's match-limit and
+   depth-limit errors. Every other value in the set is a lie about that
+   event. `did-not-match-as-expected` is the tempting one and it is the
+   worst: it says the engine gave a wrong ANSWER, when the engine gave
+   no answer at all and told you which budget it ran out of — and it
+   buries the result under the pile a reporter is trained to skim. The
+   email sub-bench's five `FRAMES` give-ups on the factored pattern are
+   the HEADLINE result of that cell, not a footnote to it: a give-up is
+   an engine's own statement about its cost model, which is the thing
+   this bench exists to compare. The row carries the engine's code or
+   name in `diagnostic` (required, enforced), it is never timed
+   (X11's rule is unchanged — timing exists only for
+   `matched-as-expected`), and the reporter counts give-ups in their
+   own column, apart from wrong answers. requirements §4.4 is amended
+   at the merge to list it.
+3. **`form` exists at all: `plain` and `whole-subject`.** ADOPTED at
+   v1.1 (2026-08-25). pcrec has no end-anchored matching mode, so its
+   adapter cannot run the match-compliance regime on the same artifact
+   it uses for search and throughput — it must COMPILE A SECOND ONE,
+   `(?:pattern)\z`, and match against that. Two artifacts from one
+   pattern is not a pcrec quirk to be hidden; it is a real difference
+   in what was measured, and the two must never share a row. A
+   `whole-subject` compile row is a different compile of different
+   text, with its own cost, its own artifact size and its own trials,
+   and a `whole-subject` match row was produced by a different matcher.
+   Folding them together would report pcrec's compliance numbers
+   against a compile cost it did not pay.
+
+   ABSENT means `plain`, so every testee that needs no second artifact
+   — libpcre2 sets `PCRE2_ANCHORED | PCRE2_ENDANCHORED` as runtime
+   FLAGS on the artifact it already has — writes nothing and means it.
+   That is also why `form` is informational rather than a testee-level
+   declaration: two testees may reach the same regime by different
+   routes, both legitimately, and the report shows the form beside the
+   number rather than trying to rank across it.
+
+   **The idiom is `\z`, and `$` is NOT equivalent.** At `options=0`,
+   PCRE2's `$` matches before a final newline as well as at the end of
+   the subject, so appending `$` accepts `"user@example.com\n"` as a
+   whole-subject match. `\z` is the true end. An adapter that reaches
+   for `$` because it is the familiar spelling introduces a silent
+   one-subject-class disagreement that looks like an engine difference
+   and is not one.
+
+   Consequences on the cross-line rules, all in §9: X9's trial
+   sequences and X11's provenance rule are keyed per (pattern, FORM);
+   X14 requires a `plain` compile row for every pattern and treats
+   `whole-subject` as optional; and X27 is new — a `whole-subject`
+   match row must have a `whole-subject` compile row for its pattern.
+4. **`truncation_check` gains `not-applicable`.** §4.4 gives
    `unverified-for-truncation` for a large-subject cell whose API does
    not expose the consumed length; the third state is a cell where the
    question does not arise (a match-compliance row over a 40-byte
    subject). Folding it into `unverified-for-truncation` would inflate
    the count of a flag that exists to be alarming.
-3. **`hazard_class` / `size_class` are enumerated at all.** The
+5. **`hazard_class` / `size_class` are enumerated at all.** The
    requirements name these as sub-bench TAGS without fixing a
    vocabulary. They are filterable, and "filterable = enumerated or
    normalized", so a vocabulary had to be chosen; the values are §5's
    own hazard-family list. Growing either is a MINOR bump (§4).
-4. **`load.verdict`, `pinning.mode`, `role`, and the two
+6. **`load.verdict`, `pinning.mode`, `role`, and the two
    `engine_metadata_declaration` enums** are new names for facts §9,
    §6 and §4.2 require to be recorded but do not name.
 
@@ -217,6 +360,28 @@ is a NORMALIZED IDENTIFIER with a per-engine registry (§6.3).
 
 R1 finding A11 split these from the fixed enums: they are open sets, so
 what is pinned is the RULE that produces the string, not the list.
+
+**A rule stated only in prose is a rule nobody runs.** Three of the
+rules below are MECHANICAL and are therefore CODE: `normalize_cpu_model`,
+`normalize_kernel` and `normalize_compiler` in `validate.py`, checked
+against their `_raw` siblings by rule X23. The rest are not mechanical
+and say so explicitly:
+
+| identifier | status |
+|---|---|
+| `cpu_model` | DERIVED from `cpu_model_raw`, checked (X23) |
+| `kernel` | DERIVED from `kernel_raw`, checked (X23) |
+| `compiler` | DERIVED from `compiler_raw`, checked (X23) |
+| `machine_id` | ASSERTED — an assignment, not a derivation (§6.5); deliberately not derivable |
+| `engine_name` | ASSERTED against a registry (§6.1); the source is a project's own name, which no function on this box can see |
+| `engine_mode` | ASSERTED against a per-engine registry (§6.3) |
+| `testee_id`, `record_id` | DERIVED from other RECORD fields, checked (X5, X3) — a different thing from normalizing an external string |
+
+The `_raw` siblings are OPTIONAL, so X23 checks a field only when its
+raw is present. That is the honest shape: the rule relates two things,
+and with one of them missing there is nothing to check — but a harness
+that omits the raw string has also given up the only evidence that its
+normalized value was right.
 
 ### 6.1 `engine_name`
 
@@ -239,6 +404,16 @@ entry with its pcrec commit pinned") — `engine_commit` carries the full
 string. The binding rule: **`engine_version` must be reproducible from
 `engine_commit`**; where it is not, the version is not a version and
 the testee is not pinned.
+
+That rule is now CHECKED, which required naming what a release looks
+like. **RELEASE-TAG SHAPE** is `^\d+\.\d+(\.\d+)?$`, optionally with a
+single trailing letter revision (`8.45a`): `10.46`, `1.11.0`, `13.4.0`.
+Anything else — a `git describe` string (`0.9.0-g1a2b3c4`), an `-rc1`,
+a `+build` suffix — is NOT a release, and rule X22 then requires
+`engine_commit` to carry the full 40-hex commit. The conservative call
+is deliberate: a pre-release is exactly the kind of build that is worth
+pinning, so making `1.0-rc1` require its commit costs an adapter one
+field and buys a testee that can be rebuilt.
 
 ### 6.3 `engine_mode`
 
@@ -288,18 +463,39 @@ as the evidence that an assignment was right.
 
 ### 6.6 `cpu_model`
 
-From `/proc/cpuinfo`'s `model name`, canonicalised: drop `(R)`, `(TM)`,
-`(tm)`, drop a trailing `@ <freq>`, lowercase, collapse runs of
-non-alphanumerics to a single `-`, strip leading/trailing `-`. E.g.
-`Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz` → `intel-core-i7-9750h-cpu`.
-`cpu_model_raw` keeps the original string verbatim (reproducibility).
+From `/proc/cpuinfo`'s `model name`, canonicalised, in this order:
+
+1. delete `(R)`, `(TM)`, `(tm)`, `(r)`;
+2. delete a trailing `@ <freq>`;
+3. lowercase;
+4. collapse every run of non-alphanumerics to a single `-`;
+5. strip leading and trailing `-`.
+
+E.g. `Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz` →
+`intel-core-i7-9750h-cpu`. `cpu_model_raw` keeps the original string
+verbatim (reproducibility) and X23 checks the derivation against it.
 
 ### 6.7 `kernel` and `compiler`
 
 `kernel` = `uname -s` and `uname -r`, lowercased, joined by `-`:
-`linux-7.0.0-29-generic`. `compiler` = the first line of
-`$CC --version` reduced to `<name>-<version>`: `gcc-15.2.0`. Raw
-strings in `kernel_raw` / `compiler_raw`.
+`linux-7.0.0-29-generic`. Mechanically: strip the raw string, replace
+every whitespace run with `-`, lowercase.
+
+`compiler` = the FIRST line of `$CC --version` reduced to
+`<name>-<version>`: `gcc-15.2.0`. Mechanically: the NAME is the first
+whitespace-separated token, lowercased with non-alphanumeric runs
+collapsed to `-`; the VERSION is the LAST token of that line which is a
+bare dotted number, after stripping surrounding `(`, `)` and `,`. That
+last clause is the whole rule: `gcc (Ubuntu 15.2.0-4ubuntu4) 15.2.0`
+has two version-looking tokens and only one of them is the compiler's
+version — a distribution's build string is not a version, and it is
+excluded by being not-a-bare-dotted-number rather than by a
+distribution-specific special case. `clang version 20.1.0 (…)` →
+`clang-20.1.0`; `rustc 1.79.0 (129f3b996 2024-06-10)` → `rustc-1.79.0`.
+If the line has no bare dotted number, the rule yields the name alone —
+that is a finding about the rule, not an escape hatch, and it is
+visible because X23 will then reject a record that carries anything
+else. Raw strings in `kernel_raw` / `compiler_raw`.
 
 `compiler` is an ENVIRONMENT dimension — the C toolchain of the box,
 which is what an AOT testee such as pcrec actually pays and what
@@ -372,7 +568,21 @@ with their own declarations. Nothing about the mechanism is pcrec's.
 
 `req` column: **R** required, **o** optional, **c** conditionally
 required (the condition is in the rule column and is enforced by the
-schema or by `validate.py`). Path spelling: `a.b` a nested member,
+schema or by `validate.py`).
+
+That last clause was a CLAIM, not a fact, until v1.1: five of the `c`
+rows were enforced in one direction or not at all. A record could
+report `compiled` on an AOT compile row and carry no `cost` — the
+compile axis silently empty for that pattern; could omit
+`truncation_check` on a large-subject row, so requirements §4.4's
+"marked `unverified-for-truncation`" marked nothing; could declare
+`capture_correspondence.mode = by-index-map` with no map; could call a
+subject `single` and claim four of them, making the reporter's
+per-subject arithmetic wrong by 4×; and could carry an occupancy
+verdict of `pass` with `max_busy_pct: null`, a judgement with nothing
+behind it. All five are `if`/`then` branches in the schema now, each
+with a control. `check_fields.py` cannot catch this class — it compares
+field NAMES, and requiredness is not a name. Path spelling: `a.b` a nested member,
 `a[].b` a member of an array element. `check_fields.py` diffs these
 tables against `record.schema.json` on every `make check-schema`, so a
 row here that is not in the schema (or the reverse) is a build failure,
@@ -410,6 +620,9 @@ reverse: what is filtered must be enumerated or normalized.
 | `run.harness_version` | string | R | FILTERABLE | §6 "the harness's own version" |
 | `run.harness_commit` | 40-hex or `unknown` | R | FILTERABLE | as above; the version alone does not pin a working tree |
 | `run.command_line` | array of string | R | REPRODUCIBILITY-ONLY | §6 "command lines and flags as run" |
+| `run.clock_source` | enum | R | `clock_monotonic`/`clock_monotonic_raw`/`other`; FILTERABLE | ADDITION: §9(e)'s batched in-process loop is timed by SOME clock, and `_RAW` (no NTP slew) and `_COARSE`-class clocks do not produce the same nanoseconds. Two records timed by different clocks are not comparable, and nothing else in the record says which was used |
+| `run.driver_build_flags` | string | R | REPRODUCIBILITY-ONLY — never filtered; `not-compiled` when the driver needs no compiler | ADDITION: `testee.build_flags` records how the ENGINE was built. The timing DRIVER is the other half of every number — `-O0` around a loop measures the loop, and `harness_contract.md` §3 requires both drivers to follow one protocol precisely so their numbers compare. The protocol is nothing without the command line that realized it |
+| `run.driver_compiler` | string | R | §6.7's normalization, or `n-a` when `driver_build_flags` is `not-compiled` | ADDITION: as above, and separate from `environment.compiler` — the box's toolchain and the toolchain that built THIS driver are the same today and will not be once a testee arrives with its own |
 | `run.env` | map string→string | o | REPRODUCIBILITY-ONLY | the env overrides that changed the run (`BENCH_TRIALS`, `CC`, …) |
 
 #### `subbench` — what was measured
@@ -432,7 +645,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `testee.testee_id` | string | R | DERIVED, §6.4; FILTERABLE | §2 identity; the triple must be in the id |
 | `testee.engine_name` | slug | R | §6.1; FILTERABLE | OD-B4(b) |
 | `testee.engine_version` | version string | R | §6.2; FILTERABLE | OD-B4(b); §2 the triple |
-| `testee.engine_commit` | 7-40 hex or null | o | FILTERABLE | §4.2 "each just another roster entry with its pcrec commit pinned" |
+| `testee.engine_commit` | 40 hex or null | c | REQUIRED when `engine_version` is not a release-tag shape (X22); FILTERABLE | §4.2 "each just another roster entry with its pcrec commit pinned". Full 40 hex only: a 7-hex prefix is a convenience for humans and an ambiguity for a pin |
 | `testee.execution_model` | enum | R | FILTERABLE | §4.3 fixed enum; §3 selects the compile-cost protocol from it |
 | `testee.automaton_class` | enum | R | FILTERABLE | §4.3 fixed enum |
 | `testee.openness` | enum | R | FILTERABLE | §4.3; §8's worked query is "only open-source" |
@@ -460,27 +673,43 @@ reverse: what is filtered must be enumerated or normalized.
 | `environment.hostname` | string | o | DIAGNOSTIC | evidence behind the `machine_id` assignment |
 | `environment.cpu_model` | slug | R | §6.6; FILTERABLE | §4.3 normalized identifier; A11 |
 | `environment.cpu_model_raw` | string | o | REPRODUCIBILITY-ONLY | the un-canonicalised `/proc/cpuinfo` line |
+| `environment.cpu_mhz` | number >0 | o | `/proc/cpuinfo` `cpu MHz` at RUN START | ADDITION: `governor` and `turbo` record the frequency POLICY; this records what the clock was actually doing when the run began. A thermally-throttled box under a `performance` governor looks identical in the policy fields and is not the same machine |
 | `environment.cores` | integer ≥1 | R | FILTERABLE | the load threshold is a function of it (`compare.sh`'s `max(2.0, cores/2)`) |
 | `environment.kernel` | string | R | §6.7; FILTERABLE | §4.3 |
 | `environment.kernel_raw` | string | o | REPRODUCIBILITY-ONLY | as above |
 | `environment.compiler` | string | R | §6.7; FILTERABLE | §4.3; what an AOT testee pays |
 | `environment.compiler_raw` | string | o | REPRODUCIBILITY-ONLY | as above |
 | `environment.load` | object | R | — | §9(a) |
-| `environment.load.before` | 3 numbers | R | `/proc/loadavg` 1/5/15, BEFORE | §9(a); C7 |
-| `environment.load.after` | 3 numbers | R | same, AFTER | §9(a): "a box that was quiet at the start but got busy partway through is just as load-compromised" (C7) |
+| `environment.load.before` | object | R | the `/proc/loadavg` sample taken BEFORE the run, with its evidence | §9(a); C7 |
+| `environment.load.before.loadavg_raw` | string | R | the `/proc/loadavg` line VERBATIM | ADDITION: three bare numbers are an assertion. The line they were read from is the evidence, and X19 checks the parse against it — the check pcrec's own history says to write, because a number and its source in one hand-maintained place drift |
+| `environment.load.before.sampled_at` | RFC 3339 UTC `Z` | R | when the sample was taken | ADDITION: "before" and "after" are claims about time; without stamps a record cannot show the two samples bracket the run rather than following each other by a millisecond |
+| `environment.load.before.load1` | number ≥0 | R | parsed from `loadavg_raw` (X19); the number the verdict is judged on | §9(a) |
+| `environment.load.before.load5` | number ≥0 | R | parsed from `loadavg_raw` (X19) | §9(a) |
+| `environment.load.before.load15` | number ≥0 | R | parsed from `loadavg_raw` (X19) | §9(a) |
+| `environment.load.after` | object | R | same shape, AFTER | §9(a): "a box that was quiet at the start but got busy partway through is just as load-compromised" (C7) |
+| `environment.load.after.loadavg_raw` | string | R | as above | as above |
+| `environment.load.after.sampled_at` | RFC 3339 UTC `Z` | R | as above | as above |
+| `environment.load.after.load1` | number ≥0 | R | as above | as above |
+| `environment.load.after.load5` | number ≥0 | R | as above | as above |
+| `environment.load.after.load15` | number ≥0 | R | as above | as above |
 | `environment.load.limit` | number >0 | R | the threshold THIS run used | OD-B8 is unruled — the number is data, not a schema constant |
-| `environment.load.verdict` | enum | R | `loaded` iff either sample exceeds `limit`; FILTERABLE | §9(a); ties to `status` (§9 rule X13) |
+| `environment.load.verdict` | enum | R | `loaded` iff either sample's `load1` exceeds `limit` (X20); FILTERABLE | §9(a); ties to `status` (§9 rule X13). X20 is what stops the verdict being an opinion beside the numbers |
 | `environment.occupancy` | object | R | — | §9(b) |
-| `environment.occupancy.verdict` | enum | R | `pass`/`fail`/`unavailable` | §9(b) "machine-readable pass/fail with `unavailable` when mpstat is missing — recorded, never silently skipped" (C6) |
-| `environment.occupancy.tool` | string | o | DIAGNOSTIC | e.g. `mpstat -P ALL 1 1` |
-| `environment.occupancy.max_busy_pct` | number/null | o | the busiest non-target core | the number behind the verdict, so a threshold change is re-judgeable without re-measuring |
-| `environment.occupancy.raw` | string | o | DIAGNOSTIC | the mpstat block (pcrec `pinned_measure.sh:59-64`'s output) |
+| `environment.occupancy.tool` | string | o | DIAGNOSTIC; one tool for both samples | e.g. `mpstat -P ALL 1 1` |
+| `environment.occupancy.limit_busy_pct` | number 0-100 | R | the busy-percentage threshold THIS run used | ADDITION, the exact counterpart of `load.limit`: OD-B8 is unruled, so the number is data. It is also what makes the verdict checkable (X26) — the same argument as X20, and the reason a verdict beside a number is worth having at all |
+| `environment.occupancy.before` | object | R | the per-core check BEFORE the run | §9(b) |
+| `environment.occupancy.before.verdict` | enum | R | `pass`/`fail`/`unavailable` | §9(b) "machine-readable pass/fail with `unavailable` when mpstat is missing — recorded, never silently skipped" (C6) |
+| `environment.occupancy.before.max_busy_pct` | number/null | R | the busiest non-target core; `null` iff `unavailable` | the number behind the verdict, so a threshold change is re-judgeable without re-measuring |
+| `environment.occupancy.before.raw` | string | R | the mpstat block (pcrec `pinned_measure.sh:59-64`'s output), or why there is none | DIAGNOSTIC, and the evidence half of the verdict — required for the same reason `loadavg_raw` is |
+| `environment.occupancy.after` | object | R | the per-core check AFTER the run | ADDITION: §9(a)'s own argument for the after-load applies unchanged to occupancy. A neighbour process that starts up midway is exactly the case a before-only check cannot see, and it is the case that moves a number |
+| `environment.occupancy.after.verdict` | enum | R | as above | as above |
+| `environment.occupancy.after.max_busy_pct` | number/null | R | as above | as above |
+| `environment.occupancy.after.raw` | string | R | as above | as above |
 | `environment.pinning` | object | R | — | §9(d) "pinned cores after the occupancy check" |
-| `environment.pinning.mode` | enum | R | `taskset`/`none`/`unavailable` | pcrec degrades quietly when unprivileged (`compare.sh` `PIN_NOTE`); the record must say which |
+| `environment.pinning.mode` | enum | R | `taskset`/`chrt+taskset`/`none`/`unavailable` | pcrec degrades quietly when unprivileged (`compare.sh` `PIN_NOTE`); the record must say which |
 | `environment.pinning.cpu` | integer/null | o | the pinned core | as above |
 | `environment.governor` | string/null | o | DIAGNOSTIC | `compare.sh`'s machine-context table records it; frequency policy changes absolute numbers |
 | `environment.turbo` | string/null | o | DIAGNOSTIC | as above |
-| `environment.quiet_attestation` | boolean | R | the harness's own claim that it waited for quiet | §6 "quiet-box attestation"; distinct from `load.verdict`, which is measured — a claim and a measurement that disagree is a finding |
 
 #### `patterns[]` — the roster the rows reference
 
@@ -516,7 +745,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `subjects[].n_subjects` | integer ≥1 | R | 1 when `role` = `single` | lets the reporter compute per-subject cost without re-reading the sub-bench |
 | `subjects[].bytes_offered` | integer ≥0 | R | total bytes OFFERED to the engine in one iteration | the denominator of throughput, and the number `consumed_length` is compared against (§4.4 truncation) |
 | `subjects[].size_band` | string | o | RESERVED — becomes an enum when OD-B2 rules the cut points | §3's match regime "10 through 1000 bytes in bands (OD-B2)". Unruled, so no cut points are invented here |
-| `subjects[].sha256` | hex64 | o | REPRODUCIBILITY-ONLY | pins a generated subject against its manifest (§5) |
+| `subjects[].sha256` | hex64 | R | pins the exact bytes offered | §5's generated subjects are reproducible only if something says WHICH bytes. Optional made it the field a harness skips on the day the generator changes, which is the day it matters; §10.1's copied-facts risk applies to `bytes_offered` too and this is its only detectable half |
 
 ### FIELD TABLE: match
 
@@ -526,6 +755,8 @@ One row per (pattern × subject-or-subject-set × regime × trial)
 | field | type | req | rule / enum | why |
 |---|---|---|---|---|
 | `kind` | const `"match"` | R | — | the discriminator |
+| `form` | enum | o | `plain` (the default when ABSENT) / `whole-subject`; FILTERABLE | ADDITION, §5 ADDITIONS 3: a testee with no end-anchored mode matches the compliance regime against a SEPARATE artifact. The row says which artifact answered, and X27 requires the record to witness that artifact's compile |
+| `seq` | integer ≥1 | R | dense and unique 1..N over ALL result rows of the record, in EMISSION order (X18) | ADDITION: §2's "file order is free" needs a carrier for the order that IS significant. Without it "the first match" — which is exactly how a lazy JIT's compile cost is defined (§3) — is a property of a file's line numbers, and a store that re-sorts rows changes a measurement |
 | `pattern_id` | slug | R | must be in `setup.patterns[]` | §6 row key |
 | `subject_id` | slug | R | must be in `setup.subjects[]` | §6 row key |
 | `regime` | enum | R | must be in `setup.subbench.regimes`; FILTERABLE | §3: each regime is a first-class result kind and they are not comparable to each other |
@@ -535,6 +766,11 @@ One row per (pattern × subject-or-subject-set × regime × trial)
 | `timing.elapsed_ns` | integer ≥0 | R | wall nanoseconds for the WHOLE batched loop | §3's timing protocol: a batched IN-PROCESS loop, never a per-call external wrapper (C5: this box's `timeout` alone costs ~108.7 ms/call, pcrec `docs/testing.md:2372`) |
 | `timing.iterations` | integer ≥1 | R | the loop's N | as above; per-call cost is `elapsed_ns/iterations` and is the REPORTER's arithmetic |
 | `timing.bytes_processed` | integer ≥0 | R | `bytes_offered × iterations`, or what the engine actually scanned | the throughput numerator; recorded raw so MB/s never appears in a record |
+| `calibration` | object | c | required when `timing.iterations` > 1 | ADDITION: `iterations` is not a constant, it is CHOSEN — the harness probes the cell and picks N so one loop clears a target (`harness_contract.md` §3: ≥ 50 ms). The chosen N is in the record and the probe that chose it was not, which makes the loop length an unexplained free variable in every comparison. X21 checks the choice against its own target |
+| `calibration.target_ns` | integer ≥1 | R | the loop length the probe was aiming for | as above |
+| `calibration.probe_iterations` | integer ≥1 | R | iterations the probe ran | as above |
+| `calibration.probe_elapsed_ns` | integer ≥0 | R | wall nanoseconds the probe took | as above; `probe_elapsed_ns / probe_iterations × iterations ≥ target_ns` is X21 |
+| `calibration.calibration_note` | string | c | required when X21's inequality does NOT hold; DIAGNOSTIC | the escape hatch a real harness needs, and the reason X21 is a rule rather than a hope. A cell whose probe cannot predict its loop — a lazy JIT probed cold, a subject whose cost depends on where the previous match stopped — must SAY so; the alternative is a silent short loop that reads as a fast engine |
 | `consumed_length` | integer/null | o | `null` = the API does not expose it | §4.4 "`consumed_length` is recorded whenever the API exposes it" (A7) |
 | `truncation_check` | enum | c | required when `regime` = `large-subject-throughput` | §4.4: "a large-subject cell without it is marked unverified-for-truncation" |
 | `observed` | object | c | required when `match_outcome` is `did-not-match-as-expected` or `wrong-span-or-captures`; DIAGNOSTIC | §7: a disagreement is a finding that feeds `upstream_findings.md`, and a finding with no observed value is not actionable |
@@ -542,7 +778,7 @@ One row per (pattern × subject-or-subject-set × regime × trial)
 | `observed.span` | `[int,int]`/null | o | — | §4.4 `wrong-span-or-captures` |
 | `observed.captures` | array of `[int,int]`/null | o | `-1` for an unset slot | as above; the capture correspondence (§4.5) is what makes this comparable across a variant |
 | `engine_metadata` | map | o | every name declared with `scope` = `match` | §4.2, §7 rule 2 |
-| `diagnostic` | string/null | o | DIAGNOSTIC, UNINDEXED | §4.2: pcrec's prose `RX_ENGINE_WHY` is "kept only as an unindexed diagnostic string" |
+| `diagnostic` | string/null | c | REQUIRED and non-empty when `match_outcome` = `gave-up` — it must name the engine's own limit code; DIAGNOSTIC, UNINDEXED otherwise | §4.2: pcrec's prose `RX_ENGINE_WHY` is "kept only as an unindexed diagnostic string". The condition is §5 ADDITIONS 2: a give-up that does not say WHICH budget was exhausted is indistinguishable from a wrong answer, which is the confusion the outcome exists to end |
 
 ### FIELD TABLE: compile
 
@@ -554,6 +790,8 @@ property of compiling, and this is the compiling row.
 | field | type | req | rule / enum | why |
 |---|---|---|---|---|
 | `kind` | const `"compile"` | R | — | the discriminator |
+| `form` | enum | o | `plain` (the default when ABSENT) / `whole-subject`; FILTERABLE. A compile row is keyed (pattern, FORM, trial) | ADDITION, §5 ADDITIONS 3: the second artifact is a separate compile of different text, with its own cost, its own size and its own trials. Every pattern needs a `plain` row (X14); `whole-subject` is present only for a testee that needs it |
+| `seq` | integer ≥1 | R | one 1..N sequence shared with the match rows (X18) | ADDITION, as above. The sequence is per RECORD, not per row kind: interleaving compile and match rows is what a harness actually does, and the order between them is part of what happened |
 | `pattern_id` | slug | R | must be in `setup.patterns[]` | §6 row key |
 | `trial` | integer ≥1 | R | 1..N contiguous per pattern | C4: pcrec's single-sample GCC-TIME swung 1.87× on a quiet box (`~/pcrec/tests/bench/CLAUDE.md:78`), so compile cost is median-of-N with spread like everything else — which means N RAW trials here |
 | `compile_outcome` | enum | R | FILTERABLE | §4.4 per-(pattern, testee) set |
@@ -563,7 +801,7 @@ property of compiling, and this is the compiling row.
 | `cost.phases` | array | o | names and order must equal `setup.testee.compile_phases` | §3 AOT: "pattern → C → gcc → loadable object, all phases, each timed" |
 | `cost.phases[].name` | slug | R | — | as above |
 | `cost.phases[].elapsed_ns` | integer ≥0 | R | phases need not sum to `total_ns` (harness overhead between them) | as above |
-| `derivation` | const `trial-1-minus-steady-state` | c | present IFF `cost_class` = `lazy-jit`, and `cost` is then FORBIDDEN | §3: a lazy JIT has "no separable call: cost = trial 1 minus steady state". That is a REDUCTION over match rows, and reductions do not belong in a record — so the row names the derivation and the reporter does the arithmetic from the raw match trials (A6 + "raw trials, not reductions") |
+| `derivation` | const `first-match-row-minus-steady-state` | c | present IFF `cost_class` = `lazy-jit`, and `cost` is then FORBIDDEN. The subtrahend is the GLOBALLY-FIRST match row of this pattern in this record — the one with the lowest `seq` — and the steady state is the rest | §3: a lazy JIT has "no separable call: cost = trial 1 minus steady state". That is a REDUCTION over match rows, and reductions do not belong in a record — so the row names the derivation and the reporter does the arithmetic from the raw match trials (A6 + "raw trials, not reductions"). The token says "first match row", not "trial 1", DELIBERATELY: `trial` is numbered per (pattern, subject, regime), so a pattern measured over 85 subjects has 85 rows numbered `trial: 1` and only ONE of them paid the JIT. `seq` is what distinguishes them |
 | `artifact_bytes` | integer/null | o | recorded if free, NOT scored | §3 "Deferred, recorded if free but not scored: memory high-water, artifact/code size" |
 | `declaration_ref` | string | c | required when `compile_outcome` = `unsupported-by-declaration` | §4.4: the outcome means "the sub-bench's engine notes SAY this engine cannot express the intention" — the row must cite the note, or the outcome is an unfalsifiable excuse |
 | `diagnostic` | string/null | c | required when `compile_outcome` = `did-not-compile`; DIAGNOSTIC, UNINDEXED | §4.4 "(with the engine's diagnostic)" |
@@ -572,9 +810,24 @@ property of compiling, and this is the compiling row.
 ## 9. Cross-line rules — what `validate.py` enforces
 
 JSON Schema validates a LINE. Everything that relates two lines, or a
-line to a derivation, is code. These are the rules; each has at least
-one positive control in `schema/examples/bad/` (pcrec's check-design
-lesson: a check with no failing case proves nothing).
+line to a derivation, or a field to a normalization rule, is code.
+These are the rules; each has at least one positive control in
+`schema/examples/bad/` (pcrec's check-design lesson: a check with no
+failing case proves nothing). `check_rules.py` prints the live counts
+on every `make check-schema`, so no number is quoted here to go stale.
+
+That claim — "each has at least one positive control" — was FALSE when
+draft 1 was merged, and re-reading it is how it was found: X5, X7, X8,
+X12 and X16 had no file in `examples/bad/` at all. Five of the
+twenty-three rules that existed at that moment had never been seen to
+fire. They have controls now. The lesson
+is the project's own, one level up: a check with no failing case proves
+nothing, and a CLAIM that every check has a failing case is itself a
+check — so it needs one too. `check_fields.py` compares the note's field
+tables against the schema; `check_rules.py` now compares THIS table
+against the directory, and fails the build for a rule with no control
+or a control naming a rule that does not exist. It was sabotage-checked
+both ways before being believed.
 
 | id | rule | source |
 |---|---|---|
@@ -586,15 +839,25 @@ lesson: a check with no failing case proves nothing).
 | X6 | `content_hash.value` equals the recomputed hash | §3 |
 | X7 | Every row's `pattern_id` is in `setup.patterns[]`; every match row's `subject_id` is in `setup.subjects[]` | brief: "ids referenced by rows exist in setup" |
 | X8 | Every match row's `regime` is in `setup.subbench.regimes` | §3 |
-| X9 | Trials are exactly 1..N, no gaps, no duplicates, per (pattern, subject, regime) for match rows and per pattern for compile rows | §2 raw trials; a duplicate trial silently doubles a cell's weight in a median |
+| X9 | Trials are exactly 1..N, no gaps, no duplicates, per (pattern, subject, regime, FORM) for match rows and per (pattern, FORM) for compile rows | §2 raw trials; a duplicate trial silently doubles a cell's weight in a median |
 | X10 | `compile_row.cost_class` equals `testee.execution_model` | §3; brief |
-| X11 | A match row carries `timing` only if `match_outcome` = `matched-as-expected` AND every compile row for that pattern has `compile_outcome` = `compiled` | §4.4/§7; brief |
+| X11 | A match row carries `timing` only if `match_outcome` = `matched-as-expected` AND every compile row for that (pattern, FORM) has `compile_outcome` = `compiled` | §4.4/§7; brief |
 | X12 | `cost.phases` names and order equal `testee.compile_phases` | §3 |
-| X13 | `status` = `measured` requires `load.verdict` = `quiet` and `occupancy.verdict` ≠ `fail` | §9(a) "a record whose after-load exceeds it is `inconclusive-load`, not measured" (C7); §9(b) |
-| X14 | `status` = `measured` requires a compile row for every pattern in the roster | makes `harness-failure` mean something: a record that stopped halfway cannot claim to be measured |
+| X13 | `status` = `measured` requires `load.verdict` = `quiet` and BOTH `occupancy.before.verdict` AND `occupancy.after.verdict` = `pass`. `unavailable` disqualifies exactly as `fail` does — see the RULING below | §9(a) "a record whose after-load exceeds it is `inconclusive-load`, not measured" (C7); §9(b); the v1.1 ruling |
+| X14 | `status` = `measured` requires a `plain` compile row for every pattern in the roster (`whole-subject` is optional — only a testee that needs the second artifact has one) | makes `harness-failure` mean something: a record that stopped halfway cannot claim to be measured |
 | X15 | Every `engine_metadata` name is declared; its `scope` matches the row kind; its value matches the declared type (`enum` value in `values`, `mask` bits in `bits`, integer, string) | §4.2, §7 rule 1 |
 | X16 | `testee.warmup_trials` ≥ 1 when `execution_model` = `lazy-jit` | §3 (A6) |
 | X17 | Across files given to one invocation: no two differing MAJOR `schema_version`s | §4, A10 |
+| X18 | Every result row's `seq` is unique, and the record's seqs are exactly 1..N over ALL result rows | §2; the lazy-JIT derivation needs a well-defined "first" |
+| X19 | Each load sample's `load1`/`load5`/`load15` equal the first three numbers of its own `loadavg_raw` | §9(a); the evidence rule — a parsed number that disagrees with the line it came from is the whole point of keeping the line |
+| X20 | `load.verdict` is `loaded` iff either sample's `load1` exceeds `limit`, `quiet` otherwise | §9(a). Without it X13 is inert: a harness that stamps `quiet` beside a `load1` of 9.8 satisfies X13 and the record claims to be measured |
+| X21 | `calibration.probe_elapsed_ns / probe_iterations × timing.iterations ≥ calibration.target_ns`, or `calibration_note` says why not | §3's batched-loop protocol; `harness_contract.md` §3's auto-calibration. A loop that fell short of its target is a shorter measurement than the record claims to have taken |
+| X22 | `testee.engine_commit` is present and full 40-hex whenever `testee.engine_version` is not a release-tag shape (§6.2) | §4.2's "pinned"; §6.2's binding rule, which until now nothing enforced |
+| X23 | `cpu_model`, `kernel` and `compiler` equal what §6.6/§6.7's rules produce from `cpu_model_raw`, `kernel_raw` and `compiler_raw`, when those are present | §6; A11. The normalization rules existed as prose only, which means the FILTERABLE half of each pair was un-checked against the reproducible half |
+| X24 | `timing.bytes_processed ≤ subjects[…].bytes_offered × timing.iterations` | §8's own definition of the field. It is the NUMERATOR of every throughput number the report prints, and until v1.1 nothing related it to the subject it claims to have scanned — a record could multiply its own MB/s and validate |
+| X25 | `consumed_length ≤ bytes_offered`; and a `truncated-subject` row must carry a `consumed_length` STRICTLY less than it | §4.4. An engine cannot consume what it was not given, and an outcome that asserts a truncation must say where it stopped — otherwise the bench's most interesting per-subject finding is an unfalsifiable label |
+| X26 | Each `occupancy.<sample>.verdict` is `pass` iff `max_busy_pct ≤ limit_busy_pct`, `fail` otherwise | §9(b). X20's argument applied to the other instrument: a verdict a harness writes beside a number it also writes is not evidence until the two are required to agree |
+| X27 | A match row with `form` = `whole-subject` has a `whole-subject` compile row for its pattern | §5 ADDITIONS 3. X11's provenance argument for the untimed case too: the second artifact is a separate compile, and a match against an artifact the record never witnessed compiling has no provenance whether or not it carries a number |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each
@@ -607,12 +870,32 @@ same failure mode as a check with no failing case, one level up. Every
 sabotage is the good example with exactly ONE thing wrong and its hash
 RESTAMPED, so X6 does not fire alongside the intended rule and mask it.
 
+### RULING: `unavailable` occupancy is not `measured` (v1.1, 2026-08-25)
+
+X13 was written to let `unavailable` through — the reasoning being that
+requirements §9(b) calls `unavailable` a thing to RECORD rather than a
+thing to fail on, and that a box without `mpstat` would otherwise be
+unable to produce a `measured` record at all.
+
+That is now RULED the other way, and the second half of it is the
+intended consequence rather than a cost: **a box without `mpstat`
+cannot produce a `measured` record.** §9(b)'s "recorded, never silently
+skipped" is satisfied twice over — the record still carries
+`unavailable` and its reason, AND the status tells the truth about what
+that leaves unknown. `measured` is the schema's word for "nothing known
+to compromise this number", and an unmeasured per-core occupancy is not
+nothing known; it is not known. A record with it is exactly what
+`inconclusive-load` is for.
+
+`mpstat` is installed on this box, so the practical cost here is zero.
+requirements §9(b)'s wording is amended at the merge to match.
+
 Two corollaries worth stating because they surprised the author:
 
 - **X11 bites a pattern with no compile row at all.** "Every compile row
-  for that pattern says `compiled`" is false when there are none, so a
-  timed match row for a pattern the record never recorded compiling is
-  rejected. That is intended: a timing whose compile the record does not
+  for that (pattern, form) says `compiled`" is false when there are
+  none, so a timed match row for an artifact the record never recorded
+  compiling is rejected. That is intended: a timing whose compile the record does not
   witness is a timing with no provenance. It also means X14's control
   fires X11 as well, which is honest rather than noisy.
 - **X6 makes the examples restampable, not editable.**
@@ -626,14 +909,49 @@ valid record placed in `examples/bad/` makes it fail, and so does a
 control renamed to claim a rule it does not fire. A gate that has never
 been seen to fail is not known to be a gate.
 
+RE-VALIDATED at v1.1 (2026-08-25), because a gate is only known to be a
+gate at the version it was last seen failing at, and re-run once more
+after the last rule landed. Five sabotages, all of which fail the
+build:
+
+1. a VALID record planted in `examples/bad/` — reported `NOT REJECTED
+   AS INTENDED`;
+2. a control RENAMED to claim a rule it does not fire — reported
+   `expected rule X11 to fire, but the rules that fired were [...]`;
+3. a control DELETED, leaving its rule with none — `check_rules`
+   reports the rule uncontrolled;
+4. a control claiming a rule id the §9 table does not contain —
+   `check_rules` reports it the other way;
+5. `calibration_note` deleted from the v8 example's timed rows — X21
+   rejects it. That one matters because the note is the only place in
+   this schema where a rule can be satisfied by writing a sentence (§11
+   item 10), and a sentence never checked for being load-bearing is
+   decoration.
+
 ## 10. Denormalization, extension points, what is absent
 
 ### 10.1 The copied sub-bench facts
 
+`patterns[].pattern_id`, `subjects[].subject_id`,
 `patterns[].hazard_class`, `patterns[].size_class`,
 `subjects[].bytes_offered`, `subbench.objective` and
-`patterns[].canonical_text` are COPIES of sub-bench facts. The copy
-exists so a report can filter without loading every sub-bench version
+`patterns[].canonical_text` are COPIES of sub-bench facts.
+
+The two IDs lead the list because they are the load-bearing ones and
+were not previously named here. **Their invariant: a `pattern_id` or
+`subject_id` is STABLE ACROSS EVERY RECORD OF THE SAME SUB-BENCH
+VERSION, and equals the sidecar's `[[patterns]]` name / the subject
+manifest's id.** They are the reporter's cross-testee JOIN KEY — how
+"pcrec on `p-addrspec`" is lined up against "libpcre2 on `p-addrspec`"
+— so an id that drifts between two testees' records does not produce a
+wrong comparison, it produces a MISSING one: two half-populated rows
+where there should be one, and a coverage percentage that quietly drops
+without naming what it lost. `canonical_sha256` is the detector (two
+records claiming one `pattern_id` with different pattern hashes are
+comparing different patterns) but it is a store-level check, not one
+`validate.py` can make from a single file — see below.
+
+The copy exists so a report can filter without loading every sub-bench version
 it touches (and so a record read alone is intelligible). The risk is
 the obvious one: a copy can disagree with its source. The mitigation is
 `subbench.content_hash` — the copy is pinned to an exact snapshot, so a
@@ -667,12 +985,32 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
   says "the measured quantity with its unit"; a unit carried as DATA
   means two rows in one cell can differ in unit, which is precisely
   what a reducer cannot handle safely.
+- **Hugepage / THP state.** Considered at the v1.1 panel (2026-08-25)
+  and deliberately NOT added. Transparent hugepages are a real confound
+  for the large-subject regime — a 1 MB subject's TLB behaviour is not
+  the same under `always` and `never` — but no instrument in
+  `harness_contract.md` samples `/sys/kernel/mm/transparent_hugepage/*`,
+  and a field no described mechanism fills is a claim wearing a
+  schema's clothes (the same argument that removed the v8 example's
+  `tier` pair, §7). It is listed HERE so its absence is a decision on
+  the record rather than an oversight, and so the day a throughput
+  outlier resists explanation, the first question has somewhere to
+  start. Adding it later is a MINOR bump.
 - **A coverage or `n` field.** §8 requires N and pass-rate beside every
   number when coverage < 100% (B5) — the reporter computes both from
   the roster (expected rows) against the rows present. Storing a count
   that the rows themselves determine is a second source of one truth.
 
 ## 11. For the panel — what I am least sure of
+
+STATUS after the v1.1 panel and critic S1 (2026-08-25): items 1, 8 and
+14 are CLOSED (a ruling, a removal, and a gate that now enforces what
+was prose). Items 2, 3, 4, 5, 6 and 7 stand as written and are still
+the places to attack. Items 9-13, 15 and 16 are the v1.1 work's OWN
+residuals — every rule and field added at this version came with a
+statement of what it still does not catch, which is the only honest way
+to add a check to a project whose lesson is that checks fail in the
+direction of passing.
 
 1. **`match_outcome` gained `crashed` and `timed-out`** (§5,
    ADDITIONS 1). This is the only place the schema exceeds requirements
@@ -681,7 +1019,7 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
    counter-argument is that §4.4 says "closed set" and a per-subject
    timeout could instead be modelled as an ABSENT row plus a
    per-pattern compile-row outcome of `timed-out` — which loses which
-   subject hung. Ruling wanted.
+   subject hung. RULED at the [B2] merge 2026-08-25: accepted, requirements §4.4 amended — closed.
 2. **The lazy-JIT compile row carries no number at all** (§8, compile
    `derivation`). It is the only row kind whose quantity is not in the
    record, and it makes the reporter's job class-dependent. It follows
@@ -715,4 +1053,71 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
 8. **`quiet_attestation` vs `load.verdict`** — a claim beside a
    measurement. Deliberate (a disagreement is a finding), but it is
    also a field a harness could set to `true` unconditionally, which
-   would make it noise.
+   would make it noise. RULED at the v1.1 panel 2026-08-25: the field
+   is DROPPED — closed. The panel's argument is the stronger form of
+   the doubt above: the "finding" the field was supposed to produce
+   requires a harness that lies in one place and tells the truth in
+   another, and the same harness writes both. `status` is already gated
+   on the MEASURED verdicts (X13, X20), so nothing the field claimed is
+   unrecorded and nothing it claimed was checkable. It is the exact
+   shape pcrec's own check-design lesson warns about — a control whose
+   source is the thing it controls. requirements §6's "quiet-box
+   attestation" is discharged by `load` + `occupancy` + `status`.
+9. **X21 checks that the calibration met its target, not that
+   `iterations` was DERIVED from the probe.** A harness that probes
+   correctly and then picks a wildly larger N passes. The stronger rule
+   — `iterations` is within some factor of `target_ns × probe_iterations
+   / probe_elapsed_ns` — was not written because no measurement on this
+   box says what that factor should be, and a threshold invented at a
+   desk is the thing §9's OD-B8 exists to avoid. [B3] measures it.
+10. **`calibration_note` is free text and X21 accepts any non-empty
+   string.** It is the one place in the schema where a rule can be
+   satisfied by writing a sentence. The alternative — an enum of
+   reasons a calibration can miss — needs a list nobody has yet, and
+   inventing one now would be the `tier` mistake (§7) again.
+11. **The load and occupancy samples have no relation to
+   `run.timestamp` or to each other.** `sampled_at` exists, and nothing
+   checks that `before` precedes `after`, that either brackets the run,
+   or that the two are more than a millisecond apart. The check is easy
+   and was left out on purpose: the ORDER is obvious to write and the
+   DURATION threshold is another invented number. A record can still
+   claim two samples taken back-to-back after the run.
+12. **X23 checks three normalizations and cannot check the fourth
+   kind.** `engine_name` and `engine_mode` are registry assertions, and
+   a testee that spells its engine `pcre-2` instead of `libpcre2`
+   produces a valid record that lands in its own filter bucket forever.
+   The registry is in §6.1/§6.3, in prose, and only a human reads it.
+13. **X17's cross-FILE half has no control and cannot easily get one.**
+   The rule fires when one invocation is handed files of differing
+   MAJOR versions — but any file at a major this validator does not
+   implement is already rejected standalone, so no pair of files
+   isolates the cross-file behaviour. `bad/x17-future-major-version`
+   covers the standalone half only. Building a real control needs a
+   second validator version, which is a [B3]/[B5] concern.
+14. **Nothing checked that every rule in §9's table had a control** —
+   which is how five rules went uncontrolled from draft 1 to v1.1 (§9).
+   CLOSED at v1.1: `schema/check_rules.py` diffs §9's rule table against
+   `examples/bad/`'s listing on every `make check-schema`, the same way
+   `check_fields.py` diffs the FIELD tables against the schema. What
+   remains open is narrower and worth stating: the gate proves a rule
+   has a control NAMED for it, and `--expect-rule` proves that control
+   fires that rule. Neither proves the control sabotages the thing the
+   rule is ABOUT — a control could fire X12 for a reason unrelated to
+   phase names. That last step is a review, and there is no obvious
+   mechanism for it.
+15. **A `whole-subject` artifact's TEXT is asserted, not pinned.**
+   `patterns[].canonical_sha256` pins the pattern the sub-bench
+   declares; nothing pins the `(?:…)\z` the adapter built from it. Two
+   adapters could wrap the same pattern differently — one with `\z`,
+   one with `$` (§5 ADDITIONS 3 says why that is not the same) — and
+   both records would validate and be compared. The fix is a hash of
+   the wrapped text on the `whole-subject` compile row; it was not
+   written because the wrapping is the adapter's, and where that hash
+   should come from is a [B4] question.
+16. **`gave-up`'s `diagnostic` is free text**, like `calibration_note`
+   (item 10). It is required and non-empty, and nothing says it names a
+   real limit code. An engine-specific enum of limit names would be
+   filterable — a report could count FRAMES give-ups against STEPS give-
+   ups — and it needs a vocabulary per engine that only the adapters
+   can supply. The right home is `engine_metadata` with a declaration,
+   once [B4] knows the codes.
