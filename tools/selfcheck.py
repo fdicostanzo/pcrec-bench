@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """tools/selfcheck.py -- the harness half of `make check` (contract 6).
 
-Seven checks, and the ones that matter are the POSITIVE CONTROLS. pcrec's own
+Eight checks, and the ones that matter are the POSITIVE CONTROLS. pcrec's own
 check-design lesson, applied here: a check that has never been seen to fail is
 not known to be a check, so every gate below is exercised against an input it
 must reject, in the same run that exercises it against one it must accept.
@@ -25,6 +25,9 @@ must reject, in the same run that exercises it against one it must accept.
                 the next subject. Nothing in the corpus hangs, so without
                 this control the whole per-subject alarm path would ship
                 unexercised.
+  store race    N writers claiming the SAME cell at the SAME timestamp must
+                each land their own record -- the control for the
+                never-clobber rule, which any single-threaded test passes.
   run smoke     a full `run` of one cell into a SCRATCH store, validated.
 
 Everything runs under gnutimeout with LC_ALL=C. Nothing here writes into the
@@ -379,7 +382,71 @@ def check_subject_timeout():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-# -------------------------------------------------------- 7 the run smoke
+# ------------------------------------------------ 7 the store race control
+
+def check_store_race():
+    """THE CONTROL FOR THE NEVER-CLOBBER RULE, which an `exists`-then-write
+    pair would pass in every single-threaded test and fail in the field.
+
+    N writers fork and claim the SAME cell at the SAME timestamp at once.
+    Every one must land its own record: N distinct files, N valid records, no
+    writer lost. A store that answered with fewer files has silently thrown a
+    measurement away, which is the outcome the `-<n>` disambiguator exists to
+    prevent -- and which a careless implementation of that disambiguator
+    reintroduces.
+
+    This control has already earned its place: it failed the first
+    implementation (a single shared `.validating/` directory that each
+    finishing writer removed from under the others -- 6 of 8 records
+    survived) and that is what put per-write staging directories in
+    `store.py`."""
+    print("-- the store never-clobber race control --")
+    from pcrecbench import store as _store
+
+    example = os.path.join(ROOT, "schema", "examples",
+                           "email-specimen@0.1__pcrec_0.9.0-g1a2b3c4_"
+                           "vm-caps-simdna__example-box__20260825T031800Z.jsonl")
+    if not os.path.exists(example):
+        bad("store race control", "no example record to race with")
+        return
+    with open(example, "r", encoding="utf-8") as f:
+        lines = f.read().splitlines()
+    import json as _json
+    setup = _json.loads(lines[0])
+    rows = [_json.loads(l) for l in lines[1:]]
+
+    n = 8
+    dest = tempfile.mkdtemp(prefix="pcrecbench-race-")
+    try:
+        pids = []
+        for _i in range(n):
+            pid = os.fork()
+            if pid == 0:
+                try:
+                    _store.write(dest, dict(setup), rows, validate=False)
+                    os._exit(0)
+                except Exception:                          # noqa: BLE001
+                    os._exit(1)
+            pids.append(pid)
+        failures = sum(1 for p in pids if os.waitpid(p, 0)[1] != 0)
+
+        import glob as _glob
+        files = _glob.glob(os.path.join(dest, "records", "*", "*", "*.jsonl"))
+        valid = sum(1 for f in files if _store.validate_file(f)[0])
+        ids = {os.path.basename(f) for f in files}
+        if failures == 0 and len(files) == n and len(ids) == n and valid == n:
+            ok("store race control",
+               "%d concurrent writers -> %d distinct valid records" % (n, n))
+        else:
+            bad("store race control",
+                "%d writer(s) failed; %d file(s), %d distinct, %d valid "
+                "(wanted %d of each)" % (failures, len(files), len(ids),
+                                         valid, n))
+    finally:
+        shutil.rmtree(dest, ignore_errors=True)
+
+
+# -------------------------------------------------------- 8 the run smoke
 
 def check_run_smoke():
     """A full `run` of ONE cell into a SCRATCH store, validated. Not a
@@ -417,6 +484,7 @@ def main():
     check_wrong_answer_control()
     check_patterns_distinct()
     check_subject_timeout()
+    check_store_race()
     check_run_smoke()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"

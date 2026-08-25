@@ -10,11 +10,19 @@ The FILE NAME IS THE RECORD ID (record_schema.md 2), so the tree is
 self-describing: a record can be identified from its path alone, and
 `validate.py --check-filename` (rule X4) enforces the agreement.
 
-NEVER SILENTLY CLOBBER. A name that already exists gets the `-<n>`
-disambiguator record_schema.md 3 defines -- `-2`, `-3`, ... assigned only on
-collision, never pre-emptively. That is pcrec `compare.sh:1211-1217`'s rule
-carried over, and the reason is the same: losing a baseline snapshot is
-exactly how a regression goes unnoticed.
+NEVER SILENTLY CLOBBER, AND THE CHECK IS ATOMIC. A name that already exists
+gets the `-<n>` disambiguator record_schema.md 3 defines -- `-2`, `-3`, ...
+assigned only on collision, never pre-emptively. That is pcrec
+`compare.sh:1211-1217`'s rule carried over, and the reason is the same:
+losing a baseline snapshot is exactly how a regression goes unnoticed.
+
+The name is CLAIMED with `O_CREAT|O_EXCL` rather than tested with
+`os.path.exists`, because an exists-then-write pair is a race: two harness
+invocations measuring the same cell in the same second both see the name
+free, both write it, and one silently overwrites the other -- the exact
+outcome the disambiguator exists to prevent, reintroduced by the way it was
+checked. `O_EXCL` makes the claim and the test one operation, so the loser of
+the race gets EEXIST and moves on to `-2`.
 
 A RECORD THAT FAILS VALIDATION IS NEVER WRITTEN (contract 4 step 5): the
 failure is a harness bug, and a store of records the shared validator rejects
@@ -25,6 +33,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_STORE = os.path.join(REPO_ROOT, "store")
@@ -32,6 +41,11 @@ VALIDATE_PY = os.path.join(REPO_ROOT, "schema", "validate.py")
 
 INDEX_HEADER = ("path\tsubbench\tversion\ttestee_id\tmachine_id\ttimestamp"
                 "\tstatus\trows\n")
+
+# Per-write staging directories live inside the record directory (so the
+# final `os.replace` is a same-filesystem rename) and are skipped by
+# `iter_records`. One per write, never shared -- see `write()`.
+STAGING_PREFIX = ".staging-"
 
 
 class StoreError(Exception):
@@ -58,25 +72,38 @@ def serialize(setup, rows):
     return "\n".join(parts) + "\n", setup
 
 
-def allocate_path(store_root, setup):
-    """The path for this record, with the `-<n>` disambiguator applied.
-    Returns (path, record_id) -- `record_id` may differ from the caller's if a
-    collision forced a suffix, and the caller MUST re-stamp it."""
+MAX_DISAMBIGUATOR = 1000
+
+
+def claim_path(store_root, setup):
+    """ATOMICALLY claim the path for this record. Returns (path, record_id, fd).
+
+    The claim is `O_CREAT|O_EXCL` on the final name; on EEXIST the `-<n>`
+    disambiguator is applied and the claim retried. The returned fd owns a
+    zero-length file at `path` -- the caller writes the content elsewhere,
+    validates it, and `os.replace`s it over this name, which is atomic and
+    keeps the exclusivity already won.
+
+    `record_id` may differ from the caller's if a collision forced a suffix,
+    and the caller MUST re-stamp it before serialising: the id is inside line
+    1 and therefore inside the content hash."""
     sb = setup["subbench"]
     base = setup["record_id"]
     d = record_dir(store_root, sb["id"], sb["version"],
                    setup["testee"]["testee_id"])
     os.makedirs(d, exist_ok=True)
-    path = os.path.join(d, base + ".jsonl")
-    if not os.path.exists(path):
-        return path, base
-    n = 2
-    while True:
-        rid = "%s-%d" % (base, n)
+    for n in range(1, MAX_DISAMBIGUATOR + 1):
+        rid = base if n == 1 else "%s-%d" % (base, n)
         path = os.path.join(d, rid + ".jsonl")
-        if not os.path.exists(path):
-            return path, rid
-        n += 1
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+        except FileExistsError:
+            continue
+        return path, rid, fd
+    raise StoreError(
+        "%s already holds %d records of this cell at this timestamp -- "
+        "refusing to keep counting. Something is re-running one cell in a "
+        "loop." % (d, MAX_DISAMBIGUATOR))
 
 
 def validate_file(path, python=None):
@@ -92,41 +119,91 @@ def validate_file(path, python=None):
 def write(store_root, setup, rows, validate=True):
     """Write one record. -> (path, record_id).
 
-    The record is written to a TEMPORARY name, validated there, and only then
-    moved into place, so a rejected record never appears in the store even
-    for an instant."""
-    path, rid = allocate_path(store_root, setup)
-    if rid != setup["record_id"]:
-        setup = dict(setup, record_id=rid)
-    text, setup = serialize(setup, rows)
+    Three steps, in this order, and the order is the point:
 
-    tmp = path + ".tmp"
-    with open(tmp, "w", encoding="utf-8", newline="\n") as f:
-        f.write(text)
-    if validate:
-        # validate.py's X4 compares the BASENAME, so the temp file has to
-        # carry the final name while it is checked.
-        checkdir = os.path.join(os.path.dirname(path), ".validating")
-        os.makedirs(checkdir, exist_ok=True)
+      1. CLAIM the final name with O_EXCL (`claim_path`). From here on no
+         other invocation can take it, whatever it does next.
+      2. Write the content to `<a PRIVATE staging dir>/<the final basename>`
+         and validate it THERE. The basename has to be the final one because
+         rule X4 compares it against `record_id`; the staging dirs are
+         excluded from `iter_records`, so a half-written or rejected file is
+         never visible as a record.
+
+         The staging directory is created by `mkdtemp` and is PRIVATE to one
+         write. A single shared `.validating/` was tried first and is wrong:
+         concurrent writers each finish and `rmdir` it, pulling the directory
+         out from under a writer that has claimed its name but not yet
+         written. MEASURED with 8 forked writers racing on one cell -- 6
+         records landed, 2 died, and the un-suffixed name was lost.
+      3. `os.replace` it over the claimed name -- atomic, and the claim is
+         still ours.
+
+    A record that fails validation is never written (harness contract 4 step
+    5): the claimed name is released and the rejected bytes are kept under a
+    `.rejected` suffix for the person who has to fix the harness bug."""
+    path, rid, fd = claim_path(store_root, setup)
+    claimed = True
+    checkdir = None
+    try:
+        if rid != setup["record_id"]:
+            setup = dict(setup, record_id=rid)
+        text, setup = serialize(setup, rows)
+
+        checkdir = tempfile.mkdtemp(dir=os.path.dirname(path),
+                                    prefix=STAGING_PREFIX)
         checkpath = os.path.join(checkdir, os.path.basename(path))
-        os.replace(tmp, checkpath)
-        ok, out = validate_file(checkpath)
-        if not ok:
-            keep = checkpath + ".rejected"
-            os.replace(checkpath, keep)
-            raise StoreError(
-                "the record FAILED validation and was NOT written to the "
-                "store -- this is a harness bug, not a measurement result "
-                "(harness contract 4 step 5).\nThe rejected record is at %s\n"
-                "%s" % (keep, out))
+        with open(checkpath, "w", encoding="utf-8", newline="\n") as f:
+            f.write(text)
+            f.flush()
+            os.fsync(f.fileno())
+
+        if validate:
+            ok, out = validate_file(checkpath)
+            if not ok:
+                keep = checkpath + ".rejected"
+                os.replace(checkpath, keep)
+                raise StoreError(
+                    "the record FAILED validation and was NOT written to the "
+                    "store -- this is a harness bug, not a measurement result "
+                    "(harness contract 4 step 5).\nThe rejected record is at "
+                    "%s\n%s" % (keep, out))
+
         os.replace(checkpath, path)
-        try:
-            os.rmdir(checkdir)
-        except OSError:
-            pass
-    else:
-        os.replace(tmp, path)
-    return path, rid
+        claimed = False          # the claim is now the record
+        _fsync_dir(os.path.dirname(path))
+        return path, rid
+    finally:
+        os.close(fd)
+        if checkdir:
+            try:
+                os.rmdir(checkdir)      # ours alone; never another writer's
+            except OSError:
+                pass
+        if claimed:
+            # Release the zero-length claim: leaving it would put a file in
+            # the store that `index` cannot parse. This is the one moment
+            # another invocation could take the name -- acceptable, because
+            # reaching here at all means the harness is already broken.
+            try:
+                os.unlink(path)
+            except OSError:
+                pass
+
+
+def _fsync_dir(path):
+    """Durability of the RENAME, not just of the bytes: on POSIX the directory
+    entry needs its own fsync or a crash can lose a file whose contents were
+    safely on disk."""
+    try:
+        fd = os.open(path, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+    except OSError:
+        return
+    try:
+        os.fsync(fd)
+    except OSError:
+        pass
+    finally:
+        os.close(fd)
 
 
 # ------------------------------------------------------------------- index
@@ -136,7 +213,8 @@ def iter_records(store_root):
     if not os.path.isdir(root):
         return
     for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = sorted(d for d in dirnames if d != ".validating")
+        dirnames[:] = sorted(d for d in dirnames
+                             if not d.startswith(STAGING_PREFIX))
         for fn in sorted(filenames):
             if fn.endswith(".jsonl"):
                 yield os.path.join(dirpath, fn)
