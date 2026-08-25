@@ -59,6 +59,15 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   OD-B15 — two records of the SAME testee_id in one query (pcre2 at two
   dates): the reporter neither states nor lets the reader choose whether
   it pooled trials or took the newest — rule it, state it in the header.
+  From pcrecdev1's repin feedback (docs/dev/feedback_pcrecdev1_2026-08-25-
+  repin.md §2, all columns): form semantics (same program / separate
+  artifact) as a column — the regime-artifact bucket IS that fact; ratio
+  vs best AND vs the named baseline; per-subject mean + timer floor on
+  short-search rows; give-up code + smallest firing subject per cell;
+  a cross-pin Δ verdict column (collapsed / unchanged within noise /
+  regressed) + a worst-subject line per cell; mechanism stamps incl.
+  the ENTRY used and buffer sizes; compile phases split; a "stddev >
+  median = timer jitter" flag on compile rows.
 - [B10] STATE:not-started — THE EDIT-TEST LOOP (inbox I-4, Frank's
   ruling; AFTER [B8]; in this order): (a) a SCRATCH TIER for records —
   same schema, one setup field (`tier: scratch` + what the binary was),

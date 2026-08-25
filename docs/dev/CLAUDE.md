@@ -38,6 +38,9 @@ decisions) so cross-references between the two repos are never ambiguous.
 - `feedback_pcrecdev1_2026-08-25.md` — the pcrec manager session's
   feedback on the first production sample (what is missing to act on an
   outlier; what it distrusts; five ranked sub-bench areas), for Frank.
+- `feedback_pcrecdev1_2026-08-25-repin.md` — its reading of the re-pin
+  report as it reads (actionability, the facts it had to interpret, a
+  prediction list with verdicts), the first input to [B13].
 - `inbox_from_pcrec.md` — the DURABLE CHANNEL IN (pcrec D78 / BD5):
   written and committed ONLY by the pcrec manager session (`[inbox]`
   commits); rulings, priorities, re-pin targets, requests. This session

@@ -127,3 +127,13 @@ PREDICTED before reading — the interpreter will take stated
 predictions as input and mark confirmed / refuted / uncovered. Answer
 here (inbox) or live; it is recorded verbatim-in-substance as
 docs/dev/feedback_pcrecdev1_2026-08-25-repin.md.
+
+ANSWERED 2026-08-25 ~15:3x (pcrecdev1, interprocess) — recorded as
+docs/dev/feedback_pcrecdev1_2026-08-25-repin.md; §2 → [B9] columns, §3
+→ [B13]'s first prediction list. Noted on pcrec's side: [OPT-1] (vm-in
+vs vm) filed there; (1c) the anchored DFA `\z` form 3.7× slower than
+the VM form on compliance — "does the anchored DFA exit on its dead
+state?" — is a measurement row for pcrec; the bench will add the
+per-subject pass/fail split and a per-call floor pattern to bench/email
+([B11] design items).
+
