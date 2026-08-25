@@ -397,6 +397,18 @@
             "bytes_processed": { "$ref": "#/$defs/nonneg_int" }
           }
         },
+        "calibration": {
+          "description": "The PROBE that chose `timing.iterations` (harness_contract.md 3: iters is auto-calibrated so one loop clears a target). Rule X21 requires the choice to have met the target, or `calibration_note` to say why it could not.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["target_ns", "probe_iterations", "probe_elapsed_ns"],
+          "properties": {
+            "target_ns": { "type": "integer", "minimum": 1 },
+            "probe_iterations": { "type": "integer", "minimum": 1 },
+            "probe_elapsed_ns": { "$ref": "#/$defs/nonneg_int" },
+            "calibration_note": { "$ref": "#/$defs/free_text" }
+          }
+        },
         "consumed_length": { "type": ["integer", "null"], "minimum": 0 },
         "truncation_check": { "$ref": "#/$defs/truncation_check" },
         "observed": {
@@ -429,6 +441,19 @@
             "required": ["match_outcome"]
           },
           "then": { "required": ["observed"] }
+        },
+        {
+          "$comment": "A batched loop of more than one iteration is a CHOSEN iteration count, and the probe that chose it is part of the measurement.",
+          "if": {
+            "properties": {
+              "timing": {
+                "properties": { "iterations": { "minimum": 2 } },
+                "required": ["iterations"]
+              }
+            },
+            "required": ["timing"]
+          },
+          "then": { "required": ["calibration"] }
         },
         {
           "$comment": "requirements.md 7: timing exists only for expectation-agreeing cells. The compiled-ness half is a cross-line rule in validate.py.",

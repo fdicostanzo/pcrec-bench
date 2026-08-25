@@ -557,6 +557,11 @@ One row per (pattern × subject-or-subject-set × regime × trial)
 | `timing.elapsed_ns` | integer ≥0 | R | wall nanoseconds for the WHOLE batched loop | §3's timing protocol: a batched IN-PROCESS loop, never a per-call external wrapper (C5: this box's `timeout` alone costs ~108.7 ms/call, pcrec `docs/testing.md:2372`) |
 | `timing.iterations` | integer ≥1 | R | the loop's N | as above; per-call cost is `elapsed_ns/iterations` and is the REPORTER's arithmetic |
 | `timing.bytes_processed` | integer ≥0 | R | `bytes_offered × iterations`, or what the engine actually scanned | the throughput numerator; recorded raw so MB/s never appears in a record |
+| `calibration` | object | c | required when `timing.iterations` > 1 | ADDITION: `iterations` is not a constant, it is CHOSEN — the harness probes the cell and picks N so one loop clears a target (`harness_contract.md` §3: ≥ 50 ms). The chosen N is in the record and the probe that chose it was not, which makes the loop length an unexplained free variable in every comparison. X21 checks the choice against its own target |
+| `calibration.target_ns` | integer ≥1 | R | the loop length the probe was aiming for | as above |
+| `calibration.probe_iterations` | integer ≥1 | R | iterations the probe ran | as above |
+| `calibration.probe_elapsed_ns` | integer ≥0 | R | wall nanoseconds the probe took | as above; `probe_elapsed_ns / probe_iterations × iterations ≥ target_ns` is X21 |
+| `calibration.calibration_note` | string | c | required when X21's inequality does NOT hold; DIAGNOSTIC | the escape hatch a real harness needs, and the reason X21 is a rule rather than a hope. A cell whose probe cannot predict its loop — a lazy JIT probed cold, a subject whose cost depends on where the previous match stopped — must SAY so; the alternative is a silent short loop that reads as a fast engine |
 | `consumed_length` | integer/null | o | `null` = the API does not expose it | §4.4 "`consumed_length` is recorded whenever the API exposes it" (A7) |
 | `truncation_check` | enum | c | required when `regime` = `large-subject-throughput` | §4.4: "a large-subject cell without it is marked unverified-for-truncation" |
 | `observed` | object | c | required when `match_outcome` is `did-not-match-as-expected` or `wrong-span-or-captures`; DIAGNOSTIC | §7: a disagreement is a finding that feeds `upstream_findings.md`, and a finding with no observed value is not actionable |
@@ -621,6 +626,7 @@ lesson: a check with no failing case proves nothing).
 | X18 | Every result row's `seq` is unique, and the record's seqs are exactly 1..N over ALL result rows | §2; the lazy-JIT derivation needs a well-defined "first" |
 | X19 | Each load sample's `load1`/`load5`/`load15` equal the first three numbers of its own `loadavg_raw` | §9(a); the evidence rule — a parsed number that disagrees with the line it came from is the whole point of keeping the line |
 | X20 | `load.verdict` is `loaded` iff either sample's `load1` exceeds `limit`, `quiet` otherwise | §9(a). Without it X13 is inert: a harness that stamps `quiet` beside a `load1` of 9.8 satisfies X13 and the record claims to be measured |
+| X21 | `calibration.probe_elapsed_ns / probe_iterations × timing.iterations ≥ calibration.target_ns`, or `calibration_note` says why not | §3's batched-loop protocol; `harness_contract.md` §3's auto-calibration. A loop that fell short of its target is a shorter measurement than the record claims to have taken |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each

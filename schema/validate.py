@@ -6,7 +6,7 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X20 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X21 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
@@ -415,6 +415,30 @@ class RecordValidator:
                             f"is {want_v!r}; the verdict is not the harness's "
                             f"opinion, it is what the numbers say", "X20"))
 
+        # X21 the calibration actually met its target
+        for n, row in rows:
+            if row.get("kind") != "match":
+                continue
+            cal = row.get("calibration")
+            if not isinstance(cal, dict):
+                continue
+            iters = (row.get("timing") or {}).get("iterations")
+            probe_n = cal.get("probe_iterations")
+            probe_ns = cal.get("probe_elapsed_ns")
+            target = cal.get("target_ns")
+            if not all(isinstance(x, int) for x in
+                       (iters, probe_n, probe_ns, target)) or probe_n < 1:
+                continue
+            est = probe_ns / probe_n * iters
+            if est < target and not cal.get("calibration_note"):
+                add(Problem(path, n, "calibration",
+                            f"the probe measured {probe_ns}ns over "
+                            f"{probe_n} iterations, so {iters} iterations "
+                            f"were predicted to take {est:.0f}ns against a "
+                            f"target of {target}ns: the calibration did NOT "
+                            f"meet its target and no calibration_note says "
+                            f"why", "X21"))
+
         # X13 / X14 the record-status gates
         if setup.get("status") == "measured":
             if load.get("verdict") != "quiet":
@@ -495,7 +519,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X20 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X21 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")
