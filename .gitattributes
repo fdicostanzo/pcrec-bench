@@ -1,0 +1,22 @@
+# pcrec-bench — line endings, and why this file exists.
+#
+# A RECORD's content hash covers its row lines AS WRITTEN
+# (docs/design/record_schema.md §3): line 1 is canonicalised before
+# hashing, but every result row is hashed byte for byte, trailing
+# whitespace stripped and nothing else. That makes the hash a real
+# tamper check and it makes the file format fragile in exactly one
+# direction: anything that rewrites the bytes on the way in or out of
+# git — `core.autocrlf`, a CRLF checkout on Windows, an editor's
+# "normalize line endings on save" — changes the hash of a file nobody
+# edited, and it presents as rule X6, "edited, truncated or restamped?".
+#
+# The fix is to tell git these are binary as far as EOL conversion is
+# concerned. `-text` disables all line-ending normalization; it does NOT
+# make the files binary for diff purposes, so `git diff` on a record is
+# still readable.
+#
+# Records are never edited (requirements.md §6), so there is no case in
+# which normalizing one is the right answer.
+
+*.jsonl            -text
+store/**/*.jsonl   -text

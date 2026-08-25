@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fdicostanzo/pcrec-bench/schema/record.schema.json",
   "title": "pcrec-bench record line",
-  "x-record-schema-version": "1.0",
+  "x-record-schema-version": "1.1",
   "description": "One JSONL line of a pcrec-bench record. Line 1 is the setup layer; every later line is a result row, discriminated by `kind`. Design note: docs/design/record_schema.md. Requirements: docs/design/requirements.md (ADOPTED v3).",
   "oneOf": [
     { "$ref": "#/$defs/setup" },
@@ -27,6 +27,49 @@
       "maxLength": 64
     },
     "nonneg_int": { "type": "integer", "minimum": 0 },
+    "rfc3339_utc": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "load_sample": {
+      "description": "One /proc/loadavg sample WITH its evidence: the line verbatim, when it was taken, and the three parsed numbers. Rule X19 requires the parse to agree with the raw line -- a number with no raw line behind it is an assertion, not a measurement.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["loadavg_raw", "sampled_at", "load1", "load5", "load15"],
+      "properties": {
+        "loadavg_raw": { "type": "string", "maxLength": 256 },
+        "sampled_at": { "$ref": "#/$defs/rfc3339_utc" },
+        "load1":  { "type": "number", "minimum": 0 },
+        "load5":  { "type": "number", "minimum": 0 },
+        "load15": { "type": "number", "minimum": 0 }
+      }
+    },
+    "occupancy_sample": {
+      "description": "One per-core occupancy check WITH its evidence (requirements.md 9(b)). `max_busy_pct` is null exactly when the verdict is `unavailable`; `raw` then carries the reason mpstat produced nothing.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "max_busy_pct", "raw"],
+      "properties": {
+        "verdict": { "$ref": "#/$defs/occupancy_verdict" },
+        "max_busy_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "raw": { "$ref": "#/$defs/free_text" }
+      },
+      "allOf": [
+        {
+          "$comment": "The note calls max_busy_pct null IFF the verdict is `unavailable`. A verdict of pass or fail is a judgement ABOUT a number, so the number must be there; a null beside `pass` is a verdict with nothing behind it.",
+          "if": {
+            "properties": { "verdict": { "const": "unavailable" } },
+            "required": ["verdict"]
+          },
+          "then": { "properties": { "max_busy_pct": { "type": "null" } } },
+          "else": { "properties": { "max_busy_pct": { "type": "number" } } }
+        }
+      ]
+    },
+    "seq": {
+      "description": "The result row's position in EMISSION order, 1..N over every result row of the record. File order is free; `seq` is what carries order (docs/design/record_schema.md 2, rule X18).",
+      "type": "integer", "minimum": 1
+    },
     "free_text": { "type": "string", "maxLength": 8192 },
 
     "execution_model": {
@@ -60,8 +103,8 @@
       "enum": ["compiled", "did-not-compile", "crashed", "timed-out", "unsupported-by-declaration"]
     },
     "match_outcome": {
-      "description": "requirements.md 4.4, the per-(pattern, subject) set, verbatim, PLUS `crashed`/`timed-out` re-used verbatim from the sibling set (see the note, ADDITIONS).",
-      "enum": ["matched-as-expected", "did-not-match-as-expected", "wrong-span-or-captures", "truncated-subject", "crashed", "timed-out"]
+      "description": "requirements.md 4.4, the per-(pattern, subject) set, verbatim, PLUS `crashed`/`timed-out` re-used verbatim from the sibling set and `gave-up` (see the note, ADDITIONS).",
+      "enum": ["matched-as-expected", "did-not-match-as-expected", "wrong-span-or-captures", "truncated-subject", "crashed", "timed-out", "gave-up"]
     },
     "truncation_check": {
       "description": "requirements.md 4.4: a large-subject cell with no consumed_length is marked unverified-for-truncation.",
@@ -84,7 +127,18 @@
       "enum": ["pass", "fail", "unavailable"]
     },
     "load_verdict": { "enum": ["quiet", "loaded"] },
-    "pinning_mode": { "enum": ["taskset", "none", "unavailable"] },
+    "form": {
+      "description": "Which ARTIFACT of a pattern the row is about. `plain` is the pattern as the sub-bench spells it; `whole-subject` is the anchored artifact a testee with no end-anchored mode must build separately (pcrec: `(?:pattern)\\z`). ABSENT means `plain`. The two must never share a row: they are different compiles and different matchers.",
+      "enum": ["plain", "whole-subject"]
+    },
+    "pinning_mode": {
+      "description": "How the run was pinned. `chrt+taskset` is the one token carrying a `+`: it names a COMPOSITION of two tools (a real-time class AND a CPU mask), and `chrt-taskset` would read as one tool's name.",
+      "enum": ["taskset", "chrt+taskset", "none", "unavailable"]
+    },
+    "clock_source": {
+      "description": "Which clock the timing driver read. Absolute numbers are not comparable across clocks, so this is recorded, never assumed.",
+      "enum": ["clock_monotonic", "clock_monotonic_raw", "other"]
+    },
 
     "named_value": {
       "type": "object",
@@ -140,7 +194,17 @@
               "propertyNames": { "type": "string", "pattern": "^[0-9]+$" },
               "additionalProperties": { "type": "integer", "minimum": 0 }
             }
-          }
+          },
+          "allOf": [
+            {
+              "$comment": "requirements.md 4.5: `by an explicit index map` -- the mode NAMES a map, so the map must be there. Without this the mode is a promise the record does not keep and the reporter cannot compare captures across the variant.",
+              "if": {
+                "properties": { "mode": { "const": "by-index-map" } },
+                "required": ["mode"]
+              },
+              "then": { "required": ["index_map"] }
+            }
+          ]
         },
         "hazard_class": { "$ref": "#/$defs/hazard_class" },
         "size_class": { "$ref": "#/$defs/size_class" }
@@ -165,7 +229,7 @@
     "subject_entry": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["subject_id", "role", "n_subjects", "bytes_offered"],
+      "required": ["subject_id", "role", "n_subjects", "bytes_offered", "sha256"],
       "properties": {
         "subject_id": { "$ref": "#/$defs/slug" },
         "role": { "enum": ["single", "set"] },
@@ -173,7 +237,17 @@
         "bytes_offered": { "$ref": "#/$defs/nonneg_int" },
         "size_band": { "type": "string", "maxLength": 64 },
         "sha256": { "$ref": "#/$defs/sha256" }
-      }
+      },
+      "allOf": [
+        {
+          "$comment": "The note: n_subjects is 1 when role is `single`. A `single` entry claiming 4 subjects makes the reporter's per-subject arithmetic wrong by 4x with nothing to notice it.",
+          "if": {
+            "properties": { "role": { "const": "single" } },
+            "required": ["role"]
+          },
+          "then": { "properties": { "n_subjects": { "const": 1 } } }
+        }
+      ]
     },
 
     "setup": {
@@ -205,16 +279,17 @@
         "run": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["run_id", "timestamp", "harness_version", "harness_commit", "command_line"],
+          "required": ["run_id", "timestamp", "harness_version", "harness_commit", "command_line",
+                       "clock_source", "driver_build_flags", "driver_compiler"],
           "properties": {
             "run_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*$", "maxLength": 64 },
-            "timestamp": {
-              "type": "string",
-              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
-            },
+            "timestamp": { "$ref": "#/$defs/rfc3339_utc" },
             "harness_version": { "$ref": "#/$defs/version_string" },
             "harness_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$|^unknown$" },
             "command_line": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "clock_source": { "$ref": "#/$defs/clock_source" },
+            "driver_build_flags": { "$ref": "#/$defs/free_text" },
+            "driver_compiler": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$", "maxLength": 128 },
             "env": {
               "type": "object",
               "propertyNames": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
@@ -255,7 +330,7 @@
             },
             "engine_name": { "$ref": "#/$defs/slug" },
             "engine_version": { "$ref": "#/$defs/version_string" },
-            "engine_commit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{7,40}$" },
+            "engine_commit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{40}$" },
             "execution_model": { "$ref": "#/$defs/execution_model" },
             "automaton_class": { "$ref": "#/$defs/automaton_class" },
             "openness": { "$ref": "#/$defs/openness" },
@@ -288,12 +363,13 @@
           "type": "object",
           "additionalProperties": false,
           "required": ["machine_id", "cpu_model", "cores", "kernel", "compiler",
-                       "load", "occupancy", "pinning", "quiet_attestation"],
+                       "load", "occupancy", "pinning"],
           "properties": {
             "machine_id": { "$ref": "#/$defs/slug" },
             "hostname": { "type": "string", "maxLength": 255 },
             "cpu_model": { "$ref": "#/$defs/slug" },
             "cpu_model_raw": { "$ref": "#/$defs/free_text" },
+            "cpu_mhz": { "type": "number", "exclusiveMinimum": 0 },
             "cores": { "type": "integer", "minimum": 1 },
             "kernel": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$", "maxLength": 128 },
             "kernel_raw": { "$ref": "#/$defs/free_text" },
@@ -304,8 +380,8 @@
               "additionalProperties": false,
               "required": ["before", "after", "limit", "verdict"],
               "properties": {
-                "before": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number", "minimum": 0 } },
-                "after":  { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number", "minimum": 0 } },
+                "before": { "$ref": "#/$defs/load_sample" },
+                "after":  { "$ref": "#/$defs/load_sample" },
                 "limit":  { "type": "number", "exclusiveMinimum": 0 },
                 "verdict": { "$ref": "#/$defs/load_verdict" }
               }
@@ -313,12 +389,12 @@
             "occupancy": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["verdict"],
+              "required": ["before", "after", "limit_busy_pct"],
               "properties": {
-                "verdict": { "$ref": "#/$defs/occupancy_verdict" },
                 "tool": { "type": "string", "maxLength": 128 },
-                "max_busy_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
-                "raw": { "$ref": "#/$defs/free_text" }
+                "limit_busy_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+                "before": { "$ref": "#/$defs/occupancy_sample" },
+                "after":  { "$ref": "#/$defs/occupancy_sample" }
               }
             },
             "pinning": {
@@ -331,8 +407,7 @@
               }
             },
             "governor": { "type": ["string", "null"], "maxLength": 64 },
-            "turbo": { "type": ["string", "null"], "maxLength": 64 },
-            "quiet_attestation": { "type": "boolean" }
+            "turbo": { "type": ["string", "null"], "maxLength": 64 }
           }
         },
 
@@ -350,9 +425,11 @@
     "match_row": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "pattern_id", "subject_id", "regime", "trial", "match_outcome"],
+      "required": ["kind", "seq", "pattern_id", "subject_id", "regime", "trial", "match_outcome"],
       "properties": {
         "kind": { "const": "match" },
+        "seq": { "$ref": "#/$defs/seq" },
+        "form": { "$ref": "#/$defs/form" },
         "pattern_id": { "$ref": "#/$defs/slug" },
         "subject_id": { "$ref": "#/$defs/slug" },
         "regime": { "$ref": "#/$defs/regime" },
@@ -366,6 +443,18 @@
             "elapsed_ns": { "$ref": "#/$defs/nonneg_int" },
             "iterations": { "type": "integer", "minimum": 1 },
             "bytes_processed": { "$ref": "#/$defs/nonneg_int" }
+          }
+        },
+        "calibration": {
+          "description": "The PROBE that chose `timing.iterations` (harness_contract.md 3: iters is auto-calibrated so one loop clears a target). Rule X21 requires the choice to have met the target, or `calibration_note` to say why it could not.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["target_ns", "probe_iterations", "probe_elapsed_ns"],
+          "properties": {
+            "target_ns": { "type": "integer", "minimum": 1 },
+            "probe_iterations": { "type": "integer", "minimum": 1 },
+            "probe_elapsed_ns": { "$ref": "#/$defs/nonneg_int" },
+            "calibration_note": { "$ref": "#/$defs/free_text" }
           }
         },
         "consumed_length": { "type": ["integer", "null"], "minimum": 0 },
@@ -402,6 +491,38 @@
           "then": { "required": ["observed"] }
         },
         {
+          "$comment": "A `gave-up` row is only a finding if it names WHICH limit was hit -- pcrec's PCREC_ERR_STEPS/FRAMES/RECURSE, pcre2's match-limit or depth-limit. Without the code it is indistinguishable from a wrong answer, which is the confusion the outcome exists to end.",
+          "if": {
+            "properties": { "match_outcome": { "const": "gave-up" } },
+            "required": ["match_outcome"]
+          },
+          "then": {
+            "required": ["diagnostic"],
+            "properties": { "diagnostic": { "type": "string", "minLength": 1 } }
+          }
+        },
+        {
+          "$comment": "requirements.md 4.4: a large-subject cell without a truncation check `is marked unverified-for-truncation` -- which is only meaningful if the field must BE there to carry the mark. Absent, the cell is not marked, it is silent.",
+          "if": {
+            "properties": { "regime": { "const": "large-subject-throughput" } },
+            "required": ["regime"]
+          },
+          "then": { "required": ["truncation_check"] }
+        },
+        {
+          "$comment": "A batched loop of more than one iteration is a CHOSEN iteration count, and the probe that chose it is part of the measurement.",
+          "if": {
+            "properties": {
+              "timing": {
+                "properties": { "iterations": { "minimum": 2 } },
+                "required": ["iterations"]
+              }
+            },
+            "required": ["timing"]
+          },
+          "then": { "required": ["calibration"] }
+        },
+        {
           "$comment": "requirements.md 7: timing exists only for expectation-agreeing cells. The compiled-ness half is a cross-line rule in validate.py.",
           "if": {
             "properties": { "match_outcome": { "not": { "const": "matched-as-expected" } } },
@@ -415,9 +536,11 @@
     "compile_row": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "pattern_id", "trial", "compile_outcome", "cost_class"],
+      "required": ["kind", "seq", "pattern_id", "trial", "compile_outcome", "cost_class"],
       "properties": {
         "kind": { "const": "compile" },
+        "seq": { "$ref": "#/$defs/seq" },
+        "form": { "$ref": "#/$defs/form" },
         "pattern_id": { "$ref": "#/$defs/slug" },
         "trial": { "type": "integer", "minimum": 1 },
         "compile_outcome": { "$ref": "#/$defs/compile_outcome" },
@@ -442,7 +565,7 @@
             }
           }
         },
-        "derivation": { "const": "trial-1-minus-steady-state" },
+        "derivation": { "const": "first-match-row-minus-steady-state" },
         "artifact_bytes": { "type": ["integer", "null"], "minimum": 0 },
         "declaration_ref": { "$ref": "#/$defs/free_text" },
         "engine_metadata": { "$ref": "#/$defs/engine_metadata" },
@@ -466,7 +589,7 @@
           "then": { "required": ["declaration_ref"] }
         },
         {
-          "$comment": "requirements.md 3: a lazy JIT has no separable compile call, so a lazy-jit row carries the DERIVATION, never a number the harness invented.",
+          "$comment": "requirements.md 3: a lazy JIT has no separable compile call, so a lazy-jit row carries the DERIVATION, never a number the harness invented. The derivation is over the globally-FIRST match row of this pattern in this record (lowest `seq`), which is what `seq` exists to make well-defined.",
           "if": {
             "properties": { "cost_class": { "const": "lazy-jit" } },
             "required": ["cost_class"]
@@ -478,6 +601,16 @@
             ]
           },
           "else": { "not": { "required": ["derivation"] } }
+        },
+        {
+          "$comment": "The note 8: `cost` is present IFF compile_outcome is `compiled` AND cost_class is not `lazy-jit`. The two NOT halves were enforced below; this is the MUST half. Without it an AOT row can report `compiled` and carry no number at all -- the compile axis silently empty for that pattern, which requirements.md 3 puts `on its own axis` precisely to avoid.",
+          "if": {
+            "allOf": [
+              { "properties": { "compile_outcome": { "const": "compiled" } }, "required": ["compile_outcome"] },
+              { "properties": { "cost_class": { "not": { "const": "lazy-jit" } } }, "required": ["cost_class"] }
+            ]
+          },
+          "then": { "required": ["cost"] }
         },
         {
           "$comment": "No cost for a compile that did not happen (requirements.md 7's rule, applied to the compile axis).",

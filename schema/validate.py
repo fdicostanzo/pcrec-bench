@@ -6,7 +6,7 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X17 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X27 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
@@ -54,6 +54,13 @@ RESERVED_KINDS = {
                   "no shape is defined yet",
 }
 SIMD_SLUG = {"on": "simd", "off": "nosimd", "n-a": "simdna"}
+DEFAULT_FORM = "plain"          # an absent `form` IS `plain` (the note 5)
+
+# docs/design/record_schema.md 6.2. A RELEASE TAG is a plain dotted version,
+# optionally with a single trailing letter revision (`8.45a`). Anything else --
+# a `git describe` string, an `-rc1`, a `+build` -- is not a release, and a
+# testee that is not on a release must carry the commit that IS its identity.
+RELEASE_TAG_RE = re.compile(r"^\d+\.\d+(\.\d+)?[a-z]?\d*$")
 
 
 class Problem:
@@ -81,6 +88,68 @@ def compute_content_hash(setup_obj, row_lines):
                        ensure_ascii=False)
     parts = [canon] + [ln.rstrip() for ln in row_lines]
     return hashlib.sha256("\n".join(parts).encode("utf-8")).hexdigest()
+
+
+def parse_loadavg(raw):
+    """The first three fields of a /proc/loadavg line, as floats. Returns None
+    if the line does not have three parseable numbers up front -- which is
+    itself the finding."""
+    parts = str(raw).split()
+    if len(parts) < 3:
+        return None
+    try:
+        return [float(x) for x in parts[:3]]
+    except ValueError:
+        return None
+
+
+# ------------------------------------------- the normalization rules (6.6-6.7)
+#
+# docs/design/record_schema.md 6 splits the OPEN identifiers from the fixed
+# enums: what is pinned is the RULE that produces the string. A rule stated
+# only in prose is a rule nobody runs, so the three that CAN be made
+# mechanical are functions here and rule X23 checks each against its own
+# `_raw` sibling. `machine_id` is the one that cannot -- it is an assignment,
+# not a derivation (6.5) -- and it stays asserted.
+
+def normalize_cpu_model(raw):
+    """6.6: drop (R)/(TM), drop a trailing `@ <freq>`, lowercase, collapse
+    runs of non-alphanumerics to one `-`, strip leading/trailing `-`."""
+    s = re.sub(r"\((?:R|TM|tm|r)\)", "", str(raw))
+    s = re.sub(r"\s*@\s*\S+\s*$", "", s)
+    s = re.sub(r"[^a-z0-9]+", "-", s.lower())
+    return s.strip("-")
+
+
+def normalize_kernel(raw):
+    """6.7: `uname -s` and `uname -r`, lowercased, joined by `-`."""
+    return re.sub(r"\s+", "-", str(raw).strip()).lower()
+
+
+def normalize_compiler(raw):
+    """6.7: the FIRST line of `$CC --version` reduced to `<name>-<version>`.
+    The name is the first token, lowercased with non-alphanumerics collapsed;
+    the version is the LAST token that is a bare dotted number, which is what
+    gcc, clang and rustc all put there and what a build string
+    (`15.2.0-4ubuntu4`) deliberately is not."""
+    line = str(raw).splitlines()[0] if str(raw).strip() else ""
+    toks = line.split()
+    if not toks:
+        return ""
+    name = re.sub(r"[^a-z0-9]+", "-", toks[0].lower()).strip("-")
+    version = ""
+    for tok in toks:
+        bare = tok.strip("(),")
+        if re.fullmatch(r"\d+(\.\d+)*", bare):
+            version = bare
+    return f"{name}-{version}" if version else name
+
+
+NORMALIZED = (
+    ("cpu_model", "cpu_model_raw", normalize_cpu_model),
+    ("kernel", "kernel_raw", normalize_kernel),
+    ("compiler", "compiler_raw", normalize_compiler),
+)
 
 
 # ------------------------------------------------------- derived identifiers
@@ -261,6 +330,17 @@ class RecordValidator:
                             f"to {want_h} (edited, truncated or restamped?)",
                             "X6"))
 
+        # X22 a version that is not a release tag must carry its commit
+        ev = str(testee.get("engine_version", ""))
+        ec = testee.get("engine_commit")
+        if ev and not RELEASE_TAG_RE.match(ev):
+            if not (isinstance(ec, str) and re.fullmatch(r"[0-9a-f]{40}", ec)):
+                add(Problem(path, 1, "testee.engine_commit",
+                            f"engine_version {ev!r} is not a release-tag shape "
+                            f"(a plain dotted version), so the testee is "
+                            f"pinned to a revision and the full 40-hex commit "
+                            f"is what pins it; got {ec!r}", "X22"))
+
         # X16 lazy-jit warm-up
         if testee.get("execution_model") == "lazy-jit" and \
                 int(testee.get("warmup_trials", 0)) < 1:
@@ -271,17 +351,24 @@ class RecordValidator:
         # rosters
         pat_ids = {e.get("pattern_id") for e in setup.get("patterns", [])}
         subj_ids = {e.get("subject_id") for e in setup.get("subjects", [])}
+        subj_bytes = {e.get("subject_id"): e.get("bytes_offered")
+                      for e in setup.get("subjects", [])}
         regimes = set(setup.get("subbench", {}).get("regimes", []))
         decl = testee.get("engine_metadata_declaration", {}) or {}
         phases = list(testee.get("compile_phases", []) or [])
 
-        compiled_ok = {}          # pattern_id -> every compile row says `compiled`
-        seen_compile = {}         # pattern_id -> set of trials
-        seen_match = {}           # (pattern, subject, regime) -> set of trials
+        # Everything below is keyed by (pattern, FORM): a testee with no
+        # end-anchored mode compiles a SECOND artifact for the whole-subject
+        # regime, and the two are different compiles of different text. They
+        # must never share a row, a trial sequence or a provenance check.
+        compiled_ok = {}          # (pattern, form) -> every compile row `compiled`
+        seen_compile = {}         # (pattern, form) -> set of trials
+        seen_match = {}           # (pattern, subject, regime, form) -> trials
 
         for n, row in rows:
             kind = row["kind"]
             pid = row.get("pattern_id")
+            form = row.get("form", DEFAULT_FORM)
             # X7
             if pid not in pat_ids:
                 add(Problem(path, n, "pattern_id",
@@ -297,10 +384,11 @@ class RecordValidator:
                                 f"{row.get('regime')!r} is not among the "
                                 f"sub-bench's declared regimes "
                                 f"{sorted(regimes)}", "X8"))
-                key = (pid, sid, row.get("regime"))
+                key = (pid, sid, row.get("regime"), form)
                 seen_match.setdefault(key, {}).setdefault(row.get("trial"), []).append(n)
             else:
-                seen_compile.setdefault(pid, {}).setdefault(row.get("trial"), []).append(n)
+                seen_compile.setdefault((pid, form), {}) \
+                            .setdefault(row.get("trial"), []).append(n)
                 # X10
                 if row.get("cost_class") != testee.get("execution_model"):
                     add(Problem(path, n, "cost_class",
@@ -316,51 +404,236 @@ class RecordValidator:
                                 f"testee's declared compile_phases {phases}",
                                 "X12"))
                 ok = row.get("compile_outcome") == "compiled"
-                compiled_ok[pid] = compiled_ok.get(pid, True) and ok
+                compiled_ok[(pid, form)] = \
+                    compiled_ok.get((pid, form), True) and ok
             # X15
             for name, value in (row.get("engine_metadata") or {}).items():
                 self._check_metadata(add, path, n, name, value, decl, kind)
 
+        # X18 the per-record emission order
+        seq_lines = {}
+        for n, row in rows:
+            seq_lines.setdefault(row.get("seq"), []).append(n)
+        for sq, lines in sorted(seq_lines.items(),
+                                key=lambda kv: (kv[0] is None, kv[0])):
+            if len(lines) > 1:
+                add(Problem(path, lines[1], "seq",
+                            f"seq {sq} appears on {len(lines)} result rows "
+                            f"(also on line {lines[0]}); seq is the record's "
+                            f"emission ORDER and must be unique", "X18"))
+        nums = sorted(x for x in seq_lines if isinstance(x, int))
+        if rows and nums != list(range(1, len(rows) + 1)):
+            first = min(min(v) for v in seq_lines.values())
+            add(Problem(path, first, "seq",
+                        f"the {len(rows)} result rows carry seq {nums}; they "
+                        f"must be a dense 1..N over EVERY result row of the "
+                        f"record, in emission order", "X18"))
+
         # X9 dense trial numbering
-        for pid, trials in seen_compile.items():
-            self._check_trials(add, path, trials, f"compile rows for pattern {pid!r}")
-        for (pid, sid, reg), trials in seen_match.items():
+        for (pid, form), trials in seen_compile.items():
             self._check_trials(add, path, trials,
-                               f"match rows for ({pid!r}, {sid!r}, {reg!r})")
+                               f"{form} compile rows for pattern {pid!r}")
+        for (pid, sid, reg, form), trials in seen_match.items():
+            self._check_trials(add, path, trials,
+                               f"{form} match rows for ({pid!r}, {sid!r}, "
+                               f"{reg!r})")
+
+        # X27 a whole-subject match row needs a whole-subject compile row
+        for n, row in rows:
+            if row["kind"] != "match":
+                continue
+            if row.get("form") != "whole-subject":
+                continue
+            pid = row.get("pattern_id")
+            if (pid, "whole-subject") not in seen_compile:
+                add(Problem(path, n, "form",
+                            f"is `whole-subject` but the record has no "
+                            f"whole-subject compile row for pattern {pid!r}; "
+                            f"that artifact is a SEPARATE compile of "
+                            f"different text and the record does not witness "
+                            f"it", "X27"))
 
         # X11 no timing on an uncompiled or expectation-disagreeing cell
         for n, row in rows:
             if row["kind"] != "match" or "timing" not in row:
                 continue
             pid = row.get("pattern_id")
-            if not compiled_ok.get(pid, False):
+            form = row.get("form", DEFAULT_FORM)
+            if not compiled_ok.get((pid, form), False):
                 add(Problem(path, n, "timing",
-                            f"pattern {pid!r} did not compile cleanly in this "
-                            f"record, so this cell must not be timed", "X11"))
+                            f"the {form} artifact of pattern {pid!r} did not "
+                            f"compile cleanly in this record, so this cell "
+                            f"must not be timed", "X11"))
             if row.get("match_outcome") != "matched-as-expected":
                 add(Problem(path, n, "timing",
                             f"match_outcome is {row.get('match_outcome')!r}: a "
                             f"timing for a wrong answer is worse than no timing",
                             "X11"))
 
-        # X13 / X14 the record-status gates
         env = setup.get("environment", {})
+
+        # X23 the normalized identifiers derive from their raw siblings
+        for field, raw_field, rule in NORMALIZED:
+            raw = env.get(raw_field)
+            if not isinstance(raw, str) or not raw.strip():
+                continue          # the raw sibling is optional; no raw, no rule
+            want_n = rule(raw)
+            if env.get(field) != want_n:
+                add(Problem(path, 1, f"environment.{field}",
+                            f"is {env.get(field)!r} but {raw_field} "
+                            f"{raw!r} normalizes to {want_n!r} by "
+                            f"docs/design/record_schema.md 6", "X23"))
+
+        # X19 the load evidence: the parse must agree with the raw line
+        load = env.get("load", {}) or {}
+        for when in ("before", "after"):
+            sample = load.get(when)
+            if not isinstance(sample, dict):
+                continue
+            got = parse_loadavg(sample.get("loadavg_raw", ""))
+            if got is None:
+                add(Problem(path, 1, f"environment.load.{when}.loadavg_raw",
+                            f"{sample.get('loadavg_raw')!r} does not start "
+                            f"with three numbers; it is not a /proc/loadavg "
+                            f"line", "X19"))
+                continue
+            want = [sample.get("load1"), sample.get("load5"),
+                    sample.get("load15")]
+            for i, (name, w) in enumerate(zip(("load1", "load5", "load15"),
+                                              want)):
+                if not isinstance(w, (int, float)) or abs(w - got[i]) > 1e-9:
+                    add(Problem(path, 1, f"environment.load.{when}.{name}",
+                                f"is {w!r} but the sample's own "
+                                f"loadavg_raw parses to {got[i]!r}; the "
+                                f"number and its evidence disagree", "X19"))
+
+        # X20 the load verdict follows from the samples and the limit
+        limit = load.get("limit")
+        verdict = load.get("verdict")
+        peaks = [s.get("load1") for s in (load.get("before"), load.get("after"))
+                 if isinstance(s, dict) and isinstance(s.get("load1"),
+                                                       (int, float))]
+        if peaks and isinstance(limit, (int, float)) and verdict in \
+                ("quiet", "loaded"):
+            want_v = "loaded" if max(peaks) > limit else "quiet"
+            if verdict != want_v:
+                add(Problem(path, 1, "environment.load.verdict",
+                            f"is {verdict!r} but the samples' peak load1 is "
+                            f"{max(peaks)} against a limit of {limit}, which "
+                            f"is {want_v!r}; the verdict is not the harness's "
+                            f"opinion, it is what the numbers say", "X20"))
+
+        # X24 / X25 the two numbers an engine cannot exceed
+        for n, row in rows:
+            if row.get("kind") != "match":
+                continue
+            offered = subj_bytes.get(row.get("subject_id"))
+            if not isinstance(offered, int):
+                continue
+            timing = row.get("timing") or {}
+            got = timing.get("bytes_processed")
+            iters = timing.get("iterations")
+            if isinstance(got, int) and isinstance(iters, int) and iters >= 1:
+                ceiling = offered * iters
+                if got > ceiling:
+                    add(Problem(path, n, "timing.bytes_processed",
+                                f"is {got} but the subject offers {offered} "
+                                f"bytes and the loop ran {iters} times, so at "
+                                f"most {ceiling} bytes can have been "
+                                f"processed; this is the numerator of every "
+                                f"throughput number in the cell", "X24"))
+            consumed = row.get("consumed_length")
+            outcome = row.get("match_outcome")
+            if isinstance(consumed, int) and consumed > offered:
+                add(Problem(path, n, "consumed_length",
+                            f"is {consumed} but only {offered} bytes were "
+                            f"offered; an engine cannot consume what it was "
+                            f"not given", "X25"))
+            if outcome == "truncated-subject":
+                if not isinstance(consumed, int):
+                    add(Problem(path, n, "consumed_length",
+                                "the outcome is `truncated-subject` but no "
+                                "consumed_length is recorded: the row asserts "
+                                "a truncation and does not say where", "X25"))
+                elif consumed >= offered:
+                    add(Problem(path, n, "consumed_length",
+                                f"the outcome is `truncated-subject` but "
+                                f"{consumed} of {offered} offered bytes were "
+                                f"consumed, which is not a truncation",
+                                "X25"))
+
+        # X21 the calibration actually met its target
+        for n, row in rows:
+            if row.get("kind") != "match":
+                continue
+            cal = row.get("calibration")
+            if not isinstance(cal, dict):
+                continue
+            iters = (row.get("timing") or {}).get("iterations")
+            probe_n = cal.get("probe_iterations")
+            probe_ns = cal.get("probe_elapsed_ns")
+            target = cal.get("target_ns")
+            if not all(isinstance(x, int) for x in
+                       (iters, probe_n, probe_ns, target)) or probe_n < 1 \
+                    or iters < 1:
+                # An iteration count below 1 is rejected by the schema
+                # (`minimum: 1`); reporting a calibration failure on top of it
+                # would make that control fail for two reasons.
+                continue
+            est = probe_ns / probe_n * iters
+            if est < target and not cal.get("calibration_note"):
+                add(Problem(path, n, "calibration",
+                            f"the probe measured {probe_ns}ns over "
+                            f"{probe_n} iterations, so {iters} iterations "
+                            f"were predicted to take {est:.0f}ns against a "
+                            f"target of {target}ns: the calibration did NOT "
+                            f"meet its target and no calibration_note says "
+                            f"why", "X21"))
+
+        # X26 the occupancy verdict follows from its number and its threshold
+        occ = env.get("occupancy", {}) or {}
+        occ_limit = occ.get("limit_busy_pct")
+        for when in ("before", "after"):
+            sample = occ.get(when)
+            if not isinstance(sample, dict):
+                continue
+            busy = sample.get("max_busy_pct")
+            got_v = sample.get("verdict")
+            if not isinstance(busy, (int, float)) or \
+                    not isinstance(occ_limit, (int, float)):
+                continue
+            want_v = "pass" if busy <= occ_limit else "fail"
+            if got_v != want_v:
+                add(Problem(path, 1, f"environment.occupancy.{when}.verdict",
+                            f"is {got_v!r} but the busiest non-target core "
+                            f"was {busy}% against a limit of {occ_limit}%, "
+                            f"which is {want_v!r}", "X26"))
+
+        # X13 / X14 the record-status gates
         if setup.get("status") == "measured":
-            if env.get("load", {}).get("verdict") != "quiet":
+            if load.get("verdict") != "quiet":
                 add(Problem(path, 1, "status",
                             "is `measured` but environment.load.verdict is not "
                             "`quiet`; a load-compromised record is "
                             "`inconclusive-load`", "X13"))
-            if env.get("occupancy", {}).get("verdict") == "fail":
-                add(Problem(path, 1, "status",
-                            "is `measured` but the per-core occupancy check "
-                            "FAILED", "X13"))
-            missing = sorted(x for x in pat_ids if x not in seen_compile)
+            for when in ("before", "after"):
+                got_v = (occ.get(when) or {}).get("verdict")
+                if got_v != "pass":
+                    add(Problem(path, 1, "status",
+                                f"is `measured` but the per-core occupancy "
+                                f"check {when} the run is {got_v!r}, not "
+                                f"`pass`; only a passing occupancy check on "
+                                f"BOTH samples supports `measured` "
+                                f"(the v1.1 ruling, §9)", "X13"))
+            # The PLAIN artifact is what every pattern must have; the
+            # whole-subject one exists only for a testee that needs it.
+            missing = sorted(x for x in pat_ids
+                             if (x, DEFAULT_FORM) not in seen_compile)
             if missing:
                 add(Problem(path, 1, "status",
                             f"is `measured` but patterns {missing} have no "
-                            f"compile row; a record that stopped halfway is "
-                            f"`harness-failure`", "X14"))
+                            f"`plain` compile row; a record that stopped "
+                            f"halfway is `harness-failure`", "X14"))
         return p
 
     @staticmethod
@@ -422,7 +695,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X17 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X27 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")
