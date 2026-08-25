@@ -128,10 +128,14 @@ class Adapter(_ad.Adapter):
 
     # -------------------------------------------------------------- compile
 
-    def compile(self, testee_id, pattern, options, trials, workdir):
+    def compile(self, testee_id, pattern_id, pattern, options, trials,
+                workdir):
         cfg = self.config(testee_id)
         drv = self.prepare_driver(workdir)
-        patfile = os.path.join(workdir, "pattern.rx")
+        # per-PATTERN scratch: see Adapter.compile's docstring.
+        pdir = os.path.join(workdir, "p-" + pattern_id)
+        os.makedirs(pdir, exist_ok=True)
+        patfile = os.path.join(pdir, "pattern.rx")
         with open(patfile, "wb") as f:
             f.write(pattern)
         argv = [drv, "--pattern", patfile, "--compile-trials", str(trials)]

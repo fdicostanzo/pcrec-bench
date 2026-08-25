@@ -243,8 +243,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
 
     for p in sb.patterns:
         say("compiling %s / %s (%d trial(s)) ..." % (testee_id, p.name, trials))
-        cr = adapter.compile(testee_id, sb.pattern_bytes(p.name), options,
-                             trials, workdir)
+        cr = adapter.compile(testee_id, p.name, sb.pattern_bytes(p.name),
+                             options, trials, workdir)
         compiled_ok[p.name] = (cr.outcome == "compiled")
         phases = testee_block["compile_phases"]
         n = len(cr.phase_seconds) if cr.outcome == "compiled" else 1

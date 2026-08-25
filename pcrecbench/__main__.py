@@ -15,7 +15,7 @@ from . import HARNESS_VERSION
 
 
 def cmd_run(args):
-    from . import harness, quiet, store, adapters
+    from . import harness, quiet, store, adapters, env, subbench
     try:
         path, rid, setup, rows = harness.run_cell(
             args.subbench, args.testee,
@@ -30,7 +30,9 @@ def cmd_run(args):
     except quiet.QuietRefusal as e:
         print("pcrecbench run: %s" % e, file=sys.stderr)
         return 3
-    except (harness.HarnessError, store.StoreError, adapters.AdapterError) as e:
+    except (harness.HarnessError, store.StoreError,
+            adapters.AdapterError, env.MachineRegistryError,
+            subbench.SubbenchError) as e:
         print("pcrecbench run: %s" % e, file=sys.stderr)
         return 1
     ncomp = sum(1 for r in rows if r["kind"] == "compile")

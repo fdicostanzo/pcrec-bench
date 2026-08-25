@@ -211,8 +211,17 @@ class Adapter:
         """Build the driver / resolve the pin. Idempotent."""
         raise NotImplementedError
 
-    def compile(self, testee_id, pattern, options, trials, workdir):
-        """-> CompileResult."""
+    def compile(self, testee_id, pattern_id, pattern, options, trials, workdir):
+        """-> CompileResult.
+
+        `pattern_id` is passed so each pattern gets its OWN scratch under
+        `workdir`. It is not decoration: a sub-bench has several patterns, the
+        harness compiles them ALL before measuring any, and an adapter that
+        wrote `workdir/pattern.rx` or `workdir/artifact.so` would have the
+        last pattern's artifact under the first pattern's handle. That bug
+        was written, and it was invisible on this sub-bench because its two
+        patterns agree on every subject -- so the interface makes it
+        unwriteable instead of relying on an adapter author to remember."""
         raise NotImplementedError
 
     def measure(self, handle, regime, subjects, iters, trials, timeout=None):

@@ -1,0 +1,39 @@
+# testees/pcrec/configs.toml -- the pcrec testees.
+#
+# requirements 4.2: pcrec is the special case in the ROSTER, not in the
+# schema. Its variations -- `--engine=`, captures on/off, later SIMD and
+# whatever [ENG-*] adds -- are separate roster entries, each with its pcrec
+# COMMIT PINNED. Nothing about that mechanism is pcrec's; it is the same
+# (engine, version, configuration) triple every testee is.
+#
+# `pin` is read from HERE and never hard-coded in the adapter. pin.sh
+# materialises it with `git archive` into the build root and builds it there;
+# it NEVER writes inside pcrec's own tree.
+#
+# WHY `--features all` IS ON EVERY CONFIG. pcrec's default feature set is
+# `std1`, which excludes the named-groups and recursion modules, so
+# bench/email's `factored.rx` is refused with "requires module
+# 'named-groups'" (MEASURED 2026-08-25 against pin 8da6120). That is a
+# BUILD/RUN flag of the testee -- the pattern text handed to pcrec is
+# byte-identical either way -- not a pattern variant. bench/email/NOTES.md
+# says so where a reader of the numbers will find it.
+
+pin = "8da6120"
+
+[testees.pcrec-auto]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all"]
+description = "pcrec defaults: engine selected automatically, captures on"
+
+[testees.pcrec-nocaps]
+engine_mode = "auto"
+captures = "off"
+flags = ["--features", "all", "--no-captures"]
+description = "pcrec --no-captures: the generation axis that recovers a pure-DFA artifact for a group-bearing pattern"
+
+[testees.pcrec-vm]
+engine_mode = "vm"
+captures = "on"
+flags = ["--features", "all", "--engine=vm"]
+description = "pcrec --engine=vm: the VM forced, which also disables the DFA prefilter so the VM derives the whole span independently"
