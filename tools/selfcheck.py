@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """tools/selfcheck.py -- the harness half of `make check` (contract 6).
 
-Five checks, and the ones that matter are the POSITIVE CONTROLS. pcrec's own
+Seven checks, and the ones that matter are the POSITIVE CONTROLS. pcrec's own
 check-design lesson, applied here: a check that has never been seen to fail is
 not known to be a check, so every gate below is exercised against an input it
 must reject, in the same run that exercises it against one it must accept.
@@ -20,6 +20,12 @@ must reject, in the same run that exercises it against one it must accept.
                 patterns shared one workdir, so the second's artifact was
                 measured under the first's handle, and the sub-bench could
                 not see it because its two patterns agree on every subject.
+  timed-out     a deliberately non-terminating artifact must come back
+                `timed-out` BY SUBJECT NAME, and the driver must carry on to
+                the next subject. Nothing in the corpus hangs, so without
+                this control the whole per-subject alarm path would ship
+                unexercised.
+  run smoke     a full `run` of one cell into a SCRATCH store, validated.
 
 Everything runs under gnutimeout with LC_ALL=C. Nothing here writes into the
 real store: the smoke uses a scratch store under the build tree.
@@ -291,7 +297,89 @@ def check_patterns_distinct():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-# -------------------------------------------------------- 6 the run smoke
+# --------------------------------------------- 6 the per-subject timeout
+
+def check_subject_timeout():
+    """THE CONTROL FOR `timed-out`, which is otherwise unfalsifiable.
+
+    record_schema.md 5's ADDITION 1 exists so that "84 subjects answered, one
+    ran past the timeout" can be recorded WITH THE SUBJECT'S NAME. Nothing in
+    the email sub-bench hangs, so without this the whole per-subject alarm
+    path -- the SIGALRM, the siglongjmp out of a timed loop, the attribution
+    to the right subject, and the driver CONTINUING to the next one -- would
+    ship never having been seen to work.
+
+    So: a pcrec artifact for `(a+)+b` built with NO step budget and a huge
+    frame stack, which genuinely does not terminate on 40 `a`s, followed in
+    the same list by a subject that answers instantly. The first must come
+    back `timed-out` BY NAME and the second must be answered."""
+    print("-- the per-subject timeout control --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("subject-timeout control", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-timeout-")
+    try:
+        adapter.prepare("pcrec-auto", tmp)
+        pcrec = adapter.pin_binary()
+        art = os.path.join(tmp, "artifact.c")
+        proc = run([pcrec, "-p", "rx", "--engine=vm", "--fno-step-budget",
+                    "--backtrack-frames=100000", "-o", art, "--", "(a+)+b"],
+                   timeout=300)
+        if proc.returncode != 0:
+            bad("subject-timeout control", "pcrec: %s" % proc.stderr.strip()[:200])
+            return
+        so = os.path.join(tmp, "unbounded.so")
+        cc = os.environ.get("CC", "gcc")
+        proc = run([cc, "-O2", "-std=gnu11", "-fPIC", "-shared", "-o", so,
+                    os.path.join(ROOT, "testees", "pcrec", "shim.c"),
+                    "-DPB_ARTIFACT=\"%s\"" % art, "-I", tmp], timeout=600)
+        if proc.returncode != 0:
+            bad("subject-timeout control", proc.stderr.strip()[:200])
+            return
+
+        hang = os.path.join(tmp, "hang.bin")
+        with open(hang, "wb") as f:
+            f.write(b"a" * 40)
+        fine = os.path.join(tmp, "fine.bin")
+        with open(fine, "wb") as f:
+            f.write(b"ab")
+
+        class S:
+            def __init__(self, sid, path, length):
+                self.subject_id, self.path, self.length = sid, path, length
+
+        subjects = [S("s-hang", hang, 40), S("s-fine", fine, 2)]
+        handle = {"driver": os.path.join(tmp, "pcrec_driver"), "lib": so,
+                  "subject_timeout": 3}
+        rows_by_trial, _i, _n = adapter.measure(handle, "search_short",
+                                                subjects, 1, 1, timeout=120)
+        rows = {r.subject_id: r for r in (rows_by_trial[0] if rows_by_trial else [])}
+        if rows.get("s-hang") and rows["s-hang"].answer == "timedout":
+            outcome, _o, _d = outcome_for(rows["s-hang"], None,
+                                          "search_short", subjects[0])
+            if outcome == "timed-out":
+                ok("subject-timeout control", "s-hang -> timed-out, by name")
+            else:
+                bad("subject-timeout control",
+                    "the driver said timedout; the judge said %s" % outcome)
+        else:
+            bad("subject-timeout control",
+                "s-hang did not time out: %s"
+                % (rows.get("s-hang") and rows["s-hang"].answer))
+        if rows.get("s-fine") and rows["s-fine"].matched:
+            ok("... and the driver CONTINUES past it",
+               "s-fine answered [%s,%s)" % (rows["s-fine"].start,
+                                            rows["s-fine"].end))
+        else:
+            bad("... and the driver CONTINUES past it",
+                "the subject after the hang was not answered")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+# -------------------------------------------------------- 7 the run smoke
 
 def check_run_smoke():
     """A full `run` of ONE cell into a SCRATCH store, validated. Not a
@@ -328,6 +416,7 @@ def main():
     check_driver_smokes()
     check_wrong_answer_control()
     check_patterns_distinct()
+    check_subject_timeout()
     check_run_smoke()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"

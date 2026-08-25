@@ -78,7 +78,7 @@ check-harness:
 deps:
 	@echo "== deps =="
 	@LC_ALL=C $(PYTHON) -c "import sys; print('python      ', sys.version.split()[0], '(3.11+ needed for tomllib)')"
-	@LC_ALL=C $(PYTHON) -c "import jsonschema; print('jsonschema  ', jsonschema.__version__)" \
+	@LC_ALL=C $(PYTHON) -c 'from importlib.metadata import version; print("jsonschema  ", version("jsonschema"))' \
 	    || echo "jsonschema   MISSING -- pip install -r requirements.txt"
 	@LC_ALL=C $(PYTHON) -c "import ctypes; ctypes.CDLL('libpcre2-8.so.0'); print('libpcre2-8   present (the expectation ORACLE and one testee)')" \
 	    || echo "libpcre2-8   MISSING -- expectations cannot be re-derived and the pcre2 testee cannot run"
