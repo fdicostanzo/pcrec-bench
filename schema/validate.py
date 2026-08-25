@@ -506,7 +506,7 @@ class RecordValidator:
             timing = row.get("timing") or {}
             got = timing.get("bytes_processed")
             iters = timing.get("iterations")
-            if isinstance(got, int) and isinstance(iters, int):
+            if isinstance(got, int) and isinstance(iters, int) and iters >= 1:
                 ceiling = offered * iters
                 if got > ceiling:
                     add(Problem(path, n, "timing.bytes_processed",
@@ -547,7 +547,11 @@ class RecordValidator:
             probe_ns = cal.get("probe_elapsed_ns")
             target = cal.get("target_ns")
             if not all(isinstance(x, int) for x in
-                       (iters, probe_n, probe_ns, target)) or probe_n < 1:
+                       (iters, probe_n, probe_ns, target)) or probe_n < 1 \
+                    or iters < 1:
+                # An iteration count below 1 is rejected by the schema
+                # (`minimum: 1`); reporting a calibration failure on top of it
+                # would make that control fail for two reasons.
                 continue
             est = probe_ns / probe_n * iters
             if est < target and not cal.get("calibration_note"):

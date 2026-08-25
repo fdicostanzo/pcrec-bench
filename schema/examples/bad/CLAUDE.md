@@ -27,6 +27,7 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | file | rule | the sabotage |
 |---|---|---|
 | `schema-index-map-missing.jsonl` | SCHEMA | `capture_correspondence.mode: by-index-map` with no `index_map` — the mode NAMES a map |
+| `schema-iterations-zero.jsonl` | SCHEMA | `timing.iterations: 0` — the reporter's per-call cost is `elapsed_ns / iterations` |
 | `schema-missing-calibration.jsonl` | SCHEMA | a timed match row with `iterations` in the hundreds of thousands and no `calibration` object saying who chose that number |
 | `schema-missing-clock-source.jsonl` | SCHEMA | `run.clock_source` deleted — nanoseconds from an unnamed clock |
 | `schema-missing-compile-cost.jsonl` | SCHEMA | an AOT compile row reporting `compiled` and carrying no `cost` — the compile axis silently empty for that pattern |
@@ -34,6 +35,7 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `schema-missing-required-field.jsonl` | SCHEMA | `environment.machine_id` deleted |
 | `schema-missing-subject-sha256.jsonl` | SCHEMA | a subject roster entry with no `sha256`: the bytes that produced the numbers are unidentified |
 | `schema-missing-truncation-check.jsonl` | SCHEMA | a `large-subject-throughput` row with no `truncation_check`, so requirements §4.4's "marked `unverified-for-truncation`" marks nothing |
+| `schema-negative-elapsed-ns.jsonl` | SCHEMA | a negative `elapsed_ns` — a clock that ran backwards, or a subtraction done in the wrong order |
 | `schema-occupancy-verdict-without-number.jsonl` | SCHEMA | `occupancy.before.verdict: pass` beside `max_busy_pct: null` — a judgement with nothing behind it |
 | `schema-quiet-attestation-present.jsonl` | SCHEMA | the DROPPED `quiet_attestation` field, still present. `additionalProperties: false` is what makes a removal stick, and this is the control that proves it does |
 | `schema-single-role-many-subjects.jsonl` | SCHEMA | a `role: single` subject claiming `n_subjects: 4`, which makes the reporter's per-subject arithmetic wrong by 4× |
@@ -47,15 +49,18 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x5-testee-id-mismatch.jsonl` | X5 | `engine_mode` changed to `dfa` while the id still says `vm-caps-simdna` — the id claiming a configuration the record does not carry, which is the exact thing deriving the id was for |
 | `x6-tampered-hash.jsonl` | X6 | one `elapsed_ns` edited after the fact, hash NOT restamped |
 | `x7-unknown-pattern-id.jsonl` | X7 | a match row keyed on `p-nonexistent`. The `wrong-span-or-captures` row is the one sabotaged because it carries no `timing`, which keeps X11 out of it |
+| `x7-unknown-subject-id.jsonl` | X7 | the subject half of the same rule, on the throughput row — the only trial of its cell, so re-keying it leaves no gap in anyone's trial numbering and X9 stays out of it |
 | `x8-regime-not-declared.jsonl` | X8 | `large-subject-throughput` removed from `subbench.regimes` while a match row still claims it — a result in a regime the sub-bench says it does not exercise |
 | `x9-duplicate-trial.jsonl` | X9 | trial 2 of one (pattern, subject, regime) recorded twice — silently doubling that trial's weight in any median |
 | `x10-cost-class-mismatch.jsonl` | X10 | a compile row claiming `interpretive` cost on a `compiled-aot` testee. This is also the file stamped `schema_version: 1.0` while carrying 1.1's fields — deliberately, so validate.py's accept-an-older-MINOR branch has a live example and nobody quietly makes the minor comparison strict (note §4.1) |
 | `x11-timing-on-uncompiled-cell.jsonl` | X11 | a timed match row for the pattern this testee reported `unsupported-by-declaration` |
 | `x12-phase-names-mismatch.jsonl` | X12 | a compile row whose second phase is `cc` where the testee declared `gcc`: phase-by-phase numbers added up across rows that do not mean the same thing |
+| `x12-phase-order-swapped.jsonl` | X12 | the `gcc` and `load` phases exchanged, values and all: the same three names in the wrong ORDER, which attributes 214 ms of compiler time to a dynamic load. The subtler half of the rule, and the reason X12 checks order and not just membership |
 | `x13-measured-but-loaded.jsonl` | X13 | `status: measured` on a record whose after-load exceeded the limit |
 | `x13-occupancy-after-fail.jsonl` | X13 | `status: measured` on a record whose per-core occupancy check FAILED *after* the run — the neighbour that started up midway, which a before-only check cannot see |
 | `x13-occupancy-unavailable.jsonl` | X13 | `status: measured` on a record whose post-run occupancy check is `unavailable` — no mpstat, so nothing is known about the other cores. Under the v1.1 ruling that is `inconclusive-load`, not `measured` |
 | `x14-missing-compile-row.jsonl` | X14 | `status: measured` with a pattern that has no compile row at all |
+| `x15-mask-as-integer.jsonl` | X15 | `vm_rungs: 3` instead of the array of set bit names — the raw bitmask an adapter reaches for first, which no reporter can filter without pcrec's bit table (note §7 rule 3) |
 | `x15-metadata-wrong-scope.jsonl` | X15 | the `engine` pair — declared `scope: pattern` — stamped on a MATCH row. The scope half of X15 has no good-example coverage now that the v8 example's undescribed `tier` pair is gone (note §7), so this control is the only thing holding it |
 | `x15-undeclared-engine-metadata.jsonl` | X15 | an `engine_metadata` pair the testee never declared |
 | `x16-lazy-jit-no-warmup.jsonl` | X16 | *(built from the **v8** example)* a `lazy-jit` testee declaring `warmup_trials: 0` — the class whose compile cost IS the first trial, claiming no trial needs excluding |
