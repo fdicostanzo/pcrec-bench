@@ -1,12 +1,12 @@
 # pcrec-bench requirements note — [B1]
 
-STATUS: DRAFT v2, 2026-08-24/25. v1 was written from the requirements
-discussion with Frank (rulings R1-R11, first session); v2 applies the R1
-critic panel's 29 findings (docs/dev/reviews/2026-08-24-r1-requirements.md
-— 27 fixed here, 2 owed to Frank: the BLOCKING SCOPE in §5 and the
-deviation grades in §4.5). Every ruling is Frank's unless marked
-"manager". Adopted when Frank says so; until then APPROACH.md stays the
-charter and this note refines it — where they differ this note is the
+STATUS: ADOPTED v3, 2026-08-25 (Frank: "narrow is fine to proceed" +
+the two variant constraints in §4.5). v1 was written from the
+requirements discussion (rulings R1-R11); v2 applied the R1 critic
+panel's 29 findings (docs/dev/reviews/2026-08-24-r1-requirements.md);
+v3 carries Frank's rulings on the two items the panel left to him.
+Every ruling is Frank's unless marked "manager". APPROACH.md stays the
+charter; this note refines it — where they differ this note is the
 newer statement, and §11 lists exactly what it amends.
 
 ## 1. Purpose — the loop, positioning second (R1)
@@ -153,38 +153,51 @@ unverified-for-truncation). None is an error of the harness; all are
 first-class results the report can filter on. Timing exists only for
 `compiled` ∧ expectation-agreeing cells (§7).
 
-### 4.5 The variant axis — same intention, adapted text or options (R3, R8)
+### 4.5 The variant axis — same intention, adapted text or options (R3, R8; constrained 2026-08-25)
 
 The bench is NOT limited to PCRE2-exact engines. A sub-bench's pattern
 is CANONICAL (PCRE2 spelling, PCRE2 option semantics); a testee may run
 a DECLARED VARIANT — the same pattern INTENTION expressed in that
-engine's syntax and/or under that engine's options, "modified a certain
-amount" (Frank) — recorded in the sub-bench's engine notes, never a
-silent fork (pcrec R-BENCH-7). A variant declaration carries:
+engine's syntax and/or under that engine's options — recorded in the
+sub-bench's engine notes, never a silent fork (pcrec R-BENCH-7). Two
+CONSTRAINTS bound what a variant may be (Frank, 2026-08-25):
 
-- its DEVIATION GRADE (manager ruling after R1 finding B3; Frank may
-  veto): `syntax-only` — a mechanical re-spelling (escapes, class
-  syntax, group syntax) a reviewer can check token by token; or
-  `approximates` — anything else. There is no "semantically equivalent"
-  grade: cross-dialect equivalence is unprovable in general and the
-  oracle cannot run the variant, so an equivalence claim is only ever
-  an opinion. An `approximates` variant's STATED DIFFERENCES are
-  themselves EXPECTATIONS — the cases where its answer legitimately
-  differs, each with a verification method (hand-derived is allowed,
-  named as such) — so "correctly different" is checkable and
-  distinguishable from "wrong at its own variant";
-- a CAPTURE CORRESPONDENCE whenever group structure changes (by name /
-  by an explicit index map / not checked) — without it
-  `wrong-span-or-captures` is not computable (OD-B9; [DD-13a] T-3);
-- re-asserted HAZARD and SIZE class tags if the translation changes
-  them (a linear-time engine's translation of a catastrophic-
-  backtracking case is not measuring the hazard; default = inherited);
-- the CONVENTION its expectations follow, when it differs from the
-  canonical case's.
+1. **The results must be the same — no variation in results.** A
+   variant is valid only if it produces the sub-bench's expected
+   answers (match/nomatch, spans, captures) on EVERY subject. There is
+   no "approximates with stated differences" grade: a variant whose
+   answers differ from the expectations anywhere is INVALID for that
+   testee, and the cell is `unsupported-by-declaration` (or the testee
+   is wrong at its own variant — either way, not timed). This also
+   settles the oracle question: expectations are the CANONICAL ones,
+   verified once by the sub-bench's method; a variant is checked
+   against them directly.
+2. **The sub-bench's objective must be achieved.** A sub-bench declares
+   its OBJECTIVE — the mechanism(s) it exists to exercise (e.g. group
+   subroutines, backreferences, a hazard class, a prefilter shape). A
+   variant that reaches the same answers by rewriting the objective
+   AWAY (e.g. inlining subroutine calls in a subroutine sub-bench)
+   defeats the purpose of the bench and is not a variant: the testee
+   reports `unsupported-by-declaration` for that sub-bench. The
+   objective is a declared field of the sub-bench; the variant
+   declaration states how it still exercises it, and that statement is
+   reviewed like any other expectation.
 
-Reports show the grade beside the number, and N + pass-rate beside any
-number whose coverage is below 100% (§8), so an easy-cases-only pass
-population cannot post an unqualified fast number.
+A variant declaration therefore carries: the variant text/options; its
+KIND, informational only (`syntax-only` — a mechanical re-spelling a
+reviewer can check token by token — or `restructured`); how it
+preserves the OBJECTIVE; a CAPTURE CORRESPONDENCE whenever group
+structure or naming changes (by name / by an explicit index map) so
+"same results" is checkable on captures too (OD-B9; [DD-13a] T-3); and
+re-asserted HAZARD/SIZE class tags if the translation changes them
+(a linear-time engine's translation of a catastrophic-backtracking case
+is not measuring the hazard — and under constraint 2 such a translation
+is usually not a variant at all; default = inherited). Runtime OPTION
+differences (caseless, dotall, UTF defaults) are variants of the same
+kind and obey the same constraints.
+
+Reports show the variant kind beside the number, and N + pass-rate
+beside any number whose coverage is below 100% (§8).
 
 ## 5. Sub-benches (R5, R6)
 
@@ -212,30 +225,26 @@ population cannot post an unqualified fast number.
 - Independence: a run measures one cell or a chosen few — never the
   whole gamut (Frank).
 
-**THE FORMAT AND THE BLOCKING POINT (R6, refined by R1 findings B8/C1/
-C3 — RULING OWED TO FRANK).** Frank ruled: block on pcrec's [DD-13]
-(the .rxt-grown unified format) rather than invent an interim; "design
-and data gather and stop when we're blocked". The panel measured the
-distance: [DD-13a] completed 2026-08-17; [DD-13b] (design) and [DD-13c]
-(panel + ruling) are `not-started` with no queue position in pcrec's
-plan, and the spine ahead of them ([DD-14]) is still producing waves —
-"soon" is not supported by the plan file. What is BLOCKED under any
-reading: authoring cases in a NEW cross-sub-bench grammar (directives,
-includes, cascades — [DD-13]'s territory). What is NOT blocked (manager
-reading, v2 is written for it): the sub-bench DIRECTORY model (this
-note's own vocabulary); the record, the adapters, the reporter; parsing
-TODAY'S `.rxt` as-is for imported cases (a live, oracle-verified format
-that [DD-13] extends as a dialect — R-COMPAT-1, R-BENCH-8); wrapping the
-email specimen's existing ad hoc files as the first sub-bench; and a
-plain SIDECAR per sub-bench holding the per-case tags, engine notes and
-variant declarations — fields that are exactly R-BENCH-1..9, no
+**THE FORMAT AND THE BLOCKING POINT (R6; scope RULED NARROW by Frank,
+2026-08-25).** Frank ruled: block on pcrec's [DD-13] (the .rxt-grown
+unified format) rather than invent an interim; "design and data gather
+and stop when we're blocked". The R1 panel measured the distance:
+[DD-13a] completed 2026-08-17; [DD-13b] (design) and [DD-13c] (panel +
+ruling) are `not-started` with no queue position in pcrec's plan, and
+the spine ahead of them ([DD-14]) is still producing waves. The RULED
+scope: BLOCKED is authoring cases in a NEW cross-sub-bench grammar
+(directives, includes, cascades — [DD-13]'s territory). NOT blocked:
+the sub-bench DIRECTORY model (this note's own vocabulary); the record,
+the adapters, the reporter; parsing TODAY'S `.rxt` as-is for imported
+cases (a live, oracle-verified format that [DD-13] extends as a dialect
+— R-COMPAT-1, R-BENCH-8); wrapping the email specimen's existing ad hoc
+files as the first sub-bench; and a plain SIDECAR per sub-bench holding
+the objective, the per-case tags, engine notes and variant declarations
+— fields that are exactly R-BENCH-1..9 plus this note's additions, no
 directives, no grammar, so [DD-13] absorbs them mechanically when it
-lands. Frank chooses between this NARROW reading and the BROAD one (no
-case carrier at all until [DD-13]; the first cut shrinks to the schema
-plus an adapter exercised on the specimen's files). This note's inputs
-for [DD-13b] — the directory model, the outcome axis, the variant
-declaration, the regime declaration — are handed to the pcrec manager
-either way.
+lands. This note's inputs for [DD-13b] — the directory model, the
+objective field, the outcome axis, the variant declaration and its two
+constraints, the regime declaration — are handed to the pcrec manager.
 
 ## 6. The record (R7)
 
@@ -273,8 +282,9 @@ APPROACH §5 stands: a timing for a wrong answer is worse than no
 timing; correctness gates the scoreboard; "unsupported" is honest;
 conventions are tagged and testees are scored against their own.
 Tempered by §1's goal: correctness is judged on the sub-bench's
-EXPECTATIONS (intention → answers) — the canonical ones, or the
-variant's declared differences (§4.5) — not on pattern-text identity.
+EXPECTATIONS (intention → answers), which are the CANONICAL ones for
+every testee — a variant must reproduce them exactly (§4.5) — not on
+pattern-text identity.
 Convention is a per-CASE expectation tag (R-BENCH-5); a testee that
 cannot produce a case's convention either runs a declared variant with
 its own convention-tagged expectations or reports
@@ -326,9 +336,8 @@ the run-cells driver, the store layout, the quiet-box instrument ([B3])
 → two adapters, libpcre2 (interp, jit) and pcrec (auto, no-captures,
 forced VM) ([B4]) → the reporter MVP (filter/group/reduce, one query)
 ([B5]) → the first honest report on the email specimen ([B6]). Under
-the NARROW blocking reading (§5) all of M1 can complete on the specimen
-plus `.rxt` imports before [DD-13] lands; under the BROAD reading M1
-stops after [B4] exercised on the specimen's files. Roster growth,
+the ruled NARROW blocking scope (§5) all of M1 can complete on the
+specimen plus `.rxt` imports before [DD-13] lands. Roster growth,
 compilers, the hand-C arm: after ([B7]).
 
 ## 11. APPROACH.md dispositions and amendments
@@ -336,7 +345,7 @@ compilers, the hand-C arm: after ([B7]).
 | Q / § | disposition |
 |---|---|
 | §1 mission | AMENDED by §1 here: the pcrec optimization loop is the first purpose; positioning second (Frank R1). |
-| §8 Q1 set format | RESOLVED IN DIRECTION (2026-08-17): pcrec [DD-13]. RULED 2026-08-24: BLOCKING, no interim grammar; the blocking SCOPE is owed to Frank (§5). |
+| §8 Q1 set format | RESOLVED IN DIRECTION (2026-08-17): pcrec [DD-13]. RULED 2026-08-24: BLOCKING, no interim grammar; SCOPE RULED NARROW 2026-08-25 (§5). |
 | §8 Q2 artifact format | RULED: JSONL, schema-versioned, validator shared with the reporter (§6). |
 | §8 Q3 timing depth | RULED: three subject regimes + compile/setup cost in v1; memory/size recorded if free, not scored (§3). |
 | §8 Q4 public posture | DEFERRED: engineering tool first; rankings not a goal now (§1). |
@@ -354,8 +363,9 @@ compilers, the hand-C arm: after ([B7]).
   openness, convention, captures/engine_mode/simd values; (b) the
   NORMALIZATION RULES for open identifiers: engine name/version,
   hardware id, CPU model string, compiler — at [B2].
-- OD-B5 — the deviation grades: manager ruled TWO (§4.5); Frank may
-  veto.
+- OD-B5 — RULED 2026-08-25 (Frank): no deviation grades — a variant
+  must reproduce the canonical results exactly and preserve the
+  sub-bench's objective; the kind tag is informational (§4.5).
 - OD-B6 — the store layout and index / cached reductions; how records
   from other machines arrive — at [B3].
 - OD-B7 — feedback delivery into pcrec — case by case until the model
@@ -370,15 +380,16 @@ compilers, the hand-C arm: after ([B7]).
 
 ## 13. For the next panel — attack list (v2)
 
-1. Does the two-grade variant scheme (§4.5) lose anything the
-   three-grade one caught? Is `syntax-only` really reviewer-checkable
-   for every dialect on the roster?
+1. The variant constraints (§4.5): is "objective preserved" checkable
+   by a reviewer for every objective kind, or does it need a per-
+   objective rule? Can a variant be `syntax-only` and still break the
+   objective?
 2. Is the record (§6) now sufficient for every query in §8 with no
    free-text filter? Enumerate the fields a "captures-off, compiled-AOT,
    open-source, hardware X, last 30 days" query touches.
 3. The lazy-JIT protocol (§3): is "trial 1 minus steady state" sound
    when the JIT warms per pattern AND per subject shape?
-4. §5's NARROW reading: does the sidecar amount to a grammar by another
+4. §5's NARROW scope: does the sidecar amount to a grammar by another
    name? What is the smallest sidecar that is not?
 5. §9: is the after-load re-sample enough, or must load be sampled
    during long throughput trials?

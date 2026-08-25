@@ -7,7 +7,7 @@ docs/dev/'s append-only records.
 
 ## Files
 
-- `requirements.md` — **[B1] the requirements note, DRAFT v2 2026-08-24/25** (v1 from R1-R11; v2 after the R1 panel — 27 findings applied),
+- `requirements.md` — **[B1] the requirements note, ADOPTED v3 2026-08-25** (v1 from R1-R11; v2 after the R1 panel; v3 = Frank's rulings: narrow blocking scope, variants reproduce results exactly and preserve the sub-bench objective),
   written from Frank's rulings R1-R11: the loop-first purpose, the
   vocabulary (sub-bench / testee / record / store / report), the three
   subject regimes + compile cost, testee dimensions and the outcome and
@@ -15,7 +15,7 @@ docs/dev/'s append-only records.
   pcrec [DD-13]), the two-layer record, correctness by intention, the
   query-driven report, box discipline, the provisional first cut, the
   APPROACH §8 dispositions, the OD-B* ledger and the panel attack list.
-  Two rulings owed to Frank (the blocking scope §5; the two-grade variant scheme §4.5); adopted when he says so.
+  The governing requirements; [B2]-[B7] build against it.
 
 Expected next residents, in the order the plan reaches them:
 
