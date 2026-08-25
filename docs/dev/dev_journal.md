@@ -371,3 +371,22 @@ must be idle throughout, not just at the start. Manager: make check on
 master 21/21 + 2/53/0; worktree removed; pcrec's tree 0 status lines
 throughout. [B3]/[B4] archived. Remaining before the report: b5report's
 v1.1 restamp → merge → the window → run_window.sh → `report`.
+
+## 2026-08-25 (EDT, ~01:3x), first session (part 12) — [B5] MERGED: the whole M1 tool chain is on master; make check = 2/53/0 + 21/21 + 18/18
+
+b5report's v1.1 pass merged (four seams resolved by hand: Makefile
+targets unioned with `check` depending on all three suites; the
+harness's __init__/__main__ kept, `report` dispatched to
+pcrecbench.report.main BEFORE argparse so the reporter owns its flags;
+pcrecbench/CLAUDE.md combined). The reporter: --grain set (per-trial
+sum of per-subject ns/call over the set) default, subject drill-down;
+gave-up counted apart from wrong; form beside numbers only when a
+non-plain form is present; lazy-JIT derived over the lowest seq (unit-
+tested on rows where the lowest seq is NOT trial 1 of any cell);
+mixed_version fixtures split into major_mismatch (1.1 vs 2.0 refused)
+and minor_pair (a 1.0-shaped record is simply invalid under 1.1 and
+drops via the per-record path). make check on master: schema 2/53/0,
+harness 21/21, report 18/18. [B5] archived; [B6] started: the window
+run is staged (scratchpad/run_window.sh); waiting for pcrecdev1's
+"WINDOW OPEN" (~02:50). All three lanes' worktrees removed, branches
+kept: lane/b2schema, lane/b2fix, lane/b3harness, lane/b5report.

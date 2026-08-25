@@ -55,3 +55,7 @@ completion date, newest group at the bottom.
   several configuration testees, pinned by commit) and libpcre2 (interp AND
   jit as separate testees). Each pins its version and records build flags;
   "unsupported" is a first-class per-case result.
+- [B5] STATE:completed 2026-08-25 (MERGED from lane/b5report 0d6ab1d: pcrecbench/report.py, --grain set|subject, gave-up apart from wrong, form beside numbers, lazy-JIT over lowest seq, 18 tests + v1.1 fixtures, make check-report; the manager resolved the Makefile/__main__/__init__/CLAUDE.md seams — report dispatched before argparse; make check on master = schema 2/53/0 + harness 21/21 + report 18/18) — THE REPORTER MVP: static over two or more
+  artifacts — per-case diffs, per-tag rollups, correctness disagreement
+  tables, rankings that exclude wrong answers by default. Never runs an
+  engine.

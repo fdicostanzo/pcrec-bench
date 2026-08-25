@@ -33,11 +33,7 @@ proposed first cut ("M1 = set format ruled + schema ruled + two adapters
 requirements discussion ([B1]) may reorder, merge, split or strike them;
 none is a commitment until Frank rules the requirements.
 
-- [B5] STATE:started (2026-08-25 ~00:0x, lane/b5report, worktrees/b5report, sonnet, brief scratchpad/brief_b5report.md) — THE REPORTER MVP: static over two or more
-  artifacts — per-case diffs, per-tag rollups, correctness disagreement
-  tables, rankings that exclude wrong answers by default. Never runs an
-  engine.
-- [B6] STATE:not-started — THE FIRST HONEST DIFF and the first feedback
+- [B6] STATE:started (2026-08-25 ~01:3x — the window run: run_window.sh staged, cells email × {pcre2-interp, pcre2-jit, pcrec-auto, pcrec-nocaps, pcrec-vm}, --trials 5 --pin 11, in pcrecdev1's quiet window ~02:50) — THE FIRST HONEST DIFF and the first feedback
   row into pcrec: run the two adapters on set v0 on a quiet box, compare,
   and hand the pcrec manager the first outlier in the agreed feedback
   shape. Closes M1 as APPROACH §8 Q5 proposed it.
