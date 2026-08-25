@@ -96,6 +96,36 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   the pcre2test reproduction — docs/dev/upstream_findings.md); OD-B10
   (1 MB vs 8 MB spread).
 
+- [B13] STATE:not-started — THE INTERPRETER (Frank, 2026-08-25: "reads
+  and provides interpretation to these reports as an add-on … no
+  opinions, all based on facts"; agreed design, journal part 5). Two
+  parts: (1) a DETERMINISTIC fact-finder, `pcrecbench interpret`, reading
+  the report TSV + store/index.tsv (never the markdown), emitting the
+  FIRED RULES with rows, numbers and record ids, plus the rules that did
+  NOT fire; a versioned RULE CATALOGUE (id, definition, threshold WITH
+  its source — spread-based, never a magic number — a worked example
+  from a real report): status caveats (inconclusive-load, excluded
+  cells, give-ups with code + subject), cross-pin deltas beyond spread,
+  rank flips vs the reference arm, ratios inside the timer floor,
+  PREDICTIONS vs OUTCOMES (the inbox's stated expectations as input:
+  confirmed / refuted / result no prediction covered), registered
+  buckets (known readings that are facts with a source, e.g. the `\z`
+  regime artifact per feedback 2a); `make check-interpret` (same input →
+  same facts; a sabotaged report fires the rule its name claims). (2) a
+  project skill `/pcrec-bench-interpret <report>` that phrases the fired
+  rules into a SIDECAR `reports/<name>.interpretation.md` stamped with
+  the report's sha256 and the catalogue version — never a section in the
+  report (the reporter stays deterministic and diffable); committed
+  beside every report. OPINION FIREWALL: every sentence cites a fired
+  rule; hypotheses appear only as LINKS to where they are already
+  recorded (outbox, known_issues), never generated. Sits after [B9]
+  (needs OD-B14 status per row and OD-B15 pooled-vs-newest). Frank:
+  "let it sit a bit before we do it." INPUT TO COLLECT FIRST: pcrecdev1's
+  feedback on the repin report as it reads — actionability and
+  interpretation (outbox O-5; answer → docs/dev/feedback_pcrecdev1_
+  <date>-repin.md, cited here). Blinded first test: catalogue v1 must
+  find, unprompted, the collapse, the three inconclusive records, the
+  give-ups and the vm-in result in the two existing reports.
 - [B7] STATE:not-started — ROSTER EXPANSION (APPROACH §4): RE2, Rust
   `regex`, Oniguruma, TRE (POSIX-tagged), Vectorscan (semantics-tagged),
   python `re`, perl; the hand-C ceiling arm (pcrec [BENCH-CEIL]'s testee

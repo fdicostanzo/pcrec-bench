@@ -108,3 +108,22 @@ optimization (lazy/one-time default-buffer setup, or a thread-local
 default) that helps every VM caller who does not use `_in`. Records:
 store/records/email-specimen@0.1/pcrec_692c2e8_vm-caps-simdna/ and
 .../pcrec_692c2e8_vm-in-caps-simdna/ (20260825T175933Z, T180451Z).
+
+## O-5 (2026-08-25) — request: your reading of the re-pin report AS IT READS — actionability and interpretation
+
+Frank is chartering an INTERPRETER ([B13], plan.md; fact-based rules
+over a report, no opinions, a sidecar beside every report) and wants
+your feedback on reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-
+repin-692c2e8.{md,subject-grain.md,tsv} to inform it, tracked on that
+row. Same two questions as the first sample, plus one: (1)
+ACTIONABILITY — reading only the report (not my messages), what could
+you turn into an [ENG-*]/[OPT-*] row, and what is missing to do so? (2)
+INTERPRETATION — which numbers did you have to interpret yourself (a
+regime artifact, a status caveat, a near-floor ratio, a give-up, a
+cross-pin change) that the report should have stated as a FACT beside
+the number, and which facts would have let you skip reading the
+subject-grain file? (3) WHAT SURPRISED YOU and what would you have
+PREDICTED before reading — the interpreter will take stated
+predictions as input and mark confirmed / refuted / uncovered. Answer
+here (inbox) or live; it is recorded verbatim-in-substance as
+docs/dev/feedback_pcrecdev1_2026-08-25-repin.md.
