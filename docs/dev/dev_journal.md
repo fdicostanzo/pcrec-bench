@@ -228,3 +228,28 @@ scratchpad) inside its 20-minute ask; QUIET WINDOW promised after wave
 G's merge battery (~03:00 est.): it sends "WINDOW OPEN" with the load
 reading, I reply "WINDOW CLOSED"; nothing heavy of its runs between.
 Watchdog re-armed for both lanes + the build.
+
+## 2026-08-25 (EDT, ~00:2x), first session (part 7) — the schema panel's S2 report: four provenance HIGHs; schema v1.1 lane opened
+
+critS2 (measurement provenance) returned 13 findings + one example
+defect. HIGH: (1) the lazy-JIT "trial 1 minus steady state" derivation
+is NOT computable from a record — trial numbering restarts per
+(pattern, subject, regime) and row order is declared insignificant, so
+nothing identifies the chronologically first row that paid the JIT
+cost (fix: a per-row `seq`; derive over the lowest seq); (2) `load` has
+no raw evidence — `status: measured` is claimable on fabricated
+numbers (fix: /proc/loadavg raw + timestamp per sample); (3) occupancy
+is sampled ONCE while load is before/after — the poisoned-core lesson
+re-opened for the dimension that caught it (fix: before/after); (4) the
+harness contract promises the iteration calibration is "recorded in
+the record" and no field exists (fix: a per-row calibration object).
+MEDIUM: engine_commit optional despite "pcrec ALWAYS pinned"; no
+driver build flags; subject sha256 optional vs pattern sha256 required;
+`quiet_attestation` provably inert and used inconsistently in the
+lane's own example (dropped); the §6 normalization rules are prose,
+unchecked. LOW: cpu MHz, clock source, hugepages, chrt+taskset pinning.
+All accepted (Frank: recommendations) → lane b2fix (opus, worktrees/
+b2fix, brief_b2fix.md): schema version 1.0 → 1.1, one named control per
+new rule, ≥ 25 sabotages. b3harness and b5report told what is coming.
+critS1 went idle without delivering; asked to resend. Watchdog covers
+three lanes.
