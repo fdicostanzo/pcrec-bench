@@ -1,0 +1,75 @@
+# The email sub-bench SIDECAR (harness contract 2, requirements 5).
+# Fields only, no grammar, no directives, no includes -- [DD-13]'s territory
+# is deliberately untouched, so the unified format absorbs this mechanically
+# when it lands.
+
+id = "email-specimen"
+version = "0.1"
+objective_kind = "realworld"
+objective = """\
+RFC 5322-shaped email validation: the hand-inlined original and its \
+subroutine-factored form; the factored form's objective is \
+calls-as-factoring (a testee may not run the inlined original in its place)."""
+description = """\
+Frank's RFC 5322 specimen, wrapped from pcrec's srEmail measurement. Two \
+patterns of the same language: `orig.rx`, the widely copied hand-inlined \
+address pattern, and `factored.rx`, the same language with its four textually \
+repeated sub-languages (atom, qchar, label, octet) named with the `{0}` \
+callee idiom and reached by `(?&name)` calls. 85 short subjects across valid \
+dot-atom, quoted-local, IPv4-literal and bracket-general forms, their \
+near-misses, and eight pathological/long cases; three 1 MB throughput \
+subjects. The pair is the bench's first real member of the \
+calls-as-FACTORING population, and the interesting axis is what an engine \
+pays for the factoring."""
+
+regimes = ["match", "search_short", "throughput"]
+
+[[patterns]]
+name = "orig"
+file = "patterns/orig.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "large"
+convention = "perl-leftmost-first"
+tags = ["rfc5322", "email", "hand-inlined", "tier-base"]
+
+[[patterns]]
+name = "factored"
+file = "patterns/factored.rx"
+feature_tier = "named-groups+subroutines"
+hazard_class = "exponential-backtracking"
+size_class = "large"
+convention = "perl-leftmost-first"
+tags = ["rfc5322", "email", "subroutine-factored", "calls-as-factoring"]
+
+[subjects]
+generator = "gen_subjects.py"
+manifest = "manifest.tsv"
+# EXTENSION to contract 2's `[subjects] (generator, manifest)`: the contract's
+# own directory layout mandates a second, GENERATED `throughput/` tree with a
+# committed `manifest_throughput.tsv`, but names only one generator/manifest
+# pair in the sidecar. Two pairs, same shape. Reported to the manager.
+throughput_generator = "gen_throughput_subjects.py"
+throughput_manifest = "manifest_throughput.tsv"
+short_search_max_bytes = 256
+
+[expectations]
+file = "expectations.tsv"
+default_method = "libpcre2-differential"
+
+# Per-testee notes. No testee runs a VARIANT of either pattern in this
+# sub-bench: both are canonical PCRE2 spellings and both adapters run the
+# canonical text (requirements 4.5 -- the record still STATES that, as
+# `patterns[].variant = null`). `options` is empty for both: the patterns
+# carry their own semantics inline and neither adapter passes a compile
+# option. See NOTES.md.
+[testees.pcre2]
+options = {}
+
+[testees.pcrec]
+options = {}
+# pcrec's default feature set (`std1`) does not include the named-groups or
+# recursion modules, so `factored.rx` is REFUSED under the default with
+# "requires module 'named-groups'". `--features all` is therefore part of
+# every pcrec testee's flags, not a variant of the pattern: the pattern text
+# is byte-identical either way. MEASURED 2026-08-25 against pin 8da6120.

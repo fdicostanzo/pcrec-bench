@@ -1,0 +1,86 @@
+id	len	sha256	description
+s-000	16	b4c9a289323b21a01c3e940f150eb9b8c542587f1abfd8f0e1cc1ffc5e475514	valid dot-atom simple
+s-001	21	2954b061096c38c04e0321af86305cd56adbeed6bfb8f61eb069c94d2a3c4155	valid dot-atom multi-label domain
+s-002	6	80305c9bb1bb2480e03894350e0a8a366dcbdeb302e69e0817aa0743abd77054	valid dot-atom single-char local
+s-003	23	80f03a5258b13b040490f8551f3700f087aa652df0a1fce8df420867cf594558	valid dot-atom many dots
+s-004	33	929ba83f97afb9e9a6bc4958aaceab03f6fe3a81a13a8d9d239596d8d383256b	valid dot-atom with allowed specials
+s-005	6	a2470cc7138452132545e505cda16e82e15fbf69556810f95116ca96507465be	valid dot-atom two-label domain minimal
+s-006	15	1e5da52c6d1be8d6041284f3bd2607f78a234c39424cd49a72f645b711048d50	valid dot-atom single-char labels chained
+s-007	25	d92bed9166a7cebbb8ecdc455a9023e3eb1c1b394a7cacc0ec4b5f9c977fd619	valid dot-atom local with digits
+s-008	19	ced95a329cb4c1a0ec9fa1b77819bbe2dd37d015c4df39cba3ee102e21524e57	valid dot-atom label with internal hyphen
+s-009	14	a72262de092556f802ca21dfc94b8bbd8cb533f606ff4c670bca89f4cb3b4791	valid dot-atom label with internal hyphens
+s-010	14	0a75bda545d2aca1d6cd68cfb6663f19628b38591795153e55b5ac73e143b27d	valid dot-atom TLD single char label
+s-011	22	a32a37bcd849fce231cbd8928916105b1901c478f309534a44e9c2a7688b2688	valid quoted simple
+s-012	18	b2ab5d463f85df5597c7110f62d4ed7a197e83e68aa02d3bf0aa36a785842c96	valid quoted with escaped quote
+s-013	18	ec5909e5d5b1ea189ae967629153ba1e0b3f2e9972a5877e7055703128584848	valid quoted with escaped backslash
+s-014	14	aa988fb8294b9805bcb77cd10a270e367f155346c4ecec4471dee715d88aa3b4	valid quoted empty
+s-015	17	acbb218b46fb3c899b4349217f62c68977b9349a1ec42de1a6939119f0d11e30	valid quoted with control char 0x01
+s-016	17	e33fe21b7ffd845b0e088eb77c3953cec5c1a7a8de1e5013136dc9c489f3cf0a	valid quoted with tab 0x09 (in qchar range)
+s-017	18	c5c061e0f0084ef70f3631c4c459a720f6abf78d71b36639b25d1e0d04e5f3cb	valid quoted with escaped 0x00-adjacent \x09
+s-018	17	d0b4e970471fc72422181a5e11053d44a055a07ce6005097995c848edba7f451	valid quoted with 0x7f (DEL, in qchar range)
+s-019	18	9db48ff30f890b68e53047762ff847a3dc994ae4adbef388ee3b44a16550df44	valid quoted with escaped high byte \xff
+s-020	20	190a88a538c030852634cbcfb0241748ae7f44a4f1ccdc621f8a3943c7bce7f4	valid quoted with many escaped quotes
+s-021	14	cb52ef1c24cd9950f258cf637428f12c82388f624e16ee2008b3276130ad4bfe	valid IPv4 literal all-zero
+s-022	22	31c47ebd05fb72112baa0ef9d47e22c47e6f6c381f2778f8882234942e2956a7	valid IPv4 literal max
+s-023	18	fcaa061d84aa08842368d82df89d763f10a95f7e390d6c2aa422977a7e44ac42	valid IPv4 literal typical
+s-024	14	97cd09cac63c0bde0936b5d7a1f561f03e8c7e54dea10cfa69a43df9a3c08de8	valid IPv4 literal single-digit octets
+s-025	18	a3f9918e27d66956eb6971792edb7e3906ab31d9ef2e5d2cf8a274de2afbefb2	valid IPv4 literal two-digit octets
+s-026	22	9396f72737a4508de473d14ca5b908f81ca9b349808519f3c2ef11a85880b81f	valid IPv4 literal boundary 250-255
+s-027	22	bb0c3fe9d3b6a1cbb8ba675545d0513004710e94f759cde79a6c2829bbc1d53b	valid IPv4 literal 199 (2xx form)
+s-028	14	8ef96343ffc3de638ed1d4323da2010b6017101295c73e6fbf64fd35b6d87977	valid bracket general form ascii tag
+s-029	28	3f074c4297387bfea31d3005aad7f50e9a02ac77933b417502e77b24663f467a	valid bracket general form IPv6-ish tag
+s-030	14	3fc0c117dc16333ad73e2b73ff804ad5cfa0da1afbcea90c96abccce2166feb9	valid bracket general form single-char tag
+s-031	19	6200d434b6dee5b6a48eb70948bf17d574379c31542f7d2a92df848065248ed8	valid bracket general form with hyphen in tag
+s-032	16	513b077cbf3b0c57a9b993662c0ed0e7c2d950a16962d6f358ddbf3993e95fdf	invalid IPv4 octet 256
+s-033	16	6bdf91774407fef416f1c6ef80d0d00241e4d17abc33e14213075993958e1612	invalid IPv4 octet 999
+s-034	12	48d9c96beb8a6bdf958290650e4947624ccad6c78c7e1671493af541253e2f07	invalid IPv4 too few octets
+s-035	16	b59764c9c3f4d0af75fd573b5dd2f53c54511cb80365f096269547224ba92447	invalid IPv4 too many octets
+s-036	17	d7d8c44da8231129fe10485201c3f130163c7542a874c3555e61e3188c195065	invalid label leading hyphen
+s-037	13	8c77dcb7d63df0ef26ffafa85c4ad277994b9059e28dd8fe93f47b2b38c478fd	invalid label leading hyphen second label
+s-038	17	954d05e9924833d57617da13b52a4070e55c25550d277f434ab45d28fba3bafa	invalid label trailing hyphen
+s-039	17	c34cb7333ccb7fc62925cbc33395f82e4636485587db6b5cede9fdc086af0dce	invalid unescaped quote inside quoted string
+s-040	15	c3c54a8037a38a700ae828ea3ebb1cb5e8df3ec6c2c43868fbf631df739d7f21	invalid missing @ entirely
+s-041	12	5ded7034f18daeb6f3e8a29b9cefb5084a25a289ea98e8bddb94a2e4df875afa	invalid empty local part
+s-042	5	123237df1bdab119529a8415d6265effbf5b68d00ac386624e336ad3f340c3f5	invalid empty domain
+s-043	22	b316055c3190f3caf5bfe17c463b0e4165c80bc0e69b16a103b49fd39cb50ee2	invalid double dot in local part
+s-044	17	dd1a8d4e41c990af71e6099411c86f3f29fab1a3731f5a3567c193b94611063d	invalid leading dot in local part
+s-045	17	886df4698bd7ac43e25bbc17b4656a839b69e80322acb74b2d9efe474f6d21dd	invalid trailing dot in local part
+s-046	12	b3c8b5117be443e611151853a1c7f304f115370f1f7a888869071035f60c61d4	invalid domain single label no dot
+s-047	13	617a2a8eb9980e87ede7238df2bf58e0b0ccac08edf91a5d658a330dc907efa3	invalid bracket unclosed
+s-048	7	dc4de3b7e1190a7a7f88a15e0f6461f1e61778c1bea9c8cdaf29258f9dd1e8a0	invalid bracket empty
+s-049	21	19bf0e790e46e335f7b3072c22a71440b97d77dbb3635293fa86e6cf1af0ed0c	invalid space in local part unquoted
+s-050	17	370671aa1bc4a91a1d3eac646c28698fcbc6ac92a7c45b90a73bcc24a49f39f9	invalid at-sign in domain
+s-051	21	1085e460c23acfa82c0cc51d2a96e6dc285cf7645112ad2587eb9eedf3fa8883	invalid control char 0x00 unquoted
+s-052	12	e7a9619e88e220ec3936863c54ada494f9c692b2ff0a4a389fa8c5ea89e7154f	bracket general form: byte 0x20 (excluded from both classes)
+s-053	10	8a063d1f61f9b55d59a5dd71d439a1b1804527c02485dd1ea6b51b1dd7864f73	bracket general form: byte 0x52 'R' (excluded from [\x21-\x5a\x53-\x7f])
+s-054	10	4bd2b02564464a748843a8f3bd0c1877ab1697e6268fdca46bc760ae218a18b5	bracket general form: byte 0x53 'S' (included, class boundary)
+s-055	10	860ae26cb095b71d2780b967db15f84672dd001bfdfb9d17d426b87b5baa6401	bracket general form: byte 0x5a 'Z' (included, class boundary)
+s-056	10	76cc21767af8ce73b96dccd919a4088d7815c7dc5fe9d37ef3022f0f257dc7c5	bracket general form: byte 0x21 '!' (included, class boundary)
+s-057	10252	5085f94e02645aecfb7a9f154ac53f082c110fd9747a9de1467c149a3c2eb42b	pathological: 10KB local part of atom chars
+s-058	4011	d0fb4765c67b6e6ef627df552705aa948dd9d96336fc0881d4bede2c087a2107	pathological: 2000-deep dotted local part a.a.a...
+s-059	5134	522e8594990eed9e9d13b6f6aff575a0d5ecbfe104077539be0a25fef32720a4	pathological: 5KB quoted string of qchars
+s-060	10240	7ffe4ce6d10a40a0c0343b1932b4c5636c4a9914f7ad186c09a37dccc5a9a24a	pathological: 10KB local part, no @ (forces full scan, nomatch)
+s-061	2008	de6cb604151eb59429af54060969062557e8a44127f36c531e3932173ecc851c	pathological: long domain, many labels
+s-062	513	372f22a0141b7e2837cded6365bdfc9a7daa9d868eda4dbf100326c98afd1683	pathological: long IPv4-literal-shaped garbage
+s-063	5135	aaa66780cc9e3d76a55b8910c5862e68d2fa154137af00c93f3ef1e33787fb85	pathological: 5KB quoted string with trailing unescaped quote mid-string
+s-064	4110	65518f44e16111b32d406bb67c4aa80ff616c6bcb3359f113f7a359ef419aa61	pathological: alternating escaped chars in quoted string, 4KB
+s-065	16	857296a3c8a811821100e4ee4c0e5dd7b1f3b6d25687c32bdc7b25de9f2b4080	valid: mixed-case local+domain (pattern is lowercase-only class -> likely no match)
+s-066	17	2c46aaa9d5fd39384d6d386af4d13717b49fc63b4105e031463d24742b3bf690	valid: uppercase inside quoted string (qchar allows 0x41-0x5a via 0x23-0x5b)
+s-067	16	bcdf9d7f64579b7303a53e13206836af2f328d0f1b9ee2ba70aa044d1e320068	valid: digits-only domain labels
+s-068	5	d648b243a3e817eaa3309e00e183483f2867baadf522099f0c2121770536b25a	valid: single-char everything
+s-069	17	3a73531c1160af79e491bd998c63ac11d0d805f64a28809c83d1f1a73be56b81	invalid: two @ signs
+s-070	13	01765853e343f81314bd84de9a2fb903c905aa502f0c816f30980bb3a54cac10	invalid: local part exactly one specials-only char
+s-071	30	7561218320f54b8d7ca8f00d150944b5fc5d607d9d0b1580d1de9df958fb3f81	valid: local part all specials
+s-072	25	799d328bef6fd41441bd4dadf2bddabfce4aab5c34f2da81cf7474b4c81dc6eb	invalid: quoted string missing closing quote
+s-073	13	84056a1cc73541b9eb42368d6aee9bdb0b14e451479782aba35e149265e391d0	invalid: bracket form missing tag colon
+s-074	17	955e0951c3ca3ff40b8aadfd9d0090ba7c440036c7bf7c49e68694d8c41eee78	valid: bracket general form tag with digits
+s-075	16	2d05e84076ae8d2795f29e4506f0a6e3ed313b4c135802a593d20ad351ce6b27	boundary: IPv4 last octet 25x boundary (250)
+s-076	16	37b707ff12530abd3bfe2f671394467e8a2f74544821878f66a89b6db7688db0	boundary: IPv4 last octet exactly 255
+s-077	16	83a8d9d409e4bb84c9f6b7e82f778d2584aa0fcd1707068affc34ea030d08e86	boundary: IPv4 octet exactly 199
+s-078	16	1778b52a3393ed1214d6478167caa3e461accfa51f26b4e05d2d085ca0e9dc7d	boundary: IPv4 octet 200 (2[0-4][0-9] branch)
+s-079	16	2c5e6ce14093507855f52702f85b1d0ba592e9536257559c1c807b3d0614852d	boundary: IPv4 octet 249 (2[0-4][0-9] branch top)
+s-080	16	6b5b5ed8e87bcd2ed6291024a3c021c79bc80ae3b0dc8ea9a3e9679f763866a7	boundary: IPv4 octet 260 invalid (exceeds all branches)
+s-081	0	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	empty subject
+s-082	1	c3641f8544d7c02f3580b07c0f9887f0c6a27ff5ab1d4a3e29caf197cfc299ae	just @ sign
+s-083	43	05c6e08f1d9fdafa03147fcb8f82f124c76d2f70e3d989dc8aadb5e7d7450bec	no match: random prose
+s-084	10	c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646	no match: digits only

@@ -39,7 +39,24 @@ docs/dev/'s append-only records.
   RECORD, and the file is named for it. Implemented by `../../schema/`
   and gated by `make check-schema`.
 
-Expected next residents, in the order the plan reaches them:
+- `harness_notes.md` — **[B3]/[B4]'s list of where the BUILD differs from
+  `harness_contract.md`, and why**: the two regime spellings, the two
+  testee-id spaces, the sidecar's second generator/manifest pair, the
+  driver-protocol columns the contract omitted, the resume rule, the
+  `iters` calibration rule, the `consumed_length` claim, the give-up
+  policy, the `subbench.content_hash` rule, and what is not built. Item
+  9 is the one with a real hole in it — the MATCH regime presumes an
+  end-anchor and pcrec has none. For the M1 panel.
+
+- `quiet_baseline.md` — **[B3]'s answer to OD-B8, MEASURED 2026-08-25**:
+  what "quiet" means numerically on this box, the 12 samples behind it,
+  and the two thresholds `pcrecbench/quiet.py` defaults to. It carries a
+  caveat that must not be lost — a genuinely IDLE baseline was not
+  obtainable (another session held the box for the whole window), so the
+  idle floor is inferred from the quietest-core column rather than
+  sampled. Its load finding is the one for the panel: the load1 gate did
+  not fire once while the per-core occupancy gate refused all 12 samples,
+  so load1 is the WEAKER instrument and occupancy is the detector.
 
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs

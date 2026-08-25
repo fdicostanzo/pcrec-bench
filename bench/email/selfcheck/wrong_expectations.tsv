@@ -1,0 +1,19 @@
+# bench/email/selfcheck/wrong_expectations.tsv -- THE POSITIVE CONTROL
+# harness contract 6: "a POSITIVE CONTROL (a subject whose expected answer
+# is deliberately wrong in a fixture yields `did-not-match-as-expected`)".
+#
+# Every row is a REAL (pattern, subject, regime) of this sub-bench with its
+# expectation DELIBERATELY FALSIFIED, plus a tenth column naming the
+# match_outcome the judge must return. tools/selfcheck.py runs the real
+# pcre2 driver over each one twice -- once against the falsified
+# expectation, which must produce the named outcome, and once against the
+# committed one, which must produce `matched-as-expected`. Without that
+# second half the control would pass just as well if the judge disliked
+# every answer it was ever shown.
+#
+# Columns: the nine of expectations.tsv, then `want`.
+pattern	subject	regime	expected	start	end	nmatches	method	oracle	want
+orig	s-000	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27	did-not-match-as-expected
+orig	s-000	match	match	0	15	-	libpcre2-differential	10.46 2025-08-27	wrong-span-or-captures
+orig	s-011	match	match	0	4	-	libpcre2-differential	10.46 2025-08-27	did-not-match-as-expected
+factored	t-a-valid-addrs	throughput	match	0	25	40331	libpcre2-differential	10.46 2025-08-27	wrong-span-or-captures

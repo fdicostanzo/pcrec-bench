@@ -4,8 +4,15 @@
 # Subagent worktrees live inside the repo so the scope mandate holds by
 # construction; they are never committed.
 worktrees/
-# Build products of testee adapters and vendored engines (none yet).
+# Build products of testee adapters and vendored engines.
 build/
+testees/pcrec/build/
+# GENERATED sub-bench subject trees: reproduced byte for byte by the
+# generators next to them, pinned by the COMMITTED manifests (harness
+# contract 2). Committing a megabyte of 'a' would be committing a
+# derivation of a two-line script.
+bench/*/subjects/
+bench/*/throughput/
 build-*/
 vendor/*/build/
 __pycache__/
