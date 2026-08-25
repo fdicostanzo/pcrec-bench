@@ -198,7 +198,7 @@ class RecordValidator:
                 continue  # already reported by the kind pass
             for err in sorted(v.iter_errors(obj), key=lambda e: list(e.absolute_path)):
                 field = ".".join(str(p) for p in err.absolute_path) or "(document)"
-                problems.append(Problem(path, n, field, err.message))
+                problems.append(Problem(path, n, field, err.message, "SCHEMA"))
 
         if setup is None:
             return problems, None
@@ -421,6 +421,11 @@ def main(argv=None):
     ap.add_argument("files", nargs="+")
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
+    ap.add_argument("--expect-rule", metavar="RULE",
+                    help="with --expect-reject: require RULE (X1..X17 or SCHEMA) "
+                         "among the rules that fired. A positive control that "
+                         "rejects for the WRONG reason proves nothing about the "
+                         "rule it was written for")
     ap.add_argument("--check-filename", action="store_true",
                     help="also enforce X4: basename == <record_id>.jsonl")
     ap.add_argument("--allow-mixed-versions", action="store_true",
@@ -442,7 +447,7 @@ def main(argv=None):
 
     rv = RecordValidator(schema)
     versions = {}
-    rejected = accepted = 0
+    rejected = accepted = wrong_rule = 0
     for path in args.files:
         problems, sv = rv.validate_file(path, check_filename=args.check_filename)
         if sv:
@@ -453,8 +458,15 @@ def main(argv=None):
                 for pr in problems:
                     print(f"validate.py: {pr}", file=sys.stderr)
             else:
+                fired = sorted({pr.rule for pr in problems if pr.rule})
                 print(f"validate.py: REJECTED (as expected) {path}: "
-                      f"{len(problems)} problem(s); first: {problems[0]}")
+                      f"{len(problems)} problem(s), rules {','.join(fired) or '-'}; "
+                      f"first: {problems[0]}")
+                if args.expect_rule and args.expect_rule not in fired:
+                    print(f"validate.py: {path}: expected rule "
+                          f"{args.expect_rule} to fire, but the rules that fired "
+                          f"were {fired}", file=sys.stderr)
+                    wrong_rule += 1
         else:
             accepted += 1
             if not args.expect_reject:
@@ -472,8 +484,9 @@ def main(argv=None):
         return 1
 
     if args.expect_reject:
-        print(f"validate.py: {rejected} rejected, {accepted} wrongly accepted")
-        return 0 if accepted == 0 else 1
+        print(f"validate.py: {rejected} rejected, {accepted} wrongly accepted, "
+              f"{wrong_rule} rejected for the wrong reason")
+        return 0 if (accepted == 0 and wrong_rule == 0) else 1
     print(f"validate.py: {accepted} valid, {rejected} invalid")
     return 0 if rejected == 0 else 1
 
