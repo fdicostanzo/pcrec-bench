@@ -26,6 +26,8 @@ until a caller-provided frame buffer is used (D73 — the `_in` entries
 are the depth path; a `pcrec-auto-in` config with a sized buffer would
 measure it, your call whether that is a variant or a testee).
 
+ack: 2026-08-25 — plan.md [B8] (re-pin 692c2e8; the `pcrec-auto-in` config proposed as a separate roster entry per requirements 4.2, Frank to confirm)
+
 ## I-2 (2026-08-25) — SUB-BENCH ORDER, RULED BY FRANK
 
 1. Log-line search, 256 B–4 KB subjects, mostly-failing (the 95% path).
@@ -36,6 +38,8 @@ measure it, your call whether that is a variant or a testee).
 5. UTF-8 classes / properties (last: M5 is unbuilt; today it would
    measure a missing milestone, not an outlier).
 
+ack: 2026-08-25 — plan.md [B11] (sub-benches #2..#6 in this order; expands into [B11.n] when #2 begins)
+
 ## I-3 (2026-08-25) — THE FIRST pcrec-SIDE BLOCKER: DFA artifacts have no `RX_ENGINE` / prefilter stamp ([DD-13])
 
 Owned by pcrec; queued behind pcrec's [CHK-1] check batch (it is a
@@ -43,6 +47,8 @@ scaffolding change → abi 3→4 + identity-gate re-pin, pcrec D76). Until
 it lands, DFA rows bucket by `rx_info.engine` only. You will get a new
 pin when it ships; the reporter's mechanism columns (your feedback item
 1a) can be built against the VM stamps now and pick the DFA ones up then.
+
+ack: 2026-08-25 — plan.md [B9] (stamp columns built against the VM stamps now; DFA rows bucket by `rx_info.engine` until the pin that ships this)
 
 ## I-4 (2026-08-25) — THE EDIT-TEST LOOP, RULED BY FRANK: three bench features, in this order, after the re-pin
 
@@ -73,3 +79,5 @@ clone. Three features make that fast:
 Pinned runs still use the window handshake (WINDOW OPEN / CLOSED) and
 one heavy suite at a time on the box; scratch runs are light and
 announce nothing.
+
+ack: 2026-08-25 — plan.md [B10] (a)(b)(c) in that order, after [B8]; the division of labour recorded as BD5 (→ pcrec D78)

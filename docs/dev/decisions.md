@@ -62,3 +62,27 @@ dependencies live here). Why: one language for everything that is ours,
 with pinned modules so a record produced on another machine was made by
 the same tooling. Revisit: if a hot path (the in-process timing loops)
 needs C — those belong to the adapters anyway.
+
+## BD5 — 2026-08-25 — The durable channel with the pcrec manager (inbox/outbox, one writer each) and the build-vs-run division of labour are pcrec D78; this repo carries the files and the skill, not a second copy of the ruling
+
+Frank, 2026-08-25, recorded by the pcrec manager as pcrec D78
+(~/pcrec/docs/dev/decisions.md, grep D78). The ruling was first committed
+INTO this repo's decisions.md by that session (d12abed) and reverted
+(91e9251) as a wrong-repo commit: pcrec's decisions live in pcrec. What
+this repo holds: `docs/dev/inbox_from_pcrec.md` (written and committed
+ONLY by the pcrec manager, single-file `[inbox]` commits; this session
+appends one `ack:` line per item and nothing else), `docs/dev/
+outbox_to_pcrec.md` (written ONLY by this session; the pcrec manager
+reads it at wake), and the `pcrec-bench-manager` skill's §0 text. Items
+are numbered and never deleted; the files carry what must survive a
+session boundary; live coordination stays interprocess (SendMessage)
+when both sessions are up. Division of labour: this session BUILDS and
+EXPANDS the bench; the pcrec manager RUNS it from a WORKTREE of this repo
+(never a clone — the store is append-only and must not fork). Two record
+tiers: PINNED (committed pcrec SHA via pin.sh, quiet window, the full
+protocol) → canonical `store/`; SCRATCH (a provided binary, a `quick`
+cell) → a scratch store the reporter can read but that never enters
+`store/index.tsv` or the rankings ([B10]). Why: a SendMessage to a
+session that is down or mid-task is lost; a file in the repo is not.
+Revisit: if the inbox grows past what a wake-time read can absorb, split
+it by topic — but keep one writer per file.

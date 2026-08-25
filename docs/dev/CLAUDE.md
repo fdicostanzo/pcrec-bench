@@ -38,6 +38,15 @@ decisions) so cross-references between the two repos are never ambiguous.
 - `feedback_pcrecdev1_2026-08-25.md` — the pcrec manager session's
   feedback on the first production sample (what is missing to act on an
   outlier; what it distrusts; five ranked sub-bench areas), for Frank.
+- `inbox_from_pcrec.md` — the DURABLE CHANNEL IN (pcrec D78 / BD5):
+  written and committed ONLY by the pcrec manager session (`[inbox]`
+  commits); rulings, priorities, re-pin targets, requests. This session
+  reads it at wake, moves each new item into plan.md and appends one
+  `ack: <date> — <where>` line under it — the only thing it writes here.
+- `outbox_to_pcrec.md` — the DURABLE CHANNEL OUT: written ONLY by this
+  session (findings about pcrec, requests for pcrec changes, questions
+  that must outlive the session); the pcrec manager reads it at wake.
+  Items `O-n`, never deleted.
 - `upstream_findings.md` — findings about OTHER engines with the record
   that shows them (U1 2026-08-25: pcre2-jit's 60 s timeout on the
   factored email pattern over 1 MB of `a`). Findings about pcrec go to

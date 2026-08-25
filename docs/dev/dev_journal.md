@@ -511,3 +511,31 @@ check before dividing). ACTION FOR THE NEXT SESSION (not done tonight):
 testees/pcrec/configs.toml pin → ae9c98c; any `abi == 2` read in the
 adapter → 3; pin.sh builds the new snapshot; re-run the five cells in a
 new window; the report over both pins is the first before/after.
+
+## 2026-08-25 (EDT, ~12:4x), second session (part 1) — wake: the inbox acknowledged, the M2 queue drafted, BD5, the outbox created
+
+Woke per the skill. Box quiet (load 0.38; pcrecdev1 up and busy).
+Between the first session's close and now, the pcrec manager committed
+inbox I-1..I-4 here (c576c5b), committed pcrec's D78 into THIS repo's
+decisions.md by mistake (d12abed, reverted 91e9251 — D78 lives in pcrec
+as aede6fd) and updated the manager skill (f4e65d3). The re-pin target
+moved from ae9c98c (post-close note) to 692c2e8 (I-1: same compiler, the
+tree the battery was scored on).
+
+Done this part, one commit: plan.md gets the M2 queue — [B8] re-pin
+692c2e8 + before/after (I-1), [B9] reporter follow-ups from pcrecdev1's
+feedback (stamps as columns, compile phases, the regime-artifact bucket,
+OD-B11..B13; I-3's DFA stamp gap noted on the row), [B10] the edit-test
+loop (scratch tier, `quick`, `pcrec-local`; I-4, after [B8]), [B11] the
+five sub-benches in Frank's order (I-2), [B12] the M1 close candidates
+(close panel, U1's NO_START_OPTIMIZE probe, OD-B10); [B7] unchanged.
+One `ack:` line under each inbox item. BD5 records the channel and the
+division of labour as a pointer to pcrec D78 (why the copy here was
+reverted). docs/dev/outbox_to_pcrec.md created: O-1 (acks), O-2 (the
+`pcrec-auto-in` question — bench position: a separate roster entry per
+requirements 4.2; needs the FB macro names / `_in` signatures at
+692c2e8), and the standing items owed to pcrec. docs/dev/CLAUDE.md lists
+both channel files. Verified: no `abi == 2` check exists in the adapter
+(driver.c:199's `== 2` is the engine id), so the abi 2→3 step of [B8]
+is a record-field check. Nothing else started — Frank reviews the first
+sample and the queue order this session.
