@@ -631,3 +631,60 @@ NOW: window requested from pcrecdev1 (six cells, ~45 min, CPU 11; its
 lanes must be idle — load is 2.7 with them up); a synthetic --trials 1
 rehearsal of the exact run_window_b8.sh (pcrec-auto, pcrec-vm-in) into a
 scratch store is running in the background.
+
+## 2026-08-25 (EDT, ~14:5x), second session (part 4, PAUSE) — [B8] DONE: the re-pin sample measured and reported; two pcrec findings; the reporter's two gaps
+
+THE WINDOW: pcrecdev1 opened it at 13:33 (load1 0.94, its three lanes
+done, its battery held). run_window_b8.sh ran 13:34-14:10 (36 of 45
+min): pcre2-interp, pcre2-jit, pcrec-auto, pcrec-nocaps, pcrec-vm,
+pcrec-vm-in, every cell rc=0 on the first gate attempt. Three records
+came back `inconclusive-load` (pcre2-interp, pcrec-auto, pcrec-nocaps):
+the AFTER occupancy sample read 10.1 / 10.2 / 11.0 % on one core against
+the 10 % limit — 1-s transients; pcrecdev1's audit of its side shows only
+git commits and watchdog `ps` ticks inside the window. OD-B12 exactly;
+pcrecdev1 suggests per-core busy AVERAGED over the cell or a load1/nproc
+ratio. The rehearsal (synthetic, --trials 1) had caught one real setup
+gap first: a fresh store has no machines.tsv and `run` refuses (rightly)
+— seed it. WINDOW CLOSED 14:10; the battery started 14:11, so the three
+cells are re-measured at the next boundary or next session.
+
+THE BEFORE/AFTER (reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-
+repin-692c2e8.{md,subject-grain.md,tsv}; set grain, median of 5,
+ns/call): (1) factored/short-search COLLAPSED as I-1 predicted —
+pcrec-auto 84,076 (8da6120) → 6,284 (692c2e8), nocaps 6,136, = orig's
+6,125; pcre2-jit 15,364, so pcrec-auto is now 2.4× faster than the JIT
+on factored where on orig it ties it. NOT an outlier: wave G confirmed
+by an independent bench. (2) factored/match-compliance: pcrec-auto 100 %
+(was excluded on five FRAMES give-ups) at 234,951 vs pcre2 1,833,524
+(0.128×); pcrec-vm-in completes all 85 at 464,408; pcrec-vm still
+excluded by its give-ups. (3) factored/throughput 1 MB: pcrec-auto
+13.40 ms 100 % (was excluded); pcre2-jit absent (U1 reproduced 5/5).
+(4) NEW: pcrec-vm-in BEATS pcrec-vm on every regime at the same pin —
+orig/short-search 12,546 vs 28,997 (2.3×), orig/compliance 62,732 vs
+80,228, factored/short-search 54,118 vs 69,538 — filed as outbox O-4
+(reading: a per-call default-buffer setup cost the `_in` entry avoids;
+~200 ns/call). (5) orig/compliance stays a regime artifact (VM forms
+3-4× under the \z DFA form; [OS-4]). (6) orig otherwise unchanged
+across pins within noise. O-3 answered by pcrecdev1: the 24-byte frame
+is right — "call-bearing" meant LINKED-call-bearing, wave G splices the
+acyclic calls; pcrec fixed its spec; the honest reporter column is
+RX_VM_CALL_LINKED/_SPLICED.
+
+REPORTER GAPS the sample exposed (→ [B9]; requirements OD-B14/B15): the
+report marks NO record status, so the three inconclusive-load records
+rank unmarked beside measured ones; and with two records of one
+testee_id (pcre2 at two dates) it neither states nor lets the reader
+choose pooled-vs-newest (the pcre2-jit orig/short-search median moved
+6,28x → 6,124, so it is not simply the old record). Until [B9], read the
+repin report with the index's status column beside it.
+
+STATE AT PAUSE: [B8] completed and archived; master cfbfc7c+; store 11
+records; make check 2/53/0, 31/31, 20/20; worktree removed, branch
+lane/b8repin kept (its unmerged config_extra rework is 9cf19c8 in that
+worktree's reflog only — gone with the worktree; the merged design is
+engine_mode slugs `auto-in`/`vm-in`). Budget: Frank at ~76 % of the
+weekly token budget at session start; this session used one strong
+lane, one window, and the manager's own traffic. Next: [B10] (scratch
+tier / quick / pcrec-local) ∥ [B9] (reporter: status, stamps incl.
+LINKED/SPLICED, phases, regime-artifact bucket, OD-B11..B15), then
+[B11] log-line search — Frank starts them.

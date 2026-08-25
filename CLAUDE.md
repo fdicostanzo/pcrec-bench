@@ -13,8 +13,8 @@ reporter ([B5], `pcrecbench/report.py`, `--grain set|subject`), and the
 first production sample in `store/` + `reports/` ([B6], pcrec pin
 8da6120). M2 is in progress: [B8] re-pinned pcrec to **692c2e8** and added
 the caller-provided frame-buffer testees (`pcrec-vm-in` measured,
-`pcrec-auto-in` defined); the [B8] window run and before/after report are
-next; then [B10] (scratch tier / `quick` / `pcrec-local`), [B9] (reporter
+`pcrec-auto-in` defined) and measured the six-cell re-pin sample — the
+before/after is `reports/*-repin-692c2e8.*`; next: [B10] (scratch tier / `quick` / `pcrec-local`), [B9] (reporter
 columns), [B11] (sub-bench #2, log-line search). `make check` is green
 (2/53/0, 31/31, 20/20). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
