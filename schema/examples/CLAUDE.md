@@ -41,7 +41,11 @@ File names are not chosen: rule X4 makes the name the record id plus
   have a live example. It also carries a `gave-up` cell — the engine
   refused `s-pathological` on its own frame budget and named the code —
   because that outcome is the bench's headline result on a hazard
-  pattern and an example that omits it teaches the wrong shape.
+  pattern and an example that omits it teaches the wrong shape. And it
+  carries BOTH forms: seven `plain` compile rows plus six
+  `whole-subject` ones, with the match-compliance rows keyed to the
+  second artifact and the search/throughput rows to the first — which
+  is what pcrec, having no end-anchored mode, actually has to do.
 - `email-specimen@0.1__v8-regexp_13.4.0_default-caps-simdna__example-box__20260825T034500Z.jsonl`
   — the second, small record: a `lazy-jit` testee (compile rows carry
   `derivation`, never a number the harness invented) whose record status

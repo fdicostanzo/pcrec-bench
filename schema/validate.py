@@ -6,7 +6,7 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X26 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X27 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
@@ -54,6 +54,7 @@ RESERVED_KINDS = {
                   "no shape is defined yet",
 }
 SIMD_SLUG = {"on": "simd", "off": "nosimd", "n-a": "simdna"}
+DEFAULT_FORM = "plain"          # an absent `form` IS `plain` (the note 5)
 
 # docs/design/record_schema.md 6.2. A RELEASE TAG is a plain dotted version,
 # optionally with a single trailing letter revision (`8.45a`). Anything else --
@@ -356,13 +357,18 @@ class RecordValidator:
         decl = testee.get("engine_metadata_declaration", {}) or {}
         phases = list(testee.get("compile_phases", []) or [])
 
-        compiled_ok = {}          # pattern_id -> every compile row says `compiled`
-        seen_compile = {}         # pattern_id -> set of trials
-        seen_match = {}           # (pattern, subject, regime) -> set of trials
+        # Everything below is keyed by (pattern, FORM): a testee with no
+        # end-anchored mode compiles a SECOND artifact for the whole-subject
+        # regime, and the two are different compiles of different text. They
+        # must never share a row, a trial sequence or a provenance check.
+        compiled_ok = {}          # (pattern, form) -> every compile row `compiled`
+        seen_compile = {}         # (pattern, form) -> set of trials
+        seen_match = {}           # (pattern, subject, regime, form) -> trials
 
         for n, row in rows:
             kind = row["kind"]
             pid = row.get("pattern_id")
+            form = row.get("form", DEFAULT_FORM)
             # X7
             if pid not in pat_ids:
                 add(Problem(path, n, "pattern_id",
@@ -378,10 +384,11 @@ class RecordValidator:
                                 f"{row.get('regime')!r} is not among the "
                                 f"sub-bench's declared regimes "
                                 f"{sorted(regimes)}", "X8"))
-                key = (pid, sid, row.get("regime"))
+                key = (pid, sid, row.get("regime"), form)
                 seen_match.setdefault(key, {}).setdefault(row.get("trial"), []).append(n)
             else:
-                seen_compile.setdefault(pid, {}).setdefault(row.get("trial"), []).append(n)
+                seen_compile.setdefault((pid, form), {}) \
+                            .setdefault(row.get("trial"), []).append(n)
                 # X10
                 if row.get("cost_class") != testee.get("execution_model"):
                     add(Problem(path, n, "cost_class",
@@ -397,7 +404,8 @@ class RecordValidator:
                                 f"testee's declared compile_phases {phases}",
                                 "X12"))
                 ok = row.get("compile_outcome") == "compiled"
-                compiled_ok[pid] = compiled_ok.get(pid, True) and ok
+                compiled_ok[(pid, form)] = \
+                    compiled_ok.get((pid, form), True) and ok
             # X15
             for name, value in (row.get("engine_metadata") or {}).items():
                 self._check_metadata(add, path, n, name, value, decl, kind)
@@ -422,21 +430,40 @@ class RecordValidator:
                         f"record, in emission order", "X18"))
 
         # X9 dense trial numbering
-        for pid, trials in seen_compile.items():
-            self._check_trials(add, path, trials, f"compile rows for pattern {pid!r}")
-        for (pid, sid, reg), trials in seen_match.items():
+        for (pid, form), trials in seen_compile.items():
             self._check_trials(add, path, trials,
-                               f"match rows for ({pid!r}, {sid!r}, {reg!r})")
+                               f"{form} compile rows for pattern {pid!r}")
+        for (pid, sid, reg, form), trials in seen_match.items():
+            self._check_trials(add, path, trials,
+                               f"{form} match rows for ({pid!r}, {sid!r}, "
+                               f"{reg!r})")
+
+        # X27 a whole-subject match row needs a whole-subject compile row
+        for n, row in rows:
+            if row["kind"] != "match":
+                continue
+            if row.get("form") != "whole-subject":
+                continue
+            pid = row.get("pattern_id")
+            if (pid, "whole-subject") not in seen_compile:
+                add(Problem(path, n, "form",
+                            f"is `whole-subject` but the record has no "
+                            f"whole-subject compile row for pattern {pid!r}; "
+                            f"that artifact is a SEPARATE compile of "
+                            f"different text and the record does not witness "
+                            f"it", "X27"))
 
         # X11 no timing on an uncompiled or expectation-disagreeing cell
         for n, row in rows:
             if row["kind"] != "match" or "timing" not in row:
                 continue
             pid = row.get("pattern_id")
-            if not compiled_ok.get(pid, False):
+            form = row.get("form", DEFAULT_FORM)
+            if not compiled_ok.get((pid, form), False):
                 add(Problem(path, n, "timing",
-                            f"pattern {pid!r} did not compile cleanly in this "
-                            f"record, so this cell must not be timed", "X11"))
+                            f"the {form} artifact of pattern {pid!r} did not "
+                            f"compile cleanly in this record, so this cell "
+                            f"must not be timed", "X11"))
             if row.get("match_outcome") != "matched-as-expected":
                 add(Problem(path, n, "timing",
                             f"match_outcome is {row.get('match_outcome')!r}: a "
@@ -598,12 +625,15 @@ class RecordValidator:
                                 f"`pass`; only a passing occupancy check on "
                                 f"BOTH samples supports `measured` "
                                 f"(the v1.1 ruling, §9)", "X13"))
-            missing = sorted(x for x in pat_ids if x not in seen_compile)
+            # The PLAIN artifact is what every pattern must have; the
+            # whole-subject one exists only for a testee that needs it.
+            missing = sorted(x for x in pat_ids
+                             if (x, DEFAULT_FORM) not in seen_compile)
             if missing:
                 add(Problem(path, 1, "status",
                             f"is `measured` but patterns {missing} have no "
-                            f"compile row; a record that stopped halfway is "
-                            f"`harness-failure`", "X14"))
+                            f"`plain` compile row; a record that stopped "
+                            f"halfway is `harness-failure`", "X14"))
         return p
 
     @staticmethod
@@ -665,7 +695,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X26 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X27 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")

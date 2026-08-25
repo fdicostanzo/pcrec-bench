@@ -263,6 +263,7 @@ The enums, in full:
 | `occupancy.verdict` | `pass` `fail` `unavailable` | §9(b) |
 | `load.verdict` | `quiet` `loaded` | §9(a), naming the existing gate |
 | `pinning.mode` | `taskset` `chrt+taskset` `none` `unavailable` | §9(d) |
+| `form` | `plain` `whole-subject` | ADDITION (§5) |
 | `clock_source` | `clock_monotonic` `clock_monotonic_raw` `other` | ADDITION (§9(e)) |
 | `hazard_class` | `none` `exponential-backtracking` `ambiguous-decomposition` `exact-minimum-boundary` `large-count` `wide-alternation` | §5 list + APPROACH §3 |
 | `size_class` | `tiny` `small` `medium` `large` `huge` | APPROACH §3 |
@@ -302,18 +303,52 @@ The enums, in full:
    `matched-as-expected`), and the reporter counts give-ups in their
    own column, apart from wrong answers. requirements §4.4 is amended
    at the merge to list it.
-3. **`truncation_check` gains `not-applicable`.** §4.4 gives
+3. **`form` exists at all: `plain` and `whole-subject`.** ADOPTED at
+   v1.1 (2026-08-25). pcrec has no end-anchored matching mode, so its
+   adapter cannot run the match-compliance regime on the same artifact
+   it uses for search and throughput — it must COMPILE A SECOND ONE,
+   `(?:pattern)\z`, and match against that. Two artifacts from one
+   pattern is not a pcrec quirk to be hidden; it is a real difference
+   in what was measured, and the two must never share a row. A
+   `whole-subject` compile row is a different compile of different
+   text, with its own cost, its own artifact size and its own trials,
+   and a `whole-subject` match row was produced by a different matcher.
+   Folding them together would report pcrec's compliance numbers
+   against a compile cost it did not pay.
+
+   ABSENT means `plain`, so every testee that needs no second artifact
+   — libpcre2 sets `PCRE2_ANCHORED | PCRE2_ENDANCHORED` as runtime
+   FLAGS on the artifact it already has — writes nothing and means it.
+   That is also why `form` is informational rather than a testee-level
+   declaration: two testees may reach the same regime by different
+   routes, both legitimately, and the report shows the form beside the
+   number rather than trying to rank across it.
+
+   **The idiom is `\z`, and `$` is NOT equivalent.** At `options=0`,
+   PCRE2's `$` matches before a final newline as well as at the end of
+   the subject, so appending `$` accepts `"user@example.com\n"` as a
+   whole-subject match. `\z` is the true end. An adapter that reaches
+   for `$` because it is the familiar spelling introduces a silent
+   one-subject-class disagreement that looks like an engine difference
+   and is not one.
+
+   Consequences on the cross-line rules, all in §9: X9's trial
+   sequences and X11's provenance rule are keyed per (pattern, FORM);
+   X14 requires a `plain` compile row for every pattern and treats
+   `whole-subject` as optional; and X27 is new — a `whole-subject`
+   match row must have a `whole-subject` compile row for its pattern.
+4. **`truncation_check` gains `not-applicable`.** §4.4 gives
    `unverified-for-truncation` for a large-subject cell whose API does
    not expose the consumed length; the third state is a cell where the
    question does not arise (a match-compliance row over a 40-byte
    subject). Folding it into `unverified-for-truncation` would inflate
    the count of a flag that exists to be alarming.
-4. **`hazard_class` / `size_class` are enumerated at all.** The
+5. **`hazard_class` / `size_class` are enumerated at all.** The
    requirements name these as sub-bench TAGS without fixing a
    vocabulary. They are filterable, and "filterable = enumerated or
    normalized", so a vocabulary had to be chosen; the values are §5's
    own hazard-family list. Growing either is a MINOR bump (§4).
-5. **`load.verdict`, `pinning.mode`, `role`, and the two
+6. **`load.verdict`, `pinning.mode`, `role`, and the two
    `engine_metadata_declaration` enums** are new names for facts §9,
    §6 and §4.2 require to be recorded but do not name.
 
@@ -720,6 +755,7 @@ One row per (pattern × subject-or-subject-set × regime × trial)
 | field | type | req | rule / enum | why |
 |---|---|---|---|---|
 | `kind` | const `"match"` | R | — | the discriminator |
+| `form` | enum | o | `plain` (the default when ABSENT) / `whole-subject`; FILTERABLE | ADDITION, §5 ADDITIONS 3: a testee with no end-anchored mode matches the compliance regime against a SEPARATE artifact. The row says which artifact answered, and X27 requires the record to witness that artifact's compile |
 | `seq` | integer ≥1 | R | dense and unique 1..N over ALL result rows of the record, in EMISSION order (X18) | ADDITION: §2's "file order is free" needs a carrier for the order that IS significant. Without it "the first match" — which is exactly how a lazy JIT's compile cost is defined (§3) — is a property of a file's line numbers, and a store that re-sorts rows changes a measurement |
 | `pattern_id` | slug | R | must be in `setup.patterns[]` | §6 row key |
 | `subject_id` | slug | R | must be in `setup.subjects[]` | §6 row key |
@@ -754,6 +790,7 @@ property of compiling, and this is the compiling row.
 | field | type | req | rule / enum | why |
 |---|---|---|---|---|
 | `kind` | const `"compile"` | R | — | the discriminator |
+| `form` | enum | o | `plain` (the default when ABSENT) / `whole-subject`; FILTERABLE. A compile row is keyed (pattern, FORM, trial) | ADDITION, §5 ADDITIONS 3: the second artifact is a separate compile of different text, with its own cost, its own size and its own trials. Every pattern needs a `plain` row (X14); `whole-subject` is present only for a testee that needs it |
 | `seq` | integer ≥1 | R | one 1..N sequence shared with the match rows (X18) | ADDITION, as above. The sequence is per RECORD, not per row kind: interleaving compile and match rows is what a harness actually does, and the order between them is part of what happened |
 | `pattern_id` | slug | R | must be in `setup.patterns[]` | §6 row key |
 | `trial` | integer ≥1 | R | 1..N contiguous per pattern | C4: pcrec's single-sample GCC-TIME swung 1.87× on a quiet box (`~/pcrec/tests/bench/CLAUDE.md:78`), so compile cost is median-of-N with spread like everything else — which means N RAW trials here |
@@ -802,12 +839,12 @@ both ways before being believed.
 | X6 | `content_hash.value` equals the recomputed hash | §3 |
 | X7 | Every row's `pattern_id` is in `setup.patterns[]`; every match row's `subject_id` is in `setup.subjects[]` | brief: "ids referenced by rows exist in setup" |
 | X8 | Every match row's `regime` is in `setup.subbench.regimes` | §3 |
-| X9 | Trials are exactly 1..N, no gaps, no duplicates, per (pattern, subject, regime) for match rows and per pattern for compile rows | §2 raw trials; a duplicate trial silently doubles a cell's weight in a median |
+| X9 | Trials are exactly 1..N, no gaps, no duplicates, per (pattern, subject, regime, FORM) for match rows and per (pattern, FORM) for compile rows | §2 raw trials; a duplicate trial silently doubles a cell's weight in a median |
 | X10 | `compile_row.cost_class` equals `testee.execution_model` | §3; brief |
-| X11 | A match row carries `timing` only if `match_outcome` = `matched-as-expected` AND every compile row for that pattern has `compile_outcome` = `compiled` | §4.4/§7; brief |
+| X11 | A match row carries `timing` only if `match_outcome` = `matched-as-expected` AND every compile row for that (pattern, FORM) has `compile_outcome` = `compiled` | §4.4/§7; brief |
 | X12 | `cost.phases` names and order equal `testee.compile_phases` | §3 |
 | X13 | `status` = `measured` requires `load.verdict` = `quiet` and BOTH `occupancy.before.verdict` AND `occupancy.after.verdict` = `pass`. `unavailable` disqualifies exactly as `fail` does — see the RULING below | §9(a) "a record whose after-load exceeds it is `inconclusive-load`, not measured" (C7); §9(b); the v1.1 ruling |
-| X14 | `status` = `measured` requires a compile row for every pattern in the roster | makes `harness-failure` mean something: a record that stopped halfway cannot claim to be measured |
+| X14 | `status` = `measured` requires a `plain` compile row for every pattern in the roster (`whole-subject` is optional — only a testee that needs the second artifact has one) | makes `harness-failure` mean something: a record that stopped halfway cannot claim to be measured |
 | X15 | Every `engine_metadata` name is declared; its `scope` matches the row kind; its value matches the declared type (`enum` value in `values`, `mask` bits in `bits`, integer, string) | §4.2, §7 rule 1 |
 | X16 | `testee.warmup_trials` ≥ 1 when `execution_model` = `lazy-jit` | §3 (A6) |
 | X17 | Across files given to one invocation: no two differing MAJOR `schema_version`s | §4, A10 |
@@ -820,6 +857,7 @@ both ways before being believed.
 | X24 | `timing.bytes_processed ≤ subjects[…].bytes_offered × timing.iterations` | §8's own definition of the field. It is the NUMERATOR of every throughput number the report prints, and until v1.1 nothing related it to the subject it claims to have scanned — a record could multiply its own MB/s and validate |
 | X25 | `consumed_length ≤ bytes_offered`; and a `truncated-subject` row must carry a `consumed_length` STRICTLY less than it | §4.4. An engine cannot consume what it was not given, and an outcome that asserts a truncation must say where it stopped — otherwise the bench's most interesting per-subject finding is an unfalsifiable label |
 | X26 | Each `occupancy.<sample>.verdict` is `pass` iff `max_busy_pct ≤ limit_busy_pct`, `fail` otherwise | §9(b). X20's argument applied to the other instrument: a verdict a harness writes beside a number it also writes is not evidence until the two are required to agree |
+| X27 | A match row with `form` = `whole-subject` has a `whole-subject` compile row for its pattern | §5 ADDITIONS 3. X11's provenance argument for the untimed case too: the second artifact is a separate compile, and a match against an artifact the record never witnessed compiling has no provenance whether or not it carries a number |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each
@@ -855,9 +893,9 @@ requirements §9(b)'s wording is amended at the merge to match.
 Two corollaries worth stating because they surprised the author:
 
 - **X11 bites a pattern with no compile row at all.** "Every compile row
-  for that pattern says `compiled`" is false when there are none, so a
-  timed match row for a pattern the record never recorded compiling is
-  rejected. That is intended: a timing whose compile the record does not
+  for that (pattern, form) says `compiled`" is false when there are
+  none, so a timed match row for an artifact the record never recorded
+  compiling is rejected. That is intended: a timing whose compile the record does not
   witness is a timing with no provenance. It also means X14's control
   fires X11 as well, which is honest rather than noisy.
 - **X6 makes the examples restampable, not editable.**

@@ -127,6 +127,10 @@
       "enum": ["pass", "fail", "unavailable"]
     },
     "load_verdict": { "enum": ["quiet", "loaded"] },
+    "form": {
+      "description": "Which ARTIFACT of a pattern the row is about. `plain` is the pattern as the sub-bench spells it; `whole-subject` is the anchored artifact a testee with no end-anchored mode must build separately (pcrec: `(?:pattern)\\z`). ABSENT means `plain`. The two must never share a row: they are different compiles and different matchers.",
+      "enum": ["plain", "whole-subject"]
+    },
     "pinning_mode": {
       "description": "How the run was pinned. `chrt+taskset` is the one token carrying a `+`: it names a COMPOSITION of two tools (a real-time class AND a CPU mask), and `chrt-taskset` would read as one tool's name.",
       "enum": ["taskset", "chrt+taskset", "none", "unavailable"]
@@ -425,6 +429,7 @@
       "properties": {
         "kind": { "const": "match" },
         "seq": { "$ref": "#/$defs/seq" },
+        "form": { "$ref": "#/$defs/form" },
         "pattern_id": { "$ref": "#/$defs/slug" },
         "subject_id": { "$ref": "#/$defs/slug" },
         "regime": { "$ref": "#/$defs/regime" },
@@ -535,6 +540,7 @@
       "properties": {
         "kind": { "const": "compile" },
         "seq": { "$ref": "#/$defs/seq" },
+        "form": { "$ref": "#/$defs/form" },
         "pattern_id": { "$ref": "#/$defs/slug" },
         "trial": { "type": "integer", "minimum": 1 },
         "compile_outcome": { "$ref": "#/$defs/compile_outcome" },
