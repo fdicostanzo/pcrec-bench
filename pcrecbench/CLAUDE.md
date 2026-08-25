@@ -30,13 +30,20 @@ to a temporary name, runs `schema/validate.py --check-filename` there, and
 only then moves it into place. A validation failure is a HARNESS BUG, not a
 measurement result, and it is reported as one.
 
-**Sampling is maximal; emission is versioned.** The harness builds every
-record with the full schema-v1.1 field set and `record.project()` narrows it
-to `record.SCHEMA_VERSION` at one point. A field that was never measured
-cannot be added to an old record afterwards; a field measured and not
-emitted costs one line. `run_cell` returns both records (`RunResult.setup`
-vs `.full_setup`) so the projection can be seen to be live rather than dead —
-`make check` asserts exactly that.
+**The harness judges by RANGE, not by lists it keeps in step by hand.** A
+give-up is a give-up because the code fell inside bounds the ENGINE
+reported (pcrec exports `[PCREC_ERR_FLOOR, -2]` from the artifact; pcre2
+supplies its measured limit-code set). A code an engine adds later
+classifies correctly with nobody editing `harness.py`, and a reserved code
+cannot be laundered into `gave-up` by an enumeration that fell behind.
+
+**A pattern has FORMS, and they never share a row.** `Adapter.compile()`
+returns a `CompiledPattern`: one `CompileResult` per form. Most engines
+have one (`plain`) because they anchor with runtime options; pcrec has no
+end-anchored mode, so it compiles `(?:pattern)\z` as a second artifact and
+the match regime is measured on that one. Both are timed and both get
+compile rows — rule X27 rejects a `whole-subject` match row whose record
+does not witness its compile.
 
 **The store claims a name with `O_EXCL`, never `exists()`-then-write.** An
 exists-then-write pair is the race the `-<n>` disambiguator exists to

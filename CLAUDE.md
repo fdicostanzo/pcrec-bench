@@ -8,9 +8,10 @@ statically, and feeds the outliers back to pcrec as optimization work.
 
 STATUS (2026-08-25): charter seeded 2026-08-17 (APPROACH.md); the
 requirements note ADOPTED ([B1], docs/design/requirements.md v3); the RECORD
-SCHEMA and its validator landed ([B2], `schema/`); the HARNESS CORE, the
-first sub-bench and the first two adapters landed ([B3]+[B4]: `pcrecbench/`,
-`bench/email/`, `testees/pcre2/`, `testees/pcrec/`). `make check` is green.
+SCHEMA and its validator landed at **v1.1** ([B2], `schema/`); the HARNESS
+CORE, the first sub-bench and the first two adapters landed ([B3]+[B4]:
+`pcrecbench/`, `bench/email/`, `testees/pcre2/`, `testees/pcrec/`) and are
+adapted to v1.1. `make check` is green (2/53/0 and 21/21).
 The REPORTER ([B5], `pcrecbench/report.py`) is the open step — `python3 -m
 pcrecbench report` is a stub that says so. Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
@@ -101,16 +102,18 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 20 checks: the generators reproduce their committed
+    make check-harness  # 21 checks: the generators reproduce their committed
                         # manifests byte for byte, the expectations re-derive
                         # from the libpcre2 oracle, both drivers smoke, the
                         # deliberately-wrong fixture yields the outcome it
                         # must, the two patterns are shown NOT to be one
                         # artifact, a hanging subject comes back `timed-out`
                         # BY NAME, 8 racing writers each land their own
-                        # record, every schema-v1.1 field is shown to be
-                        # measured-then-stripped, and a full `run` of one
-                        # cell into a SCRATCH store is validator-accepted
+                        # record, the whole-subject artifact is shown to
+                        # answer a constructed case differently from the
+                        # plain one, every v1.1 provenance field is shown
+                        # populated, and a full `run` of one cell into a
+                        # SCRATCH store is validator-accepted
                         # (~3 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets

@@ -222,42 +222,61 @@ subject that drifted from its generator is still caught. Path-prefixed
 and path-sorted, so a rename is a change and two files swapping
 contents is a change.
 
-## 12. Schema v1.1 — measured now, emitted on a one-line switch
+## 12. Schema v1.1 — ADOPTED 2026-08-25
 
-The v1.1 amendment (provenance holes found by the post-merge schema panel)
-is landing on another lane. This harness does not wait for it: it
-**measures every v1.1 field today** and narrows the record to whatever
-`record.SCHEMA_VERSION` says, at one projection point (`record.project`).
+**MERGED and adopted.** `SCHEMA_VERSION` is `1.1`, and `record.project()`
+/ `V11_ONLY` are DELETED: every field is emitted directly. The staging
+arrangement did its job — because the harness had been measuring all of
+them since before the schema existed, adoption was a merge and a set of
+emission points, not a re-instrumentation.
 
-The asymmetry is the reason. A field that was never MEASURED cannot be
-added to an old record afterwards; a field that was measured and not
-emitted costs one line to start emitting. So sampling is maximal and
-emission is versioned.
+The bet behind that arrangement, recorded here because it paid: a field
+that was never MEASURED cannot be added to an old record afterwards, while
+a field measured and not emitted costs one line. Sampling was maximal from
+the start and only emission was versioned.
 
 | v1.1 item | how it is measured today |
 |---|---|
-| (1) `seq` per row | a monotonic counter across compile AND match rows, dense 1..N |
-| (2) `load.before/after` as objects | `quiet.load_sample()` always returns `{loadavg_raw, sampled_at, load1/5/15}` |
-| (3) `occupancy` before/after | `quiet.check()` is called at BOTH ends by the same code path; `occupancy_block()` combines them, verdict = the WORSE |
-| (4) per-row `calibration` | `calibrate()` returns `{target_ns, probe_iterations, probe_elapsed_ns}`; a fixed `--iters` records `probe_iterations: 0`, which is itself the fact that no probe stands behind the number |
-| (5) `engine_commit` for non-release | ALREADY EMITTED — pcrec records `8da61208b1194966ed4e482fb61e4b44371cb5a8` |
-| (6) `run.driver_build_flags` / `driver_compiler` | `driverrun.DRIVER_BUILDS` records the exact argv, including on the cached-build path |
-| (7) `subjects[].sha256` required | ALREADY EMITTED from the committed manifests |
-| (8) `quiet_attestation` dropped | still emitted (1.0 requires it); one line in `project()` when 1.1 lands |
-| fix 21 `gave-up` | classification measured on both engines (§10.1); not yet EMITTED |
-| fix 22 `form` | pcrec compiles both forms (§9); **pcre2 OMITS `form`, absent = plain** (ruled); not yet emitted |
-| (9) `run.clock_source` | `clock_monotonic` — both drivers use `clock_gettime(CLOCK_MONOTONIC)` around the batched loop |
-| (10) `environment.cpu_mhz` | `env.cpu_mhz()`, a spot reading of cpu0's scaling frequency |
+| (1) `seq` per row | dense 1..N across compile AND match rows (X18) |
+| (2) `load.before/after` | `{loadavg_raw, sampled_at, load1/5/15}`, X19 re-parses the raw line |
+| (3) `occupancy` before/after | both ends, each with its own verdict + `limit_busy_pct` (X20/X26) |
+| (4) per-row `calibration` | on every row whose loop ran > once, with a note when the target was missed (X21) |
+| (5) `engine_commit` | the pin's 40-hex (X22) |
+| (6) `run.driver_build_flags` / `driver_compiler` | the exact argv, recorded on the cached-build path too |
+| (7) `subjects[].sha256` | from the committed manifests |
+| (8) `quiet_attestation` | DROPPED |
+| (9) `run.clock_source` | `clock_monotonic` |
+| (10) `environment.cpu_mhz` | cpu0's scaling frequency |
+| fix 21 `gave-up` | by RANGE from the engine's own bounds (§10.1) |
+| fix 22 `form` | pcrec both artifacts, pcre2 omits (§9) |
 
-**TO ADOPT:** set `SCHEMA_VERSION = "1.1"` and delete the corresponding
-entries from `record.V11_ONLY`. Nothing else moves.
+Three things changed shape at adoption and are worth naming, because none
+was what the staging assumed:
 
-`make check` has a control for exactly the failure mode this arrangement
-invites — a projection that strips a field the harness never built,
-invisible while 1.0 is emitted and absent the day the version flips. It
-asserts all three legs on a real run: the full record carries all 11
-fields, projecting at 1.0 removes exactly them, projecting at 1.1 keeps
-them.
+1. **`occupancy` has no combined verdict.** Each sample carries its own,
+   `limit_busy_pct` travels beside them, and rule X26 recomputes each
+   verdict from its own number — so a stored combined verdict could
+   disagree with the numbers under it and there is deliberately nowhere to
+   put one. `quiet.occupancy_ok()` reduces the two for the STATUS gate and
+   the record stores no reduction.
+2. **`calibration.probe_iterations` has `minimum: 1`.** The staged
+   "fixed-iters records `probe_iterations: 0`" is invalid. A fixed
+   `--iters N > 1` now runs a REAL probe for provenance and carries a
+   `calibration_note` saying the count was not derived from it; a
+   1-iteration row carries no calibration at all, which is what X21 asks
+   (a loop that ran once was never calibrated and does not claim to be).
+3. **X23 checks the normalizers.** `env.py` now IMPORTS
+   `normalize_cpu_model` / `_kernel` / `_compiler` from `validate.py`
+   rather than keeping its own copies — the same rule `record.py` already
+   followed for the derived ids, and the reason is the same: a check whose
+   expected value shares an author's second guess with the thing it checks
+   proves nothing.
+
+`make check`'s v1.1 control is now a PRESENCE check on a real written
+record, run at `--iters 2` on purpose so that X21's calibration
+requirement is actually triggered. The validator can only reject what is
+present and wrong; a field the harness quietly stopped filling in is
+invisible to it wherever the schema made the field optional.
 
 `status: measured` already requires the occupancy verdict to be `pass`
 at BOTH ends, per the panel's rule, and `unavailable` on either sample is
