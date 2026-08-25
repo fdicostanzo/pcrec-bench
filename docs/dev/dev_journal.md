@@ -189,3 +189,42 @@ run on a quiet box in a window agreed with pcrecdev1 → the report sent
 to pcrecdev1 as a production sample with a feedback request and the
 question of higher-priority sub-bench areas → journal, wake.md, close.
 Open questions are saved to the OD ledger, recommendations taken.
+
+## 2026-08-25 (EDT, ~00:0x), first session (part 6) — [B2] MERGED (the record schema); [B3]+[B4] and [B5] lanes open; pin 8da6120 building; a quiet window promised ~03:00
+
+Lane b2schema (opus) delivered in ~40 min: record_schema.md (718
+lines — identity tuple + content hash with the circularity broken,
+file name = record_id, schema versioning + mixing policy, OD-B4
+answered in both halves, per-testee engine_metadata declarations with
+pcrec worked from rx_info/RX_VM_* masks as bit-name arrays, 131 fields
+checked field-for-field against the JSON Schema by check_fields.py,
+cross-line rules X1-X17), validate.py, 2 synthetic examples, 15
+sabotages each named for the rule it must fire (`--expect-rule`), the
+gate itself sabotage-validated. Manager ran the gate (2/15/0 WRONG) and
+merged. MERGE INCIDENT: two CLAUDE.md conflicts + a command chain that
+continued past a heredoc committed a merge WITH CONFLICT MARKERS
+(285cb39, never pushed); caught within a minute by grepping for
+markers, reset to 64f4655, merged again by hand, verified. Lesson: a
+`&&` chain does not extend across a heredoc terminator — commit steps
+get their own command. Accepted at merge (Frank: go with
+recommendations): per-subject `crashed`/`timed-out` (requirements §4.4
+amended), dense trial numbering, the lazy-JIT compile row carrying a
+derivation and no number. Post-merge panel: critS1 (data model vs
+consumers; new sabotages the 15 controls miss), critS2 (provenance:
+how each environment field is obtained on this box; what compare.sh
+records that the schema lacks).
+
+docs/design/harness_contract.md written (manager): package layout,
+bench/<name>/ with a subbench.toml SIDECAR (fields only), the adapter
+interface + a shared DRIVER PROTOCOL (batched in-process loops, phases
+timed, TSV), store path = record_id.jsonl, CLI run/index/report, the
+quiet instrument (OD-B8 measured at [B3]), self-checks. Lanes opened
+from 7b57ad0: b3harness (opus: harness core + bench/email/ + pcre2 and
+pcrec adapters) and b5report (sonnet: the reporter over fixtures).
+pcrecdev1: PIN = 8da6120 (its diff-stat vs main over src/lib/cli/
+Makefile is EMPTY — same compiler; battery-run tree); the pin build
+started 00:00 (-j4, gnutimeout 900, build/pcrec-8da6120/, log in the
+scratchpad) inside its 20-minute ask; QUIET WINDOW promised after wave
+G's merge battery (~03:00 est.): it sends "WINDOW OPEN" with the load
+reading, I reply "WINDOW CLOSED"; nothing heavy of its runs between.
+Watchdog re-armed for both lanes + the build.

@@ -32,3 +32,9 @@ completion date, newest group at the bottom.
   measurement discipline, public posture; §8 Q1-Q5 each ruled or
   explicitly deferred; then a D6 critic panel on the note before it is
   adopted.
+- [B2] STATE:completed 2026-08-25 (MERGED from lane/b2schema b37122b, 6 commits: docs/design/record_schema.md 718 lines, schema/record.schema.json, validate.py X1-X17, check_fields.py, 2 synthetic examples + 15 named sabotages, make check-schema 2/15/0; accepted at merge: per-subject crashed/timed-out, dense trial numbering, lazy-JIT derivation row; S1/S2 critic panel running post-merge) — THE RECORD SCHEMA (APPROACH §3, §8 Q2; requirements.md §2, §4.2-4.4, §6):
+  the versioned per-testee output file — environment header (CPU, kernel,
+  compiler, load/quiet-box attestation, per-core occupancy), per-case
+  compile outcome / match outcome / correctness verdict / timings with
+  COMPILE and MATCH separated — plus the tiny validator the comparator
+  shares. Design note → panel → ruled.
