@@ -813,8 +813,8 @@ JSON Schema validates a LINE. Everything that relates two lines, or a
 line to a derivation, or a field to a normalization rule, is code.
 These are the rules; each has at least one positive control in
 `schema/examples/bad/` (pcrec's check-design lesson: a check with no
-failing case proves nothing). At v1.1 there are 25 rules and 44
-controls.
+failing case proves nothing). `check_rules.py` prints the live counts
+on every `make check-schema`, so no number is quoted here to go stale.
 
 That claim — "each has at least one positive control" — was FALSE when
 draft 1 was merged, and re-reading it is how it was found: X5, X7, X8,
@@ -910,16 +910,23 @@ control renamed to claim a rule it does not fire. A gate that has never
 been seen to fail is not known to be a gate.
 
 RE-VALIDATED at v1.1 (2026-08-25), because a gate is only known to be a
-gate at the version it was last seen failing at. Both sabotages above
-still make `make check-schema` fail (the planted-valid record is
-reported `NOT REJECTED AS INTENDED`; the renamed control reports
-`expected rule X11 to fire, but the rules that fired were ['X23']`),
-and one more was run for v1.1's own machinery: deleting
-`calibration_note` from the v8 example's eight timed rows makes X21
-reject it. That last one matters because the note is the only place in
-this schema where a rule can be satisfied by writing a sentence (§11
-item 10), and a sentence that is never checked for being load-bearing
-is decoration.
+gate at the version it was last seen failing at, and re-run once more
+after the last rule landed. Five sabotages, all of which fail the
+build:
+
+1. a VALID record planted in `examples/bad/` — reported `NOT REJECTED
+   AS INTENDED`;
+2. a control RENAMED to claim a rule it does not fire — reported
+   `expected rule X11 to fire, but the rules that fired were [...]`;
+3. a control DELETED, leaving its rule with none — `check_rules`
+   reports the rule uncontrolled;
+4. a control claiming a rule id the §9 table does not contain —
+   `check_rules` reports it the other way;
+5. `calibration_note` deleted from the v8 example's timed rows — X21
+   rejects it. That one matters because the note is the only place in
+   this schema where a rule can be satisfied by writing a sentence (§11
+   item 10), and a sentence never checked for being load-bearing is
+   decoration.
 
 ## 10. Denormalization, extension points, what is absent
 
@@ -996,10 +1003,14 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
 
 ## 11. For the panel — what I am least sure of
 
-STATUS after the v1.1 panel (2026-08-25): items 1 and 8 are CLOSED (a
-ruling and a removal). Items 2, 3, 4, 5, 6 and 7 stand as written and
-are still the places to attack. The v1.1 work added four residuals of
-its own, listed as items 9-12.
+STATUS after the v1.1 panel and critic S1 (2026-08-25): items 1, 8 and
+14 are CLOSED (a ruling, a removal, and a gate that now enforces what
+was prose). Items 2, 3, 4, 5, 6 and 7 stand as written and are still
+the places to attack. Items 9-13, 15 and 16 are the v1.1 work's OWN
+residuals — every rule and field added at this version came with a
+statement of what it still does not catch, which is the only honest way
+to add a check to a project whose lesson is that checks fail in the
+direction of passing.
 
 1. **`match_outcome` gained `crashed` and `timed-out`** (§5,
    ADDITIONS 1). This is the only place the schema exceeds requirements
@@ -1094,3 +1105,19 @@ its own, listed as items 9-12.
    rule is ABOUT — a control could fire X12 for a reason unrelated to
    phase names. That last step is a review, and there is no obvious
    mechanism for it.
+15. **A `whole-subject` artifact's TEXT is asserted, not pinned.**
+   `patterns[].canonical_sha256` pins the pattern the sub-bench
+   declares; nothing pins the `(?:…)\z` the adapter built from it. Two
+   adapters could wrap the same pattern differently — one with `\z`,
+   one with `$` (§5 ADDITIONS 3 says why that is not the same) — and
+   both records would validate and be compared. The fix is a hash of
+   the wrapped text on the `whole-subject` compile row; it was not
+   written because the wrapping is the adapter's, and where that hash
+   should come from is a [B4] question.
+16. **`gave-up`'s `diagnostic` is free text**, like `calibration_note`
+   (item 10). It is required and non-empty, and nothing says it names a
+   real limit code. An engine-specific enum of limit names would be
+   filterable — a report could count FRAMES give-ups against STEPS give-
+   ups — and it needs a vocabulary per engine that only the adapters
+   can supply. The right home is `engine_metadata` with a declaration,
+   once [B4] knows the codes.

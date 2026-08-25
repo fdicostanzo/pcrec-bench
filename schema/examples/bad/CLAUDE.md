@@ -44,8 +44,6 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x1-mixed-schema-versions.jsonl` | X1 | two records concatenated into one file, the second at schema version 2.0 |
 | `x2-reserved-row-kind.jsonl` | X2 | a `match-list` row — the name reserved for OD-B3's list-valued scan regime, which has no shape yet |
 | `x2-unknown-row-kind.jsonl` | X2 | a row with `kind: "timing"` |
-| `x26-occupancy-verdict-contradicts-number.jsonl` | X26 | `occupancy.before.verdict: pass` beside a busiest-core reading of 91.5% against a 10% limit |
-| `x27-whole-subject-without-compile-row.jsonl` | X27 | `p-quoted-local`'s whole-subject compile rows removed, leaving its whole-subject match row matching against an artifact the record never witnessed compiling |
 | `x3-record-id-mismatch.jsonl` | X3 | `record_id`'s stamp no longer matches `run.timestamp` |
 | `x4-filename-mismatch.jsonl` | X4 | a perfectly valid record under a name that is not its record id |
 | `x5-testee-id-mismatch.jsonl` | X5 | `engine_mode` changed to `dfa` while the id still says `vm-caps-simdna` — the id claiming a configuration the record does not carry, which is the exact thing deriving the id was for |
@@ -79,6 +77,8 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x24-bytes-processed-exceeds-offered.jsonl` | X24 | `bytes_processed` ten times what 44 offered bytes × 200000 iterations can be — a cell's MB/s multiplied by ten, in a record that validated |
 | `x25-consumed-exceeds-offered.jsonl` | X25 | `consumed_length: 4400` on a 44-byte subject |
 | `x25-truncation-without-loss.jsonl` | X25 | a `truncated-subject` row whose `consumed_length` equals the full 1 MB offered — a truncation that truncated nothing |
+| `x26-occupancy-verdict-contradicts-number.jsonl` | X26 | `occupancy.before.verdict: pass` beside a busiest-core reading of 91.5% against a 10% limit |
+| `x27-whole-subject-without-compile-row.jsonl` | X27 | `p-quoted-local`'s whole-subject compile rows removed, leaving its whole-subject match row matching against an artifact the record never witnessed compiling |
 
 ## Adding one
 
