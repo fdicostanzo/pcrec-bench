@@ -49,20 +49,40 @@ Design decisions this module makes that the contract leaves to [B5]
   unreadable-future 2.0 record is refused for BEING MIXED, not silently
   reduced to "one invalid record dropped, one record reported".
 * A lazy-JIT compile row carries no number (record_schema.md 8: "cost is
-  FORBIDDEN"); its cost is derived here, per (pattern, testee), as
-  trial-1-minus-steady-state computed from the pattern's TIMED match rows
-  (ns/call of trial 1 minus the median ns/call of the later trials), one
-  derivation per (subject, regime) cell that has both, reduced like any
-  other compile-cost class -- but never pooled with an AOT or interpreter
-  class's `cost.total_ns` numbers (requirements 3: "Reports never reduce
-  compile costs of different classes into one cell without labelling the
-  class"). NOT YET CORRECTED for schema v1.1 (manager, 2026-08-25): once a
-  per-row `seq` field exists, the rule becomes "the pattern's GLOBALLY-first
-  match row (lowest seq) minus steady state" -- one derivation per
-  (pattern, testee), not per (subject, regime) sub-cell. See the TODO on
-  `_lazy_jit_derivation` for the exact change; not applied here because
-  schema 1.0 (what this worktree's fixtures validate against) has no `seq`
-  to key on yet.
+  FORBIDDEN"); its cost is derived here as `first-match-row-minus-steady-
+  state` (schema v1.1's token; record_schema.md 8): the pattern's
+  GLOBALLY-FIRST timed match row in the record -- lowest `seq`, across
+  every subject/regime, NOT `trial == 1` of any one cell, since a
+  pattern measured over many subjects has many `trial: 1` rows and only
+  the very first one (by emission order) paid the JIT -- minus the
+  median ns/call of every OTHER timed row for that pattern. ONE derived
+  value per (pattern, testee), reduced like any other compile-cost class
+  but never pooled with an AOT or interpreter class's `cost.total_ns`
+  numbers (requirements 3). Superseded a schema-1.0-era version of this
+  function that (wrongly, absent `seq`) derived one value per (subject,
+  regime) sub-cell keyed on `trial == 1`; see `_lazy_jit_derivation`'s
+  docstring. Not exercised by an end-to-end fixture record (none of this
+  lane's testees are `lazy-jit`), so it is unit-tested directly against
+  hand-built row dicts instead -- see
+  `test_lazy_jit_derivation_uses_lowest_seq_not_trial_one`.
+* `form` (`plain` / `whole-subject`, schema v1.1, record_schema.md 5
+  ADDITIONS 3) is part of every match- and compile-cell key here (a
+  testee with no end-anchored mode, like pcrec, compiles and times a
+  SEPARATE artifact for the match-compliance regime, and the two must
+  never share a row or a reduction). Shown as its own column beside the
+  numbers, but only in tables where more than `plain` actually appears
+  in the selected records -- when everything is `plain` (the common
+  case) the column is omitted rather than clutter every report with a
+  constant.
+* `match_outcome = gave-up` (schema v1.1) means the engine exhausted its
+  OWN resource limit and said so -- it is not a wrong answer and not a
+  crash, and lumping its count into "wrong answers" would bury the
+  bench's own headline finding (record_schema.md 5 ADDITIONS 2). Every
+  outcome-counting surface here (`MatchCellReduction.n_gave_up` /
+  `.n_wrong`, `SetCellReduction`'s aggregates, the excluded-cells
+  tables) keeps `gave-up` a separate tally from
+  `did-not-match-as-expected` / `wrong-span-or-captures` /
+  `truncated-subject`.
 """
 
 from __future__ import annotations
@@ -266,6 +286,17 @@ def _pstdev_safe(values):
     return statistics.pstdev(values) if len(values) > 1 else 0.0
 
 
+# The outcomes that mean "the engine answered, and the answer disagreed
+# with the expectation" -- as opposed to `gave-up` (the engine refused to
+# answer, on its OWN resource limit) or the hazard outcomes `crashed` /
+# `timed-out` (the harness's own limit, not the engine's). schema v1.1,
+# record_schema.md 5 ADDITIONS 2: "did-not-match-as-expected is the
+# tempting one [to lump gave-up into] and it is the worst".
+WRONG_ANSWER_OUTCOMES = frozenset({
+    "did-not-match-as-expected", "wrong-span-or-captures", "truncated-subject",
+})
+
+
 @dataclass
 class MatchCellReduction:
     n_trials: int
@@ -277,6 +308,8 @@ class MatchCellReduction:
     iters: list
     outcome_counts: dict
     pass_rate: float
+    n_gave_up: int      # match_outcome == "gave-up" -- the engine's OWN limit, not a wrong answer
+    n_wrong: int         # WRONG_ANSWER_OUTCOMES -- an answer that disagreed with the expectation
 
     @property
     def expectation_failing(self):
@@ -293,6 +326,8 @@ def reduce_match_cell(rows):
     iters = sorted({r["timing"]["iterations"] for r in timed})
     n = len(ns)
     pass_rate = (outcome_counts.get("matched-as-expected", 0) / total) if total else 0.0
+    n_gave_up = outcome_counts.get("gave-up", 0)
+    n_wrong = sum(outcome_counts.get(o, 0) for o in WRONG_ANSWER_OUTCOMES)
     return MatchCellReduction(
         n_trials=total,
         n_timed=n,
@@ -303,6 +338,8 @@ def reduce_match_cell(rows):
         iters=iters,
         outcome_counts=dict(sorted(outcome_counts.items())),
         pass_rate=pass_rate,
+        n_gave_up=n_gave_up,
+        n_wrong=n_wrong,
     )
 
 
@@ -330,7 +367,10 @@ class SetCellReduction:
     n_agreeing: int
     pass_rate: float           # n_agreeing / n_subjects
     failing_subjects: list     # subject_ids not fully agreeing (empty iff pass_rate == 1.0)
+    failing_detail: dict       # failing subject_id -> its own MatchCellReduction
     n_trials: int              # trials contributing to the sum (0 if excluded/no data)
+    n_gave_up: int             # sum of n_gave_up over every subject in the set
+    n_wrong: int                # sum of n_wrong over every subject in the set
     median_ns: float | None
     min_ns: float | None
     max_ns: float | None
@@ -343,24 +383,30 @@ class SetCellReduction:
 
 def reduce_set_cell(rows_by_subject):
     """`rows_by_subject`: {subject_id: [match rows]} for one (sb, testee,
-    pattern, regime). A subject "fails" if its own reduce_match_cell()
-    is expectation_failing (any trial not matched-as-expected); if ANY
-    subject in the set fails, the WHOLE set cell is excluded (manager:
-    "excluded from ranking if ANY subject cell fails"), and the failing
-    subject_ids are recorded rather than averaged away. Otherwise, per
-    trial number common to every subject, sum the per-subject ns/call,
-    then reduce (median/min/max/stddev) over those per-trial sums --
-    "time to process the whole set once per call-set"."""
+    pattern, regime, form). A subject "fails" if its own
+    reduce_match_cell() is expectation_failing (any trial not
+    matched-as-expected); if ANY subject in the set fails, the WHOLE set
+    cell is excluded (manager: "excluded from ranking if ANY subject cell
+    fails"), and the failing subject_ids (with their own reductions, so
+    a caller can tell a `gave-up` failure from a wrong-answer one) are
+    recorded rather than averaged away. Otherwise, per trial number
+    common to every subject, sum the per-subject ns/call, then reduce
+    (median/min/max/stddev) over those per-trial sums -- "time to process
+    the whole set once per call-set"."""
     n_subjects = len(rows_by_subject)
     per_subject = {sid: reduce_match_cell(rows) for sid, rows in rows_by_subject.items()}
     failing = sorted(sid for sid, red in per_subject.items() if red.expectation_failing)
     n_agreeing = n_subjects - len(failing)
     pass_rate = (n_agreeing / n_subjects) if n_subjects else 0.0
+    n_gave_up = sum(red.n_gave_up for red in per_subject.values())
+    n_wrong = sum(red.n_wrong for red in per_subject.values())
+    failing_detail = {sid: per_subject[sid] for sid in failing}
 
     if failing or not n_subjects:
         return SetCellReduction(
             n_subjects=n_subjects, n_agreeing=n_agreeing, pass_rate=pass_rate,
-            failing_subjects=failing, n_trials=0,
+            failing_subjects=failing, failing_detail=failing_detail, n_trials=0,
+            n_gave_up=n_gave_up, n_wrong=n_wrong,
             median_ns=None, min_ns=None, max_ns=None, stddev_ns=None,
         )
 
@@ -371,12 +417,28 @@ def reduce_set_cell(rows_by_subject):
     n = len(sums)
     return SetCellReduction(
         n_subjects=n_subjects, n_agreeing=n_agreeing, pass_rate=pass_rate,
-        failing_subjects=[], n_trials=n,
+        failing_subjects=[], failing_detail={}, n_trials=n,
+        n_gave_up=n_gave_up, n_wrong=n_wrong,
         median_ns=statistics.median(sums) if n else None,
         min_ns=min(sums) if n else None,
         max_ns=max(sums) if n else None,
         stddev_ns=_pstdev_safe(sums) if n else None,
     )
+
+
+def _failure_label(red: "MatchCellReduction"):
+    """A short label for why a subject's cell failed -- distinguishing
+    `gave-up` (the engine's own limit) from a wrong answer, per the
+    manager's request to count them apart, not fold them into one tally."""
+    if red.n_gave_up and red.n_wrong:
+        return "gave-up+wrong"
+    if red.n_gave_up:
+        return "gave-up"
+    if red.n_wrong:
+        return "wrong"
+    if red.n_trials == 0:
+        return "no-data"
+    return "other"  # e.g. crashed / timed-out only
 
 
 @dataclass
@@ -394,9 +456,11 @@ class CompileCellReduction:
 
 
 def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
-    """`rows` are the compile rows for one (subbench, testee, pattern).
-    `lazy_jit_derivation_source` is a callable returning the list of
-    derived per-(subject,regime) values when `cost_class == lazy-jit`."""
+    """`rows` are the compile rows for one (subbench, testee, pattern,
+    form). `lazy_jit_derivation_source` is a callable returning the
+    (single-element, schema v1.1) list of the derived
+    first-match-row-minus-steady-state value when `cost_class ==
+    lazy-jit` -- see `_lazy_jit_derivation`."""
     total = len(rows)
     cost_class = rows[0].get("cost_class") if rows else None
     outcome_counts = Counter(r.get("compile_outcome") for r in rows)
@@ -429,46 +493,37 @@ def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
 
 
 def _lazy_jit_derivation(match_rows_for_pattern_testee):
-    """trial-1-minus-steady-state (record_schema.md 8), per (subject,
-    regime) sub-cell that has a timed trial 1 AND at least one later timed
-    trial; each sub-cell contributes one derived ns/call value.
+    """schema v1.1's `first-match-row-minus-steady-state`
+    (record_schema.md 8): "The subtrahend is the GLOBALLY-FIRST match row
+    of this pattern in this record -- the one with the lowest `seq` --
+    and the steady state is the rest." ONE derived ns/call value for the
+    whole (pattern, testee), not one per (subject, regime) sub-cell --
+    `seq` is a per-RECORD sequence (record_schema.md 8: shared with
+    compile rows, in emission order), so "first" here means first across
+    every subject and regime this pattern was measured over, which is
+    deliberately NOT `trial == 1` of whichever cell happens to sort
+    first: a pattern measured over many subjects has many `trial: 1`
+    rows and only the very first one (by `seq`) paid the JIT.
 
-    TODO (schema v1.1, per the manager 2026-08-25 -- NOT YET APPLIED,
-    schema 1.0 has no `seq` field to key on): the correct rule is "the
-    GLOBALLY-FIRST match row of the PATTERN (lowest `seq`) minus steady
-    state", not "trial 1 of each (subject, regime) sub-cell" as coded
-    below. That is a different, simpler grain -- ONE derivation per
-    (pattern, testee), not one per (subject, regime) sub-cell reduced
-    together afterwards -- and it means the "first" row may not even be
-    trial 1 of whichever (subject, regime) it belongs to once rows are
-    ordered by a cross-cell `seq` rather than per-cell `trial`. When v1.1
-    lands: replace the per-cell grouping below with a single sort of
-    every timed row for (pattern, testee) by `seq`; the first sorted row
-    is the one-time JIT warm-up cost; its ns/call minus the median ns/call
-    of every OTHER timed row is the one derived value for that
-    (pattern, testee) -- update reduce_compile_cell's `lazy_jit_derivation_source`
-    caller and this function's signature/tests together, since
-    test_report.py's known-reduction-style assertions will need a new
-    hand-computed lazy-jit fixture to match."""
-    by_cell = defaultdict(list)
-    for r in match_rows_for_pattern_testee:
-        if r.get("match_outcome") != "matched-as-expected" or "timing" not in r:
-            continue
-        t = r["timing"]
-        if not t.get("iterations"):
-            continue
-        key = (r.get("subject_id"), r.get("regime"))
-        by_cell[key].append((r.get("trial"), t["elapsed_ns"] / t["iterations"]))
-
-    out = []
-    for _key, pairs in by_cell.items():
-        pairs.sort()
-        if len(pairs) < 2 or pairs[0][0] != 1:
-            continue
-        trial1_ns = pairs[0][1]
-        steady = [ns for trial, ns in pairs[1:]]
-        out.append(trial1_ns - statistics.median(steady))
-    return out
+    Supersedes a schema-1.0-era version of this function (no `seq`
+    existed) that grouped by (subject, regime) and used `trial == 1` as
+    the per-cell proxy for "first" -- correct only because schema 1.0
+    could not do better. `match_rows_for_pattern_testee` needs only a
+    `seq` on every row; it does not need to be one full record (see
+    `test_lazy_jit_derivation_uses_lowest_seq_not_trial_one` for a
+    hand-built, non-record unit test of exactly this function)."""
+    timed = [r for r in match_rows_for_pattern_testee
+             if r.get("match_outcome") == "matched-as-expected" and "timing" in r
+             and r["timing"].get("iterations")]
+    if len(timed) < 2:
+        return []
+    by_seq = sorted(
+        ((r.get("seq"), r["timing"]["elapsed_ns"] / r["timing"]["iterations"]) for r in timed),
+        key=lambda pair: pair[0],
+    )
+    first_ns = by_seq[0][1]
+    steady = [ns for _seq, ns in by_seq[1:]]
+    return [first_ns - statistics.median(steady)]
 
 
 # ---------------------------------------------------------------- the run
@@ -482,13 +537,16 @@ class ReportData:
     subbench_versions: set
     machines: set
     schema_versions: set
-    match_cells: dict       # (sb,testee,pattern,subject,regime) -> (testee_id, MatchCellReduction)
-    set_cells: dict         # (sb,testee,pattern,regime) -> (testee_id, SetCellReduction)
-    compile_cells: dict     # key -> (testee_id, CompileCellReduction)
+    match_cells: dict       # (sb,testee,pattern,subject,regime,form) -> (testee_id, MatchCellReduction)
+    set_cells: dict         # (sb,testee,pattern,regime,form) -> (testee_id, SetCellReduction)
+    compile_cells: dict     # (sb,testee,pattern,form) -> (testee_id, CompileCellReduction)
     reference_testee_pred: str
     grain: str              # 'set' (default) or 'subject' -- which the renderer shows
     single_subject_regimes: list  # regimes where every (pattern) cell has <=1 subject:
                                    # set and subject grain render identically there
+    show_form: bool         # True iff a form other than 'plain' appears anywhere in the
+                             # selected records -- gates the 'form' column so a report over
+                             # an all-plain store looks exactly as it did before v1.1
 
 
 def build_report(loaded, args):
@@ -528,9 +586,18 @@ def build_report(loaded, args):
     subbench_versions = set()
     machines = set()
     schema_versions = set()
-    match_rows_by_key = defaultdict(list)   # (sb, testee, pattern, subject, regime) -> rows
-    compile_rows_by_key = defaultdict(list)  # (sb, testee, pattern) -> rows
-    match_rows_by_pt = defaultdict(list)     # (sb, testee, pattern) -> match rows (for lazy-jit)
+    forms_seen = set()
+    # `form` (schema v1.1, record_schema.md 5 ADDITIONS 3) is part of every
+    # match- and compile-cell key: a testee with no end-anchored mode
+    # compiles and times a SEPARATE `whole-subject` artifact for the
+    # match-compliance regime, and the two forms must never share a
+    # reduction. ABSENT on a row means `plain`.
+    match_rows_by_key = defaultdict(list)    # (sb, testee, pattern, subject, regime, form) -> rows
+    compile_rows_by_key = defaultdict(list)  # (sb, testee, pattern, form) -> rows
+    match_rows_by_pt = defaultdict(list)     # (sb, testee, pattern) -> match rows (for lazy-jit;
+                                              # NOT split by form -- record_schema.md 8's "the rest"
+                                              # is not form-scoped, and no fixture here crosses a
+                                              # lazy-jit testee with a whole-subject form to test it)
 
     for r in valid:
         s = r.setup
@@ -542,40 +609,43 @@ def build_report(loaded, args):
         schema_versions.add(s["schema_version"])
 
         for row in r.rows:
+            form = row.get("form") or "plain"
+            forms_seen.add(form)
             if row["kind"] == "match":
                 if args.regime and row.get("regime") != args.regime:
                     continue
-                key = (sb, testee_id, row["pattern_id"], row["subject_id"], row["regime"])
+                key = (sb, testee_id, row["pattern_id"], row["subject_id"], row["regime"], form)
                 match_rows_by_key[key].append(row)
                 match_rows_by_pt[(sb, testee_id, row["pattern_id"])].append(row)
             else:
-                key = (sb, testee_id, row["pattern_id"])
+                key = (sb, testee_id, row["pattern_id"], form)
                 compile_rows_by_key[key].append(row)
 
     match_cells = {}
     for key, rows in match_rows_by_key.items():
-        sb, testee_id, pattern_id, subject_id, regime = key
+        sb, testee_id, pattern_id, subject_id, regime, form = key
         match_cells[key] = (testee_id, reduce_match_cell(rows))
 
-    # --grain set: reduce over the whole subject set per (pattern, regime).
-    set_rows_by_key = defaultdict(dict)  # (sb, testee, pattern, regime) -> {subject_id: rows}
-    for (sb, testee_id, pattern_id, subject_id, regime), rows in match_rows_by_key.items():
-        set_rows_by_key[(sb, testee_id, pattern_id, regime)][subject_id] = rows
+    # --grain set: reduce over the whole subject set per (pattern, regime, form).
+    set_rows_by_key = defaultdict(dict)  # (sb, testee, pattern, regime, form) -> {subject_id: rows}
+    for (sb, testee_id, pattern_id, subject_id, regime, form), rows in match_rows_by_key.items():
+        set_rows_by_key[(sb, testee_id, pattern_id, regime, form)][subject_id] = rows
     set_cells = {}
     for key, rows_by_subject in set_rows_by_key.items():
-        sb, testee_id, pattern_id, regime = key
+        sb, testee_id, pattern_id, regime, form = key
         set_cells[key] = (testee_id, reduce_set_cell(rows_by_subject))
 
     regime_subject_counts = defaultdict(set)
-    for (sb, testee_id, pattern_id, regime), (tid, red) in set_cells.items():
+    for (sb, testee_id, pattern_id, regime, form), (tid, red) in set_cells.items():
         regime_subject_counts[regime].add(red.n_subjects)
     single_subject_regimes = sorted(
         r for r, counts in regime_subject_counts.items() if counts and max(counts) <= 1)
 
     compile_cells = {}
     for key, rows in compile_rows_by_key.items():
-        sb, testee_id, pattern_id = key
-        src = lambda rows=match_rows_by_pt.get(key, []): _lazy_jit_derivation(rows)
+        sb, testee_id, pattern_id, form = key
+        pt_key = (sb, testee_id, pattern_id)
+        src = lambda rows=match_rows_by_pt.get(pt_key, []): _lazy_jit_derivation(rows)
         compile_cells[key] = (testee_id, reduce_compile_cell(rows, lazy_jit_derivation_source=src))
 
     query_desc = []
@@ -602,6 +672,7 @@ def build_report(loaded, args):
         reference_testee_pred="libpcre2 engine_mode=interp",
         grain=args.grain,
         single_subject_regimes=single_subject_regimes,
+        show_form=bool(forms_seen - {"plain"}),
     ), None
 
 
@@ -620,16 +691,20 @@ def _is_reference(testee_setup_by_id, testee_id):
 
 
 def _ranking_groups(rd: ReportData, grain):
-    """grain='subject': keys are (sb, pattern, subject, regime), values are
-    [(testee_id, MatchCellReduction)]. grain='set': keys are (sb, pattern,
-    regime), values are [(testee_id, SetCellReduction)]."""
+    """grain='subject': keys are (sb, pattern, subject, regime, form),
+    values are [(testee_id, MatchCellReduction)]. grain='set': keys are
+    (sb, pattern, regime, form), values are [(testee_id,
+    SetCellReduction)]. `form` (schema v1.1) stays in the group key so a
+    `plain` and a `whole-subject` artifact of the same pattern are never
+    ranked in the same table."""
     groups = defaultdict(list)
     if grain == "subject":
-        for (sb, testee_id, pattern_id, subject_id, regime), (tid, red) in rd.match_cells.items():
-            groups[(sb, pattern_id, subject_id, regime)].append((testee_id, red))
+        for (sb, testee_id, pattern_id, subject_id, regime, form), (tid, red) \
+                in rd.match_cells.items():
+            groups[(sb, pattern_id, subject_id, regime, form)].append((testee_id, red))
     else:
-        for (sb, testee_id, pattern_id, regime), (tid, red) in rd.set_cells.items():
-            groups[(sb, pattern_id, regime)].append((testee_id, red))
+        for (sb, testee_id, pattern_id, regime, form), (tid, red) in rd.set_cells.items():
+            groups[(sb, pattern_id, regime, form)].append((testee_id, red))
     return groups
 
 
@@ -673,9 +748,17 @@ def render_markdown(rd: ReportData):
                     + ", ".join(f"`{r}`" for r in rd.single_subject_regimes))
     out.append("- reduction: median/min/max/stddev (population) over "
                 "per-trial `elapsed_ns / iterations`; lazy-JIT compile cost "
-                "is DERIVED as trial-1-minus-steady-state from timed match "
-                "rows, per (subject, regime) sub-cell, never pooled with "
-                "another execution-model class's compile cost")
+                "is DERIVED as first-match-row-minus-steady-state (lowest "
+                "`seq` timed row for the pattern, minus the median of every "
+                "other timed row), one value per (pattern, testee), never "
+                "pooled with another execution-model class's compile cost")
+    if rd.show_form:
+        out.append("- `form`: this report includes a `whole-subject` "
+                    "artifact beside `plain` for at least one cell (schema "
+                    "v1.1: a testee with no end-anchored mode compiles and "
+                    "times a SEPARATE artifact for match-compliance) -- "
+                    "shown as its own column/table so the two are never "
+                    "read as one number")
     out.append("")
 
     if not rd.match_cells and not rd.compile_cells:
@@ -705,11 +788,14 @@ def render_markdown(rd: ReportData):
         any_partial = any(_partial_coverage(r) for _t, r in entries)
 
         if grain == "subject":
-            sb, pattern_id, subject_id, regime = gkey
-            out.append(f"### `{pattern_id}` / `{subject_id}` / `{regime}` ({sb})\n")
+            sb, pattern_id, subject_id, regime, form = gkey
+            title = f"### `{pattern_id}` / `{subject_id}` / `{regime}`"
         else:
-            sb, pattern_id, regime = gkey
-            out.append(f"### `{pattern_id}` / `{regime}` ({sb})\n")
+            sb, pattern_id, regime, form = gkey
+            title = f"### `{pattern_id}` / `{regime}`"
+        if rd.show_form:
+            title += f" [form: `{form}`]"
+        out.append(f"{title} ({sb})\n")
         header = ["rank", "testee", "median ns/call", "min", "max", "stddev", "ratio"]
         if any_partial:
             header += (["n subjects", "pass-rate"] if grain == "set" else ["n", "pass-rate"])
@@ -728,39 +814,65 @@ def render_markdown(rd: ReportData):
     if excluded_cells:
         out.append("## Excluded from ranking (expectation-failing cells)\n")
         if grain == "subject":
-            out.append("| pattern | subject | regime | testee | n | pass-rate | outcomes |")
-            out.append("|---|---|---|---|---|---|---|")
+            header = ["pattern", "subject", "regime"]
+            if rd.show_form:
+                header.append("form")
+            header += ["testee", "n", "pass-rate", "gave-up", "wrong", "outcomes"]
+            out.append("| " + " | ".join(header) + " |")
+            out.append("|" + "|".join(["---"] * len(header)) + "|")
             for gkey, t, r in sorted(excluded_cells):
-                sb, pattern_id, subject_id, regime = gkey
+                sb, pattern_id, subject_id, regime, form = gkey
                 outcomes = ", ".join(f"{k}={v}" for k, v in r.outcome_counts.items())
-                out.append(f"| `{pattern_id}` | `{subject_id}` | `{regime}` | `{t}` | "
-                            f"{r.n_trials} | {r.pass_rate*100:.0f}% | {outcomes} |")
+                row = [f"`{pattern_id}`", f"`{subject_id}`", f"`{regime}`"]
+                if rd.show_form:
+                    row.append(f"`{form}`")
+                row += [f"`{t}`", str(r.n_trials), f"{r.pass_rate*100:.0f}%",
+                        str(r.n_gave_up), str(r.n_wrong), outcomes]
+                out.append("| " + " | ".join(row) + " |")
         else:
-            out.append("| pattern | regime | testee | n subjects | pass-rate | failing subjects |")
-            out.append("|---|---|---|---|---|---|")
+            header = ["pattern", "regime"]
+            if rd.show_form:
+                header.append("form")
+            header += ["testee", "n subjects", "pass-rate", "gave-up", "wrong",
+                       "failing subjects (reason)"]
+            out.append("| " + " | ".join(header) + " |")
+            out.append("|" + "|".join(["---"] * len(header)) + "|")
             for gkey, t, r in sorted(excluded_cells):
-                sb, pattern_id, regime = gkey
-                failing_list = ", ".join(f"`{s}`" for s in r.failing_subjects) or "(none timed)"
-                out.append(f"| `{pattern_id}` | `{regime}` | `{t}` | "
-                            f"{r.n_subjects} | {r.pass_rate*100:.0f}% | {failing_list} |")
+                sb, pattern_id, regime, form = gkey
+                failing_list = ", ".join(
+                    f"`{sid}` ({_failure_label(r.failing_detail[sid])})"
+                    for sid in r.failing_subjects
+                ) or "(none timed)"
+                row = [f"`{pattern_id}`", f"`{regime}`"]
+                if rd.show_form:
+                    row.append(f"`{form}`")
+                row += [f"`{t}`", str(r.n_subjects), f"{r.pass_rate*100:.0f}%",
+                        str(r.n_gave_up), str(r.n_wrong), failing_list]
+                out.append("| " + " | ".join(row) + " |")
         out.append("")
 
     out.append("## Compile cost (by execution-model class; never pooled across classes)\n")
     by_class = defaultdict(list)
-    for (sb, testee_id, pattern_id), (t, r) in rd.compile_cells.items():
-        by_class[r.cost_class].append((sb, pattern_id, testee_id, r))
+    for (sb, testee_id, pattern_id, form), (t, r) in rd.compile_cells.items():
+        by_class[r.cost_class].append((sb, pattern_id, testee_id, form, r))
     for cls in sorted(by_class):
         out.append(f"### `{cls}`\n")
-        label = "median ns (derived: trial-1-minus-steady-state)" if by_class[cls][0][3].derived \
-            else "median total_ns"
-        header = ["pattern", "testee", label, "min", "max", "stddev", "n costed", "outcomes"]
+        label = "median ns (derived: first-match-row-minus-steady-state)" \
+            if by_class[cls][0][4].derived else "median total_ns"
+        header = ["pattern"]
+        if rd.show_form:
+            header.append("form")
+        header += ["testee", label, "min", "max", "stddev", "n costed", "outcomes"]
         out.append("| " + " | ".join(header) + " |")
         out.append("|" + "|".join(["---"] * len(header)) + "|")
-        for sb, pattern_id, testee_id, r in sorted(by_class[cls]):
+        for sb, pattern_id, testee_id, form, r in sorted(by_class[cls]):
             outcomes = ", ".join(f"{k}={v}" for k, v in r.outcome_counts.items())
-            out.append(f"| `{pattern_id}` | `{testee_id}` | {_fmt_ns(r.median_ns)} | "
-                        f"{_fmt_ns(r.min_ns)} | {_fmt_ns(r.max_ns)} | {_fmt_ns(r.stddev_ns)} | "
-                        f"{r.n_costed} | {outcomes} |")
+            row = [f"`{pattern_id}`"]
+            if rd.show_form:
+                row.append(f"`{form}`")
+            row += [f"`{testee_id}`", _fmt_ns(r.median_ns), _fmt_ns(r.min_ns), _fmt_ns(r.max_ns),
+                    _fmt_ns(r.stddev_ns), str(r.n_costed), outcomes]
+            out.append("| " + " | ".join(row) + " |")
         out.append("")
 
     return "\n".join(out) + "\n"
@@ -779,15 +891,16 @@ def render_tsv(rd: ReportData):
          f"schema_versions: {','.join(sorted(rd.schema_versions))}",
          f"grain: {grain}",
          f"single_subject_regimes: {','.join(rd.single_subject_regimes)}"]))
-    lines.append("\t".join(["section", "pattern", "subject_or_na", "regime_or_na",
-                             "testee", "rank_or_na", "metric", "value", "n", "pass_rate"]))
+    lines.append("\t".join(["section", "pattern", "subject_or_na", "regime_or_na", "form",
+                             "testee", "rank_or_na", "metric", "value", "n", "pass_rate",
+                             "n_gave_up", "n_wrong"]))
 
     groups = _ranking_groups(rd, grain)
     for gkey in sorted(groups):
         if grain == "subject":
-            sb, pattern_id, subject_id, regime = gkey
+            sb, pattern_id, subject_id, regime, form = gkey
         else:
-            sb, pattern_id, regime = gkey
+            sb, pattern_id, regime, form = gkey
             subject_id = "(set)"
         entries = groups[gkey]
         rankable = [(t, r) for t, r in entries
@@ -801,21 +914,21 @@ def render_tsv(rd: ReportData):
             for metric, val in (("median_ns", r.median_ns), ("min_ns", r.min_ns),
                                  ("max_ns", r.max_ns), ("stddev_ns", r.stddev_ns),
                                  ("ratio", ratio)):
-                lines.append("\t".join(["rank", pattern_id, subject_id, regime, t, str(i),
+                lines.append("\t".join(["rank", pattern_id, subject_id, regime, form, t, str(i),
                                          metric, f"{val:.6f}" if val is not None else "",
-                                         str(n), f"{pr:.4f}"]))
+                                         str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong)]))
         for t, r in entries:
             if r.expectation_failing:
                 n, pr = _n_and_pass_rate(r, grain)
-                lines.append("\t".join(["excluded", pattern_id, subject_id, regime, t, "",
+                lines.append("\t".join(["excluded", pattern_id, subject_id, regime, form, t, "",
                                          "pass_rate", f"{r.pass_rate:.4f}",
-                                         str(n), f"{pr:.4f}"]))
+                                         str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong)]))
 
-    for (sb, testee_id, pattern_id), (t, r) in sorted(rd.compile_cells.items()):
-        metric = "derived_trial1_minus_steady_state_ns" if r.derived else "median_total_ns"
-        lines.append("\t".join(["compile", pattern_id, r.cost_class, "", testee_id, "",
+    for (sb, testee_id, pattern_id, form), (t, r) in sorted(rd.compile_cells.items()):
+        metric = "derived_first_match_row_minus_steady_state_ns" if r.derived else "median_total_ns"
+        lines.append("\t".join(["compile", pattern_id, "", "", form, testee_id, "",
                                  metric, f"{r.median_ns:.6f}" if r.median_ns is not None else "",
-                                 str(r.n_trials), ""]))
+                                 str(r.n_trials), "", "", ""]))
 
     return "\n".join(lines) + "\n"
 

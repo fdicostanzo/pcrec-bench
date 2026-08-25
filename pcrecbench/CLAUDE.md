@@ -26,19 +26,29 @@ docstring for the merge note.
   module started with. Either grain excludes expectation-failing cells
   from ranking (a `set` cell excludes if ANY subject in it fails, naming
   the failing subjects rather than averaging through them) and lists
-  them separately. Reduces compile cost per execution-model class (never
-  pooling classes; the `lazy-jit` class is DERIVED via
-  trial-1-minus-steady-state from timed match rows, since its compile
-  row carries no number by schema design -- NOTE a pending correction
-  once schema v1.1's `seq` field lands, see `_lazy_jit_derivation`'s
-  TODO), and renders a self-describing report in markdown (default) or
-  TSV. It never runs an engine.
+  them separately. `form` (`plain`/`whole-subject`, schema v1.1) is part
+  of every match- and compile-cell key -- a testee with no end-anchored
+  mode (pcrec) compiles and times a SEPARATE artifact for
+  match-compliance, and the two must never share a reduction; shown as
+  its own column only when a report actually includes more than `plain`.
+  `match_outcome: gave-up` (schema v1.1: the engine's OWN resource
+  limit, not a wrong answer) is counted and labelled separately from
+  wrong-answer outcomes everywhere outcomes are shown. Reduces compile
+  cost per execution-model class (never pooling classes; the `lazy-jit`
+  class is DERIVED via `first-match-row-minus-steady-state`, schema
+  v1.1's token -- the pattern's globally-first TIMED match row by
+  `seq`, minus the median of every other timed row -- since its compile
+  row carries no number by schema design; not exercised by an
+  end-to-end fixture record here, so unit-tested directly instead, see
+  `_lazy_jit_derivation`'s docstring), and renders a self-describing
+  report in markdown (default) or TSV. It never runs an engine.
   Every non-obvious design call this module makes beyond what
-  requirements.md/harness_contract.md pin down explicitly (the ns/call
-  comparable, the two ranking grains, the `--include-synthetic` addition,
-  the mixed-version-refusal ordering relative to per-record invalidity)
-  is stated in `report.py`'s own module docstring -- read that before
-  changing the reduction or filtering logic.
+  requirements.md/harness_contract.md/record_schema.md pin down
+  explicitly (the ns/call comparable, the two ranking grains, the
+  `--include-synthetic` addition, the mixed-version-refusal ordering
+  relative to per-record invalidity, the `form` column's show/hide
+  rule) is stated in `report.py`'s own module docstring -- read that
+  before changing the reduction or filtering logic.
 - `__init__.py` -- package docstring only; states the scope split with
   `b3harness`.
 - `__main__.py` -- CLI dispatch. Only `report` exists here

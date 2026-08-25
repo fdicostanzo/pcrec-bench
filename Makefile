@@ -72,15 +72,17 @@ check-schema:
 #      unsupported-by-declaration, filter semantics, the mixed-schema-
 #      version refusal, invalid-record handling, deterministic
 #      rendering);
-#   2. every fixture in pcrecbench/tests/fixtures/store/ and
-#      /store_walk_only/ (but NOT /mixed_version/, whose second file is
-#      INTENTIONALLY schema-invalid by construction -- see its
-#      CLAUDE.md) independently accepted by schema/validate.py, as a
-#      second, independent check that the fixtures are what they claim
-#      to be;
-#   3. a smoke report over fixtures/store in both formats, so a CLI
-#      regression (a crash, an empty query the harness would otherwise
-#      swallow) fails the gate even if the unit tests import around it.
+#   2. every fixture in pcrecbench/tests/fixtures/store/, /store_walk_only/
+#      and the two "ok" halves of mixed_version/{major_mismatch,minor_pair}/
+#      (but NOT their deliberately-invalid halves -- a v1.1-future 2.0 file
+#      and a pre-v1.1 schema-1.0-SHAPED file respectively; see
+#      fixtures/mixed_version/CLAUDE.md) independently accepted by
+#      schema/validate.py, as a second, independent check that the
+#      fixtures are what they claim to be;
+#   3. a smoke report over fixtures/store in both formats and both
+#      --grain values, so a CLI regression (a crash, an empty query the
+#      harness would otherwise swallow) fails the gate even if the unit
+#      tests import around it.
 check-report:
 	@echo "== check-report =="
 	@$(PYTHON) -m pcrecbench.tests.test_report
@@ -88,12 +90,16 @@ check-report:
 	@echo "-- fixtures independently accepted by schema/validate.py --"
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store/records/*/*/*.jsonl
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store_walk_only/records/*/*/*.jsonl
+	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/mixed_version/major_mismatch/records/*110000Z.jsonl
+	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/mixed_version/minor_pair/records/*090500Z.jsonl
 	@echo
-	@echo "-- CLI smoke: a report over fixtures/store, both formats --"
+	@echo "-- CLI smoke: a report over fixtures/store, both formats, both grains --"
 	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
 	    --include-synthetic --format md > /dev/null
 	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
 	    --include-synthetic --format tsv > /dev/null
+	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
+	    --include-synthetic --grain subject --format md > /dev/null
 	@echo "check-report: OK"
 
 ## help: list the targets
