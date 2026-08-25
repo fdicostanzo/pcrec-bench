@@ -389,7 +389,16 @@ compilers, the hand-C arm: after ([B7]).
   engine-neutral expectations generally ([DD-13a] T-3) — with the first
   non-PCRE2 adapter; input to [DD-13b].
 - OD-B10 — the standard large-subject size: spread at 1 MB vs 8 MB
-  measured on this box — at [B4].
+  measured on this box — at [B4] (not yet measured; the sample used 1 MB).
+- OD-B11 — reporter labels: `timed-out`/`crashed` cells show as "(other)"
+  in the excluded table; give each outcome its label (found 2026-08-25).
+- OD-B12 — the occupancy gate's 10 % per-core limit vs the two manager
+  sessions' own activity: two of six gate attempts in the first window
+  were refused on 1-s transients (12 %, 29 %, 15 % on one core — the
+  claude processes); a `--wait-quiet N` retry in the harness, and/or a
+  2-3-sample gate, before the limit is loosened (found 2026-08-25).
+- OD-B13 — `--subbench` takes the sidecar id (`email-specimen`), not the
+  directory name (`email`); accept either, or rename the directory.
 
 ## 13. For the next panel — attack list (v2)
 

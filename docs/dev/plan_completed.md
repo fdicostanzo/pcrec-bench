@@ -59,3 +59,7 @@ completion date, newest group at the bottom.
   artifacts — per-case diffs, per-tag rollups, correctness disagreement
   tables, rankings that exclude wrong answers by default. Never runs an
   engine.
+- [B6] STATE:completed 2026-08-25 (the FIRST PRODUCTION SAMPLE: five `measured` records for email-specimen@0.1 in pcrecdev1's quiet window 02:22-02:56 EDT, 5 trials, CPU 11, pin 8da6120; reports/2026-08-25-email-specimen-0.1-budu-ryzen1600.{md,subject-grain.md,tsv}; commit bf4a415; sent to pcrecdev1 with the feedback request and the higher-priority-sub-bench question; findings: pcrec-vm beats pcrec-DFA 2.3× on whole-subject compliance; factored loses 5.4× on short search (wave-G target); U1 pcre2-jit timeout on factored × 1 MB 'a') — THE FIRST HONEST DIFF and the first feedback
+  row into pcrec: run the two adapters on set v0 on a quiet box, compare,
+  and hand the pcrec manager the first outlier in the agreed feedback
+  shape. Closes M1 as APPROACH §8 Q5 proposed it.

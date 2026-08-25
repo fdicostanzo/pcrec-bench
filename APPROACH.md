@@ -146,7 +146,8 @@ on designs.
 
 ## 8. Status and open decisions
 
-Status is `docs/dev/plan.md` ([B2] the record schema in progress as of
-2026-08-25). The open decisions are requirements.md §12 (OD-B1..B10);
+Status is `docs/dev/plan.md` (M1 — [B0]..[B6] — completed 2026-08-25:
+the first production sample is in store/ and reports/; [B7] roster
+growth not started). The open decisions are requirements.md §12 (OD-B1..B10);
 the disposition of this document's original open questions is
 requirements.md §11. The project language is python 3 (BD4).

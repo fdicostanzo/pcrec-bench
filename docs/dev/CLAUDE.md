@@ -35,9 +35,10 @@ decisions) so cross-references between the two repos are never ambiguous.
   R2 (2026-08-25): the merged record schema, 22 findings, all carried
   by the schema v1.1 lane.
 
-Created when their first row lands (not before): `known_issues.md`
-(bugs in pcrec-bench's own harness/adapters/comparator), and
-`upstream_findings.md` (findings about OTHER engines, in the archived-
-transcript style of pcrec's docs/dev/upstream_issues.md and D35 —
-findings about pcrec itself go to pcrec's known_issues.md via the pcrec
-manager, never filed here).
+- `upstream_findings.md` — findings about OTHER engines with the record
+  that shows them (U1 2026-08-25: pcre2-jit's 60 s timeout on the
+  factored email pattern over 1 MB of `a`). Findings about pcrec go to
+  the pcrec manager for pcrec's known_issues.md, never here.
+
+Created when its first row lands: `known_issues.md` (bugs in
+pcrec-bench's own harness/adapters/reporter).
