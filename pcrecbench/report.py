@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""pcrecbench.report -- the reporter MVP ([B5]).
+"""pcrecbench.report -- the reporter ([B5] landing bar; [B9] columns/rulings).
 
 Answers a QUERY over the record store (docs/design/requirements.md 8,
 docs/design/harness_contract.md 5): loads `store/index.tsv` (falling back to
@@ -13,7 +13,12 @@ renders a self-describing report in markdown (default) or TSV.
 It never runs an engine (harness_contract.md 5: "it never runs an engine")
 -- it only reads records that already exist, real or synthetic.
 
-Design decisions this module makes that the contract leaves to [B5]
+REPORTER_VERSION below is stamped into every rendered report's header
+(the [B9] brief: "the header carries the reporter's version") -- bump it
+whenever rendering changes so a reader can tell two reports produced by
+different reporter code apart even when the query is identical.
+
+Design decisions this module makes that the contract leaves to [B5]/[B9]
 (stated here, and repeated in the final hand-off message):
 
 * The per-trial COMPARABLE for a match cell is `elapsed_ns / iterations`
@@ -58,13 +63,9 @@ Design decisions this module makes that the contract leaves to [B5]
   median ns/call of every OTHER timed row for that pattern. ONE derived
   value per (pattern, testee), reduced like any other compile-cost class
   but never pooled with an AOT or interpreter class's `cost.total_ns`
-  numbers (requirements 3). Superseded a schema-1.0-era version of this
-  function that (wrongly, absent `seq`) derived one value per (subject,
-  regime) sub-cell keyed on `trial == 1`; see `_lazy_jit_derivation`'s
-  docstring. Not exercised by an end-to-end fixture record (none of this
-  lane's testees are `lazy-jit`), so it is unit-tested directly against
-  hand-built row dicts instead -- see
-  `test_lazy_jit_derivation_uses_lowest_seq_not_trial_one`.
+  numbers (requirements 3). Not exercised by an end-to-end fixture record
+  (none of this project's testees are `lazy-jit`), so it is unit-tested
+  directly against hand-built row dicts instead.
 * `form` (`plain` / `whole-subject`, schema v1.1, record_schema.md 5
   ADDITIONS 3) is part of every match- and compile-cell key here (a
   testee with no end-anchored mode, like pcrec, compiles and times a
@@ -73,7 +74,7 @@ Design decisions this module makes that the contract leaves to [B5]
   numbers, but only in tables where more than `plain` actually appears
   in the selected records -- when everything is `plain` (the common
   case) the column is omitted rather than clutter every report with a
-  constant.
+  constant. [B9] R4 adds the `fact` column beside it -- see `_form_fact`.
 * `match_outcome = gave-up` (schema v1.1) means the engine exhausted its
   OWN resource limit and said so -- it is not a wrong answer and not a
   crash, and lumping its count into "wrong answers" would bury the
@@ -83,6 +84,57 @@ Design decisions this module makes that the contract leaves to [B5]
   tables) keeps `gave-up` a separate tally from
   `did-not-match-as-expected` / `wrong-span-or-captures` /
   `truncated-subject`.
+
+[B9] (2026-08-25) additions, rulings R1-R9 (docs/dev/plan.md row [B9];
+docs/design/requirements.md OD-B11, OD-B13, OD-B14, OD-B15):
+
+* R1/OD-B14 -- every ranking row carries the record's `status`; a
+  non-`measured` status excludes the row from ranking by default
+  (`--include-unmeasured` overrides), listed under its table as
+  `not ranked: <testee> -- <status> (<excerpt>)`.
+* R2/OD-B15 -- two records of one (subbench@version, testee_id, machine):
+  the NEWEST by `run.timestamp` ranks by default; older ones are
+  SUPERSEDED (named in the header, never silently pooled);
+  `--all-records` shows every record as its own row, its testee id
+  suffixed `@<compact-timestamp>`.
+* R3 -- the optional `tier` setup field lane b10loop is adding at schema
+  v1.2 (`pinned` default | `scratch`); coded here as "absent = pinned"
+  ahead of the schema landing it. A `scratch` row is excluded from
+  ranking by default (`--include-scratch` overrides, and adds a `tier`
+  column).
+* R4 -- the `fact` column beside `form`: `form` is, BY CONSTRUCTION
+  (record_schema.md 5 ADDITIONS 3, enforced by X27), a restatement --
+  `whole-subject` is always a second compiled artifact, `plain` is
+  always the one ordinary artifact with a runtime flag. A ranking table
+  whose rankable rows mix both facts gets a note under its title (the
+  "regime artifact" bucket, pcrecdev1 feedback 2a, stated as a fact).
+* R5 -- two ratio columns, `vs baseline` (the named reference testee,
+  named in the table TITLE too) and `vs best` (best measured row = 1.000x).
+* R6 -- `short-subject-search` tables (SET grain) carry `n subjects` and
+  `per-subject mean ns` always, plus a `floor` note; no floor field
+  exists in the schema yet, so the note says so rather than inventing a
+  number (`_floor_note_line`).
+* R7/OD-B11 -- a set cell with give-ups shows `gave-up: <CODE>x<n
+  subjects> (smallest: <id>, <bytes> B)` in the excluded-cells table
+  (`_gave_up_cell_summary`), the count in SUBJECTS not trials; `crashed`
+  / `timed-out` are named by the outcome itself in the per-subject
+  failure label (`_failure_label`), never folded into "(other)".
+* R8 -- a cross-pin pair (same engine + config, different version_slug,
+  record_schema.md 6.4) gets a `Δ vs previous version` column (SET grain
+  only) with a computed verdict (`_cross_pin_verdict`: unchanged within
+  2x the larger stddev, else faster/slower xN.NN) and a per-row "worst
+  subject" note; a cell excluded at the previous pin and ranked now says
+  `now measured (was: <reason>)`.
+* R9 -- pcrec compile-cost rows carry mechanism-stamp columns read ONLY
+  from `engine_metadata` (never diagnostics): `engine`, `entry` (`_in`
+  when buffer pairs are present, `plain entry` otherwise), `prefilter`
+  (a DFA row states `(no stamp -- pcrec I-3)` rather than leaving it
+  blank), `vm_rungs` (bit names joined by `|`), `buffer_frames`/
+  `buffer_trail`, `resume_frame_size`; the compile table also splits by
+  phase (emit-c/gcc/load, beside the total) and flags `stddev > median`
+  rows as timer jitter. OD-B13: `--subbench` accepts the sub-bench
+  DIRECTORY name (resolved via `bench/<dir>/subbench.toml`'s own `id`)
+  as well as the sidecar id.
 """
 
 from __future__ import annotations
@@ -100,6 +152,8 @@ from dataclasses import dataclass, field
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
+
+REPORTER_VERSION = "v2 (2026-08-25)"
 
 _MISSING = object()
 
@@ -160,6 +214,14 @@ def ts_key(ts):
     width, zero-padded, `Z` suffix) -- no datetime parsing needed, and
     LC_ALL=C string comparison is exactly what we want."""
     return str(ts)
+
+
+def _date_suffix(ts):
+    """[B9] R2: the compact timestamp `--all-records` appends to a
+    testee id to disambiguate multiple records of one (subbench@version,
+    testee_id, machine) -- the same digits as the record filename's own
+    timestamp component ("2026-08-25T17:34:02Z" -> "20260825T173402Z")."""
+    return re.sub(r"[-:]", "", str(ts))
 
 
 # ------------------------------------------------------------- record load
@@ -253,6 +315,35 @@ def discover_records(store_dir):
     return sorted(paths), "walked store/records/ (no index.tsv)"
 
 
+def resolve_subbench_arg(value, repo_root=REPO_ROOT):
+    """OD-B13: `--subbench` accepts a sub-bench DIRECTORY name (e.g.
+    `email`) as well as its sidecar id (`email-specimen`) -- resolved via
+    `bench/<dir>/subbench.toml`'s own `id` field, so nothing here has to
+    duplicate the sidecar's own claim.
+
+    Returns (resolved_value, alias_note): alias_note is a human-readable
+    string when a directory-name resolution actually happened, else
+    `None` (including when `value` is already the sidecar id, or names
+    no directory at all -- filtering then simply matches nothing, same
+    as before this ruling)."""
+    if not value:
+        return value, None
+    toml_path = os.path.join(repo_root, "bench", value, "subbench.toml")
+    if not os.path.isfile(toml_path):
+        return value, None
+    try:
+        import tomllib
+        with open(toml_path, "rb") as fh:
+            data = tomllib.load(fh)
+    except Exception:
+        return value, None
+    sidecar_id = data.get("id")
+    if not sidecar_id or sidecar_id == value:
+        return value, None
+    return sidecar_id, (f"subbench={sidecar_id} (resolved from directory "
+                         f"name {value!r} via bench/{value}/subbench.toml)")
+
+
 # ---------------------------------------------------------------- filters
 
 def matches_filters(rec: LoadedRecord, args):
@@ -296,6 +387,21 @@ WRONG_ANSWER_OUTCOMES = frozenset({
     "did-not-match-as-expected", "wrong-span-or-captures", "truncated-subject",
 })
 
+# [B9] R7: a diagnostic's engine-specific CODE -- an ALL-CAPS token with at
+# least one underscore-separated segment (`PCREC_ERR_WORK`,
+# `PCRE2_ERROR_MATCHLIMIT`), so a plain all-caps English word swept up in
+# the sentence around it (e.g. a fixture's trailing "FIXTURE") never
+# qualifies. The LAST such token in the diagnostic is taken -- both
+# engines' diagnostic strings put the specific code at the end.
+_CODE_RE = re.compile(r"[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+")
+
+
+def _extract_diagnostic_code(diagnostic):
+    if not diagnostic:
+        return None
+    matches = _CODE_RE.findall(diagnostic)
+    return matches[-1] if matches else None
+
 
 @dataclass
 class MatchCellReduction:
@@ -310,6 +416,7 @@ class MatchCellReduction:
     pass_rate: float
     n_gave_up: int      # match_outcome == "gave-up" -- the engine's OWN limit, not a wrong answer
     n_wrong: int         # WRONG_ANSWER_OUTCOMES -- an answer that disagreed with the expectation
+    gave_up_codes: Counter = field(default_factory=Counter)  # [B9] R7: per-trial diagnostic codes
 
     @property
     def expectation_failing(self):
@@ -328,6 +435,9 @@ def reduce_match_cell(rows):
     pass_rate = (outcome_counts.get("matched-as-expected", 0) / total) if total else 0.0
     n_gave_up = outcome_counts.get("gave-up", 0)
     n_wrong = sum(outcome_counts.get(o, 0) for o in WRONG_ANSWER_OUTCOMES)
+    gave_up_codes = Counter(
+        _extract_diagnostic_code(r.get("diagnostic"))
+        for r in rows if r.get("match_outcome") == "gave-up")
     return MatchCellReduction(
         n_trials=total,
         n_timed=n,
@@ -340,6 +450,7 @@ def reduce_match_cell(rows):
         pass_rate=pass_rate,
         n_gave_up=n_gave_up,
         n_wrong=n_wrong,
+        gave_up_codes=gave_up_codes,
     )
 
 
@@ -428,17 +539,48 @@ def reduce_set_cell(rows_by_subject):
 
 def _failure_label(red: "MatchCellReduction"):
     """A short label for why a subject's cell failed -- distinguishing
-    `gave-up` (the engine's own limit) from a wrong answer, per the
-    manager's request to count them apart, not fold them into one tally."""
-    if red.n_gave_up and red.n_wrong:
-        return "gave-up+wrong"
+    `gave-up` (the engine's own limit) from a wrong answer, AND, per
+    OD-B11, from the harness's own hazard outcomes `crashed` /
+    `timed-out` (never folded into an unnamed "(other)"). More than one
+    kind combines with `+` -- distinct trials of one subject cell may
+    have failed for distinct reasons."""
+    labels = []
     if red.n_gave_up:
-        return "gave-up"
+        labels.append("gave-up")
     if red.n_wrong:
-        return "wrong"
+        labels.append("wrong")
+    if red.outcome_counts.get("crashed"):
+        labels.append("crashed")
+    if red.outcome_counts.get("timed-out"):
+        labels.append("timed-out")
+    if labels:
+        return "+".join(labels)
     if red.n_trials == 0:
         return "no-data"
-    return "other"  # e.g. crashed / timed-out only
+    return "other"
+
+
+def _gave_up_cell_summary(failing_detail, subject_bytes):
+    """[B9] R7: the excluded-cells table's give-up cell, by CODE (never a
+    bare trial count) -- 'gave-up: <CODE>x<n subjects> (smallest: <id>,
+    <bytes> B)', one clause per distinct code seen, sorted by code for a
+    deterministic render. The count is SUBJECTS that gave up (each
+    counted once, by its DOMINANT code), not trials."""
+    by_code = defaultdict(list)  # code -> [(subject_id, bytes_or_None)]
+    for sid, red in failing_detail.items():
+        if not red.n_gave_up:
+            continue
+        code = red.gave_up_codes.most_common(1)[0][0] if red.gave_up_codes else "UNKNOWN"
+        by_code[code or "UNKNOWN"].append((sid, subject_bytes.get(sid)))
+    if not by_code:
+        return "0"
+    clauses = []
+    for code in sorted(by_code):
+        subs = by_code[code]
+        smallest = min(subs, key=lambda sb: (sb[1] is None, sb[1] if sb[1] is not None else 0))
+        b_str = f"{smallest[1]:,}" if smallest[1] is not None else "?"
+        clauses.append(f"{code}×{len(subs)} (smallest: {smallest[0]}, {b_str} B)")
+    return "; ".join(clauses)
 
 
 @dataclass
@@ -453,6 +595,22 @@ class CompileCellReduction:
     n_costed: int
     derived: bool
     derived_n: int = 0
+    sample_engine_metadata: dict | None = None   # [B9] R9: one row's engine_metadata (declared-consistent)
+    phase_medians: dict = field(default_factory=dict)  # [B9] R9: {"emit-c"/"gcc"/"load": median_ns}
+
+
+def _phase_medians(rows):
+    """[B9] R9: per-phase (emit-c/gcc/load) median ns across a compile
+    cell's COSTED rows -- AOT rows only (`cost.phases`); an interpreter
+    or eager-JIT compile row has no phase breakdown and contributes
+    nothing here."""
+    by_phase = defaultdict(list)
+    for r in rows:
+        if r.get("compile_outcome") != "compiled":
+            continue
+        for ph in ((r.get("cost") or {}).get("phases") or []):
+            by_phase[ph["name"]].append(ph["elapsed_ns"])
+    return {name: statistics.median(vals) for name, vals in by_phase.items() if vals}
 
 
 def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
@@ -464,6 +622,7 @@ def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
     total = len(rows)
     cost_class = rows[0].get("cost_class") if rows else None
     outcome_counts = Counter(r.get("compile_outcome") for r in rows)
+    sample_em = next((r.get("engine_metadata") for r in rows if r.get("engine_metadata")), None)
 
     if cost_class == "lazy-jit":
         derived_vals = lazy_jit_derivation_source() if lazy_jit_derivation_source else []
@@ -476,6 +635,7 @@ def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
             max_ns=max(derived_vals) if n else None,
             stddev_ns=_pstdev_safe(derived_vals) if n else None,
             n_costed=n, derived=True, derived_n=n,
+            sample_engine_metadata=sample_em, phase_medians={},
         )
 
     costed = [r["cost"]["total_ns"] for r in rows
@@ -489,6 +649,7 @@ def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
         max_ns=max(costed) if n else None,
         stddev_ns=_pstdev_safe(costed) if n else None,
         n_costed=n, derived=False,
+        sample_engine_metadata=sample_em, phase_medians=_phase_medians(rows),
     )
 
 
@@ -505,11 +666,8 @@ def _lazy_jit_derivation(match_rows_for_pattern_testee):
     first: a pattern measured over many subjects has many `trial: 1`
     rows and only the very first one (by `seq`) paid the JIT.
 
-    Supersedes a schema-1.0-era version of this function (no `seq`
-    existed) that grouped by (subject, regime) and used `trial == 1` as
-    the per-cell proxy for "first" -- correct only because schema 1.0
-    could not do better. `match_rows_for_pattern_testee` needs only a
-    `seq` on every row; it does not need to be one full record (see
+    `match_rows_for_pattern_testee` needs only a `seq` on every row; it
+    does not need to be one full record (see
     `test_lazy_jit_derivation_uses_lowest_seq_not_trial_one` for a
     hand-built, non-record unit test of exactly this function)."""
     timed = [r for r in match_rows_for_pattern_testee
@@ -524,6 +682,206 @@ def _lazy_jit_derivation(match_rows_for_pattern_testee):
     first_ns = by_seq[0][1]
     steady = [ns for _seq, ns in by_seq[1:]]
     return [first_ns - statistics.median(steady)]
+
+
+# ------------------------------------------------------------- [B9] R9 helpers
+
+def _mechanism_stamp_columns(engine_metadata):
+    """[B9] R9: pcrec's own mechanism as report columns, read ONLY from
+    `engine_metadata` (never `diagnostic` -- record_schema.md 7's whole
+    point is that these facts are STRUCTURED, not prose). A DFA artifact
+    emits no VM_* stamps by construction (record_schema.md 7's own note:
+    "A DFA-engine pcrec testee therefore declares only the rx_info-
+    sourced pairs. An ABSENT pair is not an error"), so a DFA row states
+    that as a FACT (pcrec I-3) rather than leaving a column blank as if
+    the data were merely missing. `entry` is DERIVED from the presence
+    of a buffer-capacity pair, not read from a field named `entry` (none
+    exists): a testee that ran through the caller-provided-buffer `_in`
+    entries carries `buffer_frames`/`buffer_trail`; one that did not,
+    does not."""
+    em = engine_metadata or {}
+    engine = em.get("engine")
+    has_buffers = ("buffer_frames" in em) or ("buffer_trail" in em)
+    entry = "_in" if has_buffers else "plain entry"
+    if engine == "dfa":
+        prefilter = "(no stamp — pcrec I-3)"
+    else:
+        prefilter = em.get("prefilter", "-")
+    vm_rungs = "|".join(em.get("vm_rungs") or []) or "-"
+    return {
+        "engine": engine or "-",
+        "entry": entry,
+        "prefilter": prefilter,
+        "vm_rungs": vm_rungs,
+        "buffer_frames": em.get("buffer_frames", "-"),
+        "buffer_trail": em.get("buffer_trail", "-"),
+        "resume_frame_size": em.get("resume_frame_size", "-"),
+    }
+
+
+def _jitter_flag(median_ns, stddev_ns):
+    """[B9] R9: 'stddev > median = timer jitter -- the median is the
+    number' (pcrecdev1 feedback, repin (3): interp compile-cost variance
+    12..109 us over 10 trials with no flag saying why)."""
+    if median_ns is None or stddev_ns is None:
+        return ""
+    return "timer jitter" if stddev_ns > median_ns else ""
+
+
+# ------------------------------------------------------------- [B9] R4 helper
+
+def _form_fact(form):
+    """[B9] R4: the FACT beside `form` -- `whole-subject` is, BY
+    CONSTRUCTION (record_schema.md 5 ADDITIONS 3, enforced by rule X27:
+    "a whole-subject match row must have a whole-subject compile row for
+    its pattern"), a SECOND compiled artifact; `plain` is always the one
+    ordinary artifact reached via a runtime flag. This restates `form`
+    rather than performing a fresh lookup precisely because ADDITIONS 3
+    makes the two facts coincide by definition -- a `form` value that
+    disagreed with its own compile evidence would fail X27 before this
+    module ever saw the record."""
+    return "separate artifact" if form == "whole-subject" else "same program"
+
+
+# ------------------------------------------------------------- [B9] R8 helpers
+
+def _parse_testee_config(testee_id):
+    """(engine_name, version_slug, config_slug) from a CONSTRUCTED
+    testee_id (record_schema.md 6.4: `<engine>_<version>_<config>[_<extra>]`,
+    each of the first two segments free of underscores by construction).
+    Strips an `--all-records` date suffix (`@<compact-timestamp>`) first
+    so cross-pin detection still works on a report that also asked for
+    every record separately. Returns `None` for a testee_id that does
+    not split into exactly three underscore-separated segments (an
+    author-chosen `config_extra` making a fourth is deliberately still
+    ONE config for this purpose -- `split(..., 2)` leaves it in the
+    third piece)."""
+    base = testee_id.split("@", 1)[0]
+    parts = base.split("_", 2)
+    if len(parts) != 3:
+        return None
+    return tuple(parts)
+
+
+def _cross_pin_verdict(old_median, old_stddev, new_median, new_stddev):
+    """[B9] R8: 'unchanged (within spread)' if the medians' difference is
+    within max(stddev_old, stddev_new) x 2, else faster/slower xN.NN
+    (ratio expressed so it always reads > 1x)."""
+    if old_median is None or new_median is None:
+        return None
+    spread = max(old_stddev or 0.0, new_stddev or 0.0) * 2
+    diff = new_median - old_median
+    if abs(diff) <= spread:
+        return "unchanged (within spread)"
+    if new_median < old_median:
+        ratio = (old_median / new_median) if new_median else float("inf")
+        return f"faster ×{ratio:.2f}"
+    ratio = (new_median / old_median) if old_median else float("inf")
+    return f"slower ×{ratio:.2f}"
+
+
+def _set_cell_failure_reason(red: "SetCellReduction"):
+    """A one-word summary of why a SET cell was excluded, for the R8
+    'now measured (was: <reason>)' verdict -- distinct from
+    `_failure_label` (which reduces one SUBJECT's MatchCellReduction;
+    this reduces the whole SetCellReduction's aggregate counts)."""
+    if red.n_gave_up and red.n_wrong:
+        return "gave-up+wrong"
+    if red.n_gave_up:
+        return "gave-up"
+    if red.n_wrong:
+        return "wrong"
+    if red.n_subjects == 0:
+        return "no-data"
+    return "other"
+
+
+def _worst_subject(rd: "ReportData", sb, testee_id, pattern_id, regime, form):
+    """The subject with the highest median ns/call among `rd.match_cells`
+    contributing to one (sb, testee, pattern, regime, form) SET cell --
+    R8's per-cell 'worst subject' line, from the per-subject data (set
+    grain only, per the brief)."""
+    worst = None
+    for (sb2, t2, p2, subj2, r2, f2), (_tid2, red) in rd.match_cells.items():
+        if (sb2, t2, p2, r2, f2) != (sb, testee_id, pattern_id, regime, form):
+            continue
+        if red.median_ns is None:
+            continue
+        if worst is None or red.median_ns > worst[1]:
+            worst = (subj2, red.median_ns)
+    if worst is None:
+        return None
+    sid, ns = worst
+    return sid, ns, rd.subject_bytes.get(sid)
+
+
+def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, red):
+    """[B9] R8: if `testee_id` has an older same-(engine, config) sibling
+    present in this report (a "previous pin"), return
+    {'verdict': str, 'worst_note': str|None}; else `None`. SET grain
+    only -- the brief: 'from the per-subject data; set grain only'."""
+    if rd.grain != "set":
+        return None
+    parsed = _parse_testee_config(testee_id)
+    if not parsed:
+        return None
+    engine, version, config = parsed
+    my_ts = rd.record_ts_by_testee.get((sb, testee_id))
+
+    older = []
+    for (sb2, tid2), ts2 in rd.record_ts_by_testee.items():
+        if sb2 != sb or tid2 == testee_id:
+            continue
+        p2 = _parse_testee_config(tid2)
+        if not p2 or p2[0] != engine or p2[2] != config:
+            continue
+        if p2[1] == version:
+            # Same version_slug -- e.g. two records of one identical pin
+            # surfaced separately by --all-records. Not a cross-PIN pair
+            # (record_schema.md 6.4: the version segment is what changed);
+            # OD-B15's dedup/superseded machinery covers that case, not R8.
+            continue
+        if my_ts is not None and ts_key(ts2) >= ts_key(my_ts):
+            continue
+        older.append((ts2, tid2))
+    if not older:
+        return None
+    older.sort(key=lambda pair: ts_key(pair[0]))
+    prev_tid = older[-1][1]
+
+    prev_cell = rd.set_cells.get((sb, prev_tid, pattern_id, regime, form))
+    if prev_cell is None:
+        return None
+    _prev_tid2, prev_red = prev_cell
+
+    if prev_red.expectation_failing:
+        if red.expectation_failing:
+            return None
+        verdict = f"now measured (was: {_set_cell_failure_reason(prev_red)})"
+    else:
+        verdict = _cross_pin_verdict(prev_red.median_ns, prev_red.stddev_ns,
+                                      red.median_ns, red.stddev_ns)
+        if verdict is None:
+            return None
+
+    worst_note = None
+    worst = _worst_subject(rd, sb, testee_id, pattern_id, regime, form)
+    if worst:
+        sid, ns, bts = worst
+        b_str = f"{bts:,}" if bts is not None else "?"
+        worst_note = (f"Δ detail: `{testee_id}` vs previous `{prev_tid}`: "
+                       f"worst subject `{sid}`, {_fmt_ns(ns)} ns, {b_str} B")
+    return {"verdict": verdict, "worst_note": worst_note}
+
+
+def _floor_note_line():
+    """[B9] R6: a per-call FLOOR control (pcrecdev1 feedback 1d/repin-2):
+    no field carrying such a number exists in the schema today (checked
+    against record_schema.md and record.schema.json, 2026-08-25) -- say
+    so honestly rather than invent one. Update this the day a
+    calibration/floor field lands."""
+    return ("_floor: n/a (no floor pattern in this set yet -- "
+            "pcrecdev1 feedback 1d/repin-2)_")
 
 
 # ---------------------------------------------------------------- the run
@@ -545,8 +903,19 @@ class ReportData:
     single_subject_regimes: list  # regimes where every (pattern) cell has <=1 subject:
                                    # set and subject grain render identically there
     show_form: bool         # True iff a form other than 'plain' appears anywhere in the
-                             # selected records -- gates the 'form' column so a report over
-                             # an all-plain store looks exactly as it did before v1.1
+                             # selected records -- gates the 'form'/'fact' columns so a
+                             # report over an all-plain store looks exactly as it did
+                             # before v1.1
+    # [B9] additions:
+    status_by_testee: dict = field(default_factory=dict)   # (sb, testee_id) -> (status, status_detail, record_id)
+    tier_by_testee: dict = field(default_factory=dict)      # (sb, testee_id) -> 'pinned'|'scratch'
+    record_ts_by_testee: dict = field(default_factory=dict)  # (sb, testee_id) -> run.timestamp
+    subject_bytes: dict = field(default_factory=dict)       # subject_id -> bytes_offered
+    superseded: list = field(default_factory=list)          # [(kept_record_id, [superseded_record_ids])]
+    include_unmeasured: bool = False
+    include_scratch: bool = False
+    all_records: bool = False
+    subbench_alias_note: str | None = None
 
 
 def build_report(loaded, args):
@@ -582,11 +951,51 @@ def build_report(loaded, args):
         else:
             valid.append(r)
 
+    # [B9] R2/OD-B15: dedup by (subbench@version, testee_id, machine_id),
+    # newest `run.timestamp` wins by default; `--all-records` keeps every
+    # record, each its own row (testee id suffixed when its group has
+    # more than one record, so the common single-record case is
+    # untouched).
+    all_records = bool(getattr(args, "all_records", False))
+    dup_groups = defaultdict(list)  # (sb, testee_id, machine_id) -> [(ts, r)]
+    for r in valid:
+        s = r.setup
+        sb = s["subbench"]["id"] + "@" + str(s["subbench"]["version"])
+        testee_id = s["testee"]["testee_id"]
+        machine_id = s["environment"]["machine_id"]
+        ts = s["run"]["timestamp"]
+        dup_groups[(sb, testee_id, machine_id)].append((ts, r))
+
+    effective_id_by_path = {}
+    superseded = []
+    dedup_valid = []
+    for (sb, testee_id, _machine_id), entries in dup_groups.items():
+        entries.sort(key=lambda te: ts_key(te[0]))
+        if all_records:
+            for ts, r in entries:
+                dedup_valid.append(r)
+                effective_id_by_path[r.path] = (
+                    testee_id + "@" + _date_suffix(ts) if len(entries) > 1 else testee_id)
+        else:
+            _newest_ts, newest_r = entries[-1]
+            dedup_valid.append(newest_r)
+            effective_id_by_path[newest_r.path] = testee_id
+            if len(entries) > 1:
+                superseded.append((
+                    newest_r.setup["record_id"],
+                    [r.setup["record_id"] for _ts, r in entries[:-1]],
+                ))
+    valid = dedup_valid
+
     included = []
     subbench_versions = set()
     machines = set()
     schema_versions = set()
     forms_seen = set()
+    status_by_testee = {}
+    tier_by_testee = {}
+    record_ts_by_testee = {}
+    subject_bytes = {}
     # `form` (schema v1.1, record_schema.md 5 ADDITIONS 3) is part of every
     # match- and compile-cell key: a testee with no end-anchored mode
     # compiles and times a SEPARATE `whole-subject` artifact for the
@@ -602,11 +1011,21 @@ def build_report(loaded, args):
     for r in valid:
         s = r.setup
         sb = s["subbench"]["id"] + "@" + str(s["subbench"]["version"])
-        testee_id = s["testee"]["testee_id"]
-        included.append((s["record_id"], r.path))
+        testee_id = effective_id_by_path[r.path]
+        record_id = s["record_id"]
+        included.append((record_id, r.path))
         subbench_versions.add(sb)
         machines.add(s["environment"]["machine_id"])
         schema_versions.add(s["schema_version"])
+        status_by_testee[(sb, testee_id)] = (
+            s.get("status", "measured"), s.get("status_detail"), record_id)
+        # [B9] R3: `tier` is an OPTIONAL schema v1.2 field lane b10loop is
+        # adding (not yet in the validator this reporter shares) --
+        # "absent = pinned" ahead of the schema landing it.
+        tier_by_testee[(sb, testee_id)] = s.get("tier", "pinned")
+        record_ts_by_testee[(sb, testee_id)] = s.get("run", {}).get("timestamp")
+        for subj in s.get("subjects", []) or []:
+            subject_bytes[subj["subject_id"]] = subj.get("bytes_offered")
 
         for row in r.rows:
             form = row.get("form") or "plain"
@@ -673,6 +1092,15 @@ def build_report(loaded, args):
         grain=args.grain,
         single_subject_regimes=single_subject_regimes,
         show_form=bool(forms_seen - {"plain"}),
+        status_by_testee=status_by_testee,
+        tier_by_testee=tier_by_testee,
+        record_ts_by_testee=record_ts_by_testee,
+        subject_bytes=subject_bytes,
+        superseded=sorted(superseded),
+        include_unmeasured=bool(getattr(args, "include_unmeasured", False)),
+        include_scratch=bool(getattr(args, "include_scratch", False)),
+        all_records=all_records,
+        subbench_alias_note=getattr(args, "_subbench_alias_note", None),
     ), None
 
 
@@ -686,8 +1114,10 @@ def _fmt_ns(ns):
 
 def _is_reference(testee_setup_by_id, testee_id):
     # testee_id is CONSTRUCTED (record_schema.md 6.4): engine_libpcre2's
-    # interp mode is spelled `libpcre2_<version>_interp-...`.
-    return testee_id.startswith("libpcre2_") and "_interp-" in testee_id
+    # interp mode is spelled `libpcre2_<version>_interp-...`. Strip a
+    # possible --all-records `@<timestamp>` suffix first.
+    base = testee_id.split("@", 1)[0]
+    return base.startswith("libpcre2_") and "_interp-" in base
 
 
 def _ranking_groups(rd: ReportData, grain):
@@ -731,9 +1161,25 @@ def _n_and_pass_rate(r, grain):
     return r.n_subjects, r.pass_rate
 
 
+def _status_lookup(rd: ReportData, sb, testee_id):
+    return rd.status_by_testee.get((sb, testee_id), ("measured", None, None))
+
+
+def _tier_lookup(rd: ReportData, sb, testee_id):
+    return rd.tier_by_testee.get((sb, testee_id), "pinned")
+
+
+def _excerpt(text, n=120):
+    if not text:
+        return ""
+    text = str(text)
+    return text[:n] + ("..." if len(text) > n else "")
+
+
 def render_markdown(rd: ReportData):
     out = []
     out.append("# pcrec-bench report\n")
+    out.append(f"reporter: {REPORTER_VERSION}\n")
     out.append("## Query\n")
     out.append(f"- filters: {', '.join(rd.query_desc) if rd.query_desc else '(none)'}")
     out.append(f"- record source: {rd.source_desc}")
@@ -745,9 +1191,19 @@ def render_markdown(rd: ReportData):
         for path, problems in rd.excluded_invalid:
             out.append(f"    - `{os.path.relpath(path)}`: {problems[0]}"
                         + (f" (+{len(problems)-1} more)" if len(problems) > 1 else ""))
+    if rd.superseded:
+        total_sup = sum(len(sups) for _kept, sups in rd.superseded)
+        out.append(f"- superseded records (OD-B15: older duplicate of a (subbench@version, "
+                    f"testee_id, machine); newest kept by default, `--all-records` shows each "
+                    f"separately): {total_sup}")
+        for kept, sups in rd.superseded:
+            for sup in sups:
+                out.append(f"    - `{sup}` superseded by `{kept}`")
     out.append(f"- sub-bench version(s): {', '.join(sorted(rd.subbench_versions)) or '(none)'}")
     out.append(f"- machine(s): {', '.join(sorted(rd.machines)) or '(none)'}")
     out.append(f"- schema version(s): {', '.join(sorted(rd.schema_versions)) or '(none)'}")
+    if rd.subbench_alias_note:
+        out.append(f"- {rd.subbench_alias_note}")
     out.append(f"- grain: {rd.grain} "
                 + ("(sum of per-subject ns/call over the whole subject set, "
                    "reduced over trials; a set cell is excluded if ANY "
@@ -774,7 +1230,25 @@ def render_markdown(rd: ReportData):
                     "both forms answer the same regime and RANK TOGETHER "
                     "in one table (`form` is a key only for compile-cost "
                     "rows, where a whole-subject artifact is genuinely a "
-                    "separate compile with its own cost)")
+                    "separate compile with its own cost); `fact` restates "
+                    "it as 'same program' / 'separate artifact' (R4)")
+    out.append("- status policy (OD-B14): a ranking row whose record `status` "
+                "is not `measured` is excluded from ranking by default, "
+                "listed under its table as `not ranked: <testee> -- "
+                "<status> (<status_detail excerpt>)`; `--include-unmeasured` "
+                "ranks it instead, with `status` shown"
+                + (" [ACTIVE]" if rd.include_unmeasured else ""))
+    out.append("- tier policy (R3, schema v1.2 `tier`, absent = `pinned`): "
+                "a `scratch`-tier row is excluded from ranking by default, "
+                "listed as `scratch: <testee>`; `--include-scratch` ranks "
+                "it instead, with a `tier` column"
+                + (" [ACTIVE]" if rd.include_scratch else ""))
+    out.append("- duplicate-record policy (OD-B15): only the NEWEST record "
+                "per (subbench@version, testee_id, machine) by "
+                "`run.timestamp` ranks by default; `--all-records` shows "
+                "every record as its own row, its testee id suffixed "
+                "`@<timestamp>`"
+                + (" [ACTIVE]" if rd.all_records else ""))
     out.append("")
 
     if not rd.match_cells and not rd.compile_cells:
@@ -789,47 +1263,134 @@ def render_markdown(rd: ReportData):
                     "subject set; best median first)\n")
     groups = _ranking_groups(rd, grain)
     excluded_cells = []
+    not_ranked_rows = []  # (gkey, t, form, r, status, status_detail)
+    scratch_rows = []     # (gkey, t, form, r, tier)
+
     for gkey in sorted(groups):
         entries = groups[gkey]
-        rankable = [(t, form, r) for t, form, r in entries
-                    if not r.expectation_failing and getattr(r, "n_timed", r.n_trials)]
-        failing = [(t, form, r) for t, form, r in entries if r.expectation_failing]
-        for t, form, r in failing:
+        sb = gkey[0]
+        pattern_id = gkey[1]
+        regime = gkey[-1]
+
+        rankable = []
+        group_failing = []
+        group_not_ranked = []
+        group_scratch = []
+        for t, form, r in entries:
+            status, status_detail, _rid = _status_lookup(rd, sb, t)
+            tier = _tier_lookup(rd, sb, t)
+            if r.expectation_failing or not getattr(r, "n_timed", r.n_trials):
+                group_failing.append((t, form, r))
+                continue
+            if status != "measured" and not rd.include_unmeasured:
+                group_not_ranked.append((t, form, r, status, status_detail))
+                continue
+            if tier == "scratch" and not rd.include_scratch:
+                group_scratch.append((t, form, r, tier))
+                continue
+            rankable.append((t, form, r))
+
+        for t, form, r in group_failing:
             excluded_cells.append((gkey, t, form, r))
+        for item in group_not_ranked:
+            not_ranked_rows.append((gkey,) + item)
+        for item in group_scratch:
+            scratch_rows.append((gkey,) + item)
+
         if not rankable:
             continue
+
         rankable.sort(key=lambda tfr: tfr[2].median_ns)
         ref = next((r for t, form, r in rankable if _is_reference(None, t)), None)
         ref_ns = ref.median_ns if ref else rankable[0][2].median_ns
+        best_ns = rankable[0][2].median_ns
         any_partial = any(_partial_coverage(r) for _t, _f, r in entries)
+        near_floor = grain == "set" and regime == "short-subject-search"
 
         if grain == "subject":
-            sb, pattern_id, subject_id, regime = gkey
+            _sb2, _pat2, subject_id, _reg2 = gkey
             title = f"### `{pattern_id}` / `{subject_id}` / `{regime}`"
         else:
-            sb, pattern_id, regime = gkey
             title = f"### `{pattern_id}` / `{regime}`"
-        out.append(f"{title} ({sb})\n")
-        header = ["rank", "testee"]
+        title += f" ({sb}) — baseline: {rd.reference_testee_pred}"
+        out.append(title + "\n")
+
+        facts_present = {_form_fact(form) for _t, form, _r in rankable}
+        if len(facts_present) > 1:
+            out.append("_rows compare different programs answering the same regime; "
+                        "rank order is real, the ratio between forms is a regime "
+                        "artifact until an end-anchored entry exists (pcrec "
+                        "[OS-4])._\n")
+
+        header = ["rank", "testee", "status"]
         if rd.show_form:
-            header.append("form")
-        header += ["median ns/call", "min", "max", "stddev", "ratio"]
-        if any_partial:
+            header += ["form", "fact"]
+        header += ["median ns/call", "min", "max", "stddev", "vs baseline", "vs best"]
+
+        delta_by_testee = {}
+        if grain == "set":
+            for t, form, r in rankable:
+                info = _cross_pin_info(rd, sb, pattern_id, regime, t, form, r)
+                if info:
+                    delta_by_testee[t] = info
+        if delta_by_testee:
+            header.append("Δ vs previous version")
+        if near_floor:
+            header += ["n subjects", "per-subject mean ns", "pass-rate"]
+        elif any_partial:
             header += (["n subjects", "pass-rate"] if grain == "set" else ["n", "pass-rate"])
+        if rd.include_scratch:
+            header.append("tier")
         out.append("| " + " | ".join(header) + " |")
         out.append("|" + "|".join(["---"] * len(header)) + "|")
+
+        worst_notes = []
         for i, (t, form, r) in enumerate(rankable, start=1):
-            ratio = r.median_ns / ref_ns if ref_ns else float("nan")
-            row = [str(i), f"`{t}`"]
+            status, _detail, _rid = _status_lookup(rd, sb, t)
+            tier = _tier_lookup(rd, sb, t)
+            ratio_baseline = r.median_ns / ref_ns if ref_ns else float("nan")
+            ratio_best = r.median_ns / best_ns if best_ns else float("nan")
+            row = [str(i), f"`{t}`", status]
             if rd.show_form:
-                row.append(f"`{form}`")
-            row += [_fmt_ns(r.median_ns), _fmt_ns(r.min_ns),
-                    _fmt_ns(r.max_ns), _fmt_ns(r.stddev_ns), f"{ratio:.3f}x"]
-            if any_partial:
+                row += [f"`{form}`", _form_fact(form)]
+            row += [_fmt_ns(r.median_ns), _fmt_ns(r.min_ns), _fmt_ns(r.max_ns),
+                    _fmt_ns(r.stddev_ns), f"{ratio_baseline:.3f}x", f"{ratio_best:.3f}x"]
+            if delta_by_testee:
+                info = delta_by_testee.get(t)
+                row.append(info["verdict"] if info else "-")
+                if info and info.get("worst_note"):
+                    worst_notes.append(info["worst_note"])
+            if near_floor:
+                n, pr = _n_and_pass_rate(r, grain)
+                mean = (r.median_ns / n) if n else None
+                row += [str(n), _fmt_ns(mean), f"{pr*100:.0f}%"]
+            elif any_partial:
                 n, pr = _n_and_pass_rate(r, grain)
                 row += [str(n), f"{pr*100:.0f}%"]
+            if rd.include_scratch:
+                row.append(tier)
             out.append("| " + " | ".join(row) + " |")
         out.append("")
+
+        if near_floor:
+            out.append(_floor_note_line())
+            out.append("")
+
+        if worst_notes:
+            for note in worst_notes:
+                out.append(f"- {note}")
+            out.append("")
+
+        if group_not_ranked:
+            for t, form, r, status, status_detail in group_not_ranked:
+                excerpt = _excerpt(status_detail)
+                out.append(f"- not ranked: `{t}` — {status}"
+                            + (f" ({excerpt})" if excerpt else ""))
+            out.append("")
+        if group_scratch:
+            for t, form, r, tier in group_scratch:
+                out.append(f"- scratch: `{t}` (tier={tier})")
+            out.append("")
 
     if excluded_cells:
         out.append("## Excluded from ranking (expectation-failing cells)\n")
@@ -867,7 +1428,8 @@ def render_markdown(rd: ReportData):
                 if rd.show_form:
                     row.append(f"`{form}`")
                 row += [f"`{t}`", str(r.n_subjects), f"{r.pass_rate*100:.0f}%",
-                        str(r.n_gave_up), str(r.n_wrong), failing_list]
+                        _gave_up_cell_summary(r.failing_detail, rd.subject_bytes),
+                        str(r.n_wrong), failing_list]
                 out.append("| " + " | ".join(row) + " |")
         out.append("")
 
@@ -877,21 +1439,33 @@ def render_markdown(rd: ReportData):
         by_class[r.cost_class].append((sb, pattern_id, testee_id, form, r))
     for cls in sorted(by_class):
         out.append(f"### `{cls}`\n")
+        rows_for_class = by_class[cls]
+        has_pcrec = any(t.split("@", 1)[0].startswith("pcrec_") for _sb, _p, t, _f, _r in rows_for_class)
         label = "median ns (derived: first-match-row-minus-steady-state)" \
-            if by_class[cls][0][4].derived else "median total_ns"
+            if rows_for_class[0][4].derived else "median total_ns"
         header = ["pattern"]
         if rd.show_form:
             header.append("form")
-        header += ["testee", label, "min", "max", "stddev", "n costed", "outcomes"]
+        header += ["testee", label, "min", "max", "stddev", "n costed", "jitter", "outcomes"]
+        if has_pcrec:
+            header += ["engine", "entry", "prefilter", "vm_rungs", "buffer_frames",
+                       "buffer_trail", "resume_frame_size", "emit-c ns", "gcc ns", "load ns"]
         out.append("| " + " | ".join(header) + " |")
         out.append("|" + "|".join(["---"] * len(header)) + "|")
-        for sb, pattern_id, testee_id, form, r in sorted(by_class[cls]):
+        for sb, pattern_id, testee_id, form, r in sorted(rows_for_class):
             outcomes = ", ".join(f"{k}={v}" for k, v in r.outcome_counts.items())
             row = [f"`{pattern_id}`"]
             if rd.show_form:
                 row.append(f"`{form}`")
             row += [f"`{testee_id}`", _fmt_ns(r.median_ns), _fmt_ns(r.min_ns), _fmt_ns(r.max_ns),
-                    _fmt_ns(r.stddev_ns), str(r.n_costed), outcomes]
+                    _fmt_ns(r.stddev_ns), str(r.n_costed), _jitter_flag(r.median_ns, r.stddev_ns), outcomes]
+            if has_pcrec:
+                stamps = _mechanism_stamp_columns(r.sample_engine_metadata)
+                pm = r.phase_medians or {}
+                row += [str(stamps["engine"]), stamps["entry"], str(stamps["prefilter"]),
+                        stamps["vm_rungs"], str(stamps["buffer_frames"]), str(stamps["buffer_trail"]),
+                        str(stamps["resume_frame_size"]), _fmt_ns(pm.get("emit-c")),
+                        _fmt_ns(pm.get("gcc")), _fmt_ns(pm.get("load"))]
             out.append("| " + " | ".join(row) + " |")
         out.append("")
 
@@ -902,18 +1476,24 @@ def render_tsv(rd: ReportData):
     grain = rd.grain
     lines = []
     lines.append("# " + "; ".join(
-        [f"filters: {', '.join(rd.query_desc) or '(none)'}",
+        [f"reporter: {REPORTER_VERSION}",
+         f"filters: {', '.join(rd.query_desc) or '(none)'}",
          f"source: {rd.source_desc}",
          f"records: {len(rd.included)}",
          f"excluded_invalid: {len(rd.excluded_invalid)}",
+         f"superseded: {sum(len(v) for _k, v in rd.superseded)}",
          f"subbench_versions: {','.join(sorted(rd.subbench_versions))}",
          f"machines: {','.join(sorted(rd.machines))}",
          f"schema_versions: {','.join(sorted(rd.schema_versions))}",
          f"grain: {grain}",
-         f"single_subject_regimes: {','.join(rd.single_subject_regimes)}"]))
-    lines.append("\t".join(["section", "pattern", "subject_or_na", "regime_or_na", "form",
-                             "testee", "rank_or_na", "metric", "value", "n", "pass_rate",
-                             "n_gave_up", "n_wrong"]))
+         f"single_subject_regimes: {','.join(rd.single_subject_regimes)}",
+         f"include_unmeasured: {rd.include_unmeasured}",
+         f"include_scratch: {rd.include_scratch}",
+         f"all_records: {rd.all_records}"]))
+    header = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
+              "testee", "status", "tier", "rank_or_na", "metric", "value", "n", "pass_rate",
+              "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
+    lines.append("\t".join(header))
 
     groups = _ranking_groups(rd, grain)
     for gkey in sorted(groups):
@@ -923,32 +1503,63 @@ def render_tsv(rd: ReportData):
             sb, pattern_id, regime = gkey
             subject_id = "(set)"
         entries = groups[gkey]
-        rankable = [(t, form, r) for t, form, r in entries
-                    if not r.expectation_failing and getattr(r, "n_timed", r.n_trials)]
-        rankable.sort(key=lambda tfr: tfr[2].median_ns)
-        ref = next((r for t, form, r in rankable if _is_reference(None, t)), None)
+
+        rankable = []
+        others = []  # (t, form, r, section, status, tier)
+        for t, form, r in entries:
+            status, _detail, _rid = _status_lookup(rd, sb, t)
+            tier = _tier_lookup(rd, sb, t)
+            if r.expectation_failing or not getattr(r, "n_timed", r.n_trials):
+                others.append((t, form, r, "excluded", status, tier))
+                continue
+            if status != "measured" and not rd.include_unmeasured:
+                others.append((t, form, r, "not_ranked", status, tier))
+                continue
+            if tier == "scratch" and not rd.include_scratch:
+                others.append((t, form, r, "scratch", status, tier))
+                continue
+            rankable.append((t, form, r, status, tier))
+        rankable.sort(key=lambda x: x[2].median_ns)
+        ref = next((r for t, form, r, _s, _ti in rankable if _is_reference(None, t)), None)
         ref_ns = ref.median_ns if ref else (rankable[0][2].median_ns if rankable else None)
-        for i, (t, form, r) in enumerate(rankable, start=1):
-            ratio = (r.median_ns / ref_ns) if ref_ns else float("nan")
+        best_ns = rankable[0][2].median_ns if rankable else None
+        for i, (t, form, r, status, tier) in enumerate(rankable, start=1):
+            ratio_b = (r.median_ns / ref_ns) if ref_ns else float("nan")
+            ratio_best = (r.median_ns / best_ns) if best_ns else float("nan")
             n, pr = _n_and_pass_rate(r, grain)
+            fact = _form_fact(form)
+            delta_verdict = ""
+            if grain == "set":
+                info = _cross_pin_info(rd, sb, pattern_id, regime, t, form, r)
+                delta_verdict = info["verdict"] if info else ""
             for metric, val in (("median_ns", r.median_ns), ("min_ns", r.min_ns),
                                  ("max_ns", r.max_ns), ("stddev_ns", r.stddev_ns),
-                                 ("ratio", ratio)):
-                lines.append("\t".join(["rank", pattern_id, subject_id, regime, form, t, str(i),
-                                         metric, f"{val:.6f}" if val is not None else "",
-                                         str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong)]))
-        for t, form, r in entries:
-            if r.expectation_failing:
-                n, pr = _n_and_pass_rate(r, grain)
-                lines.append("\t".join(["excluded", pattern_id, subject_id, regime, form, t, "",
-                                         "pass_rate", f"{r.pass_rate:.4f}",
-                                         str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong)]))
+                                 ("ratio_vs_baseline", ratio_b), ("ratio_vs_best", ratio_best)):
+                lines.append("\t".join(["rank", pattern_id, subject_id, regime, form, fact, t,
+                                         status, tier, str(i), metric,
+                                         f"{val:.6f}" if val is not None else "",
+                                         str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong),
+                                         "", delta_verdict]))
+        for t, form, r, section, status, tier in others:
+            n, pr = _n_and_pass_rate(r, grain)
+            fact = _form_fact(form)
+            gs = _gave_up_cell_summary(r.failing_detail, rd.subject_bytes) \
+                if grain == "set" and hasattr(r, "failing_detail") else ""
+            lines.append("\t".join([section, pattern_id, subject_id, regime, form, fact, t,
+                                     status, tier, "", "pass_rate", f"{r.pass_rate:.4f}",
+                                     str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong),
+                                     gs, ""]))
 
     for (sb, testee_id, pattern_id, form), (t, r) in sorted(rd.compile_cells.items()):
         metric = "derived_first_match_row_minus_steady_state_ns" if r.derived else "median_total_ns"
-        lines.append("\t".join(["compile", pattern_id, "", "", form, testee_id, "",
-                                 metric, f"{r.median_ns:.6f}" if r.median_ns is not None else "",
-                                 str(r.n_trials), "", "", ""]))
+        fact = _form_fact(form)
+        lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
+                                 "", metric, f"{r.median_ns:.6f}" if r.median_ns is not None else "",
+                                 str(r.n_trials), "", "", "", "", ""]))
+        jf = _jitter_flag(r.median_ns, r.stddev_ns)
+        if jf:
+            lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
+                                     "", "jitter_flag", jf, "", "", "", "", "", ""]))
 
     return "\n".join(lines) + "\n"
 
@@ -962,7 +1573,11 @@ def build_argparser():
                                               "(docs/design/requirements.md 8).")
     ap.add_argument("--store", default="store",
                      help="the store directory (default: ./store)")
-    ap.add_argument("--subbench", help="filter: subbench.id equals this")
+    ap.add_argument("--subbench", help="filter: subbench.id equals this "
+                                       "(OD-B13: the sub-bench DIRECTORY name "
+                                       "under bench/, e.g. 'email', is also "
+                                       "accepted and resolved via its own "
+                                       "subbench.toml)")
     ap.add_argument("--version", help="filter: subbench.version equals this")
     ap.add_argument("--regime", help="restrict match rows to this regime")
     ap.add_argument("--machine", help="filter: environment.machine_id equals this")
@@ -988,6 +1603,20 @@ def build_argparser():
                           "default per schema/examples/CLAUDE.md). Needed "
                           "to report over this reporter's own fixtures, "
                           "since no engine is ever run here.")
+    ap.add_argument("--include-unmeasured", action="store_true",
+                     help="[B9] R1/OD-B14: rank rows whose record `status` "
+                          "is not `measured` too (default: excluded from "
+                          "ranking, listed as 'not ranked'), with their "
+                          "status shown.")
+    ap.add_argument("--all-records", action="store_true",
+                     help="[B9] R2/OD-B15: show every record of a "
+                          "(subbench@version, testee_id, machine) as its "
+                          "own row (testee id suffixed by timestamp), "
+                          "instead of the default newest-wins dedup.")
+    ap.add_argument("--include-scratch", action="store_true",
+                     help="[B9] R3: rank `tier: scratch` rows too (default: "
+                          "excluded, listed as 'scratch'), with a `tier` "
+                          "column.")
     return ap
 
 
@@ -1009,6 +1638,12 @@ def main(argv=None):
     except ValueError as exc:
         print(f"pcrecbench report: {exc}", file=sys.stderr)
         return 2
+
+    args._subbench_alias_note = None
+    if args.subbench:
+        resolved, note = resolve_subbench_arg(args.subbench, REPO_ROOT)
+        args.subbench = resolved
+        args._subbench_alias_note = note
 
     paths, source_desc = discover_records(args.store)
     args._source_desc = f"{source_desc} ({len(paths)} candidate file(s))"
