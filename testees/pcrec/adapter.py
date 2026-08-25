@@ -31,6 +31,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__)))))
 
 from pcrecbench import adapters as _ad                       # noqa: E402
+from pcrecbench import record as _rec                        # noqa: E402
 from pcrecbench.driverrun import (C_ENV, build_driver,       # noqa: E402
                                   per_trial, run_driver)
 
@@ -243,6 +244,30 @@ class Adapter(_ad.Adapter):
 
     def compile(self, testee_id, pattern_id, pattern, options, trials,
                 workdir):
+        r"""TWO artifacts per pattern: `plain` and `whole-subject`.
+
+        pcrec has no end-anchored generation axis (a ratified but unbuilt
+        option, pcrec [OS-4]), so "does the WHOLE subject match" cannot be
+        answered by the plain artifact: its anchored entry returns the
+        leftmost-first match at position 0, and testing `== n` is sufficient
+        but NOT necessary. MEASURED: `a|ab` over `ab` returns length 1, so
+        `== n` says NO where PCRE2 under ANCHORED|ENDANCHORED says YES.
+
+        So the match/compliance regime gets its own artifact compiled from
+        `(?:<pattern>)\z`, and BOTH are timed and given their own compile
+        rows -- they are different compiles of different text, and folding
+        their costs together would report a compile cost for an artifact the
+        record does not witness (rule X27)."""
+        forms = {}
+        for form, text in ((_ad.FORM_PLAIN, pattern),
+                           (_ad.FORM_WHOLE_SUBJECT,
+                            _rec.whole_subject_text(pattern))):
+            forms[form] = self._compile_one(testee_id, pattern_id, form, text,
+                                            trials, workdir)
+        return _ad.CompiledPattern(forms)
+
+    def _compile_one(self, testee_id, pattern_id, form, pattern, trials,
+                     workdir):
         import time
         cfg = self.config(testee_id)
         pcrec = self.pin_binary()
@@ -257,14 +282,12 @@ class Adapter(_ad.Adapter):
         artifact_bytes = None
 
         for t in range(1, trials + 1):
-            # per-PATTERN, per-TRIAL scratch: see Adapter.compile's
-            # docstring for the bug this shape exists to prevent.
-            cdir = os.path.join(workdir, "p-" + pattern_id, "t%d" % t)
+            # per-PATTERN, per-FORM, per-TRIAL scratch: see Adapter.compile's
+            # docstring for the bug the per-pattern part exists to prevent,
+            # and this method's for why the form must not share either.
+            cdir = os.path.join(workdir, "p-" + pattern_id, form, "t%d" % t)
             os.makedirs(cdir, exist_ok=True)
             art_c = os.path.join(cdir, "artifact.c")
-            patfile = os.path.join(cdir, "pattern.rx")
-            with open(patfile, "wb") as f:
-                f.write(pattern)
 
             # phase 1: emit-c ------------------------------------------------
             argv = ([pcrec, "-p", "rx"] + list(cfg.get("flags", []))
@@ -313,9 +336,12 @@ class Adapter(_ad.Adapter):
             libs.append(so)
             if t == 1:
                 meta, engine_why = self._metadata(out.info)
+                self._giveup_bounds = (int(out.info.get("err_floor", -5)),
+                                       int(out.info.get("err_giveup_top", -2)))
                 artifact_bytes = os.path.getsize(so)
 
-        handle = {"driver": drv, "lib": libs[0]}
+        handle = {"driver": drv, "lib": libs[0],
+                  "giveup_range": getattr(self, "_giveup_bounds", (-5, -2))}
         return _ad.CompileResult("compiled", phase_seconds=phase_seconds,
                                  engine_metadata=meta, handle=handle,
                                  artifact_bytes=artifact_bytes,

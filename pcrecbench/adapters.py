@@ -81,6 +81,9 @@ import importlib.util
 import os
 import tomllib
 
+FORM_PLAIN = "plain"
+FORM_WHOLE_SUBJECT = "whole-subject"
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TESTEES_ROOT = os.path.join(REPO_ROOT, "testees")
 
@@ -90,7 +93,7 @@ class AdapterError(Exception):
 
 
 class CompileResult:
-    """What `Adapter.compile()` returns for ONE pattern.
+    """What `Adapter.compile()` returns for ONE pattern, for ONE form.
 
     `phase_seconds` is `[{phase: seconds, ...}, ...]`, one dict per trial, in
     trial order; `engine_metadata` is the `pattern`-scoped pairs
@@ -110,6 +113,42 @@ class CompileResult:
         self.handle = handle
         self.artifact_bytes = artifact_bytes
         self.declaration_ref = declaration_ref
+
+
+class CompiledPattern:
+    r"""What `Adapter.compile()` returns: ONE `CompileResult` per FORM.
+
+    Most engines have one form -- `plain` -- because they anchor with runtime
+    options. An engine with no end-anchored mode compiles a SECOND artifact
+    (pcrec: `(?:pattern)\z`) and returns two, because the match/compliance
+    regime cannot be answered by the plain one. `forms` is keyed by the
+    schema's `form` values, and `form_for_regime()` is the only place a
+    regime chooses between them."""
+
+    __slots__ = ("forms",)
+
+    def __init__(self, forms):
+        self.forms = dict(forms)
+
+    def __contains__(self, form):
+        return form in self.forms
+
+    def get(self, form):
+        return self.forms.get(form)
+
+    @property
+    def compiled_forms(self):
+        return {f: r for f, r in self.forms.items() if r.outcome == "compiled"}
+
+    def form_for_regime(self, regime):
+        """The form this regime must be measured on.
+
+        `match` is the WHOLE-SUBJECT question, so it uses the whole-subject
+        artifact when the adapter built one; every other regime, and every
+        adapter that anchors with runtime options, uses `plain`."""
+        if regime == "match" and FORM_WHOLE_SUBJECT in self.forms:
+            return FORM_WHOLE_SUBJECT
+        return FORM_PLAIN
 
 
 class MatchRow:
@@ -212,7 +251,7 @@ class Adapter:
         raise NotImplementedError
 
     def compile(self, testee_id, pattern_id, pattern, options, trials, workdir):
-        """-> CompileResult.
+        """-> CompiledPattern (one CompileResult per form).
 
         `pattern_id` is passed so each pattern gets its OWN scratch under
         `workdir`. It is not decoration: a sub-bench has several patterns, the

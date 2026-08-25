@@ -167,26 +167,39 @@ class Adapter(_ad.Adapter):
             argv.append("--jit")
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
 
+        def one(res):
+            # libpcre2 anchors with RUNTIME OPTIONS
+            # (PCRE2_ANCHORED|PCRE2_ENDANCHORED on the same compiled pattern),
+            # so it needs no second artifact and emits only the `plain` form.
+            # The schema reads an ABSENT `form` as `plain`, so its rows are
+            # unchanged by v1.1's fix 22.
+            return _ad.CompiledPattern({_ad.FORM_PLAIN: res})
+
         if out.timed_out:
-            return _ad.CompileResult("timed-out", diagnostic=out.diagnostic())
+            return one(_ad.CompileResult("timed-out",
+                                         diagnostic=out.diagnostic()))
         if out.returncode == 3:
-            return _ad.CompileResult("did-not-compile",
-                                     diagnostic=out.diagnostic()
-                                     or "pcre2_compile failed")
+            return one(_ad.CompileResult("did-not-compile",
+                                         diagnostic=out.diagnostic()
+                                         or "pcre2_compile failed"))
         if out.returncode != 0:
-            return _ad.CompileResult("crashed", diagnostic=out.diagnostic()
-                                     or "driver exit %s" % out.returncode)
+            return one(_ad.CompileResult("crashed",
+                                         diagnostic=out.diagnostic()
+                                         or "driver exit %s" % out.returncode))
 
         meta = {}
         for name in METADATA_DECL:
             if name in out.info:
                 meta[name] = int(out.info[name])
+        # The MEASURED set of libpcre2 resource-limit refusals travels with
+        # the handle, so harness.classify_giveup needs no engine knowledge.
         handle = {"driver": drv, "pattern_file": patfile,
-                  "jit": bool(cfg.get("jit"))}
-        return _ad.CompileResult(
+                  "jit": bool(cfg.get("jit")),
+                  "giveup_codes": set(GAVE_UP_CODES)}
+        return one(_ad.CompileResult(
             "compiled", phase_seconds=out.phase_seconds,
             engine_metadata=meta, handle=handle,
-            artifact_bytes=meta.get("compiled_size_bytes"))
+            artifact_bytes=meta.get("compiled_size_bytes")))
 
     # -------------------------------------------------------------- measure
 

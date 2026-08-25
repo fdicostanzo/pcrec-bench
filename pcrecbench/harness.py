@@ -64,7 +64,7 @@ class RunResult:
 
 # ------------------------------------------------------------- the judging
 
-def outcome_for(row, expectation, regime, subject):
+def outcome_for(row, expectation, regime, subject, giveup_ok=True):
     """(match_outcome, observed, diagnostic) for one driver answer.
 
     Requirements 4.4's per-(pattern, subject) set, plus the two [B2]
@@ -79,9 +79,22 @@ def outcome_for(row, expectation, regime, subject):
     if row.answer == "crashed":
         return "crashed", None, (row.detail or "the driver did not survive")
     if row.is_giveup:
-        return ("did-not-match-as-expected",
+        # `gave-up` (schema v1.1 fix 21): the engine REFUSED on a resource
+        # limit. Counted separately from a wrong answer, because an engine
+        # that declined to answer and an engine that answered wrongly are
+        # different findings -- and a per-subject refusal is this bench's
+        # headline hazard class. Not timed either way.
+        #
+        # The classification is the ADAPTER's, by RANGE against the engine's
+        # own bounds, never by a list kept in step by hand. A code outside
+        # the give-up range is `crashed`: pcrec's PCREC_ERR_INTERNAL says
+        # outright that it is not a give-up, and a reserved code must never
+        # be laundered into one.
+        outcome = "gave-up" if giveup_ok else "crashed"
+        return (outcome,
                 {"matched": False, "span": None, "captures": None},
-                "the engine gave up rather than answering: %s" % row.answer)
+                "the engine %s rather than answering: %s"
+                % ("gave up" if giveup_ok else "failed", row.answer))
     if row.answer.startswith("error"):
         return ("crashed", {"matched": False},
                 row.detail or row.answer)
@@ -136,6 +149,28 @@ def outcome_for(row, expectation, regime, subject):
     return "matched-as-expected", None, None
 
 
+def classify_giveup(answer, handle):
+    """Is this driver `giveup:<code>[:<name>]` answer a RESOURCE-LIMIT refusal
+    (-> `gave-up`) or something else (-> `crashed`)?
+
+    The bounds come from the ADAPTER, which reads them from the engine: pcrec
+    exports `[PCREC_ERR_FLOOR, -2]` out of the artifact itself, and pcre2
+    supplies the measured set of its limit codes. A range or a measured set,
+    never a literal list in this file -- a give-up code an engine adds later
+    must classify correctly with nobody editing the harness."""
+    try:
+        code = int(answer.split(":")[1])
+    except (IndexError, ValueError):
+        return False
+    codes = (handle or {}).get("giveup_codes")
+    if codes is not None:
+        return code in codes
+    lo, hi = (handle or {}).get("giveup_range", (None, None))
+    if lo is None:
+        return False
+    return lo <= code <= hi
+
+
 def truncation_for(regime, row, subject):
     """record_schema.md `truncation_check`, required on a
     large-subject-throughput row.
@@ -169,10 +204,11 @@ def calibrate(adapter, handle, regime, subjects, requested, timeout,
 
     Contract 3: "chosen so one subject's loop is >= 50 ms, auto-calibrated by
     python from a probe run, RECORDED IN THE RECORD". The third return value
-    is that recording -- schema v1.1 item (4) puts `{target_ns,
-    probe_iterations, probe_elapsed_ns}` on every match row, so the number
-    behind the number is never lost. It is built now and emitted when the
-    schema has a home for it (record.project).
+    is that recording -- schema v1.1 puts `{target_ns, probe_iterations,
+    probe_elapsed_ns}` on every match row whose loop ran more than once
+    (rule X21), so the number behind the number is never lost. Rule X21 also
+    requires the probe to have MET its target, or a `calibration_note` saying
+    why it could not; both cases below set one.
 
     THE RULE, because "one subject" needs saying which. The probe measures
     every subject at a small fixed `iters`; the MEDIAN per-iteration cost sets
@@ -184,13 +220,12 @@ def calibrate(adapter, handle, regime, subjects, requested, timeout,
     must not turn a cell into an overnight run -- and the number that was
     actually used lands in every row's `timing.iterations`."""
     target_ns = int(TARGET_LOOP_SECONDS * 1e9)
-    if requested is not None:
-        # A FIXED iters is still calibration provenance: it says the number
-        # was chosen by hand and no probe stands behind it, which is exactly
-        # what a reader of a smoke record needs to know.
-        return int(requested), "requested on the command line", {
-            "target_ns": target_ns, "probe_iterations": 0,
-            "probe_elapsed_ns": 0}
+    if requested is not None and int(requested) <= 1:
+        # Rule X21 asks for a calibration on any row whose loop RAN more than
+        # once. A single-iteration loop was not calibrated and does not claim
+        # to have been, so it carries none -- and no probe is run for it,
+        # which is what keeps a smoke a smoke.
+        return int(requested), "requested on the command line (iters=1)", None
     probe_iters = PROBE_ITERS.get(regime, 100)
     rows_by_trial, _info, _notes = adapter.measure(
         handle, regime, subjects, probe_iters, 1, timeout=timeout)
@@ -198,19 +233,33 @@ def calibrate(adapter, handle, regime, subjects, requested, timeout,
     probe_elapsed_ns = int(round(sum(r.seconds for r in rows) * 1e9))
     cal = {"target_ns": target_ns, "probe_iterations": probe_iters,
            "probe_elapsed_ns": probe_elapsed_ns}
+    if requested is not None:
+        # A FIXED count still gets a REAL probe, because X21 compares the
+        # probe against the target and a fabricated probe would be a number
+        # with nothing behind it. The note says the count was not derived.
+        cal["calibration_note"] = (
+            "iterations fixed at %d on the command line; the probe was run "
+            "for provenance and did not choose the count" % int(requested))
+        return int(requested), "requested on the command line", cal
     per_iter = sorted(r.seconds / max(r.iters, 1) for r in rows
                       if r.seconds > 0 and r.iters)
     if not per_iter:
+        cal["calibration_note"] = ("the probe produced no usable timing, so "
+                                   "the count fell back to 1")
         return 1, "the probe run produced no timing; falling back to iters=1", cal
     median = per_iter[len(per_iter) // 2]
     total = sum(per_iter)
     iters = max(1, int(TARGET_LOOP_SECONDS / median))
     capped = max(1, int(TRIAL_BUDGET_SECONDS / total)) if total > 0 else iters
     if capped < iters:
-        return capped, ("median subject would need iters=%d for %.0f ms, "
-                        "capped to %d by the %.0f s per-trial budget"
-                        % (iters, TARGET_LOOP_SECONDS * 1000, capped,
-                           TRIAL_BUDGET_SECONDS)), cal
+        why = ("median subject would need iters=%d for %.0f ms, capped to %d "
+               "by the %.0f s per-trial budget"
+               % (iters, TARGET_LOOP_SECONDS * 1000, capped,
+                  TRIAL_BUDGET_SECONDS))
+        # X21: the target was NOT met, and the record must say why rather
+        # than leave a reader to infer it from two numbers.
+        cal["calibration_note"] = why
+        return capped, why, cal
     return iters, ("median per-iteration %.3f us over %d subject(s) -> "
                    "iters=%d for a %.0f ms loop"
                    % (median * 1e6, len(per_iter), iters,
@@ -263,11 +312,11 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     environment = env.describe(store_root, machine_id=machine_id,
                                timestamp=timestamp)
     environment["pinning"] = pinning
-    # `quiet_attestation` is DROPPED in schema v1.1: a boolean the harness
-    # sets from its own reasons list is a claim beside a measurement, and the
-    # measurement is the one that matters (record_schema.md 11.8's own doubt).
-    # Kept until 1.1 lands because 1.0 requires it.
-    environment["quiet_attestation"] = not reasons
+    # `quiet_attestation` was DROPPED in schema v1.1 (fix 8): a boolean the
+    # harness set from its own reasons list was a claim beside a measurement,
+    # and it could only ever agree with the gate that produced it. The
+    # measurements -- load and occupancy, both ends, with their raw evidence
+    # -- are what the record carries now.
 
     # (3) prepare, compile, measure ----------------------------------------
     workdir = workdir or os.path.join(store.REPO_ROOT, "build", "work",
@@ -279,47 +328,55 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
 
     notes = list(reasons)
     rows = []
+    compiled = {}
     # v1.1 (1): a monotonic emission order across the WHOLE record, compile
     # and match rows alike. Row order is not significant to the schema, so
     # without this the sequence a harness actually ran things in -- which is
     # what a thermal-drift or warm-up question needs -- is unrecoverable.
     seq = itertools.count(1)
-    handles = {}
-    compiled_ok = {}
     options = (sb.testee_notes.get(adapter.name, {}) or {}).get("options", {})
 
     for p in sb.patterns:
         say("compiling %s / %s (%d trial(s)) ..." % (testee_id, p.name, trials))
-        cr = adapter.compile(testee_id, p.name, sb.pattern_bytes(p.name),
+        cp = adapter.compile(testee_id, p.name, sb.pattern_bytes(p.name),
                              options, trials, workdir)
-        compiled_ok[p.name] = (cr.outcome == "compiled")
+        compiled[p.name] = cp
         phases = testee_block["compile_phases"]
-        n = len(cr.phase_seconds) if cr.outcome == "compiled" else 1
-        for t in range(1, max(n, 1) + 1):
-            ps = cr.phase_seconds[t - 1] if t - 1 < len(cr.phase_seconds) else None
-            rows.append(record.compile_row(
-                p.name, t, cr.outcome, testee_block["execution_model"],
-                phases=phases, phase_seconds=ps,
-                engine_metadata=cr.engine_metadata,
-                diagnostic=cr.diagnostic,
-                artifact_bytes=cr.artifact_bytes,
-                declaration_ref=cr.declaration_ref,
-                seq=next(seq)))
-        if cr.outcome == "compiled":
-            handles[p.name] = cr.handle
-        else:
-            notes.append("%s did not compile %s: %s"
-                         % (testee_id, p.name, cr.diagnostic))
+        for form, cr in cp.forms.items():
+            n = len(cr.phase_seconds) if cr.outcome == "compiled" else 1
+            for t in range(1, max(n, 1) + 1):
+                ps = (cr.phase_seconds[t - 1]
+                      if t - 1 < len(cr.phase_seconds) else None)
+                rows.append(record.compile_row(
+                    p.name, t, cr.outcome, testee_block["execution_model"],
+                    phases=phases, phase_seconds=ps,
+                    engine_metadata=cr.engine_metadata,
+                    diagnostic=cr.diagnostic,
+                    artifact_bytes=cr.artifact_bytes,
+                    declaration_ref=cr.declaration_ref,
+                    seq=next(seq), form=form))
+            if cr.outcome != "compiled":
+                notes.append("%s did not compile %s (%s form): %s"
+                             % (testee_id, p.name, form, cr.diagnostic))
 
     subject_ids = {}
     for p in sb.patterns:
-        if p.name not in handles:
+        cp = compiled.get(p.name)
+        if cp is None:
             continue
         for regime in regimes:
             subjects = sb.subjects_for(regime)
             if not subjects:
                 continue
-            handle = dict(handles[p.name])
+            # WHICH ARTIFACT this regime must be measured on. `match` is the
+            # whole-subject question and uses the whole-subject artifact when
+            # the adapter built one; everything else uses `plain`. The two
+            # never share a row (X27 checks the compile row exists).
+            form = cp.form_for_regime(regime)
+            cr = cp.get(form)
+            if cr is None or cr.outcome != "compiled":
+                continue
+            handle = dict(cr.handle)
             handle["pin"] = quiet.taskset_prefix(pinning)
             handle["subject_timeout"] = subject_timeout
             if iters is None:
@@ -327,10 +384,10 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             n_iters, why, cal = calibrate(adapter, handle, regime, subjects,
                                           iters, driver_timeout,
                                           subject_timeout)
-            notes.append("iters for (%s, %s) = %d: %s" % (p.name, regime,
-                                                          n_iters, why))
-            say("measuring %s / %s / %s: %d subject(s) x %d iter(s) x %d "
-                "trial(s)" % (testee_id, p.name, regime, len(subjects),
+            notes.append("iters for (%s, %s, %s) = %d: %s"
+                         % (p.name, form, regime, n_iters, why))
+            say("measuring %s / %s [%s] / %s: %d subject(s) x %d iter(s) x %d "
+                "trial(s)" % (testee_id, p.name, form, regime, len(subjects),
                               n_iters, trials))
             rows_by_trial, _info, mnotes = adapter.measure(
                 handle, regime, subjects, n_iters, trials,
@@ -343,10 +400,11 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                     subj = sb.subject(r.subject_id)
                     subject_ids[r.subject_id] = subj
                     exp = sb.expectation(p.name, r.subject_id, regime)
-                    outcome, observed, diag = outcome_for(r, exp, regime,
-                                                         subj)
+                    outcome, observed, diag = outcome_for(
+                        r, exp, regime, subj,
+                        giveup_ok=classify_giveup(r.answer, handle))
                     timing = None
-                    if outcome == "matched-as-expected" and compiled_ok[p.name]:
+                    if outcome == "matched-as-expected":
                         timing = {
                             "elapsed_ns": int(round(r.seconds * 1e9)),
                             "iterations": max(int(r.iters), 1),
@@ -357,7 +415,12 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                         timing=timing, consumed=r.consumed,
                         truncation=truncation_for(regime, r, subj),
                         observed=observed, diagnostic=diag,
-                        seq=next(seq), calibration=cal))
+                        seq=next(seq), form=form,
+                        # X21: a calibration belongs on a row whose loop ran
+                        # more than once. A one-iteration loop was never
+                        # calibrated and does not claim to have been.
+                        calibration=(cal if timing and
+                                     timing["iterations"] > 1 else None)))
 
     # (4) load AND OCCUPANCY after ------------------------------------------
     # Both instruments, at both ends, by the same call that took the before
@@ -368,6 +431,9 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     say("re-checking the box after the run (mpstat takes ~1 s)...")
     load_after, occ_after = quiet.check(exclude_cpu=pin_cpu)
     environment["load"] = quiet.load_block(load_before, load_after)
+    # `limit_busy_pct` travels WITH the samples (X26): the verdict on each is
+    # recomputed from its own number against this threshold, so a threshold
+    # change is re-judgeable later without re-measuring.
     occ = quiet.occupancy_block(occ_before, occ_after)
     environment["occupancy"] = occ
 
@@ -378,21 +444,14 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     status = "measured"
     if environment["load"]["verdict"] != "quiet":
         status = "inconclusive-load"
-    if occ["verdict"] != "pass":
+    occ_ok, occ_reasons = quiet.occupancy_ok(occ)
+    if not occ_ok:
         status = "inconclusive-load"
-        if occ["verdict"] == "unavailable":
-            notes.append("occupancy unavailable (%s); recorded, never skipped "
-                         "(requirements 9(b))" % occ["tool"])
-        elif occ_before["verdict"] != occ_after["verdict"]:
+        notes.extend(occ_reasons)
+        if occ_before["verdict"] != occ_after["verdict"]:
             notes.append("occupancy differed across the run: before=%s "
                          "after=%s -- the box changed while it was measured"
                          % (occ_before["verdict"], occ_after["verdict"]))
-    if not all(compiled_ok.values()):
-        # X14: `measured` requires a compile row for every pattern -- there
-        # IS one, saying it did not compile, so the record stays honest and
-        # `measured` still means "the run completed".
-        pass
-
     driver_flags, driver_cc = driverrun.driver_build_provenance()
     run_block = {
         # `run.run_id` is a schema SLUG (lowercase), so the stamp is
@@ -427,11 +486,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     # (6)+(7) write and index ----------------------------------------------
     # PROJECT to the emitted schema version LAST, so everything above worked
     # with the full-fidelity record and only the write is versioned.
-    # (record_id depends only on subbench/testee/machine/timestamp, none of
-    # which projection touches, and the content hash is stamped by
-    # store.serialize over the bytes actually written.)
     full = (setup, rows)
-    setup, rows = record.project(setup, rows)
     path, rid = store.write(store_root, setup, rows)
     store.index(store_root)
     return RunResult(path, rid, setup, rows, full)

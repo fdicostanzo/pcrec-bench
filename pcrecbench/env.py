@@ -25,6 +25,34 @@ C_ENV = dict(os.environ, LC_ALL="C", LANG="C")
 MACHINE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,31}$")
 
 
+def _V():
+    """`schema/validate.py`, imported as a module.
+
+    The CANONICALISATION RULES live there and are used from there, never
+    reimplemented here. Rule X23 checks that `cpu_model` / `kernel` /
+    `compiler` derive from their `_raw` siblings by exactly those functions,
+    so a second copy in this file would be a check whose expected value shares
+    an author's second guess with the thing it checks -- the check-design
+    failure this project has already paid for."""
+    import importlib.util
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        "schema", "validate.py")
+    spec = importlib.util.spec_from_file_location("pcrecbench_validate_env", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_VMOD = None
+
+
+def V():
+    global _VMOD
+    if _VMOD is None:
+        _VMOD = _V()
+    return _VMOD
+
+
 # ------------------------------------------------------------------ probing
 
 def _read(path, default=""):
@@ -43,15 +71,8 @@ def cpu_model_raw():
 
 
 def canon_cpu_model(raw):
-    """record_schema.md 6.6: drop (R)/(TM)/(tm), drop a trailing `@ <freq>`,
-    lowercase, collapse non-alphanumerics to a single `-`, strip edges."""
-    s = raw
-    for junk in ("(R)", "(TM)", "(tm)", "(r)"):
-        s = s.replace(junk, "")
-    s = re.sub(r"@.*$", "", s)
-    s = s.lower()
-    s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
-    return s or "unknown"
+    """record_schema.md 6.6, via validate.py's own function (X23)."""
+    return V().normalize_cpu_model(raw)
 
 
 def cores():
@@ -66,9 +87,8 @@ def kernel_raw():
 
 
 def canon_kernel(raw):
-    """record_schema.md 6.7: `uname -s` and `uname -r`, lowercased, `-`."""
-    parts = raw.split()
-    return re.sub(r"[^a-z0-9._-]+", "-", "-".join(parts).lower())
+    """record_schema.md 6.7, via validate.py's own function (X23)."""
+    return V().normalize_kernel(raw)
 
 
 def compiler_raw(cc=None):
@@ -82,17 +102,8 @@ def compiler_raw(cc=None):
 
 
 def canon_compiler(raw):
-    """record_schema.md 6.7: the first line of `$CC --version` reduced to
-    `<name>-<version>`. `gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0` -> `gcc-15.2.0`."""
-    if not raw or raw == "unknown":
-        return "unknown"
-    name = raw.split()[0].lower()
-    name = re.sub(r"[^a-z0-9+]+", "-", name).strip("-")
-    # the LAST bare dotted-number token on the line is the version gcc/clang
-    # both print; a parenthesised distro string is deliberately not it.
-    tail = re.sub(r"\([^)]*\)", " ", raw)
-    vers = re.findall(r"\b\d+(?:\.\d+)+\b", tail)
-    return "%s-%s" % (name, vers[-1]) if vers else name
+    """record_schema.md 6.7, via validate.py's own function (X23)."""
+    return V().normalize_compiler(raw)
 
 
 def cpu_mhz():

@@ -28,9 +28,12 @@ must reject, in the same run that exercises it against one it must accept.
   store race    N writers claiming the SAME cell at the SAME timestamp must
                 each land their own record -- the control for the
                 never-clobber rule, which any single-threaded test passes.
-  v1.1 ready    every schema-v1.1 field is MEASURED today, stripped by
-                `record.project()` at 1.0, and kept at 1.1 -- the control
-                that stops the projection being dead code.
+  form          the `whole-subject` artifact answers a constructed case
+                DIFFERENTLY from the plain one, and libpcre2 says the
+                whole-subject answer is the right one. Without it the second
+                artifact could be silently unused.
+  v1.1 fields   every v1.1 provenance field is POPULATED in a real record --
+                the validator can only reject what is present and wrong.
   run smoke     a full `run` of one cell into a SCRATCH store, validated.
 
 Everything runs under gnutimeout with LC_ALL=C. Nothing here writes into the
@@ -166,7 +169,8 @@ def check_driver_smokes():
             tid = sorted(adapter.testees())[0]
             try:
                 adapter.prepare(tid, tmp)
-                cr = adapter.compile(tid, "smoke", b"a(b|c)+d", {}, 1, tmp)
+                cr = adapter.compile(tid, "smoke", b"a(b|c)+d", {}, 1,
+                                     tmp).get(_ad.FORM_PLAIN)
             except Exception as e:                        # noqa: BLE001
                 bad("%s driver smoke" % engine, "%s" % e)
                 continue
@@ -227,7 +231,8 @@ def check_wrong_answer_control():
         seen = {}
         for exp, want in wrong:
             cr = adapter.compile("pcre2-interp", exp.pattern,
-                                 sb.pattern_bytes(exp.pattern), {}, 1, tmp)
+                                 sb.pattern_bytes(exp.pattern), {}, 1,
+                                 tmp).get(_ad.FORM_PLAIN)
             subj = sb.subject(exp.subject)
             rows_by_trial, _i, _n = adapter.measure(
                 dict(cr.handle), exp.regime, [subj], 1, 1, timeout=300)
@@ -244,7 +249,8 @@ def check_wrong_answer_control():
         for exp, _want in wrong:
             real = sb.expectation(exp.pattern, exp.subject, exp.regime)
             cr = adapter.compile("pcre2-interp", exp.pattern,
-                                 sb.pattern_bytes(exp.pattern), {}, 1, tmp)
+                                 sb.pattern_bytes(exp.pattern), {}, 1,
+                                 tmp).get(_ad.FORM_PLAIN)
             subj = sb.subject(exp.subject)
             rows_by_trial, _i, _n = adapter.measure(
                 dict(cr.handle), exp.regime, [subj], 1, 1, timeout=300)
@@ -284,7 +290,7 @@ def check_patterns_distinct():
         meta = {}
         for p in sb.patterns:
             cr = adapter.compile("pcrec-auto", p.name, sb.pattern_bytes(p.name),
-                                 {}, 1, tmp)
+                                 {}, 1, tmp).get(_ad.FORM_PLAIN)
             if cr.outcome != "compiled":
                 bad("two-patterns control",
                     "%s: %s (%s)" % (p.name, cr.outcome, cr.diagnostic))
@@ -452,17 +458,18 @@ def check_store_race():
 # -------------------------------------------------------- 8 the run smoke
 
 SCHEMA_V11_FIELDS = {
-    "row.seq":                 "v1.1 (1)",
-    "match.calibration":       "v1.1 (4)",
-    "load.before.loadavg_raw": "v1.1 (2)",
-    "load.before.sampled_at":  "v1.1 (2)",
-    "load.after.loadavg_raw":  "v1.1 (2)",
-    "occupancy.before":        "v1.1 (3)",
-    "occupancy.after":         "v1.1 (3)",
-    "run.driver_build_flags":  "v1.1 (6)",
-    "run.driver_compiler":     "v1.1 (6)",
-    "run.clock_source":        "v1.1 (9)",
-    "environment.cpu_mhz":     "v1.1 (10)",
+    "row.seq":                 "X18",
+    "match.calibration":       "X21",
+    "load.before.loadavg_raw": "X19",
+    "load.before.sampled_at":  "X19",
+    "load.after.loadavg_raw":  "X19",
+    "occupancy.before":        "X20/X26",
+    "occupancy.after":         "X20/X26",
+    "occupancy.limit_busy_pct": "X26",
+    "run.driver_build_flags":  "v1.1 fix 6",
+    "run.driver_compiler":     "v1.1 fix 6",
+    "run.clock_source":        "v1.1 fix 10",
+    "environment.cpu_mhz":     "v1.1, optional",
 }
 
 
@@ -472,21 +479,26 @@ def _probe_v11(setup, rows):
     load = env.get("load", {})
     occ = env.get("occupancy", {})
     run = setup.get("run", {})
-    match_rows = [r for r in rows if r.get("kind") == "match"]
+    timed = [r for r in rows
+             if r.get("kind") == "match"
+             and (r.get("timing") or {}).get("iterations", 0) > 1]
     present = set()
     if rows and all("seq" in r for r in rows):
         present.add("row.seq")
-    if match_rows and all("calibration" in r for r in match_rows):
+    if timed and all("calibration" in r for r in timed):
         present.add("match.calibration")
     for end in ("before", "after"):
         v = load.get(end)
         if isinstance(v, dict):
             for k in ("loadavg_raw", "sampled_at"):
-                if k in v and "load.%s.%s" % (end, k) in SCHEMA_V11_FIELDS:
-                    present.add("load.%s.%s" % (end, k))
+                key = "load.%s.%s" % (end, k)
+                if k in v and key in SCHEMA_V11_FIELDS:
+                    present.add(key)
     for k in ("before", "after"):
         if k in occ:
             present.add("occupancy.%s" % k)
+    if occ.get("limit_busy_pct") is not None:
+        present.add("occupancy.limit_busy_pct")
     for k in ("driver_build_flags", "driver_compiler", "clock_source"):
         if run.get(k):
             present.add("run.%s" % k)
@@ -495,67 +507,42 @@ def _probe_v11(setup, rows):
     return present
 
 
-def check_schema_v11_readiness():
-    """THE CONTROL FOR THE PROJECTION, without which it is dead code.
+def check_v11_fields():
+    """Every v1.1 provenance field is actually POPULATED, not merely allowed.
 
-    Schema v1.1 is landing on another lane. This harness MEASURES every one
-    of its new fields already and `record.project()` narrows the record to
-    whatever `SCHEMA_VERSION` currently is. That arrangement has an obvious
-    failure mode: the projection strips a field the harness never actually
-    built, nobody notices because 1.0 records look right, and the day
-    SCHEMA_VERSION flips the field is simply absent.
+    The validator can only reject what is present and wrong; a field the
+    harness quietly stopped filling in is invisible to it wherever the schema
+    made the field optional (`cpu_mhz`, `driver_*`, `calibration` on an
+    uncalibrated row). This walks a REAL record and requires each one.
 
-    So this asserts all three legs at once, on a REAL run:
-      1. the FULL record the harness builds carries every v1.1 field;
-      2. projecting it at 1.0 removes exactly those and nothing else, and the
-         result is what the validator accepted;
-      3. projecting it at 1.1 keeps them.
-    Leg 1 is the one that matters -- 2 and 3 are cheap and would pass on an
-    empty record."""
-    print("-- schema v1.1 readiness (the projection is live, not dead) --")
-    from pcrecbench import harness as _h, record as _r
+    `--iters 2` rather than 1 on purpose: rule X21 attaches a calibration to
+    rows whose loop ran more than once, so a one-iteration smoke would let
+    `match.calibration` pass by never being required."""
+    print("-- the v1.1 provenance fields are populated --")
+    from pcrecbench import harness as _h
 
     scratch = os.path.join(ROOT, "build", "selfcheck-v11-store")
     shutil.rmtree(scratch, ignore_errors=True)
     try:
         res = _h.run_cell("email", "pcre2-interp", regimes=["match"],
-                          trials=1, iters=1, force_unquiet=True,
+                          trials=1, iters=2, force_unquiet=True,
                           store_root=scratch, machine_id="selfcheck-box",
                           synthetic=True,
-                          note="make check v1.1-readiness probe -- NOT a measurement")
+                          note="make check v1.1 field probe -- NOT a measurement")
     except Exception as e:                                 # noqa: BLE001
-        bad("v1.1 readiness", "%s" % e)
+        bad("v1.1 fields populated", "%s" % e)
         return
 
-    built = _probe_v11(res.full_setup, res.full_rows)
-    missing = sorted(set(SCHEMA_V11_FIELDS) - built)
+    missing = sorted(set(SCHEMA_V11_FIELDS) - _probe_v11(res.setup, res.rows))
     if missing:
-        bad("v1.1 fields are MEASURED",
-            "not built: %s" % ", ".join("%s [%s]" % (m, SCHEMA_V11_FIELDS[m])
-                                        for m in missing))
+        bad("v1.1 fields populated",
+            "absent: %s" % ", ".join("%s [%s]" % (m, SCHEMA_V11_FIELDS[m])
+                                     for m in missing))
     else:
-        ok("v1.1 fields are MEASURED",
-           "all %d present in the full record" % len(SCHEMA_V11_FIELDS))
+        ok("v1.1 fields populated",
+           "all %d present in the WRITTEN record" % len(SCHEMA_V11_FIELDS))
 
-    written = _probe_v11(res.setup, res.rows)
-    if written:
-        bad("... and STRIPPED at schema 1.0",
-            "leaked into the written record: %s" % ", ".join(sorted(written)))
-    else:
-        ok("... and STRIPPED at schema 1.0",
-           "the written record carries none of them")
-
-    s11, r11 = _r.project(res.full_setup, res.full_rows, schema_version="1.1")
-    kept = _probe_v11(s11, r11)
-    if kept == set(SCHEMA_V11_FIELDS):
-        ok("... and KEPT at schema 1.1",
-           "flipping SCHEMA_VERSION emits all %d" % len(SCHEMA_V11_FIELDS))
-    else:
-        bad("... and KEPT at schema 1.1",
-            "1.1 would drop: %s"
-            % ", ".join(sorted(set(SCHEMA_V11_FIELDS) - kept)))
-
-    seqs = [r["seq"] for r in res.full_rows]
+    seqs = [r["seq"] for r in res.rows]
     if seqs == list(range(1, len(seqs) + 1)):
         ok("seq is dense and monotonic across the whole record",
            "1..%d over compile AND match rows" % len(seqs))
@@ -563,6 +550,90 @@ def check_schema_v11_readiness():
         bad("seq is dense and monotonic across the whole record",
             "got %s..%s over %d rows" % (seqs[:1], seqs[-1:], len(seqs)))
     shutil.rmtree(scratch, ignore_errors=True)
+
+
+def check_whole_subject_form():
+    r"""THE CONTROL FOR THE `whole-subject` ARTIFACT (v1.1 fix 22).
+
+    pcrec has no end-anchored mode, so the match regime asks its question of
+    a separately compiled `(?:pattern)\z` artifact. The two forms must give
+    DIFFERENT answers somewhere, or the second artifact is dead weight and
+    nobody would notice if the harness silently used the plain one.
+
+    The case: pattern `a|ab`, subject `ab`.
+      plain, anchored entry -> leftmost-first match is [0,1), so `== n` is NO
+      whole-subject         -> [0,2), YES
+      libpcre2 ANCHORED|ENDANCHORED -> [0,2), YES  (the oracle, so the
+                                                    whole-subject form is the
+                                                    one that is RIGHT)
+
+    The email corpus never exercises this -- both its patterns agree on all
+    85 subjects either way -- which is exactly why the case is constructed."""
+    print("-- the whole-subject artifact answers differently (v1.1 form) --")
+    from pcrecbench import record as _r
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("whole-subject control", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-form-")
+    try:
+        adapter.prepare("pcrec-auto", tmp)
+        subj_path = os.path.join(tmp, "ab.bin")
+        with open(subj_path, "wb") as f:
+            f.write(b"ab")
+
+        class S:
+            subject_id, path, length = "s-ab", subj_path, 2
+
+        cp = adapter.compile("pcrec-auto", "aab", b"a|ab", {}, 1, tmp)
+        answers = {}
+        for form in (_ad.FORM_PLAIN, _ad.FORM_WHOLE_SUBJECT):
+            cr = cp.get(form)
+            if cr is None or cr.outcome != "compiled":
+                bad("whole-subject control",
+                    "%s form did not compile: %s"
+                    % (form, cr and cr.diagnostic))
+                return
+            rows, _i, _n = adapter.measure(dict(cr.handle), "match", [S()],
+                                           1, 1, timeout=120)
+            answers[form] = rows[0][0]
+
+        plain, whole = answers[_ad.FORM_PLAIN], answers[_ad.FORM_WHOLE_SUBJECT]
+        if plain.matched:
+            bad("whole-subject control",
+                "the PLAIN artifact answered match [%s,%s); the case is "
+                "supposed to expose that it cannot" % (plain.start, plain.end))
+        elif not (whole.matched and (whole.start, whole.end) == (0, 2)):
+            bad("whole-subject control",
+                "the whole-subject artifact answered %s [%s,%s), wanted "
+                "match [0,2)" % (whole.answer, whole.start, whole.end))
+        else:
+            ok("whole-subject control",
+               "a|ab over 'ab': plain says %s, whole-subject says match [0,2)"
+               % plain.answer)
+
+        # ... and the ORACLE says the whole-subject answer is the right one,
+        # so the control is anchored to PCRE2 and not to pcrec's own opinion.
+        from pcrecbench import oracle_pcre2 as _o
+        got = _o.compile(b"a|ab").match(b"ab")
+        if got and got[0] == (0, 2):
+            ok("... and libpcre2 agrees with the whole-subject answer",
+               "ANCHORED|ENDANCHORED -> (0, 2)")
+        else:
+            bad("... and libpcre2 agrees with the whole-subject answer",
+                "the oracle said %r" % (got,))
+
+        # the two forms must also be DIFFERENT COMPILES, witnessed separately
+        if cp.get(_ad.FORM_PLAIN).handle["lib"] == \
+                cp.get(_ad.FORM_WHOLE_SUBJECT).handle["lib"]:
+            bad("the two forms are separate artifacts",
+                "both forms point at ONE .so")
+        else:
+            ok("the two forms are separate artifacts",
+               "distinct .so per form, each with its own compile row")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def check_run_smoke():
@@ -602,7 +673,8 @@ def main():
     check_patterns_distinct()
     check_subject_timeout()
     check_store_race()
-    check_schema_v11_readiness()
+    check_whole_subject_form()
+    check_v11_fields()
     check_run_smoke()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"

@@ -66,28 +66,23 @@ class QuietRefusal(Exception):
 # ------------------------------------------------------------------- load
 
 def loadavg():
-    """The three figures, as the current schema's `load.before/after` want
-    them. `load_sample()` is the richer form schema v1.1 moves to."""
-    return load_sample()["loadavg"]
+    """The three figures, for a caller that just wants numbers."""
+    s = load_sample()
+    return [s["load1"], s["load5"], s["load15"]]
 
 
 def load_sample():
-    """A load sample with its PROVENANCE: the raw `/proc/loadavg` line and the
-    wall time it was taken at, beside the parsed figures.
-
-    Schema v1.1 makes `environment.load.before/after` exactly this shape
-    (`loadavg_raw`, `sampled_at`, `load1/5/15`). Until it lands the record
-    carries only the three numbers, and `record.py`'s projection is the one
-    place that reduces this to them -- the sample itself is always taken in
-    full, because a number whose provenance was never captured cannot have it
-    added later."""
+    """`$defs/load_sample`: a load sample WITH its evidence -- the
+    `/proc/loadavg` line verbatim, when it was taken, and the three parsed
+    numbers. Rule X19 re-parses the raw line and requires it to agree, so the
+    numbers here are derived from the string that is stored beside them and
+    cannot drift from it."""
     with open("/proc/loadavg", "r", encoding="ascii") as f:
         raw = f.read().strip()
     parts = raw.split()
     return {
         "loadavg_raw": raw,
         "sampled_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "loadavg": [float(parts[0]), float(parts[1]), float(parts[2])],
         "load1": float(parts[0]),
         "load5": float(parts[1]),
         "load15": float(parts[2]),
@@ -95,12 +90,9 @@ def load_sample():
 
 
 def load_block(before, after, limit=LOAD1_LIMIT):
-    """record_schema.md `environment.load`. `verdict` is `loaded` iff EITHER
-    sample's 1-minute figure exceeds `limit` (requirements 9(a), C7).
-
-    `before`/`after` are `load_sample()` dicts; the full samples are kept here
-    and `record.py`'s projection reduces them for the emitted schema
-    version."""
+    """`environment.load`. `verdict` is `loaded` iff EITHER sample's 1-minute
+    figure exceeds `limit` (requirements 9(a), C7) -- rule X20 recomputes it
+    from the two samples and the limit, so the verdict cannot be an opinion."""
     loaded = before["load1"] > limit or after["load1"] > limit
     return {
         "before": before,
@@ -160,16 +152,19 @@ def parse_mpstat(text):
 def occupancy(exclude_cpu=None, limit=MAX_BUSY_PCT_LIMIT, timeout=30):
     """record_schema.md `environment.occupancy`. `unavailable` when mpstat is
     absent or unparseable -- requirements 9(b): recorded, never skipped."""
+    # `$defs/occupancy_sample`: verdict + max_busy_pct + raw, and nothing
+    # else. `max_busy_pct` is null EXACTLY when the verdict is `unavailable`
+    # (the schema enforces the iff), so `raw` then has to carry the reason
+    # mpstat produced nothing -- requirements 9(b): recorded, never skipped.
     block = {
         "verdict": "unavailable",
-        "tool": " ".join(MPSTAT_CMD),
         "max_busy_pct": None,
         "raw": "",
-        # v1.1 carries a `sampled_at` per occupancy sample, as load does.
-        "sampled_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
     if shutil.which("mpstat") is None:
-        block["raw"] = "mpstat not installed on this box"
+        block["raw"] = ("mpstat not installed on this box, so per-core "
+                        "occupancy could not be measured (%s)"
+                        % " ".join(MPSTAT_CMD))
         return block
     try:
         out = subprocess.run(MPSTAT_CMD, capture_output=True, text=True,
@@ -184,7 +179,8 @@ def occupancy(exclude_cpu=None, limit=MAX_BUSY_PCT_LIMIT, timeout=30):
     block["raw"] = full.split("\nAverage:", 1)[0].strip()
     considered = {c: i for c, i in per_cpu.items() if c != exclude_cpu}
     if not considered:
-        block["raw"] += "\n(no per-cpu rows parsed)"
+        block["raw"] = (block["raw"] + "\n(no per-cpu rows could be parsed "
+                        "from the above)").strip()
         return block
     max_busy = round(100.0 - min(considered.values()), 2)
     block["max_busy_pct"] = max_busy
@@ -230,27 +226,45 @@ def check(exclude_cpu=None, load_limit=LOAD1_LIMIT,
                                     limit=occupancy_limit)
 
 
-def occupancy_block(before, after):
-    """The combined occupancy fact. v1.1 carries `before`/`after` the way load
-    does; the current schema carries ONE object, and `record.py`'s projection
-    picks it. `verdict` is the WORSE of the two -- `fail` beats `unavailable`
-    beats `pass` -- so an after-sample that went busy cannot be outvoted by a
-    clean before-sample."""
-    rank = {"pass": 0, "unavailable": 1, "fail": 2}
-    worse = before if rank[before["verdict"]] >= rank[after["verdict"]] else after
-    busy = [v for v in (before["max_busy_pct"], after["max_busy_pct"])
-            if v is not None]
+def occupancy_block(before, after, limit=MAX_BUSY_PCT_LIMIT):
+    """`environment.occupancy`: the two samples, the tool, and the THRESHOLD
+    they were judged against.
+
+    There is deliberately no combined verdict here. Each sample carries its
+    own, rule X26 recomputes each from its own number against
+    `limit_busy_pct`, and `occupancy_ok()` below is the only place the two are
+    reduced to one answer -- a reduction the record does not store, because a
+    stored one could disagree with the numbers under it."""
     return {
+        "tool": " ".join(MPSTAT_CMD),
+        "limit_busy_pct": limit,
         "before": before,
         "after": after,
-        "verdict": worse["verdict"],
-        "tool": before["tool"],
-        "max_busy_pct": max(busy) if busy else None,
-        "raw": "BEFORE:\n%s\n\nAFTER:\n%s" % (before["raw"], after["raw"]),
     }
 
 
-def gate(load_before, occ, force=False, load_limit=LOAD1_LIMIT):
+def occupancy_ok(block):
+    """-> (ok, reasons). `pass` is required at BOTH ends (requirements 9(b),
+    ruled 2026-08-25): `unavailable` or `fail` on either sample is not a
+    measured record. A box that was clean at the start and shared partway
+    through was still shared while it was measured."""
+    reasons = []
+    for when in ("before", "after"):
+        sample = block.get(when) or {}
+        v = sample.get("verdict")
+        if v == "fail":
+            reasons.append("occupancy %s: busiest non-target core %.2f%% busy "
+                           "(limit %.2f%%)"
+                           % (when, sample.get("max_busy_pct") or 0.0,
+                              block.get("limit_busy_pct", MAX_BUSY_PCT_LIMIT)))
+        elif v != "pass":
+            reasons.append("occupancy %s: %s is unavailable -- recorded, "
+                           "never skipped (requirements 9(b))"
+                           % (when, block.get("tool", "mpstat")))
+    return (not reasons), reasons
+
+
+def gate(load_before, occ_sample, force=False, load_limit=LOAD1_LIMIT):
     """Contract 4 step (2): refuse unless quiet, or `--force-unquiet`.
 
     Returns a REASONS list -- empty when the box is quiet. A non-empty list
@@ -261,12 +275,13 @@ def gate(load_before, occ, force=False, load_limit=LOAD1_LIMIT):
     if load1 > load_limit:
         reasons.append("load1 %.2f exceeds the limit %.2f"
                        % (load1, load_limit))
-    if occ["verdict"] == "fail":
+    if occ_sample["verdict"] == "fail":
         reasons.append("occupancy: busiest non-target core %.2f%% busy "
-                       "(limit %.2f%%)" % (occ["max_busy_pct"], MAX_BUSY_PCT_LIMIT))
-    if occ["verdict"] == "unavailable":
+                       "(limit %.2f%%)"
+                       % (occ_sample["max_busy_pct"], MAX_BUSY_PCT_LIMIT))
+    if occ_sample["verdict"] == "unavailable":
         reasons.append("occupancy: %s is unavailable -- recorded, not skipped "
-                       "(requirements 9(b))" % occ["tool"])
+                       "(requirements 9(b))" % " ".join(MPSTAT_CMD))
     if reasons and not force:
         raise QuietRefusal(
             "the box is not quiet:\n  - " + "\n  - ".join(reasons)
