@@ -115,7 +115,7 @@ still pinning every byte that carries a number.
 
 The hash is a TAMPER/TRUNCATION check, not a de-duplication key: two
 records of the same cell differ in their timestamps and therefore in
-their ids regardless of hash. `schema/examples/bad/tampered-hash.jsonl`
+their ids regardless of hash. `schema/examples/bad/x6-tampered-hash.jsonl`
 is the positive control.
 
 ## 4. Schema version, mixing, migration
@@ -703,9 +703,11 @@ property of compiling, and this is the compiling row.
 ## 9. Cross-line rules — what `validate.py` enforces
 
 JSON Schema validates a LINE. Everything that relates two lines, or a
-line to a derivation, is code. These are the rules; each has at least
-one positive control in `schema/examples/bad/` (pcrec's check-design
-lesson: a check with no failing case proves nothing).
+line to a derivation, or a field to a normalization rule, is code.
+These are the rules; each has at least one positive control in
+`schema/examples/bad/` (pcrec's check-design lesson: a check with no
+failing case proves nothing). At v1.1 there are 23 rules and 31
+controls.
 
 | id | rule | source |
 |---|---|---|
@@ -762,6 +764,18 @@ The check-schema harness was itself sabotage-validated on 2026-08-25: a
 valid record placed in `examples/bad/` makes it fail, and so does a
 control renamed to claim a rule it does not fire. A gate that has never
 been seen to fail is not known to be a gate.
+
+RE-VALIDATED at v1.1 (2026-08-25), because a gate is only known to be a
+gate at the version it was last seen failing at. Both sabotages above
+still make `make check-schema` fail (the planted-valid record is
+reported `NOT REJECTED AS INTENDED`; the renamed control reports
+`expected rule X11 to fire, but the rules that fired were ['X23']`),
+and one more was run for v1.1's own machinery: deleting
+`calibration_note` from the v8 example's eight timed rows makes X21
+reject it. That last one matters because the note is the only place in
+this schema where a rule can be satisfied by writing a sentence (§11
+item 10), and a sentence that is never checked for being load-bearing
+is decoration.
 
 ## 10. Denormalization, extension points, what is absent
 
