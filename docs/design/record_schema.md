@@ -113,10 +113,46 @@ contains its own hash; canonicalising line 1 only (rows are hashed as
 written) keeps the rule cheap for a file with thousands of rows while
 still pinning every byte that carries a number.
 
-The hash is a TAMPER/TRUNCATION check, not a de-duplication key: two
-records of the same cell differ in their timestamps and therefore in
-their ids regardless of hash. `schema/examples/bad/x6-tampered-hash.jsonl`
-is the positive control.
+**What the hash proves, and what it does not.** It proves POST-WRITE
+BYTE INTEGRITY: that the file has not been edited, truncated or
+reordered since it was written. It proves nothing whatever about
+whether the fields were TRUE when they were written. A harness that
+records a `cpu_model` it never read, a `load1` it invented or a
+`compile_outcome` that flatters its testee produces a record whose hash
+verifies perfectly. That is not a defect in the hash — no digest can
+attest to a claim's truth — but it is the reason the X-rules exist:
+each of them relates a self-declared field to another self-declared
+field, so that a lie has to be told CONSISTENTLY in several places
+before it validates. The hash guards the file; the rules guard the
+record's internal agreement; neither guards honesty, and §11 is where
+that is admitted rather than papered over.
+
+It is also not a de-duplication key: two records of the same cell differ
+in their timestamps and therefore in their ids regardless of hash.
+`schema/examples/bad/x6-tampered-hash.jsonl` is the positive control.
+
+**Row lines are hashed AS WRITTEN, which makes the format fragile in
+exactly one direction.** Line 1 is canonicalised before hashing; every
+result row is hashed byte for byte. So anything that rewrites bytes on
+the way into or out of version control — `core.autocrlf`, a CRLF
+checkout, an editor that normalizes line endings on save, a formatter
+run over a `.jsonl` — changes the hash of a file nobody edited, and it
+presents as X6: "edited, truncated or restamped?". The repository's
+root `.gitattributes` marks `*.jsonl` as `-text` to disable EOL
+conversion for exactly this reason. A reader who sees X6 fire across
+MANY records at once should suspect the transport, not the harness; a
+single record is the other way round.
+
+**The `-<n>` disambiguator's never-clobber rule is the WRITER's
+obligation, not the schema's.** §3 defines what the suffix means; it
+cannot make the assignment safe. Two harness processes that both see
+`…T031800Z.jsonl` missing will both write it, and the loser's
+measurement is gone — which is the precise failure `compare.sh`'s rule
+exists to prevent. The writer must therefore create the file with
+`O_EXCL` (python: `open(path, "x")`) and, on `FileExistsError`, retry at
+the next `-<n>`. `validate.py` sees one file at a time and can never
+detect a clobber that already happened, so this is stated here as a
+contract on the store, not as a rule with a control.
 
 ## 4. Schema version, mixing, migration
 
@@ -832,10 +868,26 @@ is decoration.
 
 ### 10.1 The copied sub-bench facts
 
+`patterns[].pattern_id`, `subjects[].subject_id`,
 `patterns[].hazard_class`, `patterns[].size_class`,
 `subjects[].bytes_offered`, `subbench.objective` and
-`patterns[].canonical_text` are COPIES of sub-bench facts. The copy
-exists so a report can filter without loading every sub-bench version
+`patterns[].canonical_text` are COPIES of sub-bench facts.
+
+The two IDs lead the list because they are the load-bearing ones and
+were not previously named here. **Their invariant: a `pattern_id` or
+`subject_id` is STABLE ACROSS EVERY RECORD OF THE SAME SUB-BENCH
+VERSION, and equals the sidecar's `[[patterns]]` name / the subject
+manifest's id.** They are the reporter's cross-testee JOIN KEY — how
+"pcrec on `p-addrspec`" is lined up against "libpcre2 on `p-addrspec`"
+— so an id that drifts between two testees' records does not produce a
+wrong comparison, it produces a MISSING one: two half-populated rows
+where there should be one, and a coverage percentage that quietly drops
+without naming what it lost. `canonical_sha256` is the detector (two
+records claiming one `pattern_id` with different pattern hashes are
+comparing different patterns) but it is a store-level check, not one
+`validate.py` can make from a single file — see below.
+
+The copy exists so a report can filter without loading every sub-bench version
 it touches (and so a record read alone is intelligible). The risk is
 the obvious one: a copy can disagree with its source. The mitigation is
 `subbench.content_hash` — the copy is pinned to an exact snapshot, so a
