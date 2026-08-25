@@ -8,7 +8,7 @@ statically"). This directory owns that format.
 
 The DESIGN lives in `../docs/design/record_schema.md` — every field, why
 it exists, the enums, the normalization rules, the cross-line rules
-X1..X23, and the open questions. Read it before changing anything here;
+X1..X25, and the open questions. Read it before changing anything here;
 the files below are its implementation and `make check-schema` fails if
 they and the note disagree.
 

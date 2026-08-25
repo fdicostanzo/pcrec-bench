@@ -725,8 +725,9 @@ controls.
 
 That claim — "each has at least one positive control" — was FALSE when
 draft 1 was merged, and re-reading it is how it was found: X5, X7, X8,
-X12 and X16 had no file in `examples/bad/` at all. Five of twenty-three
-rules had never been seen to fire. They have controls now. The lesson
+X12 and X16 had no file in `examples/bad/` at all. Five of the
+twenty-three rules that existed at that moment had never been seen to
+fire. They have controls now. The lesson
 is the project's own, one level up: a check with no failing case proves
 nothing, and a CLAIM that every check has a failing case is itself a
 check — so it needs one too. `check_fields.py` compares the note's field

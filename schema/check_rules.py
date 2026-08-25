@@ -5,8 +5,8 @@ name a rule that exists.
 
 The note has claimed since draft 1 that "each has at least one positive control
 in `schema/examples/bad/`". At v1.1 that claim was found to be FALSE for five
-of the twenty-three rules (X5, X7, X8, X12, X16), which had never been seen to
-fire. The claim survived a merge and a critic panel because a human was the
+of the rules that existed at that moment (X5, X7, X8, X12, X16), which had
+never been seen to fire. The claim survived a merge and a critic panel because a human was the
 only thing checking it -- which is pcrec's check-design lesson exactly, one
 level up: a check with no failing case proves nothing, and a CLAIM that every
 check has a failing case is itself a check, so it needs one too.
