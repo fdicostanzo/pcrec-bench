@@ -390,3 +390,22 @@ harness 21/21, report 18/18. [B5] archived; [B6] started: the window
 run is staged (scratchpad/run_window.sh); waiting for pcrecdev1's
 "WINDOW OPEN" (~02:50). All three lanes' worktrees removed, branches
 kept: lane/b2schema, lane/b2fix, lane/b3harness, lane/b5report.
+
+## 2026-08-25 (EDT, ~01:3x), first session (part 13) — the window REHEARSAL: one registry gate, one real harness bug (X21 caught it), the reporter renders real records
+
+Rehearsed the exact window script (scratchpad/run_window.sh; STORE/
+EXTRA/LOG overrides added) into a scratch store, --trials 1 --synthetic
+--force-unquiet, on the loaded box. Rehearsal #1: all five cells rc=1
+in one second — the scratch store had no machines.tsv and the harness
+refused an unregistered box (the registry gate working; the real store
+carries it). Rehearsal #2: 4/5 cells wrote validated records (all
+`inconclusive-load`, correctly: load1 3.4-4.3 against the 2.0 limit,
+worst cores 30-60% busy); pcre2-jit was REJECTED by X21 and NOT written
+— harness.py:252 computes iters = int(target/median) (truncation):
+probe 24.79 ms/iter → 2 iters predicted at 49.58 ms < 50 ms target, no
+calibration_note. The rule the R2 panel asked for (S2-4) caught a real
+bug on the first real record it saw. Fix request to b3harness on
+worktrees/b3fix (ceil + a note when the sweep cap lowers the count + a
+control at the just-above-integer ratio). The reporter renders the four
+real records (set grain, form shown, compile costs by class, excluded
+table) — first sight of real numbers, none of them a measurement.
