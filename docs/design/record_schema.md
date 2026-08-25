@@ -192,8 +192,7 @@ The enums, in full:
    lie (`did-not-match-as-expected` is a wrong answer, not a hang) or
    drop the row (silently deleting the most interesting datum in the
    bench). The two tokens are re-used verbatim from the sibling set
-   rather than invented. **This is the one place the schema exceeds
-   requirements §4.4 and it is flagged for the panel (§11.1).**
+   rather than invented. **ACCEPTED at the [B2] merge (2026-08-25): requirements.md §4.4 is amended to carry `crashed`/`timed-out` per subject; see §11.1 (closed).**
 2. **`truncation_check` gains `not-applicable`.** §4.4 gives
    `unverified-for-truncation` for a large-subject cell whose API does
    not expose the consumed length; the third state is a cell where the
@@ -681,7 +680,7 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
    counter-argument is that §4.4 says "closed set" and a per-subject
    timeout could instead be modelled as an ABSENT row plus a
    per-pattern compile-row outcome of `timed-out` — which loses which
-   subject hung. Ruling wanted.
+   subject hung. RULED at the [B2] merge 2026-08-25: accepted, requirements §4.4 amended — closed.
 2. **The lazy-JIT compile row carries no number at all** (§8, compile
    `derivation`). It is the only row kind whose quantity is not in the
    record, and it makes the reporter's job class-dependent. It follows
