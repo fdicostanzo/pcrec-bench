@@ -432,3 +432,43 @@ diagnosis that motivated it. Also from the rehearsal: pcrec-vm posted
 the fastest compliance number on orig (single trial, loaded box — NOT a
 measurement; the window decides). Window ~02:50; run_window.sh staged
 (5 cells, --trials 5, --pin 11; expect ~20-40 min).
+
+## 2026-08-25 (EDT, ~03:0x), first session (part 15, CLOSE) — [B6] DONE: the first production sample measured, reported, sent; M1 complete
+
+THE WINDOW: pcrecdev1 opened it early (02:21, load 0.42 — its sweep had
+stopped on its own at row 48 and it held the resume). run_window.sh ran
+02:22-02:49: pcre2-interp, pcre2-jit, pcrec-nocaps, pcrec-vm `measured`
+(both occupancy samples pass); pcrec-auto REFUSED by the gate (rc 3) on
+a 1-s transient (12.12 % on one core the second after the previous
+cell exited); re-run refused again (28.71 %); a retry loop passed on its
+second attempt (02:50-02:55) → `measured`. The transients are the two
+claude sessions' own CPU (~6-8 % each) plus a stray `gh` — a real
+finding for the gate (OD-B12: retry/multi-sample before loosening the
+limit). WINDOW CLOSED 02:56, load 1.25; 34 min used of 45 promised.
+
+THE REPORT (reports/2026-08-25-email-specimen-0.1-budu-ryzen1600.md, set
+grain; the first `--subbench email` query matched nothing — the sidecar
+id is `email-specimen`, OD-B13): orig/short-search pcrec-auto 6.13 µs ≈
+pcre2-jit 6.28 µs (interp 65.7); orig/throughput jit 9.08 ms, pcrec-auto
+13.40 ms (0.464x), interp 28.9 ms, pcrec-vm excluded (STEPS give-up on
+the 'a'-run); orig/compliance (whole-subject) pcrec-vm 101 µs (0.188x)
+BEATS pcrec's own DFA 235 µs (0.437x) 2.3× — the first outlier bucketed
+by mechanism; pcre2 536-537 µs; factored: pcrec FRAMES give-ups on the
+same 5 deep subjects in all three configs, STEPS on the 'a'-run, and a
+5.4× loss on short search vs jit (the wave-G target) — srEmail's
+findings reproduced as records; compile cost on its own axis (pcrec
+118 / 420 ms; pcre2 14 µs / jit 160 µs). UPSTREAM U1: pcre2-JIT hit the
+60 s per-subject alarm on factored × 1 MB 'a' (5/5 trials) where the
+INTERPRETER answers in 17.8 µs/iteration — likely the interpreter's
+start-of-match prescan; filed in docs/dev/upstream_findings.md with the
+pcre2test reproduction as the next step. Records + index + reports
+committed (bf4a415); the report sent to pcrecdev1 as the PRODUCTION
+SAMPLE with Frank's two asks (feedback on the shape; a ranked list of
+higher-priority sub-bench areas) — its answer arrives next session.
+
+M1 ([B0]..[B6]) is complete in one session. Commits on master: 7789bd1
+… b3ab30b (+ this close). Not done / owed: the M1 close panel over
+harness_contract + harness_notes (D6); OD-B10 (1 MB vs 8 MB spread);
+OD-B11/B12/B13; a re-pin of pcrec after wave G merges; the second
+sub-bench (Frank's call after pcrecdev1's list); no remote configured
+(branch `master`). Session closes here; Frank reviews next session.
