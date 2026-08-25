@@ -45,6 +45,27 @@ must reject, in the same run that exercises it against one it must accept.
                 abi == 3 and the sizing pairs, a DFA artifact stamps 0 and
                 records no buffer pair, a VM artifact records the capacities.
   run smoke     a full `run` of one cell into a SCRATCH store, validated.
+  tier schema   (v1.2, [B10]) the scratch example is accepted, the 1.1
+                examples with NO `tier` still are (absent = pinned), and the
+                two tier controls are rejected FOR X28 / X29 by name.
+  tier store    the canonical store (the `.canonical` marker) REFUSES a
+                scratch record on write, and REFUSES to index one planted
+                there by hand (the sabotage); a scratch store takes it.
+  reduction     the shared set-grain reduction (pcrecbench/reduce.py, the
+                arithmetic `quick` prints and the reporter ranks) on a
+                3-trial x 2-subject fixture whose median is hand-computable,
+                and on a fixture with one give-up, which must EXCLUDE the
+                set and name the code.
+  quick         a `quick` cell (two testees, one pattern, one regime, five
+                subjects) completes in seconds, its records are scratch and
+                valid, and the median it printed equals the shared reduction
+                recomputed from the record file.
+  pcrec-local   the provided-binary testee: describes as `local:<sha12>`
+                with no `+describe` for a git-archive pin, `+…-dirty` and a
+                null commit beside a dirty repo, `+<sha>` and HEAD beside a
+                clean one; a missing $PCREC_BIN is a clean error naming the
+                variable; a quick cell runs; `run --store <canonical>` is
+                REFUSED.
 
 Everything runs under gnutimeout with LC_ALL=C. Nothing here writes into the
 real store: the smoke uses a scratch store under the build tree.
@@ -986,6 +1007,200 @@ def check_run_smoke():
         bad("index regenerates", n.stderr.strip()[:200])
 
 
+# ------------------------------------------------------ 10 the record tiers
+
+def _validate(argv):
+    return run([sys.executable, os.path.join(ROOT, "schema", "validate.py")]
+               + argv, timeout=300)
+
+
+def check_tier_schema():
+    """Schema v1.2 ([B10] (a)): the tier fields are ADDITIVE and the two tier
+    rules FIRE. `make check-schema` covers the same files by glob; this
+    names what each proves."""
+    print("-- the record tiers: schema v1.2 --")
+    import glob as _glob
+    import json as _json
+    ex = os.path.join(ROOT, "schema", "examples")
+    scratch = [f for f in _glob.glob(os.path.join(ex, "*.jsonl"))
+               if "_local-" in os.path.basename(f)]
+    old = [f for f in _glob.glob(os.path.join(ex, "*.jsonl"))
+           if "_local-" not in os.path.basename(f)]
+    if len(scratch) != 1:
+        bad("scratch example present", "found %d" % len(scratch))
+        return
+    setup = _json.loads(open(scratch[0], encoding="utf-8").readline())
+    proc = _validate(["--check-filename", scratch[0]])
+    if (proc.returncode == 0 and setup.get("tier") == "scratch"
+            and setup.get("schema_version") == "1.2"
+            and str(setup["testee"]["engine_version"]).startswith("local:")
+            and setup["testee"].get("engine_commit") is None
+            and "binary" in setup["testee"]):
+        ok("scratch example accepted (v1.2)",
+           "tier scratch, local: version, null commit, binary present")
+    else:
+        bad("scratch example accepted (v1.2)",
+            (proc.stderr or proc.stdout).strip()[-300:])
+    proc = _validate(["--check-filename"] + old)
+    absent = all("tier" not in _json.loads(open(f, encoding="utf-8").readline())
+                 for f in old)
+    if proc.returncode == 0 and absent and old:
+        ok("1.1 examples with NO tier still validate",
+           "%d record(s): absent tier = pinned" % len(old))
+    else:
+        bad("1.1 examples with NO tier still validate",
+            (proc.stderr or proc.stdout).strip()[-300:])
+    for rule, name in (("X28", "x28-local-binary-not-scratch.jsonl"),
+                       ("X29", "x29-scratch-without-binary.jsonl")):
+        f = os.path.join(ex, "bad", name)
+        proc = _validate(["--expect-reject", "--expect-rule", rule, f])
+        if proc.returncode == 0 and os.path.exists(f):
+            ok("%s control rejected for %s" % (name.split("-")[0], rule),
+               name)
+        else:
+            bad("%s control rejected for %s" % (name.split("-")[0], rule),
+                (proc.stderr or proc.stdout).strip()[-300:])
+
+
+def check_store_tier_refusal():
+    """THE STORE'S HALF OF THE TIER RULE, with its sabotage. A scratch
+    record must be refused INTO the canonical store (write), and the
+    canonical index must refuse to LIST one that got there some other way
+    -- proven by planting one by hand. The same record into a store without
+    the marker is written, validated and indexed, so the refusal is the
+    marker's and not a broken writer's."""
+    print("-- the record tiers: the store refuses scratch into canonical --")
+    from pcrecbench import store as _store
+    import json as _json
+    import glob as _glob
+
+    if _store.is_canonical(_store.DEFAULT_STORE):
+        ok("the repo's store/ carries the .canonical marker",
+           os.path.relpath(_store.DEFAULT_STORE, ROOT))
+    else:
+        bad("the repo's store/ carries the .canonical marker", "it does not")
+
+    ex = [f for f in _glob.glob(os.path.join(ROOT, "schema", "examples",
+                                             "*.jsonl"))
+          if "_local-" in os.path.basename(f)]
+    if not ex:
+        bad("store tier refusal", "no scratch example to write")
+        return
+    lines = open(ex[0], encoding="utf-8").read().splitlines()
+    setup = _json.loads(lines[0])
+    rows = [_json.loads(l) for l in lines[1:]]
+    assert setup.get("tier") == "scratch"
+
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-tier-")
+    try:
+        canon = os.path.join(tmp, "canonical")
+        os.makedirs(canon)
+        with open(os.path.join(canon, _store.CANONICAL_MARKER), "w") as f:
+            f.write("canonical\n")
+        # 1. write refused
+        try:
+            _store.write(canon, dict(setup), rows, validate=False)
+            bad("canonical store REFUSES a scratch record on write",
+                "it was written")
+        except _store.StoreError as e:
+            if "REFUSED" in str(e) and not _glob.glob(
+                    os.path.join(canon, "records", "*", "*", "*.jsonl")):
+                ok("canonical store REFUSES a scratch record on write",
+                   "StoreError, nothing on disk")
+            else:
+                bad("canonical store REFUSES a scratch record on write",
+                    str(e)[:200])
+        # 2. SABOTAGE: plant one by hand; index must refuse to list it
+        sb = setup["subbench"]
+        d = _store.record_dir(canon, sb["id"], sb["version"],
+                              setup["testee"]["testee_id"])
+        os.makedirs(d, exist_ok=True)
+        planted = os.path.join(d, setup["record_id"] + ".jsonl")
+        with open(planted, "w", encoding="utf-8", newline="\n") as f:
+            f.write("\n".join(lines) + "\n")
+        try:
+            _store.index(canon)
+            bad("canonical index REFUSES to list a planted scratch record",
+                "index.tsv was written")
+        except _store.StoreError as e:
+            if "REFUSED" in str(e) and setup["record_id"] in str(e):
+                ok("canonical index REFUSES to list a planted scratch record",
+                   "StoreError names the file")
+            else:
+                bad("canonical index REFUSES to list a planted scratch record",
+                    str(e)[:200])
+        # 3. the CONTROL: a scratch store takes it, validated, and indexes it
+        scratch = os.path.join(tmp, "scratch")
+        try:
+            path, rid = _store.write(scratch, dict(setup), rows, validate=True)
+            n = _store.index(scratch)
+            if n == 1 and os.path.exists(path):
+                ok("a scratch store WRITES (validated) and INDEXES it",
+                   "1 record, validator-accepted")
+            else:
+                bad("a scratch store WRITES (validated) and INDEXES it",
+                    "index counted %d" % n)
+        except _store.StoreError as e:
+            bad("a scratch store WRITES (validated) and INDEXES it",
+                str(e)[:300])
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_reduction():
+    """THE SHARED ARITHMETIC (R5): `quick` prints it, the reporter ranks
+    it, and this fixture pins it to numbers a reader can check by hand.
+
+      subject A, trials 1..3: 100, 300, 200 ns/call
+      subject B, trials 1..3:  10,  30,  20 ns/call
+      per-trial set sums:     110, 330, 220  -> median 220, min 110, max 330
+
+    Then the CONTROL: B's trial 2 becomes a `gave-up` (PCREC_ERR_FRAMES).
+    The set must carry NO number, name B as failing, count one give-up
+    under its code, and report pass-rate 1/2."""
+    print("-- the shared set-grain reduction (reduce.py) --")
+    from pcrecbench import reduce as _rd
+
+    def row(sid, trial, ns, iters=10):
+        return {"kind": "match", "pattern_id": "p", "subject_id": sid,
+                "regime": "short-subject-search", "trial": trial,
+                "match_outcome": "matched-as-expected",
+                "timing": {"elapsed_ns": ns * iters, "iterations": iters,
+                           "bytes_processed": 40 * iters}}
+
+    fixture = {"A": [row("A", 1, 100), row("A", 2, 300), row("A", 3, 200)],
+               "B": [row("B", 1, 10), row("B", 2, 30), row("B", 3, 20)]}
+    r = _rd.reduce_set_cell(fixture)
+    if (r.median_ns, r.min_ns, r.max_ns, r.n_trials, r.pass_rate,
+            r.n_gave_up, r.failing_subjects) == (220, 110, 330, 3, 1.0, 0, []):
+        ok("set-grain reduction on the hand-computed fixture",
+           "sums %s -> median 220, min 110, max 330" % r.sums)
+    else:
+        bad("set-grain reduction on the hand-computed fixture",
+            "median %s min %s max %s n %s pass %s"
+            % (r.median_ns, r.min_ns, r.max_ns, r.n_trials, r.pass_rate))
+
+    giveup = {"A": list(fixture["A"]),
+              "B": [fixture["B"][0],
+                    {"kind": "match", "pattern_id": "p", "subject_id": "B",
+                     "regime": "short-subject-search", "trial": 2,
+                     "match_outcome": "gave-up",
+                     "observed": {"matched": False},
+                     "diagnostic": "the engine gave up rather than answering: "
+                                   "giveup:-3:PCREC_ERR_FRAMES"},
+                    fixture["B"][2]]}
+    r = _rd.reduce_set_cell(giveup)
+    if (r.median_ns is None and r.failing_subjects == ["B"]
+            and r.n_gave_up == 1 and r.pass_rate == 0.5
+            and r.giveup_codes == {"-3:PCREC_ERR_FRAMES": 1}):
+        ok("... and one give-up EXCLUDES the set and names its code",
+           "B fails, pass-rate 1/2, give-ups {-3:PCREC_ERR_FRAMES: 1}")
+    else:
+        bad("... and one give-up EXCLUDES the set and names its code",
+            "median %s failing %s gave_up %s codes %s"
+            % (r.median_ns, r.failing_subjects, r.n_gave_up, r.giveup_codes))
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -1000,6 +1215,9 @@ def main():
     check_calibration_meets_target()
     check_frame_buffer()
     check_run_smoke()
+    check_tier_schema()
+    check_store_tier_refusal()
+    check_reduction()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))

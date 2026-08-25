@@ -169,13 +169,19 @@ def load_registry(store_root):
 
 
 def resolve_machine_id(store_root, hostname, cpu_model, ncores,
-                       assign=None, timestamp=None):
+                       assign=None, timestamp=None, fallback_roots=()):
     """Look this box up in the registry; return its `machine_id`.
 
     `assign` registers a NEW id for this box (the `--machine-id` flag). An
     unknown box with no `assign` is an ERROR: record_schema.md 6.5 makes the id
     a deliberate human act, and a harness that guessed one would attribute this
-    run to a machine nobody named."""
+    run to a machine nobody named.
+
+    `fallback_roots` (v1.2, the scratch tier): registries consulted READ-ONLY
+    when this store's own does not know the box. A scratch store under
+    build/ starts empty, and a `quick` cell must not demand a fresh
+    `--machine-id` for a box the canonical store already names -- nor may it
+    invent one. The id found there is the SAME id, so no history splits."""
     rows = load_registry(store_root)
     key = (hostname, cpu_model, str(ncores))
     for r in rows:
@@ -188,6 +194,18 @@ def resolve_machine_id(store_root, hostname, cpu_model, ncores,
                     "second id, or its history splits in two"
                     % (r["machine_id"], registry_path(store_root), assign))
             return r["machine_id"]
+    for other in fallback_roots:
+        if os.path.abspath(other) == os.path.abspath(store_root):
+            continue
+        for r in load_registry(other):
+            if (r["hostname"], r["cpu_model"], r["cores"]) == key:
+                if assign and assign != r["machine_id"]:
+                    raise MachineRegistryError(
+                        "this box is registered as %r in %s; refusing to "
+                        "name it %r in a scratch store -- one box, one id "
+                        "(record_schema.md 6.5)"
+                        % (r["machine_id"], registry_path(other), assign))
+                return r["machine_id"]
 
     if not assign:
         raise MachineRegistryError(
@@ -219,9 +237,12 @@ def resolve_machine_id(store_root, hostname, cpu_model, ncores,
 
 # --------------------------------------------------------------- the block
 
-def describe(store_root, machine_id=None, timestamp=None, cc=None):
+def describe(store_root, machine_id=None, timestamp=None, cc=None,
+             fallback_roots=()):
     """The record's `environment` block minus the run-time samples (`load`,
-    `occupancy`, `pinning`, `quiet_attestation`), which quiet.py supplies."""
+    `occupancy`, `pinning`, `quiet_attestation`), which quiet.py supplies.
+    `fallback_roots`: other stores' machine registries to consult read-only
+    (a scratch store borrows the canonical store's ids, 6.5)."""
     craw = cpu_model_raw()
     kraw = kernel_raw()
     cmpraw = compiler_raw(cc)
@@ -230,7 +251,8 @@ def describe(store_root, machine_id=None, timestamp=None, cc=None):
     n = cores()
     return {
         "machine_id": resolve_machine_id(store_root, host, cpu, n,
-                                         assign=machine_id, timestamp=timestamp),
+                                         assign=machine_id, timestamp=timestamp,
+                                         fallback_roots=fallback_roots),
         "hostname": host,
         "cpu_model": cpu,
         "cpu_model_raw": craw,

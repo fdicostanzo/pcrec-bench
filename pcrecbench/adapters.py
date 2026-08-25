@@ -77,6 +77,7 @@ WHICH subject hung. `gnutimeout` on the driver PROCESS is the outer
 backstop for a driver that hangs somewhere else (requirements 3).
 """
 
+import hashlib
 import importlib.util
 import os
 import tomllib
@@ -90,6 +91,16 @@ TESTEES_ROOT = os.path.join(REPO_ROOT, "testees")
 
 class AdapterError(Exception):
     pass
+
+
+def sha256_file(path):
+    """The sha256 of a file's bytes -- a scratch record's `testee.binary`
+    identity (record_schema.md 6.8, X29)."""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 class CompileResult:
@@ -243,8 +254,30 @@ class Adapter:
                 % (self.name, testee_id, ", ".join(sorted(self.testees()))))
 
     def describe(self, testee_id, workdir=None):
-        """The record's `testee` block, every field, versions PROBED."""
+        """The record's `testee` block, every field, versions PROBED.
+
+        v1.2: a describe() MAY carry `tier: "scratch"` (a testee that is
+        scratch BY CONSTRUCTION -- a provided binary) and `binary: {path,
+        sha256}`. The harness lifts `tier` onto the setup layer (it is not a
+        testee field) and keeps `binary` where it is."""
         raise NotImplementedError
+
+    def tier(self, testee_id):
+        """The tier this testee FORCES, or `pinned` when it forces none. A
+        provided-binary testee answers `scratch` here so the harness can
+        refuse the canonical store BEFORE it prepares, gates or measures
+        anything (record_schema.md 6.8). The default is `pinned`."""
+        return "pinned"
+
+    def binary_identity(self, testee_id, workdir=None):
+        """-> {"path": str, "sha256": hex64}: WHAT THE ENGINE BINARY WAS. A
+        scratch record must carry it (X29), and a pinned testee measured at
+        the scratch tier (`run --tier scratch`) is still a binary somewhere.
+        An adapter that cannot say raises AdapterError."""
+        raise AdapterError(
+            "%s cannot describe the binary behind testee %r, so it cannot "
+            "write a scratch-tier record (X29 requires testee.binary)"
+            % (self.name, testee_id))
 
     def prepare(self, testee_id, workdir):
         """Build the driver / resolve the pin. Idempotent."""

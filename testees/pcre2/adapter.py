@@ -134,6 +134,37 @@ class Adapter(_ad.Adapter):
             "engine_metadata_declaration": decl,
         }
 
+    def binary_identity(self, testee_id, workdir=None):
+        """`testee.binary` for a scratch-tier record (schema v1.2, X29): the
+        distribution libpcre2-8.so.0 the driver dlopens, resolved to the
+        file the dynamic loader actually maps -- read from /proc/self/maps
+        after loading it here, the same soname the driver asks for -- and
+        its sha256. Not `find_library`, which returns a soname, not a
+        path."""
+        import ctypes
+        soname = "libpcre2-8.so.0"
+        try:
+            ctypes.CDLL(soname)
+        except OSError as e:
+            raise _ad.AdapterError("cannot load %s: %s" % (soname, e))
+        path = None
+        try:
+            with open("/proc/self/maps", "r", encoding="utf-8",
+                      errors="replace") as f:
+                for line in f:
+                    cand = line.split()[-1] if line.strip() else ""
+                    if os.path.basename(cand).startswith("libpcre2-8.so"):
+                        path = cand
+                        break
+        except OSError:
+            pass
+        if not path or not os.path.exists(path):
+            raise _ad.AdapterError(
+                "loaded %s but could not find its file in /proc/self/maps; "
+                "a scratch record must name the binary (X29)" % soname)
+        return {"path": os.path.realpath(path),
+                "sha256": _ad.sha256_file(path)}
+
     # -------------------------------------------------------------- prepare
 
     def prepare_driver(self, workdir):

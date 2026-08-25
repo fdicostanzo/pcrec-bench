@@ -281,6 +281,12 @@ class Adapter(_ad.Adapter):
             return ""
         return proc.stdout.strip() if proc.returncode == 0 else ""
 
+    def binary_identity(self, testee_id, workdir=None):
+        """`testee.binary` (schema v1.2, X29): the pinned `pcrec` the pin
+        script built, and its sha256."""
+        path = self.pin_binary()
+        return {"path": os.path.realpath(path), "sha256": _ad.sha256_file(path)}
+
     # ------------------------------------------------------------- describe
 
     def describe(self, testee_id, workdir=None):

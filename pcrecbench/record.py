@@ -18,7 +18,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # The schema version this harness emits. Bumping it is a deliberate act: the
 # fields below and `schema/record.schema.json` move together, and
 # `make check` is what proves they did.
-SCHEMA_VERSION = "1.1"
+SCHEMA_VERSION = "1.2"
 
 #: What the drivers actually call. Both use `clock_gettime(CLOCK_MONOTONIC)`
 #: around the batched loop -- never a wall clock, never a per-call timer.

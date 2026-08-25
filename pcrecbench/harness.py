@@ -12,6 +12,21 @@ The seven steps of contract 4, in order, and each is one function below:
   (6) write it                      store.write, never silently clobbering
   (7) `index`                       store.index
 
+THE TIER (schema v1.2, record_schema.md 6.8; Frank's I-4). `run_cell` takes
+`tier`; an adapter whose testee is scratch BY CONSTRUCTION (`pcrec-local`)
+forces it. A scratch run: goes to the scratch store unless a root was named;
+is REFUSED into the canonical store before anything else happens; skips the
+quiet GATE (`--force-unquiet` implied) but still SAMPLES the box at both ends
+and computes `status` honestly; and stamps `tier: scratch` plus
+`testee.binary` on the record. The same seven steps, the same record shape,
+the same judging -- a scratch number is a real number kept out of the
+rankings by its tier, not a lesser measurement.
+
+`pcrecbench quick` (I-4 (b)) is `run_cell` with the knobs it needed and no
+second code path: `patterns=` (one), `regimes=` (one), `subject_limit=`
+(the first k), `tier="scratch"`, `budget=` (the per-trial calibration cap,
+seconds instead of the default 20).
+
 THE JUDGING RULE, which is the thing worth reading twice. The ADAPTER reports
 what the engine answered; the HARNESS decides what that means against the
 sub-bench's expectation. An adapter that judged its own correctness would be
@@ -199,8 +214,13 @@ def truncation_for(regime, row, subject):
 # ------------------------------------------------------------ calibration
 
 def calibrate(adapter, handle, regime, subjects, requested, timeout,
-              subject_timeout):
+              subject_timeout, budget=None):
     """Choose `iters`. -> (iters, why, calibration).
+
+    `budget` is the per-trial cap in seconds (default TRIAL_BUDGET_SECONDS);
+    `quick` passes ~2 s so a cell stays inside "seconds, not minutes". The
+    cap is the SAME rule at a different number -- rule X21's
+    `calibration_note` says when it bound.
 
     Contract 3: "chosen so one subject's loop is >= 50 ms, auto-calibrated by
     python from a probe run, RECORDED IN THE RECORD". The third return value
@@ -243,6 +263,7 @@ def calibrate(adapter, handle, regime, subjects, requested, timeout,
     The count is then verified against X21's exact expression before it is
     returned, so the two can never silently drift apart again."""
     target_ns = int(TARGET_LOOP_SECONDS * 1e9)
+    budget = TRIAL_BUDGET_SECONDS if budget is None else float(budget)
     if requested is not None and int(requested) <= 1:
         # Rule X21 asks for a calibration on any row whose loop RAN more than
         # once. A single-iteration loop was not calibrated and does not claim
@@ -283,12 +304,11 @@ def calibrate(adapter, handle, regime, subjects, requested, timeout,
 
     iters = _iters_meeting_target(target_ns, probe_ns, probe_n)
     total = sum(per_iter for per_iter, _row in timed)
-    capped = max(1, int(TRIAL_BUDGET_SECONDS / total)) if total > 0 else iters
+    capped = max(1, int(budget / total)) if total > 0 else iters
     if capped < iters:
         why = ("the median subject would need iters=%d for %.0f ms, capped to "
-               "%d by the %.0f s per-trial budget"
-               % (iters, TARGET_LOOP_SECONDS * 1000, capped,
-                  TRIAL_BUDGET_SECONDS))
+               "%d by the %g s per-trial budget"
+               % (iters, TARGET_LOOP_SECONDS * 1000, capped, budget))
         # X21: the target was NOT met, and the record must say why rather
         # than leave a reader to infer it from two numbers.
         cal["calibration_note"] = why
@@ -325,17 +345,27 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
              force_unquiet=False, store_root=None, machine_id=None,
              pin_cpu=None, subject_timeout=60, driver_timeout=900,
              command_line=None, note=None, synthetic=False, workdir=None,
-             progress=None):
+             progress=None, tier=store.TIER_PINNED, patterns=None,
+             subject_limit=None, budget=None):
     """The whole of contract 4. Returns a `RunResult`.
 
     It carries BOTH the record as written and the FULL pre-projection one, so
     a caller (and `make check`) can see that the v1.1 fields are really being
     measured rather than merely provided for. A projection nobody can inspect
-    is a projection nobody can tell is dead."""
+    is a projection nobody can tell is dead.
+
+    v1.2 knobs (the `quick` surface, and the tier):
+      tier           `pinned` (default) or `scratch`; an adapter's own
+                     `tier()` can force `scratch`
+      patterns       a subset of the sub-bench's pattern ids (default all)
+      subject_limit  the FIRST k subjects of each regime's set (default all)
+      budget         the per-trial calibration cap in seconds (default 20)
+      store_root     None = the tier's default store: canonical for
+                     `pinned`, `$PCRECBENCH_SCRATCH_STORE` or
+                     build/scratch-store/ for `scratch`"""
     from .subbench import find as find_subbench
 
     say = progress or (lambda *_a: None)
-    store_root = store_root or store.DEFAULT_STORE
 
     # (1) the sub-bench -----------------------------------------------------
     sb = find_subbench(subbench_name)
@@ -352,8 +382,40 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             "generators:\n  python3 bench/%s/gen_subjects.py\n"
             "  python3 bench/%s/gen_throughput_subjects.py"
             % (len(missing), missing[0], subbench_name, subbench_name))
+    if patterns:
+        have = {p.name for p in sb.patterns}
+        unknown = [p for p in patterns if p not in have]
+        if unknown:
+            raise HarnessError("%s has no pattern(s) %s (it has %s)"
+                               % (sb.id, ", ".join(unknown),
+                                  ", ".join(sorted(have))))
+        cell_patterns = [p for p in sb.patterns if p.name in set(patterns)]
+    else:
+        cell_patterns = list(sb.patterns)
+    if subject_limit is not None and int(subject_limit) < 1:
+        raise HarnessError("subject_limit must be >= 1, got %r" % subject_limit)
 
     adapter, cfg = _ad.resolve(testee_id)
+
+    # (1b) THE TIER, and the early refusal ---------------------------------
+    # An adapter whose testee is scratch by construction (a provided binary)
+    # forces the tier; the store's rule is then applied BEFORE the gate, the
+    # registry or a driver -- a refused run touches nothing.
+    forced = adapter.tier(testee_id)
+    if forced == store.TIER_SCRATCH:
+        tier = store.TIER_SCRATCH
+    if tier not in store.TIERS:
+        raise HarnessError("unknown tier %r (the tiers are %s)"
+                           % (tier, ", ".join(store.TIERS)))
+    if store_root is None:
+        store_root = store.default_store_for(tier)
+    store.check_tier_allowed(store_root, tier)
+    scratch = tier == store.TIER_SCRATCH
+    if scratch:
+        # The GATE is not applied at the scratch tier (record_schema.md 6.8):
+        # a quick cell runs on the box as it is. The INSTRUMENT still runs,
+        # below, and `status` is still what the samples say.
+        force_unquiet = True
 
     # (2) the quiet gate ----------------------------------------------------
     say("checking the box (mpstat takes ~1 s)...")
@@ -362,8 +424,12 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     pinning = quiet.pinning(pin_cpu)
 
     timestamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    # A scratch store borrows the canonical registry's machine id (6.5):
+    # one box, one id, and a quick cell must not demand a fresh --machine-id
+    # for a box the canonical store already names.
+    fallback = () if store.is_canonical(store_root) else (store.DEFAULT_STORE,)
     environment = env.describe(store_root, machine_id=machine_id,
-                               timestamp=timestamp)
+                               timestamp=timestamp, fallback_roots=fallback)
     environment["pinning"] = pinning
     # `quiet_attestation` was DROPPED in schema v1.1 (fix 8): a boolean the
     # harness set from its own reasons list was a claim beside a measurement,
@@ -378,8 +444,24 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     say("preparing %s ..." % testee_id)
     adapter.prepare(testee_id, workdir)
     testee_block = adapter.describe(testee_id, workdir)
+    # `tier` is a SETUP field, not a testee field; an adapter that forces it
+    # says so in describe() too, and the two must agree.
+    described = testee_block.pop("tier", None)
+    if described == store.TIER_SCRATCH and not scratch:
+        raise HarnessError(
+            "%s.describe(%r) says tier scratch but %s.tier(%r) said %r; the "
+            "adapter is inconsistent and the early refusal would have been "
+            "skipped" % (adapter.name, testee_id, adapter.name, testee_id,
+                         forced))
+    if scratch and "binary" not in testee_block:
+        # X29: a scratch record says what the binary was.
+        testee_block["binary"] = adapter.binary_identity(testee_id, workdir)
 
     notes = list(reasons)
+    if scratch:
+        notes.append("tier scratch: the quiet GATE was not applied "
+                     "(record_schema.md 6.8); the box was still sampled and "
+                     "status is what the samples say")
     rows = []
     compiled = {}
     # v1.1 (1): a monotonic emission order across the WHOLE record, compile
@@ -389,7 +471,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     seq = itertools.count(1)
     options = (sb.testee_notes.get(adapter.name, {}) or {}).get("options", {})
 
-    for p in sb.patterns:
+    for p in cell_patterns:
         say("compiling %s / %s (%d trial(s)) ..." % (testee_id, p.name, trials))
         cp = adapter.compile(testee_id, p.name, sb.pattern_bytes(p.name),
                              options, trials, workdir)
@@ -413,12 +495,14 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                              % (testee_id, p.name, form, cr.diagnostic))
 
     subject_ids = {}
-    for p in sb.patterns:
+    for p in cell_patterns:
         cp = compiled.get(p.name)
         if cp is None:
             continue
         for regime in regimes:
             subjects = sb.subjects_for(regime)
+            if subject_limit is not None:
+                subjects = subjects[:int(subject_limit)]
             if not subjects:
                 continue
             # WHICH ARTIFACT this regime must be measured on. `match` is the
@@ -436,7 +520,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                 say("calibrating %s / %s / %s ..." % (testee_id, p.name, regime))
             n_iters, why, cal = calibrate(adapter, handle, regime, subjects,
                                           iters, driver_timeout,
-                                          subject_timeout)
+                                          subject_timeout, budget=budget)
             notes.append("iters for (%s, %s, %s) = %d: %s"
                          % (p.name, form, regime, n_iters, why))
             say("measuring %s / %s [%s] / %s: %d subject(s) x %d iter(s) x %d "
@@ -526,13 +610,16 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     setup = record.build_setup(
         sb, testee_block, environment, run_block,
         [REGIME_TO_ENUM[r] for r in regimes],
-        [record.pattern_entry(sb, p.name) for p in sb.patterns],
+        [record.pattern_entry(sb, p.name) for p in cell_patterns],
         [record.subject_entry(subject_ids[k]) for k in sorted(subject_ids)],
         status,
         status_detail="; ".join(notes) if notes and status != "measured" else None,
         note=note)
     if synthetic:
         setup["synthetic"] = True
+    # Stamped on EVERY record, both tiers: absent means pinned by the schema,
+    # but a record that says which tier it is beats one that implies it.
+    setup["tier"] = tier
     if notes and "status_detail" not in setup:
         setup["note"] = "; ".join(notes) if not note else note + " | " + "; ".join(notes)
 

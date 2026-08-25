@@ -26,6 +26,7 @@ def cmd_run(args):
             driver_timeout=args.driver_timeout,
             command_line=["python3", "-m", "pcrecbench"] + sys.argv[1:],
             note=args.note, synthetic=args.synthetic,
+            tier=args.tier,
             progress=(lambda *a: print(*a, file=sys.stderr)) if not args.quiet_output else None)
     except quiet.QuietRefusal as e:
         print("pcrecbench run: %s" % e, file=sys.stderr)
@@ -39,6 +40,7 @@ def cmd_run(args):
     nmatch = len(rows) - ncomp
     print("%s" % path)
     print("record_id  %s" % rid)
+    print("tier       %s" % setup.get("tier", "pinned"))
     print("status     %s" % setup["status"])
     print("rows       %d (%d compile, %d match)" % (len(rows), ncomp, nmatch))
     return 0
@@ -141,10 +143,19 @@ checks (rule X5). `python3 -m pcrecbench testees` lists the config ids.""")
                    help="measure on a box that failed the quiet gate. The "
                         "record's status becomes `inconclusive-load` and the "
                         "reasons go in `status_detail`")
-    r.add_argument("--store", default=store.DEFAULT_STORE,
-                   help="the store root (default: %(default)s). A SCRATCH "
-                        "path is how a smoke avoids writing into the real "
-                        "store")
+    r.add_argument("--tier", choices=list(store.TIERS), default=store.TIER_PINNED,
+                   help="the record's TIER (record_schema.md 6.8). `pinned` "
+                        "(default): a committed engine revision under the "
+                        "quiet gate, into the canonical store. `scratch`: the "
+                        "edit-test loop's tier -- no quiet gate, into the "
+                        "scratch store, never ranked. A provided-binary "
+                        "testee (pcrec-local) is scratch by construction")
+    r.add_argument("--store", default=None,
+                   help="the store root. Default: the TIER's store -- the "
+                        "canonical %s for `pinned`, $PCRECBENCH_SCRATCH_STORE "
+                        "or build/scratch-store/ for `scratch`. A scratch "
+                        "record into the canonical store is REFUSED"
+                        % os.path.relpath(store.DEFAULT_STORE, os.getcwd()))
     r.add_argument("--machine-id", default=None,
                    help="register THIS box under a stable slug. Required the "
                         "first time a box is measured; ids are hand-assigned "
@@ -169,8 +180,12 @@ checks (rule X5). `python3 -m pcrecbench testees` lists the config ids.""")
                    help="suppress the progress lines on stderr")
     r.set_defaults(func=cmd_run)
 
-    i = sub.add_parser("index", help="regenerate store/index.tsv")
-    i.add_argument("--store", default=store.DEFAULT_STORE)
+    i = sub.add_parser("index", help="regenerate <store>/index.tsv (the "
+                                     "canonical store's refuses to list a "
+                                     "scratch record)")
+    i.add_argument("--store", default=store.DEFAULT_STORE,
+                   help="the store root (default: the canonical store; a "
+                        "scratch store keeps its own index.tsv)")
     i.set_defaults(func=cmd_index)
 
     q = sub.add_parser("quiet", help="sample the box and print the verdict")
