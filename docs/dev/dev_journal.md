@@ -348,3 +348,26 @@ with an ACK request worked; briefs should ask for ACKs on rulings.
 b3harness and b5report told to merge master and adapt (flip
 SCHEMA_VERSION, form, gave-up range rule, a|ab control; fixtures
 restamped, lazy-JIT over lowest seq). Window ~02:50.
+
+## 2026-08-25 (EDT, ~01:1x), first session (part 11) — [B3]+[B4] MERGED (42c0557): the harness runs every cell; make check 21/21 on master
+
+b3harness's v1.1 pass merged clean (18 commits total): SCHEMA_VERSION
+1.1 emitted directly (the projection deleted), `form` on pcrec's rows
+(pcre2 omits), `gave-up` via the range rule against the shim-exported
+floor (pcrec floor −5 / top −2 / internal −6 MEASURED at the pin) and
+pcre2's four configured-budget codes, `occupancy.limit_busy_pct`,
+calibration on rows with iterations > 1, three new controls (the `a|ab`
+control anchored to libpcre2's answer, not pcrec's; separate artifacts
+per form so X27 is not vacuous; v1.1 fields populated on a real record
+at --iters 2 so X21 triggers). Three staging assumptions the merged
+schema overturned, recorded by the lane: no combined occupancy verdict
+(each sample carries its own, X26 recomputes it); probe_iterations has
+minimum 1, so fixed --iters runs a real probe and notes that the count
+was not derived from it; env.py imports the normalizers from
+validate.py (X23 checks them). During the pass the box went quiet
+mid-run and the strict both-ends rule made pcrec-auto/-nocaps
+`inconclusive-load` on the AFTER sample — the rule working; the window
+must be idle throughout, not just at the start. Manager: make check on
+master 21/21 + 2/53/0; worktree removed; pcrec's tree 0 status lines
+throughout. [B3]/[B4] archived. Remaining before the report: b5report's
+v1.1 restamp → merge → the window → run_window.sh → `report`.

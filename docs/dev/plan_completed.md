@@ -38,3 +38,20 @@ completion date, newest group at the bottom.
   compile outcome / match outcome / correctness verdict / timings with
   COMPILE and MATCH separated — plus the tiny validator the comparator
   shares. Design note → panel → ruled.
+- [B3] STATE:completed 2026-08-25 (MERGED 42c0557 from lane/b3harness f437952, 18 commits; make check 21/21 on master; docs/design/harness_notes.md + quiet_baseline.md; OD-B8 measured under load: occupancy is the detector, load1 the backstop — proposed limits busy ≤ 10 %, load1 < 2.0, re-measure quiet) — THE HARNESS CORE: the sub-bench DIRECTORY
+  conventions (goal, canonical patterns, generated subjects + manifest,
+  expectations with verification method, tags, engine notes and
+  declared variants, regime declaration), the run-cells driver (one
+  cell or a chosen few, never the gamut), the store layout + index
+  (OD-B6), and the QUIET-BOX INSTRUMENT — load before/after, mpstat
+  per-core occupancy machine-readable, the numeric meaning of "quiet"
+  MEASURED on this box (OD-B8). The pattern/case FORMAT is owned by
+  pcrec's [DD-13] and is NOT invented here (requirements.md §5); under
+  Frank's NARROW blocking reading this row may parse today's `.rxt`
+  as-is and wrap the email specimen's files as the first sub-bench with
+  a plain per-sub-bench sidecar (R-BENCH-1..9 fields, no grammar);
+  under the BROAD reading it wraps the specimen's files only.
+- [B4] STATE:completed 2026-08-25 (MERGED with [B3] at 42c0557: testees/pcre2 interp+jit via a dlopen driver; testees/pcrec auto/nocaps/vm pinned at 8da6120 via pin.sh, the (?:P)\z whole-subject artifact with `form`, give-up range rule from the artifact's exported PCREC_ERR_FLOOR; pcre2 give-up set {−47,−53,−63,−46} measured; two pcrec findings filed with the pcrec manager: no DFA prefilter stamp, the \z skip loop cannot skip the last byte) — TESTEE ADAPTERS, first two (plus OD-B10, the large-subject size measured at 1 MB vs 8 MB): pcrec (as its
+  several configuration testees, pinned by commit) and libpcre2 (interp AND
+  jit as separate testees). Each pins its version and records build flags;
+  "unsupported" is a first-class per-case result.
