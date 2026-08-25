@@ -68,37 +68,71 @@ newline, so `$` would silently accept a subject with a trailing `\n` that
 the oracle rejects. `(?:...)` and not bare concatenation: a top-level
 alternation would otherwise bind only its last branch to the anchor.
 
-### MEASURED against pin 8da6120, 2026-08-25 — verified, not assumed
+### MEASURED against pin 692c2e8, 2026-08-25 — verified, not assumed
+
+Re-measured at the re-pin (pcrec's [DD-14] close merge; its compiler is
+byte-identical to 17469b6, the [DD-14.FB] merge). "Emitted C" is the byte
+size of the `artifact.c` that `pcrec -p rx <flags> -o artifact.c -- <text>`
+writes; it does not embed the output path.
 
 | pattern / form | config | engine | ncaps | emitted C |
 |---|---|---|---|---|
-| `orig` plain | auto | **dfa** | 1 | 43 669 B |
-| `orig` `\z` | auto | **dfa** | 1 | 49 090 B |
-| `orig` plain | nocaps | dfa | 1 | 43 671 B |
-| `orig` `\z` | nocaps | **dfa** | 1 | 49 092 B |
-| `orig` `\z` | vm | vm | 1 | 46 974 B |
-| `factored` plain / `\z` | auto | vm | 5 | 44 102 / 44 238 B |
+| `orig` plain | auto | **dfa** | 1 | 44 786 B |
+| `orig` `\z` | auto | **dfa** | 1 | 50 199 B |
+| `orig` plain / `\z` | nocaps | dfa | 1 | 44 786 / 50 199 B |
+| `orig` plain / `\z` | vm | vm | 1 | 52 521 / 52 651 B |
+| `factored` plain | auto | **dfa** (was vm at 8da6120) | 5 | 45 453 B |
+| `factored` `\z` | auto | **dfa** (was vm at 8da6120) | 5 | 50 866 B |
+| `factored` plain / `\z` | nocaps | **dfa** (was vm) | 1 | 45 076 / 50 489 B |
+| `factored` plain / `\z` | vm | vm | 5 | 65 288 / 65 416 B |
 
-1. **`orig`'s `\z` form still selects the DFA engine** under `auto` and
-   `nocaps`. The prediction holds.
-2. **The byte-class skip prefilter is still there**, and its
-   `rx_can_begin_match` table is BYTE-IDENTICAL between the two forms
-   (same sha256 over the table body). But the skip LOOP is not identical
-   and the difference is load-bearing: the plain form skips while
-   `scan_position < subject_length` and `return 0`s when it runs off the
-   end; the `\z` form skips only while `scan_position + 1 <
-   subject_length` and cannot early-exit, because the end-of-subject
-   "end view" state (`rx_forward_end_view`) has to be evaluated. **The
-   prefilter is present but strictly weaker in the `\z` form** — it can
-   never skip the final byte. Expect the `\z` artifact to cost slightly
-   more per scan, and do not read a difference between the two forms as
-   an engine-selection effect.
-3. The `\z` form costs **+12.4 % emitted C** on `orig` and **+0.3 %** on
-   `factored`.
-4. **`\z` requires pcrec's `assertions` module.** Every pcrec config
-   already passes `--features all`, so no config change was needed — but
-   a future config that narrowed the feature set would break the match
-   regime rather than the pattern.
+**THE HEADLINE CHANGE vs 8da6120: `factored` now compiles to a DFA
+artifact under `auto` AND `nocaps`, in both forms.** pcrec's wave G
+([DD-14.G], merged at 08ddcbd: "dead-capture elision, prefilter restored
+for call-bearing patterns") is what did it — at 8da6120 the `{0}` callee
+groups were captures and forced the VM (`engine_why`: "capture group at
+pattern offset 3"); at 692c2e8 the four named groups are still reported
+(`ngroups` 4, `nnames` 4, `ncaps` 5 under captures-on) but the artifact is
+`engine = 1`, `frame_capacity = -1`, and every frame-sizing field stamps
+`0`. Consequences a reader of before/after numbers must hold in mind:
+
+1. **`pcrec-auto` and `pcrec-nocaps` no longer give up anywhere on
+   `bench/email`.** MEASURED (smoke, `--trials 1 --iters 1`, match
+   regime): `pcrec-auto` at 692c2e8 answers 170/170 `matched-as-expected`;
+   at 8da6120 the same cell had 5 `gave-up` (`PCREC_ERR_FRAMES`) rows on
+   `factored` whole-subject (s-058, s-059, s-061, s-063, s-064). Those
+   five are NOT fixed by a bigger buffer; they are fixed by a different
+   engine. A before/after on `factored` under `auto` compares a VM
+   artifact with a DFA artifact, not one engine's two versions.
+2. **`pcrec-vm` still gives up on exactly those five** (MEASURED, same
+   smoke: 5 × `giveup:-3:PCREC_ERR_FRAMES`, all `factored`
+   whole-subject), so the VM-forced config is the only one on this
+   sub-bench where the frame budget — and the `_in` caller-provided
+   buffer — is reachable at all.
+3. **`orig`'s `\z` form still selects the DFA** under `auto` and `nocaps`
+   (unchanged), and now so does `factored`'s.
+4. **`abi` reads 3** (was 2): `rx_info` gained `resume_frames`,
+   `trail_frames`, `resume_frame_size`, `trail_frame_size` ([DD-14.FB],
+   §10.4). Nothing in this adapter hardcodes the number; CONFIRMED from
+   the smoke record's `engine_metadata.abi == 3` on all four compile rows.
+5. **The give-up bounds did NOT change**: `PCREC_ERR_FLOOR` -5, top -2,
+   `PCREC_ERR_INTERNAL` -6, read from the emitted header at 692c2e8.
+   `PCREC_ERR_RECURSE` (-5) is still "reserved: no producer yet".
+6. **The byte-class skip prefilter** is present on all four DFA `auto`
+   artifacts and its `rx_can_begin_match` table is BYTE-IDENTICAL between
+   `orig` and `factored` (same sha256 over the table body per form:
+   `6404d2dc…` plain, `7164c398…` `\z`). The skip-LOOP asymmetry stands:
+   the plain form skips while `scan_position < subject_length`, the `\z`
+   form only while `scan_position + 1 < subject_length` — the `\z`
+   prefilter can never skip the final byte. Do not read a plain-vs-`\z`
+   difference as an engine-selection effect.
+7. The `\z` form costs **+12.1 % emitted C** on `orig` and **+11.9 %** on
+   `factored` (both DFA now; at 8da6120 `factored` was VM and paid +0.3 %).
+   `RX_ALTCLS_FACTORED` stamps 2 on `orig` and 1 on `factored`.
+8. **`\z` requires pcrec's `assertions` module** and `factored` still
+   requires `named-groups` under the default `std1` set (re-verified at
+   692c2e8: "(?<...) requires module 'named-groups' (pattern offset 3)").
+   Every config passes `--features all`, so nothing changed.
 
 ### The gap this measurement found
 
@@ -146,7 +180,7 @@ which the artifact states outright is not a give-up — is `crashed`. A
 give-up code pcrec adds later is then classified correctly with no adapter
 edit, and a reserved code can never be laundered into `gave-up`.
 
-MEASURED at pin 8da6120: floor -5, top -2, internal -6. `PCREC_ERR_WORK`
+MEASURED at pin 692c2e8 (unchanged since 8da6120): floor -5, top -2, internal -6. `PCREC_ERR_WORK`
 (-4) is inside the range; `PCREC_ERR_RECURSE` (-5) is inside it but has no
 producer yet. Schema v1.1 gives these rows their own `gave-up` outcome;
 until it lands they are `did-not-match-as-expected` — see

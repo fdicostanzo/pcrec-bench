@@ -72,4 +72,5 @@ options = {}
 # recursion modules, so `factored.rx` is REFUSED under the default with
 # "requires module 'named-groups'". `--features all` is therefore part of
 # every pcrec testee's flags, not a variant of the pattern: the pattern text
-# is byte-identical either way. MEASURED 2026-08-25 against pin 8da6120.
+# is byte-identical either way. MEASURED 2026-08-25 against pin 8da6120,
+# re-verified at 692c2e8.
