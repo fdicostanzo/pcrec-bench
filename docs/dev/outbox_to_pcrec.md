@@ -78,3 +78,14 @@ the stamp and never hardcodes (record pairs `resume_frame_size` /
 pcrec-auto has zero give-ups on bench/email; the caller-buffer testee
 measured here is `pcrec-vm-in` (32768 frames / 131072 trail; the five
 FRAMES subjects need at most 10245 / 46100 — s-059 — trail/frames ≈ 4.5).
+
+ANSWERED 2026-08-25 ~14:2x (pcrecdev1, interprocess): the STAMP is right,
+the doc was imprecise. On bench/email `factored` with `--engine=vm
+--features all` at 692c2e8: `RX_VM_CALL_SPLICED 10`, `RX_VM_CALL_LINKED
+0`, frame 24 B; the cyclic control `^(a(?1)?b)$`: SPLICED 0, LINKED 2,
+frame 40 B. The two per-frame call fields exist only when a call is
+LINKED; wave G splices every acyclic callee inline, so "call-bearing" in
+§10.2 meant LINKED-call-bearing. pcrec's match_api.md §10.2 and
+limits.md §5 now say so (fixed on pcrec main). For the reporter ([B9]):
+bucket VM rows by `RX_VM_CALL_LINKED` / `_SPLICED` — the honest column.
+
