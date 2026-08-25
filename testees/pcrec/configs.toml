@@ -38,3 +38,55 @@ engine_mode = "vm"
 captures = "on"
 flags = ["--features", "all", "--engine=vm"]
 description = "pcrec --engine=vm: the VM forced, which also disables the DFA prefilter so the VM derives the whole span independently"
+
+# ---------------------------------------------------------------------------
+# THE CALLER-PROVIDED FRAME BUFFER TESTEES (pcrec match_api.md 10, [DD-14.FB]).
+#
+# `buffer_frames` / `buffer_trail` are CAPACITIES -- resume frames and trail
+# entries, NEVER bytes (10.2); the driver sizes the regions per artifact from
+# the frame sizes the artifact stamps, and passes no descriptor at all on an
+# artifact that stamps 0 (every DFA artifact, 10.4). The number a `-in` cell
+# measures is the cost of the depth path with an adequate buffer; the two
+# capacities are the knob and they are recorded (testee.runtime_options, and
+# the buffer_frames / buffer_trail metadata pairs on every compile row whose
+# artifact actually used them).
+#
+# WHY 32768 / 131072 -- MEASURED 2026-08-25 at pin 692c2e8, on the VM
+# artifact of bench/email's `factored` pattern (`(?:...)\z` form, match
+# regime, `--trials 1 --iters 1`), the only artifact on this sub-bench where
+# the frame budget binds. The five subjects that give up with
+# PCREC_ERR_FRAMES at the stamped default (2048 frames / 3072 trail) need,
+# each with the OTHER capacity held far above binding:
+#
+#     subject  bytes  frames  trail        (trail/frames ~ 4.5, pcrec's ratio)
+#     s-058    4011    4005   20020        2000-deep dotted local part
+#     s-059    5134   10245   46100        5 KB quoted string
+#     s-061    2008    1504    5020        500-label domain
+#     s-063    5135    5122   23044        5 KB quoted string, unescaped quote
+#     s-064    4110    2053   18452        alternating escapes, 4 KB
+#
+# The smallest power-of-two pair at which every give-up vanishes is
+# 16384 / 65536 (16384 / 32768 still loses s-059 on the trail). The config
+# sits one doubling above that: 32768 x 24 B + 131072 x 16 B = 2.75 MiB per
+# run, touched once outside every timed loop. See testees/pcrec/CLAUDE.md.
+
+[testees.pcrec-auto-in]
+engine_mode = "auto-in"
+captures = "on"
+flags = ["--features", "all"]
+buffer_frames = 32768
+buffer_trail = 131072
+description = "pcrec defaults with a caller-provided frame buffer (the _in entries, match_api.md 10): engine selected automatically, captures on, 32768 resume frames / 131072 trail entries. INERT on a DFA artifact, which takes no buffers"
+
+# PROPOSED (lane [B8], 2026-08-25), pending the manager's ruling: at 692c2e8
+# both email patterns select the DFA under `auto`, so `pcrec-auto-in` builds
+# no artifact that reads its buffer on this sub-bench. This is the entry on
+# which the capacities above were measured and the only one where the depth
+# path is reachable.
+[testees.pcrec-vm-in]
+engine_mode = "vm-in"
+captures = "on"
+flags = ["--features", "all", "--engine=vm"]
+buffer_frames = 32768
+buffer_trail = 131072
+description = "pcrec --engine=vm with a caller-provided frame buffer (the _in entries, match_api.md 10): the VM forced, 32768 resume frames / 131072 trail entries, sized so bench/email's five deep subjects complete instead of giving up PCREC_ERR_FRAMES"

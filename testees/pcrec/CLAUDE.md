@@ -1,20 +1,22 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides three testees, all at the commit pinned in `configs.toml`:
+Provides five testees, all at the commit pinned in `configs.toml`:
 
 | config id | pcrec flags | what it is for |
 |---|---|---|
 | `pcrec-auto` | `--features all` | the defaults: engine chosen automatically, captures on |
 | `pcrec-nocaps` | `+ --no-captures` | the axis that recovers a pure-DFA artifact for a group-bearing pattern |
 | `pcrec-vm` | `+ --engine=vm` | the VM forced, prefilter off, so the VM derives the whole span independently |
+| `pcrec-auto-in` | `--features all` + `buffer_frames = 32768`, `buffer_trail = 131072` | the defaults, matched through the `_in` entries with a caller-provided frame buffer (ruled by Frank / both managers). INERT wherever `auto` picks the DFA — which at pin 692c2e8 is every artifact of `bench/email` |
+| `pcrec-vm-in` | `+ --engine=vm` + the same two capacities | PROPOSED by lane [B8], pending ruling: the VM forced with the buffer, the one entry on `bench/email` where the depth path is reachable and the capacities were measured |
 
 | file | role |
 |---|---|
-| `adapter.py` | the three configs; the pin; the engine-metadata DECLARATION |
+| `adapter.py` | the five configs; the pin; the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
 | `pin.sh` | `git archive <commit>` from pcrec into the build root, and `make` THERE |
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
-| `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase |
-| `configs.toml` | the config ids and `pin = "<commit>"` |
+| `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
+| `configs.toml` | the config ids, `pin = "<commit>"`, and the `_in` testees' capacities with the measurement that chose them |
 
 ## `pin.sh` never writes inside pcrec
 
@@ -165,6 +167,114 @@ disagreement would be recorded as `did-not-match-as-expected` — a finding
 about the harness, not about pcrec. **MEASURED on `bench/email`: it does not
 bite. `pcrec-auto` answers 85/85 as expected on `orig` in the match regime.**
 Reported to the manager as a contract gap for a future sub-bench.
+
+## The `_in` path: the caller-provided frame buffer (pcrec match_api.md §10)
+
+pcrec's generated matcher never allocates (§5.2): the VM's resume stack
+and its undo trail are sized at compile time (`RX_RESUME_FRAMES` 2048 /
+`RX_TRAIL_FRAMES` 3072 by default) and live in the entry's own stack frame,
+so a deep subject returns `PCREC_ERR_FRAMES` in constant time rather than
+recursing. [DD-14.FB] (pcrec 17469b6, in this pin) lets the CALLER supply
+that storage instead: every artifact exports `<prefix>_search_in`,
+`<prefix>_match_in`, `<prefix>_match_caps_in`, each its un-suffixed sibling
+plus one argument, a descriptor
+
+    typedef struct { void *frames; size_t nframes;   /* CAPACITY in frames */
+                     void *trail;  size_t ntrail; }  /* capacity in ENTRIES */
+    rx_buffers;
+
+**The counts are capacities, not bytes** (§10.2). Both regions are required
+when the descriptor is non-NULL, and pcrec's own measurement says why a
+frames-only knob would be inert: on `^(a(?1)?b)$` the TRAIL binds first, at
+~9 entries per nesting level against ~2 frames, so the default runs out of
+trail with two thirds of the resume stack unused (pcrec
+`docs/design/frame_buffer_design.md` §4). This bench's measurement below
+found the same ~4.5 : 1 ratio on the email pattern.
+
+### The four promises of §10.3 this adapter relies on
+
+1. **`buf == NULL` IS the plain call** — "not similar to, the same call".
+   The driver's no-option path calls the plain entries anyway, so the
+   existing configs' output is byte-identical to before the feature.
+2. **A give-up is retryable** and the buffers are **pure scratch**: nothing
+   survives a call, nothing needs re-initialising, so ONE pair of regions
+   per driver run, reused across every subject and iteration, is correct.
+3. **`PCREC_ERR_FRAMES` does not say whose buffer ran out**, and the count
+   that would have sufficed is not reported. Sizing is therefore by
+   measurement (below), and a give-up under a caller buffer is recorded
+   exactly as one under the default — same code, same `gave-up` outcome.
+4. **On a DFA artifact the surface is present and inert**, and every
+   sizing field stamps `0` — "this engine takes no buffers". §10.4's
+   documented mistake is dividing by that 0; `driver.c` tests the size
+   first and, when it is 0, allocates nothing, prints
+   `info buffer_inert stamped-size-0`, and runs the plain path. That is
+   why `pcrec-auto-in` on `bench/email` at 692c2e8 records no
+   `buffer_frames` pair on any compile row: all four artifacts are DFA.
+
+### Where the pieces live
+
+- **`shim.c`** builds the descriptor (it is the one file that knows the
+  type) and exports `pb_search_in(...)` / `pb_match_caps_in(...)` taking
+  `(frames, nframes, trail, ntrail)`, plus the sizing surface READ from
+  the artifact's own macros — `pb_buffer_align()`, `pb_resume_frames()`,
+  `pb_trail_frames()` (the stamped defaults), `pb_resume_frame_size()`,
+  `pb_trail_frame_size()` (per-artifact bytes; never hardcoded — pcrec
+  documents 24 on a call-free and 40 on a call-bearing VM artifact, and
+  the email `factored` VM artifact at 692c2e8 stamps **24**, see the
+  findings). Everything is `#ifdef RX_BUFFER_ALIGN`-guarded: against a
+  pre-FB artifact `pb_has_in_entries()` is 0, the sizes are 0, and the
+  `_in` wrappers return `PB_UNSUPPORTED` (-1000000, below every pcrec
+  code) — which the driver never reaches because it refuses `--buffer-*`
+  on such an artifact up front.
+- **`driver.c`**: `--buffer-frames N --buffer-trail M` (both or neither).
+  Allocates once per run, `posix_memalign` to `pb_buffer_align()`, sized
+  `N × resume_frame_size` and `M × trail_frame_size` bytes, and touches
+  every page once OUTSIDE any timed loop so the first subject does not pay
+  page faults for storage the match may never fill. Then the `_in` entries
+  in all three modes — search, find-all, match — with the same protocol
+  lines and the same give-up propagation. Prints `info resume_frames /
+  trail_frames / resume_frame_size / trail_frame_size / buffer_align`
+  whenever the artifact stamps them, and `info buffer_frames /
+  buffer_trail` ONLY when the regions were allocated and used.
+- **`adapter.py`**: `buffer_capacities(cfg)` validates the config (both
+  or neither, positive integers), `buffer_args()` turns it into driver
+  argv, which rides on the load-only run (so the compile row's
+  `engine_metadata` says what ran) and on every `measure()` call. The
+  declaration gains the six integer pairs; `describe()` puts the
+  capacities in `build_flags` and `runtime_options`. The `engine_mode`
+  slug (`auto-in`, `vm-in`) is what makes the derived `testee_id`
+  distinct: `pcrec_692c2e8_vm-in-caps-simdna`.
+
+### The measurement that chose 32768 / 131072 (pin 692c2e8, 2026-08-25)
+
+On the VM artifact of `factored`'s `\z` form (the match regime's), the
+five subjects that give up at the stamped default were binary-searched for
+the smallest capacity of each array that matches, with the other held at
+4 194 304 (`--trials 1 --iters 1`, a smoke's settings — these are
+capacities, not timings):
+
+| subject | bytes | what it is | smallest frames | smallest trail |
+|---|---|---|---|---|
+| s-058 | 4 011 | 2000-deep dotted local part | 4 005 | 20 020 |
+| s-059 | 5 134 | 5 KB quoted string of qchars | **10 245** | **46 100** |
+| s-061 | 2 008 | 500-label domain | 1 504 | 5 020 |
+| s-063 | 5 135 | 5 KB quoted string, unescaped quote (expected `nomatch`) | 5 122 | 23 044 |
+| s-064 | 4 110 | alternating escaped chars, 4 KB | 2 053 | 18 452 |
+
+Trail/frames is 4.5 on every row (pcrec's ratio); the per-byte cost is
+~2 frames and ~9 trail entries on the quoted-string subjects and ~1 / ~5
+on the dotted and labelled ones. Power-of-two sweep on all five at once:
+2048/3072 (the default) 0 of 5 answered; 4096/8192 → 1; 8192/16384 → 1;
+16384/32768 → 4 (s-059 still short on TRAIL); **16384/65536 → 5 of 5**,
+the smallest power-of-two pair; **32768/131072** is one doubling above it
+and is the config: 32768 × 24 B + 131072 × 16 B = 2.75 MiB per run.
+Every answer at those sizes agrees with the oracle's expectation (four
+`match` over the whole subject, s-063 `nomatch`).
+
+What the buffer does NOT fix, measured on the same artifacts:
+`t-c-long-atom-run` (1 MB of `a`, no `@`) gives up `PCREC_ERR_STEPS` in
+the throughput regime with or without the buffer — a step budget, not a
+frame budget — and stays a `gave-up` row on every VM config.
 
 ## Give-ups
 
