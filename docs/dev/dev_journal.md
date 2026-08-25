@@ -162,3 +162,30 @@ with cross-line rules, a SYNTHETIC example record + six sabotaged
 rejects as positive controls, `make check-schema`, CLAUDE.md files.
 Watchdog cron (10 min) up. Box: nothing heavy from this side; pcrecdev1
 reports the box light until wave G delivers.
+
+## 2026-08-25 (EDT, ~00:2x), first session (part 5) — AUTONOMOUS RUN AUTHORIZED: through the first sub-bench and a report, then close
+
+Frank (~00:2x): "proceed autonomously through setting up first subbench
+and generating some report. coordinate with pcrecdev1 of course but
+also notify of results and request feedback — noting this is a
+production sample. also, should ask about higher-priority subbench
+areas. save open questions for later but go with recommendations for
+now. journal defensively. then close session and i'll review results
+with you in next session." Also today: BD4 python project files
+(ab68080); APPROACH.md rewritten as the MAINTAINED high-level statement
+(15854b0) with the maintenance rule in CLAUDE.md + the skill; component
+directory names chosen — bench/, testees/, schema/, store/, report/ —
+flagged to Frank, unobjected so far.
+
+PLAN for the run: [B2] lands (lane b2schema is at its examples) →
+review, merge, a 2-critic schema panel in parallel with [B3]+[B4] →
+[B3] harness core (bench/ conventions, the email specimen wrapped as
+bench/email/, the quiet-box instrument, the run-cells driver, the
+store) and [B4] adapters (libpcre2 interp/jit via a dlopen C driver
+with batched in-process loops; pcrec built from a PINNED commit via
+`git archive` into a gitignored build dir — never pcrec's own tree) on
+a manager-written adapter contract → [B5] the reporter MVP → [B6] cells
+run on a quiet box in a window agreed with pcrecdev1 → the report sent
+to pcrecdev1 as a production sample with a feedback request and the
+question of higher-priority sub-bench areas → journal, wake.md, close.
+Open questions are saved to the OD ledger, recommendations taken.
