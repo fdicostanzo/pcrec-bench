@@ -65,7 +65,9 @@ rejected for some OTHER reason fails the build. The rules are defined in
 
 ## Adding one
 
-Every new cross-line rule gets a file here, named for it. The generator
+Every new cross-line rule gets a file here, named for it — and since
+v1.1 `schema/check_rules.py` fails the build if one does not, so this is
+now a rule rather than a habit. The generator
 that produced these lived in the session scratchpad and is deliberately
 not committed: a sabotage is easier to read as a finished file than as a
 mutation function, and these files change only when a rule does.

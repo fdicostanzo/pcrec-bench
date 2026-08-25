@@ -34,6 +34,11 @@ they and the note disagree.
   JSON Schema, field for field, in both directions. The note and the
   schema are two independent hand-written statements of one contract;
   this is what keeps them from drifting apart silently.
+- `check_rules.py` — the same idea for the note's §9 RULE table against
+  `examples/bad/`'s directory listing: every rule must have a control
+  named for it, every control must name a rule that exists. Added at
+  v1.1 because five rules had reached that version with no control at
+  all while the note claimed in prose that none could.
 - `examples/` — records that MUST validate. See its CLAUDE.md.
 - `examples/bad/` — records that MUST NOT. See its CLAUDE.md.
 
@@ -41,9 +46,11 @@ they and the note disagree.
 
     make check-schema          # from the repo root; it is also the default target
 
-Three checks: the note against the schema; every good example accepted;
-every sabotage rejected FOR THE RULE ITS FILE NAME NAMES. The third is
-what makes the first two mean anything.
+Four checks: the note's field tables against the schema; the note's rule
+table against `examples/bad/`; every good example accepted; every
+sabotage rejected FOR THE RULE ITS FILE NAME NAMES. The last is what
+makes the others mean anything, and the second is what makes the last
+one complete.
 
 ## Rules for changing the format
 
@@ -58,7 +65,8 @@ what makes the first two mean anything.
   kind, or `check_fields.py` fails. That is deliberate: a field with no
   stated reason is a field nobody can filter on with confidence.
 - A new cross-line rule needs a sabotaged record in `examples/bad/`
-  named for it. A check with no failing case proves nothing.
+  named for it. A check with no failing case proves nothing — and since
+  v1.1 `check_rules.py` enforces that rather than trusting it.
 - Nothing pcrec-specific becomes a top-level field. pcrec's mechanism
   stamps go in `engine_metadata` under the per-testee declaration, like
   every other engine's (requirements §4.2; R1 finding B1).

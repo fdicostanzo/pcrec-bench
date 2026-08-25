@@ -716,8 +716,10 @@ rules had never been seen to fire. They have controls now. The lesson
 is the project's own, one level up: a check with no failing case proves
 nothing, and a CLAIM that every check has a failing case is itself a
 check — so it needs one too. `check_fields.py` compares the note's field
-tables against the schema; nothing compares this table against the
-directory, which is §11 item 14.
+tables against the schema; `check_rules.py` now compares THIS table
+against the directory, and fails the build for a rule with no control
+or a control naming a rule that does not exist. It was sabotage-checked
+both ways before being believed.
 
 | id | rule | source |
 |---|---|---|
@@ -933,9 +935,14 @@ its own, listed as items 9-12.
    isolates the cross-file behaviour. `bad/x17-future-major-version`
    covers the standalone half only. Building a real control needs a
    second validator version, which is a [B3]/[B5] concern.
-14. **Nothing checks that every rule in §9's table has a control.**
-   `check_fields.py` diffs the note's FIELD tables against the schema
-   because they are two hand-written statements of one contract; §9's
-   RULE table and `examples/bad/`'s directory listing are exactly the
-   same shape of pair and nothing diffs them. That is how five rules
-   went uncontrolled from draft 1 to v1.1 (§9).
+14. **Nothing checked that every rule in §9's table had a control** —
+   which is how five rules went uncontrolled from draft 1 to v1.1 (§9).
+   CLOSED at v1.1: `schema/check_rules.py` diffs §9's rule table against
+   `examples/bad/`'s listing on every `make check-schema`, the same way
+   `check_fields.py` diffs the FIELD tables against the schema. What
+   remains open is narrower and worth stating: the gate proves a rule
+   has a control NAMED for it, and `--expect-rule` proves that control
+   fires that rule. Neither proves the control sabotages the thing the
+   rule is ABOUT — a control could fire X12 for a reason unrelated to
+   phase names. That last step is a review, and there is no obvious
+   mechanism for it.
