@@ -62,6 +62,23 @@ answers a query over the store ("sub-bench A1, open-source, compilers
 only"), filtering on the recorded dimensions and reducing raw trials to
 comparables. Details and vocabulary: requirements.md §2.
 
+Records come in two TIERS (Frank, 2026-08-25, inbox I-4; BD5; record
+schema §6.8), because the loop this bench serves is edit → measure and
+a canonical number is minutes of protocol. A **pinned** record is a
+committed engine revision built by the pin script, measured under the
+quiet gate and the window handshake, kept in the canonical `store/` and
+ranked. A **scratch** record — a PROVIDED binary (`pcrec-local`:
+`$PCREC_BIN` from a pcrec worktree, dirty or not, its version the
+binary's own digest) or a one-cell `pcrecbench quick` — is the same
+record shape reduced by the same arithmetic, written in seconds to a
+scratch store the reporter may read, and it NEVER enters `store/`, its
+index or a ranking: the store refuses it, on write and on index. The
+scratch tier skips the quiet gate, never the instrument, so its status
+is still the truth about the box; the tier is what keeps it out of the
+rankings. That is how "a bench number never comes from a dirty tree"
+stays true for the numbers that count while a pcrec lane can bench its
+own binary before it delivers.
+
 Three subject regimes are measured (requirements §3): large-subject
 throughput; short-subject search (~256 B, per-call cost); and
 match/compliance over 10..1000 B subjects. Compile/setup cost is its own
@@ -103,10 +120,13 @@ Four decoupled components, each with its own design note when built:
 - **The record** (`schema/`) — JSONL, schema-versioned, with a
   validator the reporter shares. Setup layer + MATCH rows + COMPILE
   rows; raw trials, no statistics. Design: docs/design/record_schema.md.
-- **The store and the reporter** (`store/`, `report/`) — the store is
-  the accumulated records with an index; the reporter is pure static
-  analysis over records: filter, group, reduce to comparables, show N
-  and pass-rate beside every number whose coverage is below 100%,
+- **The store and the reporter** (`store/`, `pcrecbench/report.py`) —
+  the canonical store is the accumulated PINNED records with an index
+  (a `.canonical` marker names it; scratch records live in a scratch
+  store under `build/`); the reporter is pure static analysis over
+  records: filter, group, reduce to comparables (the set-grain
+  reduction it shares with `quick`, `pcrecbench/reduce.py`), show N and
+  pass-rate beside every number whose coverage is below 100%,
   self-describing output. It never runs an engine.
 
 ## 5. Testee roster

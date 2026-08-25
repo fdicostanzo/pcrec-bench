@@ -194,18 +194,18 @@ def resolve_machine_id(store_root, hostname, cpu_model, ncores,
                     "second id, or its history splits in two"
                     % (r["machine_id"], registry_path(store_root), assign))
             return r["machine_id"]
-    for other in fallback_roots:
-        if os.path.abspath(other) == os.path.abspath(store_root):
-            continue
-        for r in load_registry(other):
-            if (r["hostname"], r["cpu_model"], r["cores"]) == key:
-                if assign and assign != r["machine_id"]:
-                    raise MachineRegistryError(
-                        "this box is registered as %r in %s; refusing to "
-                        "name it %r in a scratch store -- one box, one id "
-                        "(record_schema.md 6.5)"
-                        % (r["machine_id"], registry_path(other), assign))
-                return r["machine_id"]
+    # The fallback is consulted ONLY when no id was given: an explicit
+    # --machine-id into a scratch store registers there, exactly as before
+    # (that is how `make check` names its throwaway stores `selfcheck-box`
+    # on a box the canonical registry already knows). The canonical
+    # registry's own one-box-one-id rule is enforced where it lives, above.
+    if not assign:
+        for other in fallback_roots:
+            if os.path.abspath(other) == os.path.abspath(store_root):
+                continue
+            for r in load_registry(other):
+                if (r["hostname"], r["cpu_model"], r["cores"]) == key:
+                    return r["machine_id"]
 
     if not assign:
         raise MachineRegistryError(

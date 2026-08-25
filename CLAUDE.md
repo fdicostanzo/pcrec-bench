@@ -14,9 +14,11 @@ first production sample in `store/` + `reports/` ([B6], pcrec pin
 8da6120). M2 is in progress: [B8] re-pinned pcrec to **692c2e8** and added
 the caller-provided frame-buffer testees (`pcrec-vm-in` measured,
 `pcrec-auto-in` defined) and measured the six-cell re-pin sample — the
-before/after is `reports/*-repin-692c2e8.*`; next: [B10] (scratch tier / `quick` / `pcrec-local`), [B9] (reporter
+before/after is `reports/*-repin-692c2e8.*`; [B10] landed the EDIT-TEST
+LOOP (schema **v1.2** record tiers `pinned`/`scratch`, `pcrecbench
+quick`, the `pcrec-local` provided-binary testee); next: [B9] (reporter
 columns), [B11] (sub-bench #2, log-line search). `make check` is green
-(2/53/0, 31/31, 20/20). Manager sessions start with the
+(3/55/0, 50/50, 20/20). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -70,23 +72,31 @@ bindings) live here, vendored or system, pinned either way.
   (gitignored hand-off brief). See docs/dev/CLAUDE.md.
 - `docs/design/` — living design notes (requirements, the record schema,
   set format position, adapter notes, measurement dirs). See its CLAUDE.md.
-- `schema/` — the RECORD format: `record.schema.json` (JSON Schema draft
-  2020-12), `validate.py` (the validator the harness and the reporter
-  share), `check_fields.py`, and `examples/` + `examples/bad/` (records
-  that must validate, and sabotaged ones that must not). Designed in
-  `docs/design/record_schema.md`. See its CLAUDE.md.
+- `schema/` — the RECORD format at **v1.2**: `record.schema.json` (JSON
+  Schema draft 2020-12), `validate.py` (the validator the harness and the
+  reporter share; rules X1..X29), `check_fields.py`, `check_rules.py`, and
+  `examples/` + `examples/bad/` (records that must validate, and sabotaged
+  ones that must not). Designed in `docs/design/record_schema.md`; the
+  record TIERS (`pinned` / `scratch`) are its §6.8. See its CLAUDE.md.
 - `pcrecbench/` — the HARNESS package: `harness.py` (run a cell),
   `subbench.py`, `adapters.py` (the interface + **the driver protocol, in
-  full, at the top of the file**), `driverrun.py`, `record.py`, `store.py`,
-  `quiet.py`, `env.py`, `oracle_pcre2.py`, `__main__.py` (the CLI).
-  Specified by `docs/design/harness_contract.md`. See its CLAUDE.md.
+  full, at the top of the file**), `driverrun.py`, `record.py`, `store.py`
+  (the two tiers, the `.canonical` marker), `reduce.py` (the set-grain
+  reduction `quick` and the reporter share), `quiet.py`, `env.py`,
+  `oracle_pcre2.py`, `report.py` (the reporter, [B5]), `__main__.py` (the
+  CLI: `run`, `quick`, `index`, `quiet`, `testees`, `report`). Specified
+  by `docs/design/harness_contract.md`. See its CLAUDE.md.
 - `bench/<name>/` — the SUB-BENCHES: sidecar, patterns, deterministic
   generators + sha256 manifests, oracle-verified expectations, engine
   notes. `bench/email/` is the RFC 5322 specimen. See its CLAUDE.md.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
-  (auto, nocaps, vm, at a pinned commit). See their CLAUDE.mds.
-- `store/` — the record store: `records/<subbench>@<version>/<testee_id>/
-  <record_id>.jsonl`, `index.tsv`, `machines.tsv`. See its CLAUDE.md.
+  (auto, nocaps, vm, the `-in` variants, at a pinned commit; and
+  `pcrec-local`, a PROVIDED binary at no pin). See their CLAUDE.mds.
+- `store/` — the CANONICAL record store (the `.canonical` marker):
+  `records/<subbench>@<version>/<testee_id>/<record_id>.jsonl`,
+  `index.tsv`, `machines.tsv`. Pinned records only; scratch records live
+  in `build/scratch-store/` (or `$PCRECBENCH_SCRATCH_STORE`), never here.
+  See its CLAUDE.md.
 - `tools/` — `selfcheck.py`, the harness half of `make check`.
 - `.claude/skills/pcrec-bench-manager/` — the manager-session skill.
 - Planned (not yet created): `pcrecbench/report.py` ([B5]).
@@ -105,7 +115,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 31 checks: the generators reproduce their committed
+    make check-harness  # 50 checks: the generators reproduce their committed
                         # manifests byte for byte, the expectations re-derive
                         # from the libpcre2 oracle, both drivers smoke, the
                         # deliberately-wrong fixture yields the outcome it
@@ -120,8 +130,15 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # caller-provided frame-buffer path (`_in` entries)
                         # agrees with the plain one, a tiny buffer gives
                         # up PCREC_ERR_FRAMES BY NAME where the configured
-                        # one matches, and a DFA artifact takes no buffer
-                        # (~3 min; needs libpcre2-8-0 and a C compiler)
+                        # one matches, and a DFA artifact takes no buffer;
+                        # and ([B10]) the tier rules fire by name, the
+                        # canonical store refuses a scratch record on write
+                        # and on index (planted by hand), the shared
+                        # reduction matches a hand-computed median, a `quick`
+                        # cell's printed median is recomputed from its file,
+                        # and pcrec-local describes, runs and is refused
+                        # into a canonical store
+                        # (~4 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets
 
@@ -129,12 +146,34 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
 one regime, `--force-unquiet`, every record it writes marked `synthetic`
 and written under `build/`. Nothing it prints is a number.
 
-Measuring one cell:
+Measuring one cell (the PINNED tier — a committed engine revision, the
+quiet gate, the window handshake, into `store/`):
 
     python3 -m pcrecbench testees            # the config ids
     python3 -m pcrecbench quiet --samples 5  # is the box quiet? (OD-B8)
     python3 -m pcrecbench run --subbench email --testee pcre2-jit --trials 5
     python3 -m pcrecbench index
+
+The EDIT-TEST LOOP (the SCRATCH tier — Frank's I-4, [B10]; seconds, not
+minutes; no quiet gate but the box is still sampled and `status` is
+honest; records go to `build/scratch-store/`, never to `store/`, never
+into a ranking):
+
+    # one pattern x one regime x the first k subjects, one or two testees,
+    # the comparable printed inline (the reporter's own set-grain reduction)
+    python3 -m pcrecbench quick --subbench email --pattern orig \
+        --regime search --testee pcre2-jit --vs pcre2-interp --subjects 10
+    # a PROVIDED pcrec binary, no pin: scratch tier by construction
+    PCREC_BIN=~/pcrec/worktrees/x/build/pcrec PCREC_LOCAL_FLAGS="--engine=vm" \
+        python3 -m pcrecbench quick --subbench email --pattern orig \
+        --regime search --testee pcrec-local --vs pcre2-jit
+    # a whole cell at the scratch tier (e.g. a pinned testee on a busy box)
+    python3 -m pcrecbench run --subbench email --testee pcrec-auto --tier scratch
+    python3 -m pcrecbench index --store build/scratch-store   # its own index
+
+`run --tier scratch --store store` (or `--testee pcrec-local --store
+store`) is REFUSED before anything is measured: the canonical store's
+`.canonical` marker is what `store.py` checks, on write and on index.
 
 The subject trees are GENERATED and gitignored — run
 `python3 bench/email/gen_subjects.py` and
