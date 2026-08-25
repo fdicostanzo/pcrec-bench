@@ -32,6 +32,8 @@ decisions) so cross-references between the two repos are never ambiguous.
 - `reviews/` — D6-style critic-panel records, `YYYY-MM-DD-rN-<topic>.md`,
   each with the findings table, dispositions, and what is owed to Frank.
   R1 (2026-08-24): the requirements note, 29 findings, 27 fixed in v2.
+  R2 (2026-08-25): the merged record schema, 22 findings, all carried
+  by the schema v1.1 lane.
 
 Created when their first row lands (not before): `known_issues.md`
 (bugs in pcrec-bench's own harness/adapters/comparator), and
