@@ -1201,6 +1201,87 @@ def check_reduction():
             % (r.median_ns, r.failing_subjects, r.n_gave_up, r.giveup_codes))
 
 
+# --------------------------------------------------------------- 11 quick
+
+def check_quick():
+    """`pcrecbench quick` ([B10] (b)): the loop's surface, end to end, under
+    a hard timeout. Two testees, one pattern, one regime, five subjects, two
+    trials -- seconds. Then the three things that make the printed number
+    trustworthy: the records are `tier: scratch` and validator-accepted (the
+    store validated them on write; re-checked here through the shared
+    validator with --check-filename), and the MEDIAN the command printed
+    equals `reduce.reduce_set_cell` re-applied to the record FILE -- the
+    same function the reporter ranks with (R5). A printed number that
+    cannot be recomputed from the record is a number with nothing behind
+    it."""
+    print("-- `quick`: one cell, two testees, the comparable recomputed --")
+    from pcrecbench import reduce as _rd
+    import glob as _glob
+    import re as _re
+
+    scratch = os.path.join(ROOT, "build", "selfcheck-quick-store")
+    shutil.rmtree(scratch, ignore_errors=True)
+    t0 = __import__("time").monotonic()
+    proc = run(["gnutimeout", "300", sys.executable, "-m", "pcrecbench",
+                "quick", "--subbench", "email", "--pattern", "orig",
+                "--regime", "search", "--testee", "pcre2-jit",
+                "--vs", "pcre2-interp", "--subjects", "5", "--trials", "2",
+                "--store", scratch, "--synthetic", "--quiet-output"],
+               cwd=ROOT, timeout=330)
+    wall = __import__("time").monotonic() - t0
+    if proc.returncode != 0:
+        bad("quick completes under gnutimeout 300",
+            "exit %d: %s" % (proc.returncode,
+                             (proc.stderr or proc.stdout).strip()[-300:]))
+        return
+    ok("quick completes under gnutimeout 300",
+       "pcre2-jit vs pcre2-interp, orig, search, 5 subjects x 2 trials: "
+       "%.1f s wall" % wall)
+
+    printed = {}
+    for line in proc.stdout.splitlines():
+        m = _re.match(r"^(pcre2-\w+)\s+(\S+)\s+(\S+)\s+", line)
+        if m:
+            printed[m.group(1)] = (m.group(2), m.group(3))
+    files = sorted(_glob.glob(os.path.join(scratch, "records", "*", "*",
+                                           "*.jsonl")))
+    if len(files) != 2 or set(printed) != {"pcre2-jit", "pcre2-interp"}:
+        bad("quick wrote two records and printed two rows",
+            "%d file(s); rows for %s" % (len(files), sorted(printed)))
+        return
+    proc = _validate(["--check-filename"] + files)
+    tiers = []
+    for f in files:
+        setup, rows = _rd.read_record(f)
+        tiers.append(setup.get("tier"))
+    if proc.returncode == 0 and tiers == ["scratch", "scratch"]:
+        ok("both quick records are tier scratch and validator-accepted",
+           "schema %s" % setup.get("schema_version"))
+    else:
+        bad("both quick records are tier scratch and validator-accepted",
+            "tiers %s; %s" % (tiers, (proc.stderr or proc.stdout)[-200:]))
+
+    agree = 0
+    for f in files:
+        setup, rows = _rd.read_record(f)
+        cells = _rd.cells_from_record(rows)
+        mine = [v for k, v in cells.items()
+                if k[0] == "orig" and k[1] == "short-subject-search"]
+        r = _rd.reduce_set_cell(mine[0]) if len(mine) == 1 else None
+        tid = "pcre2-jit" if "_jit-" in f else "pcre2-interp"
+        want = "%.3f" % r.median_ns if r and r.median_ns is not None else "-"
+        if printed[tid][1] == want and r.n_subjects == 5:
+            agree += 1
+        else:
+            bad("the printed median equals the shared reduction of the file",
+                "%s: printed %s, recomputed %s over %s subject(s)"
+                % (tid, printed[tid][1], want, r and r.n_subjects))
+    if agree == 2:
+        ok("the printed median equals the shared reduction of the file",
+           "both testees: reduce_set_cell(record) == the number on screen")
+    shutil.rmtree(scratch, ignore_errors=True)
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -1218,6 +1299,7 @@ def main():
     check_tier_schema()
     check_store_tier_refusal()
     check_reduction()
+    check_quick()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))
