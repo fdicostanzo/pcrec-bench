@@ -89,3 +89,22 @@ LINKED; wave G splices every acyclic callee inline, so "call-bearing" in
 limits.md §5 now say so (fixed on pcrec main). For the reporter ([B9]):
 bucket VM rows by `RX_VM_CALL_LINKED` / `_SPLICED` — the honest column.
 
+
+## O-4 (2026-08-25) — finding for pcrec: `pcrec-vm-in` (caller-provided buffer) is FASTER than `pcrec-vm` on every regime at the same pin
+
+MEASURED in the [B8] window (692c2e8, `--engine=vm --features all`, 5
+trials, CPU 11, set grain ns/call, both records `measured`): orig /
+short-subject-search 12,546 (vm-in) vs 28,997 (vm) — 2.3×; orig /
+match-compliance (`\z` form) 62,732 vs 80,228; factored /
+short-subject-search 54,118 vs 69,538. Same artifact text, same
+compiler, same box, same window; the only difference is the `_in` entry
+with a once-allocated 32768-frame / 131072-entry buffer versus the
+un-suffixed entry with the stamped defaults (2048 / 3072). Reading: the
+un-suffixed entry pays a per-call cost the `_in` path does not —
+setting up or clearing ~98 KB of default storage (2048×24 + 3072×16 B)
+on every call would be about the size of the gap (16 µs over 77 short
+subjects ≈ 200 ns/call). If that is what it is, it is a general
+optimization (lazy/one-time default-buffer setup, or a thread-local
+default) that helps every VM caller who does not use `_in`. Records:
+store/records/email-specimen@0.1/pcrec_692c2e8_vm-caps-simdna/ and
+.../pcrec_692c2e8_vm-in-caps-simdna/ (20260825T175933Z, T180451Z).

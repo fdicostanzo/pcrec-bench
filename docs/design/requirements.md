@@ -399,6 +399,12 @@ compilers, the hand-C arm: after ([B7]).
   2-3-sample gate, before the limit is loosened (found 2026-08-25).
 - OD-B13 — `--subbench` takes the sidecar id (`email-specimen`), not the
   directory name (`email`); accept either, or rename the directory.
+- OD-B14 — the reporter shows no record `status`; `inconclusive-load`
+  records rank unmarked beside `measured` ones (seen in the [B8] sample,
+  2026-08-25). Owner: [B9].
+- OD-B15 — two records of one testee_id in a query: pooled or newest?
+  Unstated; must be ruled and printed in the report header. Owner: [B9].
+
 
 ## 13. For the next panel — attack list (v2)
 

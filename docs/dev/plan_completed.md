@@ -63,3 +63,36 @@ completion date, newest group at the bottom.
   row into pcrec: run the two adapters on set v0 on a quiet box, compare,
   and hand the pcrec manager the first outlier in the agreed feedback
   shape. Closes M1 as APPROACH §8 Q5 proposed it.
+
+- [B8] STATE:completed — RE-PIN pcrec to `692c2e8` (inbox I-1; the
+  [DD-14] close merge, compiler byte-identical to `17469b6`, the tree the
+  battery was scored on: matrix 180/0/6/0, test 26,560/0, san both axes).
+  Steps: testees/pcrec/configs.toml `pin`; the adapter records `abi` as a
+  pair (no `== 2` check exists — verify the new records say 3 and that
+  the four FB sizing fields and `_FRAMES`/`_FRAME_SIZE` land in
+  `engine_metadata`; a stamped 0 means no buffers); pin.sh builds
+  build/pcrec-692c2e8/; the five email-specimen cells in a new quiet
+  window (WINDOW OPEN/CLOSED handshake with pcrecdev1, --trials 5); then
+  the FIRST BEFORE/AFTER report over both pins. Expected: factored/
+  short-search collapses to orig's (wave G — one DFA artifact); if it
+  does NOT, that is pcrec's first real outlier; FRAMES give-ups on the
+  five deep subjects remain until a caller-provided frame buffer is used
+  (pcrec D73). BUILT (lane b8repin, merged 08602ed): generic `_in`
+  plumbing (any config may carry `buffer_frames`/`buffer_trail`,
+  capacities never bytes); `pcrec-vm-in` is the MEASURED roster entry
+  (at 692c2e8 `auto` selects the DFA for both email patterns, so
+  `pcrec-auto-in` is defined but inert here — not measured); capacities
+  32768/131072 chosen by measurement (s-059 needs 10245/46100); contract
+  pcrec docs/spec/match_api.md §10; the record carries the capacities
+  used. Remaining: the six-cell window run and the before/after report.
+  DONE 2026-08-25 (second session): merged 08602ed; the window run
+  0cf336c (six cells 13:34-14:10 EDT, CPU 11, 5 trials; pcre2-jit,
+  pcrec-vm, pcrec-vm-in `measured`; pcre2-interp, pcrec-auto, pcrec-nocaps
+  `inconclusive-load` on a 1-s AFTER-sample transient — re-measure in the
+  next window); the before/after report
+  reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.*.
+  RESULT: factored/short-search collapsed 84,076 → 6,284 ns/call (= orig;
+  2.4× faster than pcre2-jit); factored compliance and throughput now 100 %
+  under auto; vm-in completes the five deep subjects; NEW finding: vm-in
+  beats vm on every regime at the same pin (outbox O-4).
+

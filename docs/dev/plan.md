@@ -36,27 +36,6 @@ older candidates. Proposed order (Frank confirms): [B8] → [B10] (ruled
 "after the re-pin", in its (a)(b)(c) order) ∥ [B9] (a disjoint reporter
 lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
 
-- [B8] STATE:started — RE-PIN pcrec to `692c2e8` (inbox I-1; the
-  [DD-14] close merge, compiler byte-identical to `17469b6`, the tree the
-  battery was scored on: matrix 180/0/6/0, test 26,560/0, san both axes).
-  Steps: testees/pcrec/configs.toml `pin`; the adapter records `abi` as a
-  pair (no `== 2` check exists — verify the new records say 3 and that
-  the four FB sizing fields and `_FRAMES`/`_FRAME_SIZE` land in
-  `engine_metadata`; a stamped 0 means no buffers); pin.sh builds
-  build/pcrec-692c2e8/; the five email-specimen cells in a new quiet
-  window (WINDOW OPEN/CLOSED handshake with pcrecdev1, --trials 5); then
-  the FIRST BEFORE/AFTER report over both pins. Expected: factored/
-  short-search collapses to orig's (wave G — one DFA artifact); if it
-  does NOT, that is pcrec's first real outlier; FRAMES give-ups on the
-  five deep subjects remain until a caller-provided frame buffer is used
-  (pcrec D73). BUILT (lane b8repin, merged 08602ed): generic `_in`
-  plumbing (any config may carry `buffer_frames`/`buffer_trail`,
-  capacities never bytes); `pcrec-vm-in` is the MEASURED roster entry
-  (at 692c2e8 `auto` selects the DFA for both email patterns, so
-  `pcrec-auto-in` is defined but inert here — not measured); capacities
-  32768/131072 chosen by measurement (s-059 needs 10245/46100); contract
-  pcrec docs/spec/match_api.md §10; the record carries the capacities
-  used. Remaining: the six-cell window run and the before/after report.
 - [B9] STATE:not-started — REPORTER FOLLOW-UPS from pcrecdev1's feedback
   (feedback_pcrecdev1_2026-08-25.md §1a/§1c/§2a) + the open OD-Bs:
   (1a) the artifact's strategy stamps (`RX_ENGINE`, `RX_ENGINE_WHY`,
@@ -71,7 +50,15 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   kept out of the outlier queue until pcrec [OS-4]; OD-B11 (labels for
   `timed-out`/`crashed`), OD-B13 (`--subbench` accepts the directory
   name as well as the sidecar id), OD-B12 (a --wait-quiet retry /
-  multi-sample gate — the transients are the managers' own processes).
+  multi-sample gate — the transients are the managers' own processes;
+  pcrecdev1's suggestion: per-core busy AVERAGED over the cell, or a
+  load1/nproc ratio, instead of a 1-s sample). NEW from the [B8] sample:
+  OD-B14 — the reporter shows NO record `status`: `inconclusive-load`
+  records rank beside `measured` ones unmarked (show the status per row,
+  exclude non-measured from rankings by default with a flag to include);
+  OD-B15 — two records of the SAME testee_id in one query (pcre2 at two
+  dates): the reporter neither states nor lets the reader choose whether
+  it pooled trials or took the newest — rule it, state it in the header.
 - [B10] STATE:not-started — THE EDIT-TEST LOOP (inbox I-4, Frank's
   ruling; AFTER [B8]; in this order): (a) a SCRATCH TIER for records —
   same schema, one setup field (`tier: scratch` + what the binary was),
