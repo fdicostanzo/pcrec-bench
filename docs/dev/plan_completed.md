@@ -96,3 +96,75 @@ completion date, newest group at the bottom.
   under auto; vm-in completes the five deep subjects; NEW finding: vm-in
   beats vm on every regime at the same pin (outbox O-4).
 
+- [B9] STATE:completed — REPORTER FOLLOW-UPS from pcrecdev1's feedback
+  (feedback_pcrecdev1_2026-08-25.md §1a/§1c/§2a) + the open OD-Bs:
+  (1a) the artifact's strategy stamps (`RX_ENGINE`, `RX_ENGINE_WHY`,
+  `RX_VM_PREFILTER`, `RX_VM_RUNGS/STRATS/PRUNES`, `RX_VM_CALL_*`) as
+  bucket COLUMNS — the records carry them as `engine_metadata` pairs;
+  build against the VM stamps now, the DFA stamps pick up on the pin
+  that ships inbox I-3 (pcrec-owned, behind [CHK-1]; until then DFA rows
+  bucket by `rx_info.engine` only); (1c) the compile axis split by phase
+  (pcrec / gcc / dlopen — in every compile row already); (2a) the
+  match-compliance `whole-subject` result bucketed as a REGIME ARTIFACT
+  (the `\z` form is a different program from ANCHORED|ENDANCHORED),
+  kept out of the outlier queue until pcrec [OS-4]; OD-B11 (labels for
+  `timed-out`/`crashed`), OD-B13 (`--subbench` accepts the directory
+  name as well as the sidecar id), OD-B12 (a --wait-quiet retry /
+  multi-sample gate — the transients are the managers' own processes;
+  pcrecdev1's suggestion: per-core busy AVERAGED over the cell, or a
+  load1/nproc ratio, instead of a 1-s sample). NEW from the [B8] sample:
+  OD-B14 — the reporter shows NO record `status`: `inconclusive-load`
+  records rank beside `measured` ones unmarked (show the status per row,
+  exclude non-measured from rankings by default with a flag to include);
+  OD-B15 — two records of the SAME testee_id in one query (pcre2 at two
+  dates): the reporter neither states nor lets the reader choose whether
+  it pooled trials or took the newest — rule it, state it in the header.
+  From pcrecdev1's repin feedback (docs/dev/feedback_pcrecdev1_2026-08-25-
+  repin.md §2, all columns): form semantics (same program / separate
+  artifact) as a column — the regime-artifact bucket IS that fact; ratio
+  vs best AND vs the named baseline; per-subject mean + timer floor on
+  short-search rows; give-up code + smallest firing subject per cell;
+  a cross-pin Δ verdict column (collapsed / unchanged within noise /
+  regressed) + a worst-subject line per cell; mechanism stamps incl.
+  the ENTRY used and buffer sizes; compile phases split; a "stddev >
+  median = timer jitter" flag on compile rows.
+  DONE 2026-08-25 (lane b9report, sonnet; merged): reporter v2 — status
+  per row + non-measured unranked by default (--include-unmeasured);
+  newest MEASURED record per testee wins, newer non-measured listed
+  (--all-records); tier-aware (scratch unranked, --include-scratch);
+  form-semantics column (same program / separate artifact) + the
+  regime-artifact statement; ratio vs baseline AND vs best; per-subject
+  mean + floor note; give-ups by code with the smallest firing subject;
+  cross-pin Δ verdict column + worst-subject line; mechanism-stamp and
+  compile-phase columns + jitter flag; --subbench by directory; the two
+  committed reports re-rendered (`reporter: v2` header); 31 tests;
+  OD-B11/B13/B14/B15 closed; imports pcrecbench.reduce (shared with
+  quick). OD-B12 (the gate) stays open.
+
+- [B10] STATE:completed — THE EDIT-TEST LOOP (inbox I-4, Frank's
+  ruling; AFTER [B8]; in this order): (a) a SCRATCH TIER for records —
+  same schema, one setup field (`tier: scratch` + what the binary was),
+  a scratch store the reporter can read but that NEVER enters `store/`,
+  `store/index.tsv` or the rankings; pinned records stay canonical
+  exactly as today; (b) `pcrecbench quick` — one cell (one pattern × one
+  regime) against one or two testees, a scratch record, the comparable
+  printed inline; seconds, no report file unless asked; (c) a
+  `pcrec-local` testee — `PCREC_BIN=/path` + extra flags, no pin.sh;
+  `version` = `local:<sha256 of the binary>` + the tree's `git describe
+  --dirty` when a repo sits beside it; scratch-tier BY CONSTRUCTION
+  (the adapter refuses the canonical store). Division of labour (pcrec
+  D78 / BD5): this session BUILDS the bench; the pcrec manager RUNS it
+  from a worktree of this repo (never a clone). Scratch runs are light
+  and announce nothing; pinned runs keep the window handshake.
+  DONE 2026-08-25 (lane b10loop; merged): schema v1.2 (`tier`
+  pinned|scratch, absent = pinned; `testee.binary`; `local:` versions;
+  X28/X29 with failing examples; 3/55/0); store/.canonical marker with
+  write() AND index() refusals proven by sabotage; `run --tier scratch`
+  → build/scratch-store/ (gate skipped, box still sampled, status
+  honest); `pcrecbench quick` (one pattern × one regime × first-k
+  subjects, 1-2 testees, 3 trials, 2 s calibration budget, the
+  comparable inline via the shared pcrecbench/reduce.py; ~5-8 s);
+  `pcrec-local` ($PCREC_BIN + $PCREC_LOCAL_FLAGS, `local:<sha12>[+describe
+  --dirty]`, engine_commit null when dirty, scratch by construction, the
+  canonical store refused); 50 harness checks.
+

@@ -688,3 +688,28 @@ lane, one window, and the manager's own traffic. Next: [B10] (scratch
 tier / quick / pcrec-local) ∥ [B9] (reporter: status, stamps incl.
 LINKED/SPLICED, phases, regime-artifact bucket, OD-B11..B15), then
 [B11] log-line search — Frank starts them.
+
+## 2026-08-25 (EDT, ~15:5x), second session (part 5) — [B9] and [B10] DONE: reporter v2, the scratch tier, `quick`, `pcrec-local`; [B13] chartered
+
+Frank: "proceed on b10/b9 and the re-measure when you can" (after the
+interpreter conversation: [B13] chartered, not started; pcrecdev1's
+reading of the repin report recorded as feedback_pcrecdev1_2026-08-25-
+repin.md and folded into [B9]'s column list and [B13]'s prediction
+list). Two lanes, disjoint by file ownership, both ACKed their briefs
+first (the lesson applied; no late steers this time): b10loop (strong)
+and b9report (sonnet). Merged in that order, no conflicts; master make
+check 3/55/0, 50/50, 31/31; the repin report reproduces under reporter
+v2. What landed is on the archived rows. Two rulings made en route: R2
+amended — the newest MEASURED record wins per testee, a newer
+non-measured record never supersedes it (a non-measured record is not
+evidence against a measured one; pcre2 did not change between the two
+dates) — without it the baseline vanished from the repin report; and
+reduce.py's give-up spelling (`-3:PCREC_ERR_FRAMES`) adopted in the
+report so quick and the reporter cannot disagree. Lane mechanics: b10loop
+went idle twice mid-task (a nudge resumed it) and its first make check
+failed 3 checks on its own registry-fallback regression (explicit
+--machine-id refused) — diagnosed by the watchdog from the log before
+the lane spoke, fixed by the lane, no check loosened. b9report found and
+fixed a render bug of its own (a fully-excluded ranking group vanished
+with its title). KB-1 filed (known_issues.md created). Waiting: the
+16-min re-measure window after pcrecdev1's battery (~16:45-17:15).

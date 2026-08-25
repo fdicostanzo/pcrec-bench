@@ -55,5 +55,5 @@ decisions) so cross-references between the two repos are never ambiguous.
   factored email pattern over 1 MB of `a`). Findings about pcrec go to
   the pcrec manager for pcrec's known_issues.md, never here.
 
-Created when its first row lands: `known_issues.md` (bugs in
-pcrec-bench's own harness/adapters/reporter).
+- `known_issues.md` — bugs in pcrec-bench's OWN harness/adapters/
+  reporter (`KB-n`); KB-1 the runtime_options bare-flag pairing.
