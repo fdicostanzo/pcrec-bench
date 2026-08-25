@@ -1,0 +1,22 @@
+[project]
+name = "pcrec-bench"
+version = "0.0.1"
+description = "Comparative regex-engine benchmark: versioned sub-benches, per-testee records, static reporting; sibling of pcrec"
+readme = "APPROACH.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+# Runtime dependencies of the harness/tooling. Pins for a reproducible
+# box live in requirements.txt (BD4); this list states the compatibility
+# range. Engine adapters may carry their own build machinery (cmake,
+# cargo, ...) under testees/<name>/ — those are NOT python packages.
+dependencies = [
+    "jsonschema>=4.19,<5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["schema", "tests"]

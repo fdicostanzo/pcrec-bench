@@ -53,6 +53,7 @@ bindings) live here, vendored or system, pinned either way.
 ## Where things are
 
 - `APPROACH.md` — the charter.
+- `pyproject.toml`, `requirements.txt` — the python project files (BD4).
 - `docs/dev/` — plan.md (grep'able `[Bn] STATE:` rows), plan_completed.md,
   dev_journal.md (append-only), decisions.md (BDn), pcrec_references.md
   (the map of every pcrec document this project depends on), wake.md
@@ -65,8 +66,13 @@ bindings) live here, vendored or system, pinned either way.
 
 ## Build & test
 
-None yet. When they exist: plain `make` for what is ours; each testee
-adapter may use whatever its engine demands (cmake, cargo, meson).
+Python 3 (>=3.11) is the project language for the harness, validator,
+store and reporter (BD4): `pyproject.toml` (compatibility ranges),
+`requirements.txt` (exact pins measured on the box — `python3 -m venv
+.venv && .venv/bin/pip install -r requirements.txt`). Plain GNU `make`
+targets wrap what is ours (`make check-schema` lands with [B2]); each
+testee adapter under testees/<name>/ may use whatever its engine demands
+(C shims, cmake, cargo), pinned there.
 
 ## Conventions (inherited from pcrec where they apply)
 

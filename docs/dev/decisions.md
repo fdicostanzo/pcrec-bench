@@ -46,3 +46,19 @@ failure seen from here is reported to the pcrec session before anything is
 concluded from it. (5) `timeout` (gnutimeout — pcrec docs/testing.md
 :2407, the uutils timeout costs ~108 ms/call) on every command of uncertain
 length. Revisit: when a single session owns the box.
+
+## BD4 — 2026-08-25 — Python 3 is the project language for the harness, validator and reporter; standard python project files
+
+Frank, 2026-08-25: "if we are adopting python as project language then
+setup usual python project files e.g. requirements.txt so we can specify
+these modules." So: the harness core, the record validator, the store
+tooling and the reporter are python 3 (>=3.11; the box runs 3.14.4).
+`pyproject.toml` states the package and its compatibility ranges;
+`requirements.txt` carries EXACT pins measured working on the box (today:
+jsonschema==4.19.2); the two are updated together. Testee ADAPTERS are
+not python packages — each lives under testees/<name>/ with whatever its
+engine demands (C shims, cmake, cargo), pinned there (pcrec D52:
+dependencies live here). Why: one language for everything that is ours,
+with pinned modules so a record produced on another machine was made by
+the same tooling. Revisit: if a hot path (the in-process timing loops)
+needs C — those belong to the adapters anyway.

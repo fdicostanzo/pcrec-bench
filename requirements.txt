@@ -1,0 +1,5 @@
+# Exact pins measured working on the development box (2026-08-25,
+# python 3.14.4). `pip install -r requirements.txt` in a venv reproduces
+# the tooling environment; pyproject.toml carries the compatibility
+# ranges. Update the pin and this comment together (BD4).
+jsonschema==4.19.2
