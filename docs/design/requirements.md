@@ -327,7 +327,12 @@ not measured (pcrec compare R3.10's lesson); (b) per-core occupancy via
 `mpstat -P ALL 1 1` (installed on this box; the pattern is pcrec
 docs/design/altcls_pinned_impl/pinned_measure.sh:59-64), made
 MACHINE-READABLE pass/fail with `unavailable` when mpstat is missing —
-recorded, never silently skipped; (c) what "quiet" is numerically is
+recorded, never silently skipped — sampled BEFORE AND AFTER like load
+(RULED 2026-08-25, schema v1.1 X13: `measured` requires `pass` on both
+samples; `unavailable` or `fail` on either ⇒ `inconclusive-load`, so a
+box without mpstat cannot produce a `measured` record — the intended
+consequence, since [B3] measured that load1 never tripped while
+occupancy refused the box 12/12); (c) what "quiet" is numerically is
 MEASURED on this box, not assumed (OD-B8, a task on [B3]); (d) median of
 N with spread; pinned cores after the occupancy check; (e) batched
 in-process timing for the short regimes, gnutimeout on the outer
