@@ -84,6 +84,49 @@ fast ones under the clock's resolution. The result is then capped so the
 predicted whole-list sweep stays under 20 s per trial. Both the number
 and the reason land in the record.
 
+### 7.1 What the calibration got wrong, and the correction
+
+A window rehearsal had a record REJECTED by X21 (pcre2-jit, `factored`,
+`large-subject-throughput`). Two bugs, and the second is the instructive
+one.
+
+1. **The count was floored where the rule needs a ceiling.** A 24.79 ms
+   probe against a 50 ms target is 2.017; `int()` chose 2 and predicted
+   49.58 ms — just under. Fixed.
+2. **The recorded probe described a different quantity from the decision.**
+   `probe_elapsed_ns` was the SUM over the probe sweep while `iters` came
+   from the MEDIAN subject. X21 recomputes
+   `probe_elapsed_ns / probe_iterations × iterations`, so the rule and the
+   harness were reasoning about different numbers; they agreed in the
+   failing case only because one 24.8 ms subject dominated two sub-0.1 ms
+   siblings, which is what made it look like pure rounding. The probe
+   recorded now is the **median subject's own** elapsed and iteration
+   count.
+
+The count is chosen by `_iters_meeting_target()` using **X21's own
+expression over the same integers the record will carry**, then re-checked
+against it. Choosing by one arithmetic and validating by another is how
+the original bug survived; now there is one arithmetic.
+
+**A correction to a claim made while fixing it.** It was asserted that
+ceil alone would leave `search_short` records still rejectable. That is
+FALSE, and the control proved it: once the count is derived from the same
+integers the record carries, X21 passes for *any* probe — including the
+old sum-based one. Bug (2) is a FIDELITY bug, not a validity one: a count
+chosen from the sweep total makes each subject's loop about total/N of the
+target, so `target_ns` claims a target the individual loops never meet.
+Worth recording because the wrong diagnosis would have produced a control
+that could never fail.
+
+Hence the control's third leg, and it is the only one that catches bug
+(2). MEASURED, all three sabotage-validated:
+
+| leg | restored floor | ceil + sum-based probe |
+|---|---|---|
+| (a) ratios that floor wrongly | **fires** | passes |
+| (b) X21's expression on a real record | **fires** | passes |
+| (c) the probe describes ONE SUBJECT | — | **fires** |
+
 ## 8. `consumed_length` — the same narrow claim from both testees
 
 Neither libpcre2 nor a pcrec artifact exposes a scan high-water mark;
