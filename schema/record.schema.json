@@ -53,7 +53,18 @@
         "verdict": { "$ref": "#/$defs/occupancy_verdict" },
         "max_busy_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
         "raw": { "$ref": "#/$defs/free_text" }
-      }
+      },
+      "allOf": [
+        {
+          "$comment": "The note calls max_busy_pct null IFF the verdict is `unavailable`. A verdict of pass or fail is a judgement ABOUT a number, so the number must be there; a null beside `pass` is a verdict with nothing behind it.",
+          "if": {
+            "properties": { "verdict": { "const": "unavailable" } },
+            "required": ["verdict"]
+          },
+          "then": { "properties": { "max_busy_pct": { "type": "null" } } },
+          "else": { "properties": { "max_busy_pct": { "type": "number" } } }
+        }
+      ]
     },
     "seq": {
       "description": "The result row's position in EMISSION order, 1..N over every result row of the record. File order is free; `seq` is what carries order (docs/design/record_schema.md 2, rule X18).",
@@ -179,7 +190,17 @@
               "propertyNames": { "type": "string", "pattern": "^[0-9]+$" },
               "additionalProperties": { "type": "integer", "minimum": 0 }
             }
-          }
+          },
+          "allOf": [
+            {
+              "$comment": "requirements.md 4.5: `by an explicit index map` -- the mode NAMES a map, so the map must be there. Without this the mode is a promise the record does not keep and the reporter cannot compare captures across the variant.",
+              "if": {
+                "properties": { "mode": { "const": "by-index-map" } },
+                "required": ["mode"]
+              },
+              "then": { "required": ["index_map"] }
+            }
+          ]
         },
         "hazard_class": { "$ref": "#/$defs/hazard_class" },
         "size_class": { "$ref": "#/$defs/size_class" }
@@ -212,7 +233,17 @@
         "bytes_offered": { "$ref": "#/$defs/nonneg_int" },
         "size_band": { "type": "string", "maxLength": 64 },
         "sha256": { "$ref": "#/$defs/sha256" }
-      }
+      },
+      "allOf": [
+        {
+          "$comment": "The note: n_subjects is 1 when role is `single`. A `single` entry claiming 4 subjects makes the reporter's per-subject arithmetic wrong by 4x with nothing to notice it.",
+          "if": {
+            "properties": { "role": { "const": "single" } },
+            "required": ["role"]
+          },
+          "then": { "properties": { "n_subjects": { "const": 1 } } }
+        }
+      ]
     },
 
     "setup": {
@@ -454,6 +485,14 @@
           "then": { "required": ["observed"] }
         },
         {
+          "$comment": "requirements.md 4.4: a large-subject cell without a truncation check `is marked unverified-for-truncation` -- which is only meaningful if the field must BE there to carry the mark. Absent, the cell is not marked, it is silent.",
+          "if": {
+            "properties": { "regime": { "const": "large-subject-throughput" } },
+            "required": ["regime"]
+          },
+          "then": { "required": ["truncation_check"] }
+        },
+        {
           "$comment": "A batched loop of more than one iteration is a CHOSEN iteration count, and the probe that chose it is part of the measurement.",
           "if": {
             "properties": {
@@ -544,6 +583,16 @@
             ]
           },
           "else": { "not": { "required": ["derivation"] } }
+        },
+        {
+          "$comment": "The note 8: `cost` is present IFF compile_outcome is `compiled` AND cost_class is not `lazy-jit`. The two NOT halves were enforced below; this is the MUST half. Without it an AOT row can report `compiled` and carry no number at all -- the compile axis silently empty for that pattern, which requirements.md 3 puts `on its own axis` precisely to avoid.",
+          "if": {
+            "allOf": [
+              { "properties": { "compile_outcome": { "const": "compiled" } }, "required": ["compile_outcome"] },
+              { "properties": { "cost_class": { "not": { "const": "lazy-jit" } } }, "required": ["cost_class"] }
+            ]
+          },
+          "then": { "required": ["cost"] }
         },
         {
           "$comment": "No cost for a compile that did not happen (requirements.md 7's rule, applied to the compile axis).",

@@ -478,7 +478,21 @@ with their own declarations. Nothing about the mechanism is pcrec's.
 
 `req` column: **R** required, **o** optional, **c** conditionally
 required (the condition is in the rule column and is enforced by the
-schema or by `validate.py`). Path spelling: `a.b` a nested member,
+schema or by `validate.py`).
+
+That last clause was a CLAIM, not a fact, until v1.1: five of the `c`
+rows were enforced in one direction or not at all. A record could
+report `compiled` on an AOT compile row and carry no `cost` — the
+compile axis silently empty for that pattern; could omit
+`truncation_check` on a large-subject row, so requirements §4.4's
+"marked `unverified-for-truncation`" marked nothing; could declare
+`capture_correspondence.mode = by-index-map` with no map; could call a
+subject `single` and claim four of them, making the reporter's
+per-subject arithmetic wrong by 4×; and could carry an occupancy
+verdict of `pass` with `max_busy_pct: null`, a judgement with nothing
+behind it. All five are `if`/`then` branches in the schema now, each
+with a control. `check_fields.py` cannot catch this class — it compares
+field NAMES, and requiredness is not a name. Path spelling: `a.b` a nested member,
 `a[].b` a member of an array element. `check_fields.py` diffs these
 tables against `record.schema.json` on every `make check-schema`, so a
 row here that is not in the schema (or the reverse) is a build failure,

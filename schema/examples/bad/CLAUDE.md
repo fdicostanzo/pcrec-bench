@@ -26,12 +26,17 @@ rejected for some OTHER reason fails the build. The rules are defined in
 
 | file | rule | the sabotage |
 |---|---|---|
+| `schema-index-map-missing.jsonl` | SCHEMA | `capture_correspondence.mode: by-index-map` with no `index_map` — the mode NAMES a map |
 | `schema-missing-calibration.jsonl` | SCHEMA | a timed match row with `iterations` in the hundreds of thousands and no `calibration` object saying who chose that number |
+| `schema-missing-compile-cost.jsonl` | SCHEMA | an AOT compile row reporting `compiled` and carrying no `cost` — the compile axis silently empty for that pattern |
 | `schema-missing-clock-source.jsonl` | SCHEMA | `run.clock_source` deleted — nanoseconds from an unnamed clock |
 | `schema-missing-driver-build-flags.jsonl` | SCHEMA | `run.driver_build_flags` deleted — the engine's build is pinned and the timing driver's is not |
 | `schema-missing-required-field.jsonl` | SCHEMA | `environment.machine_id` deleted |
 | `schema-missing-subject-sha256.jsonl` | SCHEMA | a subject roster entry with no `sha256`: the bytes that produced the numbers are unidentified |
+| `schema-missing-truncation-check.jsonl` | SCHEMA | a `large-subject-throughput` row with no `truncation_check`, so requirements §4.4's "marked `unverified-for-truncation`" marks nothing |
+| `schema-occupancy-verdict-without-number.jsonl` | SCHEMA | `occupancy.before.verdict: pass` beside `max_busy_pct: null` — a judgement with nothing behind it |
 | `schema-quiet-attestation-present.jsonl` | SCHEMA | the DROPPED `quiet_attestation` field, still present. `additionalProperties: false` is what makes a removal stick, and this is the control that proves it does |
+| `schema-single-role-many-subjects.jsonl` | SCHEMA | a `role: single` subject claiming `n_subjects: 4`, which makes the reporter's per-subject arithmetic wrong by 4× |
 | `schema-wrong-enum.jsonl` | SCHEMA | `execution_model` spelled `compiled-AOT` — the un-normalized spelling, which is the mistake an author actually makes |
 | `x1-mixed-schema-versions.jsonl` | X1 | two records concatenated into one file, the second at schema version 2.0 |
 | `x2-reserved-row-kind.jsonl` | X2 | a `match-list` row — the name reserved for OD-B3's list-valued scan regime, which has no shape yet |
