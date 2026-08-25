@@ -56,6 +56,7 @@ Convention: `pcrec D52` = ~/pcrec/docs/dev/decisions.md entry D52;
 | libpcre2 ctypes binding | docs/design/eng_brep_measurements/probes/pcre2_ctypes.py | the committed binding the whole oracle chain borrows (br_oracle.py → la_oracle.py → sr_oracle.py). |
 | measurement style | docs/design/lookaround_measurements/, subroutines_measurements/ (probes/, out/ with source headers); out/leftrec.txt (a probe with its own guard), out/prefilter.txt (the 21×-350× prefilter cost table) | the style Frank expects: question, method, numbers, archived verbatim. |
 | measurement discipline | docs/dev/learnings.md §1 (measurement), §2 (oracle strategy), §3 (check design) | quiet box, medians/spread, per-core occupancy before pinned runs, poisoned-pinned-core incident, controls that share no source with what they control. |
+| the caller-provided frame buffer | docs/spec/match_api.md §10 ([DD-14.FB]; §10.2 the `_in` entries + `rx_buffers`, §10.4 the sizing/reflection surface, §10.6 mmap example); tests/recursion/run_frame_buffer.sh §2 (exact-fit sizes) | the contract a `pcrec-auto-in` testee ([B8]) is built against; frame sizes are PER-ARTIFACT stamps, read never hardcoded; the record carries the buffer sizes used. Verified present at pcrec `6c676b2` (2026-08-25). |
 | the .rxt format | docs/testing.md | today's case carrier and the import source (R-BENCH-8). |
 | oracle tiers | docs/testing.md; tests/registry (PC-3) | python `re` base tier, libpcre2 differential, the D27 blinded method; D52's linear-time third tier at need. |
 

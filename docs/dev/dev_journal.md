@@ -539,3 +539,23 @@ both channel files. Verified: no `abi == 2` check exists in the adapter
 (driver.c:199's `== 2` is the engine id), so the abi 2→3 step of [B8]
 is a record-field check. Nothing else started — Frank reviews the first
 sample and the queue order this session.
+
+## 2026-08-25 (EDT, ~13:0x), second session (part 2) — O-2 answered by pcrecdev1: the frame-buffer contract is pcrec docs/spec/match_api.md §10
+
+pcrecdev1 answered O-2 interprocess within minutes (the durable file
+carries what outlives a session; live questions still flow live — D78
+as intended). Recorded in place under O-2, in [B8]'s row, and as a
+pcrec_references.md row (the spec's §10.2/§10.4/§10.6 verified present
+at pcrec 6c676b2, read-only). The facts that shape the `pcrec-auto-in`
+adapter: the `rx_buffers` descriptor (frames in FRAMES, trail in
+ENTRIES, both required, pure scratch, never shared across concurrent
+calls); the four sizing stamps are PER-ARTIFACT (`RX_RESUME_FRAME_SIZE`
+is 40 B on the email pattern and 24 elsewhere) and mirrored as
+`rx_info` fields — read them, never hardcode, and never divide by a
+stamped 0; a DFA artifact has the `_in` entries and ignores the
+descriptor. pcrecdev1 concurs with the separate-roster-entry reading of
+requirements 4.2; the record must carry the buffer sizes USED. Box:
+pcrecdev1 has three lanes up (-j4 builds, targeted suites), no heavy
+suite until a merge battery, and will message WINDOW-style before
+`make test`/mech/san — so a `[B8]` window is a request, not a given.
+Awaiting Frank on the queue order and the roster entry.

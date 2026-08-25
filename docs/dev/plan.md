@@ -51,8 +51,14 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   five deep subjects remain until a caller-provided frame buffer is used
   (pcrec D73). A `pcrec-auto-in` config (the `_in` entries with a sized
   buffer) is a SEPARATE ROSTER ENTRY per requirements 4.2 (a testee
-  triple, like nocaps), not a variant — added in this row if Frank
-  agrees, else queued.
+  triple, like nocaps), not a variant — pcrecdev1 concurs (outbox O-2,
+  answered); added in this row if Frank agrees, else queued. Its
+  contract is pcrec docs/spec/match_api.md §10 (the `rx_buffers`
+  descriptor; sizes read from the artifact's `<P>_*_FRAME_SIZE` stamps
+  or the `rx_info` sizing fields, NEVER hardcoded — they are
+  per-artifact; a stamped 0 means no buffers); the record carries the
+  `nframes`/`ntrail` USED (that number is the knob); exact-fit sizes for
+  the deep subjects in pcrec tests/recursion/run_frame_buffer.sh §2.
 - [B9] STATE:not-started — REPORTER FOLLOW-UPS from pcrecdev1's feedback
   (feedback_pcrecdev1_2026-08-25.md §1a/§1c/§2a) + the open OD-Bs:
   (1a) the artifact's strategy stamps (`RX_ENGINE`, `RX_ENGINE_WHY`,

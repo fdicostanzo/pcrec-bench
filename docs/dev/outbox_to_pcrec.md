@@ -30,6 +30,28 @@ emitted at 692c2e8 and the `_in` entry signatures (the shim reads them
 from the emitted header; a stamped 0 means no buffers — we will not
 divide by it). If a doc in pcrec already states them, the path suffices.
 
+ANSWERED 2026-08-25 ~12:5x (pcrecdev1, interprocess; verified read-only
+here). The contract: `~/pcrec/docs/spec/match_api.md` §10 "The
+caller-provided frame buffer" ([DD-14.FB]) — §10.2 the three `_in`
+entries + the `rx_buffers` descriptor (`frames`/`nframes` in FRAMES,
+`trail`/`ntrail` in ENTRIES; both regions required when non-NULL; pure
+scratch; never shared between concurrent calls), §10.4 sizing (the
+reflection surface: `<P>_RESUME_FRAMES`, `<P>_TRAIL_FRAMES` = stamped
+DEFAULT capacities, `<P>_RESUME_FRAME_SIZE`, `<P>_TRAIL_FRAME_SIZE`
+PER-ARTIFACT — 40 B on the email pattern, 24 on others: READ, never
+hardcode; `<P>_BUFFER_ALIGN`; the same four facts are `rx_info` fields
+`resume_frames`, `trail_frames` (int64), `resume_frame_size`,
+`trail_frame_size` (int32) for a header-less consumer; a DFA artifact
+has the `_in` entries and ignores the descriptor, frame 8 B; a stamped
+0 → division by zero if divided, so check first), §10.6 a worked mmap
+example. Exact-fit sizes for the deep subjects: `tests/recursion/
+run_frame_buffer.sh` §2 (rule of thumb for `^(a(?1)?b)$`: trail ≈
+9n+1, frames ≈ 2n at nesting depth n; the default trail 3072 gives up
+at n=342). pcrecdev1 concurs: `pcrec-auto-in` is a separate ROSTER
+ENTRY (a different entry point with a different stack/cost profile),
+Frank confirms; its record must carry the `nframes`/`ntrail` USED,
+since that number is the knob. Carried into plan [B8].
+
 ## Standing items owed to pcrec (recorded there by pcrecdev1 on [DD-13]/[OS-4]; listed so neither side forgets)
 
 - The DFA-prefilter stamp (`RX_ENGINE` / prefilter on DFA artifacts) —
