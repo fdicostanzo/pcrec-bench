@@ -31,6 +31,7 @@ import os
 import statistics
 import sys
 import traceback
+from collections import Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIXDIR = os.path.join(HERE, "fixtures")
@@ -125,6 +126,60 @@ def _args(**overrides):
     for k, v in overrides.items():
         setattr(args, k, v)
     return args
+
+
+# ------------------------------------------------- [B9] hand-built record helpers
+#
+# R1 (status), R2 (dedup/--all-records), R3 (tier, a schema v1.2 field the
+# validator this reporter shares does not know yet) and R8 (cross-pin) are
+# tested directly against `report.build_report`/`report.LoadedRecord`,
+# bypassing `schema/validate.py` entirely -- the same technique this file's
+# `_lazy_jit_derivation` test already uses for a case no fixture testee
+# exercises end-to-end. `tier` in particular CANNOT go through a real
+# fixture file yet: the schema's `setup` object is `additionalProperties:
+# false`, so a `tier` field the validator does not know about would be
+# REJECTED, never reaching the tier-exclusion logic under test (the [B9]
+# brief's own escape hatch: "keep that fixture out of the validator-checked
+# set and say so in the report" -- here, "out of the validator" entirely).
+
+def _mini_setup(testee_id, sb_id="rb-mini", sb_version="1.0", machine="m1",
+                 timestamp="2026-08-25T10:00:00Z", status="measured",
+                 status_detail=None, tier=None, record_id=None, subjects=None):
+    s = {
+        "kind": "setup",
+        "schema_version": "1.1",
+        "record_id": record_id or f"{sb_id}@{sb_version}__{testee_id}__{machine}",
+        "subbench": {"id": sb_id, "version": sb_version},
+        "testee": {"testee_id": testee_id},
+        "environment": {"machine_id": machine},
+        "run": {"timestamp": timestamp},
+        "status": status,
+    }
+    if status_detail is not None:
+        s["status_detail"] = status_detail
+    if tier is not None:
+        s["tier"] = tier
+    if subjects is not None:
+        s["subjects"] = subjects
+    return s
+
+
+def _mini_row(pattern_id, subject_id, regime, trial, seq, ns, iterations=1000, form=None):
+    row = {
+        "kind": "match", "pattern_id": pattern_id, "subject_id": subject_id,
+        "regime": regime, "trial": trial, "seq": seq,
+        "match_outcome": "matched-as-expected",
+        "timing": {"elapsed_ns": ns * iterations, "iterations": iterations,
+                   "bytes_processed": iterations},
+    }
+    if form:
+        row["form"] = form
+    return row
+
+
+def _mk_loaded(path, setup, rows):
+    return report.LoadedRecord(path=path, setup=setup, rows=rows, problems=[],
+                                schema_major=1, schema_minor=1)
 
 
 # ----------------------------------------------------------------------- tests
@@ -672,6 +727,322 @@ def test_deterministic_output():
     _check(md1 == md2, "rendering the same report twice must be byte-identical")
 
 
+def test_status_gate_r1():
+    """[B9] R1/OD-B14: a ranking row whose record `status` is not
+    `measured` is excluded from ranking by default (listed under its
+    table as 'not ranked: <testee> -- <status> (<excerpt>)'), and ranked
+    -- with its status shown -- under --include-unmeasured."""
+    setup_a = _mini_setup("engine-a_1.0.0_cfg-caps-simdna", status="measured")
+    setup_b = _mini_setup("engine-b_1.0.0_cfg-caps-simdna", status="inconclusive-load",
+                           status_detail="box was noisy during the run")
+    rows_a = [_mini_row("p1", "s1", "short-subject-search", t, t, 100) for t in (1, 2, 3)]
+    rows_b = [_mini_row("p1", "s1", "short-subject-search", t, t, 50) for t in (1, 2, 3)]
+    loaded = [_mk_loaded("a.jsonl", setup_a, rows_a), _mk_loaded("b.jsonl", setup_b, rows_b)]
+
+    args = _args(store="x", include_synthetic=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("`engine-a_1.0.0_cfg-caps-simdna` | measured |" in md,
+           f"the measured testee must appear ranked, with its status shown:\n{md}")
+    _check("not ranked: `engine-b_1.0.0_cfg-caps-simdna` — inconclusive-load "
+           "(box was noisy during the run)" in md,
+           f"expected a 'not ranked' line naming status and excerpt:\n{md}")
+    _check("`engine-b_1.0.0_cfg-caps-simdna` |" not in md,
+           "the inconclusive-load testee must not appear as a ranked ROW by default")
+
+    args2 = _args(store="x", include_synthetic=True, include_unmeasured=True)
+    rd2, err2 = report.build_report(loaded, args2)
+    _check(err2 is None, f"unexpected refusal: {err2}")
+    md2 = report.render_markdown(rd2)
+    _check("`engine-b_1.0.0_cfg-caps-simdna` | inconclusive-load |" in md2,
+           f"--include-unmeasured must rank the row with its status shown:\n{md2}")
+
+
+def test_duplicate_record_dedup_r2():
+    """[B9] R2/OD-B15: two records of one (subbench@version, testee_id,
+    machine) -- the NEWEST by run.timestamp ranks by default (the older
+    superseded, named in the header, never pooled); --all-records shows
+    each record as its own row, its testee id suffixed by timestamp."""
+    setup_old = _mini_setup("engine-c_1.0.0_cfg-caps-simdna",
+                             timestamp="2026-08-25T09:00:00Z", record_id="rec-old")
+    setup_new = _mini_setup("engine-c_1.0.0_cfg-caps-simdna",
+                             timestamp="2026-08-25T11:00:00Z", record_id="rec-new")
+    rows_old = [_mini_row("p1", "s1", "short-subject-search", t, t, 999) for t in (1, 2, 3)]
+    rows_new = [_mini_row("p1", "s1", "short-subject-search", t, t, 100) for t in (1, 2, 3)]
+    loaded = [_mk_loaded("old.jsonl", setup_old, rows_old), _mk_loaded("new.jsonl", setup_new, rows_new)]
+
+    args = _args(store="x", include_synthetic=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    _check([rid for rid, _p in rd.included] == ["rec-new"],
+           f"only the newest record should be included, got {rd.included}")
+    _check(rd.superseded == [("rec-new", ["rec-old"])],
+           f"expected rec-old superseded by rec-new, got {rd.superseded}")
+    md = report.render_markdown(rd)
+    _check("`rec-old` superseded by `rec-new`" in md, f"the header must name the superseded record:\n{md}")
+    key = next(k for k in rd.set_cells if k[1] == "engine-c_1.0.0_cfg-caps-simdna")
+    _tid, red = rd.set_cells[key]
+    _check(red.median_ns == 100.0,
+           f"the reduction must come from the NEWEST record ONLY (100.0), not pooled "
+           f"with the superseded record (999.0) -- got {red.median_ns}")
+
+    args_all = _args(store="x", include_synthetic=True, all_records=True)
+    rd_all, err_all = report.build_report(loaded, args_all)
+    _check(err_all is None, f"unexpected refusal: {err_all}")
+    _check(sorted(rid for rid, _p in rd_all.included) == ["rec-new", "rec-old"],
+           f"--all-records must include both records, got {rd_all.included}")
+    testees_present = {k[1] for k in rd_all.set_cells}
+    _check(testees_present == {"engine-c_1.0.0_cfg-caps-simdna@20260825T090000Z",
+                                "engine-c_1.0.0_cfg-caps-simdna@20260825T110000Z"},
+           f"--all-records must suffix each record's testee id by its timestamp, got {testees_present}")
+
+
+def test_scratch_tier_gate_r3():
+    """[B9] R3: the optional schema v1.2 `tier` field (absent = `pinned`)
+    -- a `scratch` row is excluded from ranking by default (listed as
+    'scratch: <testee>'), and ranked -- with a `tier` column -- under
+    --include-scratch."""
+    setup_pinned = _mini_setup("engine-d_1.0.0_cfg-caps-simdna", status="measured")
+    setup_scratch = _mini_setup("engine-e_1.0.0_cfg-caps-simdna", status="measured", tier="scratch")
+    rows_p = [_mini_row("p1", "s1", "short-subject-search", t, t, 100) for t in (1, 2, 3)]
+    rows_s = [_mini_row("p1", "s1", "short-subject-search", t, t, 50) for t in (1, 2, 3)]
+    loaded = [_mk_loaded("d.jsonl", setup_pinned, rows_p), _mk_loaded("e.jsonl", setup_scratch, rows_s)]
+
+    args = _args(store="x", include_synthetic=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("scratch: `engine-e_1.0.0_cfg-caps-simdna` (tier=scratch)" in md,
+           f"expected a scratch exclusion line:\n{md}")
+    _check("`engine-e_1.0.0_cfg-caps-simdna` |" not in md,
+           "the scratch-tier testee must not appear as a ranked row by default")
+
+    args2 = _args(store="x", include_synthetic=True, include_scratch=True)
+    rd2, err2 = report.build_report(loaded, args2)
+    _check(err2 is None, f"unexpected refusal: {err2}")
+    md2 = report.render_markdown(rd2)
+    _check("| tier |" in md2, f"the tier column must appear under --include-scratch:\n{md2}")
+    _check("scratch |" in md2, "the scratch row's tier value must be shown as a column")
+
+
+def test_form_fact_and_mixed_regime_note_r4():
+    """[B9] R4: `fact` restates `form` ('separate artifact' /
+    'same program'); a ranking table whose rankable rows mix both facts
+    (pcrec's whole-subject p-digits compliance row beside libpcre2's
+    plain one, this suite's existing fixture) carries the 'regime
+    artifact' note under its title."""
+    _check(report._form_fact("whole-subject") == "separate artifact",
+           "whole-subject must be a separate artifact")
+    _check(report._form_fact("plain") == "same program", "plain must be the same program")
+    _check(report._form_fact(None) == "same program", "an absent form means plain, i.e. same program")
+
+    loaded, _paths, _source = _load_store(STORE)
+    args = _args(store=STORE, include_synthetic=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    section = md.split("`p-digits` / `match-compliance`")[1].split("###")[0]
+    _check("same program" in section and "separate artifact" in section,
+           f"the fact column must show both values in a mixed-form ranking group:\n{section}")
+    _check("rows compare different programs answering the same regime" in section,
+           f"a table mixing forms must carry the regime-artifact note:\n{section}")
+
+
+def test_two_ratio_columns_r5():
+    """[B9] R5: two ratio columns, `vs baseline` (named in the table
+    TITLE) and `vs best` (the best measured row = 1.000x)."""
+    loaded, _paths, _source = _load_store(STORE)
+    args = _args(store=STORE, include_synthetic=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("| vs baseline | vs best |" in md, f"expected two ratio columns:\n{md[:2000]}")
+    _check("baseline: libpcre2 engine_mode=interp" in md,
+           "the baseline testee must be named in the table title")
+    section = md.split("`p-digits` / `match-compliance`")[1].split("###")[0]
+    first_row_line = next(l for l in section.split("\n") if l.startswith("| 1 |"))
+    cells = [c.strip() for c in first_row_line.strip("|").split("|")]
+    _check(cells[-1] == "1.000x", f"rank 1's 'vs best' ratio must be 1.000x, got {cells[-1]!r}")
+
+
+def test_near_floor_columns_r6():
+    """[B9] R6: short-subject-search tables (SET grain) always carry
+    `n subjects` and `per-subject mean ns`, plus a floor note; no floor
+    field exists in the schema yet, so the note says so honestly."""
+    loaded, _paths, _source = _load_store(STORE)
+    args = _args(store=STORE, include_synthetic=True)  # grain='set'
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    section = md.split("`p-digits` / `short-subject-search`")[1].split("###")[0]
+    _check("n subjects" in section and "per-subject mean ns" in section,
+           f"short-subject-search tables must always carry n subjects + per-subject mean:\n{section}")
+    _check("floor: n/a" in section, f"a floor note must follow a short-subject-search table:\n{section}")
+
+
+def test_gave_up_cell_summary_r7():
+    """[B9] R7/OD-B11: a set cell's give-ups shown by CODE, counted in
+    SUBJECTS not trials, with the smallest firing subject named --
+    `_extract_diagnostic_code` and `_gave_up_cell_summary` directly,
+    then the existing fixture's single gave-up subject end-to-end."""
+    _check(report._extract_diagnostic_code(
+               "the engine gave up rather than answering: giveup:-4:PCREC_ERR_WORK")
+           == "PCREC_ERR_WORK", "expected PCREC_ERR_WORK extracted")
+    _check(report._extract_diagnostic_code(
+               "pcre2: PCRE2_ERROR_MATCHLIMIT (match limit exceeded) -- FIXTURE")
+           == "PCRE2_ERROR_MATCHLIMIT",
+           "a trailing all-caps WORD with no underscore (FIXTURE) must not be mistaken for the code")
+    _check(report._extract_diagnostic_code(None) is None, "no diagnostic -> no code")
+
+    def _mkc(n_gave_up, code):
+        codes = Counter({code: n_gave_up}) if n_gave_up else Counter()
+        return report.MatchCellReduction(
+            n_trials=n_gave_up, n_timed=0, median_ns=None, min_ns=None, max_ns=None,
+            stddev_ns=None, iters=[], outcome_counts={"gave-up": n_gave_up} if n_gave_up else {},
+            pass_rate=0.0, n_gave_up=n_gave_up, n_wrong=0, gave_up_codes=codes)
+
+    failing_detail = {
+        "big": _mkc(3, "PCREC_ERR_STEPS"),
+        "small": _mkc(3, "PCREC_ERR_STEPS"),
+        "other": _mkc(3, "PCREC_ERR_FRAMES"),
+    }
+    subject_bytes = {"big": 1000, "small": 5, "other": 50}
+    summary = report._gave_up_cell_summary(failing_detail, subject_bytes)
+    _check(summary == "PCREC_ERR_FRAMES×1 (smallest: other, 50 B); PCREC_ERR_STEPS×2 (smallest: small, 5 B)",
+           f"unexpected gave-up summary: {summary!r}")
+    _check(report._gave_up_cell_summary({}, {}) == "0", "no gave-ups -> '0'")
+
+    loaded, _paths, _source = _load_store(STORE)
+    args = _args(store=STORE, include_synthetic=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    excl = md.split("Excluded from ranking")[1].split("## Compile cost")[0]
+    _check("PCRE2_ERROR_MATCHLIMIT×1 (smallest: s-give-up-1, 3 B)" in excl,
+           f"expected the fixture's gave-up subject formatted by R7's rule:\n{excl}")
+
+
+def test_cross_pin_delta_r8():
+    """[B9] R8: a cross-pin pair (same engine+config, different
+    version_slug) gets a computed Δ verdict and a worst-subject note; a
+    cell excluded at the previous pin and ranked now says
+    'now measured (was: <reason>)'."""
+    _check(report._parse_testee_config("pcrec_692c2e8_auto-caps-simdna")
+           == ("pcrec", "692c2e8", "auto-caps-simdna"), "expected engine/version/config split")
+    _check(report._parse_testee_config("pcrec_692c2e8_auto-caps-simdna@20260825T175131Z")
+           == ("pcrec", "692c2e8", "auto-caps-simdna"),
+           "an --all-records date suffix must be stripped before parsing")
+    _check(report._parse_testee_config("weird") is None,
+           "a testee id with fewer than 3 underscore segments has no config to parse")
+
+    _check(report._cross_pin_verdict(100.0, 1.0, 100.5, 1.0) == "unchanged (within spread)",
+           "a small difference within 2x the larger stddev must read as unchanged")
+    _check(report._cross_pin_verdict(100.0, 1.0, 50.0, 1.0) == "faster ×2.00", "half the time -> faster x2.00")
+    _check(report._cross_pin_verdict(50.0, 1.0, 100.0, 1.0) == "slower ×2.00", "double the time -> slower x2.00")
+
+    setup_old = _mini_setup("pcrec_AAAAAAA_vm-caps-simdna",
+                             timestamp="2026-08-25T09:00:00Z", record_id="rec-old8")
+    setup_new = _mini_setup("pcrec_BBBBBBB_vm-caps-simdna",
+                             timestamp="2026-08-25T11:00:00Z", record_id="rec-new8")
+    rows_old = [_mini_row("p1", "s1", "short-subject-search", t, t, 100) for t in (1, 2, 3)]
+    rows_new = [_mini_row("p1", "s1", "short-subject-search", t, t, 40) for t in (1, 2, 3)]
+    loaded = [_mk_loaded("old8.jsonl", setup_old, rows_old), _mk_loaded("new8.jsonl", setup_new, rows_new)]
+    args = _args(store="x", include_synthetic=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("Δ vs previous version" in md, f"expected a delta column:\n{md}")
+    _check("faster ×2.50" in md, f"100ns -> 40ns is a 2.5x speedup:\n{md}")
+    _check("Δ detail: `pcrec_BBBBBBB_vm-caps-simdna` vs previous `pcrec_AAAAAAA_vm-caps-simdna`" in md,
+           f"expected a worst-subject Δ detail line:\n{md}")
+
+    # a same-VERSION pair (e.g. two --all-records rows of one identical pin)
+    # must NOT be treated as a cross-pin pair.
+    same_version = report._parse_testee_config("pcrec_AAAAAAA_vm-caps-simdna@20260825T090000Z")
+    _check(same_version == ("pcrec", "AAAAAAA", "vm-caps-simdna"), same_version)
+
+    # 'now measured (was: <reason>)': the OLD pin's cell was expectation-failing
+    # (a wrong answer), the NEW pin's cell passes.
+    setup_old2 = _mini_setup("pcrec_CCCCCCC_vm-caps-simdna",
+                              timestamp="2026-08-25T09:00:00Z", record_id="rec-old8b")
+    setup_new2 = _mini_setup("pcrec_DDDDDDD_vm-caps-simdna",
+                              timestamp="2026-08-25T11:00:00Z", record_id="rec-new8b")
+    row_old_wrong = {"kind": "match", "pattern_id": "p2", "subject_id": "s1",
+                      "regime": "short-subject-search", "trial": 1, "seq": 1,
+                      "match_outcome": "did-not-match-as-expected"}
+    rows_new2 = [_mini_row("p2", "s1", "short-subject-search", t, t, 40) for t in (1, 2, 3)]
+    loaded2 = [_mk_loaded("old8b.jsonl", setup_old2, [row_old_wrong]),
+               _mk_loaded("new8b.jsonl", setup_new2, rows_new2)]
+    rd2, err2 = report.build_report(loaded2, args)
+    _check(err2 is None, f"unexpected refusal: {err2}")
+    md2 = report.render_markdown(rd2)
+    _check("now measured (was: wrong)" in md2, f"expected the 'now measured' verdict:\n{md2}")
+
+
+def test_mechanism_stamp_columns_r9():
+    """[B9] R9: pcrec compile-cost stamp columns, read ONLY from
+    `engine_metadata` -- a DFA row states the no-stamp fact rather than
+    a blank; `entry` is derived from buffer-pair presence; the compile
+    table splits by phase and flags timer jitter."""
+    dfa_stamp = report._mechanism_stamp_columns({"engine": "dfa", "ncaps": 1})
+    _check(dfa_stamp["engine"] == "dfa", "engine must be read from engine_metadata")
+    _check(dfa_stamp["prefilter"] == "(no stamp — pcrec I-3)",
+           f"a DFA row must state the no-stamp fact, got {dfa_stamp['prefilter']!r}")
+    _check(dfa_stamp["entry"] == "plain entry", "no buffer pair -> plain entry")
+
+    vm_stamp = report._mechanism_stamp_columns({
+        "engine": "vm", "prefilter": "hybrid",
+        "vm_rungs": ["PCREC_VM_RUNG_CURSOR", "PCREC_VM_RUNG_REVDET"],
+        "buffer_frames": 32768, "buffer_trail": 131072, "resume_frame_size": 24})
+    _check(vm_stamp["entry"] == "_in", "a buffer-capacity pair present -> the _in entry")
+    _check(vm_stamp["prefilter"] == "hybrid", "a VM row's declared prefilter must pass through")
+    _check(vm_stamp["vm_rungs"] == "PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_REVDET",
+           f"expected bit names joined by |, got {vm_stamp['vm_rungs']!r}")
+    _check(vm_stamp["buffer_frames"] == 32768 and vm_stamp["resume_frame_size"] == 24,
+           "buffer_frames/resume_frame_size must pass through")
+
+    vm_no_buffers = report._mechanism_stamp_columns({"engine": "vm", "prefilter": "none"})
+    _check(vm_no_buffers["entry"] == "plain entry", "no buffer pair on a VM row -> plain entry too")
+    _check(vm_no_buffers["vm_rungs"] == "-", "no vm_rungs declared -> '-'")
+
+    _check(report._jitter_flag(100.0, 50.0) == "", "stddev below median -> no jitter flag")
+    _check(report._jitter_flag(100.0, 150.0) == "timer jitter", "stddev above median -> the jitter flag")
+    _check(report._jitter_flag(None, 1.0) == "", "no median -> no flag (nothing to compare)")
+
+    loaded, _paths, _source = _load_store(STORE)
+    args = _args(store=STORE, include_synthetic=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    compiled = md.split("### `compiled-aot`")[1].split("### `")[0]
+    _check("engine" in compiled and "entry" in compiled and "vm_rungs" in compiled,
+           f"the compiled-aot table must carry the mechanism-stamp columns:\n{compiled[:800]}")
+    _check("emit-c ns" in compiled and "gcc ns" in compiled and "load ns" in compiled,
+           "the compiled-aot table must carry the phase-split columns")
+    interp = md.split("### `interpretive`")[1]
+    _check("vm_rungs" not in interp,
+           "a non-pcrec compile class must NOT carry the pcrec-only stamp columns")
+
+
+def test_subbench_dir_alias_od_b13():
+    """OD-B13: `--subbench` accepts the sub-bench DIRECTORY name
+    (`email`) as well as the sidecar id (`email-specimen`), resolved via
+    `bench/<dir>/subbench.toml`'s own `id` field."""
+    resolved, note = report.resolve_subbench_arg("email", report.REPO_ROOT)
+    _check(resolved == "email-specimen", f"expected 'email' resolved to 'email-specimen', got {resolved!r}")
+    _check(note is not None and "email-specimen" in note and "'email'" in note,
+           f"expected an alias note, got {note!r}")
+
+    resolved2, note2 = report.resolve_subbench_arg("email-specimen", report.REPO_ROOT)
+    _check(resolved2 == "email-specimen", "an already-sidecar id must pass through unchanged")
+    _check(note2 is None, "no alias note when the value was already the sidecar id")
+
+    resolved3, note3 = report.resolve_subbench_arg("nonexistent-dir", report.REPO_ROOT)
+    _check(resolved3 == "nonexistent-dir", "an unknown directory name must pass through unchanged")
+    _check(note3 is None, "no alias note for an unresolved value")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -693,6 +1064,16 @@ TESTS = [
     test_invalid_record_is_dropped_with_a_message,
     test_markdown_and_tsv_render_without_error,
     test_deterministic_output,
+    test_status_gate_r1,
+    test_duplicate_record_dedup_r2,
+    test_scratch_tier_gate_r3,
+    test_form_fact_and_mixed_regime_note_r4,
+    test_two_ratio_columns_r5,
+    test_near_floor_columns_r6,
+    test_gave_up_cell_summary_r7,
+    test_cross_pin_delta_r8,
+    test_mechanism_stamp_columns_r9,
+    test_subbench_dir_alias_od_b13,
 ]
 
 
