@@ -1,0 +1,482 @@
+#!/usr/bin/env python3
+"""validate.py -- the pcrec-bench record validator, shared by the harness and
+the reporter (requirements.md 6: "a tiny validator the reporter shares").
+
+It checks two things a record must satisfy:
+
+  * every LINE against its kind's JSON Schema (schema/record.schema.json),
+    line 1 as the setup layer and every later line as a result row; and
+  * the CROSS-LINE rules a schema cannot express -- X1..X17 in
+    docs/design/record_schema.md 9: derived identifiers, the content hash,
+    roster references, dense trial numbering, the compile-cost class, the
+    "no timing on a cell that did not compile or did not agree with its
+    expectation" rule, engine_metadata declarations, and the record-status
+    gates.
+
+Every message names the FILE, the 1-based LINE and the field path.
+
+Usage:
+    validate.py FILE...                 validate; exit 0 if all are valid
+    validate.py --expect-reject FILE... exit 0 only if EVERY file is REJECTED
+                                        (the positive controls in
+                                        schema/examples/bad/)
+    validate.py --check-filename FILE...  additionally enforce X4: the file's
+                                        basename is <record_id>.jsonl
+    validate.py --allow-mixed-versions FILE...  suppress X17
+    validate.py --print-hash FILE       print the content hash the file's
+                                        bytes imply (X6's expected value) and
+                                        exit; for restamping an edited example
+
+Requires python3 + jsonschema (4.19 on this box). Deliberately no other
+dependency: it runs anywhere a record is read.
+"""
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import sys
+
+try:
+    from jsonschema import Draft202012Validator
+except ImportError:  # pragma: no cover - environment problem, not a record problem
+    print("validate.py: the `jsonschema` package is required (4.19 on this box)",
+          file=sys.stderr)
+    sys.exit(2)
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+SCHEMA_PATH = os.path.join(HERE, "record.schema.json")
+
+ROW_KINDS = ("match", "compile")
+RESERVED_KINDS = {
+    "match-list": "reserved for the list-valued scan regime (OD-B3); "
+                  "no shape is defined yet",
+}
+SIMD_SLUG = {"on": "simd", "off": "nosimd", "n-a": "simdna"}
+
+
+class Problem:
+    __slots__ = ("path", "line", "field", "msg", "rule")
+
+    def __init__(self, path, line, field, msg, rule=""):
+        self.path, self.line, self.field, self.msg, self.rule = \
+            path, line, field, msg, rule
+
+    def __str__(self):
+        where = f"{self.path}:{self.line}"
+        field = f": {self.field}" if self.field else ""
+        rule = f" [{self.rule}]" if self.rule else ""
+        return f"{where}{field}: {self.msg}{rule}"
+
+
+# ---------------------------------------------------------------- the hash
+
+def compute_content_hash(setup_obj, row_lines):
+    """docs/design/record_schema.md 3. Line 1 canonicalised WITHOUT its own
+    `content_hash` member (that is what breaks the circularity), then each row
+    line's text as written with trailing whitespace stripped, joined by \\n."""
+    stripped = {k: v for k, v in setup_obj.items() if k != "content_hash"}
+    canon = json.dumps(stripped, sort_keys=True, separators=(",", ":"),
+                       ensure_ascii=False)
+    parts = [canon] + [ln.rstrip() for ln in row_lines]
+    return hashlib.sha256("\n".join(parts).encode("utf-8")).hexdigest()
+
+
+# ------------------------------------------------------- derived identifiers
+
+def derive_testee_id(t):
+    """docs/design/record_schema.md 6.4."""
+    version_slug = re.sub(r"[^a-z0-9.]", "-", str(t.get("engine_version", "")).lower())
+    caps = "caps" if t.get("captures") == "on" else "nocaps"
+    simd = SIMD_SLUG.get(t.get("simd"), "?")
+    tid = f"{t.get('engine_name')}_{version_slug}_{t.get('engine_mode')}-{caps}-{simd}"
+    if t.get("config_extra"):
+        tid += "_" + t["config_extra"]
+    return tid
+
+
+def derive_record_id(setup):
+    """docs/design/record_schema.md 3, without the -<n> disambiguator (which is
+    assigned at write time and is accepted as a suffix)."""
+    sb = setup.get("subbench", {})
+    stamp = str(setup.get("run", {}).get("timestamp", "")).replace("-", "").replace(":", "")
+    return (f"{sb.get('id')}@{sb.get('version')}"
+            f"__{setup.get('testee', {}).get('testee_id')}"
+            f"__{setup.get('environment', {}).get('machine_id')}"
+            f"__{stamp}")
+
+
+# ---------------------------------------------------------------- the checks
+
+class RecordValidator:
+    def __init__(self, schema):
+        self.schema = schema
+        self.schema_version = schema.get("x-record-schema-version", "1.0")
+        base = {"$schema": schema["$schema"], "$defs": schema["$defs"]}
+        self.by_kind = {
+            "setup": Draft202012Validator(dict(base, **{"$ref": "#/$defs/setup"})),
+            "match": Draft202012Validator(dict(base, **{"$ref": "#/$defs/match_row"})),
+            "compile": Draft202012Validator(dict(base, **{"$ref": "#/$defs/compile_row"})),
+        }
+
+    # -- one file ---------------------------------------------------------
+    def validate_file(self, path, check_filename=False):
+        problems = []
+        try:
+            with open(path, encoding="utf-8") as fh:
+                raw = fh.read().split("\n")
+        except OSError as exc:
+            return [Problem(path, 0, "", f"cannot read: {exc}")], None
+        # A trailing newline produces a final empty element; that is not a line.
+        while raw and raw[-1] == "":
+            raw.pop()
+        if not raw:
+            return [Problem(path, 0, "", "empty file: a record has at least a "
+                                         "setup line", "X1")], None
+
+        objs = []
+        for n, text in enumerate(raw, start=1):
+            if text.strip() == "":
+                problems.append(Problem(path, n, "", "blank line: JSONL has no "
+                                                     "blank lines"))
+                objs.append(None)
+                continue
+            try:
+                obj = json.loads(text)
+            except json.JSONDecodeError as exc:
+                problems.append(Problem(path, n, "", f"not valid JSON: {exc.msg} "
+                                                     f"(col {exc.colno})"))
+                objs.append(None)
+                continue
+            if not isinstance(obj, dict):
+                problems.append(Problem(path, n, "", "each line must be a JSON "
+                                                     "object"))
+                objs.append(None)
+                continue
+            objs.append(obj)
+
+        # X1 / X2: line kinds.
+        setup = None
+        rows = []
+        for n, obj in enumerate(objs, start=1):
+            if obj is None:
+                continue
+            kind = obj.get("kind")
+            if kind in RESERVED_KINDS:
+                problems.append(Problem(path, n, "kind",
+                                        f"`{kind}` is RESERVED: {RESERVED_KINDS[kind]}",
+                                        "X2"))
+                continue
+            if n == 1:
+                if kind != "setup":
+                    problems.append(Problem(path, 1, "kind",
+                                            f"line 1 must be the setup layer, "
+                                            f"found kind={kind!r}", "X1"))
+                    continue
+                setup = obj
+                continue
+            if kind == "setup":
+                problems.append(Problem(path, n, "kind",
+                                        "a second setup line: two records have "
+                                        "been concatenated into one file", "X1"))
+                continue
+            if kind not in ROW_KINDS:
+                problems.append(Problem(path, n, "kind",
+                                        f"unknown row kind {kind!r}; known kinds "
+                                        f"are {', '.join(ROW_KINDS)}", "X2"))
+                continue
+            rows.append((n, obj))
+
+        # Per-line schema validation.
+        for n, obj in enumerate(objs, start=1):
+            if obj is None:
+                continue
+            kind = obj.get("kind")
+            v = self.by_kind.get(kind)
+            if v is None:
+                continue  # already reported by the kind pass
+            for err in sorted(v.iter_errors(obj), key=lambda e: list(e.absolute_path)):
+                field = ".".join(str(p) for p in err.absolute_path) or "(document)"
+                problems.append(Problem(path, n, field, err.message))
+
+        if setup is None:
+            return problems, None
+
+        problems.extend(self._cross_line(path, setup, rows, raw, check_filename))
+        return problems, setup.get("schema_version")
+
+    # -- the cross-line rules --------------------------------------------
+    def _cross_line(self, path, setup, rows, raw, check_filename):
+        p = []
+        add = p.append
+
+        # schema version this validator implements
+        sv = str(setup.get("schema_version", ""))
+        if re.match(r"^\d+\.\d+$", sv):
+            f_major, f_minor = (int(x) for x in sv.split("."))
+            o_major, o_minor = (int(x) for x in self.schema_version.split("."))
+            if f_major != o_major:
+                add(Problem(path, 1, "schema_version",
+                            f"major version {sv} but this validator implements "
+                            f"{self.schema_version}; a major boundary needs a "
+                            f"declared migration", "X17"))
+            elif f_minor > o_minor:
+                add(Problem(path, 1, "schema_version",
+                            f"{sv} was written by a newer schema minor than this "
+                            f"validator ({self.schema_version}); upgrade the "
+                            f"validator rather than reading it half-blind", "X17"))
+
+        # X3 record_id
+        want = derive_record_id(setup)
+        got = str(setup.get("record_id", ""))
+        if got != want and not re.match(r"^" + re.escape(want) + r"-\d+$", got):
+            add(Problem(path, 1, "record_id",
+                        f"is {got!r} but the record's own fields derive "
+                        f"{want!r} (optionally + '-<n>')", "X3"))
+
+        # X4 file name
+        if check_filename:
+            base = os.path.basename(path)
+            if base != got + ".jsonl":
+                add(Problem(path, 1, "record_id",
+                            f"file is named {base!r} but the record id requires "
+                            f"{got + '.jsonl'!r}", "X4"))
+
+        # X5 testee_id
+        testee = setup.get("testee", {})
+        want_t = derive_testee_id(testee)
+        if testee.get("testee_id") != want_t:
+            add(Problem(path, 1, "testee.testee_id",
+                        f"is {testee.get('testee_id')!r} but the testee's own "
+                        f"fields derive {want_t!r}", "X5"))
+
+        # X6 content hash
+        stored = setup.get("content_hash", {})
+        if isinstance(stored, dict) and stored.get("algorithm") == "sha256":
+            want_h = compute_content_hash(setup, raw[1:])
+            if stored.get("value") != want_h:
+                add(Problem(path, 1, "content_hash.value",
+                            f"is {stored.get('value')} but the file's bytes hash "
+                            f"to {want_h} (edited, truncated or restamped?)",
+                            "X6"))
+
+        # X16 lazy-jit warm-up
+        if testee.get("execution_model") == "lazy-jit" and \
+                int(testee.get("warmup_trials", 0)) < 1:
+            add(Problem(path, 1, "testee.warmup_trials",
+                        "a lazy-JIT testee pays its compile cost inside trial 1, "
+                        "so at least one warm-up trial must be declared", "X16"))
+
+        # rosters
+        pat_ids = {e.get("pattern_id") for e in setup.get("patterns", [])}
+        subj_ids = {e.get("subject_id") for e in setup.get("subjects", [])}
+        regimes = set(setup.get("subbench", {}).get("regimes", []))
+        decl = testee.get("engine_metadata_declaration", {}) or {}
+        phases = list(testee.get("compile_phases", []) or [])
+
+        compiled_ok = {}          # pattern_id -> every compile row says `compiled`
+        seen_compile = {}         # pattern_id -> set of trials
+        seen_match = {}           # (pattern, subject, regime) -> set of trials
+
+        for n, row in rows:
+            kind = row["kind"]
+            pid = row.get("pattern_id")
+            # X7
+            if pid not in pat_ids:
+                add(Problem(path, n, "pattern_id",
+                            f"{pid!r} is not in setup.patterns[]", "X7"))
+            if kind == "match":
+                sid = row.get("subject_id")
+                if sid not in subj_ids:
+                    add(Problem(path, n, "subject_id",
+                                f"{sid!r} is not in setup.subjects[]", "X7"))
+                # X8
+                if row.get("regime") not in regimes:
+                    add(Problem(path, n, "regime",
+                                f"{row.get('regime')!r} is not among the "
+                                f"sub-bench's declared regimes "
+                                f"{sorted(regimes)}", "X8"))
+                key = (pid, sid, row.get("regime"))
+                seen_match.setdefault(key, {}).setdefault(row.get("trial"), []).append(n)
+            else:
+                seen_compile.setdefault(pid, {}).setdefault(row.get("trial"), []).append(n)
+                # X10
+                if row.get("cost_class") != testee.get("execution_model"):
+                    add(Problem(path, n, "cost_class",
+                                f"is {row.get('cost_class')!r} but the testee's "
+                                f"execution_model is "
+                                f"{testee.get('execution_model')!r}", "X10"))
+                # X12
+                got_phases = [ph.get("name") for ph in
+                              (row.get("cost", {}) or {}).get("phases", [])]
+                if got_phases and got_phases != phases:
+                    add(Problem(path, n, "cost.phases",
+                                f"names/order {got_phases} do not equal the "
+                                f"testee's declared compile_phases {phases}",
+                                "X12"))
+                ok = row.get("compile_outcome") == "compiled"
+                compiled_ok[pid] = compiled_ok.get(pid, True) and ok
+            # X15
+            for name, value in (row.get("engine_metadata") or {}).items():
+                self._check_metadata(add, path, n, name, value, decl, kind)
+
+        # X9 dense trial numbering
+        for pid, trials in seen_compile.items():
+            self._check_trials(add, path, trials, f"compile rows for pattern {pid!r}")
+        for (pid, sid, reg), trials in seen_match.items():
+            self._check_trials(add, path, trials,
+                               f"match rows for ({pid!r}, {sid!r}, {reg!r})")
+
+        # X11 no timing on an uncompiled or expectation-disagreeing cell
+        for n, row in rows:
+            if row["kind"] != "match" or "timing" not in row:
+                continue
+            pid = row.get("pattern_id")
+            if not compiled_ok.get(pid, False):
+                add(Problem(path, n, "timing",
+                            f"pattern {pid!r} did not compile cleanly in this "
+                            f"record, so this cell must not be timed", "X11"))
+            if row.get("match_outcome") != "matched-as-expected":
+                add(Problem(path, n, "timing",
+                            f"match_outcome is {row.get('match_outcome')!r}: a "
+                            f"timing for a wrong answer is worse than no timing",
+                            "X11"))
+
+        # X13 / X14 the record-status gates
+        env = setup.get("environment", {})
+        if setup.get("status") == "measured":
+            if env.get("load", {}).get("verdict") != "quiet":
+                add(Problem(path, 1, "status",
+                            "is `measured` but environment.load.verdict is not "
+                            "`quiet`; a load-compromised record is "
+                            "`inconclusive-load`", "X13"))
+            if env.get("occupancy", {}).get("verdict") == "fail":
+                add(Problem(path, 1, "status",
+                            "is `measured` but the per-core occupancy check "
+                            "FAILED", "X13"))
+            missing = sorted(x for x in pat_ids if x not in seen_compile)
+            if missing:
+                add(Problem(path, 1, "status",
+                            f"is `measured` but patterns {missing} have no "
+                            f"compile row; a record that stopped halfway is "
+                            f"`harness-failure`", "X14"))
+        return p
+
+    @staticmethod
+    def _check_trials(add, path, trials, what):
+        for t, lines in sorted(trials.items()):
+            if len(lines) > 1:
+                add(Problem(path, lines[1], "trial",
+                            f"trial {t} of the {what} appears {len(lines)} times "
+                            f"(also on line {lines[0]})", "X9"))
+        nums = sorted(trials)
+        if nums != list(range(1, len(nums) + 1)):
+            first = min(trials[nums[0]]) if nums else 0
+            add(Problem(path, first, "trial",
+                        f"the {what} have trials {nums}; they must be a dense "
+                        f"1..N", "X9"))
+
+    @staticmethod
+    def _check_metadata(add, path, n, name, value, decl, kind):
+        d = decl.get(name)
+        field = f"engine_metadata.{name}"
+        if d is None:
+            add(Problem(path, n, field,
+                        "is not declared in "
+                        "setup.testee.engine_metadata_declaration; an "
+                        "undeclared pair is free text and is not filterable",
+                        "X15"))
+            return
+        want_scope = "match" if kind == "match" else "pattern"
+        if d.get("scope") != want_scope:
+            add(Problem(path, n, field,
+                        f"is declared with scope {d.get('scope')!r} but appears "
+                        f"on a {kind} row (scope {want_scope!r})", "X15"))
+        t = d.get("type")
+        if t == "integer" and not isinstance(value, int):
+            add(Problem(path, n, field, f"declared `integer`, got {value!r}", "X15"))
+        elif t == "string" and not isinstance(value, str):
+            add(Problem(path, n, field, f"declared `string`, got {value!r}", "X15"))
+        elif t == "enum":
+            if not isinstance(value, str) or value not in (d.get("values") or []):
+                add(Problem(path, n, field,
+                            f"{value!r} is not one of the declared values "
+                            f"{d.get('values')}", "X15"))
+        elif t == "mask":
+            if not isinstance(value, list):
+                add(Problem(path, n, field,
+                            "declared `mask`, whose value is an ARRAY of set bit "
+                            "names (never the integer)", "X15"))
+            else:
+                unknown = [b for b in value if b not in (d.get("bits") or [])]
+                if unknown:
+                    add(Problem(path, n, field,
+                                f"bits {unknown} are not among the declared bits "
+                                f"{d.get('bits')}", "X15"))
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description="validate pcrec-bench record files")
+    ap.add_argument("files", nargs="+")
+    ap.add_argument("--expect-reject", action="store_true",
+                    help="exit 0 only if EVERY file is rejected (positive controls)")
+    ap.add_argument("--check-filename", action="store_true",
+                    help="also enforce X4: basename == <record_id>.jsonl")
+    ap.add_argument("--allow-mixed-versions", action="store_true",
+                    help="suppress X17 across the files given")
+    ap.add_argument("--print-hash", action="store_true",
+                    help="print the content hash the file's bytes imply, and exit")
+    args = ap.parse_args(argv)
+
+    schema = json.load(open(SCHEMA_PATH, encoding="utf-8"))
+
+    if args.print_hash:
+        for path in args.files:
+            with open(path, encoding="utf-8") as fh:
+                lines = fh.read().split("\n")
+            while lines and lines[-1] == "":
+                lines.pop()
+            print(f"{path}\t{compute_content_hash(json.loads(lines[0]), lines[1:])}")
+        return 0
+
+    rv = RecordValidator(schema)
+    versions = {}
+    rejected = accepted = 0
+    for path in args.files:
+        problems, sv = rv.validate_file(path, check_filename=args.check_filename)
+        if sv:
+            versions.setdefault(sv.split(".")[0], []).append(path)
+        if problems:
+            rejected += 1
+            if not args.expect_reject:
+                for pr in problems:
+                    print(f"validate.py: {pr}", file=sys.stderr)
+            else:
+                print(f"validate.py: REJECTED (as expected) {path}: "
+                      f"{len(problems)} problem(s); first: {problems[0]}")
+        else:
+            accepted += 1
+            if not args.expect_reject:
+                print(f"validate.py: OK {path}")
+            else:
+                print(f"validate.py: ACCEPTED {path} -- but it is a positive "
+                      f"control and MUST be rejected", file=sys.stderr)
+
+    # X17: mixing across the files given to one invocation.
+    if len(versions) > 1 and not args.allow_mixed_versions and not args.expect_reject:
+        detail = "; ".join(f"{maj}.x: {', '.join(os.path.basename(f) for f in fs)}"
+                           for maj, fs in sorted(versions.items()))
+        print(f"validate.py: X17: these files mix major schema versions and no "
+              f"migration is declared ({detail})", file=sys.stderr)
+        return 1
+
+    if args.expect_reject:
+        print(f"validate.py: {rejected} rejected, {accepted} wrongly accepted")
+        return 0 if accepted == 0 else 1
+    print(f"validate.py: {accepted} valid, {rejected} invalid")
+    return 0 if rejected == 0 else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

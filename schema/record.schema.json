@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fdicostanzo/pcrec-bench/schema/record.schema.json",
   "title": "pcrec-bench record line",
+  "x-record-schema-version": "1.0",
   "description": "One JSONL line of a pcrec-bench record. Line 1 is the setup layer; every later line is a result row, discriminated by `kind`. Design note: docs/design/record_schema.md. Requirements: docs/design/requirements.md (ADOPTED v3).",
   "oneOf": [
     { "$ref": "#/$defs/setup" },
