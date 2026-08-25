@@ -559,3 +559,75 @@ pcrecdev1 has three lanes up (-j4 builds, targeted suites), no heavy
 suite until a merge battery, and will message WINDOW-style before
 `make test`/mech/san — so a `[B8]` window is a request, not a given.
 Awaiting Frank on the queue order and the roster entry.
+
+## 2026-08-25 (EDT, ~13:4x), second session (part 3) — [B8] code landed: pin 692c2e8, the `_in` frame-buffer testees, 31 checks; the window requested
+
+Frank: "proceed with your order"; budget note — finish the current set
+([B8]) then pause with journal + wake (76 % of the weekly token budget
+used; about a day's work for two devs left). Lane b8repin (worktree,
+strong model) delivered lane/b8repin in three commits (733fae4, 995ec7f,
+1c2ff01), merged as 08602ed.
+
+FINDING THAT MOVED THE PREMISE (lane, smoke at --trials 1): at 692c2e8
+`factored` compiles to a DFA artifact under BOTH `auto` and `nocaps`,
+both forms (wave G's dead-capture elision) — pcrec-auto answers 170/170
+with ZERO give-ups on bench/email; the five PCREC_ERR_FRAMES give-ups
+(factored whole-subject s-058/059/061/063/064) remain only on the
+VM-forced artifact. So the `pcrec-auto-in` entry both managers had in
+mind is INERT here (a DFA artifact stamps frame size 0, the driver
+passes NULL). RULED (me, pcrecdev1 concurring; Frank's word pending via
+the inbox — pcrecdev1's "Frank confirms" was retracted as its own
+recommendation): the `_in` machinery is generic (any config may carry
+`buffer_frames`/`buffer_trail`, CAPACITIES never bytes, both or neither);
+`pcrec-vm-in` is the roster entry measured on this sub-bench;
+`pcrec-auto-in` stays DEFINED (the checks use it to prove the
+DFA-artifact NULL path; it goes live on a sub-bench with VM-selected
+patterns under auto, e.g. #4) but is NOT MEASURED on bench/email — an
+entry measuring the same artifact as another is a trap for report
+readers. Independent reproduction of wave G's bar (pcrec's specimen
+check reads 12/0 on its side). The before/after on factored/short-search
+is therefore DFA-vs-DFA, not wave-G-on-VM.
+
+THE SIZING MEASUREMENT (lane, on the factored `\z` VM artifact, one
+capacity held far above binding while the other is swept): s-058 needs
+4005 frames / 20020 trail; s-059 10245 / 46100 (the maximum; 5 KB quoted
+string); s-061 1504 / 5020; s-063 5122 / 23044; s-064 2053 / 18452 —
+trail/frames ≈ 4.5 throughout. Smallest power-of-two pair clearing all
+five: 16384 / 65536 (16384 / 32768 still loses s-059 on the trail).
+Config: 32768 / 131072, one doubling above — 2.75 MiB per run, touched
+once outside every timed loop. Recorded twice per record: as
+`runtime_options` and as `buffer_frames`/`buffer_trail` metadata pairs
+on every compile row whose artifact used them (absent = stamped defaults
+ran). New pairs declared: resume_frames, trail_frames,
+resume_frame_size, trail_frame_size (per-artifact; 0 on DFA).
+
+CHECKS: 7 new PASS lines (check_frame_buffer): `_in` agrees with plain
+(span AND captures); a tiny buffer (4/4) on a deep subject gives up
+`giveup:-3:PCREC_ERR_FRAMES` BY NAME where the configured one matches
+(sabotage proved once: the shim passing NULL made exactly the
+"configured capacities MATCH" arm fail); a DFA artifact with buffers
+requested takes none, no division by the stamped 0, answers identical;
+abi reads 3; give-up bounds unchanged (-5/-2/-6). Old-vs-new driver
+without options: subject lines identical on all 85 subjects, 3 modes.
+make check on master: 2/53/0, 31/31, 20/20.
+
+PCREC FINDING to carry (outbox O-3 at pause): the call-bearing factored
+VM artifact stamps `RX_RESUME_FRAME_SIZE 24` where match_api.md §10.2
+says 40 for a call-bearing artifact — a doc/measurement discrepancy on
+pcrec's side (the adapter reads the stamp, so the bench is right either
+way).
+
+LANE MECHANICS: manager→lane messages arrived LATE — two steers
+(config_extra naming; drop auto-in) were ACKed only after the lane had
+declared itself complete and I had merged; I stopped its rework and
+accepted its engine_mode slugs (`auto-in`, `vm-in`, registered in
+record_schema.md §6.3) rather than spend budget on a rename. The lane
+also reverted my plan.md STATE tag (told not to touch plan.md) — restored
+in the merge commit. Lesson confirmed twice now: ask for an ACK of the
+BRIEF's rulings at the start, and put the rulings that matter in the
+brief, not in follow-ups.
+
+NOW: window requested from pcrecdev1 (six cells, ~45 min, CPU 11; its
+lanes must be idle — load is 2.7 with them up); a synthetic --trials 1
+rehearsal of the exact run_window_b8.sh (pcrec-auto, pcrec-vm-in) into a
+scratch store is running in the background.
