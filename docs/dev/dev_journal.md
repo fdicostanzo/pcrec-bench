@@ -139,3 +139,26 @@ sub-bench grammar; parse today's .rxt, wrap the specimen, plain sidecar
 of R-BENCH fields) vs BROAD (no carrier at all; M1 shrinks to schema +
 an adapter on the specimen's files) — manager recommends NARROW; (2) the
 two-grade variant scheme (veto restores three).
+
+## 2026-08-25 (EDT, ~00:0x), first session (part 4) — requirements ADOPTED (v3, 8c34498); [B1] closed; [B2] the record schema opens
+
+Frank's two rulings: the blocking scope is NARROW ("narrow is fine to
+proceed" — today's .rxt may be parsed as-is, the specimen wrapped, a
+plain sidecar of R-BENCH fields; only a NEW cross-sub-bench grammar is
+[DD-13]'s and blocked); and variants carry two CONSTRAINTS instead of
+grades — (1) the results must be the SAME on every subject, no
+variation (the "approximates" idea is gone; a differing variant is
+unsupported-by-declaration or the testee is wrong), (2) the sub-bench's
+OBJECTIVE must be achieved (a subroutine sub-bench may not be satisfied
+by rewriting the subroutines out) — so the sub-bench gains a declared
+OBJECTIVE field and a variant declaration states how it preserves it.
+Note v3 written; [B1] archived; the [DD-13b] inputs (directory model,
+objective, outcome enum, variant constraints, regime declaration) handed
+to pcrecdev1 by message. [B2] opened: lane b2schema (opus, worktree
+worktrees/b2schema, branch lane/b2schema, brief scratchpad/
+brief_b2schema.md): docs/design/record_schema.md, schema/record.schema.
+json (draft 2020-12; jsonschema 4.19.2 is installed), schema/validate.py
+with cross-line rules, a SYNTHETIC example record + six sabotaged
+rejects as positive controls, `make check-schema`, CLAUDE.md files.
+Watchdog cron (10 min) up. Box: nothing heavy from this side; pcrecdev1
+reports the box light until wave G delivers.
