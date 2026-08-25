@@ -1,0 +1,6 @@
+path	subbench	version	testee_id	machine_id	timestamp	status	rows
+records/email-specimen@0.1/libpcre2_10.46_interp-caps-simdna/email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T062213Z.jsonl	email-specimen	0.1	libpcre2_10.46_interp-caps-simdna	budu-ryzen1600	2026-08-25T06:22:13Z	measured	1660
+records/email-specimen@0.1/libpcre2_10.46_jit-caps-simdna/email-specimen@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260825T062944Z.jsonl	email-specimen	0.1	libpcre2_10.46_jit-caps-simdna	budu-ryzen1600	2026-08-25T06:29:44Z	measured	1660
+records/email-specimen@0.1/pcrec_8da6120_auto-caps-simdna/email-specimen@0.1__pcrec_8da6120_auto-caps-simdna__budu-ryzen1600__20260825T065046Z.jsonl	email-specimen	0.1	pcrec_8da6120_auto-caps-simdna	budu-ryzen1600	2026-08-25T06:50:46Z	measured	1670
+records/email-specimen@0.1/pcrec_8da6120_auto-nocaps-simdna/email-specimen@0.1__pcrec_8da6120_auto-nocaps-simdna__budu-ryzen1600__20260825T063943Z.jsonl	email-specimen	0.1	pcrec_8da6120_auto-nocaps-simdna	budu-ryzen1600	2026-08-25T06:39:43Z	measured	1670
+records/email-specimen@0.1/pcrec_8da6120_vm-caps-simdna/email-specimen@0.1__pcrec_8da6120_vm-caps-simdna__budu-ryzen1600__20260825T064436Z.jsonl	email-specimen	0.1	pcrec_8da6120_vm-caps-simdna	budu-ryzen1600	2026-08-25T06:44:36Z	measured	1670
