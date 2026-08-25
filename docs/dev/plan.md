@@ -36,7 +36,7 @@ older candidates. Proposed order (Frank confirms): [B8] → [B10] (ruled
 "after the re-pin", in its (a)(b)(c) order) ∥ [B9] (a disjoint reporter
 lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
 
-- [B8] STATE:not-started — RE-PIN pcrec to `692c2e8` (inbox I-1; the
+- [B8] STATE:started — RE-PIN pcrec to `692c2e8` (inbox I-1; the
   [DD-14] close merge, compiler byte-identical to `17469b6`, the tree the
   battery was scored on: matrix 180/0/6/0, test 26,560/0, san both axes).
   Steps: testees/pcrec/configs.toml `pin`; the adapter records `abi` as a
