@@ -324,13 +324,19 @@ The enums, in full:
    routes, both legitimately, and the report shows the form beside the
    number rather than trying to rank across it.
 
-   **The idiom is `\z`, and `$` is NOT equivalent.** At `options=0`,
-   PCRE2's `$` matches before a final newline as well as at the end of
-   the subject, so appending `$` accepts `"user@example.com\n"` as a
-   whole-subject match. `\z` is the true end. An adapter that reaches
-   for `$` because it is the familiar spelling introduces a silent
-   one-subject-class disagreement that looks like an engine difference
-   and is not one.
+   **The idiom is `(?:<pattern>)\z`, and neither half is decoration.**
+   `\z` rather than `$`: at `options=0` PCRE2's `$` matches before a
+   final newline as well as at the end of the subject, so an appended
+   `$` accepts `"user@example.com\n"` as a whole-subject match. `\z` is
+   the true end, and an adapter that reaches for `$` because it is the
+   familiar spelling introduces a silent one-subject-class disagreement
+   that looks like an engine difference and is not one. The `(?:…)`
+   wrap rather than a bare append: it BINDS A TOP-LEVEL ALTERNATION.
+   `a|b` + `\z` is `a|(b\z)` — the anchor lands on the last branch
+   only, and every other branch silently keeps matching a prefix, so a
+   whole-subject regime stops being whole-subject for most of the
+   pattern. Both halves are the harness contract's (§3, ruled
+   2026-08-25 with the pcrec manager).
 
    Consequences on the cross-line rules, all in §9: X9's trial
    sequences and X11's provenance rule are keyed per (pattern, FORM);
