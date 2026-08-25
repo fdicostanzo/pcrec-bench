@@ -56,3 +56,45 @@ pcre2.h on the box). (e) The box lies under load; bench on a quiet box.
 Next: [B1] — the overall-requirements discussion with Frank (points to
 put to him listed in wake.md), then docs/design/requirements.md and its
 critic panel.
+
+## 2026-08-24 (EDT), first session (part 2) — the requirements RULED (R1-R11); requirements.md DRAFT v1; the critic panel opens
+
+Frank ruled the eleven requirement points in conversation (~22:5x-23:3x):
+R1 loop-first (positioning second); R2 three subject regimes — large-
+subject throughput, short-subject search (~256 B), and MATCH/compliance
+on 10..1000 B subjects (bands TBD) — plus compile/setup cost on its own
+axis; R3 HARNESS FIRST — the roster is for design and grows later,
+COMPILERS included; per-(pattern, testee) OUTCOME is an axis (compiled /
+did-not-compile / crashed / timed-out / unsupported), and a SYNTAX-VARIANT
+axis admits engines that are not PCRE2-exact (same intention, declared
+adaptation); testee dimensions = hardware, version, categorization
+(interpretive/compiled/JIT; DFA/NFA/backtracking/hybrid); the hand-C
+ceiling arm explained and ruled NOT in the first cut; R4 pcrec is the
+special case — its variations are separate testee engines (later SIMD
+on/off); R5 the SUB-BENCH is the unit: a self-contained DIRECTORY with a
+goal, possibly several related patterns, data files, engine-specific
+notes/adjustments; a RECORD = one sub-bench × one testee configuration
+with all factors (date, hardware...); records gathered INDEPENDENTLY,
+never the whole gamut; the product is data gathering + reporting; R6
+the pattern format BLOCKS on pcrec's [DD-13] ("the rxt should be coming
+pretty soon") — design and gather until blocked, then stop, no interim
+carrier; R7 JSONL record with a general-setup layer + N raw results
+reduced to comparables (min/max/stddev... TBD); R8 correctness as
+chartered, tempered by the goal of RELATABLE, ACTIONABLE data — the same
+pattern INTENTION may be expressed by a modified pattern per engine and
+still compare (deviation grades = manager's sharpening, unruled); R9 the
+deliverable is a QUERY-DRIVEN REPORT over the store ("sub-bench A1,
+open-source, compiler-only"); delivery into pcrec case by case until the
+model is clear (pcrecdev1 may not be running); R10 check load and wait
+until quiet; R11 the first cut agreed in substance, changeable after
+design.
+
+Written: docs/design/requirements.md DRAFT v1 (13 sections: purpose,
+vocabulary, regimes, testees + outcome + variant axes, sub-benches,
+record, correctness, reporting, box discipline, first cut, APPROACH §8
+dispositions, OD-B1..B8, the panel attack list). General rule from
+Frank: commit often, push as needed (no remote configured yet; branch
+here is `master`). Housekeeping committed 7789bd1. Next: the D6 panel
+(three read-only sonnet critics: data model/report completeness;
+semantics/variant axis/charter consistency; blocking point/first cut/
+measurement validity) → triage → Frank adopts → [B2].

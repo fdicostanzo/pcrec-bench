@@ -34,7 +34,9 @@ requirements discussion ([B1]) may reorder, merge, split or strike them;
 none is a commitment until Frank rules the requirements.
 
 - [B1] STATE:started — REQUIREMENTS: the overall-requirements discussion
-  with Frank (opened 2026-08-24, first session). Inputs: APPROACH.md (the
+  with Frank (opened 2026-08-24, first session; R1-R11 RULED the same
+  evening — docs/design/requirements.md DRAFT v1 written from them;
+  the D6 critic panel is the next step, then adoption). Inputs: APPROACH.md (the
   four principles, §8's five open questions), pcrec's R-BENCH-1..9
   (docs/design/dd13_format/requirements.md §5), pcrec [BENCH-1]/
   [BENCH-CEIL]/[ENG-PGO]'s cross-note, Frank's post-spine-loop direction

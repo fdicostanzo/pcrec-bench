@@ -7,13 +7,18 @@ docs/dev/'s append-only records.
 
 ## Files
 
-None yet (2026-08-24). Expected first residents, in the order the plan
-reaches them:
+- `requirements.md` — **[B1] the requirements note, DRAFT v1 2026-08-24**,
+  written from Frank's rulings R1-R11: the loop-first purpose, the
+  vocabulary (sub-bench / testee / record / store / report), the three
+  subject regimes + compile cost, testee dimensions and the outcome and
+  syntax-variant axes, the sub-bench directory model (format BLOCKING on
+  pcrec [DD-13]), the two-layer record, correctness by intention, the
+  query-driven report, box discipline, the provisional first cut, the
+  APPROACH §8 dispositions, the OD-B* ledger and the panel attack list.
+  Under D6 critic review; adopted when Frank says so.
 
-- `requirements.md` — the requirements note from the overall-requirements
-  discussion with Frank ([B1]): what pcrec-bench must measure, for whom,
-  fed back how; APPROACH.md §8's open questions with their rulings; the
-  measured facts the requirements rest on.
+Expected next residents, in the order the plan reaches them:
+
 - `artifact_schema.md` — the per-testee output artifact (APPROACH.md §3),
   versioned; the comparator's input contract.
 - `set_format.md` — the bench set format position: what this project needs
