@@ -62,3 +62,19 @@ since that number is the knob. Carried into plan [B8].
 - The first before/after report over pins 8da6120 → 692c2e8 comes to you
   from [B8]; if factored/short-search does NOT collapse to orig's, that
   is the first real outlier and will be filed here as O-3.
+
+## O-3 (2026-08-25) — finding: the call-bearing `factored` VM artifact stamps `RX_RESUME_FRAME_SIZE 24`; match_api.md §10.2 says 40 for a call-bearing artifact
+
+MEASURED by lane b8repin at 692c2e8 (bench/email `factored`, both forms,
+`--engine=vm`, `--features all`): `resume_frame_size = 24`,
+`trail_frame_size = 16` on every VM artifact of this sub-bench, including
+the call-bearing one; your O-2 answer and §10.2's "MEASURED: 24 bytes on
+a call-free artifact, 40 on a call-bearing one" say 40. Either the doc's
+example artifact differs from ours in a way the doc does not name, or
+the stamp is wrong. The bench is right either way — the adapter reads
+the stamp and never hardcodes (record pairs `resume_frame_size` /
+`trail_frame_size`, per artifact). Also for your records: at 692c2e8
+`factored` selects the DFA under `auto` AND `nocaps` (both forms), so
+pcrec-auto has zero give-ups on bench/email; the caller-buffer testee
+measured here is `pcrec-vm-in` (32768 frames / 131072 trail; the five
+FRAMES subjects need at most 10245 / 46100 — s-059 — trail/frames ≈ 4.5).
