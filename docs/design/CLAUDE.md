@@ -17,6 +17,13 @@ docs/dev/'s append-only records.
   APPROACH §8 dispositions, the OD-B* ledger and the panel attack list.
   The governing requirements; [B2]-[B7] build against it.
 
+- `harness_contract.md` — manager design (2026-08-25) for [B3]/[B4]/[B5]
+  to build against in parallel: the python package layout, the sub-bench
+  directory + `subbench.toml` sidecar, the adapter interface and the
+  shared DRIVER PROTOCOL (batched in-process timing), the store layout
+  and `run`/`index`/`report` CLI, the quiet instrument, self-checks.
+  Paneled at the M1 close.
+
 Expected next residents, in the order the plan reaches them:
 
 - `artifact_schema.md` — the per-testee output artifact (APPROACH.md §3),
