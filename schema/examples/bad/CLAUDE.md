@@ -20,7 +20,12 @@ rejected for some OTHER reason fails the build. The rules are defined in
 
 | file | rule | the sabotage |
 |---|---|---|
+| `schema-missing-calibration.jsonl` | SCHEMA | a timed match row with `iterations` in the hundreds of thousands and no `calibration` object saying who chose that number |
+| `schema-missing-clock-source.jsonl` | SCHEMA | `run.clock_source` deleted — nanoseconds from an unnamed clock |
+| `schema-missing-driver-build-flags.jsonl` | SCHEMA | `run.driver_build_flags` deleted — the engine's build is pinned and the timing driver's is not |
 | `schema-missing-required-field.jsonl` | SCHEMA | `environment.machine_id` deleted |
+| `schema-missing-subject-sha256.jsonl` | SCHEMA | a subject roster entry with no `sha256`: the bytes that produced the numbers are unidentified |
+| `schema-quiet-attestation-present.jsonl` | SCHEMA | the DROPPED `quiet_attestation` field, still present. `additionalProperties: false` is what makes a removal stick, and this is the control that proves it does |
 | `schema-wrong-enum.jsonl` | SCHEMA | `execution_model` spelled `compiled-AOT` — the un-normalized spelling, which is the mistake an author actually makes |
 | `x1-mixed-schema-versions.jsonl` | X1 | two records concatenated into one file, the second at schema version 2.0 |
 | `x2-reserved-row-kind.jsonl` | X2 | a `match-list` row — the name reserved for OD-B3's list-valued scan regime, which has no shape yet |
@@ -29,28 +34,23 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x4-filename-mismatch.jsonl` | X4 | a perfectly valid record under a name that is not its record id |
 | `x6-tampered-hash.jsonl` | X6 | one `elapsed_ns` edited after the fact, hash NOT restamped |
 | `x9-duplicate-trial.jsonl` | X9 | trial 2 of one (pattern, subject, regime) recorded twice — silently doubling that trial's weight in any median |
-| `x10-cost-class-mismatch.jsonl` | X10 | a compile row claiming `interpretive` cost on a `compiled-aot` testee |
+| `x10-cost-class-mismatch.jsonl` | X10 | a compile row claiming `interpretive` cost on a `compiled-aot` testee. This is also the file stamped `schema_version: 1.0` while carrying 1.1's fields — deliberately, so validate.py's accept-an-older-MINOR branch has a live example and nobody quietly makes the minor comparison strict (note §4.1) |
 | `x11-timing-on-uncompiled-cell.jsonl` | X11 | a timed match row for the pattern this testee reported `unsupported-by-declaration` |
 | `x13-measured-but-loaded.jsonl` | X13 | `status: measured` on a record whose after-load exceeded the limit |
 | `x13-occupancy-after-fail.jsonl` | X13 | `status: measured` on a record whose per-core occupancy check FAILED *after* the run — the neighbour that started up midway, which a before-only check cannot see |
-| `x19-load-raw-mismatch.jsonl` | X19 | `load.after.load1` says 0.14 while the `loadavg_raw` line it claims to be parsed from says 9.90 |
-| `x20-verdict-quiet-but-loaded.jsonl` | X20 | `load.verdict: quiet` beside a peak `load1` of 11.4 against a limit of 6.0. X13 alone is satisfied by this record, which is why X20 exists |
-| `x21-calibration-below-target.jsonl` | X21 | a probe that predicts a 20 ms loop recorded as having chosen an iteration count for a 50 ms target, with no `calibration_note` — the short loop that reads as a fast engine |
-| `schema-missing-calibration.jsonl` | SCHEMA | a timed match row with `iterations` in the hundreds of thousands and no `calibration` object saying who chose that number |
-| `schema-missing-clock-source.jsonl` | SCHEMA | `run.clock_source` deleted — nanoseconds from an unnamed clock |
-| `schema-missing-driver-build-flags.jsonl` | SCHEMA | `run.driver_build_flags` deleted — the engine's build is pinned and the timing driver's is not |
-| `schema-missing-subject-sha256.jsonl` | SCHEMA | a subject roster entry with no `sha256`: the bytes that produced the numbers are unidentified |
-| `x22-unpinned-engine-version.jsonl` | X22 | `engine_version: 0.9.0-g1a2b3c4` — a `git describe` string, not a release — with `engine_commit: null`. §6.2 has always said the version must be reproducible from the commit; this is the first time anything checks it |
-| `schema-quiet-attestation-present.jsonl` | SCHEMA | the DROPPED `quiet_attestation` field, still present. `additionalProperties: false` is what makes a removal stick, and this is the control that proves it does |
-| `x23-cpu-model-not-derived.jsonl` | X23 | `cpu_model: example-cpu` beside a `cpu_model_raw` that normalizes to `example-cpu-12-core` — the FILTERABLE half and the reproducible half disagreeing, which is the whole failure mode §6 exists to prevent |
-| `x23-kernel-not-derived.jsonl` | X23 | `kernel` naming a release `kernel_raw` does not |
-| `x23-compiler-not-derived.jsonl` | X23 | `compiler` naming a gcc version `compiler_raw` does not |
 | `x14-missing-compile-row.jsonl` | X14 | `status: measured` with a pattern that has no compile row at all |
 | `x15-metadata-wrong-scope.jsonl` | X15 | the `engine` pair — declared `scope: pattern` — stamped on a MATCH row. The scope half of X15 has no good-example coverage now that the v8 example's undescribed `tier` pair is gone (note §7), so this control is the only thing holding it |
 | `x15-undeclared-engine-metadata.jsonl` | X15 | an `engine_metadata` pair the testee never declared |
+| `x17-future-major-version.jsonl` | X17 | a record at schema version 2.0, which this validator does not implement and for which no migration is declared. It is also the standalone half of X17: the cross-FILE half (two majors in one invocation) needs two files and is exercised by hand |
 | `x18-duplicate-seq.jsonl` | X18 | two result rows claiming the same `seq` — the record no longer says which was emitted first, which is the one thing `seq` exists to say |
 | `x18-seq-gap.jsonl` | X18 | the last result row's `seq` bumped past N: a row was dropped somewhere and the file does not admit it |
-| `x17-future-major-version.jsonl` | X17 | a record at schema version 2.0, which this validator does not implement and for which no migration is declared. It is also the standalone half of X17: the cross-FILE half (two majors in one invocation) needs two files and is exercised by hand |
+| `x19-load-raw-mismatch.jsonl` | X19 | `load.after.load1` says 0.14 while the `loadavg_raw` line it claims to be parsed from says 9.90 |
+| `x20-verdict-quiet-but-loaded.jsonl` | X20 | `load.verdict: quiet` beside a peak `load1` of 11.4 against a limit of 6.0. X13 alone is satisfied by this record, which is why X20 exists |
+| `x21-calibration-below-target.jsonl` | X21 | a probe that predicts a 20 ms loop recorded as having chosen an iteration count for a 50 ms target, with no `calibration_note` — the short loop that reads as a fast engine |
+| `x22-unpinned-engine-version.jsonl` | X22 | `engine_version: 0.9.0-g1a2b3c4` — a `git describe` string, not a release — with `engine_commit: null`. §6.2 has always said the version must be reproducible from the commit; this is the first time anything checks it |
+| `x23-compiler-not-derived.jsonl` | X23 | `compiler` naming a gcc version `compiler_raw` does not |
+| `x23-cpu-model-not-derived.jsonl` | X23 | `cpu_model: example-cpu` beside a `cpu_model_raw` that normalizes to `example-cpu-12-core` — the FILTERABLE half and the reproducible half disagreeing, which is the whole failure mode §6 exists to prevent |
+| `x23-kernel-not-derived.jsonl` | X23 | `kernel` naming a release `kernel_raw` does not |
 
 ## Adding one
 

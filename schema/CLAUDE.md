@@ -8,7 +8,7 @@ statically"). This directory owns that format.
 
 The DESIGN lives in `../docs/design/record_schema.md` — every field, why
 it exists, the enums, the normalization rules, the cross-line rules
-X1..X17, and the open questions. Read it before changing anything here;
+X1..X23, and the open questions. Read it before changing anything here;
 the files below are its implementation and `make check-schema` fails if
 they and the note disagree.
 
@@ -18,11 +18,14 @@ they and the note disagree.
   per line kind (`setup`, `match_row`, `compile_row`); the root is their
   `oneOf`, so a generic tool can validate a line without knowing which
   it is. `x-record-schema-version` at the root is the version this
-  schema IMPLEMENTS (1.0), which is what `validate.py` compares a file's
+  schema IMPLEMENTS (1.1), which is what `validate.py` compares a file's
   `schema_version` against.
 - `validate.py` — the validator the harness and the reporter share
   (requirements §6). Per-line schema validation PLUS the cross-line
-  rules a schema cannot express. `python3` + `jsonschema` only, so it
+  rules a schema cannot express, PLUS the three normalization rules of
+  the note's §6.6-§6.7 as functions (`normalize_cpu_model`,
+  `normalize_kernel`, `normalize_compiler`) — a rule stated only in
+  prose is a rule nobody runs, and X23 is what runs these. `python3` + `jsonschema` only, so it
   runs anywhere a record is read. Modes: plain, `--expect-reject`
   (positive controls), `--expect-rule` (which rule must fire),
   `--check-filename` (rule X4), `--allow-mixed-versions` (rule X17),
@@ -47,7 +50,10 @@ what makes the first two mean anything.
 - Adding an OPTIONAL field or an ENUM VALUE is a MINOR bump
   (`x-record-schema-version`, the note §4) and needs a line in the note
   saying why. Anything else is a MAJOR bump and needs a declared
-  migration.
+  migration. 1.0 → 1.1 was a documented ONE-TIME exception to that rule
+  (note §4.1) and it expires the moment the first record is stored;
+  read §4.1 before assuming the next change of that shape can do the
+  same.
 - A new field needs a row in the note's `### FIELD TABLE:` block for its
   kind, or `check_fields.py` fails. That is deliberate: a field with no
   stated reason is a field nobody can filter on with confidence.

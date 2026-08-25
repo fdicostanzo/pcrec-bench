@@ -143,9 +143,48 @@ migration exists. Concretely, and enforced by `validate.py`:
   an error (`--allow-mixed-versions` to override, for the migration
   author). Differing MINORs are accepted — that is what "additive"
   buys.
-- A MIGRATION is a documented, reviewed entry in this note (there are
-  none; the schema is at 1.0) naming the two versions and the rewrite.
-  Absent one, a major-version boundary is a hard stop, not a warning.
+- A MIGRATION is a documented, reviewed entry in this note naming the
+  two versions and the rewrite. Absent one, a major-version boundary is
+  a hard stop, not a warning.
+
+### 4.1 Version history
+
+| version | date | what |
+|---|---|---|
+| 1.0 | 2026-08-25 | draft 1, merged |
+| 1.1 | 2026-08-25 | the post-merge panel's twelve findings (§11) |
+
+**1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
+the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
+(`seq`, `run.clock_source`, `run.driver_build_flags`,
+`run.driver_compiler`, `subjects[].sha256`, the new `load`/`occupancy`
+sample shapes, `calibration` when `iterations` > 1), narrows one
+(`testee.engine_commit` from 7-40 hex to 40), renames one enum value
+(the lazy-JIT `derivation` const) and REMOVES one field
+(`quiet_attestation`). Every one of those is a major change by §4's own
+definition, and the definition is not being softened.
+
+The exception is that MINOR exists to protect a POPULATION — readers on
+an older minor that must keep accepting files — and on 2026-08-25 that
+population is empty. No record has been written to any store: 1.0 was
+merged the same day and the harness lane is writing its first records
+against 1.1. A major bump would announce a migration for zero records
+and would spend the 2.0 boundary, which is worth keeping for the first
+change that breaks a record someone has actually measured.
+
+The exception is one-time and expires the moment the first record is
+stored. After that, §4's table is the whole rule and a change of this
+shape is 2.0 with a migration entry beside it.
+
+One consequence is load-bearing: a 1.0-stamped file is NOT readable as
+1.1 (it will lack required fields), even though the minor-version rule
+says a reader must accept it. That contradiction is real, it is a
+property of this exception rather than of the schema, and it is
+harmless only because no such file exists. `validate.py` still accepts
+an older MINOR — `schema/examples/bad/x10-cost-class-mismatch.jsonl` is
+stamped `1.0` while carrying 1.1's fields, deliberately, so that branch
+has a live example and nobody "fixes" the minor comparison into
+strictness.
 
 ## 5. The fixed enums (OD-B4 (a))
 
@@ -783,6 +822,11 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
 
 ## 11. For the panel — what I am least sure of
 
+STATUS after the v1.1 panel (2026-08-25): items 1 and 8 are CLOSED (a
+ruling and a removal). Items 2, 3, 4, 5, 6 and 7 stand as written and
+are still the places to attack. The v1.1 work added four residuals of
+its own, listed as items 9-12.
+
 1. **`match_outcome` gained `crashed` and `timed-out`** (§5,
    ADDITIONS 1). This is the only place the schema exceeds requirements
    §4.4's closed set. The argument is that a per-subject hang is the
@@ -834,3 +878,27 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
    shape pcrec's own check-design lesson warns about — a control whose
    source is the thing it controls. requirements §6's "quiet-box
    attestation" is discharged by `load` + `occupancy` + `status`.
+9. **X21 checks that the calibration met its target, not that
+   `iterations` was DERIVED from the probe.** A harness that probes
+   correctly and then picks a wildly larger N passes. The stronger rule
+   — `iterations` is within some factor of `target_ns × probe_iterations
+   / probe_elapsed_ns` — was not written because no measurement on this
+   box says what that factor should be, and a threshold invented at a
+   desk is the thing §9's OD-B8 exists to avoid. [B3] measures it.
+10. **`calibration_note` is free text and X21 accepts any non-empty
+   string.** It is the one place in the schema where a rule can be
+   satisfied by writing a sentence. The alternative — an enum of
+   reasons a calibration can miss — needs a list nobody has yet, and
+   inventing one now would be the `tier` mistake (§7) again.
+11. **The load and occupancy samples have no relation to
+   `run.timestamp` or to each other.** `sampled_at` exists, and nothing
+   checks that `before` precedes `after`, that either brackets the run,
+   or that the two are more than a millisecond apart. The check is easy
+   and was left out on purpose: the ORDER is obvious to write and the
+   DURATION threshold is another invented number. A record can still
+   claim two samples taken back-to-back after the run.
+12. **X23 checks three normalizations and cannot check the fourth
+   kind.** `engine_name` and `engine_mode` are registry assertions, and
+   a testee that spells its engine `pcre-2` instead of `libpcre2`
+   produces a valid record that lands in its own filter bucket forever.
+   The registry is in §6.1/§6.3, in prose, and only a human reads it.
