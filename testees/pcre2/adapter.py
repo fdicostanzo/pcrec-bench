@@ -53,6 +53,30 @@ METADATA_DECL = {
 }
 
 
+# The RESOURCE-LIMIT refusals: negative `pcre2_match` returns where the
+# engine declined to answer because a configured budget ran out, as opposed
+# to answering wrongly or failing. Schema v1.1's per-subject `gave-up`
+# outcome is for exactly these; every other negative code is `crashed`.
+#
+# [measured] 2026-08-25 against this box's libpcre2 10.46, by forcing each
+# limit with pcre2_set_match_limit_8 / pcre2_set_depth_limit_8 on `^(a+)+$`
+# over 200 `a`s and reading the returned code, then sweeping
+# pcre2_get_error_message over -70..-1 to catch the siblings. NOT read from a
+# header -- there is no pcre2.h on this box.
+GAVE_UP_CODES = {
+    -47: "PCRE2_ERROR_MATCHLIMIT",      # "match limit exceeded"      (forced)
+    -53: "PCRE2_ERROR_DEPTHLIMIT",      # "matching depth limit ..."  (forced)
+    -63: "PCRE2_ERROR_HEAPLIMIT",       # "heap limit exceeded"
+    -46: "PCRE2_ERROR_JIT_STACKLIMIT",  # "JIT stack limit reached"
+}
+# Deliberately NOT in the set, and each for a stated reason:
+#   -48 "no more memory"  -- an allocation failure, not a configured budget;
+#        the box ran out, the engine did not decline. `crashed`.
+#   -52 "nested recursion at the same subject position" -- a SEMANTIC refusal
+#        (PCRE2 10.46's recursion-loop rule), not a resource limit.
+#   -1  "no match"        -- an answer, not a refusal.
+
+
 class Adapter(_ad.Adapter):
     name = "pcre2"
 

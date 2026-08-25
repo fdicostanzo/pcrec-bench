@@ -40,6 +40,10 @@ static long long (*pb_work_budget)(void);
 static long long (*pb_frame_capacity)(void);
 static long long (*pb_subject_ceiling)(void);
 static const char *(*pb_engine_why)(void);
+static int       (*pb_err_floor)(void);
+static int       (*pb_err_giveup_top)(void);
+static int       (*pb_err_internal)(void);
+static const char *(*pb_err_name)(int);
 static int       (*pb_has_vm_stamps)(void);
 static const char *(*pb_vm_prefilter)(void);
 static unsigned  (*pb_vm_rungs)(void);
@@ -171,6 +175,8 @@ int main(int argc, char **argv) {
     SYM(pb_abi); SYM(pb_ncaps); SYM(pb_ngroups); SYM(pb_nnames);
     SYM(pb_engine); SYM(pb_step_budget); SYM(pb_work_budget);
     SYM(pb_frame_capacity); SYM(pb_subject_ceiling); SYM(pb_engine_why);
+    SYM(pb_err_floor); SYM(pb_err_giveup_top); SYM(pb_err_internal);
+    SYM(pb_err_name);
     SYM(pb_has_vm_stamps); SYM(pb_vm_prefilter); SYM(pb_vm_rungs);
     SYM(pb_vm_strats); SYM(pb_vm_prunes); SYM(pb_engine_stamp);
     SYM(pb_search); SYM(pb_match_caps);
@@ -179,6 +185,12 @@ int main(int argc, char **argv) {
      * fields, never from the prose RX_ENGINE_WHY (requirements 4.2). The
      * prose goes out as `engine_why` and the adapter puts it in the row's
      * unindexed `diagnostic`, which is where record_schema.md 7 puts it. */
+    /* The give-up code SPACE, from the artifact's own constants. The harness
+     * classifies a negative return by RANGE against these, never by a list.
+     * See shim.c. */
+    printf("info\terr_floor\t%d\n", pb_err_floor());
+    printf("info\terr_giveup_top\t%d\n", pb_err_giveup_top());
+    printf("info\terr_internal\t%d\n", pb_err_internal());
     printf("info\tabi\t%d\n", pb_abi());
     printf("info\tncaps\t%d\n", pb_ncaps());
     printf("info\tngroups\t%d\n", pb_ngroups());
@@ -296,7 +308,15 @@ int main(int argc, char **argv) {
             strcpy(sbuf, "-"); strcpy(ebuf, "-");
             capsbuf[0] = '-'; capsbuf[1] = 0;
             if (giveup) {
-                snprintf(answerbuf, sizeof answerbuf, "giveup:%d", (int)giveup);
+                const char *nm = pb_err_name((int)giveup);
+                /* `giveup:<code>:<NAME>` -- the harness maps the CODE by
+                 * range and puts the NAME in the row's diagnostic. */
+                if (nm)
+                    snprintf(answerbuf, sizeof answerbuf, "giveup:%d:%s",
+                             (int)giveup, nm);
+                else
+                    snprintf(answerbuf, sizeof answerbuf, "giveup:%d",
+                             (int)giveup);
                 answer = answerbuf;
             } else {
                 answer = "nomatch";

@@ -161,6 +161,55 @@ own position: an engine that declined to answer and an engine that
 answered wrongly are different findings, and this sub-bench's headline
 hazard class is the former.
 
+### 10.1 The give-up CODE SPACE — ruled as a range, and measured on both engines
+
+**RULED 2026-08-25 (manager):** `gave-up` iff the code lies in
+`[PCREC_ERR_FLOOR, -2]`, read from the artifact's OWN constants; strictly
+below the floor → `crashed`. A range beats an enumeration: a give-up code
+pcrec adds later is classified correctly by an adapter nobody edited, and
+a reserved or internal code can never be laundered into `gave-up` by a
+list that fell behind.
+
+`testees/pcrec/shim.c` now exports `pb_err_floor()`,
+`pb_err_giveup_top()`, `pb_err_internal()` and `pb_err_name()`, and the
+driver reports them as `info` rows. MEASURED against pin 8da6120:
+`err_floor -5`, `err_giveup_top -2`, `err_internal -6`; a real give-up now
+answers `giveup:-3:PCREC_ERR_FRAMES`.
+
+Three facts read off the pinned artifact's own header, two of which
+correct the ruling message's list:
+
+- `PCREC_ERR_WORK` (-4) **is** a give-up and was missing from the list.
+  The range rule includes it by construction.
+- `PCREC_ERR_INTERNAL` (-6) is **not** a give-up — the artifact says so
+  outright ("below PCREC_ERR_FLOOR: NOT a give-up") — and maps to
+  `crashed`.
+- `PCREC_ERR_RECURSE` (-5) is inside the range but has **no producer at
+  this pin**, so it cannot fire today.
+
+**pcre2's side needed the same treatment, and the ruled two-item list was
+too narrow.** MEASURED on libpcre2 10.46 by forcing each limit
+(`pcre2_set_match_limit_8` / `pcre2_set_depth_limit_8` on `^(a+)+$` over
+200 `a`s) and then sweeping `pcre2_get_error_message` over -70..-1 —
+there is no `pcre2.h` on this box, so nothing here is read from a header:
+
+| code | message | disposition |
+|---|---|---|
+| -47 | match limit exceeded | `gave-up` (forced, confirmed) |
+| -53 | matching depth limit exceeded | `gave-up` (forced, confirmed) |
+| -63 | heap limit exceeded | `gave-up` |
+| **-46** | **JIT stack limit reached** | **`gave-up`** |
+| -48 | no more memory | `crashed` — an allocation failure, not a configured budget |
+| -52 | nested recursion at the same subject position | `crashed` — a SEMANTIC refusal, not a resource limit |
+
+**-46 is the one that matters here:** `pcre2-jit` is a roster testee, and
+a JIT stack exhaustion recorded as `crashed` would read as a libpcre2 bug
+rather than a budget. The set lives in `testees/pcre2/adapter.py` as
+`GAVE_UP_CODES`, with the non-members and their reasons written beside
+it. The pcre2 driver now answers `giveup:<code>:<pcre2's own message>`,
+the message taken from `pcre2_get_error_message` rather than a table in
+the driver, so it cannot fall out of step with the library.
+
 ## 11. `subbench.content_hash` — the rule, which §8 left to [B3]
 
 sha256 over every COMMITTED file in the sub-bench directory: for each
@@ -195,6 +244,8 @@ emission is versioned.
 | (6) `run.driver_build_flags` / `driver_compiler` | `driverrun.DRIVER_BUILDS` records the exact argv, including on the cached-build path |
 | (7) `subjects[].sha256` required | ALREADY EMITTED from the committed manifests |
 | (8) `quiet_attestation` dropped | still emitted (1.0 requires it); one line in `project()` when 1.1 lands |
+| fix 21 `gave-up` | classification measured on both engines (§10.1); not yet EMITTED |
+| fix 22 `form` | pcrec compiles both forms (§9); **pcre2 OMITS `form`, absent = plain** (ruled); not yet emitted |
 | (9) `run.clock_source` | `clock_monotonic` — both drivers use `clock_gettime(CLOCK_MONOTONIC)` around the batched loop |
 | (10) `environment.cpu_mhz` | `env.cpu_mhz()`, a spot reading of cpu0's scaling frequency |
 

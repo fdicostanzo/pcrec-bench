@@ -134,10 +134,23 @@ Reported to the manager as a contract gap for a future sub-bench.
 
 ## Give-ups
 
-A budget give-up (`PCREC_ERR_STEPS` -2, `_FRAMES` -3, `_WORK` -4) propagates
-to the driver as `giveup:<code>` and is judged `did-not-match-as-expected`,
-with the code in the row's `diagnostic`. It is therefore not timed. See
-`bench/email/NOTES.md` for why there is no `gave-up` outcome.
+A budget give-up propagates to the driver as
+`giveup:<code>:<NAME>` (e.g. `giveup:-3:PCREC_ERR_FRAMES`) and is not timed.
+
+**Classification is by RANGE, never by a list** (ruled 2026-08-25): a
+negative return is a give-up iff it lies in `[PCREC_ERR_FLOOR, -2]`, and
+`shim.c` exports `pb_err_floor()` / `pb_err_giveup_top()` /
+`pb_err_internal()` / `pb_err_name()` so the bounds come from the artifact
+itself. Anything strictly below the floor — `PCREC_ERR_INTERNAL` (-6),
+which the artifact states outright is not a give-up — is `crashed`. A
+give-up code pcrec adds later is then classified correctly with no adapter
+edit, and a reserved code can never be laundered into `gave-up`.
+
+MEASURED at pin 8da6120: floor -5, top -2, internal -6. `PCREC_ERR_WORK`
+(-4) is inside the range; `PCREC_ERR_RECURSE` (-5) is inside it but has no
+producer yet. Schema v1.1 gives these rows their own `gave-up` outcome;
+until it lands they are `did-not-match-as-expected` — see
+`bench/email/NOTES.md`.
 
 ## Engine metadata
 

@@ -362,7 +362,7 @@ int main(int argc, char **argv) {
             continue;
         }
 
-        char answerbuf[64];
+        char answerbuf[256];
         const char *answer;
         char sbuf[32], ebuf[32], nbuf[32];
 
@@ -378,7 +378,21 @@ int main(int argc, char **argv) {
             if (rc_final == PCRE2_ERROR_NOMATCH) {
                 answer = "nomatch";
             } else {
-                snprintf(answerbuf, sizeof answerbuf, "giveup:%d", (int)rc_final);
+                /* `giveup:<code>:<pcre2's own message>`. The message comes
+                 * from pcre2_get_error_message rather than a table in this
+                 * file, so it cannot fall out of step with the library; the
+                 * harness classifies on the CODE. */
+                unsigned char emsg[160];
+                int en = p_get_error_message(rc_final, emsg, sizeof emsg);
+                if (en > 0) {
+                    for (int k = 0; emsg[k]; k++)
+                        if (emsg[k] == '\t' || emsg[k] == '\n') emsg[k] = ' ';
+                    snprintf(answerbuf, sizeof answerbuf, "giveup:%d:%s",
+                             (int)rc_final, (char *)emsg);
+                } else {
+                    snprintf(answerbuf, sizeof answerbuf, "giveup:%d",
+                             (int)rc_final);
+                }
                 answer = answerbuf;
             }
         }

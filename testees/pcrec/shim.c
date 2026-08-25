@@ -65,6 +65,39 @@ long long pb_frame_capacity(void) { return (long long)PB_INFO.frame_capacity; }
 long long pb_subject_ceiling(void){ return (long long)PB_INFO.subject_ceiling; }
 const char *pb_engine_why(void)   { return PB_INFO.engine_why; }
 
+/* --------------------------------------------- the give-up code SPACE */
+
+/* The artifact's OWN bounds on what a give-up is, so the harness classifies
+ * by RANGE and never by a list it keeps in step by hand.
+ *
+ * pcrec's contract (D49, quoted from the emitted header): a typed give-up is
+ * a return in `[PCREC_ERR_FLOOR, -2]` -- one per way the engine can give up
+ * -- and the codes PROPAGATE rather than collapsing to -1. Values strictly
+ * BELOW the floor are NOT give-ups: `PCREC_ERR_INTERNAL` says so in the
+ * artifact itself, and anything further down is reserved for a future abort
+ * semantic.
+ *
+ * Exporting the two numbers means a give-up code pcrec ADDS later is
+ * classified correctly by an adapter nobody edited, and a reserved or
+ * internal code can never be laundered into `gave-up` by an enumeration that
+ * fell behind. `pb_err_name()` is for the row's `diagnostic`, which carries
+ * the NAME rather than the bare integer. */
+
+int pb_err_floor(void)    { return (int)PCREC_ERR_FLOOR; }
+int pb_err_giveup_top(void) { return -2; }
+int pb_err_internal(void) { return (int)PCREC_ERR_INTERNAL; }
+
+const char *pb_err_name(int code) {
+    switch (code) {
+        case PCREC_ERR_STEPS:    return "PCREC_ERR_STEPS";
+        case PCREC_ERR_FRAMES:   return "PCREC_ERR_FRAMES";
+        case PCREC_ERR_WORK:     return "PCREC_ERR_WORK";
+        case PCREC_ERR_RECURSE:  return "PCREC_ERR_RECURSE";
+        case PCREC_ERR_INTERNAL: return "PCREC_ERR_INTERNAL";
+        default:                 return (const char *)0;
+    }
+}
+
 /* ----------------------------------- the D46 stamps (VM artifacts only) */
 
 int pb_has_vm_stamps(void) {
