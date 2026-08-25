@@ -144,7 +144,67 @@ subject that drifted from its generator is still caught. Path-prefixed
 and path-sorted, so a rename is a change and two files swapping
 contents is a change.
 
-## 12. What is NOT built here
+## 12. Schema v1.1 — measured now, emitted on a one-line switch
+
+The v1.1 amendment (provenance holes found by the post-merge schema panel)
+is landing on another lane. This harness does not wait for it: it
+**measures every v1.1 field today** and narrows the record to whatever
+`record.SCHEMA_VERSION` says, at one projection point (`record.project`).
+
+The asymmetry is the reason. A field that was never MEASURED cannot be
+added to an old record afterwards; a field that was measured and not
+emitted costs one line to start emitting. So sampling is maximal and
+emission is versioned.
+
+| v1.1 item | how it is measured today |
+|---|---|
+| (1) `seq` per row | a monotonic counter across compile AND match rows, dense 1..N |
+| (2) `load.before/after` as objects | `quiet.load_sample()` always returns `{loadavg_raw, sampled_at, load1/5/15}` |
+| (3) `occupancy` before/after | `quiet.check()` is called at BOTH ends by the same code path; `occupancy_block()` combines them, verdict = the WORSE |
+| (4) per-row `calibration` | `calibrate()` returns `{target_ns, probe_iterations, probe_elapsed_ns}`; a fixed `--iters` records `probe_iterations: 0`, which is itself the fact that no probe stands behind the number |
+| (5) `engine_commit` for non-release | ALREADY EMITTED — pcrec records `8da61208b1194966ed4e482fb61e4b44371cb5a8` |
+| (6) `run.driver_build_flags` / `driver_compiler` | `driverrun.DRIVER_BUILDS` records the exact argv, including on the cached-build path |
+| (7) `subjects[].sha256` required | ALREADY EMITTED from the committed manifests |
+| (8) `quiet_attestation` dropped | still emitted (1.0 requires it); one line in `project()` when 1.1 lands |
+| (9) `run.clock_source` | `clock_monotonic` — both drivers use `clock_gettime(CLOCK_MONOTONIC)` around the batched loop |
+| (10) `environment.cpu_mhz` | `env.cpu_mhz()`, a spot reading of cpu0's scaling frequency |
+
+**TO ADOPT:** set `SCHEMA_VERSION = "1.1"` and delete the corresponding
+entries from `record.V11_ONLY`. Nothing else moves.
+
+`make check` has a control for exactly the failure mode this arrangement
+invites — a projection that strips a field the harness never built,
+invisible while 1.0 is emitted and absent the day the version flips. It
+asserts all three legs on a real run: the full record carries all 11
+fields, projecting at 1.0 removes exactly them, projecting at 1.1 keeps
+them.
+
+`status: measured` already requires the occupancy verdict to be `pass`
+at BOTH ends, per the panel's rule, and `unavailable` on either sample is
+`inconclusive-load`. One residual wrinkle for the panel:
+`quiet_attestation` is computed from the BEFORE gate only, so a run that
+went busy partway through records `quiet_attestation: true` beside
+`occupancy.verdict: fail`. That is record_schema.md §11.8's "a claim
+beside a measurement, and a disagreement is a finding" working as
+designed — and it stops being a question when (8) drops the field.
+
+## 13. Store writes are atomic, and the first implementation was not
+
+The name is claimed with `O_CREAT|O_EXCL` and the `-<n>` disambiguator
+retried on `EEXIST`. An `os.path.exists`-then-write pair passes every
+single-threaded test and fails in the field: two invocations of the same
+cell in the same second both see the name free, both write, one is lost —
+the exact outcome the disambiguator exists to prevent, reintroduced by the
+way it was checked.
+
+**The control earned its place immediately.** With 8 forked writers racing
+on one cell, the first implementation landed 6 records and lost 2: every
+writer staged its content in a single shared `.validating/` directory and
+`rmdir`'d it on the way out, pulling the directory out from under writers
+that had claimed a name but not yet written. Staging is now one `mkdtemp`
+directory per write. The control is permanent (`make check`).
+
+## 14. What is NOT built here
 
 - `pcrecbench/report.py` — [B5]. `python3 -m pcrecbench report` exits 2
   with a message saying so.

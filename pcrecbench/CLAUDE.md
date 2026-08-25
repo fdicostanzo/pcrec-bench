@@ -30,6 +30,19 @@ to a temporary name, runs `schema/validate.py --check-filename` there, and
 only then moves it into place. A validation failure is a HARNESS BUG, not a
 measurement result, and it is reported as one.
 
+**Sampling is maximal; emission is versioned.** The harness builds every
+record with the full schema-v1.1 field set and `record.project()` narrows it
+to `record.SCHEMA_VERSION` at one point. A field that was never measured
+cannot be added to an old record afterwards; a field measured and not
+emitted costs one line. `run_cell` returns both records (`RunResult.setup`
+vs `.full_setup`) so the projection can be seen to be live rather than dead —
+`make check` asserts exactly that.
+
+**The store claims a name with `O_EXCL`, never `exists()`-then-write.** An
+exists-then-write pair is the race the `-<n>` disambiguator exists to
+prevent, reintroduced by the way it was checked. Staging is one temp
+directory per write, not one shared one — the race control caught that too.
+
 **Derivations are imported, never reimplemented.** `record.py` loads
 `schema/validate.py` as a module and calls its `derive_record_id`,
 `derive_testee_id` and `compute_content_hash`. Two implementations of one

@@ -101,14 +101,17 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # the sub-bench generators reproduce their committed
+    make check-harness  # 20 checks: the generators reproduce their committed
                         # manifests byte for byte, the expectations re-derive
                         # from the libpcre2 oracle, both drivers smoke, the
                         # deliberately-wrong fixture yields the outcome it
                         # must, the two patterns are shown NOT to be one
-                        # artifact, and a full `run` of one cell into a
-                        # SCRATCH store is written and validator-accepted
-                        # (~2 min; needs libpcre2-8-0 and a C compiler)
+                        # artifact, a hanging subject comes back `timed-out`
+                        # BY NAME, 8 racing writers each land their own
+                        # record, every schema-v1.1 field is shown to be
+                        # measured-then-stripped, and a full `run` of one
+                        # cell into a SCRATCH store is validator-accepted
+                        # (~3 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets
 
