@@ -31,7 +31,14 @@ File names are not chosen: rule X4 makes the name the record id plus
   — the second, small record: a `lazy-jit` testee (compile rows carry
   `derivation`, never a number the harness invented) whose record status
   is `inconclusive-load` — the box got busy partway through, so the
-  numbers exist and the record says do not trust them.
+  numbers exist and the record says do not trust them. Its
+  `engine_metadata_declaration` is deliberately EMPTY: the `tier` pair
+  this example used to declare had no adapter mechanism behind it
+  anywhere in `docs/design/harness_contract.md` §3, and a declaration
+  the contract cannot produce is an invented capability dressed as an
+  example. The consequence is that no ACCEPTED example exercises
+  `scope: match`; `bad/x15-metadata-wrong-scope.jsonl` covers that
+  branch instead.
 
 ## Editing one
 

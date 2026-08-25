@@ -33,7 +33,10 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x11-timing-on-uncompiled-cell.jsonl` | X11 | a timed match row for the pattern this testee reported `unsupported-by-declaration` |
 | `x13-measured-but-loaded.jsonl` | X13 | `status: measured` on a record whose after-load exceeded the limit |
 | `x14-missing-compile-row.jsonl` | X14 | `status: measured` with a pattern that has no compile row at all |
+| `x15-metadata-wrong-scope.jsonl` | X15 | the `engine` pair — declared `scope: pattern` — stamped on a MATCH row. The scope half of X15 has no good-example coverage now that the v8 example's undescribed `tier` pair is gone (note §7), so this control is the only thing holding it |
 | `x15-undeclared-engine-metadata.jsonl` | X15 | an `engine_metadata` pair the testee never declared |
+| `x18-duplicate-seq.jsonl` | X18 | two result rows claiming the same `seq` — the record no longer says which was emitted first, which is the one thing `seq` exists to say |
+| `x18-seq-gap.jsonl` | X18 | the last result row's `seq` bumped past N: a row was dropped somewhere and the file does not admit it |
 | `x17-future-major-version.jsonl` | X17 | a record at schema version 2.0, which this validator does not implement and for which no migration is declared. It is also the standalone half of X17: the cross-FILE half (two majors in one invocation) needs two files and is exercised by hand |
 
 ## Adding one
@@ -42,5 +45,22 @@ Every new cross-line rule gets a file here, named for it. The generator
 that produced these lived in the session scratchpad and is deliberately
 not committed: a sabotage is easier to read as a finished file than as a
 mutation function, and these files change only when a rule does.
+
+## When a control fires more than one rule
+
+`--expect-rule` requires the NAMED rule to be among those that fired; it
+does not require it to be alone. Three controls legitimately fire more
+than one, and all three are honest rather than sloppy:
+
+- `x14-missing-compile-row` also fires X11 — a timed match row whose
+  pattern has no compile row has no provenance either (note §9's first
+  corollary).
+- `x1-mixed-schema-versions` also fires X18 and X9 — the second record's
+  rows bring their own `seq` 1..N and their own trial numbering, which
+  collide with the first record's. A concatenation is detectable in
+  several ways at once; that is a property of concatenation, not a
+  defect in the control.
+- `x6-tampered-hash` is the one control that is deliberately NOT
+  restamped, so its edit and its hash disagree by construction.
 
 Maintenance: update this file when files are added/removed or change role.

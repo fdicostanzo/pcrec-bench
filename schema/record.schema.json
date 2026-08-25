@@ -27,6 +27,10 @@
       "maxLength": 64
     },
     "nonneg_int": { "type": "integer", "minimum": 0 },
+    "seq": {
+      "description": "The result row's position in EMISSION order, 1..N over every result row of the record. File order is free; `seq` is what carries order (docs/design/record_schema.md 2, rule X18).",
+      "type": "integer", "minimum": 1
+    },
     "free_text": { "type": "string", "maxLength": 8192 },
 
     "execution_model": {
@@ -350,9 +354,10 @@
     "match_row": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "pattern_id", "subject_id", "regime", "trial", "match_outcome"],
+      "required": ["kind", "seq", "pattern_id", "subject_id", "regime", "trial", "match_outcome"],
       "properties": {
         "kind": { "const": "match" },
+        "seq": { "$ref": "#/$defs/seq" },
         "pattern_id": { "$ref": "#/$defs/slug" },
         "subject_id": { "$ref": "#/$defs/slug" },
         "regime": { "$ref": "#/$defs/regime" },
@@ -415,9 +420,10 @@
     "compile_row": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "pattern_id", "trial", "compile_outcome", "cost_class"],
+      "required": ["kind", "seq", "pattern_id", "trial", "compile_outcome", "cost_class"],
       "properties": {
         "kind": { "const": "compile" },
+        "seq": { "$ref": "#/$defs/seq" },
         "pattern_id": { "$ref": "#/$defs/slug" },
         "trial": { "type": "integer", "minimum": 1 },
         "compile_outcome": { "$ref": "#/$defs/compile_outcome" },
@@ -442,7 +448,7 @@
             }
           }
         },
-        "derivation": { "const": "trial-1-minus-steady-state" },
+        "derivation": { "const": "first-match-row-minus-steady-state" },
         "artifact_bytes": { "type": ["integer", "null"], "minimum": 0 },
         "declaration_ref": { "$ref": "#/$defs/free_text" },
         "engine_metadata": { "$ref": "#/$defs/engine_metadata" },
@@ -466,7 +472,7 @@
           "then": { "required": ["declaration_ref"] }
         },
         {
-          "$comment": "requirements.md 3: a lazy JIT has no separable compile call, so a lazy-jit row carries the DERIVATION, never a number the harness invented.",
+          "$comment": "requirements.md 3: a lazy JIT has no separable compile call, so a lazy-jit row carries the DERIVATION, never a number the harness invented. The derivation is over the globally-FIRST match row of this pattern in this record (lowest `seq`), which is what `seq` exists to make well-defined.",
           "if": {
             "properties": { "cost_class": { "const": "lazy-jit" } },
             "required": ["cost_class"]

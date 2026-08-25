@@ -58,9 +58,16 @@ the validator rejects a second one, which is what a concatenation of
 two records looks like and is the realistic way two schema versions
 end up in one file (§4).
 
-Row ORDER is not significant and the validator does not require one.
-Writing compile rows before match rows is the natural harness order and
-what the examples do.
+Row ORDER IN THE FILE is free; `seq` carries the order. Every result
+row carries a `seq` — dense and unique 1..N over ALL result rows of the
+record, in EMISSION order (rule X18). File order and emission order are
+therefore separable: a reader may sort the rows however it likes, and a
+tool that rewrites a file cannot silently lose which measurement
+happened first. That matters for more than tidiness: a lazy JIT's
+compile cost is defined as its FIRST match minus steady state (§3 of the
+requirements), and "first" has to mean something the file cannot
+scramble. Writing compile rows before match rows is the natural harness
+order and what the examples do; nothing depends on it any more.
 
 **File name = `record_id` + `.jsonl`, verbatim.** The record id is
 built from the identity tuple (§3) with `__` between components, and
@@ -525,6 +532,7 @@ One row per (pattern × subject-or-subject-set × regime × trial)
 | field | type | req | rule / enum | why |
 |---|---|---|---|---|
 | `kind` | const `"match"` | R | — | the discriminator |
+| `seq` | integer ≥1 | R | dense and unique 1..N over ALL result rows of the record, in EMISSION order (X18) | ADDITION: §2's "file order is free" needs a carrier for the order that IS significant. Without it "the first match" — which is exactly how a lazy JIT's compile cost is defined (§3) — is a property of a file's line numbers, and a store that re-sorts rows changes a measurement |
 | `pattern_id` | slug | R | must be in `setup.patterns[]` | §6 row key |
 | `subject_id` | slug | R | must be in `setup.subjects[]` | §6 row key |
 | `regime` | enum | R | must be in `setup.subbench.regimes`; FILTERABLE | §3: each regime is a first-class result kind and they are not comparable to each other |
@@ -553,6 +561,7 @@ property of compiling, and this is the compiling row.
 | field | type | req | rule / enum | why |
 |---|---|---|---|---|
 | `kind` | const `"compile"` | R | — | the discriminator |
+| `seq` | integer ≥1 | R | one 1..N sequence shared with the match rows (X18) | ADDITION, as above. The sequence is per RECORD, not per row kind: interleaving compile and match rows is what a harness actually does, and the order between them is part of what happened |
 | `pattern_id` | slug | R | must be in `setup.patterns[]` | §6 row key |
 | `trial` | integer ≥1 | R | 1..N contiguous per pattern | C4: pcrec's single-sample GCC-TIME swung 1.87× on a quiet box (`~/pcrec/tests/bench/CLAUDE.md:78`), so compile cost is median-of-N with spread like everything else — which means N RAW trials here |
 | `compile_outcome` | enum | R | FILTERABLE | §4.4 per-(pattern, testee) set |
@@ -562,7 +571,7 @@ property of compiling, and this is the compiling row.
 | `cost.phases` | array | o | names and order must equal `setup.testee.compile_phases` | §3 AOT: "pattern → C → gcc → loadable object, all phases, each timed" |
 | `cost.phases[].name` | slug | R | — | as above |
 | `cost.phases[].elapsed_ns` | integer ≥0 | R | phases need not sum to `total_ns` (harness overhead between them) | as above |
-| `derivation` | const `trial-1-minus-steady-state` | c | present IFF `cost_class` = `lazy-jit`, and `cost` is then FORBIDDEN | §3: a lazy JIT has "no separable call: cost = trial 1 minus steady state". That is a REDUCTION over match rows, and reductions do not belong in a record — so the row names the derivation and the reporter does the arithmetic from the raw match trials (A6 + "raw trials, not reductions") |
+| `derivation` | const `first-match-row-minus-steady-state` | c | present IFF `cost_class` = `lazy-jit`, and `cost` is then FORBIDDEN. The subtrahend is the GLOBALLY-FIRST match row of this pattern in this record — the one with the lowest `seq` — and the steady state is the rest | §3: a lazy JIT has "no separable call: cost = trial 1 minus steady state". That is a REDUCTION over match rows, and reductions do not belong in a record — so the row names the derivation and the reporter does the arithmetic from the raw match trials (A6 + "raw trials, not reductions"). The token says "first match row", not "trial 1", DELIBERATELY: `trial` is numbered per (pattern, subject, regime), so a pattern measured over 85 subjects has 85 rows numbered `trial: 1` and only ONE of them paid the JIT. `seq` is what distinguishes them |
 | `artifact_bytes` | integer/null | o | recorded if free, NOT scored | §3 "Deferred, recorded if free but not scored: memory high-water, artifact/code size" |
 | `declaration_ref` | string | c | required when `compile_outcome` = `unsupported-by-declaration` | §4.4: the outcome means "the sub-bench's engine notes SAY this engine cannot express the intention" — the row must cite the note, or the outcome is an unfalsifiable excuse |
 | `diagnostic` | string/null | c | required when `compile_outcome` = `did-not-compile`; DIAGNOSTIC, UNINDEXED | §4.4 "(with the engine's diagnostic)" |
@@ -594,6 +603,7 @@ lesson: a check with no failing case proves nothing).
 | X15 | Every `engine_metadata` name is declared; its `scope` matches the row kind; its value matches the declared type (`enum` value in `values`, `mask` bits in `bits`, integer, string) | §4.2, §7 rule 1 |
 | X16 | `testee.warmup_trials` ≥ 1 when `execution_model` = `lazy-jit` | §3 (A6) |
 | X17 | Across files given to one invocation: no two differing MAJOR `schema_version`s | §4, A10 |
+| X18 | Every result row's `seq` is unique, and the record's seqs are exactly 1..N over ALL result rows | §2; the lazy-JIT derivation needs a well-defined "first" |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each

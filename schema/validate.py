@@ -6,7 +6,7 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X17 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X18 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
@@ -321,6 +321,25 @@ class RecordValidator:
             for name, value in (row.get("engine_metadata") or {}).items():
                 self._check_metadata(add, path, n, name, value, decl, kind)
 
+        # X18 the per-record emission order
+        seq_lines = {}
+        for n, row in rows:
+            seq_lines.setdefault(row.get("seq"), []).append(n)
+        for sq, lines in sorted(seq_lines.items(),
+                                key=lambda kv: (kv[0] is None, kv[0])):
+            if len(lines) > 1:
+                add(Problem(path, lines[1], "seq",
+                            f"seq {sq} appears on {len(lines)} result rows "
+                            f"(also on line {lines[0]}); seq is the record's "
+                            f"emission ORDER and must be unique", "X18"))
+        nums = sorted(x for x in seq_lines if isinstance(x, int))
+        if rows and nums != list(range(1, len(rows) + 1)):
+            first = min(min(v) for v in seq_lines.values())
+            add(Problem(path, first, "seq",
+                        f"the {len(rows)} result rows carry seq {nums}; they "
+                        f"must be a dense 1..N over EVERY result row of the "
+                        f"record, in emission order", "X18"))
+
         # X9 dense trial numbering
         for pid, trials in seen_compile.items():
             self._check_trials(add, path, trials, f"compile rows for pattern {pid!r}")
@@ -422,7 +441,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X17 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X18 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")
