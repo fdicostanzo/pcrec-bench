@@ -42,6 +42,9 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `schema-missing-subject-sha256.jsonl` | SCHEMA | a subject roster entry with no `sha256`: the bytes that produced the numbers are unidentified |
 | `x22-unpinned-engine-version.jsonl` | X22 | `engine_version: 0.9.0-g1a2b3c4` — a `git describe` string, not a release — with `engine_commit: null`. §6.2 has always said the version must be reproducible from the commit; this is the first time anything checks it |
 | `schema-quiet-attestation-present.jsonl` | SCHEMA | the DROPPED `quiet_attestation` field, still present. `additionalProperties: false` is what makes a removal stick, and this is the control that proves it does |
+| `x23-cpu-model-not-derived.jsonl` | X23 | `cpu_model: example-cpu` beside a `cpu_model_raw` that normalizes to `example-cpu-12-core` — the FILTERABLE half and the reproducible half disagreeing, which is the whole failure mode §6 exists to prevent |
+| `x23-kernel-not-derived.jsonl` | X23 | `kernel` naming a release `kernel_raw` does not |
+| `x23-compiler-not-derived.jsonl` | X23 | `compiler` naming a gcc version `compiler_raw` does not |
 | `x14-missing-compile-row.jsonl` | X14 | `status: measured` with a pattern that has no compile row at all |
 | `x15-metadata-wrong-scope.jsonl` | X15 | the `engine` pair — declared `scope: pattern` — stamped on a MATCH row. The scope half of X15 has no good-example coverage now that the v8 example's undescribed `tier` pair is gone (note §7), so this control is the only thing holding it |
 | `x15-undeclared-engine-metadata.jsonl` | X15 | an `engine_metadata` pair the testee never declared |

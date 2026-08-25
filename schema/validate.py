@@ -6,7 +6,7 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X22 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X23 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
@@ -100,6 +100,55 @@ def parse_loadavg(raw):
         return [float(x) for x in parts[:3]]
     except ValueError:
         return None
+
+
+# ------------------------------------------- the normalization rules (6.6-6.7)
+#
+# docs/design/record_schema.md 6 splits the OPEN identifiers from the fixed
+# enums: what is pinned is the RULE that produces the string. A rule stated
+# only in prose is a rule nobody runs, so the three that CAN be made
+# mechanical are functions here and rule X23 checks each against its own
+# `_raw` sibling. `machine_id` is the one that cannot -- it is an assignment,
+# not a derivation (6.5) -- and it stays asserted.
+
+def normalize_cpu_model(raw):
+    """6.6: drop (R)/(TM), drop a trailing `@ <freq>`, lowercase, collapse
+    runs of non-alphanumerics to one `-`, strip leading/trailing `-`."""
+    s = re.sub(r"\((?:R|TM|tm|r)\)", "", str(raw))
+    s = re.sub(r"\s*@\s*\S+\s*$", "", s)
+    s = re.sub(r"[^a-z0-9]+", "-", s.lower())
+    return s.strip("-")
+
+
+def normalize_kernel(raw):
+    """6.7: `uname -s` and `uname -r`, lowercased, joined by `-`."""
+    return re.sub(r"\s+", "-", str(raw).strip()).lower()
+
+
+def normalize_compiler(raw):
+    """6.7: the FIRST line of `$CC --version` reduced to `<name>-<version>`.
+    The name is the first token, lowercased with non-alphanumerics collapsed;
+    the version is the LAST token that is a bare dotted number, which is what
+    gcc, clang and rustc all put there and what a build string
+    (`15.2.0-4ubuntu4`) deliberately is not."""
+    line = str(raw).splitlines()[0] if str(raw).strip() else ""
+    toks = line.split()
+    if not toks:
+        return ""
+    name = re.sub(r"[^a-z0-9]+", "-", toks[0].lower()).strip("-")
+    version = ""
+    for tok in toks:
+        bare = tok.strip("(),")
+        if re.fullmatch(r"\d+(\.\d+)*", bare):
+            version = bare
+    return f"{name}-{version}" if version else name
+
+
+NORMALIZED = (
+    ("cpu_model", "cpu_model_raw", normalize_cpu_model),
+    ("kernel", "kernel_raw", normalize_kernel),
+    ("compiler", "compiler_raw", normalize_compiler),
+)
 
 
 # ------------------------------------------------------- derived identifiers
@@ -392,8 +441,21 @@ class RecordValidator:
                             f"timing for a wrong answer is worse than no timing",
                             "X11"))
 
-        # X19 the load evidence: the parse must agree with the raw line
         env = setup.get("environment", {})
+
+        # X23 the normalized identifiers derive from their raw siblings
+        for field, raw_field, rule in NORMALIZED:
+            raw = env.get(raw_field)
+            if not isinstance(raw, str) or not raw.strip():
+                continue          # the raw sibling is optional; no raw, no rule
+            want_n = rule(raw)
+            if env.get(field) != want_n:
+                add(Problem(path, 1, f"environment.{field}",
+                            f"is {env.get(field)!r} but {raw_field} "
+                            f"{raw!r} normalizes to {want_n!r} by "
+                            f"docs/design/record_schema.md 6", "X23"))
+
+        # X19 the load evidence: the parse must agree with the raw line
         load = env.get("load", {}) or {}
         for when in ("before", "after"):
             sample = load.get(when)
@@ -536,7 +598,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X22 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X23 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")

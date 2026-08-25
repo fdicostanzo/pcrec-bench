@@ -232,6 +232,28 @@ is a NORMALIZED IDENTIFIER with a per-engine registry (§6.3).
 R1 finding A11 split these from the fixed enums: they are open sets, so
 what is pinned is the RULE that produces the string, not the list.
 
+**A rule stated only in prose is a rule nobody runs.** Three of the
+rules below are MECHANICAL and are therefore CODE: `normalize_cpu_model`,
+`normalize_kernel` and `normalize_compiler` in `validate.py`, checked
+against their `_raw` siblings by rule X23. The rest are not mechanical
+and say so explicitly:
+
+| identifier | status |
+|---|---|
+| `cpu_model` | DERIVED from `cpu_model_raw`, checked (X23) |
+| `kernel` | DERIVED from `kernel_raw`, checked (X23) |
+| `compiler` | DERIVED from `compiler_raw`, checked (X23) |
+| `machine_id` | ASSERTED — an assignment, not a derivation (§6.5); deliberately not derivable |
+| `engine_name` | ASSERTED against a registry (§6.1); the source is a project's own name, which no function on this box can see |
+| `engine_mode` | ASSERTED against a per-engine registry (§6.3) |
+| `testee_id`, `record_id` | DERIVED from other RECORD fields, checked (X5, X3) — a different thing from normalizing an external string |
+
+The `_raw` siblings are OPTIONAL, so X23 checks a field only when its
+raw is present. That is the honest shape: the rule relates two things,
+and with one of them missing there is nothing to check — but a harness
+that omits the raw string has also given up the only evidence that its
+normalized value was right.
+
 ### 6.1 `engine_name`
 
 Lowercase ASCII, `[a-z0-9]([a-z0-9-]*[a-z0-9])?`. It names the ENGINE
@@ -312,18 +334,39 @@ as the evidence that an assignment was right.
 
 ### 6.6 `cpu_model`
 
-From `/proc/cpuinfo`'s `model name`, canonicalised: drop `(R)`, `(TM)`,
-`(tm)`, drop a trailing `@ <freq>`, lowercase, collapse runs of
-non-alphanumerics to a single `-`, strip leading/trailing `-`. E.g.
-`Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz` → `intel-core-i7-9750h-cpu`.
-`cpu_model_raw` keeps the original string verbatim (reproducibility).
+From `/proc/cpuinfo`'s `model name`, canonicalised, in this order:
+
+1. delete `(R)`, `(TM)`, `(tm)`, `(r)`;
+2. delete a trailing `@ <freq>`;
+3. lowercase;
+4. collapse every run of non-alphanumerics to a single `-`;
+5. strip leading and trailing `-`.
+
+E.g. `Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz` →
+`intel-core-i7-9750h-cpu`. `cpu_model_raw` keeps the original string
+verbatim (reproducibility) and X23 checks the derivation against it.
 
 ### 6.7 `kernel` and `compiler`
 
 `kernel` = `uname -s` and `uname -r`, lowercased, joined by `-`:
-`linux-7.0.0-29-generic`. `compiler` = the first line of
-`$CC --version` reduced to `<name>-<version>`: `gcc-15.2.0`. Raw
-strings in `kernel_raw` / `compiler_raw`.
+`linux-7.0.0-29-generic`. Mechanically: strip the raw string, replace
+every whitespace run with `-`, lowercase.
+
+`compiler` = the FIRST line of `$CC --version` reduced to
+`<name>-<version>`: `gcc-15.2.0`. Mechanically: the NAME is the first
+whitespace-separated token, lowercased with non-alphanumeric runs
+collapsed to `-`; the VERSION is the LAST token of that line which is a
+bare dotted number, after stripping surrounding `(`, `)` and `,`. That
+last clause is the whole rule: `gcc (Ubuntu 15.2.0-4ubuntu4) 15.2.0`
+has two version-looking tokens and only one of them is the compiler's
+version — a distribution's build string is not a version, and it is
+excluded by being not-a-bare-dotted-number rather than by a
+distribution-specific special case. `clang version 20.1.0 (…)` →
+`clang-20.1.0`; `rustc 1.79.0 (129f3b996 2024-06-10)` → `rustc-1.79.0`.
+If the line has no bare dotted number, the rule yields the name alone —
+that is a finding about the rule, not an escape hatch, and it is
+visible because X23 will then reject a record that carries anything
+else. Raw strings in `kernel_raw` / `compiler_raw`.
 
 `compiler` is an ENVIRONMENT dimension — the C toolchain of the box,
 which is what an AOT testee such as pcrec actually pays and what
@@ -649,6 +692,7 @@ lesson: a check with no failing case proves nothing).
 | X20 | `load.verdict` is `loaded` iff either sample's `load1` exceeds `limit`, `quiet` otherwise | §9(a). Without it X13 is inert: a harness that stamps `quiet` beside a `load1` of 9.8 satisfies X13 and the record claims to be measured |
 | X21 | `calibration.probe_elapsed_ns / probe_iterations × timing.iterations ≥ calibration.target_ns`, or `calibration_note` says why not | §3's batched-loop protocol; `harness_contract.md` §3's auto-calibration. A loop that fell short of its target is a shorter measurement than the record claims to have taken |
 | X22 | `testee.engine_commit` is present and full 40-hex whenever `testee.engine_version` is not a release-tag shape (§6.2) | §4.2's "pinned"; §6.2's binding rule, which until now nothing enforced |
+| X23 | `cpu_model`, `kernel` and `compiler` equal what §6.6/§6.7's rules produce from `cpu_model_raw`, `kernel_raw` and `compiler_raw`, when those are present | §6; A11. The normalization rules existed as prose only, which means the FILTERABLE half of each pair was un-checked against the reproducible half |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each
