@@ -37,6 +37,13 @@ must reject, in the same run that exercises it against one it must accept.
   X21           the chosen iteration count MEETS its target -- checked both
                 as arithmetic over ratios that floor wrongly, and as X21's
                 own expression over a real record's rows.
+  frame buffer  the pcrec `_in` path (match_api.md 10): the `_in` entries
+                agree with the plain ones on the smoke pattern; the buffer
+                MATTERS (the control) -- a deliberately tiny buffer on a deep
+                email subject gives up `PCREC_ERR_FRAMES` BY NAME where the
+                configured capacities match; the pin's compile rows carry
+                abi == 3 and the sizing pairs, a DFA artifact stamps 0 and
+                records no buffer pair, a VM artifact records the capacities.
   run smoke     a full `run` of one cell into a SCRATCH store, validated.
 
 Everything runs under gnutimeout with LC_ALL=C. Nothing here writes into the
@@ -765,6 +772,192 @@ def check_calibration_meets_target():
     shutil.rmtree(scratch, ignore_errors=True)
 
 
+# ------------------------------------------ 9 the caller-provided frame buffer
+
+def check_frame_buffer():
+    """THE CONTROLS FOR THE `_in` PATH (pcrec match_api.md 10, [DD-14.FB]).
+
+    Three things, each with the case that would expose a shim or driver that
+    quietly did nothing:
+
+      1. AGREEMENT: `pcrec-auto-in` (the `_in` entries with a buffer) answers
+         the smoke pattern with the same span AND captures as `pcrec-auto`
+         (the plain entries). 10.3 promises the entries are siblings; this is
+         the bench checking it rather than believing it.
+      2. THE BUFFER MATTERS: on bench/email's `factored` pattern and the
+         deepest give-up subject (s-059), the stamped default gives up
+         `PCREC_ERR_FRAMES`, a deliberately TINY caller buffer (4 frames / 4
+         entries) gives up `PCREC_ERR_FRAMES` BY NAME, and the configured
+         capacities MATCH the whole subject as the oracle expects. A shim
+         that ignored the descriptor -- passed NULL, or the wrong region --
+         fails the third arm; a driver that never allocated fails it too.
+         (Sabotaged once on purpose: with the shim passing NULL the
+         configured arm gave up exactly like the default -- see the commit.)
+      3. THE ABI READ AND THE PAIRS: every pcrec compile row at this pin
+         carries `abi == 3` and the four sizing pairs; on a DFA artifact
+         (`orig` under auto) the frame size is 0 and NO `buffer_*` pair is
+         recorded even though the config asked for one (10.4's "this engine
+         takes no buffers"); on the VM artifact under `pcrec-vm-in` the two
+         `buffer_*` pairs carry the config's capacities."""
+    print("-- the caller-provided frame buffer (the `_in` path) --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("frame-buffer control", "no pcrec adapter")
+        return
+    cfg_in = adapter.testees().get("pcrec-auto-in")
+    cfg_vm_in = adapter.testees().get("pcrec-vm-in")
+    if not cfg_in or not cfg_vm_in:
+        bad("frame-buffer control",
+            "configs.toml has no pcrec-auto-in / pcrec-vm-in")
+        return
+    sb = Subbench(BENCH)
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-fb-")
+    try:
+        subj_path = os.path.join(tmp, "s.bin")
+        with open(subj_path, "wb") as f:
+            f.write(b"xabcbd")
+
+        class S:
+            subject_id, path, length = "s-smoke", subj_path, 6
+
+        # 1. agreement --------------------------------------------------
+        answers = {}
+        for tid in ("pcrec-auto", "pcrec-auto-in"):
+            adapter.prepare(tid, tmp)
+            cr = adapter.compile(tid, "smoke", b"a(b|c)+d", {}, 1,
+                                 tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                bad("_in agreement", "%s: %s" % (tid, cr.diagnostic))
+                return
+            rows, _i, _n = adapter.measure(dict(cr.handle), "search_short",
+                                           [S()], 1, 1, timeout=120)
+            answers[tid] = (rows[0][0], cr.engine_metadata)
+        plain, plain_meta = answers["pcrec-auto"]
+        via_in, in_meta = answers["pcrec-auto-in"]
+        same = (plain.answer, plain.start, plain.end, plain.caps) == \
+               (via_in.answer, via_in.start, via_in.end, via_in.caps)
+        if in_meta.get("engine") != "vm" or "buffer_frames" not in in_meta:
+            bad("_in agreement",
+                "the smoke pattern did not exercise the buffer: engine=%s, "
+                "buffer_frames=%s -- the agreement would be vacuous"
+                % (in_meta.get("engine"), in_meta.get("buffer_frames")))
+        elif same and plain.matched and (plain.start, plain.end) == (1, 6):
+            ok("_in agreement (plain vs caller buffer)",
+               "a(b|c)+d over 'xabcbd': both [%d,%d) caps %s, VM artifact, "
+               "buffer %s/%s in use"
+               % (plain.start, plain.end, plain.caps,
+                  in_meta["buffer_frames"], in_meta["buffer_trail"]))
+        else:
+            bad("_in agreement (plain vs caller buffer)",
+                "plain %s [%s,%s) %s vs _in %s [%s,%s) %s"
+                % (plain.answer, plain.start, plain.end, plain.caps,
+                   via_in.answer, via_in.start, via_in.end, via_in.caps))
+
+        # 2. the buffer matters ----------------------------------------
+        adapter.prepare("pcrec-vm-in", tmp)
+        cp = adapter.compile("pcrec-vm-in", "factored",
+                             sb.pattern_bytes("factored"), {}, 1, tmp)
+        cr = cp.get(_ad.FORM_WHOLE_SUBJECT)
+        if cr is None or cr.outcome != "compiled":
+            bad("buffer-matters control",
+                "factored did not compile under pcrec-vm-in: %s"
+                % (cr and cr.diagnostic))
+            return
+        deep = sb.subject("s-059")
+        exp = sb.expectation("factored", "s-059", "match")
+        arms = {
+            "default": [],
+            "tiny": ["--buffer-frames", "4", "--buffer-trail", "4"],
+            "configured": list(cr.handle["buffer_args"]),
+        }
+        got = {}
+        for arm, args in arms.items():
+            handle = dict(cr.handle)
+            handle["buffer_args"] = args
+            rows, _i, _n = adapter.measure(handle, "match", [deep], 1, 1,
+                                           timeout=120)
+            row = rows[0][0]
+            outcome, _o, _d = outcome_for(row, exp, "match", deep)
+            got[arm] = (row, outcome)
+        want_giveup = "giveup:-3:PCREC_ERR_FRAMES"
+        d_row, d_out = got["default"]
+        t_row, t_out = got["tiny"]
+        c_row, c_out = got["configured"]
+        if d_row.answer == want_giveup and d_out == "gave-up":
+            ok("buffer-matters: the stamped default gives up",
+               "s-059 (%d B) -> %s -> gave-up" % (deep.length, d_row.answer))
+        else:
+            bad("buffer-matters: the stamped default gives up",
+                "s-059 -> %s (%s); the control's premise is gone"
+                % (d_row.answer, d_out))
+        if t_row.answer == want_giveup and t_out == "gave-up":
+            ok("buffer-matters: a tiny caller buffer gives up BY NAME",
+               "4 frames / 4 entries -> %s" % t_row.answer)
+        else:
+            bad("buffer-matters: a tiny caller buffer gives up BY NAME",
+                "4/4 -> %s (%s)" % (t_row.answer, t_out))
+        if c_row.matched and c_out == "matched-as-expected":
+            ok("buffer-matters: the configured capacities MATCH",
+               "%s -> match [%d,%d), matched-as-expected"
+               % (" ".join(arms["configured"]), c_row.start, c_row.end))
+        else:
+            bad("buffer-matters: the configured capacities MATCH",
+                "%s -> %s (%s): the descriptor is not reaching the artifact"
+                % (" ".join(arms["configured"]), c_row.answer, c_out))
+
+        # 3. the abi read and the pairs --------------------------------
+        vm_meta = cr.engine_metadata
+        adapter.prepare("pcrec-auto-in", tmp)
+        dfa = adapter.compile("pcrec-auto-in", "orig",
+                              sb.pattern_bytes("orig"), {}, 1,
+                              tmp).get(_ad.FORM_PLAIN)
+        dfa_meta = dfa.engine_metadata if dfa.outcome == "compiled" else {}
+        sizing = ("resume_frames", "trail_frames", "resume_frame_size",
+                  "trail_frame_size")
+        abis = {m.get("abi") for m in (plain_meta, in_meta, vm_meta, dfa_meta)}
+        if abis == {3} and all(k in m for m in (vm_meta, dfa_meta)
+                               for k in sizing):
+            ok("abi == 3 and the sizing pairs on every compile row",
+               "4 artifacts, both engines, all abi 3")
+        else:
+            bad("abi == 3 and the sizing pairs on every compile row",
+                "abi values %s; sizing pairs present: vm %s, dfa %s"
+                % (sorted(abis, key=str),
+                   [k for k in sizing if k in vm_meta],
+                   [k for k in sizing if k in dfa_meta]))
+        if (dfa_meta.get("engine") == "dfa"
+                and dfa_meta.get("resume_frame_size") == 0
+                and "buffer_frames" not in dfa_meta
+                and "buffer_trail" not in dfa_meta):
+            ok("a DFA artifact stamps 0 and records NO buffer pair",
+               "orig under pcrec-auto-in: engine dfa, frame size 0, buffers "
+               "inert (10.4)")
+        else:
+            bad("a DFA artifact stamps 0 and records NO buffer pair",
+                "orig under pcrec-auto-in: %s"
+                % {k: dfa_meta.get(k) for k in ("engine", "resume_frame_size",
+                                                "buffer_frames")})
+        caps = (cfg_vm_in.get("buffer_frames"), cfg_vm_in.get("buffer_trail"))
+        if (vm_meta.get("engine") == "vm"
+                and (vm_meta.get("buffer_frames"),
+                     vm_meta.get("buffer_trail")) == caps
+                and vm_meta.get("resume_frame_size", 0) > 0):
+            ok("a VM artifact records the configured capacities",
+               "factored under pcrec-vm-in: buffer %s/%s, frame %d B, "
+               "trail entry %d B"
+               % (caps[0], caps[1], vm_meta["resume_frame_size"],
+                  vm_meta["trail_frame_size"]))
+        else:
+            bad("a VM artifact records the configured capacities",
+                "factored under pcrec-vm-in: %s"
+                % {k: vm_meta.get(k) for k in ("engine", "buffer_frames",
+                                               "buffer_trail",
+                                               "resume_frame_size")})
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_run_smoke():
     """A full `run` of ONE cell into a SCRATCH store, validated. Not a
     measurement: --trials 1 --iters 1, one regime, --force-unquiet, and the
@@ -805,6 +998,7 @@ def main():
     check_whole_subject_form()
     check_v11_fields()
     check_calibration_meets_target()
+    check_frame_buffer()
     check_run_smoke()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"

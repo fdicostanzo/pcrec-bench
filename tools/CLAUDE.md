@@ -17,3 +17,15 @@ store race control (a shared staging directory lost 2 of 8 records), and the
 per-subject timeout control (nothing in the corpus hangs, so the alarm path
 had never run). A fourth, the v1.1-readiness control, exists to stop
 `record.project()` becoming dead code before the schema version flips.
+
+The frame-buffer block (`check_frame_buffer`, [B8]) follows the same rule:
+its "buffer matters" arm was sabotaged once on purpose — the shim made to
+pass a NULL descriptor — and the configured-capacities arm failed exactly as
+it must (the deep subject gave up as under the default), so the control is
+known to see a shim that ignores the buffer. Its other arms: the `_in`
+entries agree with the plain ones on the smoke pattern; a tiny caller buffer
+gives up `PCREC_ERR_FRAMES` BY NAME; every pcrec compile row at the pin reads
+`abi == 3` with the four sizing pairs; a DFA artifact stamps a frame size of
+0 and records no `buffer_*` pair; a VM artifact records the configured
+capacities. Seven PASS lines, all needing the pin's `_in` surface (pcrec
+17469b6 or later).
