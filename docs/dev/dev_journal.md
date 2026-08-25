@@ -98,3 +98,44 @@ here is `master`). Housekeeping committed 7789bd1. Next: the D6 panel
 (three read-only sonnet critics: data model/report completeness;
 semantics/variant axis/charter consistency; blocking point/first cut/
 measurement validity) → triage → Frank adopts → [B2].
+
+## 2026-08-24/25 (EDT), first session (part 3) — the R1 panel: 29 findings, 27 applied in requirements.md v2; two rulings owed
+
+Three read-only sonnet critics (A data model/report, B semantics/
+variant/charter, C blocking/first cut/measurement) returned 11 + 9 + 10
+findings; the manager re-read every load-bearing citation (all held:
+mpstat installed; uutils timeout ~108.7 ms/call; GCC-TIME 1.87× single-
+sample swing; RX_VM_* are structured masks; the LC_ALL=C lesson). Record
+docs/dev/reviews/2026-08-24-r1-requirements.md. The HIGHs, all fixed:
+record identity collided at date granularity (→ timestamp + hash);
+"run" undefined (→ run/cell/record/trial defined); pcrec-only mechanism
+stamps contradicted "one more file in the pile" AND had no shape (→ a
+generic enumerated engine_metadata map read from structured fields, the
+prose RX_ENGINE_WHY unindexed); build config free text on the headline
+filter axis (→ captures/engine_mode/simd as fields, flags blob for
+reproducibility only); compile cost did not fit the row shape and lazy
+JIT has no separable call (→ COMPILE rows keyed pattern×trial, a per-
+execution-model protocol, trial 1 excluded for lazy JIT, median-of-N —
+gcc is not a clean single number); per-trial gnutimeout would BE the
+signal in the 10..1000 B regimes (→ batched in-process loops, timeout on
+the outer process only); the middle deviation grade undecidable (→ TWO
+grades, stated differences are expectations — manager ruling, vetoable);
+capture-restructuring variants uncheckable (→ mandatory capture
+correspondence, OD-B9); plan.md [B3] still proposed the interim carrier
+§5 forbids (→ row rewritten). MEDIUMs: truncated-subject outcome +
+consumed_length; runtime compile options recorded and covered by
+variants; N + pass-rate mandatory on partial coverage; hazard/size tags
+re-assertable per variant; convention per case with per-testee
+capability; load sampled after as well as before (inconclusive-load
+status); mpstat occupancy machine-readable; 1 MB subjects disclosed as
+smaller than pcrec's 8-64 MB convention (OD-B10); LC_ALL=C; OD-B4 split
+into enums vs normalization rules; OD-B8 given an owning row ([B3]).
+
+OWED TO FRANK before adoption: (1) the BLOCKING SCOPE — the panel
+measured that [DD-13b/c] have no queue position in pcrec's plan and
+[DD-14] is still growing, so "the rxt should be coming pretty soon" is
+not supported by the plan file; NARROW reading (block only a new cross-
+sub-bench grammar; parse today's .rxt, wrap the specimen, plain sidecar
+of R-BENCH fields) vs BROAD (no carrier at all; M1 shrinks to schema +
+an adapter on the specimen's files) — manager recommends NARROW; (2) the
+two-grade variant scheme (veto restores three).

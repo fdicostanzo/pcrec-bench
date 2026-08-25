@@ -56,14 +56,20 @@ none is a commitment until Frank rules the requirements.
   compile outcome / match outcome / correctness verdict / timings with
   COMPILE and MATCH separated — plus the tiny validator the comparator
   shares. Design note → panel → ruled.
-- [B3] STATE:not-started — THE SET, v0: the interim set carrier and the
-  first versioned set. The FORMAT is owned by pcrec's [DD-13] (APPROACH §8
-  Q1, resolved in direction); until [DD-13b/c] land this project needs an
-  interim that imports .rxt (R-BENCH-8) and carries the per-case tags
-  (R-BENCH-1) without inventing a competing grammar. First contents: the
-  email specimen (a ready-made row), imports from pcrec's oracle-verified
-  corpora, and the hazard classes APPROACH §2.1 names.
-- [B4] STATE:not-started — TESTEE ADAPTERS, first two: pcrec (as its
+- [B3] STATE:not-started — THE HARNESS CORE: the sub-bench DIRECTORY
+  conventions (goal, canonical patterns, generated subjects + manifest,
+  expectations with verification method, tags, engine notes and
+  declared variants, regime declaration), the run-cells driver (one
+  cell or a chosen few, never the gamut), the store layout + index
+  (OD-B6), and the QUIET-BOX INSTRUMENT — load before/after, mpstat
+  per-core occupancy machine-readable, the numeric meaning of "quiet"
+  MEASURED on this box (OD-B8). The pattern/case FORMAT is owned by
+  pcrec's [DD-13] and is NOT invented here (requirements.md §5); under
+  Frank's NARROW blocking reading this row may parse today's `.rxt`
+  as-is and wrap the email specimen's files as the first sub-bench with
+  a plain per-sub-bench sidecar (R-BENCH-1..9 fields, no grammar);
+  under the BROAD reading it wraps the specimen's files only.
+- [B4] STATE:not-started — TESTEE ADAPTERS, first two (plus OD-B10, the large-subject size measured at 1 MB vs 8 MB): pcrec (as its
   several configuration testees, pinned by commit) and libpcre2 (interp AND
   jit as separate testees). Each pins its version and records build flags;
   "unsupported" is a first-class per-case result.
