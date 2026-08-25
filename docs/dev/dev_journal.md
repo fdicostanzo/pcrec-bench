@@ -713,3 +713,20 @@ the lane spoke, fixed by the lane, no check loosened. b9report found and
 fixed a render bug of its own (a fully-excluded ranking group vanished
 with its title). KB-1 filed (known_issues.md created). Waiting: the
 16-min re-measure window after pcrecdev1's battery (~16:45-17:15).
+
+## 2026-08-25 (EDT, ~18:4x), second session (part 6, PAUSE) — the three re-measured cells are `measured`; the repin sample is complete
+
+pcrecdev1's battery finished 18:15 (green); WINDOW OPEN; load1 decayed
+to 0.93 by 18:16; run_window_b8.sh with TESTEES="pcre2-interp pcrec-auto
+pcrec-nocaps" ran 18:16-18:32: all three `measured` (nocaps: one BEFORE-
+sample gate refusal, rc 3, passed on the script's second attempt — the
+OD-B12 retry doing its job). WINDOW CLOSED 18:32, load1 1.11. store/ now
+holds 14 records; reporter v2's newest-measured rule ranks the 18:xx
+records and lists the 13:xx inconclusive-load ones as superseded. The
+repin report re-rendered (all three files): every 692c2e8 cell ranked;
+the headline numbers of part 4 stand (the auto/nocaps medians agree
+with their inconclusive-load runs within spread — the gate had refused
+records that were, in the event, fine, which is the OD-B12 argument for
+an averaged-occupancy verdict). Session pauses here: [B8]-[B10] done,
+[B13] chartered, next in the queue [B11] log-line search — Frank starts
+it.
