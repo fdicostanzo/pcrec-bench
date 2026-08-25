@@ -60,19 +60,50 @@ pattern text handed to pcrec is identical either way. It lives in
     recorded as `did-not-match-as-expected` with the give-up code in the
     row's `diagnostic` — see "give-ups" below.
 
+## The match regime runs a SECOND pcrec artifact
+
+pcrec has no end-anchor option, so for the `match` regime its adapter
+compiles `(?:<pattern>)\z` as a separate artifact and uses the anchored
+entry on it; `search_short` and `throughput` use the plain artifact. The
+two never share a row (schema v1.1's `form` enum). libpcre2 needs none of
+this — it passes `PCRE2_ANCHORED|PCRE2_ENDANCHORED` as runtime flags on
+the one compiled pattern. Full rationale and measurements:
+`testees/pcrec/CLAUDE.md`.
+
+For a reader of THIS sub-bench's numbers, three consequences:
+
+1. **pcrec's match-regime compile cost is a different artifact's** from
+   its search/throughput compile cost. The record labels which; do not
+   reduce them together.
+2. **`orig`'s `\z` form still selects the DFA engine** (MEASURED against
+   pin 8da6120, both `pcrec-auto` and `pcrec-nocaps`), so the match
+   regime is not secretly measuring the VM for the inlined pattern.
+3. **The `\z` form's byte-class skip prefilter is present but weaker**:
+   the same `rx_can_begin_match` table, but a skip loop that can never
+   skip the final byte and cannot early-exit, because the end-of-subject
+   view has to be evaluated. A small per-scan cost difference between
+   pcrec's match-regime and search-regime numbers is expected and is
+   this, not an engine change.
+
 ## Give-ups are wrong answers, not missing ones
 
-`match_outcome` (record_schema.md §5) has no `gave-up` value, and it
-should not: from the bench's point of view an engine that declines to
-answer within its budget has not produced the expected answer. Such a
-row is `did-not-match-as-expected`, carries `observed.matched = false`,
-and names the engine's own code in `diagnostic` (`pcrec give-up
-PCREC_ERR_STEPS (-2)`). It is therefore NOT timed (requirements §7: a
-timing for a wrong answer is worse than no timing) and the reporter
-excludes it from rankings and lists it. A give-up that the sub-bench's
-notes had DECLARED would instead be `unsupported-by-declaration`; none
-is declared here, because a budget is a configuration, not an
-inexpressible construct.
+**RULED 2026-08-25: schema v1.1 adds a per-subject `gave-up` outcome** —
+the engine refused on a resource limit (pcrec `PCREC_ERR_STEPS`/
+`_FRAMES`/`_WORK`; pcre2's match or depth limit) — with the engine's own
+code in `diagnostic`. It is not timed, and it is counted SEPARATELY from
+wrong answers, which is the point: an engine that declined to answer and
+an engine that answered wrongly are different findings, and folding them
+together would hide the bench's headline hazard class inside a bucket of
+ordinary mismatches.
+
+Until v1.1 lands such a row is `did-not-match-as-expected` with
+`observed.matched = false` and the code in `diagnostic`. Either way it is
+NOT timed (requirements §7: a timing for a wrong answer is worse than no
+timing) and the reporter excludes it from rankings and lists it.
+
+A give-up that the sub-bench's notes had DECLARED would instead be
+`unsupported-by-declaration`; none is declared here, because a budget is a
+configuration, not an inexpressible construct.
 
 ## What the expectations are, and are not
 

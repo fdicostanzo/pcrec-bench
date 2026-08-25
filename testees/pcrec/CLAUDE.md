@@ -52,6 +52,69 @@ stamps at all.
 loader caches by path, so a repeated dlopen of one path measures the cache
 and not the load.
 
+## The MATCH regime uses a SECOND artifact — `(?:<pattern>)\z`
+
+RULED by the manager, 2026-08-25, from the pcrec manager: pcrec has no
+`PCRE2_ENDANCHORED` equivalent (a ratified but UNBUILT generation axis,
+pcrec [OS-4]; this bench is recorded there as its first customer), so the
+match/compliance regime compiles a SECOND artifact from `(?:<pattern>)\z`
+and uses the anchored entry on it. `search_short` and `throughput` use the
+PLAIN artifact. The two forms never share a row: schema v1.1's `form` enum
+(`plain` | `whole-subject`) labels compile and match rows, and pcrec emits
+compile rows for BOTH forms of every pattern, both timed, all phases.
+
+`\z` and not `$`: at `options = 0`, `$` also matches before a final
+newline, so `$` would silently accept a subject with a trailing `\n` that
+the oracle rejects. `(?:...)` and not bare concatenation: a top-level
+alternation would otherwise bind only its last branch to the anchor.
+
+### MEASURED against pin 8da6120, 2026-08-25 — verified, not assumed
+
+| pattern / form | config | engine | ncaps | emitted C |
+|---|---|---|---|---|
+| `orig` plain | auto | **dfa** | 1 | 43 669 B |
+| `orig` `\z` | auto | **dfa** | 1 | 49 090 B |
+| `orig` plain | nocaps | dfa | 1 | 43 671 B |
+| `orig` `\z` | nocaps | **dfa** | 1 | 49 092 B |
+| `orig` `\z` | vm | vm | 1 | 46 974 B |
+| `factored` plain / `\z` | auto | vm | 5 | 44 102 / 44 238 B |
+
+1. **`orig`'s `\z` form still selects the DFA engine** under `auto` and
+   `nocaps`. The prediction holds.
+2. **The byte-class skip prefilter is still there**, and its
+   `rx_can_begin_match` table is BYTE-IDENTICAL between the two forms
+   (same sha256 over the table body). But the skip LOOP is not identical
+   and the difference is load-bearing: the plain form skips while
+   `scan_position < subject_length` and `return 0`s when it runs off the
+   end; the `\z` form skips only while `scan_position + 1 <
+   subject_length` and cannot early-exit, because the end-of-subject
+   "end view" state (`rx_forward_end_view`) has to be evaluated. **The
+   prefilter is present but strictly weaker in the `\z` form** — it can
+   never skip the final byte. Expect the `\z` artifact to cost slightly
+   more per scan, and do not read a difference between the two forms as
+   an engine-selection effect.
+3. The `\z` form costs **+12.4 % emitted C** on `orig` and **+0.3 %** on
+   `factored`.
+4. **`\z` requires pcrec's `assertions` module.** Every pcrec config
+   already passes `--features all`, so no config change was needed — but
+   a future config that narrowed the feature set would break the match
+   regime rather than the pattern.
+
+### The gap this measurement found
+
+**The DFA prefilter is NOT observable through any structured stamp, so
+`engine_metadata` cannot say whether it is on.** `RX_VM_PREFILTER` is a
+VM-only stamp (record_schema.md §7: the `VM_*` stamps are emitted on VM
+artifacts only), and a DFA artifact's only `#define`s are
+`RX_ALTCLS_MERGES` / `RX_ALTCLS_FACTORED`. The prefilter's presence above
+was established by reading the emitted skip LOOP — prose and code, not a
+stamp — which is exactly what requirements §4.2 says a metadata pair must
+not be built from. Requirements §4.2 wants reports to "bucket outliers by
+MECHANISM", and the DFA prefilter is one of this sub-bench's headline
+mechanisms (pcrec's own srEmail measured a ~23× prefilter loss). **A
+DFA-side prefilter stamp is a candidate request to the pcrec manager**;
+until it exists, no pcrec DFA record can be filtered on it.
+
 ## `consumed_length`, and the MATCH-regime asymmetry you must know about
 
 `consumed_length` is the subject length the artifact's entry was given and

@@ -1,8 +1,10 @@
 #!/bin/sh
 # testees/pcrec/pin.sh -- materialise and build ONE pinned pcrec commit.
 #
-#   pin.sh <commit>            -> prints the path of the built `pcrec` binary
-#   pin.sh --path <commit>     -> prints the path without building
+#   pin.sh <commit>                    -> prints the path of the built binary
+#   pin.sh --path <commit>             -> prints the path without building
+#   pin.sh --build-root DIR <commit>   -> build somewhere else (a throwaway
+#                                         root, for exercising this script)
 #
 # THE TWO RULES THIS SCRIPT EXISTS TO ENFORCE:
 #
@@ -52,7 +54,15 @@ default_build_root() {
 BUILD_ROOT="${PCRECBENCH_BUILD_ROOT:-$(default_build_root)}"
 
 path_only=0
-if [ "${1:-}" = "--path" ]; then path_only=1; shift; fi
+while [ $# -gt 0 ]; do
+    case "${1:-}" in
+        --path)       path_only=1; shift ;;
+        --build-root) BUILD_ROOT="${2:?--build-root needs a directory}"; shift 2 ;;
+        --)           shift; break ;;
+        -*)           echo "pin.sh: unknown option $1" >&2; exit 2 ;;
+        *)            break ;;
+    esac
+done
 commit="${1:-}"
 [ -n "$commit" ] || { echo "usage: pin.sh [--path] <commit>" >&2; exit 2; }
 

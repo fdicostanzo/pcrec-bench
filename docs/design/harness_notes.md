@@ -112,25 +112,54 @@ pcrec.
 85/85 as expected on `orig` in the match regime, and the five
 disagreements on `factored` are budget give-ups, not this.
 
-Options for the panel: (a) leave it, documented, and re-check per
-sub-bench; (b) define the match regime as "the engine's own
-whole-subject test, however it spells it", making the asymmetry part of
-what is measured; (c) treat an engine without an end-anchor as
-`unsupported-by-declaration` for the regime, which would delete pcrec
-from the compliance columns entirely. The lane implemented (a) and
-recommends (b).
+Options offered to the panel were: (a) leave it documented; (b) define
+the regime as "the engine's own whole-subject test, however spelled";
+(c) `unsupported-by-declaration`.
 
-## 10. Give-ups have no outcome of their own
+**RESOLVED 2026-08-25, and better than any of them.** From the pcrec
+manager: for the match regime the pcrec adapter compiles a SECOND
+artifact from `(?:<pattern>)\z` and uses the anchored entry on it;
+`search_short` and `throughput` keep the plain artifact. `\z` and not
+`$` because at `options = 0` `$` also matches before a final newline;
+`(?:...)` so a top-level alternation binds to the anchor. Schema v1.1
+adds an optional `form` enum (`plain` | `whole-subject`) on compile and
+match rows so the two artifacts never share a row, and pcrec emits
+compile rows for both forms of every pattern. pcrec's missing
+end-anchored entry is a ratified but unbuilt generation axis upstream
+([OS-4]) and is being raised there; this bench is its first customer.
 
-`match_outcome` has no `gave-up`. A budget give-up
-(`PCREC_ERR_STEPS`/`_FRAMES`/`_WORK`) is recorded as
-`did-not-match-as-expected` with the engine's own code in the row's
-`diagnostic`, and is therefore not timed. The argument is in
-`bench/email/NOTES.md`: from the bench's point of view, a wrong answer
-and a refused one are both "not the expected answer", and a give-up
-under a configurable budget is not `unsupported-by-declaration`
-(nothing is inexpressible; a number was too small). **If the panel
-disagrees this is a schema change, not a harness change.**
+**The asymmetry was NOT theoretical, and the resolution is measured.**
+Constructed control: pattern `a|ab`, subject `ab`. The plain artifact's
+anchored entry returns length 1, so `== n` answers NO, where libpcre2
+under `ANCHORED|ENDANCHORED` answers `((0, 2), ())`. The `(?:a|ab)\z`
+artifact answers `match [0,2)`. It is the `make check` control for the
+idiom. The email sub-bench's own patterns never hit it (85/85 agreed on
+the plain artifact), which is precisely why a constructed case was
+needed.
+
+Two things the measurement established that the ruling did not assume
+(details in `testees/pcrec/CLAUDE.md`): `orig`'s `\z` form still selects
+the DFA engine, and its byte-class skip prefilter is still present with a
+byte-identical start-class table — but with a **weaker skip loop**, which
+can never skip the final byte because the end-of-subject view must be
+evaluated. And a gap: **the DFA prefilter is not observable through any
+structured stamp**, so `engine_metadata` cannot report it. That is a
+candidate request to the pcrec manager, because requirements §4.2's
+"bucket outliers by MECHANISM" needs it and this sub-bench's headline
+mechanism is exactly that prefilter.
+
+## 10. Give-ups — RESOLVED as a schema change
+
+The lane recorded a budget give-up as `did-not-match-as-expected` and
+argued that if the panel disagreed it was a schema matter, not a harness
+one. **The manager agreed: schema v1.1 adds a per-subject `gave-up`
+outcome** — the engine refused on a resource limit (pcrec
+`PCREC_ERR_STEPS`/`_FRAMES`/`_WORK`; pcre2's match or depth limit) — with
+the engine's code in `diagnostic`, not timed, and **counted separately
+from wrong answers**. That separation is the improvement on the lane's
+own position: an engine that declined to answer and an engine that
+answered wrongly are different findings, and this sub-bench's headline
+hazard class is the former.
 
 ## 11. `subbench.content_hash` — the rule, which §8 left to [B3]
 
