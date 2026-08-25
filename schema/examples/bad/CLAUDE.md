@@ -28,8 +28,8 @@ rejected for some OTHER reason fails the build. The rules are defined in
 |---|---|---|
 | `schema-index-map-missing.jsonl` | SCHEMA | `capture_correspondence.mode: by-index-map` with no `index_map` — the mode NAMES a map |
 | `schema-missing-calibration.jsonl` | SCHEMA | a timed match row with `iterations` in the hundreds of thousands and no `calibration` object saying who chose that number |
-| `schema-missing-compile-cost.jsonl` | SCHEMA | an AOT compile row reporting `compiled` and carrying no `cost` — the compile axis silently empty for that pattern |
 | `schema-missing-clock-source.jsonl` | SCHEMA | `run.clock_source` deleted — nanoseconds from an unnamed clock |
+| `schema-missing-compile-cost.jsonl` | SCHEMA | an AOT compile row reporting `compiled` and carrying no `cost` — the compile axis silently empty for that pattern |
 | `schema-missing-driver-build-flags.jsonl` | SCHEMA | `run.driver_build_flags` deleted — the engine's build is pinned and the timing driver's is not |
 | `schema-missing-required-field.jsonl` | SCHEMA | `environment.machine_id` deleted |
 | `schema-missing-subject-sha256.jsonl` | SCHEMA | a subject roster entry with no `sha256`: the bytes that produced the numbers are unidentified |
@@ -67,6 +67,9 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x23-compiler-not-derived.jsonl` | X23 | `compiler` naming a gcc version `compiler_raw` does not |
 | `x23-cpu-model-not-derived.jsonl` | X23 | `cpu_model: example-cpu` beside a `cpu_model_raw` that normalizes to `example-cpu-12-core` — the FILTERABLE half and the reproducible half disagreeing, which is the whole failure mode §6 exists to prevent |
 | `x23-kernel-not-derived.jsonl` | X23 | `kernel` naming a release `kernel_raw` does not |
+| `x24-bytes-processed-exceeds-offered.jsonl` | X24 | `bytes_processed` ten times what 44 offered bytes × 200000 iterations can be — a cell's MB/s multiplied by ten, in a record that validated |
+| `x25-consumed-exceeds-offered.jsonl` | X25 | `consumed_length: 4400` on a 44-byte subject |
+| `x25-truncation-without-loss.jsonl` | X25 | a `truncated-subject` row whose `consumed_length` equals the full 1 MB offered — a truncation that truncated nothing |
 
 ## Adding one
 

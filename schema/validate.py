@@ -6,7 +6,7 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X23 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X25 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
@@ -350,6 +350,8 @@ class RecordValidator:
         # rosters
         pat_ids = {e.get("pattern_id") for e in setup.get("patterns", [])}
         subj_ids = {e.get("subject_id") for e in setup.get("subjects", [])}
+        subj_bytes = {e.get("subject_id"): e.get("bytes_offered")
+                      for e in setup.get("subjects", [])}
         regimes = set(setup.get("subbench", {}).get("regimes", []))
         decl = testee.get("engine_metadata_declaration", {}) or {}
         phases = list(testee.get("compile_phases", []) or [])
@@ -494,6 +496,45 @@ class RecordValidator:
                             f"is {want_v!r}; the verdict is not the harness's "
                             f"opinion, it is what the numbers say", "X20"))
 
+        # X24 / X25 the two numbers an engine cannot exceed
+        for n, row in rows:
+            if row.get("kind") != "match":
+                continue
+            offered = subj_bytes.get(row.get("subject_id"))
+            if not isinstance(offered, int):
+                continue
+            timing = row.get("timing") or {}
+            got = timing.get("bytes_processed")
+            iters = timing.get("iterations")
+            if isinstance(got, int) and isinstance(iters, int):
+                ceiling = offered * iters
+                if got > ceiling:
+                    add(Problem(path, n, "timing.bytes_processed",
+                                f"is {got} but the subject offers {offered} "
+                                f"bytes and the loop ran {iters} times, so at "
+                                f"most {ceiling} bytes can have been "
+                                f"processed; this is the numerator of every "
+                                f"throughput number in the cell", "X24"))
+            consumed = row.get("consumed_length")
+            outcome = row.get("match_outcome")
+            if isinstance(consumed, int) and consumed > offered:
+                add(Problem(path, n, "consumed_length",
+                            f"is {consumed} but only {offered} bytes were "
+                            f"offered; an engine cannot consume what it was "
+                            f"not given", "X25"))
+            if outcome == "truncated-subject":
+                if not isinstance(consumed, int):
+                    add(Problem(path, n, "consumed_length",
+                                "the outcome is `truncated-subject` but no "
+                                "consumed_length is recorded: the row asserts "
+                                "a truncation and does not say where", "X25"))
+                elif consumed >= offered:
+                    add(Problem(path, n, "consumed_length",
+                                f"the outcome is `truncated-subject` but "
+                                f"{consumed} of {offered} offered bytes were "
+                                f"consumed, which is not a truncation",
+                                "X25"))
+
         # X21 the calibration actually met its target
         for n, row in rows:
             if row.get("kind") != "match":
@@ -598,7 +639,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X23 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X25 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")

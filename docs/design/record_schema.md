@@ -720,7 +720,7 @@ JSON Schema validates a LINE. Everything that relates two lines, or a
 line to a derivation, or a field to a normalization rule, is code.
 These are the rules; each has at least one positive control in
 `schema/examples/bad/` (pcrec's check-design lesson: a check with no
-failing case proves nothing). At v1.1 there are 23 rules and 36
+failing case proves nothing). At v1.1 there are 25 rules and 44
 controls.
 
 That claim — "each has at least one positive control" — was FALSE when
@@ -760,6 +760,8 @@ both ways before being believed.
 | X21 | `calibration.probe_elapsed_ns / probe_iterations × timing.iterations ≥ calibration.target_ns`, or `calibration_note` says why not | §3's batched-loop protocol; `harness_contract.md` §3's auto-calibration. A loop that fell short of its target is a shorter measurement than the record claims to have taken |
 | X22 | `testee.engine_commit` is present and full 40-hex whenever `testee.engine_version` is not a release-tag shape (§6.2) | §4.2's "pinned"; §6.2's binding rule, which until now nothing enforced |
 | X23 | `cpu_model`, `kernel` and `compiler` equal what §6.6/§6.7's rules produce from `cpu_model_raw`, `kernel_raw` and `compiler_raw`, when those are present | §6; A11. The normalization rules existed as prose only, which means the FILTERABLE half of each pair was un-checked against the reproducible half |
+| X24 | `timing.bytes_processed ≤ subjects[…].bytes_offered × timing.iterations` | §8's own definition of the field. It is the NUMERATOR of every throughput number the report prints, and until v1.1 nothing related it to the subject it claims to have scanned — a record could multiply its own MB/s and validate |
+| X25 | `consumed_length ≤ bytes_offered`; and a `truncated-subject` row must carry a `consumed_length` STRICTLY less than it | §4.4. An engine cannot consume what it was not given, and an outcome that asserts a truncation must say where it stopped — otherwise the bench's most interesting per-subject finding is an unfalsifiable label |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each
