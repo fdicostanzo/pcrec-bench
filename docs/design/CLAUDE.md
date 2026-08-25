@@ -23,11 +23,25 @@ docs/dev/'s append-only records.
   shared DRIVER PROTOCOL (batched in-process timing), the store layout
   and `run`/`index`/`report` CLI, the quiet instrument, self-checks.
   Paneled at the M1 close.
+- `record_schema.md` — **[B2] the record schema design note, merged
+  2026-08-25**: what a record is (one cell, one run, one file, JSONL,
+  never edited), the file naming rule, the record identity and its
+  content hash, schema versioning and the mixing/migration policy,
+  OD-B4's answer in both halves (the FIXED ENUMS and the NORMALIZATION
+  RULES for engine name/version, testee id, hardware id, CPU model,
+  kernel, compiler), the per-testee `engine_metadata` declaration with
+  pcrec worked as the example (read from `rx_info` and the `RX_VM_*`
+  stamps, never from the prose `ENGINE_WHY`), the full field tables for
+  the setup layer and both row kinds, the cross-line rules X1..X17, the
+  reserved extension points, and a "for the panel" list of what the
+  author is least sure of. This note is what APPROACH.md §3 called the
+  `artifact_schema` — the requirements note's vocabulary settled on
+  RECORD, and the file is named for it. Implemented by `../../schema/`
+  and gated by `make check-schema`.
 
 Expected next residents, in the order the plan reaches them:
 
-- `artifact_schema.md` — the per-testee output artifact (APPROACH.md §3),
-  versioned; the comparator's input contract.
+Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in
   ~/pcrec/docs/design/dd13_format/requirements.md §5) and what it uses in

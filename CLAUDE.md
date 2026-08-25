@@ -6,9 +6,10 @@ as several pinned testees — on a harder and wider set than the usual
 microbenchmarks, emits standardized per-testee artifacts, compares them
 statically, and feeds the outliers back to pcrec as optimization work.
 
-STATUS (2026-08-24): charter seeded 2026-08-17 (APPROACH.md); housekeeping
-done; the REQUIREMENTS discussion with Frank ([B1]) is the open step. No
-set, schema, adapter or comparator code exists yet. Manager sessions start
+STATUS (2026-08-25): charter seeded 2026-08-17 (APPROACH.md); housekeeping
+done; the requirements note ADOPTED ([B1], docs/design/requirements.md v3);
+the RECORD SCHEMA and its validator are the open step ([B2], `schema/`). No
+set, adapter or reporter code exists yet. Manager sessions start
 with the `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -60,21 +61,36 @@ bindings) live here, vendored or system, pinned either way.
   dev_journal.md (append-only), decisions.md (BDn), pcrec_references.md
   (the map of every pcrec document this project depends on), wake.md
   (gitignored hand-off brief). See docs/dev/CLAUDE.md.
-- `docs/design/` — living design notes (requirements, artifact schema, set
-  format position, adapter notes, measurement dirs). See its CLAUDE.md.
+- `docs/design/` — living design notes (requirements, the record schema,
+  set format position, adapter notes, measurement dirs). See its CLAUDE.md.
+- `schema/` — the RECORD format: `record.schema.json` (JSON Schema draft
+  2020-12), `validate.py` (the validator the harness and the reporter
+  share), `check_fields.py`, and `examples/` + `examples/bad/` (records
+  that must validate, and sabotaged ones that must not). Designed in
+  `docs/design/record_schema.md`. See its CLAUDE.md.
 - `.claude/skills/pcrec-bench-manager/` — the manager-session skill.
-- Planned (not yet created): `set/`, `testees/<name>/`, `schema/`,
-  `compare/` per APPROACH.md §3 — created when their plan rows start.
+- Planned (not yet created): `set/`, `testees/<name>/`, `compare/` per
+  APPROACH.md §3 — created when their plan rows start.
 
 ## Build & test
 
 Python 3 (>=3.11) is the project language for the harness, validator,
 store and reporter (BD4): `pyproject.toml` (compatibility ranges),
 `requirements.txt` (exact pins measured on the box — `python3 -m venv
-.venv && .venv/bin/pip install -r requirements.txt`). Plain GNU `make`
-targets wrap what is ours (`make check-schema` lands with [B2]); each
-testee adapter under testees/<name>/ may use whatever its engine demands
-(C shims, cmake, cargo), pinned there.
+.venv && .venv/bin/pip install -r requirements.txt`).
+
+    make                # == make check-schema (the default target)
+    make check-schema   # the record schema: the design note's field tables
+                        # against the JSON Schema, every schema/examples/
+                        # record accepted, every schema/examples/bad/ record
+                        # rejected FOR THE RULE ITS NAME CLAIMS (counts
+                        # printed; ~3 s, python3 + jsonschema only)
+    make help           # list the targets
+
+Plain GNU make for what is ours (pcrec's D2 posture: a stranger's `make`
+must work); `make check` (all self-checks) lands with [B3]. Each testee
+adapter under testees/<name>/ may use whatever its engine demands (C
+shims, cmake, cargo), pinned there.
 
 ## Conventions (inherited from pcrec where they apply)
 

@@ -1,0 +1,493 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fdicostanzo/pcrec-bench/schema/record.schema.json",
+  "title": "pcrec-bench record line",
+  "x-record-schema-version": "1.0",
+  "description": "One JSONL line of a pcrec-bench record. Line 1 is the setup layer; every later line is a result row, discriminated by `kind`. Design note: docs/design/record_schema.md. Requirements: docs/design/requirements.md (ADOPTED v3).",
+  "oneOf": [
+    { "$ref": "#/$defs/setup" },
+    { "$ref": "#/$defs/match_row" },
+    { "$ref": "#/$defs/compile_row" }
+  ],
+
+  "$defs": {
+
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$",
+      "maxLength": 64
+    },
+    "version_string": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+      "maxLength": 64
+    },
+    "nonneg_int": { "type": "integer", "minimum": 0 },
+    "free_text": { "type": "string", "maxLength": 8192 },
+
+    "execution_model": {
+      "description": "requirements.md 4.3, verbatim modulo the lowercase-hyphen token rule.",
+      "enum": ["interpretive", "compiled-aot", "eager-jit", "lazy-jit"]
+    },
+    "automaton_class": {
+      "description": "requirements.md 4.3, verbatim.",
+      "enum": ["dfa-only", "nfa-simulation", "backtracking", "hybrid", "simd-multipattern"]
+    },
+    "openness": {
+      "description": "requirements.md 4.3, verbatim.",
+      "enum": ["open-source", "closed"]
+    },
+    "convention": {
+      "description": "requirements.md 4.3, verbatim.",
+      "enum": ["perl-leftmost-first", "posix-leftmost-longest", "all-ends"]
+    },
+    "on_off": { "enum": ["on", "off"] },
+    "on_off_na": { "enum": ["on", "off", "n-a"] },
+    "regime": {
+      "description": "requirements.md 3, the three subject regimes.",
+      "enum": ["large-subject-throughput", "short-subject-search", "match-compliance"]
+    },
+    "record_status": {
+      "description": "requirements.md 6, verbatim.",
+      "enum": ["measured", "harness-failure", "inconclusive-load"]
+    },
+    "compile_outcome": {
+      "description": "requirements.md 4.4, the per-(pattern, testee) set, verbatim.",
+      "enum": ["compiled", "did-not-compile", "crashed", "timed-out", "unsupported-by-declaration"]
+    },
+    "match_outcome": {
+      "description": "requirements.md 4.4, the per-(pattern, subject) set, verbatim, PLUS `crashed`/`timed-out` re-used verbatim from the sibling set (see the note, ADDITIONS).",
+      "enum": ["matched-as-expected", "did-not-match-as-expected", "wrong-span-or-captures", "truncated-subject", "crashed", "timed-out"]
+    },
+    "truncation_check": {
+      "description": "requirements.md 4.4: a large-subject cell with no consumed_length is marked unverified-for-truncation.",
+      "enum": ["verified", "unverified-for-truncation", "not-applicable"]
+    },
+    "variant_kind": {
+      "description": "requirements.md 4.5, verbatim; informational only (OD-B5).",
+      "enum": ["syntax-only", "restructured"]
+    },
+    "hazard_class": {
+      "description": "requirements.md 5 / APPROACH.md 3. Copied from the sub-bench sidecar for filterability; closed enum, growing it is a MINOR schema bump.",
+      "enum": ["none", "exponential-backtracking", "ambiguous-decomposition", "exact-minimum-boundary", "large-count", "wide-alternation"]
+    },
+    "size_class": {
+      "description": "APPROACH.md 3 tag, copied from the sub-bench sidecar.",
+      "enum": ["tiny", "small", "medium", "large", "huge"]
+    },
+    "occupancy_verdict": {
+      "description": "requirements.md 9(b), verbatim.",
+      "enum": ["pass", "fail", "unavailable"]
+    },
+    "load_verdict": { "enum": ["quiet", "loaded"] },
+    "pinning_mode": { "enum": ["taskset", "none", "unavailable"] },
+
+    "named_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name":  { "type": "string", "maxLength": 128 },
+        "value": { "type": ["string", "integer", "boolean"] }
+      }
+    },
+
+    "engine_metadata_pair_decl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "scope", "source"],
+      "properties": {
+        "type":        { "enum": ["enum", "integer", "string", "mask"] },
+        "scope":       { "enum": ["pattern", "match"] },
+        "values":      { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "bits":        { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "source":      { "$ref": "#/$defs/free_text" },
+        "description": { "$ref": "#/$defs/free_text" }
+      }
+    },
+
+    "engine_metadata": {
+      "description": "requirements.md 4.2: enumerated (name, value) pairs read from STRUCTURED fields. Every name must be declared in testee.engine_metadata_declaration; the validator enforces name, scope and value type.",
+      "type": "object",
+      "propertyNames": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$", "maxLength": 64 },
+      "additionalProperties": {
+        "type": ["string", "integer", "array"],
+        "items": { "type": "string" }
+      }
+    },
+
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "text", "objective_preservation", "capture_correspondence"],
+      "properties": {
+        "kind": { "$ref": "#/$defs/variant_kind" },
+        "text": { "$ref": "#/$defs/free_text" },
+        "options": { "type": "array", "items": { "$ref": "#/$defs/named_value" } },
+        "objective_preservation": { "$ref": "#/$defs/free_text" },
+        "capture_correspondence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode"],
+          "properties": {
+            "mode": { "enum": ["identical", "by-name", "by-index-map", "not-applicable"] },
+            "index_map": {
+              "type": "object",
+              "propertyNames": { "type": "string", "pattern": "^[0-9]+$" },
+              "additionalProperties": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "hazard_class": { "$ref": "#/$defs/hazard_class" },
+        "size_class": { "$ref": "#/$defs/size_class" }
+      }
+    },
+
+    "pattern_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pattern_id", "canonical_sha256", "hazard_class", "size_class"],
+      "properties": {
+        "pattern_id": { "$ref": "#/$defs/slug" },
+        "canonical_sha256": { "$ref": "#/$defs/sha256" },
+        "canonical_text": { "$ref": "#/$defs/free_text" },
+        "hazard_class": { "$ref": "#/$defs/hazard_class" },
+        "size_class": { "$ref": "#/$defs/size_class" },
+        "tags": { "type": "array", "items": { "type": "string", "maxLength": 64 } },
+        "variant": { "oneOf": [ { "type": "null" }, { "$ref": "#/$defs/variant" } ] }
+      }
+    },
+
+    "subject_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_id", "role", "n_subjects", "bytes_offered"],
+      "properties": {
+        "subject_id": { "$ref": "#/$defs/slug" },
+        "role": { "enum": ["single", "set"] },
+        "n_subjects": { "type": "integer", "minimum": 1 },
+        "bytes_offered": { "$ref": "#/$defs/nonneg_int" },
+        "size_band": { "type": "string", "maxLength": 64 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+
+    "setup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "schema_version", "record_id", "content_hash", "status",
+                   "run", "subbench", "testee", "environment", "patterns", "subjects"],
+      "properties": {
+        "kind": { "const": "setup" },
+        "schema_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+        "record_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*@[A-Za-z0-9][A-Za-z0-9._+-]*__[a-z0-9][a-z0-9.-]*(_[a-z0-9.-]+){2,3}__[a-z0-9][a-z0-9-]*__[0-9]{8}T[0-9]{6}Z(-[0-9]+)?$"
+        },
+        "content_hash": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": { "const": "sha256" },
+            "value": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "synthetic": { "type": "boolean" },
+        "note": { "$ref": "#/$defs/free_text" },
+        "status": { "$ref": "#/$defs/record_status" },
+        "status_detail": { "$ref": "#/$defs/free_text" },
+
+        "run": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["run_id", "timestamp", "harness_version", "harness_commit", "command_line"],
+          "properties": {
+            "run_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*$", "maxLength": 64 },
+            "timestamp": {
+              "type": "string",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+            },
+            "harness_version": { "$ref": "#/$defs/version_string" },
+            "harness_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$|^unknown$" },
+            "command_line": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "env": {
+              "type": "object",
+              "propertyNames": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+              "additionalProperties": { "type": "string" }
+            }
+          }
+        },
+
+        "subbench": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version", "content_hash", "objective", "regimes"],
+          "properties": {
+            "id": { "$ref": "#/$defs/slug" },
+            "version": { "$ref": "#/$defs/version_string" },
+            "content_hash": { "$ref": "#/$defs/sha256" },
+            "objective": { "$ref": "#/$defs/free_text" },
+            "regimes": {
+              "type": "array", "minItems": 1, "uniqueItems": true,
+              "items": { "$ref": "#/$defs/regime" }
+            },
+            "source_ref": { "$ref": "#/$defs/free_text" }
+          }
+        },
+
+        "testee": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["testee_id", "engine_name", "engine_version", "execution_model",
+                       "automaton_class", "openness", "license_id", "conventions",
+                       "captures", "engine_mode", "simd", "compile_cost_definition",
+                       "compile_phases", "warmup_trials", "engine_metadata_declaration"],
+          "properties": {
+            "testee_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9.-]*(_[a-z0-9.-]+){2,3}$",
+              "maxLength": 128
+            },
+            "engine_name": { "$ref": "#/$defs/slug" },
+            "engine_version": { "$ref": "#/$defs/version_string" },
+            "engine_commit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{7,40}$" },
+            "execution_model": { "$ref": "#/$defs/execution_model" },
+            "automaton_class": { "$ref": "#/$defs/automaton_class" },
+            "openness": { "$ref": "#/$defs/openness" },
+            "license_id": { "type": "string", "maxLength": 64 },
+            "conventions": {
+              "type": "array", "minItems": 1, "uniqueItems": true,
+              "items": { "$ref": "#/$defs/convention" }
+            },
+            "captures": { "$ref": "#/$defs/on_off" },
+            "engine_mode": { "$ref": "#/$defs/slug" },
+            "simd": { "$ref": "#/$defs/on_off_na" },
+            "config_extra": { "$ref": "#/$defs/slug" },
+            "build_flags": { "$ref": "#/$defs/free_text" },
+            "runtime_options": { "type": "array", "items": { "$ref": "#/$defs/named_value" } },
+            "compile_cost_definition": { "$ref": "#/$defs/free_text" },
+            "compile_phases": {
+              "type": "array", "uniqueItems": true,
+              "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "maxLength": 32 }
+            },
+            "warmup_trials": { "type": "integer", "minimum": 0 },
+            "engine_metadata_declaration": {
+              "type": "object",
+              "propertyNames": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$", "maxLength": 64 },
+              "additionalProperties": { "$ref": "#/$defs/engine_metadata_pair_decl" }
+            }
+          }
+        },
+
+        "environment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["machine_id", "cpu_model", "cores", "kernel", "compiler",
+                       "load", "occupancy", "pinning", "quiet_attestation"],
+          "properties": {
+            "machine_id": { "$ref": "#/$defs/slug" },
+            "hostname": { "type": "string", "maxLength": 255 },
+            "cpu_model": { "$ref": "#/$defs/slug" },
+            "cpu_model_raw": { "$ref": "#/$defs/free_text" },
+            "cores": { "type": "integer", "minimum": 1 },
+            "kernel": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$", "maxLength": 128 },
+            "kernel_raw": { "$ref": "#/$defs/free_text" },
+            "compiler": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$", "maxLength": 128 },
+            "compiler_raw": { "$ref": "#/$defs/free_text" },
+            "load": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["before", "after", "limit", "verdict"],
+              "properties": {
+                "before": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number", "minimum": 0 } },
+                "after":  { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number", "minimum": 0 } },
+                "limit":  { "type": "number", "exclusiveMinimum": 0 },
+                "verdict": { "$ref": "#/$defs/load_verdict" }
+              }
+            },
+            "occupancy": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["verdict"],
+              "properties": {
+                "verdict": { "$ref": "#/$defs/occupancy_verdict" },
+                "tool": { "type": "string", "maxLength": 128 },
+                "max_busy_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+                "raw": { "$ref": "#/$defs/free_text" }
+              }
+            },
+            "pinning": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["mode"],
+              "properties": {
+                "mode": { "$ref": "#/$defs/pinning_mode" },
+                "cpu": { "type": ["integer", "null"], "minimum": 0 }
+              }
+            },
+            "governor": { "type": ["string", "null"], "maxLength": 64 },
+            "turbo": { "type": ["string", "null"], "maxLength": 64 },
+            "quiet_attestation": { "type": "boolean" }
+          }
+        },
+
+        "patterns": {
+          "type": "array", "minItems": 1,
+          "items": { "$ref": "#/$defs/pattern_entry" }
+        },
+        "subjects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/subject_entry" }
+        }
+      }
+    },
+
+    "match_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "pattern_id", "subject_id", "regime", "trial", "match_outcome"],
+      "properties": {
+        "kind": { "const": "match" },
+        "pattern_id": { "$ref": "#/$defs/slug" },
+        "subject_id": { "$ref": "#/$defs/slug" },
+        "regime": { "$ref": "#/$defs/regime" },
+        "trial": { "type": "integer", "minimum": 1 },
+        "match_outcome": { "$ref": "#/$defs/match_outcome" },
+        "timing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["elapsed_ns", "iterations", "bytes_processed"],
+          "properties": {
+            "elapsed_ns": { "$ref": "#/$defs/nonneg_int" },
+            "iterations": { "type": "integer", "minimum": 1 },
+            "bytes_processed": { "$ref": "#/$defs/nonneg_int" }
+          }
+        },
+        "consumed_length": { "type": ["integer", "null"], "minimum": 0 },
+        "truncation_check": { "$ref": "#/$defs/truncation_check" },
+        "observed": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["matched"],
+          "properties": {
+            "matched": { "type": "boolean" },
+            "span": {
+              "type": ["array", "null"], "minItems": 2, "maxItems": 2,
+              "items": { "type": "integer", "minimum": 0 }
+            },
+            "captures": {
+              "type": ["array", "null"],
+              "items": {
+                "type": ["array", "null"], "minItems": 2, "maxItems": 2,
+                "items": { "type": "integer", "minimum": -1 }
+              }
+            }
+          }
+        },
+        "engine_metadata": { "$ref": "#/$defs/engine_metadata" },
+        "diagnostic": { "type": ["string", "null"], "maxLength": 8192 }
+      },
+      "allOf": [
+        {
+          "$comment": "requirements.md 7: an expectation-disagreeing row must say what it saw.",
+          "if": {
+            "properties": { "match_outcome": { "enum": ["did-not-match-as-expected", "wrong-span-or-captures"] } },
+            "required": ["match_outcome"]
+          },
+          "then": { "required": ["observed"] }
+        },
+        {
+          "$comment": "requirements.md 7: timing exists only for expectation-agreeing cells. The compiled-ness half is a cross-line rule in validate.py.",
+          "if": {
+            "properties": { "match_outcome": { "not": { "const": "matched-as-expected" } } },
+            "required": ["match_outcome"]
+          },
+          "then": { "not": { "required": ["timing"] } }
+        }
+      ]
+    },
+
+    "compile_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "pattern_id", "trial", "compile_outcome", "cost_class"],
+      "properties": {
+        "kind": { "const": "compile" },
+        "pattern_id": { "$ref": "#/$defs/slug" },
+        "trial": { "type": "integer", "minimum": 1 },
+        "compile_outcome": { "$ref": "#/$defs/compile_outcome" },
+        "cost_class": { "$ref": "#/$defs/execution_model" },
+        "cost": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["total_ns"],
+          "properties": {
+            "total_ns": { "$ref": "#/$defs/nonneg_int" },
+            "phases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "elapsed_ns"],
+                "properties": {
+                  "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "maxLength": 32 },
+                  "elapsed_ns": { "$ref": "#/$defs/nonneg_int" }
+                }
+              }
+            }
+          }
+        },
+        "derivation": { "const": "trial-1-minus-steady-state" },
+        "artifact_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "declaration_ref": { "$ref": "#/$defs/free_text" },
+        "engine_metadata": { "$ref": "#/$defs/engine_metadata" },
+        "diagnostic": { "type": ["string", "null"], "maxLength": 8192 }
+      },
+      "allOf": [
+        {
+          "$comment": "requirements.md 4.4: the engine's own diagnostic is what makes did-not-compile actionable.",
+          "if": {
+            "properties": { "compile_outcome": { "const": "did-not-compile" } },
+            "required": ["compile_outcome"]
+          },
+          "then": { "required": ["diagnostic"] }
+        },
+        {
+          "$comment": "requirements.md 4.4: unsupported-by-declaration must cite the sub-bench engine note that declares it.",
+          "if": {
+            "properties": { "compile_outcome": { "const": "unsupported-by-declaration" } },
+            "required": ["compile_outcome"]
+          },
+          "then": { "required": ["declaration_ref"] }
+        },
+        {
+          "$comment": "requirements.md 3: a lazy JIT has no separable compile call, so a lazy-jit row carries the DERIVATION, never a number the harness invented.",
+          "if": {
+            "properties": { "cost_class": { "const": "lazy-jit" } },
+            "required": ["cost_class"]
+          },
+          "then": {
+            "allOf": [
+              { "not": { "required": ["cost"] } },
+              { "required": ["derivation"] }
+            ]
+          },
+          "else": { "not": { "required": ["derivation"] } }
+        },
+        {
+          "$comment": "No cost for a compile that did not happen (requirements.md 7's rule, applied to the compile axis).",
+          "if": {
+            "properties": { "compile_outcome": { "not": { "const": "compiled" } } },
+            "required": ["compile_outcome"]
+          },
+          "then": { "not": { "required": ["cost"] } }
+        }
+      ]
+    }
+  }
+}
