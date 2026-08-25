@@ -798,6 +798,100 @@ def test_duplicate_record_dedup_r2():
            f"--all-records must suffix each record's testee id by its timestamp, got {testees_present}")
 
 
+def test_duplicate_record_dedup_prefers_measured_r2():
+    """[B9] R2/OD-B15, AMENDED (manager, 2026-08-25, before merge): the
+    default kept record is the NEWEST *MEASURED* one, not merely the
+    newest by timestamp -- a newer non-measured record is not evidence
+    against an older measured one of the same testee and version.
+    Three scenarios, matching the real store's libpcre2-interp shape:
+    (a) measured-older beats unmeasured-newer -- the newer one is listed
+        as "newer, not measured", NOT superseded, and the reduction
+        comes from the OLDER measured record;
+    (b) unmeasured-only still shows -- when NO record in the group is
+        measured, the newest record overall stands (unranked per R1
+        unless --include-unmeasured), same as before this amendment;
+    (c) both at once (older-superseded AND newer-not-measured around one
+        measured record in the middle) -- the real shape this amendment
+        exists for."""
+    # (a) measured-older beats unmeasured-newer
+    setup_old_measured = _mini_setup("engine-f_1.0.0_cfg-caps-simdna", status="measured",
+                                      timestamp="2026-08-25T02:22:00Z", record_id="rec-f-measured")
+    setup_new_unmeasured = _mini_setup("engine-f_1.0.0_cfg-caps-simdna", status="inconclusive-load",
+                                        status_detail="box was noisy", timestamp="2026-08-25T13:34:00Z",
+                                        record_id="rec-f-unmeasured")
+    rows_old_measured = [_mini_row("p1", "s1", "short-subject-search", t, t, 100) for t in (1, 2, 3)]
+    rows_new_unmeasured = [_mini_row("p1", "s1", "short-subject-search", t, t, 999) for t in (1, 2, 3)]
+    loaded_a = [_mk_loaded("f-old.jsonl", setup_old_measured, rows_old_measured),
+                _mk_loaded("f-new.jsonl", setup_new_unmeasured, rows_new_unmeasured)]
+    args = _args(store="x", include_synthetic=True)
+    rd_a, err_a = report.build_report(loaded_a, args)
+    _check(err_a is None, f"unexpected refusal: {err_a}")
+    _check([rid for rid, _p in rd_a.included] == ["rec-f-measured"],
+           f"the older MEASURED record must be kept, got {rd_a.included}")
+    _check(rd_a.superseded == [],
+           f"the newer non-measured record must NOT be listed as superseded, got {rd_a.superseded}")
+    _check(rd_a.newer_not_measured == [("rec-f-measured", "rec-f-unmeasured", "inconclusive-load")],
+           f"expected the newer record listed as 'newer, not measured', got {rd_a.newer_not_measured}")
+    key_a = next(k for k in rd_a.set_cells if k[1] == "engine-f_1.0.0_cfg-caps-simdna")
+    _tid_a, red_a = rd_a.set_cells[key_a]
+    _check(red_a.median_ns == 100.0,
+           f"the reduction must come from the OLDER MEASURED record (100.0), never the "
+           f"newer non-measured one (999.0) -- got {red_a.median_ns}")
+    md_a = report.render_markdown(rd_a)
+    _check("newer, not measured: `rec-f-unmeasured` (inconclusive-load) -- kept `rec-f-measured`" in md_a,
+           f"expected the header's 'newer, not measured' line:\n{md_a}")
+    _check("`engine-f_1.0.0_cfg-caps-simdna` | measured |" in md_a,
+           f"the kept (measured) record must rank by default:\n{md_a}")
+
+    # (b) unmeasured-only still shows -- no record in the group is measured,
+    # so the newest overall stands (the pre-amendment fallback), and the
+    # older one is still an ordinary superseded duplicate.
+    setup_g_old = _mini_setup("engine-g_1.0.0_cfg-caps-simdna", status="inconclusive-load",
+                               timestamp="2026-08-25T09:00:00Z", record_id="rec-g-old")
+    setup_g_new = _mini_setup("engine-g_1.0.0_cfg-caps-simdna", status="inconclusive-load",
+                               timestamp="2026-08-25T11:00:00Z", record_id="rec-g-new")
+    rows_g_old = [_mini_row("p1", "s1", "short-subject-search", t, t, 50) for t in (1, 2, 3)]
+    rows_g_new = [_mini_row("p1", "s1", "short-subject-search", t, t, 60) for t in (1, 2, 3)]
+    loaded_b = [_mk_loaded("g-old.jsonl", setup_g_old, rows_g_old),
+                _mk_loaded("g-new.jsonl", setup_g_new, rows_g_new)]
+    rd_b, err_b = report.build_report(loaded_b, args)
+    _check(err_b is None, f"unexpected refusal: {err_b}")
+    _check([rid for rid, _p in rd_b.included] == ["rec-g-new"],
+           f"with no measured record at all, the newest overall must stand, got {rd_b.included}")
+    _check(rd_b.superseded == [("rec-g-new", ["rec-g-old"])],
+           f"the older one is an ordinary superseded duplicate, got {rd_b.superseded}")
+    _check(rd_b.newer_not_measured == [],
+           f"nothing is 'newer than the kept measured record' when none is measured, "
+           f"got {rd_b.newer_not_measured}")
+    md_b = report.render_markdown(rd_b)
+    _check("not ranked: `engine-g_1.0.0_cfg-caps-simdna` — inconclusive-load" in md_b,
+           f"the unmeasured-only kept record must still be unranked by default (R1):\n{md_b}")
+
+    # (c) both at once -- older-superseded AND newer-not-measured around
+    # one measured record in the middle (the real store's exact shape:
+    # libpcre2-interp measured@06:22, then re-measured inconclusive@17:34
+    # -- here with an extra older duplicate too, for full coverage).
+    setup_h_oldest = _mini_setup("engine-h_1.0.0_cfg-caps-simdna", status="inconclusive-load",
+                                  timestamp="2026-08-25T01:00:00Z", record_id="rec-h-oldest")
+    setup_h_measured = _mini_setup("engine-h_1.0.0_cfg-caps-simdna", status="measured",
+                                    timestamp="2026-08-25T02:22:00Z", record_id="rec-h-measured")
+    setup_h_newest = _mini_setup("engine-h_1.0.0_cfg-caps-simdna", status="inconclusive-load",
+                                  timestamp="2026-08-25T13:34:00Z", record_id="rec-h-newest")
+    rows_h = [_mini_row("p1", "s1", "short-subject-search", t, t, 70) for t in (1, 2, 3)]
+    loaded_c = [_mk_loaded("h-oldest.jsonl", setup_h_oldest, rows_h),
+                _mk_loaded("h-measured.jsonl", setup_h_measured, rows_h),
+                _mk_loaded("h-newest.jsonl", setup_h_newest, rows_h)]
+    rd_c, err_c = report.build_report(loaded_c, args)
+    _check(err_c is None, f"unexpected refusal: {err_c}")
+    _check([rid for rid, _p in rd_c.included] == ["rec-h-measured"],
+           f"the single measured record (the middle one) must be kept, got {rd_c.included}")
+    _check(rd_c.superseded == [("rec-h-measured", ["rec-h-oldest"])],
+           f"the OLDER-than-kept record must still be superseded, got {rd_c.superseded}")
+    _check(rd_c.newer_not_measured == [("rec-h-measured", "rec-h-newest", "inconclusive-load")],
+           f"the NEWER-than-kept, non-measured record must be listed separately, "
+           f"got {rd_c.newer_not_measured}")
+
+
 def test_scratch_tier_gate_r3():
     """[B9] R3: the optional schema v1.2 `tier` field (absent = `pinned`)
     -- a `scratch` row is excluded from ranking by default (listed as
@@ -1074,6 +1168,7 @@ TESTS = [
     test_deterministic_output,
     test_status_gate_r1,
     test_duplicate_record_dedup_r2,
+    test_duplicate_record_dedup_prefers_measured_r2,
     test_scratch_tier_gate_r3,
     test_form_fact_and_mixed_regime_note_r4,
     test_two_ratio_columns_r5,

@@ -40,29 +40,36 @@ still answers the SAME query as before.
   RE-PIN SAMPLE ([B8]): the same six cells re-measured after pcrec's
   re-pin to `692c2e8` (the caller-provided frame-buffer testees added,
   `pcrec-vm-in` measured), alongside the surviving pin-8da6120 records
-  and the store's own re-measurements (a second libpcre2-interp run
-  landed `inconclusive-load`, a second libpcre2-jit run landed
-  `measured` and supersedes the first under OD-B15's newest-wins dedup —
-  see the header's "superseded records" line). Query: `--subbench
-  email-specimen` (no bound needed: every record this sample was drawn
-  from already existed when it was first generated). `.subject-grain.md`
-  the per-subject drill-down; `.tsv` the machine-readable form. Read
-  alongside `docs/dev/feedback_pcrecdev1_2026-08-25-repin.md` (the
-  pcrec manager's reading that became [B9]'s R1-R9 rulings) and
+  and the store's own re-measurements: a second libpcre2-interp run
+  (17:34, under load) landed `inconclusive-load` and, per OD-B15's
+  AMENDED dedup rule ([B9], 2026-08-25 — a newer non-measured record is
+  not evidence against an older measured one and does not supersede it),
+  does NOT replace the original 06:22 measured record — it is listed
+  under the header as "newer, not measured" instead, and the 06:22
+  record is what the ranking tables actually use; a second libpcre2-jit
+  run (17:41) DID land `measured`, so it supersedes the first jit record
+  under the ordinary newest-measured-wins rule (see the header's
+  "superseded records" line). Query: `--subbench email-specimen` (no
+  bound needed: every record this sample was drawn from already existed
+  when it was first generated). `.subject-grain.md` the per-subject
+  drill-down; `.tsv` the machine-readable form. Read alongside
+  `docs/dev/feedback_pcrecdev1_2026-08-25-repin.md` (the pcrec manager's
+  reading that became [B9]'s R1-R9 rulings) and
   `docs/dev/feedback_pcrecdev1_2026-08-25.md`.
 
 **A note on what [B9]'s own rulings changed in this store's numbers**:
 applying R1 (OD-B14: a non-`measured` row is excluded from ranking by
-default) together with R2 (OD-B15: the NEWEST record per testee_id+
-machine ranks by default) to the re-pin sample has a real consequence —
-`libpcre2_10.46_interp-caps-simdna`'s newest record (17:34, a re-measure
-under load) is `inconclusive-load`, so the DEFAULT baseline testee
-(`libpcre2 engine_mode=interp`, named in every table title) is now
-UNRANKED in most tables of the re-pin report unless
-`--include-unmeasured` is passed; two of the four `692c2e8` pcrec
-testees (`auto-caps`, `auto-nocaps`) are `inconclusive-load` for the
-same reason and vanish from ranked rows they used to occupy. This is
-the two rulings composing as specified, not a bug — see the "not ranked"
-lines under the affected tables — but it means the re-pin report's
-ranked rows look noticeably sparser than before [B9]; a re-measure of
-those three cells on a quiet box would restore them to ranked status.
+default) to the re-pin sample means two of the four `692c2e8` pcrec
+testees (`auto-caps`, `auto-nocaps`) are `inconclusive-load` and have NO
+measured record at all yet, so they are UNRANKED in every table (see
+their "not ranked" lines) unless `--include-unmeasured` is passed — a
+re-measure of those two on a quiet box would rank them. The DEFAULT
+baseline testee (`libpcre2 engine_mode=interp`, named in every table
+title) IS ranked, using its original 06:22 measured record: R2/OD-B15
+was AMENDED (manager, 2026-08-25, before this lane's merge) specifically
+because the first cut of the dedup rule — newest record wins regardless
+of status — would have let interp's later `inconclusive-load` re-measure
+silently displace its earlier measured one and vanish from every table's
+baseline; the amended rule (newest MEASURED record wins; a newer
+non-measured one is listed separately, never treated as evidence against
+an older measured one) restores it.

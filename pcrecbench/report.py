@@ -101,11 +101,18 @@ docs/design/requirements.md OD-B11, OD-B13, OD-B14, OD-B15):
   non-`measured` status excludes the row from ranking by default
   (`--include-unmeasured` overrides), listed under its table as
   `not ranked: <testee> -- <status> (<excerpt>)`.
-* R2/OD-B15 -- two records of one (subbench@version, testee_id, machine):
-  the NEWEST by `run.timestamp` ranks by default; older ones are
-  SUPERSEDED (named in the header, never silently pooled);
-  `--all-records` shows every record as its own row, its testee id
-  suffixed `@<compact-timestamp>`.
+* R2/OD-B15, AMENDED (manager, 2026-08-25, before merge) -- two records
+  of one (subbench@version, testee_id, machine): the NEWEST *MEASURED*
+  record ranks by default, not merely the newest by `run.timestamp`. A
+  record older than the kept one is SUPERSEDED (named in the header,
+  never silently pooled); a record NEWER than the kept one that is NOT
+  `measured` does NOT supersede it (a non-measured record is not
+  evidence against a measured one of the same testee and version) and
+  is listed separately as "newer, not measured". Only when NO record in
+  the group is measured does the newest record overall stand (itself
+  unranked per R1 unless `--include-unmeasured`). `--all-records` is
+  UNCHANGED by this amendment: every record still shows as its own row,
+  its testee id suffixed `@<compact-timestamp>`.
 * R3 -- the optional `tier` setup field lane b10loop is adding at schema
   v1.2 (`pinned` default | `scratch`); coded here as "absent = pinned"
   ahead of the schema landing it. A `scratch` row is excluded from
@@ -801,6 +808,7 @@ class ReportData:
     record_ts_by_testee: dict = field(default_factory=dict)  # (sb, testee_id) -> run.timestamp
     subject_bytes: dict = field(default_factory=dict)       # subject_id -> bytes_offered
     superseded: list = field(default_factory=list)          # [(kept_record_id, [superseded_record_ids])]
+    newer_not_measured: list = field(default_factory=list)  # [(kept_record_id, newer_record_id, status)]
     include_unmeasured: bool = False
     include_scratch: bool = False
     all_records: bool = False
@@ -840,11 +848,21 @@ def build_report(loaded, args):
         else:
             valid.append(r)
 
-    # [B9] R2/OD-B15: dedup by (subbench@version, testee_id, machine_id),
-    # newest `run.timestamp` wins by default; `--all-records` keeps every
-    # record, each its own row (testee id suffixed when its group has
-    # more than one record, so the common single-record case is
-    # untouched).
+    # [B9] R2/OD-B15, AMENDED (manager, 2026-08-25, before merge): dedup by
+    # (subbench@version, testee_id, machine_id). The default kept record is
+    # the NEWEST *MEASURED* record in the group, not merely the newest by
+    # timestamp -- a newer record that is NOT measured is not evidence
+    # against a measured one of the same testee and version (the manager's
+    # example: pcre2 did not change between 02:22 and 13:34, so a later
+    # inconclusive-load run of the identical testee_id has nothing to say
+    # about the earlier measured run's number). Only when NO record in the
+    # group is measured does the newest record overall stand -- unranked
+    # per R1 unless --include-unmeasured, same as before this amendment.
+    # A record OLDER than the kept one is still SUPERSEDED (unchanged); a
+    # record NEWER than the kept one that is NOT measured does NOT
+    # supersede it and is listed separately as "newer, not measured" so a
+    # reader can see it was seen and set aside, not silently dropped.
+    # `--all-records` is UNCHANGED: every record still gets its own row.
     all_records = bool(getattr(args, "all_records", False))
     dup_groups = defaultdict(list)  # (sb, testee_id, machine_id) -> [(ts, r)]
     for r in valid:
@@ -857,6 +875,7 @@ def build_report(loaded, args):
 
     effective_id_by_path = {}
     superseded = []
+    newer_not_measured = []
     dedup_valid = []
     for (sb, testee_id, _machine_id), entries in dup_groups.items():
         entries.sort(key=lambda te: ts_key(te[0]))
@@ -865,15 +884,30 @@ def build_report(loaded, args):
                 dedup_valid.append(r)
                 effective_id_by_path[r.path] = (
                     testee_id + "@" + _date_suffix(ts) if len(entries) > 1 else testee_id)
-        else:
-            _newest_ts, newest_r = entries[-1]
-            dedup_valid.append(newest_r)
-            effective_id_by_path[newest_r.path] = testee_id
-            if len(entries) > 1:
-                superseded.append((
-                    newest_r.setup["record_id"],
-                    [r.setup["record_id"] for _ts, r in entries[:-1]],
-                ))
+            continue
+
+        measured_entries = [(ts, r) for ts, r in entries
+                             if r.setup.get("status", "measured") == "measured"]
+        kept_ts, kept_r = measured_entries[-1] if measured_entries else entries[-1]
+        dedup_valid.append(kept_r)
+        effective_id_by_path[kept_r.path] = testee_id
+
+        older = [r for ts, r in entries if ts_key(ts) < ts_key(kept_ts)]
+        # An entry NEWER than `kept` can only be non-measured: `kept` is
+        # the newest MEASURED entry whenever one exists, so no measured
+        # entry is ever newer than it; when none exists, `kept` is the
+        # newest entry overall, so "newer" is empty by construction.
+        newer = [r for ts, r in entries if ts_key(ts) > ts_key(kept_ts)]
+        if older:
+            superseded.append((
+                kept_r.setup["record_id"],
+                [r.setup["record_id"] for r in older],
+            ))
+        for r in newer:
+            newer_not_measured.append((
+                kept_r.setup["record_id"], r.setup["record_id"],
+                r.setup.get("status", "measured"),
+            ))
     valid = dedup_valid
 
     included = []
@@ -999,6 +1033,7 @@ def build_report(loaded, args):
         record_ts_by_testee=record_ts_by_testee,
         subject_bytes=subject_bytes,
         superseded=sorted(superseded),
+        newer_not_measured=sorted(newer_not_measured),
         include_unmeasured=bool(getattr(args, "include_unmeasured", False)),
         include_scratch=bool(getattr(args, "include_scratch", False)),
         all_records=all_records,
@@ -1095,12 +1130,21 @@ def render_markdown(rd: ReportData):
                         + (f" (+{len(problems)-1} more)" if len(problems) > 1 else ""))
     if rd.superseded:
         total_sup = sum(len(sups) for _kept, sups in rd.superseded)
-        out.append(f"- superseded records (OD-B15: older duplicate of a (subbench@version, "
-                    f"testee_id, machine); newest kept by default, `--all-records` shows each "
+        out.append(f"- superseded records (OD-B15, amended: older duplicate of a "
+                    f"(subbench@version, testee_id, machine) than the newest MEASURED "
+                    f"record; newest-measured kept by default, `--all-records` shows each "
                     f"separately): {total_sup}")
         for kept, sups in rd.superseded:
             for sup in sups:
                 out.append(f"    - `{sup}` superseded by `{kept}`")
+    if rd.newer_not_measured:
+        out.append(f"- newer, not measured (OD-B15 amendment, 2026-08-25: a record newer "
+                    f"than the kept one but NOT `measured` does not supersede it -- a "
+                    f"non-measured record is not evidence against a measured one of the "
+                    f"same testee and version; it stands only if the group has no measured "
+                    f"record at all): {len(rd.newer_not_measured)}")
+        for kept, newer, status in rd.newer_not_measured:
+            out.append(f"    - newer, not measured: `{newer}` ({status}) -- kept `{kept}`")
     out.append(f"- sub-bench version(s): {', '.join(sorted(rd.subbench_versions)) or '(none)'}")
     out.append(f"- machine(s): {', '.join(sorted(rd.machines)) or '(none)'}")
     out.append(f"- schema version(s): {', '.join(sorted(rd.schema_versions)) or '(none)'}")
@@ -1145,11 +1189,15 @@ def render_markdown(rd: ReportData):
                 "listed as `scratch: <testee>`; `--include-scratch` ranks "
                 "it instead, with a `tier` column"
                 + (" [ACTIVE]" if rd.include_scratch else ""))
-    out.append("- duplicate-record policy (OD-B15): only the NEWEST record "
-                "per (subbench@version, testee_id, machine) by "
-                "`run.timestamp` ranks by default; `--all-records` shows "
-                "every record as its own row, its testee id suffixed "
-                "`@<timestamp>`"
+    out.append("- duplicate-record policy (OD-B15, amended 2026-08-25): the NEWEST "
+                "MEASURED record per (subbench@version, testee_id, machine) ranks "
+                "by default -- a newer record that is NOT measured does not "
+                "supersede a measured one of the same testee and version (listed "
+                "as \"newer, not measured\" instead); only when no record in the "
+                "group is measured does the newest record overall stand (itself "
+                "unranked per the status policy above, unless "
+                "--include-unmeasured). `--all-records` shows every record as its "
+                "own row, its testee id suffixed `@<timestamp>`"
                 + (" [ACTIVE]" if rd.all_records else ""))
     out.append("")
 
@@ -1199,13 +1247,18 @@ def render_markdown(rd: ReportData):
         for item in group_scratch:
             scratch_rows.append((gkey,) + item)
 
-        if not rankable:
+        # A group with NOTHING to show at all (every entry expectation-
+        # failing, which goes to the separate "Excluded from ranking"
+        # table below) is skipped entirely -- but a group where every
+        # entry is status- or tier-excluded (nothing rankable, yet there
+        # IS something to report) must still print its title and the
+        # not-ranked/scratch bullets, or that information is silently
+        # invisible (found while testing the R2 amendment's
+        # unmeasured-only case, 2026-08-25: a single-testee group with
+        # no measured record used to vanish completely).
+        if not rankable and not group_not_ranked and not group_scratch:
             continue
 
-        rankable.sort(key=lambda tfr: tfr[2].median_ns)
-        ref = next((r for t, form, r in rankable if _is_reference(None, t)), None)
-        ref_ns = ref.median_ns if ref else rankable[0][2].median_ns
-        best_ns = rankable[0][2].median_ns
         any_partial = any(_partial_coverage(r) for _t, _f, r in entries)
         near_floor = grain == "set" and regime == "short-subject-search"
 
@@ -1217,71 +1270,80 @@ def render_markdown(rd: ReportData):
         title += f" ({sb}) — baseline: {rd.reference_testee_pred}"
         out.append(title + "\n")
 
-        facts_present = {_form_fact(form) for _t, form, _r in rankable}
-        if len(facts_present) > 1:
-            out.append("_rows compare different programs answering the same regime; "
-                        "rank order is real, the ratio between forms is a regime "
-                        "artifact until an end-anchored entry exists (pcrec "
-                        "[OS-4])._\n")
+        if rankable:
+            rankable.sort(key=lambda tfr: tfr[2].median_ns)
+            ref = next((r for t, form, r in rankable if _is_reference(None, t)), None)
+            ref_ns = ref.median_ns if ref else rankable[0][2].median_ns
+            best_ns = rankable[0][2].median_ns
 
-        header = ["rank", "testee", "status"]
-        if rd.show_form:
-            header += ["form", "fact"]
-        header += ["median ns/call", "min", "max", "stddev", "vs baseline", "vs best"]
+            facts_present = {_form_fact(form) for _t, form, _r in rankable}
+            if len(facts_present) > 1:
+                out.append("_rows compare different programs answering the same regime; "
+                            "rank order is real, the ratio between forms is a regime "
+                            "artifact until an end-anchored entry exists (pcrec "
+                            "[OS-4])._\n")
 
-        delta_by_testee = {}
-        if grain == "set":
-            for t, form, r in rankable:
-                info = _cross_pin_info(rd, sb, pattern_id, regime, t, form, r)
-                if info:
-                    delta_by_testee[t] = info
-        if delta_by_testee:
-            header.append("Δ vs previous version")
-        if near_floor:
-            header += ["n subjects", "per-subject mean ns", "pass-rate"]
-        elif any_partial:
-            header += (["n subjects", "pass-rate"] if grain == "set" else ["n", "pass-rate"])
-        if rd.include_scratch:
-            header.append("tier")
-        out.append("| " + " | ".join(header) + " |")
-        out.append("|" + "|".join(["---"] * len(header)) + "|")
-
-        worst_notes = []
-        for i, (t, form, r) in enumerate(rankable, start=1):
-            status, _detail, _rid = _status_lookup(rd, sb, t)
-            tier = _tier_lookup(rd, sb, t)
-            ratio_baseline = r.median_ns / ref_ns if ref_ns else float("nan")
-            ratio_best = r.median_ns / best_ns if best_ns else float("nan")
-            row = [str(i), f"`{t}`", status]
+            header = ["rank", "testee", "status"]
             if rd.show_form:
-                row += [f"`{form}`", _form_fact(form)]
-            row += [_fmt_ns(r.median_ns), _fmt_ns(r.min_ns), _fmt_ns(r.max_ns),
-                    _fmt_ns(r.stddev_ns), f"{ratio_baseline:.3f}x", f"{ratio_best:.3f}x"]
+                header += ["form", "fact"]
+            header += ["median ns/call", "min", "max", "stddev", "vs baseline", "vs best"]
+
+            delta_by_testee = {}
+            if grain == "set":
+                for t, form, r in rankable:
+                    info = _cross_pin_info(rd, sb, pattern_id, regime, t, form, r)
+                    if info:
+                        delta_by_testee[t] = info
             if delta_by_testee:
-                info = delta_by_testee.get(t)
-                row.append(info["verdict"] if info else "-")
-                if info and info.get("worst_note"):
-                    worst_notes.append(info["worst_note"])
+                header.append("Δ vs previous version")
             if near_floor:
-                n, pr = _n_and_pass_rate(r, grain)
-                mean = (r.median_ns / n) if n else None
-                row += [str(n), _fmt_ns(mean), f"{pr*100:.0f}%"]
+                header += ["n subjects", "per-subject mean ns", "pass-rate"]
             elif any_partial:
-                n, pr = _n_and_pass_rate(r, grain)
-                row += [str(n), f"{pr*100:.0f}%"]
+                header += (["n subjects", "pass-rate"] if grain == "set" else ["n", "pass-rate"])
             if rd.include_scratch:
-                row.append(tier)
-            out.append("| " + " | ".join(row) + " |")
-        out.append("")
+                header.append("tier")
+            out.append("| " + " | ".join(header) + " |")
+            out.append("|" + "|".join(["---"] * len(header)) + "|")
 
-        if near_floor:
-            out.append(_floor_note_line())
+            worst_notes = []
+            for i, (t, form, r) in enumerate(rankable, start=1):
+                status, _detail, _rid = _status_lookup(rd, sb, t)
+                tier = _tier_lookup(rd, sb, t)
+                ratio_baseline = r.median_ns / ref_ns if ref_ns else float("nan")
+                ratio_best = r.median_ns / best_ns if best_ns else float("nan")
+                row = [str(i), f"`{t}`", status]
+                if rd.show_form:
+                    row += [f"`{form}`", _form_fact(form)]
+                row += [_fmt_ns(r.median_ns), _fmt_ns(r.min_ns), _fmt_ns(r.max_ns),
+                        _fmt_ns(r.stddev_ns), f"{ratio_baseline:.3f}x", f"{ratio_best:.3f}x"]
+                if delta_by_testee:
+                    info = delta_by_testee.get(t)
+                    row.append(info["verdict"] if info else "-")
+                    if info and info.get("worst_note"):
+                        worst_notes.append(info["worst_note"])
+                if near_floor:
+                    n, pr = _n_and_pass_rate(r, grain)
+                    mean = (r.median_ns / n) if n else None
+                    row += [str(n), _fmt_ns(mean), f"{pr*100:.0f}%"]
+                elif any_partial:
+                    n, pr = _n_and_pass_rate(r, grain)
+                    row += [str(n), f"{pr*100:.0f}%"]
+                if rd.include_scratch:
+                    row.append(tier)
+                out.append("| " + " | ".join(row) + " |")
             out.append("")
 
-        if worst_notes:
-            for note in worst_notes:
-                out.append(f"- {note}")
-            out.append("")
+            if near_floor:
+                out.append(_floor_note_line())
+                out.append("")
+
+            if worst_notes:
+                for note in worst_notes:
+                    out.append(f"- {note}")
+                out.append("")
+        else:
+            out.append("_no measured/ranked row for this cell yet -- see the "
+                        "not-ranked/scratch line(s) below._\n")
 
         if group_not_ranked:
             for t, form, r, status, status_detail in group_not_ranked:
@@ -1384,6 +1446,7 @@ def render_tsv(rd: ReportData):
          f"records: {len(rd.included)}",
          f"excluded_invalid: {len(rd.excluded_invalid)}",
          f"superseded: {sum(len(v) for _k, v in rd.superseded)}",
+         f"newer_not_measured: {len(rd.newer_not_measured)}",
          f"subbench_versions: {','.join(sorted(rd.subbench_versions))}",
          f"machines: {','.join(sorted(rd.machines))}",
          f"schema_versions: {','.join(sorted(rd.schema_versions))}",

@@ -69,10 +69,13 @@ which is expected and not a bug in this suite.
   check-design lesson this project inherits from pcrec CLAUDE.md: "a
   check with no failing case proves nothing".
 
-  **[B9] additions (2026-08-25, 10 new tests, 30 total)**: one test per
+  **[B9] additions (2026-08-25, 11 new tests, 31 total)**: one test per
   R1-R9 ruling plus OD-B13, each exercising both the rule FIRING and the
   case where it does not (`test_status_gate_r1`,
-  `test_duplicate_record_dedup_r2`, `test_scratch_tier_gate_r3`,
+  `test_duplicate_record_dedup_r2`,
+  `test_duplicate_record_dedup_prefers_measured_r2` (the manager's R2
+  amendment before merge: measured-older beats unmeasured-newer,
+  unmeasured-only still shows, and both at once), `test_scratch_tier_gate_r3`,
   `test_form_fact_and_mixed_regime_note_r4`, `test_two_ratio_columns_r5`,
   `test_near_floor_columns_r6`, `test_gave_up_cell_summary_r7`,
   `test_cross_pin_delta_r8`, `test_mechanism_stamp_columns_r9`,
@@ -92,7 +95,8 @@ which is expected and not a bug in this suite.
   gave-up subject and mixed-form `p-digits`/match-compliance cell
   already cover them) plus direct unit tests of the pure helper
   functions (`_form_fact`, `_gave_up_cell_summary`,
-  `_extract_diagnostic_code`, `_mechanism_stamp_columns`,
+  `report.giveup_code` (lane b10loop's shared extractor -- see the note
+  above), `_mechanism_stamp_columns`,
   `_jitter_flag`, `_cross_pin_verdict`, `_parse_testee_config`,
   `report.resolve_subbench_arg`).
 - `fixtures/` -- the synthetic store this suite reads. See its own

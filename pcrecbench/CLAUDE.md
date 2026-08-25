@@ -67,10 +67,18 @@ pcrec manager's repin-report feedback), stamped as `reporter: v2
   `status`; a non-`measured` row is excluded from ranking by default
   (listed under its table as `not ranked: <testee> -- <status>
   (<excerpt>)`), `--include-unmeasured` ranks it with status shown.
-- **R2/OD-B15 — duplicate testee_id.** The NEWEST record per
-  (subbench@version, testee_id, machine) by `run.timestamp` ranks by
-  default (older ones SUPERSEDED, named in the header, never pooled);
-  `--all-records` shows every record as its own row, testee id suffixed
+- **R2/OD-B15 — duplicate testee_id, AMENDED (manager, 2026-08-25,
+  before merge).** The NEWEST *MEASURED* record per (subbench@version,
+  testee_id, machine) ranks by default — not merely the newest by
+  `run.timestamp`, because a non-measured record is not evidence against
+  a measured one of the same testee and version (pcre2 does not change
+  between two runs of the identical pin). Older-than-kept records are
+  SUPERSEDED (named in the header, never pooled); a NEWER-than-kept
+  record that is not `measured` does NOT supersede it and is listed
+  separately as "newer, not measured"; only when no record in the group
+  is measured does the newest overall stand (itself unranked per R1
+  unless `--include-unmeasured`). `--all-records` is unchanged by the
+  amendment: every record still shows as its own row, testee id suffixed
   `@<compact-timestamp>`.
 - **R3 — `tier` (ahead of schema v1.2).** Coded as "absent = pinned"
   before lane b10loop's optional `tier` setup field lands in the shared
@@ -129,8 +137,8 @@ Details, worked examples and the exact verdict rules are in
 `report.py`'s module docstring (the authoritative version) and its
 per-function docstrings (`_gave_up_cell_summary`, `_cross_pin_verdict`,
 `_mechanism_stamp_columns`, `_form_fact`, `resolve_subbench_arg`, etc.).
-`pcrecbench/tests/test_report.py` has one test per ruling (10 new tests,
-30 total). `reports/*` regenerated against `reporter: v2` -- see
+`pcrecbench/tests/test_report.py` has one test per ruling (11 new tests,
+31 total). `reports/*` regenerated against `reporter: v2` -- see
 `reports/CLAUDE.md`.
 
 ## The reporter ([B5], merged 2026-08-25)

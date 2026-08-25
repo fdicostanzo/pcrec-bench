@@ -418,14 +418,21 @@ compilers, the hand-C arm: after ([B7]).
   `--include-unmeasured` ranks it instead with `status` shown. Was: the
   reporter shows no record `status`; `inconclusive-load` records rank
   unmarked beside `measured` ones (seen in the [B8] sample, 2026-08-25).
-- OD-B15 — CLOSED [B9] 2026-08-25 (R2): NEWEST by default, never
-  pooled. The NEWEST record per (subbench@version, testee_id, machine)
-  by `run.timestamp` ranks; older ones are SUPERSEDED and named by
-  record id in the report header, never silently pooled into one
-  reduction; `--all-records` shows every record as its own row, its
-  testee id suffixed `@<compact-timestamp>`. Was: two records of one
-  testee_id in a query: pooled or newest? Unstated; must be ruled and
-  printed in the report header.
+- OD-B15 — CLOSED [B9] 2026-08-25 (R2, AMENDED by the manager before
+  merge, same day): NEWEST *MEASURED* by default, never pooled. The
+  NEWEST record whose `status` is `measured`, per (subbench@version,
+  testee_id, machine), ranks -- a newer record that is NOT `measured` is
+  not evidence against a measured one of the same testee and version, so
+  it does NOT supersede it and is listed separately in the header as
+  "newer, not measured: <record id> (<status>)"; only when no record in
+  the group is measured does the newest one overall stand (itself
+  unranked per R1/OD-B14 unless `--include-unmeasured`). Older-than-kept
+  records are SUPERSEDED as before, named by record id in the report
+  header, never silently pooled into one reduction; `--all-records` is
+  unchanged and shows every record as its own row, its testee id
+  suffixed `@<compact-timestamp>`. Was: two records of one testee_id in
+  a query: pooled or newest? Unstated; must be ruled and printed in the
+  report header.
 
 
 ## 13. For the next panel — attack list (v2)
