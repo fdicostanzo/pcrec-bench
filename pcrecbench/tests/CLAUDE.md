@@ -28,12 +28,19 @@ depend on the other lane's code").
   through, with `gave-up` and wrong-answer failures counted and labelled
   SEPARATELY per subject
   (`test_set_grain_excludes_whole_set_when_any_subject_fails`), the
-  subject-grain expectation-failing-cell exclusion from ranking AND that
-  `form` (schema v1.1) correctly separates pcrec's `whole-subject`
-  compliance cell from a same-pattern/subject/regime `plain` cell rather
-  than pooling them
-  (`test_expectation_failing_cell_is_excluded_from_ranking`),
-  `unsupported-by-declaration` handling, the corrected seq-based
+  subject-grain expectation-failing-cell exclusion from ranking WHEN two
+  testees share one (pattern, subject, regime) with DIFFERENT forms --
+  pcrec `whole-subject`, libpcre2 `plain` -- and one of them fails
+  (`test_expectation_failing_cell_is_excluded_from_ranking`); THE FIX
+  ITSELF (manager, 2026-08-25, reversing this module's first cut, which
+  wrongly split the ranking table by `form`): that all three testees
+  answering `p-digits`/match-compliance rank TOGETHER in ONE table at
+  BOTH grains, each row carrying its own `form` as a column, never as a
+  split (`test_form_never_splits_the_ranking_table`) -- and that `form`
+  DOES stay a key for compile-cost cells, where a whole-subject artifact
+  is a genuinely separate compile
+  (`test_compile_cost_still_keyed_by_form`); `unsupported-by-declaration`
+  handling, the corrected seq-based
   lazy-JIT derivation as a direct UNIT TEST against hand-built rows (no
   fixture testee here is `lazy-jit`) --
   `test_lazy_jit_derivation_uses_lowest_seq_not_trial_one` -- deliberately

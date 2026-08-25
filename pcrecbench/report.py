@@ -691,20 +691,31 @@ def _is_reference(testee_setup_by_id, testee_id):
 
 
 def _ranking_groups(rd: ReportData, grain):
-    """grain='subject': keys are (sb, pattern, subject, regime, form),
-    values are [(testee_id, MatchCellReduction)]. grain='set': keys are
-    (sb, pattern, regime, form), values are [(testee_id,
-    SetCellReduction)]. `form` (schema v1.1) stays in the group key so a
-    `plain` and a `whole-subject` artifact of the same pattern are never
-    ranked in the same table."""
+    """grain='subject': keys are (sb, pattern, subject, regime), values
+    are [(testee_id, form, MatchCellReduction)]. grain='set': keys are
+    (sb, pattern, regime), values are [(testee_id, form,
+    SetCellReduction)].
+
+    `form` (schema v1.1) is DELIBERATELY NOT part of the group key
+    (manager fix request, 2026-08-25, reversing this module's first cut):
+    `form` records HOW a testee reached the regime (pcrec: a second
+    `(?:P)\\z` artifact; libpcre2: runtime ANCHORED|ENDANCHORED flags on
+    its ordinary artifact) -- both answer the SAME question and MUST
+    rank together, or the compliance regime (the whole point of which is
+    comparing engines) never compares anything. `form` still stays in
+    `rd.match_cells`/`rd.set_cells`'s OWN keys (so a testee that somehow
+    carries both forms for one regime still reduces to two distinguishable
+    rows, each carrying its own form here) and in `rd.compile_cells`'s key
+    (a `whole-subject` compile is a separate artifact with its own cost,
+    size and trials -- that half of the schema's point stands unchanged)."""
     groups = defaultdict(list)
     if grain == "subject":
         for (sb, testee_id, pattern_id, subject_id, regime, form), (tid, red) \
                 in rd.match_cells.items():
-            groups[(sb, pattern_id, subject_id, regime, form)].append((testee_id, red))
+            groups[(sb, pattern_id, subject_id, regime)].append((testee_id, form, red))
     else:
         for (sb, testee_id, pattern_id, regime, form), (tid, red) in rd.set_cells.items():
-            groups[(sb, pattern_id, regime, form)].append((testee_id, red))
+            groups[(sb, pattern_id, regime)].append((testee_id, form, red))
     return groups
 
 
@@ -756,9 +767,14 @@ def render_markdown(rd: ReportData):
         out.append("- `form`: this report includes a `whole-subject` "
                     "artifact beside `plain` for at least one cell (schema "
                     "v1.1: a testee with no end-anchored mode compiles and "
-                    "times a SEPARATE artifact for match-compliance) -- "
-                    "shown as its own column/table so the two are never "
-                    "read as one number")
+                    "times a SEPARATE artifact for match-compliance, e.g. "
+                    "`(?:pattern)\\z`, where another testee reaches the "
+                    "same regime via runtime flags on its ordinary "
+                    "artifact) -- shown as a per-row COLUMN, not a split: "
+                    "both forms answer the same regime and RANK TOGETHER "
+                    "in one table (`form` is a key only for compile-cost "
+                    "rows, where a whole-subject artifact is genuinely a "
+                    "separate compile with its own cost)")
     out.append("")
 
     if not rd.match_cells and not rd.compile_cells:
@@ -775,36 +791,40 @@ def render_markdown(rd: ReportData):
     excluded_cells = []
     for gkey in sorted(groups):
         entries = groups[gkey]
-        rankable = [(t, r) for t, r in entries
+        rankable = [(t, form, r) for t, form, r in entries
                     if not r.expectation_failing and getattr(r, "n_timed", r.n_trials)]
-        failing = [(t, r) for t, r in entries if r.expectation_failing]
-        for t, r in failing:
-            excluded_cells.append((gkey, t, r))
+        failing = [(t, form, r) for t, form, r in entries if r.expectation_failing]
+        for t, form, r in failing:
+            excluded_cells.append((gkey, t, form, r))
         if not rankable:
             continue
-        rankable.sort(key=lambda tr: tr[1].median_ns)
-        ref = next((r for t, r in rankable if _is_reference(None, t)), None)
-        ref_ns = ref.median_ns if ref else rankable[0][1].median_ns
-        any_partial = any(_partial_coverage(r) for _t, r in entries)
+        rankable.sort(key=lambda tfr: tfr[2].median_ns)
+        ref = next((r for t, form, r in rankable if _is_reference(None, t)), None)
+        ref_ns = ref.median_ns if ref else rankable[0][2].median_ns
+        any_partial = any(_partial_coverage(r) for _t, _f, r in entries)
 
         if grain == "subject":
-            sb, pattern_id, subject_id, regime, form = gkey
+            sb, pattern_id, subject_id, regime = gkey
             title = f"### `{pattern_id}` / `{subject_id}` / `{regime}`"
         else:
-            sb, pattern_id, regime, form = gkey
+            sb, pattern_id, regime = gkey
             title = f"### `{pattern_id}` / `{regime}`"
-        if rd.show_form:
-            title += f" [form: `{form}`]"
         out.append(f"{title} ({sb})\n")
-        header = ["rank", "testee", "median ns/call", "min", "max", "stddev", "ratio"]
+        header = ["rank", "testee"]
+        if rd.show_form:
+            header.append("form")
+        header += ["median ns/call", "min", "max", "stddev", "ratio"]
         if any_partial:
             header += (["n subjects", "pass-rate"] if grain == "set" else ["n", "pass-rate"])
         out.append("| " + " | ".join(header) + " |")
         out.append("|" + "|".join(["---"] * len(header)) + "|")
-        for i, (t, r) in enumerate(rankable, start=1):
+        for i, (t, form, r) in enumerate(rankable, start=1):
             ratio = r.median_ns / ref_ns if ref_ns else float("nan")
-            row = [str(i), f"`{t}`", _fmt_ns(r.median_ns), _fmt_ns(r.min_ns),
-                   _fmt_ns(r.max_ns), _fmt_ns(r.stddev_ns), f"{ratio:.3f}x"]
+            row = [str(i), f"`{t}`"]
+            if rd.show_form:
+                row.append(f"`{form}`")
+            row += [_fmt_ns(r.median_ns), _fmt_ns(r.min_ns),
+                    _fmt_ns(r.max_ns), _fmt_ns(r.stddev_ns), f"{ratio:.3f}x"]
             if any_partial:
                 n, pr = _n_and_pass_rate(r, grain)
                 row += [str(n), f"{pr*100:.0f}%"]
@@ -820,8 +840,8 @@ def render_markdown(rd: ReportData):
             header += ["testee", "n", "pass-rate", "gave-up", "wrong", "outcomes"]
             out.append("| " + " | ".join(header) + " |")
             out.append("|" + "|".join(["---"] * len(header)) + "|")
-            for gkey, t, r in sorted(excluded_cells):
-                sb, pattern_id, subject_id, regime, form = gkey
+            for gkey, t, form, r in sorted(excluded_cells):
+                sb, pattern_id, subject_id, regime = gkey
                 outcomes = ", ".join(f"{k}={v}" for k, v in r.outcome_counts.items())
                 row = [f"`{pattern_id}`", f"`{subject_id}`", f"`{regime}`"]
                 if rd.show_form:
@@ -837,8 +857,8 @@ def render_markdown(rd: ReportData):
                        "failing subjects (reason)"]
             out.append("| " + " | ".join(header) + " |")
             out.append("|" + "|".join(["---"] * len(header)) + "|")
-            for gkey, t, r in sorted(excluded_cells):
-                sb, pattern_id, regime, form = gkey
+            for gkey, t, form, r in sorted(excluded_cells):
+                sb, pattern_id, regime = gkey
                 failing_list = ", ".join(
                     f"`{sid}` ({_failure_label(r.failing_detail[sid])})"
                     for sid in r.failing_subjects
@@ -898,17 +918,17 @@ def render_tsv(rd: ReportData):
     groups = _ranking_groups(rd, grain)
     for gkey in sorted(groups):
         if grain == "subject":
-            sb, pattern_id, subject_id, regime, form = gkey
+            sb, pattern_id, subject_id, regime = gkey
         else:
-            sb, pattern_id, regime, form = gkey
+            sb, pattern_id, regime = gkey
             subject_id = "(set)"
         entries = groups[gkey]
-        rankable = [(t, r) for t, r in entries
+        rankable = [(t, form, r) for t, form, r in entries
                     if not r.expectation_failing and getattr(r, "n_timed", r.n_trials)]
-        rankable.sort(key=lambda tr: tr[1].median_ns)
-        ref = next((r for t, r in rankable if _is_reference(None, t)), None)
-        ref_ns = ref.median_ns if ref else (rankable[0][1].median_ns if rankable else None)
-        for i, (t, r) in enumerate(rankable, start=1):
+        rankable.sort(key=lambda tfr: tfr[2].median_ns)
+        ref = next((r for t, form, r in rankable if _is_reference(None, t)), None)
+        ref_ns = ref.median_ns if ref else (rankable[0][2].median_ns if rankable else None)
+        for i, (t, form, r) in enumerate(rankable, start=1):
             ratio = (r.median_ns / ref_ns) if ref_ns else float("nan")
             n, pr = _n_and_pass_rate(r, grain)
             for metric, val in (("median_ns", r.median_ns), ("min_ns", r.min_ns),
@@ -917,7 +937,7 @@ def render_tsv(rd: ReportData):
                 lines.append("\t".join(["rank", pattern_id, subject_id, regime, form, t, str(i),
                                          metric, f"{val:.6f}" if val is not None else "",
                                          str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong)]))
-        for t, r in entries:
+        for t, form, r in entries:
             if r.expectation_failing:
                 n, pr = _n_and_pass_rate(r, grain)
                 lines.append("\t".join(["excluded", pattern_id, subject_id, regime, form, t, "",

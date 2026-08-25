@@ -228,14 +228,19 @@ def test_known_reduction():
 
 
 def test_expectation_failing_cell_is_excluded_from_ranking():
-    """--grain subject: the original per-(pattern,subject,regime,form)
-    exclusion. Testee B's p-word/s-word-1/match-compliance is `form:
-    plain` (B has no end-anchored-mode workaround) and testee A's SAME
-    (pattern, subject, regime) is `form: whole-subject` (pcrec's own
-    compliance artifact) -- v1.1 keeps the two in SEPARATE groups by
-    design (record_schema.md 5 ADDITIONS 3: "the two must never share a
-    row"), so this checks B's exclusion in its own group and A's
-    continued rankability in its own, DIFFERENT, group."""
+    """--grain subject: the (pattern, subject, regime) exclusion. Testee
+    B's p-word/s-word-1/match-compliance is `form: plain` (B has no
+    end-anchored-mode workaround) and testee A's SAME (pattern, subject,
+    regime) is `form: whole-subject` (pcrec's own compliance artifact).
+
+    Manager fix request (2026-08-25), reversing this module's first cut:
+    `form` is NOT a ranking-group key -- both testees answering the same
+    (pattern, subject, regime) belong in ONE group regardless of form
+    (record_schema.md 5 ADDITIONS 3 says the two artifacts are different
+    THINGS, not that they answer different QUESTIONS; ranking exists to
+    compare engines on a question). So this checks A and B are in the
+    SAME group, B is excluded from THAT group's rankable set while A
+    remains rankable in it, and each entry still carries its own form."""
     loaded, _paths, _source = _load_store(STORE)
     args = _args(store=STORE, include_synthetic=True, grain="subject")
     rd, err = report.build_report(loaded, args)
@@ -244,31 +249,93 @@ def test_expectation_failing_cell_is_excluded_from_ranking():
 
     groups = report._ranking_groups(rd, grain="subject")
 
-    b_key = next((k for k in groups if k[1] == "p-word" and k[2] == "s-word-1"
-                  and k[3] == "match-compliance" and k[4] == "plain"), None)
-    _check(b_key is not None, "expected p-word/s-word-1/match-compliance/plain group to exist")
-    b_entries = groups[b_key]
-    testee_b_entry = next((r for t, r in b_entries if t == TESTEE_B), None)
-    _check(testee_b_entry is not None, "expected testee B's failing cell to be present")
-    _check(testee_b_entry.expectation_failing,
-           "testee B's did-not-match-as-expected cell must be flagged expectation_failing")
-    _check(testee_b_entry.pass_rate == 0.0, f"expected pass_rate 0.0, got {testee_b_entry.pass_rate}")
-    b_rankable = [t for t, r in b_entries if not r.expectation_failing and r.n_timed]
-    _check(TESTEE_B not in b_rankable,
-           f"testee B must be excluded from its own group's rankable set, got {b_rankable}")
+    key = next((k for k in groups if k[1] == "p-word" and k[2] == "s-word-1"
+                and k[3] == "match-compliance"), None)
+    _check(key is not None, "expected ONE p-word/s-word-1/match-compliance group to exist")
+    _check(len(key) == 4, f"the group key must NOT carry form (4-tuple), got {key}")
+    entries = groups[key]
+    testees_present = {t for t, _f, _r in entries}
+    _check(testees_present == {TESTEE_A, TESTEE_B},
+           f"testee A (whole-subject) and testee B (plain) must share ONE group, got {testees_present}")
 
-    a_key = next((k for k in groups if k[1] == "p-word" and k[2] == "s-word-1"
-                  and k[3] == "match-compliance" and k[4] == "whole-subject"), None)
-    _check(a_key is not None, "expected p-word/s-word-1/match-compliance/whole-subject group to exist")
-    a_entries = groups[a_key]
-    a_rankable = [t for t, r in a_entries if not r.expectation_failing and r.n_timed]
-    _check(TESTEE_A in a_rankable,
-           f"testee A (passing, whole-subject) must remain rankable in its own group, got {a_rankable}")
+    testee_a_form, _a_red = next((f, r) for t, f, r in entries if t == TESTEE_A)
+    testee_b_form, testee_b_red = next((f, r) for t, f, r in entries if t == TESTEE_B)
+    _check(testee_a_form == "whole-subject",
+           f"expected testee A's form == 'whole-subject', got {testee_a_form!r}")
+    _check(testee_b_form == "plain",
+           f"expected testee B's form == 'plain' (absent on the row), got {testee_b_form!r}")
+    _check(testee_b_red.expectation_failing,
+           "testee B's did-not-match-as-expected cell must be flagged expectation_failing")
+    _check(testee_b_red.pass_rate == 0.0, f"expected pass_rate 0.0, got {testee_b_red.pass_rate}")
+
+    rankable = [t for t, _f, r in entries if not r.expectation_failing and r.n_timed]
+    _check(rankable == [TESTEE_A],
+           f"testee B must be excluded from the SHARED group's rankable set while testee A "
+           f"remains rankable in it, got {rankable}")
 
     md = report.render_markdown(rd)
     _check("Excluded from ranking" in md, "markdown report must have an excluded-cells section")
     _check(TESTEE_B in md.split("Excluded from ranking")[1].split("## Compile cost")[0],
            "testee B's failing cell must be listed under Excluded from ranking")
+
+
+def test_form_never_splits_the_ranking_table():
+    """THE FIX ITSELF (manager, 2026-08-25): p-digits/match-compliance has
+    THREE testees answering the SAME question via TWO different forms --
+    pcrec (`whole-subject`, its own `(?:pattern)\\z` artifact) and both
+    libpcre2 testees (`plain`, runtime ANCHORED|ENDANCHORED flags on
+    their ordinary artifact). All three MUST appear in ONE ranking table,
+    each row carrying its own form, at both grains -- the whole point of
+    `form` is to make this comparison possible, not to prevent it."""
+    loaded, _paths, _source = _load_store(STORE)
+
+    for grain in ("set", "subject"):
+        args = _args(store=STORE, include_synthetic=True, grain=grain)
+        rd, err = report.build_report(loaded, args)
+        _check(err is None, f"unexpected refusal (grain={grain}): {err}")
+
+        groups = report._ranking_groups(rd, grain=grain)
+        if grain == "subject":
+            key = next((k for k in groups if k[1] == "p-digits" and k[2] == "s-num-1"
+                        and k[3] == "match-compliance"), None)
+        else:
+            key = next((k for k in groups if k[1] == "p-digits"
+                        and k[2] == "match-compliance"), None)
+        _check(key is not None, f"expected a p-digits/match-compliance group to exist (grain={grain})")
+        entries = groups[key]
+        testees_present = {t for t, _f, _r in entries}
+        _check(testees_present == {TESTEE_A, TESTEE_B, TESTEE_C},
+               f"all three testees must share ONE p-digits/match-compliance group "
+               f"(grain={grain}), got {testees_present}")
+        forms_by_testee = {t: f for t, f, _r in entries}
+        _check(forms_by_testee[TESTEE_A] == "whole-subject",
+               f"expected testee A form == 'whole-subject' (grain={grain}), "
+               f"got {forms_by_testee[TESTEE_A]!r}")
+        _check(forms_by_testee[TESTEE_B] == "plain" and forms_by_testee[TESTEE_C] == "plain",
+               f"expected testees B and C form == 'plain' (grain={grain}), got {forms_by_testee}")
+
+        md = report.render_markdown(rd)
+        _check(TESTEE_A in md and TESTEE_B in md and TESTEE_C in md,
+               "sanity: all three testee ids must appear somewhere in the report")
+        _check("| form |" in md, "the ranking table must carry a form column")
+        _check("`whole-subject`" in md and "`plain`" in md,
+               "both form values must appear as per-row column values in the rendered report")
+
+
+def test_compile_cost_still_keyed_by_form():
+    """The ONE place `form` remains a key (manager, 2026-08-25): a
+    whole-subject compile row is a genuinely separate compile (its own
+    cost, own artifact, own trials) -- pcrec's p-digits gets TWO compile
+    cells here, `plain` and `whole-subject`, never pooled."""
+    loaded, _paths, _source = _load_store(STORE)
+    args = _args(store=STORE, include_synthetic=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+
+    forms_for_a_digits = {form for (_sb, t, p, form), (_t, _r) in rd.compile_cells.items()
+                           if t == TESTEE_A and p == "p-digits"}
+    _check(forms_for_a_digits == {"plain", "whole-subject"},
+           f"expected pcrec's p-digits compile cells keyed by BOTH forms, got {forms_for_a_digits}")
 
 
 def test_set_grain_sums_per_subject_ns_per_call():
@@ -611,6 +678,8 @@ TESTS = [
     test_all_fixtures_validate,
     test_known_reduction,
     test_expectation_failing_cell_is_excluded_from_ranking,
+    test_form_never_splits_the_ranking_table,
+    test_compile_cost_still_keyed_by_form,
     test_set_grain_sums_per_subject_ns_per_call,
     test_set_grain_excludes_whole_set_when_any_subject_fails,
     test_unsupported_by_declaration_outcome,

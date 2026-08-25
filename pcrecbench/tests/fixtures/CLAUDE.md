@@ -73,11 +73,13 @@ set, per trial, then reduce over trials) indistinguishable from
       TWO DIFFERENT reasons -- exactly what
       `test_set_grain_excludes_whole_set_when_any_subject_fails` checks
       (`n_gave_up == 3`, `n_wrong == 3`, each subject individually
-      labelled). `test_expectation_failing_cell_is_excluded_from_ranking`
-      covers the `--grain subject` exclusion of `s-word-1` alone (in
-      its own `form: plain` group -- separate from pcrec's `form:
-      whole-subject` group for the same pattern/subject/regime, by
-      design).
+      labelled). `p-word`/`s-word-1`/`match-compliance` also shares its
+      (pattern, subject, regime) with pcrec's PASSING `form:
+      whole-subject` cell for the same coordinates -- since `form` is
+      NOT a ranking-group key (manager fix request, 2026-08-25;
+      `test_expectation_failing_cell_is_excluded_from_ranking`), the two
+      testees are in ONE group, and only libpcre2-interp's `plain` entry
+      is excluded from it.
     - `libpcre2_10.46_jit-caps-simdna` (`eager-jit`) -- `p-word` is
       `unsupported-by-declaration` (a fictional declaration reason, purely
       to exercise the outcome and the "no cost for an unsupported
@@ -85,7 +87,17 @@ set, per trial, then reduce over trials) indistinguishable from
   Together: a compile-cost mix of `compiled-aot` and `interpretive`
   (plus `eager-jit` as a bonus third class), all three testees × 1
   sub-bench × 2 regimes, one wrong-answer cell, one gave-up cell, one
-  unsupported-by-declaration cell, one `form: whole-subject` testee.
+  unsupported-by-declaration cell, one `form: whole-subject` testee. The
+  same shape also makes `p-digits`/`match-compliance` the fixture that
+  proves `form` never splits a ranking table (manager fix request,
+  2026-08-25): pcrec (`whole-subject`) and BOTH libpcre2 testees
+  (`plain`) all pass that cell, so all three appear together in ONE
+  ranking table at both grains, each carrying its own `form` column --
+  `test_form_never_splits_the_ranking_table`. This shape already existed
+  here (pcrec whole-subject, libpcre2 plain, same pattern/regime) from
+  the earlier v1.1 restamp, so no fixture changes were needed for this
+  fix -- only `report.py`'s ranking-group key and the tests that assumed
+  the old (incorrect) per-form split.
   NOT covered by an end-to-end record here: a `lazy-jit` testee (none of
   these three is one) -- the corrected `_lazy_jit_derivation` (schema
   v1.1's `first-match-row-minus-steady-state`, keyed on the lowest

@@ -85,10 +85,22 @@ docstring for the merge note.
   from ranking (a `set` cell excludes if ANY subject in it fails, naming
   the failing subjects rather than averaging through them) and lists
   them separately. `form` (`plain`/`whole-subject`, schema v1.1) is part
-  of every match- and compile-cell key -- a testee with no end-anchored
-  mode (pcrec) compiles and times a SEPARATE artifact for
-  match-compliance, and the two must never share a reduction; shown as
-  its own column only when a report actually includes more than `plain`.
+  of every match- and compile-CELL key (so a testee that carries both
+  forms in one regime still reduces to two distinguishable numbers), but
+  is DELIBERATELY NOT a RANKING-GROUP key (manager fix request,
+  2026-08-25, reversing this module's first cut, which split the
+  ranking table by form and made the compliance regime -- the whole
+  point of which is comparing engines -- compare nobody to anybody):
+  `form` records HOW a testee reached a regime (pcrec's own
+  `(?:pattern)\z` artifact vs. another testee's runtime
+  ANCHORED|ENDANCHORED flags on its ordinary artifact), not WHICH
+  question it answered, so testees with different forms for the same
+  (pattern, regime) rank TOGETHER in one table, each row carrying its
+  own form as a column (shown only when a report actually includes more
+  than `plain`). `form` DOES remain a key for compile-cost cells -- a
+  whole-subject artifact is a genuinely separate compile, with its own
+  cost, size and trials, and pooling those would report one testee's
+  compliance timing against a compile cost it did not pay.
   `match_outcome: gave-up` (schema v1.1: the engine's OWN resource
   limit, not a wrong answer) is counted and labelled separately from
   wrong-answer outcomes everywhere outcomes are shown. Reduces compile
