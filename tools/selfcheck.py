@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """tools/selfcheck.py -- the harness half of `make check` (contract 6).
 
-Eight checks, and the ones that matter are the POSITIVE CONTROLS. pcrec's own
+Nine checks, and the ones that matter are the POSITIVE CONTROLS. pcrec's own
 check-design lesson, applied here: a check that has never been seen to fail is
 not known to be a check, so every gate below is exercised against an input it
 must reject, in the same run that exercises it against one it must accept.
@@ -28,6 +28,9 @@ must reject, in the same run that exercises it against one it must accept.
   store race    N writers claiming the SAME cell at the SAME timestamp must
                 each land their own record -- the control for the
                 never-clobber rule, which any single-threaded test passes.
+  v1.1 ready    every schema-v1.1 field is MEASURED today, stripped by
+                `record.project()` at 1.0, and kept at 1.1 -- the control
+                that stops the projection being dead code.
   run smoke     a full `run` of one cell into a SCRATCH store, validated.
 
 Everything runs under gnutimeout with LC_ALL=C. Nothing here writes into the
@@ -448,6 +451,120 @@ def check_store_race():
 
 # -------------------------------------------------------- 8 the run smoke
 
+SCHEMA_V11_FIELDS = {
+    "row.seq":                 "v1.1 (1)",
+    "match.calibration":       "v1.1 (4)",
+    "load.before.loadavg_raw": "v1.1 (2)",
+    "load.before.sampled_at":  "v1.1 (2)",
+    "load.after.loadavg_raw":  "v1.1 (2)",
+    "occupancy.before":        "v1.1 (3)",
+    "occupancy.after":         "v1.1 (3)",
+    "run.driver_build_flags":  "v1.1 (6)",
+    "run.driver_compiler":     "v1.1 (6)",
+    "run.clock_source":        "v1.1 (9)",
+    "environment.cpu_mhz":     "v1.1 (10)",
+}
+
+
+def _probe_v11(setup, rows):
+    """-> the set of SCHEMA_V11_FIELDS actually present in this record."""
+    env = setup.get("environment", {})
+    load = env.get("load", {})
+    occ = env.get("occupancy", {})
+    run = setup.get("run", {})
+    match_rows = [r for r in rows if r.get("kind") == "match"]
+    present = set()
+    if rows and all("seq" in r for r in rows):
+        present.add("row.seq")
+    if match_rows and all("calibration" in r for r in match_rows):
+        present.add("match.calibration")
+    for end in ("before", "after"):
+        v = load.get(end)
+        if isinstance(v, dict):
+            for k in ("loadavg_raw", "sampled_at"):
+                if k in v and "load.%s.%s" % (end, k) in SCHEMA_V11_FIELDS:
+                    present.add("load.%s.%s" % (end, k))
+    for k in ("before", "after"):
+        if k in occ:
+            present.add("occupancy.%s" % k)
+    for k in ("driver_build_flags", "driver_compiler", "clock_source"):
+        if run.get(k):
+            present.add("run.%s" % k)
+    if env.get("cpu_mhz") is not None:
+        present.add("environment.cpu_mhz")
+    return present
+
+
+def check_schema_v11_readiness():
+    """THE CONTROL FOR THE PROJECTION, without which it is dead code.
+
+    Schema v1.1 is landing on another lane. This harness MEASURES every one
+    of its new fields already and `record.project()` narrows the record to
+    whatever `SCHEMA_VERSION` currently is. That arrangement has an obvious
+    failure mode: the projection strips a field the harness never actually
+    built, nobody notices because 1.0 records look right, and the day
+    SCHEMA_VERSION flips the field is simply absent.
+
+    So this asserts all three legs at once, on a REAL run:
+      1. the FULL record the harness builds carries every v1.1 field;
+      2. projecting it at 1.0 removes exactly those and nothing else, and the
+         result is what the validator accepted;
+      3. projecting it at 1.1 keeps them.
+    Leg 1 is the one that matters -- 2 and 3 are cheap and would pass on an
+    empty record."""
+    print("-- schema v1.1 readiness (the projection is live, not dead) --")
+    from pcrecbench import harness as _h, record as _r
+
+    scratch = os.path.join(ROOT, "build", "selfcheck-v11-store")
+    shutil.rmtree(scratch, ignore_errors=True)
+    try:
+        res = _h.run_cell("email", "pcre2-interp", regimes=["match"],
+                          trials=1, iters=1, force_unquiet=True,
+                          store_root=scratch, machine_id="selfcheck-box",
+                          synthetic=True,
+                          note="make check v1.1-readiness probe -- NOT a measurement")
+    except Exception as e:                                 # noqa: BLE001
+        bad("v1.1 readiness", "%s" % e)
+        return
+
+    built = _probe_v11(res.full_setup, res.full_rows)
+    missing = sorted(set(SCHEMA_V11_FIELDS) - built)
+    if missing:
+        bad("v1.1 fields are MEASURED",
+            "not built: %s" % ", ".join("%s [%s]" % (m, SCHEMA_V11_FIELDS[m])
+                                        for m in missing))
+    else:
+        ok("v1.1 fields are MEASURED",
+           "all %d present in the full record" % len(SCHEMA_V11_FIELDS))
+
+    written = _probe_v11(res.setup, res.rows)
+    if written:
+        bad("... and STRIPPED at schema 1.0",
+            "leaked into the written record: %s" % ", ".join(sorted(written)))
+    else:
+        ok("... and STRIPPED at schema 1.0",
+           "the written record carries none of them")
+
+    s11, r11 = _r.project(res.full_setup, res.full_rows, schema_version="1.1")
+    kept = _probe_v11(s11, r11)
+    if kept == set(SCHEMA_V11_FIELDS):
+        ok("... and KEPT at schema 1.1",
+           "flipping SCHEMA_VERSION emits all %d" % len(SCHEMA_V11_FIELDS))
+    else:
+        bad("... and KEPT at schema 1.1",
+            "1.1 would drop: %s"
+            % ", ".join(sorted(set(SCHEMA_V11_FIELDS) - kept)))
+
+    seqs = [r["seq"] for r in res.full_rows]
+    if seqs == list(range(1, len(seqs) + 1)):
+        ok("seq is dense and monotonic across the whole record",
+           "1..%d over compile AND match rows" % len(seqs))
+    else:
+        bad("seq is dense and monotonic across the whole record",
+            "got %s..%s over %d rows" % (seqs[:1], seqs[-1:], len(seqs)))
+    shutil.rmtree(scratch, ignore_errors=True)
+
+
 def check_run_smoke():
     """A full `run` of ONE cell into a SCRATCH store, validated. Not a
     measurement: --trials 1 --iters 1, one regime, --force-unquiet, and the
@@ -485,6 +602,7 @@ def main():
     check_patterns_distinct()
     check_subject_timeout()
     check_store_race()
+    check_schema_v11_readiness()
     check_run_smoke()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"

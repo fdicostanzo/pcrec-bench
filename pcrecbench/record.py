@@ -14,7 +14,43 @@ import json
 import os
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# =========================================================================
+# THE SCHEMA VERSION, AND THE ONE PLACE THE RECORD IS NARROWED TO IT
+# =========================================================================
+#
+# The harness BUILDS every record with the full v1.1 field set -- the load and
+# occupancy samples with their provenance, the calibration numbers behind each
+# `iters`, the driver's exact build command, the per-row `seq`, the clock
+# source, the CPU MHz. It then PROJECTS that onto whatever `SCHEMA_VERSION`
+# says, and `project()` below is the only code that knows the difference.
+#
+# The direction matters and is not symmetric. A field that was never MEASURED
+# cannot be added to an old record afterwards; a field that was measured and
+# not emitted costs one line to start emitting. So the sampling is always
+# maximal and the emission is versioned.
+#
+# TO ADOPT v1.1: set SCHEMA_VERSION to "1.1" and delete the entries from
+# V11_ONLY that the merged schema accepts. Nothing else moves.
 SCHEMA_VERSION = "1.0"
+
+#: Fields the harness computes that schema 1.0 does not accept
+#: (`additionalProperties: false` everywhere, so emitting one is a hard
+#: rejection). Each entry cites the v1.1 item it is waiting for.
+V11_ONLY = {
+    "row.seq":                  "v1.1 (1) monotonic emission order per row",
+    "row.calibration":          "v1.1 (4) {target_ns, probe_iterations, probe_elapsed_ns}",
+    "load.sample_detail":       "v1.1 (2) load.before/after become objects",
+    "occupancy.before_after":   "v1.1 (3) occupancy gains before/after",
+    "run.driver_build_flags":   "v1.1 (6) the driver's exact compile command",
+    "run.driver_compiler":      "v1.1 (6)",
+    "run.clock_source":         "v1.1 (9) clock_monotonic",
+    "environment.cpu_mhz":      "v1.1 (10), optional",
+}
+
+#: What the drivers actually call. Both use `clock_gettime(CLOCK_MONOTONIC)`
+#: around the batched loop -- never a wall clock, never a per-call timer.
+CLOCK_SOURCE = "clock_monotonic"
 
 
 def _validator_module():
@@ -58,6 +94,58 @@ def stamp_content_hash(setup, rows):
 
 def sha256_bytes(b):
     return hashlib.sha256(b).hexdigest()
+
+
+# ------------------------------------------------------------- projection
+
+def project(setup, rows, schema_version=None):
+    """Narrow a fully-built record to the emitted schema version.
+
+    THE ONLY place a v1.1 field is dropped. Everything above builds the full
+    record; this decides what 1.0 is allowed to carry. Returns (setup, rows),
+    both fresh objects -- the caller's full-fidelity versions are not mutated,
+    so a caller that wants the measured-but-unemitted numbers (a log line, a
+    future migration) still has them."""
+    version = schema_version or SCHEMA_VERSION
+    if version != "1.0":
+        return setup, rows
+
+    setup = json.loads(json.dumps(setup))
+    env = setup.get("environment", {})
+
+    # (2) load.before/after are three bare numbers at 1.0, objects at 1.1.
+    load = env.get("load")
+    if load:
+        for end in ("before", "after"):
+            v = load.get(end)
+            if isinstance(v, dict):
+                load[end] = v["loadavg"]
+
+    # (3) occupancy is ONE object at 1.0. The combined verdict is already the
+    # worse of the two samples (quiet.occupancy_block), so the gate does not
+    # weaken -- only the two samples' separate provenance is lost, and the
+    # `raw` text of both is kept because 1.0 has a place for it.
+    occ = env.get("occupancy")
+    if occ:
+        for k in ("before", "after"):
+            occ.pop(k, None)
+
+    # (10) cpu_mhz has no home at 1.0.
+    env.pop("cpu_mhz", None)
+
+    # (6)+(9) the driver's provenance and the clock source have no home at 1.0.
+    run = setup.get("run", {})
+    for k in ("driver_build_flags", "driver_compiler", "clock_source"):
+        run.pop(k, None)
+
+    # (1)+(4) per-row seq and calibration.
+    out_rows = []
+    for r in rows:
+        r = dict(r)
+        r.pop("seq", None)
+        r.pop("calibration", None)
+        out_rows.append(r)
+    return setup, out_rows
 
 
 # --------------------------------------------------------------- the blocks
@@ -137,7 +225,7 @@ def build_setup(sb, testee_block, environment, run_block, regimes,
 
 def compile_row(pattern_id, trial, outcome, cost_class, phases=None,
                 phase_seconds=None, engine_metadata=None, diagnostic=None,
-                artifact_bytes=None, declaration_ref=None):
+                artifact_bytes=None, declaration_ref=None, seq=None):
     row = {
         "kind": "compile",
         "pattern_id": pattern_id,
@@ -166,12 +254,14 @@ def compile_row(pattern_id, trial, outcome, cost_class, phases=None,
         row["declaration_ref"] = declaration_ref
     if diagnostic or outcome == "did-not-compile":
         row["diagnostic"] = diagnostic or "(the engine gave no diagnostic)"
+    if seq is not None:
+        row["seq"] = seq
     return row
 
 
 def match_row(pattern_id, subject_id, regime_enum, trial, outcome,
               timing=None, consumed=None, truncation=None, observed=None,
-              diagnostic=None):
+              diagnostic=None, seq=None, calibration=None):
     row = {
         "kind": "match",
         "pattern_id": pattern_id,
@@ -189,4 +279,8 @@ def match_row(pattern_id, subject_id, regime_enum, trial, outcome,
         row["observed"] = observed
     if diagnostic:
         row["diagnostic"] = diagnostic
+    if seq is not None:
+        row["seq"] = seq
+    if calibration is not None:
+        row["calibration"] = dict(calibration)
     return row

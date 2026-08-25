@@ -103,25 +103,51 @@ def run_driver(argv, timeout=None, cwd=None, pin=None):
     return out
 
 
+#: The exact command line each driver was built with, keyed by binary path.
+#: Schema v1.1 items (6) `run.driver_build_flags` and `run.driver_compiler`:
+#: a timing driver built `-O0` and one built `-O2` are different instruments,
+#: and a record that does not say which cannot be compared with another.
+#: Recorded whether or not the current schema has a home for it -- a number
+#: whose provenance was never captured cannot have it added later.
+DRIVER_BUILDS = {}
+
+
 def build_driver(source, output, extra=None, cflags=None):
     """Build a driver if the binary is missing or older than its source.
 
     Returns the binary path. `$CC` and `$CFLAGS` are honoured so the record's
     `environment.compiler` and the driver's actual toolchain are the same
     thing (record_schema.md 6.7)."""
+    cc = os.environ.get("CC", "gcc")
+    flags = (cflags or os.environ.get("CFLAGS", "-O2 -std=gnu11")).split()
+    argv = [cc] + flags + ["-o", output, source] + list(extra or [])
+    # Registered even on the cached path: the record must state how the
+    # driver that produced its numbers was built, not only how one that
+    # happened to be rebuilt this run was.
+    DRIVER_BUILDS[os.path.abspath(output)] = {
+        "command_line": list(argv),
+        "compiler": cc,
+    }
     if (os.path.exists(output)
             and os.path.getmtime(output) >= os.path.getmtime(source)):
         return output
     os.makedirs(os.path.dirname(output) or ".", exist_ok=True)
-    cc = os.environ.get("CC", "gcc")
-    flags = (cflags or os.environ.get("CFLAGS", "-O2 -std=gnu11")).split()
-    argv = [cc] + flags + ["-o", output, source] + list(extra or [])
     proc = subprocess.run(argv, capture_output=True, text=True, env=C_ENV,
                           timeout=600)
     if proc.returncode != 0:
         raise _ad.AdapterError("building %s failed:\n%s\n%s"
                                % (source, " ".join(argv), proc.stderr))
     return output
+
+
+def driver_build_provenance():
+    """-> (build_flags, compiler): every driver command line this run used,
+    newline-joined, and the compiler that ran them."""
+    if not DRIVER_BUILDS:
+        return None, None
+    cmds = sorted(" ".join(v["command_line"]) for v in DRIVER_BUILDS.values())
+    compilers = sorted({v["compiler"] for v in DRIVER_BUILDS.values()})
+    return "\n".join(cmds), ", ".join(compilers)
 
 
 def write_list(subjects, path):

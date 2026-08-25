@@ -95,6 +95,20 @@ def canon_compiler(raw):
     return "%s-%s" % (name, vers[-1]) if vers else name
 
 
+def cpu_mhz():
+    """`/proc/cpuinfo`'s `cpu MHz` for cpu0, as a float. Schema v1.1 item
+    (10), optional. It is a SPOT reading of a scaling frequency, not a
+    property of the box -- it says what the core was clocked at when the
+    record was built, which is why it is diagnostic rather than filterable."""
+    for line in _read("/proc/cpuinfo").splitlines():
+        if line.lower().startswith("cpu mhz"):
+            try:
+                return round(float(line.split(":", 1)[1].strip()), 3)
+            except ValueError:
+                return None
+    return None
+
+
 def governor():
     g = _read("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor").strip()
     return g or None
@@ -216,4 +230,7 @@ def describe(store_root, machine_id=None, timestamp=None, cc=None):
         "compiler_raw": cmpraw,
         "governor": governor(),
         "turbo": turbo(),
+        # v1.1 (10). Built always, emitted only when the schema has a home
+        # for it -- record.project() decides.
+        "cpu_mhz": cpu_mhz(),
     }

@@ -11,7 +11,12 @@ silently skipped:
       `loaded` if EITHER sample exceeds the limit.
   (b) OCCUPANCY -- per-core %idle from `mpstat -P ALL 1 1`, reduced to the
       busiest NON-TARGET core (`max_busy_pct` = 100 - min %idle over the cores
-      we are not pinned to). Verdict `pass` / `fail` / `unavailable`.
+      we are not pinned to), sampled at BOTH ENDS for exactly the reason load
+      is. Verdict `pass` / `fail` / `unavailable`, and the combined verdict is
+      the WORSE of the two samples: a box that stayed under the load limit
+      while another job occupied a core is the case this instrument was
+      measured to catch (docs/design/quiet_baseline.md), and it can start
+      after the run does.
   (d) PINNING -- `taskset` after the occupancy check; `none` when the harness
       was told not to pin, `unavailable` when taskset is missing or refuses.
 
@@ -27,6 +32,7 @@ import os
 import re
 import shutil
 import subprocess
+import time
 
 from .env import C_ENV
 
@@ -60,15 +66,42 @@ class QuietRefusal(Exception):
 # ------------------------------------------------------------------- load
 
 def loadavg():
+    """The three figures, as the current schema's `load.before/after` want
+    them. `load_sample()` is the richer form schema v1.1 moves to."""
+    return load_sample()["loadavg"]
+
+
+def load_sample():
+    """A load sample with its PROVENANCE: the raw `/proc/loadavg` line and the
+    wall time it was taken at, beside the parsed figures.
+
+    Schema v1.1 makes `environment.load.before/after` exactly this shape
+    (`loadavg_raw`, `sampled_at`, `load1/5/15`). Until it lands the record
+    carries only the three numbers, and `record.py`'s projection is the one
+    place that reduces this to them -- the sample itself is always taken in
+    full, because a number whose provenance was never captured cannot have it
+    added later."""
     with open("/proc/loadavg", "r", encoding="ascii") as f:
-        parts = f.read().split()
-    return [float(parts[0]), float(parts[1]), float(parts[2])]
+        raw = f.read().strip()
+    parts = raw.split()
+    return {
+        "loadavg_raw": raw,
+        "sampled_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "loadavg": [float(parts[0]), float(parts[1]), float(parts[2])],
+        "load1": float(parts[0]),
+        "load5": float(parts[1]),
+        "load15": float(parts[2]),
+    }
 
 
 def load_block(before, after, limit=LOAD1_LIMIT):
     """record_schema.md `environment.load`. `verdict` is `loaded` iff EITHER
-    sample's 1-minute figure exceeds `limit` (requirements 9(a), C7)."""
-    loaded = before[0] > limit or after[0] > limit
+    sample's 1-minute figure exceeds `limit` (requirements 9(a), C7).
+
+    `before`/`after` are `load_sample()` dicts; the full samples are kept here
+    and `record.py`'s projection reduces them for the emitted schema
+    version."""
+    loaded = before["load1"] > limit or after["load1"] > limit
     return {
         "before": before,
         "after": after,
@@ -132,6 +165,8 @@ def occupancy(exclude_cpu=None, limit=MAX_BUSY_PCT_LIMIT, timeout=30):
         "tool": " ".join(MPSTAT_CMD),
         "max_busy_pct": None,
         "raw": "",
+        # v1.1 carries a `sampled_at` per occupancy sample, as load does.
+        "sampled_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
     if shutil.which("mpstat") is None:
         block["raw"] = "mpstat not installed on this box"
@@ -185,8 +220,34 @@ def taskset_prefix(pin):
 
 def check(exclude_cpu=None, load_limit=LOAD1_LIMIT,
           occupancy_limit=MAX_BUSY_PCT_LIMIT):
-    """Sample the box BEFORE a run. Returns (load_before, occupancy_block)."""
-    return loadavg(), occupancy(exclude_cpu=exclude_cpu, limit=occupancy_limit)
+    """Sample the box. Returns (load_sample, occupancy_block).
+
+    The SAME call is made before and after a run -- there is no `check_after`,
+    because two samples taken by two code paths are two instruments, and the
+    whole point of the after-sample is that it is comparable to the before
+    one."""
+    return load_sample(), occupancy(exclude_cpu=exclude_cpu,
+                                    limit=occupancy_limit)
+
+
+def occupancy_block(before, after):
+    """The combined occupancy fact. v1.1 carries `before`/`after` the way load
+    does; the current schema carries ONE object, and `record.py`'s projection
+    picks it. `verdict` is the WORSE of the two -- `fail` beats `unavailable`
+    beats `pass` -- so an after-sample that went busy cannot be outvoted by a
+    clean before-sample."""
+    rank = {"pass": 0, "unavailable": 1, "fail": 2}
+    worse = before if rank[before["verdict"]] >= rank[after["verdict"]] else after
+    busy = [v for v in (before["max_busy_pct"], after["max_busy_pct"])
+            if v is not None]
+    return {
+        "before": before,
+        "after": after,
+        "verdict": worse["verdict"],
+        "tool": before["tool"],
+        "max_busy_pct": max(busy) if busy else None,
+        "raw": "BEFORE:\n%s\n\nAFTER:\n%s" % (before["raw"], after["raw"]),
+    }
 
 
 def gate(load_before, occ, force=False, load_limit=LOAD1_LIMIT):
@@ -196,9 +257,10 @@ def gate(load_before, occ, force=False, load_limit=LOAD1_LIMIT):
     with `force` set is what makes the record `inconclusive-load`
     (record_schema.md X13); without `force` the caller raises."""
     reasons = []
-    if load_before[0] > load_limit:
+    load1 = load_before["load1"] if isinstance(load_before, dict) else load_before[0]
+    if load1 > load_limit:
         reasons.append("load1 %.2f exceeds the limit %.2f"
-                       % (load_before[0], load_limit))
+                       % (load1, load_limit))
     if occ["verdict"] == "fail":
         reasons.append("occupancy: busiest non-target core %.2f%% busy "
                        "(limit %.2f%%)" % (occ["max_busy_pct"], MAX_BUSY_PCT_LIMIT))

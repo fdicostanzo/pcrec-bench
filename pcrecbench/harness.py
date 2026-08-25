@@ -20,12 +20,13 @@ answer becomes a `match_outcome`, and it is engine-independent by
 construction.
 """
 
+import itertools
 import os
 import sys
 import time
 
 from . import adapters as _ad
-from . import env, quiet, record, store
+from . import driverrun, env, quiet, record, store
 from .subbench import REGIME_TO_ENUM, REGIME_MODE
 from . import HARNESS_VERSION
 
@@ -41,6 +42,24 @@ PROBE_ITERS = {"throughput": 1, "search_short": 200, "match": 200}
 
 class HarnessError(Exception):
     pass
+
+
+class RunResult:
+    """What `run_cell` returns. `setup`/`rows` are what was WRITTEN (narrowed
+    to the emitted schema version); `full_setup`/`full_rows` are what was
+    BUILT, with every v1.1 field the harness measures."""
+
+    __slots__ = ("path", "record_id", "setup", "rows", "full_setup",
+                 "full_rows")
+
+    def __init__(self, path, record_id, setup, rows, full):
+        self.path, self.record_id = path, record_id
+        self.setup, self.rows = setup, rows
+        self.full_setup, self.full_rows = full
+
+    def __iter__(self):
+        """Unpacks as the old 4-tuple, so existing callers keep working."""
+        return iter((self.path, self.record_id, self.setup, self.rows))
 
 
 # ------------------------------------------------------------- the judging
@@ -146,8 +165,14 @@ def truncation_for(regime, row, subject):
 
 def calibrate(adapter, handle, regime, subjects, requested, timeout,
               subject_timeout):
-    """Choose `iters` (contract 3: "chosen so one subject's loop is >= 50 ms,
-    auto-calibrated by python from a probe run, recorded in the record").
+    """Choose `iters`. -> (iters, why, calibration).
+
+    Contract 3: "chosen so one subject's loop is >= 50 ms, auto-calibrated by
+    python from a probe run, RECORDED IN THE RECORD". The third return value
+    is that recording -- schema v1.1 item (4) puts `{target_ns,
+    probe_iterations, probe_elapsed_ns}` on every match row, so the number
+    behind the number is never lost. It is built now and emitted when the
+    schema has a home for it (record.project).
 
     THE RULE, because "one subject" needs saying which. The probe measures
     every subject at a small fixed `iters`; the MEDIAN per-iteration cost sets
@@ -158,16 +183,25 @@ def calibrate(adapter, handle, regime, subjects, requested, timeout,
     total sweep stays inside TRIAL_BUDGET_SECONDS -- one pathological subject
     must not turn a cell into an overnight run -- and the number that was
     actually used lands in every row's `timing.iterations`."""
+    target_ns = int(TARGET_LOOP_SECONDS * 1e9)
     if requested is not None:
-        return int(requested), "requested on the command line"
+        # A FIXED iters is still calibration provenance: it says the number
+        # was chosen by hand and no probe stands behind it, which is exactly
+        # what a reader of a smoke record needs to know.
+        return int(requested), "requested on the command line", {
+            "target_ns": target_ns, "probe_iterations": 0,
+            "probe_elapsed_ns": 0}
     probe_iters = PROBE_ITERS.get(regime, 100)
     rows_by_trial, _info, _notes = adapter.measure(
         handle, regime, subjects, probe_iters, 1, timeout=timeout)
     rows = rows_by_trial[0] if rows_by_trial else []
+    probe_elapsed_ns = int(round(sum(r.seconds for r in rows) * 1e9))
+    cal = {"target_ns": target_ns, "probe_iterations": probe_iters,
+           "probe_elapsed_ns": probe_elapsed_ns}
     per_iter = sorted(r.seconds / max(r.iters, 1) for r in rows
                       if r.seconds > 0 and r.iters)
     if not per_iter:
-        return 1, "the probe run produced no timing; falling back to iters=1"
+        return 1, "the probe run produced no timing; falling back to iters=1", cal
     median = per_iter[len(per_iter) // 2]
     total = sum(per_iter)
     iters = max(1, int(TARGET_LOOP_SECONDS / median))
@@ -176,11 +210,11 @@ def calibrate(adapter, handle, regime, subjects, requested, timeout,
         return capped, ("median subject would need iters=%d for %.0f ms, "
                         "capped to %d by the %.0f s per-trial budget"
                         % (iters, TARGET_LOOP_SECONDS * 1000, capped,
-                           TRIAL_BUDGET_SECONDS))
+                           TRIAL_BUDGET_SECONDS)), cal
     return iters, ("median per-iteration %.3f us over %d subject(s) -> "
                    "iters=%d for a %.0f ms loop"
                    % (median * 1e6, len(per_iter), iters,
-                      TARGET_LOOP_SECONDS * 1000))
+                      TARGET_LOOP_SECONDS * 1000)), cal
 
 
 # ----------------------------------------------------------------- the run
@@ -190,7 +224,12 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
              pin_cpu=None, subject_timeout=60, driver_timeout=900,
              command_line=None, note=None, synthetic=False, workdir=None,
              progress=None):
-    """The whole of contract 4. Returns (path, record_id, setup, rows)."""
+    """The whole of contract 4. Returns a `RunResult`.
+
+    It carries BOTH the record as written and the FULL pre-projection one, so
+    a caller (and `make check`) can see that the v1.1 fields are really being
+    measured rather than merely provided for. A projection nobody can inspect
+    is a projection nobody can tell is dead."""
     from .subbench import find as find_subbench
 
     say = progress or (lambda *_a: None)
@@ -216,15 +255,18 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
 
     # (2) the quiet gate ----------------------------------------------------
     say("checking the box (mpstat takes ~1 s)...")
-    load_before, occ = quiet.check(exclude_cpu=pin_cpu)
-    reasons = quiet.gate(load_before, occ, force=force_unquiet)
+    load_before, occ_before = quiet.check(exclude_cpu=pin_cpu)
+    reasons = quiet.gate(load_before, occ_before, force=force_unquiet)
     pinning = quiet.pinning(pin_cpu)
 
     timestamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     environment = env.describe(store_root, machine_id=machine_id,
                                timestamp=timestamp)
     environment["pinning"] = pinning
-    environment["occupancy"] = occ
+    # `quiet_attestation` is DROPPED in schema v1.1: a boolean the harness
+    # sets from its own reasons list is a claim beside a measurement, and the
+    # measurement is the one that matters (record_schema.md 11.8's own doubt).
+    # Kept until 1.1 lands because 1.0 requires it.
     environment["quiet_attestation"] = not reasons
 
     # (3) prepare, compile, measure ----------------------------------------
@@ -237,6 +279,11 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
 
     notes = list(reasons)
     rows = []
+    # v1.1 (1): a monotonic emission order across the WHOLE record, compile
+    # and match rows alike. Row order is not significant to the schema, so
+    # without this the sequence a harness actually ran things in -- which is
+    # what a thermal-drift or warm-up question needs -- is unrecoverable.
+    seq = itertools.count(1)
     handles = {}
     compiled_ok = {}
     options = (sb.testee_notes.get(adapter.name, {}) or {}).get("options", {})
@@ -256,7 +303,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                 engine_metadata=cr.engine_metadata,
                 diagnostic=cr.diagnostic,
                 artifact_bytes=cr.artifact_bytes,
-                declaration_ref=cr.declaration_ref))
+                declaration_ref=cr.declaration_ref,
+                seq=next(seq)))
         if cr.outcome == "compiled":
             handles[p.name] = cr.handle
         else:
@@ -276,8 +324,9 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             handle["subject_timeout"] = subject_timeout
             if iters is None:
                 say("calibrating %s / %s / %s ..." % (testee_id, p.name, regime))
-            n_iters, why = calibrate(adapter, handle, regime, subjects, iters,
-                                     driver_timeout, subject_timeout)
+            n_iters, why, cal = calibrate(adapter, handle, regime, subjects,
+                                          iters, driver_timeout,
+                                          subject_timeout)
             notes.append("iters for (%s, %s) = %d: %s" % (p.name, regime,
                                                           n_iters, why))
             say("measuring %s / %s / %s: %d subject(s) x %d iter(s) x %d "
@@ -307,24 +356,44 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                         p.name, r.subject_id, enum, trial, outcome,
                         timing=timing, consumed=r.consumed,
                         truncation=truncation_for(regime, r, subj),
-                        observed=observed, diagnostic=diag))
+                        observed=observed, diagnostic=diag,
+                        seq=next(seq), calibration=cal))
 
-    # (4) load AFTER --------------------------------------------------------
-    load_after = quiet.loadavg()
+    # (4) load AND OCCUPANCY after ------------------------------------------
+    # Both instruments, at both ends, by the same call that took the before
+    # sample. A box that was quiet at the start and got busy partway through
+    # is just as load-compromised (requirements 9(a), C7) -- and the measured
+    # finding of docs/design/quiet_baseline.md is that the instrument which
+    # actually notices that is the per-core one, not load1.
+    say("re-checking the box after the run (mpstat takes ~1 s)...")
+    load_after, occ_after = quiet.check(exclude_cpu=pin_cpu)
     environment["load"] = quiet.load_block(load_before, load_after)
+    occ = quiet.occupancy_block(occ_before, occ_after)
+    environment["occupancy"] = occ
 
     # (5) the record --------------------------------------------------------
+    # `measured` requires BOTH ends clean, on BOTH instruments. `occ` already
+    # carries the WORSE of the two occupancy samples, so this reads as one
+    # test and enforces two.
     status = "measured"
-    if environment["load"]["verdict"] != "quiet" or occ["verdict"] == "fail":
+    if environment["load"]["verdict"] != "quiet":
         status = "inconclusive-load"
-    if occ["verdict"] == "unavailable" and not force_unquiet:
+    if occ["verdict"] != "pass":
         status = "inconclusive-load"
+        if occ["verdict"] == "unavailable":
+            notes.append("occupancy unavailable (%s); recorded, never skipped "
+                         "(requirements 9(b))" % occ["tool"])
+        elif occ_before["verdict"] != occ_after["verdict"]:
+            notes.append("occupancy differed across the run: before=%s "
+                         "after=%s -- the box changed while it was measured"
+                         % (occ_before["verdict"], occ_after["verdict"]))
     if not all(compiled_ok.values()):
         # X14: `measured` requires a compile row for every pattern -- there
         # IS one, saying it did not compile, so the record stays honest and
         # `measured` still means "the run completed".
         pass
 
+    driver_flags, driver_cc = driverrun.driver_build_provenance()
     run_block = {
         # `run.run_id` is a schema SLUG (lowercase), so the stamp is
         # lowercased -- the id shared by every record of one invocation.
@@ -336,6 +405,10 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         "command_line": list(command_line or sys.argv),
         "env": {k: v for k, v in os.environ.items()
                 if k in ("CC", "CFLAGS", "LC_ALL", "PCRECBENCH_BUILD_ROOT")},
+        # v1.1 (6)+(9). Built always; emitted when the schema has a home.
+        "driver_build_flags": driver_flags,
+        "driver_compiler": driver_cc,
+        "clock_source": record.CLOCK_SOURCE,
     }
 
     setup = record.build_setup(
@@ -352,9 +425,16 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         setup["note"] = "; ".join(notes) if not note else note + " | " + "; ".join(notes)
 
     # (6)+(7) write and index ----------------------------------------------
+    # PROJECT to the emitted schema version LAST, so everything above worked
+    # with the full-fidelity record and only the write is versioned.
+    # (record_id depends only on subbench/testee/machine/timestamp, none of
+    # which projection touches, and the content hash is stamped by
+    # store.serialize over the bytes actually written.)
+    full = (setup, rows)
+    setup, rows = record.project(setup, rows)
     path, rid = store.write(store_root, setup, rows)
     store.index(store_root)
-    return path, rid, setup, rows
+    return RunResult(path, rid, setup, rows, full)
 
 
 def _git_commit():
