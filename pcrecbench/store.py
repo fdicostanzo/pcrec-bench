@@ -27,6 +27,18 @@ the race gets EEXIST and moves on to `-2`.
 A RECORD THAT FAILS VALIDATION IS NEVER WRITTEN (contract 4 step 5): the
 failure is a harness bug, and a store of records the shared validator rejects
 is worse than no store.
+
+TWO TIERS, TWO KINDS OF STORE (schema v1.2, record_schema.md 6.8; Frank's
+I-4). The CANONICAL store is the tree carrying a `.canonical` marker file --
+the repo's `store/`, from the main tree or any worktree's checkout of it. A
+SCRATCH store is any other root; the default one is
+`$PCRECBENCH_SCRATCH_STORE` or `build/scratch-store/` (gitignored). A
+`tier: scratch` record is REFUSED into the canonical store on write
+(`write()`), and `index()` of the canonical store REFUSES to list one that
+somehow got there -- belt and braces, because "a scratch number never enters
+store/index.tsv or the rankings" is a promise the store keeps, not one the
+harness is trusted with. The marker is a file rather than a path comparison
+so the rule holds from a worktree without asking git.
 """
 
 import json
@@ -39,6 +51,14 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_STORE = os.path.join(REPO_ROOT, "store")
 VALIDATE_PY = os.path.join(REPO_ROOT, "schema", "validate.py")
 
+# The tiers (record_schema.md 6.8). An ABSENT `tier` on a record is `pinned`.
+TIER_PINNED = "pinned"
+TIER_SCRATCH = "scratch"
+TIERS = (TIER_PINNED, TIER_SCRATCH)
+CANONICAL_MARKER = ".canonical"
+SCRATCH_STORE_ENV = "PCRECBENCH_SCRATCH_STORE"
+DEFAULT_SCRATCH_STORE = os.path.join(REPO_ROOT, "build", "scratch-store")
+
 INDEX_HEADER = ("path\tsubbench\tversion\ttestee_id\tmachine_id\ttimestamp"
                 "\tstatus\trows\n")
 
@@ -50,6 +70,48 @@ STAGING_PREFIX = ".staging-"
 
 class StoreError(Exception):
     pass
+
+
+# ------------------------------------------------------------------- tiers
+
+def is_canonical(store_root):
+    """Is this root the CANONICAL store? True iff it carries the marker."""
+    return os.path.exists(os.path.join(store_root, CANONICAL_MARKER))
+
+
+def scratch_store():
+    """The default SCRATCH store root: `$PCRECBENCH_SCRATCH_STORE`, else
+    `build/scratch-store/` under this tree (gitignored with the rest of
+    build/)."""
+    return os.environ.get(SCRATCH_STORE_ENV) or DEFAULT_SCRATCH_STORE
+
+
+def default_store_for(tier):
+    """Where a record of this tier goes when nobody said: the canonical store
+    for `pinned`, the scratch store for `scratch`."""
+    return scratch_store() if tier == TIER_SCRATCH else DEFAULT_STORE
+
+
+def record_tier(setup):
+    return setup.get("tier", TIER_PINNED)
+
+
+def check_tier_allowed(store_root, tier):
+    """Refuse a scratch record into the canonical store. Called by `write()`
+    and, EARLY, by the harness -- before the gate, before the machine
+    registry, before a single driver runs -- so a refused run costs nothing
+    and touches nothing."""
+    if tier not in TIERS:
+        raise StoreError("unknown record tier %r (the tiers are %s)"
+                         % (tier, ", ".join(TIERS)))
+    if tier == TIER_SCRATCH and is_canonical(store_root):
+        raise StoreError(
+            "REFUSED: a `tier: scratch` record can never enter the CANONICAL "
+            "store (%s carries the %s marker). Scratch records -- a local "
+            "binary, a `quick` cell -- go to a scratch store: omit --store to "
+            "use %s, or name any root without the marker "
+            "(record_schema.md 6.8; inbox I-4)."
+            % (store_root, CANONICAL_MARKER, scratch_store()))
 
 
 def record_dir(store_root, subbench_id, version, testee_id):
@@ -140,7 +202,11 @@ def write(store_root, setup, rows, validate=True):
 
     A record that fails validation is never written (harness contract 4 step
     5): the claimed name is released and the rejected bytes are kept under a
-    `.rejected` suffix for the person who has to fix the harness bug."""
+    `.rejected` suffix for the person who has to fix the harness bug.
+
+    Step 0, before any of that: a `tier: scratch` record is REFUSED into the
+    canonical store (`check_tier_allowed`), before a name is claimed."""
+    check_tier_allowed(store_root, record_tier(setup))
     path, rid, fd = claim_path(store_root, setup)
     claimed = True
     checkdir = None
@@ -221,8 +287,15 @@ def iter_records(store_root):
 
 
 def index(store_root):
-    """Regenerate `store/index.tsv`: one line per record. Committed with the
-    records, so a reader can find a cell without opening every file."""
+    """Regenerate `<store>/index.tsv`: one line per record. Committed with the
+    records of the canonical store, so a reader can find a cell without
+    opening every file; a scratch store gets its own index the same way.
+
+    The CANONICAL store's index REFUSES to list a `tier: scratch` record.
+    `write()` already refuses to put one there, so reaching this is a sign
+    something wrote around the store -- and the index, which is what the
+    reporter and the rankings read, must not launder it."""
+    canonical = is_canonical(store_root)
     lines = [INDEX_HEADER]
     n = 0
     for path in iter_records(store_root):
@@ -234,6 +307,15 @@ def index(store_root):
         except json.JSONDecodeError:
             raise StoreError("%s: line 1 is not JSON -- the store holds a "
                              "file that is not a record" % path)
+        if canonical and record_tier(setup) == TIER_SCRATCH:
+            raise StoreError(
+                "REFUSED to index %s: it is a `tier: scratch` record inside "
+                "the CANONICAL store (%s carries %s). Nothing writes a "
+                "scratch record here through store.write(), so it arrived "
+                "some other way; move it to a scratch store (%s) -- the "
+                "index will not list it and the rankings must never see it "
+                "(record_schema.md 6.8)."
+                % (path, store_root, CANONICAL_MARKER, scratch_store()))
         rel = os.path.relpath(path, store_root)
         lines.append("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%d\n" % (
             rel, setup["subbench"]["id"], setup["subbench"]["version"],

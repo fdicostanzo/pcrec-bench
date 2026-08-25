@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fdicostanzo/pcrec-bench/schema/record.schema.json",
   "title": "pcrec-bench record line",
-  "x-record-schema-version": "1.1",
+  "x-record-schema-version": "1.2",
   "description": "One JSONL line of a pcrec-bench record. Line 1 is the setup layer; every later line is a result row, discriminated by `kind`. Design note: docs/design/record_schema.md. Requirements: docs/design/requirements.md (ADOPTED v3).",
   "oneOf": [
     { "$ref": "#/$defs/setup" },
@@ -25,6 +25,16 @@
       "type": "string",
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
       "maxLength": 64
+    },
+    "engine_version": {
+      "description": "A version_string, OR (v1.2) the LOCAL-BINARY shape `local:<first 12 hex of the binary's sha256>[+<git describe --dirty, sanitised>]`. The `local:` prefix is the one place a colon is admitted: it names a binary nobody pinned, and rule X28 requires such a record to be `tier: scratch` (docs/design/record_schema.md 6.2, 6.8).",
+      "type": "string",
+      "pattern": "^(local:[0-9a-f]{12}(\\+[a-z0-9][a-z0-9._+-]*)?|[A-Za-z0-9][A-Za-z0-9._+-]*)$",
+      "maxLength": 64
+    },
+    "tier": {
+      "description": "v1.2 (docs/design/record_schema.md 6.8). `pinned`: a committed engine revision built by the pin script, measured under the quiet gate with the full protocol -- the only tier the canonical store and the rankings admit. `scratch`: a provided binary or a `quick` cell, written to a scratch store the reporter may read but that never enters store/index.tsv or a ranking. ABSENT means `pinned`, so every pre-1.2 record keeps its meaning.",
+      "enum": ["pinned", "scratch"]
     },
     "nonneg_int": { "type": "integer", "minimum": 0 },
     "rfc3339_utc": {
@@ -272,6 +282,7 @@
           }
         },
         "synthetic": { "type": "boolean" },
+        "tier": { "$ref": "#/$defs/tier" },
         "note": { "$ref": "#/$defs/free_text" },
         "status": { "$ref": "#/$defs/record_status" },
         "status_detail": { "$ref": "#/$defs/free_text" },
@@ -329,8 +340,18 @@
               "maxLength": 128
             },
             "engine_name": { "$ref": "#/$defs/slug" },
-            "engine_version": { "$ref": "#/$defs/version_string" },
+            "engine_version": { "$ref": "#/$defs/engine_version" },
             "engine_commit": { "type": ["string", "null"], "pattern": "^[0-9a-f]{40}$" },
+            "binary": {
+              "description": "v1.2: WHAT THE BINARY WAS. Required on a `tier: scratch` record (rule X29): a scratch number comes from a binary nobody pinned by commit, so the file itself -- its path and its sha256 -- is the only identity the record can carry. Optional on a pinned record, where the commit is the identity.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": { "type": "string", "minLength": 1, "maxLength": 4096 },
+                "sha256": { "$ref": "#/$defs/sha256" }
+              }
+            },
             "execution_model": { "$ref": "#/$defs/execution_model" },
             "automaton_class": { "$ref": "#/$defs/automaton_class" },
             "openness": { "$ref": "#/$defs/openness" },

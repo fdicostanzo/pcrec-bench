@@ -6,12 +6,13 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X27 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X29 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
-    expectation" rule, engine_metadata declarations, and the record-status
-    gates.
+    expectation" rule, engine_metadata declarations, the record-status
+    gates, and (v1.2) the record TIER: a local binary is never `pinned`
+    (X28) and a `scratch` record says what its binary was (X29).
 
 Every message names the FILE, the 1-based LINE and the field path.
 
@@ -55,6 +56,8 @@ RESERVED_KINDS = {
 }
 SIMD_SLUG = {"on": "simd", "off": "nosimd", "n-a": "simdna"}
 DEFAULT_FORM = "plain"          # an absent `form` IS `plain` (the note 5)
+DEFAULT_TIER = "pinned"         # an absent `tier` IS `pinned` (the note 6.8)
+LOCAL_VERSION_PREFIX = "local:"  # the local-binary engine_version shape (6.2)
 
 # docs/design/record_schema.md 6.2. A RELEASE TAG is a plain dotted version,
 # optionally with a single trailing letter revision (`8.45a`). Anything else --
@@ -330,16 +333,46 @@ class RecordValidator:
                             f"to {want_h} (edited, truncated or restamped?)",
                             "X6"))
 
-        # X22 a version that is not a release tag must carry its commit
+        # X22 a version that is not a release tag must carry its commit --
+        # EXCEPT the v1.2 `local:` shape, whose identity is the binary itself
+        # (X29 requires testee.binary.sha256 on it, via X28's tier rule): a
+        # dirty tree has no single commit to name, and that is the point of
+        # the shape rather than a gap in it.
         ev = str(testee.get("engine_version", ""))
         ec = testee.get("engine_commit")
-        if ev and not RELEASE_TAG_RE.match(ev):
+        is_local = ev.startswith(LOCAL_VERSION_PREFIX)
+        if ev and not is_local and not RELEASE_TAG_RE.match(ev):
             if not (isinstance(ec, str) and re.fullmatch(r"[0-9a-f]{40}", ec)):
                 add(Problem(path, 1, "testee.engine_commit",
                             f"engine_version {ev!r} is not a release-tag shape "
                             f"(a plain dotted version), so the testee is "
                             f"pinned to a revision and the full 40-hex commit "
                             f"is what pins it; got {ec!r}", "X22"))
+
+        # X28 a LOCAL binary can never be a pinned record (the note 6.8)
+        tier = setup.get("tier", DEFAULT_TIER)
+        if is_local and tier != "scratch":
+            add(Problem(path, 1, "tier",
+                        f"engine_version {ev!r} names a LOCAL binary (a file "
+                        f"nobody pinned by commit), so the record must be "
+                        f"`tier: scratch`; it is {tier!r} (absent = "
+                        f"`pinned`). A bench number never comes from a "
+                        f"dirty tree, and this is the rule that keeps it "
+                        f"so", "X28"))
+
+        # X29 a scratch record says WHAT THE BINARY WAS
+        if tier == "scratch":
+            b = testee.get("binary")
+            if not (isinstance(b, dict) and isinstance(b.get("path"), str)
+                    and b.get("path")
+                    and isinstance(b.get("sha256"), str)
+                    and re.fullmatch(r"[0-9a-f]{64}", b["sha256"])):
+                add(Problem(path, 1, "testee.binary",
+                            "the record is `tier: scratch` but carries no "
+                            "testee.binary {path, sha256}; a scratch number "
+                            "comes from a binary nobody pinned, so the file "
+                            "itself is the only identity the record can "
+                            "have, and it must say which", "X29"))
 
         # X16 lazy-jit warm-up
         if testee.get("execution_model") == "lazy-jit" and \
@@ -695,7 +728,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X27 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X29 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")

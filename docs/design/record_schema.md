@@ -189,6 +189,7 @@ migration exists. Concretely, and enforced by `validate.py`:
 |---|---|---|
 | 1.0 | 2026-08-25 | draft 1, merged |
 | 1.1 | 2026-08-25 | the post-merge panel's twelve findings (§11) |
+| 1.2 | 2026-08-25 | the RECORD TIERS ([B10], inbox I-4): optional `tier` (`pinned`/`scratch`, absent = `pinned`), optional `testee.binary` {path, sha256}, the `local:` shape of `engine_version`, rules X28/X29, X22 exempts `local:` (§6.2, §6.8) |
 
 **1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
 the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
@@ -211,6 +212,15 @@ change that breaks a record someone has actually measured.
 The exception is one-time and expires the moment the first record is
 stored. After that, §4's table is the whole rule and a change of this
 shape is 2.0 with a migration entry beside it.
+
+**1.1 → 1.2 is a MINOR bump by the rule, with no exception needed.**
+It adds two OPTIONAL fields (`tier`, `testee.binary`), one new admitted
+SHAPE of an existing string (`engine_version` may be `local:…`, §6.2)
+and two rules (X28, X29) that can only fire on records carrying the
+new shape or the new value. Every 1.1 record validates unchanged under
+1.2 — `tier` absent reads as `pinned`, which is what every 1.1 record
+was — and `make check-schema` proves it on the 1.1 examples, which are
+deliberately left stamped `1.1`.
 
 One consequence is load-bearing: a 1.0-stamped file is NOT readable as
 1.1 (it will lack required fields), even though the minor-version rule
@@ -421,6 +431,30 @@ is deliberate: a pre-release is exactly the kind of build that is worth
 pinning, so making `1.0-rc1` require its commit costs an adapter one
 field and buys a testee that can be rebuilt.
 
+**The `local:` shape (v1.2).** A testee that is a PROVIDED BINARY — a
+pcrec worktree's `build/pcrec` handed over as `$PCREC_BIN`, before it
+is committed anywhere — has no commit that reproduces it. Its
+`engine_version` is
+
+    local:<the first 12 hex of the sha256 of the binary file>
+         [ "+" <git describe --always --dirty --tags, of the repository
+                found by walking up from the binary's directory,
+                lowercased, every character outside [a-z0-9._+-]
+                replaced by "-"> ]
+
+The `+describe` half is present only when a repository sits beside the
+binary; a `git archive` snapshot (which `pin.sh` marks with a `PIN.tsv`)
+has none and gets none. `engine_commit` is `git rev-parse HEAD` of
+that repository when `describe` did not say `-dirty`, and `null`
+otherwise — a dirty tree has no single commit, and the record says so
+rather than naming the nearest one. X22 EXEMPTS this shape: the
+binding rule "the version is reproducible from the commit" is replaced
+by "the version names the binary" — X28 requires such a record to be
+`tier: scratch`, and X29 requires `testee.binary` to carry the full
+sha256 the prefix abbreviates. The 12-hex prefix is for the
+`testee_id` (§6.4: the version slug is part of it, and 64 hex would
+make every path unreadable); the full digest is in `testee.binary`.
+
 ### 6.3 `engine_mode`
 
 Lowercase slug, per-engine registry:
@@ -480,6 +514,37 @@ From `/proc/cpuinfo`'s `model name`, canonicalised, in this order:
 E.g. `Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz` →
 `intel-core-i7-9750h-cpu`. `cpu_model_raw` keeps the original string
 verbatim (reproducibility) and X23 checks the derivation against it.
+
+### 6.8 Record tiers: `pinned` and `scratch` (v1.2, [B10])
+
+Ruled by Frank (inbox I-4, 2026-08-25; the division of labour is BD5 /
+pcrec D78). Every record is in exactly one of two TIERS, named by the
+optional setup field `tier`, ABSENT meaning `pinned`:
+
+| tier | what it is | where it lives |
+|---|---|---|
+| `pinned` | a COMMITTED engine revision materialised by `testees/<engine>/pin.sh` (`git archive`, built outside the engine's tree), measured under the quiet gate, the window handshake and the full protocol | the canonical `store/` (the tree carrying a `.canonical` marker), `store/index.tsv`, the rankings |
+| `scratch` | a PROVIDED binary (`pcrec-local`, §6.2's `local:` shape) or a `pcrecbench quick` cell — the edit-test loop's numbers | a SCRATCH store (`$PCRECBENCH_SCRATCH_STORE`, default `build/scratch-store/`, never committed). The reporter may read it, and a scratch record NEVER enters `store/`, `store/index.tsv` or a ranking |
+
+Three things about a scratch record are deliberate and are worth
+stating once:
+
+- **It is the same schema.** A scratch record validates by every rule
+  a pinned one does; `tier` is one field, and `testee.binary` (X29)
+  is the one addition — "plus what the binary was", in I-4's words.
+  The reporter reduces it with the same arithmetic.
+- **Its `status` is still the truth.** The quiet gate is not applied
+  to a scratch run (it is meant to take seconds on a box that may be
+  busy), but load and occupancy are still sampled at both ends and
+  `status` is still computed from them, so a scratch record measured
+  under load says `inconclusive-load`. The TIER is what keeps it out
+  of the rankings — not a lie about the box.
+- **A local binary is scratch BY CONSTRUCTION.** X28 rejects a
+  `local:` version on any record that is not `tier: scratch`, and the
+  store refuses a scratch record into the canonical tree on write AND
+  on index. This is what keeps "a bench number never comes from a
+  dirty tree" true for the numbers that count, while letting a pcrec
+  lane bench its own worktree binary before delivering.
 
 ### 6.7 `kernel` and `compiler`
 
@@ -614,6 +679,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `status` | enum | R | `measured`/`harness-failure`/`inconclusive-load` | §6; pcrec D14's clean-vs-not-measured distinction |
 | `status_detail` | string | o | DIAGNOSTIC | what failed, for a non-`measured` record |
 | `synthetic` | boolean | o | default `false`; FILTERABLE | ADDITION: an example or a schema test must be unmistakable as a non-measurement, and prose in `note` is not machine-checkable. The reporter excludes `synthetic` records from every query |
+| `tier` | enum | o | `pinned` (the default when ABSENT) / `scratch`; FILTERABLE; §6.8. X28: a `local:` engine version requires `scratch`; the store refuses `scratch` into the canonical tree | v1.2 ADDITION (I-4, [B10]): the edit-test loop needs numbers from a binary nobody has pinned, and the rankings must never see them. One field says which tier a record is in, so the exclusion is a filter and not a convention |
 | `note` | string | o | DIAGNOSTIC | §6 leaves room for a human sentence; the examples use it to say they are illustrative |
 
 #### `run` — the invocation
@@ -650,8 +716,11 @@ reverse: what is filtered must be enumerated or normalized.
 | `testee` | object | R | — | §2, §4 |
 | `testee.testee_id` | string | R | DERIVED, §6.4; FILTERABLE | §2 identity; the triple must be in the id |
 | `testee.engine_name` | slug | R | §6.1; FILTERABLE | OD-B4(b) |
-| `testee.engine_version` | version string | R | §6.2; FILTERABLE | OD-B4(b); §2 the triple |
-| `testee.engine_commit` | 40 hex or null | c | REQUIRED when `engine_version` is not a release-tag shape (X22); FILTERABLE | §4.2 "each just another roster entry with its pcrec commit pinned". Full 40 hex only: a 7-hex prefix is a convenience for humans and an ambiguity for a pin |
+| `testee.engine_version` | version string, or (v1.2) the `local:` shape | R | §6.2; FILTERABLE | OD-B4(b); §2 the triple |
+| `testee.engine_commit` | 40 hex or null | c | REQUIRED when `engine_version` is not a release-tag shape (X22), EXCEPT the `local:` shape, where it is HEAD when the tree beside the binary is clean and `null` when it is dirty; FILTERABLE | §4.2 "each just another roster entry with its pcrec commit pinned". Full 40 hex only: a 7-hex prefix is a convenience for humans and an ambiguity for a pin |
+| `testee.binary` | object | c | REQUIRED when `tier` = `scratch` (X29); optional otherwise | v1.2 ADDITION (§6.8): "plus what the binary was". A scratch record's engine was never pinned by commit, so the file is its only identity |
+| `testee.binary.path` | string | R | REPRODUCIBILITY-ONLY | where the binary was when it was measured — a path is not stable, which is why the digest is beside it |
+| `testee.binary.sha256` | hex64 | R | the full digest the `local:` prefix abbreviates | as above |
 | `testee.execution_model` | enum | R | FILTERABLE | §4.3 fixed enum; §3 selects the compile-cost protocol from it |
 | `testee.automaton_class` | enum | R | FILTERABLE | §4.3 fixed enum |
 | `testee.openness` | enum | R | FILTERABLE | §4.3; §8's worked query is "only open-source" |
@@ -864,6 +933,8 @@ both ways before being believed.
 | X25 | `consumed_length ≤ bytes_offered`; and a `truncated-subject` row must carry a `consumed_length` STRICTLY less than it | §4.4. An engine cannot consume what it was not given, and an outcome that asserts a truncation must say where it stopped — otherwise the bench's most interesting per-subject finding is an unfalsifiable label |
 | X26 | Each `occupancy.<sample>.verdict` is `pass` iff `max_busy_pct ≤ limit_busy_pct`, `fail` otherwise | §9(b). X20's argument applied to the other instrument: a verdict a harness writes beside a number it also writes is not evidence until the two are required to agree |
 | X27 | A match row with `form` = `whole-subject` has a `whole-subject` compile row for its pattern | §5 ADDITIONS 3. X11's provenance argument for the untimed case too: the second artifact is a separate compile, and a match against an artifact the record never witnessed compiling has no provenance whether or not it carries a number |
+| X28 | A `testee.engine_version` of the `local:` shape (§6.2) requires `tier` = `scratch` (absent `tier` is `pinned`, and is rejected) | §6.8 (v1.2), I-4: a local binary can never be pinned. Without it a lane could bench a dirty worktree and file the number as canonical |
+| X29 | `tier` = `scratch` requires `testee.binary` = {`path`, `sha256` (64 hex)} | §6.8 (v1.2), I-4's "plus what the binary was": a scratch record's only engine identity is the file, so the record must name it |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each

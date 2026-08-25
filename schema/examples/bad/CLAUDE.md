@@ -79,6 +79,8 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x25-truncation-without-loss.jsonl` | X25 | a `truncated-subject` row whose `consumed_length` equals the full 1 MB offered — a truncation that truncated nothing |
 | `x26-occupancy-verdict-contradicts-number.jsonl` | X26 | `occupancy.before.verdict: pass` beside a busiest-core reading of 91.5% against a 10% limit |
 | `x27-whole-subject-without-compile-row.jsonl` | X27 | `p-quoted-local`'s whole-subject compile rows removed, leaving its whole-subject match row matching against an artifact the record never witnessed compiling |
+| `x28-local-binary-not-scratch.jsonl` | X28 | `engine_version: local:0123456789ab` — a binary nobody pinned by commit — on a record with no `tier`, which is `pinned`. `testee.binary` is present (so X29 stays out), the ids are re-derived (so X3/X5 stay out) and X22 exempts the shape: the one defect is a local binary claiming the pinned tier, which is exactly what "a bench number never comes from a dirty tree" forbids |
+| `x29-scratch-without-binary.jsonl` | X29 | `tier: scratch` with no `testee.binary` — a scratch record that does not say what the binary was, which is the one thing a scratch record's engine identity consists of |
 
 ## Adding one
 

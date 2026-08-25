@@ -1,0 +1,8 @@
+# store/.canonical -- THE CANONICAL-STORE MARKER (schema v1.2, [B10]).
+#
+# Its presence is what makes this tree the canonical store: pcrecbench/store.py
+# refuses to WRITE a `tier: scratch` record into a store carrying this file,
+# and refuses to INDEX one that somehow got here. A store without the marker
+# is a scratch store. The marker is a file rather than a path comparison so
+# it holds from a worktree, whose store/ is a checkout of this same tree.
+canonical

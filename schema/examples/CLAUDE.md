@@ -59,6 +59,18 @@ File names are not chosen: rule X4 makes the name the record id plus
   `scope: match`; `bad/x15-metadata-wrong-scope.jsonl` covers that
   branch instead.
 
+- `email-specimen@0.1__pcrec_local-0123456789ab-v0.9.0-3-g1a2b3c4-dirty_vm-caps-simdna__example-box__20260825T041200Z.jsonl`
+  — the SCRATCH-TIER record (schema v1.2, [B10]): the pcrec example
+  re-cast as a `quick` cell against a LOCAL binary. `tier: scratch`;
+  `engine_version` in the `local:` shape with a `+…-dirty` describe
+  suffix; `engine_commit: null` (a dirty tree has no single commit);
+  `testee.binary` naming the file and its full sha256; and status
+  `inconclusive-load` with a loaded after-sample — a scratch run skips
+  the quiet GATE but still samples the box, and the status tells the
+  truth. It is the only example stamped `1.2`; the two above stay at
+  `1.1` deliberately, so `make check-schema` proves the minor bump is
+  additive (an absent `tier` reads as `pinned`).
+
 ## Editing one
 
 Records are hashed (`content_hash`, note §3). After editing, restamp:
