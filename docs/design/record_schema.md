@@ -472,15 +472,30 @@ reverse: what is filtered must be enumerated or normalized.
 | `environment.compiler` | string | R | §6.7; FILTERABLE | §4.3; what an AOT testee pays |
 | `environment.compiler_raw` | string | o | REPRODUCIBILITY-ONLY | as above |
 | `environment.load` | object | R | — | §9(a) |
-| `environment.load.before` | 3 numbers | R | `/proc/loadavg` 1/5/15, BEFORE | §9(a); C7 |
-| `environment.load.after` | 3 numbers | R | same, AFTER | §9(a): "a box that was quiet at the start but got busy partway through is just as load-compromised" (C7) |
+| `environment.load.before` | object | R | the `/proc/loadavg` sample taken BEFORE the run, with its evidence | §9(a); C7 |
+| `environment.load.before.loadavg_raw` | string | R | the `/proc/loadavg` line VERBATIM | ADDITION: three bare numbers are an assertion. The line they were read from is the evidence, and X19 checks the parse against it — the check pcrec's own history says to write, because a number and its source in one hand-maintained place drift |
+| `environment.load.before.sampled_at` | RFC 3339 UTC `Z` | R | when the sample was taken | ADDITION: "before" and "after" are claims about time; without stamps a record cannot show the two samples bracket the run rather than following each other by a millisecond |
+| `environment.load.before.load1` | number ≥0 | R | parsed from `loadavg_raw` (X19); the number the verdict is judged on | §9(a) |
+| `environment.load.before.load5` | number ≥0 | R | parsed from `loadavg_raw` (X19) | §9(a) |
+| `environment.load.before.load15` | number ≥0 | R | parsed from `loadavg_raw` (X19) | §9(a) |
+| `environment.load.after` | object | R | same shape, AFTER | §9(a): "a box that was quiet at the start but got busy partway through is just as load-compromised" (C7) |
+| `environment.load.after.loadavg_raw` | string | R | as above | as above |
+| `environment.load.after.sampled_at` | RFC 3339 UTC `Z` | R | as above | as above |
+| `environment.load.after.load1` | number ≥0 | R | as above | as above |
+| `environment.load.after.load5` | number ≥0 | R | as above | as above |
+| `environment.load.after.load15` | number ≥0 | R | as above | as above |
 | `environment.load.limit` | number >0 | R | the threshold THIS run used | OD-B8 is unruled — the number is data, not a schema constant |
-| `environment.load.verdict` | enum | R | `loaded` iff either sample exceeds `limit`; FILTERABLE | §9(a); ties to `status` (§9 rule X13) |
+| `environment.load.verdict` | enum | R | `loaded` iff either sample's `load1` exceeds `limit` (X20); FILTERABLE | §9(a); ties to `status` (§9 rule X13). X20 is what stops the verdict being an opinion beside the numbers |
 | `environment.occupancy` | object | R | — | §9(b) |
-| `environment.occupancy.verdict` | enum | R | `pass`/`fail`/`unavailable` | §9(b) "machine-readable pass/fail with `unavailable` when mpstat is missing — recorded, never silently skipped" (C6) |
-| `environment.occupancy.tool` | string | o | DIAGNOSTIC | e.g. `mpstat -P ALL 1 1` |
-| `environment.occupancy.max_busy_pct` | number/null | o | the busiest non-target core | the number behind the verdict, so a threshold change is re-judgeable without re-measuring |
-| `environment.occupancy.raw` | string | o | DIAGNOSTIC | the mpstat block (pcrec `pinned_measure.sh:59-64`'s output) |
+| `environment.occupancy.tool` | string | o | DIAGNOSTIC; one tool for both samples | e.g. `mpstat -P ALL 1 1` |
+| `environment.occupancy.before` | object | R | the per-core check BEFORE the run | §9(b) |
+| `environment.occupancy.before.verdict` | enum | R | `pass`/`fail`/`unavailable` | §9(b) "machine-readable pass/fail with `unavailable` when mpstat is missing — recorded, never silently skipped" (C6) |
+| `environment.occupancy.before.max_busy_pct` | number/null | R | the busiest non-target core; `null` iff `unavailable` | the number behind the verdict, so a threshold change is re-judgeable without re-measuring |
+| `environment.occupancy.before.raw` | string | R | the mpstat block (pcrec `pinned_measure.sh:59-64`'s output), or why there is none | DIAGNOSTIC, and the evidence half of the verdict — required for the same reason `loadavg_raw` is |
+| `environment.occupancy.after` | object | R | the per-core check AFTER the run | ADDITION: §9(a)'s own argument for the after-load applies unchanged to occupancy. A neighbour process that starts up midway is exactly the case a before-only check cannot see, and it is the case that moves a number |
+| `environment.occupancy.after.verdict` | enum | R | as above | as above |
+| `environment.occupancy.after.max_busy_pct` | number/null | R | as above | as above |
+| `environment.occupancy.after.raw` | string | R | as above | as above |
 | `environment.pinning` | object | R | — | §9(d) "pinned cores after the occupancy check" |
 | `environment.pinning.mode` | enum | R | `taskset`/`none`/`unavailable` | pcrec degrades quietly when unprivileged (`compare.sh` `PIN_NOTE`); the record must say which |
 | `environment.pinning.cpu` | integer/null | o | the pinned core | as above |
@@ -598,12 +613,14 @@ lesson: a check with no failing case proves nothing).
 | X10 | `compile_row.cost_class` equals `testee.execution_model` | §3; brief |
 | X11 | A match row carries `timing` only if `match_outcome` = `matched-as-expected` AND every compile row for that pattern has `compile_outcome` = `compiled` | §4.4/§7; brief |
 | X12 | `cost.phases` names and order equal `testee.compile_phases` | §3 |
-| X13 | `status` = `measured` requires `load.verdict` = `quiet` and `occupancy.verdict` ≠ `fail` | §9(a) "a record whose after-load exceeds it is `inconclusive-load`, not measured" (C7); §9(b) |
+| X13 | `status` = `measured` requires `load.verdict` = `quiet` and NEITHER `occupancy.before.verdict` NOR `occupancy.after.verdict` = `fail`. `unavailable` does not disqualify — §9(b) makes it a thing to RECORD, not a thing to fail on, and a box without mpstat would otherwise be unable to produce a measured record at all | §9(a) "a record whose after-load exceeds it is `inconclusive-load`, not measured" (C7); §9(b) |
 | X14 | `status` = `measured` requires a compile row for every pattern in the roster | makes `harness-failure` mean something: a record that stopped halfway cannot claim to be measured |
 | X15 | Every `engine_metadata` name is declared; its `scope` matches the row kind; its value matches the declared type (`enum` value in `values`, `mask` bits in `bits`, integer, string) | §4.2, §7 rule 1 |
 | X16 | `testee.warmup_trials` ≥ 1 when `execution_model` = `lazy-jit` | §3 (A6) |
 | X17 | Across files given to one invocation: no two differing MAJOR `schema_version`s | §4, A10 |
 | X18 | Every result row's `seq` is unique, and the record's seqs are exactly 1..N over ALL result rows | §2; the lazy-JIT derivation needs a well-defined "first" |
+| X19 | Each load sample's `load1`/`load5`/`load15` equal the first three numbers of its own `loadavg_raw` | §9(a); the evidence rule — a parsed number that disagrees with the line it came from is the whole point of keeping the line |
+| X20 | `load.verdict` is `loaded` iff either sample's `load1` exceeds `limit`, `quiet` otherwise | §9(a). Without it X13 is inert: a harness that stamps `quiet` beside a `load1` of 9.8 satisfies X13 and the record claims to be measured |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each

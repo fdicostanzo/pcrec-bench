@@ -32,6 +32,9 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x10-cost-class-mismatch.jsonl` | X10 | a compile row claiming `interpretive` cost on a `compiled-aot` testee |
 | `x11-timing-on-uncompiled-cell.jsonl` | X11 | a timed match row for the pattern this testee reported `unsupported-by-declaration` |
 | `x13-measured-but-loaded.jsonl` | X13 | `status: measured` on a record whose after-load exceeded the limit |
+| `x13-occupancy-after-fail.jsonl` | X13 | `status: measured` on a record whose per-core occupancy check FAILED *after* the run — the neighbour that started up midway, which a before-only check cannot see |
+| `x19-load-raw-mismatch.jsonl` | X19 | `load.after.load1` says 0.14 while the `loadavg_raw` line it claims to be parsed from says 9.90 |
+| `x20-verdict-quiet-but-loaded.jsonl` | X20 | `load.verdict: quiet` beside a peak `load1` of 11.4 against a limit of 6.0. X13 alone is satisfied by this record, which is why X20 exists |
 | `x14-missing-compile-row.jsonl` | X14 | `status: measured` with a pattern that has no compile row at all |
 | `x15-metadata-wrong-scope.jsonl` | X15 | the `engine` pair — declared `scope: pattern` — stamped on a MATCH row. The scope half of X15 has no good-example coverage now that the v8 example's undescribed `tier` pair is gone (note §7), so this control is the only thing holding it |
 | `x15-undeclared-engine-metadata.jsonl` | X15 | an `engine_metadata` pair the testee never declared |

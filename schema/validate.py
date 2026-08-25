@@ -6,7 +6,7 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X18 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X20 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
@@ -81,6 +81,19 @@ def compute_content_hash(setup_obj, row_lines):
                        ensure_ascii=False)
     parts = [canon] + [ln.rstrip() for ln in row_lines]
     return hashlib.sha256("\n".join(parts).encode("utf-8")).hexdigest()
+
+
+def parse_loadavg(raw):
+    """The first three fields of a /proc/loadavg line, as floats. Returns None
+    if the line does not have three parseable numbers up front -- which is
+    itself the finding."""
+    parts = str(raw).split()
+    if len(parts) < 3:
+        return None
+    try:
+        return [float(x) for x in parts[:3]]
+    except ValueError:
+        return None
 
 
 # ------------------------------------------------------- derived identifiers
@@ -362,18 +375,59 @@ class RecordValidator:
                             f"timing for a wrong answer is worse than no timing",
                             "X11"))
 
-        # X13 / X14 the record-status gates
+        # X19 the load evidence: the parse must agree with the raw line
         env = setup.get("environment", {})
+        load = env.get("load", {}) or {}
+        for when in ("before", "after"):
+            sample = load.get(when)
+            if not isinstance(sample, dict):
+                continue
+            got = parse_loadavg(sample.get("loadavg_raw", ""))
+            if got is None:
+                add(Problem(path, 1, f"environment.load.{when}.loadavg_raw",
+                            f"{sample.get('loadavg_raw')!r} does not start "
+                            f"with three numbers; it is not a /proc/loadavg "
+                            f"line", "X19"))
+                continue
+            want = [sample.get("load1"), sample.get("load5"),
+                    sample.get("load15")]
+            for i, (name, w) in enumerate(zip(("load1", "load5", "load15"),
+                                              want)):
+                if not isinstance(w, (int, float)) or abs(w - got[i]) > 1e-9:
+                    add(Problem(path, 1, f"environment.load.{when}.{name}",
+                                f"is {w!r} but the sample's own "
+                                f"loadavg_raw parses to {got[i]!r}; the "
+                                f"number and its evidence disagree", "X19"))
+
+        # X20 the load verdict follows from the samples and the limit
+        limit = load.get("limit")
+        verdict = load.get("verdict")
+        peaks = [s.get("load1") for s in (load.get("before"), load.get("after"))
+                 if isinstance(s, dict) and isinstance(s.get("load1"),
+                                                       (int, float))]
+        if peaks and isinstance(limit, (int, float)) and verdict in \
+                ("quiet", "loaded"):
+            want_v = "loaded" if max(peaks) > limit else "quiet"
+            if verdict != want_v:
+                add(Problem(path, 1, "environment.load.verdict",
+                            f"is {verdict!r} but the samples' peak load1 is "
+                            f"{max(peaks)} against a limit of {limit}, which "
+                            f"is {want_v!r}; the verdict is not the harness's "
+                            f"opinion, it is what the numbers say", "X20"))
+
+        # X13 / X14 the record-status gates
         if setup.get("status") == "measured":
-            if env.get("load", {}).get("verdict") != "quiet":
+            if load.get("verdict") != "quiet":
                 add(Problem(path, 1, "status",
                             "is `measured` but environment.load.verdict is not "
                             "`quiet`; a load-compromised record is "
                             "`inconclusive-load`", "X13"))
-            if env.get("occupancy", {}).get("verdict") == "fail":
-                add(Problem(path, 1, "status",
-                            "is `measured` but the per-core occupancy check "
-                            "FAILED", "X13"))
+            occ = env.get("occupancy", {}) or {}
+            for when in ("before", "after"):
+                if (occ.get(when) or {}).get("verdict") == "fail":
+                    add(Problem(path, 1, "status",
+                                f"is `measured` but the per-core occupancy "
+                                f"check FAILED {when} the run", "X13"))
             missing = sorted(x for x in pat_ids if x not in seen_compile)
             if missing:
                 add(Problem(path, 1, "status",
@@ -441,7 +495,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X18 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X20 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")

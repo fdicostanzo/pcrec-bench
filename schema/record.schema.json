@@ -27,6 +27,34 @@
       "maxLength": 64
     },
     "nonneg_int": { "type": "integer", "minimum": 0 },
+    "rfc3339_utc": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "load_sample": {
+      "description": "One /proc/loadavg sample WITH its evidence: the line verbatim, when it was taken, and the three parsed numbers. Rule X19 requires the parse to agree with the raw line -- a number with no raw line behind it is an assertion, not a measurement.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["loadavg_raw", "sampled_at", "load1", "load5", "load15"],
+      "properties": {
+        "loadavg_raw": { "type": "string", "maxLength": 256 },
+        "sampled_at": { "$ref": "#/$defs/rfc3339_utc" },
+        "load1":  { "type": "number", "minimum": 0 },
+        "load5":  { "type": "number", "minimum": 0 },
+        "load15": { "type": "number", "minimum": 0 }
+      }
+    },
+    "occupancy_sample": {
+      "description": "One per-core occupancy check WITH its evidence (requirements.md 9(b)). `max_busy_pct` is null exactly when the verdict is `unavailable`; `raw` then carries the reason mpstat produced nothing.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "max_busy_pct", "raw"],
+      "properties": {
+        "verdict": { "$ref": "#/$defs/occupancy_verdict" },
+        "max_busy_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "raw": { "$ref": "#/$defs/free_text" }
+      }
+    },
     "seq": {
       "description": "The result row's position in EMISSION order, 1..N over every result row of the record. File order is free; `seq` is what carries order (docs/design/record_schema.md 2, rule X18).",
       "type": "integer", "minimum": 1
@@ -212,10 +240,7 @@
           "required": ["run_id", "timestamp", "harness_version", "harness_commit", "command_line"],
           "properties": {
             "run_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*$", "maxLength": 64 },
-            "timestamp": {
-              "type": "string",
-              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
-            },
+            "timestamp": { "$ref": "#/$defs/rfc3339_utc" },
             "harness_version": { "$ref": "#/$defs/version_string" },
             "harness_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$|^unknown$" },
             "command_line": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
@@ -308,8 +333,8 @@
               "additionalProperties": false,
               "required": ["before", "after", "limit", "verdict"],
               "properties": {
-                "before": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number", "minimum": 0 } },
-                "after":  { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number", "minimum": 0 } },
+                "before": { "$ref": "#/$defs/load_sample" },
+                "after":  { "$ref": "#/$defs/load_sample" },
                 "limit":  { "type": "number", "exclusiveMinimum": 0 },
                 "verdict": { "$ref": "#/$defs/load_verdict" }
               }
@@ -317,12 +342,11 @@
             "occupancy": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["verdict"],
+              "required": ["before", "after"],
               "properties": {
-                "verdict": { "$ref": "#/$defs/occupancy_verdict" },
                 "tool": { "type": "string", "maxLength": 128 },
-                "max_busy_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
-                "raw": { "$ref": "#/$defs/free_text" }
+                "before": { "$ref": "#/$defs/occupancy_sample" },
+                "after":  { "$ref": "#/$defs/occupancy_sample" }
               }
             },
             "pinning": {
