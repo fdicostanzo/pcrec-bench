@@ -706,8 +706,18 @@ JSON Schema validates a LINE. Everything that relates two lines, or a
 line to a derivation, or a field to a normalization rule, is code.
 These are the rules; each has at least one positive control in
 `schema/examples/bad/` (pcrec's check-design lesson: a check with no
-failing case proves nothing). At v1.1 there are 23 rules and 31
+failing case proves nothing). At v1.1 there are 23 rules and 36
 controls.
+
+That claim — "each has at least one positive control" — was FALSE when
+draft 1 was merged, and re-reading it is how it was found: X5, X7, X8,
+X12 and X16 had no file in `examples/bad/` at all. Five of twenty-three
+rules had never been seen to fire. They have controls now. The lesson
+is the project's own, one level up: a check with no failing case proves
+nothing, and a CLAIM that every check has a failing case is itself a
+check — so it needs one too. `check_fields.py` compares the note's field
+tables against the schema; nothing compares this table against the
+directory, which is §11 item 14.
 
 | id | rule | source |
 |---|---|---|
@@ -916,3 +926,16 @@ its own, listed as items 9-12.
    a testee that spells its engine `pcre-2` instead of `libpcre2`
    produces a valid record that lands in its own filter bucket forever.
    The registry is in §6.1/§6.3, in prose, and only a human reads it.
+13. **X17's cross-FILE half has no control and cannot easily get one.**
+   The rule fires when one invocation is handed files of differing
+   MAJOR versions — but any file at a major this validator does not
+   implement is already rejected standalone, so no pair of files
+   isolates the cross-file behaviour. `bad/x17-future-major-version`
+   covers the standalone half only. Building a real control needs a
+   second validator version, which is a [B3]/[B5] concern.
+14. **Nothing checks that every rule in §9's table has a control.**
+   `check_fields.py` diffs the note's FIELD tables against the schema
+   because they are two hand-written statements of one contract; §9's
+   RULE table and `examples/bad/`'s directory listing are exactly the
+   same shape of pair and nothing diffs them. That is how five rules
+   went uncontrolled from draft 1 to v1.1 (§9).

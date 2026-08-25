@@ -5,10 +5,16 @@ every check this project's sibling has written and later found broken
 was broken in the direction of PASSING, and a check with no failing case
 proves nothing about the rule it claims to enforce.
 
-Each file is the good pcrec example with exactly ONE thing wrong, and
-its content hash restamped so the sabotage is the only defect — a
-control that fails for two reasons is not a control. (`x6-tampered-hash`
-is the deliberate exception: not restamping IS its sabotage.)
+Each file is a good example with exactly ONE thing wrong, and its
+content hash restamped so the sabotage is the only defect — a control
+that fails for two reasons is not a control. (`x6-tampered-hash` is the
+deliberate exception: not restamping IS its sabotage.) All but one are
+built from the pcrec example; `x16-lazy-jit-no-warmup` is built from the
+v8 one, because the rule it controls only exists for a `lazy-jit`
+testee and the pcrec example is `compiled-aot`. Where a rule could be
+sabotaged on several rows, the row is chosen to keep OTHER rules out of
+it — `x7` sabotages the untimed `wrong-span-or-captures` row precisely
+so X11 does not fire alongside.
 
 **The file name names the rule.** The leading token before the first `-`
 is the rule id `make check-schema` requires to fire: `x11-...` must fire
@@ -32,15 +38,20 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x2-unknown-row-kind.jsonl` | X2 | a row with `kind: "timing"` |
 | `x3-record-id-mismatch.jsonl` | X3 | `record_id`'s stamp no longer matches `run.timestamp` |
 | `x4-filename-mismatch.jsonl` | X4 | a perfectly valid record under a name that is not its record id |
+| `x5-testee-id-mismatch.jsonl` | X5 | `engine_mode` changed to `dfa` while the id still says `vm-caps-simdna` — the id claiming a configuration the record does not carry, which is the exact thing deriving the id was for |
 | `x6-tampered-hash.jsonl` | X6 | one `elapsed_ns` edited after the fact, hash NOT restamped |
+| `x7-unknown-pattern-id.jsonl` | X7 | a match row keyed on `p-nonexistent`. The `wrong-span-or-captures` row is the one sabotaged because it carries no `timing`, which keeps X11 out of it |
+| `x8-regime-not-declared.jsonl` | X8 | `large-subject-throughput` removed from `subbench.regimes` while a match row still claims it — a result in a regime the sub-bench says it does not exercise |
 | `x9-duplicate-trial.jsonl` | X9 | trial 2 of one (pattern, subject, regime) recorded twice — silently doubling that trial's weight in any median |
 | `x10-cost-class-mismatch.jsonl` | X10 | a compile row claiming `interpretive` cost on a `compiled-aot` testee. This is also the file stamped `schema_version: 1.0` while carrying 1.1's fields — deliberately, so validate.py's accept-an-older-MINOR branch has a live example and nobody quietly makes the minor comparison strict (note §4.1) |
 | `x11-timing-on-uncompiled-cell.jsonl` | X11 | a timed match row for the pattern this testee reported `unsupported-by-declaration` |
+| `x12-phase-names-mismatch.jsonl` | X12 | a compile row whose second phase is `cc` where the testee declared `gcc`: phase-by-phase numbers added up across rows that do not mean the same thing |
 | `x13-measured-but-loaded.jsonl` | X13 | `status: measured` on a record whose after-load exceeded the limit |
 | `x13-occupancy-after-fail.jsonl` | X13 | `status: measured` on a record whose per-core occupancy check FAILED *after* the run — the neighbour that started up midway, which a before-only check cannot see |
 | `x14-missing-compile-row.jsonl` | X14 | `status: measured` with a pattern that has no compile row at all |
 | `x15-metadata-wrong-scope.jsonl` | X15 | the `engine` pair — declared `scope: pattern` — stamped on a MATCH row. The scope half of X15 has no good-example coverage now that the v8 example's undescribed `tier` pair is gone (note §7), so this control is the only thing holding it |
 | `x15-undeclared-engine-metadata.jsonl` | X15 | an `engine_metadata` pair the testee never declared |
+| `x16-lazy-jit-no-warmup.jsonl` | X16 | *(built from the **v8** example)* a `lazy-jit` testee declaring `warmup_trials: 0` — the class whose compile cost IS the first trial, claiming no trial needs excluding |
 | `x17-future-major-version.jsonl` | X17 | a record at schema version 2.0, which this validator does not implement and for which no migration is declared. It is also the standalone half of X17: the cross-FILE half (two majors in one invocation) needs two files and is exercised by hand |
 | `x18-duplicate-seq.jsonl` | X18 | two result rows claiming the same `seq` — the record no longer says which was emitted first, which is the one thing `seq` exists to say |
 | `x18-seq-gap.jsonl` | X18 | the last result row's `seq` bumped past N: a row was dropped somewhere and the file does not admit it |
