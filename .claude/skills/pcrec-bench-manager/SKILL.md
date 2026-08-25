@@ -35,11 +35,40 @@ Frank (the user) sets milestone-level direction and answers rulings.
   docs/testing.md:2407) on every command of uncertain run length, yours
   and your subagents'. A timeout firing is a FINDING, never a reason to
   simply re-run longer.
+- **THE DURABLE CHANNEL with the pcrec manager (Frank, 2026-08-25; pcrec
+  decisions.md D78).** Two single-writer files in THIS repo:
+  `docs/dev/inbox_from_pcrec.md` — written and committed ONLY by the
+  pcrec manager (single-file `[inbox]` commits): rulings, priorities,
+  pins, requests. You READ it at wake (step 1a below), move each new
+  item into plan.md, and append one `ack: <date> — <where it went>`
+  line under the item — the ONLY thing you write in that file; items
+  are numbered and never deleted. `docs/dev/outbox_to_pcrec.md` — YOU
+  write (findings about pcrec, requests for pcrec changes, questions
+  that must outlive your session); the pcrec manager reads it at wake.
+  This is NOT a ban on interprocess messages: when both sessions are
+  up, coordination and questions flow live by SendMessage as before —
+  the files carry what must survive a session boundary.
+- **DIVISION OF LABOUR (same ruling).** This session's purpose is to
+  BUILD and EXPAND the bench; the pcrec manager RUNS it as needed from a
+  worktree of this repo (never a clone — the store is append-only and
+  must not fork). Two record TIERS: PINNED (a committed pcrec SHA via
+  `pin.sh`, quiet window, the full protocol) → the canonical `store/`;
+  SCRATCH (a provided binary, a `quick` cell) → a scratch store the
+  reporter can read but that never enters `store/index.tsv` or the
+  rankings. Inbox I-4 charters the three features that make the
+  edit-test loop fast (scratch tier, `quick`, the `pcrec-local`
+  testee); pinned runs keep the WINDOW OPEN / CLOSED handshake and
+  one-heavy-suite rule; scratch runs are light and announce nothing.
 
 ## 1. Wake up (do this first, in order)
 
 1. **Read `docs/dev/wake.md`** — the hand-off brief from the previous
    session. Gitignored; on any disagreement, the committed docs win.
+1a. **Read `docs/dev/inbox_from_pcrec.md`** — the pcrec manager's durable
+   rulings/priorities/pins (§0). Every item without an `ack:` line is
+   NEW: move it into plan.md (a row, a queue position, or a note on the
+   row it affects) and append `ack: <date> — <where>` under it in the
+   same commit. Re-pin targets arrive here.
 2. Read the tail of `docs/dev/dev_journal.md` (append-only, newest at
    bottom) — the restart/status-recovery record.
 3. Check `docs/dev/plan.md` state: `grep -n "STATE:started" docs/dev/plan.md`
