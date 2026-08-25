@@ -321,3 +321,30 @@ byte-identical artifacts). b2fix: my first three messages never
 reached it (lane inbox delivery unreliable tonight — ask for ACKs);
 the consolidated resend landed; at fix 21 of 22. pcrecdev1: window
 slips to ~02:50 (srG's rows at 0.8/min). Chain unchanged.
+
+## 2026-08-25 (EDT, ~01:1x), first session (part 10) — SCHEMA v1.1 MERGED (ae9b0d0): 27 rules, 53 controls; both build lanes adapting
+
+b2fix (opus, ~70 min, 21 commits, 64 files) landed all 22 fixes of the
+R2 panel plus three of its own (X20 load verdict follows the numbers,
+X24 bytes_processed bound, X26 occupancy verdict follows its limit):
+seq, load/occupancy before+after with raw evidence, calibration,
+engine_commit required for non-release versions (X22), driver build
+flags/compiler/clock source, subjects sha256, quiet_attestation dropped,
+normalization checked (X23), consumed_length bound (X25), `gave-up`,
+`form` plain|whole-subject (X27, X9/X11/X14 keyed per (pattern, form)),
+.gitattributes for the hash, check_rules.py (every §9 rule has a named
+control — five had none through a merge and a panel). Gate re-validated
+five ways at the final state. Lessons recorded by the lane: an
+INDEX-KEYED sabotage mutator does not fail when the file shifts — it
+silently sabotages a different row (eight mutators rewritten to locate
+rows semantically); a control that fails for three reasons is not a
+control (X21/X24 now skip iterations < 1 so the zero-iterations control
+fires exactly the schema rule). Merge clean, gate 2/53/0 on master;
+requirements §9(b) amended with the strict-occupancy ruling; harness
+contract already carried the rest (2ac7fcf). Message delivery to lane
+inboxes was unreliable in one direction tonight (three manager→b2fix
+messages lost; lane→manager always arrived) — the consolidated resend
+with an ACK request worked; briefs should ask for ACKs on rulings.
+b3harness and b5report told to merge master and adapt (flip
+SCHEMA_VERSION, form, gave-up range rule, a|ab control; fixtures
+restamped, lazy-JIT over lowest seq). Window ~02:50.
