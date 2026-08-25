@@ -606,6 +606,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `environment.load.verdict` | enum | R | `loaded` iff either sample's `load1` exceeds `limit` (X20); FILTERABLE | §9(a); ties to `status` (§9 rule X13). X20 is what stops the verdict being an opinion beside the numbers |
 | `environment.occupancy` | object | R | — | §9(b) |
 | `environment.occupancy.tool` | string | o | DIAGNOSTIC; one tool for both samples | e.g. `mpstat -P ALL 1 1` |
+| `environment.occupancy.limit_busy_pct` | number 0-100 | R | the busy-percentage threshold THIS run used | ADDITION, the exact counterpart of `load.limit`: OD-B8 is unruled, so the number is data. It is also what makes the verdict checkable (X26) — the same argument as X20, and the reason a verdict beside a number is worth having at all |
 | `environment.occupancy.before` | object | R | the per-core check BEFORE the run | §9(b) |
 | `environment.occupancy.before.verdict` | enum | R | `pass`/`fail`/`unavailable` | §9(b) "machine-readable pass/fail with `unavailable` when mpstat is missing — recorded, never silently skipped" (C6) |
 | `environment.occupancy.before.max_busy_pct` | number/null | R | the busiest non-target core; `null` iff `unavailable` | the number behind the verdict, so a threshold change is re-judgeable without re-measuring |
@@ -750,7 +751,7 @@ both ways before being believed.
 | X10 | `compile_row.cost_class` equals `testee.execution_model` | §3; brief |
 | X11 | A match row carries `timing` only if `match_outcome` = `matched-as-expected` AND every compile row for that pattern has `compile_outcome` = `compiled` | §4.4/§7; brief |
 | X12 | `cost.phases` names and order equal `testee.compile_phases` | §3 |
-| X13 | `status` = `measured` requires `load.verdict` = `quiet` and NEITHER `occupancy.before.verdict` NOR `occupancy.after.verdict` = `fail`. `unavailable` does not disqualify — §9(b) makes it a thing to RECORD, not a thing to fail on, and a box without mpstat would otherwise be unable to produce a measured record at all | §9(a) "a record whose after-load exceeds it is `inconclusive-load`, not measured" (C7); §9(b) |
+| X13 | `status` = `measured` requires `load.verdict` = `quiet` and BOTH `occupancy.before.verdict` AND `occupancy.after.verdict` = `pass`. `unavailable` disqualifies exactly as `fail` does — see the RULING below | §9(a) "a record whose after-load exceeds it is `inconclusive-load`, not measured" (C7); §9(b); the v1.1 ruling |
 | X14 | `status` = `measured` requires a compile row for every pattern in the roster | makes `harness-failure` mean something: a record that stopped halfway cannot claim to be measured |
 | X15 | Every `engine_metadata` name is declared; its `scope` matches the row kind; its value matches the declared type (`enum` value in `values`, `mask` bits in `bits`, integer, string) | §4.2, §7 rule 1 |
 | X16 | `testee.warmup_trials` ≥ 1 when `execution_model` = `lazy-jit` | §3 (A6) |
@@ -763,6 +764,7 @@ both ways before being believed.
 | X23 | `cpu_model`, `kernel` and `compiler` equal what §6.6/§6.7's rules produce from `cpu_model_raw`, `kernel_raw` and `compiler_raw`, when those are present | §6; A11. The normalization rules existed as prose only, which means the FILTERABLE half of each pair was un-checked against the reproducible half |
 | X24 | `timing.bytes_processed ≤ subjects[…].bytes_offered × timing.iterations` | §8's own definition of the field. It is the NUMERATOR of every throughput number the report prints, and until v1.1 nothing related it to the subject it claims to have scanned — a record could multiply its own MB/s and validate |
 | X25 | `consumed_length ≤ bytes_offered`; and a `truncated-subject` row must carry a `consumed_length` STRICTLY less than it | §4.4. An engine cannot consume what it was not given, and an outcome that asserts a truncation must say where it stopped — otherwise the bench's most interesting per-subject finding is an unfalsifiable label |
+| X26 | Each `occupancy.<sample>.verdict` is `pass` iff `max_busy_pct ≤ limit_busy_pct`, `fail` otherwise | §9(b). X20's argument applied to the other instrument: a verdict a harness writes beside a number it also writes is not evidence until the two are required to agree |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each
@@ -774,6 +776,26 @@ reason proves nothing about the rule it was written for — which is the
 same failure mode as a check with no failing case, one level up. Every
 sabotage is the good example with exactly ONE thing wrong and its hash
 RESTAMPED, so X6 does not fire alongside the intended rule and mask it.
+
+### RULING: `unavailable` occupancy is not `measured` (v1.1, 2026-08-25)
+
+X13 was written to let `unavailable` through — the reasoning being that
+requirements §9(b) calls `unavailable` a thing to RECORD rather than a
+thing to fail on, and that a box without `mpstat` would otherwise be
+unable to produce a `measured` record at all.
+
+That is now RULED the other way, and the second half of it is the
+intended consequence rather than a cost: **a box without `mpstat`
+cannot produce a `measured` record.** §9(b)'s "recorded, never silently
+skipped" is satisfied twice over — the record still carries
+`unavailable` and its reason, AND the status tells the truth about what
+that leaves unknown. `measured` is the schema's word for "nothing known
+to compromise this number", and an unmeasured per-core occupancy is not
+nothing known; it is not known. A record with it is exactly what
+`inconclusive-load` is for.
+
+`mpstat` is installed on this box, so the practical cost here is zero.
+requirements §9(b)'s wording is amended at the merge to match.
 
 Two corollaries worth stating because they surprised the author:
 

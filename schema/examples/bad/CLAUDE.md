@@ -41,6 +41,7 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x1-mixed-schema-versions.jsonl` | X1 | two records concatenated into one file, the second at schema version 2.0 |
 | `x2-reserved-row-kind.jsonl` | X2 | a `match-list` row — the name reserved for OD-B3's list-valued scan regime, which has no shape yet |
 | `x2-unknown-row-kind.jsonl` | X2 | a row with `kind: "timing"` |
+| `x26-occupancy-verdict-contradicts-number.jsonl` | X26 | `occupancy.before.verdict: pass` beside a busiest-core reading of 91.5% against a 10% limit |
 | `x3-record-id-mismatch.jsonl` | X3 | `record_id`'s stamp no longer matches `run.timestamp` |
 | `x4-filename-mismatch.jsonl` | X4 | a perfectly valid record under a name that is not its record id |
 | `x5-testee-id-mismatch.jsonl` | X5 | `engine_mode` changed to `dfa` while the id still says `vm-caps-simdna` — the id claiming a configuration the record does not carry, which is the exact thing deriving the id was for |
@@ -53,6 +54,7 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x12-phase-names-mismatch.jsonl` | X12 | a compile row whose second phase is `cc` where the testee declared `gcc`: phase-by-phase numbers added up across rows that do not mean the same thing |
 | `x13-measured-but-loaded.jsonl` | X13 | `status: measured` on a record whose after-load exceeded the limit |
 | `x13-occupancy-after-fail.jsonl` | X13 | `status: measured` on a record whose per-core occupancy check FAILED *after* the run — the neighbour that started up midway, which a before-only check cannot see |
+| `x13-occupancy-unavailable.jsonl` | X13 | `status: measured` on a record whose post-run occupancy check is `unavailable` — no mpstat, so nothing is known about the other cores. Under the v1.1 ruling that is `inconclusive-load`, not `measured` |
 | `x14-missing-compile-row.jsonl` | X14 | `status: measured` with a pattern that has no compile row at all |
 | `x15-metadata-wrong-scope.jsonl` | X15 | the `engine` pair — declared `scope: pattern` — stamped on a MATCH row. The scope half of X15 has no good-example coverage now that the v8 example's undescribed `tier` pair is gone (note §7), so this control is the only thing holding it |
 | `x15-undeclared-engine-metadata.jsonl` | X15 | an `engine_metadata` pair the testee never declared |

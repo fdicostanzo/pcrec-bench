@@ -385,9 +385,10 @@
             "occupancy": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["before", "after"],
+              "required": ["before", "after", "limit_busy_pct"],
               "properties": {
                 "tool": { "type": "string", "maxLength": 128 },
+                "limit_busy_pct": { "type": "number", "minimum": 0, "maximum": 100 },
                 "before": { "$ref": "#/$defs/occupancy_sample" },
                 "after":  { "$ref": "#/$defs/occupancy_sample" }
               }

@@ -6,7 +6,7 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X25 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X26 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
@@ -559,6 +559,25 @@ class RecordValidator:
                             f"meet its target and no calibration_note says "
                             f"why", "X21"))
 
+        # X26 the occupancy verdict follows from its number and its threshold
+        occ = env.get("occupancy", {}) or {}
+        occ_limit = occ.get("limit_busy_pct")
+        for when in ("before", "after"):
+            sample = occ.get(when)
+            if not isinstance(sample, dict):
+                continue
+            busy = sample.get("max_busy_pct")
+            got_v = sample.get("verdict")
+            if not isinstance(busy, (int, float)) or \
+                    not isinstance(occ_limit, (int, float)):
+                continue
+            want_v = "pass" if busy <= occ_limit else "fail"
+            if got_v != want_v:
+                add(Problem(path, 1, f"environment.occupancy.{when}.verdict",
+                            f"is {got_v!r} but the busiest non-target core "
+                            f"was {busy}% against a limit of {occ_limit}%, "
+                            f"which is {want_v!r}", "X26"))
+
         # X13 / X14 the record-status gates
         if setup.get("status") == "measured":
             if load.get("verdict") != "quiet":
@@ -566,12 +585,15 @@ class RecordValidator:
                             "is `measured` but environment.load.verdict is not "
                             "`quiet`; a load-compromised record is "
                             "`inconclusive-load`", "X13"))
-            occ = env.get("occupancy", {}) or {}
             for when in ("before", "after"):
-                if (occ.get(when) or {}).get("verdict") == "fail":
+                got_v = (occ.get(when) or {}).get("verdict")
+                if got_v != "pass":
                     add(Problem(path, 1, "status",
                                 f"is `measured` but the per-core occupancy "
-                                f"check FAILED {when} the run", "X13"))
+                                f"check {when} the run is {got_v!r}, not "
+                                f"`pass`; only a passing occupancy check on "
+                                f"BOTH samples supports `measured` "
+                                f"(the v1.1 ruling, §9)", "X13"))
             missing = sorted(x for x in pat_ids if x not in seen_compile)
             if missing:
                 add(Problem(path, 1, "status",
@@ -639,7 +661,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X25 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X26 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")
