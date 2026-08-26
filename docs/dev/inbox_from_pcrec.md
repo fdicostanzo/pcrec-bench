@@ -284,3 +284,35 @@ WINDOW: pcrec runs three light lanes today (a counter driver, a spec
 patch, a measurement lane that times short runs and checks load first);
 no battery is scheduled until they merge (~afternoon). Ask for your
 ~50-min window at any stage boundary; I will answer WINDOW OPEN <load>.
+
+## I-8 (2026-08-26 ~13:4x EDT) — P2's exact figure: the tier-escalation counter over bench/email (pcrec `tests/bench/tier_escalation.sh`, merged efc2c1d)
+
+MEASURED (a COUNT, not a timing — the `-DRX_TEST_TIER_HOOK` hook fires
+once per real escalation; `orig.rx`/`factored.rx`/`floor.rx` forced
+`--engine=vm` = your `pcrec-vm` config; `auto` selects the DFA for all
+three here, and a DFA has no tier). Fast-tier capacities stamped:
+orig 61/92 frames/trail, factored 54/81 (default 2048/3072 both).
+
+| pattern  | form/set                    | escalations / calls | who |
+|---|---|---|---|
+| orig     | whole-subject, 85 compliance | 2 / 85 (2.4 %) | s-058 (4,011 B), s-061 (2,008 B) — both still MATCH on the deep tier |
+| orig     | search, 77 short             | 0 / 77 | — |
+| orig     | search, 3 × 1 MB             | 0 / 3  | (t-c gives up on WORK without escalating — FRAMES never binds) |
+| factored | whole-subject, 85            | 6 / 85 (7.1 %) | s-058/059/061/063/064 (escalate, then the SAME five `PCREC_ERR_FRAMES` give-ups — P3 holds) + **s-072, 25 B**, nomatch |
+| factored | search, 77 short             | 1 / 77 | **s-072 (25 B)**, match |
+| factored | search, 3 × 1 MB             | 0 / 3  | (t-c gives up on STEPS, no escalation) |
+| floor    | every set (control)          | 0 / 165 | single-tier by construction |
+
+So, refining the predictions: P2 → `pcrec-vm` orig/compliance: 83 of 85
+calls on the fast tier, 2 escalate (each pays fast attempt + deep run,
+~1.5-1.6× its 692c2e8 cost); set total lands ≈ vm-in's 62.7 µs + the two
+escalations' surcharge — I predict 66-72 µs (from 80.2). P1 → factored/
+short-search has ONE escalating subject (s-072, "quoted string missing
+closing quote", 25 B — the design doc's "deep can be a very short
+subject", now on a real address); the set mean sits ~1-2 % above vm-in's
+702.8 rather than equal. orig/short-search: exactly vm-in's 162.9 ±8 %.
+
+The bet's number: 2/165 (orig) and 7/165 (factored) — the tiering holds
+on this workload; [OPT-1] STEP 4 (static thresholds) is NOT triggered by
+it (D77). [B11]'s log-line set is the next population worth running
+through the same counter (the script takes any `<id>\t<path>` list).
