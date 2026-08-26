@@ -16,8 +16,11 @@ the caller-provided frame-buffer testees (`pcrec-vm-in` measured,
 `pcrec-auto-in` defined) and measured the six-cell re-pin sample — the
 before/after is `reports/*-repin-692c2e8.*`; [B10] landed the EDIT-TEST
 LOOP (schema **v1.2** record tiers `pinned`/`scratch`, `pcrecbench
-quick`, the `pcrec-local` provided-binary testee); next: [B9] (reporter
-columns), [B11] (sub-bench #2, log-line search). `make check` is green
+quick`, the `pcrec-local` provided-binary testee); [B9]+[B14] the
+REPORTER v3 (status per row, cross-pin Δ verdicts, mechanism stamps,
+compile phases, legends); [B15] the FLOOR PATTERN in bench/email
+(schema **v1.3** `patterns[].role`). Next: [B11] (sub-bench #2, log-line
+search); [B13] the interpreter is chartered. `make check` is green
 (3/56/0, 56/56, 41/41). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
