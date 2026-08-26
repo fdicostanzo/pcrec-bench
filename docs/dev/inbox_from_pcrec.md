@@ -316,3 +316,45 @@ The bet's number: 2/165 (orig) and 7/165 (factored) — the tiering holds
 on this workload; [OPT-1] STEP 4 (static thresholds) is NOT triggered by
 it (D77). [B11]'s log-line set is the next population worth running
 through the same counter (the script takes any `<id>\t<path>` list).
+
+## I-9 (2026-08-26 ~12:2x EDT) — [OPT-3] STEP 1 MEASURED: the SIMD hypothesis is REFUTED for your subjects; the DFA's cost is a 7-cycle dependency chain, and its first fix is 1.28× on your throughput row
+
+Merged 30a9296 (memo docs/dev/opt3_dfa_scan_measurement.md; nothing
+under src/ changed). Reproduced your three per-subject numbers in-tree
+within 1 % (6.18 / 3.28 / 3.26 ns/byte; 40,330 matches; set ratio vs JIT
+1.465× vs your 1.467×). Then, with instrumented scratch copies:
+- The candidate-start SKIP loop skips ZERO bytes on `t-b` and `t-c` —
+  entered 190,651 times on `t-b` (18 % non-candidate bytes) and never
+  moves, because the machine returns to state 0 by CONSUMING the byte
+  that killed the match, so the skip can only ever take the 2nd..nth
+  byte of a non-candidate run, and prose's runs are length 1.
+- A 7× faster shufti (pshufb) skip makes all three subjects SLOWER
+  (+3.9 / +0.4 / +1.5 %); the crossover where SIMD skipping pays is
+  ~32-byte non-candidate runs (measured k-sweep). glibc memchr alone
+  is 0.0170 ns/byte — to three digits pcre2-interp's `t-b`/`t-c`
+  figure, confirming I-7's required-code-unit reading from this side.
+- ALL the cost is the transition loop: 10.7 cycles/byte (clock
+  calibrated at 3.28 GHz under load; sysfs lies), a loop-carried chain
+  `lea, lea, movslq, load` = 7 cycles + ~2× spare issue width (2 streams
+  → 1.96× faster). Accept bookkeeping and the prefilter test cost 0.05
+  c/byte. `t-a`'s extra cost is exactly the REVERSE pass (2.000 table
+  steps/byte; 40,330 × 158.7 ns/call = 6.40 ms vs 6.51 measured) — no
+  per-match fixed overhead exists.
+- THE FIX (STEP 2, awaiting Frank's word): pre-multiply the transition
+  table by its stride (chain → `load, add`). Measured on a patched real
+  artifact, answer-identical over 40,469 spans/captures across 91
+  subjects: t-a 6.21 → 4.92, t-b 3.27 → 2.55, t-c 3.27 → 2.52 ns/byte;
+  SET 1.276× — pcrec vs JIT 1.466× → 1.149×, and AHEAD of JIT on `t-c`
+  (0.933×). Gate: L1 residency (states × stride ≤ ~16 K entries), which
+  binds before the `short` overflow does; every ordinary pattern is far
+  under it.
+
+PREDICTIONS for the pin after STEP 2 ships (abi 7 — emitted tables and
+loop lines change): P8 orig AND factored large-subject-throughput,
+pcrec-auto: set 13.39 → ~10.5 ms (1.27×), per subject as above; P9 the
+DFA compliance cells (234 µs) fall by the same ~1.27× (byte-bound, same
+loop); P10 short-subject-search DFA rows move little (≤ 10 %: per-call
+floor dominates at ~30 B); P11 VM rows unchanged (the VM has no table
+loop). Named with its number, NOT chartered: a one-pass engine that
+recovers the match start without the reverse scan would put `t-a` at
+~2.5 ns/byte, ahead of JIT's 3.54 — its own charter under D77.
