@@ -17,14 +17,15 @@ non-empty diff after a bare rerun (no query change, no reporter change)
 means either the store changed or the reporter regressed determinism.
 
 Both sample sets below were regenerated at [B14] (2026-08-25) against
-reporter `v3 (2026-08-25)` (previously regenerated at [B9] against `v2`):
-each regeneration means these files no longer diff byte-identical
-against the previous reporter's versions, but each still answers the
-SAME query as before — see `pcrecbench/report.py`'s module docstring for
-the full ruling list ([B9]'s R1-R9, [B14]'s R1-R10 — the two ruling sets
-share numbers by coincidence of two separate `R1`..`R9` sequences, not by
-design; read each set's own dated section) and the note below for what
-[B14] changed in these files specifically.
+reporter `v4 (2026-08-25)` (`v3` on the same day, then `v4` for a same-day
+correction — see the KB-2 note below; previously regenerated at [B9]
+against `v2`): each regeneration means these files no longer diff
+byte-identical against the previous reporter's versions, but each still
+answers the SAME query as before — see `pcrecbench/report.py`'s module
+docstring for the full ruling list ([B9]'s R1-R9, [B14]'s R1-R10 — the
+two ruling sets share numbers by coincidence of two separate `R1`..`R9`
+sequences, not by design; read each set's own dated section) and the
+note below for what [B14] changed in these files specifically.
 
 - `2026-08-25-email-specimen-0.1-budu-ryzen1600.md` — the FIRST
   PRODUCTION SAMPLE: email-specimen@0.1 × {pcre2-interp, pcre2-jit,
@@ -83,9 +84,10 @@ summary that matters for reading these files):
 - a `large-subject-throughput` ranking row carries `ns/byte` beside
   `ns/call`, and a set of <=3 subjects (every throughput cell today)
   gets its own per-subject sub-table under the ranking row (R2);
-- a `match-compliance` ranking group states `matches: m/n` — subjects
-  whose GROUND TRUTH (`bench/email/expectations.tsv`, read live, not
-  stored in the record) expects a match (R3);
+- a `match-compliance` ranking group states `matches: m/n` when
+  derivable, `matches: n/s` otherwise (R3 — see the KB-2 correction
+  below: as of `v4` it is ALWAYS `n/s` in these files, honestly, not a
+  fabricated fraction);
 - a cross-pin `Δ detail` line names `worst now` and, only when it is a
   DIFFERENT subject, `largest Δ` beside it, instead of one ambiguous
   "worst subject" (R6);
@@ -94,10 +96,32 @@ summary that matters for reading these files):
 
 R9 (a `role: floor` pattern's short-subject-search table retitled a
 per-call overhead CONTROL, with a `floor ns` figure on every other
-pattern's row) has no fixture in these files yet — `bench/email` declares
-no floor pattern as of this regeneration; it is coded and tested
-(`pcrecbench/tests/test_report.py`) against hand-built records, ready for
-the day one lands.
+pattern's row) reads `floor: n/a` unchanged in these files — bench/email
+gained a real floor pattern in its SOURCE the same day (lane b15floor,
+schema v1.3), but no MEASURED record of it exists in `store/` yet, so
+this regeneration's own data has nothing to show. The wiring itself is
+proven two ways in `pcrecbench/tests/test_report.py`: against hand-built
+records (`test_floor_pattern_r9`) and, now that v1.3 makes `patterns[].
+role` schema-legal, against a REAL schema-valid fixture file
+(`test_floor_pattern_fixture_r9`, `pcrecbench/tests/fixtures/
+floor_pattern/`) — ready for the day a real floor-pattern measurement
+lands here.
+
+**KB-2 correction (same day, before final merge; docs/dev/
+known_issues.md; manager steer 2026-08-25): R3's `matches: m/n` moved
+from "read `bench/email/expectations.tsv` live" to "derive from the
+record alone."** The reporter must work from records alone — a record
+measured on another box, or against a later sub-bench version, has no
+sidecar checkout beside it to read. The record itself turns out to carry
+no field this can be derived from either, for the common case:
+`pcrecbench.harness.outcome_for` sets `observed = None` on a
+`matched-as-expected` row (checked against these very files' own
+records), so `pcrecbench.report._matching_subject_count` now always
+returns `None` and every `match-compliance` group here reads `matches:
+n/s`, pointing at KB-2 rather than a fabricated fraction. `report.py` no
+longer imports `pcrecbench.subbench` at all. `REPORTER_VERSION` bumped
+`v3` → `v4` the same day for this (its own rule: bump whenever rendering
+changes).
 
 **A note on what [B9]'s own rulings changed in this store's numbers**:
 applying R1 (OD-B14: a non-`measured` row is excluded from ranking by

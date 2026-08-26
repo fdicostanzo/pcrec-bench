@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v3 (2026-08-25)
+reporter: v4 (2026-08-25)
 
 ## Query
 
@@ -56,7 +56,7 @@ reporter: v3 (2026-08-25)
 
 ### `factored` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 40/85 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -130,7 +130,7 @@ _floor: n/a (no floor pattern in this set yet -- pcrecdev1 feedback 1d/repin-2)_
 
 ### `orig` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 40/85 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 

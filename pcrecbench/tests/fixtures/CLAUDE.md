@@ -140,6 +140,20 @@ set, per trial, then reduce over trials) indistinguishable from
   independently against `schema/validate.py` (see the Makefile target);
   the deliberately-invalid halves are validated (for REJECTION, by the
   specific rule expected) inside `test_all_fixtures_validate` instead.
+- `floor_pattern/store/` -- [B14] R9, added once schema v1.3 (lane
+  b15floor) made `patterns[].role` legal. ONE record: `store/`'s own
+  libpcre2-interp record, copied and extended -- `p-digits`/`p-word`
+  restamped `role: member` (explicit, the schema default), plus a THIRD
+  pattern `p-floor` (`role: floor`, canonical text the literal `@`, in
+  the spirit of bench/email's real floor pattern) with its own compile
+  row and short-subject-search match rows over the existing `s-num-1`/
+  `s-word-1` subjects, small hand-computable ns values. `content_hash`
+  recomputed to match (`schema/validate.py --print-hash`, same
+  procedure as "Editing" below). Unlike every OTHER fixture in this
+  ruling set, this one is validated by `schema/validate.py` ITSELF, not
+  bypassed via a hand-built `LoadedRecord` -- proving R9's wiring
+  (`test_floor_pattern_fixture_r9`) through the real loader path now
+  that the schema actually allows it.
 
 ## Editing
 

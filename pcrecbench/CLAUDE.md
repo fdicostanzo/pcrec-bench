@@ -195,31 +195,47 @@ section in `report.py`'s module docstring):
   ranking row (subject id, bytes, median ns/call, ns/byte, every ranked
   testee); every throughput ranking row also gains `ns/byte` beside
   `ns/call`.
-- **R3 -- matching-subject count.** A `match-compliance` ranking group
-  states `matches: m/n` -- subjects whose GROUND TRUTH expectation is a
-  match, read live from the sub-bench's own `expectations.tsv` via
-  `pcrecbench.subbench` (`_matching_subject_count`/
-  `_load_subbench_for_report`), since the record itself cannot answer
-  this (record_schema.md 10.3) and best-effort omitted, never
-  fabricated, when the sub-bench cannot be resolved.
+- **R3 -- matching-subject count, CORRECTED same day (KB-2,
+  docs/dev/known_issues.md; manager steer 2026-08-25).** This ruling's
+  first cut read `bench/<dir>/expectations.tsv` live through
+  `pcrecbench.subbench` -- superseded, because the reporter must work
+  from RECORDS ALONE (a record measured elsewhere, or against a later
+  sub-bench version, has no sidecar checkout beside it). The record
+  itself carries no field to derive this from either:
+  `pcrecbench.harness.outcome_for` sets `observed = None` on the common
+  `matched-as-expected` row (checked against real store data), so
+  `_matching_subject_count` now always returns `None` and the rendered
+  line reads `matches: n/s` -- honest, not fabricated, not silent.
+  `report.py` no longer imports `pcrecbench.subbench` at all. Fixing
+  this for real needs a schema/harness change (a real expected-answer
+  field on a match row), not a reporter-side inference from the
+  disagreeing minority (`observed` IS populated there, but inferring `m`
+  from only that subset would systematically undercount it -- see the
+  function's docstring).
 - **R6 -- worst now vs largest Delta.** A cross-pin `Δ detail` line now
   names `worst now` (the new record's own slowest subject, [B9]'s
   meaning) and, only when it differs, `largest Δ` (the subject whose
   ns/call moved the most, `_largest_delta_subject`) beside it.
 - **R9 -- the floor pattern.** Schema v1.3's optional `patterns[].role`
-  (`member` default | `floor`, lane b15floor, not yet schema-legal): a
-  `role: floor` pattern's own short-subject-search table is retitled a
-  per-call overhead CONTROL rather than ranked, and every other
-  (member) pattern's short-subject-search row gains a `floor ns` figure
-  beside its per-subject mean (`_floor_mean_for`). Exercised only via
-  hand-built `LoadedRecord`s (the [B9] `tier` tests' technique) until
-  b15floor's schema lands.
-- **R10 -- `reporter: v3 (2026-08-25)`;** every committed report under
-  `reports/` regenerated against it -- see `reports/CLAUDE.md`.
+  (`member` default | `floor`, lane b15floor): a `role: floor` pattern's
+  own short-subject-search table is retitled a per-call overhead CONTROL
+  rather than ranked, and every other (member) pattern's short-subject-
+  search row gains a `floor ns` figure beside its per-subject mean
+  (`_floor_mean_for`). Landed same-day as b15floor's schema v1.3, so
+  exercised BOTH ways: the original hand-built `LoadedRecord`s (the [B9]
+  `tier` tests' bypass technique) and, once v1.3 made `patterns[].role`
+  schema-legal, a REAL fixture file (`fixtures/floor_pattern/`) accepted
+  by `schema/validate.py` itself -- proving the wired path end to end,
+  not just the reduction logic.
+- **R10 -- `reporter: v3 (2026-08-25)`, then `v4` the same day** for the
+  KB-2 correction above (this module's own rule: bump whenever rendering
+  changes, so two reports are never mistaken for each other); every
+  committed report under `reports/` regenerated against `v4` -- see
+  `reports/CLAUDE.md`.
 
-`pcrecbench/tests/test_report.py` gained ten more tests (one per ruling,
-41 total). `reports/*` regenerated against `reporter: v3` -- see
-`reports/CLAUDE.md`.
+`pcrecbench/tests/test_report.py` gained eleven more tests (one per
+ruling, plus the R9 fixture-validated proof; 42 total). `reports/*`
+regenerated against `reporter: v4` -- see `reports/CLAUDE.md`.
 
 ## The reporter ([B5], merged 2026-08-25)
 

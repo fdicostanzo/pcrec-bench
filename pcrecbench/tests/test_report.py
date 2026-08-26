@@ -28,6 +28,7 @@ below and were reported to the manager verbatim.
 from __future__ import annotations
 
 import os
+import re
 import statistics
 import sys
 import traceback
@@ -1174,12 +1175,17 @@ def test_subbench_dir_alias_od_b13():
 #
 # One test per ruling (R1-R10), each exercising both the rule FIRING and a
 # case where it does not -- docs/dev/feedback_pcrecdev1_2026-08-25-repin-v2.md
-# is the spec. R1/R2/R3/R4/R7's firing cases go through `REAL_STORE` (the
+# is the spec. R1/R2/R4/R7's firing cases go through `REAL_STORE` (the
 # project's own committed email-specimen sample): they need REAL
-# `engine_metadata` stamps at two different pcrec pins and a REAL
-# `bench/email/expectations.tsv`, neither of which any synthetic fixture
-# here reproduces. R5/R6/R8/R9 go through hand-built `LoadedRecord`s (the
-# same technique the [B9] `tier`/cross-pin tests already use).
+# `engine_metadata` stamps at two different pcrec pins, which no synthetic
+# fixture here reproduces. R3 (CORRECTED, KB-2 -- see its own docstring)
+# is exercised entirely against the synthetic fixture store, on purpose:
+# the whole point of the fix is that the reporter no longer reaches into
+# `bench/` at all. R5/R6/R8/R9 go through hand-built `LoadedRecord`s (the
+# same technique the [B9] `tier`/cross-pin tests already use); R9 also
+# gets a REAL schema-valid fixture FILE (`fixtures/floor_pattern/`,
+# validated by `schema/validate.py` itself, not bypassed) now that lane
+# b15floor's schema v1.3 makes `patterns[].role` legal.
 
 def test_plain_entry_capacities_r1():
     """[B14] R1: a plain-entry compile row (no `buffer_frames`/
@@ -1218,37 +1224,55 @@ def test_plain_entry_capacities_r1():
 
 
 def test_matching_subject_count_r3():
-    """[B14] R3: a `match-compliance` ranking group states `matches:
-    m/n` from the sub-bench's OWN `expectations.tsv` -- 40 of the email
-    specimen's 85 subjects expect a match (`awk -F'\\t' '$1=="orig" &&
-    $3=="match"'` against `bench/email/expectations.tsv`, checked by
-    hand). Not firing: no synthetic fixture sub-bench id here (`fixture-
-    mini`, `rb-mini`) names a real `bench/<dir>/`, so the note is
-    omitted entirely rather than fabricated."""
-    _check(report._matching_subject_count("no-such-sb@1.0", "orig", "match-compliance", ["s-000"])
-           is None, "an unresolvable sub-bench id must yield None, never a fabricated count")
-    _check(report._matching_subject_count("email-specimen@0.1", "orig", "large-subject-throughput",
-                                           ["t-a-valid-addrs"]) is None,
-           "R3 is match-compliance only -- any other regime must yield None")
+    """[B14] R3, CORRECTED (KB-2, manager steer 2026-08-25): the reporter
+    works from RECORDS ALONE -- this ruling's first cut read `bench/
+    <dir>/expectations.tsv` through `pcrecbench.subbench`, which this
+    test used to exercise against the real store; that dependency is
+    gone (`report.py` no longer imports `pcrecbench.subbench` at all).
+    `_matching_subject_count` now always returns `None` -- checked
+    directly, and end to end against the EXISTING fixture store (real
+    schema-valid records, `fixture-mini`, whose `p-digits`/`match-
+    compliance` cell already exercises the match-compliance regime) --
+    because the record's own `matched-as-expected` rows carry `observed:
+    null` (verified against this very fixture below), so there is no
+    per-subject expected-answer field to derive `m`/`n` from. The
+    rendered line therefore reads `matches: n/s`, not a fabricated
+    fraction and not silence."""
+    _check(report._matching_subject_count(None, "no-such-sb@1.0", "orig", "match-compliance", ["s-000"])
+           is None, "always None for now -- KB-2 is unresolved")
+    _check(report._matching_subject_count(None, "email-specimen@0.1", "orig",
+                                           "large-subject-throughput", ["t-a-valid-addrs"]) is None,
+           "always None regardless of regime too")
 
-    loaded, _paths, _source = _load_store(REAL_STORE)
-    args = _args(store=REAL_STORE, subbench="email-specimen")
+    loaded, _paths, _source = _load_store(STORE)
+    # Confirm the premise directly against the fixture's own bytes: a
+    # matched-as-expected match-compliance row carries `observed: null`,
+    # the fact the whole correction rests on.
+    for rec in loaded:
+        for row in rec.rows:
+            if (row.get("kind") == "match" and row.get("regime") == "match-compliance"
+                    and row.get("match_outcome") == "matched-as-expected"):
+                _check(row.get("observed") is None,
+                       f"premise check: expected observed=null on a matched-as-expected "
+                       f"row, got {row.get('observed')!r} ({rec.path})")
+
+    args = _args(store=STORE, include_synthetic=True)
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check(md.count("matches: 40/85 (subjects whose expected outcome is a match") == 2,
-           f"expected the 40/85 note once for `orig` and once for `factored`:\n"
-           f"{[l for l in md.splitlines() if 'matches:' in l]}")
+    n_s_lines = [l for l in md.splitlines() if l.strip().startswith("- matches:")]
+    _check(n_s_lines and all("n/s" in l for l in n_s_lines),
+           f"every match-compliance group must state 'matches: n/s', got:\n{n_s_lines}")
+    _check("KB-2" in md, f"the n/s note must point at the tracked known issue:\n{n_s_lines}")
+    _check(not re.search(r"matches: \d+/\d+", md),
+           f"must never print a fabricated m/n fraction:\n{n_s_lines}")
 
-    # Not firing: the synthetic fixture store's sub-bench id names no real
-    # bench/<dir>/, so no note is printed for its match-compliance groups.
-    loaded_fx, _p, _s = _load_store(STORE)
-    args_fx = _args(store=STORE, include_synthetic=True)
-    rd_fx, err_fx = report.build_report(loaded_fx, args_fx)
-    _check(err_fx is None, f"unexpected refusal: {err_fx}")
-    md_fx = report.render_markdown(rd_fx)
-    _check("matches:" not in md_fx,
-           f"a synthetic sub-bench id must yield no matches note at all:\n{md_fx}")
+    # Not firing (regime-gated): the fixture store has exactly TWO
+    # match-compliance groups (p-digits, p-word) and no others -- so
+    # exactly two 'matches:' lines total, none attached to its
+    # short-subject-search groups.
+    _check(len(n_s_lines) == 2, f"expected exactly 2 'matches:' lines "
+           f"(p-digits, p-word match-compliance), got {len(n_s_lines)}: {n_s_lines}")
 
 
 def test_buffer_frame_legend_r4():
@@ -1523,18 +1547,60 @@ def test_floor_pattern_r9():
            f"absent a floor pattern, the honest [B9] note must stand unchanged:\n{md_plain}")
 
 
-def test_reporter_v3_r10():
-    """[B14] R10: the reporter bumps to v3 (2026-08-25); the header
-    carries it on every render."""
-    _check(report.REPORTER_VERSION == "v3 (2026-08-25)",
-           f"expected REPORTER_VERSION == 'v3 (2026-08-25)', got {report.REPORTER_VERSION!r}")
+def test_reporter_v4_r10():
+    """[B14] R10: the reporter bumps to v3 (2026-08-25), then AGAIN to v4
+    the same day for the KB-2 correction (R3, above) -- per this module's
+    own stated rule, a version bump whenever rendering changes so two
+    reports produced by different reporter code are never mistaken for
+    each other. The header carries v4 on every render."""
+    _check(report.REPORTER_VERSION == "v4 (2026-08-25)",
+           f"expected REPORTER_VERSION == 'v4 (2026-08-25)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v3 (2026-08-25)" in md, f"expected the v3 header line:\n{md[:200]}")
+    _check("reporter: v4 (2026-08-25)" in md, f"expected the v4 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v3 (2026-08-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v4 (2026-08-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+
+
+def test_floor_pattern_fixture_r9():
+    """[B14] R9, PROVEN THROUGH THE SHARED VALIDATOR (lead steer,
+    2026-08-25: "a fixture must prove the wired path"). Lane b15floor's
+    schema v1.3 (`patterns[].role`) is now on master, so this is no
+    longer bypass-only: `fixtures/floor_pattern/` is a REAL, schema-valid
+    record (accepted by `schema/validate.py` itself, not a hand-built
+    `LoadedRecord`) -- a copy of the existing `fixture-mini` libpcre2
+    record with a genuine `role: floor` pattern (`p-floor`, the literal
+    `@`, matching bench/email's own floor pattern in spirit) added
+    alongside its two `role: member` patterns (stated explicitly, the
+    schema default), with real compile/match rows and a recomputed
+    `content_hash`. Proves the SAME wiring `test_floor_pattern_r9`
+    (bypass technique) already covers, end to end through the real
+    loader/validator path this time."""
+    fixdir = os.path.join(FIXDIR, "floor_pattern", "store")
+    loaded, paths, _source = _load_store(fixdir)
+    _check(len(paths) == 1, f"expected exactly 1 record in the floor_pattern fixture, got {paths}")
+    _check(not loaded[0].problems,
+           f"the floor-pattern fixture must validate cleanly through schema/validate.py: "
+           f"{loaded[0].problems}")
+
+    args = _args(store=fixdir, include_synthetic=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    _check(rd.floor_pattern_by_sb.get("fixture-mini@1.0") == "p-floor",
+           f"expected the real record's role=floor pattern recognised, got {rd.floor_pattern_by_sb}")
+
+    md = report.render_markdown(rd)
+    floor_section = md.split("\n### `p-floor` / `short-subject-search`")[1].split("\n### `")[0]
+    _check("(floor control — per-call overhead, not a ranking of engines)" in floor_section,
+           f"the real floor-pattern record's own table must be retitled a control:\n{floor_section[:300]}")
+
+    # p-digits and p-word are role=member (stated explicitly) -- each
+    # gains a floor ns figure sourced from p-floor's own reduction.
+    digits_section = md.split("\n### `p-digits` / `short-subject-search`")[1].split("\n### `")[0]
+    _check("floor ns" in digits_section,
+           f"a member pattern in a real record with a floor pattern must gain the column:\n{digits_section}")
 
 
 TESTS = [
@@ -1579,7 +1645,8 @@ TESTS = [
     test_artifact_bytes_column_r7,
     test_legend_and_superseded_shortening_r8,
     test_floor_pattern_r9,
-    test_reporter_v3_r10,
+    test_floor_pattern_fixture_r9,
+    test_reporter_v4_r10,
 ]
 
 

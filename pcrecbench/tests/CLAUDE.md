@@ -99,6 +99,35 @@ which is expected and not a bug in this suite.
   above), `_mechanism_stamp_columns`,
   `_jitter_flag`, `_cross_pin_verdict`, `_parse_testee_config`,
   `report.resolve_subbench_arg`).
+
+  **[B14] additions (2026-08-25, 11 new tests, 42 total)**: one test per
+  R1-R10 ruling plus a fixture-validated proof for R9
+  (`test_plain_entry_capacities_r1`, `test_tiny_set_per_subject_subtable_r2`,
+  `test_matching_subject_count_r3`, `test_buffer_frame_legend_r4`,
+  `test_jitter_ratio_r5`, `test_worst_now_vs_largest_delta_r6`,
+  `test_artifact_bytes_column_r7`, `test_legend_and_superseded_shortening_r8`,
+  `test_floor_pattern_r9`, `test_floor_pattern_fixture_r9`,
+  `test_reporter_v4_r10`). R1/R2/R4/R7's firing cases go through
+  `REAL_STORE` (`os.path.join(report.REPO_ROOT, "store")`, the project's
+  own committed email-specimen sample) because they need REAL
+  `engine_metadata` stamps at two different pcrec pins that no synthetic
+  fixture reproduces. R3 was corrected SAME DAY, before merge (KB-2,
+  docs/dev/known_issues.md; manager steer): its first cut (exercised
+  against `REAL_STORE` + `bench/email/expectations.tsv`) read the
+  sub-bench sidecar live, which a report over a record from elsewhere
+  cannot do; the corrected version reads nothing but the record (which
+  turns out to carry no usable field either -- `pcrecbench.harness.
+  outcome_for` sets `observed = None` on `matched-as-expected` rows), so
+  `test_matching_subject_count_r3` now runs entirely against the
+  synthetic `fixtures/store/` and asserts the honest `matches: n/s`
+  line, plus a direct check that the fixture's own rows really do carry
+  `observed: null` (the premise the whole correction rests on). R5/R6/
+  R8/R9 (jitter/legend/cross-pin-delta/floor) go through hand-built
+  `LoadedRecord`s, the same bypass technique R3's [B9] `tier` tests used
+  -- R9 ALSO gets `test_floor_pattern_fixture_r9`, a REAL schema-valid
+  fixture file (`fixtures/floor_pattern/`) once lane b15floor's schema
+  v1.3 made `patterns[].role` legal, proving the wired path through
+  `schema/validate.py` itself, not just the bypass.
 - `fixtures/` -- the synthetic store this suite reads. See its own
   CLAUDE.md.
 - `__init__.py` -- makes this a package so
