@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v3 (2026-08-25)
+reporter: v4 (2026-08-25)
 
 ## Query
 
@@ -31,7 +31,7 @@ reporter: v3 (2026-08-25)
 
 ### `factored` / `s-000` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -63,7 +63,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-001` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -95,7 +95,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-002` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -127,7 +127,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-003` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -159,7 +159,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-004` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -191,7 +191,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-005` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -223,7 +223,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-006` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -255,7 +255,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-007` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -287,7 +287,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-008` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -319,7 +319,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-009` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -351,7 +351,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-010` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -383,7 +383,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-011` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -415,7 +415,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-012` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -447,7 +447,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-013` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -479,7 +479,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-014` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -511,7 +511,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-015` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -543,7 +543,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-016` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -575,7 +575,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-017` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -607,7 +607,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-018` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -639,7 +639,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-019` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -671,7 +671,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-020` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -703,7 +703,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-021` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -735,7 +735,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-022` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -767,7 +767,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-023` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -799,7 +799,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-024` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -831,7 +831,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-025` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -863,7 +863,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-026` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -895,7 +895,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-027` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -927,7 +927,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-028` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -959,7 +959,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-029` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -991,7 +991,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-030` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1023,7 +1023,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-031` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1055,7 +1055,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-032` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1087,7 +1087,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-033` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1119,7 +1119,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-034` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1151,7 +1151,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-035` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1183,7 +1183,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-036` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1215,7 +1215,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-037` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1247,7 +1247,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-038` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1279,7 +1279,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-039` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1311,7 +1311,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-040` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1343,7 +1343,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-041` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1375,7 +1375,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-042` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1407,7 +1407,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-043` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1439,7 +1439,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-044` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1471,7 +1471,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-045` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1503,7 +1503,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-046` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1535,7 +1535,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-047` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1567,7 +1567,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-048` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1599,7 +1599,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-049` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1631,7 +1631,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-050` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1663,7 +1663,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-051` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1695,7 +1695,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-052` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1727,7 +1727,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-053` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1759,7 +1759,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-054` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1791,7 +1791,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-055` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1823,7 +1823,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-056` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1855,7 +1855,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-057` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1873,7 +1873,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-058` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1887,7 +1887,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-059` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1901,7 +1901,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-060` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1919,7 +1919,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-061` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1933,7 +1933,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-062` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1951,7 +1951,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-063` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1965,7 +1965,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-064` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1979,7 +1979,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-065` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2011,7 +2011,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-066` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2043,7 +2043,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-067` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2075,7 +2075,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-068` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2107,7 +2107,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-069` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2139,7 +2139,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-070` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2171,7 +2171,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-071` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2203,7 +2203,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-072` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2235,7 +2235,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-073` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2267,7 +2267,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-074` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2299,7 +2299,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-075` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2331,7 +2331,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-076` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2363,7 +2363,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-077` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2395,7 +2395,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-078` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2427,7 +2427,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-079` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2459,7 +2459,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-080` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2491,7 +2491,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-081` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2523,7 +2523,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-082` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2555,7 +2555,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-083` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2587,7 +2587,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-084` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2655,7 +2655,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-000` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2687,7 +2687,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-001` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2719,7 +2719,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-002` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2751,7 +2751,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-003` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2783,7 +2783,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-004` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2815,7 +2815,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-005` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2847,7 +2847,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-006` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2879,7 +2879,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-007` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2911,7 +2911,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-008` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2943,7 +2943,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-009` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2975,7 +2975,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-010` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3007,7 +3007,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-011` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3039,7 +3039,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-012` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3071,7 +3071,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-013` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3103,7 +3103,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-014` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3135,7 +3135,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-015` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3167,7 +3167,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-016` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3199,7 +3199,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-017` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3231,7 +3231,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-018` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3263,7 +3263,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-019` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3295,7 +3295,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-020` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3327,7 +3327,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-021` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3359,7 +3359,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-022` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3391,7 +3391,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-023` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3423,7 +3423,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-024` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3455,7 +3455,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-025` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3487,7 +3487,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-026` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3519,7 +3519,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-027` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3551,7 +3551,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-028` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3583,7 +3583,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-029` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3615,7 +3615,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-030` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3647,7 +3647,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-031` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3679,7 +3679,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-032` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3711,7 +3711,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-033` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3743,7 +3743,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-034` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3775,7 +3775,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-035` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3807,7 +3807,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-036` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3839,7 +3839,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-037` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3871,7 +3871,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-038` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3903,7 +3903,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-039` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3935,7 +3935,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-040` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3967,7 +3967,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-041` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3999,7 +3999,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-042` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4031,7 +4031,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-043` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4063,7 +4063,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-044` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4095,7 +4095,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-045` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4127,7 +4127,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-046` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4159,7 +4159,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-047` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4191,7 +4191,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-048` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4223,7 +4223,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-049` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4255,7 +4255,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-050` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4287,7 +4287,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-051` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4319,7 +4319,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-052` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4351,7 +4351,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-053` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4383,7 +4383,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-054` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4415,7 +4415,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-055` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4447,7 +4447,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-056` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4479,7 +4479,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-057` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4497,7 +4497,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-058` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4515,7 +4515,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-059` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4533,7 +4533,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-060` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4551,7 +4551,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-061` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4569,7 +4569,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-062` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4587,7 +4587,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-063` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4605,7 +4605,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-064` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4623,7 +4623,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-065` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4655,7 +4655,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-066` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4687,7 +4687,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-067` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4719,7 +4719,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-068` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4751,7 +4751,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-069` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4783,7 +4783,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-070` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4815,7 +4815,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-071` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4847,7 +4847,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-072` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4879,7 +4879,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-073` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4911,7 +4911,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-074` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4943,7 +4943,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-075` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4975,7 +4975,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-076` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -5007,7 +5007,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-077` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -5039,7 +5039,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-078` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -5071,7 +5071,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-079` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -5103,7 +5103,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-080` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -5135,7 +5135,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-081` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -5167,7 +5167,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-082` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -5199,7 +5199,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-083` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -5231,7 +5231,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-084` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
-- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+- matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 

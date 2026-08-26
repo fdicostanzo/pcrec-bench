@@ -201,19 +201,24 @@ second reading of the reporter-v2 re-pin rendering -- "still missing"
   a set this small. Every `large-subject-throughput` ranking row also
   gains its own `ns/byte` beside `ns/call`, the way `short-subject-
   search` already carries a per-subject mean.
-* R3 -- MATCHING-SUBJECT COUNT. A `match-compliance` ranking group gets
-  a `matches: m/n` note -- m subjects of n whose GROUND-TRUTH
-  expectation is a match. The record itself carries no such fact by
-  design (record_schema.md 10.3: "the expectation lives in the sub-
-  bench; the record says which outcome was observed against it") --
-  `match_outcome: matched-as-expected` agrees with a `nomatch`
-  expectation exactly as often as a `match` one (`harness.outcome_for`:
-  the test is `row.matched != expectation.matched`, symmetric in both
-  directions). So this reads the sub-bench's OWN `expectations.tsv`
-  through `pcrecbench.subbench` -- best-effort: a sub-bench id that
-  resolves to no real `bench/<dir>/` (every fixture here) or whose
-  expectations are unavailable yields no note at all, never a fabricated
-  count (`_matching_subject_count`/`_load_subbench_for_report`).
+* R3 -- MATCHING-SUBJECT COUNT, CORRECTED (KB-2, docs/dev/
+  known_issues.md; manager steer 2026-08-25). A `match-compliance`
+  ranking group gets a `matches: m/n` note when derivable -- m subjects
+  of n whose GROUND-TRUTH expectation is a match -- and `matches: n/s`
+  otherwise. This ruling's FIRST cut read the sub-bench's own
+  `expectations.tsv` through `pcrecbench.subbench`; superseded, because
+  the reporter must work from RECORDS ALONE (a record measured on
+  another box, or against a later sub-bench version, has no sidecar
+  checkout to read beside it). The record itself carries no field this
+  can be derived from EITHER, for the common case: `harness.outcome_for`
+  sets `observed = None` on a `matched-as-expected` row (record_schema.md
+  10.3: "the expectation lives in the sub-bench; the record says which
+  outcome was observed against it" -- this is schema working as
+  designed), so `_matching_subject_count` returns `None` (rendered as
+  `n/s`) until a schema/harness change gives a match row a real
+  expected-answer field. See its docstring for the full reasoning
+  (including why inferring `m` from only the disagreeing minority, where
+  `observed.matched` IS populated, would systematically undercount it).
 * R6 -- WORST NOW vs LARGEST DELTA. The [B9] "Delta detail: worst
   subject" line named the NEW record's slowest subject, worded as if it
   were the subject whose Delta was biggest -- not always the same
@@ -239,6 +244,15 @@ second reading of the reporter-v2 re-pin rendering -- "still missing"
 * R10 -- reporter bumps to `v3 (2026-08-25)`; every committed report
   under `reports/` is regenerated against it (`reports/CLAUDE.md` notes
   what changed).
+
+KB-2 correction (same day, before final merge): R3's sub-bench-reading
+first cut is replaced by the record-only version above; `REPORTER_VERSION`
+bumps again to `v4 (2026-08-25)` per this module's own stated rule
+("bump whenever rendering changes so a reader can tell two reports
+produced by different reporter code apart even when the query is
+identical") -- a `v3`-labelled report from before this fix and a
+`v4`-labelled one after it disagree on every `match-compliance` group's
+`matches:` line, and the version string is what tells them apart.
 """
 
 from __future__ import annotations
@@ -253,17 +267,11 @@ import sys
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 
-# [B14] R3: read-only use of the sibling `subbench` module to reach a
-# sub-bench's OWN ground-truth `expectations.tsv` (record_schema.md 10.3:
-# the record itself carries no such fact). This reporter does not own
-# subbench.py (harness-lane territory) and never writes through it.
-from pcrecbench import subbench  # noqa: E402
-
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v3 (2026-08-25)"
+REPORTER_VERSION = "v4 (2026-08-25)"
 
 _MISSING = object()
 
@@ -1046,82 +1054,37 @@ def _group_subject_ids(rd: "ReportData", sb, pattern_id, regime):
     return sorted(ids)
 
 
-_subbench_by_id_cache = {}
+def _matching_subject_count(rd: "ReportData", sb, pattern_id, regime, subject_ids):
+    """[B14] R3, CORRECTED (KB-2, docs/dev/known_issues.md; manager steer
+    2026-08-25, superseding this ruling's first cut which read `bench/
+    <dir>/expectations.tsv` through `pcrecbench.subbench`). The reporter
+    works from RECORDS alone -- a record measured on another box, or
+    against a later sub-bench version, has no sidecar checkout to read
+    beside it, so a reporter that reaches into `bench/` to answer a query
+    is answering from the WRONG machine's sub-bench tree in that case.
 
+    But the record genuinely carries no field this can be derived from
+    either, for the common case: `pcrecbench.harness.outcome_for` sets
+    `observed = None` on a `matched-as-expected` row (checked against
+    real data -- every `orig`/`match-compliance` row in store/records/
+    email-specimen@0.1/libpcre2_..._interp-.../*.jsonl carries `"observed":
+    null`), and `matched-as-expected` is ~85-95% of a compliance cell's
+    subjects. `observed.matched` is populated only on a DISAGREEING row
+    (`did-not-match-as-expected` / `wrong-span-or-captures`) -- exactly
+    the subjects a per-subject ground-truth count must NOT be built from
+    alone: inferring `m` from only the handful that disagree, while the
+    agreeing majority stays silent, would systematically undercount `m`
+    by construction, not merely sample it. record_schema.md 10.3 states
+    the design intent plainly: "the expectation lives in the sub-bench;
+    the record says which outcome was observed against it" -- this is
+    schema working as designed, not a bug a reporter-side inference
+    should paper over.
 
-def _load_subbench_for_report(sb_id, repo_root=REPO_ROOT):
-    """[B14] R3: best-effort resolution of a sub-bench ID (e.g.
-    `email-specimen`) to its loaded `bench/<dir>/` -- the REVERSE of
-    `resolve_subbench_arg` (which goes directory -> id for `--subbench`).
-    Cached per id (the walk is cheap but repeated once per ranking group
-    otherwise). Returns `None`, NEVER raises, when no `bench/<dir>/`
-    declares this id, or the directory fails to load (missing
-    `expectations.tsv`, a malformed sidecar, etc.) -- every fixture sub-
-    bench id here (`fixture-mini`, `rb-mini`, ...) names no real
-    directory, and that is a normal, expected case, not a reporter
-    error."""
-    if sb_id in _subbench_by_id_cache:
-        return _subbench_by_id_cache[sb_id]
-    result = None
-    bench_root = os.path.join(repo_root, "bench")
-    if os.path.isdir(bench_root):
-        for dirname in sorted(os.listdir(bench_root)):
-            toml_path = os.path.join(bench_root, dirname, "subbench.toml")
-            if not os.path.isfile(toml_path):
-                continue
-            try:
-                import tomllib
-                with open(toml_path, "rb") as fh:
-                    data = tomllib.load(fh)
-            except Exception:
-                continue
-            if data.get("id") == sb_id:
-                try:
-                    result = subbench.find(dirname, bench_root)
-                except Exception:
-                    result = None
-                break
-    _subbench_by_id_cache[sb_id] = result
-    return result
-
-
-def _matching_subject_count(sb_full_id, pattern_id, regime, subject_ids):
-    """[B14] R3: (m, n) -- of `subject_ids` (one ranking group's own
-    subjects, from `_group_subject_ids`), how many have a GROUND-TRUTH
-    expectation of `match` for (pattern_id, regime) in the sub-bench's
-    OWN `expectations.tsv`. Only meaningful for `match-compliance`: the
-    record's `match_outcome` cannot answer this (record_schema.md 10.3 --
-    `matched-as-expected` agrees with a `nomatch` expectation exactly as
-    often as a `match` one; see `pcrecbench.harness.outcome_for`, whose
-    test is symmetric: `row.matched != expectation.matched`). Returns
-    `None` (never a fabricated count) when the regime is not
-    `match-compliance`, the sub-bench cannot be resolved
-    (`_load_subbench_for_report`), or it has no expectation rows at all
-    for this (pattern, regime) -- e.g. `gen_expectations.py` has not run,
-    or every fixture sub-bench here, which names no real `bench/<dir>/`."""
-    if regime != "match-compliance":
-        return None
-    sb_id = sb_full_id.split("@", 1)[0]
-    sub = _load_subbench_for_report(sb_id)
-    if sub is None:
-        return None
-    short_regime = subbench.ENUM_TO_REGIME.get(regime)
-    if short_regime is None:
-        return None
-    m = n = 0
-    try:
-        for sid in subject_ids:
-            exp = sub.expectation(pattern_id, sid, short_regime)
-            if exp is None:
-                continue
-            n += 1
-            if exp.matched:
-                m += 1
-    except subbench.SubbenchError:
-        return None
-    if n == 0:
-        return None
-    return m, n
+    So: `None`, always, until a schema/harness change gives a match row a
+    real expected-answer field (KB-2's owner is "the next reporter row",
+    which is a harness/schema change first). The caller renders `matches:
+    n/s` rather than a fabricated or silently-dropped figure."""
+    return None
 
 
 # ---------------------------------------------------------------- the run
@@ -1637,21 +1600,27 @@ def render_markdown(rd: ReportData):
             title += " (floor control — per-call overhead, not a ranking of engines)"
         out.append(title + "\n")
 
-        # [B14] R3: the matching-subject count, `match-compliance` only --
-        # the record itself cannot answer this (see `_matching_subject_
-        # count`'s docstring), so it comes from the sub-bench's own
-        # `expectations.tsv` and is silently omitted when that cannot be
-        # resolved (every fixture sub-bench here, or a real one queried
-        # before `gen_expectations.py` has run).
+        # [B14] R3, CORRECTED (KB-2): the matching-subject count,
+        # `match-compliance` only. The record carries no field this can
+        # be derived from for the common `matched-as-expected` case (see
+        # `_matching_subject_count`'s docstring) -- reading the sub-bench
+        # sidecar instead would tie a report to a checkout the record it
+        # is reporting on need not have been measured against, so this
+        # states the honest `n/s` rather than either reading `bench/` or
+        # silently dropping the line.
         if regime == "match-compliance":
             subject_ids_for_count = [subject_id] if subject_id is not None \
                 else _group_subject_ids(rd, sb, pattern_id, regime)
-            mc = _matching_subject_count(sb, pattern_id, regime, subject_ids_for_count)
+            mc = _matching_subject_count(rd, sb, pattern_id, regime, subject_ids_for_count)
             if mc:
                 m_count, n_count = mc
                 out.append(f"- matches: {m_count}/{n_count} (subjects whose expected "
                             f"outcome is a match; record_schema.md 10.3 — ground truth "
                             f"lives in the sub-bench, not the record)\n")
+            else:
+                out.append("- matches: n/s (the record carries no expected-answer field "
+                            "for its common `matched-as-expected` rows -- KB-2, "
+                            "docs/dev/known_issues.md)\n")
 
         if rankable:
             rankable.sort(key=lambda tfr: tfr[2].median_ns)
