@@ -66,6 +66,16 @@ must reject, in the same run that exercises it against one it must accept.
                 clean one; a missing $PCREC_BIN is a clean error naming the
                 variable; a quick cell runs; `run --store <canonical>` is
                 REFUSED.
+  floor pattern (v1.3, [B15]) bench/email's `role: floor` pattern: the
+                sidecar assigns exactly one floor and the other two patterns
+                `member`; a real quick cell's record carries `role: "floor"`
+                on the right pattern; the schema's X30 rejects a record
+                declaring TWO floor patterns; and both drivers (pcre2,
+                pcrec) agree with the oracle on it -- nomatch on a subject
+                with no `@`, the first `@`'s span on one that has one.
+  KB-1          (docs/dev/known_issues.md, FIXED) pcrec-auto's
+                runtime_options pairs `--features` with `all`, not `true`
+                with `all` silently dropped.
 
 Everything runs under gnutimeout with LC_ALL=C. Nothing here writes into the
 real store: the smoke uses a scratch store under the build tree.
@@ -1459,6 +1469,142 @@ def check_pcrec_local():
         shutil.rmtree(canon, ignore_errors=True)
 
 
+# ------------------------------------------------------- 13 the floor pattern
+
+def check_floor_pattern():
+    """[B15] R5: bench/email's FLOOR pattern (`patterns/floor.rx`, sidecar
+    `role = "floor"`, schema v1.3) actually reaches a real record, the
+    schema refuses a SECOND floor pattern (X30), and both drivers agree
+    with the oracle on it: nomatch on a subject with no `@`, the first
+    `@`'s span on one that has one."""
+    print("-- the floor pattern (role: floor, schema v1.3) --")
+    sb = Subbench(BENCH)
+    floor, orig, factored = (sb.pattern("floor"), sb.pattern("orig"),
+                             sb.pattern("factored"))
+    if floor.role == "floor" and orig.role == "member" \
+            and factored.role == "member":
+        ok("sidecar role: exactly one floor, the rest member",
+           "floor=%s orig=%s factored=%s" % (floor.role, orig.role, factored.role))
+    else:
+        bad("sidecar role: exactly one floor, the rest member",
+            "floor=%r orig=%r factored=%r" % (floor.role, orig.role, factored.role))
+
+    # role REACHES THE RECORD, through a real (scratch-tier) quick cell.
+    from pcrecbench import reduce as _rd
+    import glob as _glob
+    scratch = os.path.join(ROOT, "build", "selfcheck-floor-store")
+    shutil.rmtree(scratch, ignore_errors=True)
+    proc = run(["gnutimeout", "300", sys.executable, "-m", "pcrecbench",
+                "quick", "--subbench", "email", "--pattern", "floor",
+                "--regime", "search", "--testee", "pcre2-jit",
+                "--subjects", "5", "--trials", "1",
+                "--store", scratch, "--synthetic", "--quiet-output"],
+               cwd=ROOT, timeout=330)
+    if proc.returncode != 0:
+        bad("a floor-pattern quick cell completes",
+            (proc.stderr or proc.stdout).strip()[-300:])
+    else:
+        files = sorted(_glob.glob(os.path.join(scratch, "records", "*", "*",
+                                                "*.jsonl")))
+        setup, _rows = _rd.read_record(files[0]) if files else ({}, [])
+        roles = {p.get("pattern_id"): p.get("role")
+                 for p in setup.get("patterns", [])}
+        if roles.get("floor") == "floor":
+            ok("patterns[].role: 'floor' reaches a real record", "roles %s" % roles)
+        else:
+            bad("patterns[].role: 'floor' reaches a real record", "roles %s" % roles)
+    shutil.rmtree(scratch, ignore_errors=True)
+
+    # X30: a record declaring TWO floor-role patterns is rejected.
+    f = os.path.join(ROOT, "schema", "examples", "bad",
+                     "x30-two-floor-patterns.jsonl")
+    proc = _validate(["--expect-reject", "--expect-rule", "X30", f])
+    if proc.returncode == 0 and os.path.exists(f):
+        ok("X30 control rejected (two role: floor patterns)", os.path.basename(f))
+    else:
+        bad("X30 control rejected (two role: floor patterns)",
+            (proc.stderr or proc.stdout).strip()[-300:])
+
+    # both drivers agree with the oracle on the floor pattern: nomatch on a
+    # subject with no `@`, the first `@`'s span on one that has one.
+    no_at = has_at = None
+    for s in sb.subjects_for("search_short"):
+        body = sb.subject_bytes(s.subject_id)
+        if no_at is None and b"@" not in body:
+            no_at = s
+        elif has_at is None and b"@" in body:
+            has_at = s
+        if no_at and has_at:
+            break
+    if not (no_at and has_at):
+        bad("floor test subjects found (one with @, one without)",
+            "no_at=%s has_at=%s" % (no_at, has_at))
+        return
+    for engine, testee in (("pcre2", "pcre2-jit"), ("pcrec", "pcrec-auto")):
+        adapter = _ad.discover().get(engine)
+        if adapter is None:
+            bad("%s answers the floor pattern by the oracle" % engine, "no adapter")
+            continue
+        tmp = tempfile.mkdtemp(prefix="pcrecbench-floor-")
+        try:
+            adapter.prepare(testee, tmp)
+            cr = adapter.compile(testee, "floor", sb.pattern_bytes("floor"),
+                                 {}, 1, tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                bad("%s answers the floor pattern by the oracle" % engine,
+                    "%s: %s" % (cr.outcome, cr.diagnostic))
+                continue
+            rows_by_trial, _i, _n = adapter.measure(
+                dict(cr.handle), "search_short", [no_at, has_at], 1, 1,
+                timeout=120)
+            rows = {r.subject_id: r for r in rows_by_trial[0]}
+            exp_no = sb.expectation("floor", no_at.subject_id, "search_short")
+            exp_has = sb.expectation("floor", has_at.subject_id, "search_short")
+            got_no, _o, _d = outcome_for(rows[no_at.subject_id], exp_no,
+                                         "search_short", no_at)
+            got_has, _o, _d = outcome_for(rows[has_at.subject_id], exp_has,
+                                          "search_short", has_at)
+            if got_no == "matched-as-expected" and got_has == "matched-as-expected":
+                ok("%s answers the floor pattern by the oracle" % engine,
+                   "nomatch on %s (%dB), [%s,%s) on %s"
+                   % (no_at.subject_id, no_at.length, exp_has.start,
+                      exp_has.end, has_at.subject_id))
+            else:
+                bad("%s answers the floor pattern by the oracle" % engine,
+                    "no-@ (%s): %s; has-@ (%s): %s"
+                    % (no_at.subject_id, got_no, has_at.subject_id, got_has))
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_kb1_runtime_options():
+    """KB-1 (docs/dev/known_issues.md), FIXED: `testees/pcrec/adapter.py`'s
+    `runtime_options()` must pair a BARE flag with the token that FOLLOWS
+    it, not stamp `True` and lose the value. `pcrec-auto`'s own flags are
+    `["--features", "all"]`, so its describe() must show `{"name":
+    "--features", "value": "all"}` -- not `{"value": true}` with `all`
+    silently dropped (still legible only in `build_flags` as free text)."""
+    print("-- KB-1: runtime_options pairs a bare flag with its value --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("KB-1 fixed: --features pairs with 'all'", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-kb1-")
+    try:
+        adapter.prepare("pcrec-auto", tmp)
+        block = adapter.describe("pcrec-auto", tmp)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    opts = {o.get("name"): o.get("value") for o in block.get("runtime_options", [])}
+    if opts.get("--features") == "all":
+        ok("KB-1 fixed: pcrec-auto's --features pairs with 'all'",
+           "runtime_options %s" % block.get("runtime_options"))
+    else:
+        bad("KB-1 fixed: pcrec-auto's --features pairs with 'all'",
+            "runtime_options %s" % block.get("runtime_options"))
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -1478,6 +1624,8 @@ def main():
     check_reduction()
     check_quick()
     check_pcrec_local()
+    check_floor_pattern()
+    check_kb1_runtime_options()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))
