@@ -16,12 +16,15 @@ immediately after a regeneration — the reporter is deterministic, so a
 non-empty diff after a bare rerun (no query change, no reporter change)
 means either the store changed or the reporter regressed determinism.
 
-Both sample sets below were regenerated at [B9] (2026-08-25) against
-reporter `v2 (2026-08-25)`: new columns (`status`, `fact`, `vs best`,
-mechanism stamps, phase splits, etc. — see `pcrecbench/report.py`'s
-module docstring for the full R1-R9 ruling list) mean these files no
-longer diff byte-identical against their pre-[B9] versions, but each
-still answers the SAME query as before.
+Both sample sets below were regenerated at [B14] (2026-08-25) against
+reporter `v3 (2026-08-25)` (previously regenerated at [B9] against `v2`):
+each regeneration means these files no longer diff byte-identical
+against the previous reporter's versions, but each still answers the
+SAME query as before — see `pcrecbench/report.py`'s module docstring for
+the full ruling list ([B9]'s R1-R9, [B14]'s R1-R10 — the two ruling sets
+share numbers by coincidence of two separate `R1`..`R9` sequences, not by
+design; read each set's own dated section) and the note below for what
+[B14] changed in these files specifically.
 
 - `2026-08-25-email-specimen-0.1-budu-ryzen1600.md` — the FIRST
   PRODUCTION SAMPLE: email-specimen@0.1 × {pcre2-interp, pcre2-jit,
@@ -56,6 +59,45 @@ still answers the SAME query as before.
   `docs/dev/feedback_pcrecdev1_2026-08-25-repin.md` (the pcrec manager's
   reading that became [B9]'s R1-R9 rulings) and
   `docs/dev/feedback_pcrecdev1_2026-08-25.md`.
+
+**[B14] (2026-08-25) regenerated both sample sets against reporter `v3
+(2026-08-25)`** — docs/dev/feedback_pcrecdev1_2026-08-25-repin-v2.md (the
+pcrec manager's second reading of the v2 rendering) was the spec, rulings
+R1-R10 (`pcrecbench/report.py`'s module docstring has the full list; the
+summary that matters for reading these files):
+
+- a compile-cost table's per-testee CONSTANT facts (`engine`, `entry`,
+  `prefilter`, `vm_rungs`, and the buffer/frame facts below) moved OFF
+  the table into a one-line-per-testee LEGEND printed above it (R8) — a
+  reader now checks the legend once per testee, not once per row;
+- a plain-entry compile row states the STAMPED DEFAULT capacity it
+  actually runs on (`buffers=2048/3072 (stamped default)`), not a blank
+  (R1); the legend's `buffers`/`frame` facts read `n/s` (nothing stamped
+  at that pin) or `0 (DFA)` (stamped, and zero because a DFA artifact
+  takes no buffers) — never a bare `-`/`0` standing for either (R4);
+- `jitter` is a computed ratio (`stddev/median`) or `timer-floor` under a
+  20-microsecond floor, not a boolean, and the column disappears from a
+  table where every row comes back empty rather than printing a wall of
+  blanks (R5);
+- every compile-cost row carries its `artifact bytes` (R7);
+- a `large-subject-throughput` ranking row carries `ns/byte` beside
+  `ns/call`, and a set of <=3 subjects (every throughput cell today)
+  gets its own per-subject sub-table under the ranking row (R2);
+- a `match-compliance` ranking group states `matches: m/n` — subjects
+  whose GROUND TRUTH (`bench/email/expectations.tsv`, read live, not
+  stored in the record) expects a match (R3);
+- a cross-pin `Δ detail` line names `worst now` and, only when it is a
+  DIFFERENT subject, `largest Δ` beside it, instead of one ambiguous
+  "worst subject" (R6);
+- the Query header's superseded-record list collapsed to one summary
+  line (`--all-records` still lists every id) (R8).
+
+R9 (a `role: floor` pattern's short-subject-search table retitled a
+per-call overhead CONTROL, with a `floor ns` figure on every other
+pattern's row) has no fixture in these files yet — `bench/email` declares
+no floor pattern as of this regeneration; it is coded and tested
+(`pcrecbench/tests/test_report.py`) against hand-built records, ready for
+the day one lands.
 
 **A note on what [B9]'s own rulings changed in this store's numbers**:
 applying R1 (OD-B14: a non-`measured` row is excluded from ranking by
