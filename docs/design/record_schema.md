@@ -190,6 +190,7 @@ migration exists. Concretely, and enforced by `validate.py`:
 | 1.0 | 2026-08-25 | draft 1, merged |
 | 1.1 | 2026-08-25 | the post-merge panel's twelve findings (§11) |
 | 1.2 | 2026-08-25 | the RECORD TIERS ([B10], inbox I-4): optional `tier` (`pinned`/`scratch`, absent = `pinned`), optional `testee.binary` {path, sha256}, the `local:` shape of `engine_version`, rules X28/X29, X22 exempts `local:` (§6.2, §6.8) |
+| 1.3 | 2026-08-25 | the FLOOR PATTERN ([B15], pcrecdev1's feedback item 1(d)): optional `patterns[].role` (`member`/`floor`, absent = `member`), rule X30 (at most one `floor` pattern per record) |
 
 **1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
 the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
@@ -231,6 +232,16 @@ an older MINOR — `schema/examples/bad/x10-cost-class-mismatch.jsonl` is
 stamped `1.0` while carrying 1.1's fields, deliberately, so that branch
 has a live example and nobody "fixes" the minor comparison into
 strictness.
+
+**1.2 → 1.3 is a MINOR bump by the rule, with no exception needed**
+([B15], 2026-08-25). It adds one OPTIONAL field (`patterns[].role`,
+`member`/`floor`, absent = `member`) and one rule (X30) that can only
+fire on a record carrying two or more `role: floor` entries. Every 1.1
+and 1.2 record validates unchanged under 1.3 — an absent `role` reads
+as `member`, which is what every earlier record was — and `make
+check-schema` proves it on the 1.1 and 1.2 examples, which are
+deliberately left stamped at their own versions (the same reasoning
+1.1 → 1.2 gave for leaving the 1.1 examples alone).
 
 ## 5. The fixed enums (OD-B4 (a))
 
@@ -278,6 +289,7 @@ The enums, in full:
 | `hazard_class` | `none` `exponential-backtracking` `ambiguous-decomposition` `exact-minimum-boundary` `large-count` `wide-alternation` | §5 list + APPROACH §3 |
 | `size_class` | `tiny` `small` `medium` `large` `huge` | APPROACH §3 |
 | `role` (subject) | `single` `set` | §6 ("subject-or-subject-set") |
+| `role` (pattern) | `member` `floor` | ADDITION (v1.3, [B15]; §5 ADDITIONS 7) |
 | `capture_correspondence.mode` | `identical` `by-name` `by-index-map` `not-applicable` | §4.5, R1 finding B2 |
 | `engine_metadata_declaration.*.type` | `enum` `integer` `string` `mask` | ADDITION (§7) |
 | `engine_metadata_declaration.*.scope` | `pattern` `match` | ADDITION (§7) |
@@ -367,6 +379,20 @@ The enums, in full:
 6. **`load.verdict`, `pinning.mode`, `role`, and the two
    `engine_metadata_declaration` enums** are new names for facts §9,
    §6 and §4.2 require to be recorded but do not name.
+7. **`role` (pattern) exists at all: `member` and `floor`.** ADOPTED at
+   v1.3 (2026-08-25), from pcrecdev1's reading of the first production
+   sample (`docs/dev/feedback_pcrecdev1_2026-08-25.md` item 1(d)): "a
+   per-call FLOOR control in every short-subject set (a one-literal
+   pattern on the same subjects) reported beside the number, so 6.13 us
+   over 77 subjects (80 ns/subject) reads against the harness's own
+   overhead." Without a field naming which pattern plays that role, a
+   reporter has to know it by convention (a pattern id, a tag it reads
+   prose out of) rather than filter on it. ABSENT means `member`, so
+   every pre-1.3 record keeps its meaning; X30 requires the floor to be
+   SINGULAR, because a set with two baselines has no one number to read
+   the rest against. `bench/email`'s is a one-byte literal `@`
+   (`patterns/floor.rx`), the first sub-bench to declare one — see its
+   `NOTES.md` "The floor pattern" section for what it is and is not.
 
 `engine_mode` is deliberately NOT a fixed enum: §4.3 gives its values
 as "auto/dfa/vm/... per engine", which is per-engine by construction. It
@@ -798,6 +824,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `patterns[].size_class` | enum | R | COPIED; FILTERABLE | as above |
 | `patterns[].tags` | array of string | o | DIAGNOSTIC | the sub-bench's other tags, carried but not filtered until they are enumerated |
 | `patterns[].variant` | object/null | R | `null` = this testee runs the canonical text | §4.5: a variant is "never a silent fork" — the record states one either way |
+| `patterns[].role` | enum | o | `member` (the default when ABSENT) / `floor`; FILTERABLE. X30: at most one `floor` per record | v1.3 ADDITION ([B15], §5 ADDITIONS 7): a sub-bench may mark ONE pattern its per-call FLOOR so a set's summed timing reads against the harness's own per-call overhead, rather than floating unanchored |
 | `patterns[].variant.kind` | enum | R | `syntax-only`/`restructured`; informational | §4.5; OD-B5 ruled it informational |
 | `patterns[].variant.text` | string | R | REPRODUCIBILITY-ONLY | §4.5 "the variant text/options" |
 | `patterns[].variant.options` | array of `{name,value}` | o | the variant's own runtime options | §4.5 "Runtime OPTION differences … are variants of the same kind" |
@@ -935,6 +962,7 @@ both ways before being believed.
 | X27 | A match row with `form` = `whole-subject` has a `whole-subject` compile row for its pattern | §5 ADDITIONS 3. X11's provenance argument for the untimed case too: the second artifact is a separate compile, and a match against an artifact the record never witnessed compiling has no provenance whether or not it carries a number |
 | X28 | A `testee.engine_version` of the `local:` shape (§6.2) requires `tier` = `scratch` (absent `tier` is `pinned`, and is rejected) | §6.8 (v1.2), I-4: a local binary can never be pinned. Without it a lane could bench a dirty worktree and file the number as canonical |
 | X29 | `tier` = `scratch` requires `testee.binary` = {`path`, `sha256` (64 hex)} | §6.8 (v1.2), I-4's "plus what the binary was": a scratch record's only engine identity is the file, so the record must name it |
+| X30 | At most one entry in `patterns[]` has `role` = `floor` | §5 ADDITIONS 7 (v1.3): the floor pattern's whole point is a SINGLE per-call baseline the rest of the set reads against; two of them leave that baseline ambiguous |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each

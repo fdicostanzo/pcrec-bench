@@ -8,7 +8,8 @@ statically"). This directory owns that format.
 
 The DESIGN lives in `../docs/design/record_schema.md` — every field, why
 it exists, the enums, the normalization rules, the cross-line rules
-X1..X29, the record tiers (§6.8), and the open questions. Read it before changing anything here;
+X1..X30, the record tiers (§6.8), the floor-pattern role (§5 ADDITIONS
+7), and the open questions. Read it before changing anything here;
 the files below are its implementation and `make check-schema` fails if
 they and the note disagree.
 
@@ -18,11 +19,13 @@ they and the note disagree.
   per line kind (`setup`, `match_row`, `compile_row`); the root is their
   `oneOf`, so a generic tool can validate a line without knowing which
   it is. `x-record-schema-version` at the root is the version this
-  schema IMPLEMENTS (1.2), which is what `validate.py` compares a file's
+  schema IMPLEMENTS (1.3), which is what `validate.py` compares a file's
   `schema_version` against. v1.2 added the two optional TIER fields
   (`tier`, `testee.binary`) and the `local:` shape of `engine_version`
-  ([B10]); every 1.1 record still validates, and the 1.1 examples are
-  left stamped 1.1 to prove it.
+  ([B10]); v1.3 added optional `patterns[].role` (`member`/`floor`,
+  absent = `member`, [B15]); every 1.1 and 1.2 record still validates,
+  and the older examples are left stamped at their own versions to
+  prove it.
 - `validate.py` — the validator the harness and the reporter share
   (requirements §6). Per-line schema validation PLUS the cross-line
   rules a schema cannot express, PLUS the three normalization rules of
@@ -34,7 +37,8 @@ they and the note disagree.
   `--check-filename` (rule X4), `--allow-mixed-versions` (rule X17),
   `--print-hash` (restamp an edited example). Rules X28/X29 (v1.2) are
   the tier rules: a `local:` binary is never `pinned`, and a `scratch`
-  record says what its binary was.
+  record says what its binary was. Rule X30 (v1.3) is the floor-pattern
+  rule: at most one `patterns[]` entry may carry `role: floor`.
 - `check_fields.py` — diffs the design note's field tables against the
   JSON Schema, field for field, in both directions. The note and the
   schema are two independent hand-written statements of one contract;

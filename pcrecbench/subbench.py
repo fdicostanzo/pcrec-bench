@@ -44,12 +44,17 @@ class SubbenchError(Exception):
 
 class Pattern:
     __slots__ = ("name", "file", "feature_tier", "hazard_class", "size_class",
-                 "convention", "tags")
+                 "convention", "tags", "role")
 
     def __init__(self, d):
         for k in self.__slots__:
             setattr(self, k, d.get(k))
         self.tags = list(d.get("tags") or [])
+        # record_schema.md 5 (v1.3, [B15]): `role` is `member` unless the
+        # sidecar says `floor` -- the ONE per-call baseline pattern a set may
+        # declare. Defaulting here, not in the record, means an old sidecar
+        # with no `role` key loads exactly as it always did.
+        self.role = self.role or "member"
         for req in ("name", "file", "hazard_class", "size_class"):
             if not getattr(self, req):
                 raise SubbenchError("pattern entry is missing %r: %r" % (req, d))

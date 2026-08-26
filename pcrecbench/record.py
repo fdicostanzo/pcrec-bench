@@ -18,7 +18,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # The schema version this harness emits. Bumping it is a deliberate act: the
 # fields below and `schema/record.schema.json` move together, and
 # `make check` is what proves they did.
-SCHEMA_VERSION = "1.2"
+SCHEMA_VERSION = "1.3"
 
 #: What the drivers actually call. Both use `clock_gettime(CLOCK_MONOTONIC)`
 #: around the batched loop -- never a wall clock, never a per-call timer.
@@ -111,6 +111,11 @@ def pattern_entry(sb, name):
         "size_class": p.size_class,
         "variant": None,
     }
+    # v1.3 ([B15]): ABSENT means `member`, exactly like `form` means `plain`
+    # when absent -- a sidecar with no `role` key produces a record
+    # identical to what it always produced.
+    if getattr(p, "role", "member") != "member":
+        entry["role"] = p.role
     try:
         entry["canonical_text"] = text.decode("utf-8")
     except UnicodeDecodeError:

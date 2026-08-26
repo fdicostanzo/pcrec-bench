@@ -6,13 +6,14 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X29 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X30 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
     expectation" rule, engine_metadata declarations, the record-status
-    gates, and (v1.2) the record TIER: a local binary is never `pinned`
-    (X28) and a `scratch` record says what its binary was (X29).
+    gates, (v1.2) the record TIER: a local binary is never `pinned`
+    (X28) and a `scratch` record says what its binary was (X29), and
+    (v1.3) at most one `patterns[]` entry may be the set's FLOOR (X30).
 
 Every message names the FILE, the 1-based LINE and the field path.
 
@@ -381,6 +382,18 @@ class RecordValidator:
                         "a lazy-JIT testee pays its compile cost inside trial 1, "
                         "so at least one warm-up trial must be declared", "X16"))
 
+        # X30 at most one pattern may be the set's FLOOR (the note 5, v1.3)
+        floor_ids = sorted(e.get("pattern_id") for e in setup.get("patterns", [])
+                           if e.get("role") == "floor")
+        if len(floor_ids) > 1:
+            add(Problem(path, 1, "patterns[].role",
+                        f"{len(floor_ids)} patterns are role=floor "
+                        f"{floor_ids}, but a record may carry at most one: "
+                        f"the floor pattern's whole point is a SINGLE "
+                        f"per-call baseline the rest of the set reads "
+                        f"against, and two of them leave that baseline "
+                        f"ambiguous", "X30"))
+
         # rosters
         pat_ids = {e.get("pattern_id") for e in setup.get("patterns", [])}
         subj_ids = {e.get("subject_id") for e in setup.get("subjects", [])}
@@ -728,7 +741,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X29 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X30 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")
