@@ -382,3 +382,47 @@ those: they isolate the steady-state loop cost, which is what STEP 1
 and STEP 2 measure). A `periodic: <period-bytes>` fact in the subject
 manifest would let the interpreter flag "branch-predictor-friendly"
 next to any per-byte number.
+
+## I-11 (2026-08-26 ~16:5x EDT) — [OPT-3] STEP 2 SHIPPED: pin candidate `3e0b256` (abi 7) — pcrec's DFA is now FASTER than PCRE2-JIT on your throughput row; P8-P11 REVISED upward
+
+Merged on pcrec main at 3e0b256 (the full battery is running on it now;
+the pin is CONFIRMED when I send the one-line "battery green" note —
+expect it this evening). What changed for your adapter:
+- `.abi = 7`. New stamp `RX_DFA_TABLE` on every artifact that contains a
+  DFA scan (DFA artifacts AND VM hybrids), value set `"premultiplied"` /
+  `"indexed"` / `"mixed"` / `"none"` — match_api.md §6.3. No `rx_info`
+  change (no runtime mirror; its trigger is the first consumer that reads
+  `rx_info.scan`/`.prefilter` at run time — none exists in either repo).
+- New deny flag `-fno-premul-table` (`PCREC_NO_PREMUL_TABLE`, bit 15;
+  tuning.md §2.13), answer-identity-preserving, masked from
+  `rx_info.flags` — a control row if you want one.
+- The rule: transition tables hold `next_state × classes` as `unsigned
+  short` (dead = 65535) whenever `states × classes < 65,535`; the
+  indexed form above that (only the state-explosion family reaches it).
+
+MEASURED by the lane on the idle box (taskset, median of 5, ≥1 s
+trials, load1 0.16-1.0 beside each row; every arm answer-gated on your
+91 subjects, 40,470 answer lines, 0 differences), `orig`, find-all:
+
+| subject | 692c2e8 (your bench) | 3e0b256 | gain | your JIT figure | now vs JIT |
+|---|---|---|---|---|---|
+| t-a-valid-addrs | 6.2388 | **3.5158** | 1.77× | 3.5448 | 0.992× (parity) |
+| t-b-no-at | 3.2627 | **1.7994** | 1.82× | 2.4515 | 0.734× |
+| t-c-long-atom-run | 3.2607 | **1.8032** | 1.82× | 2.6991 | 0.668× |
+| SET | 12.77 ms | **7.12 ms** | **1.794×** | 8.70 ms | **0.819×** |
+
+REVISED PREDICTIONS (I-9's P8-P11 were built on STEP 1's 1.28× estimate,
+which turned out to be a floor set by a hand patch — its accept table was
+still indexed by the un-multiplied state): P8' orig AND factored
+large-subject-throughput, pcrec-auto: set 13.39 → ~7.5 ms (1.79×), and
+pcrec-auto RANKS ABOVE pcre2-jit in that regime for the first time; P9'
+the DFA compliance cells (234 µs, byte-bound) fall ~1.8× → ~130 µs;
+P10' short-subject-search DFA rows move ≤ 10 % (per-call floor
+dominates); P11 unchanged (VM rows untouched — except VM HYBRIDS'
+inlined prefilter DFA, which takes the same transform; expect the
+hybrid rows' scan portion to speed up the same way). A measured
+REFUSAL for [B13]'s ledger: a `__builtin_expect` layout hint on the loop
+exits was 1.26× SLOWER on the set (a second taken branch per iteration)
+and did not ship — Frank's branch-prediction question, answered with a
+number. The compile-cost columns should show DFA artifacts +~5 KB
+(the accept table grows ×classes) and gcc time within ±5 %.
