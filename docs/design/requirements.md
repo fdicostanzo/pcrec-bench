@@ -232,6 +232,14 @@ beside any number whose coverage is below 100% (§8).
   logged event.
 - Independence: a run measures one cell or a chosen few — never the
   whole gamut (Frank).
+- **Every short-subject search set carries a FLOOR pattern** (ruled
+  2026-08-25, from pcrecdev1's reading of the first production sample;
+  [B15] built the first one): one pattern per sub-bench, tagged `role:
+  floor` in the sidecar (record schema v1.3, §5 ADDITIONS 7) — a
+  one-literal control run over the same subjects as the rest of the
+  set, so a set's summed per-call timing reads against the harness's
+  own per-call overhead instead of floating unanchored. `bench/email`'s
+  is the one-byte literal `@`; see its `NOTES.md`.
 
 **THE FORMAT AND THE BLOCKING POINT (R6; scope RULED NARROW by Frank,
 2026-08-25).** Frank ruled: block on pcrec's [DD-13] (the .rxt-grown

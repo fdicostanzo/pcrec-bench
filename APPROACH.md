@@ -83,7 +83,12 @@ Three subject regimes are measured (requirements §3): large-subject
 throughput; short-subject search (~256 B, per-call cost); and
 match/compliance over 10..1000 B subjects. Compile/setup cost is its own
 axis, defined per execution model (AOT / eager JIT / lazy JIT /
-interpreter) and never folded into match time.
+interpreter) and never folded into match time. Every short-subject
+search set carries a FLOOR pattern (requirements §5; record schema
+v1.3, `patterns[].role`) — a one-literal control run over the same
+subjects, so a set's summed timing reads against the harness's own
+per-call overhead rather than floating unanchored; `bench/email`'s is
+the one-byte literal `@` ([B15], NOTES.md).
 
 Not every rx fits every engine. Per (pattern, testee) the record states
 an OUTCOME (compiled / did-not-compile / crashed / timed-out /

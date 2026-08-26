@@ -158,6 +158,74 @@ The eight subjects over 256 B (the 10 KB local part, the 2000-deep
 ~256-byte subjects, and timing a 10 KB subject in that regime would put
 a different cost class in the same column.
 
+## The floor pattern
+
+**What it is.** `patterns/floor.rx` is the one-byte literal `@`, no
+anchors, no groups, tagged `role: floor` in the sidecar (schema v1.3,
+`docs/design/record_schema.md` 5 ADDITIONS 7). It runs in all three
+regimes over the SAME subjects `orig` and `factored` do: `search_short`
+(the first `@` found within a handful of bytes on most subjects — that
+is the point), `match` (does the WHOLE subject equal `@` — true on
+exactly one of the 85, `s-082`, "just @ sign"), and `throughput`
+(find-all `@` over the three 1 MB subjects — a memchr-class scan, not a
+regex-engine one).
+
+**Why.** pcrecdev1's reading of the first production sample
+(`docs/dev/feedback_pcrecdev1_2026-08-25.md` item 1(d)): "a per-call
+FLOOR control in every short-subject set (a one-literal pattern on the
+same subjects) reported beside the number, so 6.13 us over 77 subjects
+(80 ns/subject) reads against the harness's own overhead." Without it, a
+set's summed timing has no baseline: is 80 ns/subject mostly the
+pattern's own work, or mostly the harness's per-call loop, the driver's
+dispatch, and the subject lookup? A one-literal pattern over the same
+subject set isolates that overhead — the one component EVERY pattern in
+the set pays regardless of what it is matching — so `orig` and
+`factored`'s numbers can be read net of it.
+
+**What it is NOT.** A ranking of engines. The floor's own number is
+still an engine's number (pcre2's floor is not the same nanoseconds as
+pcrec's floor — different dispatch, different loop, different subject
+handling), so "engine X's floor is smaller than engine Y's" is a real
+finding about per-call overhead, not evidence that X is "faster" at
+regex matching; that comparison belongs to `orig`/`factored`, read net
+of each engine's OWN floor. The floor is a baseline per (testee,
+sub-bench), not a cross-engine handicap.
+
+**How many of the 85 subjects contain `@`.** 80 of 85 (byte-scanned).
+The five that do not: `s-040` "invalid missing @ entirely", `s-060`
+"pathological: 10KB local part, no @ (forces full scan, nomatch)",
+`s-081` "empty subject", `s-083` "no match: random prose", `s-084` "no
+match: digits only". (The three 1 MB throughput subjects are separate:
+`t-a-valid-addrs` has 40330 `@`s, `t-b-no-at` and `t-c-long-atom-run`
+have none.) The expectations derived from the libpcre2 oracle
+(`gen_expectations.py`, 495 rows total, up from 330 with two patterns):
+
+| regime | subjects | match | nomatch |
+|---|---|---|---|
+| `match` (whole-subject `@`) | 85 | 1 (`s-082`) | 84 |
+| `search_short` (first `@`) | 77 | 73 | 4 |
+| `throughput` (find-all `@`) | 3 | `t-a-valid-addrs`: first span [9,10), 40330 matches | `t-b-no-at`, `t-c-long-atom-run`: 0 matches each |
+
+**MEASURED, scratch tier, under load — direction only, never a
+measurement** (`pcrecbench quick --subbench email --pattern floor
+--regime search --testee pcre2-jit --vs <pcrec config>`, 2026-08-25,
+3 trials x 77 subjects, box shared with the pcrec manager session — both
+records came back `inconclusive-load`):
+
+| vs | pcre2-jit median ns/call | pcrec median ns/call | ratio |
+|---|---|---|---|
+| `pcrec-auto` | 3440.1 | 1467.8 | pcre2-jit 2.34x slower |
+| `pcrec-vm` | 3601.9 | 2510.8 | pcre2-jit 1.43x slower |
+
+Both numbers are labelled `tier: scratch` and `status:
+inconclusive-load` in their records; they say a DIRECTION (pcrec's
+dispatch loop over this one-literal pattern reads faster than pcre2-jit's
+on this box, under load, on this pin) and nothing more. A pinned,
+quiet-box measurement is what the next full re-pin sample owes the
+reporter's `floor: n/a (no floor pattern in this set yet)` note
+(`pcrecbench/report.py`, ruling R6) — this sub-bench now HAS one; wiring
+it into that column is the reporter lane's ([B14]/[B9]) to pick up.
+
 ## Origin
 
 Copied from pcrec `docs/design/subroutines_measurements/email_specimen/`

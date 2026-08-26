@@ -32,6 +32,7 @@ hazard_class = "exponential-backtracking"
 size_class = "large"
 convention = "perl-leftmost-first"
 tags = ["rfc5322", "email", "hand-inlined", "tier-base"]
+role = "member"
 
 [[patterns]]
 name = "factored"
@@ -41,6 +42,22 @@ hazard_class = "exponential-backtracking"
 size_class = "large"
 convention = "perl-leftmost-first"
 tags = ["rfc5322", "email", "subroutine-factored", "calls-as-factoring"]
+role = "member"
+
+[[patterns]]
+# THE FLOOR PATTERN (Frank, 2026-08-25; pcrecdev1's feedback item 1(d),
+# docs/dev/feedback_pcrecdev1_2026-08-25.md: "a per-call FLOOR control in
+# every short-subject set ... reported beside the number, so 6.13 us over
+# 77 subjects (80 ns/subject) reads against the harness's own overhead").
+# See NOTES.md's "The floor pattern" section for what it is and is not.
+name = "floor"
+file = "patterns/floor.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["floor", "control", "one-literal"]
+role = "floor"
 
 [subjects]
 generator = "gen_subjects.py"
