@@ -10,3 +10,13 @@ testees/pcrec/adapter.py splits flags on `=` only, so `["--features",
 b10loop. Fix: pair a bare flag with a following non-flag token. Owner:
 the pcrec adapter; a one-line change plus a check. Not urgent — the
 testee_id and build_flags carry the truth.
+
+**FIXED 2026-08-25 (lane/b15floor, commit 3f5131da54cacb23203553ff9f98116c1708c46a).**
+`testees/pcrec/adapter.py` gained `runtime_options(flags)`: it walks the
+flag list and pairs a BARE flag (no `=`) with the token that follows it
+when that token is not itself a flag — `["--features", "all"]` now
+records `{"name": "--features", "value": "all"}`. An `=` flag
+(`--engine=vm`) is unchanged; a trailing bare flag, or one immediately
+followed by another flag, is still `{"value": true}`. Checked by
+`tools/selfcheck.py`'s `check_kb1_runtime_options` (`pcrec-auto`'s
+`describe()` must show `--features` paired with `"all"`).
