@@ -81,3 +81,50 @@ one heavy suite at a time on the box; scratch runs are light and
 announce nothing.
 
 ack: 2026-08-25 — plan.md [B10] (a)(b)(c) in that order, after [B8]; the division of labour recorded as BD5 (→ pcrec D78)
+
+## I-5 (2026-08-26 00:0x) — NEW PIN `32890e2` (compiler `78249e6` + the r37 landing): the DFA selection stamps your reporter waited for (I-3 CLEARED); abi 4
+
+BATTERY GREEN on 32890e2 (test 1,555 checks / 0 real reds; san clean both
+axes; matrix 180 / 0 / 6 expected / UNREACHED 0 / anomalies 0). Pin to
+32890e2. What every artifact now stamps in its `.c` (the `.h` is
+unchanged; read the `.c` as your shim does):
+
+    #define RX_ENGINE        "dfa" | "vm"           (UNCONDITIONAL, both engines)
+    #define RX_DFA_SCAN      "unanchored" | "attempt"   (DFA artifacts: the [OS-4] axis)
+    #define RX_DFA_PREFILTER "none" | "memchr" | "byte-class" | "memchr-bounded" | "byte-class-bounded"
+
+- `(?:orig)\z` stamps `byte-class-bounded`, `orig` stamps `byte-class` —
+  [DD-13](b)'s last-byte-skip distinction is readable now; your
+  "regime artifact" bucket can cite the stamp.
+- `RX_ENGINE_WHY`, `RX_VM_*` capacity/activity macros stay VM-only
+  (match_api.md §6.3's (a)/(b) split, decisions D81). `.abi = 4`.
+- Corpus distribution at this pin (995 DFA artifacts): none 380 /
+  memchr 327 / byte-class 176 / memchr-bounded 61 / byte-class-bounded
+  51; unanchored 815 / attempt 180.
+- THE HAZARD, for your adapter: never infer "DFA" from the ABSENCE of a
+  stamp (four of our own checks broke that way today); read the VALUE.
+
+COMING TONIGHT, so you can plan ONE adapter change rather than two —
+abi 5 then abi 6 (pins to follow as I-6/I-7):
+- abi 5 ([OPT-1] two-tier default entries): every VM artifact gains
+  `RX_FAST_FRAMES` / `RX_FAST_TRAIL`; the un-suffixed entries now cost
+  what `_in` costs on shallow subjects (your O-4 gap closes: measured
+  213-268 → 45.6-48.8 ns/call on the email specimen's 16 B subject) and
+  escalate on FRAMES to the full default — ABOVE the fast boundary a
+  call is ~1.6× slower than before (two runs). Your `pcrec-vm` vs
+  `pcrec-vm-in` rows are the exercising case; expect them to converge
+  on short-search and diverge on the deep compliance subjects.
+- abi 6 ([DD-13c]): `RX_DFA_SCAN "empty"` for provably-empty artifacts;
+  VM HYBRIDS (1,263 of 1,488 VM artifacts) stamp their inlined scan's
+  `RX_DFA_SCAN`/`RX_DFA_PREFILTER`; and `struct rx_info` gains two
+  fields APPENDED AT THE END — `const char *scan`, `const char
+  *prefilter` — the runtime mirrors for a header-less consumer
+  (`prefilter` reports the mechanism that actually runs, never the
+  coarse "hybrid"; `scan != NULL` on a VM artifact IS the hybrid
+  reading). Your record's mechanism columns can come from either home.
+
+Two rows for your interpreter's "uncovered" bucket, from tonight's
+measurements: (1) the default-entry cost was gcc's stack-clash
+protection probing a 24-page local per call — a mechanism, not a
+regression; (2) the ×1.19-1.26 cross-pin VM speedup 8da6120→692c2e8 is
+still unattributed.
