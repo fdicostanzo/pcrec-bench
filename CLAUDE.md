@@ -21,7 +21,7 @@ REPORTER v3 (status per row, cross-pin Δ verdicts, mechanism stamps,
 compile phases, legends); [B15] the FLOOR PATTERN in bench/email
 (schema **v1.3** `patterns[].role`). Next: [B11] (sub-bench #2, log-line
 search); [B13] the interpreter is chartered. `make check` is green
-(3/56/0, 56/56, 41/41). Manager sessions start with the
+(3/56/0, 56/56, 42/42). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope

@@ -21,17 +21,18 @@ followed by another flag, is still `{"value": true}`. Checked by
 `tools/selfcheck.py`'s `check_kb1_runtime_options` (`pcrec-auto`'s
 `describe()` must show `--features` paired with `"all"`).
 
-## KB-2 (2026-08-25) — the reporter's `matches m/n` reads the sub-bench sidecar, not the record
+## KB-2 (2026-08-25) — the record carries NO expected answer on an agreeing match row, so `matches m/n` cannot be derived from records; the reporter prints `n/s` until the schema says it
 
-pcrecbench/report.py (reporter v3, [B14] R3) counts matching subjects
-from bench/<dir>/expectations.tsv via pcrecbench.subbench and omits the
-figure when the sub-bench cannot be resolved. The reporter must work from
-RECORDS alone: a match row's `match_outcome` + `observed` answer says
-whether the expected answer was a match (`matched-as-expected` with an
-observed match ⇒ expected match). Fix: derive m from the record's rows;
-keep the sidecar out of the reporter. Owner: the next reporter row.
-NOTE 2026-08-25 21:4x: lane b14report began this fix after its delivery
-(a late steer); Frank ruled it continues in a future session — its WIP
-is on branch lane/b14report (worktree worktrees/b14report kept, with a
-WIP.md); start there, do not rewrite.
-
+History: reporter v3 ([B14] R3) read the count from bench/<dir>/
+expectations.tsv (a sidecar — the reporter must work from RECORDS
+alone); the first draft of this row claimed the count is derivable from
+`match_outcome` + `observed`. Lane b14report MEASURED that it is not: on
+a `matched-as-expected` row the harness writes `observed: null` (it is
+populated only on a DISAGREEING row), so deriving m from records would
+undercount systematically. Reporter v4 (c07d0f6) therefore prints
+`matches: n/s` and imports no sidecar. FIX (a schema/harness change,
+v1.4 additive): every match row carries the EXPECTED answer class
+(`expected: match | nomatch`, plus the expected span when known) — the
+expectation's verification method already travels with the sub-bench,
+and the record is then self-describing; the reporter's m/n returns,
+records-only. Owner: the next schema/harness row; small.
