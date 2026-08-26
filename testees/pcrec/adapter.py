@@ -233,6 +233,42 @@ def buffer_capacities(cfg):
     return f, t
 
 
+def runtime_options(flags):
+    """`testee.runtime_options` (record_schema.md 4.3): the engine's OWN
+    option names, as {name, value} pairs.
+
+    KB-1 (docs/dev/known_issues.md), FIXED: a BARE flag (no `=`) is paired
+    with the FOLLOWING token when that token is itself not a flag --
+    `["--features", "all"]` -> {"name": "--features", "value": "all"}. The
+    previous rule split on `=` only, so a bare flag's value -- the very
+    next argv token -- was never looked at and the pair recorded
+    `{"value": true}` instead, losing `all` to `runtime_options` (it
+    stayed readable in `build_flags` as text, which is why this was not
+    urgent). `--engine=vm` is unchanged: an `=` flag's value is what
+    follows the `=`, consumed alone. A trailing bare flag, or one
+    immediately followed by another flag, has no following value and is
+    `true`, same as before."""
+    out = []
+    i, n = 0, len(flags)
+    while i < n:
+        f = flags[i]
+        if not f.startswith("--"):
+            i += 1
+            continue
+        if "=" in f:
+            name, _, value = f.partition("=")
+            out.append({"name": name, "value": value})
+            i += 1
+            continue
+        if i + 1 < n and not flags[i + 1].startswith("--"):
+            out.append({"name": f, "value": flags[i + 1]})
+            i += 2
+            continue
+        out.append({"name": f, "value": True})
+        i += 1
+    return out
+
+
 def buffer_args(cfg):
     """The driver's `--buffer-frames N --buffer-trail M`, or []."""
     caps = buffer_capacities(cfg)
@@ -452,9 +488,7 @@ class Adapter(_ad.Adapter):
             full, desc = self.pin_provenance()
         caps = buffer_capacities(cfg)
         buffer_note = ""
-        runtime = [{"name": f.split("=")[0], "value":
-                    f.split("=", 1)[1] if "=" in f else True}
-                   for f in cfg.get("flags", []) if f.startswith("--")]
+        runtime = runtime_options(cfg.get("flags", []))
         if caps:
             buffer_note = ("; caller-provided frame buffer (match_api.md 10): "
                            "%d resume frames, %d trail entries -- CAPACITIES, "
