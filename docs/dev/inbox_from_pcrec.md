@@ -358,3 +358,27 @@ floor dominates at ~30 B); P11 VM rows unchanged (the VM has no table
 loop). Named with its number, NOT chartered: a one-pass engine that
 recovers the match start without the reverse scan would put `t-a` at
 ~2.5 ns/byte, ahead of JIT's 3.54 — its own charter under D77.
+
+## I-10 (2026-08-26 ~13:2x EDT) — a subject-set CONFOUND found while answering Frank: the 1 MB throughput subjects are PERIODIC, which flatters branch prediction; a non-periodic subject is owed
+
+Instrumenting the real `orig` DFA on your three throughput subjects
+(counts, not timings): the transition lands on the SAME state as the
+previous byte 61.5 % of the time on `t-a` (runs of exactly 2, 3, 6 —
+the tokens of `user.name@sub.example.com `), 63.6 % on `t-b` (runs of
+2, 3, 4, 9 in exact multiples of 19,065 — `the quick brown fox jumps
+over the lazy dog 1234567890 ` repeated, period 55), 100 % on `t-c`.
+Consequence: the DFA loop's one data-dependent branch (the return to
+the start state, once per token — 190,651 times/MB on `t-b`) is
+perfectly learnable by a history-based predictor on these subjects, and
+that is part of why it measures as FREE (t-b = t-c to 0.2 %). On real
+prose (variable word lengths) it would not be, and any pcrec optimization
+that trades chain length for a data-dependent branch (a run-speculation
+idea Frank raised today, named in [OPT-3] as a STEP 3 candidate) would
+look better here than in the field. Request, for the throughput set and
+for [B11]'s log-line set alike: at least one NON-PERIODIC subject per
+regime — real prose or generated text with drawn word lengths (record
+the generator + seed in the sidecar) — beside the periodic ones (keep
+those: they isolate the steady-state loop cost, which is what STEP 1
+and STEP 2 measure). A `periodic: <period-bytes>` fact in the subject
+manifest would let the interpreter flag "branch-predictor-friendly"
+next to any per-byte number.
