@@ -18,7 +18,7 @@ before/after is `reports/*-repin-692c2e8.*`; [B10] landed the EDIT-TEST
 LOOP (schema **v1.2** record tiers `pinned`/`scratch`, `pcrecbench
 quick`, the `pcrec-local` provided-binary testee); next: [B9] (reporter
 columns), [B11] (sub-bench #2, log-line search). `make check` is green
-(3/55/0, 50/50, 31/31). Manager sessions start with the
+(3/56/0, 56/56, 41/41). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope

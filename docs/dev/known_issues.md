@@ -20,3 +20,14 @@ records `{"name": "--features", "value": "all"}`. An `=` flag
 followed by another flag, is still `{"value": true}`. Checked by
 `tools/selfcheck.py`'s `check_kb1_runtime_options` (`pcrec-auto`'s
 `describe()` must show `--features` paired with `"all"`).
+
+## KB-2 (2026-08-25) — the reporter's `matches m/n` reads the sub-bench sidecar, not the record
+
+pcrecbench/report.py (reporter v3, [B14] R3) counts matching subjects
+from bench/<dir>/expectations.tsv via pcrecbench.subbench and omits the
+figure when the sub-bench cannot be resolved. The reporter must work from
+RECORDS alone: a match row's `match_outcome` + `observed` answer says
+whether the expected answer was a match (`matched-as-expected` with an
+observed match ⇒ expected match). Fix: derive m from the record's rows;
+keep the sidecar out of the reporter. Owner: the next reporter row.
+

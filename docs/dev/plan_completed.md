@@ -190,3 +190,32 @@ completion date, newest group at the bottom.
   — pcre2's per-call setup exceeds a dlopen'd C call; a pinned floor
   record is the next window's business.
 
+- [B14] STATE:completed — REPORTER FOLLOW-UPS from pcrecdev1's reading
+  of the reporter-v2 repin report (docs/dev/feedback_pcrecdev1_2026-08-25-
+  repin-v2.md §1, §2, §4): print the STAMPED DEFAULT capacities
+  (`resume_frames`/`trail_frames`) on plain-entry rows where
+  `buffer_frames`/`buffer_trail` now print "-" (the plain entry HAS a
+  buffer — its size is what [OPT-1]'s cost is proportional to); a 3-row
+  per-subject sub-table for sets of ≤ 3 subjects (throughput) + ns/byte
+  beside ns/call; the MATCHING-subject count per compliance cell; the
+  artifact SIZE (emitted bytes) as a compile-cost column; `jitter`
+  computed (stddev/median, or "timer-floor" when min < 20 µs) or dropped;
+  `resume_frame_size` legend: `-` = not stamped at that pin, `0` =
+  stamped no buffers (render `0 (DFA)` / `n/s`); "Δ detail: worst
+  subject" — say whether it is the new record's worst or the largest Δ,
+  print both when they differ; SHORTEN: the superseded-record ids in the
+  header → a count + "--all-records lists them"; the per-testee constant
+  columns of the compile-cost table → a one-line-per-testee legend above
+  it. When pcrec's I-5 pin (abi 4: RX_ENGINE unconditional, RX_DFA_SCAN,
+  RX_DFA_PREFILTER) ships: the DFA stamp columns (I-3 closes). Sonnet
+  lane; disjoint from everything but report.py/tests/reports.
+  DONE 2026-08-25 (lane b14report, sonnet; merged): reporter v3 — stamped-
+  default capacities on plain-entry rows; `n/s` vs `0 (DFA)` legend;
+  per-subject sub-tables + ns/byte for ≤3-subject sets; matches m/n on
+  compliance groups (from the sub-bench sidecar — KB-2: derive from the
+  record instead); computed jitter (ratio / timer-floor), empty columns
+  dropped; worst-now vs largest-Δ; artifact-bytes column; per-testee
+  legend replacing repeated columns; superseded list collapsed; the
+  floor column wired to `patterns[].role`; 41 tests; both report sets
+  re-rendered. DFA stamp columns wait for pcrec's I-5 pin.
+

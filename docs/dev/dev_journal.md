@@ -746,3 +746,28 @@ is exactly the "unpredicted Δ, flag as loudly as a regression" case;
 STEPS-vs-WORK on the same subject = "a different budget binds on a
 different spelling". pcrec's [DD-13] stamps land tonight (abi 4); I-5
 expected — the next re-pin. Paused again.
+
+## 2026-08-25 (EDT, ~21:4x), second session (part 8, CLOSE) — [B14] + [B15] merged; the session closes
+
+Frank: "proceed to implement on feedback, 1-3 subagents as profitable"
+then "close session when idle". Two sonnet lanes, both ACKed first,
+disjoint by ownership: b15floor (bench/email `floor.rx` = `@` with
+sidecar role floor; oracle-derived expectations 330 → 495; schema v1.3
+`patterns[].role` + X30; KB-1 fixed; 56 harness checks) merged first;
+b14report (reporter v3: the ten follow-ups from pcrecdev1's second
+reading; 41 tests; both report sets re-rendered, reproduce) merged on
+top. Master make check 3/56/0, 56/56, 41/41. One steer (R3: matches
+from the record, not the sidecar) arrived after the lane had built it
+the other way — accepted as delivered and filed as KB-2 rather than
+spend a round; the record carries what is needed (`match_outcome` +
+`observed`). Scratch, direction only: on the floor pattern pcre2-jit is
+slower per call than pcrec-auto (≈45 vs 19 ns/call) — pcre2's per-call
+setup, not the harness, is the floor; a pinned floor record is the next
+window's business (the floor column will then fill on every short-
+search row). Not done this session: [B11] log-line search (Frank
+starts it); [B13] sitting; the re-pin when pcrec's I-5 (abi 4, DFA
+stamps) arrives; a pinned run of bench/email including the floor
+pattern. Session total, second session: [B8], [B9], [B10], [B14], [B15]
+done; [B13] chartered; 16 commits of docs/records/reports; two windows
+with pcrecdev1 (36 + 16 min); O-1..O-6 in the outbox; KB-1 fixed, KB-2
+filed. Closes here.
