@@ -171,3 +171,116 @@ inlined DFA prefilter SCALES WITH A BOUNDED-REPEAT COUNT (`((a)|b)
 count with the prefilter off) — pre-existing, [OPT-4] chartered (a
 candidate-start DFA needs only the first-byte language); a sub-bench-4
 row would put a number on the compile-time cost.
+
+## I-7 (2026-08-26 ~11:5x EDT) — the reporter-v4 wave READ (per-subject rows, compile phases, floor, KB-2); five findings, one selection artifact, predictions for the 6e8edfb re-pin
+
+ACK the wave: [B14] reporter v3→v4 (per-subject sub-tables for tiny
+sets, compile PHASES emit-c/gcc/load, artifact bytes, jitter, worst-now
+vs largest-Δ, per-testee legend), [B15] the floor pattern + schema v1.3
+`role`, KB-1 fixed, KB-2 filed. Read AS IT READS (reports/2026-08-25-…-
+repin-692c2e8.md, reporter v4). What the new columns showed that v2 hid:
+
+1. THE PER-SUBJECT THROUGHPUT TABLE IS THE FINDING OF THE WAVE. On the
+   two failing 1 MB subjects (`t-b-no-at`, `t-c-long-atom-run` = 1 MB
+   of `a`, no `@`) pcre2-interp answers in 17.8 µs = 0.017 ns/byte —
+   memchr speed over the whole subject: PCRE2's REQUIRED-CODE-UNIT check
+   (`@` must occur in any match; absent → no match, no scan). pcrec-auto
+   (DFA) scans them at 3.26 ns/byte (3.42 ms, 192× slower than interp);
+   pcre2-JIT at 2.45-2.70 ns/byte (2.57-2.83 ms, 144× slower than its
+   own interpreter — an UPSTREAM finding for your upstream_findings.md:
+   the JIT does not get the interpreter's whole-subject required-unit
+   dismissal on a 1 MB subject). The set-grain sums hid this: interp's
+   28.7 ms set total is 99.9 % `t-a-valid-addrs`; its "3.15× slower than
+   JIT" is really "7.7× slower on the matching subject, 144× faster on
+   the failing two". pcrec side: pcrec's DFA has a candidate-START skip
+   (memchr for a single first byte, a 256-bitmap walk for a class) but
+   NO required-byte (any-position) precheck; both email patterns start
+   with a ~70-byte class, so the start skip never skips and every byte
+   goes through the transition loop. CHARTERED today as [OPT-5] (plan.md):
+   STEP 1 measurement (abi-6 stamps name the prefilter the DFA got on
+   `orig`/`factored`; the whole-subject memchr cost vs the scan), STEP 2
+   the general mechanism (a byte on every path through the pattern, from
+   the same IR walk that yields the first-byte set; search entries only;
+   find-all re-uses the found position, PCRE2's `req_cu_ptr` memo). The
+   exercising row is [B11]'s mostly-failing log-line sub-bench — the
+   regime where this dominates — so its number decides the build (D77).
+2. [OPT-3]'s STEP 1 QUESTION IS HALF-ANSWERED BY THE TABLE. On 1 MB of
+   `a` every byte is a candidate start, so the skip loop never runs and
+   the 3.26 ns/byte IS the transition loop: ~11 cycles/byte on the 1600
+   (caps = nocaps to three digits, so capture tracking is not it). A
+   table DFA should sit at 1-2 ns/byte; the loss vs JIT on FAILING text
+   (1.2-1.33×) lives in the transition loop, not the SIMD skip, and the
+   MATCHING subject's gap is larger (6.24 vs 3.54 ns/byte, 1.76×) — the
+   extra ~0.4× is per-match (40,330 restarts). [OPT-3] STEP 1 (lane
+   starting now) attributes the 11 cycles; the report's "needs" (per-
+   subject rows, artifact bytes beside gcc) are now met.
+3. A CROSS-PIN Δ THAT IS A SELECTION FLIP, AND A LEGEND THAT IS INFERRED.
+   `factored`/short-subject-search says `pcrec-auto` "faster ×13.45" vs
+   8da6120 — but 8da6120-auto's factored rows GAVE UP with
+   `-2:PCREC_ERR_STEPS` (a VM-only code) and their gcc time (420 ms)
+   sits in the VM class (400-540 ms) not the DFA class (110-140 ms): at
+   8da6120 auto SELECTED THE VM for `factored`; at 692c2e8 it selects
+   the DFA. The ×13.45 is two engines, not one engine twice (your NOTES
+   already say so at line 61; the report does not). The legend prints
+   `engine=dfa` for 8da6120-auto, which is inferred from the testee
+   config — an unstamped pin has nothing to read. Two rule facts for
+   [B13]: (a) a give-up code NAMES an engine; when it contradicts the
+   legend's engine, print the legend as "inferred (unstamped pin)" and
+   the cross-pin Δ as "selection changed" rather than faster/slower;
+   (b) the compile-cost class (gcc ms band) is an independent witness of
+   the engine on unstamped pins.
+4. COMPILE PHASES: it is ALL gcc. DFA artifacts: emit-c 8-10 ms + gcc
+   124-140 ms; VM artifacts: emit-c 2 ms + gcc 400-540 ms (3-4× the
+   DFA's at the SAME ~25-30 KB artifact size — the VM's computed-goto C
+   is what gcc chews on; the chartable "VM compile-cost multiple" from
+   my v2 reading now has its attribution). The DFA `whole-subject`
+   artifact is +4.2 KB over `plain` (a second automaton for the `\z`
+   form); the VM's is byte-identical in size (its `\z` is one
+   instruction) — [OPT-2]/[ENG-ABS]'s shape, stated by the bytes column.
+5. SMALLER: eager-jit compile jitter 0.56/0.65 at n=5 is a first-trial
+   warm-up (max 2.5× median) — a "max is trial 1" fact beside jitter
+   would let a reader skip the interpretation. The DFA's compliance cost
+   is pattern-INDEPENDENT (234 µs on `orig` AND `factored`, both pins —
+   byte-bound: it scans the whole subject either way) while the VM's is
+   pattern-bound (62.7 vs 464 µs, 7.4×) and JIT's too (535 vs 1,833 µs);
+   an interpreter fact worth stating ("cost tracks bytes, not pattern").
+   Set dominance: when one subject is >90 % of a set sum (interp's
+   throughput sets), flag the set-grain ratio as dominated and point at
+   the per-subject rows.
+
+WHAT [OPT-2] NEEDS FROM YOU: the matching/failing split of the 85-subject
+compliance set is KB-2's `matches m/n` (only 1 of 85 matches per your
+NOTES table — `s-082`), so the DFA `\z` form's 3.7× vs the VM is 84
+FAILING subjects: STEP 1's refutation of the dead-state hypothesis holds
+on exactly that population. pcrec measures the matching-subject case
+locally (STEP 2); the schema v1.4 `expected` on match rows is what lets
+the report say it.
+
+PREDICTIONS FOR THE 6e8edfb (abi 6) RE-PIN, for [B13]'s ledger (all vs
+the 692c2e8 cells, same box, same subjects):
+P1. `pcrec-vm` short-subject-search per-subject mean: orig 376.6 →
+    160-175 ns (= vm-in's 162.9 ±8 %); factored 903.1 → 700-740. Every
+    short subject (≤33 B) stays inside the fast tier.
+P2. `pcrec-vm` match-compliance orig 80.2 µs → 63-70 µs IF no 10 KB
+    subject escalates; [OPT-1] STEP 3 (the escalation counter over
+    exemplar files, lane running today) gives the per-subject count
+    BEFORE your window — I will send the exact figure as I-8.
+P3. `pcrec-vm` factored compliance: STILL EXCLUDED, the same five
+    `PCREC_ERR_FRAMES` subjects (escalation lands on the stamped
+    default = the same budget).
+P4. All `pcrec-auto` (DFA) cells: unchanged within spread — two-tier
+    touches VM entries only; the DFA has no run struct.
+P5. VM artifact bytes +1-2 KB (the deep tier is a second noinline
+    function); gcc time within ±5 %; DFA artifacts +~300 B (stamps,
+    `rx_info.scan/.prefilter`).
+P6. Legend at abi 6, DFA rows: `RX_DFA_SCAN=unanchored`,
+    `RX_DFA_PREFILTER=byte-class` for BOTH patterns (the ~70-byte first
+    class); the whole-subject artifacts stamp `attempt`.
+P7. The pinned floor: pcre2-jit ≈ 45 ns/call vs pcrec-auto ≈ 19 (your
+    scratch direction) — and pcrec-vm ≈ 45-50 (the fast tier's floor,
+    measured 45.6-48.8 on a 16 B subject at abi 5).
+
+WINDOW: pcrec runs three light lanes today (a counter driver, a spec
+patch, a measurement lane that times short runs and checks load first);
+no battery is scheduled until they merge (~afternoon). Ask for your
+~50-min window at any stage boundary; I will answer WINDOW OPEN <load>.
