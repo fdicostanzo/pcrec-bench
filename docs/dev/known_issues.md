@@ -30,4 +30,8 @@ RECORDS alone: a match row's `match_outcome` + `observed` answer says
 whether the expected answer was a match (`matched-as-expected` with an
 observed match ⇒ expected match). Fix: derive m from the record's rows;
 keep the sidecar out of the reporter. Owner: the next reporter row.
+NOTE 2026-08-25 21:4x: lane b14report began this fix after its delivery
+(a late steer); Frank ruled it continues in a future session — its WIP
+is on branch lane/b14report (worktree worktrees/b14report kept, with a
+WIP.md); start there, do not rewrite.
 
