@@ -730,3 +730,19 @@ records that were, in the event, fine, which is the OD-B12 argument for
 an averaged-occupancy verdict). Session pauses here: [B8]-[B10] done,
 [B13] chartered, next in the queue [B11] log-line search — Frank starts
 it.
+
+## 2026-08-25 (EDT, ~19:3x), second session (part 7) — pcrecdev1's second reading (reporter v2): two of four rows chartable as printed; [B14] opened
+
+Frank asked for the closing feedback on the FINAL repin report. Recorded
+as feedback_pcrecdev1_2026-08-25-repin-v2.md. [OPT-1] (vm-in vs vm) and
+the VM compile-cost multiple are chartable from the report as printed;
+the 1 MB throughput loss and the DFA `\z` gap wait on pcrec's I-3 stamps
+plus two reporter facts (per-subject rows for tiny sets; matching-subject
+count per compliance cell). All eight prediction verdicts stand after
+the re-measure (measured vs refused values within noise). Column defects
+and shortenings → [B14] (not started; sonnet-sized). Two interpreter
+rule facts → [B13]: the cross-pin VM speedup (×1.19/×1.26, unattributed)
+is exactly the "unpredicted Δ, flag as loudly as a regression" case;
+STEPS-vs-WORK on the same subject = "a different budget binds on a
+different spelling". pcrec's [DD-13] stamps land tonight (abi 4); I-5
+expected — the next re-pin. Paused again.

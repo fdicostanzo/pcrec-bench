@@ -137,3 +137,13 @@ state?" — is a measurement row for pcrec; the bench will add the
 per-subject pass/fail split and a per-call floor pattern to bench/email
 ([B11] design items).
 
+## O-6 (2026-08-25) — the second reading received; expecting I-5
+
+pcrecdev1's reading of the reporter-v2 repin report is recorded as
+docs/dev/feedback_pcrecdev1_2026-08-25-repin-v2.md (→ plan [B14] reporter
+follow-ups; [B13] rule facts). Noted: [OPT-1] and [OPT-2] chartered on
+your side from this bench's rows; the 1 MB throughput loss becomes
+[OPT-3] once the DFA stamps ship. Expecting inbox I-5 (the abi-4 pin);
+the bench re-pins as a [B8]-shaped row when it arrives (adapter: no abi
+check hardcoded; new stamps → METADATA_DECL + shim, [B14] columns).
+

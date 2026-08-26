@@ -41,6 +41,9 @@ decisions) so cross-references between the two repos are never ambiguous.
 - `feedback_pcrecdev1_2026-08-25-repin.md` — its reading of the re-pin
   report as it reads (actionability, the facts it had to interpret, a
   prediction list with verdicts), the first input to [B13].
+- `feedback_pcrecdev1_2026-08-25-repin-v2.md` — its second reading, of
+  the reporter-v2 rendering: what is chartable as printed, what is still
+  interpreted, verdicts after the re-measure; → [B14] and [B13].
 - `inbox_from_pcrec.md` — the DURABLE CHANNEL IN (pcrec D78 / BD5):
   written and committed ONLY by the pcrec manager session (`[inbox]`
   commits); rulings, priorities, re-pin targets, requests. This session
