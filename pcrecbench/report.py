@@ -151,6 +151,94 @@ docs/design/requirements.md OD-B11, OD-B13, OD-B14, OD-B15):
   rows as timer jitter. OD-B13: `--subbench` accepts the sub-bench
   DIRECTORY name (resolved via `bench/<dir>/subbench.toml`'s own `id`)
   as well as the sidecar id.
+
+[B14] (2026-08-25) additions, rulings R1-R10 (docs/dev/plan.md row [B14];
+docs/dev/feedback_pcrecdev1_2026-08-25-repin-v2.md, the pcrec manager's
+second reading of the reporter-v2 re-pin rendering -- "still missing"
+(1), "still interpreted/wrong/ambiguous" (2), "remove/shorten" (4)):
+
+* R1 -- PLAIN-ENTRY CAPACITIES. A compile row with no `buffer_frames`/
+  `buffer_trail` pair (the plain entry) is not bufferless -- it runs on
+  the STAMPED DEFAULT capacity ([OPT-1]'s own cost is proportional to
+  it: "gcc stack-clash probing of the 98.5 KB run struct"). `engine_
+  metadata`'s `resume_frames`/`trail_frames` pair (record_schema.md 7,
+  the rx_info-sourced pair every artifact stamps, buffer or not) is
+  read for exactly this case -- see `_buffers_display`.
+* R4 -- THE LEGEND for `resume_frame_size` and the buffer pair, so `-`
+  and `0` stop meaning two different facts: `n/s` = the pin stamped
+  neither pair (pre-I-3, or a field genuinely absent); `0 (DFA)` =
+  stamped, and the artifact takes no buffers by construction (a DFA
+  engine emits no VM_* stamps -- record_schema.md 7's own note). R1's
+  stamped-default capacities and an `_in` row's caller capacities both
+  render through the same `_buffers_display`/`_frame_size_display`
+  pair, so the two rulings can never drift into different spellings.
+* R5 -- JITTER IS COMPUTED. The [B9] boolean ("stddev > median") is
+  replaced by the ratio itself (`stddev/median`, three decimals) --
+  "the interpretive rows have stddev ~= median ... that is what the
+  column was for; compute it ... or drop it" -- and `timer-floor` when
+  `min_ns` sits under the clock's practical floor (20 microseconds).
+  Per the same feedback ("drop it" if it never fires): a jitter column
+  empty on EVERY row of one compile-cost table is omitted from that
+  table's header and rows, not rendered as a wall of blanks.
+* R7 -- ARTIFACT SIZE. A compile row's own `artifact_bytes` (schema:
+  top-level on the row, "recorded if free, NOT scored") becomes a
+  column on every compile-cost table (pcrec and non-pcrec alike) so gcc
+  time can be read against SIZE, not against which engine emitted it.
+* R8 -- LEGEND, NOT REPEATED COLUMNS. Two shortenings, same complaint
+  (120-char lines that say the same six things nine times): the Query
+  header's superseded-record list collapses to one summary line
+  (`--all-records` is where the ids live now); the compile-cost table's
+  six PER-TESTEE CONSTANT columns (`engine`, `entry`, `prefilter`,
+  `vm_rungs`, R1/R4's buffer facts, `resume_frame_size`) move to a
+  one-line-per-testee LEGEND printed above each `has_pcrec` table,
+  leaving the table itself to carry only what varies per ROW: the
+  phase numbers, R7's artifact bytes, and R5's jitter.
+* R2 -- TINY SETS. A SET-grain cell whose subject count is <= 3 (today,
+  every `large-subject-throughput` cell) gets a per-subject sub-table
+  under its ranking row -- subject id, bytes, median ns/call, ns/BYTE,
+  for every ranked testee -- since "the per-subject numbers should be
+  IN the table, not only 'worst subject' in the Delta detail line" for
+  a set this small. Every `large-subject-throughput` ranking row also
+  gains its own `ns/byte` beside `ns/call`, the way `short-subject-
+  search` already carries a per-subject mean.
+* R3 -- MATCHING-SUBJECT COUNT. A `match-compliance` ranking group gets
+  a `matches: m/n` note -- m subjects of n whose GROUND-TRUTH
+  expectation is a match. The record itself carries no such fact by
+  design (record_schema.md 10.3: "the expectation lives in the sub-
+  bench; the record says which outcome was observed against it") --
+  `match_outcome: matched-as-expected` agrees with a `nomatch`
+  expectation exactly as often as a `match` one (`harness.outcome_for`:
+  the test is `row.matched != expectation.matched`, symmetric in both
+  directions). So this reads the sub-bench's OWN `expectations.tsv`
+  through `pcrecbench.subbench` -- best-effort: a sub-bench id that
+  resolves to no real `bench/<dir>/` (every fixture here) or whose
+  expectations are unavailable yields no note at all, never a fabricated
+  count (`_matching_subject_count`/`_load_subbench_for_report`).
+* R6 -- WORST NOW vs LARGEST DELTA. The [B9] "Delta detail: worst
+  subject" line named the NEW record's slowest subject, worded as if it
+  were the subject whose Delta was biggest -- not always the same
+  subject. Now explicit: `worst now` (unchanged meaning) and, when it
+  names a DIFFERENT subject, `largest Delta` (the subject whose ns/call
+  moved most between the two pins, by magnitude) printed beside it
+  (`_largest_delta_subject`).
+* R9 -- THE FLOOR PATTERN. Schema v1.3 (lane b15floor) adds an optional
+  `patterns[].role` (`member` default | `floor`) -- a floor pattern's
+  short-subject-search numbers are a PER-CALL OVERHEAD CONTROL, not
+  another ranked pattern. When a record's `patterns[]` carries a `role:
+  floor` entry, every OTHER (member) pattern's short-subject-search
+  ranking row gains a `floor: <ns>` figure (the floor pattern's own
+  per-subject mean for that testee) beside its per-subject mean, and
+  the floor pattern's OWN table is titled "(floor control -- per-call
+  overhead, not a ranking of engines)" instead of ranked like the rest.
+  Absent `role` reads as `member` (today's every record); absent a
+  floor pattern in the set keeps [B9]'s honest `floor: n/a` note. Not
+  yet schema-legal (`setup` is `additionalProperties: false` until
+  b15floor lands v1.3), so exercised only via hand-built `LoadedRecord`s
+  that bypass `schema/validate.py` -- the same technique R3's [B9]
+  `tier` tests already used.
+* R10 -- reporter bumps to `v3 (2026-08-25)`; every committed report
+  under `reports/` is regenerated against it (`reports/CLAUDE.md` notes
+  what changed).
 """
 
 from __future__ import annotations
@@ -165,11 +253,17 @@ import sys
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 
+# [B14] R3: read-only use of the sibling `subbench` module to reach a
+# sub-bench's OWN ground-truth `expectations.tsv` (record_schema.md 10.3:
+# the record itself carries no such fact). This reporter does not own
+# subbench.py (harness-lane territory) and never writes through it.
+from pcrecbench import subbench  # noqa: E402
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v2 (2026-08-25)"
+REPORTER_VERSION = "v3 (2026-08-25)"
 
 _MISSING = object()
 
@@ -493,6 +587,7 @@ class CompileCellReduction:
     derived_n: int = 0
     sample_engine_metadata: dict | None = None   # [B9] R9: one row's engine_metadata (declared-consistent)
     phase_medians: dict = field(default_factory=dict)  # [B9] R9: {"emit-c"/"gcc"/"load": median_ns}
+    artifact_bytes: int | None = None  # [B14] R7: one row's `artifact_bytes` (declared-consistent per artifact)
 
 
 def _phase_medians(rows):
@@ -519,6 +614,12 @@ def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
     cost_class = rows[0].get("cost_class") if rows else None
     outcome_counts = Counter(r.get("compile_outcome") for r in rows)
     sample_em = next((r.get("engine_metadata") for r in rows if r.get("engine_metadata")), None)
+    # [B14] R7: `artifact_bytes` is one number per ARTIFACT (declared-
+    # consistent across its trials, same technique as `sample_em` above) --
+    # the first non-null value seen, not an average of something that never
+    # varies by construction.
+    artifact_bytes = next((r.get("artifact_bytes") for r in rows
+                           if r.get("artifact_bytes") is not None), None)
 
     if cost_class == "lazy-jit":
         derived_vals = lazy_jit_derivation_source() if lazy_jit_derivation_source else []
@@ -532,6 +633,7 @@ def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
             stddev_ns=_pstdev_safe(derived_vals) if n else None,
             n_costed=n, derived=True, derived_n=n,
             sample_engine_metadata=sample_em, phase_medians={},
+            artifact_bytes=artifact_bytes,
         )
 
     costed = [r["cost"]["total_ns"] for r in rows
@@ -546,6 +648,7 @@ def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
         stddev_ns=_pstdev_safe(costed) if n else None,
         n_costed=n, derived=False,
         sample_engine_metadata=sample_em, phase_medians=_phase_medians(rows),
+        artifact_bytes=artifact_bytes,
     )
 
 
@@ -615,13 +718,89 @@ def _mechanism_stamp_columns(engine_metadata):
     }
 
 
-def _jitter_flag(median_ns, stddev_ns):
-    """[B9] R9: 'stddev > median = timer jitter -- the median is the
-    number' (pcrecdev1 feedback, repin (3): interp compile-cost variance
-    12..109 us over 10 trials with no flag saying why)."""
-    if median_ns is None or stddev_ns is None:
+# ------------------------------------------------------------- [B14] R1/R4 helpers
+
+#: [B14] R1/R4: `resume_frame_size` under 20 ns would be nonsense; the only
+#: real value the stamp ever carries is 0 (a DFA artifact, which touches no
+#: buffer at all) or a positive frame size. Used to distinguish "stamped
+#: zero" from "not stamped" without a second sentinel.
+_TIMER_FLOOR_NS = 20_000  # 20 microseconds (R5)
+
+
+def _buffers_display(engine_metadata):
+    """[B14] R1/R4: the compile-cost legend's `buffers` fact, in ONE of
+    three shapes so `-`/`0` never again stand for two different facts
+    (pcrecdev1 feedback, repin-v2 (2)):
+
+    * an `_in` row's CALLER capacity (`buffer_frames`/`buffer_trail`,
+      unchanged from [B9]) -- the pair is present because the harness
+      configured it;
+    * a PLAIN row's STAMPED DEFAULT capacity (R1) -- no caller pair, but
+      `resume_frames`/`trail_frames` (record_schema.md 7's rx_info-sourced
+      pair every artifact stamps, buffer or not) says what the plain entry
+      actually runs on, and [OPT-1]'s whole cost is proportional to it;
+    * `0 (DFA)` when that pair is stamped and BOTH halves are zero -- a DFA
+      artifact takes no buffers by construction (record_schema.md 7: "An
+      DFA-engine pcrec testee therefore declares only the rx_info-sourced
+      pairs"), a STATED fact, not a blank;
+    * `n/s` when neither pair was stamped at this pin at all (pre-I-3, or
+      a non-pcrec testee that never declares these names)."""
+    em = engine_metadata or {}
+    bf, bt = em.get("buffer_frames"), em.get("buffer_trail")
+    if bf is not None or bt is not None:
+        return f"{bf}/{bt} (caller-provided)"
+    rf, rt = em.get("resume_frames"), em.get("trail_frames")
+    if rf is not None and rt is not None:
+        if rf == 0 and rt == 0:
+            return "0 (DFA)"
+        return f"{rf}/{rt} (stamped default)"
+    return "n/s"
+
+
+def _frame_size_display(engine_metadata):
+    """[B14] R4: `resume_frame_size`'s own legend -- `n/s` absent, `0
+    (DFA)` stamped-and-zero, else the stamped byte count. Companion to
+    `_buffers_display`; kept a separate function because the two facts
+    come from different engine_metadata names and can each be absent
+    independently (a testee mid-migration could stamp one and not the
+    other, however briefly)."""
+    em = engine_metadata or {}
+    fs = em.get("resume_frame_size")
+    if fs is None:
+        return "n/s"
+    if fs == 0:
+        return "0 (DFA)"
+    return str(fs)
+
+
+def _testee_legend_line(testee_id, engine_metadata):
+    """[B14] R8: the one-line-per-testee LEGEND replacing the compile-cost
+    table's six per-testee CONSTANT columns (`engine`, `entry`,
+    `prefilter`, `vm_rungs`, and R1/R4's buffer/frame facts) -- printed
+    once above a `has_pcrec` table rather than repeated on every row."""
+    stamps = _mechanism_stamp_columns(engine_metadata)
+    return (f"- `{testee_id}`: engine={stamps['engine']}, entry={stamps['entry']}, "
+            f"prefilter={stamps['prefilter']}, rungs={stamps['vm_rungs']}, "
+            f"buffers={_buffers_display(engine_metadata)}, "
+            f"frame={_frame_size_display(engine_metadata)}")
+
+
+def _jitter_flag(median_ns, stddev_ns, min_ns=None):
+    """[B14] R5 (supersedes [B9]'s boolean): jitter is a COMPUTED RATIO,
+    `stddev/median`, not a bare 'stddev > median' flag -- pcrecdev1
+    feedback, repin-v2 (2): "the interpretive rows have stddev ~= median
+    ... that is what the column was for; compute it (stddev/median, or
+    'timer-floor' when min < 20 microseconds) or drop it." `min_ns` under
+    the clock's practical floor (20 microseconds, `_TIMER_FLOOR_NS`)
+    reports `timer-floor` instead of a ratio that is mostly measuring the
+    clock, not the compile. Returns `''` when there is nothing to compute
+    (no costed rows at all) -- the caller (R5's other half) omits the
+    whole column from a table where every row comes back empty."""
+    if min_ns is not None and min_ns < _TIMER_FLOOR_NS:
+        return "timer-floor"
+    if not median_ns or stddev_ns is None:
         return ""
-    return "timer jitter" if stddev_ns > median_ns else ""
+    return f"{stddev_ns / median_ns:.3f}"
 
 
 # ------------------------------------------------------------- [B9] R4 helper
@@ -711,6 +890,41 @@ def _worst_subject(rd: "ReportData", sb, testee_id, pattern_id, regime, form):
     return sid, ns, rd.subject_bytes.get(sid)
 
 
+def _largest_delta_subject(rd: "ReportData", sb, pattern_id, regime, old_tid, new_tid):
+    """[B14] R6: the subject whose ns/call moved the MOST (by absolute
+    magnitude) between the previous pin (`old_tid`) and this one
+    (`new_tid`) -- distinct from `_worst_subject`, which names the NEW
+    record's slowest subject in absolute terms and is not always the same
+    one (pcrecdev1 feedback, repin-v2 (2): "worst of the NEW record, or
+    the subject with the largest Delta? The label implies the latter, the
+    numbers look like the former. State which, and print both when they
+    differ."). Ignores `form` deliberately -- a cross-pin pair can differ
+    in form (e.g. one side gains an `_in` entry) while still measuring
+    the same subject, and the Delta is a fact about the SUBJECT, not the
+    artifact that answered for it."""
+    old_by_subject = {}
+    new_by_subject = {}
+    for (sb2, t2, p2, subj2, r2, _f2), (_tid2, red) in rd.match_cells.items():
+        if sb2 != sb or p2 != pattern_id or r2 != regime or red.median_ns is None:
+            continue
+        if t2 == old_tid:
+            old_by_subject[subj2] = red.median_ns
+        elif t2 == new_tid:
+            new_by_subject[subj2] = red.median_ns
+    best = None
+    for sid, new_ns in new_by_subject.items():
+        old_ns = old_by_subject.get(sid)
+        if old_ns is None:
+            continue
+        delta = new_ns - old_ns
+        if best is None or abs(delta) > abs(best[1]):
+            best = (sid, delta, new_ns)
+    if best is None:
+        return None
+    sid, delta, new_ns = best
+    return sid, delta, new_ns, rd.subject_bytes.get(sid)
+
+
 def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, red):
     """[B9] R8: if `testee_id` has an older same-(engine, config) sibling
     present in this report (a "previous pin"), return
@@ -763,10 +977,28 @@ def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, r
     worst_note = None
     worst = _worst_subject(rd, sb, testee_id, pattern_id, regime, form)
     if worst:
-        sid, ns, bts = worst
-        b_str = f"{bts:,}" if bts is not None else "?"
-        worst_note = (f"Δ detail: `{testee_id}` vs previous `{prev_tid}`: "
-                       f"worst subject `{sid}`, {_fmt_ns(ns)} ns, {b_str} B")
+        sid_w, ns_w, bts_w = worst
+        b_w = f"{bts_w:,}" if bts_w is not None else "?"
+        # [B14] R6: name BOTH facts explicitly -- the new record's own
+        # slowest subject ("worst now") and, only when it names a
+        # DIFFERENT subject, the one whose Delta from the previous pin was
+        # largest ("largest Delta"). The two coincide often enough (a
+        # uniformly slower artifact) that collapsing them into one clause
+        # when they agree avoids implying a distinction that is not there.
+        largest = _largest_delta_subject(rd, sb, pattern_id, regime, prev_tid, testee_id)
+        if largest and largest[0] != sid_w:
+            sid_l, delta_l, new_ns_l, bts_l = largest
+            b_l = f"{bts_l:,}" if bts_l is not None else "?"
+            sign = "+" if delta_l >= 0 else ""
+            worst_note = (
+                f"Δ detail: `{testee_id}` vs previous `{prev_tid}`: "
+                f"worst now: `{sid_w}`, {_fmt_ns(ns_w)} ns, {b_w} B; "
+                f"largest Δ: `{sid_l}`, {sign}{_fmt_ns(delta_l)} ns "
+                f"(now {_fmt_ns(new_ns_l)} ns), {b_l} B")
+        else:
+            worst_note = (
+                f"Δ detail: `{testee_id}` vs previous `{prev_tid}`: "
+                f"worst now (also the largest Δ): `{sid_w}`, {_fmt_ns(ns_w)} ns, {b_w} B")
     return {"verdict": verdict, "worst_note": worst_note}
 
 
@@ -778,6 +1010,118 @@ def _floor_note_line():
     calibration/floor field lands."""
     return ("_floor: n/a (no floor pattern in this set yet -- "
             "pcrecdev1 feedback 1d/repin-2)_")
+
+
+# ------------------------------------------------------------- [B14] R9 helpers
+
+def _floor_mean_for(rd: "ReportData", sb, floor_pattern_id, regime, testee_id):
+    """[B14] R9: the floor pattern's own per-subject mean ns for
+    `testee_id` at (sb, regime) -- `median_ns / n_subjects` of its SET
+    cell, the same arithmetic the near-floor table already shows for
+    every ranked pattern (R6/[B9]). `None` when this testee has no
+    (measured, non-excluded) floor-pattern cell at this (sb, regime) --
+    the caller renders that as `n/a` rather than a fabricated number."""
+    for (sb2, t2, p2, r2, _f2), (_tid2, red) in rd.set_cells.items():
+        if (sb2, t2, p2, r2) != (sb, testee_id, floor_pattern_id, regime):
+            continue
+        if red.median_ns is None or not red.n_subjects:
+            continue
+        return red.median_ns / red.n_subjects
+    return None
+
+
+# ------------------------------------------------------------- [B14] R2/R3 helpers
+
+def _group_subject_ids(rd: "ReportData", sb, pattern_id, regime):
+    """The distinct subject ids measured for one (sb, pattern, regime)
+    ranking group, across every testee and form -- the union, since the
+    SAME subject set is what a sub-bench's regime defines regardless of
+    which testee is answering (a testee that gave up on one still names
+    it). Shared by R2 (the tiny-set per-subject sub-table) and R3 (the
+    matching-subject count)."""
+    ids = set()
+    for (sb2, _t2, p2, subj2, r2, _f2) in rd.match_cells:
+        if sb2 == sb and p2 == pattern_id and r2 == regime:
+            ids.add(subj2)
+    return sorted(ids)
+
+
+_subbench_by_id_cache = {}
+
+
+def _load_subbench_for_report(sb_id, repo_root=REPO_ROOT):
+    """[B14] R3: best-effort resolution of a sub-bench ID (e.g.
+    `email-specimen`) to its loaded `bench/<dir>/` -- the REVERSE of
+    `resolve_subbench_arg` (which goes directory -> id for `--subbench`).
+    Cached per id (the walk is cheap but repeated once per ranking group
+    otherwise). Returns `None`, NEVER raises, when no `bench/<dir>/`
+    declares this id, or the directory fails to load (missing
+    `expectations.tsv`, a malformed sidecar, etc.) -- every fixture sub-
+    bench id here (`fixture-mini`, `rb-mini`, ...) names no real
+    directory, and that is a normal, expected case, not a reporter
+    error."""
+    if sb_id in _subbench_by_id_cache:
+        return _subbench_by_id_cache[sb_id]
+    result = None
+    bench_root = os.path.join(repo_root, "bench")
+    if os.path.isdir(bench_root):
+        for dirname in sorted(os.listdir(bench_root)):
+            toml_path = os.path.join(bench_root, dirname, "subbench.toml")
+            if not os.path.isfile(toml_path):
+                continue
+            try:
+                import tomllib
+                with open(toml_path, "rb") as fh:
+                    data = tomllib.load(fh)
+            except Exception:
+                continue
+            if data.get("id") == sb_id:
+                try:
+                    result = subbench.find(dirname, bench_root)
+                except Exception:
+                    result = None
+                break
+    _subbench_by_id_cache[sb_id] = result
+    return result
+
+
+def _matching_subject_count(sb_full_id, pattern_id, regime, subject_ids):
+    """[B14] R3: (m, n) -- of `subject_ids` (one ranking group's own
+    subjects, from `_group_subject_ids`), how many have a GROUND-TRUTH
+    expectation of `match` for (pattern_id, regime) in the sub-bench's
+    OWN `expectations.tsv`. Only meaningful for `match-compliance`: the
+    record's `match_outcome` cannot answer this (record_schema.md 10.3 --
+    `matched-as-expected` agrees with a `nomatch` expectation exactly as
+    often as a `match` one; see `pcrecbench.harness.outcome_for`, whose
+    test is symmetric: `row.matched != expectation.matched`). Returns
+    `None` (never a fabricated count) when the regime is not
+    `match-compliance`, the sub-bench cannot be resolved
+    (`_load_subbench_for_report`), or it has no expectation rows at all
+    for this (pattern, regime) -- e.g. `gen_expectations.py` has not run,
+    or every fixture sub-bench here, which names no real `bench/<dir>/`."""
+    if regime != "match-compliance":
+        return None
+    sb_id = sb_full_id.split("@", 1)[0]
+    sub = _load_subbench_for_report(sb_id)
+    if sub is None:
+        return None
+    short_regime = subbench.ENUM_TO_REGIME.get(regime)
+    if short_regime is None:
+        return None
+    m = n = 0
+    try:
+        for sid in subject_ids:
+            exp = sub.expectation(pattern_id, sid, short_regime)
+            if exp is None:
+                continue
+            n += 1
+            if exp.matched:
+                m += 1
+    except subbench.SubbenchError:
+        return None
+    if n == 0:
+        return None
+    return m, n
 
 
 # ---------------------------------------------------------------- the run
@@ -813,6 +1157,10 @@ class ReportData:
     include_scratch: bool = False
     all_records: bool = False
     subbench_alias_note: str | None = None
+    # [B14] R9: sb -> the pattern_id of that sb's `role: floor` pattern, if
+    # any record in the selection declares one (schema v1.3, not yet
+    # schema-legal -- see the module docstring's R9 note).
+    floor_pattern_by_sb: dict = field(default_factory=dict)
 
 
 def build_report(loaded, args):
@@ -919,6 +1267,7 @@ def build_report(loaded, args):
     tier_by_testee = {}
     record_ts_by_testee = {}
     subject_bytes = {}
+    floor_pattern_by_sb = {}  # [B14] R9: sb -> pattern_id of its `role: floor` pattern, if any
     # `form` (schema v1.1, record_schema.md 5 ADDITIONS 3) is part of every
     # match- and compile-cell key: a testee with no end-anchored mode
     # compiles and times a SEPARATE `whole-subject` artifact for the
@@ -950,6 +1299,14 @@ def build_report(loaded, args):
         record_ts_by_testee[(sb, testee_id)] = s.get("run", {}).get("timestamp")
         for subj in s.get("subjects", []) or []:
             subject_bytes[subj["subject_id"]] = subj.get("bytes_offered")
+        # [B14] R9: schema v1.3's optional `patterns[].role` (not yet
+        # schema-legal -- see the module docstring). Absent on every
+        # pattern today, which is exactly `role = member` by the ruling's
+        # own default; this only ever sets something once b15floor's
+        # floor pattern lands (or a hand-built test record says so).
+        for p in s.get("patterns", []) or []:
+            if p.get("role") == "floor" and sb not in floor_pattern_by_sb:
+                floor_pattern_by_sb[sb] = p["pattern_id"]
 
         # Match rows: grouped by `pcrecbench.reduce.cells_from_record` --
         # the SAME (pattern_id, regime, form) -> {subject_id: [rows]}
@@ -1038,6 +1395,7 @@ def build_report(loaded, args):
         include_scratch=bool(getattr(args, "include_scratch", False)),
         all_records=all_records,
         subbench_alias_note=getattr(args, "_subbench_alias_note", None),
+        floor_pattern_by_sb=floor_pattern_by_sb,
     ), None
 
 
@@ -1129,14 +1487,13 @@ def render_markdown(rd: ReportData):
             out.append(f"    - `{os.path.relpath(path)}`: {problems[0]}"
                         + (f" (+{len(problems)-1} more)" if len(problems) > 1 else ""))
     if rd.superseded:
+        # [B14] R8: was a bullet naming every superseded/kept id pair
+        # (120-char lines, pcrecdev1 feedback repin-v2 (4)) -- the ids are
+        # not lost, `--all-records` lists them (and every record, kept or
+        # not, as its own row); this line just stops repeating them here.
         total_sup = sum(len(sups) for _kept, sups in rd.superseded)
-        out.append(f"- superseded records (OD-B15, amended: older duplicate of a "
-                    f"(subbench@version, testee_id, machine) than the newest MEASURED "
-                    f"record; newest-measured kept by default, `--all-records` shows each "
-                    f"separately): {total_sup}")
-        for kept, sups in rd.superseded:
-            for sup in sups:
-                out.append(f"    - `{sup}` superseded by `{kept}`")
+        out.append(f"- superseded: {total_sup} record(s) (OD-B15; "
+                    f"--all-records lists them)")
     if rd.newer_not_measured:
         out.append(f"- newer, not measured (OD-B15 amendment, 2026-08-25: a record newer "
                     f"than the kept one but NOT `measured` does not supersede it -- a "
@@ -1261,14 +1618,40 @@ def render_markdown(rd: ReportData):
 
         any_partial = any(_partial_coverage(r) for _t, _f, r in entries)
         near_floor = grain == "set" and regime == "short-subject-search"
+        is_throughput = grain == "set" and regime == "large-subject-throughput"
+        # [B14] R9: this group's own floor pattern, if the sb declares one
+        # (schema v1.3, not yet schema-legal -- module docstring). Only
+        # meaningful in the near-floor (short-subject-search) tables the
+        # floor pattern itself was measured for.
+        floor_pattern_id = rd.floor_pattern_by_sb.get(sb)
+        is_floor_pattern = near_floor and floor_pattern_id == pattern_id
 
+        subject_id = None
         if grain == "subject":
             _sb2, _pat2, subject_id, _reg2 = gkey
             title = f"### `{pattern_id}` / `{subject_id}` / `{regime}`"
         else:
             title = f"### `{pattern_id}` / `{regime}`"
         title += f" ({sb}) — baseline: {rd.reference_testee_pred}"
+        if is_floor_pattern:
+            title += " (floor control — per-call overhead, not a ranking of engines)"
         out.append(title + "\n")
+
+        # [B14] R3: the matching-subject count, `match-compliance` only --
+        # the record itself cannot answer this (see `_matching_subject_
+        # count`'s docstring), so it comes from the sub-bench's own
+        # `expectations.tsv` and is silently omitted when that cannot be
+        # resolved (every fixture sub-bench here, or a real one queried
+        # before `gen_expectations.py` has run).
+        if regime == "match-compliance":
+            subject_ids_for_count = [subject_id] if subject_id is not None \
+                else _group_subject_ids(rd, sb, pattern_id, regime)
+            mc = _matching_subject_count(sb, pattern_id, regime, subject_ids_for_count)
+            if mc:
+                m_count, n_count = mc
+                out.append(f"- matches: {m_count}/{n_count} (subjects whose expected "
+                            f"outcome is a match; record_schema.md 10.3 — ground truth "
+                            f"lives in the sub-bench, not the record)\n")
 
         if rankable:
             rankable.sort(key=lambda tfr: tfr[2].median_ns)
@@ -1283,10 +1666,27 @@ def render_markdown(rd: ReportData):
                             "artifact until an end-anchored entry exists (pcrec "
                             "[OS-4])._\n")
 
+            # [B14] R2: the group's own subject set, and its total bytes when
+            # every subject in it declares one -- `is_throughput`'s ns/byte
+            # column and the tiny-set sub-table below both need it, computed
+            # once rather than twice.
+            group_subject_ids = _group_subject_ids(rd, sb, pattern_id, regime)
+            total_bytes = None
+            if is_throughput:
+                byte_vals = [rd.subject_bytes.get(sid) for sid in group_subject_ids]
+                if byte_vals and all(v is not None for v in byte_vals):
+                    total_bytes = sum(byte_vals)
+            tiny_set = (grain == "set" and len(group_subject_ids) <= 3
+                        and len(group_subject_ids) > 0)
+            show_floor_column = bool(near_floor and floor_pattern_id and not is_floor_pattern)
+
             header = ["rank", "testee", "status"]
             if rd.show_form:
                 header += ["form", "fact"]
-            header += ["median ns/call", "min", "max", "stddev", "vs baseline", "vs best"]
+            header.append("median ns/call")
+            if is_throughput:
+                header.append("ns/byte")
+            header += ["min", "max", "stddev", "vs baseline", "vs best"]
 
             delta_by_testee = {}
             if grain == "set":
@@ -1297,7 +1697,10 @@ def render_markdown(rd: ReportData):
             if delta_by_testee:
                 header.append("Δ vs previous version")
             if near_floor:
-                header += ["n subjects", "per-subject mean ns", "pass-rate"]
+                header += ["n subjects", "per-subject mean ns"]
+                if show_floor_column:
+                    header.append("floor ns")
+                header.append("pass-rate")
             elif any_partial:
                 header += (["n subjects", "pass-rate"] if grain == "set" else ["n", "pass-rate"])
             if rd.include_scratch:
@@ -1314,7 +1717,11 @@ def render_markdown(rd: ReportData):
                 row = [str(i), f"`{t}`", status]
                 if rd.show_form:
                     row += [f"`{form}`", _form_fact(form)]
-                row += [_fmt_ns(r.median_ns), _fmt_ns(r.min_ns), _fmt_ns(r.max_ns),
+                row.append(_fmt_ns(r.median_ns))
+                if is_throughput:
+                    row.append(f"{r.median_ns / total_bytes:.4f}"
+                               if (r.median_ns is not None and total_bytes) else "-")
+                row += [_fmt_ns(r.min_ns), _fmt_ns(r.max_ns),
                         _fmt_ns(r.stddev_ns), f"{ratio_baseline:.3f}x", f"{ratio_best:.3f}x"]
                 if delta_by_testee:
                     info = delta_by_testee.get(t)
@@ -1324,7 +1731,11 @@ def render_markdown(rd: ReportData):
                 if near_floor:
                     n, pr = _n_and_pass_rate(r, grain)
                     mean = (r.median_ns / n) if n else None
-                    row += [str(n), _fmt_ns(mean), f"{pr*100:.0f}%"]
+                    row += [str(n), _fmt_ns(mean)]
+                    if show_floor_column:
+                        floor_mean = _floor_mean_for(rd, sb, floor_pattern_id, regime, t)
+                        row.append(_fmt_ns(floor_mean) if floor_mean is not None else "n/a")
+                    row.append(f"{pr*100:.0f}%")
                 elif any_partial:
                     n, pr = _n_and_pass_rate(r, grain)
                     row += [str(n), f"{pr*100:.0f}%"]
@@ -1333,8 +1744,33 @@ def render_markdown(rd: ReportData):
                 out.append("| " + " | ".join(row) + " |")
             out.append("")
 
-            if near_floor:
+            if near_floor and not is_floor_pattern and not show_floor_column:
+                # No floor pattern exists in this set at all -- [B9]'s
+                # honest placeholder note stands unchanged.
                 out.append(_floor_note_line())
+                out.append("")
+
+            # [B14] R2: a set this small (today, every `large-subject-
+            # throughput` cell) gets its own subjects IN the table rather
+            # than only a "worst subject" line -- pcrecdev1 feedback,
+            # repin-v2 (1): "for a 3-subject set the per-subject numbers
+            # should be IN the table (a 3-row sub-table)".
+            if tiny_set:
+                out.append(f"#### `{pattern_id}` / `{regime}` per-subject ({sb})\n")
+                out.append("| subject | bytes | testee | median ns/call | ns/byte |")
+                out.append("|---|---|---|---|---|")
+                for sid in group_subject_ids:
+                    bts = rd.subject_bytes.get(sid)
+                    b_str = f"{bts:,}" if bts is not None else "?"
+                    for t, form, _r in rankable:
+                        cell = rd.match_cells.get((sb, t, pattern_id, sid, regime, form))
+                        if cell is None:
+                            continue
+                        _tid, subj_red = cell
+                        ns_byte = (f"{subj_red.median_ns / bts:.4f}"
+                                   if (subj_red.median_ns is not None and bts) else "-")
+                        out.append(f"| `{sid}` | {b_str} | `{t}` | "
+                                    f"{_fmt_ns(subj_red.median_ns)} | {ns_byte} |")
                 out.append("")
 
             if worst_notes:
@@ -1407,13 +1843,38 @@ def render_markdown(rd: ReportData):
         has_pcrec = any(t.split("@", 1)[0].startswith("pcrec_") for _sb, _p, t, _f, _r in rows_for_class)
         label = "median ns (derived: first-match-row-minus-steady-state)" \
             if rows_for_class[0][4].derived else "median total_ns"
+
+        if has_pcrec:
+            # [B14] R8: the six per-TESTEE CONSTANT columns (`engine`,
+            # `entry`, `prefilter`, `vm_rungs`, R1/R4's buffer/frame facts)
+            # move to a one-line-per-testee LEGEND above the table instead
+            # of repeating on every (pattern, form) row (pcrecdev1
+            # feedback, repin-v2 (4): "a 60-char PCREC_VM_RUNG_... string
+            # repeated 16 times").
+            legend_em_by_testee = {}
+            for _sb, _p, testee_id, _f, r in rows_for_class:
+                if testee_id not in legend_em_by_testee and r.sample_engine_metadata:
+                    legend_em_by_testee[testee_id] = r.sample_engine_metadata
+            for testee_id in sorted(legend_em_by_testee):
+                out.append(_testee_legend_line(testee_id, legend_em_by_testee[testee_id]))
+            out.append("")
+
+        # [B14] R5: a jitter column empty on EVERY row of this table is
+        # dropped rather than rendered as a wall of blanks.
+        jitter_by_row = {(sb, pattern_id, testee_id, form):
+                          _jitter_flag(r.median_ns, r.stddev_ns, r.min_ns)
+                          for sb, pattern_id, testee_id, form, r in rows_for_class}
+        show_jitter = any(jitter_by_row.values())
+
         header = ["pattern"]
         if rd.show_form:
             header.append("form")
-        header += ["testee", label, "min", "max", "stddev", "n costed", "jitter", "outcomes"]
+        header += ["testee", label, "min", "max", "stddev", "n costed", "artifact bytes"]
+        if show_jitter:
+            header.append("jitter")
+        header.append("outcomes")
         if has_pcrec:
-            header += ["engine", "entry", "prefilter", "vm_rungs", "buffer_frames",
-                       "buffer_trail", "resume_frame_size", "emit-c ns", "gcc ns", "load ns"]
+            header += ["emit-c ns", "gcc ns", "load ns"]
         out.append("| " + " | ".join(header) + " |")
         out.append("|" + "|".join(["---"] * len(header)) + "|")
         for sb, pattern_id, testee_id, form, r in sorted(rows_for_class):
@@ -1422,14 +1883,14 @@ def render_markdown(rd: ReportData):
             if rd.show_form:
                 row.append(f"`{form}`")
             row += [f"`{testee_id}`", _fmt_ns(r.median_ns), _fmt_ns(r.min_ns), _fmt_ns(r.max_ns),
-                    _fmt_ns(r.stddev_ns), str(r.n_costed), _jitter_flag(r.median_ns, r.stddev_ns), outcomes]
+                    _fmt_ns(r.stddev_ns), str(r.n_costed),
+                    (f"{r.artifact_bytes:,}" if r.artifact_bytes is not None else "-")]
+            if show_jitter:
+                row.append(jitter_by_row[(sb, pattern_id, testee_id, form)])
+            row.append(outcomes)
             if has_pcrec:
-                stamps = _mechanism_stamp_columns(r.sample_engine_metadata)
                 pm = r.phase_medians or {}
-                row += [str(stamps["engine"]), stamps["entry"], str(stamps["prefilter"]),
-                        stamps["vm_rungs"], str(stamps["buffer_frames"]), str(stamps["buffer_trail"]),
-                        str(stamps["resume_frame_size"]), _fmt_ns(pm.get("emit-c")),
-                        _fmt_ns(pm.get("gcc")), _fmt_ns(pm.get("load"))]
+                row += [_fmt_ns(pm.get("emit-c")), _fmt_ns(pm.get("gcc")), _fmt_ns(pm.get("load"))]
             out.append("| " + " | ".join(row) + " |")
         out.append("")
 
@@ -1515,16 +1976,39 @@ def render_tsv(rd: ReportData):
                                      str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong),
                                      gs, ""]))
 
+    stamp_testees_emitted = set()
     for (sb, testee_id, pattern_id, form), (t, r) in sorted(rd.compile_cells.items()):
         metric = "derived_first_match_row_minus_steady_state_ns" if r.derived else "median_total_ns"
         fact = _form_fact(form)
         lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
                                  "", metric, f"{r.median_ns:.6f}" if r.median_ns is not None else "",
                                  str(r.n_trials), "", "", "", "", ""]))
-        jf = _jitter_flag(r.median_ns, r.stddev_ns)
+        # [B14] R5: the jitter VALUE (a ratio, or 'timer-floor'), not a
+        # boolean flag.
+        jf = _jitter_flag(r.median_ns, r.stddev_ns, r.min_ns)
         if jf:
             lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
-                                     "", "jitter_flag", jf, "", "", "", "", "", ""]))
+                                     "", "jitter", jf, "", "", "", "", "", ""]))
+        # [B14] R7: artifact_bytes, once per (pattern, testee, form) row --
+        # the same grain the compile-cost table's own column carries.
+        if r.artifact_bytes is not None:
+            lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
+                                     "", "artifact_bytes", str(r.artifact_bytes),
+                                     "", "", "", "", "", ""]))
+        # [B14] R8: the mechanism-stamp LEGEND facts, once per testee
+        # (declared-consistent across pattern/form -- same basis as the
+        # markdown legend) rather than a fresh set of columns.
+        if r.sample_engine_metadata and testee_id not in stamp_testees_emitted:
+            stamp_testees_emitted.add(testee_id)
+            stamps = _mechanism_stamp_columns(r.sample_engine_metadata)
+            for name, val in (
+                ("engine", stamps["engine"]), ("entry", stamps["entry"]),
+                ("prefilter", stamps["prefilter"]), ("vm_rungs", stamps["vm_rungs"]),
+                ("buffers", _buffers_display(r.sample_engine_metadata)),
+                ("frame", _frame_size_display(r.sample_engine_metadata)),
+            ):
+                lines.append("\t".join(["compile_stamp", "", "", "", "", "", testee_id,
+                                         "", "", "", name, str(val), "", "", "", "", "", ""]))
 
     return "\n".join(lines) + "\n"
 

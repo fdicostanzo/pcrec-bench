@@ -44,6 +44,13 @@ from pcrecbench import report  # noqa: E402
 
 
 STORE = os.path.join(FIXDIR, "store")
+# [B14]: the PROJECT's own real committed store (email-specimen@0.1, the
+# 692c2e8/8da6120 pcrec pins alongside libpcre2) -- used by R1/R2/R3/R4/R7's
+# end-to-end firing checks, since those rulings need REAL engine_metadata
+# stamps (resume_frames/trail_frames/buffer_frames pairs at two different
+# pins) and a REAL `bench/email/expectations.tsv` (R3) that no synthetic
+# fixture here reproduces. Read-only; nothing in this suite writes to it.
+REAL_STORE = os.path.join(report.REPO_ROOT, "store")
 STORE_WALK_ONLY = os.path.join(FIXDIR, "store_walk_only")
 # v1.1 (manager, 2026-08-25): two SEPARATE mixed-version scenarios, kept in
 # separate subdirectories so querying one never accidentally exercises the
@@ -144,7 +151,8 @@ def _args(**overrides):
 
 def _mini_setup(testee_id, sb_id="rb-mini", sb_version="1.0", machine="m1",
                  timestamp="2026-08-25T10:00:00Z", status="measured",
-                 status_detail=None, tier=None, record_id=None, subjects=None):
+                 status_detail=None, tier=None, record_id=None, subjects=None,
+                 patterns=None):
     s = {
         "kind": "setup",
         "schema_version": "1.1",
@@ -161,6 +169,13 @@ def _mini_setup(testee_id, sb_id="rb-mini", sb_version="1.0", machine="m1",
         s["tier"] = tier
     if subjects is not None:
         s["subjects"] = subjects
+    if patterns is not None:
+        # [B14] R9: schema v1.3's `patterns[].role` is not yet schema-legal
+        # (`setup` is `additionalProperties: false` until b15floor lands
+        # it) -- only ever reaches `build_report` through a hand-built
+        # LoadedRecord that bypasses `schema/validate.py`, same technique
+        # R3's [B9] `tier` tests already use.
+        s["patterns"] = patterns
     return s
 
 
@@ -780,7 +795,11 @@ def test_duplicate_record_dedup_r2():
     _check(rd.superseded == [("rec-new", ["rec-old"])],
            f"expected rec-old superseded by rec-new, got {rd.superseded}")
     md = report.render_markdown(rd)
-    _check("`rec-old` superseded by `rec-new`" in md, f"the header must name the superseded record:\n{md}")
+    # [B14] R8: shortened to a one-line count (pcrecdev1 feedback repin-v2
+    # (4)) -- the ids themselves live in `rd.superseded` (checked above)
+    # and in `--all-records`, not repeated in the rendered header.
+    _check("superseded: 1 record(s) (OD-B15; --all-records lists them)" in md,
+           f"the header must summarise the superseded count:\n{md}")
     key = next(k for k in rd.set_cells if k[1] == "engine-c_1.0.0_cfg-caps-simdna")
     _tid, red = rd.set_cells[key]
     _check(red.median_ns == 100.0,
@@ -1108,9 +1127,13 @@ def test_mechanism_stamp_columns_r9():
     _check(vm_no_buffers["entry"] == "plain entry", "no buffer pair on a VM row -> plain entry too")
     _check(vm_no_buffers["vm_rungs"] == "-", "no vm_rungs declared -> '-'")
 
-    _check(report._jitter_flag(100.0, 50.0) == "", "stddev below median -> no jitter flag")
-    _check(report._jitter_flag(100.0, 150.0) == "timer jitter", "stddev above median -> the jitter flag")
-    _check(report._jitter_flag(None, 1.0) == "", "no median -> no flag (nothing to compare)")
+    # [B14] R5 superseded the boolean 'stddev > median' flag with the
+    # ratio itself, plus 'timer-floor' under the clock's practical floor
+    # -- see test_jitter_ratio_r5 below for the dedicated ruling test.
+    # `_jitter_flag` is still exercised here because R9's mechanism-stamp
+    # columns and R5's jitter column share the same compiled-aot table.
+    _check(report._jitter_flag(100000.0, 50000.0, 90000.0) == "0.500",
+           "stddev/median, three decimals")
 
     loaded, _paths, _source = _load_store(STORE)
     args = _args(store=STORE, include_synthetic=True)
@@ -1118,13 +1141,15 @@ def test_mechanism_stamp_columns_r9():
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
     compiled = md.split("### `compiled-aot`")[1].split("### `")[0]
-    _check("engine" in compiled and "entry" in compiled and "vm_rungs" in compiled,
-           f"the compiled-aot table must carry the mechanism-stamp columns:\n{compiled[:800]}")
+    # [B14] R8: engine/entry/prefilter/vm_rungs moved from table COLUMNS
+    # to a one-line-per-testee LEGEND above the table.
+    _check("engine=" in compiled and "entry=" in compiled and "rungs=" in compiled,
+           f"the compiled-aot table must carry the mechanism-stamp legend:\n{compiled[:800]}")
     _check("emit-c ns" in compiled and "gcc ns" in compiled and "load ns" in compiled,
            "the compiled-aot table must carry the phase-split columns")
     interp = md.split("### `interpretive`")[1]
-    _check("vm_rungs" not in interp,
-           "a non-pcrec compile class must NOT carry the pcrec-only stamp columns")
+    _check("rungs=" not in interp,
+           "a non-pcrec compile class must NOT carry the pcrec-only stamp legend")
 
 
 def test_subbench_dir_alias_od_b13():
@@ -1143,6 +1168,373 @@ def test_subbench_dir_alias_od_b13():
     resolved3, note3 = report.resolve_subbench_arg("nonexistent-dir", report.REPO_ROOT)
     _check(resolved3 == "nonexistent-dir", "an unknown directory name must pass through unchanged")
     _check(note3 is None, "no alias note for an unresolved value")
+
+
+# ============================================================= [B14] tests
+#
+# One test per ruling (R1-R10), each exercising both the rule FIRING and a
+# case where it does not -- docs/dev/feedback_pcrecdev1_2026-08-25-repin-v2.md
+# is the spec. R1/R2/R3/R4/R7's firing cases go through `REAL_STORE` (the
+# project's own committed email-specimen sample): they need REAL
+# `engine_metadata` stamps at two different pcrec pins and a REAL
+# `bench/email/expectations.tsv`, neither of which any synthetic fixture
+# here reproduces. R5/R6/R8/R9 go through hand-built `LoadedRecord`s (the
+# same technique the [B9] `tier`/cross-pin tests already use).
+
+def test_plain_entry_capacities_r1():
+    """[B14] R1: a plain-entry compile row (no `buffer_frames`/
+    `buffer_trail`) is not bufferless -- it runs on the STAMPED DEFAULT
+    capacity (`resume_frames`/`trail_frames`), and that is what
+    [OPT-1]'s cost is proportional to (pcrecdev1 feedback, repin-v2
+    (1)). Firing: `pcrec_692c2e8_vm-caps-simdna`'s plain entry in the
+    REAL store stamps `resume_frames=2048`/`trail_frames=3072` (abi 3).
+    Not firing: `_in` rows keep the caller capacity unchanged, and a
+    pre-I-3 pin (`pcrec_8da6120_vm-caps-simdna`) stamped neither pair at
+    all, so R1 has nothing to derive from (R4 covers that case: `n/s`)."""
+    _check(report._buffers_display({"resume_frames": 2048, "trail_frames": 3072})
+           == "2048/3072 (stamped default)",
+           "a plain entry with a stamped rx_info pair must show the STAMPED DEFAULT")
+    _check(report._buffers_display({"buffer_frames": 32768, "buffer_trail": 131072,
+                                     "resume_frames": 2048, "trail_frames": 3072})
+           == "32768/131072 (caller-provided)",
+           "an _in row keeps the CALLER capacity even when the stamped default is also present")
+    _check(report._buffers_display({}) == "n/s", "no pair stamped at all -> n/s")
+
+    loaded, _paths, _source = _load_store(REAL_STORE)
+    args = _args(store=REAL_STORE, subbench="email-specimen")
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    compiled = md.split("### `compiled-aot`")[1].split("### `")[0]
+    _check("`pcrec_692c2e8_vm-caps-simdna`: engine=vm, entry=plain entry, "
+           "prefilter=none, rungs=PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|"
+           "PCREC_VM_RUNG_FRAMES_UNBOUNDED, buffers=2048/3072 (stamped default), frame=24"
+           in compiled,
+           f"expected the plain VM entry's stamped-default capacity in the legend:\n{compiled[:1500]}")
+    _check("`pcrec_692c2e8_vm-in-caps-simdna`: engine=vm, entry=_in, prefilter=none, "
+           "rungs=PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED, "
+           "buffers=32768/131072 (caller-provided), frame=24" in compiled,
+           f"an _in row must still show the CALLER capacity unchanged:\n{compiled[:1500]}")
+
+
+def test_matching_subject_count_r3():
+    """[B14] R3: a `match-compliance` ranking group states `matches:
+    m/n` from the sub-bench's OWN `expectations.tsv` -- 40 of the email
+    specimen's 85 subjects expect a match (`awk -F'\\t' '$1=="orig" &&
+    $3=="match"'` against `bench/email/expectations.tsv`, checked by
+    hand). Not firing: no synthetic fixture sub-bench id here (`fixture-
+    mini`, `rb-mini`) names a real `bench/<dir>/`, so the note is
+    omitted entirely rather than fabricated."""
+    _check(report._matching_subject_count("no-such-sb@1.0", "orig", "match-compliance", ["s-000"])
+           is None, "an unresolvable sub-bench id must yield None, never a fabricated count")
+    _check(report._matching_subject_count("email-specimen@0.1", "orig", "large-subject-throughput",
+                                           ["t-a-valid-addrs"]) is None,
+           "R3 is match-compliance only -- any other regime must yield None")
+
+    loaded, _paths, _source = _load_store(REAL_STORE)
+    args = _args(store=REAL_STORE, subbench="email-specimen")
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check(md.count("matches: 40/85 (subjects whose expected outcome is a match") == 2,
+           f"expected the 40/85 note once for `orig` and once for `factored`:\n"
+           f"{[l for l in md.splitlines() if 'matches:' in l]}")
+
+    # Not firing: the synthetic fixture store's sub-bench id names no real
+    # bench/<dir>/, so no note is printed for its match-compliance groups.
+    loaded_fx, _p, _s = _load_store(STORE)
+    args_fx = _args(store=STORE, include_synthetic=True)
+    rd_fx, err_fx = report.build_report(loaded_fx, args_fx)
+    _check(err_fx is None, f"unexpected refusal: {err_fx}")
+    md_fx = report.render_markdown(rd_fx)
+    _check("matches:" not in md_fx,
+           f"a synthetic sub-bench id must yield no matches note at all:\n{md_fx}")
+
+
+def test_buffer_frame_legend_r4():
+    """[B14] R4: `n/s` (neither pair stamped at this pin) vs `0 (DFA)`
+    (stamped, and zero because a DFA artifact takes no buffers) -- `-`
+    and bare `0` must never again stand for two different facts
+    (pcrecdev1 feedback, repin-v2 (2))."""
+    _check(report._buffers_display({"resume_frames": 0, "trail_frames": 0}) == "0 (DFA)",
+           "a stamped, all-zero pair is a DFA fact, not a blank")
+    _check(report._buffers_display({}) == "n/s", "neither pair stamped -> n/s")
+    _check(report._frame_size_display({"resume_frame_size": 0}) == "0 (DFA)",
+           "a stamped, zero frame size is a DFA fact")
+    _check(report._frame_size_display({}) == "n/s", "no frame size stamped -> n/s")
+    _check(report._frame_size_display({"resume_frame_size": 24}) == "24",
+           "a real stamped frame size passes through as-is")
+
+    loaded, _paths, _source = _load_store(REAL_STORE)
+    args = _args(store=REAL_STORE, subbench="email-specimen")
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    compiled = md.split("### `compiled-aot`")[1].split("### `")[0]
+    _check("`pcrec_692c2e8_auto-caps-simdna`: engine=dfa, entry=plain entry, "
+           "prefilter=(no stamp — pcrec I-3), rungs=-, buffers=0 (DFA), frame=0 (DFA)"
+           in compiled,
+           f"a DFA artifact at a stamped pin must read '0 (DFA)', not a blank:\n{compiled[:1500]}")
+    _check("`pcrec_8da6120_auto-caps-simdna`: engine=dfa, entry=plain entry, "
+           "prefilter=(no stamp — pcrec I-3), rungs=-, buffers=n/s, frame=n/s" in compiled,
+           f"a pre-I-3 pin (neither pair stamped) must read 'n/s', not the same '0' "
+           f"as the DFA fact above:\n{compiled[:1500]}")
+
+
+def test_tiny_set_per_subject_subtable_r2():
+    """[B14] R2: a SET cell of <= 3 subjects (today, every
+    `large-subject-throughput` cell) gets its own per-subject sub-table
+    -- subject id, bytes, median ns/call, ns/byte, for every ranked
+    testee -- and every throughput ranking row gains `ns/byte` beside
+    `ns/call`. Not firing: `short-subject-search` (77-85 subjects) gets
+    neither."""
+    loaded, _paths, _source = _load_store(REAL_STORE)
+    args = _args(store=REAL_STORE, subbench="email-specimen")
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+
+    # Split on "\n### `" (NOT bare "### `"): a per-subject sub-table's own
+    # heading is "#### ..." which itself contains "### `" as a substring
+    # starting at its second character, so a bare split would wrongly cut
+    # the section off before the sub-table it is meant to capture.
+    # Both the opening AND closing split points are anchored on "\n### `"
+    # (a leading newline, exactly three hashes): a bare "### `<pattern>` /
+    # `<regime>`" is not unique here -- R2's own per-subject sub-table
+    # heading is "#### `<pattern>` / `<regime>` per-subject (...)", which
+    # CONTAINS the bare three-hash text as a substring one character in,
+    # so a bare split cuts the section off before the very sub-table this
+    # test means to capture.
+    throughput = md.split("\n### `orig` / `large-subject-throughput`")[1].split("\n### `")[0]
+    _check("| rank | testee | status | form | fact | median ns/call | ns/byte | min |" in throughput,
+           f"a throughput ranking row must carry ns/byte beside ns/call:\n{throughput[:600]}")
+    _check("#### `orig` / `large-subject-throughput` per-subject (email-specimen@0.1)" in throughput,
+           f"a <=3-subject set must get its own per-subject sub-table:\n{throughput}")
+    _check("| `t-a-valid-addrs` | 1,048,576 |" in throughput,
+           f"the sub-table must name each subject with its byte count:\n{throughput}")
+
+    search = md.split("\n### `orig` / `short-subject-search`")[1].split("\n### `")[0]
+    _check("per-subject (" not in search,
+           f"a 77-subject search set must NOT get the tiny-set sub-table:\n{search[:400]}")
+    header_line = next(l for l in search.splitlines() if l.startswith("| rank |"))
+    _check("ns/byte" not in header_line,
+           f"short-subject-search is not a throughput regime -- no ns/byte column:\n{header_line}")
+
+
+def test_jitter_ratio_r5():
+    """[B14] R5: jitter is a computed ratio (`stddev/median`), not a
+    boolean; `timer-floor` when `min_ns` is under the clock's practical
+    floor (20 microseconds); a column empty on EVERY row of a table is
+    OMITTED, not rendered as a wall of blanks (pcrecdev1 feedback,
+    repin-v2 (2))."""
+    _check(report._jitter_flag(100000.0, 50000.0, 90000.0) == "0.500",
+           "stddev/median, three decimals")
+    _check(report._jitter_flag(100000.0, 10000.0, 5000.0) == "timer-floor",
+           "min_ns under 20 microseconds -> timer-floor, regardless of the ratio")
+    _check(report._jitter_flag(None, None, None) == "", "nothing costed -> empty, not a ratio")
+    _check(report._jitter_flag(0, 10.0, 90000.0) == "", "a zero median must not divide by zero")
+
+    # Firing: the real store's interpretive compile rows have min well
+    # under 20 microseconds (a libpcre2 interp compile is a handful of
+    # microseconds) -- 'timer-floor', not a ratio close to 1.
+    loaded, _paths, _source = _load_store(REAL_STORE)
+    args = _args(store=REAL_STORE, subbench="email-specimen")
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    interp = md.split("### `interpretive`")[1].split("### `")[0] if "### `interpretive`" in md \
+        else md.split("### `interpretive`")[1]
+    _check("timer-floor" in interp, f"expected timer-floor on a sub-20us interpretive compile:\n{interp}")
+
+    # Not firing: a column empty on EVERY row of a table is omitted --
+    # a hand-built record whose only compile row never compiled (no
+    # `cost` at all) has NOTHING to compute jitter from anywhere in its
+    # (sole) class, so the header must not carry a 'jitter' column.
+    setup = _mini_setup("engine-j_1.0.0_cfg-caps-simdna")
+    row_uncompiled = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                       "compile_outcome": "did-not-compile", "cost_class": "interpretive",
+                       "diagnostic": "syntax error -- FIXTURE"}
+    loaded2 = [_mk_loaded("j.jsonl", setup, [row_uncompiled])]
+    rd2, err2 = report.build_report(loaded2, _args(store="x", include_synthetic=True))
+    _check(err2 is None, f"unexpected refusal: {err2}")
+    md2 = report.render_markdown(rd2)
+    section = md2.split("### `interpretive`")[1]
+    header_line2 = next(l for l in section.splitlines() if l.startswith("| pattern |"))
+    _check("jitter" not in header_line2,
+           f"a table with nothing to compute jitter from must drop the column:\n{header_line2}")
+
+
+def test_artifact_bytes_column_r7():
+    """[B14] R7: a compile row's `artifact_bytes` becomes a column on
+    every compile-cost table (pcrec and non-pcrec alike), so gcc time
+    can be read against SIZE, not against engine. Not firing: a row
+    with no `artifact_bytes` at all prints `-`, never a fabricated
+    number."""
+    setup = _mini_setup("engine-k_1.0.0_cfg-caps-simdna")
+    row_sized = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                 "compile_outcome": "compiled", "cost_class": "interpretive",
+                 "cost": {"total_ns": 1000}, "artifact_bytes": 4096}
+    row_unsized = {"kind": "compile", "pattern_id": "p2", "trial": 1, "seq": 2,
+                   "compile_outcome": "compiled", "cost_class": "interpretive",
+                   "cost": {"total_ns": 2000}}
+    loaded = [_mk_loaded("k.jsonl", setup, [row_sized, row_unsized])]
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("| `p1` | `engine-k_1.0.0_cfg-caps-simdna` | 1,000.0 | 1,000.0 | 1,000.0 | 0.0 | 1 | 4,096 |" in md,
+           f"expected artifact_bytes=4,096 on the sized row:\n{md}")
+    _check("| `p2` | `engine-k_1.0.0_cfg-caps-simdna` | 2,000.0 | 2,000.0 | 2,000.0 | 0.0 | 1 | - |" in md,
+           f"expected '-' (not a fabricated number) on the unsized row:\n{md}")
+
+    # Firing against the real store too, for a real number.
+    loaded_r, _p, _s = _load_store(REAL_STORE)
+    rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen"))
+    _check(err_r is None, f"unexpected refusal: {err_r}")
+    md_r = report.render_markdown(rd_r)
+    _check("29,744" in md_r, f"expected the real store's artifact_bytes to appear:\n{md_r[:200]}")
+
+
+def test_legend_and_superseded_shortening_r8():
+    """[B14] R8: two shortenings. The Query header's superseded-record
+    list collapses to one summary line (`--all-records` is where the
+    ids live); the compile-cost table's six per-testee CONSTANT columns
+    move to a one-line-per-testee LEGEND above the table, not repeated
+    on every (pattern, form) row."""
+    setup_old = _mini_setup("engine-l_1.0.0_cfg-caps-simdna",
+                             timestamp="2026-08-25T09:00:00Z", record_id="rec-l-old")
+    setup_new = _mini_setup("engine-l_1.0.0_cfg-caps-simdna",
+                             timestamp="2026-08-25T11:00:00Z", record_id="rec-l-new")
+    rows_old = [_mini_row("p1", "s1", "short-subject-search", t, t, 999) for t in (1, 2, 3)]
+    rows_new = [_mini_row("p1", "s1", "short-subject-search", t, t, 100) for t in (1, 2, 3)]
+    loaded = [_mk_loaded("l-old.jsonl", setup_old, rows_old), _mk_loaded("l-new.jsonl", setup_new, rows_new)]
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("superseded: 1 record(s) (OD-B15; --all-records lists them)" in md,
+           f"expected the shortened one-line superseded summary:\n{md}")
+    _check("`rec-l-old` superseded by `rec-l-new`" not in md,
+           "the old per-id bullet must be gone, not merely supplemented")
+
+    # The legend, against the real store: one line per pcrec testee,
+    # never a per-row repetition of the same six facts.
+    loaded_r, _p, _s = _load_store(REAL_STORE)
+    rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen"))
+    _check(err_r is None, f"unexpected refusal: {err_r}")
+    md_r = report.render_markdown(rd_r)
+    compiled = md_r.split("### `compiled-aot`")[1].split("### `")[0]
+    _check(compiled.count("`pcrec_692c2e8_vm-caps-simdna`: engine=") == 1,
+           f"the legend must name each testee's mechanism stamps exactly ONCE, "
+           f"not once per (pattern, form) row:\n{compiled[:400]}")
+    header_line = next(l for l in compiled.splitlines() if l.startswith("| pattern |"))
+    _check("engine" not in header_line and "vm_rungs" not in header_line,
+           f"the six per-testee constant columns must be gone from the table header:\n{header_line}")
+
+
+def test_worst_now_vs_largest_delta_r6():
+    """[B14] R6: 'worst subject' used to name the NEW record's slowest
+    subject while reading as if it were the subject whose Delta was
+    biggest -- not always the same one. Now explicit: `worst now`
+    always, `largest Delta` ALSO printed when it names a different
+    subject (pcrecdev1 feedback, repin-v2 (2))."""
+    setup_old = _mini_setup("pcrec_EEEEEEE_vm-caps-simdna",
+                             timestamp="2026-08-25T09:00:00Z", record_id="rec-e-old")
+    setup_new = _mini_setup("pcrec_FFFFFFF_vm-caps-simdna",
+                             timestamp="2026-08-25T11:00:00Z", record_id="rec-e-new")
+    # s1: small Delta (900 -> 910) but the highest absolute ns in the NEW
+    # record ("worst now"). s2: tiny old value, huge Delta (10 -> 400),
+    # but still smaller in absolute terms than s1 ("largest Delta").
+    rows_old = ([_mini_row("p1", "s1", "short-subject-search", t, t, 900) for t in (1, 2, 3)]
+                + [_mini_row("p1", "s2", "short-subject-search", t, t + 3, 10) for t in (1, 2, 3)])
+    rows_new = ([_mini_row("p1", "s1", "short-subject-search", t, t, 910) for t in (1, 2, 3)]
+                + [_mini_row("p1", "s2", "short-subject-search", t, t + 3, 400) for t in (1, 2, 3)])
+    loaded = [_mk_loaded("e-old.jsonl", setup_old, rows_old), _mk_loaded("e-new.jsonl", setup_new, rows_new)]
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("worst now: `s1`, 910.0 ns" in md, f"expected s1 named as worst now:\n{md}")
+    _check("largest Δ: `s2`, +390.0 ns (now 400.0 ns)" in md,
+           f"expected s2 named as the largest Delta, distinct from worst now:\n{md}")
+
+    # Not firing (same subject): reduce to one subject only -- the two
+    # facts coincide, and the wording says so in ONE clause.
+    rows_old_one = [_mini_row("p1", "s1", "short-subject-search", t, t, 900) for t in (1, 2, 3)]
+    rows_new_one = [_mini_row("p1", "s1", "short-subject-search", t, t, 100) for t in (1, 2, 3)]
+    loaded_one = [_mk_loaded("e-old1.jsonl", setup_old, rows_old_one),
+                  _mk_loaded("e-new1.jsonl", setup_new, rows_new_one)]
+    rd1, err1 = report.build_report(loaded_one, _args(store="x", include_synthetic=True))
+    _check(err1 is None, f"unexpected refusal: {err1}")
+    md1 = report.render_markdown(rd1)
+    _check("worst now (also the largest Δ): `s1`" in md1,
+           f"one shared subject must collapse to a single combined clause:\n{md1}")
+    _check("largest Δ: `s1`, " not in md1, "must not ALSO print the separate largest-Delta clause")
+
+
+def test_floor_pattern_r9():
+    """[B14] R9: schema v1.3's `patterns[].role` (`member` default |
+    `floor`, not yet schema-legal). A `role: floor` pattern's own
+    short-subject-search table is retitled a control, not a ranking;
+    every OTHER (member) pattern's short-subject-search row gains a
+    `floor ns` figure beside its per-subject mean. Not firing: the
+    existing [B9] `floor: n/a` note stands when no record declares a
+    floor pattern at all (covered by `test_near_floor_columns_r6`,
+    unaffected by this ruling -- reconfirmed here for the same store)."""
+    patterns = [{"pattern_id": "p-mem", "role": "member"},
+                {"pattern_id": "p-floor", "role": "floor"}]
+    setup = _mini_setup("engine-m_1.0.0_cfg-caps-simdna", patterns=patterns)
+    rows = (
+        [_mini_row("p-mem", "s1", "short-subject-search", 1, 1, 50)]
+        + [_mini_row("p-mem", "s2", "short-subject-search", 1, 2, 70)]
+        + [_mini_row("p-floor", "s1", "short-subject-search", 1, 3, 100)]
+        + [_mini_row("p-floor", "s2", "short-subject-search", 1, 4, 300)]
+    )
+    loaded = [_mk_loaded("m.jsonl", setup, rows)]
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    _check(rd.floor_pattern_by_sb.get("rb-mini@1.0") == "p-floor",
+           f"expected the floor pattern recorded for its sb, got {rd.floor_pattern_by_sb}")
+    md = report.render_markdown(rd)
+
+    # Anchored on "\n### `" both ends -- both `p-mem` and `p-floor` are
+    # 2-subject sets, so R2's tiny-set rule ALSO fires here and each gets
+    # its own H4 per-subject sub-table (`#### \`p-mem\`... per-subject`),
+    # whose bare heading text contains the bare H3 title as a one-off
+    # substring -- see the R2 test's comment for why the bare form is
+    # unsafe.
+    member = md.split("\n### `p-mem` / `short-subject-search`")[1].split("\n### `")[0]
+    _check("floor ns" in member, f"a member pattern must gain the floor ns column:\n{member}")
+    # floor SET cell: sum(100, 300) = 400 over 2 subjects -> per-subject mean 200.0
+    _check("200.0" in member, f"expected the floor pattern's per-subject mean (200.0):\n{member}")
+
+    floor_section = md.split("\n### `p-floor` / `short-subject-search`")[1].split("\n### `")[0]
+    _check("(floor control — per-call overhead, not a ranking of engines)" in floor_section,
+           f"the floor pattern's own table must be retitled a control:\n{floor_section[:300]}")
+    _check("floor ns" not in floor_section.split("\n")[0],
+           "the floor pattern's OWN table does not need a floor column on itself")
+
+    # Not firing: no floor pattern declared at all -- the honest [B9] note.
+    setup_plain = _mini_setup("engine-n_1.0.0_cfg-caps-simdna")
+    rows_plain = [_mini_row("p1", "s1", "short-subject-search", t, t, 50) for t in (1, 2, 3)]
+    loaded_plain = [_mk_loaded("n.jsonl", setup_plain, rows_plain)]
+    rd_plain, err_plain = report.build_report(loaded_plain, _args(store="x", include_synthetic=True))
+    _check(err_plain is None, f"unexpected refusal: {err_plain}")
+    _check(rd_plain.floor_pattern_by_sb == {}, "no floor pattern declared -> empty mapping")
+    md_plain = report.render_markdown(rd_plain)
+    _check("floor: n/a (no floor pattern in this set yet" in md_plain,
+           f"absent a floor pattern, the honest [B9] note must stand unchanged:\n{md_plain}")
+
+
+def test_reporter_v3_r10():
+    """[B14] R10: the reporter bumps to v3 (2026-08-25); the header
+    carries it on every render."""
+    _check(report.REPORTER_VERSION == "v3 (2026-08-25)",
+           f"expected REPORTER_VERSION == 'v3 (2026-08-25)', got {report.REPORTER_VERSION!r}")
+    loaded, _paths, _source = _load_store(STORE)
+    rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("reporter: v3 (2026-08-25)" in md, f"expected the v3 header line:\n{md[:200]}")
+    tsv = report.render_tsv(rd)
+    _check("reporter: v3 (2026-08-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
 
 
 TESTS = [
@@ -1177,6 +1569,17 @@ TESTS = [
     test_cross_pin_delta_r8,
     test_mechanism_stamp_columns_r9,
     test_subbench_dir_alias_od_b13,
+    # [B14]
+    test_plain_entry_capacities_r1,
+    test_tiny_set_per_subject_subtable_r2,
+    test_matching_subject_count_r3,
+    test_buffer_frame_legend_r4,
+    test_jitter_ratio_r5,
+    test_worst_now_vs_largest_delta_r6,
+    test_artifact_bytes_column_r7,
+    test_legend_and_superseded_shortening_r8,
+    test_floor_pattern_r9,
+    test_reporter_v3_r10,
 ]
 
 

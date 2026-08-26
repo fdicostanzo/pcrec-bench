@@ -156,7 +156,69 @@ Details, worked examples and the exact verdict rules are in
 per-function docstrings (`_gave_up_cell_summary`, `_cross_pin_verdict`,
 `_mechanism_stamp_columns`, `_form_fact`, `resolve_subbench_arg`, etc.).
 `pcrecbench/tests/test_report.py` has one test per ruling (11 new tests,
-31 total). `reports/*` regenerated against `reporter: v2` -- see
+31 total at [B9]). `reports/*` were regenerated against `reporter: v2`
+at [B9] -- see `reports/CLAUDE.md`.
+
+## The reporter, [B14] follow-ups (2026-08-25)
+
+The pcrec manager's SECOND reading of the reporter-v2 re-pin rendering
+(docs/dev/feedback_pcrecdev1_2026-08-25-repin-v2.md) landed ten more
+rulings on top of [B9]'s, stamped as `reporter: v3 (2026-08-25)` (two
+separate `R1`..`R10`/`R1`..`R9` sequences -- [B9]'s and [B14]'s share
+numbers by coincidence, not by design; read each ruling by its dated
+section in `report.py`'s module docstring):
+
+- **R1 -- plain-entry capacities.** A compile row with no `buffer_frames`/
+  `buffer_trail` pair is not bufferless: it runs on the STAMPED DEFAULT
+  capacity (`engine_metadata`'s `resume_frames`/`trail_frames`), read and
+  shown as `buffers=2048/3072 (stamped default)` -- [OPT-1]'s own cost is
+  proportional to exactly this number.
+- **R4 -- the buffer/frame legend.** `n/s` (neither pair stamped at this
+  pin) vs `0 (DFA)` (stamped, and zero because a DFA artifact takes no
+  buffers) -- `-`/bare `0` never again stand for two different facts
+  (`_buffers_display`/`_frame_size_display`).
+- **R8 -- legend, not repeated columns.** The compile-cost table's six
+  per-testee CONSTANT columns (`engine`, `entry`, `prefilter`,
+  `vm_rungs`, R1/R4's buffer/frame facts) moved to a one-line-per-testee
+  LEGEND above each `has_pcrec` table (`_testee_legend_line`), leaving
+  the table itself to phase numbers, R7's artifact bytes and R5's
+  jitter; the Query header's superseded-record list collapsed to one
+  summary line (`--all-records` still lists every id).
+- **R5 -- jitter is computed.** `stddev/median` (three decimals), or
+  `timer-floor` when `min_ns` sits under a 20-microsecond floor --
+  replacing [B9]'s boolean; a jitter column empty on EVERY row of one
+  table is omitted from that table, not rendered as a wall of blanks.
+- **R7 -- artifact size.** A compile row's own `artifact_bytes` is now a
+  column on every compile-cost table, pcrec and non-pcrec alike.
+- **R2 -- tiny sets.** A SET-grain cell of <= 3 subjects (today, every
+  `large-subject-throughput` cell) gets a per-subject sub-table under its
+  ranking row (subject id, bytes, median ns/call, ns/byte, every ranked
+  testee); every throughput ranking row also gains `ns/byte` beside
+  `ns/call`.
+- **R3 -- matching-subject count.** A `match-compliance` ranking group
+  states `matches: m/n` -- subjects whose GROUND TRUTH expectation is a
+  match, read live from the sub-bench's own `expectations.tsv` via
+  `pcrecbench.subbench` (`_matching_subject_count`/
+  `_load_subbench_for_report`), since the record itself cannot answer
+  this (record_schema.md 10.3) and best-effort omitted, never
+  fabricated, when the sub-bench cannot be resolved.
+- **R6 -- worst now vs largest Delta.** A cross-pin `Δ detail` line now
+  names `worst now` (the new record's own slowest subject, [B9]'s
+  meaning) and, only when it differs, `largest Δ` (the subject whose
+  ns/call moved the most, `_largest_delta_subject`) beside it.
+- **R9 -- the floor pattern.** Schema v1.3's optional `patterns[].role`
+  (`member` default | `floor`, lane b15floor, not yet schema-legal): a
+  `role: floor` pattern's own short-subject-search table is retitled a
+  per-call overhead CONTROL rather than ranked, and every other
+  (member) pattern's short-subject-search row gains a `floor ns` figure
+  beside its per-subject mean (`_floor_mean_for`). Exercised only via
+  hand-built `LoadedRecord`s (the [B9] `tier` tests' technique) until
+  b15floor's schema lands.
+- **R10 -- `reporter: v3 (2026-08-25)`;** every committed report under
+  `reports/` regenerated against it -- see `reports/CLAUDE.md`.
+
+`pcrecbench/tests/test_report.py` gained ten more tests (one per ruling,
+41 total). `reports/*` regenerated against `reporter: v3` -- see
 `reports/CLAUDE.md`.
 
 ## The reporter ([B5], merged 2026-08-25)

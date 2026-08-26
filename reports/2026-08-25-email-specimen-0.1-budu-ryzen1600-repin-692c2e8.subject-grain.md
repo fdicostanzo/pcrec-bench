@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v2 (2026-08-25)
+reporter: v3 (2026-08-25)
 
 ## Query
 
@@ -16,12 +16,7 @@ reporter: v2 (2026-08-25)
     - `email-specimen@0.1__pcrec_8da6120_auto-caps-simdna__budu-ryzen1600__20260825T065046Z` (store/records/email-specimen@0.1/pcrec_8da6120_auto-caps-simdna/email-specimen@0.1__pcrec_8da6120_auto-caps-simdna__budu-ryzen1600__20260825T065046Z.jsonl)
     - `email-specimen@0.1__pcrec_8da6120_auto-nocaps-simdna__budu-ryzen1600__20260825T063943Z` (store/records/email-specimen@0.1/pcrec_8da6120_auto-nocaps-simdna/email-specimen@0.1__pcrec_8da6120_auto-nocaps-simdna__budu-ryzen1600__20260825T063943Z.jsonl)
     - `email-specimen@0.1__pcrec_8da6120_vm-caps-simdna__budu-ryzen1600__20260825T064436Z` (store/records/email-specimen@0.1/pcrec_8da6120_vm-caps-simdna/email-specimen@0.1__pcrec_8da6120_vm-caps-simdna__budu-ryzen1600__20260825T064436Z.jsonl)
-- superseded records (OD-B15, amended: older duplicate of a (subbench@version, testee_id, machine) than the newest MEASURED record; newest-measured kept by default, `--all-records` shows each separately): 5
-    - `email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T062213Z` superseded by `email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T221651Z`
-    - `email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T173402Z` superseded by `email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T221651Z`
-    - `email-specimen@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260825T062944Z` superseded by `email-specimen@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260825T174132Z`
-    - `email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T175131Z` superseded by `email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T222422Z`
-    - `email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T175534Z` superseded by `email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T222840Z`
+- superseded: 5 record(s) (OD-B15; --all-records lists them)
 - sub-bench version(s): email-specimen@0.1
 - machine(s): budu-ryzen1600
 - schema version(s): 1.1, 1.2
@@ -35,6 +30,8 @@ reporter: v2 (2026-08-25)
 ## Ranking (per pattern x subject x regime; best median first)
 
 ### `factored` / `s-000` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -66,6 +63,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-001` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -95,6 +94,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,215.1 | 1,204.9 | 1,225.4 | 7.5 | 1.000x | 8.959x |
 
 ### `factored` / `s-002` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -126,6 +127,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-003` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -155,6 +158,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,317.6 | 1,307.7 | 1,325.5 | 7.0 | 1.000x | 8.886x |
 
 ### `factored` / `s-004` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -186,6 +191,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-005` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -215,6 +222,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 752.0 | 742.8 | 756.7 | 5.8 | 1.000x | 19.328x |
 
 ### `factored` / `s-006` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -246,6 +255,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-007` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -275,6 +286,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 971.0 | 961.1 | 980.8 | 7.2 | 1.000x | 5.981x |
 
 ### `factored` / `s-008` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -306,6 +319,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-009` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -335,6 +350,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 854.6 | 848.3 | 858.2 | 3.5 | 1.000x | 9.481x |
 
 ### `factored` / `s-010` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -366,6 +383,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-011` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -395,6 +414,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 4,695.2 | 4,675.7 | 4,762.3 | 29.9 | 1.000x | 73.324x |
 
 ### `factored` / `s-012` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -426,6 +447,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-013` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -455,6 +478,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,105.7 | 1,091.6 | 1,109.8 | 7.7 | 1.000x | 9.553x |
 
 ### `factored` / `s-014` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -486,6 +511,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-015` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -515,6 +542,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,067.7 | 1,048.3 | 1,072.5 | 10.8 | 1.000x | 9.662x |
 
 ### `factored` / `s-016` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -546,6 +575,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-017` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -575,6 +606,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,093.3 | 1,091.4 | 1,108.0 | 6.1 | 1.000x | 9.472x |
 
 ### `factored` / `s-018` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -606,6 +639,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-019` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -635,6 +670,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 2,567.6 | 2,544.6 | 2,572.8 | 10.3 | 1.000x | 50.541x |
 
 ### `factored` / `s-020` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -666,6 +703,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-021` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -695,6 +734,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,146.1 | 1,141.6 | 1,212.1 | 26.3 | 1.000x | 12.697x |
 
 ### `factored` / `s-022` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -726,6 +767,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-023` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -755,6 +798,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,127.7 | 1,116.8 | 1,160.3 | 15.1 | 1.000x | 10.547x |
 
 ### `factored` / `s-024` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -786,6 +831,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-025` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -815,6 +862,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,130.1 | 1,124.0 | 1,137.4 | 4.9 | 1.000x | 10.550x |
 
 ### `factored` / `s-026` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -846,6 +895,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-027` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -875,6 +926,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,074.4 | 1,061.8 | 1,077.3 | 5.7 | 1.000x | 10.251x |
 
 ### `factored` / `s-028` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -906,6 +959,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-029` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -935,6 +990,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `pcrec_8da6120_auto-caps-simdna` | measured | `plain` | same program | 4,456.4 | 4,346.2 | 4,548.4 | 71.4 | 1.671x | 53.398x |
 
 ### `factored` / `s-030` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -966,6 +1023,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-031` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -995,6 +1054,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 2,678.5 | 2,653.8 | 2,721.5 | 22.9 | 1.000x | 49.840x |
 
 ### `factored` / `s-032` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1026,6 +1087,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-033` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1055,6 +1118,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 3,046.6 | 3,021.5 | 3,057.1 | 12.4 | 1.000x | 68.984x |
 
 ### `factored` / `s-034` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1086,6 +1151,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-035` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1115,6 +1182,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 5,885.4 | 5,850.6 | 5,927.8 | 28.5 | 1.000x | 133.307x |
 
 ### `factored` / `s-036` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1146,6 +1215,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-037` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1175,6 +1246,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 2,921.2 | 2,906.6 | 2,944.1 | 15.2 | 1.000x | 83.399x |
 
 ### `factored` / `s-038` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1206,6 +1279,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-039` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1235,6 +1310,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,547.7 | 1,535.3 | 1,603.9 | 24.0 | 1.000x | 14.625x |
 
 ### `factored` / `s-040` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1266,6 +1343,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-041` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1295,6 +1374,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `pcrec_8da6120_auto-caps-simdna` | measured | `plain` | same program | 1,371.7 | 1,359.5 | 1,408.8 | 16.9 | 7.635x | 46.082x |
 
 ### `factored` / `s-042` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1326,6 +1407,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-043` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1355,6 +1438,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 2,799.5 | 2,785.9 | 2,827.4 | 14.0 | 1.000x | 22.443x |
 
 ### `factored` / `s-044` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1386,6 +1471,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-045` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1415,6 +1502,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,989.7 | 1,984.0 | 2,026.7 | 15.8 | 1.000x | 45.153x |
 
 ### `factored` / `s-046` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1446,6 +1535,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-047` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1475,6 +1566,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 6,042.5 | 5,974.9 | 6,077.1 | 34.8 | 1.000x | 175.295x |
 
 ### `factored` / `s-048` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1506,6 +1599,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-049` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1535,6 +1630,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 2,562.5 | 2,558.5 | 2,570.5 | 4.1 | 1.000x | 20.990x |
 
 ### `factored` / `s-050` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1566,6 +1663,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-051` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1595,6 +1694,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 2,567.1 | 2,546.1 | 2,583.7 | 15.6 | 1.000x | 21.057x |
 
 ### `factored` / `s-052` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1626,6 +1727,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-053` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1655,6 +1758,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 2,672.3 | 2,667.5 | 2,674.3 | 2.3 | 1.000x | 124.643x |
 
 ### `factored` / `s-054` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1686,6 +1791,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-055` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1715,6 +1822,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 2,666.5 | 2,659.6 | 2,705.0 | 16.4 | 1.000x | 124.370x |
 
 ### `factored` / `s-056` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1746,6 +1855,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-057` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1762,6 +1873,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-058` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
@@ -1774,6 +1887,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-059` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
@@ -1785,6 +1900,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 5 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 291,546.0 | 290,559.2 | 295,500.6 | 1,854.9 | 1.002x | 8.676x | 5 | 100% |
 
 ### `factored` / `s-060` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1802,6 +1919,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-061` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
@@ -1813,6 +1932,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 5 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 72,983.8 | 72,564.0 | 74,111.1 | 563.9 | 1.004x | 6.638x | 5 | 100% |
 
 ### `factored` / `s-062` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1830,6 +1951,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-063` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
@@ -1842,6 +1965,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-064` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
@@ -1853,6 +1978,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 5 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 150,253.1 | 148,576.4 | 150,944.1 | 917.7 | 1.000x | 5.584x | 5 | 100% |
 
 ### `factored` / `s-065` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1884,6 +2011,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-066` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1913,6 +2042,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,070.3 | 1,062.9 | 1,083.7 | 6.8 | 1.000x | 9.743x |
 
 ### `factored` / `s-067` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -1944,6 +2075,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-068` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1973,6 +2106,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 690.3 | 682.2 | 693.5 | 4.1 | 1.000x | 21.109x |
 
 ### `factored` / `s-069` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2004,6 +2139,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-070` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2033,6 +2170,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 855.7 | 841.7 | 886.9 | 16.0 | 1.000x | 10.250x |
 
 ### `factored` / `s-071` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2064,6 +2203,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-072` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2093,6 +2234,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 3,115.0 | 3,098.1 | 3,177.6 | 29.3 | 1.000x | 19.345x |
 
 ### `factored` / `s-073` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2124,6 +2267,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-074` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2153,6 +2298,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 2,680.5 | 2,666.3 | 2,685.2 | 7.3 | 1.000x | 56.491x |
 
 ### `factored` / `s-075` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2184,6 +2331,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-076` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2213,6 +2362,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,025.4 | 1,025.2 | 1,038.9 | 6.5 | 1.000x | 9.910x |
 
 ### `factored` / `s-077` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2244,6 +2395,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-078` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2273,6 +2426,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,083.2 | 1,065.2 | 1,090.6 | 8.7 | 1.000x | 10.465x |
 
 ### `factored` / `s-079` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2304,6 +2459,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-080` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2333,6 +2490,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 3,186.6 | 3,136.7 | 3,205.7 | 30.2 | 1.000x | 72.267x |
 
 ### `factored` / `s-081` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2364,6 +2523,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-082` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2394,6 +2555,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-083` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2423,6 +2586,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `pcrec_8da6120_auto-caps-simdna` | measured | `plain` | same program | 3,437.5 | 3,405.4 | 3,452.8 | 19.5 | 99.024x | 99.024x |
 
 ### `factored` / `s-084` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2490,6 +2655,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-000` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2519,6 +2686,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 550.6 | 544.2 | 558.9 | 4.9 | 1.000x | 10.128x |
 
 ### `orig` / `s-001` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2550,6 +2719,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-002` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2579,6 +2750,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 483.7 | 476.3 | 486.2 | 3.5 | 1.000x | 12.574x |
 
 ### `orig` / `s-003` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2610,6 +2783,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-004` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2639,6 +2814,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 568.1 | 563.3 | 572.4 | 3.0 | 1.000x | 8.338x |
 
 ### `orig` / `s-005` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2670,6 +2847,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-006` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2699,6 +2878,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 788.2 | 780.2 | 792.2 | 4.8 | 1.000x | 9.360x |
 
 ### `orig` / `s-007` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2730,6 +2911,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-008` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2759,6 +2942,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 545.7 | 537.2 | 553.7 | 5.5 | 1.000x | 9.668x |
 
 ### `orig` / `s-009` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2790,6 +2975,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-010` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2819,6 +3006,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 435.1 | 431.8 | 446.6 | 5.3 | 1.000x | 11.526x |
 
 ### `orig` / `s-011` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2850,6 +3039,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-012` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2879,6 +3070,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 682.7 | 674.1 | 683.1 | 3.6 | 1.000x | 8.309x |
 
 ### `orig` / `s-013` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2910,6 +3103,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-014` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2939,6 +3134,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 542.2 | 532.1 | 549.4 | 5.9 | 1.000x | 8.177x |
 
 ### `orig` / `s-015` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -2970,6 +3167,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-016` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2999,6 +3198,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,082.9 | 1,077.7 | 1,094.8 | 6.1 | 1.000x | 22.900x |
 
 ### `orig` / `s-017` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3030,6 +3231,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-018` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3059,6 +3262,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 656.5 | 650.5 | 665.6 | 5.0 | 1.000x | 8.211x |
 
 ### `orig` / `s-019` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3090,6 +3295,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-020` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3119,6 +3326,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 688.1 | 684.6 | 699.7 | 5.3 | 1.000x | 8.130x |
 
 ### `orig` / `s-021` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3150,6 +3359,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-022` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3179,6 +3390,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 450.6 | 449.7 | 459.8 | 3.8 | 1.000x | 10.740x |
 
 ### `orig` / `s-023` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3210,6 +3423,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-024` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3239,6 +3454,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 720.0 | 707.8 | 724.3 | 5.6 | 1.000x | 8.226x |
 
 ### `orig` / `s-025` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3270,6 +3487,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-026` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3299,6 +3518,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 451.1 | 447.6 | 457.2 | 3.2 | 1.000x | 10.811x |
 
 ### `orig` / `s-027` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3330,6 +3551,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-028` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3359,6 +3582,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,080.1 | 1,066.1 | 1,089.3 | 8.3 | 1.000x | 28.621x |
 
 ### `orig` / `s-029` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3390,6 +3615,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-030` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3419,6 +3646,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,082.4 | 1,066.0 | 1,083.6 | 6.7 | 1.000x | 29.002x |
 
 ### `orig` / `s-031` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3450,6 +3679,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-032` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3479,6 +3710,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,317.6 | 1,314.7 | 1,330.2 | 5.4 | 1.000x | 29.994x |
 
 ### `orig` / `s-033` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3510,6 +3743,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-034` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3539,6 +3774,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 2,203.8 | 2,183.4 | 2,223.3 | 14.5 | 1.000x | 71.286x |
 
 ### `orig` / `s-035` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3570,6 +3807,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-036` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3599,6 +3838,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 738.7 | 716.4 | 747.1 | 10.8 | 1.000x | 15.609x |
 
 ### `orig` / `s-037` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3630,6 +3871,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-038` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3659,6 +3902,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,817.5 | 1,808.8 | 1,863.7 | 19.5 | 1.000x | 38.235x |
 
 ### `orig` / `s-039` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3690,6 +3935,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-040` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3719,6 +3966,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `pcrec_8da6120_vm-caps-simdna` | measured | `plain` | same program | 457.2 | 442.8 | 481.3 | 13.3 | 13.050x | 13.050x |
 
 ### `orig` / `s-041` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3750,6 +3999,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-042` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3779,6 +4030,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `pcrec_8da6120_vm-caps-simdna` | measured | `plain` | same program | 312.8 | 289.0 | 334.9 | 16.3 | 1.449x | 24.771x |
 
 ### `orig` / `s-043` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3810,6 +4063,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-044` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3839,6 +4094,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 545.7 | 539.6 | 549.1 | 3.2 | 1.000x | 7.479x |
 
 ### `orig` / `s-045` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3870,6 +4127,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-046` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3899,6 +4158,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,748.1 | 1,734.5 | 1,767.2 | 10.7 | 1.000x | 56.262x |
 
 ### `orig` / `s-047` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3930,6 +4191,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-048` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3959,6 +4222,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 809.1 | 804.9 | 815.7 | 4.1 | 1.000x | 45.098x |
 
 ### `orig` / `s-049` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -3990,6 +4255,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-050` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4019,6 +4286,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,642.9 | 1,622.0 | 1,659.6 | 13.3 | 1.000x | 17.259x |
 
 ### `orig` / `s-051` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4050,6 +4319,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-052` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4079,6 +4350,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,098.2 | 1,079.7 | 1,105.0 | 10.1 | 1.000x | 35.079x |
 
 ### `orig` / `s-053` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4110,6 +4383,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-054` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4139,6 +4414,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,074.1 | 1,061.2 | 1,075.2 | 5.5 | 1.000x | 50.761x |
 
 ### `orig` / `s-055` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4170,6 +4447,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-056` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4200,6 +4479,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-057` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4215,6 +4496,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `pcrec_8da6120_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 67,491.2 | 67,374.7 | 67,996.4 | 226.6 | 6.835x | 8.770x |
 
 ### `orig` / `s-058` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4232,6 +4515,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-059` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4247,6 +4532,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 159,957.9 | 158,455.0 | 161,577.8 | 1,091.4 | 1.000x | 11.634x |
 
 ### `orig` / `s-060` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4264,6 +4551,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-061` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4279,6 +4568,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 44,681.4 | 44,532.7 | 44,970.8 | 145.6 | 1.000x | 8.288x |
 
 ### `orig` / `s-062` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4296,6 +4587,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-063` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4312,6 +4605,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-064` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4327,6 +4622,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 95,201.2 | 94,869.4 | 96,222.9 | 524.5 | 1.000x | 8.947x |
 
 ### `orig` / `s-065` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4358,6 +4655,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-066` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4387,6 +4686,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 668.9 | 656.9 | 676.3 | 7.3 | 1.000x | 8.314x |
 
 ### `orig` / `s-067` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4418,6 +4719,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-068` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4447,6 +4750,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 415.9 | 409.8 | 421.2 | 3.6 | 1.000x | 15.891x |
 
 ### `orig` / `s-069` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4478,6 +4783,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-070` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4507,6 +4814,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 542.3 | 540.7 | 546.8 | 2.5 | 1.000x | 10.561x |
 
 ### `orig` / `s-071` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4538,6 +4847,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-072` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4567,6 +4878,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,738.3 | 1,731.1 | 1,780.0 | 17.5 | 1.000x | 11.313x |
 
 ### `orig` / `s-073` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4598,6 +4911,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-074` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4627,6 +4942,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,075.6 | 1,066.8 | 1,079.9 | 4.8 | 1.000x | 22.828x |
 
 ### `orig` / `s-075` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4658,6 +4975,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-076` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4687,6 +5006,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 637.8 | 632.4 | 645.5 | 4.2 | 1.000x | 9.219x |
 
 ### `orig` / `s-077` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4718,6 +5039,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-078` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4747,6 +5070,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 733.6 | 723.3 | 739.7 | 5.4 | 1.000x | 11.338x |
 
 ### `orig` / `s-079` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 1/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4778,6 +5103,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-080` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4807,6 +5134,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 1,287.1 | 1,274.9 | 1,299.3 | 9.4 | 1.000x | 29.321x |
 
 ### `orig` / `s-081` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -4838,6 +5167,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-082` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4868,6 +5199,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-083` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
+
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4897,6 +5230,8 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 9 | `pcrec_8da6120_vm-caps-simdna` | measured | `plain` | same program | 863.7 | 841.5 | 868.4 | 12.1 | 24.146x | 24.146x |
 
 ### `orig` / `s-084` / `match-compliance` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
+
+- matches: 0/1 (subjects whose expected outcome is a match; record_schema.md 10.3 — ground truth lives in the sub-bench, not the record)
 
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
@@ -5003,48 +5338,56 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `compiled-aot`
 
-| pattern | form | testee | median total_ns | min | max | stddev | n costed | jitter | outcomes | engine | entry | prefilter | vm_rungs | buffer_frames | buffer_trail | resume_frame_size | emit-c ns | gcc ns | load ns |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `factored` | `plain` | `pcrec_692c2e8_auto-caps-simdna` | 142,807,131.0 | 139,685,262.0 | 150,876,967.0 | 3,735,406.7 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | 0 | 7,857,473.0 | 134,841,708.0 | 204,181.0 |
-| `factored` | `whole-subject` | `pcrec_692c2e8_auto-caps-simdna` | 149,988,921.0 | 135,107,620.0 | 165,256,163.0 | 9,876,531.6 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | 0 | 9,990,487.0 | 139,767,912.0 | 176,401.0 |
-| `factored` | `plain` | `pcrec_692c2e8_auto-nocaps-simdna` | 135,540,698.0 | 123,865,500.0 | 143,299,140.0 | 6,749,928.0 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | 0 | 9,481,694.0 | 124,395,424.0 | 189,771.0 |
-| `factored` | `whole-subject` | `pcrec_692c2e8_auto-nocaps-simdna` | 143,875,264.0 | 137,191,200.0 | 153,344,718.0 | 6,267,042.3 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | 0 | 9,966,287.0 | 133,033,592.0 | 169,271.0 |
-| `factored` | `plain` | `pcrec_692c2e8_vm-caps-simdna` | 535,765,380.0 | 526,468,518.0 | 537,513,576.0 | 4,046,565.0 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | 24 | 2,136,698.0 | 532,659,209.0 | 99,420.0 |
-| `factored` | `whole-subject` | `pcrec_692c2e8_vm-caps-simdna` | 538,961,373.0 | 537,787,867.0 | 542,941,905.0 | 1,841,075.2 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | 24 | 2,024,237.0 | 536,246,952.0 | 108,041.0 |
-| `factored` | `plain` | `pcrec_692c2e8_vm-in-caps-simdna` | 533,212,035.0 | 528,952,948.0 | 535,271,359.0 | 2,613,095.7 | 5 |  | compiled=5 | vm | _in | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | 32768 | 131072 | 24 | 2,036,853.0 | 529,840,444.0 | 108,041.0 |
-| `factored` | `whole-subject` | `pcrec_692c2e8_vm-in-caps-simdna` | 542,331,633.0 | 530,896,401.0 | 545,425,863.0 | 5,487,425.3 | 5 |  | compiled=5 | vm | _in | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | 32768 | 131072 | 24 | 2,076,533.0 | 539,578,846.0 | 115,011.0 |
-| `factored` | `plain` | `pcrec_8da6120_auto-caps-simdna` | 420,465,289.0 | 414,985,073.0 | 428,903,342.0 | 4,893,507.9 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | - | 1,880,342.0 | 418,531,336.0 | 110,891.0 |
-| `factored` | `whole-subject` | `pcrec_8da6120_auto-caps-simdna` | 430,387,601.0 | 417,874,860.0 | 443,938,027.0 | 8,743,376.0 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | - | 1,903,072.0 | 428,382,468.0 | 199,551.0 |
-| `factored` | `plain` | `pcrec_8da6120_auto-nocaps-simdna` | 427,493,516.0 | 422,008,523.0 | 434,926,485.0 | 4,492,879.1 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | - | 3,458,012.0 | 423,761,643.0 | 190,832.0 |
-| `factored` | `whole-subject` | `pcrec_8da6120_auto-nocaps-simdna` | 420,974,905.0 | 413,095,565.0 | 432,864,330.0 | 7,311,852.8 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | - | 1,773,151.0 | 419,081,683.0 | 189,551.0 |
-| `factored` | `plain` | `pcrec_8da6120_vm-caps-simdna` | 424,762,944.0 | 423,664,078.0 | 432,708,304.0 | 3,362,545.9 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | - | 1,716,071.0 | 422,822,902.0 | 193,901.0 |
-| `factored` | `whole-subject` | `pcrec_8da6120_vm-caps-simdna` | 427,987,625.0 | 424,012,201.0 | 439,228,106.0 | 5,642,429.0 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | - | 1,699,401.0 | 426,211,414.0 | 190,301.0 |
-| `orig` | `plain` | `pcrec_692c2e8_auto-caps-simdna` | 135,961,026.0 | 124,634,780.0 | 158,511,788.0 | 11,404,316.3 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | 0 | 7,764,922.0 | 124,249,427.0 | 189,141.0 |
-| `orig` | `whole-subject` | `pcrec_692c2e8_auto-caps-simdna` | 143,586,237.0 | 136,043,026.0 | 153,833,077.0 | 6,389,203.0 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | 0 | 9,405,903.0 | 127,932,222.0 | 195,571.0 |
-| `orig` | `plain` | `pcrec_692c2e8_auto-nocaps-simdna` | 135,528,237.0 | 125,544,052.0 | 139,877,347.0 | 5,078,626.5 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | 0 | 7,857,602.0 | 124,941,538.0 | 101,821.0 |
-| `orig` | `whole-subject` | `pcrec_692c2e8_auto-nocaps-simdna` | 138,953,371.0 | 131,250,210.0 | 148,817,548.0 | 6,791,912.1 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | 0 | 9,635,665.0 | 126,301,027.0 | 96,901.0 |
-| `orig` | `plain` | `pcrec_692c2e8_vm-caps-simdna` | 406,687,295.0 | 398,252,896.0 | 413,024,068.0 | 5,798,706.7 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | 24 | 1,943,277.0 | 401,723,407.0 | 195,001.0 |
-| `orig` | `whole-subject` | `pcrec_692c2e8_vm-caps-simdna` | 404,607,847.0 | 391,192,410.0 | 416,889,170.0 | 8,332,820.0 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | 24 | 1,846,257.0 | 402,667,491.0 | 102,910.0 |
-| `orig` | `plain` | `pcrec_692c2e8_vm-in-caps-simdna` | 406,593,912.0 | 392,519,313.0 | 419,969,716.0 | 9,292,650.8 | 5 |  | compiled=5 | vm | _in | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | 32768 | 131072 | 24 | 1,944,632.0 | 404,648,530.0 | 100,580.0 |
-| `orig` | `whole-subject` | `pcrec_692c2e8_vm-in-caps-simdna` | 401,511,589.0 | 398,264,420.0 | 408,501,273.0 | 3,919,558.6 | 5 |  | compiled=5 | vm | _in | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | 32768 | 131072 | 24 | 2,046,133.0 | 399,354,875.0 | 110,581.0 |
-| `orig` | `plain` | `pcrec_8da6120_auto-caps-simdna` | 118,056,825.0 | 103,621,896.0 | 120,772,314.0 | 6,366,891.3 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | - | 7,414,687.0 | 110,543,728.0 | 98,410.0 |
-| `orig` | `whole-subject` | `pcrec_8da6120_auto-caps-simdna` | 117,555,053.0 | 109,696,744.0 | 130,533,016.0 | 9,212,004.5 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | - | 9,605,031.0 | 107,535,020.0 | 194,121.0 |
-| `orig` | `plain` | `pcrec_8da6120_auto-nocaps-simdna` | 113,739,182.0 | 110,959,754.0 | 143,108,420.0 | 11,988,842.7 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | - | 7,620,208.0 | 106,465,166.0 | 107,390.0 |
-| `orig` | `whole-subject` | `pcrec_8da6120_auto-nocaps-simdna` | 135,300,201.0 | 122,043,665.0 | 137,739,956.0 | 6,730,911.2 | 5 |  | compiled=5 | dfa | plain entry | (no stamp — pcrec I-3) | - | - | - | - | 19,767,436.0 | 115,433,954.0 | 101,750.0 |
-| `orig` | `plain` | `pcrec_8da6120_vm-caps-simdna` | 382,875,770.0 | 372,878,556.0 | 389,967,264.0 | 6,557,411.6 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | - | 1,976,132.0 | 380,961,488.0 | 196,851.0 |
-| `orig` | `whole-subject` | `pcrec_8da6120_vm-caps-simdna` | 374,587,618.0 | 362,494,710.0 | 389,369,562.0 | 9,692,150.1 | 5 |  | compiled=5 | vm | plain entry | none | PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED | - | - | - | 2,358,745.0 | 372,141,432.0 | 101,580.0 |
+- `pcrec_692c2e8_auto-caps-simdna`: engine=dfa, entry=plain entry, prefilter=(no stamp — pcrec I-3), rungs=-, buffers=0 (DFA), frame=0 (DFA)
+- `pcrec_692c2e8_auto-nocaps-simdna`: engine=dfa, entry=plain entry, prefilter=(no stamp — pcrec I-3), rungs=-, buffers=0 (DFA), frame=0 (DFA)
+- `pcrec_692c2e8_vm-caps-simdna`: engine=vm, entry=plain entry, prefilter=none, rungs=PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED, buffers=2048/3072 (stamped default), frame=24
+- `pcrec_692c2e8_vm-in-caps-simdna`: engine=vm, entry=_in, prefilter=none, rungs=PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED, buffers=32768/131072 (caller-provided), frame=24
+- `pcrec_8da6120_auto-caps-simdna`: engine=dfa, entry=plain entry, prefilter=(no stamp — pcrec I-3), rungs=-, buffers=n/s, frame=n/s
+- `pcrec_8da6120_auto-nocaps-simdna`: engine=dfa, entry=plain entry, prefilter=(no stamp — pcrec I-3), rungs=-, buffers=n/s, frame=n/s
+- `pcrec_8da6120_vm-caps-simdna`: engine=vm, entry=plain entry, prefilter=none, rungs=PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED, buffers=n/s, frame=n/s
+
+| pattern | form | testee | median total_ns | min | max | stddev | n costed | artifact bytes | jitter | outcomes | emit-c ns | gcc ns | load ns |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `factored` | `plain` | `pcrec_692c2e8_auto-caps-simdna` | 142,807,131.0 | 139,685,262.0 | 150,876,967.0 | 3,735,406.7 | 5 | 29,744 | 0.026 | compiled=5 | 7,857,473.0 | 134,841,708.0 | 204,181.0 |
+| `factored` | `whole-subject` | `pcrec_692c2e8_auto-caps-simdna` | 149,988,921.0 | 135,107,620.0 | 165,256,163.0 | 9,876,531.6 | 5 | 33,928 | 0.066 | compiled=5 | 9,990,487.0 | 139,767,912.0 | 176,401.0 |
+| `factored` | `plain` | `pcrec_692c2e8_auto-nocaps-simdna` | 135,540,698.0 | 123,865,500.0 | 143,299,140.0 | 6,749,928.0 | 5 | 29,744 | 0.050 | compiled=5 | 9,481,694.0 | 124,395,424.0 | 189,771.0 |
+| `factored` | `whole-subject` | `pcrec_692c2e8_auto-nocaps-simdna` | 143,875,264.0 | 137,191,200.0 | 153,344,718.0 | 6,267,042.3 | 5 | 33,928 | 0.044 | compiled=5 | 9,966,287.0 | 133,033,592.0 | 169,271.0 |
+| `factored` | `plain` | `pcrec_692c2e8_vm-caps-simdna` | 535,765,380.0 | 526,468,518.0 | 537,513,576.0 | 4,046,565.0 | 5 | 29,776 | 0.008 | compiled=5 | 2,136,698.0 | 532,659,209.0 | 99,420.0 |
+| `factored` | `whole-subject` | `pcrec_692c2e8_vm-caps-simdna` | 538,961,373.0 | 537,787,867.0 | 542,941,905.0 | 1,841,075.2 | 5 | 29,776 | 0.003 | compiled=5 | 2,024,237.0 | 536,246,952.0 | 108,041.0 |
+| `factored` | `plain` | `pcrec_692c2e8_vm-in-caps-simdna` | 533,212,035.0 | 528,952,948.0 | 535,271,359.0 | 2,613,095.7 | 5 | 29,776 | 0.005 | compiled=5 | 2,036,853.0 | 529,840,444.0 | 108,041.0 |
+| `factored` | `whole-subject` | `pcrec_692c2e8_vm-in-caps-simdna` | 542,331,633.0 | 530,896,401.0 | 545,425,863.0 | 5,487,425.3 | 5 | 29,776 | 0.010 | compiled=5 | 2,076,533.0 | 539,578,846.0 | 115,011.0 |
+| `factored` | `plain` | `pcrec_8da6120_auto-caps-simdna` | 420,465,289.0 | 414,985,073.0 | 428,903,342.0 | 4,893,507.9 | 5 | 25,128 | 0.012 | compiled=5 | 1,880,342.0 | 418,531,336.0 | 110,891.0 |
+| `factored` | `whole-subject` | `pcrec_8da6120_auto-caps-simdna` | 430,387,601.0 | 417,874,860.0 | 443,938,027.0 | 8,743,376.0 | 5 | 25,128 | 0.020 | compiled=5 | 1,903,072.0 | 428,382,468.0 | 199,551.0 |
+| `factored` | `plain` | `pcrec_8da6120_auto-nocaps-simdna` | 427,493,516.0 | 422,008,523.0 | 434,926,485.0 | 4,492,879.1 | 5 | 25,128 | 0.011 | compiled=5 | 3,458,012.0 | 423,761,643.0 | 190,832.0 |
+| `factored` | `whole-subject` | `pcrec_8da6120_auto-nocaps-simdna` | 420,974,905.0 | 413,095,565.0 | 432,864,330.0 | 7,311,852.8 | 5 | 25,128 | 0.017 | compiled=5 | 1,773,151.0 | 419,081,683.0 | 189,551.0 |
+| `factored` | `plain` | `pcrec_8da6120_vm-caps-simdna` | 424,762,944.0 | 423,664,078.0 | 432,708,304.0 | 3,362,545.9 | 5 | 25,128 | 0.008 | compiled=5 | 1,716,071.0 | 422,822,902.0 | 193,901.0 |
+| `factored` | `whole-subject` | `pcrec_8da6120_vm-caps-simdna` | 427,987,625.0 | 424,012,201.0 | 439,228,106.0 | 5,642,429.0 | 5 | 25,128 | 0.013 | compiled=5 | 1,699,401.0 | 426,211,414.0 | 190,301.0 |
+| `orig` | `plain` | `pcrec_692c2e8_auto-caps-simdna` | 135,961,026.0 | 124,634,780.0 | 158,511,788.0 | 11,404,316.3 | 5 | 29,704 | 0.084 | compiled=5 | 7,764,922.0 | 124,249,427.0 | 189,141.0 |
+| `orig` | `whole-subject` | `pcrec_692c2e8_auto-caps-simdna` | 143,586,237.0 | 136,043,026.0 | 153,833,077.0 | 6,389,203.0 | 5 | 33,888 | 0.044 | compiled=5 | 9,405,903.0 | 127,932,222.0 | 195,571.0 |
+| `orig` | `plain` | `pcrec_692c2e8_auto-nocaps-simdna` | 135,528,237.0 | 125,544,052.0 | 139,877,347.0 | 5,078,626.5 | 5 | 29,704 | 0.037 | compiled=5 | 7,857,602.0 | 124,941,538.0 | 101,821.0 |
+| `orig` | `whole-subject` | `pcrec_692c2e8_auto-nocaps-simdna` | 138,953,371.0 | 131,250,210.0 | 148,817,548.0 | 6,791,912.1 | 5 | 33,888 | 0.049 | compiled=5 | 9,635,665.0 | 126,301,027.0 | 96,901.0 |
+| `orig` | `plain` | `pcrec_692c2e8_vm-caps-simdna` | 406,687,295.0 | 398,252,896.0 | 413,024,068.0 | 5,798,706.7 | 5 | 25,592 | 0.014 | compiled=5 | 1,943,277.0 | 401,723,407.0 | 195,001.0 |
+| `orig` | `whole-subject` | `pcrec_692c2e8_vm-caps-simdna` | 404,607,847.0 | 391,192,410.0 | 416,889,170.0 | 8,332,820.0 | 5 | 25,592 | 0.021 | compiled=5 | 1,846,257.0 | 402,667,491.0 | 102,910.0 |
+| `orig` | `plain` | `pcrec_692c2e8_vm-in-caps-simdna` | 406,593,912.0 | 392,519,313.0 | 419,969,716.0 | 9,292,650.8 | 5 | 25,592 | 0.023 | compiled=5 | 1,944,632.0 | 404,648,530.0 | 100,580.0 |
+| `orig` | `whole-subject` | `pcrec_692c2e8_vm-in-caps-simdna` | 401,511,589.0 | 398,264,420.0 | 408,501,273.0 | 3,919,558.6 | 5 | 25,592 | 0.010 | compiled=5 | 2,046,133.0 | 399,354,875.0 | 110,581.0 |
+| `orig` | `plain` | `pcrec_8da6120_auto-caps-simdna` | 118,056,825.0 | 103,621,896.0 | 120,772,314.0 | 6,366,891.3 | 5 | 29,232 | 0.054 | compiled=5 | 7,414,687.0 | 110,543,728.0 | 98,410.0 |
+| `orig` | `whole-subject` | `pcrec_8da6120_auto-caps-simdna` | 117,555,053.0 | 109,696,744.0 | 130,533,016.0 | 9,212,004.5 | 5 | 33,424 | 0.078 | compiled=5 | 9,605,031.0 | 107,535,020.0 | 194,121.0 |
+| `orig` | `plain` | `pcrec_8da6120_auto-nocaps-simdna` | 113,739,182.0 | 110,959,754.0 | 143,108,420.0 | 11,988,842.7 | 5 | 29,232 | 0.105 | compiled=5 | 7,620,208.0 | 106,465,166.0 | 107,390.0 |
+| `orig` | `whole-subject` | `pcrec_8da6120_auto-nocaps-simdna` | 135,300,201.0 | 122,043,665.0 | 137,739,956.0 | 6,730,911.2 | 5 | 33,424 | 0.050 | compiled=5 | 19,767,436.0 | 115,433,954.0 | 101,750.0 |
+| `orig` | `plain` | `pcrec_8da6120_vm-caps-simdna` | 382,875,770.0 | 372,878,556.0 | 389,967,264.0 | 6,557,411.6 | 5 | 25,088 | 0.017 | compiled=5 | 1,976,132.0 | 380,961,488.0 | 196,851.0 |
+| `orig` | `whole-subject` | `pcrec_8da6120_vm-caps-simdna` | 374,587,618.0 | 362,494,710.0 | 389,369,562.0 | 9,692,150.1 | 5 | 25,088 | 0.026 | compiled=5 | 2,358,745.0 | 372,141,432.0 | 101,580.0 |
 
 ### `eager-jit`
 
-| pattern | form | testee | median total_ns | min | max | stddev | n costed | jitter | outcomes |
-|---|---|---|---|---|---|---|---|---|---|
-| `factored` | `plain` | `libpcre2_10.46_jit-caps-simdna` | 68,951.0 | 62,961.0 | 164,202.0 | 38,343.6 | 5 |  | compiled=5 |
-| `orig` | `plain` | `libpcre2_10.46_jit-caps-simdna` | 148,341.0 | 133,921.0 | 384,633.0 | 95,697.6 | 5 |  | compiled=5 |
+| pattern | form | testee | median total_ns | min | max | stddev | n costed | artifact bytes | jitter | outcomes |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `factored` | `plain` | `libpcre2_10.46_jit-caps-simdna` | 68,951.0 | 62,961.0 | 164,202.0 | 38,343.6 | 5 | 951 | 0.556 | compiled=5 |
+| `orig` | `plain` | `libpcre2_10.46_jit-caps-simdna` | 148,341.0 | 133,921.0 | 384,633.0 | 95,697.6 | 5 | 1,609 | 0.645 | compiled=5 |
 
 ### `interpretive`
 
-| pattern | form | testee | median total_ns | min | max | stddev | n costed | jitter | outcomes |
-|---|---|---|---|---|---|---|---|---|---|
-| `factored` | `plain` | `libpcre2_10.46_interp-caps-simdna` | 14,590.0 | 13,061.0 | 45,140.0 | 12,302.5 | 5 |  | compiled=5 |
-| `orig` | `plain` | `libpcre2_10.46_interp-caps-simdna` | 13,550.0 | 12,290.0 | 44,861.0 | 12,584.5 | 5 |  | compiled=5 |
+| pattern | form | testee | median total_ns | min | max | stddev | n costed | artifact bytes | jitter | outcomes |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `factored` | `plain` | `libpcre2_10.46_interp-caps-simdna` | 14,590.0 | 13,061.0 | 45,140.0 | 12,302.5 | 5 | 951 | timer-floor | compiled=5 |
+| `orig` | `plain` | `libpcre2_10.46_interp-caps-simdna` | 13,550.0 | 12,290.0 | 44,861.0 | 12,584.5 | 5 | 1,609 | timer-floor | compiled=5 |
 
