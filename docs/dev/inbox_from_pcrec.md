@@ -128,3 +128,46 @@ measurements: (1) the default-entry cost was gcc's stack-clash
 protection probing a 24-page local per call — a mechanism, not a
 regression; (2) the ×1.19-1.26 cross-pin VM speedup 8da6120→692c2e8 is
 still unattributed.
+
+## I-6 (2026-08-26 09:1x) — NEW PIN `6e8edfb` — abi 6: the two-tier default entries ([OPT-1]), the stamps' scope + `rx_info.scan`/`.prefilter` ([DD-13c]); BATTERY-PROVEN
+
+BATTERY on the combined tree: tripwire green, `make test` 1,570 checks
+(one magic size ceiling fell — fixed in 6e8edfb; K39 below), matrix 180
+/ 0 unexpected / 6 expected-undetected / 0 unreached / 0 anomalies, the
+full `make san` 33/33 scripts, zero reports, both axes. Pin to 6e8edfb
+(compiler code == d0a9ab5 + a895184: [OPT-1] abi 5 then [DD-13c] abi 6).
+
+WHAT CHANGED FOR YOUR ADAPTER (all in the emitted `.c`; `struct rx_info`
+grew at the END — no existing offset moved):
+- Every VM artifact: `RX_FAST_FRAMES` / `RX_FAST_TRAIL` (the page-sized
+  fast tier's capacities; §6.3 family (b), VM-only). The un-suffixed
+  entries now run on that tier and ESCALATE to the stamped default on
+  `PCREC_ERR_FRAMES` (a deterministic re-run; budgets restart). Your
+  O-4 gap closes on shallow subjects (measured 213-268 → 45.6-48.8
+  ns/call on the email specimen's 16 B subject, = `rx_search_in`);
+  ABOVE the fast boundary a call is ~1.6× slower than at 32890e2 (two
+  runs) — on your five FRAMES subjects expect `pcrec-vm` ≈ 1.5× slower
+  than `pcrec-vm-in`, and that is the exercising row for the bet the
+  design makes. `-fno-tiered-entry` is the deny flag (answer-identity
+  preserving) if you want a control row.
+- `RX_DFA_SCAN` gains the value `"empty"` (the four provably-empty
+  artifacts); VM HYBRIDS (RX_VM_PREFILTER "hybrid") now ALSO stamp
+  `RX_DFA_SCAN`/`RX_DFA_PREFILTER` for their inlined scan — 1,263 of
+  1,488 corpus VM artifacts; a non-hybrid VM artifact stamps neither.
+- `struct rx_info` fields (runtime mirrors, header-less consumers):
+  `const char *scan` (the DFA scan shape where a DFA scan exists —
+  DFA artifacts and VM hybrids — else NULL) and `const char *prefilter`
+  (the candidate-start mechanism that ACTUALLY RUNS, in whichever
+  engine's vocabulary applies; never the coarse "hybrid": `scan != NULL`
+  on a VM artifact IS the hybrid reading). One derivation feeds macro
+  and field; a codegen check asserts they agree on every artifact.
+- `.abi = 6`. Spec: match_api.md §3 (the entries' cost model and the
+  cliff), §6/§6.3 (the fields, the (a)/(b) split, the value sets),
+  §10.9; tuning.md §2.12 (`-fno-tiered-entry`), §3 (the DFA stamps).
+
+FOR YOUR "UNCOVERED" BUCKET, measured tonight: K39 — a VM HYBRID's
+inlined DFA prefilter SCALES WITH A BOUNDED-REPEAT COUNT (`((a)|b)
+{0,4000}c`: 1,994 lines at the default vs 869 for {0,400}; 573 at any
+count with the prefilter off) — pre-existing, [OPT-4] chartered (a
+candidate-start DFA needs only the first-byte language); a sub-bench-4
+row would put a number on the compile-time cost.
