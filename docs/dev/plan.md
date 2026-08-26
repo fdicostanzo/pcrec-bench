@@ -77,17 +77,6 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   it. When pcrec's I-5 pin (abi 4: RX_ENGINE unconditional, RX_DFA_SCAN,
   RX_DFA_PREFILTER) ships: the DFA stamp columns (I-3 closes). Sonnet
   lane; disjoint from everything but report.py/tests/reports.
-- [B15] STATE:started — THE PER-CALL FLOOR PATTERN in every short-subject
-  set (pcrecdev1 feedback 1d/1a, both readings; the reporter's "floor:
-  n/a"): bench/email gains `floor.rx` = the literal `@` with sidecar
-  `role = "floor"` (default `member`), oracle-derived expectations over
-  the same subjects (all three regimes), manifests/NOTES/CLAUDE.md;
-  schema v1.3 (additive): optional `patterns[].role` enum member|floor,
-  the harness copying it from the sidecar; the reporter ([B14]) prints
-  the floor pattern's per-subject mean beside every short-search row of
-  the same record. Plus KB-1 (runtime_options bare-flag pairing) in the
-  pcrec adapter with a check. Lane b15floor (sonnet); disjoint from
-  report.py. Design rule for [B11]+: every set carries a floor pattern.
 - [B13] STATE:not-started — THE INTERPRETER (Frank, 2026-08-25: "reads
   and provides interpretation to these reports as an add-on … no
   opinions, all based on facts"; agreed design, journal part 5). Two

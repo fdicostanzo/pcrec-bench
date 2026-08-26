@@ -168,3 +168,25 @@ completion date, newest group at the bottom.
   --dirty]`, engine_commit null when dirty, scratch by construction, the
   canonical store refused); 50 harness checks.
 
+- [B15] STATE:completed — THE PER-CALL FLOOR PATTERN in every short-subject
+  set (pcrecdev1 feedback 1d/1a, both readings; the reporter's "floor:
+  n/a"): bench/email gains `floor.rx` = the literal `@` with sidecar
+  `role = "floor"` (default `member`), oracle-derived expectations over
+  the same subjects (all three regimes), manifests/NOTES/CLAUDE.md;
+  schema v1.3 (additive): optional `patterns[].role` enum member|floor,
+  the harness copying it from the sidecar; the reporter ([B14]) prints
+  the floor pattern's per-subject mean beside every short-search row of
+  the same record. Plus KB-1 (runtime_options bare-flag pairing) in the
+  pcrec adapter with a check. Lane b15floor (sonnet); disjoint from
+  report.py. Design rule for [B11]+: every set carries a floor pattern.
+  DONE 2026-08-25 (lane b15floor, sonnet; merged bf4949d): floor.rx =
+  `@`, role floor; expectations 330 → 495 rows oracle-derived (search 73
+  match / 4 nomatch; match 1/84; throughput 40330 / 0 / 0 find-all); 80
+  of 85 subjects contain `@`; schema v1.3 `patterns[].role` + X30
+  (3/56/0); harness stamps the role; KB-1 FIXED; requirements §5 and
+  APPROACH §3 state the rule; make check 3/56/0, 56/56, 31/31. Scratch,
+  under load, direction only: on the floor pcre2-jit is SLOWER than
+  pcrec-auto (3,440 vs 1,468 ns per 77-subject set ≈ 45 vs 19 ns/call)
+  — pcre2's per-call setup exceeds a dlopen'd C call; a pinned floor
+  record is the next window's business.
+
