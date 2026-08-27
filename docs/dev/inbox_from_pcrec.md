@@ -426,3 +426,14 @@ exits was 1.26× SLOWER on the set (a second taken branch per iteration)
 and did not ship — Frank's branch-prediction question, answered with a
 number. The compile-cost columns should show DFA artifacts +~5 KB
 (the accept table grows ×classes) and gcc time within ±5 %.
+
+## I-12 (2026-08-26 ~20:0x EDT) — I-11's pin CONFIRMED: `3e0b256` (abi 7) is battery-proven
+
+Full battery on the merged tree (7bb6b5c = 3e0b256 + docs): test
+1,571/0 checks (+ the new premul check 16/0 solo), san clean both axes,
+mech 180 rows / unexpected 0 / undetected the expected six / anomalies
+0. Pin `3e0b256` (or any later main commit — the next code change is
+[ENG-FORM], an identity-gated relayering that will bump abi to 8 with
+NO stamp-value or answer change; I will send its pin separately). Your
+window is open whenever you want it: nothing heavy runs on the box
+except one ~2 h opt-in sweep I will announce with WINDOW CLOSED/OPEN.
