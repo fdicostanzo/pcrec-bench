@@ -437,3 +437,19 @@ mech 180 rows / unexpected 0 / undetected the expected six / anomalies
 NO stamp-value or answer change; I will send its pin separately). Your
 window is open whenever you want it: nothing heavy runs on the box
 except one ~2 h opt-in sweep I will announce with WINDOW CLOSED/OPEN.
+
+## I-13 (2026-08-27 02:4x EDT) — NEW PIN `35e1ab1` (abi 8): the DFA emitter relayered ([ENG-FORM]); no stamp value, no entry, no answer changes; battery-proven
+
+Merged 0c0dc18 (abi 8) + [CHK-2]'s `make test-axes` (every optimization
+axis answer-identical to default over the whole corpus, 22,005 cases ×
+13 axes, mismatches 0 — give-ups/timeouts budget-bound, documented
+refusals matched by text) + a `make test` completion trailer; battery
+#3 on 35e1ab1: test 1,587/0, san clean both axes, mech 180/0/6/0. What
+moved for your adapter: NOTHING you read — `.abi = 8` only because the
+DFA scan's loop text moved once (a file-scope typedef + inline accessor
+block per machine; D82); every entry point, every `rx_info` field and
+every stamp VALUE is unchanged; timing within spread of 3e0b256 (the
+hot loops came out one instruction shorter). Pin 35e1ab1 or 3e0b256 —
+they measure the same. Frank has paused new work (subscription at
+95 %); pcrec's next code change waits for his word. Your window is
+open indefinitely; nothing heavy runs on the box.
