@@ -8,7 +8,7 @@ Provides five testees at the commit pinned in `configs.toml`, and one —
 | `pcrec-auto` | `--features all` | the defaults: engine chosen automatically, captures on |
 | `pcrec-nocaps` | `+ --no-captures` | the axis that recovers a pure-DFA artifact for a group-bearing pattern |
 | `pcrec-vm` | `+ --engine=vm` | the VM forced, prefilter off, so the VM derives the whole span independently |
-| `pcrec-auto-in` | `--features all` + `buffer_frames = 32768`, `buffer_trail = 131072` | the defaults, matched through the `_in` entries with a caller-provided frame buffer. INERT wherever `auto` picks the DFA — which at pin 692c2e8 is every artifact of `bench/email`, so it is DEFINED but NOT MEASURED there (the checks use it; it goes live on a sub-bench with VM-selected patterns under `auto`) |
+| `pcrec-auto-in` | `--features all` + `buffer_frames = 32768`, `buffer_trail = 131072` | the defaults, matched through the `_in` entries with a caller-provided frame buffer. INERT wherever `auto` picks the DFA — which is still every artifact of `bench/email` (RE-VERIFIED at pin 35e1ab1, 2026-08-28: all six `auto`/`nocaps` artifacts stamp `RX_ENGINE "dfa"`), so it is DEFINED but NOT MEASURED there (the checks use it; it goes live on a sub-bench with VM-selected patterns under `auto`) |
 | `pcrec-vm-in` | `+ --engine=vm` + the same two capacities | RULED 2026-08-25 (manager + pcrec manager; Frank's word pending via the inbox): the VM forced with the buffer, the one entry on `bench/email` where the depth path is reachable and the capacities were measured — the sixth cell of the [B8] window |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
@@ -175,20 +175,27 @@ pattern offset 3"); at 692c2e8 the four named groups are still reported
    692c2e8: "(?<...) requires module 'named-groups' (pattern offset 3)").
    Every config passes `--features all`, so nothing changed.
 
-### The gap this measurement found
+### The gap this measurement found — CLOSED at the 35e1ab1 re-pin
 
-**The DFA prefilter is NOT observable through any structured stamp, so
-`engine_metadata` cannot say whether it is on.** `RX_VM_PREFILTER` is a
-VM-only stamp (record_schema.md §7: the `VM_*` stamps are emitted on VM
-artifacts only), and a DFA artifact's only `#define`s are
-`RX_ALTCLS_MERGES` / `RX_ALTCLS_FACTORED`. The prefilter's presence above
-was established by reading the emitted skip LOOP — prose and code, not a
-stamp — which is exactly what requirements §4.2 says a metadata pair must
-not be built from. Requirements §4.2 wants reports to "bucket outliers by
-MECHANISM", and the DFA prefilter is one of this sub-bench's headline
-mechanisms (pcrec's own srEmail measured a ~23× prefilter loss). **A
-DFA-side prefilter stamp is a candidate request to the pcrec manager**;
-until it exists, no pcrec DFA record can be filtered on it.
+**It said: the DFA prefilter is NOT observable through any structured
+stamp, so `engine_metadata` cannot say whether it is on.** The prefilter's
+presence had to be established by reading the emitted skip LOOP — prose
+and code, not a stamp — which is exactly what requirements §4.2 says a
+metadata pair must not be built from, while §4.2 also wants reports to
+"bucket outliers by MECHANISM". It was filed to the pcrec manager, came
+back as pcrec's inbox I-3, and closed as [DD-13] / [DD-13c] / [OPT-3]:
+`RX_DFA_SCAN`, `RX_DFA_PREFILTER` and `RX_DFA_TABLE` are on every
+artifact that CONTAINS a DFA scan — VM HYBRIDS included — and
+`rx_info.scan` / `.prefilter` mirror the first two at run time. **Every
+pcrec record at this pin can be filtered on its candidate-start
+mechanism**, from a structured field, on both engines. See "The mechanism
+stamps" below.
+
+The part worth keeping after the closure: the VM HYBRID is the artifact
+kind where the DFA scan does the WORK (the email specimen's ~23×), and it
+was the one kind that could stamp nothing about it until [DD-13c]. A
+bench that had settled for "DFA artifacts only" would have bucketed every
+artifact by scan shape EXCEPT the ones that needed it.
 
 ## `consumed_length`, and the MATCH-regime asymmetry you must know about
 
@@ -347,3 +354,192 @@ adapter has no name for is a hard error, not a silently dropped bit.
 The prose `RX_ENGINE_WHY` is **not** a metadata pair: it goes into the
 compile row's unindexed `diagnostic`, exactly where record_schema.md §7 puts
 it.
+
+### The mechanism stamps, and the two rules for reading them ([B16], abi 8)
+
+pcrec grew five pins of observability between this bench's 692c2e8 pin and
+`35e1ab1`, absorbed here in ONE adapter change (pcrec asked for one rather
+than five). What arrived, and where each pair comes from:
+
+| pcrec abi | what appeared | pairs recorded here |
+|---|---|---|
+| 4 ([DD-13]) | `RX_ENGINE` on EVERY artifact; `RX_DFA_SCAN` / `RX_DFA_PREFILTER` on DFA artifacts | `dfa_scan`, `dfa_prefilter` (and `RX_ENGINE` as `engine`'s control) |
+| 5 ([OPT-1]) | `RX_FAST_FRAMES` / `RX_FAST_TRAIL` on every VM artifact | `fast_frames`, `fast_trail` |
+| 6 ([DD-13c]) | `RX_DFA_SCAN "empty"`; the two `_DFA_*` macros extended to VM HYBRIDS; `rx_info.scan` / `.prefilter` appended | (the fields are CONTROLS, not pairs) |
+| 7 ([OPT-3]) | `RX_DFA_TABLE` | `dfa_table` |
+| 8 ([ENG-FORM]) | nothing a consumer reads — the emitted scan loop moved | — |
+
+**Rule 1: never infer a fact from a stamp's ABSENCE. Read the VALUE.**
+This is pcrec's own inbox I-5 hazard, which broke four of pcrec's checks
+the day the stamps landed. A macro this adapter does not see is recorded
+as NO PAIR, which record_schema.md §7 already defines as "not stamped" — a
+state distinct from every value. The one reading taken from an absence is
+the spec's own IFF and comes from a FIELD (printed on every artifact, so it
+is never taken from silence): `rx_info.scan == NULL` on a VM artifact IS
+"not a hybrid" (match_api.md §6, consequence 2).
+
+The scope rules those absences obey, exactly (match_api.md §6.3 (a)):
+
+- `RX_ENGINE` — **every** artifact pcrec emits.
+- `RX_DFA_SCAN` / `_PREFILTER` / `_TABLE` — every artifact that **contains
+  a DFA scan**: every DFA artifact AND every VM HYBRID, and no other. A
+  non-hybrid VM artifact carries none of the three.
+- `RX_FAST_FRAMES` / `_TRAIL` — every **VM** artifact, single-tier ones
+  included. `RX_FAST_FRAMES == RX_RESUME_FRAMES` IS "this artifact has one
+  tier", and is the only spelling of it.
+- `RX_VM_PREFILTER` and `RX_DFA_PREFILTER` are **two different selections**,
+  not two spellings. The first says whether the VM runs a capture-erased DFA
+  ahead of its program at all; the second says what candidate-start filter
+  THAT scan carries. A hybrid answers both, independently, and both are
+  recorded.
+
+**Rule 2: one derivation per column; a second spelling is spent as a
+CONTROL.** pcrec publishes three facts twice and asserts on its own side
+that the two agree, over its whole corpus and on both engines
+(`tests/codegen/run_dfa_stamps.sh`). This adapter reads both and checks
+them (`Adapter._check_agreement`), because a disagreement is a compiler or
+shim bug rather than a measurement, and a record that quietly kept one of
+the two would carry the bug forward as a number:
+
+1. `<PREFIX>_ENGINE` == the string form of `rx_info.engine`.
+2. `rx_info.prefilter` is never NULL (consequence 1).
+3. `<PREFIX>_DFA_SCAN` present IFF `rx_info.scan` is non-NULL, and equal to
+   it when both are there.
+4. `rx_info.prefilter` == `<PREFIX>_DFA_PREFILTER` where a DFA scan exists,
+   == `<PREFIX>_VM_PREFILTER` (`"none"`) where it does not. The field
+   reports the mechanism that ACTUALLY RUNS and never the coarse `"hybrid"`
+   (consequence 3).
+
+Each is an `AdapterError` naming both values. An absent MACRO is checked
+only against the field's own absence — rule 1, applied to the control
+rather than to the datum.
+
+### The ABI FLOOR, and where it lives
+
+`shim.c` reads `rx_info.scan` / `.prefilter`, appended at pcrec abi 6, so 6
+is the lowest artifact it can read and `PB_SHIM_MIN_ABI` says so ONCE.
+`driver.c` compares `pb_abi()` against it before reading anything else and
+refuses a lower artifact by name (`error abi-below-shim-floor: …`, carrying
+both numbers, exit 3); `adapter.py` recognises that line and re-raises it
+as a clean `AdapterError` **without keeping a second copy of the number**.
+An artifact older still (abi < 6) does not link this shim at all — the
+field access is a compile error, which is the loudest form of the same
+refusal and cannot be mistaken for a measurement.
+
+`make check-harness`'s `abi floor` block is the SABOTAGE that keeps the
+path exercised: a real artifact's `.abi = 8` edited to `5` in a copy, built
+with the ordinary shim and run by the ordinary driver, must be refused by
+name — with the unmodified artifact loading in the same run as the positive
+control, and the token the adapter watches for checked against the
+diagnostic the driver actually produced (two copies of one string, in two
+languages, with nothing else enforcing that they agree).
+
+### MEASURED at pin 35e1ab1, 2026-08-28 — one artifact of each KIND
+
+Asserted by VALUE in `make check-harness` (`check_mechanism_stamps`), on
+small hand-chosen patterns rather than on `bench/email`'s: a check whose
+witness is a corpus pattern stops being a check the day engine selection
+moves under it, which is exactly what happened to `factored` between
+8da6120 and 692c2e8.
+
+| kind | pattern / config | stamps |
+|---|---|---|
+| pure DFA | `foo[0-9]+bar`, auto | `engine=dfa`, `dfa_scan=unanchored`, `dfa_prefilter=memchr`, `dfa_table=premultiplied`; no `fast_*` |
+| VM HYBRID | `a(b\|c)+d`, auto | `engine=vm`, `prefilter=hybrid`, `dfa_scan=unanchored`, `dfa_prefilter=memchr`, `dfa_table=premultiplied`, `fast_frames=1`, `fast_trail=3` |
+| VM, no DFA scan | `a(b\|c)+d`, `--engine=vm` | `engine=vm`, `prefilter=none`, NO `_DFA_*` pair, `fast_frames=1`, `fast_trail=3` |
+| provably-empty | `[^\x00-\xff]`, auto | `engine=dfa`, `dfa_scan=empty`, `dfa_prefilter=none`, `dfa_table=none` |
+
+`abi` reads **8** on all four. `--engine=vm` disabling the DFA prefilter
+(so the VM derives the whole span independently) is visible directly for
+the first time: the same pattern is a HYBRID under `auto` and carries no
+DFA scan at all under `--engine=vm`.
+
+**`dfa_table` needs its own control, and has one.** pcrec's form census
+measured `indexed` and `mixed` at ZERO corpus population — every ordinary
+pattern is small enough that the pre-multiplied form wins — so a check that
+only ever sees `premultiplied` cannot tell a working stamp from a constant,
+and this bench would then be filtering on a column that never varies.
+`check_dfa_table_deny_flag` uses `-fno-premul-table` (tuning.md §2.13, an
+answer-identity-preserving deny flag) through `pcrec-local` to reach
+`indexed` on the census's own witness pattern.
+
+### RE-MEASURED at 35e1ab1: `bench/email`'s own artifacts
+
+Compile-only facts (no timing, no measurement window). The `692c2e8`
+column reproduces the table under "MEASURED against pin 692c2e8" above to
+the byte, which is what makes the deltas trustworthy: same method, same
+box, same command shape.
+
+| pattern / form / config | 692c2e8 | 35e1ab1 | Δ | stamps at 35e1ab1 |
+|---|---|---|---|---|
+| `orig` plain / auto, nocaps | 44,786 | 74,593 | +29,807 (+66.6 %) | dfa, unanchored, byte-class, premultiplied |
+| `orig` `\z` / auto, nocaps | 50,199 | 85,060 | +34,861 (+69.4 %) | dfa, unanchored, **byte-class-bounded**, premultiplied |
+| `orig` plain / vm | 52,521 | 57,595 | +5,074 (+9.7 %) | vm, `RX_VM_PREFILTER none`, no DFA scan |
+| `orig` `\z` / vm | 52,651 | 57,725 | +5,074 (+9.6 %) | as above |
+| `factored` plain / auto | 45,453 | 75,260 | +29,807 (+65.6 %) | dfa, unanchored, byte-class, premultiplied |
+| `factored` `\z` / auto | 50,866 | 85,727 | +34,861 (+68.5 %) | dfa, unanchored, **byte-class-bounded**, premultiplied |
+| `factored` plain / vm | 65,288 | 70,362 | +5,074 (+7.8 %) | vm, `none`, no DFA scan |
+| `floor` plain / auto | 13,318 | 16,466 | +3,148 (+23.6 %) | dfa, unanchored, **memchr**, premultiplied |
+| `floor` `\z` / auto | 14,280 | 18,324 | +4,044 (+28.3 %) | dfa, unanchored, **memchr-bounded**, premultiplied |
+| `floor` plain / vm | 19,647 | 19,739 | +92 (+0.5 %) | vm, `none`, no DFA scan |
+
+Four things a reader of the re-pin's numbers needs:
+
+1. **Engine selection did NOT move.** Every `auto` and `nocaps` artifact
+   of all three patterns is still a DFA artifact, both forms — so
+   `pcrec-auto-in` stays INERT on this sub-bench and the roster note above
+   stands. `--engine=vm` still yields a NON-hybrid artifact
+   (`RX_VM_PREFILTER "none"`), the corpus-wide behaviour pcrec documents
+   for that flag, which is why the `vm` configs carry no `_DFA_*` stamps.
+2. **The `\z` form's prefilter is now READABLE, and it is a different
+   mechanism, not a different pattern.** The plain form stamps
+   `byte-class` and the `\z` form `byte-class-bounded` (and `floor`:
+   `memchr` vs `memchr-bounded`). That IS the plain-vs-`\z` skip-loop
+   asymmetry the [B8] measurement had to establish by reading the emitted
+   loop — under a `$`/`\Z`/`\z` view every skip stops one byte short and
+   the `memchr` arm loses its early-out. A reader comparing the two forms
+   must not attribute that difference to engine selection; the stamp now
+   says so in the record.
+3. **DFA artifacts grew far more than pcrec's I-11 predicted.** That note
+   said "DFA artifacts +~5 KB (the accept table grows ×classes)"; measured
+   here it is **+29.8 KB plain / +34.9 KB `\z`** on both email patterns
+   (+66 %..+69 %) and +3.1/+4.0 KB (+24 %/+28 %) on the much smaller
+   `floor` pattern. The span covers five pins, not [OPT-3] alone — see
+   the attribution below.
+4. **VM artifacts grew +5,074 B, flat**, on both patterns and both forms
+   (and +92 B on `floor`), which is [OPT-1]'s deep tier as a second
+   noinline function — I-11's "+1-2 KB" for the VM side, also low.
+
+#### Where the growth came from (attributed pin by pin)
+
+Compiled at each of the four pins that span the re-pin, in a scratch build
+root, same command shape throughout (`orig` and `floor`, plain form):
+
+| artifact | 692c2e8 (abi 3) | 6e8edfb (abi 6) | 3e0b256 (abi 7) | 35e1ab1 (abi 8) |
+|---|---|---|---|---|
+| `orig` / auto (DFA) | 44,786 | 44,957 **+171** | 72,452 **+27,495** | 74,593 **+2,141** |
+| `orig` / vm | 52,521 | 57,595 **+5,074** | 57,595 **+0** | 57,595 **+0** |
+| `floor` / auto (DFA) | 13,318 | 13,481 **+163** | 14,327 **+846** | 16,466 **+2,139** |
+| `floor` / vm | 19,647 | 19,739 **+92** | 19,739 **+0** | 19,739 **+0** |
+
+- **abi 4-6 costs a DFA artifact ~170 B** — the three stamps and the two
+  `rx_info` pointers, which is what one would expect of them.
+- **abi 7 ([OPT-3], the pre-multiplied tables) is the whole story on the
+  DFA side, and it is not "+~5 KB": +27,495 B on `orig` (+61 %)** against
+  +846 B on the much smaller `floor` pattern. It scales with the machine,
+  as the mechanism says it should (the accept table grows ×classes) — the
+  prediction in pcrec's I-11 appears to have been made against a pattern
+  the size of `floor` rather than of `orig`. A VM artifact is untouched by
+  it, because `--engine=vm` yields a NON-hybrid artifact here and a
+  non-hybrid VM artifact contains no DFA table at all.
+- **abi 8 ([ENG-FORM]) costs ~2.14 KB per DFA artifact, FLAT** (+2,141 on
+  `orig`, +2,139 on `floor`) — the file-scope typedef and inline accessor
+  block per machine. I-13 said "nothing you read" moved, which is true of
+  every VALUE, and is what that note was about; the artifact still grew.
+- **[OPT-1]'s deep tier costs a VM artifact +5,074 B on `orig`** and only
+  +92 B on `floor` (a single-tier artifact: its stamped default already
+  fits a page), and nothing after abi 6 moves a VM artifact at all.
+
+The consequence for a re-pin report: the compile-cost columns will move on
+the DFA rows by much more than the ±5 % pcrec's notes predict, and
+`artifact bytes` ([B14] R7) is the column that says why.

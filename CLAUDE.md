@@ -6,12 +6,22 @@ as several pinned testees — on a harder and wider set than the usual
 microbenchmarks, emits standardized per-testee artifacts, compares them
 statically, and feeds the outliers back to pcrec as optimization work.
 
-STATUS (2026-08-25): M1 COMPLETE — charter (APPROACH.md), requirements v3
+STATUS (2026-08-28): M1 COMPLETE — charter (APPROACH.md), requirements v3
 ([B1]), record schema v1.1 ([B2], `schema/`), the harness core, the
 `bench/email/` specimen, the pcre2 and pcrec adapters ([B3]+[B4]), the
 reporter ([B5], `pcrecbench/report.py`, `--grain set|subject`), and the
 first production sample in `store/` + `reports/` ([B6], pcrec pin
-8da6120). M2 is in progress: [B8] re-pinned pcrec to **692c2e8** and added
+8da6120). M2 is in progress: [B16] re-pinned pcrec to **35e1ab1**
+(abi 8) — one adapter change absorbing five pcrec pins of new
+observability (pcrec inbox I-5/I-6/I-11/I-12/I-13): the shim reads
+`RX_ENGINE`, `RX_DFA_SCAN`/`_PREFILTER`/`_TABLE`, `RX_FAST_FRAMES`/
+`_TRAIL` and `rx_info.scan`/`.prefilter`, with an abi FLOOR the driver
+refuses below by name and a macro-vs-field control on every artifact,
+so a pcrec record can now be bucketed by its candidate-start
+MECHANISM on both engines (the gap [B8] filed as pcrec I-3, closed);
+the REPORTER is v5 with I-7 §3/§5's rulings ([B16] R1-R8), which
+turned one committed `faster ×13.45` into `selection changed
+(vm → dfa)`. Earlier in M2: [B8] re-pinned pcrec to **692c2e8** and added
 the caller-provided frame-buffer testees (`pcrec-vm-in` measured,
 `pcrec-auto-in` defined) and measured the six-cell re-pin sample — the
 before/after is `reports/*-repin-692c2e8.*`; [B10] landed the EDIT-TEST
@@ -21,7 +31,7 @@ REPORTER v3 (status per row, cross-pin Δ verdicts, mechanism stamps,
 compile phases, legends); [B15] the FLOOR PATTERN in bench/email
 (schema **v1.3** `patterns[].role`). Next: [B11] (sub-bench #2, log-line
 search); [B13] the interpreter is chartered. `make check` is green
-(3/56/0, 56/56, 42/42). Manager sessions start with the
+(3/56/0, 69/69, 49/49). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
