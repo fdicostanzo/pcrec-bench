@@ -1031,3 +1031,81 @@ I-10's CONFOUND, MEASURED (the new prose subjects; orig; ns/byte):
 Everything I-11 claimed for the DFA holds on the bench's own protocol;
 the compile-size prediction and P6 did not, and the periodic subjects
 overstated the DFA's lead over the JIT on failing text by 1.6×.
+
+## 2026-08-28 (EDT, ~12:0x), third session (part 6) — WINDOW C DONE: bench/loglines@0.1 at pcrec 35e1ab1, six cells `measured`; the [OPT-5] number; the NEXT OUTLIER is not [OPT-5]
+
+THE WINDOW: 11:00-11:50 (50 min; cells 8.5 / 8.7 / 7.5 / 7.5 / 8.6 /
+8.3 min — the lane's ≈9 min estimate held), --trials 5, core 11, six
+records into store/ (21 → 27), all `measured`; every cell after the
+first needed a second gate attempt (the post-cell transient; pcrec-auto
+needed three, busiest core 10-15 % — the editor's `gh pr list` poll).
+Reports: reports/2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-
+35e1ab1.{md,subject-grain.md,tsv} (reporter v5). Floors (per-subject
+mean, search): pcrec-auto 18.2 ns, pcrec-vm 41.0, pcre2-jit 45.9,
+pcre2-interp 100.7 — the DFA's per-call floor is 2.5× under the JIT's.
+
+THE [OPT-5] NUMBER (the required-byte precheck; read against
+pattern_facts.tsv's presence counts, journal part 3):
+- 1 MB, required byte ABSENT and not the first byte (kv-quoted `"` /
+  stack-frame `)` on t-1024k-syslog): pcre2-interp dismisses in 19.2 /
+  17.9 µs; pcrec-auto scans 3.25 / 3.61 ms — 169× / 202×. pcre2-jit:
+  2.11 ms / 68 µs (the JIT does not dismiss either; its stack-frame
+  speed is a different mechanism, below).
+- THE CONTROL THAT SAYS THE MECHANISM ALREADY HALF-EXISTS: http-5xx
+  (required byte `"` IS the first byte, prefilter `memchr-bounded`) on
+  the same syslog subject: pcrec-auto 17.6 µs = pcre2-interp's 17.8 —
+  the memchr first-byte skip over a subject without the byte IS the
+  dismissal. [OPT-5] is the k>0 case of a skip pcrec has at k=0.
+- The SEARCH BAND (112 subjects of 256 B-4 KB — the regime that
+  matters): kv-quoted pcrec-auto 501 µs vs pcre2-jit 335 (1.50× behind;
+  `"` absent in 35/112 subjects, so a precheck saves at most ~35/112 of
+  the scan ≈ 150 µs → parity, not a win); stack-frame pcrec-auto 558 µs
+  vs JIT 17.6 (31.7× behind; `)` absent in 16/112 — a precheck cannot
+  close 1/30th of that). Verdict for pcrec: a required-byte precheck
+  is worth building only as the general "byte at offset k" skip below,
+  never as its own mechanism (D77: the narrow number is ~parity).
+
+THE OUTLIER THE SET ACTUALLY FOUND — pcrec-auto vs pcre2-jit, search
+band, set ns/call over 112 subjects:
+  stack-frame 558,756 vs 17,574 (31.8× BEHIND) · uuid 434,798 vs
+  35,766 (12.2× behind) · iso-ts 213,267 vs 21,013 (10.1× behind) ·
+  kv-quoted 1.50× behind · bignum 423,660 vs 394,927 (1.07× behind) ·
+  hex32-id 1.14× AHEAD · ipv4 3.56× ahead · ipv6 4.39× ahead ·
+  http-5xx 7,013 vs 104,980 (15.0× ahead; the JIT is even 1.8× slower
+  than its own interpreter on this one — upstream row U4).
+The JIT's 17-36 µs sets are 0.08-0.15 ns/byte over ~230 KB — SIMD
+scanning speed. What the three losing patterns share and the parity
+ones lack: a FIXED-LENGTH PREFIX WITH A SELECTIVE BYTE AT A KNOWN
+OFFSET — `\d{4}-\d{2}-` (`-` at offsets 4 and 7), `[0-9a-f]{8}-…-`
+(`-` at 8 and 13), `\bat ` (`a`,`t`,` ` at 0-2); hex32-id and bignum
+are all-class prefixes with no selective position and sit at parity.
+PCRE2's JIT scans the fixed-length prefix for its most selective
+position pair with a SIMD char-pair search (its "fast forward first
+N characters"); pcrec's DFA skip looks only at offset 0 — and at
+offset 0 these patterns start with a digit/hex/letter, which is in
+every line, so the skip never skips and the transition loop runs on
+every byte (2.4 ns/byte on stack-frame). Same story at 1 MB: iso-ts
+JIT 0.21 ms vs pcrec 1.94 (9×), uuid 0.48 vs 3.36 (7×), stack-frame
+0.09 vs 3.90 (42×); ipv4 the other way (pcrec 1.89 vs JIT 6.05).
+THE GENERAL MECHANISM (one, not three — memory `pcrec-general-
+mechanisms-not-special-cases`): candidate-start derivation from ANY
+fixed offset k inside the pattern's fixed-length prefix, choosing the
+(k, byte-set) with the lowest expected frequency — the first-byte skip
+is k=0, the required-byte precheck is "absent at every k → no match",
+the JIT's pair scan is two k's at once; the frequency prior is D83's
+exemplar findings file, with a static table as the fallback. Sent to
+pcrec as the outbox's first outlier at O-7.
+
+A pcrec FINDING (compile, not timing): `level-context` under `auto`
+DID NOT COMPILE — "pattern too complex for the DFA engine (>32000
+states; try --engine=vm)" — and auto did NOT fall back to the VM,
+which compiles and runs the same pattern (1.55 ms/set, 13.4× behind
+the JIT's 115 µs; JIT 0.71 ms at 1 MB vs interp 1.17). `\b(?:ERROR|
+FATAL|CRIT)\b.{0,200}?\b(?:timeout|timed out|refused|denied|
+unreachable)\b`: the bounded lazy repeat before a word-boundary
+alternation is the K23/K32 band. Two things for pcrec: the SELECTOR's
+contract when the DFA build overflows under auto (fall back, or
+predict), and the state count itself. Bench-side gap: the reporter
+shows `did-not-compile=1` only in the compile-cost table; the ranking
+must list the cell as `not ranked: <testee> — did-not-compile
+(<diagnostic>)` (→ [B12] item).
