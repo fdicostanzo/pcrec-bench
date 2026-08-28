@@ -21,11 +21,14 @@ filter with a context word, an HTTP access line with a 5xx status, a UUID, a \
 Java stack frame, a 32-hex trace id and a 10-19 digit number -- over 112 \
 chunks of mixed-format log text (syslog, nginx access and error, klog, \
 JSON-lines, journald, Java stack traces), 279-3772 B, non-periodic by \
-construction, plus a 16 KB / 64 KB / 256 KB / 1 MB size sweep in a failing \
-and a matching-bearing flavour. Every member pattern matches 6-9 % of the \
+construction, plus a 16 KB / 64 KB / 256 KB / 1 MB size sweep in three \
+flavours: mixed failing text (no testee can dismiss it -- every required \
+byte in the set is structural in mixed logs), a single-source syslog stream \
+carrying no `\"` and no `)` (which two patterns CAN be dismissed on without \
+a scan), and a matching-bearing chunk. Every member pattern matches 6-9 % of the \
 search-band subjects, so ~93 % of the (pattern, subject) cells are the \
-failing path this set exists to time. The last two patterns are the CONTROL: \
-they contain no literal byte at all, so an engine that dismisses a subject \
+failing path this set exists to time. Three patterns are the CONTROL: \
+PCRE2 finds no required byte for them, so an engine that dismisses a subject \
 by looking for a required byte gets no help on them and must scan. See \
 NOTES.md for the required-literal column, the m/n per pattern, and what \
 would defeat the objective."""
