@@ -55,12 +55,22 @@ below mandates the second subject tree). Nothing else; a new field is
 a design change.
 
 Regime → subject mapping: `throughput` uses `throughput/` subjects with
-SEARCH semantics; `search_short` uses `subjects/` entries ≤ 256 B with
-SEARCH semantics; `match` uses `subjects/` with MATCH (anchored, whole-
-subject) semantics. Expectations are per (pattern, subject, regime).
-The record spells the regimes `large-subject-throughput` /
-`short-subject-search` / `match-compliance` (record_schema.md); the
-mapping lives in one place, `pcrecbench/subbench.py`.
+SEARCH semantics; `search_short` uses `subjects/` entries within the
+sub-bench's `short_search_max_bytes` with SEARCH semantics; `match` uses
+`subjects/` with MATCH (anchored, whole-subject) semantics. Expectations
+are per (pattern, subject, regime). The record spells the regimes
+`large-subject-throughput` / `short-subject-search` / `match-compliance`
+(record_schema.md); the mapping lives in one place,
+`pcrecbench/subbench.py`.
+
+The BOUND is the sidecar's, not this note's: 256 B is `bench/email`'s
+value and the loader's default, and `bench/loglines` declares 4096
+because what a shipper hands a matcher is a CHUNK of log lines rather
+than one line ([B11.1]; its NOTES.md argues it). A sub-bench also
+declares WHICH regimes it exercises and a SUBSET is legitimate:
+`bench/loglines` declares no `match` regime, and `subjects_for()`,
+`run_cell()` and the record schema (`regimes`, `minItems: 1`) all take
+the declared subset as-is.
 
 WHOLE-SUBJECT MATCH PER ENGINE (ruled 2026-08-25 with the pcrec
 manager): libpcre2 = `PCRE2_ANCHORED|PCRE2_ENDANCHORED` on the plain

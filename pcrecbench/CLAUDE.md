@@ -8,7 +8,7 @@ the record's shape is `docs/design/record_schema.md`.
 |---|---|
 | `__main__.py` | the CLI: `run` (`--tier pinned\|scratch`), `quick` (the edit-test loop's one-cell surface, [B10]), `index`, `quiet`, `testees`, `report` |
 | `harness.py` | contract §4's seven steps; `outcome_for()` is the ONE place an engine's answer becomes a `match_outcome`; `run_cell(tier=, patterns=, subject_limit=, budget=)` is what `quick` parameterises — no second code path |
-| `subbench.py` | loads `bench/<name>/`; owns the regime→subject mapping and `subbench.content_hash`; `_load_manifest` is GENERIC on a subject manifest's column count (4, the original shape, or 5 with `periodic` appended, [B17]) — no column position is hard-coded beyond "periodic, if present, is last" |
+| `subbench.py` | loads `bench/<name>/`; owns the regime→subject mapping and `subbench.content_hash`; `_load_manifest` is GENERIC on a subject manifest's column count (4, the original shape, or 5 with `periodic` appended, [B17]) — no column position is hard-coded beyond "periodic, if present, is last". `bench/loglines`' manifests use the same column, in the same place ([B11.1]) |
 | `adapters.py` | the `Adapter` interface, discovery, and **the DRIVER PROTOCOL** (in full, at the top of the file) |
 | `driverrun.py` | build/run/parse a driver; the resume-after-driver-death rule |
 | `record.py` | builds the record dict; every derived id comes FROM `schema/validate.py`'s own functions |
@@ -16,7 +16,9 @@ the record's shape is `docs/design/record_schema.md`.
 | `store.py` | the store path rule, never-clobber, validate-before-write, the index; the TIERS: `.canonical` marks the canonical store, which refuses a `tier: scratch` record on write and on index; `scratch_store()` is `$PCRECBENCH_SCRATCH_STORE` or `build/scratch-store/` |
 | `quiet.py` | the quiet-box instrument and its two thresholds (`docs/design/quiet_baseline.md`) |
 | `env.py` | the `environment` block; the machine registry |
-| `oracle_pcre2.py` | the libpcre2 ctypes binding, copied from pcrec (see its header) and extended |
+| `oracle_pcre2.py` | the libpcre2 ctypes binding, copied from pcrec (see its header) and extended: anchoring bits, `find_all`, an explicit give-up surface, and `pattern_info()` ([B11.1] — PCRE2's own first/REQUIRED code unit and min length, the analysis `bench/loglines` is built around) |
+| `periodic.py` | the `periodic` manifest column's DEFINITION (inbox I-10, [B17]): `smallest_period` / `periodic_field`, the smallest exact repeat period in [1, 4096] bytes or `no`. Moved here from `bench/email/` when `bench/loglines` became its second caller ([B11.1]) — the column means the same thing in every manifest because one function computes it |
+| `expectations.py` | the GENERIC expectation chain every `bench/<name>/gen_expectations.py` runs: one row per (pattern × subject × declared regime) from the libpcre2 oracle, `--check` mode, the no-capture-participated assertion, and the rule that an oracle give-up is DROPPED and listed rather than recorded as `nomatch`. Lifted out of `bench/email/gen_expectations.py` when the second sub-bench arrived; two copies would be two chances for two sets' expectations to be derived by different rules |
 
 ## Three rules that are not obvious from the code
 

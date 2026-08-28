@@ -59,8 +59,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "throughput")
 MANIFEST = os.path.join(HERE, "manifest_throughput.tsv")
 
-sys.path.insert(0, HERE)
-from periodic import periodic_field  # noqa: E402
+sys.path.insert(0, os.path.dirname(os.path.dirname(HERE)))
+from pcrecbench.periodic import periodic_field  # noqa: E402
 
 TARGET = 1024 * 1024
 

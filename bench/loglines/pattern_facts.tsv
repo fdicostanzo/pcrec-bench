@@ -1,0 +1,12 @@
+pattern	first_code_unit	required_code_unit	min_length	search_req_present	search_matches	tput_req_present	tput_matches	tput_req_absent	oracle
+iso-ts	bitmap-or-none	:	19	112/112	8/112	12/12	4/12	-	10.46 2025-08-27
+ipv4	bitmap-or-none	.	7	112/112	10/112	12/12	4/12	-	10.46 2025-08-27
+ipv6	bitmap-or-none	:	3	112/112	7/112	12/12	4/12	-	10.46 2025-08-27
+kv-quoted	bitmap-or-none	"	4	77/112	8/112	8/12	4/12	t-016k-syslog,t-064k-syslog,t-256k-syslog,t-1024k-syslog	10.46 2025-08-27
+level-context	bitmap-or-none	NONE	10	-	8/112	-	4/12	-	10.46 2025-08-27
+http-5xx	"	5	20	112/112	7/112	12/12	4/12	-	10.46 2025-08-27
+uuid	bitmap-or-none	-	36	112/112	8/112	12/12	4/12	-	10.46 2025-08-27
+stack-frame	a	)	18	96/112	7/112	8/12	4/12	t-016k-syslog,t-064k-syslog,t-256k-syslog,t-1024k-syslog	10.46 2025-08-27
+hex32-id	bitmap-or-none	NONE	32	-	8/112	-	4/12	-	10.46 2025-08-27
+bignum	bitmap-or-none	NONE	10	-	8/112	-	4/12	-	10.46 2025-08-27
+floor	:	NONE	1	-	112/112	-	12/12	-	10.46 2025-08-27

@@ -219,7 +219,7 @@ data-dependent branch (the return to the start state) is therefore
 perfectly learnable by a history-based branch predictor on these three:
 "on real prose (variable word lengths) it would not be, and any pcrec
 optimization that trades chain length for a data-dependent branch would
-look better here than in the field." `bench/email/periodic.py`'s
+look better here than in the field." `pcrecbench/periodic.py`'s
 `smallest_period` re-derives this MECHANICALLY, not by re-typing the
 figures: the smallest p in [1, 4096] with `s[i] == s[i+p]` for every
 valid i, or `no`. Both generators (`gen_subjects.py`,
@@ -246,7 +246,7 @@ them into sentences of 6-14 words with terminal punctuation (`.`/`?`/`!`)
 and an occasional line break, and — for t-d only — inserts one of eight
 varied-form valid dot-atom addresses roughly every 200-400 words. t-e
 runs the identical process with address insertion turned off. Neither is
-periodic up to the 4096 B bound `periodic.py` checks (`no` in the
+periodic up to the 4096 B bound `pcrecbench/periodic.py` checks (`no` in the
 manifest for both), by construction: a PRNG choosing among 210
 variable-length tokens has no short exact repeat over a 1 MB span.
 

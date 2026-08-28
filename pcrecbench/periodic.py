@@ -10,6 +10,13 @@ which is which without re-deriving it -- this module is that mechanism,
 shared by both generators (gen_subjects.py, gen_throughput_subjects.py) so
 the definition of "period" is the SAME wherever it appears in a manifest.
 
+MOVED HERE FROM `bench/email/` when the second sub-bench landed ([B11.1]).
+It began as one sub-bench's helper and is now the definition of a MANIFEST
+COLUMN that every sub-bench writes, so it belongs to the harness package:
+`bench/loglines/logtext.py` imports it too, and "the same column name and
+semantics" is then a fact about the code rather than a claim in two NOTES
+files that could drift apart.
+
 Definition (I-10's own words): the smallest p, 1 <= p <= MAX_PERIOD, such
 that s[i] == s[i+p] for every i in range(len(s) - p). `no` (this module
 returns None) means no such p exists in that range -- NOT that the subject

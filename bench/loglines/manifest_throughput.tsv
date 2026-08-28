@@ -1,0 +1,13 @@
+id	len	sha256	description	periodic
+t-016k-fail	16403	31c1616f2ad7bab3f632d18f4d4e6d411ac75186490f871cc5f5e73c19eb1d47	16 KB of background log text, NO member shape anywhere (the failing path; the analogue of bench/email's t-b-no-at)	no
+t-016k-syslog	16434	006287dd17a4b00ed4edaf93a917bde036b1e830bc87c500c7cbe1603bb51030	16 KB of a single-source BSD-syslog stream, no member shape and NO `"` or `)` anywhere -- the required code units of kv-quoted and stack-frame, which are therefore dismissible without a scan	no
+t-016k-hit	16398	26c60143735cec3b64b78784fae973fd7df2b137f0d476a9c24554337e0bfe8c	16 KB of the same log text with one instance of every member shape per 4096 B (the matching-bearing counterpart)	no
+t-064k-fail	65593	245361c15fa6928f84cc9a05d68b14777c9fb1052ffe0cb67f28942d7ed67790	64 KB of background log text, NO member shape anywhere (the failing path; the analogue of bench/email's t-b-no-at)	no
+t-064k-syslog	65605	8589bfc41d946e45091ac8351392fcb01fe1c696c9dc58c53dbb6c1147ef7424	64 KB of a single-source BSD-syslog stream, no member shape and NO `"` or `)` anywhere -- the required code units of kv-quoted and stack-frame, which are therefore dismissible without a scan	no
+t-064k-hit	65551	744850ae823574e12565c40c7a03ff5ee4c94913ef19861ea16c27feac017831	64 KB of the same log text with one instance of every member shape per 4096 B (the matching-bearing counterpart)	no
+t-256k-fail	262169	4dfd5a731015ff46c5ff7a0a894d86fa2a976020ff28fec7d3618a9e3e8e85cf	256 KB of background log text, NO member shape anywhere (the failing path; the analogue of bench/email's t-b-no-at)	no
+t-256k-syslog	262173	770500847cbccc0deba098e8eef37bfe1d207f3da42805a6e67180a4a6443ed3	256 KB of a single-source BSD-syslog stream, no member shape and NO `"` or `)` anywhere -- the required code units of kv-quoted and stack-frame, which are therefore dismissible without a scan	no
+t-256k-hit	262234	55d6fa934099d1a2826ffdc6b2f5e7e7ddcca330e9b08d34e8dded3897eb509a	256 KB of the same log text with one instance of every member shape per 4096 B (the matching-bearing counterpart)	no
+t-1024k-fail	1048621	6c56d92fadb214df52c09aaa9fae33484b16e57d1b7930c88df8dda63c3ba104	1024 KB of background log text, NO member shape anywhere (the failing path; the analogue of bench/email's t-b-no-at)	no
+t-1024k-syslog	1048651	5530c7a17b17b60a8c40c4cbae98e88fa5a931ef9403e2fab2b67fa67d43ef07	1024 KB of a single-source BSD-syslog stream, no member shape and NO `"` or `)` anywhere -- the required code units of kv-quoted and stack-frame, which are therefore dismissible without a scan	no
+t-1024k-hit	1048621	72c6adf280bf63006e4773eb4b429307ba4e7c8bcfbdf7e0fb2d95fb31972417	1024 KB of the same log text with one instance of every member shape per 4096 B (the matching-bearing counterpart)	no

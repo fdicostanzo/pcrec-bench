@@ -4,6 +4,25 @@
 |---|---|
 | `selfcheck.py` | `make check-harness`: the [B3] half of the self-check suite |
 
+THE GENERIC GATES ENUMERATE (`subbench_dirs()`, [B11.1]). Harness contract 6
+says "bench/*/ each", and the checks that belong to the sub-bench CONTRACT --
+the generators reproduce their committed manifests, any other `gen_*.py` in
+the directory re-derives under `--check`, `expectations.tsv` re-derives, both
+drivers answer the set's floor pattern exactly as the oracle says -- discover
+every `bench/<name>/` with a `subbench.toml` instead of naming one. They named
+`email`, and the count this suite prints would not have moved on the day a
+second sub-bench landed: a check that silently covers half of what it claims
+is the shape of failure this file's organising principle exists to prevent.
+The email-SPECIFIC arms (the wrong-answer fixture, the two-patterns control,
+the frame-buffer block, the `whole-subject` form control) stay named, because
+they are about that set's own fixtures and not about the contract.
+
+The per-sub-bench floor smoke is also the per-sub-bench DRIVER smoke: a real
+adapter compiles a real pattern of the set and answers real subjects of it,
+and it picks its two subjects BY THE EXPECTATION rather than by looking for a
+byte -- a set whose floor matches every subject (bench/loglines' is `:`) has
+no missing one, and the check says so rather than failing.
+
 `selfcheck.py`'s organising principle is pcrec's check-design lesson: every
 gate is exercised against an input it must REJECT in the same run that
 exercises it against one it must accept. A check with no failing case proves

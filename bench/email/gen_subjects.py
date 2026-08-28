@@ -26,8 +26,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "subjects")
 MANIFEST = os.path.join(HERE, "manifest.tsv")
 
-sys.path.insert(0, HERE)
-from periodic import periodic_field  # noqa: E402
+sys.path.insert(0, os.path.dirname(os.path.dirname(HERE)))
+from pcrecbench.periodic import periodic_field  # noqa: E402
 
 subjects = []  # list of (desc, bytes)
 

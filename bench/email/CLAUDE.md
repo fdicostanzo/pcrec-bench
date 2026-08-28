@@ -21,7 +21,7 @@ non-periodic throughput subjects.
 | `patterns/orig.rx` | the hand-inlined pattern, raw bytes, no trailing newline |
 | `patterns/factored.rx` | the same language via four `{0}` definitions + `(?&name)` calls |
 | `patterns/floor.rx` | the FLOOR pattern ([B15]): the one-byte literal `@`, `role = "floor"` in the sidecar (schema v1.3) — a per-call baseline `orig`/`factored`'s numbers read against, not a third member of the language pair. See NOTES.md |
-| `periodic.py` | ([B17]) `smallest_period`/`periodic_field`: the smallest exact repeat period in [1, 4096] bytes, or `no` — shared by both generators below so the definition is the same wherever it appears in a manifest. See NOTES.md "Periodic and non-periodic subjects" |
+| — | the `periodic` fact ([B17]) lives in `pcrecbench/periodic.py`, MOVED there from this directory when `bench/loglines` became its second caller ([B11.1]): `smallest_period`/`periodic_field`, the smallest exact repeat period in [1, 4096] bytes or `no`, so the definition is the same wherever the column appears in ANY manifest. Both generators below import it. See NOTES.md "Periodic and non-periodic subjects" |
 | `gen_subjects.py` | writes `subjects/` (gitignored) + `manifest.tsv` (committed) |
 | `gen_throughput_subjects.py` | writes `throughput/` (gitignored) + `manifest_throughput.tsv`; ([B17]) also the generated-prose builder (`build_prose`, seeded `random.Random(GEN_SEED)`) behind `t-d-prose-sparse-addrs`/`t-e-prose-no-at` |
 | `manifest.tsv` | 85 subjects: id, len, sha256, description, periodic ([B17]: gained the last column, uniform with the throughput manifest — all 85 are tiny enough that the period scan costs nothing) |
