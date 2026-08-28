@@ -253,6 +253,101 @@ produced by different reporter code apart even when the query is
 identical") -- a `v3`-labelled report from before this fix and a
 `v4`-labelled one after it disagree on every `match-compliance` group's
 `matches:` line, and the version string is what tells them apart.
+
+THE [B16] RULINGS (2026-08-28) -- the abi-8 re-pin's reporter half
+-------------------------------------------------------------------
+
+pcrec's inbox items I-5, I-6, I-7 and I-11 shipped five pins' worth of
+observability between this bench's 692c2e8 pin and 35e1ab1, and I-7 §3
+and §5 asked for four reporter rules by name. A THIRD numbering sequence,
+independent of [B9]'s and [B14]'s (`R1` here is not `R1` there; read each
+ruling by its dated section, as the two earlier sequences already
+require):
+
+* R1 -- THE DFA SCAN'S MECHANISM, AND THE RETIREMENT OF "no stamp".
+  [B9] R9's `prefilter` column printed `(no stamp -- pcrec I-3)` on every
+  DFA row, because a DFA artifact stamped nothing about its scan. pcrec
+  I-3 is CLEARED (abi 4, extended to VM HYBRIDS at abi 6): every artifact
+  that CONTAINS a DFA scan now stamps `RX_DFA_SCAN`, `RX_DFA_PREFILTER`
+  and (abi 7) `RX_DFA_TABLE`. The legend carries all three, via
+  `_dfa_scan_display`, and the VM's own `RX_VM_PREFILTER` stays a
+  SEPARATE clause: they are two selections, not two spellings, and a
+  hybrid answers both independently (match_api.md 6.3 (a)).
+  `_dfa_scan_display` keeps three states apart that a single blank would
+  merge -- stamped; NO DFA SCAN (a VM artifact that is not a hybrid,
+  read from `rx_info.scan == NULL`, which the spec states as an iff);
+  and NOT STAMPED AT THIS PIN. pcrec I-5's hazard, in the reporter:
+  never infer a mechanism from a stamp's absence, and never let a reader
+  do it either.
+* R2 -- THE FAST TIER IN THE LEGEND. [OPT-1]'s two-tier default entry
+  (abi 5) means an un-suffixed call above the boundary runs twice --
+  1.24-1.53x slower, with a 3.05x discontinuity at the boundary itself
+  (match_api.md 10.9). `_fast_tier_display` prints where that boundary
+  is, and prints `== stamped default (single tier)` when the artifact
+  has one tier, which is pcrec's own and ONLY spelling of that fact. A
+  `pcrec-vm` vs `pcrec-vm-in` gap is not interpretable without it.
+* R3 -- THE LEGEND IS PER (TESTEE, PATTERN, FORM), and where the engine
+  was NOT STAMPED it says so (I-7 §3 (a)). Two faults, one line:
+  [B14] R8's legend took the FIRST `sample_engine_metadata` it saw for a
+  testee and printed it as that testee's mechanism -- but `engine` is a
+  per-PATTERN fact and `--engine=auto` chooses per pattern. MEASURED on
+  this repo's own committed records: at pin 8da6120 `pcrec-auto` compiled
+  `orig` to a DFA artifact and `factored` to a VM one, and the legend
+  said `engine=dfa` for both because `orig` sorted first. I-7 read that
+  as an inference from the testee config; it was in fact another
+  pattern's measured value under this pattern's name, which is worse.
+  The line is now scoped, and collapses back to ONE line when a testee's
+  mechanism really is identical across its cells (a checked fact about
+  the rows, not an assumption). Where an older pin stamped no engine at
+  all, `_engine_reading` prints `inferred (unstamped pin)` -- and for an
+  `auto` config it prints `unknown`, because the config fixes the
+  REQUEST and not the answer.
+* R4 -- A GIVE-UP CODE NAMES AN ENGINE, AND A CROSS-PIN Δ CAN BE A
+  SELECTION CHANGE (I-7 §3 (a)). `PCREC_ERR_STEPS`, `_FRAMES`, `_WORK`
+  and `_RECURSE` are all produced by budgets a DFA artifact does not
+  have (it stamps -1 for every one), so a cell that gave up with one is
+  evidence about which engine answered, independent of any stamp.
+  `_cross_pin_info` now asks whether the two pins are the same ENGINE
+  before it computes any ratio, taking each side's engine from ITS OWN
+  (pattern, form) compile cell and falling back to the give-up witness
+  on an unstamped pin; when they differ it prints `selection changed
+  (dfa -> vm)` INSTEAD of faster/slower xN. The case that produced the
+  rule: `factored`/short-subject-search read `faster x13.45` across
+  8da6120 -> 692c2e8 while the old pin's rows had given up with
+  `-2:PCREC_ERR_STEPS`. Two engines, not one engine twice.
+* R5 -- THE gcc-ms BAND AS AN INDEPENDENT WITNESS (I-7 §3 (b)). A DFA
+  artifact's gcc phase measured 124-140 ms on this box and a VM
+  artifact's 400-540 ms -- 3-4x at the SAME artifact size, because the
+  VM's computed-goto C is what gcc chews on (I-7 §4). On a pin that
+  stamped no engine, the legend prints which band the row's own gcc
+  median falls in. It is a WITNESS and never a reading: it is consulted
+  only where nothing was stamped, it never fills the engine field, and
+  it is box- and toolchain-specific by construction. Implemented "as far
+  as the records support it": the bands come from measurement on THIS
+  box at 692c2e8, so the witness testifies about records from it and
+  abstains (`None`) on anything outside both bands.
+* R6 -- "MAX IS TRIAL 1" BESIDE THE JITTER FIGURE (I-7 §5). A jitter
+  ratio says how wide a spread is and cannot say whether it has an order
+  to it. `_max_is_first_trial` answers the narrow question -- did the
+  maximum come from the first trial -- and the jitter cell carries it,
+  so eager-JIT's 0.56/0.65 reads as the first-trial warm-up it is
+  without the reader having to reconstruct that. A FACT, not a verdict:
+  it never says "warm-up", and it is `None` (printed as nothing) when
+  fewer than two costed trials or no `trial` numbers make it unanswerable.
+* R7 -- A DOMINATED SET-GRAIN RATIO SAYS SO (I-7 §5). When one subject
+  is more than 90 % of a SET cell's per-subject total, that row's
+  `set composition` column reads `dominated: <subject> is N% of this
+  set` and a note under the table points at the per-subject rows. The
+  measured case: pcre2-interp's "3.15x slower than JIT" on the
+  throughput set was 99.9 % one subject -- 7.7x slower on the matching
+  subject and 144x FASTER on the other two. The ratio is not suppressed
+  (it is a true statement about a true total); the report just stops
+  letting one subject wear the set's name silently.
+* R8 -- `REPORTER_VERSION` bumps to `v5 (2026-08-28)`, and every
+  committed report under `reports/` is regenerated against it. The
+  rendering of EXISTING records changes under R3, R4, R6 and R7 -- the
+  8da6120 legend and the x13.45 verdict both move -- which is exactly
+  the case the version string exists for.
 """
 
 from __future__ import annotations
@@ -271,7 +366,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v4 (2026-08-25)"
+REPORTER_VERSION = "v5 (2026-08-28)"
 
 _MISSING = object()
 
@@ -596,6 +691,12 @@ class CompileCellReduction:
     sample_engine_metadata: dict | None = None   # [B9] R9: one row's engine_metadata (declared-consistent)
     phase_medians: dict = field(default_factory=dict)  # [B9] R9: {"emit-c"/"gcc"/"load": median_ns}
     artifact_bytes: int | None = None  # [B14] R7: one row's `artifact_bytes` (declared-consistent per artifact)
+    #: [B16] R6 (pcrec I-7 §5): True when the cell's MAXIMUM cost is its
+    #: FIRST trial -- the shape of a warm-up rather than of noise. `None`
+    #: when there are fewer than two costed trials, or when no row carries a
+    #: `trial` number to order them by (a derived lazy-JIT cell has one
+    #: value and no trials at all).
+    max_is_first_trial: bool | None = None
 
 
 def _phase_medians(rows):
@@ -610,6 +711,32 @@ def _phase_medians(rows):
         for ph in ((r.get("cost") or {}).get("phases") or []):
             by_phase[ph["name"]].append(ph["elapsed_ns"])
     return {name: statistics.median(vals) for name, vals in by_phase.items() if vals}
+
+
+def _max_is_first_trial(rows):
+    """[B16] R6 (pcrec I-7 §5): did the MAXIMUM of this compile cell come
+    from trial 1?
+
+    The reason to compute it is stated in the feedback that asked for it:
+    "eager-jit compile jitter 0.56/0.65 at n=5 is a first-trial warm-up
+    (max 2.5x median) -- a 'max is trial 1' fact beside jitter would let a
+    reader skip the interpretation." A jitter RATIO says how wide the
+    spread is; it cannot say whether the spread is a warm-up (one trial
+    paying a cost the others do not) or noise (a spread with no order to
+    it). This is the cheapest fact that separates them, and it is a FACT
+    rather than a verdict: the reader still decides what it means.
+
+    Deliberately narrow. It answers only "is the max the first trial",
+    not "is trial 1 an outlier" -- a second question needing a threshold,
+    which would be a judgement this function has no basis for. `None`
+    means "cannot say" (fewer than two costed trials, or rows with no
+    `trial` number) and the caller prints nothing rather than a default."""
+    costed = [(r.get("trial"), r["cost"]["total_ns"]) for r in rows
+              if r.get("compile_outcome") == "compiled" and "cost" in r]
+    if len(costed) < 2 or any(t is None for t, _ns in costed):
+        return None
+    max_trial = max(costed, key=lambda pair: pair[1])[0]
+    return max_trial == min(t for t, _ns in costed)
 
 
 def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
@@ -657,6 +784,7 @@ def reduce_compile_cell(rows, lazy_jit_derivation_source=None):
         n_costed=n, derived=False,
         sample_engine_metadata=sample_em, phase_medians=_phase_medians(rows),
         artifact_bytes=artifact_bytes,
+        max_is_first_trial=_max_is_first_trial(rows),
     )
 
 
@@ -710,20 +838,124 @@ def _mechanism_stamp_columns(engine_metadata):
     engine = em.get("engine")
     has_buffers = ("buffer_frames" in em) or ("buffer_trail" in em)
     entry = "_in" if has_buffers else "plain entry"
-    if engine == "dfa":
-        prefilter = "(no stamp — pcrec I-3)"
-    else:
-        prefilter = em.get("prefilter", "-")
     vm_rungs = "|".join(em.get("vm_rungs") or []) or "-"
     return {
         "engine": engine or "-",
         "entry": entry,
-        "prefilter": prefilter,
+        # [B16] R1: the CANDIDATE-START mechanism, which is what this column
+        # was always for. `prefilter` (the VM's own vocabulary: does the VM
+        # run a capture-erased DFA ahead of its program) and `dfa_prefilter`
+        # (what candidate-start filter that DFA scan itself carries) are TWO
+        # SELECTIONS, not two spellings, and a hybrid answers both
+        # independently -- so both are shown and neither is folded into the
+        # other. [B9]'s "(no stamp -- pcrec I-3)" is retired: I-3 was CLEARED
+        # at pcrec abi 4 and the DFA side stamps its mechanism now.
+        "prefilter": em.get("prefilter", "-"),
+        "dfa_scan": em.get("dfa_scan", "-"),
+        "dfa_prefilter": em.get("dfa_prefilter", "-"),
+        "dfa_table": em.get("dfa_table", "-"),
         "vm_rungs": vm_rungs,
         "buffer_frames": em.get("buffer_frames", "-"),
         "buffer_trail": em.get("buffer_trail", "-"),
         "resume_frame_size": em.get("resume_frame_size", "-"),
     }
+
+
+def _dfa_scan_display(engine_metadata):
+    """[B16] R1: the DFA SCAN's three facts as one legend clause, or the
+    reason there is none.
+
+    Three distinct states, and the whole point of the ruling is that they
+    are never collapsed (pcrec I-5's hazard: "never infer 'DFA' or anything
+    else from a stamp's ABSENCE; read the VALUE"):
+
+    * STAMPED -- `scan=unanchored prefilter=byte-class table=premultiplied`.
+      Present on every artifact that CONTAINS a DFA scan: every DFA
+      artifact AND every VM HYBRID (match_api.md 6.3 (a) states the scope
+      as an iff, and pcrec asserts it in both directions).
+    * NO SCAN -- the artifact is a VM one that carries no DFA scan. This is
+      the one reading taken from an absence, and it is taken from a FIELD
+      rather than from silence: `rx_info.scan == NULL` on a VM artifact IS
+      "not a hybrid" (match_api.md 6, consequence 2). The adapter records
+      the field's absence as the absence of `dfa_scan`, so the two coincide.
+    * NOT STAMPED AT THIS PIN -- a record from a pcrec before abi 4 (or,
+      for the table alone, before abi 7). A reader must not take this for
+      either of the two above, and the phrase says which one it is not.
+
+    The `table` half can be absent while the other two are present (it
+    arrived three abis later); it is then reported as its own gap rather
+    than dragging the whole clause into "not stamped"."""
+    em = engine_metadata or {}
+    engine = em.get("engine")
+    abi = em.get("abi")
+    scan = em.get("dfa_scan")
+    if scan is None:
+        # WHICH ABSENCE IS THIS? The record's own `abi` pair is the only
+        # thing that can say, and it is recorded on every pcrec compile row,
+        # so the question is answerable rather than guessed:
+        #   abi >= 6  the two _DFA_* macros are on every artifact that has a
+        #             scan, hybrids included, AND `rx_info.scan` exists. An
+        #             absence is the FIELD's NULL -- there is no DFA scan
+        #             here, which on a VM artifact IS "not a hybrid".
+        #   abi 4-5   DFA artifacts stamp; VM HYBRIDS DO NOT YET (that is
+        #             [DD-13c], abi 6). An absence on a VM artifact is
+        #             therefore uninformative and must not be read either way.
+        #   abi < 4   nothing is stamped at all.
+        if abi is None:
+            return "n/s (no abi pair: cannot say which absence this is)"
+        if abi >= 6:
+            if engine == "vm":
+                return "no DFA scan (rx_info.scan NULL: not a hybrid)"
+            return "n/s (stamped pin, but no scan pair on this row)"
+        if abi >= 4:
+            if engine == "vm":
+                return ("n/s (pcrec abi %d: hybrids did not stamp their "
+                        "inlined scan until abi 6 -- this says nothing "
+                        "about whether this artifact has one)" % abi)
+            return "n/s (stamped pin, but no scan pair on this row)"
+        return "n/s (pcrec abi %d, before the DFA stamps landed at abi 4)" % abi
+    table = em.get("dfa_table")
+    if table is None:
+        table = ("n/s (pcrec abi %s, before [OPT-3]'s stamp at abi 7)"
+                 % (abi if abi is not None else "?"))
+    return (f"scan={scan} prefilter={em.get('dfa_prefilter', 'n/s')} "
+            f"table={table}")
+
+
+def _fast_tier_display(engine_metadata):
+    """[B16] R2: [OPT-1]'s two-tier default entry, as a legend clause.
+
+    `RX_FAST_FRAMES` / `RX_FAST_TRAIL` are VM-only and NEVER ABSENT on a VM
+    artifact (match_api.md 6.3), so on a VM row their absence means the pin
+    predates abi 5 and says so. The comparison against the stamped default
+    is the reading that matters and pcrec states it as the ONLY spelling of
+    the fact: `fast == resume_frames` IS "this artifact has one tier".
+
+    Why a report row wants it: above the boundary an un-suffixed call runs
+    the fast attempt AND the deep replay -- measured 1.24-1.53x slower,
+    with a 3.05x discontinuity across the boundary itself (10.9) -- so a
+    `pcrec-vm` vs `pcrec-vm-in` gap is only interpretable next to where the
+    boundary sits. A DFA artifact has no tier at all, which is a fact about
+    the engine and not a gap."""
+    em = engine_metadata or {}
+    abi = em.get("abi")
+    ff, ft = em.get("fast_frames"), em.get("fast_trail")
+    if ff is None and ft is None:
+        if em.get("engine") == "dfa":
+            return "n/a (DFA: no tier)"
+        if abi is None:
+            return "n/s (no abi pair)"
+        if abi < 5:
+            return "n/a (pcrec abi %d: no tier existed before abi 5)" % abi
+        # VM artifacts at abi >= 5 stamp these unconditionally, so an
+        # absence here is not "one tier" -- it is a gap, and saying so is
+        # the point (a fact readable from a macro's ABSENCE is exactly what
+        # [DD-13] had to remove from two of pcrec's own checks).
+        return "n/s (abi %d stamps these on every VM artifact -- unexpected)" % abi
+    rf, rt = em.get("resume_frames"), em.get("trail_frames")
+    if rf is not None and rt is not None and (ff, ft) == (rf, rt):
+        return f"{ff}/{ft} == stamped default (single tier)"
+    return f"{ff}/{ft} fast, escalates to {rf}/{rt}"
 
 
 # ------------------------------------------------------------- [B14] R1/R4 helpers
@@ -781,16 +1013,151 @@ def _frame_size_display(engine_metadata):
     return str(fs)
 
 
-def _testee_legend_line(testee_id, engine_metadata):
-    """[B14] R8: the one-line-per-testee LEGEND replacing the compile-cost
-    table's six per-testee CONSTANT columns (`engine`, `entry`,
-    `prefilter`, `vm_rungs`, and R1/R4's buffer/frame facts) -- printed
-    once above a `has_pcrec` table rather than repeated on every row."""
+#: [B16] R4 (pcrec I-7 §3 (a)): the give-up codes that NAME an engine.
+#: Every one of them is produced by a budget or a stack that only the VM
+#: has: a DFA artifact stamps `step_budget` -1, `work_budget` -1 and
+#: `frame_capacity` -1 (measured on pcrec 35e1ab1's own artifacts), so no
+#: producer of any of these codes exists inside one. A cell that gave up
+#: with one of these is therefore evidence about WHICH ENGINE ANSWERED,
+#: independent of any stamp -- which is exactly what an unstamped pin
+#: needs, and what caught the ×13.45 that was really a selection flip.
+#: pcrec's give-up SPACE is read by range from the artifact and is not
+#: this table's business; this maps only the codes that exist today, and a
+#: code absent from it yields no witness rather than a wrong one.
+_GIVEUP_NAMES_ENGINE = {
+    "PCREC_ERR_STEPS": "vm",
+    "PCREC_ERR_FRAMES": "vm",
+    "PCREC_ERR_WORK": "vm",
+    "PCREC_ERR_RECURSE": "vm",
+}
+
+#: [B16] R5 (pcrec I-7 §3 (b)): the gcc-phase COST BANDS, as an
+#: INDEPENDENT witness of which engine an artifact is. MEASURED on this
+#: box at pin 692c2e8 and reported as pcrec I-7 §4: a DFA artifact's gcc
+#: phase runs 124-140 ms and a VM artifact's 400-540 ms -- 3-4x, at the
+#: SAME ~25-30 KB artifact size, because the VM's computed-goto C is what
+#: gcc chews on. The bands are widened by a third at each end here, since
+#: they are a WITNESS and a witness that is too narrow simply stops
+#: testifying.
+#:
+#: THIS IS A WITNESS, NEVER A READING. It is used only where the engine is
+#: not stamped, and only to say "the compile cost agrees / disagrees with
+#: the inference"; it never overrides a stamp and never supplies an engine
+#: to a column. It is box- and toolchain-specific by construction (a
+#: different gcc, a different machine, or a much larger pattern moves the
+#: bands), which is the other reason it may not become a value.
+_GCC_BAND_NS = {
+    "dfa": (80_000_000, 190_000_000),
+    "vm": (270_000_000, 720_000_000),
+}
+
+
+def _gcc_band_witness(gcc_median_ns):
+    """[B16] R5: which engine the gcc phase's own cost is consistent with,
+    or `None` when it falls in neither band (or in both, which the bands
+    are chosen not to allow). See `_GCC_BAND_NS` for what this may and may
+    not be used for."""
+    if gcc_median_ns is None:
+        return None
+    hits = [eng for eng, (lo, hi) in _GCC_BAND_NS.items()
+            if lo <= gcc_median_ns <= hi]
+    return hits[0] if len(hits) == 1 else None
+
+
+def _engine_mode_from_testee(testee_id):
+    """The `engine_mode` slug of a constructed pcrec testee_id -- the
+    config segment minus its trailing `<captures>-<simd>` pair
+    (record_schema.md 6.4; `pcrec_692c2e8_vm-in-caps-simdna` -> `vm-in`).
+    `None` for anything that does not have that shape."""
+    parsed = _parse_testee_config(testee_id)
+    if not parsed:
+        return None
+    parts = parsed[2].split("-")
+    return "-".join(parts[:-2]) or None
+
+
+def _engine_reading(testee_id, engine_metadata):
+    """[B16] R3 (pcrec I-7 §3 (a)): what this report may honestly say the
+    engine is, and WHERE IT GOT IT.
+
+    Returns `(display, stamped_value)`. `stamped_value` is the engine when
+    it was READ from the artifact and `None` otherwise, so a caller can
+    tell a fact from a guess without re-deriving the distinction.
+
+    The rule exists because of a real misreading. pcrec I-7 §3 caught a
+    `faster ×13.45` cross-pin verdict that was two engines rather than one
+    engine twice, and reported the legend's `engine=dfa` on the older pin
+    as "inferred from the testee config -- an unstamped pin has nothing to
+    read". So: where nothing was read, this SAYS nothing was read.
+
+    And where the config is `auto` it says less still. `--engine=auto` is
+    pcrec choosing PER PATTERN; the config fixes the REQUEST, not the
+    answer, and the very flip I-7 found was `auto` selecting the VM for one
+    pattern and the DFA for another AT THE SAME PIN. An `auto` testee with
+    no stamp therefore yields `unknown`, not a guess dressed as one."""
+    em = engine_metadata or {}
+    stamped = em.get("engine")
+    if stamped:
+        return stamped, stamped
+    mode = _engine_mode_from_testee(testee_id)
+    base = (mode or "").split("-")[0]
+    if base in ("vm", "dfa"):
+        return f"{base} — inferred (unstamped pin; from --engine={base})", None
+    if base == "auto":
+        return ("unknown — inferred (unstamped pin; --engine=auto selects "
+                "per PATTERN, so the config does not name an engine)"), None
+    return "unknown — inferred (unstamped pin)", None
+
+
+def _testee_legend_line(testee_id, engine_metadata, scope=None,
+                        gcc_median_ns=None, giveup_engines=()):
+    """[B14] R8, extended by [B16] R1/R2/R3/R5: the one-line LEGEND
+    replacing the compile-cost table's per-row CONSTANT columns.
+
+    [B16] made it a line per (testee, pattern, form) rather than per
+    TESTEE, and that is a CORRECTION rather than a widening. [B14]'s
+    version took the first `sample_engine_metadata` it saw for a testee and
+    printed it as the whole testee's mechanism -- but `engine` and every
+    stamp beside it are PER-PATTERN facts, and `--engine=auto` picks per
+    pattern. MEASURED on this repo's own committed records: at pin 8da6120
+    `pcrec-auto` compiled `orig` to a DFA artifact and `factored` to a VM
+    one, and the legend printed `engine=dfa` for both because `orig` sorted
+    first. pcrec I-7 §3 read that line as an inference from the testee
+    config; it was worse than an inference -- it was another pattern's
+    measured fact, wearing this pattern's name. `scope` is that pattern
+    (and form), printed so the line cannot be read as the testee's own.
+
+    `gcc_median_ns` and `giveup_engines` are R5/R4's independent witnesses.
+    They are consulted ONLY where the engine was not stamped, and they are
+    printed as witnesses -- with what they are and what they saw -- never
+    folded into the engine field itself."""
     stamps = _mechanism_stamp_columns(engine_metadata)
-    return (f"- `{testee_id}`: engine={stamps['engine']}, entry={stamps['entry']}, "
-            f"prefilter={stamps['prefilter']}, rungs={stamps['vm_rungs']}, "
+    display, stamped = _engine_reading(testee_id, engine_metadata)
+    label = f"`{testee_id}`" if not scope else f"`{testee_id}` / {scope}"
+    line = (f"- {label}: engine={display}, entry={stamps['entry']}, "
+            f"vm_prefilter={stamps['prefilter']}, "
+            f"dfa: {_dfa_scan_display(engine_metadata)}, "
+            f"rungs={stamps['vm_rungs']}, "
+            f"fast tier={_fast_tier_display(engine_metadata)}, "
             f"buffers={_buffers_display(engine_metadata)}, "
             f"frame={_frame_size_display(engine_metadata)}")
+    if stamped is None:
+        witnesses = []
+        band = _gcc_band_witness(gcc_median_ns)
+        if band:
+            lo, hi = _GCC_BAND_NS[band]
+            witnesses.append(
+                f"gcc {_fmt_ns(gcc_median_ns)} ns is in the {band} band "
+                f"({lo // 1_000_000}-{hi // 1_000_000} ms, pcrec I-7 §4)")
+        named = sorted({e for e in giveup_engines if e})
+        if named:
+            witnesses.append(
+                "its give-up code(s) name " + "/".join(named)
+                + " (a code only that engine can produce)")
+        if witnesses:
+            line += ("\n    - witnesses (independent of any stamp, and never "
+                     "a substitute for one): " + "; ".join(witnesses))
+    return line
 
 
 def _jitter_flag(median_ns, stddev_ns, min_ns=None):
@@ -933,6 +1300,79 @@ def _largest_delta_subject(rd: "ReportData", sb, pattern_id, regime, old_tid, ne
     return sid, delta, new_ns, rd.subject_bytes.get(sid)
 
 
+#: [B16] R7 (pcrec I-7 §5): the share of a SET cell's total one subject
+#: must exceed before the set-grain ratio is flagged `dominated`. The
+#: number is the one the feedback named: "when one subject is >90 % of a
+#: set sum, flag the set-grain ratio as dominated and point at the
+#: per-subject rows."
+_DOMINANCE_SHARE = 0.90
+
+
+def _dominant_subject(rd: "ReportData", sb, testee_id, pattern_id, regime, form):
+    """[B16] R7: `(subject_id, share)` when ONE subject is more than
+    `_DOMINANCE_SHARE` of this SET cell's per-subject total, else `None`.
+
+    The finding this exists for, in the feedback's own words: pcre2-interp's
+    "3.15x slower than JIT" on the throughput set was really "7.7x slower on
+    the matching subject, 144x faster on the failing two" -- its 28.7 ms set
+    total is 99.9 % one subject. A ratio between two such sums is a real
+    number about a real total, and it is also a statement about ONE subject
+    wearing the set's name. The flag does not suppress the ratio; it says
+    which of the two readings is available and points at the rows that carry
+    the other.
+
+    Computed from the per-subject MEDIANS, which is what the per-subject
+    sub-table shows, rather than from the set reduction's per-trial sums:
+    the question is about composition, and the two agree to well inside the
+    threshold on any cell where the flag could fire."""
+    per_subject = []
+    for (sb2, t2, p2, subj2, r2, f2), (_tid2, red) in rd.match_cells.items():
+        if (sb2, t2, p2, r2, f2) != (sb, testee_id, pattern_id, regime, form):
+            continue
+        if red.median_ns is not None:
+            per_subject.append((subj2, red.median_ns))
+    if len(per_subject) < 2:
+        return None
+    total = sum(ns for _sid, ns in per_subject)
+    if total <= 0:
+        return None
+    sid, ns = max(per_subject, key=lambda pair: pair[1])
+    share = ns / total
+    return (sid, share) if share > _DOMINANCE_SHARE else None
+
+
+def _cell_engine_reading(rd: "ReportData", sb, testee_id, pattern_id, form):
+    """The `(display, stamped)` engine reading of ONE (testee, pattern,
+    form) compile cell -- the per-pattern fact, looked up where it lives,
+    rather than a testee-wide sample. Used by the cross-pin verdict, which
+    is the place a per-testee sample went wrong once already ([B16] R3's
+    docstring has the measurement)."""
+    cell = rd.compile_cells.get((sb, testee_id, pattern_id, form))
+    if cell is None:
+        return None, None
+    _tid, red = cell
+    return _engine_reading(testee_id, red.sample_engine_metadata)
+
+
+def _giveup_engines_for(rd: "ReportData", sb, testee_id, pattern_id, form):
+    """[B16] R4: every engine NAMED by a give-up code this (testee,
+    pattern, form) produced, over every regime. Empty when it gave up with
+    no engine-naming code, or did not give up at all."""
+    engines = set()
+    for (sb2, t2, p2, _subj2, _r2, f2), (_tid2, red) in rd.match_cells.items():
+        if (sb2, t2, p2, f2) != (sb, testee_id, pattern_id, form):
+            continue
+        # `giveup_codes` is the reduction's own Counter of the codes the
+        # SHARED extractor (`pcrecbench.reduce.giveup_code`) found -- the
+        # same strings `quick` prints and R7's table groups by. Read the
+        # NAMES from it, never re-parse a diagnostic here.
+        for code in (getattr(red, "giveup_codes", None) or {}):
+            for name, eng in _GIVEUP_NAMES_ENGINE.items():
+                if name in str(code):
+                    engines.add(eng)
+    return engines
+
+
 def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, red):
     """[B9] R8: if `testee_id` has an older same-(engine, config) sibling
     present in this report (a "previous pin"), return
@@ -972,7 +1412,44 @@ def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, r
         return None
     _prev_tid2, prev_red = prev_cell
 
-    if prev_red.expectation_failing:
+    # [B16] R4 (pcrec I-7 §3 (a)): BEFORE any faster/slower verdict, ask
+    # whether the two pins are even the same engine. `--engine=auto` selects
+    # per PATTERN, so a re-pin can change the SELECTION rather than the
+    # speed, and a ratio between two engines is not a version-to-version
+    # measurement of anything. The case that produced this rule: `factored`
+    # / short-subject-search read "faster ×13.45" for `pcrec-auto` across
+    # 8da6120 -> 692c2e8, where the old pin's rows had ALSO given up with
+    # `-2:PCREC_ERR_STEPS`, a code only the VM can produce. Two engines, not
+    # one engine twice.
+    #
+    # The engine of each side is taken from ITS OWN (pattern, form) compile
+    # cell -- never from a testee-wide sample, which is the mistake [B16] R3
+    # documents -- and where a pin did not stamp one, R4's give-up witness
+    # answers instead. A witness only ever CONTRADICTS: it can say "these
+    # differ", never "these agree".
+    prev_engine_display, prev_engine = _cell_engine_reading(rd, sb, prev_tid,
+                                                            pattern_id, form)
+    new_engine_display, new_engine = _cell_engine_reading(rd, sb, testee_id,
+                                                          pattern_id, form)
+    if prev_engine is None:
+        witness = _giveup_engines_for(rd, sb, prev_tid, pattern_id, form)
+        if len(witness) == 1:
+            prev_engine = next(iter(witness))
+            prev_engine_display = (f"{prev_engine} — witness (unstamped pin; "
+                                   f"its give-up code names {prev_engine})")
+    if new_engine is None:
+        witness = _giveup_engines_for(rd, sb, testee_id, pattern_id, form)
+        if len(witness) == 1:
+            new_engine = next(iter(witness))
+            new_engine_display = (f"{new_engine} — witness (unstamped pin; "
+                                  f"its give-up code names {new_engine})")
+    selection_changed = (prev_engine is not None and new_engine is not None
+                         and prev_engine != new_engine)
+
+    if selection_changed:
+        verdict = (f"selection changed ({prev_engine_display} → "
+                   f"{new_engine_display})")
+    elif prev_red.expectation_failing:
         if red.expectation_failing:
             return None
         verdict = f"now measured (was: {_set_cell_failure_reason(prev_red)})"
@@ -1649,6 +2126,16 @@ def render_markdown(rd: ReportData):
                         and len(group_subject_ids) > 0)
             show_floor_column = bool(near_floor and floor_pattern_id and not is_floor_pattern)
 
+            # [B16] R7 (pcrec I-7 §5): a SET-grain ratio built almost
+            # entirely from one subject says so, on the row, and points at
+            # the rows that carry the other reading.
+            dominated_by_testee = {}
+            if grain == "set":
+                for t, form, r in rankable:
+                    dom = _dominant_subject(rd, sb, t, pattern_id, regime, form)
+                    if dom:
+                        dominated_by_testee[t] = dom
+
             header = ["rank", "testee", "status"]
             if rd.show_form:
                 header += ["form", "fact"]
@@ -1656,6 +2143,8 @@ def render_markdown(rd: ReportData):
             if is_throughput:
                 header.append("ns/byte")
             header += ["min", "max", "stddev", "vs baseline", "vs best"]
+            if dominated_by_testee:
+                header.append("set composition")
 
             delta_by_testee = {}
             if grain == "set":
@@ -1692,6 +2181,10 @@ def render_markdown(rd: ReportData):
                                if (r.median_ns is not None and total_bytes) else "-")
                 row += [_fmt_ns(r.min_ns), _fmt_ns(r.max_ns),
                         _fmt_ns(r.stddev_ns), f"{ratio_baseline:.3f}x", f"{ratio_best:.3f}x"]
+                if dominated_by_testee:
+                    dom = dominated_by_testee.get(t)
+                    row.append(f"**dominated**: `{dom[0]}` is {dom[1]*100:.1f}% "
+                               f"of this set" if dom else "spread")
                 if delta_by_testee:
                     info = delta_by_testee.get(t)
                     row.append(info["verdict"] if info else "-")
@@ -1712,6 +2205,18 @@ def render_markdown(rd: ReportData):
                     row.append(tier)
                 out.append("| " + " | ".join(row) + " |")
             out.append("")
+
+            if dominated_by_testee:
+                out.append(
+                    "_**dominated**: for the flagged testee(s), one subject is "
+                    f"more than {_DOMINANCE_SHARE*100:.0f} % of the set total, "
+                    "so the `vs baseline` / `vs best` ratios on those rows are "
+                    "ratios of that ONE subject wearing the set's name. The "
+                    "set number is still the set's; the per-subject rows below "
+                    "(or `--grain subject`) carry the other reading, and they "
+                    "can point the opposite way -- pcrec I-7 §1 measured a set "
+                    "ratio of 3.15x slower that was 7.7x slower on one subject "
+                    "and 144x FASTER on the other two._\n")
 
             if near_floor and not is_floor_pattern and not show_floor_column:
                 # No floor pattern exists in this set at all -- [B9]'s
@@ -1820,19 +2325,67 @@ def render_markdown(rd: ReportData):
             # of repeating on every (pattern, form) row (pcrecdev1
             # feedback, repin-v2 (4): "a 60-char PCREC_VM_RUNG_... string
             # repeated 16 times").
-            legend_em_by_testee = {}
-            for _sb, _p, testee_id, _f, r in rows_for_class:
-                if testee_id not in legend_em_by_testee and r.sample_engine_metadata:
-                    legend_em_by_testee[testee_id] = r.sample_engine_metadata
-            for testee_id in sorted(legend_em_by_testee):
-                out.append(_testee_legend_line(testee_id, legend_em_by_testee[testee_id]))
+            # [B16] R3: a line per (testee, PATTERN, form), not per testee.
+            # `engine` and every stamp beside it are per-PATTERN facts and
+            # `--engine=auto` chooses per pattern, so [B14]'s first-wins
+            # sample printed one pattern's measured engine under another
+            # pattern's name (MEASURED on this repo's own 8da6120 records --
+            # see `_testee_legend_line`). Where a testee's mechanism really
+            # is constant across its patterns the lines are collapsed back
+            # to one, so the common case does not grow: the collapse is a
+            # CHECKED fact about the rows, not an assumption about the pin.
+            legend_by_key = {}
+            for sb_l, pattern_l, testee_l, form_l, r in rows_for_class:
+                if not r.sample_engine_metadata:
+                    continue
+                legend_by_key[(testee_l, pattern_l, form_l)] = (
+                    sb_l, r.sample_engine_metadata, r.phase_medians or {})
+            by_testee = defaultdict(list)
+            for (testee_l, pattern_l, form_l), val in legend_by_key.items():
+                by_testee[testee_l].append((pattern_l, form_l, val))
+            for testee_l in sorted(by_testee):
+                entries = sorted(by_testee[testee_l])
+                # The collapse test is the RENDERED LINE, not the raw
+                # metadata: two cells whose `ncaps` differ but whose
+                # MECHANISM is identical would print the same line, and
+                # printing it twice would suggest a difference that is not
+                # there. Comparing what the reader sees is also the only
+                # comparison that cannot drift from what is displayed.
+                unscoped = {}
+                for pattern_l, form_l, (sb_l, em, pm) in entries:
+                    unscoped[(pattern_l, form_l)] = _testee_legend_line(
+                        testee_l, em, scope=None,
+                        gcc_median_ns=pm.get("gcc"),
+                        giveup_engines=_giveup_engines_for(
+                            rd, sb_l, testee_l, pattern_l, form_l))
+                collapse = len(set(unscoped.values())) == 1
+                if collapse:
+                    out.append(next(iter(unscoped.values())))
+                    if len(entries) > 1:
+                        out.append(f"    - (identical on all {len(entries)} "
+                                    f"(pattern, form) cells of this testee)")
+                    continue
+                for pattern_l, form_l, (sb_l, em, pm) in entries:
+                    out.append(_testee_legend_line(
+                        testee_l, em, scope=f"`{pattern_l}` / `{form_l}`",
+                        gcc_median_ns=pm.get("gcc"),
+                        giveup_engines=_giveup_engines_for(
+                            rd, sb_l, testee_l, pattern_l, form_l)))
             out.append("")
 
         # [B14] R5: a jitter column empty on EVERY row of this table is
         # dropped rather than rendered as a wall of blanks.
-        jitter_by_row = {(sb, pattern_id, testee_id, form):
-                          _jitter_flag(r.median_ns, r.stddev_ns, r.min_ns)
-                          for sb, pattern_id, testee_id, form, r in rows_for_class}
+        # [B16] R6 (pcrec I-7 §5): the jitter RATIO says how wide the spread
+        # is; "max is trial 1" says whether it has an order to it -- a
+        # warm-up rather than noise. Printed in the same cell so a reader
+        # meets the two together, which is what the feedback asked for
+        # ("would let a reader skip the interpretation").
+        jitter_by_row = {}
+        for sb, pattern_id, testee_id, form, r in rows_for_class:
+            jf = _jitter_flag(r.median_ns, r.stddev_ns, r.min_ns)
+            if jf and r.max_is_first_trial:
+                jf += " (max is trial 1)"
+            jitter_by_row[(sb, pattern_id, testee_id, form)] = jf
         show_jitter = any(jitter_by_row.values())
 
         header = ["pattern"]

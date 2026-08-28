@@ -1109,8 +1109,18 @@ def test_mechanism_stamp_columns_r9():
     table splits by phase and flags timer jitter."""
     dfa_stamp = report._mechanism_stamp_columns({"engine": "dfa", "ncaps": 1})
     _check(dfa_stamp["engine"] == "dfa", "engine must be read from engine_metadata")
-    _check(dfa_stamp["prefilter"] == "(no stamp — pcrec I-3)",
-           f"a DFA row must state the no-stamp fact, got {dfa_stamp['prefilter']!r}")
+    # [B16] R1 SUPERSEDES this ruling's "(no stamp -- pcrec I-3)" string.
+    # I-3 was CLEARED at pcrec abi 4: a DFA artifact stamps its own scan and
+    # candidate-start filter now, and they are `dfa_scan`/`dfa_prefilter`,
+    # not the VM's `prefilter`. This row declares neither, so both read `-`
+    # here and `_dfa_scan_display` is what turns that into a sentence
+    # (`test_dfa_scan_legend_b16_r1` covers the sentence, including which
+    # KIND of absence it is).
+    _check(dfa_stamp["prefilter"] == "-",
+           f"an undeclared VM prefilter must pass through as '-', got "
+           f"{dfa_stamp['prefilter']!r}")
+    _check(dfa_stamp["dfa_prefilter"] == "-" and dfa_stamp["dfa_scan"] == "-",
+           "an undeclared DFA scan pair must pass through as '-'")
     _check(dfa_stamp["entry"] == "plain entry", "no buffer pair -> plain entry")
 
     vm_stamp = report._mechanism_stamp_columns({
@@ -1212,15 +1222,29 @@ def test_plain_entry_capacities_r1():
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
     compiled = md.split("### `compiled-aot`")[1].split("### `")[0]
-    _check("`pcrec_692c2e8_vm-caps-simdna`: engine=vm, entry=plain entry, "
-           "prefilter=none, rungs=PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|"
-           "PCREC_VM_RUNG_FRAMES_UNBOUNDED, buffers=2048/3072 (stamped default), frame=24"
-           in compiled,
-           f"expected the plain VM entry's stamped-default capacity in the legend:\n{compiled[:1500]}")
-    _check("`pcrec_692c2e8_vm-in-caps-simdna`: engine=vm, entry=_in, prefilter=none, "
-           "rungs=PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED, "
-           "buffers=32768/131072 (caller-provided), frame=24" in compiled,
-           f"an _in row must still show the CALLER capacity unchanged:\n{compiled[:1500]}")
+    # The legend's WORDING moved at [B16] (R1's dfa clause, R2's fast tier,
+    # R3's engine reading), so this assertion checks the two facts THIS
+    # ruling is about -- the testee's identity and its stamped-default
+    # capacity in one line -- rather than pinning a sentence another
+    # ruling owns. The literal-line form of the check belongs to whichever
+    # ruling last set the wording; see `test_dfa_scan_legend_b16_r1`.
+    vm_legend = [ln for ln in compiled.splitlines()
+                 if ln.startswith("- `pcrec_692c2e8_vm-caps-simdna`")]
+    _check(len(vm_legend) == 1,
+           f"expected exactly one legend line for the plain VM testee, got "
+           f"{len(vm_legend)}:\n{compiled[:1500]}")
+    _check("entry=plain entry" in vm_legend[0]
+           and "buffers=2048/3072 (stamped default)" in vm_legend[0]
+           and "frame=24" in vm_legend[0],
+           f"expected the plain VM entry's stamped-default capacity in the "
+           f"legend:\n{vm_legend[0]}")
+    in_legend = [ln for ln in compiled.splitlines()
+                 if ln.startswith("- `pcrec_692c2e8_vm-in-caps-simdna`")]
+    _check(len(in_legend) == 1 and "entry=_in" in in_legend[0]
+           and "buffers=32768/131072 (caller-provided)" in in_legend[0]
+           and "frame=24" in in_legend[0],
+           f"an _in row must still show the CALLER capacity unchanged:\n"
+           f"{in_legend or compiled[:1500]}")
 
 
 def test_matching_subject_count_r3():
@@ -1295,14 +1319,32 @@ def test_buffer_frame_legend_r4():
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
     compiled = md.split("### `compiled-aot`")[1].split("### `")[0]
-    _check("`pcrec_692c2e8_auto-caps-simdna`: engine=dfa, entry=plain entry, "
-           "prefilter=(no stamp — pcrec I-3), rungs=-, buffers=0 (DFA), frame=0 (DFA)"
-           in compiled,
-           f"a DFA artifact at a stamped pin must read '0 (DFA)', not a blank:\n{compiled[:1500]}")
-    _check("`pcrec_8da6120_auto-caps-simdna`: engine=dfa, entry=plain entry, "
-           "prefilter=(no stamp — pcrec I-3), rungs=-, buffers=n/s, frame=n/s" in compiled,
+    # As above: [B16] R1 retired the "(no stamp -- pcrec I-3)" clause (I-3
+    # is CLEARED; the DFA side stamps its own mechanism from pcrec abi 4),
+    # so this ruling's own two facts are what is checked here.
+    dfa_legend = [ln for ln in compiled.splitlines()
+                  if ln.startswith("- `pcrec_692c2e8_auto-caps-simdna`")]
+    _check(len(dfa_legend) == 1,
+           f"expected exactly one legend line for the DFA testee, got "
+           f"{len(dfa_legend)}:\n{compiled[:1500]}")
+    _check("engine=dfa" in dfa_legend[0]
+           and "buffers=0 (DFA)" in dfa_legend[0]
+           and "frame=0 (DFA)" in dfa_legend[0],
+           f"a DFA artifact at a stamped pin must read '0 (DFA)', not a "
+           f"blank:\n{dfa_legend[0]}")
+    # 8da6120 is the pin whose `auto` testee compiled `orig` to a DFA
+    # artifact and `factored` to a VM one, so under [B16] R3 its legend is
+    # SPLIT per (pattern, form) instead of one line claiming the first
+    # pattern's engine for both. This ruling's own fact -- neither buffer
+    # pair stamped at that pin reads `n/s`, never the same `0` as the DFA
+    # fact above -- is checked on the `orig`/`plain` line.
+    old_orig = [ln for ln in compiled.splitlines()
+                if ln.startswith("- `pcrec_8da6120_auto-caps-simdna` / "
+                                 "`orig` / `plain`")]
+    _check(len(old_orig) == 1 and "engine=dfa" in old_orig[0]
+           and "buffers=n/s" in old_orig[0] and "frame=n/s" in old_orig[0],
            f"a pre-I-3 pin (neither pair stamped) must read 'n/s', not the same '0' "
-           f"as the DFA fact above:\n{compiled[:1500]}")
+           f"as the DFA fact above:\n{old_orig or compiled[:1500]}")
 
 
 def test_tiny_set_per_subject_subtable_r2():
@@ -1548,20 +1590,23 @@ def test_floor_pattern_r9():
 
 
 def test_reporter_v4_r10():
-    """[B14] R10: the reporter bumps to v3 (2026-08-25), then AGAIN to v4
-    the same day for the KB-2 correction (R3, above) -- per this module's
-    own stated rule, a version bump whenever rendering changes so two
-    reports produced by different reporter code are never mistaken for
-    each other. The header carries v4 on every render."""
-    _check(report.REPORTER_VERSION == "v4 (2026-08-25)",
-           f"expected REPORTER_VERSION == 'v4 (2026-08-25)', got {report.REPORTER_VERSION!r}")
+    """[B14] R10, CARRIED FORWARD BY [B16] R8: a version bump whenever
+    rendering changes, so two reports produced by different reporter code
+    are never mistaken for each other. [B14] took it to v3 then v4 the
+    same day (the KB-2 correction); [B16]'s rulings change the rendering
+    of records ALREADY IN `store/` -- the 8da6120 legend under R3 and the
+    x13.45 cross-pin verdict under R4 both move -- so it is now v5. The
+    test keeps its [B14] name: the RULE is [B14] R10's, and only the
+    version it pins has moved."""
+    _check(report.REPORTER_VERSION == "v5 (2026-08-28)",
+           f"expected REPORTER_VERSION == 'v5 (2026-08-28)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v4 (2026-08-25)" in md, f"expected the v4 header line:\n{md[:200]}")
+    _check("reporter: v5 (2026-08-28)" in md, f"expected the v5 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v4 (2026-08-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v5 (2026-08-28)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
 
 
 def test_floor_pattern_fixture_r9():
@@ -1601,6 +1646,304 @@ def test_floor_pattern_fixture_r9():
     digits_section = md.split("\n### `p-digits` / `short-subject-search`")[1].split("\n### `")[0]
     _check("floor ns" in digits_section,
            f"a member pattern in a real record with a floor pattern must gain the column:\n{digits_section}")
+
+
+
+# --------------------------------------------------------------- [B16] tests
+
+def test_dfa_scan_legend_b16_r1():
+    """[B16] R1: the DFA scan's three stamps in the legend, and -- the part
+    that matters -- three DIFFERENT absences that a single blank would have
+    merged. pcrec I-5's hazard is the rule being enforced: never infer a
+    mechanism from a stamp's absence; read the VALUE, and where there is no
+    value, say WHICH absence it is."""
+    stamped = report._dfa_scan_display({
+        "abi": 8, "engine": "dfa", "dfa_scan": "unanchored",
+        "dfa_prefilter": "byte-class", "dfa_table": "premultiplied"})
+    _check(stamped == "scan=unanchored prefilter=byte-class table=premultiplied",
+           f"a stamped DFA row must read all three, got {stamped!r}")
+
+    hybrid = report._dfa_scan_display({
+        "abi": 8, "engine": "vm", "prefilter": "hybrid",
+        "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
+        "dfa_table": "premultiplied"})
+    _check("scan=unanchored" in hybrid and "prefilter=memchr" in hybrid,
+           f"a VM HYBRID carries the same three stamps ([DD-13c]), got {hybrid!r}")
+
+    # (1) abi >= 6, VM, no pair: rx_info.scan is NULL and that IS "not a
+    # hybrid" -- the one reading the spec states as an iff.
+    not_hybrid = report._dfa_scan_display({"abi": 8, "engine": "vm",
+                                           "prefilter": "none"})
+    _check("not a hybrid" in not_hybrid and "rx_info.scan NULL" in not_hybrid,
+           f"abi>=6 + VM + no scan pair IS 'not a hybrid', got {not_hybrid!r}")
+
+    # (2) abi 4-5, VM, no pair: hybrids did not stamp yet, so this says
+    # NOTHING about whether the artifact has a scan.
+    unknowable = report._dfa_scan_display({"abi": 5, "engine": "vm",
+                                           "prefilter": "hybrid"})
+    _check("says nothing" in unknowable and "abi 6" in unknowable,
+           f"abi 4-5 + VM + no pair must refuse to read, got {unknowable!r}")
+
+    # (3) abi < 4: nothing was stamped at all.
+    prestamp = report._dfa_scan_display({"abi": 3, "engine": "dfa"})
+    _check("before the DFA stamps landed at abi 4" in prestamp,
+           f"a pre-abi-4 pin must name itself, got {prestamp!r}")
+
+    # (4) the table alone is younger than the other two -- its own gap, not
+    # the whole clause's.
+    no_table = report._dfa_scan_display({
+        "abi": 6, "engine": "dfa", "dfa_scan": "attempt",
+        "dfa_prefilter": "none"})
+    _check("scan=attempt" in no_table and "abi 7" in no_table,
+           f"abi 6 stamps scan/prefilter but not table, got {no_table!r}")
+
+    # And the three states are DISTINCT strings -- the whole point.
+    _check(len({not_hybrid, unknowable, prestamp}) == 3,
+           "the three absences must not render identically")
+
+
+def test_fast_tier_legend_b16_r2():
+    """[B16] R2: [OPT-1]'s two-tier default entry in the legend, including
+    pcrec's ONLY spelling of 'this artifact has one tier' (fast == stamped
+    default) and the DFA's 'no tier at all', which is a fact rather than a
+    gap."""
+    two_tier = report._fast_tier_display({
+        "abi": 8, "engine": "vm", "fast_frames": 61, "fast_trail": 92,
+        "resume_frames": 2048, "trail_frames": 3072})
+    _check(two_tier == "61/92 fast, escalates to 2048/3072",
+           f"expected the boundary and what it escalates to, got {two_tier!r}")
+
+    single = report._fast_tier_display({
+        "abi": 8, "engine": "vm", "fast_frames": 1, "fast_trail": 3,
+        "resume_frames": 1, "trail_frames": 3})
+    _check("single tier" in single and "==" in single,
+           f"fast == stamped default IS 'one tier' (match_api.md 6.3), got {single!r}")
+
+    dfa = report._fast_tier_display({"abi": 8, "engine": "dfa",
+                                     "resume_frames": 0, "trail_frames": 0})
+    _check(dfa == "n/a (DFA: no tier)",
+           f"a DFA artifact has no tier -- a fact, not a gap; got {dfa!r}")
+
+    old = report._fast_tier_display({"abi": 3, "engine": "vm"})
+    _check("no tier existed before abi 5" in old,
+           f"a pre-abi-5 pin must name itself, got {old!r}")
+
+
+def test_engine_reading_and_scoped_legend_b16_r3():
+    """[B16] R3 (pcrec I-7 §3 (a)): a STAMPED engine is a reading; an
+    unstamped one is announced as an inference; an unstamped `auto` config
+    yields `unknown`, because --engine=auto selects per PATTERN. And the
+    legend is scoped per (pattern, form) exactly when a testee's cells
+    disagree -- the fault this ruling corrects."""
+    display, stamped = report._engine_reading(
+        "pcrec_35e1ab1_auto-caps-simdna", {"abi": 8, "engine": "dfa"})
+    _check((display, stamped) == ("dfa", "dfa"),
+           f"a stamped engine is the value itself, got {display!r}")
+
+    display, stamped = report._engine_reading(
+        "pcrec_8da6120_auto-caps-simdna", {})
+    _check(stamped is None and "unknown" in display and "per PATTERN" in display,
+           f"an unstamped `auto` config cannot name an engine, got {display!r}")
+
+    display, stamped = report._engine_reading(
+        "pcrec_8da6120_vm-caps-simdna", {})
+    _check(stamped is None and display.startswith("vm — inferred (unstamped pin"),
+           f"an unstamped `vm` config is an INFERENCE and says so, got {display!r}")
+
+    # The scoping, against the real store: 8da6120's `auto` testee compiled
+    # `orig` to a DFA artifact and `factored` to a VM one AT ONE PIN, which
+    # is what a per-testee legend line could not say.
+    loaded, _paths, _source = _load_store(REAL_STORE)
+    rd, err = report.build_report(loaded, _args(store=REAL_STORE,
+                                                subbench="email-specimen"))
+    _check(err is None, f"unexpected refusal: {err}")
+    compiled = report.render_markdown(rd).split("### `compiled-aot`")[1].split("### `")[0]
+    scoped = [ln for ln in compiled.splitlines()
+              if ln.startswith("- `pcrec_8da6120_auto-caps-simdna` / ")]
+    _check(len(scoped) >= 2,
+           f"a testee whose cells disagree must get one line per cell:\n{compiled[:2000]}")
+    engines = {("dfa" if "engine=dfa" in ln else "vm" if "engine=vm" in ln else "?")
+               for ln in scoped}
+    _check(engines == {"dfa", "vm"},
+           f"the split must SHOW both engines at that pin, got {engines}:\n"
+           + "\n".join(scoped))
+    # ...and a testee whose cells agree is still ONE line.
+    collapsed = [ln for ln in compiled.splitlines()
+                 if ln.startswith("- `pcrec_692c2e8_vm-caps-simdna`")]
+    _check(len(collapsed) == 1 and " / " not in collapsed[0].split(": ")[0],
+           f"an agreeing testee must stay collapsed to one unscoped line:\n{collapsed}")
+
+
+def test_giveup_names_engine_and_selection_changed_b16_r4():
+    """[B16] R4 (pcrec I-7 §3 (a)): a give-up code names an engine, and a
+    cross-pin Δ between two different engines prints `selection changed`
+    instead of faster/slower ×N.
+
+    Built as the real case was: an OLD pin whose rows gave up with
+    `-2:PCREC_ERR_STEPS` (a code only the VM can produce -- a DFA artifact
+    stamps -1 for every budget) and a NEW pin that measures. Without the
+    rule the two would compare as one engine getting faster."""
+    _check(report._GIVEUP_NAMES_ENGINE["PCREC_ERR_STEPS"] == "vm",
+           "PCREC_ERR_STEPS is a VM-only code (a DFA artifact has no step budget)")
+
+    args = _args(store="x", include_synthetic=True)
+    old_tid, new_tid = ("pcrec_AAAAAAA_auto-caps-simdna",
+                        "pcrec_BBBBBBB_auto-caps-simdna")
+    setup_old = _mini_setup(old_tid, timestamp="2026-08-25T09:00:00Z",
+                            record_id="rec-b16-old")
+    setup_new = _mini_setup(new_tid, timestamp="2026-08-25T11:00:00Z",
+                            record_id="rec-b16-new")
+    gave_up = {"kind": "match", "pattern_id": "p1", "subject_id": "s1",
+               "regime": "short-subject-search", "trial": 1, "seq": 1,
+               "match_outcome": "gave-up",
+               "diagnostic": "giveup:-2:PCREC_ERR_STEPS"}
+    # The NEW pin stamps its engine; the OLD one does not, so the give-up
+    # code is the only witness of what answered there.
+    compile_new = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 9,
+                   "cost_class": "compiled-aot", "compile_outcome": "compiled",
+                   "cost": {"total_ns": 130_000_000,
+                            "phases": [{"name": "gcc",
+                                        "elapsed_ns": 130_000_000}]},
+                   "engine_metadata": {"abi": 8, "engine": "dfa",
+                                       "dfa_scan": "unanchored",
+                                       "dfa_prefilter": "byte-class",
+                                       "dfa_table": "premultiplied"}}
+    rows_new = [_mini_row("p1", "s1", "short-subject-search", t, t, 40)
+                for t in (1, 2, 3)] + [compile_new]
+    loaded = [_mk_loaded("old.jsonl", setup_old, [gave_up]),
+              _mk_loaded("new.jsonl", setup_new, rows_new)]
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    _check(report._giveup_engines_for(rd, "rb-mini@1.0", old_tid, "p1", "plain")
+           == {"vm"},
+           "the old pin's give-up code must be read as naming the VM")
+    md = report.render_markdown(rd)
+    _check("selection changed" in md,
+           f"a cross-pin pair of two different engines must read 'selection "
+           f"changed', not faster/slower:\n{md}")
+    _check("now measured (was: gave-up)" not in md,
+           f"the selection verdict must REPLACE the ordinary one, not sit "
+           f"beside it:\n{md}")
+
+
+def test_gcc_band_witness_b16_r5():
+    """[B16] R5 (pcrec I-7 §3 (b)): the gcc-phase cost band as an
+    INDEPENDENT witness of the engine on an unstamped pin -- and the two
+    limits on it, which are the ruling as much as the bands are: it never
+    fills the engine field, and it abstains rather than guessing."""
+    _check(report._gcc_band_witness(130_000_000) == "dfa",
+           "124-140 ms is the measured DFA band (pcrec I-7 §4)")
+    _check(report._gcc_band_witness(470_000_000) == "vm",
+           "400-540 ms is the measured VM band (pcrec I-7 §4)")
+    _check(report._gcc_band_witness(230_000_000) is None,
+           "between the bands the witness must ABSTAIN, not pick the nearer")
+    _check(report._gcc_band_witness(None) is None, "no gcc phase -> no witness")
+
+    # On an unstamped row the legend prints it AS a witness, and the engine
+    # field still says the reading is an inference.
+    line = report._testee_legend_line("pcrec_8da6120_vm-caps-simdna", {},
+                                      gcc_median_ns=470_000_000,
+                                      giveup_engines={"vm"})
+    _check("inferred (unstamped pin" in line,
+           f"the engine field must stay an inference, got:\n{line}")
+    _check("witnesses (independent of any stamp" in line
+           and "vm band" in line and "give-up code(s) name vm" in line,
+           f"both witnesses must be printed as witnesses:\n{line}")
+
+    # On a STAMPED row there is nothing to witness and no witness line.
+    stamped_line = report._testee_legend_line(
+        "pcrec_35e1ab1_vm-caps-simdna",
+        {"abi": 8, "engine": "vm", "prefilter": "none"},
+        gcc_median_ns=470_000_000, giveup_engines={"vm"})
+    _check("witnesses" not in stamped_line,
+           f"a stamped engine needs no witness:\n{stamped_line}")
+
+
+def test_max_is_trial_one_b16_r6():
+    """[B16] R6 (pcrec I-7 §5): 'max is trial 1' beside the jitter ratio --
+    the fact that separates a warm-up from noise, which the ratio alone
+    cannot. A FACT, not a verdict, and `None` when unanswerable."""
+    def rows(*pairs):
+        return [{"compile_outcome": "compiled", "trial": t,
+                 "cost": {"total_ns": ns}} for t, ns in pairs]
+
+    _check(report._max_is_first_trial(rows((1, 900), (2, 100), (3, 110))) is True,
+           "a first-trial warm-up must be reported")
+    _check(report._max_is_first_trial(rows((1, 100), (2, 900), (3, 110))) is False,
+           "a max in the middle is not a first-trial warm-up")
+    _check(report._max_is_first_trial(rows((1, 100))) is None,
+           "one trial cannot answer the question")
+    _check(report._max_is_first_trial(
+        [{"compile_outcome": "compiled", "cost": {"total_ns": 1}},
+         {"compile_outcome": "compiled", "cost": {"total_ns": 2}}]) is None,
+        "rows with no `trial` number cannot be ordered -> None, not a default")
+
+    # And it reaches the rendered jitter cell.
+    args = _args(store="x", include_synthetic=True)
+    setup = _mini_setup("pcrec_CCCCCCC_auto-caps-simdna")
+    compile_rows = [
+        {"kind": "compile", "pattern_id": "p1", "trial": t, "seq": 10 + t,
+         "cost_class": "compiled-aot", "compile_outcome": "compiled",
+         "cost": {"total_ns": ns},
+         "engine_metadata": {"abi": 8, "engine": "dfa"}}
+        for t, ns in ((1, 400_000_000), (2, 100_000_000), (3, 101_000_000))]
+    loaded = [_mk_loaded("c.jsonl", setup,
+                          [_mini_row("p1", "s1", "short-subject-search", t, t, 40)
+                           for t in (1, 2, 3)] + compile_rows)]
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("(max is trial 1)" in md,
+           f"the jitter cell must carry the fact:\n{md}")
+
+
+def test_dominated_set_ratio_b16_r7():
+    """[B16] R7 (pcrec I-7 §5): a SET-grain ratio that is really one
+    subject says so, and points at the per-subject rows.
+
+    The measured case it comes from: pcre2-interp's throughput set total is
+    99.9 % one subject, so its '3.15x slower than JIT' was 7.7x slower on
+    that subject and 144x FASTER on the other two."""
+    args = _args(store="x", include_synthetic=True)
+    setup = _mini_setup("engine-d_1.0.0_cfg-caps-simdna")
+    rows = []
+    seq = 0
+    for sid, ns in (("s1", 100_000), ("s2", 50), ("s3", 50)):
+        for t in (1, 2, 3):
+            seq += 1
+            rows.append(_mini_row("p1", sid, "large-subject-throughput",
+                                  t, seq, ns))
+    loaded = [_mk_loaded("d.jsonl", setup, rows)]
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    dom = report._dominant_subject(rd, "rb-mini@1.0",
+                                   "engine-d_1.0.0_cfg-caps-simdna",
+                                   "p1", "large-subject-throughput", "plain")
+    _check(dom is not None and dom[0] == "s1" and dom[1] > 0.99,
+           f"s1 is 99.9 % of this set and must be flagged, got {dom!r}")
+    md = report.render_markdown(rd)
+    _check("**dominated**: `s1`" in md and "set composition" in md,
+           f"the ranking row must carry the flag:\n{md}")
+    _check("per-subject rows below" in md,
+           f"the note must point at the other reading:\n{md}")
+
+    # An evenly-spread set is NOT flagged -- the control that keeps the
+    # flag meaningful.
+    setup_even = _mini_setup("engine-e_1.0.0_cfg-caps-simdna")
+    rows_even = []
+    seq = 0
+    for sid in ("s1", "s2", "s3"):
+        for t in (1, 2, 3):
+            seq += 1
+            rows_even.append(_mini_row("p1", sid, "large-subject-throughput",
+                                       t, seq, 1000))
+    rd_even, err_even = report.build_report(
+        [_mk_loaded("e.jsonl", setup_even, rows_even)], args)
+    _check(err_even is None, f"unexpected refusal: {err_even}")
+    _check(report._dominant_subject(rd_even, "rb-mini@1.0",
+                                     "engine-e_1.0.0_cfg-caps-simdna", "p1",
+                                     "large-subject-throughput", "plain") is None,
+           "an evenly-spread set must NOT be flagged")
 
 
 TESTS = [
@@ -1647,6 +1990,14 @@ TESTS = [
     test_floor_pattern_r9,
     test_floor_pattern_fixture_r9,
     test_reporter_v4_r10,
+    # [B16]
+    test_dfa_scan_legend_b16_r1,
+    test_fast_tier_legend_b16_r2,
+    test_engine_reading_and_scoped_legend_b16_r3,
+    test_giveup_names_engine_and_selection_changed_b16_r4,
+    test_gcc_band_witness_b16_r5,
+    test_max_is_trial_one_b16_r6,
+    test_dominated_set_ratio_b16_r7,
 ]
 
 
