@@ -239,6 +239,79 @@ section in `report.py`'s module docstring):
 ruling, plus the R9 fixture-validated proof; 42 total). `reports/*`
 regenerated against `reporter: v4` -- see `reports/CLAUDE.md`.
 
+## The reporter, [B16] rulings (2026-08-28) -- the abi-8 re-pin's half
+
+The re-pin to pcrec `35e1ab1` (abi 8) absorbed five pcrec pins of new
+observability, and its inbox items I-5, I-6, I-7 and I-11 asked the
+reporter for four rules by name. A THIRD `R1`.. sequence, independent of
+[B9]'s and [B14]'s (the three share numbers by coincidence of three
+separate sequences; read each ruling by its dated section), stamped
+`reporter: v5 (2026-08-28)`:
+
+- **R1 -- the DFA scan's mechanism, and "(no stamp -- pcrec I-3)"
+  retired.** I-3 is CLEARED: every artifact that CONTAINS a DFA scan --
+  every DFA artifact AND every VM HYBRID -- stamps `RX_DFA_SCAN`,
+  `RX_DFA_PREFILTER` and (abi 7) `RX_DFA_TABLE`. The legend carries all
+  three (`_dfa_scan_display`) and keeps the VM's own `RX_VM_PREFILTER` as
+  a SEPARATE clause: two selections, not two spellings, and a hybrid
+  answers both independently. `_dfa_scan_display` keeps THREE absences
+  apart that one blank would merge -- "no DFA scan" (abi >= 6, read from
+  `rx_info.scan == NULL`, the spec's own iff), "hybrids did not stamp
+  yet" (abi 4-5, which says NOTHING either way), and "before the stamps
+  landed" (abi < 4) -- deciding which from the record's own `abi` pair.
+  pcrec I-5's hazard, in the reporter: read the value, never the absence.
+- **R2 -- the fast tier in the legend** (`_fast_tier_display`):
+  [OPT-1]'s boundary, and pcrec's ONLY spelling of "one tier"
+  (`fast == stamped default`). Above the boundary an un-suffixed call
+  runs twice, so a `pcrec-vm` vs `pcrec-vm-in` gap is not interpretable
+  without it.
+- **R3 -- the legend is per (testee, PATTERN, form)**, collapsing to one
+  line when a testee's cells genuinely agree (a CHECKED fact about the
+  rows). This CORRECTS [B14] R8, which took the first
+  `sample_engine_metadata` it saw for a testee and printed it as the
+  whole testee's mechanism: MEASURED on this repo's own records, at pin
+  8da6120 `pcrec-auto` compiled `orig` to a DFA artifact and `factored`
+  to a VM one, and the legend said `engine=dfa` for both because `orig`
+  sorted first. `_engine_reading` prints `inferred (unstamped pin)` where
+  nothing was read, and `unknown` for an `auto` config -- `--engine=auto`
+  chooses per PATTERN, so the config fixes the REQUEST, not the answer.
+- **R4 -- a give-up code names an engine; a cross-pin Δ can be a
+  SELECTION CHANGE.** `PCREC_ERR_STEPS`/`_FRAMES`/`_WORK`/`_RECURSE` all
+  need a budget a DFA artifact stamps `-1` for. `_cross_pin_info` asks
+  whether the two pins are the same ENGINE before computing any ratio,
+  reading each side's engine from ITS OWN (pattern, form) compile cell
+  and falling back to the give-up witness on an unstamped pin; when they
+  differ it prints `selection changed (dfa -> vm)` in place of
+  faster/slower ×N. A selection change EXPLAINS a `now measured` rather
+  than replacing it -- only the RATIO is what two engines make
+  meaningless.
+- **R5 -- the gcc-ms band as an independent witness** (`_GCC_BAND_NS`,
+  `_gcc_band_witness`): a DFA artifact's gcc phase measured 124-140 ms on
+  this box against a VM artifact's 400-540 ms (I-7 §4). Consulted ONLY
+  where nothing was stamped, printed AS a witness, never filling the
+  engine field, and abstaining rather than guessing between the bands. It
+  is box- and toolchain-specific by construction, which is the other
+  reason it may not become a value.
+- **R6 -- "max is trial 1" beside the jitter ratio**
+  (`_max_is_first_trial`): the fact that separates a warm-up from noise,
+  which a ratio alone cannot. A FACT, not a verdict, and `None` when
+  unanswerable.
+- **R7 -- a dominated set-grain ratio says so** (`_dominant_subject`,
+  threshold 90 %): with a note pointing at the per-subject rows. The
+  measured case: pcre2-interp's throughput set is 99.9 % one subject, so
+  its "3.15× slower than JIT" was 7.7× slower on that subject and 144×
+  FASTER on the other two.
+- **R8 -- `reporter: v5 (2026-08-28)`**, and every committed report under
+  `reports/` regenerated: R3/R4/R6/R7 change the rendering of records
+  already in `store/`.
+
+`pcrecbench/tests/test_report.py` gained seven tests, one per ruling,
+each with its control (the three absences must render DIFFERENTLY; an
+evenly-spread set must NOT be flagged; a stamped engine gets no witness
+line); four [B9]/[B14] tests that pinned superseded WORDING now check
+their own ruling's facts instead of a sentence another ruling owns.
+49 total, all green.
+
 ## The reporter ([B5], merged 2026-08-25)
 
 STATUS (this worktree, lane/b5report): only `report.py` and its package

@@ -16,16 +16,16 @@ immediately after a regeneration — the reporter is deterministic, so a
 non-empty diff after a bare rerun (no query change, no reporter change)
 means either the store changed or the reporter regressed determinism.
 
-Both sample sets below were regenerated at [B14] (2026-08-25) against
-reporter `v4 (2026-08-25)` (`v3` on the same day, then `v4` for a same-day
-correction — see the KB-2 note below; previously regenerated at [B9]
-against `v2`): each regeneration means these files no longer diff
-byte-identical against the previous reporter's versions, but each still
-answers the SAME query as before — see `pcrecbench/report.py`'s module
-docstring for the full ruling list ([B9]'s R1-R9, [B14]'s R1-R10 — the
-two ruling sets share numbers by coincidence of two separate `R1`..`R9`
+Both sample sets below were regenerated at [B16] (2026-08-28) against
+reporter `v5 (2026-08-28)` (previously at [B14] against `v3` then `v4`
+the same day — see the KB-2 note below; and at [B9] against `v2`): each
+regeneration means these files no longer diff byte-identical against the
+previous reporter's versions, but each still answers the SAME query as
+before — see `pcrecbench/report.py`'s module docstring for the full
+ruling list ([B9]'s R1-R9, [B14]'s R1-R10, [B16]'s R1-R8 — the three
+ruling sets share numbers by coincidence of three separate `R1`..
 sequences, not by design; read each set's own dated section) and the
-note below for what [B14] changed in these files specifically.
+notes below for what each wave changed in these files specifically.
 
 - `2026-08-25-email-specimen-0.1-budu-ryzen1600.md` — the FIRST
   PRODUCTION SAMPLE: email-specimen@0.1 × {pcre2-interp, pcre2-jit,
@@ -122,6 +122,52 @@ n/s`, pointing at KB-2 rather than a fabricated fraction. `report.py` no
 longer imports `pcrecbench.subbench` at all. `REPORTER_VERSION` bumped
 `v3` → `v4` the same day for this (its own rule: bump whenever rendering
 changes).
+
+**[B16] (2026-08-28) regenerated both sample sets against reporter `v5
+(2026-08-28)`.** The re-pin to pcrec 35e1ab1 (abi 8) is the wave; the
+reporter half of it is pcrec's inbox I-7 §3 and §5, and FOUR of its
+rulings change what these committed files say about records that have
+not moved. No number moved — the records are the same records — but two
+verdicts and two annotations did:
+
+- **the ×13.45 is gone, and what replaced it is the finding.** `factored`
+  / `short-subject-search` / `pcrec-auto` read `faster ×13.45` at `v4`
+  across 8da6120 → 692c2e8. It now reads `selection changed (vm → dfa)`
+  ([B16] R4): at 8da6120 `auto` selected the VM for `factored` (its rows
+  gave up with `-2:PCREC_ERR_STEPS`, a code only the VM can produce) and
+  at 692c2e8 it selects the DFA. The ×13.45 was two engines, not one
+  engine getting faster — pcrec I-7 §3 caught it by hand; the reporter
+  catches it now. The same substitution happens in three more cells
+  (`factored`'s throughput and compliance rows), where the verdict reads
+  `selection changed (vm → dfa); now measured (was: gave-up)`: a
+  selection change EXPLAINS a cell that used to be excluded, so both
+  facts print, and only the faster/slower RATIO is suppressed.
+- **the legend is scoped per (pattern, form) where a testee's cells
+  disagree** ([B16] R3). `pcrec_8da6120_auto-caps-simdna` now gets one
+  legend line per cell, because at that pin it compiled `orig` to a DFA
+  artifact and `factored` to a VM one — the `v4` legend printed
+  `engine=dfa` for the whole testee, which was `orig`'s measured value
+  wearing `factored`'s name. Every testee whose cells agree still gets
+  ONE line, with `(identical on all N (pattern, form) cells)` under it.
+- **`jitter` gained `(max is trial 1)`** ([B16] R6) wherever the cell's
+  maximum is its first trial — including the eager-JIT rows whose
+  0.556/0.645 jitter was I-7 §5's example of a first-trial warm-up that
+  a bare ratio could not distinguish from noise.
+- **a `set composition` column** ([B16] R7) flags a set-grain ratio that
+  is really one subject. In these files it fires on
+  `libpcre2_10.46_interp-caps-simdna`'s two throughput rows:
+  `t-a-valid-addrs` is 99.9 % of that set, so interp's "3.15× slower
+  than JIT" is a ratio of that one subject — 144× FASTER on the other
+  two, which the per-subject sub-table under the row shows.
+
+The DFA mechanism columns ([B16] R1) and the fast-tier clause (R2) are
+present in these files but have nothing to show: every record here is
+from pcrec abi 2 or 3, before those stamps existed, so the legend reads
+`dfa: n/s (pcrec abi 3, before the DFA stamps landed at abi 4)` and
+`fast tier=n/a (pcrec abi 3: no tier existed before abi 5)`. Which
+ABSENCE a missing stamp is gets decided from the record's own `abi`
+pair, never guessed — the first record measured at the 35e1ab1 pin will
+show the values instead.
 
 **A note on what [B9]'s own rulings changed in this store's numbers**:
 applying R1 (OD-B14: a non-`measured` row is excluded from ranking by

@@ -128,6 +128,28 @@ which is expected and not a bug in this suite.
   fixture file (`fixtures/floor_pattern/`) once lane b15floor's schema
   v1.3 made `patterns[].role` legal, proving the wired path through
   `schema/validate.py` itself, not just the bypass.
+  **[B16] additions (2026-08-28, 7 new tests, 49 total)**: one test per
+  R1-R7 ruling of the abi-8 re-pin's reporter wave
+  (`test_dfa_scan_legend_b16_r1`, `test_fast_tier_legend_b16_r2`,
+  `test_engine_reading_and_scoped_legend_b16_r3`,
+  `test_giveup_names_engine_and_selection_changed_b16_r4`,
+  `test_gcc_band_witness_b16_r5`, `test_max_is_trial_one_b16_r6`,
+  `test_dominated_set_ratio_b16_r7`; R8 is the version bump, which
+  `test_reporter_v4_r10` already pins). Each carries its own CONTROL,
+  because each ruling is the kind that passes trivially without one:
+  R1's three ABSENCES must render as three DIFFERENT strings (a single
+  blank for all of them is the bug the ruling exists to prevent); R5's
+  witness must ABSTAIN between the two gcc bands and must not appear at
+  all on a stamped row; R7 must NOT flag an evenly-spread set. R3 and R4
+  fire against `REAL_STORE` for the same reason [B14]'s R1/R2/R4/R7 do —
+  they need two real pcrec pins whose `engine_metadata` disagrees, which
+  is exactly the 8da6120 record where `pcrec-auto` compiled `orig` to a
+  DFA artifact and `factored` to a VM one, and which no synthetic
+  fixture reproduces. Four [B9]/[B14] tests were re-pointed rather than
+  deleted: they had pinned a legend SENTENCE that a later ruling owns
+  (`(no stamp — pcrec I-3)`, retired when pcrec cleared I-3), so they
+  now assert their OWN ruling's facts and leave the wording to whichever
+  ruling last set it.
 - `fixtures/` -- the synthetic store this suite reads. See its own
   CLAUDE.md.
 - `__init__.py` -- makes this a package so

@@ -37,6 +37,25 @@
  *     is allocated, no `buffer_*` pair is printed, the plain entries run,
  *     and `info buffer_inert stamped-size-0` says so. Dividing by the 0 is
  *     the documented mistake and is never done.
+ *
+ * THE ABI FLOOR IS CHECKED HERE, FIRST. `pb_abi()` against
+ * `pb_shim_min_abi()` (shim.c) before any other info line and before any
+ * subject is read: an artifact below the floor is REFUSED by name --
+ * `error abi-below-shim-floor: ...` carrying both numbers -- and the driver
+ * exits 3. The adapter turns that one line into a clean AdapterError. It is
+ * a REFUSAL and not a degraded run on purpose: a shim that read a field the
+ * artifact does not have would be reading whatever follows it.
+ *
+ * WHAT IS PRINTED FOR THE MECHANISM STAMPS, and the rule none of it breaks
+ * (pcrec I-5): NOTHING IS EVER INFERRED FROM A STAMP'S ABSENCE. Each of
+ * `info dfa_scan / dfa_prefilter / dfa_table / fast_frames / fast_trail` is
+ * printed only when the artifact stamps it, and a consumer of these lines
+ * reads a MISSING line as "not stamped" and nothing else -- never as "DFA",
+ * never as "not a hybrid". The one fact that IS readable from an absence is
+ * the spec's own iff and comes from a FIELD rather than a macro:
+ * `info rxinfo_scan_present 0` on a VM artifact is "not a hybrid"
+ * (match_api.md 6, consequence 2), and it is printed on EVERY artifact so
+ * that reading is never made from silence either.
  */
 
 #define _GNU_SOURCE
@@ -72,6 +91,16 @@ static unsigned  (*pb_vm_rungs)(void);
 static unsigned  (*pb_vm_strats)(void);
 static unsigned  (*pb_vm_prunes)(void);
 static const char *(*pb_engine_stamp)(void);
+static int       (*pb_shim_min_abi)(void);
+static const char *(*pb_info_scan)(void);
+static const char *(*pb_info_prefilter)(void);
+static int       (*pb_has_dfa_stamps)(void);
+static const char *(*pb_dfa_scan)(void);
+static const char *(*pb_dfa_prefilter)(void);
+static const char *(*pb_dfa_table)(void);
+static int       (*pb_has_fast_tier)(void);
+static long long (*pb_fast_frames)(void);
+static long long (*pb_fast_trail)(void);
 static int       (*pb_search)(const unsigned char *, size_t, size_t,
                               ptrdiff_t (*)[2]);
 static long long (*pb_match_caps)(const unsigned char *, size_t, size_t,
@@ -261,6 +290,10 @@ int main(int argc, char **argv) {
     SYM(pb_err_name);
     SYM(pb_has_vm_stamps); SYM(pb_vm_prefilter); SYM(pb_vm_rungs);
     SYM(pb_vm_strats); SYM(pb_vm_prunes); SYM(pb_engine_stamp);
+    SYM(pb_shim_min_abi); SYM(pb_info_scan); SYM(pb_info_prefilter);
+    SYM(pb_has_dfa_stamps); SYM(pb_dfa_scan); SYM(pb_dfa_prefilter);
+    SYM(pb_dfa_table);
+    SYM(pb_has_fast_tier); SYM(pb_fast_frames); SYM(pb_fast_trail);
     SYM(pb_search); SYM(pb_match_caps);
     SYM(pb_has_in_entries); SYM(pb_buffer_align);
     SYM(pb_resume_frames); SYM(pb_trail_frames);
@@ -274,6 +307,20 @@ int main(int argc, char **argv) {
     /* The give-up code SPACE, from the artifact's own constants. The harness
      * classifies a negative return by RANGE against these, never by a list.
      * See shim.c. */
+    /* THE ABI FLOOR, before anything else is read or printed. shim.c reads
+     * `rx_info.scan` / `.prefilter`, appended to the struct at pcrec's abi 6;
+     * an older artifact has no such fields and this shim would be reading
+     * past them. Refuse by NAME, carrying both numbers, and stop. */
+    if (pb_abi() < pb_shim_min_abi()) {
+        printf("error\tabi-below-shim-floor: artifact rx_info.abi %d is below "
+               "the %d this shim was written for (testees/pcrec/shim.c reads "
+               "rx_info.scan/.prefilter, appended at pcrec abi 6). Re-pin, or "
+               "point PCREC_BIN at a pcrec at or after that abi.\n",
+               pb_abi(), pb_shim_min_abi());
+        fflush(stdout);
+        return 3;
+    }
+
     printf("info\terr_floor\t%d\n", pb_err_floor());
     printf("info\terr_giveup_top\t%d\n", pb_err_giveup_top());
     printf("info\terr_internal\t%d\n", pb_err_internal());
@@ -298,6 +345,43 @@ int main(int argc, char **argv) {
     }
     const char *es = pb_engine_stamp();
     if (es) printf("info\tengine_stamp\t%s\n", es);
+
+    /* The abi-6 RUNTIME MIRRORS (match_api.md 6). `prefilter` is documented
+     * never to be NULL; it is printed unconditionally so the adapter can
+     * SEE a NULL and report the contract violation rather than infer one
+     * from a line that is simply missing. `scan` may legitimately be NULL
+     * (a non-hybrid VM artifact), so its presence is printed as its own
+     * fact -- on every artifact, so that "not a hybrid" is read from a
+     * VALUE and never from silence. */
+    {
+        const char *rs = pb_info_scan();
+        const char *rp = pb_info_prefilter();
+        printf("info\trxinfo_scan_present\t%d\n", rs ? 1 : 0);
+        if (rs) printf("info\trxinfo_scan\t%s\n", rs);
+        printf("info\trxinfo_prefilter_present\t%d\n", rp ? 1 : 0);
+        if (rp) printf("info\trxinfo_prefilter\t%s\n", rp);
+    }
+
+    /* The DFA-SCAN stamps: on every artifact that CONTAINS a DFA scan (every
+     * DFA artifact AND every VM hybrid -- match_api.md 6.3 (a)'s iff), and on
+     * no other. `dfa_table` is [OPT-3]/abi 7 and can be absent while the
+     * other two are present; that is "this pcrec did not stamp it", printed
+     * as nothing at all rather than as a value. */
+    if (pb_has_dfa_stamps()) {
+        const char *ds = pb_dfa_scan(), *dp = pb_dfa_prefilter();
+        const char *dt = pb_dfa_table();
+        if (ds) printf("info\tdfa_scan\t%s\n", ds);
+        if (dp) printf("info\tdfa_prefilter\t%s\n", dp);
+        if (dt) printf("info\tdfa_table\t%s\n", dt);
+    }
+
+    /* The two-tier default entry's capacities ([OPT-1], abi 5): VM-only,
+     * never absent on a VM artifact. `fast_frames == resume_frames` IS
+     * "this artifact has one tier" and is the only spelling of it. */
+    if (pb_has_fast_tier()) {
+        printf("info\tfast_frames\t%lld\n", pb_fast_frames());
+        printf("info\tfast_trail\t%lld\n", pb_fast_trail());
+    }
 
     /* The frame-buffer sizing surface (match_api.md 10.4), whenever the
      * artifact stamps it -- both engines at abi 3; a DFA artifact stamps
