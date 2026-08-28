@@ -946,3 +946,88 @@ trap for size tables, corrected in place.
 STATE: master = the [B16] merge; make check running on it (the lane's
 merged-tree run was green); lanes 0; cron torn down. NEXT: window A/B
 (email@0.2, six cells + floor, ~50 min), then window C (loglines).
+
+## 2026-08-28 (EDT, ~11:0x), third session (part 5) — WINDOW A/B DONE: email-specimen@0.2 at pcrec 35e1ab1 (abi 8), six cells `measured`; the prediction ledger; I-10's confound measured
+
+THE WINDOW: 10:16-10:59 (43 min), box idle, one cell at a time on core
+11, --trials 5, into store/ (20 → 21 records). Every record `measured`.
+Two mechanics: (1) the first launch (a harness background task) was
+stopped seconds in and relaunched under `setsid` (the 10-min task
+timeout would have cut a 50-min run; nothing was written — a cell
+writes only at its end); (2) the pcre2-interp cell was refused three
+times by the quiet gate (busiest core 47-100 %): the b16repin lane
+was STILL ALIVE after delivery, had recreated its removed worktree and
+was re-running `pcrecbench.tests.test_report` — stopped by TaskStop,
+all three lanes stopped, worktrees removed; the cell re-ran at 10:50
+(rc 0 first attempt). Two later cells needed a second gate attempt
+(the 1-s transient right after the previous cell closes — OD-B12's
+shape; a `sleep 15` before the first sample would remove it). The
+lane's post-delivery diff (the `tiny_set` fix I asked for) is saved
+in the scratchpad to apply after window C. Report:
+reports/2026-08-28-email-specimen-0.2-budu-ryzen1600-repin-35e1ab1.{md,
+subject-grain.md,tsv} (reporter v5; the `dominated` flag fires on
+pcre2's floor/throughput rows — t-a is 90-97 % of those sets).
+
+THE LEDGER (predictions from inbox I-7 / I-8 / I-11, vs the 692c2e8
+records; same box, byte-identical subjects; set-grain ns/call unless
+said; per-subject rows for the throughput set because the set grew
+from 3 to 5 subjects at 0.2):
+- P1 ✓ pcrec-vm short-search per-subject mean: orig 376.6 → 162.6 ns
+  (predicted 160-175; vm-in 164.1 — CONVERGED); factored 903.1 → 699.4
+  (predicted 700-740; vm-in 703.3).
+- P2 ✓ pcrec-vm orig match-compliance 80.2 → 62.8 µs (predicted 63-70;
+  vm-in 62.1 — the O-4 gap is closed on every regime).
+- P3 ✓ pcrec-vm factored compliance still excluded: the same five
+  PCREC_ERR_FRAMES subjects (s-058, s-059, s-061, s-063, +1; smallest
+  2,008 B); vm-in completes all 85 at 456 µs (was 464).
+- P5 ✗ artifact bytes: DFA +29.8-34.9 KB, VM +5.1 KB (journal part 4;
+  I-11 said +5 KB / +1-2 KB). gcc time: DFA 124-140 → 127-146 ms
+  (+~4 %, inside the ±5 %); VM 400-540 → 416-549 ms (inside).
+- P6 ✗ the whole-subject artifacts stamp `unanchored` +
+  `byte-class-bounded` (floor: `memchr-bounded`), not `attempt` — I-5
+  had it right, I-7 contradicted it (part 4).
+- P7 ✓/✗ the pinned floor (per-subject mean, short-search): pcrec-auto
+  17.7 ns (predicted ≈19 ✓), pcre2-jit 44.2 (≈45 ✓), pcre2-interp
+  96.9, pcrec-vm 32.6 / vm-in 32.9 — BETTER than the predicted 45-50
+  (the abi-5 16 B-subject figure; the fast tier's floor is ~33 ns).
+- P8' ✓ orig throughput on the ORIGINAL three: pcrec-auto 3.585 /
+  1.895 / 1.879 ms (I-11's lane: 3.516 / 1.799 / 1.803 — within 2-5 %,
+  the bench's own protocol), set 7.36 ms vs 12.77 at 692c2e8 = 1.735×
+  (predicted 1.79×); pcre2-jit 3.685 / 2.564 / 2.819 = 9.07 ms, so
+  pcrec-auto is 0.81× of JIT — ranks ABOVE pcre2-jit on the throughput
+  regime for the first time, as predicted. factored: identical to orig
+  to three digits (the DFA is the same machine).
+- P9' ✓ DFA compliance 234 → 133.8 µs orig / 130.2 factored (~1.75×).
+- P10' ✗ (good direction) short-search DFA rows moved 1.73×, not
+  ≤10 %: pcrec-auto orig 6,125 → 3,533 ns/set (45.9 ns per subject
+  against a 17.7 ns floor) — the scan portion of even a 30 B subject
+  took the premultiplied table's gain; pcrec-auto is now 1.73× faster
+  than pcre2-jit on short search (was parity), 3.5× faster than its
+  own VM.
+- P11 ✓ VM rows untouched on throughput (15.7-16.0 ms on every failing
+  1 MB subject, ~15 ns/byte, 8.5× the DFA); the [OPT-1] gains above
+  are the VM's only movement.
+
+I-10's CONFOUND, MEASURED (the new prose subjects; orig; ns/byte):
+- FAILING text: periodic t-b-no-at pcrec-auto 1.807, pcre2-jit 2.445
+  (pcrec 0.739× of JIT); NON-PERIODIC t-e-prose-no-at pcrec-auto
+  2.962, pcre2-jit 3.012 (pcrec 0.984× — PARITY). The periodic subject
+  flattered pcrec's DFA loop by 1.64× and the JIT by 1.23×: the
+  branch-prediction reading in I-10 is right and it is worth more to
+  pcrec than to the JIT. Any [OPT-3] STEP 3 candidate must be measured
+  on t-e, not t-b — and a run-speculation idea would have looked 1.6×
+  better than the field on the old set.
+- MATCHING prose (t-d, 496 addresses in 1 MB): pcrec-auto 2.994 ns/byte
+  (= its failing-prose cost: bytes, not matches), pcre2-jit 5.690 —
+  pcrec 0.526× of JIT; pcre2-interp 89.5 ns/byte (93.9 ms: the
+  interpreter's backtracking on near-miss tokens — every word before
+  a `.`), 30× the DFA. The JIT pays 2.8 ms MORE on prose with 496
+  addresses than on prose without: ~5.6 µs per match, or near-miss
+  backtracking on every `word.` token — an upstream_findings row.
+- pcre2-interp dismisses t-e in 18.1 µs (no `@`; the required-code-unit
+  check, same as t-b) — 172× the DFA's scan. Interp's set-grain
+  throughput ratio is DOMINATED by t-a (96.7 %) and the report says so.
+
+Everything I-11 claimed for the DFA holds on the bench's own protocol;
+the compile-size prediction and P6 did not, and the periodic subjects
+overstated the DFA's lead over the JIT on failing text by 1.6×.

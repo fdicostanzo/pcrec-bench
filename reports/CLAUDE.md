@@ -185,3 +185,15 @@ silently displace its earlier measured one and vanish from every table's
 baseline; the amended rule (newest MEASURED record wins; a newer
 non-measured one is listed separately, never treated as evidence against
 an older measured one) restores it.
+
+- `2026-08-28-email-specimen-0.2-budu-ryzen1600-repin-35e1ab1.md` — the
+  [B16] re-pin sample at pcrec **35e1ab1** (abi 8) on `email-specimen@0.2`
+  (five throughput subjects: [B17]'s two non-periodic prose subjects
+  beside the periodic three), six cells `measured` 2026-08-28 10:16-10:59
+  EDT, `--trials 5`, quiet window, reporter v5. Query:
+  `report --subbench email-specimen --version 0.2 --format md`. The
+  prediction ledger against the 692c2e8 records (journal, third session
+  part 5) is read per SUBJECT because the throughput set grew — a 0.1
+  set sum and a 0.2 set sum are different cells. `.subject-grain.md`
+  (`--grain subject`) carries the periodic-vs-prose rows that answer
+  pcrec's I-10; `.tsv` the same set-grain query as TSV.
