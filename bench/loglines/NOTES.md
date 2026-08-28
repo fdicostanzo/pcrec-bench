@@ -265,6 +265,14 @@ CHUNK of lines. Every one of the 112 subjects is inside the band, so the
   nothing to read on this sub-bench, exactly as on `bench/email` at pin
   692c2e8. `pcrec-vm` forces the VM and is the entry where a give-up, if one
   exists here at all, would appear first.
+  One consequence of declaring no `match` regime that a reader of the RECORD
+  will see: pcrec's adapter compiles both artifacts per pattern
+  unconditionally (`plain` and the `(?:…)\z` `whole-subject` form), so a
+  pcrec record here carries `whole-subject` COMPILE rows with no match rows
+  under them. That is valid -- rule X27 requires a whole-subject match row to
+  have a compile row, not the reverse -- and it is why the cell-time estimate
+  below counts 110 gcc invocations rather than 55. Do not read those compile
+  costs as this sub-bench's: they belong to an artifact it never measures.
 - **No engine note claims a measurement.** Nothing in this file is a number
   from a run of this sub-bench; the only figures here are properties of the
   corpus and of PCRE2's compile-time analysis, all re-derived by `make check`.
