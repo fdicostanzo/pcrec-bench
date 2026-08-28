@@ -27,7 +27,7 @@ Those are near-misses on purpose: a failing subject whose bytes are rejected
 at the first byte measures nothing, and this sub-bench's whole point is the
 cost of FAILING over text that keeps the engine interested.
 
-The shapes the patterns look for enter only through `feature_lines()`, which
+The shapes the patterns look for enter only through `feature_line()`, which
 the callers inject into a drawn minority of subjects. That is what sets the
 match rate; `NOTES.md` states the resulting m/n per pattern, from the oracle.
 
