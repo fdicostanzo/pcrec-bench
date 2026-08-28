@@ -29,8 +29,14 @@ LOOP (schema **v1.2** record tiers `pinned`/`scratch`, `pcrecbench
 quick`, the `pcrec-local` provided-binary testee); [B9]+[B14] the
 REPORTER v3 (status per row, cross-pin Δ verdicts, mechanism stamps,
 compile phases, legends); [B15] the FLOOR PATTERN in bench/email
-(schema **v1.3** `patterns[].role`). Next: [B11] (sub-bench #2, log-line
-search); [B13] the interpreter is chartered. `make check` is green
+(schema **v1.3** `patterns[].role`). 2026-08-28: [B17] added two
+non-periodic 1 MB prose subjects and the `periodic` manifest column
+(`email-specimen@0.2`); [B11.1] landed SUB-BENCH #2, `bench/loglines/`
+(log-line search over mostly-failing text, 10 goal-authored patterns +
+floor, 112 subjects + a 16 KB-1 MB sweep, `pattern_facts.tsv` from
+pcre2_pattern_info). Next: the windows at abi 8 (email@0.2, loglines);
+[B11.2]..[B11.5] the remaining sub-benches; [B13] the interpreter is
+chartered. `make check` is green
 (3/56/0, 75/75, 49/49). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
