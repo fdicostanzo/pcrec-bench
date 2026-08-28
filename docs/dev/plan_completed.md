@@ -219,3 +219,5 @@ completion date, newest group at the bottom.
   floor column wired to `patterns[].role`; 41 tests; both report sets
   re-rendered. DFA stamp columns wait for pcrec's I-5 pin.
 
+
+- [B17] STATE:completed (2026-08-28, merged as the parent of a78d1cc; email-specimen@0.2; measured in the abi-8 window of the same day) — NON-PERIODIC THROUGHPUT SUBJECTS (inbox I-10): `bench/email` gains at least one non-periodic 1 MB subject per throughput construction (matching-bearing prose with drawn word lengths and a low density of addresses; failing prose with no `@`), generated with a recorded seed, beside the periodic three (kept: they isolate the steady-state loop); `manifest_throughput.tsv` gains a `periodic` column (the period in bytes, or `no`) so the interpreter can flag "branch-predictor-friendly" beside a per-byte number; expectations re-derived. A SUBJECT change bumps the version (requirements §5): `email-specimen@0.2`; measured for the throughput regime in a second window after [B16]'s at 0.1 (the cross-pin ledger stays at 0.1; the periodic/non-periodic contrast is within-pin at 0.2).
