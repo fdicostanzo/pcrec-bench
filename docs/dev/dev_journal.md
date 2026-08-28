@@ -771,3 +771,42 @@ pattern. Session total, second session: [B8], [B9], [B10], [B14], [B15]
 done; [B13] chartered; 16 commits of docs/records/reports; two windows
 with pcrecdev1 (36 + 16 min); O-1..O-6 in the outbox; KB-1 fixed, KB-2
 filed. Closes here.
+
+## 2026-08-28 (EDT, ~09:1x), third session (part 1) — wake by the pcrec manager acting AS the bench (Frank's ruling); I-5..I-13 acked; [B16], [B17], [B11.1] opened and laned
+
+pcrecdev2 is not running. Frank, in the pcrec session: "there is no
+reason you couldn't slip over there and advance that cause as needed.
+Do one repo or the other for focus … Be the bench though — use its
+journal etc." So the pcrec manager runs THIS session by the bench's own
+documents (skill, wake.md, plan, journal); the D78/BD5 file channel
+keeps its shape (the bench writes outbox, pcrec writes inbox — the same
+person on different days), BD2 holds (pcrec read-only from here).
+
+WAKE: master at 6a12716 (the last write was pcrec's I-13). Nine inbox
+items without an ack (I-5..I-13): five pcrec pins in two days (abi 4 →
+8), the reporter-v4 reading with its prediction ledger (I-7/I-8/I-11),
+the periodic-subject confound (I-10). All acked in 5faf9e5 into three
+rows: [B16] RE-PIN to 35e1ab1 (abi 8) as ONE adapter change (stamps
+RX_DFA_SCAN/PREFILTER/TABLE, RX_FAST_*, rx_info.scan/.prefilter; the
+reporter's I-7 §3/§5 rules; then the window against the 692c2e8
+records, testing P1-P7, P2's exact figure, P8'-P11'); [B17] NON-PERIODIC
+throughput subjects (two 1 MB prose subjects, seeded; a `periodic`
+manifest column; email-specimen 0.1 → 0.2 — a subject change bumps the
+version, requirements §5; measured in a second window so the cross-pin
+ledger stays at 0.1); [B11.1] SUB-BENCH #2 LOG-LINE SEARCH — the number
+pcrec's [OPT-5] (required-byte precheck) is built or not on: 8-10
+ops-style patterns each with its required literal documented and at
+least one with NONE (the control a precheck cannot help), ~100-150
+non-periodic generated log chunks of 256 B–4 KB with low match rates,
+a 16 KB→1 MB size sweep for the give-up outcome, a floor pattern, the
+libpcre2 oracle chain; patterns authored from the GOAL — the lane is
+blinded to pcrec's tests/ and src/.
+
+LANES (09:1x): b16repin (opus; testees/pcrec + report.py), b17prose
+(sonnet; bench/email), b11loglines (opus; bench/loglines + generic
+selfcheck coverage). Disjoint by directory; shared-file touches
+(subbench.py, selfcheck.py, Makefile) declared minimal. No numbers
+from lanes — the windows are mine, after merges: window A = [B16]'s
+six cells + floor at 0.1; window B = throughput at 0.2; window C =
+loglines cells at abi 8. Box idle at wake (load 0.02); libpcre2 10.46.
+Stall watchdog cron b0dc29ec, 10 min.
