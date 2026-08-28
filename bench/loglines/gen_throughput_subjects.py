@@ -1,25 +1,33 @@
 #!/usr/bin/env python3
 """gen_throughput_subjects.py -- the log-line sub-bench's SIZE SWEEP.
 
-Eight subjects: 16 KB, 64 KB, 256 KB and 1 MB, each in two flavours, from the
-same grammar the 256 B - 4 KB search band is drawn from (`logtext.py`).
+Twelve subjects: 16 KB, 64 KB, 256 KB and 1 MB, each in three flavours, from
+the same grammar the 256 B - 4 KB search band is drawn from (`logtext.py`).
 
-  `t-<size>-fail`  BACKGROUND ONLY. No member pattern matches it anywhere --
-                   the oracle says so in `expectations.tsv`, and that is the
-                   subject this sub-bench exists for: it is the direct
-                   analogue of bench/email's `t-b-no-at`, the row where
-                   pcre2-interp dismissed a whole 1 MB subject at memchr speed
-                   because its required code unit was absent while pcrec's DFA
-                   scanned every byte (inbox I-7 1). Here the required units
-                   DIFFER per pattern -- `.` and `:` are structural in log
-                   text and present in every one of these subjects, `-`, `"`
-                   and `)` are not -- so the same set of failing subjects
-                   carries BOTH cases, and `pattern_facts.tsv` says which
-                   pattern is in which.
+  `t-<size>-fail`  MIXED background, BACKGROUND ONLY. No member pattern
+                   matches it anywhere -- the oracle says so in
+                   `expectations.tsv`. This is the failing path with the
+                   precheck UNAVAILABLE: every required code unit in this set
+                   (`:` `.` `-` `"` `)` and a digit) occurs in mixed log text,
+                   so no testee can dismiss these subjects without scanning
+                   them, and what they measure is raw failing-scan cost.
   `t-<size>-hit`   The same background with every shape injected, spread
                    through the chunk: the matching-bearing counterpart, so a
                    per-byte cost on failing text has a matching-text number
                    from the same size and the same grammar to read against.
+  `t-<size>-syslog` A SINGLE-SOURCE BSD-syslog stream, also failing, and the
+                   one flavour that carries the memchr-dismissal case: it
+                   contains no `"` and no `)`, which are exactly the required
+                   code units of `kv-quoted` and `stack-frame`, so those two
+                   patterns can be dismissed on it without a scan while the
+                   other eight cannot. MEASURED and added after the first cut:
+                   on MIXED log text every required byte in this set is
+                   present (`:` `.` `-` and digits are structural), so the
+                   `-fail` subjects alone could not be the analogue of
+                   bench/email's `t-b-no-at` -- they are the case where BOTH
+                   engines must scan. Both cases are wanted; the pair is what
+                   separates "the precheck was unavailable" from "the precheck
+                   was available and this is what it bought".
 
 WHY A SWEEP AND NOT ONE SIZE (inbox I-2 1b). A give-up is a first-class
 outcome, and the number owed is the SIZE AT WHICH IT FIRST FIRES for each
@@ -55,16 +63,18 @@ SIZES = (("016k", 16 * 1024), ("064k", 64 * 1024),
 HIT_SPACING = 4096
 
 
-def fill(rng, target, features_every=None):
-    """Background lines to `target` bytes; if `features_every` is set, one
-    line of every shape spliced in after each block of that many bytes."""
+def fill(rng, target, features_every=None, line=None):
+    """`line()` lines to `target` bytes (default the mixed background); if
+    `features_every` is set, one line of every shape spliced in after each
+    block of that many bytes."""
+    line = line or logtext.background
     out = []
     size = 0
     next_inject = features_every
     while size < target:
-        line = logtext.background(rng)
-        out.append(line)
-        size += len(line) + 1
+        line_text = line(rng)
+        out.append(line_text)
+        size += len(line_text) + 1
         if features_every and size >= next_inject:
             for feat in logtext.FEATURES:
                 block = logtext.feature_line(rng, feat)
@@ -84,6 +94,13 @@ def build():
              "failing path; the analogue of bench/email's t-b-no-at)"
              % (nbytes // 1024),
              fill(rng, nbytes)))
+        subjects.append(
+            ("t-%s-syslog" % label,
+             "%d KB of a single-source BSD-syslog stream, no member shape and "
+             "NO `\"` or `)` anywhere -- the required code units of kv-quoted "
+             "and stack-frame, which are therefore dismissible without a scan"
+             % (nbytes // 1024),
+             fill(rng, nbytes, line=logtext.syslog_only)))
         subjects.append(
             ("t-%s-hit" % label,
              "%d KB of the same log text with one instance of every member "

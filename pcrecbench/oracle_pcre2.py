@@ -16,7 +16,14 @@ ADDITIONS for pcrec-bench (everything else is the origin's text):
     match's span, which is what a throughput subject's expectation is;
   * an explicit `giveup` surface: a negative rc that is not NOMATCH is
     raised rather than folded into "no match", so a match-limit give-up can
-    never be silently recorded as an expectation.
+    never be silently recorded as an expectation;
+  * `pattern_info()` ([B11.1]) -- PCRE2's own start-of-match analysis: the
+    FIRST code unit and, the one a bench over failing subjects turns on, the
+    REQUIRED code unit (`req_cu`: the byte that must occur somewhere in any
+    match, on which `pcre2_match` dismisses a subject without running the
+    automaton). A pattern with none is a pattern no required-byte precheck
+    can help, and `bench/loglines` states that per pattern FROM HERE rather
+    than from a reading of the syntax.
 
 pcrec is NOT the source of truth here and neither is pcrec-bench: PCRE2 is
 (pcrec CLAUDE.md's Compatibility Standard, D26). `version()` is read live off
@@ -199,6 +206,65 @@ PCRE2_ANCHORED = 0x80000000
 PCRE2_ENDANCHORED = 0x20000000
 
 
+# PATTERN INFO: what PCRE2's own start-of-match analysis found ([B11.1]).
+#
+# [measured] The PCRE2_INFO_* codes below were read off THIS box's
+# libpcre2-8.so.0 by the same discipline as PCRE2_CONFIG_VERSION (the -dev
+# package is not installed, so the enum cannot be read from a header): probe
+# `pcre2_pattern_info_8` with codes 0..25 on patterns whose answers are known
+# by construction. `abc` gives 97 ('a') at code 5 and 99 ('c') at code 11,
+# with 1 at codes 6 and 12; `[0-9]{4}` gives 0 at 6 AND at 12 with a non-null
+# bitmap pointer at 7 -- a pattern with a first-code-unit BITMAP and NO
+# required code unit. The __main__ self-check below re-runs exactly that, so a
+# wrong code cannot pass silently.
+PCRE2_INFO_FIRSTCODEUNIT = 5
+PCRE2_INFO_FIRSTCODETYPE = 6
+PCRE2_INFO_LASTCODEUNIT = 11
+PCRE2_INFO_LASTCODETYPE = 12
+PCRE2_INFO_MINLENGTH = 16
+
+_lib.pcre2_pattern_info_8.restype = ctypes.c_int
+_lib.pcre2_pattern_info_8.argtypes = [ctypes.c_void_p, ctypes.c_uint32,
+                                      ctypes.c_void_p]
+
+
+def _info_u32(compiled, code):
+    v = ctypes.c_uint32(0)
+    rc = _lib.pcre2_pattern_info_8(compiled._code, code, ctypes.byref(v))
+    if rc != 0:
+        raise Pcre2Error("pcre2_pattern_info(%d) error %d: %s"
+                         % (code, rc, _errmsg(rc)))
+    return v.value
+
+
+def _pattern_info_impl(self):
+    """PCRE2's own start-of-match analysis, as a dict.
+
+    `required_code_unit` is the one a bench measuring FAILING subjects cares
+    about: the byte PCRE2 knows must occur SOMEWHERE in any match, which lets
+    `pcre2_match` dismiss a subject that does not contain it without running
+    the automaton at all (upstream's `req_cu`). `first_code_unit` is the
+    separate leading-byte analysis, and is None when PCRE2 has a start BITMAP
+    or nothing instead of a single byte.
+
+    A `*_code_type` of 0 means the analysis found nothing. For `required_` in
+    particular that means NO required byte exists and a required-byte precheck
+    cannot help the pattern at all -- which is a fact about the pattern that a
+    sub-bench should be able to STATE from the engine rather than assert from
+    a reading of the syntax."""
+    ftype = _info_u32(self, PCRE2_INFO_FIRSTCODETYPE)
+    ltype = _info_u32(self, PCRE2_INFO_LASTCODETYPE)
+    return {
+        "first_code_type": ftype,
+        "first_code_unit": (_info_u32(self, PCRE2_INFO_FIRSTCODEUNIT)
+                            if ftype == 1 else None),
+        "required_code_type": ltype,
+        "required_code_unit": (_info_u32(self, PCRE2_INFO_LASTCODEUNIT)
+                               if ltype == 1 else None),
+        "min_length": _info_u32(self, PCRE2_INFO_MINLENGTH),
+    }
+
+
 def _search_raw(compiled, subject, start, options):
     """The shared body of search/match: returns (span, groups) or None."""
     if isinstance(subject, str):
@@ -257,6 +323,7 @@ def _find_all_impl(self, subject, limit=None):
 
 Compiled.match = _match_impl
 Compiled.find_all = _find_all_impl
+Compiled.pattern_info = _pattern_info_impl
 
 
 if __name__ == "__main__":
@@ -280,3 +347,19 @@ if __name__ == "__main__":
     assert rx3.match("aaa") == ((0, 3), ()), rx3.match("aaa")
     assert rx3.find_all("aa b aaa") == ((0, 2), 2), rx3.find_all("aa b aaa")
     print("anchoring bits + find_all: OK")
+
+    # pattern_info: the PCRE2_INFO_* codes, on two patterns whose analysis is
+    # known by construction. `abc` must report a first unit 'a' AND a required
+    # unit 'c'; `[0-9]{4}` must report NEITHER (a bitmap, and no req_cu) --
+    # so a code that happened to name a different field cannot pass, and the
+    # "no required byte" case this bench's control patterns rest on is
+    # exercised here rather than trusted.
+    i1 = compile(r"abc").pattern_info()
+    assert i1["first_code_unit"] == ord("a"), i1
+    assert i1["required_code_unit"] == ord("c"), i1
+    assert i1["min_length"] == 3, i1
+    i2 = compile(r"[0-9]{4}").pattern_info()
+    assert i2["first_code_unit"] is None and i2["first_code_type"] == 0, i2
+    assert i2["required_code_unit"] is None and i2["required_code_type"] == 0, i2
+    assert i2["min_length"] == 4, i2
+    print("pattern_info (first / required code unit): OK")

@@ -253,6 +253,34 @@ def _agentlog(rng):
 BACKGROUND = (_syslog, _applog, _klog, _nginx_err, _journald, _agentlog)
 
 
+# The messages with no parenthesis and no double quote in them. `syslog_only`
+# below is built from these, and the exclusion is the whole point of it.
+PLAIN_MSGS = [m for m in SYSLOG_MSGS if "(" not in m and '"' not in m]
+
+
+def syslog_only(rng):
+    """One line of a SINGLE-SOURCE BSD-syslog stream -- what `journalctl -o
+    short` or one host's /var/log/syslog looks like.
+
+    WHY THIS EXISTS BESIDE `background()`. Mixed log text contains every
+    punctuation byte somewhere, so on a large mixed subject PCRE2's
+    required-code-unit dismissal never fires: `:` `.` `-` and a digit are
+    structural, and every literal-bearing pattern in this set requires one of
+    those. MEASURED on the first cut of this sub-bench -- all eight throughput
+    subjects contained every required byte, so not one of them was the
+    analogue of bench/email's `t-b-no-at` (inbox I-7 1), the row where
+    pcre2-interp dismissed a 1 MB subject at memchr speed.
+
+    These lines carry NO `"` and NO `)`, which are exactly the required code
+    units of `kv-quoted` and `stack-frame`. So on a `-syslog` subject those
+    two patterns ARE dismissible without a scan and the rest are not, and one
+    subject set holds both cases. `pattern_facts.tsv` names which is which,
+    from PCRE2, rather than from this docstring."""
+    return "%s %s %s[%d]: %s" % (
+        _bsd_stamp(rng), rng.pick(HOSTS), rng.pick(DAEMONS),
+        rng.between(1, 32767), _fill(rng, rng.pick(PLAIN_MSGS)))
+
+
 def background(rng):
     """One background line (no trailing newline). Matches no member pattern
     of this sub-bench -- asserted by the oracle, not by this comment: the
