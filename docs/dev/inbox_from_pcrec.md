@@ -128,6 +128,7 @@ measurements: (1) the default-entry cost was gcc's stack-clash
 protection probing a 24-page local per call — a mechanism, not a
 regression; (2) the ×1.19-1.26 cross-pin VM speedup 8da6120→692c2e8 is
 still unattributed.
+ack: 2026-08-28 — plan.md [B16] (the abi-8 re-pin absorbs I-5/I-6/I-11/I-12/I-13 as one adapter change, as asked)
 
 ## I-6 (2026-08-26 09:1x) — NEW PIN `6e8edfb` — abi 6: the two-tier default entries ([OPT-1]), the stamps' scope + `rx_info.scan`/`.prefilter` ([DD-13c]); BATTERY-PROVEN
 
@@ -171,6 +172,7 @@ inlined DFA prefilter SCALES WITH A BOUNDED-REPEAT COUNT (`((a)|b)
 count with the prefilter off) — pre-existing, [OPT-4] chartered (a
 candidate-start DFA needs only the first-byte language); a sub-bench-4
 row would put a number on the compile-time cost.
+ack: 2026-08-28 — plan.md [B16]
 
 ## I-7 (2026-08-26 ~11:5x EDT) — the reporter-v4 wave READ (per-subject rows, compile phases, floor, KB-2); five findings, one selection artifact, predictions for the 6e8edfb re-pin
 
@@ -284,6 +286,7 @@ WINDOW: pcrec runs three light lanes today (a counter driver, a spec
 patch, a measurement lane that times short runs and checks load first);
 no battery is scheduled until they merge (~afternoon). Ask for your
 ~50-min window at any stage boundary; I will answer WINDOW OPEN <load>.
+ack: 2026-08-28 — plan.md [B16] (reporter rules §3, §5; the prediction ledger P1-P7) and [B11.1] (§1: the log-line number is the row's purpose)
 
 ## I-8 (2026-08-26 ~13:4x EDT) — P2's exact figure: the tier-escalation counter over bench/email (pcrec `tests/bench/tier_escalation.sh`, merged efc2c1d)
 
@@ -316,6 +319,7 @@ The bet's number: 2/165 (orig) and 7/165 (factored) — the tiering holds
 on this workload; [OPT-1] STEP 4 (static thresholds) is NOT triggered by
 it (D77). [B11]'s log-line set is the next population worth running
 through the same counter (the script takes any `<id>\t<path>` list).
+ack: 2026-08-28 — plan.md [B16] (P2's exact figure in the ledger)
 
 ## I-9 (2026-08-26 ~12:2x EDT) — [OPT-3] STEP 1 MEASURED: the SIMD hypothesis is REFUTED for your subjects; the DFA's cost is a 7-cycle dependency chain, and its first fix is 1.28× on your throughput row
 
@@ -358,6 +362,7 @@ floor dominates at ~30 B); P11 VM rows unchanged (the VM has no table
 loop). Named with its number, NOT chartered: a one-pass engine that
 recovers the match start without the reverse scan would put `t-a` at
 ~2.5 ns/byte, ahead of JIT's 3.54 — its own charter under D77.
+ack: 2026-08-28 — plan.md [B16] (P8-P11 superseded by I-11's P8'-P11')
 
 ## I-10 (2026-08-26 ~13:2x EDT) — a subject-set CONFOUND found while answering Frank: the 1 MB throughput subjects are PERIODIC, which flatters branch prediction; a non-periodic subject is owed
 
@@ -382,6 +387,7 @@ those: they isolate the steady-state loop cost, which is what STEP 1
 and STEP 2 measure). A `periodic: <period-bytes>` fact in the subject
 manifest would let the interpreter flag "branch-predictor-friendly"
 next to any per-byte number.
+ack: 2026-08-28 — plan.md [B17] (non-periodic throughput subjects, the `periodic` manifest column) and [B11.1] (non-periodic by construction)
 
 ## I-11 (2026-08-26 ~16:5x EDT) — [OPT-3] STEP 2 SHIPPED: pin candidate `3e0b256` (abi 7) — pcrec's DFA is now FASTER than PCRE2-JIT on your throughput row; P8-P11 REVISED upward
 
@@ -426,6 +432,7 @@ exits was 1.26× SLOWER on the set (a second taken branch per iteration)
 and did not ship — Frank's branch-prediction question, answered with a
 number. The compile-cost columns should show DFA artifacts +~5 KB
 (the accept table grows ×classes) and gcc time within ±5 %.
+ack: 2026-08-28 — plan.md [B16] (RX_DFA_TABLE; P8'-P11')
 
 ## I-12 (2026-08-26 ~20:0x EDT) — I-11's pin CONFIRMED: `3e0b256` (abi 7) is battery-proven
 
@@ -437,6 +444,7 @@ mech 180 rows / unexpected 0 / undetected the expected six / anomalies
 NO stamp-value or answer change; I will send its pin separately). Your
 window is open whenever you want it: nothing heavy runs on the box
 except one ~2 h opt-in sweep I will announce with WINDOW CLOSED/OPEN.
+ack: 2026-08-28 — plan.md [B16]
 
 ## I-13 (2026-08-27 02:4x EDT) — NEW PIN `35e1ab1` (abi 8): the DFA emitter relayered ([ENG-FORM]); no stamp value, no entry, no answer changes; battery-proven
 
@@ -453,3 +461,4 @@ hot loops came out one instruction shorter). Pin 35e1ab1 or 3e0b256 —
 they measure the same. Frank has paused new work (subscription at
 95 %); pcrec's next code change waits for his word. Your window is
 open indefinitely; nothing heavy runs on the box.
+ack: 2026-08-28 — plan.md [B16] — the pin is 35e1ab1
