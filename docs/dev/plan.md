@@ -36,7 +36,7 @@ older candidates. Proposed order (Frank confirms): [B8] → [B10] (ruled
 "after the re-pin", in its (a)(b)(c) order) ∥ [B9] (a disjoint reporter
 lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
 
-- [B11] STATE:started — (2026-08-28: #2 begins as [B11.1] below; Frank's ruling that the pcrec manager may run bench sessions AS the bench when pcrecdev2 is down — one repo per session) SUB-BENCHES #2..#6, in Frank's ruled order
+- [B11] STATE:started — (2026-08-28: #2 DONE as [B11.1], archived; next is #3 wide alternations by I-2's order unless pcrec rules #5 bounded-repeat first after O-7 item 6 — asked in O-7; Frank's ruling that the pcrec manager may run bench sessions AS the bench when pcrecdev2 is down — one repo per session) SUB-BENCHES #2..#6, in Frank's ruled order
   (inbox I-2): (1) LOG-LINE SEARCH, 256 B–4 KB subjects, mostly-failing
   (the 95 % path): timestamps, IPv4/IPv6, key=value, quoted fields,
   typical ops patterns; (2) WIDE ALTERNATIONS / keyword tries (10, 100,
@@ -51,8 +51,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   fires (§1b: a size-sweep design item). Blinded set authors (D27-style)
   where the set has expectations to write. Expand into [B11.n] when
   work on the first begins.
-- [B11.1] STATE:started — SUB-BENCH #2: LOG-LINE SEARCH (`bench/loglines/`, 2026-08-28). THE NUMBER THIS ROW EXISTS TO PRODUCE (inbox I-7 §1, pcrec [OPT-5]): on mostly-FAILING 256 B–4 KB subjects, what pcrec's DFA pays for having no REQUIRED-BYTE (any-position) precheck where pcre2-interp dismisses a subject at memchr speed — the regime where that dominates; the number decides pcrec's build (pcrec D77). Shape: typical ops patterns (timestamps, IPv4/IPv6, key=value, quoted fields, a status-code/level filter, a multi-token "error with context" shape), each with a documented REQUIRED literal where one exists and at least one pattern with NONE (the control: a required-byte precheck cannot help it); subjects = generated log lines, NON-PERIODIC by construction (drawn field lengths and vocab, seeded generator, seed + `periodic` fact recorded in the manifest — I-10), a matching-rate per pattern that is low (the 95 % path) but not zero; a size sweep for the give-up outcome (256 B → 4 KB → beyond, until any testee gives up, the first size recorded — I-2 §1b); the FLOOR pattern (one literal, `role = "floor"`, the rule since [B15]); oracle chain as bench/email (`gen_expectations.py` from libpcre2, `--check` mode, sha256 manifests, `make check` coverage). Patterns authored from the GOAL (D27-style: the author reads no pcrec source or corpus). Measured in a window after the [B16] re-pin so the number is at abi 8.
-- [B12] STATE:not-started — M1 CLOSE ITEMS (candidates, unordered):
+- [B12] STATE:not-started — M1 CLOSE ITEMS (candidates, unordered): [ADDED 2026-08-28] a DID-NOT-COMPILE cell must appear under its ranking table as `not ranked: <testee> — did-not-compile (<diagnostic>)`, not only in the compile-cost table (loglines/level-context under pcrec-auto vanished from the ranking, journal part 6); the window script's post-cell gate transient (a `sleep 15` before the first sample; every cell after the first needed a retry on 2026-08-28) belongs in a committed `scripts/run_window.sh` rather than a scratchpad copy;
   the M1 close panel (D6) over harness_contract.md + harness_notes.md +
   the report; U1's discriminating measurement (the pcre2 INTERPRETER
   with PCRE2_NO_START_OPTIMIZE on the same cell, K34-probe shape; then
