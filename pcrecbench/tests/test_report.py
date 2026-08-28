@@ -1595,18 +1595,19 @@ def test_reporter_v4_r10():
     are never mistaken for each other. [B14] took it to v3 then v4 the
     same day (the KB-2 correction); [B16]'s rulings change the rendering
     of records ALREADY IN `store/` -- the 8da6120 legend under R3 and the
-    x13.45 cross-pin verdict under R4 both move -- so it is now v5. The
+    x13.45 cross-pin verdict under R4 both move -- so it became v5; [B16] R9
+    (the per-subject sub-table keyed on the regime) took it to v6. The
     test keeps its [B14] name: the RULE is [B14] R10's, and only the
     version it pins has moved."""
-    _check(report.REPORTER_VERSION == "v5 (2026-08-28)",
-           f"expected REPORTER_VERSION == 'v5 (2026-08-28)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v6 (2026-08-28)",
+           f"expected REPORTER_VERSION == 'v6 (2026-08-28)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v5 (2026-08-28)" in md, f"expected the v5 header line:\n{md[:200]}")
+    _check("reporter: v6 (2026-08-28)" in md, f"expected the v5 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v5 (2026-08-28)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v6 (2026-08-28)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
 
 
 def test_floor_pattern_fixture_r9():
@@ -1951,6 +1952,96 @@ def test_dominated_set_ratio_b16_r7():
            "an evenly-spread set must NOT be flagged")
 
 
+
+def test_per_subject_subtable_b16_r9():
+    """[B16] R9: the per-subject sub-table's condition is a property of the
+    CELL, not one sub-bench's subject count.
+
+    THE REGRESSION THIS EXISTS FOR, first, as a real five-subject
+    throughput cell: [B14] R2 keyed the sub-table on `<= 3 subjects` with
+    the comment "today, every large-subject-throughput cell". [B17] added
+    two non-periodic prose subjects to bench/email's throughput sweep
+    (email-specimen@0.2, pcrec I-10), and that cell would have SILENTLY
+    lost its per-subject rows -- in the one regime where those rows ARE
+    the finding (pcrec I-7 §1: the set-grain sums hid that pcre2-interp is
+    144x FASTER than JIT on two of the three subjects it is "3.15x slower"
+    than JIT over)."""
+    args = _args(store="x", include_synthetic=True)
+    setup = _mini_setup("engine-f_1.0.0_cfg-caps-simdna")
+    rows, seq = [], 0
+    for sid in ("t-1", "t-2", "t-3", "t-4", "t-5"):
+        for t in (1, 2, 3):
+            seq += 1
+            rows.append(_mini_row("p1", sid, "large-subject-throughput",
+                                  t, seq, 1000))
+    rd, err = report.build_report([_mk_loaded("f.jsonl", setup, rows)], args)
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("per-subject" in md and "`t-5`" in md,
+           f"a FIVE-subject throughput cell must still get its per-subject "
+           f"rows -- this is the [B17] regression:\n{md}")
+
+    # The decision function itself, condition by condition.
+    show, skip = report._per_subject_subtable("large-subject-throughput", 5,
+                                              False, "set")
+    _check(show and skip is None, "throughput at 5 subjects: shown")
+    show, _skip = report._per_subject_subtable("large-subject-throughput", 12,
+                                               False, "set")
+    _check(show, "throughput at 12 (bench/loglines' sweep): shown")
+    show, _skip = report._per_subject_subtable("match-compliance", 3, False,
+                                               "set")
+    _check(show, "[B14] R2's own case -- any regime, <= 3 subjects: shown")
+    show, _skip = report._per_subject_subtable("match-compliance", 20, True,
+                                               "set")
+    _check(show, "a DOMINATED cell: shown, so R7's pointer does not dangle")
+    show, skip = report._per_subject_subtable("match-compliance", 20, False,
+                                              "set")
+    _check(not show and skip is None,
+           "20 ordinary compliance subjects: no sub-table and nothing to say")
+
+    # The CAP, and the honesty rule about a fact not shown: an 85-subject
+    # (bench/email) or 112-subject (bench/loglines) compliance set is not
+    # made readable by printing every row of it.
+    show, skip = report._per_subject_subtable("match-compliance", 85, True,
+                                              "set")
+    _check(not show and skip and "85 subjects" in skip
+           and "--grain subject" in skip,
+           f"above the cap the row must NAME the count and point at "
+           f"--grain subject, not fall silent; got {skip!r}")
+    show, skip = report._per_subject_subtable("large-subject-throughput", 112,
+                                              False, "set")
+    _check(not show and skip, "the cap binds in the throughput regime too")
+    show, _skip = report._per_subject_subtable("large-subject-throughput", 5,
+                                               False, "subject")
+    _check(not show, "subject grain IS the per-subject view; no sub-table")
+    show, _skip = report._per_subject_subtable("large-subject-throughput", 0,
+                                               False, "set")
+    _check(not show, "no subjects, no sub-table")
+
+    # ...and the cap is not one sub-bench's subject count, which is the
+    # coupling this ruling removes.
+    _check(report._SUBTABLE_MAX_SUBJECTS > 12,
+           "the cap must clear bench/loglines' 12-subject throughput sweep")
+    _check(report._SUBTABLE_MAX_SUBJECTS < 85,
+           "the cap must NOT admit a compliance set")
+
+    # R7's note points where the rows actually ARE. A dominated cell over
+    # the cap says `--grain subject`; one under it says "below".
+    setup_d = _mini_setup("engine-g_1.0.0_cfg-caps-simdna")
+    rows_d, seq = [], 0
+    for sid, ns in (("d-1", 100_000), ("d-2", 50), ("d-3", 50)):
+        for t in (1, 2, 3):
+            seq += 1
+            rows_d.append(_mini_row("p1", sid, "large-subject-throughput",
+                                    t, seq, ns))
+    rd_d, err_d = report.build_report([_mk_loaded("g.jsonl", setup_d, rows_d)],
+                                       args)
+    _check(err_d is None, f"unexpected refusal: {err_d}")
+    md_d = report.render_markdown(rd_d)
+    _check("**dominated**" in md_d and "the per-subject rows below" in md_d,
+           f"a dominated cell WITH a sub-table must say 'below':\n{md_d}")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -2003,6 +2094,7 @@ TESTS = [
     test_gcc_band_witness_b16_r5,
     test_max_is_trial_one_b16_r6,
     test_dominated_set_ratio_b16_r7,
+    test_per_subject_subtable_b16_r9,
 ]
 
 

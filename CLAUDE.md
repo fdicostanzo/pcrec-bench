@@ -34,10 +34,12 @@ non-periodic 1 MB prose subjects and the `periodic` manifest column
 (`email-specimen@0.2`); [B11.1] landed SUB-BENCH #2, `bench/loglines/`
 (log-line search over mostly-failing text, 10 goal-authored patterns +
 floor, 112 subjects + a 16 KB-1 MB sweep, `pattern_facts.tsv` from
-pcre2_pattern_info). Next: the windows at abi 8 (email@0.2, loglines);
-[B11.2]..[B11.5] the remaining sub-benches; [B13] the interpreter is
-chartered. `make check` is green
-(3/56/0, 75/75, 49/49). Manager sessions start with the
+pcre2_pattern_info). Both were MEASURED the same day
+(six cells each, `reports/2026-08-28-*`; outbox O-7 carries the
+findings to pcrec — the [OPT-5] precheck is parity, the offset-k skip
+is the ask). Next: pcrec's answers to O-7; [B11.2]..[B11.5] the
+remaining sub-benches; [B13] the interpreter is chartered. `make check`
+is green (3/56/0, 75/75, 50/50). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope

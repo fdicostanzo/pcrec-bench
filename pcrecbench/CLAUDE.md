@@ -312,6 +312,14 @@ line); four [B9]/[B14] tests that pinned superseded WORDING now check
 their own ruling's facts instead of a sentence another ruling owns.
 49 total, all green.
 
+- **R9 -- the per-subject sub-table is keyed on the REGIME.** [B14] R2's
+  `<= 3 subjects` rule was "every throughput cell" only while the
+  throughput sets had three subjects; at email-specimen@0.2 (five) and
+  bench/loglines (twelve) it dropped the table. A
+  `large-subject-throughput` cell, a `dominated` cell, and a <= 3 set all
+  get it (`test_per_subject_subtable_b16_r9`). `reporter: v6 (2026-08-28)`;
+  every committed report re-rendered.
+
 ## The reporter ([B5], merged 2026-08-25)
 
 STATUS (this worktree, lane/b5report): only `report.py` and its package

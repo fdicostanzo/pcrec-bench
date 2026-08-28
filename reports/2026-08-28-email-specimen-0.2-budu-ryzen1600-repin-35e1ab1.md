@@ -1,11 +1,11 @@
 # pcrec-bench report
 
-reporter: v5 (2026-08-28)
+reporter: v6 (2026-08-28)
 
 ## Query
 
 - filters: subbench=email-specimen, version=0.2
-- record source: store/index.tsv (20 candidate file(s))
+- record source: store/index.tsv (26 candidate file(s))
 - records included: 6
     - `email-specimen@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260828T145051Z` (store/records/email-specimen@0.2/libpcre2_10.46_interp-caps-simdna/email-specimen@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260828T145051Z.jsonl)
     - `email-specimen@0.2__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260828T141718Z` (store/records/email-specimen@0.2/libpcre2_10.46_jit-caps-simdna/email-specimen@0.2__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260828T141718Z.jsonl)
@@ -32,6 +32,26 @@ reporter: v5 (2026-08-28)
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 13,593,900.0 | 2.5928 | 13,556,964.8 | 13,728,371.4 | 59,896.2 | 0.027x | 1.000x | 5 | 100% |
 | 2 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 13,684,627.4 | 2.6101 | 13,638,732.1 | 13,864,401.6 | 78,198.4 | 0.027x | 1.007x | 5 | 100% |
 | 3 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 501,204,604.4 | 95.5972 | 498,857,639.0 | 504,528,853.9 | 1,816,122.3 | 1.000x | 36.870x | 5 | 100% |
+
+#### `factored` / `large-subject-throughput` per-subject (email-specimen@0.2)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-a-valid-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 3,578,231.1 | 3.4125 |
+| `t-a-valid-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 3,591,987.4 | 3.4256 |
+| `t-a-valid-addrs` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 51,651,471.6 | 49.2587 |
+| `t-b-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 1,890,786.8 | 1.8032 |
+| `t-b-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 1,877,191.1 | 1.7902 |
+| `t-b-no-at` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 19,035.0 | 0.0182 |
+| `t-c-long-atom-run` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 1,876,102.3 | 1.7892 |
+| `t-c-long-atom-run` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 1,875,979.8 | 1.7891 |
+| `t-c-long-atom-run` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 18,766.5 | 0.0179 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 3,143,556.6 | 2.9979 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 3,194,847.5 | 3.0468 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 449,517,489.8 | 428.6933 |
+| `t-e-prose-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 3,098,348.9 | 2.9548 |
+| `t-e-prose-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 3,146,368.5 | 3.0006 |
+| `t-e-prose-no-at` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 19,000.4 | 0.0181 |
 
 ### `factored` / `match-compliance` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
@@ -69,7 +89,42 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 5 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 15,694,249.9 | 2.9934 | 15,644,181.0 | 16,112,979.1 | 173,516.2 | 4.225x | 22.061x | spread |
 | 6 | `pcrec_35e1ab1_vm-in-caps-simdna` | measured | `plain` | same program | 15,827,138.2 | 3.0188 | 15,789,874.1 | 15,846,666.6 | 18,853.1 | 4.261x | 22.248x | spread |
 
-_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; the per-subject rows below (or `--grain subject`) carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
+_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; the per-subject rows below carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
+
+#### `floor` / `large-subject-throughput` per-subject (email-specimen@0.2)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-a-valid-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 627,186.7 | 0.5981 |
+| `t-a-valid-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 628,561.1 | 0.5994 |
+| `t-a-valid-addrs` | 1,048,576 | `libpcre2_10.46_jit-caps-simdna` | 1,707,833.8 | 1.6287 |
+| `t-a-valid-addrs` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 3,590,816.7 | 3.4245 |
+| `t-a-valid-addrs` | 1,048,576 | `pcrec_35e1ab1_vm-caps-simdna` | 3,908,618.9 | 3.7275 |
+| `t-a-valid-addrs` | 1,048,576 | `pcrec_35e1ab1_vm-in-caps-simdna` | 4,074,182.9 | 3.8854 |
+| `t-b-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 17,705.1 | 0.0169 |
+| `t-b-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 17,720.6 | 0.0169 |
+| `t-b-no-at` | 1,048,576 | `libpcre2_10.46_jit-caps-simdna` | 39,218.5 | 0.0374 |
+| `t-b-no-at` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 17,761.8 | 0.0169 |
+| `t-b-no-at` | 1,048,576 | `pcrec_35e1ab1_vm-caps-simdna` | 2,793,280.9 | 2.6639 |
+| `t-b-no-at` | 1,048,576 | `pcrec_35e1ab1_vm-in-caps-simdna` | 2,790,208.5 | 2.6610 |
+| `t-c-long-atom-run` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 17,705.9 | 0.0169 |
+| `t-c-long-atom-run` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 17,715.6 | 0.0169 |
+| `t-c-long-atom-run` | 1,048,576 | `libpcre2_10.46_jit-caps-simdna` | 39,429.5 | 0.0376 |
+| `t-c-long-atom-run` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 17,774.7 | 0.0170 |
+| `t-c-long-atom-run` | 1,048,576 | `pcrec_35e1ab1_vm-caps-simdna` | 2,790,950.1 | 2.6617 |
+| `t-c-long-atom-run` | 1,048,576 | `pcrec_35e1ab1_vm-in-caps-simdna` | 2,790,569.1 | 2.6613 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 30,813.1 | 0.0294 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 30,873.3 | 0.0294 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `libpcre2_10.46_jit-caps-simdna` | 69,063.3 | 0.0659 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 70,023.5 | 0.0668 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `pcrec_35e1ab1_vm-caps-simdna` | 3,345,865.5 | 3.1909 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `pcrec_35e1ab1_vm-in-caps-simdna` | 3,371,357.6 | 3.2152 |
+| `t-e-prose-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 17,686.9 | 0.0169 |
+| `t-e-prose-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 17,687.2 | 0.0169 |
+| `t-e-prose-no-at` | 1,048,576 | `libpcre2_10.46_jit-caps-simdna` | 39,876.5 | 0.0380 |
+| `t-e-prose-no-at` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 17,730.8 | 0.0169 |
+| `t-e-prose-no-at` | 1,048,576 | `pcrec_35e1ab1_vm-caps-simdna` | 2,823,491.0 | 2.6927 |
+| `t-e-prose-no-at` | 1,048,576 | `pcrec_35e1ab1_vm-in-caps-simdna` | 2,793,313.5 | 2.6639 |
 
 ### `floor` / `match-compliance` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
@@ -105,6 +160,31 @@ _rows compare different programs answering the same regime; rank order is real, 
 | 2 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 13,609,551.7 | 2.5958 | 13,584,614.0 | 13,613,088.3 | 10,455.9 | 0.111x | 1.002x | 5 | 100% |
 | 3 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 18,200,581.7 | 3.4715 | 18,143,115.8 | 18,245,427.0 | 38,971.3 | 0.148x | 1.340x | 5 | 100% |
 | 4 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 122,619,648.3 | 23.3878 | 122,492,083.3 | 128,349,586.4 | 2,241,432.7 | 1.000x | 9.025x | 5 | 100% |
+
+#### `orig` / `large-subject-throughput` per-subject (email-specimen@0.2)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-a-valid-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 3,579,415.8 | 3.4136 |
+| `t-a-valid-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 3,584,658.7 | 3.4186 |
+| `t-a-valid-addrs` | 1,048,576 | `libpcre2_10.46_jit-caps-simdna` | 3,684,690.7 | 3.5140 |
+| `t-a-valid-addrs` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 28,694,695.4 | 27.3654 |
+| `t-b-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 1,888,829.9 | 1.8013 |
+| `t-b-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 1,895,118.8 | 1.8073 |
+| `t-b-no-at` | 1,048,576 | `libpcre2_10.46_jit-caps-simdna` | 2,563,984.5 | 2.4452 |
+| `t-b-no-at` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 17,985.3 | 0.0172 |
+| `t-c-long-atom-run` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 1,876,578.1 | 1.7896 |
+| `t-c-long-atom-run` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 1,878,612.2 | 1.7916 |
+| `t-c-long-atom-run` | 1,048,576 | `libpcre2_10.46_jit-caps-simdna` | 2,819,271.7 | 2.6887 |
+| `t-c-long-atom-run` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 17,957.3 | 0.0171 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 3,133,275.5 | 2.9881 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 3,138,982.6 | 2.9936 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `libpcre2_10.46_jit-caps-simdna` | 5,966,411.6 | 5.6900 |
+| `t-d-prose-sparse-addrs` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 93,875,420.9 | 89.5266 |
+| `t-e-prose-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-nocaps-simdna` | 3,113,753.6 | 2.9695 |
+| `t-e-prose-no-at` | 1,048,576 | `pcrec_35e1ab1_auto-caps-simdna` | 3,106,092.4 | 2.9622 |
+| `t-e-prose-no-at` | 1,048,576 | `libpcre2_10.46_jit-caps-simdna` | 3,157,856.9 | 3.0116 |
+| `t-e-prose-no-at` | 1,048,576 | `libpcre2_10.46_interp-caps-simdna` | 18,076.5 | 0.0172 |
 
 ### `orig` / `match-compliance` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 

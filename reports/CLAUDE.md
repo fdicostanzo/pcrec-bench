@@ -16,8 +16,13 @@ immediately after a regeneration — the reporter is deterministic, so a
 non-empty diff after a bare rerun (no query change, no reporter change)
 means either the store changed or the reporter regressed determinism.
 
-Both sample sets below were regenerated at [B16] (2026-08-28) against
-reporter `v5 (2026-08-28)` (previously at [B14] against `v3` then `v4`
+Every report below was regenerated at [B16] R9 (2026-08-28, later the
+same day) against reporter `v6 (2026-08-28)` — the per-subject
+sub-table keyed on the regime; and the two `-repin-692c2e8` files' query
+gained `--version 0.1` when `email-specimen@0.2` records entered the
+store (the SAME records as before: the version filter now says what the
+store's contents used to imply). Before that, both sample sets were
+regenerated at [B16] against reporter `v5 (2026-08-28)` (previously at [B14] against `v3` then `v4`
 the same day — see the KB-2 note below; and at [B9] against `v2`): each
 regeneration means these files no longer diff byte-identical against the
 previous reporter's versions, but each still answers the SAME query as
@@ -197,3 +202,16 @@ an older measured one) restores it.
   set sum and a 0.2 set sum are different cells. `.subject-grain.md`
   (`--grain subject`) carries the periodic-vs-prose rows that answer
   pcrec's I-10; `.tsv` the same set-grain query as TSV.
+
+- `2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.md` — the
+  FIRST SAMPLE of sub-bench #2, `bench/loglines@0.1` ([B11.1]), at pcrec
+  **35e1ab1** (abi 8): six cells `measured` 2026-08-28 11:00-11:50 EDT,
+  `--trials 5`, quiet window, reporter v6. Query: `report --subbench
+  loglines --version 0.1 --format md`. This is the report pcrec's
+  [OPT-5] was chartered to be decided on (journal third session part 6;
+  outbox O-7 items 4-6): read the search-band ranking beside
+  `bench/loglines/pattern_facts.tsv`'s presence counts; `pcrec-auto`
+  has NO `level-context` rows because that artifact did not compile
+  (the compile-cost table says `did-not-compile=1`; the ranking does not
+  yet list it — [B12]). `.subject-grain.md` carries the 16 KB-1 MB sweep
+  rows per flavour (fail / hit / syslog); `.tsv` the set-grain query.

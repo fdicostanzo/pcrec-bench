@@ -1109,3 +1109,32 @@ predict), and the state count itself. Bench-side gap: the reporter
 shows `did-not-compile=1` only in the compile-cost table; the ranking
 must list the cell as `not ranked: <testee> — did-not-compile
 (<diagnostic>)` (→ [B12] item).
+
+## 2026-08-28 (EDT, ~12:3x), third session (part 7, CLOSE) — R9 (reporter v6) applied; every report re-rendered; the store commits; the session closes
+
+The b16repin lane's post-delivery diff was the `tiny_set` fix I had
+asked for: the per-subject sub-table keyed on the REGIME
+(large-subject-throughput always; a `dominated` cell always; a ≤ 3 set
+still), with its own test. Applied by hand, `REPORTER_VERSION` v5 → v6,
+[B16] R9 in report.py's docstring and pcrecbench/CLAUDE.md, the
+version-pinning test moved to v6 (it caught the bump under make
+check: 49/1, then 50/0). All twelve committed report files re-rendered
+at v6 with the query in their own headers — the two `-repin-692c2e8`
+queries gained `--version 0.1` now that 0.2 records share the store
+(the same records; reports/CLAUDE.md says so); the 0.2 and loglines
+set-grain reports gained the throughput per-subject sub-tables
+(5 and 12 subjects) that R9 exists for. make check: 3/56/0, 75/75,
+50/50. Store: 27 records (12 new today, committed with this entry).
+
+Mechanics worth one line each: the harness's background task killed
+two long runs (a make check twice; the first window launch) — every
+long run today that finished ran under `setsid`; `test_report` alone
+is > 2 min and block-buffers (`python3 -u`, gnutimeout 540); my R9
+docstring insertion first landed past the closing quotes (a syntax
+error that rendered twelve EMPTY reports before I caught it — re-render
+and count `reporter: v6` headers, never trust the exit code of `>`).
+
+STATE AT CLOSE: master = this commit; no lanes, no worktrees, no cron,
+no monitors; box idle. wake.md rewritten. The deliverable to pcrec is
+outbox O-7 (four asks). Next bench session: pcrec's answers, [B12]'s
+two quick items, then [B11.2] or [B11.4] as ruled.

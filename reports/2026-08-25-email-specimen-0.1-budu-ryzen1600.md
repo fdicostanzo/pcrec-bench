@@ -1,11 +1,11 @@
 # pcrec-bench report
 
-reporter: v5 (2026-08-28)
+reporter: v6 (2026-08-28)
 
 ## Query
 
 - filters: subbench=email-specimen, until=2026-08-25T07:00:00Z
-- record source: store/index.tsv (14 candidate file(s))
+- record source: store/index.tsv (26 candidate file(s))
 - records included: 5
     - `email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T062213Z` (store/records/email-specimen@0.1/libpcre2_10.46_interp-caps-simdna/email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T062213Z.jsonl)
     - `email-specimen@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260825T062944Z` (store/records/email-specimen@0.1/libpcre2_10.46_jit-caps-simdna/email-specimen@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260825T062944Z.jsonl)
@@ -30,7 +30,7 @@ reporter: v5 (2026-08-28)
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 51,887,584.9 | 16.4946 | 51,715,536.7 | 52,400,309.6 | 237,758.7 | 1.000x | 1.000x | **dominated**: `t-a-valid-addrs` is 99.9% of this set | 3 | 100% |
 
-_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; the per-subject rows below (or `--grain subject`) carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
+_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; the per-subject rows below carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
 
 #### `factored` / `large-subject-throughput` per-subject (email-specimen@0.1)
 
@@ -70,7 +70,7 @@ _floor: n/a (no floor pattern in this set yet -- pcrecdev1 feedback 1d/repin-2)_
 | 3 | `pcrec_8da6120_auto-nocaps-simdna` | measured | `plain` | same program | 13,419,710.9 | 4.2660 | 13,378,803.9 | 13,495,708.0 | 42,286.7 | 0.465x | 1.478x | spread | 3 | 100% |
 | 4 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 28,855,145.7 | 9.1728 | 28,771,996.2 | 29,202,089.1 | 156,956.7 | 1.000x | 3.178x | **dominated**: `t-a-valid-addrs` is 99.9% of this set | 3 | 100% |
 
-_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; the per-subject rows below (or `--grain subject`) carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
+_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; the per-subject rows below carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
 
 #### `orig` / `large-subject-throughput` per-subject (email-specimen@0.1)
 

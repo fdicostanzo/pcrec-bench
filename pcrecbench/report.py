@@ -348,6 +348,18 @@ require):
   rendering of EXISTING records changes under R3, R4, R6 and R7 -- the
   8da6120 legend and the x13.45 verdict both move -- which is exactly
   the case the version string exists for.
+
+* R9 -- THE PER-SUBJECT SUB-TABLE IS KEYED ON THE REGIME, NOT ON A COUNT.
+  [B14] R2 printed the per-subject sub-table for a SET-grain cell of
+  <= 3 subjects with the comment "today, every large-subject-throughput
+  cell"; [B17] made email-specimen@0.2's throughput set five subjects
+  and bench/loglines' twelve, so that rule silently dropped the table
+  exactly where it matters. Now: a `large-subject-throughput` cell
+  always gets it, a `dominated` cell (R7) always gets it, and a set of
+  <= 3 subjects keeps it. Manager-merged after the lane's delivery
+  (the lane wrote it; the manager applied it, tested 50/50, and bumped
+  `REPORTER_VERSION` to `v6 (2026-08-28)`; every committed report
+  re-rendered).
 """
 
 from __future__ import annotations
@@ -366,7 +378,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v5 (2026-08-28)"
+REPORTER_VERSION = "v6 (2026-08-28)"
 
 _MISSING = object()
 
@@ -1341,6 +1353,59 @@ def _dominant_subject(rd: "ReportData", sb, testee_id, pattern_id, regime, form)
     return (sid, share) if share > _DOMINANCE_SHARE else None
 
 
+#: [B16] R9: the most subjects a per-subject sub-table will ever enumerate
+#: under a ranking row. Above it the sub-table would be a wall rather than
+#: a reading (bench/email's compliance set is 85 subjects, bench/loglines'
+#: is 112) and the row points at `--grain subject` instead. Chosen to clear
+#: the largest set any regime actually enumerates today -- bench/loglines'
+#: 12-subject throughput sweep -- with headroom, and NOT to be the subject
+#: count of any one sub-bench, which is the coupling this ruling removes.
+_SUBTABLE_MAX_SUBJECTS = 24
+
+
+def _per_subject_subtable(regime, n_subjects, dominated, grain):
+    """[B16] R9: should this ranking row carry a per-subject sub-table, and
+    if not, why not? Returns `(show: bool, reason: str|None)`.
+
+    [B14] R2 keyed this on `len(subject_ids) <= 3` with the comment "today,
+    every `large-subject-throughput` cell". That was true of
+    email-specimen@0.1 and stopped being true at @0.2, which added two
+    non-periodic prose subjects to the throughput sweep ([B17], pcrec
+    I-10): a five-subject cell would have SILENTLY lost its sub-table, and
+    the throughput regime is precisely where the per-subject rows are the
+    finding rather than a drill-down (pcrec I-7 §1: the set-grain sums hid
+    that pcre2-interp is 144× FASTER than JIT on two of the three subjects
+    it is "3.15× slower" than JIT over). A threshold that is one
+    sub-bench's subject count is a constant waiting to go stale; the three
+    conditions below are properties of the CELL:
+
+    1. `large-subject-throughput` — always, at any size up to the cap. The
+       per-subject rows are the finding in this regime.
+    2. A cell R7 flagged `dominated` — always, up to the cap. R7's note
+       says the per-subject rows "below" carry the other reading, and a
+       flag whose pointer dangles is worse than no flag.
+    3. Any regime with a set small enough to simply enumerate (<= 3, [B14]
+       R2's own case, kept).
+
+    `_SUBTABLE_MAX_SUBJECTS` bounds all three: an 85- or 112-subject
+    compliance set is not made readable by printing every row of it, and
+    the caller says so and names `--grain subject` instead of falling
+    silent -- the same honesty rule the rest of this module follows about
+    a fact it is not showing."""
+    if grain != "set" or not n_subjects:
+        return False, None
+    wanted = (regime == "large-subject-throughput" or dominated
+              or n_subjects <= 3)
+    if not wanted:
+        return False, None
+    if n_subjects > _SUBTABLE_MAX_SUBJECTS:
+        return False, (
+            f"{n_subjects} subjects — too many to enumerate here "
+            f"(the cap is {_SUBTABLE_MAX_SUBJECTS}); `--grain subject` "
+            f"renders them")
+    return True, None
+
+
 def _cell_engine_reading(rd: "ReportData", sb, testee_id, pattern_id, form):
     """The `(display, stamped)` engine reading of ONE (testee, pattern,
     form) compile cell -- the per-pattern fact, looked up where it lives,
@@ -2131,8 +2196,6 @@ def render_markdown(rd: ReportData):
                 byte_vals = [rd.subject_bytes.get(sid) for sid in group_subject_ids]
                 if byte_vals and all(v is not None for v in byte_vals):
                     total_bytes = sum(byte_vals)
-            tiny_set = (grain == "set" and len(group_subject_ids) <= 3
-                        and len(group_subject_ids) > 0)
             show_floor_column = bool(near_floor and floor_pattern_id and not is_floor_pattern)
 
             # [B16] R7 (pcrec I-7 §5): a SET-grain ratio built almost
@@ -2154,6 +2217,13 @@ def render_markdown(rd: ReportData):
             header += ["min", "max", "stddev", "vs baseline", "vs best"]
             if dominated_by_testee:
                 header.append("set composition")
+
+            # [B16] R9: the sub-table's condition is a property of the
+            # CELL (regime, dominance, size), never one sub-bench's subject
+            # count -- see `_per_subject_subtable`.
+            show_subtable, subtable_skip = _per_subject_subtable(
+                regime, len(group_subject_ids), bool(dominated_by_testee),
+                grain)
 
             delta_by_testee = {}
             if grain == "set":
@@ -2221,8 +2291,10 @@ def render_markdown(rd: ReportData):
                     f"more than {_DOMINANCE_SHARE*100:.0f} % of the set total, "
                     "so the `vs baseline` / `vs best` ratios on those rows are "
                     "ratios of that ONE subject wearing the set's name. The "
-                    "set number is still the set's; the per-subject rows below "
-                    "(or `--grain subject`) carry the other reading, and they "
+                    "set number is still the set's; "
+                    + ("the per-subject rows below "
+                       if show_subtable else "`--grain subject` ")
+                    + "carry the other reading, and they "
                     "can point the opposite way -- pcrec I-7 §1 measured a set "
                     "ratio of 3.15x slower that was 7.7x slower on one subject "
                     "and 144x FASTER on the other two._\n")
@@ -2233,12 +2305,17 @@ def render_markdown(rd: ReportData):
                 out.append(_floor_note_line())
                 out.append("")
 
-            # [B14] R2: a set this small (today, every `large-subject-
-            # throughput` cell) gets its own subjects IN the table rather
-            # than only a "worst subject" line -- pcrecdev1 feedback,
-            # repin-v2 (1): "for a 3-subject set the per-subject numbers
-            # should be IN the table (a 3-row sub-table)".
-            if tiny_set:
+            # [B14] R2, re-keyed by [B16] R9: a cell whose per-subject rows
+            # are the reading gets them IN the table rather than only a
+            # "worst subject" line -- pcrecdev1 feedback, repin-v2 (1):
+            # "for a 3-subject set the per-subject numbers should be IN the
+            # table (a 3-row sub-table)". R9 replaced "3-subject set" with
+            # the three conditions in `_per_subject_subtable`, because the
+            # count was one sub-bench's and went stale at
+            # email-specimen@0.2.
+            if subtable_skip:
+                out.append(f"_per-subject rows: {subtable_skip}._\n")
+            if show_subtable:
                 out.append(f"#### `{pattern_id}` / `{regime}` per-subject ({sb})\n")
                 out.append("| subject | bytes | testee | median ns/call | ns/byte |")
                 out.append("|---|---|---|---|---|")
