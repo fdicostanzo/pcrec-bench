@@ -33,6 +33,42 @@
  * error; an UNDECLARED one is"). A DFA artifact links a shim whose
  * `pb_has_vm_stamps()` returns 0, and the adapter forwards no VM pairs.
  *
+ * THE ABI FLOOR (`PB_SHIM_MIN_ABI`, exported as `pb_shim_min_abi()`). This
+ * shim reads two `struct rx_info` FIELDS that did not exist before pcrec's
+ * abi 6 -- `scan` and `prefilter` ([DD-13c], match_api.md 6) -- so 6 is the
+ * lowest artifact this file can read, and it says so in one place instead of
+ * leaving the fact implicit in a field access. The driver compares
+ * `pb_abi()` against it at load and REFUSES a lower artifact by name; the
+ * adapter turns that into a clean AdapterError carrying both numbers. An
+ * artifact older still (abi < 6) does not link this shim at all -- the field
+ * access is a compile error, which is the loudest possible form of the same
+ * refusal and cannot be mistaken for a measurement.
+ *
+ * THE THREE STAMP FAMILIES THIS FILE READS, and the rule for each
+ * (match_api.md 6.3's (a)/(b) split, tuning.md 3):
+ *
+ *   (a) SELECTION, unconditional: `RX_ENGINE` -- on EVERY artifact both
+ *       engines produce, since abi 4. Read as a string and CROSS-CHECKED
+ *       against `rx_info.engine`'s integer by the adapter.
+ *   (a) SELECTION, per-MECHANISM: `RX_DFA_SCAN` / `RX_DFA_PREFILTER`
+ *       (abi 4; extended to VM hybrids at abi 6) and `RX_DFA_TABLE`
+ *       (abi 7). Present IFF the artifact CONTAINS a DFA scan -- every DFA
+ *       artifact and every VM HYBRID, and no other artifact. `rx_info.scan`
+ *       / `.prefilter` are the runtime mirrors of the first two.
+ *   (b) CAPACITY, VM-only: `RX_FAST_FRAMES` / `RX_FAST_TRAIL` (abi 5), the
+ *       capacities the un-suffixed entries' fast tier runs on (10.9). Never
+ *       absent on a VM artifact -- `RX_FAST_FRAMES == RX_RESUME_FRAMES` IS
+ *       the statement "this artifact has one tier", and it is the only
+ *       spelling of it.
+ *
+ * NEVER INFER A FACT FROM A STAMP'S ABSENCE (pcrec I-5's hazard, which broke
+ * four of pcrec's own checks the day the stamps landed). Every getter below
+ * returns a NULL / 0 that the driver reports as "not stamped", and no
+ * consumer of this file may read "not stamped" as "DFA", "not a hybrid", or
+ * anything else. The one exception is stated in the spec as an IFF and is
+ * therefore a READING rather than an inference: `rx_info.scan != NULL` on a
+ * VM artifact IS "this is a hybrid" (match_api.md 6, consequence 2).
+ *
  * THE CALLER-PROVIDED FRAME BUFFER (pcrec docs/spec/match_api.md 10,
  * [DD-14.FB], abi 3). The `pb_*_in` entries and the five sizing getters are
  * guarded the same way, on `RX_BUFFER_ALIGN` -- the macro every artifact
@@ -78,6 +114,14 @@
  * give-up, not an internal code, nothing the harness could mistake for one. */
 #define PB_UNSUPPORTED (-1000000)
 
+/* The lowest `rx_info.abi` this file can read: abi 6 appended `scan` and
+ * `prefilter` to the struct ([DD-13c]). Bump it only when a field access
+ * below needs a newer one -- a macro this shim reads through #ifdef does NOT
+ * raise the floor, because its absence is a legitimate "not stamped". */
+#define PB_SHIM_MIN_ABI 6
+
+int pb_shim_min_abi(void) { return PB_SHIM_MIN_ABI; }
+
 /* ------------------------------------------------- reflection (rx_info) */
 
 int      pb_abi(void)             { return (int)PB_INFO.abi; }
@@ -90,6 +134,16 @@ long long pb_work_budget(void)    { return (long long)PB_INFO.work_budget; }
 long long pb_frame_capacity(void) { return (long long)PB_INFO.frame_capacity; }
 long long pb_subject_ceiling(void){ return (long long)PB_INFO.subject_ceiling; }
 const char *pb_engine_why(void)   { return PB_INFO.engine_why; }
+
+/* The abi-6 runtime mirrors ([DD-13c], match_api.md 6). `scan` is the DFA
+ * scan the artifact CONTAINS ("unanchored" / "attempt" / "empty") or NULL
+ * when it contains none; `prefilter` is the candidate-start mechanism in
+ * whichever engine's vocabulary applies and is NEVER NULL -- the adapter
+ * reports a NULL here as a contract violation rather than papering over it.
+ * These are the FIELDS; the macros below are the other spelling, and the
+ * adapter's job is to check that the two agree. */
+const char *pb_info_scan(void)      { return PB_INFO.scan; }
+const char *pb_info_prefilter(void) { return PB_INFO.prefilter; }
 
 /* --------------------------------------------- the give-up code SPACE */
 
@@ -171,6 +225,84 @@ const char *pb_engine_stamp(void) {
     return RX_ENGINE;
 #else
     return (const char *)0;
+#endif
+}
+
+/* ------------------- the DFA-SCAN stamps ([DD-13], [DD-13c], [OPT-3]) */
+
+/* Present IFF the artifact CONTAINS a DFA scan: every DFA artifact and every
+ * VM HYBRID (match_api.md 6.3 (a) states the relation as an iff and pcrec's
+ * own tests/codegen/run_dfa_stamps.sh asserts it in both directions). A
+ * non-hybrid VM artifact carries none of the three, and that is "no DFA
+ * scan here", NOT "no stamp support" -- the difference is what
+ * pb_shim_min_abi() and rx_info.scan are for. */
+
+int pb_has_dfa_stamps(void) {
+#ifdef RX_DFA_SCAN
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_dfa_scan(void) {
+#ifdef RX_DFA_SCAN
+    return RX_DFA_SCAN;
+#else
+    return (const char *)0;
+#endif
+}
+
+const char *pb_dfa_prefilter(void) {
+#ifdef RX_DFA_PREFILTER
+    return RX_DFA_PREFILTER;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* [OPT-3], abi 7. The ENCODING of that scan's transition table:
+ * "premultiplied" / "indexed" / "mixed" / "none". No rx_info mirror exists,
+ * deliberately (match_api.md 6.3 records the trigger that would make one
+ * owed), so this macro is the only surface -- and its absence on an abi-6
+ * artifact is "this pcrec did not stamp it", never a value. */
+const char *pb_dfa_table(void) {
+#ifdef RX_DFA_TABLE
+    return RX_DFA_TABLE;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* ------------------------ the two-tier default entry ([OPT-1], abi 5) */
+
+/* VM-only (6.3 family (b)) and never absent on a VM artifact. They report
+ * the capacities the UN-SUFFIXED entries' fast tier runs on; no entry takes
+ * them as an argument and no caller sizes anything from them -- they are
+ * here so a bench row can say which side of the boundary its subjects sit
+ * on (10.9's "a call that DOES escalate is SLOWER"). */
+
+int pb_has_fast_tier(void) {
+#ifdef RX_FAST_FRAMES
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_fast_frames(void) {
+#ifdef RX_FAST_FRAMES
+    return (long long)RX_FAST_FRAMES;
+#else
+    return 0;
+#endif
+}
+
+long long pb_fast_trail(void) {
+#ifdef RX_FAST_TRAIL
+    return (long long)RX_FAST_TRAIL;
+#else
+    return 0;
 #endif
 }
 

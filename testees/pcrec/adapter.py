@@ -51,6 +51,47 @@ ENGINE METADATA comes from the artifact's STRUCTURED fields only
 preprocessor stamps read the same way. The prose `RX_ENGINE_WHY` is
 explicitly NOT a metadata pair: it lands in the compile row's unindexed
 `diagnostic`, which is where record_schema.md 7 puts it.
+
+THE ABI FLOOR AND THE TWO SPELLINGS ([B16], pin 35e1ab1 = pcrec abi 8).
+pcrec grew five pins' worth of observability between this bench's 692c2e8
+pin and 35e1ab1, and this adapter absorbs all of it at once:
+
+  abi 4 ([DD-13])   `RX_ENGINE` on EVERY artifact; `RX_DFA_SCAN` /
+                    `RX_DFA_PREFILTER` on DFA artifacts.
+  abi 5 ([OPT-1])   `RX_FAST_FRAMES` / `RX_FAST_TRAIL` on every VM artifact
+                    -- the two-tier default entry's fast capacities.
+  abi 6 ([DD-13c])  `RX_DFA_SCAN "empty"`; the two `_DFA_*` macros extended
+                    to VM HYBRIDS; `rx_info.scan` / `.prefilter` appended.
+  abi 7 ([OPT-3])   `RX_DFA_TABLE`.
+  abi 8 ([ENG-FORM]) nothing a consumer reads -- the emitted scan loop moved.
+
+Two rules govern how they are read, and both exist because they were paid
+for on the pcrec side first:
+
+1. NEVER INFER A FACT FROM A STAMP'S ABSENCE (pcrec I-5: it broke four of
+   pcrec's own checks the day the stamps landed). READ THE VALUE. A macro
+   this adapter does not see is recorded as no pair at all -- which
+   record_schema.md 7 already defines as "not stamped", a fact distinct
+   from every value. The single reading that IS taken from an absence is
+   the spec's own iff and comes from a FIELD, printed on every artifact so
+   it is never taken from silence: `rx_info.scan == NULL` on a VM artifact
+   IS "not a hybrid" (match_api.md 6, consequence 2).
+2. ONE DERIVATION PER COLUMN, and where pcrec publishes a fact TWICE the
+   two spellings are CHECKED AGAINST EACH OTHER rather than both recorded.
+   `engine` is `rx_info.engine`, checked against `RX_ENGINE`; `dfa_scan` /
+   `dfa_prefilter` are the macros, checked against `rx_info.scan` /
+   `.prefilter`. A disagreement is an AdapterError naming both values --
+   pcrec asserts field == macro on every artifact of both engines
+   (`tests/codegen/run_dfa_stamps.sh`), so a disagreement seen here is a
+   pcrec bug or a shim bug and is worth stopping for, not averaging.
+
+The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 6 -- the abi that
+appended the two fields it reads) and is enforced in `driver.c`, which
+refuses a lower artifact by name before printing anything else. This file
+does NOT keep a second copy of the number: it recognises the driver's
+refusal line and re-raises it as an AdapterError carrying pcrec's own two
+numbers. Two copies of one floor is exactly the shape of check that has
+failed this project before.
 """
 
 import os
@@ -81,7 +122,10 @@ RXINFO_SRC = "rx_info.%s, read through testees/pcrec/shim.c's pb_%s()"
 METADATA_DECL = {
     "engine": {
         "type": "enum", "scope": "pattern", "values": ["dfa", "vm", "unknown"],
-        "source": "rx_info.engine (PCREC_ENGINE_DFA=1 / PCREC_ENGINE_VM=2)",
+        "source": "rx_info.engine (PCREC_ENGINE_DFA=1 / PCREC_ENGINE_VM=2), "
+                  "read through pb_engine(); CHECKED against <PREFIX>_ENGINE "
+                  "(pb_engine_stamp(), unconditional since pcrec abi 4) -- "
+                  "the macro is not a second pair, it is this one's control",
         "description": "the engine the artifact was built with",
     },
     "abi": {"type": "integer", "scope": "pattern",
@@ -114,9 +158,14 @@ METADATA_DECL = {
     "prefilter": {
         "type": "enum", "scope": "pattern", "values": ["hybrid", "none"],
         "source": "<PREFIX>_VM_PREFILTER, read through pb_vm_prefilter()",
-        "description": "the [M4.6f] prefilter decision. VM artifacts ONLY: a "
+        "description": "the [M4.6f] prefilter decision, in the VM's OWN "
+                       "vocabulary: does the VM run a capture-erased DFA "
+                       "ahead of its program at all. VM artifacts ONLY -- a "
                        "DFA artifact emits no such stamp, and an ABSENT pair "
-                       "is not an error",
+                       "is not an error. It is a DIFFERENT SELECTION from "
+                       "`dfa_prefilter`, not a coarser spelling of it "
+                       "(match_api.md 6.3 (a)): a hybrid answers both, and "
+                       "the answers are independent",
     },
     "vm_rungs": {
         "type": "mask", "scope": "pattern",
@@ -137,6 +186,80 @@ METADATA_DECL = {
         "bits": ["PCREC_VM_PRUNE_CLAMPED", "PCREC_VM_PRUNE_UNCLAMPED"],
         "source": "<PREFIX>_VM_PRUNES, read through pb_vm_prunes()",
         "description": "length-prune form, per quantifier",
+    },
+    # -- THE DFA SCAN's own selection facts ([DD-13] abi 4, extended to VM
+    # HYBRIDS at [DD-13c] abi 6; [OPT-3]'s table at abi 7). match_api.md 6.3
+    # (a) states the scope as an IFF: these are on every artifact that
+    # CONTAINS a DFA scan -- every DFA artifact AND every VM hybrid -- and on
+    # no other artifact. An absent pair therefore means "this artifact has no
+    # DFA scan" OR "this pcrec did not stamp it"; the adapter never collapses
+    # the two, and never reads either as an engine. `rx_info.scan` /
+    # `.prefilter` are the runtime mirrors and are used as the CONTROL on the
+    # two macros, not recorded a second time.
+    "dfa_scan": {
+        "type": "enum", "scope": "pattern",
+        "values": ["unanchored", "attempt", "empty"],
+        "source": "<PREFIX>_DFA_SCAN, read through pb_dfa_scan(); CHECKED "
+                  "against rx_info.scan (pb_info_scan(), abi 6+)",
+        "description": "WHICH DFA scan this artifact contains: the O(n) "
+                       "forward+reverse table pair (`unanchored`), the "
+                       "per-start computed-goto loop an anchored pattern "
+                       "takes (`attempt`), or a provably-empty body that is "
+                       "one `return 0` (`empty`). Different loops with "
+                       "different cost curves, and nothing else a consumer "
+                       "can read distinguishes them",
+    },
+    "dfa_prefilter": {
+        "type": "enum", "scope": "pattern",
+        "values": ["none", "memchr", "byte-class", "memchr-bounded",
+                   "byte-class-bounded"],
+        "source": "<PREFIX>_DFA_PREFILTER, read through pb_dfa_prefilter(); "
+                  "CHECKED against rx_info.prefilter (pb_info_prefilter())",
+        "description": "the CANDIDATE-START mechanism that DFA scan carries. "
+                       "`none`'s largest cause is that the start state "
+                       "ACCEPTS (no skip is sound), not that no filter was "
+                       "wanted. The two `-bounded` values are a real "
+                       "difference in what the mechanism buys under a "
+                       "$/\\Z/\\z view -- every skip stops one byte short "
+                       "and the memchr arm loses its early-out -- and not a "
+                       "spelling of the unbounded pair",
+    },
+    "dfa_table": {
+        "type": "enum", "scope": "pattern",
+        "values": ["premultiplied", "indexed", "mixed", "none"],
+        "source": "<PREFIX>_DFA_TABLE ([OPT-3], pcrec abi 7+), read through "
+                  "pb_dfa_table(). NO rx_info mirror exists, deliberately "
+                  "(match_api.md 6.3 records the trigger that would make one "
+                  "owed), so this macro is the only surface and its absence "
+                  "means an artifact from a pcrec before abi 7",
+        "description": "the ENCODING of that scan's transition table: "
+                       "`premultiplied` (the step is table[state + class]), "
+                       "`indexed` (the step multiplies -- the form pcrec "
+                       "emitted before [OPT-3]), `mixed` (forward and "
+                       "reverse machines took different forms), or `none` "
+                       "(no numeric transition table at all: an `attempt` or "
+                       "`empty` scan)",
+    },
+    # -- the two-tier default entry's fast capacities ([OPT-1], abi 5).
+    # 6.3 family (b): VM artifacts ONLY, and NEVER ABSENT on one. The
+    # un-suffixed entries run on this tier and escalate to the stamped
+    # default on PCREC_ERR_FRAMES (match_api.md 10.9), so a subject above the
+    # boundary pays two runs; the `_in` entries never had a tier.
+    "fast_frames": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_FAST_FRAMES ([OPT-1], pcrec abi 5+), read "
+                  "through pb_fast_frames()",
+        "description": "the resume capacity, in FRAMES, that the un-suffixed "
+                       "entries' fast tier runs on. Equal to `resume_frames` "
+                       "IS the statement `this artifact has one tier` -- and "
+                       "is the only spelling of it",
+    },
+    "fast_trail": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_FAST_TRAIL ([OPT-1], pcrec abi 5+), read through "
+                  "pb_fast_trail()",
+        "description": "the fast tier's trail capacity, in ENTRIES; the "
+                       "companion of `fast_frames`",
     },
     # -- the caller-provided frame buffer's sizing surface (match_api.md
     # 10.4, abi 3). Stamped on EVERY artifact at abi 3, both engines; a DFA
@@ -210,7 +333,20 @@ MASK_BITS = {
 INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "step_budget",
              "work_budget", "frame_capacity", "subject_ceiling",
              "resume_frames", "trail_frames", "resume_frame_size",
-             "trail_frame_size", "buffer_frames", "buffer_trail")
+             "trail_frame_size", "buffer_frames", "buffer_trail",
+             "fast_frames", "fast_trail")
+
+#: The `info` names carrying a STRING-valued pair, and the declared name each
+#: lands under. Kept beside INT_PAIRS so a pair can never be printed by the
+#: driver and silently dropped here (`engine_stamp` was, from abi 4 until
+#: [B16]: the driver printed it and `_metadata` had no line for it, so the
+#: unconditional engine stamp reached no record for five pins).
+STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table")
+
+#: The driver's refusal token for an artifact below shim.c's PB_SHIM_MIN_ABI.
+#: The NUMBER lives in shim.c and nowhere else; this is only how the refusal
+#: is recognised.
+ABI_FLOOR_TOKEN = "abi-below-shim-floor"
 
 
 def buffer_capacities(cfg):
@@ -647,8 +783,20 @@ class Adapter(_ad.Adapter):
             out = run_driver([drv, "--lib", so, "--trial", str(t)] + bufargs,
                              timeout=120, cwd=cdir)
             if out.returncode != 0:
+                # THE ABI FLOOR is a REFUSAL, not a crashed measurement.
+                # driver.c compares rx_info.abi against shim.c's own
+                # PB_SHIM_MIN_ABI before it reads anything else and says so by
+                # name; carrying pcrec's two numbers straight through means
+                # this file keeps no second copy of the floor to fall out of
+                # step with (the check-design failure this project has paid
+                # for). Anything else from the driver stays `crashed`.
+                diag = out.diagnostic() or ""
+                if ABI_FLOOR_TOKEN in diag:
+                    raise _ad.AdapterError(
+                        "pcrec artifact refused by testees/pcrec/shim.c: %s"
+                        % diag.strip())
                 return _ad.CompileResult("crashed",
-                                         diagnostic=out.diagnostic()
+                                         diagnostic=diag
                                          or "the driver could not load %s" % so)
             load_s = 0.0
             for _trial, phase, secs in out.compile_lines:
@@ -674,20 +822,103 @@ class Adapter(_ad.Adapter):
     def _metadata(self, info):
         """The driver's `info` pairs -> declared engine_metadata, plus the
         prose `engine_why` which is returned SEPARATELY: requirements 4.2 is
-        explicit that it is kept only as an unindexed diagnostic string."""
+        explicit that it is kept only as an unindexed diagnostic string.
+
+        Every pair recorded here is DECLARED in METADATA_DECL (rule X15
+        rejects an undeclared one), comes from a STRUCTURED field or a
+        preprocessor stamp, and is recorded ONCE. Where pcrec publishes a
+        fact in two places the second is spent on `_check_agreement` instead
+        of on a second column."""
         meta = {}
         for name in INT_PAIRS:
             if name in info:
                 meta[name] = int(info[name])
-        if "engine" in info:
-            meta["engine"] = info["engine"]
-        if "prefilter" in info:
-            meta["prefilter"] = info["prefilter"]
+        for name in STR_PAIRS:
+            if name in info:
+                meta[name] = info[name]
         for name in MASK_BITS:
             if name in info:
                 meta[name] = _mask_names(name, int(info[name], 0))
+        self._check_agreement(info, meta)
         why = info.get("engine_why")
         return meta, ("RX_ENGINE_WHY: %s" % why) if why else None
+
+    @staticmethod
+    def _check_agreement(info, meta):
+        """pcrec publishes three facts TWICE -- once as a preprocessor stamp
+        and once as an `rx_info` field -- and asserts on its own side, over
+        its whole corpus and on both engines, that the two agree
+        (`tests/codegen/run_dfa_stamps.sh`; match_api.md 6's "ONE DERIVATION,
+        TWO SPELLINGS"). This bench reads BOTH and checks them here, because
+        a disagreement is a compiler or shim bug rather than a measurement,
+        and a record that quietly kept one of the two would carry the bug
+        forward as a number.
+
+        The four claims checked, each an AdapterError naming both values:
+
+        1. `<PREFIX>_ENGINE` == the string form of `rx_info.engine`.
+        2. `rx_info.prefilter` is NEVER NULL (match_api.md 6, consequence 1).
+        3. `<PREFIX>_DFA_SCAN` is present IFF `rx_info.scan` is non-NULL, and
+           equal to it when both are there. This is the iff 6.3 (a) states,
+           and it is the reason "not a hybrid" can be read from a VALUE.
+        4. `rx_info.prefilter` == `<PREFIX>_DFA_PREFILTER` where the artifact
+           contains a DFA scan, and == `<PREFIX>_VM_PREFILTER` (which is
+           `"none"` there) where it does not. The field reports the mechanism
+           that ACTUALLY RUNS and never the coarse `"hybrid"`, so on a hybrid
+           it is the DFA's vocabulary that must match -- consequence 3.
+
+        A pcrec too old to stamp a given macro is not a disagreement: an
+        absent macro is checked only against the field's own absence, never
+        against a value. That is rule 1 of the module docstring, applied to
+        the control rather than to the datum."""
+        engine = meta.get("engine")
+        stamp = info.get("engine_stamp")
+        if stamp is not None and engine is not None and stamp != engine:
+            raise _ad.AdapterError(
+                "pcrec artifact disagrees with itself about its ENGINE: "
+                "<PREFIX>_ENGINE is %r but rx_info.engine reads %r. One "
+                "emitter writes both (match_api.md 6.3 (a)), so this is a "
+                "compiler or shim bug, not a measurement." % (stamp, engine))
+
+        if info.get("rxinfo_prefilter_present") == "0":
+            raise _ad.AdapterError(
+                "pcrec artifact has rx_info.prefilter == NULL. match_api.md "
+                "6 consequence 1 states it is NEVER NULL -- every artifact "
+                "has an answer to 'what candidate-start mechanism do you "
+                "carry', including \"none\".")
+
+        field_scan = info.get("rxinfo_scan")           # None when NULL
+        macro_scan = meta.get("dfa_scan")              # None when unstamped
+        has_field = info.get("rxinfo_scan_present") == "1"
+        if macro_scan is not None and not has_field:
+            raise _ad.AdapterError(
+                "pcrec artifact stamps <PREFIX>_DFA_SCAN %r but rx_info.scan "
+                "is NULL. match_api.md 6.3 (a) states the relation as an "
+                "IFF; on this artifact it does not hold." % (macro_scan,))
+        if macro_scan is not None and field_scan != macro_scan:
+            raise _ad.AdapterError(
+                "pcrec artifact disagrees with itself about its DFA SCAN: "
+                "<PREFIX>_DFA_SCAN is %r, rx_info.scan reads %r."
+                % (macro_scan, field_scan))
+
+        field_pf = info.get("rxinfo_prefilter")
+        macro_dfa_pf = meta.get("dfa_prefilter")
+        macro_vm_pf = meta.get("prefilter")
+        if macro_dfa_pf is not None:
+            if field_pf != macro_dfa_pf:
+                raise _ad.AdapterError(
+                    "pcrec artifact disagrees with itself about its "
+                    "CANDIDATE-START mechanism: <PREFIX>_DFA_PREFILTER is "
+                    "%r, rx_info.prefilter reads %r. The field reports the "
+                    "mechanism that actually runs and must equal the DFA "
+                    "scan's own stamp, hybrid included (match_api.md 6, "
+                    "consequence 3)." % (macro_dfa_pf, field_pf))
+        elif macro_vm_pf is not None and field_pf is not None:
+            if field_pf != macro_vm_pf:
+                raise _ad.AdapterError(
+                    "pcrec artifact has no DFA scan, so rx_info.prefilter "
+                    "should be <PREFIX>_VM_PREFILTER's value %r; it reads "
+                    "%r." % (macro_vm_pf, field_pf))
 
     # -------------------------------------------------------------- measure
 
