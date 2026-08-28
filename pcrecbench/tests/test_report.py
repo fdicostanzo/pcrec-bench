@@ -1821,9 +1821,14 @@ def test_giveup_names_engine_and_selection_changed_b16_r4():
     _check("selection changed" in md,
            f"a cross-pin pair of two different engines must read 'selection "
            f"changed', not faster/slower:\n{md}")
-    _check("now measured (was: gave-up)" not in md,
-           f"the selection verdict must REPLACE the ordinary one, not sit "
-           f"beside it:\n{md}")
+    # The selection change EXPLAINS a "now measured", so both are printed;
+    # what it REPLACES is the faster/slower RATIO, which is the statement
+    # two different engines make meaningless.
+    _check("selection changed" in md and "now measured (was: gave-up)" in md,
+           f"a selection change explains a 'now measured' rather than "
+           f"hiding it:\n{md}")
+    _check("faster ×" not in md and "slower ×" not in md,
+           f"no faster/slower ratio may be printed across two engines:\n{md}")
 
 
 def test_gcc_band_witness_b16_r5():

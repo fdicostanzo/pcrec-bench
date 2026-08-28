@@ -1446,13 +1446,22 @@ def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, r
     selection_changed = (prev_engine is not None and new_engine is not None
                          and prev_engine != new_engine)
 
-    if selection_changed:
-        verdict = (f"selection changed ({prev_engine_display} → "
-                   f"{new_engine_display})")
-    elif prev_red.expectation_failing:
+    if prev_red.expectation_failing:
         if red.expectation_failing:
             return None
         verdict = f"now measured (was: {_set_cell_failure_reason(prev_red)})"
+        # A selection change EXPLAINS a "now measured" rather than
+        # replacing it -- both facts are true and the second is why the
+        # first happened (pcrec I-1 predicted exactly this on the re-pin:
+        # "factored short-search collapses to orig's"). Only the
+        # faster/slower RATIO is a statement a selection change makes
+        # meaningless, and that is the one it replaces below.
+        if selection_changed:
+            verdict = (f"selection changed ({prev_engine_display} → "
+                       f"{new_engine_display}); {verdict}")
+    elif selection_changed:
+        verdict = (f"selection changed ({prev_engine_display} → "
+                   f"{new_engine_display})")
     else:
         verdict = _cross_pin_verdict(prev_red.median_ns, prev_red.stddev_ns,
                                       red.median_ns, red.stddev_ns)
