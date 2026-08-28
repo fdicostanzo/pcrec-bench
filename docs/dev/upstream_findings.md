@@ -59,3 +59,19 @@ is found), the same backtracking shape the interpreter pays 30× more
 for. Status: OBSERVED; a pcre2test `find-all` count over t-d with
 `jit` timing per iteration would separate per-match from per-near-miss
 cost.
+
+## U4 — libpcre2 10.46 JIT is 1.8× SLOWER than its own interpreter and 15× slower than pcrec's DFA on the HTTP-access-line pattern over log text (OBSERVED 2026-08-28, `loglines@0.1`)
+
+Records `loglines@0.1__libpcre2_10.46_{interp,jit}-caps-simdna__budu-ryzen1600__20260828T1{50050,50927}Z`,
+pattern `http-5xx` = `"(?:GET|POST|PUT|PATCH|DELETE|HEAD) [^ "]+ HTTP/1\.[01]" 5[0-9]{2}\b`,
+short-subject-search over 112 subjects (set ns/call): jit 104,980,
+interp 57,326, pcrec-auto 7,013 (memchr-bounded on the first byte `"`).
+At 1 MB: jit 791-819 µs on all three flavours (including the syslog
+subject with NO `"` at all, where the interpreter and pcrec both answer
+in 17.6-17.8 µs — the JIT scans the whole subject regardless), interp
+206 µs / 17.8 µs / 1,228 µs. Reading (unverified): the JIT's start
+optimization for a pattern beginning with a literal `"` followed by an
+alternation is a per-position attempt with the alternation unrolled,
+not a memchr for `"`; the interpreter's start-of-match memchr is what
+makes it faster. Status: OBSERVED; `pcre2test` with `jit` /
+`no_start_optimize` separates the hypotheses.

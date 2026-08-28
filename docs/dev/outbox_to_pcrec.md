@@ -147,3 +147,104 @@ your side from this bench's rows; the 1 MB throughput loss becomes
 the bench re-pins as a [B8]-shaped row when it arrives (adapter: no abi
 check hardcoded; new stamps → METADATA_DECL + shim, [B14] columns).
 
+
+## O-7 (2026-08-28 ~12:1x EDT) — the abi-8 pin MEASURED; the prediction ledger; I-10's confound quantified; the [OPT-5] number (parity — build the general offset-k skip instead); a did-not-compile under `auto`; four adapter-side findings
+
+Written by the pcrec manager acting as the bench (Frank's ruling
+2026-08-28: one repo per session). Everything below is in
+reports/2026-08-28-email-specimen-0.2-…-repin-35e1ab1.* and
+reports/2026-08-28-loglines-0.1-…-first-sample-35e1ab1.* (reporter v5,
+pinned tier, quiet windows, --trials 5, box idle), journal third
+session parts 4-6, upstream_findings U2-U4.
+
+1. PIN 35e1ab1 (abi 8) IS MEASURED. Six cells on email-specimen@0.2
+   (five throughput subjects — I-10's two non-periodic prose subjects
+   added, `periodic` column in the manifests) and six on the NEW
+   bench/loglines@0.1 (sub-bench #2). Adapter: the shim reads every
+   stamp I-5/I-6/I-11 named with an abi floor and a macro-vs-rx_info
+   agreement control; every VALUE proven on a real artifact.
+2. THE LEDGER (vs the 692c2e8 records; details journal part 5): P1 ✓
+   (pcrec-vm short-search orig 376.6 → 162.6 ns/subject, = vm-in),
+   P2 ✓ (80.2 → 62.8 µs), P3 ✓ (the same five FRAMES give-ups), P7 ✓
+   for the DFA (17.7 ns floor) and JIT (44.2) but the VM's fast-tier
+   floor is 32.6, not 45-50; P8' ✓ (orig throughput on the original
+   three: 7.36 ms vs 12.77 = 1.735×; vs JIT 9.07 = 0.81× — pcrec-auto
+   ranks ABOVE pcre2-jit on throughput, first time), P9' ✓ (DFA
+   compliance 234 → 131-134 µs), P11 ✓ (VM throughput untouched, ~15
+   ns/byte). NOT as predicted: P5 (DFA artifacts +29.8-34.9 KB, not
+   +5 KB — +27.5 KB is abi 7's premultiplied accept table, +2.1 KB
+   FLAT per DFA artifact is abi 8's accessor block; VM +5.1 KB; gcc
+   time within ±5 %), P6 (`(?:P)\z` stamps `unanchored` +
+   `byte-class-bounded`, not `attempt` — I-5 had it right), P10'
+   (short-search DFA rows moved 1.73×, not ≤10 %: 6,125 → 3,533 ns/set;
+   pcrec-auto is now 1.73× faster than the JIT on short search).
+3. I-10 QUANTIFIED. Failing 1 MB, orig, ns/byte: periodic t-b pcrec
+   1.807 / JIT 2.445 (0.739×); NON-PERIODIC prose t-e pcrec 2.962 /
+   JIT 3.012 (0.984× — parity). The periodic subject flattered the DFA
+   loop 1.64× and the JIT 1.23×. Measure every [OPT-3] STEP 3 candidate
+   on t-e-prose-no-at, and expect the loop at ~9.5 cycles/byte there,
+   not ~5.8. Matching prose (t-d, 496 addresses): pcrec 2.99 ns/byte
+   (= failing; bytes not matches), JIT 5.69 (0.526× — U3: the JIT pays
+   per near-miss token), interp 89.5.
+4. THE [OPT-5] NUMBER — DO NOT BUILD THE PRECHECK AS ITS OWN MECHANISM.
+   bench/loglines: 10 ops patterns + floor, 112 non-periodic log chunks
+   256 B-4 KB (match rates 6-9 %), a 16 KB-1 MB sweep in fail / hit /
+   single-source-syslog flavours, pattern_facts.tsv from
+   pcre2_pattern_info. Before any timing: on mixed log text every
+   required code unit is STRUCTURAL (`:` `.` `-` `5` in 112/112
+   subjects; `"` absent in 35/112, `)` in 16/112; three patterns have
+   none). Timings: where the required byte is absent and NOT first
+   (kv-quoted, stack-frame on the syslog 1 MB), interp dismisses in
+   18-19 µs vs pcrec's 3.2-3.6 ms scan (169-202×) — but on the SEARCH
+   BAND a precheck buys kv-quoted at most ~150 of its 501 µs (→ parity
+   with the JIT's 335) and stack-frame 1/30th of its gap. THE CONTROL:
+   http-5xx (required `"` IS the first byte, prefilter memchr-bounded)
+   dismisses the syslog 1 MB in 17.6 µs = interp — your k=0 skip is
+   already the dismissal when the byte is first.
+5. THE OUTLIER THIS SET FOUND (search band, pcrec-auto vs pcre2-jit,
+   set ns/call): stack-frame 558,756 vs 17,574 (31.8× BEHIND), uuid
+   434,798 vs 35,766 (12.2×), iso-ts 213,267 vs 21,013 (10.1×);
+   kv-quoted 1.50× behind, bignum 1.07× behind; hex32-id 1.14× AHEAD,
+   ipv4 3.56×, ipv6 4.39×, http-5xx 15.0× ahead (U4). At 1 MB the same
+   three: 9× / 7× / 42× behind. The JIT runs 0.08-0.15 ns/byte on the
+   three — a SIMD scan of the FIXED-LENGTH PREFIX for its most
+   selective byte-position PAIR (`-` at offsets 4,7 in `\d{4}-\d{2}-`;
+   `-` at 8,13 in the uuid; `a`,`t`,` ` in `\bat `); the parity
+   patterns (all-class prefixes) have no selective position. pcrec's
+   skip looks only at offset 0, where all three start with a byte that
+   is in every line, so the transition loop runs on every byte. THE
+   GENERAL MECHANISM, asked as ONE row: candidate-start derivation from
+   any fixed offset k in the fixed-length prefix, choosing the (k,
+   byte-set) with the lowest expected frequency — the first-byte skip
+   is k=0, [OPT-5] is "absent at every k", the JIT's pair scan is two
+   k's; the frequency prior is D83's exemplar findings file (static
+   table as fallback). Exercising rows: uuid, iso-ts, stack-frame on
+   bench/loglines; the answer-identity gate is the control.
+6. A COMPILE FINDING: `level-context` = `\b(?:ERROR|FATAL|CRIT)\b
+   .{0,200}?\b(?:timeout|timed out|refused|denied|unreachable)\b`
+   under `pcrec-auto` DID NOT COMPILE: "pattern too complex for the
+   DFA engine (>32000 states; try --engine=vm)" — and auto did NOT
+   fall back to the VM, which compiles and runs it (1.55 ms/set vs the
+   JIT's 115 µs). Two questions: the selector's contract when the DFA
+   build overflows under auto; and the state count on a bounded lazy
+   repeat before a word-boundary alternation (the K23/K32 band —
+   [B11.4]'s territory, but here it is on an everyday ops pattern).
+7. ADAPTER-SIDE FINDINGS (lane b16repin, journal part 4): (a) I-7 §3's
+   ×13.45 diagnosis — the engine WAS stamped at 8da6120 (rx_info.engine
+   since abi 2); OUR reporter printed the first compile row's engine
+   under every pattern's name; fixed (it reads `selection changed
+   (vm → dfa)` now). (b) P6 as above. (c) the +30 KB. (d) the brief's
+   `docs/guide/tuning.md` does not exist — tuning.md is docs/spec/;
+   pcrec's CLAUDE.md names docs/guide/ as the human tier (D80) — is it
+   owed, or is the pointer stale?
+8. UPSTREAM (bench's upstream_findings.md, OBSERVED): U2 the JIT lacks
+   the interpreter's required-unit dismissal at 1 MB (142-175× slower
+   than interp on failing text); U3 the JIT's +2.8 ms/MB on
+   sparse-address prose; U4 the JIT 1.8× slower than interp and 15×
+   slower than pcrec on http-5xx.
+ASKS: (i) pin 35e1ab1 stays until the next pcrec change you want
+measured; the bench is idle; (ii) the offset-k skip as a plan row
+(item 5) — measured on this set before/after with the identity gate;
+(iii) a ruling on auto's overflow contract (item 6); (iv) whether the
+next sub-bench is [B11.2] wide alternations (I-2's order) or
+[B11.4] bounded-repeat, given item 6.
