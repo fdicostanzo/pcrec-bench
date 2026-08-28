@@ -76,7 +76,7 @@ form keeps the plain form's engine selection.
 The email sub-bench (`bench/email/`) is the specimen from pcrec
 docs/design/subroutines_measurements/email_specimen/ (read-only source;
 COPY the generators and patterns, cite the origin in CLAUDE.md): 85
-subjects, three 1 MB throughput subjects, objective_kind = realworld,
+subjects, three 1 MB throughput subjects (the origin's; since [B17] / email-specimen@0.2 the bench adds two generated non-periodic prose subjects beside them), objective_kind = realworld,
 objective = "RFC 5322-shaped email validation: the hand-inlined
 original and its subroutine-factored form; the factored form's
 objective is calls-as-factoring (a testee may not run the inlined
