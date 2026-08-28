@@ -164,6 +164,8 @@ orig	s-084	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 orig	t-a-valid-addrs	throughput	match	0	25	40330	libpcre2-differential	10.46 2025-08-27
 orig	t-b-no-at	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 orig	t-c-long-atom-run	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+orig	t-d-prose-sparse-addrs	throughput	match	2046	2067	496	libpcre2-differential	10.46 2025-08-27
+orig	t-e-prose-no-at	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 factored	s-000	match	match	0	16	-	libpcre2-differential	10.46 2025-08-27
 factored	s-001	match	match	0	21	-	libpcre2-differential	10.46 2025-08-27
 factored	s-002	match	match	0	6	-	libpcre2-differential	10.46 2025-08-27
@@ -329,6 +331,8 @@ factored	s-084	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 factored	t-a-valid-addrs	throughput	match	0	25	40330	libpcre2-differential	10.46 2025-08-27
 factored	t-b-no-at	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 factored	t-c-long-atom-run	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+factored	t-d-prose-sparse-addrs	throughput	match	2046	2067	496	libpcre2-differential	10.46 2025-08-27
+factored	t-e-prose-no-at	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 floor	s-000	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 floor	s-001	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 floor	s-002	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -494,3 +498,5 @@ floor	s-084	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 floor	t-a-valid-addrs	throughput	match	9	10	40330	libpcre2-differential	10.46 2025-08-27
 floor	t-b-no-at	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 floor	t-c-long-atom-run	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+floor	t-d-prose-sparse-addrs	throughput	match	2051	2052	496	libpcre2-differential	10.46 2025-08-27
+floor	t-e-prose-no-at	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27

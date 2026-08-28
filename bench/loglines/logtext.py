@@ -31,15 +31,23 @@ The shapes the patterns look for enter only through `feature_line()`, which
 the callers inject into a drawn minority of subjects. That is what sets the
 match rate; `NOTES.md` states the resulting m/n per pattern, from the oracle.
 
-THE `periodic` FACT (inbox I-10). `smallest_period()` is the manifest column's
-definition: the smallest p in 1..limit such that b[i] == b[i-p] for every
-i >= p, or None ("no") if there is none. Log text drawn field by field has
-none; the fact is COMPUTED and committed rather than claimed, because "it is
-non-periodic by construction" is exactly the kind of claim that stops being
-true when someone edits the vocabulary.
+THE `periodic` FACT (inbox I-10) is NOT defined here. It is
+`pcrecbench.periodic`, [B17]'s module for bench/email, moved into the harness
+package when this sub-bench became its second caller: the column means the
+same thing in every manifest because it is computed by the same function, not
+because two NOTES files say so. Re-exported below so both generators here can
+reach it by one name.
 """
 
+import os
 import random
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__)))))
+
+from pcrecbench.periodic import (periodic_field,  # noqa: E402,F401
+                                 smallest_period)
 
 # --------------------------------------------------------------------- rng
 
@@ -388,29 +396,3 @@ def feature_line(rng, feature):
                             rng.between(20, 990)))
         return lines
     raise ValueError("unknown feature %r" % feature)
-
-
-# ------------------------------------------------------------ the periodic
-# fact (inbox I-10). The manifest column's DEFINITION lives here.
-
-
-def smallest_period(b, limit=4096):
-    """The smallest p in 1..min(limit, len(b)-1) with b[i] == b[i-p] for every
-    i >= p, or None if there is none.
-
-    `b[p:] == b[:-p]` is exactly that condition, done as one memcmp; the
-    cheap `b[p] != b[0]` pre-test in front of it kills most candidates
-    without touching the rest of the buffer, which is what makes this
-    affordable on a 1 MB subject."""
-    n = len(b)
-    for p in range(1, min(limit, n - 1) + 1):
-        if b[p] != b[0]:
-            continue
-        if b[p:] == b[:-p]:
-            return p
-    return None
-
-
-def periodic_field(b, limit=4096):
-    p = smallest_period(b, limit)
-    return "no" if p is None else str(p)

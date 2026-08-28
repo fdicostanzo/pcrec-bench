@@ -20,10 +20,14 @@ the identical file set and the identical manifest.
 """
 import hashlib
 import os
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "subjects")
 MANIFEST = os.path.join(HERE, "manifest.tsv")
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(HERE)))
+from pcrecbench.periodic import periodic_field  # noqa: E402
 
 subjects = []  # list of (desc, bytes)
 
@@ -160,13 +164,19 @@ add("no match: digits only", "1234567890")
 
 def main():
     os.makedirs(OUT, exist_ok=True)
-    lines = ["id\tlen\tsha256\tdescription"]
+    # [B17]/I-10: `periodic` alongside manifest_throughput.tsv's column, for
+    # uniformity -- the reader (pcrecbench/subbench.py) accepts either
+    # manifest with or without it, so there is no format reason not to; the
+    # 85 subjects here are all tiny (<= 10 KB), so the smallest-period scan
+    # is cheap even for the pathological long ones.
+    lines = ["id\tlen\tsha256\tdescription\tperiodic"]
     for i, (desc, b) in enumerate(subjects):
         sid = "s-%03d" % i
         with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
             f.write(b)
-        lines.append("%s\t%d\t%s\t%s"
-                     % (sid, len(b), hashlib.sha256(b).hexdigest(), desc))
+        lines.append("%s\t%d\t%s\t%s\t%s"
+                     % (sid, len(b), hashlib.sha256(b).hexdigest(), desc,
+                        periodic_field(b)))
     with open(MANIFEST, "w", encoding="utf-8", newline="\n") as mf:
         mf.write("\n".join(lines) + "\n")
     print("gen_subjects: %d subjects -> %s, manifest -> %s"

@@ -14,7 +14,7 @@ are translated.
 
 | directory | what it is |
 |---|---|
-| `email/` | the RFC 5322 specimen: `orig.rx` (hand-inlined) and `factored.rx` (the same language via `(?&name)` calls), 85 short subjects + three 1 MB throughput subjects |
+| `email/` | the RFC 5322 specimen: `orig.rx` (hand-inlined) and `factored.rx` (the same language via `(?&name)` calls), 85 short subjects + five 1 MB throughput subjects (three periodic + two generated-prose non-periodic, [B17]/I-10) |
 | `loglines/` | LOG-LINE SEARCH over mostly-failing text ([B11.1], inbox I-7 §1): ten patterns operators grep logs with + the floor, 112 chunks of mixed-format log text at 279-3772 B (~93 % of the member cells `nomatch`) and a 16 KB - 1 MB size sweep in three flavours. Shaped around ONE axis -- whether PCRE2's required-code-unit dismissal is available for a pattern -- with three patterns where it is not available at all as the control; the measurement pcrec's [OPT-5] is built or not on. Declares `search_short` + `throughput` only, and `short_search_max_bytes = 4096` |
 
 `subjects/` and `throughput/` are GENERATED and gitignored; the
