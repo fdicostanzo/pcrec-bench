@@ -1,4 +1,6 @@
-id	len	sha256	description
-t-a-valid-addrs	1048576	e408283db8afef78b119794c8bac5b38bd4fa927279d1e5b14bb29b7dc4cdefc	1 MB of valid dot-atom addresses separated by spaces
-t-b-no-at	1048576	543b4587f6c8256d58e3e961ae708f24dc314b60d51359155063647fcc3ef867	1 MB of prose with no '@' anywhere (the prefilter case)
-t-c-long-atom-run	1048576	9bc1b2a288b26af7257a36277ae3816a7d4f16e89c1e7e77d0a5c48bad62b360	1 MB of 'a' -- one unbroken atom-class run, no '@'
+id	len	sha256	description	periodic
+t-a-valid-addrs	1048576	e408283db8afef78b119794c8bac5b38bd4fa927279d1e5b14bb29b7dc4cdefc	1 MB of valid dot-atom addresses separated by spaces	26
+t-b-no-at	1048576	543b4587f6c8256d58e3e961ae708f24dc314b60d51359155063647fcc3ef867	1 MB of prose with no '@' anywhere (the prefilter case)	55
+t-c-long-atom-run	1048576	9bc1b2a288b26af7257a36277ae3816a7d4f16e89c1e7e77d0a5c48bad62b360	1 MB of 'a' -- one unbroken atom-class run, no '@'	1
+t-d-prose-sparse-addrs	1048576	d55c0e8f4270222653652a0b0b26ed3f8d936d24926f8ffd636fcd1ad9d94242	1 MB of generated prose (seed 20260828, vocabulary of 210 varied-length words), a valid dot-atom address inserted every 200-400 words (496 addresses total)	no
+t-e-prose-no-at	1048576	ee92cda733b1ef82fb3cd477e94f668c7f2cdc7b5f7bce6c4dbf54fcbafe2e34	1 MB of generated prose (seed 20260828, vocabulary of 210 varied-length words), the same generator as t-d-prose-sparse-addrs with address insertion off -- no '@' anywhere	no

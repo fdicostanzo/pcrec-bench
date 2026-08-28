@@ -101,7 +101,12 @@ bindings) live here, vendored or system, pinned either way.
   by `docs/design/harness_contract.md`. See its CLAUDE.md.
 - `bench/<name>/` — the SUB-BENCHES: sidecar, patterns, deterministic
   generators + sha256 manifests, oracle-verified expectations, engine
-  notes. `bench/email/` is the RFC 5322 specimen. See its CLAUDE.md.
+  notes. `bench/email/` is the RFC 5322 specimen; `bench/loglines/` is the
+  log-line search set ([B11.1]) -- mostly-FAILING log text, shaped around
+  whether PCRE2's required-code-unit dismissal is available for a pattern,
+  and the measurement pcrec's [OPT-5] is built or not on. `make check`'s
+  generic gates enumerate `bench/*/` rather than naming a set. See their
+  CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
   (auto, nocaps, vm, the `-in` variants, at a pinned commit; and
   `pcrec-local`, a PROVIDED binary at no pin). See their CLAUDE.mds.
@@ -128,9 +133,13 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 69 checks: the generators reproduce their committed
-                        # manifests byte for byte, the expectations re-derive
-                        # from the libpcre2 oracle, both drivers smoke, the
+    make check-harness  # NCHECKS checks: for EVERY sub-bench under bench/ (by
+                        # enumeration, [B11.1]) the generators reproduce their
+                        # committed manifests byte for byte, every other
+                        # gen_*.py re-derives under --check, the expectations
+                        # re-derive from the libpcre2 oracle and a driver
+                        # answers the set's floor pattern by the oracle;
+                        # both drivers smoke, the
                         # deliberately-wrong fixture yields the outcome it
                         # must, the two patterns are shown NOT to be one
                         # artifact, a hanging subject comes back `timed-out`

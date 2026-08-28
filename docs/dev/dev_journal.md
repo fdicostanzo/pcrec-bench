@@ -771,3 +771,118 @@ pattern. Session total, second session: [B8], [B9], [B10], [B14], [B15]
 done; [B13] chartered; 16 commits of docs/records/reports; two windows
 with pcrecdev1 (36 + 16 min); O-1..O-6 in the outbox; KB-1 fixed, KB-2
 filed. Closes here.
+
+## 2026-08-28 (EDT, ~09:1x), third session (part 1) — wake by the pcrec manager acting AS the bench (Frank's ruling); I-5..I-13 acked; [B16], [B17], [B11.1] opened and laned
+
+pcrecdev2 is not running. Frank, in the pcrec session: "there is no
+reason you couldn't slip over there and advance that cause as needed.
+Do one repo or the other for focus … Be the bench though — use its
+journal etc." So the pcrec manager runs THIS session by the bench's own
+documents (skill, wake.md, plan, journal); the D78/BD5 file channel
+keeps its shape (the bench writes outbox, pcrec writes inbox — the same
+person on different days), BD2 holds (pcrec read-only from here).
+
+WAKE: master at 6a12716 (the last write was pcrec's I-13). Nine inbox
+items without an ack (I-5..I-13): five pcrec pins in two days (abi 4 →
+8), the reporter-v4 reading with its prediction ledger (I-7/I-8/I-11),
+the periodic-subject confound (I-10). All acked in 5faf9e5 into three
+rows: [B16] RE-PIN to 35e1ab1 (abi 8) as ONE adapter change (stamps
+RX_DFA_SCAN/PREFILTER/TABLE, RX_FAST_*, rx_info.scan/.prefilter; the
+reporter's I-7 §3/§5 rules; then the window against the 692c2e8
+records, testing P1-P7, P2's exact figure, P8'-P11'); [B17] NON-PERIODIC
+throughput subjects (two 1 MB prose subjects, seeded; a `periodic`
+manifest column; email-specimen 0.1 → 0.2 — a subject change bumps the
+version, requirements §5; measured in a second window so the cross-pin
+ledger stays at 0.1); [B11.1] SUB-BENCH #2 LOG-LINE SEARCH — the number
+pcrec's [OPT-5] (required-byte precheck) is built or not on: 8-10
+ops-style patterns each with its required literal documented and at
+least one with NONE (the control a precheck cannot help), ~100-150
+non-periodic generated log chunks of 256 B–4 KB with low match rates,
+a 16 KB→1 MB size sweep for the give-up outcome, a floor pattern, the
+libpcre2 oracle chain; patterns authored from the GOAL — the lane is
+blinded to pcrec's tests/ and src/.
+
+LANES (09:1x): b16repin (opus; testees/pcrec + report.py), b17prose
+(sonnet; bench/email), b11loglines (opus; bench/loglines + generic
+selfcheck coverage). Disjoint by directory; shared-file touches
+(subbench.py, selfcheck.py, Makefile) declared minimal. No numbers
+from lanes — the windows are mine, after merges: window A = [B16]'s
+six cells + floor at 0.1; window B = throughput at 0.2; window C =
+loglines cells at abi 8. Box idle at wake (load 0.02); libpcre2 10.46.
+Stall watchdog cron b0dc29ec, 10 min.
+
+## 2026-08-28 (EDT, ~09:5x), third session (part 2) — [B17] MERGED: email-specimen@0.2, the two prose subjects, the `periodic` column
+
+Lane b17prose (sonnet) delivered in ~45 min, one commit (6dc9236),
+merged as a78d1cc's parent. What landed: `t-d-prose-sparse-addrs`
+(1 MB of seeded prose, vocabulary of 210 varied-length words, a valid
+dot-atom address every 200-400 words — 496 addresses, checked three
+ways: the generator's count, `bytes.count(b'@')`, the oracle's find-all
+count) and `t-e-prose-no-at` (the same generator with insertion off,
+zero `@`); `bench/email/periodic.py` (I-10's definition: the smallest
+p ≤ 4096 with s[i]==s[i+p], else `no`), shared by both generators; a
+`periodic` column on BOTH manifests — the three originals re-derive to
+I-10's own 26 / 55 / 1 mechanically, the prose subjects `no`; of the 85
+short subjects only s-060 (10 KB local part) is periodic (1). The
+loader accepts 4- or 5-column manifests (a manifest that predates the
+column still loads; any other width is refused). Version 0.1 → 0.2 with
+the reason in the sidecar (requirements §5); expectations 501 rows,
+`--check` clean; make check 3/56/0, 56/56, 42/42 — unchanged counts, no
+new check (the manifest-reproduction and expectation checks cover the
+new subjects by construction).
+
+The lane's own honesty item: I-10's literal "every 200-400 words" gives
+low hundreds of addresses per MB, not the "few thousand" my brief
+guessed; it kept I-10's figure and reported the real count. Right call
+— sparse is the point (t-a has 40,330 matches; t-d's 496 makes it the
+matching-bearing subject whose cost is scan, not per-match restart).
+
+Stale-prose sweep (the lane's grep): report.py's `tiny_set … <= 3`
+per-subject-table threshold was "every throughput cell" and would
+silently drop the sub-table at 0.2 — handed to b16repin (its file);
+harness_contract §2's "three 1 MB" fixed in a78d1cc (the origin's
+three, plus two since [B17]); requirements §5's mention describes the
+ORIGIN and stays. Lane mechanics: the lane went idle twice with a
+background make check in flight (a Monitor armed, no report) — two
+pings; its ACK came as plain text, not a message. Brief line for next
+time: "the ACK and the report are SendMessage calls."
+
+## 2026-08-28 (EDT, ~10:0x), third session (part 3) — [B11.1] MERGED: bench/loglines@0.1; the set's finding BEFORE any number
+
+Lane b11loglines (opus, blinded to pcrec's tests/ and src/) delivered
+in ~50 min (b142c34; merged). The sub-bench: ten member patterns
+authored from the goal — iso-ts, ipv4, ipv6, kv-quoted, level-context,
+http-5xx, uuid, stack-frame, hex32-id, bignum — plus the floor `:`;
+112 generated log chunks (26/28/29/29 across the 256-511 / 512-1023 /
+1024-2047 / 2048-4096 B bands, every one `periodic: no`, mixed
+syslog / nginx / JSON-lines / Java stack / k8s formats, a seeded
+generator in logtext.py), match rates 6-9 % per pattern (the 95 % path
+is FAILING text, and the background is near-misses, not first-byte
+rejects); a size sweep 16 KB / 64 KB / 256 KB / 1 MB in THREE flavours
+— fail, hit, and single-source BSD syslog; regimes search_short (max
+4096 B) + throughput, no match regime (a subset — the loader accepts
+it); expectations 1,364 rows from the libpcre2 oracle; make check
+62 checks (was 50), the generic gates now ENUMERATE bench/*/ (never by
+name); the oracle chain factored into pcrecbench/expectations.py;
+periodic.py moved to pcrecbench/ (the lane hit the same shared change
+[B17] made, took master's, deleted its own — they agreed exactly).
+Cell-time estimate ≈ 9 min pcrec / 8 min pcre2 at --trials 5.
+
+THE FINDING, from `pattern_facts.tsv` (pcre2_pattern_info's FIRST and
+REQUIRED code unit per pattern, presence counts over the subjects,
+re-derived by make check): on MIXED log text every required code unit
+in the set is a STRUCTURAL byte — `:` (iso-ts, ipv6), `.` (ipv4), `-`
+(uuid), `5` (http-5xx), `"` (kv-quoted), `)` (stack-frame) — and
+`:` `.` `-` `5` occur in 112/112 search subjects; only `"` (absent in
+35/112) and `)` (absent in 16/112) leave any room for a required-byte
+dismissal to fire; level-context, hex32-id and bignum have NO required
+unit at all (the control). The first cut of the sweep had every
+required byte present in all eight large subjects — not one was the
+analogue of t-b-no-at — so the lane added the syslog flavour (no `"`,
+no `)`), on which kv-quoted and stack-frame are dismissible without a
+scan. What this says to pcrec's [OPT-5] before a single timing: the
+required-byte precheck's benefit on realistic log search is bounded by
+those presence counts — near zero on mixed text, real only for
+quote/paren-bearing shapes on single-source streams — and the
+window's numbers should be read against the counts, not against
+"failing text". Outbox item drafted at window time (O-7).

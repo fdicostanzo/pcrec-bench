@@ -6,10 +6,15 @@ check-design lesson, applied here: a check that has never been seen to fail is
 not known to be a check, so every gate below is exercised against an input it
 must reject, in the same run that exercises it against one it must accept.
 
-  manifests     both generators reproduce their committed manifests byte for
-                byte; and a SABOTAGED manifest is rejected (control).
-  expectations  expectations.tsv re-derives from the libpcre2 oracle; and a
-                sabotaged expectation is rejected (control).
+  manifests     EVERY sub-bench under bench/ ([B11.1]: enumerated, never
+                named), each generator its sidecar declares reproducing its
+                committed manifest byte for byte, plus any other `gen_*.py`
+                the directory carries re-derived through `--check`
+                (bench/loglines' pattern_facts.tsv is the first); and a
+                SABOTAGED manifest is rejected (control).
+  expectations  every sub-bench's expectations.tsv re-derives from the
+                libpcre2 oracle; and a sabotaged expectation is rejected
+                (control).
   drivers       each driver compiles a trivial pattern and answers one
                 subject at iters=1 (a SMOKE, not a measurement).
   wrong-answer  the deliberately-wrong fixture expectations in
@@ -71,8 +76,11 @@ must reject, in the same run that exercises it against one it must accept.
                 `member`; a real quick cell's record carries `role: "floor"`
                 on the right pattern; the schema's X30 rejects a record
                 declaring TWO floor patterns; and both drivers (pcre2,
-                pcrec) agree with the oracle on it -- nomatch on a subject
-                with no `@`, the first `@`'s span on one that has one.
+                pcrec) agree with the oracle on the floor pattern of EVERY
+                sub-bench ([B11.1]), on a matching and a non-matching subject
+                chosen by the EXPECTATION -- which doubles as the per-
+                sub-bench driver smoke, since it is a real adapter compiling
+                a real pattern of the set and answering real subjects of it.
   KB-1          (docs/dev/known_issues.md, FIXED) pcrec-auto's
                 runtime_options pairs `--features` with `all`, not `true`
                 with `all` silently dropped.
@@ -135,24 +143,66 @@ def run(argv, timeout=900, cwd=None):
 
 # ------------------------------------------------------------- 1 manifests
 
+def subbench_dirs():
+    """EVERY sub-bench under `bench/`, by discovery, never by name ([B11.1]).
+
+    The generic gates -- generators reproduce their manifests, expectations
+    re-derive, a driver answers the floor pattern by the oracle -- belong to
+    the sub-bench CONTRACT (harness contract 6: "bench/*/ each"), so they
+    enumerate. A gate that named `email` would have silently covered one of
+    two sub-benches the day the second landed, and the count it printed would
+    not have moved to say so."""
+    root = os.path.join(ROOT, "bench")
+    out = []
+    for name in sorted(os.listdir(root)):
+        path = os.path.join(root, name)
+        if os.path.exists(os.path.join(path, "subbench.toml")):
+            out.append((name, path))
+    return out
+
+
 def check_manifests():
     print("-- manifests reproduce byte for byte --")
-    for gen, manifest in (("gen_subjects.py", "manifest.tsv"),
-                          ("gen_throughput_subjects.py",
-                           "manifest_throughput.tsv")):
-        path = os.path.join(BENCH, manifest)
-        with open(path, "rb") as f:
-            before = f.read()
-        proc = run([sys.executable, os.path.join(BENCH, gen)])
-        if proc.returncode != 0:
-            bad(gen, proc.stderr.strip()[:200])
-            continue
-        with open(path, "rb") as f:
-            after = f.read()
-        if before == after:
-            ok(gen, "%d line(s)" % (before.count(b"\n") - 1))
-        else:
-            bad(gen, "the regenerated manifest differs from the committed one")
+    for name, bench in subbench_dirs():
+        sb = Subbench(bench)
+        subj = sb.cfg.get("subjects", {})
+        pairs = [(subj.get("generator"), subj.get("manifest", "manifest.tsv"))]
+        if subj.get("throughput_generator"):
+            pairs.append((subj["throughput_generator"],
+                          subj.get("throughput_manifest",
+                                   "manifest_throughput.tsv")))
+        # Any other committed `gen_*.py` in the directory that supports
+        # `--check` is re-derived too, by existence -- [B11.1]'s
+        # `gen_pattern_facts.py` is the first, and a sub-bench that adds
+        # another derived table gets it covered without editing this file.
+        for gen, manifest in pairs:
+            path = os.path.join(bench, manifest)
+            with open(path, "rb") as f:
+                before = f.read()
+            proc = run([sys.executable, os.path.join(bench, gen)])
+            if proc.returncode != 0:
+                bad("%s: %s" % (name, gen), proc.stderr.strip()[:200])
+                continue
+            with open(path, "rb") as f:
+                after = f.read()
+            if before == after:
+                ok("%s: %s" % (name, gen), "%d line(s)" % (before.count(b"\n") - 1))
+            else:
+                bad("%s: %s" % (name, gen),
+                    "the regenerated manifest differs from the committed one")
+        for extra in sorted(f for f in os.listdir(bench)
+                            if f.startswith("gen_") and f.endswith(".py")
+                            and f not in [p[0] for p in pairs]
+                            and f != "gen_expectations.py"):
+            proc = run([sys.executable, os.path.join(bench, extra), "--check"],
+                       timeout=1800)
+            if proc.returncode == 0:
+                ok("%s: %s --check" % (name, extra),
+                   proc.stdout.strip().splitlines()[-1]
+                   if proc.stdout.strip() else "")
+            else:
+                bad("%s: %s --check" % (name, extra),
+                    (proc.stderr or proc.stdout).strip()[:300])
 
     # CONTROL: a manifest with one byte changed must be detected. The check
     # above compares bytes, so the control is that comparison seeing a
@@ -174,13 +224,19 @@ def check_manifests():
 
 def check_expectations():
     print("-- expectations re-derive from the oracle --")
-    proc = run([sys.executable, os.path.join(BENCH, "gen_expectations.py"),
-                "--check"], timeout=1800)
-    if proc.returncode == 0:
-        ok("gen_expectations.py --check", proc.stdout.strip().splitlines()[-1]
-           if proc.stdout.strip() else "")
-    else:
-        bad("gen_expectations.py --check", proc.stderr.strip()[:300])
+    derived = 0
+    for name, bench in subbench_dirs():
+        proc = run([sys.executable, os.path.join(bench, "gen_expectations.py"),
+                    "--check"], timeout=1800)
+        if proc.returncode == 0:
+            derived += 1
+            ok("%s: gen_expectations.py --check" % name,
+               proc.stdout.strip().splitlines()[-1]
+               if proc.stdout.strip() else "")
+        else:
+            bad("%s: gen_expectations.py --check" % name,
+                proc.stderr.strip()[:300])
+    if not derived:
         return
 
     # CONTROL: a sabotaged expectations file must be REJECTED by --check.
@@ -1568,54 +1624,79 @@ def check_floor_pattern():
         bad("X30 control rejected (two role: floor patterns)",
             (proc.stderr or proc.stdout).strip()[-300:])
 
-    # both drivers agree with the oracle on the floor pattern: nomatch on a
-    # subject with no `@`, the first `@`'s span on one that has one.
-    no_at = has_at = None
+    # Both drivers agree with the oracle on the floor pattern -- on EVERY
+    # sub-bench ([B11.1]), which is also this suite's per-sub-bench driver
+    # smoke: a real adapter compiles a real pattern from the set and answers
+    # real subjects of it, and the answers are the oracle's.
+    for name, bench in subbench_dirs():
+        _floor_oracle_smoke(name, Subbench(bench))
+
+
+def _floor_oracle_smoke(name, sb):
+    """One sub-bench's floor pattern, through both drivers, against the
+    oracle's own expectations.
+
+    The two subjects are chosen BY THE EXPECTATION, not by looking for a
+    byte: one the floor is expected to match and one it is expected to miss.
+    A set whose floor matches every subject (bench/loglines' floor is `:`,
+    which every log line carries) has no missing one, so the check says so
+    and uses two matching subjects rather than reporting a failure -- the
+    pair it can get is still a real driver-vs-oracle comparison."""
+    floors = [p for p in sb.patterns if p.role == "floor"]
+    if len(floors) != 1:
+        bad("%s: exactly one floor pattern" % name,
+            "found %d: %s" % (len(floors), [p.name for p in floors]))
+        return
+    floor = floors[0].name
+    if "search_short" not in sb.regimes:
+        ok("%s: floor smoke skipped" % name,
+           "the sub-bench declares no search_short regime")
+        return
+    hits, misses = [], []
     for s in sb.subjects_for("search_short"):
-        body = sb.subject_bytes(s.subject_id)
-        if no_at is None and b"@" not in body:
-            no_at = s
-        elif has_at is None and b"@" in body:
-            has_at = s
-        if no_at and has_at:
-            break
-    if not (no_at and has_at):
-        bad("floor test subjects found (one with @, one without)",
-            "no_at=%s has_at=%s" % (no_at, has_at))
+        exp = sb.expectation(floor, s.subject_id, "search_short")
+        if exp is None:
+            continue
+        (hits if exp.matched else misses).append(s)
+    pair = ([misses[0], hits[0]] if misses and hits
+            else (hits[:2] if len(hits) >= 2 else misses[:2]))
+    note = "" if (misses and hits) else " (no non-matching subject in the set)"
+    if len(pair) != 2:
+        bad("%s: floor test subjects found" % name,
+            "%d hit(s), %d miss(es)" % (len(hits), len(misses)))
         return
     for engine, testee in (("pcre2", "pcre2-jit"), ("pcrec", "pcrec-auto")):
+        label = "%s: %s answers the floor pattern by the oracle" % (name, engine)
         adapter = _ad.discover().get(engine)
         if adapter is None:
-            bad("%s answers the floor pattern by the oracle" % engine, "no adapter")
+            bad(label, "no adapter")
             continue
         tmp = tempfile.mkdtemp(prefix="pcrecbench-floor-")
         try:
             adapter.prepare(testee, tmp)
-            cr = adapter.compile(testee, "floor", sb.pattern_bytes("floor"),
+            cr = adapter.compile(testee, floor, sb.pattern_bytes(floor),
                                  {}, 1, tmp).get(_ad.FORM_PLAIN)
             if cr.outcome != "compiled":
-                bad("%s answers the floor pattern by the oracle" % engine,
-                    "%s: %s" % (cr.outcome, cr.diagnostic))
+                bad(label, "%s: %s" % (cr.outcome, cr.diagnostic))
                 continue
             rows_by_trial, _i, _n = adapter.measure(
-                dict(cr.handle), "search_short", [no_at, has_at], 1, 1,
-                timeout=120)
+                dict(cr.handle), "search_short", pair, 1, 1, timeout=120)
             rows = {r.subject_id: r for r in rows_by_trial[0]}
-            exp_no = sb.expectation("floor", no_at.subject_id, "search_short")
-            exp_has = sb.expectation("floor", has_at.subject_id, "search_short")
-            got_no, _o, _d = outcome_for(rows[no_at.subject_id], exp_no,
-                                         "search_short", no_at)
-            got_has, _o, _d = outcome_for(rows[has_at.subject_id], exp_has,
-                                          "search_short", has_at)
-            if got_no == "matched-as-expected" and got_has == "matched-as-expected":
-                ok("%s answers the floor pattern by the oracle" % engine,
-                   "nomatch on %s (%dB), [%s,%s) on %s"
-                   % (no_at.subject_id, no_at.length, exp_has.start,
-                      exp_has.end, has_at.subject_id))
+            got = []
+            for s in pair:
+                exp = sb.expectation(floor, s.subject_id, "search_short")
+                o, _o, _d = outcome_for(rows[s.subject_id], exp,
+                                        "search_short", s)
+                got.append((s, exp, o))
+            if all(o == "matched-as-expected" for _s, _e, o in got):
+                ok(label, "%s%s" % (", ".join(
+                    "%s %s" % (s.subject_id,
+                               "nomatch" if not e.matched
+                               else "[%s,%s)" % (e.start, e.end))
+                    for s, e, _o in got), note))
             else:
-                bad("%s answers the floor pattern by the oracle" % engine,
-                    "no-@ (%s): %s; has-@ (%s): %s"
-                    % (no_at.subject_id, got_no, has_at.subject_id, got_has))
+                bad(label, "; ".join("%s: %s" % (s.subject_id, o)
+                                     for s, _e, o in got))
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
 
