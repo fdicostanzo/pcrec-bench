@@ -886,3 +886,63 @@ those presence counts — near zero on mixed text, real only for
 quote/paren-bearing shapes on single-source streams — and the
 window's numbers should be read against the counts, not against
 "failing text". Outbox item drafted at window time (O-7).
+
+## 2026-08-28 (EDT, ~10:2x), third session (part 4) — [B16] MERGED: pin 35e1ab1 (abi 8), reporter v5; four pcrec-side findings from the lane
+
+Lane b16repin (opus) delivered in ~75 min, nine commits incl. a merge
+of master; merged. The adapter: `configs.toml` pin 35e1ab1 (PIN.tsv:
+35e1ab168bf3…, archived 13:07:56Z); the shim reads RX_DFA_SCAN /
+RX_DFA_PREFILTER (abi 4+, VM hybrids at 6+), RX_FAST_FRAMES / _TRAIL
+(abi 5+, VM-only), RX_DFA_TABLE (abi 7+) and rx_info.scan / .prefilter
+(abi 6+) — the fields are read but NOT recorded: they are the CONTROL
+on the macros (`_check_agreement`: engine string vs int; prefilter
+never NULL; DFA_SCAN present iff scan non-NULL and equal; prefilter ==
+the DFA's vocabulary where a DFA scan exists, else the VM's) — and an
+abi FLOOR (PB_SHIM_MIN_ABI 6, one definition, refused by name with
+both numbers on a sabotaged `.abi = 5` fixture, the unmodified artifact
+loading in the same run as the control). Every stamp's VALUE proven on
+a real artifact of each kind (pure DFA, VM hybrid, forced VM,
+provably-empty); `-fno-premul-table` moves dfa_table to `indexed` as
+the control for the one value the corpus reaches. make check 3/56/0,
+75/75, check-report OK (49 reporter tests). Reporter v4 → v5, [B16]
+R1-R8 (pcrecbench/CLAUDE.md): the DFA mechanism legend per (testee,
+pattern, form); the fast tier; `inferred (unstamped pin)`; a give-up
+code that names the other engine turns a cross-pin ratio into
+`selection changed (vm → dfa)`; the gcc-ms band as a WITNESS that
+abstains between bands; "max is trial 1"; the >90 % `dominated` flag;
+the version bump. reports/ re-rendered, byte-identical after the merge.
+
+FOUR FINDINGS FOR pcrec (→ outbox O-7 with the window's numbers):
+1. I-7 §3 was half right and the cause is OURS. The engine WAS stamped
+   at 8da6120 (rx_info.engine exists since abi 2): the record says
+   `engine: vm` for factored and `dfa` for orig at that pin. The legend
+   printed `engine=dfa` for the whole testee because [B14] R8 sampled
+   the FIRST compile row (orig sorts first) — another pattern's value
+   under this pattern's name, not an inference from the config. Fixed
+   (R3); the ×13.45 now reads `selection changed (vm → dfa)`.
+2. P6 (I-7) is wrong on the whole-subject shape: `(?:P)\z` artifacts
+   stamp RX_DFA_SCAN "unanchored" with RX_DFA_PREFILTER
+   "byte-class-bounded" (floor: memchr → memchr-bounded), not
+   `attempt` — `attempt` is the `^`/`\A` shape. Verified on all three
+   email patterns. (I-5 had said exactly this; I-7's P6 contradicted
+   it.) The plain-vs-`\z` skip-loop asymmetry [B8] read out of emitted
+   C is now a stamp in the record.
+3. I-11's compile-size prediction ("DFA +~5 KB, VM +1-2 KB")
+   understates by ~6×: measured 692c2e8 → 35e1ab1, compile-only, same
+   basename: DFA artifacts +29,807 B plain / +34,861 B `\z` on both
+   email patterns (+66-69 %); VM +5,074 B flat. Pin by pin on
+   orig/auto: abi 4→6 +171 B; abi 7 ([OPT-3] premul) +27,495 B; abi 8
+   ([ENG-FORM]) +2,141 B — and on the tiny floor pattern abi 7 costs
+   +846 B while abi 8 costs +2,139 B: [OPT-3] scales with the machine,
+   [ENG-FORM] is ~2.14 KB FLAT per DFA artifact (the accessor block).
+   Every value pcrec said we read is unchanged; the artifact grew.
+4. My brief cited `pcrec/docs/guide/tuning.md`; pcrec has no docs/guide
+   — tuning.md is docs/spec/tuning.md (§2.12, §2.13, §3 all present).
+Bench-side correction: testees/pcrec/CLAUDE.md claimed the emitted
+`.c` does not embed the output path — false of the BASENAME (`#include
+"<basename>.h"`): `-o a.c` vs `-o aaaaaaaaaa.c` differ by 9 bytes; a
+trap for size tables, corrected in place.
+
+STATE: master = the [B16] merge; make check running on it (the lane's
+merged-tree run was green); lanes 0; cron torn down. NEXT: window A/B
+(email@0.2, six cells + floor, ~50 min), then window C (loglines).
