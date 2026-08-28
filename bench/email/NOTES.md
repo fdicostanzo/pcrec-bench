@@ -150,7 +150,7 @@ OD-B9, with the first non-PCRE2 adapter.
 |---|---|---|---|
 | `match` | all 85 | `PCRE2_ANCHORED\|PCRE2_ENDANCHORED` at 0 | 80 of 170 cells match |
 | `search_short` | the 77 of ≤ 256 B | unanchored at offset 0 | first-match span |
-| `throughput` | the three 1 MB | unanchored, find-all | first span + count |
+| `throughput` | the five 1 MB | unanchored, find-all | first span + count |
 
 The eight subjects over 256 B (the 10 KB local part, the 2000-deep
 `a.a.a…`, the 5 KB quoted strings, the 500-label domain, …) are in the
@@ -167,7 +167,7 @@ regimes over the SAME subjects `orig` and `factored` do: `search_short`
 (the first `@` found within a handful of bytes on most subjects — that
 is the point), `match` (does the WHOLE subject equal `@` — true on
 exactly one of the 85, `s-082`, "just @ sign"), and `throughput`
-(find-all `@` over the three 1 MB subjects — a memchr-class scan, not a
+(find-all `@` over the five 1 MB subjects — a memchr-class scan, not a
 regex-engine one).
 
 **Why.** pcrecdev1's reading of the first production sample
@@ -195,16 +195,85 @@ sub-bench), not a cross-engine handicap.
 The five that do not: `s-040` "invalid missing @ entirely", `s-060`
 "pathological: 10KB local part, no @ (forces full scan, nomatch)",
 `s-081` "empty subject", `s-083` "no match: random prose", `s-084` "no
-match: digits only". (The three 1 MB throughput subjects are separate:
-`t-a-valid-addrs` has 40330 `@`s, `t-b-no-at` and `t-c-long-atom-run`
-have none.) The expectations derived from the libpcre2 oracle
-(`gen_expectations.py`, 495 rows total, up from 330 with two patterns):
+match: digits only". (The five 1 MB throughput subjects are separate —
+see "Periodic and non-periodic subjects" below: `t-a-valid-addrs` has
+40330 `@`s, `t-b-no-at` and `t-c-long-atom-run` have none,
+`t-d-prose-sparse-addrs` has 496, `t-e-prose-no-at` has none.) The
+expectations derived from the libpcre2 oracle (`gen_expectations.py`,
+501 rows total — 495 at 0.1 + 3 patterns × 2 new subjects):
 
 | regime | subjects | match | nomatch |
 |---|---|---|---|
 | `match` (whole-subject `@`) | 85 | 1 (`s-082`) | 84 |
 | `search_short` (first `@`) | 77 | 73 | 4 |
-| `throughput` (find-all `@`) | 3 | `t-a-valid-addrs`: first span [9,10), 40330 matches | `t-b-no-at`, `t-c-long-atom-run`: 0 matches each |
+| `throughput` (find-all `@`) | 5 | `t-a-valid-addrs`: first span [9,10), 40330 matches; `t-d-prose-sparse-addrs`: first span [2046,2067), 496 matches | `t-b-no-at`, `t-c-long-atom-run`, `t-e-prose-no-at`: 0 matches each |
+
+## Periodic and non-periodic subjects ([B17], inbox I-10)
+
+**What I-10 found.** Instrumenting the real DFA on the original three
+throughput subjects, pcrecdev1 measured that all three are PERIODIC —
+`t-a-valid-addrs` period 26 B (the repeated `user.name@sub.example.com `
+token), `t-b-no-at` period 55 B (the repeated sentence), `t-c-long-atom-
+run` period 1 B (one repeated byte) — and that the DFA loop's one
+data-dependent branch (the return to the start state) is therefore
+perfectly learnable by a history-based branch predictor on these three:
+"on real prose (variable word lengths) it would not be, and any pcrec
+optimization that trades chain length for a data-dependent branch would
+look better here than in the field." `bench/email/periodic.py`'s
+`smallest_period` re-derives this MECHANICALLY, not by re-typing the
+figures: the smallest p in [1, 4096] with `s[i] == s[i+p]` for every
+valid i, or `no`. Both generators (`gen_subjects.py`,
+`gen_throughput_subjects.py`) call it and write a `periodic` manifest
+column; `make check` regenerates and diffs, so a re-derivation that
+disagreed with I-10's own figures would fail loudly rather than silently
+drift.
+
+**What the three periodic subjects isolate — KEPT, not replaced.**
+[OPT-3] STEP 1 and STEP 2 measure the DFA's steady-state per-byte loop
+cost; a subject with a short, exact period is the right tool for that —
+every one of a handful of distinct states repeats forever, so the number
+is close to a pure instruction-count measurement with none of a real
+corpus's data-dependent variance. Removing them would make STEP-series
+regressions noisier for no reason.
+
+**What t-d/t-e add.** `t-d-prose-sparse-addrs` and `t-e-prose-no-at` are
+generated PROSE from the SAME generator (`build_prose` in
+`gen_throughput_subjects.py`): a seeded `random.Random(GEN_SEED)`
+(`GEN_SEED = 20260828`, recorded in the generator's docstring and
+repeated in each subject's manifest description) draws words one at a
+time from a 210-word vocabulary of varying length (1-11 bytes), breaks
+them into sentences of 6-14 words with terminal punctuation (`.`/`?`/`!`)
+and an occasional line break, and — for t-d only — inserts one of eight
+varied-form valid dot-atom addresses roughly every 200-400 words. t-e
+runs the identical process with address insertion turned off. Neither is
+periodic up to the 4096 B bound `periodic.py` checks (`no` in the
+manifest for both), by construction: a PRNG choosing among 210
+variable-length tokens has no short exact repeat over a 1 MB span.
+
+**The counts, measured, not assumed.** t-d inserted **496** addresses
+into 1 MB (`build_prose`'s own `addr_count`, cross-checked against
+`d_bytes.count(b"@") == addr_count` in the generator and against the
+libpcre2 oracle's find-all count in `expectations.tsv` — both agree:
+496). That is NOT "a few thousand" as a first scratch estimate of this
+row guessed — reported here rather than papered over: I-10's own gap
+figure ("roughly every 200-400 words") taken literally, over this
+vocabulary's ~5.5 bytes/word average (words + spacing + punctuation),
+yields ~185k words per MB, so a ~300-word average gap produces low
+hundreds of insertions, not thousands; hitting literally "a few
+thousand" would need either a far shorter average word (unrealistic for
+"prose") or a gap far under 200 words (contradicting I-10's own figure).
+The 200-400 word gap was kept literal over the round-number aspiration.
+t-e has **zero** `@` bytes (asserted in the generator, confirmed by the
+oracle: `nomatch`, 0 matches, on all three patterns).
+
+**Why this satisfies I-10's request.** "At least one NON-PERIODIC
+subject per throughput construction, beside the periodic ones" — t-d is
+the non-periodic counterpart to `t-a-valid-addrs` (an engine finds
+matches, but not on a predictable cadence); t-e is the non-periodic
+counterpart to `t-b-no-at`/`t-c-long-atom-run` (an engine scans the
+whole subject and finds nothing, but the bytes it scans do not repeat).
+A "branch-predictor-friendly" reading of a per-byte number can now
+compare a subject's `periodic` column against its throughput row.
 
 **MEASURED, scratch tier, under load — direction only, never a
 measurement** (`pcrecbench quick --subbench email --pattern floor

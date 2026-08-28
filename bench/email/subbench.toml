@@ -4,7 +4,17 @@
 # when it lands.
 
 id = "email-specimen"
-version = "0.1"
+# [B17] 2026-08-28: 0.1 -> 0.2 (requirements.md 5: "bumping is a deliberate,
+# logged event" -- any change to a pattern, subject or expectation makes
+# existing records incomparable). Reason: inbox I-10's non-periodic
+# throughput subjects -- `t-d-prose-sparse-addrs` and `t-e-prose-no-at`
+# added to manifest_throughput.tsv (both manifests also gain a `periodic`
+# column). No pattern text changed and the three original throughput
+# subjects plus all 85 short subjects are byte-identical to 0.1's -- only
+# the manifest shape and the throughput subject SET changed, which is
+# still a version-comparability boundary: a `pcrecbench run` at 0.1 has 3
+# throughput subjects, at 0.2 it has 5, and the two are not the same cell.
+version = "0.2"
 objective_kind = "realworld"
 objective = """\
 RFC 5322-shaped email validation: the hand-inlined original and its \
@@ -17,8 +27,10 @@ address pattern, and `factored.rx`, the same language with its four textually \
 repeated sub-languages (atom, qchar, label, octet) named with the `{0}` \
 callee idiom and reached by `(?&name)` calls. 85 short subjects across valid \
 dot-atom, quoted-local, IPv4-literal and bracket-general forms, their \
-near-misses, and eight pathological/long cases; three 1 MB throughput \
-subjects. The pair is the bench's first real member of the \
+near-misses, and eight pathological/long cases; five 1 MB throughput \
+subjects (three periodic constructions plus two generated-prose subjects, \
+[B17]/I-10, isolating steady-state loop cost and non-periodic branch \
+behavior respectively). The pair is the bench's first real member of the \
 calls-as-FACTORING population, and the interesting axis is what an engine \
 pays for the factoring."""
 
