@@ -810,3 +810,39 @@ from lanes — the windows are mine, after merges: window A = [B16]'s
 six cells + floor at 0.1; window B = throughput at 0.2; window C =
 loglines cells at abi 8. Box idle at wake (load 0.02); libpcre2 10.46.
 Stall watchdog cron b0dc29ec, 10 min.
+
+## 2026-08-28 (EDT, ~09:5x), third session (part 2) — [B17] MERGED: email-specimen@0.2, the two prose subjects, the `periodic` column
+
+Lane b17prose (sonnet) delivered in ~45 min, one commit (6dc9236),
+merged as a78d1cc's parent. What landed: `t-d-prose-sparse-addrs`
+(1 MB of seeded prose, vocabulary of 210 varied-length words, a valid
+dot-atom address every 200-400 words — 496 addresses, checked three
+ways: the generator's count, `bytes.count(b'@')`, the oracle's find-all
+count) and `t-e-prose-no-at` (the same generator with insertion off,
+zero `@`); `bench/email/periodic.py` (I-10's definition: the smallest
+p ≤ 4096 with s[i]==s[i+p], else `no`), shared by both generators; a
+`periodic` column on BOTH manifests — the three originals re-derive to
+I-10's own 26 / 55 / 1 mechanically, the prose subjects `no`; of the 85
+short subjects only s-060 (10 KB local part) is periodic (1). The
+loader accepts 4- or 5-column manifests (a manifest that predates the
+column still loads; any other width is refused). Version 0.1 → 0.2 with
+the reason in the sidecar (requirements §5); expectations 501 rows,
+`--check` clean; make check 3/56/0, 56/56, 42/42 — unchanged counts, no
+new check (the manifest-reproduction and expectation checks cover the
+new subjects by construction).
+
+The lane's own honesty item: I-10's literal "every 200-400 words" gives
+low hundreds of addresses per MB, not the "few thousand" my brief
+guessed; it kept I-10's figure and reported the real count. Right call
+— sparse is the point (t-a has 40,330 matches; t-d's 496 makes it the
+matching-bearing subject whose cost is scan, not per-match restart).
+
+Stale-prose sweep (the lane's grep): report.py's `tiny_set … <= 3`
+per-subject-table threshold was "every throughput cell" and would
+silently drop the sub-table at 0.2 — handed to b16repin (its file);
+harness_contract §2's "three 1 MB" fixed in a78d1cc (the origin's
+three, plus two since [B17]); requirements §5's mention describes the
+ORIGIN and stays. Lane mechanics: the lane went idle twice with a
+background make check in flight (a Monitor armed, no report) — two
+pings; its ACK came as plain text, not a message. Brief line for next
+time: "the ACK and the report are SendMessage calls."
