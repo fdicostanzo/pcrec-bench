@@ -128,7 +128,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 50 checks: the generators reproduce their committed
+    make check-harness  # 69 checks: the generators reproduce their committed
                         # manifests byte for byte, the expectations re-derive
                         # from the libpcre2 oracle, both drivers smoke, the
                         # deliberately-wrong fixture yields the outcome it
@@ -150,7 +150,16 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # reduction matches a hand-computed median, a `quick`
                         # cell's printed median is recomputed from its file,
                         # and pcrec-local describes, runs and is refused
-                        # into a canonical store
+                        # into a canonical store; and ([B16]) the pcrec abi
+                        # 4-8 mechanism stamps are asserted BY VALUE on a
+                        # real artifact of each KIND (pure DFA, VM hybrid,
+                        # non-hybrid VM, provably-empty), both directions of
+                        # the _DFA_* scope iff, `-fno-premul-table` reaching
+                        # RX_DFA_TABLE's other value (the control that keeps
+                        # a stamp distinguishable from a constant), and an
+                        # artifact whose rx_info.abi is SABOTAGED below
+                        # shim.c's floor refused BY NAME with the unmodified
+                        # one loading in the same run
                         # (~4 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets
