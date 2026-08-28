@@ -1,0 +1,202 @@
+# The log-line-search sub-bench SIDECAR (harness contract 2, requirements 5).
+# Fields only, no grammar, no directives, no includes -- [DD-13]'s territory
+# is deliberately untouched, so the unified format absorbs this mechanically
+# when it lands.
+
+id = "loglines"
+version = "0.1"
+objective_kind = "realworld"
+objective = """\
+Log-line search over mostly-FAILING text: what an engine pays to establish \
+that a chunk of log lines does NOT contain the shape an operator is grepping \
+for, at the sizes a log shipper hands a matcher (256 B - 4 KB) and across a \
+size sweep to 1 MB. The set contains both cases the answer turns on -- \
+patterns whose match requires a literal byte, which a required-byte precheck \
+can dismiss a subject on, and patterns built only from classes, which no \
+such precheck can help."""
+description = """\
+Ten patterns an operator actually greps logs with -- an ISO-8601 timestamp, \
+a bounded-octet IPv4, a colon-hex IPv6 shape, `key="quoted value"`, a level \
+filter with a context word, an HTTP access line with a 5xx status, a UUID, a \
+Java stack frame, a 32-hex trace id and a 10-19 digit number -- over 112 \
+chunks of mixed-format log text (syslog, nginx access and error, klog, \
+JSON-lines, journald, Java stack traces), 279-3772 B, non-periodic by \
+construction, plus a 16 KB / 64 KB / 256 KB / 1 MB size sweep in a failing \
+and a matching-bearing flavour. Every member pattern matches 6-9 % of the \
+search-band subjects, so ~93 % of the (pattern, subject) cells are the \
+failing path this set exists to time. The last two patterns are the CONTROL: \
+they contain no literal byte at all, so an engine that dismisses a subject \
+by looking for a required byte gets no help on them and must scan. See \
+NOTES.md for the required-literal column, the m/n per pattern, and what \
+would defeat the objective."""
+
+# NO `match` REGIME, and it is a declaration, not an omission -- NOTES.md
+# "Regimes" has the reasoning: a chunk of log lines is not a candidate string
+# to validate whole, anchoring one yields `nomatch` on every subject and every
+# pattern, and the harness would compile a second artifact per pattern to
+# measure it. `subjects_for()`/`run_cell()` take a declared subset as-is.
+regimes = ["search_short", "throughput"]
+
+# THE MEMBERS. `feature_tier` names the pcrec modules a pattern needs beyond
+# the parser core: `base` is the frozen `std1` set (classes, modifiers) and
+# `base+assertions` adds `\b`, which is built but not in `std1`. Every pcrec
+# testee already passes `--features all` (a TESTEE flag, not a pattern
+# variant -- the pattern text is byte-identical either way; the same note as
+# bench/email's). `required_literal` is NOT a field here: it is PCRE2's own
+# analysis, derived per pattern into `pattern_facts.tsv` by
+# `gen_pattern_facts.py` and tabulated in NOTES.md, never hand-typed.
+
+[[patterns]]
+name = "iso-ts"
+file = "patterns/iso-ts.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["logs", "timestamp", "iso8601", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "ipv4"
+file = "patterns/ipv4.rx"
+feature_tier = "base"
+hazard_class = "ambiguous-decomposition"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["logs", "address", "bounded-octets", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "ipv6"
+file = "patterns/ipv6.rx"
+feature_tier = "base"
+hazard_class = "ambiguous-decomposition"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["logs", "address", "colon-hex", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "kv-quoted"
+file = "patterns/kv-quoted.rx"
+feature_tier = "base+assertions"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["logs", "key-value", "quoted-string", "tier-assertions"]
+role = "member"
+
+[[patterns]]
+name = "level-context"
+file = "patterns/level-context.rx"
+feature_tier = "base+assertions"
+hazard_class = "none"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["logs", "level-filter", "lazy-gap", "two-token", "tier-assertions"]
+role = "member"
+
+[[patterns]]
+name = "http-5xx"
+file = "patterns/http-5xx.rx"
+feature_tier = "base+assertions"
+hazard_class = "none"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["logs", "access-log", "status-filter", "tier-assertions"]
+role = "member"
+
+[[patterns]]
+name = "uuid"
+file = "patterns/uuid.rx"
+feature_tier = "base+assertions"
+hazard_class = "none"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["logs", "identifier", "uuid", "tier-assertions"]
+role = "member"
+
+[[patterns]]
+name = "stack-frame"
+file = "patterns/stack-frame.rx"
+feature_tier = "base+assertions"
+hazard_class = "ambiguous-decomposition"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["logs", "stack-trace", "java", "tier-assertions"]
+role = "member"
+
+[[patterns]]
+# CONTROL 1 of 2: classes only, no literal byte anywhere.
+name = "hex32-id"
+file = "patterns/hex32-id.rx"
+feature_tier = "base+assertions"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["logs", "identifier", "class-only", "no-required-literal", "control",
+        "tier-assertions"]
+role = "member"
+
+[[patterns]]
+# CONTROL 2 of 2: classes only, and a VARIABLE length where `hex32-id` is
+# fixed -- so the control is not one shape twice.
+name = "bignum"
+file = "patterns/bignum.rx"
+feature_tier = "base+assertions"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["logs", "identifier", "class-only", "no-required-literal", "control",
+        "tier-assertions"]
+role = "member"
+
+[[patterns]]
+# THE FLOOR PATTERN (requirements 5, the rule since [B15]): one literal byte,
+# `role = "floor"`, run over the same subjects as the members so their
+# per-call numbers read against the harness's own per-call overhead. `:` is
+# this corpus's `@`: structural in every log format here, so it is found
+# within the first line of every subject and the number is dispatch, not
+# scanning. See NOTES.md, "The floor pattern".
+name = "floor"
+file = "patterns/floor.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["floor", "control", "one-literal"]
+role = "floor"
+
+[subjects]
+generator = "gen_subjects.py"
+manifest = "manifest.tsv"
+throughput_generator = "gen_throughput_subjects.py"
+throughput_manifest = "manifest_throughput.tsv"
+# 4096, not bench/email's 256: requirements 3 sizes the short-search regime at
+# "~256-byte subjects (log lines, fields)" and a single log LINE is that, but
+# what a shipper, a grep or an agent hands a matcher is a CHUNK of lines. The
+# band is declared here and `subbench.py` reads it from here -- the 256 in the
+# requirements note is bench/email's value, not the loader's.
+short_search_max_bytes = 4096
+
+[expectations]
+file = "expectations.tsv"
+default_method = "libpcre2-differential"
+
+# Per-testee notes. No testee runs a VARIANT of any pattern in this sub-bench:
+# all eleven are canonical PCRE2 spellings and every adapter runs the
+# canonical text (requirements 4.5 -- the record still STATES that, as
+# `patterns[].variant = null`). `options` is empty for both engines: the
+# patterns carry their own semantics inline and neither adapter passes a
+# compile option. See NOTES.md.
+[testees.pcre2]
+options = {}
+
+[testees.pcrec]
+options = {}
+# Eight of the eleven patterns use `\b`, whose module (`assertions`) is BUILT
+# but is not in pcrec's default `std1` feature set, so they are refused under
+# the bare default with "requires module 'assertions'". `--features all` is
+# already on every pcrec testee config for bench/email's sake; it is a
+# build/run flag of the TESTEE, not a variant of the pattern, and the pattern
+# text handed to pcrec is byte-identical either way.

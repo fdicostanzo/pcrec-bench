@@ -1,0 +1,9 @@
+id	len	sha256	description	periodic
+t-016k-fail	16403	31c1616f2ad7bab3f632d18f4d4e6d411ac75186490f871cc5f5e73c19eb1d47	16 KB of background log text, NO member shape anywhere (the failing path; the analogue of bench/email's t-b-no-at)	no
+t-016k-hit	16447	75ecc27d79f000aaf0e04f656ea5914451b9a4fb6fc1de060c3994e44920e491	16 KB of the same log text with one instance of every member shape per 4096 B (the matching-bearing counterpart)	no
+t-064k-fail	65555	0e12cd0124d8071cc4da1ce69ef96917f80fc68e954bba86583ded1f5092a84c	64 KB of background log text, NO member shape anywhere (the failing path; the analogue of bench/email's t-b-no-at)	no
+t-064k-hit	65548	9b97b22a26627c72716996566a490902a4b49b326552aa5d23b06db5bd075843	64 KB of the same log text with one instance of every member shape per 4096 B (the matching-bearing counterpart)	no
+t-256k-fail	262216	2f301450a3b29ee74f845f21ec2e85c6dbdb6b74ed95d75776f57c420011c6e1	256 KB of background log text, NO member shape anywhere (the failing path; the analogue of bench/email's t-b-no-at)	no
+t-256k-hit	262185	ac6d97b0f0dd2854801dd264d2bbef353d7e83d918b417ec79585410fa9944ea	256 KB of the same log text with one instance of every member shape per 4096 B (the matching-bearing counterpart)	no
+t-1024k-fail	1048684	8279c2ed7cddbf419c802ced9c29c1982a648ed930479842a40a29d66b9973f2	1024 KB of background log text, NO member shape anywhere (the failing path; the analogue of bench/email's t-b-no-at)	no
+t-1024k-hit	1048656	9b6b1ef5b82067c2bf1a8ff990ca1add72bafda5e91527eb3ae250880e0c293f	1024 KB of the same log text with one instance of every member shape per 4096 B (the matching-bearing counterpart)	no

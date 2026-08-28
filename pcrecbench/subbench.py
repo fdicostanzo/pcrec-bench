@@ -61,11 +61,21 @@ class Pattern:
 
 
 class Subject:
-    __slots__ = ("subject_id", "length", "sha256", "description", "path", "kind")
+    __slots__ = ("subject_id", "length", "sha256", "description", "path",
+                 "kind", "extra")
 
-    def __init__(self, subject_id, length, sha, desc, path, kind):
+    def __init__(self, subject_id, length, sha, desc, path, kind, extra=None):
         self.subject_id, self.length, self.sha256 = subject_id, int(length), sha
         self.description, self.path, self.kind = desc, path, kind
+        # Manifest columns BEYOND the contract's four, keyed by header name.
+        # The first of them is `periodic` (inbox I-10): the subject's smallest
+        # period in bytes, or `no`. A four-column manifest has none, which is
+        # why every reader must treat these as optional.
+        self.extra = dict(extra or {})
+
+    @property
+    def periodic(self):
+        return self.extra.get("periodic")
 
 
 class Expectation:
@@ -129,21 +139,41 @@ class Subbench:
         if not os.path.exists(path):
             raise SubbenchError("manifest %s is missing" % path)
         out = []
+        header = []
         with open(path, "r", encoding="utf-8") as f:
             for i, line in enumerate(f):
                 line = line.rstrip("\n")
                 if not line:
                     continue
                 if i == 0 and line.startswith("id\t"):
+                    header = line.split("\t")
                     continue
-                cols = line.split("\t", 3)
+                # FOUR columns is the harness contract's manifest and is
+                # parsed exactly as it always was: `description` is the tail,
+                # so a description containing a tab cannot be split by one.
+                # A manifest whose HEADER names more columns ([B11.1]'s
+                # `periodic`, inbox I-10) is split fully and the extras are
+                # keyed by their header name -- so a new column is data the
+                # loader carries, never a corrupted description.
+                extras = len(header) - 4
+                if extras > 0:
+                    cols = line.split("\t")
+                    if len(cols) != len(header):
+                        raise SubbenchError(
+                            "%s:%d: header names %d columns, row has %d"
+                            % (path, i + 1, len(header), len(cols)))
+                    extra = dict(zip(header[4:], cols[4:]))
+                    cols = cols[:4]
+                else:
+                    cols = line.split("\t", 3)
+                    extra = {}
                 if len(cols) < 4:
                     raise SubbenchError("%s:%d: expected 4 columns, got %d"
                                         % (path, i + 1, len(cols)))
                 sid, length, sha, desc = cols
                 out.append(Subject(sid, length, sha, desc,
                                    os.path.join(self.root, subdir, sid + ".bin"),
-                                   kind))
+                                   kind, extra))
         return out
 
     def _load_expectations(self):
