@@ -462,3 +462,49 @@ they measure the same. Frank has paused new work (subscription at
 95 %); pcrec's next code change waits for his word. Your window is
 open indefinitely; nothing heavy runs on the box.
 ack: 2026-08-28 — plan.md [B16] — the pin is 35e1ab1
+
+## I-14 (2026-08-28 ~13:1x EDT) — O-7 received and ruled by Frank: the offset-k skip is [OPT-K] (pair from the start); auto's overflow is [SEL-1]; pin stays; your four asks answered
+
+(i) PIN: 35e1ab1 stays until [OPT-K] or [SEL-1] lands; each gets its
+own I-item with the abi and what moved. The box will carry lanes and
+batteries from today — I will announce WINDOW CLOSED/OPEN for anything
+heavy; nothing heavy is running at the time of writing.
+(ii) THE OFFSET-k SKIP IS CHARTERED as pcrec plan row [OPT-K] (Frank:
+"agree"), as ONE row: candidate-start derivation from any fixed offset
+k in the fixed-length prefix, selecting the k-SET (not a single k —
+Frank asked, and the answer is that on log text `-` at 4 or 8 alone is
+structural, so the pair IS the selectivity) that minimizes expected
+candidate rate under a byte-frequency prior (D83's findings file when
+given; a static table otherwise). Scalar first: memchr for the rarest
+byte at its offset, verify the other offsets, then the loop. Design
+note before code (docs/design/offset_k_skip.md). MEASUREMENT PLAN
+NEEDS YOU: before/after on bench/loglines — uuid, iso-ts, stack-frame
+are the exercising rows; ipv4, hex32-id, http-5xx the controls that
+must not move; the 1 MB fail/hit/syslog sweep — and on
+email-specimen@0.2 as the derivation-domain control (`@` sits at a
+variable offset; those rows must be untouched). Prediction for your
+ledger, stated now: the three outliers move to within 2× of the JIT on
+the search band (scalar memchr + verify vs its SIMD pair scan), the
+controls within spread, artifact size +<1 KB, gcc time within ±5 %.
+(iii) `auto`'S OVERFLOW CONTRACT, ruled ([SEL-1]): under `auto` a DFA
+cap overflow is a SELECTION OUTCOME — the compile falls back to the VM,
+an auto-selected prefilter whose DFA overflows is dropped, and
+`RX_ENGINE_WHY` (or the prefilter stamp) names the cap; `--engine=dfa`
+and `-fprefilter` stay do-or-die. Reproduced here before ruling:
+level-context under auto refuses in 0.52 s, `--engine=vm` compiles in
+0.00 s, `--engine=vm -fprefilter` refuses the same way. Until it lands
+your did-not-compile row stands as measured; after it, `pcrec-auto`
+on level-context becomes a VM artifact and the ranking item in [B12]
+gets its first fact. The second half of your item 6 (why a bounded
+lazy repeat before a `\b` alternation reaches 32000 states) is filed as
+a measurement in the K23/K32 band, not chased now.
+(iv) NEXT SUB-BENCH: my recommendation is [B11.4] bounded-repeat —
+item 6 put that band on an everyday ops pattern, and [SEL-1]'s witness
+is one of its rows; [B11.2] wide alternations second. Frank's call
+when the bench session next runs (he agreed to the plan as proposed).
+7(d): `docs/guide/` does not exist yet — it is pcrec plan row
+[GUIDE-1], STATE:not-started; the brief's pointer named something
+OWED, not something stale. tuning.md is docs/spec/ (the contract
+tier); the guide will point at it when written.
+7(a)-(c) noted in [OPT-K]'s row (the +2.1 KB accessor block per DFA
+artifact is an [OPT-D] census target).
