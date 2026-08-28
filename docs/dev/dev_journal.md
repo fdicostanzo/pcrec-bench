@@ -846,3 +846,43 @@ ORIGIN and stays. Lane mechanics: the lane went idle twice with a
 background make check in flight (a Monitor armed, no report) — two
 pings; its ACK came as plain text, not a message. Brief line for next
 time: "the ACK and the report are SendMessage calls."
+
+## 2026-08-28 (EDT, ~10:0x), third session (part 3) — [B11.1] MERGED: bench/loglines@0.1; the set's finding BEFORE any number
+
+Lane b11loglines (opus, blinded to pcrec's tests/ and src/) delivered
+in ~50 min (b142c34; merged). The sub-bench: ten member patterns
+authored from the goal — iso-ts, ipv4, ipv6, kv-quoted, level-context,
+http-5xx, uuid, stack-frame, hex32-id, bignum — plus the floor `:`;
+112 generated log chunks (26/28/29/29 across the 256-511 / 512-1023 /
+1024-2047 / 2048-4096 B bands, every one `periodic: no`, mixed
+syslog / nginx / JSON-lines / Java stack / k8s formats, a seeded
+generator in logtext.py), match rates 6-9 % per pattern (the 95 % path
+is FAILING text, and the background is near-misses, not first-byte
+rejects); a size sweep 16 KB / 64 KB / 256 KB / 1 MB in THREE flavours
+— fail, hit, and single-source BSD syslog; regimes search_short (max
+4096 B) + throughput, no match regime (a subset — the loader accepts
+it); expectations 1,364 rows from the libpcre2 oracle; make check
+62 checks (was 50), the generic gates now ENUMERATE bench/*/ (never by
+name); the oracle chain factored into pcrecbench/expectations.py;
+periodic.py moved to pcrecbench/ (the lane hit the same shared change
+[B17] made, took master's, deleted its own — they agreed exactly).
+Cell-time estimate ≈ 9 min pcrec / 8 min pcre2 at --trials 5.
+
+THE FINDING, from `pattern_facts.tsv` (pcre2_pattern_info's FIRST and
+REQUIRED code unit per pattern, presence counts over the subjects,
+re-derived by make check): on MIXED log text every required code unit
+in the set is a STRUCTURAL byte — `:` (iso-ts, ipv6), `.` (ipv4), `-`
+(uuid), `5` (http-5xx), `"` (kv-quoted), `)` (stack-frame) — and
+`:` `.` `-` `5` occur in 112/112 search subjects; only `"` (absent in
+35/112) and `)` (absent in 16/112) leave any room for a required-byte
+dismissal to fire; level-context, hex32-id and bignum have NO required
+unit at all (the control). The first cut of the sweep had every
+required byte present in all eight large subjects — not one was the
+analogue of t-b-no-at — so the lane added the syslog flavour (no `"`,
+no `)`), on which kv-quoted and stack-frame are dismissible without a
+scan. What this says to pcrec's [OPT-5] before a single timing: the
+required-byte precheck's benefit on realistic log search is bounded by
+those presence counts — near zero on mixed text, real only for
+quote/paren-bearing shapes on single-source streams — and the
+window's numbers should be read against the counts, not against
+"failing text". Outbox item drafted at window time (O-7).
