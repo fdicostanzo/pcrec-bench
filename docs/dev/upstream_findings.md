@@ -24,3 +24,38 @@ backtracking through the subroutine calls and does not return within
 separate the two hypotheses; if the JIT genuinely lacks the prescan on
 call-bearing patterns, that is reportable. Reporter note: the reporter
 labels this cell "(other)" — `timed-out` needs its own label (OD-B11).
+
+## U2 — libpcre2 10.46 JIT does NOT get the interpreter's whole-subject required-code-unit dismissal on a 1 MB failing subject: 2.4-3.2 ms where the interpreter answers in 18 µs (OBSERVED 2026-08-25 at 692c2e8, re-observed 2026-08-28 on `email-specimen@0.2`)
+
+Records `email-specimen@0.2__libpcre2_10.46_{interp,jit}-caps-simdna__budu-ryzen1600__20260828T14{5051,1718}Z`,
+pattern `orig`, subjects `t-b-no-at`, `t-c-long-atom-run`, and the
+non-periodic `t-e-prose-no-at` (1 MB each, no `@`; `@` is the
+pattern's required code unit per `pcre2_pattern_info`). Interpreter:
+17,985 / 17,957 / 18,077 ns per call — a memchr over the subject and a
+clean nomatch (0.017 ns/byte). JIT: 2,563,985 / 2,819,272 / 3,157,857
+ns — the full scan (2.4-3.0 ns/byte), 142-175× the interpreter on the
+same failing text. First stated in pcrec's inbox I-7 §1 (2026-08-26)
+from the 0.1 records. Reading (unverified against the source): the
+required-code-unit check (`req_cu`) is applied in `pcre2_match`'s
+start-of-match phase and is not part of the JIT's compiled prologue, or
+is capped by REQ_CU_MAX (5000) there while the interpreter's memchr
+path is not. Next: `pcre2test` with `jit` vs `no_jit` and
+`no_start_optimize` on the same subject; if the JIT genuinely lacks
+the check on a plain (non-call-bearing) pattern, that is reportable.
+Status: OBSERVED.
+
+## U3 — libpcre2 10.46 JIT pays ~2.8 ms/MB MORE on prose with 496 sparse addresses than on address-free prose, where pcrec's DFA pays the same on both (OBSERVED 2026-08-28, `email-specimen@0.2`)
+
+Same records; `orig`, `t-d-prose-sparse-addrs` (1 MB generated prose,
+496 valid addresses, seed 20260828) vs `t-e-prose-no-at` (the same
+generator, no `@`). JIT: 5,966,412 vs 3,157,857 ns (5.69 vs 3.01
+ns/byte, +2.81 ms); pcrec DFA (auto): 3,138,983 vs 3,106,092 (2.99
+vs 2.96 — bytes, not matches); interpreter 93,875,421 vs 18,077 (the
+required-unit check turns off once `@` is present, and the backtracking
+on `word.` near-miss tokens costs 89.5 ns/byte). 496 find-all matches
+cannot explain 2.8 ms (5.6 µs per match), so the JIT's extra cost is
+per NEAR-MISS token (every `word.`/`word,` before a `@`-bearing address
+is found), the same backtracking shape the interpreter pays 30× more
+for. Status: OBSERVED; a pcre2test `find-all` count over t-d with
+`jit` timing per iteration would separate per-match from per-near-miss
+cost.
