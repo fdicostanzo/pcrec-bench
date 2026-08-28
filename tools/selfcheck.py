@@ -76,6 +76,22 @@ must reject, in the same run that exercises it against one it must accept.
   KB-1          (docs/dev/known_issues.md, FIXED) pcrec-auto's
                 runtime_options pairs `--features` with `all`, not `true`
                 with `all` silently dropped.
+  stamps        ([B16]) the abi 4-8 mechanism stamps, on a real artifact of
+                each KIND at the pin, asserted by VALUE: a pure DFA
+                artifact, a VM HYBRID, a non-hybrid VM artifact and a
+                provably-empty one. Plus the two SCOPE rules in both
+                directions (a hybrid carries all three `_DFA_*` pairs; a
+                non-hybrid VM carries none) and the fast tier's own scope.
+  dfa_table     ([B16]) `-fno-premul-table` moves `RX_DFA_TABLE` from
+                `premultiplied` to `indexed` -- the control that
+                distinguishes a working stamp from a constant, since the
+                corpus reaches only one of the four values.
+  abi floor     ([B16], the SABOTAGE) an artifact whose `rx_info.abi` is
+                edited below `shim.c`'s `PB_SHIM_MIN_ABI` is REFUSED by
+                name, carrying both numbers, with the unmodified artifact
+                loading fine in the same run as the control -- and the
+                token the adapter watches for checked against the
+                diagnostic the driver actually produced.
 
 Everything runs under gnutimeout with LC_ALL=C. Nothing here writes into the
 real store: the smoke uses a scratch store under the build tree.
@@ -92,6 +108,7 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, ROOT)
 
 from pcrecbench import adapters as _ad                    # noqa: E402
+from pcrecbench.driverrun import build_driver, run_driver  # noqa: E402
 from pcrecbench.harness import outcome_for                # noqa: E402
 from pcrecbench.subbench import Subbench, Expectation     # noqa: E402
 
@@ -805,6 +822,21 @@ def check_calibration_meets_target():
 
 # ------------------------------------------ 9 the caller-provided frame buffer
 
+def _shim_min_abi():
+    """`PB_SHIM_MIN_ABI` read out of `testees/pcrec/shim.c` itself, so this
+    file keeps no second copy of the number. `None` if the macro is not
+    found -- the caller then checks only what it can."""
+    import re as _re
+    path = os.path.join(ROOT, "testees", "pcrec", "shim.c")
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            m = _re.search(r"^#define\s+PB_SHIM_MIN_ABI\s+(\d+)", f.read(),
+                           _re.M)
+    except OSError:
+        return None
+    return int(m.group(1)) if m else None
+
+
 def check_frame_buffer():
     """THE CONTROLS FOR THE `_in` PATH (pcrec match_api.md 10, [DD-14.FB]).
 
@@ -946,15 +978,26 @@ def check_frame_buffer():
         dfa_meta = dfa.engine_metadata if dfa.outcome == "compiled" else {}
         sizing = ("resume_frames", "trail_frames", "resume_frame_size",
                   "trail_frame_size")
+        # The abi is READ, not asserted to be a literal ([B16]). This check
+        # pinned `abi == 3` and had to be edited at every re-pin, which
+        # makes it a check of this file's edit history rather than of the
+        # bench. What it actually needs to hold is: one abi across every
+        # artifact of both engines (a mixed set would mean two pcrecs got
+        # into one run), at or above the floor shim.c declares -- and the
+        # floor is IMPORTED from shim.c, never retyped here.
         abis = {m.get("abi") for m in (plain_meta, in_meta, vm_meta, dfa_meta)}
-        if abis == {3} and all(k in m for m in (vm_meta, dfa_meta)
-                               for k in sizing):
-            ok("abi == 3 and the sizing pairs on every compile row",
-               "4 artifacts, both engines, all abi 3")
+        floor = _shim_min_abi()
+        if (len(abis) == 1 and None not in abis
+                and (floor is None or next(iter(abis)) >= floor)
+                and all(k in m for m in (vm_meta, dfa_meta) for k in sizing)):
+            ok("one abi, at or above the shim's floor, + the sizing pairs",
+               "4 artifacts, both engines, all abi %d (shim floor %s)"
+               % (next(iter(abis)), floor))
         else:
-            bad("abi == 3 and the sizing pairs on every compile row",
-                "abi values %s; sizing pairs present: vm %s, dfa %s"
-                % (sorted(abis, key=str),
+            bad("one abi, at or above the shim's floor, + the sizing pairs",
+                "abi values %s (shim floor %s); sizing pairs present: vm %s, "
+                "dfa %s"
+                % (sorted(abis, key=str), floor,
                    [k for k in sizing if k in vm_meta],
                    [k for k in sizing if k in dfa_meta]))
         if (dfa_meta.get("engine") == "dfa"
@@ -1605,6 +1648,328 @@ def check_kb1_runtime_options():
             "runtime_options %s" % block.get("runtime_options"))
 
 
+# --------------------------------------- 14 the abi 4-8 mechanism stamps
+
+#: The artifacts the stamp check compiles, and what each is FOR. Every row
+#: is a distinct artifact KIND, because the scope rules the stamps obey are
+#: rules about kinds: `RX_ENGINE` is on all of them, the three `_DFA_*`
+#: stamps are on exactly those that CONTAIN a DFA scan (match_api.md 6.3
+#: (a)'s iff), and `RX_FAST_*` is on exactly the VM ones.
+#:
+#: The patterns are small and hand-chosen rather than drawn from
+#: bench/email, deliberately: a check whose witness is a corpus pattern
+#: stops being a check the day engine selection moves under it (which is
+#: precisely what happened to this bench between 8da6120 and 692c2e8 --
+#: `factored` changed engines). These four are the SHAPES, and each one's
+#: expected values are asserted, not merely printed.
+STAMP_CASES = (
+    # (label, testee, pattern, expected {pair: value})
+    ("pure DFA", "pcrec-auto", b"foo[0-9]+bar",
+     {"engine": "dfa", "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
+      "dfa_table": "premultiplied"}),
+    ("VM hybrid", "pcrec-auto", b"a(b|c)+d",
+     {"engine": "vm", "prefilter": "hybrid", "dfa_scan": "unanchored",
+      "dfa_prefilter": "memchr", "dfa_table": "premultiplied"}),
+    ("VM, no DFA scan", "pcrec-vm", b"a(b|c)+d",
+     {"engine": "vm", "prefilter": "none"}),
+    ("provably-empty DFA", "pcrec-auto", b"[^\\x00-\\xff]",
+     {"engine": "dfa", "dfa_scan": "empty", "dfa_prefilter": "none",
+      "dfa_table": "none"}),
+)
+
+
+def check_mechanism_stamps():
+    """THE abi 4-8 STAMPS, PROVEN ON REAL ARTIFACTS AT THE PIN ([B16]).
+
+    pcrec's inbox I-5, I-6, I-11 and I-13 describe five pins' worth of new
+    observability. This check compiles a real artifact of each KIND through
+    the ordinary adapter path and asserts each stamp's VALUE -- not its
+    presence. Four things it is built to catch, each of which a
+    presence-only check would pass:
+
+      1. A stamp read from the wrong macro (`dfa_prefilter` filled from
+         `RX_VM_PREFILTER` would read `hybrid`, which is not in its value
+         set at all).
+      2. The SCOPE RULES broken in either direction: a non-hybrid VM
+         artifact must carry NO `_DFA_*` pair, and a VM hybrid MUST carry
+         all three (that direction is [DD-13c]'s whole point -- until it
+         landed, the artifact kind where the DFA scan does the work was the
+         one kind that could not say so).
+      3. `RX_FAST_FRAMES`/`_TRAIL` present on every VM artifact and on NO
+         DFA artifact (6.3 family (b)).
+      4. An adapter that dropped a pair the driver prints -- which is a
+         real failure this bench shipped for five pins: `engine_stamp` was
+         printed from abi 4 and never recorded. Every pair asserted here is
+         read out of the RECORD's engine_metadata, where a dropped pair is
+         simply absent.
+
+    The macro-vs-`rx_info` agreement is NOT re-asserted here: the adapter
+    raises on a disagreement before this check could see one
+    (`Adapter._check_agreement`), and `check_abi_floor_refusal` is what
+    proves that guard is wired rather than decorative."""
+    print("-- the abi 4-8 mechanism stamps (pcrec I-5/I-6/I-11/I-13) --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("mechanism stamps", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-stamps-")
+    metas = {}
+    try:
+        for label, tid, pattern, expected in STAMP_CASES:
+            adapter.prepare(tid, tmp)
+            cr = adapter.compile(tid, label.replace(" ", "-").replace(",", ""),
+                                 pattern, {}, 1, tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                bad("stamps: %s" % label, cr.diagnostic)
+                continue
+            em = cr.engine_metadata
+            metas[label] = em
+            wrong = {k: (em.get(k), v) for k, v in expected.items()
+                     if em.get(k) != v}
+            if wrong:
+                bad("stamps: %s" % label,
+                    "; ".join("%s: got %r, want %r" % (k, got, want)
+                              for k, (got, want) in sorted(wrong.items())))
+                continue
+            ok("stamps: %s" % label,
+               ", ".join("%s=%s" % (k, expected[k]) for k in sorted(expected)))
+
+        # -- the SCOPE rules, in both directions (match_api.md 6.3 (a)) --
+        dfa_keys = ("dfa_scan", "dfa_prefilter", "dfa_table")
+        nonhybrid = metas.get("VM, no DFA scan", {})
+        present = [k for k in dfa_keys if k in nonhybrid]
+        if nonhybrid and not present:
+            ok("scope: a non-hybrid VM artifact carries NO _DFA_* pair",
+               "engine=vm, prefilter=none, and none of %s"
+               % ", ".join(dfa_keys))
+        elif nonhybrid:
+            bad("scope: a non-hybrid VM artifact carries NO _DFA_* pair",
+                "but it carries %s -- the iff in 6.3 (a) does not hold"
+                % ", ".join(present))
+        hybrid = metas.get("VM hybrid", {})
+        missing = [k for k in dfa_keys if k not in hybrid]
+        if hybrid and not missing:
+            ok("scope: a VM HYBRID carries all three _DFA_* pairs",
+               "the [DD-13c] direction: scan=%s, prefilter=%s, table=%s"
+               % (hybrid["dfa_scan"], hybrid["dfa_prefilter"],
+                  hybrid["dfa_table"]))
+        elif hybrid:
+            bad("scope: a VM HYBRID carries all three _DFA_* pairs",
+                "missing %s" % ", ".join(missing))
+
+        # -- the fast tier: every VM artifact, no DFA artifact ([OPT-1]) --
+        fast_seen = {label: ("fast_frames" in em and "fast_trail" in em)
+                     for label, em in metas.items()}
+        want_fast = {label: (em.get("engine") == "vm")
+                     for label, em in metas.items()}
+        if fast_seen and fast_seen == want_fast:
+            vm_labels = [l for l, w in want_fast.items() if w]
+            ok("scope: RX_FAST_FRAMES/_TRAIL on every VM artifact and no DFA one",
+               "VM: %s (e.g. %s/%s); DFA: none"
+               % (", ".join(sorted(vm_labels)),
+                  metas[vm_labels[0]]["fast_frames"],
+                  metas[vm_labels[0]]["fast_trail"]) if vm_labels else "")
+        else:
+            bad("scope: RX_FAST_FRAMES/_TRAIL on every VM artifact and no DFA one",
+                "seen %r, wanted %r" % (fast_seen, want_fast))
+
+        # -- one abi, and it is at or above the shim's floor --
+        abis = {label: em.get("abi") for label, em in metas.items()}
+        distinct = set(abis.values())
+        if len(distinct) == 1 and None not in distinct:
+            ok("abi is stamped and identical on every artifact",
+               "abi %d on %d artifacts, both engines"
+               % (next(iter(distinct)), len(abis)))
+        else:
+            bad("abi is stamped and identical on every artifact",
+                "abi values %r" % abis)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_dfa_table_deny_flag():
+    """[OPT-3]'s CONTROL ROW: `-fno-premul-table` moves `RX_DFA_TABLE` from
+    `premultiplied` to `indexed` on the same pattern (pcrec I-11, tuning.md
+    2.13).
+
+    Why this is worth a check rather than a note. `dfa_table`'s value set
+    has four members and the corpus reaches only two of them: pcrec's own
+    form census measured `indexed` and `mixed` at ZERO corpus population,
+    because every ordinary pattern is small enough that the pre-multiplied
+    form wins. A check that only ever sees `premultiplied` cannot tell a
+    working stamp from a constant, and this bench would then be filtering
+    records on a column that never varies. The deny flag is the lever that
+    reaches the other value, so it is also the control on the stamp.
+
+    It runs through `pcrec-local` -- the provided-binary testee -- pointed
+    at the PIN's own binary, which is the supported way to pass an extra
+    flag and is scratch tier by construction (nothing here is measured or
+    stored)."""
+    print("-- RX_DFA_TABLE's deny-flag control (pcrec I-11, tuning.md 2.13) --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("dfa_table deny-flag control", "no pcrec adapter")
+        return
+    pattern = b"(?:[a-z]+)@(?:[a-z]+)"     # the census's own `indexed` witness
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-premul-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    try:
+        os.environ["PCREC_BIN"] = adapter.pin_binary()
+        got = {}
+        for arm, extra in (("default", ""),
+                           ("-fno-premul-table", "-fno-premul-table")):
+            os.environ["PCREC_LOCAL_FLAGS"] = extra
+            adapter.prepare("pcrec-local", tmp)
+            cr = adapter.compile("pcrec-local", "premul-" + arm.strip("-"),
+                                 pattern, {}, 1, tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                bad("dfa_table deny-flag control",
+                    "%s did not compile: %s" % (arm, cr.diagnostic))
+                return
+            got[arm] = cr.engine_metadata.get("dfa_table")
+        if got == {"default": "premultiplied", "-fno-premul-table": "indexed"}:
+            ok("dfa_table: the deny flag reaches the OTHER value",
+               "%s: default -> premultiplied, -fno-premul-table -> indexed "
+               "(the corpus reaches only the first)"
+               % pattern.decode())
+        else:
+            bad("dfa_table: the deny flag reaches the OTHER value",
+                "got %r; a stamp that cannot move is not a stamp" % got)
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_abi_floor_refusal():
+    """THE ABI FLOOR, ON A SABOTAGED ARTIFACT ([B16]).
+
+    `shim.c` reads two `struct rx_info` fields that pcrec appended at abi
+    6, and declares that floor once (`PB_SHIM_MIN_ABI`). `driver.c` refuses
+    an artifact below it before reading anything else, and `adapter.py`
+    turns that refusal into a clean AdapterError.
+
+    Nothing in the corpus can exercise that path -- the pin is abi 8 -- so
+    without a SABOTAGE the whole refusal would ship unexercised, which is
+    this project's own stated check-design lesson. The sabotage is the
+    smallest one that reaches the real path: compile a real artifact, edit
+    its `rx_info` initialiser's `.abi = 8` to `.abi = 5` in a COPY, and run
+    the ordinary shim + driver over it. It still compiles (the fields are
+    all still there -- the point is that the driver must not TRUST them on
+    an artifact that claims to predate them), and the refusal must fire by
+    name and carry both numbers.
+
+    The POSITIVE CONTROL is in the same run: the unmodified artifact, built
+    and loaded by the same code, must load fine. A refusal that fired on
+    everything would pass a check written without it."""
+    print("-- the abi floor, refused by name on a sabotaged artifact --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("abi-floor refusal", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-abifloor-")
+    try:
+        pcrec = adapter.pin_binary()
+        art = os.path.join(tmp, "artifact.c")
+        proc = run([pcrec, "-p", "rx", "--features", "all", "-o", art, "--",
+                    "foo[0-9]+bar"], timeout=120)
+        if proc.returncode != 0:
+            bad("abi-floor refusal", "pcrec did not emit: %s" % proc.stderr)
+            return
+        with open(art, "r", encoding="utf-8") as f:
+            src = f.read()
+        import re as _re
+        m = _re.search(r"\.abi = (\d+),", src)
+        if not m:
+            bad("abi-floor refusal",
+                "the emitted artifact has no `.abi = N,` line to sabotage -- "
+                "pcrec changed the initialiser's shape; re-derive this check")
+            return
+        real_abi = int(m.group(1))
+        sabotaged = os.path.join(tmp, "sabotaged.c")
+        with open(sabotaged, "w", encoding="utf-8") as f:
+            f.write(src.replace(m.group(0), ".abi = 5,", 1))
+        # The artifact's own .h sits beside the original; both .c files are
+        # in `tmp`, so one -I serves both.
+        drv = build_driver(os.path.join(ROOT, "testees", "pcrec", "driver.c"),
+                           os.path.join(tmp, "pcrec_driver"), extra=["-ldl"])
+        shim = os.path.join(ROOT, "testees", "pcrec", "shim.c")
+        results = {}
+        for arm, csrc in (("real", art), ("sabotaged", sabotaged)):
+            so = os.path.join(tmp, "%s.so" % arm)
+            g = run([os.environ.get("CC", "gcc"), "-O0", "-std=gnu11", "-fPIC",
+                     "-shared", "-o", so, shim,
+                     '-DPB_ARTIFACT="%s"' % csrc, "-I", tmp], timeout=300)
+            if g.returncode != 0:
+                bad("abi-floor refusal",
+                    "the %s artifact did not build: %s" % (arm, g.stderr[-400:]))
+                return
+            results[arm] = run_driver([drv, "--lib", so, "--trial", "1"],
+                                      timeout=120, cwd=tmp)
+        real, sab = results["real"], results["sabotaged"]
+
+        if real.returncode == 0 and real.info.get("abi") == str(real_abi):
+            ok("abi-floor CONTROL: the unmodified artifact loads",
+               "abi %d, driver exit 0 -- the refusal is not firing on "
+               "everything" % real_abi)
+        else:
+            bad("abi-floor CONTROL: the unmodified artifact loads",
+                "exit %d, abi %r" % (real.returncode, real.info.get("abi")))
+
+        diag = sab.diagnostic() or ""
+        if sab.returncode != 0 and "abi-below-shim-floor" in diag:
+            ok("abi-floor: a below-floor artifact is REFUSED by name",
+               "exit %d; %s" % (sab.returncode,
+                                diag.split("\n")[0][:140]))
+        else:
+            bad("abi-floor: a below-floor artifact is REFUSED by name",
+                "exit %d, diagnostic %r -- the floor is not wired"
+                % (sab.returncode, diag[:200]))
+        if ("artifact rx_info.abi 5" in diag) and ("below the 6" in diag):
+            ok("abi-floor: the refusal carries BOTH numbers",
+               "the artifact's claimed abi and the shim's floor, so a reader "
+               "knows which end to move")
+        else:
+            bad("abi-floor: the refusal carries BOTH numbers",
+                "got %r" % diag[:200])
+
+        # ...and the token the ADAPTER watches for is the token the DRIVER
+        # actually emitted. Two copies of one string, in two languages, with
+        # nothing but this line enforcing that they agree -- which is the
+        # shape of failure this project keeps paying for, so it is checked
+        # against the REAL diagnostic rather than against a literal.
+        token = _pcrec_adapter_token()
+        if token and token in diag:
+            ok("abi-floor: the adapter's token matches the driver's output",
+               "%r appears in the refusal the driver just produced, so "
+               "_compile_one raises AdapterError instead of recording a "
+               "`crashed` compile row" % token)
+        else:
+            bad("abi-floor: the adapter's token matches the driver's output",
+                "adapter watches for %r; the driver said %r" % (token, diag[:160]))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _pcrec_adapter_token():
+    """The adapter's own refusal token, imported rather than retyped -- the
+    number and the string both live on the other side, and a check that
+    kept its own copy of either would be checking itself."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "pcrec_adapter_for_selfcheck",
+        os.path.join(ROOT, "testees", "pcrec", "adapter.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.ABI_FLOOR_TOKEN
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -1626,6 +1991,9 @@ def main():
     check_pcrec_local()
     check_floor_pattern()
     check_kb1_runtime_options()
+    check_mechanism_stamps()
+    check_dfa_table_deny_flag()
+    check_abi_floor_refusal()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))
