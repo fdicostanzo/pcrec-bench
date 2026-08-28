@@ -8,7 +8,7 @@ the record's shape is `docs/design/record_schema.md`.
 |---|---|
 | `__main__.py` | the CLI: `run` (`--tier pinned\|scratch`), `quick` (the edit-test loop's one-cell surface, [B10]), `index`, `quiet`, `testees`, `report` |
 | `harness.py` | contract §4's seven steps; `outcome_for()` is the ONE place an engine's answer becomes a `match_outcome`; `run_cell(tier=, patterns=, subject_limit=, budget=)` is what `quick` parameterises — no second code path |
-| `subbench.py` | loads `bench/<name>/`; owns the regime→subject mapping and `subbench.content_hash` |
+| `subbench.py` | loads `bench/<name>/`; owns the regime→subject mapping and `subbench.content_hash`; `_load_manifest` is GENERIC on a subject manifest's column count (4, the original shape, or 5 with `periodic` appended, [B17]) — no column position is hard-coded beyond "periodic, if present, is last" |
 | `adapters.py` | the `Adapter` interface, discovery, and **the DRIVER PROTOCOL** (in full, at the top of the file) |
 | `driverrun.py` | build/run/parse a driver; the resume-after-driver-death rule |
 | `record.py` | builds the record dict; every derived id comes FROM `schema/validate.py`'s own functions |

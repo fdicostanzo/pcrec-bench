@@ -61,11 +61,16 @@ class Pattern:
 
 
 class Subject:
-    __slots__ = ("subject_id", "length", "sha256", "description", "path", "kind")
+    __slots__ = ("subject_id", "length", "sha256", "description", "periodic",
+                 "path", "kind")
 
-    def __init__(self, subject_id, length, sha, desc, path, kind):
+    def __init__(self, subject_id, length, sha, desc, periodic, path, kind):
         self.subject_id, self.length, self.sha256 = subject_id, int(length), sha
         self.description, self.path, self.kind = desc, path, kind
+        # [B17]/I-10: the smallest period in bytes (see bench/email/
+        # periodic.py), as a decimal STRING, `"no"`, or None if this
+        # manifest predates the column -- a 4-column manifest still loads.
+        self.periodic = periodic
 
 
 class Expectation:
@@ -136,12 +141,21 @@ class Subbench:
                     continue
                 if i == 0 and line.startswith("id\t"):
                     continue
-                cols = line.split("\t", 3)
-                if len(cols) < 4:
-                    raise SubbenchError("%s:%d: expected 4 columns, got %d"
-                                        % (path, i + 1, len(cols)))
-                sid, length, sha, desc = cols
-                out.append(Subject(sid, length, sha, desc,
+                # GENERIC on column count: 4 columns is the original shape
+                # (id, len, sha256, description); 5 adds `periodic`
+                # ([B17]/I-10). No position is hard-coded beyond "periodic,
+                # if present, is the 5th and last column" -- a manifest
+                # with neither more nor fewer is rejected rather than
+                # silently mis-parsed.
+                cols = line.split("\t")
+                if len(cols) not in (4, 5):
+                    raise SubbenchError(
+                        "%s:%d: expected 4 columns (id, len, sha256, "
+                        "description) or 5 (+ periodic), got %d"
+                        % (path, i + 1, len(cols)))
+                sid, length, sha, desc = cols[:4]
+                periodic = cols[4] if len(cols) == 5 else None
+                out.append(Subject(sid, length, sha, desc, periodic,
                                    os.path.join(self.root, subdir, sid + ".bin"),
                                    kind))
         return out

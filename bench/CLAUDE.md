@@ -14,7 +14,7 @@ are translated.
 
 | directory | what it is |
 |---|---|
-| `email/` | the RFC 5322 specimen: `orig.rx` (hand-inlined) and `factored.rx` (the same language via `(?&name)` calls), 85 short subjects + three 1 MB throughput subjects |
+| `email/` | the RFC 5322 specimen: `orig.rx` (hand-inlined) and `factored.rx` (the same language via `(?&name)` calls), 85 short subjects + five 1 MB throughput subjects (three periodic + two generated-prose non-periodic, [B17]/I-10) |
 
 `subjects/` and `throughput/` are GENERATED and gitignored; the
 generators and their sha256 manifests are committed, and `make check`
