@@ -14,12 +14,14 @@
 # `std1`, which excludes the named-groups and recursion modules, so
 # bench/email's `factored.rx` is refused with "requires module
 # 'named-groups'" (MEASURED 2026-08-25 against pin 8da6120, re-verified at
-# 692c2e8). That is a
+# 692c2e8 and RE-VERIFIED at 35e1ab1, 2026-08-28: same refusal, same
+# wording -- "(?<...) requires module 'named-groups' (pattern offset 3)").
+# That is a
 # BUILD/RUN flag of the testee -- the pattern text handed to pcrec is
 # byte-identical either way -- not a pattern variant. bench/email/NOTES.md
 # says so where a reader of the numbers will find it.
 
-pin = "692c2e8"
+pin = "35e1ab1"
 
 [testees.pcrec-auto]
 engine_mode = "auto"
@@ -69,6 +71,16 @@ description = "pcrec --engine=vm: the VM forced, which also disables the DFA pre
 # 16384 / 65536 (16384 / 32768 still loses s-059 on the trail). The config
 # sits one doubling above that: 32768 x 24 B + 131072 x 16 B = 2.75 MiB per
 # run, touched once outside every timed loop. See testees/pcrec/CLAUDE.md.
+#
+# The table above is HISTORY (pin 692c2e8) and is not re-derived at every
+# re-pin: it is a capacity search, not a timing. What IS re-proved at the
+# CURRENT pin, on every `make check-harness`, is the conclusion the numbers
+# were chosen for -- selfcheck's `buffer-matters` arm shows, at 35e1ab1,
+# the stamped default giving up PCREC_ERR_FRAMES on s-059, a tiny 4/4
+# caller buffer giving up BY NAME, and THESE capacities matching the whole
+# subject. [OPT-1]'s tiered default entry (abi 5) did not move them: it
+# escalates to the same stamped default, so the give-up boundary is where
+# it was (pcrec I-8's counter measured the escalations, not new give-ups).
 
 [testees.pcrec-auto-in]
 engine_mode = "auto-in"
