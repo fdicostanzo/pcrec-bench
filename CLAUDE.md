@@ -31,7 +31,7 @@ REPORTER v3 (status per row, cross-pin Δ verdicts, mechanism stamps,
 compile phases, legends); [B15] the FLOOR PATTERN in bench/email
 (schema **v1.3** `patterns[].role`). Next: [B11] (sub-bench #2, log-line
 search); [B13] the interpreter is chartered. `make check` is green
-(3/56/0, 69/69, 49/49). Manager sessions start with the
+(3/56/0, 75/75, 49/49). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -133,7 +133,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # NCHECKS checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 75 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check, the expectations

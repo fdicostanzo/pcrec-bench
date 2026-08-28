@@ -73,6 +73,7 @@ cell, and is REFUSED into a canonical store (a temp one carrying the
 marker, so a broken refusal cannot reach the real `store/`).
 
 The [B16] blocks (2026-08-28, the abi-8 re-pin) add thirteen PASS lines
+(75 in all after the merge with [B11.1]'s per-sub-bench enumeration)
 across three checks, each built around the failure it would otherwise
 miss:
 

@@ -114,7 +114,19 @@ alternation would otherwise bind only its last branch to the anchor.
 Re-measured at the re-pin (pcrec's [DD-14] close merge; its compiler is
 byte-identical to 17469b6, the [DD-14.FB] merge). "Emitted C" is the byte
 size of the `artifact.c` that `pcrec -p rx <flags> -o artifact.c -- <text>`
-writes; it does not embed the output path.
+writes.
+
+**It DOES depend on the output file's BASENAME, by exactly that name's
+length** — corrected [B16], 2026-08-28; this sentence used to end "it does
+not embed the output path", which is true of the DIRECTORY and false of
+the name. In the split form the CLI produces by default, the `.c` opens
+with `#include "<basename>.h"`, so `-o a.c` and `-o aaaaaaaaaa.c` on one
+pattern at one pin differ by 9 bytes — the difference in the names.
+MEASURED at 692c2e8 as well as 35e1ab1, so it is long-standing, not new.
+The consequence for anyone re-deriving these tables: use the SAME output
+basename throughout, as every row here does (`artifact.c`) — which is why
+the 692c2e8 column of the re-measurement below reproduces this table to
+the byte.
 
 | pattern / form | config | engine | ncaps | emitted C |
 |---|---|---|---|---|
