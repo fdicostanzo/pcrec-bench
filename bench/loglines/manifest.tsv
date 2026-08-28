@@ -1,0 +1,113 @@
+id	len	sha256	description	periodic
+s-000	307	27ce41d69dcbb5ff03f2db9f9823e43171cfe3bace97673dc5b3dccbdd263e79	256-512 B band, 4 lines, shapes: iso-ts	no
+s-001	449	1490fd28c229a05dc8d9eb5c6f8e871faa1d61b968ea15323bc44cc62d52d67a	256-512 B band, 5 lines, background only (no shape injected)	no
+s-002	333	ab9e7480f3cd9ef20b3a99e56b41a40348c22a832f6848a44109023199c3fcc4	256-512 B band, 4 lines, shapes: iso-ts+kv-quoted	no
+s-003	351	f3383b86679447dc1c5692962924ecc6dcb058b0dcf240a160ab1124cfff9f75	256-512 B band, 4 lines, background only (no shape injected)	no
+s-004	510	3fd94194bbb2f320440819440d2162a9fcfee7eb8eb1d71a059f9abe9cd83be4	256-512 B band, 6 lines, background only (no shape injected)	no
+s-005	303	a9f51df839d0e660a237b21d905e9574a7a37a8992873b2a94b0619498d515c7	256-512 B band, 4 lines, background only (no shape injected)	no
+s-006	367	a61e17077499f753833f2e460edaa801f23ed8f1718409d1bb70c88d05999303	256-512 B band, 4 lines, shapes: ipv6	no
+s-007	411	2e1e04e34df918ba8f8ea196c8acaeaf3c41737cf09c89563327c359f158c3d2	256-512 B band, 5 lines, shapes: iso-ts	no
+s-008	361	0dc26e348242a9873e2b92df86bafeac64782cd47104c1352d56fd408a8b6179	256-512 B band, 5 lines, shapes: stack-frame	no
+s-009	334	fbd37e69ac5efe6b22e031504f8f4d6b014c92d2a4d4d52093995ea3be889817	256-512 B band, 4 lines, shapes: bignum	no
+s-010	388	9dd496a0b0eb9f5805850fbe3a82f8dd9a17bd3e7893e50449e35e0c11eed306	256-512 B band, 4 lines, shapes: kv-quoted+http-5xx	no
+s-011	446	fd13752c498b32ae11f1dc0d27c097bc452cc432d869666927031cc918f20096	256-512 B band, 5 lines, shapes: http-5xx	no
+s-012	569	16b00a1d72f2740fb6a6a25808dc3fb54c401293aac5d4b64284f7d6a6bf6bcc	256-512 B band, 6 lines, background only (no shape injected)	no
+s-013	486	4434f37d2fee999b564d84a310eab8835b24fe9f769dc68daa73a392a2daac93	256-512 B band, 6 lines, background only (no shape injected)	no
+s-014	343	d4f16a2ced8d6dbba28c0b08d97ab6ad620301075bbcc2c351e1d947dcdcbf5a	256-512 B band, 4 lines, background only (no shape injected)	no
+s-015	400	10f7ade72493c094a8d3227756b490bbc8c14c48e325d467ea44ac97cdb0d700	256-512 B band, 4 lines, background only (no shape injected)	no
+s-016	346	0d0891d2eac62daad594d1fc23ffc32186599c453dc454be6a5d483215edfc7a	256-512 B band, 4 lines, shapes: uuid	no
+s-017	387	3f8e334c476c9e6a4d1b00fb4a93a6b21cfb422b844be2f62bacd058f13adf04	256-512 B band, 4 lines, background only (no shape injected)	no
+s-018	331	48c5cd24ec3f34fba5945ed6eccca47f83c77c6069b8e19041c971f9f1694b98	256-512 B band, 4 lines, shapes: hex32-id	no
+s-019	358	e7e49516f5d317696aa29284829819a862b22f4fee1b02dffb4d0dbda9ae769d	256-512 B band, 5 lines, shapes: stack-frame	no
+s-020	466	732d17f17d6c9608d0cd24ca67b5868ae8c2309c6f0a922eb714406b13e74bec	256-512 B band, 5 lines, background only (no shape injected)	no
+s-021	303	0867a964e2a279a4b039e252c9368bfeaa8eb36e1fe3b2006e2a600fb46aee70	256-512 B band, 4 lines, background only (no shape injected)	no
+s-022	448	7b870047baa0b530abafcb3a299fa136fd08f2285d87ac21de51f12c20581ceb	256-512 B band, 6 lines, background only (no shape injected)	no
+s-023	528	af0b221575feac7a987599af1bc676124e3b27a4b7d302a81c58617de47e0366	256-512 B band, 6 lines, shapes: iso-ts+http-5xx	no
+s-024	306	69ca9658e0f993ed73192df9c649f2b91b71f562439d8f45617b71b744d2f4f2	256-512 B band, 3 lines, shapes: uuid	no
+s-025	391	49605a8b97196ae334458bb64fcfe5e6fbc930e7674f7192d0ea9c5f09baaaf7	256-512 B band, 5 lines, background only (no shape injected)	no
+s-026	438	35dc813b87369f5a92daddaf38eb9dc39c4f5f064dc7c7aa5f72cdceb5a15b67	256-512 B band, 4 lines, shapes: ipv6	no
+s-027	279	d6786f06e2f843cb69999f0e18e60061b49a7c79874bf2277373ba02db13ca83	256-512 B band, 3 lines, shapes: http-5xx+uuid	no
+s-028	644	e71c760fb52d1d01cdce16dc461aacf6ff5f3c8eefe113c7283317fb9daaf23b	512-1024 B band, 7 lines, shapes: bignum	no
+s-029	905	42fd6f12fdb97b0d5f85cf3bd37fd444a90fbca9a835db2d2aa34cce6d31a8d3	512-1024 B band, 11 lines, shapes: iso-ts+ipv4+kv-quoted+uuid+hex32-id	no
+s-030	691	57c9051dbd65ebca2e5aa8522204630cdee7cdca0f987b8c74ea54651779c785	512-1024 B band, 6 lines, shapes: level-context+http-5xx	no
+s-031	837	57dde560a1d9656f67df8b81bd68a72d232e93656edf51252f4a759c0ce10a2b	512-1024 B band, 9 lines, background only (no shape injected)	no
+s-032	756	cc4f3f538d8a4dd55d901031fb7460111ce3377164368712db49ba1d93124574	512-1024 B band, 8 lines, background only (no shape injected)	no
+s-033	652	ada8a25de710c0d7320a67d02af2666e005418e9872d30c0ec3f4637112dffdb	512-1024 B band, 7 lines, background only (no shape injected)	no
+s-034	868	a2efeeab855ed6e6eb3d7e00bf0cf735670e2b6c5092ac9756d3cc8b0d56e2fc	512-1024 B band, 10 lines, shapes: hex32-id	no
+s-035	850	b99637680d7e9c04905a4b39b6b21bbf105349a58806493413ef904e5db0c45a	512-1024 B band, 10 lines, shapes: level-context	no
+s-036	914	081a5b0b668e806cf202b0ae25e7284b0f00dafd44fc6d21ed3f0470fde8d228	512-1024 B band, 9 lines, background only (no shape injected)	no
+s-037	856	e40058bd4f884f4b5d8fb04ac195959695797b95c8dcbb46d4076663c3b3c81e	512-1024 B band, 11 lines, shapes: level-context	no
+s-038	836	5dfa8f0514263a5604ff6da92fad27deff28fe87a8f12d5fe064f43f96aedc8f	512-1024 B band, 9 lines, background only (no shape injected)	no
+s-039	1115	dd7ed7b08061d8934062a892f8bbf89295626257ad7e436f84c4993f384747d2	512-1024 B band, 11 lines, background only (no shape injected)	no
+s-040	1005	847dd90017f8c0d59e681fc66170b74f1a541adcad8682f39f27b413a129660a	512-1024 B band, 12 lines, background only (no shape injected)	no
+s-041	792	66154378903b1f0d2e3b1c0a078c7a1a2735fb5560f741c6f80503738b8d3fd8	512-1024 B band, 9 lines, shapes: iso-ts+ipv6	no
+s-042	662	897feb5a4630b1f550dba89d540069f903f44afd68d1a87e0c4e3f8ce98a7db2	512-1024 B band, 7 lines, shapes: kv-quoted	no
+s-043	761	36529ec50bff390d70c177d97eb7d09cca58d10a1bb68857e6202558a333a7da	512-1024 B band, 8 lines, background only (no shape injected)	no
+s-044	778	28f1f6aee728bbb10d5b3229ec988c919ff3627f94589bb64f6db45682dca013	512-1024 B band, 8 lines, background only (no shape injected)	no
+s-045	629	228957d8710191fe62b60021ded70bed0723e6ab38c3a33ce59eba1bcab55046	512-1024 B band, 7 lines, shapes: bignum	no
+s-046	905	143295258484e848a38c61d9edcefe7a31190ef29d6c215696600f2e9348b10c	512-1024 B band, 10 lines, shapes: level-context	no
+s-047	806	fbd80a17f33aee4c3ae9f31f5962690933bb9ae40bde86633afe23198f9dc75f	512-1024 B band, 10 lines, background only (no shape injected)	no
+s-048	913	3709c37061939de767ad8223c674913a005f37e1dca6222520443d34090f9470	512-1024 B band, 11 lines, shapes: uuid	no
+s-049	811	9edf982ed163a0e63f59b9698cfaee9e8237fd3becb8a17dfba570cdeeab2d1d	512-1024 B band, 9 lines, background only (no shape injected)	no
+s-050	1066	107206c840df8b4473dce50a07a7e360fbea4c2aead42f79b0ddf13e34e29c6f	512-1024 B band, 11 lines, background only (no shape injected)	no
+s-051	764	6469d0890d292c3b19e76e03974abe0b744dc7112d7c19b931ead917a5dabf00	512-1024 B band, 11 lines, background only (no shape injected)	no
+s-052	892	fb9b675aaae8dc104a533371a122b3bc2634408bacb9e4562bb93fca0a5a5032	512-1024 B band, 10 lines, background only (no shape injected)	no
+s-053	694	6c903dccc292c9270b4a23149221debd51950ae7d301aa5b44e9713f4c3f513b	512-1024 B band, 8 lines, background only (no shape injected)	no
+s-054	1022	ae8b00e7588211f62aaac25881d89ee7407676a39a3e6c9452cee202d1cec43e	512-1024 B band, 11 lines, background only (no shape injected)	no
+s-055	686	55d8db6ed411f6915ad5e1333a856fcbe607941821f2e346e923667660554dbb	512-1024 B band, 8 lines, shapes: bignum	no
+s-056	1675	1f328f7071249e8c4e19c57006d6eb270d099f8c384be234866bee3f3d7d5f51	1024-2048 B band, 19 lines, background only (no shape injected)	no
+s-057	1125	464ad9c9f971f93f307c341c9a733677c8807cb49a8b147621dbdb2ce138a8f8	1024-2048 B band, 13 lines, shapes: level-context	no
+s-058	1903	9a56b90ce57fc8bfb66555b25f6ca9d5d2e57c1744263a3b52673e9bb6a0fb5a	1024-2048 B band, 19 lines, shapes: hex32-id	no
+s-059	1201	60c10a55cc1db6fb2d68de62a2c20fdc549d95aa924d9159bf80956ddf806ea8	1024-2048 B band, 14 lines, background only (no shape injected)	no
+s-060	1363	24868228c477895a090621520e5fc7ea88365f284a3abb0a35fb697520834888	1024-2048 B band, 15 lines, background only (no shape injected)	no
+s-061	1549	31c0565d325af39fcf655e40669fdc8ad575e17beff6fe8bcffbc7517adf2172	1024-2048 B band, 18 lines, background only (no shape injected)	no
+s-062	2021	06bdf2d192d5a123a08776845004ae6f33e37a16bbbb9acf04737c9de0d6efc1	1024-2048 B band, 22 lines, background only (no shape injected)	no
+s-063	1425	9f07867690dc5060384f769d2258c9908a0f3c573d852e09f027231bd66b62c0	1024-2048 B band, 16 lines, shapes: kv-quoted	no
+s-064	1133	485ef82b69470a1b227973a9d154d88aea99874aeb37a72ff46fc4837fb2163a	1024-2048 B band, 13 lines, background only (no shape injected)	no
+s-065	1337	8f4fe0fd0541d92977eee2564b49b391141d471a592e5203446af5b1d4d0a8d8	1024-2048 B band, 14 lines, background only (no shape injected)	no
+s-066	1858	a203330eb00bdf180f0eb47f91e9da6d7514ca823b931fab0b0508ebb1523fae	1024-2048 B band, 22 lines, background only (no shape injected)	no
+s-067	2016	d5fba53a7f82a86089adc8e3dcb5d2d40912084c589751420a4552cebb1f3d49	1024-2048 B band, 23 lines, shapes: stack-frame	no
+s-068	1525	9bdd53969ccdcfd22f0ea4090d0ce559c2f9735288bf49be0ba805ed7c9dcc89	1024-2048 B band, 17 lines, shapes: level-context	no
+s-069	1723	90f6aaebd5d750547ccb1324c1031a89ac5fd539b663c2c0e0c05819b74abd64	1024-2048 B band, 20 lines, background only (no shape injected)	no
+s-070	1343	6cb4d4c63e232eb4c1249e757f92e807bf06a4ec044d99450e9d30ae411b74d8	1024-2048 B band, 15 lines, background only (no shape injected)	no
+s-071	1388	65848a34384d6dd251bcc2155c3a363dc595707578ab1387ef46d6c640e91f0d	1024-2048 B band, 16 lines, shapes: level-context	no
+s-072	2043	db3c9a7f44ac531055822ee0dd4f1a80a171c1d7ef892a2575d930addbd98ed2	1024-2048 B band, 21 lines, shapes: uuid+hex32-id	no
+s-073	1265	85a5346566fd36ba400aeabcfd3925d7875879bfeeaa1da75fe8d1ba8d598116	1024-2048 B band, 14 lines, shapes: level-context	no
+s-074	1620	f5f509e259bb6e3fb6cda8a51d80ced8836a2632f7d133af40327528a0cc0c5c	1024-2048 B band, 17 lines, background only (no shape injected)	no
+s-075	1274	f4eb952e0aea205220c21accb2c9eea75a6f4081605f21dd5a86be7a76519fa0	1024-2048 B band, 16 lines, shapes: kv-quoted+stack-frame	no
+s-076	1465	39eb988857e4656ad2367f66362588ec33825a137a8e993571f6ddeb60b785dd	1024-2048 B band, 15 lines, shapes: ipv6+hex32-id	no
+s-077	1269	f17d7faab90512a16e6acb396590a26710e25fb7100dc8909dfadd2903eb22d8	1024-2048 B band, 15 lines, shapes: bignum	no
+s-078	1416	0cea29db38489a2211f635f85c477762b76df83ee3c52aa2b6769bd3ff6110e8	1024-2048 B band, 15 lines, shapes: ipv6	no
+s-079	1925	59fe7381184929884b1fed1f85b2b8ab246b47a7f9db70a04cc66c6f7fe66f97	1024-2048 B band, 20 lines, shapes: kv-quoted+bignum	no
+s-080	1239	8adc8752a52086c72016ed89380f9933f08d34c52e9af250aa509b585b10c6dd	1024-2048 B band, 16 lines, shapes: ipv4+hex32-id+stack-frame	no
+s-081	2066	95b799cbde02bc38038c9c9a7d3a12751a7babed3b7f0006dda5faec318fe5ca	1024-2048 B band, 25 lines, background only (no shape injected)	no
+s-082	1335	050354493ce6457618f03f0e2423fdc0b3bf7505f9748bfd37080189fafc5862	1024-2048 B band, 15 lines, background only (no shape injected)	no
+s-083	1269	2f850fb1b3addcc782d1411731501bf81b4128aab64a92bcdbb6ff20cd752377	1024-2048 B band, 14 lines, shapes: ipv6	no
+s-084	2638	ba5e69f066d7e7f06a531bcbd50723eef64811fec2f6030fe58c18f7adcb2e08	2048-3800 B band, 29 lines, background only (no shape injected)	no
+s-085	3273	3cb51f6905a86e0c96eec74361a9b73535b183eeea8523dd72698dc48f612860	2048-3800 B band, 39 lines, background only (no shape injected)	no
+s-086	3483	1861191cd1cb92ea1e538a9f8a440fa3f6420e317776d83c7e5c79e2f1dfe7ec	2048-3800 B band, 42 lines, background only (no shape injected)	no
+s-087	3207	74ab797b42ee4082d0e78ec270b16b86e4dd4deedb981d41c50173d189e699b9	2048-3800 B band, 37 lines, shapes: http-5xx	no
+s-088	2397	ca0316943c6e774ce3c1e8193a380f34952e9b6ef1107d4891ffbf74df18a066	2048-3800 B band, 28 lines, shapes: iso-ts	no
+s-089	2155	31085c7ae575b6a22007267bb4f72ad07c6daf706cb4113e46b96b8d60c7a31f	2048-3800 B band, 25 lines, background only (no shape injected)	no
+s-090	3186	7ba859e1827cba086356925194f96c405d274e09e7c9e11d79d2485cd5f820bc	2048-3800 B band, 33 lines, background only (no shape injected)	no
+s-091	3657	c5aca4fc8917a7a3bf4e85e4aa8eeae547210130bc2b1ee9e742ab63386b939a	2048-3800 B band, 43 lines, background only (no shape injected)	no
+s-092	3257	0bbfb1c214d6bba805dd6a9d248115e958ead4e2415fc216aa621cee7de5adf5	2048-3800 B band, 40 lines, background only (no shape injected)	no
+s-093	3010	0ea8382ad5da1f1fa4e2bb9197c05f78e80cdf0189d726e5a08e74d6032b46f9	2048-3800 B band, 34 lines, background only (no shape injected)	no
+s-094	3031	176882b7c67d5557e8ef356b4b0948207177aea97574d77c0b8155e4763dd0ee	2048-3800 B band, 33 lines, shapes: ipv4+hex32-id+bignum	no
+s-095	3082	7426b754ac7accea0d63b2ec4a6cfd7575717a46a7875b2f659e22d23cd0b24b	2048-3800 B band, 36 lines, shapes: stack-frame	no
+s-096	3227	bb0d60d18d7c7c339ba5aec43d30cf683d502c37b5d41b5b00512914fa56c9a1	2048-3800 B band, 38 lines, shapes: iso-ts	no
+s-097	2854	59050d3a6774e3f081ae1556031051eed9ea53f811fb22e2069b4032e983060e	2048-3800 B band, 34 lines, shapes: stack-frame	no
+s-098	3772	9137119f70532931b5664d47aa1bbd63402efc0af351ac723f10c84294eb4f6d	2048-3800 B band, 39 lines, background only (no shape injected)	no
+s-099	2947	c692a764e1542cd445b1cd6e720c884facab4cd3f22b19e85d12a31bfe3d7265	2048-3800 B band, 33 lines, shapes: http-5xx	no
+s-100	3441	33126ed3bcd477586dd9b87e65ac740015da90e467398fcf30614e4fdf570c9e	2048-3800 B band, 40 lines, background only (no shape injected)	no
+s-101	2548	a67f7bf7223b28a3c8230d27d9334deb5b840bae00d02686856be503c36efbb5	2048-3800 B band, 29 lines, shapes: kv-quoted	no
+s-102	3498	a0cb31e2003c51a5491a9147011a9746d627bdfd64114e31ed0b7557034dc816	2048-3800 B band, 38 lines, shapes: bignum	no
+s-103	3001	fae97b4faa3dd66831850e0f9b2a778ac62282f3794e33807631c631ce431fc8	2048-3800 B band, 34 lines, background only (no shape injected)	no
+s-104	2288	38f1ef3c87ce9f81dfb7c0844f3b67ff48cac01f16e214201656c6163a0284f0	2048-3800 B band, 24 lines, shapes: uuid	no
+s-105	2765	7b4cd827854396642e1a606bb67f35192c4812d2dc170f1705f300188a17505a	2048-3800 B band, 33 lines, shapes: uuid	no
+s-106	2397	8ab17a86ae86d41f458743b592c4108984308bb81f898a290d8bd0aa1ef57ed3	2048-3800 B band, 26 lines, background only (no shape injected)	no
+s-107	3126	28c0f9e11b3169400eda274a13c32f444ff780d96e7df4c537f32ff55f8e7e5c	2048-3800 B band, 35 lines, background only (no shape injected)	no
+s-108	3342	aad75170b5257265ecbe54b958a5b9805d4122958dcf34752abcecab8d49b630	2048-3800 B band, 40 lines, background only (no shape injected)	no
+s-109	3482	75c6d68e4474327b27e7a10b4d69c4a815efc6506fd44c868c637ffccf5dcf81	2048-3800 B band, 39 lines, shapes: ipv6	no
+s-110	3677	df37a6d5ae2e6a4eb738f322b46b4c49eaa857b03c89cacee08a294b6d3f931b	2048-3800 B band, 39 lines, background only (no shape injected)	no
+s-111	3487	0edb76f2f6ad8b75c78b7cfca734ce3ab210bee10ff692dd2d32a8ff4c226ce5	2048-3800 B band, 42 lines, background only (no shape injected)	no
