@@ -634,12 +634,16 @@ row's `diagnostic`, unindexed.
 | name | type | scope | source in the pcrec artifact |
 |---|---|---|---|
 | `engine` | enum `dfa`,`vm` | pattern | `rx_info.engine` (`PCREC_ENGINE_DFA`=1 / `PCREC_ENGINE_VM`=2, emitted in every artifact's `PCREC_RX_ABI_H` block — `~/pcrec/src/gen/emit_dfa.c:462-497`) |
-| `abi` | integer | pattern | `rx_info.abi` (2 today) |
+| `abi` | integer | pattern | `rx_info.abi` (**8** at the current pin; 2 when this example was written) |
 | `ncaps` | integer | pattern | `rx_info.ncaps` |
 | `ngroups` | integer | pattern | `rx_info.ngroups` |
 | `step_budget` | integer | pattern | `rx_info.step_budget` (-1 = none) |
 | `work_budget` | integer | pattern | `rx_info.work_budget` (-1 = none) |
 | `prefilter` | enum `hybrid`,`none` | pattern | `<PREFIX>_VM_PREFILTER` (`~/pcrec/src/gen/emit_vm.c`, the [M4.6f] stamp) |
+| `dfa_scan` | enum `unanchored`,`attempt`,`empty` | pattern | `<PREFIX>_DFA_SCAN`, checked against `rx_info.scan` |
+| `dfa_prefilter` | enum `none`,`memchr`,`byte-class`,`memchr-bounded`,`byte-class-bounded` | pattern | `<PREFIX>_DFA_PREFILTER`, checked against `rx_info.prefilter` |
+| `dfa_table` | enum `premultiplied`,`indexed`,`mixed`,`none` | pattern | `<PREFIX>_DFA_TABLE` (pcrec abi 7+; no `rx_info` mirror exists) |
+| `fast_frames`, `fast_trail` | integer | pattern | `<PREFIX>_FAST_FRAMES` / `_TRAIL` (pcrec abi 5+, VM artifacts only) |
 | `vm_rungs` | mask | pattern | `<PREFIX>_VM_RUNGS`, bits `PCREC_VM_RUNG_CURSOR`, `_FRAMES_BOUNDED`, `_FRAMES_UNBOUNDED`, `_REVDET`, `_COUNTER` (D46/[ABI-NS] D60) |
 | `vm_strats` | mask | pattern | `<PREFIX>_VM_STRATS`, bits `PCREC_VM_STRAT_POSSESSIVE`, `_BACKTRACKING` |
 | `vm_prunes` | mask | pattern | `<PREFIX>_VM_PRUNES`, bits `PCREC_VM_PRUNE_CLAMPED`, `_UNCLAMPED` |
@@ -652,6 +656,28 @@ Two notes an adapter author must not lose:
   would break pcrec's own byte-identity gate). A DFA-engine pcrec
   testee therefore declares only the `rx_info`-sourced pairs. An
   ABSENT pair is not an error; an UNDECLARED one is.
+- **The scope of a pair is a rule about the MECHANISM, not about the
+  engine, and the `dfa_*` rows above are why the distinction is worth
+  stating** (added [B16], 2026-08-28, at the pcrec 35e1ab1 re-pin). Those
+  three are present on every artifact that CONTAINS a DFA scan — every
+  DFA artifact AND every VM HYBRID, and no other artifact. Two
+  consequences for anyone reading a record: `prefilter` (the VM's own
+  vocabulary) and `dfa_prefilter` (that scan's candidate-start filter)
+  are TWO SELECTIONS rather than two spellings, and a hybrid carries
+  both; and **an absent pair may not be read as an engine**. Whether a
+  missing `dfa_scan` means "this artifact has no DFA scan" or "this pcrec
+  did not stamp it" is answered by the record's own `abi` pair and by
+  nothing else — the reporter's `_dfa_scan_display` is where that is
+  decided, and the hazard is pcrec's own (its inbox I-5: four of pcrec's
+  checks broke by inferring a fact from a stamp's absence).
+- **Where an engine publishes one fact TWICE, the second spelling is
+  spent as a CONTROL, not as a second pair.** pcrec mirrors `engine`,
+  `dfa_scan` and `dfa_prefilter` in both a preprocessor stamp and an
+  `rx_info` field and asserts on its own side that they agree; the
+  adapter reads both and raises on a disagreement rather than recording
+  either (`testees/pcrec/adapter.py`'s `_check_agreement`). One
+  derivation per column keeps a record from carrying a compiler bug
+  forward as a number.
 - `rx_info` is a `.rodata` symbol, readable by linking against the
   artifact; the `<PREFIX>_*` stamps are preprocessor-visible at compile
   time. The adapter may read either, and must record which in the
