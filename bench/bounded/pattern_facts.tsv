@@ -1,9 +1,9 @@
 pattern	bytes	max_count	nest_depth	count_product	lazy	first_code_unit	required_code_unit	min_length	match_m_n	search_m_n	tput_m_n	oracle
-year4	5	4	1	4	no	bitmap-or-none	NONE	4	1/30	15/30	1/4	10.46 2025-08-27
+year4	5	4	1	4	no	bitmap-or-none	NONE	4	1/30	13/30	1/4	10.46 2025-08-27
 hex32	12	32	1	32	no	bitmap-or-none	NONE	32	1/30	4/30	1/4	10.46 2025-08-27
 pw-8-64	7	64	1	64	no	bitmap-or-none	NONE	8	16/30	27/30	4/4	10.46 2025-08-27
 line-80	6	80	1	open	no	bitmap-or-none	NONE	80	10/30	10/30	4/4	10.46 2025-08-27
-dotted4	23	3	2	9	no	bitmap-or-none	.	7	2/30	4/30	0/4	10.46 2025-08-27
+dotted4	23	3	2	9	no	bitmap-or-none	.	7	1/30	4/30	0/4	10.46 2025-08-27
 csv5	32	32	2	128	no	bitmap-or-none	,	4	1/30	3/30	0/4	10.46 2025-08-27
 ctx-lazy-64	64	64	1	64	yes	bitmap-or-none	NONE	8	1/30	1/30	0/4	10.46 2025-08-27
 ctx-lazy-256	65	256	1	256	yes	bitmap-or-none	NONE	8	2/30	3/30	0/4	10.46 2025-08-27

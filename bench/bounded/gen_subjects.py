@@ -180,7 +180,7 @@ def lines(rng):
             desc = ("line/ctx-near-miss: `%s`/`%s`-class near-miss words only, no whole-word trigger "
                     "or context" % (trig, ctx))
             lo, hi = 1, len(words)
-        if assigned[sid]:
+        if assigned.get(sid):
             words = _inject(rng, words, assigned[sid], lo, hi)
             desc += "; shapes: " + "+".join(assigned[sid])
         text = _pad(rng, words, total)
