@@ -1,4 +1,4 @@
-# reporter: v6 (2026-08-28); filters: subbench=loglines, version=0.1; source: store/index.tsv (26 candidate file(s)); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.3; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False
+# reporter: v7 (2026-08-29); filters: subbench=loglines, version=0.1, until=2026-08-29T00:00:00Z; source: store/index.tsv (41 candidate file(s)); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.3; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 rank	bignum	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	11362573.160494	12	1.0000	0	0		
 rank	bignum	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	11344060.358025	12	1.0000	0	0		
@@ -600,6 +600,8 @@ rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1a
 rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	4	stddev_ns	53596.339153	12	1.0000	0	0		
 rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	4	ratio_vs_baseline	6.851791	12	1.0000	0	0		
 rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	4	ratio_vs_best	13.612720	12	1.0000	0	0		
+did_not_compile	level-context	(set)	large-subject-throughput			pcrec_35e1ab1_auto-caps-simdna	did-not-compile									pcrec: pattern too complex for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0)	
+did_not_compile	level-context	(set)	large-subject-throughput			pcrec_35e1ab1_auto-nocaps-simdna	did-not-compile									pcrec: pattern too complex for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0)	
 rank	level-context	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	115353.704610	112	1.0000	0	0		
 rank	level-context	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	115275.772115	112	1.0000	0	0		
 rank	level-context	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	115948.938222	112	1.0000	0	0		
@@ -624,6 +626,8 @@ rank	level-context	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_v
 rank	level-context	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	4	stddev_ns	247441.535440	112	1.0000	0	0		
 rank	level-context	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	4	ratio_vs_baseline	7.158589	112	1.0000	0	0		
 rank	level-context	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	4	ratio_vs_best	13.395562	112	1.0000	0	0		
+did_not_compile	level-context	(set)	short-subject-search			pcrec_35e1ab1_auto-caps-simdna	did-not-compile									pcrec: pattern too complex for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0)	
+did_not_compile	level-context	(set)	short-subject-search			pcrec_35e1ab1_auto-nocaps-simdna	did-not-compile									pcrec: pattern too complex for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0)	
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	476245.748886	12	1.0000	0	0		
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	476007.883730	12	1.0000	0	0		
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	477275.617385	12	1.0000	0	0		

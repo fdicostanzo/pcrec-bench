@@ -218,7 +218,11 @@ an older measured one) restores it.
   drifted through the v6/[B16] R9 regeneration; corrected here at
   [B12] R10, no content beyond the version line changed for this file).
   Query:
-  `report --subbench email-specimen --version 0.2 --format md`. The
+  `report --subbench email-specimen --version 0.2 --until
+  2026-08-29T00:00:00Z --format md` (the `--until` bound added
+  2026-08-29 when the 36d5963 records entered the store: the pcre2
+  testee_ids carry no pin, so newest-measured-wins would otherwise pull
+  that day's pcre2 records into this file). The
   prediction ledger against the 692c2e8 records (journal, third session
   part 5) is read per SUBJECT because the throughput set grew — a 0.1
   set sum and a 0.2 set sum are different cells. `.subject-grain.md`
@@ -230,7 +234,10 @@ an older measured one) restores it.
   **35e1ab1** (abi 8): six cells `measured` 2026-08-28 11:00-11:50 EDT,
   `--trials 5`, quiet window, reporter v7 (regenerated at [B12] R10; see
   above). Query: `report --subbench
-  loglines --version 0.1 --format md`. This is the report pcrec's
+  loglines --version 0.1 --until 2026-08-29T00:00:00Z --format md` (the
+  `--until` bound added 2026-08-29, same reason as the entry above; the
+  R10 bullets show that `pcrec-nocaps` did not compile `level-context`
+  at 35e1ab1 either). This is the report pcrec's
   [OPT-5] was chartered to be decided on (journal third session part 6;
   outbox O-7 items 4-6): read the search-band ranking beside
   `bench/loglines/pattern_facts.tsv`'s presence counts; `pcrec-auto`
@@ -242,3 +249,29 @@ an older measured one) restores it.
   --engine=vm) (pattern offset 0))` since [B12] R10). `.subject-grain.md`
   carries the 16 KB-1 MB sweep rows per flavour (fail / hit / syslog);
   `.tsv` the set-grain query.
+
+- `2026-08-29-email-specimen-0.2-budu-ryzen1600-repin-36d5963.md` — the
+  [B18] re-pin sample at pcrec **36d5963** (abi 11; inbox I-15/I-16/I-17
+  absorbed as one adapter change) on `email-specimen@0.2`: six cells
+  `measured` 2026-08-29 15:06-15:43 EDT plus two re-runs 16:39-16:55
+  (the first `pcre2-interp` and `pcrec-vm` records of the day landed
+  `inconclusive-load` — journal fourth session part 2 — and stay in the
+  store as history; the report's newest-measured-wins rule picks the
+  re-runs), `--trials 5`, quiet window with BOTH manager sessions idle,
+  reporter v7. Query: `report --subbench email-specimen --version 0.2
+  --format md` — 10 records: the four 35e1ab1 pcrec testees (the
+  cross-pin Δ baseline), the four 36d5963 ones, and the newest pcre2
+  pair. This is the [ENG-ABS] ledger (inbox I-16: the `match` regime's
+  DFA/VM ratios; the search rows are the flat control) — outbox O-8.
+  `.subject-grain.md` (`--grain subject`) carries the per-subject match
+  rows the ledger is read on; `.tsv` the set-grain query.
+- `2026-08-29-loglines-0.1-budu-ryzen1600-repin-36d5963.md` — the [B18]
+  re-pin sample at pcrec **36d5963** on `loglines@0.1`: six cells
+  `measured` 15:43-16:37 EDT plus one re-run (`pcrec-nocaps`, 16:55),
+  same protocol, reporter v7. Query: `report --subbench loglines
+  --version 0.1 --format md` — 10 records as above. This is the [OPT-K]
+  ledger (inbox I-15: uuid / iso-ts / stack-frame the exercising rows,
+  ipv4 / hex32-id / http-5xx the controls) and Frank's [SEL-1] row
+  (`level-context` under `pcrec-auto`, a VM artifact now, vs pcre2-jit)
+  — outbox O-8. `.subject-grain.md` carries the 16 KB-1 MB sweep per
+  flavour; `.tsv` the set-grain query.
