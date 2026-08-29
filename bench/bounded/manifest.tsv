@@ -1,0 +1,44 @@
+id	len	sha256	description	periodic
+f-year-4	4	a20a2b7bb0842d5cf8a0c06c626421fd51ec103925c1819a51271f2779afa730	field/match year4: 4 digits	no
+f-year-3	3	27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf	field/near-miss year4: 3 digits, fails at the 4th repetition	no
+f-year-5	5	868b5cf5e9e2b7152f387c8969611922f7276cd0db9af3c60336a54a09d0af69	field/over-run year4: 5 digits, the repeat is satisfied and \z fails	no
+f-hex-32	32	4da2c97d8a6196ba1e493fed83721da9457b27d30dec49784b5ca1158bd0666b	field/match hex32: 32 hex	no
+f-hex-31	31	3fbb06251c4e6c7bf00fe51b9b77cc5bd855301ff0fe016fc732fd0ff4f3ad26	field/near-miss hex32: 31 hex, fails at the 32nd repetition	no
+f-hex-32g	32	ff13aa741f7ea61b2e2d2d86ff467b1101a6f1f75056cf15e06364e29665ecca	field/near-miss hex32: 31 hex then `g`, fails at the 32nd repetition on a wrong byte	no
+f-pw-8	8	7bfb6e22251389dc07ccfc046f369fd05995feca1338d996bbd6001316e824c6	field/match pw-8-64: 8 bytes, the exact minimum	no
+f-pw-7	7	291103dc6d7b969541b3fa8aef56e26a9af49f645148d4555925cde049531d30	field/near-miss pw-8-64: 7 bytes, fails at the 8th repetition	no
+f-pw-64	64	08f056d7041535e40e2c5f71dbaf743cbd1b76484f76df04d600c27537262382	field/match pw-8-64: 64 bytes, the exact maximum	no
+f-pw-65	65	9a42baf67e2af42d01b52143e62e0962a5d4d5dafdfd796604dd30013a16005b	field/over-run pw-8-64: 65 bytes, the repeat is satisfied at 64 and \z fails	no
+f-quad-4	12	cfa70d62675ad68156a45c96ac6fa810298c0402007fa0cbdae653151595eed8	field/match dotted4: four octets	no
+f-quad-3	8	b34dae7180da95e33fc91b8dd8d71f6856f836bd9197c94fae03cdaf8b1fb727	field/near-miss dotted4: three octets, fails inside the 3rd group repetition	no
+f-quad-4x	13	f912bffbfbb77b1e5970d04105645b369a544b6b2c259ca8fabf32f542473c8e	field/over-run dotted4: last octet has 4 digits, \z fails	no
+f-mac-6	17	f524a4a3b6aa550cc2a19d1a4ebcaa36db4b9bdd8040e9ead3cba38be143f856	field/match mac6: six groups	no
+f-mac-5	14	8064a5f9dd0dd1103a3008ef51d35c920a22dbc36a4a08108a47452d65165852	field/near-miss mac6: five groups, fails at the 5th `{5}` repetition's separator	no
+f-csv-5	19	a8fac28494928ada203bfb860c70f0686ca8f053fba98e0ee21d8d158c273f91	field/match csv5: five fields	no
+f-csv-4	15	70eb0edeb06b138ca579d3eff04d75ab71c1dd4ae55a387ccaf3a3cd46f9704f	field/near-miss csv5: four fields, fails at the 4th `{4}` repetition's comma	no
+l-00	43	d7f76b26349d0733af67d7544ba1e753bb998104c507551fdf1223d83951425f	line/ctx-gap-32 whole: starts with `fail`, ends with `disk`, 35 B between -- a whole-subject match for every ctx rung whose count covers the gap	no
+l-01	147	4ce15d4521dcc812d3dad09059e4b027d817259598099477a3b6f7f3926f6dd7	line/ctx-gap-128 whole: starts with `panic`, ends with `disk`, 138 B between -- a whole-subject match for every ctx rung whose count covers the gap	no
+l-02	595	08fbdf7ccc832b0a6e5d61f5b35feb24c0ae91665c66917ff45f509ccfb02f2f	line/ctx-gap-512: `panic` then `disk` 514 B later, mid-line; shapes: year4	no
+l-03	971	e7b8c7c65d016d05939b335b125c64c7825cdeae03166b8f00d2e1b2687ac6ed	line/ctx-gap-840: `abort` then `disk` 849 B later, mid-line; shapes: hex32+mac6	no
+l-04	505	447e29cb30bd8c373a4eba999860031d676dc6b38630dca1cfa5a51f5b696bd9	line/ctx-no-context: trigger `abort` and no context word after it (the lazy gap walks its full count and finds nothing); shapes: year4	no
+l-05	998	1323e31238e0f4b68a835aa72e6563c41932d7ffe827bd4639fcaa3a7e4a4979	line/ctx-no-context: trigger `abort` and no context word after it (the lazy gap walks its full count and finds nothing); shapes: year4+csv5	no
+l-06	304	af9b6ec796e286932302f9d5daffe39313fe1b18bfe6e6a5849ab6500bad107a	line/ctx-wrong-order: context word `memory` BEFORE trigger `panic`; shapes: mac6	no
+l-07	151	6a1d148987519ed1db1387a06f479ddb81fc265767cd08c562c412df2ef518fe	line/ctx-near-miss: `abort`/`disk`-class near-miss words only, no whole-word trigger or context; shapes: dotted4	no
+l-08	134	6616d2648e049653bc6b15461897584ece0001e2d1289a2fcdfe81b583e54776	line/background: ops prose of near-misses; shapes: dotted4	no
+l-09	402	50ab7e41389b3efb51a04b9dbe7f21c007725b896b7b1855527318607b2a205e	line/background: ops prose of near-misses (no shape injected)	no
+l-10	255	66047af1ae6bcc8ffd288696047d550816e8c6433be285a784b6ab22eb10a376	line/background: ops prose of near-misses (no shape injected)	no
+l-11	883	9b60ef555131ff93b581ad4ed3b313d5701a89b7291d9e97e495be4b67078b73	line/background: ops prose of near-misses; shapes: hex32+dotted4+csv5	no
+r-00016	16	478ffd3de75c979609755bb3c490b0e41e364381b85cb05c39707c56bb716306	run/letters: 16 random lowercase letters	no
+r-00017	17	2b2c75a7284b1b395ff2ebd1019f7c2a7ee21be26fdf6d5afd70f50712f75c20	run/letters: 17 random lowercase letters	no
+r-00036	36	54ac5e06c224e2b8243a18fe1ae98490e0d29ebeccd88a0ae0474fb4f2281ed8	run/letters: 36 random lowercase letters	no
+r-00037	37	d29ce892f37014bbc888bb910d08ec162c69beec137f2feb63bbebc7df2bc3cd	run/letters: 37 random lowercase letters	no
+r-00255	255	eed74b3a8a74481d809cd0cd96e93bfd0e1dec615f0e163f5b7bcd09b9bf06d7	run/letters: 255 random lowercase letters	no
+r-00256	256	2821c509a7db4caedb4c5647a6b900656a7fda3c088c54e00c42dd471085b1a4	run/letters: 256 random lowercase letters	no
+r-00257	257	26a1cdcc03fc0678440d13c36ac86eb2ccb5fbf6f20fd65cba7edf8ae4230edd	run/letters: 257 random lowercase letters	no
+r-04096	4096	7becd7ee93c5972e9ac97047724af321ab85b28df7e504477000160d9f9a81fb	run/letters: 4096 random lowercase letters	no
+r-16384	16384	1b161f842084a671314a0d36bfdc067ef7931bc951b056b82f42258bc03fe7b6	run/letters: 16384 random lowercase letters	no
+d-00016	16	e4dd362c7ae3f169db1f0d5294e78a3b6fd36f30fc0765b85ab4a9d15dfaa095	run/digits: 16 random digits	no
+d-00017	17	22a8d8e31241154e1298bb99a5960fe0c0cf8949d3e9bcfb95dbd8e65ed12f99	run/digits: 17 random digits	no
+d-00027	27	df958c5798bfbe10b1932d0b1dfd63dca52f91e3bb40aafcc83fc20ca6ede447	run/digits: 27 random digits	no
+d-00028	28	0d167630bef889e4ca5cc59cb84bdd42aaa812fa92bca0804ed1159dd6b2cf0a	run/digits: 28 random digits	no
+d-00256	256	f06e054994319358249296e8bb7212abc4f6e2875ad892eca05f0dd79bf510c8	run/digits: 256 random digits	no

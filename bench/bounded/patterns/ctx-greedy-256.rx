@@ -1,0 +1,1 @@
+\b(?:fail|abort|panic)\b.{0,256}\b(?:disk|memory|socket|quota)\b

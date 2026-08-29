@@ -1,0 +1,415 @@
+# The bounded-repeat sub-bench SIDECAR (harness contract 2, requirements 5).
+# Fields only, no grammar, no directives, no includes -- [DD-13]'s territory
+# is deliberately untouched, so the unified format absorbs this mechanically
+# when it lands.
+
+id = "bounded"
+version = "0.1"
+objective_kind = "hazard"
+objective = """\
+Bounded repeats on both axes: what an engine pays to COMPILE a counted \
+repeat as the count grows, nests and changes body (a literal, a class, a \
+group) -- through to the count at which it refuses, which is a first-class \
+outcome and the number the count ladder exists to locate -- and what it \
+pays to MATCH the everyday bounded shapes (fixed-width fields, hex ids, \
+length rules, nested octet counts) and the hazard-band ones (a bounded lazy \
+gap before a word-boundary alternation; an ambiguous nested count) on \
+subjects that match, that fail at the last repetition, and that over-run \
+the count and fail only at the end anchor."""
+description = """\
+Thirty patterns in two families. ELEVEN everyday bounded shapes: a 4-digit \
+year, a 32-hex id, a password length rule `.{8,64}`, a line-length rule \
+`.{80,}`, a dotted quad `(?:\\d{1,3}\\.){3}\\d{1,3}`, a six-group MAC, a \
+five-field CSV record, and a bounded-context shape `\\b(?:fail|abort|panic)\
+\\b.{0,N}?\\b(?:disk|memory|socket|quota)\\b` as a count ladder N = 64 / 256 \
+/ 1024 plus its greedy twin at 256. EIGHTEEN count-ladder rungs on a few \
+skeletons: `[a-z]{0,n}` for n = 16 .. 65535 (PCRE2's own ceiling), the \
+exact `{n}`, the open `{n,}`, the lazy `{0,n}?`, a group body \
+`(?:a|[b-z]){0,n}`, two- and three-deep nests `(?:\\d{1,k}){1,k}`, and one \
+ambiguous nest over letters whose near-misses a backtracker pays for. Plus \
+the floor. Subjects: 17 whole-string FIELDS (each shape's exact match, its \
+near-miss at the last repetition, its over-run), 12 LINES of near-miss ops \
+prose (43-999 B) carrying the shapes in an allocated minority and the \
+trigger/context pairs at designed gaps, and 14 RUNS of random letters or \
+digits sitting on the ladder's rungs and one off them (16 B - 16 KB). \
+Regimes `match` + `search_short` (1024 B band); no throughput sweep -- the \
+sweep here is the COUNT, in the patterns. See NOTES.md for the pattern \
+table with m/n, the ladder and the predicted first-refusal counts, the \
+oracle's own limits, and the cell-time estimate."""
+
+# `match` and `search_short`, NOT `throughput` -- a declaration, not an
+# omission (NOTES.md, "Regimes"): the give-up axis this set sweeps is the
+# COUNT in the pattern, and inbox I-2 1(b)'s "the size at which it first
+# fires" is here "the count at which it first fires", which lives in the
+# count ladder, not in a subject-size sweep. The longest subject (16 KB) is
+# in `match` only.
+regimes = ["match", "search_short"]
+
+# THE MEMBERS. `feature_tier`: `base` is pcrec's frozen `std1` set; the four
+# `ctx-*` rungs use `\b` (the `assertions` module, built but not in `std1`),
+# which every pcrec testee already passes `--features all` for -- a TESTEE
+# flag, not a pattern variant; the text is byte-identical either way.
+# `hazard_class` is the schema's enum: `exact-minimum-boundary` for the
+# fixed-width everyday shapes whose near-misses fail one repetition short,
+# `large-count` for the ladder, `ambiguous-decomposition` for the lazy gap
+# and the nests. `size_class` is the PATTERN's byte size (tiny < 16 B, small
+# < 64, medium < 256).
+
+# ---- everyday shapes ----
+
+[[patterns]]
+name = "year4"
+file = "patterns/year4.rx"
+feature_tier = "base"
+hazard_class = "exact-minimum-boundary"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "fixed-width", "digits", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "hex32"
+file = "patterns/hex32.rx"
+feature_tier = "base"
+hazard_class = "exact-minimum-boundary"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "fixed-width", "hex-id", "class-body", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "pw-8-64"
+file = "patterns/pw-8-64.rx"
+feature_tier = "base"
+hazard_class = "exact-minimum-boundary"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "length-rule", "dot-body", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "line-80"
+file = "patterns/line-80.rx"
+feature_tier = "base"
+hazard_class = "exact-minimum-boundary"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "length-rule", "open-count", "dot-body", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "dotted4"
+file = "patterns/dotted4.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["everyday", "nested-count", "group-body", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "mac6"
+file = "patterns/mac6.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["everyday", "nested-count", "group-body", "hex", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "csv5"
+file = "patterns/csv5.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["everyday", "nested-count", "negated-class", "tier-base"]
+role = "member"
+
+[[patterns]]
+# The bounded-context COUNT LADDER, rung 64: a lazy gap before a `\b`
+# alternation. The shape inbox I-14 (iii) filed in the K23/K32 band; the
+# count is what this ladder sweeps.
+name = "ctx-lazy-64"
+file = "patterns/ctx-lazy-64.rx"
+feature_tier = "base+assertions"
+hazard_class = "ambiguous-decomposition"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["everyday", "lazy-gap", "word-boundary", "ladder", "ctx", "tier-assertions"]
+role = "member"
+
+[[patterns]]
+name = "ctx-lazy-256"
+file = "patterns/ctx-lazy-256.rx"
+feature_tier = "base+assertions"
+hazard_class = "ambiguous-decomposition"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["everyday", "lazy-gap", "word-boundary", "ladder", "ctx", "tier-assertions"]
+role = "member"
+
+[[patterns]]
+name = "ctx-lazy-1024"
+file = "patterns/ctx-lazy-1024.rx"
+feature_tier = "base+assertions"
+hazard_class = "ambiguous-decomposition"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["everyday", "lazy-gap", "word-boundary", "ladder", "ctx", "tier-assertions"]
+role = "member"
+
+[[patterns]]
+# The greedy twin of `ctx-lazy-256`: same language, same count, greedy gap.
+# The pair separates "the lazy quantifier" from "the bounded gap before a
+# `\b` alternation" as the cause of whatever the 256 rung shows.
+name = "ctx-greedy-256"
+file = "patterns/ctx-greedy-256.rx"
+feature_tier = "base+assertions"
+hazard_class = "ambiguous-decomposition"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["everyday", "greedy-gap", "word-boundary", "control", "ctx", "tier-assertions"]
+role = "member"
+
+# ---- the count ladder ----
+
+[[patterns]]
+name = "cls-upto-16"
+file = "patterns/cls-upto-16.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-upto-256"
+file = "patterns/cls-upto-256.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-upto-4096"
+file = "patterns/cls-upto-4096.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-upto-16384"
+file = "patterns/cls-upto-16384.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-upto-32768"
+file = "patterns/cls-upto-32768.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "tier-base"]
+role = "member"
+
+[[patterns]]
+# PCRE2's own ceiling: `{0,65536}` is refused by the oracle ("number too big
+# in {} quantifier"; oracle_limits.tsv), so this is the last rung any
+# PCRE2-dialect engine can be asked for.
+name = "cls-upto-65535"
+file = "patterns/cls-upto-65535.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "ceiling", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-exact-256"
+file = "patterns/cls-exact-256.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "exact", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-exact-16384"
+file = "patterns/cls-exact-16384.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "exact", "tier-base"]
+role = "member"
+
+[[patterns]]
+# The OPEN count `{n,}`: n mandatory repetitions then an unbounded loop. The
+# control for the `{0,n}` rungs -- the same n, no upper bound to unroll.
+name = "cls-atleast-4096"
+file = "patterns/cls-atleast-4096.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "atleast", "control", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-lazy-16384"
+file = "patterns/cls-lazy-16384.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "lazy", "tier-base"]
+role = "member"
+
+[[patterns]]
+# GROUP body, same language as `[a-z]{0,n}`: the body axis. PCRE2 replicates
+# a repeated group per count and refuses this skeleton at 4096 ("regular
+# expression is too large"; oracle_limits.tsv), so 1024 is its top rung.
+name = "grp-upto-256"
+file = "patterns/grp-upto-256.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["ladder", "group-body", "upto", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "grp-upto-1024"
+file = "patterns/grp-upto-1024.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["ladder", "group-body", "upto", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "nest2-4"
+file = "patterns/nest2-4.rx"
+feature_tier = "base"
+hazard_class = "ambiguous-decomposition"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["ladder", "nested", "depth-2", "class-body", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "nest2-16"
+file = "patterns/nest2-16.rx"
+feature_tier = "base"
+hazard_class = "ambiguous-decomposition"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["ladder", "nested", "depth-2", "class-body", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "nest2-64"
+file = "patterns/nest2-64.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["ladder", "nested", "depth-2", "class-body", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "nest3-3"
+file = "patterns/nest3-3.rx"
+feature_tier = "base"
+hazard_class = "ambiguous-decomposition"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["ladder", "nested", "depth-3", "class-body", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "nest3-16"
+file = "patterns/nest3-16.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["ladder", "nested", "depth-3", "class-body", "tier-base"]
+role = "member"
+
+[[patterns]]
+# The ambiguous nest over LETTERS, bounded so the oracle finishes it: every
+# letter run longer than 36 is a near-miss a backtracker decomposes 7^6 ways
+# (about 1.7 ms on the interpreter, measured while designing the set). The
+# hazard-band MATCH row; the digit nests above are its compile-axis kin.
+name = "nest2-letters-6"
+file = "patterns/nest2-letters-6.rx"
+feature_tier = "base"
+hazard_class = "ambiguous-decomposition"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["ladder", "nested", "depth-2", "class-body", "hazard", "tier-base"]
+role = "member"
+
+[[patterns]]
+# THE FLOOR PATTERN (requirements 5, the rule since [B15]): one literal byte,
+# `role = "floor"`, run over the same subjects as the members so their
+# per-call numbers read against the harness's own per-call overhead. `:` is
+# in every line's timestamp within its first 12 bytes; it is absent from
+# most fields and from every run, where the floor is a memchr-class miss
+# over the subject (NOTES.md, "The floor pattern", states the m/n).
+name = "floor"
+file = "patterns/floor.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["floor", "control", "one-literal"]
+role = "floor"
+
+[subjects]
+generator = "gen_subjects.py"
+manifest = "manifest.tsv"
+# No throughput pair: no `throughput` regime is declared (above).
+# 1024, between bench/email's 256 and bench/loglines' 4096: every field and
+# every line (43-999 B) is in the search band; the 4096- and 16384-byte runs
+# are the count ladder's match-regime subjects and are excluded from search
+# by this bound, which is what keeps the search band cost-uniform.
+short_search_max_bytes = 1024
+
+[expectations]
+file = "expectations.tsv"
+default_method = "libpcre2-differential"
+
+# Per-testee notes. No testee runs a VARIANT of any pattern in this sub-bench:
+# all thirty are canonical PCRE2 spellings and every adapter runs the
+# canonical text (requirements 4.5 -- the record still STATES that, as
+# `patterns[].variant = null`). `options` is empty for both engines: the
+# patterns carry their own semantics inline and neither adapter passes a
+# compile option. See NOTES.md.
+[testees.pcre2]
+options = {}
+
+[testees.pcrec]
+options = {}
+# Four patterns use `\b` (`assertions` module, built but not in `std1`);
+# `--features all` is already on every pcrec testee config -- a flag of the
+# TESTEE, not a variant of the pattern. A REFUSAL on a large-count rung is
+# an expected, first-class `did-not-compile` outcome of this set (NOTES.md,
+# "The ladder and the predicted first refusal"), never a testee note.
