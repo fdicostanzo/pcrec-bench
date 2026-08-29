@@ -47,12 +47,11 @@ OUT = os.path.join(HERE, "oracle_limits.tsv")
 # passed; `cap` = 65536 is one past PCRE2's count ceiling so the count
 # ceiling itself is always reached and named.
 SKELETONS = (
-    ("cls-upto",      r"[a-z]{0,N}",                    "16,256,4096,16384,32768,65535", 16, 65536),
-    ("cls-exact",     r"[a-z]{N}",                      "256,16384",                     256, 65536),
-    ("cls-atleast",   r"[a-z]{N,}",                     "4096",                          256, 65536),
+    ("cls-upto",      r"[a-z]{0,N}",                    "256,4096,16384,32768,65535", 16, 65536),
+        ("cls-atleast",   r"[a-z]{N,}",                     "4096",                          256, 65536),
     ("cls-lazy",      r"[a-z]{0,N}?",                   "16384",                         256, 65536),
-    ("grp-upto",      r"(?:a|[b-z]){0,N}",              "256,1024",                      16, 65536),
-    ("nest2",         r"(?:\d{1,N}){1,N}",              "4,16,64",                       4, 65536),
+    ("grp-upto",      r"(?:a|[b-z]){0,N}",              "1024",                          16, 65536),
+    ("nest2",         r"(?:\d{1,N}){1,N}",              "4,64",                          4, 65536),
     ("nest3",         r"(?:(?:\d{1,N}){1,N}){1,N}",     "3,16",                          3, 65536),
     ("nest2-letters", r"(?:[a-z]{1,N}){1,N}",           "6",                             6, 65536),
     ("ctx-lazy",      r"\b(?:fail|abort|panic)\b.{0,N}?\b(?:disk|memory|socket|quota)\b",

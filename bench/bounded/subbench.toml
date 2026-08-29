@@ -17,24 +17,26 @@ gap before a word-boundary alternation; an ambiguous nested count) on \
 subjects that match, that fail at the last repetition, and that over-run \
 the count and fail only at the end anchor."""
 description = """\
-Twenty-nine patterns in two families. TEN everyday bounded shapes: a 4-digit \
+Twenty-four patterns in two families. TEN everyday bounded shapes: a 4-digit \
 year, a 32-hex id, a password length rule `.{8,64}`, a line-length rule \
 `.{80,}`, a dotted quad `(?:\\d{1,3}\\.){3}\\d{1,3}`, a five-field CSV \
 record, and a bounded-context shape `\\b(?:fail|abort|panic)\
 \\b.{0,N}?\\b(?:disk|memory|socket|quota)\\b` as a count ladder N = 64 / 256 \
-/ 1024 plus its greedy twin at 256. EIGHTEEN count-ladder rungs on a few \
-skeletons: `[a-z]{0,n}` for n = 16 .. 65535 (PCRE2's own ceiling), the \
-exact `{n}`, the open `{n,}`, the lazy `{0,n}?`, a group body \
-`(?:a|[b-z]){0,n}`, two- and three-deep nests `(?:\\d{1,k}){1,k}`, and one \
-ambiguous nest over letters whose near-misses a backtracker pays for. Plus \
-the floor. Subjects: 15 whole-string FIELDS (each shape's exact match, its \
-near-miss at the last repetition, its over-run), 11 LINES of near-miss ops \
-prose (43-998 B) carrying the shapes in an allocated minority and the \
-trigger/context pairs at designed gaps, 12 RUNS of random letters or \
-digits sitting on the ladder's small rungs and one off them (16-257 B), and \
-four LARGE runs (4 KB / 16 KB / 64 KB) in a `throughput` regime that is the \
+/ 1024 plus its greedy twin at 256. THIRTEEN count-ladder rungs on a few \
+skeletons: `[a-z]{0,n}` for n = 256 .. 65535 (PCRE2's own ceiling), the \
+open `{n,}`, the lazy `{0,n}?`, a group body `(?:a|[b-z]){0,1024}`, two- \
+and three-deep nests `(?:\\d{1,k}){1,k}`, and one ambiguous nest over \
+letters whose near-misses a backtracker pays for. Plus the floor. \
+Subjects: 13 whole-string FIELDS (each shape's exact match, its near-miss \
+at the last repetition, its over-run), 8 LINES of near-miss ops prose \
+(43-256 B) carrying the shapes in an allocated minority and the \
+trigger/context pairs at designed gaps, 9 RUNS of random letters or digits \
+sitting on the ladder's small rungs and one off them (16-257 B), and four \
+LARGE runs (4 KB / 16 KB / 64 KB) in a `throughput` regime that is the \
 ladder's top rungs driven to their full count, not a size sweep -- the \
-sweep here is the COUNT, in the patterns. See NOTES.md for the pattern \
+sweep here is the COUNT, in the patterns. The set is sized to the \
+harness's batched-loop protocol (NOTES.md, "Cell-time estimate"), which is \
+why the ladder is thirteen rungs and not twenty. See NOTES.md for the pattern \
 table with m/n, the ladder and the predicted first-refusal counts, the \
 oracle's own limits, and the cell-time estimate."""
 
@@ -169,16 +171,6 @@ role = "member"
 # ---- the count ladder ----
 
 [[patterns]]
-name = "cls-upto-16"
-file = "patterns/cls-upto-16.rx"
-feature_tier = "base"
-hazard_class = "large-count"
-size_class = "tiny"
-convention = "perl-leftmost-first"
-tags = ["ladder", "class-body", "upto", "tier-base"]
-role = "member"
-
-[[patterns]]
 name = "cls-upto-256"
 file = "patterns/cls-upto-256.rx"
 feature_tier = "base"
@@ -232,26 +224,6 @@ tags = ["ladder", "class-body", "upto", "ceiling", "tier-base"]
 role = "member"
 
 [[patterns]]
-name = "cls-exact-256"
-file = "patterns/cls-exact-256.rx"
-feature_tier = "base"
-hazard_class = "large-count"
-size_class = "tiny"
-convention = "perl-leftmost-first"
-tags = ["ladder", "class-body", "exact", "tier-base"]
-role = "member"
-
-[[patterns]]
-name = "cls-exact-16384"
-file = "patterns/cls-exact-16384.rx"
-feature_tier = "base"
-hazard_class = "large-count"
-size_class = "tiny"
-convention = "perl-leftmost-first"
-tags = ["ladder", "class-body", "exact", "tier-base"]
-role = "member"
-
-[[patterns]]
 # The OPEN count `{n,}`: n mandatory repetitions then an unbounded loop. The
 # control for the `{0,n}` rungs -- the same n, no upper bound to unroll.
 name = "cls-atleast-4096"
@@ -274,19 +246,6 @@ tags = ["ladder", "class-body", "upto", "lazy", "tier-base"]
 role = "member"
 
 [[patterns]]
-# GROUP body, same language as `[a-z]{0,n}`: the body axis. PCRE2 replicates
-# a repeated group per count and refuses this skeleton at 4096 ("regular
-# expression is too large"; oracle_limits.tsv), so 1024 is its top rung.
-name = "grp-upto-256"
-file = "patterns/grp-upto-256.rx"
-feature_tier = "base"
-hazard_class = "large-count"
-size_class = "small"
-convention = "perl-leftmost-first"
-tags = ["ladder", "group-body", "upto", "tier-base"]
-role = "member"
-
-[[patterns]]
 name = "grp-upto-1024"
 file = "patterns/grp-upto-1024.rx"
 feature_tier = "base"
@@ -299,16 +258,6 @@ role = "member"
 [[patterns]]
 name = "nest2-4"
 file = "patterns/nest2-4.rx"
-feature_tier = "base"
-hazard_class = "ambiguous-decomposition"
-size_class = "small"
-convention = "perl-leftmost-first"
-tags = ["ladder", "nested", "depth-2", "class-body", "tier-base"]
-role = "member"
-
-[[patterns]]
-name = "nest2-16"
-file = "patterns/nest2-16.rx"
 feature_tier = "base"
 hazard_class = "ambiguous-decomposition"
 size_class = "small"
@@ -381,17 +330,19 @@ generator = "gen_subjects.py"
 manifest = "manifest.tsv"
 throughput_generator = "gen_throughput_subjects.py"
 throughput_manifest = "manifest_throughput.tsv"
-# 1024, between bench/email's 256 and bench/loglines' 4096: every field,
-# line (43-998 B) and small run is in the search band, so the two short
-# regimes see the same 38 subjects.
-short_search_max_bytes = 1024
+# 512: every field, line and small run (3-257 B) is in the search band, so
+# the two short regimes see the same 30 subjects. The lines themselves are
+# held to <= 256 B by the generator (requirements 3's "~256-byte subjects"
+# for this regime, bench/email's band); 512 rather than 256 only so the
+# 257-byte over-run of the 256 rung is not dropped from search by one byte.
+short_search_max_bytes = 512
 
 [expectations]
 file = "expectations.tsv"
 default_method = "libpcre2-differential"
 
 # Per-testee notes. No testee runs a VARIANT of any pattern in this sub-bench:
-# all twenty-nine are canonical PCRE2 spellings and every adapter runs the
+# all twenty-four are canonical PCRE2 spellings and every adapter runs the
 # canonical text (requirements 4.5 -- the record still STATES that, as
 # `patterns[].variant = null`). `options` is empty for both engines: the
 # patterns carry their own semantics inline and neither adapter passes a

@@ -9,7 +9,7 @@ is the entry point and the place the sub-bench's own directory is named.
     python3 bench/bounded/gen_expectations.py            # write
     python3 bench/bounded/gen_expectations.py --check     # re-derive + diff
 
-29 patterns x (38 match + 38 search_short + 4 throughput) subject slots.
+24 patterns x (30 match + 30 search_short + 4 throughput) subject slots.
 The `throughput` rows are the ladder's large rungs under find-all search,
 not a size sweep (NOTES.md, "Regimes").
 

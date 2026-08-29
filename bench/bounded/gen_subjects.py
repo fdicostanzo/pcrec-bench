@@ -4,12 +4,12 @@
 
 Three families from one grammar (`boundedtext.py`, whose header says why
 three): FIELDS (3-65 B whole-string candidates, each everyday shape as its
-exact match, its last-repetition near-miss and its end-anchor over-run),
-LINES (43-998 B ops prose, near-miss background, the everyday shapes
-injected into an exactly allocated minority, and the bounded-context lines
-with a trigger word and a context word at a DESIGNED gap), and RUNS
-(random letters / digits at the count ladder's SMALL rungs and one off
-them, 16-257 B). The ladder's LARGE rungs are exercised by the
+exact match, its last-repetition near-miss and -- for two shapes -- its
+end-anchor over-run), LINES (43-256 B ops prose, near-miss background, the
+everyday shapes injected into an exactly allocated minority, and the
+bounded-context lines with a trigger word and a context word at a DESIGNED
+gap), and RUNS (random letters / digits at the count ladder's SMALL rungs
+and one off them, 16-257 B). The ladder's LARGE rungs are exercised by the
 `throughput/` runs (`gen_throughput_subjects.py`), not here: a 16 KB
 subject in the `match` regime beside 40 subjects of ~40 B would drive the
 harness's median-calibrated loop into its 20 s per-trial cap on every
@@ -46,9 +46,12 @@ SEED = 20260829
 OUT = os.path.join(HERE, "subjects")
 MANIFEST = os.path.join(HERE, "manifest.tsv")
 
-# Lines are capped at MAX_LINE bytes and the sidecar's short_search_max_bytes
-# is 1024, so every subject here is in BOTH short regimes.
-MAX_LINE = 1000
+# Lines are capped at MAX_LINE bytes (requirements 3: the short-search
+# regime's "~256-byte subjects") and the sidecar's short_search_max_bytes is
+# 512, so every subject here is in BOTH short regimes. The cap is also what
+# keeps the search band's cost spread inside what the harness's median-
+# calibrated loop tolerates (NOTES.md, "Cell-time estimate").
+MAX_LINE = 256
 
 # ---------------------------------------------------------------- fields
 
@@ -61,11 +64,9 @@ def fields(rng):
     y = nonperiodic(rng, bt.year4, lambda v: v[:3])
     out.append(("f-year-4", "field/match year4: 4 digits", y))
     out.append(("f-year-3", "field/near-miss year4: 3 digits, fails at the 4th repetition", y[:3]))
-    out.append(("f-year-5", "field/over-run year4: 5 digits, the repeat is satisfied and \\z fails", nonperiodic(rng, lambda r: y + r.digits(1))))
-    h = nonperiodic(rng, bt.hex32, lambda v: v[:31], lambda v: v[:31] + "g")
+    h = nonperiodic(rng, bt.hex32, lambda v: v[:31])
     out.append(("f-hex-32", "field/match hex32: 32 hex", h))
     out.append(("f-hex-31", "field/near-miss hex32: 31 hex, fails at the 32nd repetition", h[:31]))
-    out.append(("f-hex-32g", "field/near-miss hex32: 31 hex then `g`, fails at the 32nd repetition on a wrong byte", h[:31] + "g"))
     out.append(("f-pw-8", "field/match pw-8-64: 8 bytes, the exact minimum", nonperiodic(rng, lambda r: bt.password(r, 8))))
     out.append(("f-pw-7", "field/near-miss pw-8-64: 7 bytes, fails at the 8th repetition", nonperiodic(rng, lambda r: bt.password(r, 7))))
     out.append(("f-pw-64", "field/match pw-8-64: 64 bytes, the exact maximum", nonperiodic(rng, lambda r: bt.password(r, 64))))
@@ -73,7 +74,8 @@ def fields(rng):
     q = nonperiodic(rng, bt.dotted4, lambda v: v.rsplit(".", 1)[0])
     out.append(("f-quad-4", "field/match dotted4: four octets", q))
     out.append(("f-quad-3", "field/near-miss dotted4: three octets, fails inside the 3rd group repetition", q.rsplit(".", 1)[0]))
-    out.append(("f-quad-4x", "field/over-run dotted4: last octet has 4 digits, \\z fails", nonperiodic(rng, lambda r: q + r.digits(1))))
+    out.append(("f-quad-4x", "field/over-run dotted4: last octet has 4 digits, \\z fails",
+                nonperiodic(rng, lambda r: q + r.digits(4 - len(q.rsplit(".", 1)[1])))))
     c = nonperiodic(rng, bt.csv5, lambda v: v.rsplit(",", 1)[0])
     out.append(("f-csv-5", "field/match csv5: five fields", c))
     out.append(("f-csv-4", "field/near-miss csv5: four fields, fails at the 4th `{4}` repetition's comma", c.rsplit(",", 1)[0]))
@@ -94,22 +96,21 @@ def fields(rng):
 CTX_LINES = (
     # id,     total, gap,  kind
     ("l-00", None, 32,   "whole"),
-    ("l-01", None, 128,  "whole"),
-    ("l-02", None, 512,  "gap"),
-    ("l-03", None, 840,  "gap"),
-    ("l-04", 500,  None, "no-context"),
-    ("l-05", 1000, None, "no-context"),
-    ("l-06", 300,  None, "wrong-order"),
-    ("l-07", 150,  None, "near-miss"),
+    ("l-01", None, 96,   "whole"),
+    ("l-02", None, 160,  "gap"),
+    ("l-03", 250,  None, "no-context"),
+    ("l-04", 120,  None, "no-context"),
+    ("l-05", 200,  None, "wrong-order"),
+    ("l-06", 150,  None, "near-miss"),
 )
-BACKGROUND_LINES = (("l-08", 120), ("l-09", 400), ("l-10", 800))
+BACKGROUND_LINES = (("l-07", 230),)
 
-# HOW MANY of the nine non-whole lines carry each everyday shape -- an exact
+# HOW MANY of the six non-whole lines carry each everyday shape -- an exact
 # allocation without replacement (bench/loglines' lesson: a per-line coin
-# flip at n=9 would make the match rate an accident of the seed). The two
+# flip at n=6 would make the match rate an accident of the seed). The two
 # `whole` ctx lines are not in the pool: an injected token would break
 # "ends with the context word".
-COUNTS = (("year4", 3), ("hex32", 2), ("dotted4", 3), ("csv5", 2))
+COUNTS = (("year4", 2), ("hex32", 2), ("dotted4", 2), ("csv5", 2))
 SHAPES = {"year4": bt.year4, "hex32": bt.hex32, "dotted4": bt.dotted4,
           "csv5": bt.csv5}
 
@@ -194,7 +195,7 @@ def lines(rng):
 
 # ------------------------------------------------------------------ runs
 
-LETTER_RUNS = (16, 17, 36, 37, 255, 256, 257)
+LETTER_RUNS = (36, 37, 256, 257)
 DIGIT_RUNS = (16, 17, 27, 28, 256)
 
 

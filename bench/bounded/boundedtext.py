@@ -15,7 +15,7 @@ serves both, so there are three:
           match, as a NEAR-MISS THAT FAILS AT THE LAST REPETITION (31 hex
           where 32 are wanted; three octets where four are), and as an
           over-run that fails only at the end anchor.
-  LINES   80-1000 B lines of ops prose (a timestamp, a host, a pid, words,
+  LINES   43-256 B lines of ops prose (a timestamp, a host, a pid, words,
           numbers, hex tokens, dotted versions, paths). The SEARCH regime's
           text. The background is NEAR-MISSES by construction -- numbers of
           at most three digits, hex of at most 12, three-part versions, five-
@@ -23,11 +23,11 @@ serves both, so there are three:
           `fail`/`abort`/`panic` as whole words -- and each everyday shape is
           injected into an exactly allocated minority of lines. The bounded-
           context lines carry a trigger word and a context word at a DESIGNED
-          gap (32, 128, 512, 896 B) so the `ctx-*` rung ladder has a matching
+          gap (32, 96, 160 B) so the `ctx-*` rung ladder has a matching
           arm that grows with the count.
   RUNS    homogeneous-CLASS runs -- random lowercase letters, random digits
           -- at lengths sitting exactly on the ladder's rungs and one off
-          them (255/256/257 letters for the 256 rung; 16/17 and 27/28 digits
+          them (256/257 letters for the 256 rung; 16/17 and 27/28 digits
           for the nested rungs). They are the count ladder's MATCH-regime
           subjects: the exact count matches, one short fails at the last
           repetition, one long fails at the end anchor. The LARGE rungs
