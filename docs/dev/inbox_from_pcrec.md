@@ -645,3 +645,75 @@ and (c) stand — the fallback-vs-JIT rows (Frank's) and [B11.4]
 bounded-repeat; (c) if your harness has a `_match` probe against long
 subjects anywhere (a failing anchored probe on a 1 MB buffer), it is
 the row this pin was built for — measure it.
+
+## I-17 (2026-08-29 ~13:5x EDT) — NEW PIN `36d5963` (abi 11): [ART-SIZE] STEP 2, the emitted-size term — two exact size caps as failsafes, the counter rung's K chosen by a ladder, a capacity floor, seven-value stamps; NOTHING MOVES on your patterns; battery-proven; ONE consolidated worklist for the pcrecdev2 window
+
+CODE = 36d5963 (the [ART-SIZE] merge 6e37a4c plus one fix the union
+battery found: a LeakSanitizer report on the ladder's aborted trials —
+two emitter scratch buffers made Job-owned); the union battery ran on
+36d5963: `make -k -j12 test` checks 0 failed, 27/27 sections (only the
+known counterk load cell red, cleared solo 1,634/0; resource 26/0,
+counterk 24/0), `make san` rc 0 / 0 report lines both axes, mech
+189 rows / unexpected 0 / undetected 6 (S150-S153 S160 S178, expected) / unreached 0 / anomalies 0. Panels: r40 (design, three revision passes + a
+focused re-check) and r42 (the delivered code: identity holds — the
+shipped artifact is byte-identical to a separate `--unroll=<K>` compile
+on 7/7 patterns, term-K vs default answers identical on 67,677 cells,
+2,002-emit acceptance sweep with ZERO corpus changes). Pin 36d5963.
+
+WHAT MOVED FOR YOUR ADAPTER (abi 10 → 11): (1) TWO EMITTED-SIZE CAPS,
+emergency failsafes (D84): comment-excluded C source bytes OUTSIDE table
+initializers > 500,000 ("code"), or TOTAL emitted bytes > 1,000,000,
+REFUSE with `pattern too large: …` naming the measured size, the cap
+and the levers; raise-only overrides `--max-emit-code-bytes=N` /
+`--max-emit-bytes=N` (a value below the default is refused as
+malformed); NOT deniable; `docs/spec/limits.md` §8 "Handling an
+oversized artifact" is the documented recourse; (2) the VM counter
+rung's unroll K is CHOSEN by a size ladder when the artifact's code
+bytes exceed 120,000 — the 2 MB witness now compiles at 87 KB;
+`--unroll=K` stays the explicit override; (3) a DECLARED-CAPACITY
+FLOOR: the term never picks a K that lowers `rx_info.frame_capacity` /
+`subject_ceiling` below the default's (an explicit `--unroll=K` MAY —
+five recursion cells witness it — and the stamped ceiling says so);
+(4) NEW unconditional stamps: on every artifact `<P>_MAX_EMIT_CODE_BYTES`
+and `<P>_MAX_EMIT_BYTES` (the EFFECTIVE caps); on every VM artifact
+`<P>_UNROLL_K` and `<P>_UNROLL_K_WHY` ∈ {`default`, `option`, `denied`,
+`size-model`, `size-model-declined`, `cap-rescue`, `capacity-declined`};
+(5) `-fno-size-term` (bit 18, `PCREC_NO_SIZE_TERM`) denies the K
+selection only — never the caps; (6) `.abi = 11`; `pcrec --list-axes`
+47 rows / 19 axes; the registry check reads 67.
+
+YOUR PATTERNS: surveyed READ-ONLY before this shipped — 18 patterns
+(bench/email 3, bench/loglines 11, the four email-specimen .rx) × your
+three pinned flag sets from testees/pcrec/configs.toml = 54 emits: 54
+ACCEPT, 0 refusals, 0 K movements (every VM artifact reads K=8 /
+`default`); largest artifact 76,304 B; `level-context` (the [SEL-1]
+fallback VM artifact) 22,905 B under all three sets. Nothing moves;
+the probe is `docs/design/artsize_impl/probes/bench_acceptance.sh` if
+you add patterns. ORDINARY COMPILES ARE UNCHANGED IN COST (r42
+critic-meas: no measurable delta below the threshold over 14 patterns
+× 150 compiles; +43 ms per compile on the two tree patterns above it).
+
+THE CONSOLIDATED WORKLIST FOR THE pcrecdev2 WINDOW (Frank: "next session
+I'll start the parallel pcrecdev2 on bench and advance these bench
+requests") — one list, superseding I-15's and I-16's asks:
+(a) re-pin to 36d5963 and re-measure the MATCH regime on the
+compliance/email sets (I-16's ledger: matching subjects DFA/VM 1.031×
+[r41 1.036×], the 35 short valid emails 0.482× [0.489×], ALL 85 1.161×,
+NON-MATCHING 1.550×; a failing `_match` probe at byte 3 of a 1 MB subject
+5.5 ns flat), with the SEARCH rows as the flat control (nothing in
+`_search` changed at abi 10 or 11);
+(b) FRANK'S ASK (I-15 b): for every pattern where auto's DFA fallback
+trips (`RX_ENGINE_WHY` starts "dfa overflowed"), pcrec-auto (a VM
+artifact) vs pcre2-jit timing — `level-context` first;
+(c) [B11.4] bounded-repeat as the next sub-bench (I-14/I-15 c) — and it
+is where [ENG-COUNT] (filed unscheduled 2026-08-29: large DFA-side counts
+like `[a-z]{0,30000}`) would find its measured need if one exists;
+(d) a long-subject failing-`_match` probe row (I-16 c) if your harness
+has one — the row [ENG-ABS] was built for;
+(e) read the new stamps into your adapter's map from `--list-axes`
+(`_UNROLL_K`, `_UNROLL_K_WHY`, `_MAX_EMIT_*`; `RX_DFA_MATCH` from abi 10)
+so a K movement or a cap override on a future pattern is a bucketed
+fact, not a surprise.
+WINDOW MECHANICS: one heavy suite on the box at a time — the pcrec
+session runs beside yours from wake-up; live coordination interprocess,
+durable rulings here (D78).
