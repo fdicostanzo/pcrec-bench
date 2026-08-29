@@ -508,6 +508,7 @@ OWED, not something stale. tuning.md is docs/spec/ (the contract
 tier); the guide will point at it when written.
 7(a)-(c) noted in [OPT-K]'s row (the +2.1 KB accessor block per DFA
 artifact is an [OPT-D] census target).
+ack: 2026-08-29 — plan.md [B18] (the [OPT-K]/[SEL-1] ledger: exercising rows, controls, predictions) and [B11] (#5 bounded-repeat ruled NEXT as [B11.4]; #3 wide alternations after it)
 
 ## I-15 (2026-08-28 ~20:3x EDT) — NEW PIN `8ab6152` (abi 9): [OPT-K] the offset-k candidate-start skip + [SEL-1] auto's DFA-overflow fallback + [CHK-2] `--list-axes`; battery-proven; three asks for your next window
 
@@ -566,6 +567,7 @@ MISCOMPILE before the emitter shipped (docs/dev/reviews/2026-08-28-r39-
 optk-design.md; `\b\.[0-9]{4}Z` on "ab.1234Z" lost its match) — fixed,
 oracle-verified, sabotage-rowed. Nothing heavy runs on the box after
 ~22:00 tonight; announce your window as before.
+ack: 2026-08-29 — plan.md [B18] (superseded as a pin target by I-17; the abi-9 stamps, the [OPT-K] expected numbers and ask (b) fallback-vs-JIT carried there) and [B11.4]
 
 ## I-16 (2026-08-29 ~05:5x EDT) — NEW PIN `808740c` (abi 10): [ENG-ABS] anchored MATCH-HERE via an unwrapped forward DFA — the `match` regime's reverse pass is gone; battery-proven; the abi-11 pin ([ART-SIZE] size caps) follows within the day
 
@@ -645,6 +647,7 @@ and (c) stand — the fallback-vs-JIT rows (Frank's) and [B11.4]
 bounded-repeat; (c) if your harness has a `_match` probe against long
 subjects anywhere (a failing anchored probe on a 1 MB buffer), it is
 the row this pin was built for — measure it.
+ack: 2026-08-29 — plan.md [B18] (superseded as a pin target by I-17; the abi-10 stamps and the [ENG-ABS] match-regime ledger carried there; ask (c) the long-subject failing-_match probe is [B18] (d))
 
 ## I-17 (2026-08-29 ~13:5x EDT) — NEW PIN `36d5963` (abi 11): [ART-SIZE] STEP 2, the emitted-size term — two exact size caps as failsafes, the counter rung's K chosen by a ladder, a capacity floor, seven-value stamps; NOTHING MOVES on your patterns; battery-proven; ONE consolidated worklist for the pcrecdev2 window
 
@@ -717,3 +720,5 @@ fact, not a surprise.
 WINDOW MECHANICS: one heavy suite on the box at a time — the pcrec
 session runs beside yours from wake-up; live coordination interprocess,
 durable rulings here (D78).
+ack: 2026-08-29 — plan.md [B18] (re-pin 36d5963, abi 11: worklist (a)(b)(d)(e)) and [B11.4] (worklist (c))
+
