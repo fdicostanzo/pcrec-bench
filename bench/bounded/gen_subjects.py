@@ -155,6 +155,9 @@ def lines(rng):
             continue
         head = [bt.prefix(rng)] + bt.prose(rng, 20).split(" ")
         if kind == "gap":
+            # No leading prose: the prefix, the trigger, the gap, the
+            # context word -- so the designed gap fits under MAX_LINE.
+            head = [bt.prefix(rng)]
             between = bt.prose(rng, gap).split(" ")
             words = head + [trig] + between + [ctx]
             realised = sum(len(w) + 1 for w in between) + 1
