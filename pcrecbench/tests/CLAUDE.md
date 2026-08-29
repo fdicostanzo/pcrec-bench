@@ -128,14 +128,17 @@ which is expected and not a bug in this suite.
   fixture file (`fixtures/floor_pattern/`) once lane b15floor's schema
   v1.3 made `patterns[].role` legal, proving the wired path through
   `schema/validate.py` itself, not just the bypass.
-  **[B16] additions (2026-08-28, 7 new tests, 49 total)**: one test per
+  **[B16] additions (2026-08-28, 7 new tests, 50 total** — corrected here
+  from a stale "49" that had drifted from the actual `TESTS` list by one;
+  found while counting for [B12] below): one test per
   R1-R7 ruling of the abi-8 re-pin's reporter wave
   (`test_dfa_scan_legend_b16_r1`, `test_fast_tier_legend_b16_r2`,
   `test_engine_reading_and_scoped_legend_b16_r3`,
   `test_giveup_names_engine_and_selection_changed_b16_r4`,
   `test_gcc_band_witness_b16_r5`, `test_max_is_trial_one_b16_r6`,
   `test_dominated_set_ratio_b16_r7`; R8 is the version bump, which
-  `test_reporter_v4_r10` already pins). Each carries its own CONTROL,
+  `test_reporter_version_pin` -- renamed at [B12], was `test_reporter_v4_r10`
+  -- pins). Each carries its own CONTROL,
   because each ruling is the kind that passes trivially without one:
   R1's three ABSENCES must render as three DIFFERENT strings (a single
   blank for all of them is the bug the ruling exists to prevent); R5's
@@ -150,6 +153,36 @@ which is expected and not a bug in this suite.
   (`(no stamp — pcrec I-3)`, retired when pcrec cleared I-3), so they
   now assert their OWN ruling's facts and leave the wording to whichever
   ruling last set it.
+
+  **[B12] R10 addition (2026-08-29, 1 new test, 51 total)**:
+  `test_did_not_compile_ranking_line_r10` -- the firing case (two
+  hand-built testees sharing one pattern/regime group, one did-not-compile
+  with no match rows at all, the other measured cleanly so the ranking
+  GROUP exists to hang the bullet under) and a control pattern both
+  testees compile cleanly on, asserted absent of any did-not-compile
+  bullet. Anchored on `"\n### \`" on BOTH ends of its section-slicing
+  split, the same reason `test_floor_pattern_r9`'s own comment already
+  gives: a <= 3 subject cell (this one has 1) gets its own H4 per-subject
+  sub-table (`#### ... per-subject`), whose bare heading text contains
+  the bare H3 title as a one-off substring once its leading `#` is
+  dropped -- the unanchored split form silently truncates the section at
+  that `#` (caught by hand during development: the first draft of this
+  test failed with a section that looked truncated at a lone trailing
+  `#`, which is exactly this substring collision, not a `report.py` bug).
+
+  Also at [B12]: the `test_report` RUNTIME FIX. `_load_store(REAL_STORE)`
+  pays `schema/validate.py`'s full jsonschema validation cost for every
+  record under `store/` -- measured ~39 s per call once bench/loglines
+  and email-specimen@0.2 joined email-specimen@0.1 there (26 records,
+  2026-08-29; `cProfile` pointed the cost at jsonschema's `iter_errors`/
+  `descend`/`referencing` `$ref` resolution, not file I/O). Seven call
+  sites in this suite each paid it independently -- where the suite's
+  > 2 minute runtime went. `_load_real_store()` (a module-level cache
+  around `_load_store(REAL_STORE)`) shares ONE load across all seven,
+  safe because nothing in this suite or in `report.build_report`/
+  `render_markdown`/`render_tsv` ever mutates a `LoadedRecord` after
+  `report.load_all` returns it. Measured before/after on this box, same
+  51 tests, all green both times: 274.6 s -> 47.6 s.
 - `fixtures/` -- the synthetic store this suite reads. See its own
   CLAUDE.md.
 - `__init__.py` -- makes this a package so
