@@ -310,7 +310,9 @@ each with its control (the three absences must render DIFFERENTLY; an
 evenly-spread set must NOT be flagged; a stamped engine gets no witness
 line); four [B9]/[B14] tests that pinned superseded WORDING now check
 their own ruling's facts instead of a sentence another ruling owns.
-49 total, all green.
+50 total, all green (corrected here from a stale "49" -- the [B16] count
+text had drifted from the actual `TESTS` list by one; found while
+counting for [B12] R10's own addition below).
 
 - **R9 -- the per-subject sub-table is keyed on the REGIME.** [B14] R2's
   `<= 3 subjects` rule was "every throughput cell" only while the
@@ -361,6 +363,59 @@ no re-render, every committed report byte-identical:
   enum (an O-8 ask), or a bench-side rule that a `diagnostic` prefix may
   feed one declared pair -- a ruling, not a lane's call. Until then the
   distinction is readable in the compile-cost table's diagnostic column.
+
+## The reporter, [B12] R10 (2026-08-29) -- a did-not-compile cell is not-ranked, not invisible
+
+M1 close item (docs/dev/plan.md row [B12], "[ADDED 2026-08-28]"; lane
+b12close), kept the plan row's own label rather than opening a fourth
+`R1..` sequence. Found on bench/loglines' first sample: `level-context`
+under `pcrec-auto` did not compile at pcrec 35e1ab1 ("pattern too complex
+for the DFA engine (>32000 states; try --engine=vm)") and vanished from
+the RANKING entirely -- it still showed in the compile-cost table (every
+compile row does), which is not where a reader scanning a ranking looks.
+The cause: a testee whose compile fails contributes zero match rows, so
+it never reaches `_ranking_groups` -- [B9] R1's `status` gate only
+excludes a row that EXISTS.
+
+Fixed at `build_report`: every compile cell whose `compile_outcome` is
+`did-not-compile` (never `unsupported-by-declaration`, a testee's own
+advance declaration and a different fact) is indexed by `(sb, pattern_id)
+-> {testee_id: diagnostic}` (`ReportData.did_not_compile_by_pattern`)
+independently of match rows, and every ranking group for that pattern --
+either grain, every regime some OTHER testee actually ranked in --
+prints a bullet under its table:
+
+    not ranked: <testee> -- did-not-compile (<diagnostic>)
+
+`<diagnostic>` is the record's own string verbatim, truncated to one
+line with a stated note when it is multi-line (`_diagnostic_first_line`).
+A THIRD source of "why is this testee missing", alongside [B9] R1's
+status gate and R3's tier gate, not a replacement for either -- tracked
+independently since a testee can fail one pattern and measure the next
+cleanly in the same record. The TSV render gets the same fact as a
+`did_not_compile` section row (`gave_up_summary` carries the diagnostic,
+the only free-text column that fits). `pcrecbench/tests/test_report.py`
+gained `test_did_not_compile_ranking_line_r10` (the firing case, two
+hand-built testees sharing one pattern/regime group so the group exists,
+plus a control pattern both compile cleanly on) and the version-pinning
+test moved out from under [B14]'s name to `test_reporter_version_pin`
+(it was never really that ruling's own -- every rendering-changing
+ruling re-bumps `REPORTER_VERSION` and re-points it). 51 total. Also
+fixed at [B12]: `test_report`'s runtime (`REAL_STORE` -- `store/` itself,
+not a fixture -- grew to three sub-benches' worth of records, and
+`schema/validate.py`'s jsonschema validation cost ~39 s per
+`_load_store(REAL_STORE)` call; seven call sites in this suite each paid
+it independently, which is where the suite's > 2 minute runtime went).
+Fixed with a module-level cache (`_load_real_store()`,
+`pcrecbench/tests/test_report.py`) shared by all seven call sites rather
+than a marker that would have split the suite `make check` still needs
+to run whole -- nothing in this suite or in `report.build_report`/
+`render_markdown`/`render_tsv` mutates a `LoadedRecord` after
+`report.load_all` returns it, so sharing one load across tests changes
+nothing about what is asserted. Suite runtime: 274.6s -> 47.6s (measured
+2026-08-29, same box, same 51 tests, all green both times).
+`reporter: v7 (2026-08-29)`; every committed report under `reports/`
+regenerated -- see `reports/CLAUDE.md`.
 
 ## The reporter ([B5], merged 2026-08-25)
 

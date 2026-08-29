@@ -126,6 +126,41 @@ def _load_store(store_dir, **kw):
     return loaded, paths, source
 
 
+# [B12] R10, THE test_report RUNTIME FIX: `_load_store(REAL_STORE)` pays
+# `schema/validate.py`'s jsonschema validation cost for EVERY record in
+# `store/` -- measured at ~39 s per call on this box once bench/loglines
+# and email-specimen@0.2's records joined email-specimen@0.1's (26
+# records, 2026-08-29; `python3 -m cProfile` pointed the cost at
+# `jsonschema.validators.iter_errors`/`descend`/`referencing`'s `$ref`
+# resolution, not file I/O -- `report.discover_records` itself takes
+# ~0.1 ms). Seven call sites in this suite each pay that cost
+# independently, which is where `test_report`'s > 2 minute runtime goes
+# (`gnutimeout 540 python3 -u -m pytest ...` durations, 2026-08-29).
+# Loading it ONCE for the whole suite run and sharing the result is safe:
+# nothing in this suite, and nothing in `report.build_report`/
+# `report.render_markdown`/`render_tsv`, ever mutates a `LoadedRecord`
+# after `report.load_all` returns it (checked: no `r.setup = `/`r.rows =
+# `/`r.problems = ` assignment exists in report.py outside the
+# dataclass's own constructor) -- every reader only iterates and reduces.
+# `REAL_STORE`'s SYNTHETIC counterpart (`STORE`, the small hand-built
+# fixture store) is not cached here: it is fast on its own (well under a
+# second for all of `fixtures/store/`) and every one of ITS few call
+# sites already gets a fresh, independent `loaded` list, which is a
+# smaller thing to reason about than adding a second cache for a store
+# that was never the slow one.
+_REAL_STORE_CACHE = None
+
+
+def _load_real_store():
+    """Cached `_load_store(REAL_STORE)` -- see the comment above. Returns
+    the SAME `(loaded, paths, source)` tuple (and the same `LoadedRecord`
+    objects inside it) to every caller within one process run."""
+    global _REAL_STORE_CACHE
+    if _REAL_STORE_CACHE is None:
+        _REAL_STORE_CACHE = _load_store(REAL_STORE)
+    return _REAL_STORE_CACHE
+
+
 def _args(**overrides):
     ap = report.build_argparser()
     args = ap.parse_args([])
@@ -1216,7 +1251,7 @@ def test_plain_entry_capacities_r1():
            "an _in row keeps the CALLER capacity even when the stamped default is also present")
     _check(report._buffers_display({}) == "n/s", "no pair stamped at all -> n/s")
 
-    loaded, _paths, _source = _load_store(REAL_STORE)
+    loaded, _paths, _source = _load_real_store()
     args = _args(store=REAL_STORE, subbench="email-specimen")
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
@@ -1313,7 +1348,7 @@ def test_buffer_frame_legend_r4():
     _check(report._frame_size_display({"resume_frame_size": 24}) == "24",
            "a real stamped frame size passes through as-is")
 
-    loaded, _paths, _source = _load_store(REAL_STORE)
+    loaded, _paths, _source = _load_real_store()
     args = _args(store=REAL_STORE, subbench="email-specimen")
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
@@ -1354,7 +1389,7 @@ def test_tiny_set_per_subject_subtable_r2():
     testee -- and every throughput ranking row gains `ns/byte` beside
     `ns/call`. Not firing: `short-subject-search` (77-85 subjects) gets
     neither."""
-    loaded, _paths, _source = _load_store(REAL_STORE)
+    loaded, _paths, _source = _load_real_store()
     args = _args(store=REAL_STORE, subbench="email-specimen")
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
@@ -1403,7 +1438,7 @@ def test_jitter_ratio_r5():
     # Firing: the real store's interpretive compile rows have min well
     # under 20 microseconds (a libpcre2 interp compile is a handful of
     # microseconds) -- 'timer-floor', not a ratio close to 1.
-    loaded, _paths, _source = _load_store(REAL_STORE)
+    loaded, _paths, _source = _load_real_store()
     args = _args(store=REAL_STORE, subbench="email-specimen")
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
@@ -1453,7 +1488,7 @@ def test_artifact_bytes_column_r7():
            f"expected '-' (not a fabricated number) on the unsized row:\n{md}")
 
     # Firing against the real store too, for a real number.
-    loaded_r, _p, _s = _load_store(REAL_STORE)
+    loaded_r, _p, _s = _load_real_store()
     rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen"))
     _check(err_r is None, f"unexpected refusal: {err_r}")
     md_r = report.render_markdown(rd_r)
@@ -1483,7 +1518,7 @@ def test_legend_and_superseded_shortening_r8():
 
     # The legend, against the real store: one line per pcrec testee,
     # never a per-row repetition of the same six facts.
-    loaded_r, _p, _s = _load_store(REAL_STORE)
+    loaded_r, _p, _s = _load_real_store()
     rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen"))
     _check(err_r is None, f"unexpected refusal: {err_r}")
     md_r = report.render_markdown(rd_r)
@@ -1589,25 +1624,105 @@ def test_floor_pattern_r9():
            f"absent a floor pattern, the honest [B9] note must stand unchanged:\n{md_plain}")
 
 
-def test_reporter_v4_r10():
-    """[B14] R10, CARRIED FORWARD BY [B16] R8: a version bump whenever
-    rendering changes, so two reports produced by different reporter code
-    are never mistaken for each other. [B14] took it to v3 then v4 the
-    same day (the KB-2 correction); [B16]'s rulings change the rendering
-    of records ALREADY IN `store/` -- the 8da6120 legend under R3 and the
-    x13.45 cross-pin verdict under R4 both move -- so it became v5; [B16] R9
-    (the per-subject sub-table keyed on the regime) took it to v6. The
-    test keeps its [B14] name: the RULE is [B14] R10's, and only the
-    version it pins has moved."""
-    _check(report.REPORTER_VERSION == "v6 (2026-08-28)",
-           f"expected REPORTER_VERSION == 'v6 (2026-08-28)', got {report.REPORTER_VERSION!r}")
+def test_reporter_version_pin():
+    """THE VERSION-PINNING TEST. Originally `test_reporter_v4_r10` ([B14]
+    R10: a version bump whenever rendering changes, so two reports
+    produced by different reporter code are never mistaken for each
+    other) -- renamed and moved here at [B12] R10 (2026-08-29), because
+    the rule is not any one ruling's own: every dated section that
+    changes rendering re-bumps `REPORTER_VERSION` and this is the one
+    test that pins the CURRENT value, not the ruling that happened to
+    land it. History: [B14] took it to v3 then v4 the same day (the KB-2
+    correction); [B16]'s R3/R4 changed the rendering of records ALREADY
+    IN `store/` -- the 8da6120 legend and the x13.45 cross-pin verdict
+    both moved -- so it became v5; [B16] R9 (the per-subject sub-table
+    keyed on the regime) took it to v6; [B12] R10 (the did-not-compile
+    ranking line, `test_did_not_compile_ranking_line_r10` below) took it
+    to v7."""
+    _check(report.REPORTER_VERSION == "v7 (2026-08-29)",
+           f"expected REPORTER_VERSION == 'v7 (2026-08-29)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v6 (2026-08-28)" in md, f"expected the v5 header line:\n{md[:200]}")
+    _check("reporter: v7 (2026-08-29)" in md, f"expected the v7 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v6 (2026-08-28)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v7 (2026-08-29)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+
+
+def test_did_not_compile_ranking_line_r10():
+    """[B12] R10: a testee whose compile FAILED (`compile_outcome ==
+    "did-not-compile"`) must appear under its ranking table as
+    `not ranked: <testee> -- did-not-compile (<diagnostic>)`, not merely
+    vanish because it produced zero match rows. Found on bench/loglines'
+    first sample: `level-context` under `pcrec-auto` did not compile at
+    pcrec 35e1ab1 and disappeared from the ranking entirely (it still
+    showed in the compile-cost table, which is not where a reader
+    checking a RANKING looks).
+
+    Two testees share one pattern/regime group: `engine-c` (did-not-
+    compile, no match rows for `p1` at all -- the shape of the real
+    loglines cell) and `engine-d` (compiles and measures `p1` cleanly,
+    which is what keeps the ranking GROUP itself alive; see the module
+    docstring's [B12] R10 section for why a did-not-compile-only group
+    with no other testee is a different, unreachable case). The CONTROL
+    is `p2`, which both testees compile and measure cleanly -- its
+    ranking table must carry no did-not-compile bullet at all."""
+    setup_c = _mini_setup("engine-c_1.0.0_cfg-caps-simdna")
+    setup_d = _mini_setup("engine-d_1.0.0_cfg-caps-simdna")
+    row_dnc_plain = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                      "compile_outcome": "did-not-compile", "cost_class": "interpretive",
+                      "diagnostic": "engine-c: pattern too complex for the DFA engine "
+                                    "(>32000 states; try --engine=vm) -- FIXTURE"}
+    # p2 compiles cleanly on BOTH testees -- the control.
+    row_c_p2_compile = {"kind": "compile", "pattern_id": "p2", "trial": 1, "seq": 2,
+                         "compile_outcome": "compiled", "cost_class": "interpretive",
+                         "cost": {"total_ns": 1000}}
+    rows_c_p2_match = [_mini_row("p2", "s1", "short-subject-search", t, 10 + t, 50) for t in (1, 2, 3)]
+    loaded_c = [_mk_loaded("c.jsonl", setup_c, [row_dnc_plain, row_c_p2_compile] + rows_c_p2_match)]
+
+    rows_d_p1_match = [_mini_row("p1", "s1", "short-subject-search", t, 20 + t, 60) for t in (1, 2, 3)]
+    row_d_p2_compile = {"kind": "compile", "pattern_id": "p2", "trial": 1, "seq": 2,
+                         "compile_outcome": "compiled", "cost_class": "interpretive",
+                         "cost": {"total_ns": 1200}}
+    rows_d_p2_match = [_mini_row("p2", "s1", "short-subject-search", t, 30 + t, 55) for t in (1, 2, 3)]
+    loaded_d = [_mk_loaded("d.jsonl", setup_d, rows_d_p1_match + [row_d_p2_compile] + rows_d_p2_match)]
+
+    rd, err = report.build_report(loaded_c + loaded_d, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    _check(rd.did_not_compile_by_pattern.get(("rb-mini@1.0", "p1")) ==
+           {"engine-c_1.0.0_cfg-caps-simdna":
+            "engine-c: pattern too complex for the DFA engine (>32000 states; "
+            "try --engine=vm) -- FIXTURE"},
+           f"expected the did-not-compile diagnostic indexed by (sb, pattern_id): "
+           f"{rd.did_not_compile_by_pattern}")
+
+    md = report.render_markdown(rd)
+    # Anchored on "\n### `" on BOTH ends, same reason `test_floor_pattern_r9`
+    # already documents: `p1` is a <= 3 subject set, so R2's tiny-set rule
+    # fires and it gets its own H4 per-subject sub-table
+    # (`#### \`p1\` ... per-subject`), whose bare heading text CONTAINS the
+    # bare H3 title as a one-off substring once its leading `#` is dropped
+    # -- the bare (unanchored) split form is unsafe here.
+    p1_section = md.split("\n### `p1` / `short-subject-search`")[1].split("\n### `")[0]
+    _check("not ranked: `engine-c_1.0.0_cfg-caps-simdna` — did-not-compile "
+           "(engine-c: pattern too complex for the DFA engine (>32000 states; "
+           "try --engine=vm) -- FIXTURE)" in p1_section,
+           f"expected the did-not-compile ranking line under p1's table:\n{p1_section}")
+    _check("`engine-d_1.0.0_cfg-caps-simdna`" in p1_section,
+           f"engine-d must still rank normally in the same table:\n{p1_section}")
+
+    # CONTROL: p2 compiled on both testees -- no did-not-compile bullet
+    # anywhere near its table.
+    p2_section = md.split("\n### `p2` / `short-subject-search`")[1].split("\n### `")[0]
+    _check("did-not-compile" not in p2_section,
+           f"a cell where both testees compiled must carry no did-not-compile "
+           f"bullet:\n{p2_section}")
+
+    tsv = report.render_tsv(rd)
+    _check("did_not_compile\tp1\t(set)\tshort-subject-search\t\t\t"
+           "engine-c_1.0.0_cfg-caps-simdna\tdid-not-compile" in tsv,
+           f"expected a did_not_compile row in the TSV render:\n{tsv}")
 
 
 def test_floor_pattern_fixture_r9():
@@ -1805,7 +1920,7 @@ def test_engine_reading_and_scoped_legend_b16_r3():
     # The scoping, against the real store: 8da6120's `auto` testee compiled
     # `orig` to a DFA artifact and `factored` to a VM one AT ONE PIN, which
     # is what a per-testee legend line could not say.
-    loaded, _paths, _source = _load_store(REAL_STORE)
+    loaded, _paths, _source = _load_real_store()
     rd, err = report.build_report(loaded, _args(store=REAL_STORE,
                                                 subbench="email-specimen"))
     _check(err is None, f"unexpected refusal: {err}")
@@ -2136,7 +2251,7 @@ TESTS = [
     test_legend_and_superseded_shortening_r8,
     test_floor_pattern_r9,
     test_floor_pattern_fixture_r9,
-    test_reporter_v4_r10,
+    test_reporter_version_pin,
     # [B16]
     test_dfa_scan_legend_b16_r1,
     test_b18_offsets_and_match_form_in_legend,
@@ -2147,6 +2262,8 @@ TESTS = [
     test_max_is_trial_one_b16_r6,
     test_dominated_set_ratio_b16_r7,
     test_per_subject_subtable_b16_r9,
+    # [B12]
+    test_did_not_compile_ranking_line_r10,
 ]
 
 

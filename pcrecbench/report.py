@@ -360,6 +360,54 @@ require):
   (the lane wrote it; the manager applied it, tested 50/50, and bumped
   `REPORTER_VERSION` to `v6 (2026-08-28)`; every committed report
   re-rendered).
+
+THE [B12] RULING (2026-08-29) -- close-out item, kept the plan row's own
+label rather than restarting at R1 (docs/dev/plan.md row [B12], "[ADDED
+2026-08-28]"; lane b12close)
+-------------------------------------------------------------------------
+
+* R10 -- A DID-NOT-COMPILE CELL IS NOT-RANKED, NOT INVISIBLE. Found on
+  bench/loglines' first sample: `level-context` under `pcrec-auto` did
+  not compile at pcrec 35e1ab1 ("pattern too complex for the DFA engine
+  (>32000 states; try --engine=vm)") and vanished from the ranking
+  tables entirely -- it still appeared in the compile-cost table (every
+  compile row does), but a reader scanning the RANKING for that pattern
+  saw no trace that `pcrec-auto` was ever supposed to be there. The
+  cause: a testee whose compile failed contributes ZERO match rows, so
+  it never reaches `_ranking_groups` at all -- R1/OD-B14's `status`
+  gate (this docstring, above) only excludes a row that EXISTS; it has
+  nothing to say about a row that was never produced. Fixed at the
+  `build_report` layer: every compile cell whose `compile_outcome` is
+  `did-not-compile` (never `unsupported-by-declaration`, which is a
+  testee's own advance declaration and a different fact) is indexed by
+  `(sb, pattern_id) -> {testee_id: diagnostic}` regardless of whether
+  any match row exists for it, and every ranking group for that
+  `(sb, pattern_id)` -- at EITHER grain, over every regime the pattern
+  was actually ranked in by some OTHER testee -- prints a bullet under
+  its table, alongside the R1/R3 not-ranked/scratch bullets it already
+  has:
+
+      not ranked: <testee> — did-not-compile (<diagnostic>)
+
+  `<diagnostic>` is the record's own `diagnostic` string VERBATIM
+  (never reworded), truncated to its first line with a stated note when
+  the diagnostic itself is multi-line (`_diagnostic_first_line`) -- the
+  same "never launder a fact through a summary" discipline record_schema
+  applies to `engine_metadata`. A testee with more than one failing
+  form (rare -- `plain` and `whole-subject` can fail independently)
+  reports the `plain` form's diagnostic, since `plain` is what the
+  ranked regimes actually run on; a testee that compiled cleanly gets
+  no bullet at all, on any pattern. This is a THIRD SOURCE of "why is
+  this testee not in the table" alongside R1's status gate and R3's
+  tier gate, not a replacement for either -- a testee can be
+  did-not-compile for one pattern and measured for the next in the same
+  record, and the two facts are tracked independently. Not reachable
+  through the compile row's own table's `outcomes` column alone: that
+  column already said `did-not-compile=1`, but a reader has to already
+  suspect the RANKING is short a row to go look for it there, which is
+  the gap this closes. `REPORTER_VERSION` bumps to `v7 (2026-08-29)`;
+  every committed report under `reports/` regenerated -- see
+  `reports/CLAUDE.md`.
 """
 
 from __future__ import annotations
@@ -378,7 +426,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v6 (2026-08-28)"
+REPORTER_VERSION = "v7 (2026-08-29)"
 
 _MISSING = object()
 
@@ -1709,6 +1757,14 @@ class ReportData:
     # any record in the selection declares one (schema v1.3, not yet
     # schema-legal -- see the module docstring's R9 note).
     floor_pattern_by_sb: dict = field(default_factory=dict)
+    # [B12] R10: (sb, pattern_id) -> {testee_id: diagnostic} for every
+    # testee whose compile of `pattern_id` reported `compile_outcome ==
+    # "did-not-compile"` -- indexed independently of whether the testee
+    # produced any match row (it never does, for this pattern), so the
+    # ranking-group renderer can print a `not ranked: ... did-not-compile`
+    # bullet even though the testee is absent from `match_cells`/`set_cells`
+    # entirely. See the module docstring's [B12] R10 section.
+    did_not_compile_by_pattern: dict = field(default_factory=dict)
 
 
 def build_report(loaded, args):
@@ -1902,11 +1958,29 @@ def build_report(loaded, args):
         r for r, counts in regime_subject_counts.items() if counts and max(counts) <= 1)
 
     compile_cells = {}
+    # [B12] R10: (sb, pattern_id) -> {testee_id: diagnostic} for a testee
+    # whose compile of `pattern_id` never produced an artifact at all
+    # (`compile_outcome == "did-not-compile"` -- deliberately NOT
+    # `unsupported-by-declaration`, a testee's own advance declaration and
+    # a different fact). Built from the RAW rows, not `compile_cells`
+    # below, because a did-not-compile cell carries no `cost` for
+    # `reduce_compile_cell` to reduce and the diagnostic string lives only
+    # on the row. A testee failing on BOTH forms (`plain` and
+    # `whole-subject` can fail independently) keeps its `plain` diagnostic,
+    # since `plain` is what the ranked regimes actually run on.
+    did_not_compile_by_pattern = defaultdict(dict)  # (sb, pattern_id) -> {testee_id: diagnostic}
     for key, rows in compile_rows_by_key.items():
         sb, testee_id, pattern_id, form = key
         pt_key = (sb, testee_id, pattern_id)
         src = lambda rows=match_rows_by_pt.get(pt_key, []): _lazy_jit_derivation(rows)
         compile_cells[key] = (testee_id, reduce_compile_cell(rows, lazy_jit_derivation_source=src))
+
+        diag_row = next((row for row in rows if row.get("compile_outcome") == "did-not-compile"), None)
+        if diag_row is not None:
+            by_pattern = did_not_compile_by_pattern[(sb, pattern_id)]
+            if testee_id not in by_pattern or form == "plain":
+                by_pattern[testee_id] = _diagnostic_first_line(diag_row.get("diagnostic"))
+    did_not_compile_by_pattern = dict(did_not_compile_by_pattern)
 
     query_desc = []
     for name in ("subbench", "version", "regime", "machine", "since", "until"):
@@ -1944,6 +2018,7 @@ def build_report(loaded, args):
         all_records=all_records,
         subbench_alias_note=getattr(args, "_subbench_alias_note", None),
         floor_pattern_by_sb=floor_pattern_by_sb,
+        did_not_compile_by_pattern=did_not_compile_by_pattern,
     ), None
 
 
@@ -2017,6 +2092,21 @@ def _excerpt(text, n=120):
         return ""
     text = str(text)
     return text[:n] + ("..." if len(text) > n else "")
+
+
+def _diagnostic_first_line(diag):
+    """[B12] R10: a did-not-compile row's `diagnostic`, VERBATIM (never
+    reworded) but never more than one line -- a `not ranked:` bullet is
+    one line by construction, and a multi-line diagnostic dumped into it
+    would run the table's markdown together. Says so explicitly rather
+    than silently dropping the rest."""
+    if not diag:
+        return "(no diagnostic)"
+    text = str(diag)
+    first, sep, rest = text.partition("\n")
+    if sep and rest.strip():
+        return first + " [truncated, diagnostic continues]"
+    return first
 
 
 def render_markdown(rd: ReportData):
@@ -2152,6 +2242,19 @@ def render_markdown(rd: ReportData):
         for item in group_scratch:
             scratch_rows.append((gkey,) + item)
 
+        # [B12] R10: a testee whose compile of THIS pattern reported
+        # `did-not-compile` produced NO match row at all, so it is absent
+        # from `entries` entirely -- none of the three buckets above ever
+        # see it. Looked up independently, by (sb, pattern_id), and
+        # excluded only if the testee somehow already has an entry here
+        # (it never does, in practice: a did-not-compile testee measures
+        # nothing for this pattern).
+        entry_testees = {t for t, _f, _r in entries}
+        dnc_rows = sorted(
+            (t, diag) for t, diag in rd.did_not_compile_by_pattern.get((sb, pattern_id), {}).items()
+            if t not in entry_testees
+        )
+
         # A group with NOTHING to show at all (every entry expectation-
         # failing, which goes to the separate "Excluded from ranking"
         # table below) is skipped entirely -- but a group where every
@@ -2160,8 +2263,10 @@ def render_markdown(rd: ReportData):
         # not-ranked/scratch bullets, or that information is silently
         # invisible (found while testing the R2 amendment's
         # unmeasured-only case, 2026-08-25: a single-testee group with
-        # no measured record used to vanish completely).
-        if not rankable and not group_not_ranked and not group_scratch:
+        # no measured record used to vanish completely). R10 adds a
+        # fourth reason to keep the group: a did-not-compile testee with
+        # nothing else in the group.
+        if not rankable and not group_not_ranked and not group_scratch and not dnc_rows:
             continue
 
         any_partial = any(_partial_coverage(r) for _t, _f, r in entries)
@@ -2373,7 +2478,7 @@ def render_markdown(rd: ReportData):
                 out.append("")
         else:
             out.append("_no measured/ranked row for this cell yet -- see the "
-                        "not-ranked/scratch line(s) below._\n")
+                        "not-ranked/scratch/did-not-compile line(s) below._\n")
 
         if group_not_ranked:
             for t, form, r, status, status_detail in group_not_ranked:
@@ -2384,6 +2489,13 @@ def render_markdown(rd: ReportData):
         if group_scratch:
             for t, form, r, tier in group_scratch:
                 out.append(f"- scratch: `{t}` (tier={tier})")
+            out.append("")
+        if dnc_rows:
+            # [B12] R10: a testee that never produced a match row for this
+            # pattern because its compile FAILED, not because it was
+            # excluded by status/tier -- see the module docstring.
+            for t, diag in dnc_rows:
+                out.append(f"- not ranked: `{t}` — did-not-compile ({diag})")
             out.append("")
 
     if excluded_cells:
@@ -2617,6 +2729,17 @@ def render_tsv(rd: ReportData):
                                      status, tier, "", "pass_rate", f"{r.pass_rate:.4f}",
                                      str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong),
                                      gs, ""]))
+
+        # [B12] R10: a did-not-compile testee is absent from `entries`
+        # entirely (see render_markdown's own comment) -- one row per
+        # testee, per group, `gave_up_summary` carrying the verbatim
+        # (one-line) diagnostic since no other column fits free text.
+        entry_testees = {t for t, _f, _r in entries}
+        for t, diag in sorted(rd.did_not_compile_by_pattern.get((sb, pattern_id), {}).items()):
+            if t in entry_testees:
+                continue
+            lines.append("\t".join(["did_not_compile", pattern_id, subject_id, regime, "", "", t,
+                                     "did-not-compile", "", "", "", "", "", "", "", "", diag, ""]))
 
     stamp_testees_emitted = set()
     for (sb, testee_id, pattern_id, form), (t, r) in sorted(rd.compile_cells.items()):

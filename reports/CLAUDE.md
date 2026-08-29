@@ -16,6 +16,25 @@ immediately after a regeneration — the reporter is deterministic, so a
 non-empty diff after a bare rerun (no query change, no reporter change)
 means either the store changed or the reporter regressed determinism.
 
+**[B12] R10 (2026-08-29) regenerated every report below against reporter
+`v7 (2026-08-29)`.** Same queries, same records — one ruling, and it
+changes the rendering of exactly one file's RANKING content: a
+did-not-compile compile cell now prints `not ranked: <testee> —
+did-not-compile (<diagnostic>)` under its ranking table instead of
+vanishing from the ranking silently (see `pcrecbench/report.py`'s
+module docstring, "THE [B12] RULING"). Of the four report sets here,
+only `2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.md`
+(and its `.subject-grain.md`; the `.tsv` gets a `did_not_compile`
+section row) has a live did-not-compile cell to show:
+`level-context`/`pcrec-auto` did not compile at pcrec 35e1ab1, and its
+`short-subject-search` and `large-subject-throughput` ranking tables now
+each carry the bullet, naming the diagnostic verbatim ("pattern too
+complex for the DFA engine (>32000 states; try --engine=vm) (pattern
+offset 0)"). Every other committed report's only diff against its `v6`
+render is the version-line bump (`reporter: v6 (2026-08-28)` →
+`reporter: v7 (2026-08-29)`) — no did-not-compile cell exists in
+email-specimen's records at any pin measured so far.
+
 Every report below was regenerated at [B16] R9 (2026-08-28, later the
 same day) against reporter `v6 (2026-08-28)` — the per-subject
 sub-table keyed on the regime; and the two `-repin-692c2e8` files' query
@@ -27,8 +46,8 @@ the same day — see the KB-2 note below; and at [B9] against `v2`): each
 regeneration means these files no longer diff byte-identical against the
 previous reporter's versions, but each still answers the SAME query as
 before — see `pcrecbench/report.py`'s module docstring for the full
-ruling list ([B9]'s R1-R9, [B14]'s R1-R10, [B16]'s R1-R8 — the three
-ruling sets share numbers by coincidence of three separate `R1`..
+ruling list ([B9]'s R1-R9, [B14]'s R1-R10, [B16]'s R1-R8, [B12]'s R10 —
+the ruling sets share numbers by coincidence of separate `R1..`
 sequences, not by design; read each set's own dated section) and the
 notes below for what each wave changed in these files specifically.
 
@@ -195,7 +214,10 @@ an older measured one) restores it.
   [B16] re-pin sample at pcrec **35e1ab1** (abi 8) on `email-specimen@0.2`
   (five throughput subjects: [B17]'s two non-periodic prose subjects
   beside the periodic three), six cells `measured` 2026-08-28 10:16-10:59
-  EDT, `--trials 5`, quiet window, reporter v5. Query:
+  EDT, `--trials 5`, quiet window, reporter v7 (this entry's own "v5" had
+  drifted through the v6/[B16] R9 regeneration; corrected here at
+  [B12] R10, no content beyond the version line changed for this file).
+  Query:
   `report --subbench email-specimen --version 0.2 --format md`. The
   prediction ledger against the 692c2e8 records (journal, third session
   part 5) is read per SUBJECT because the throughput set grew — a 0.1
@@ -206,12 +228,17 @@ an older measured one) restores it.
 - `2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.md` — the
   FIRST SAMPLE of sub-bench #2, `bench/loglines@0.1` ([B11.1]), at pcrec
   **35e1ab1** (abi 8): six cells `measured` 2026-08-28 11:00-11:50 EDT,
-  `--trials 5`, quiet window, reporter v6. Query: `report --subbench
+  `--trials 5`, quiet window, reporter v7 (regenerated at [B12] R10; see
+  above). Query: `report --subbench
   loglines --version 0.1 --format md`. This is the report pcrec's
   [OPT-5] was chartered to be decided on (journal third session part 6;
   outbox O-7 items 4-6): read the search-band ranking beside
   `bench/loglines/pattern_facts.tsv`'s presence counts; `pcrec-auto`
   has NO `level-context` rows because that artifact did not compile
-  (the compile-cost table says `did-not-compile=1`; the ranking does not
-  yet list it — [B12]). `.subject-grain.md` carries the 16 KB-1 MB sweep
-  rows per flavour (fail / hit / syslog); `.tsv` the set-grain query.
+  (the compile-cost table says `did-not-compile=1`; the ranking's
+  `short-subject-search` and `large-subject-throughput` tables each carry
+  `not ranked: \`pcrec_35e1ab1_auto-caps-simdna\` — did-not-compile
+  (pattern too complex for the DFA engine (>32000 states; try
+  --engine=vm) (pattern offset 0))` since [B12] R10). `.subject-grain.md`
+  carries the 16 KB-1 MB sweep rows per flavour (fail / hit / syslog);
+  `.tsv` the set-grain query.
