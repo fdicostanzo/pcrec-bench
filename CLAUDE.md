@@ -49,9 +49,19 @@ floor, 112 subjects + a 16 KB-1 MB sweep, `pattern_facts.tsv` from
 pcre2_pattern_info). Both were MEASURED the same day
 (six cells each, `reports/2026-08-28-*`; outbox O-7 carries the
 findings to pcrec — the [OPT-5] precheck is parity, the offset-k skip
-is the ask). Next: pcrec's answers to O-7; [B11.2]..[B11.5] the
-remaining sub-benches; [B13] the interpreter is chartered. `make check`
-is green (3/56/0, 100/100, 50/50). Manager sessions start with the
+is the ask). 2026-08-29: [B11.4] landed SUB-BENCH #4, `bench/bounded/`
+(bounded repeats on both axes: ten everyday shapes incl. a bounded lazy
+gap before a `\b` alternation at three counts, a thirteen-rung count
+ladder to PCRE2's own 65535 ceiling, 30 short subjects + four large
+runs in a count-rung `throughput` regime, `pattern_facts.tsv` with the
+count facts, `oracle_limits.tsv` with the oracle's own first refusal
+per skeleton; the predicted first pcrec refusal is the abi-11 size cap
+at the 32768 rung — a first-class `did-not-compile` outcome, to be
+measured in a window next). [B18]'s WINDOW ran the same day: 12 cells
+at 36d5963 on email-specimen@0.2 and loglines@0.1, every one `measured`
+(store index 41); outbox O-8 carries the ledger. Next: bounded's window;
+[B11.2] wide alternations; [B13] the interpreter is chartered. `make check`
+is green (3/56/0, 107/107, 51/51 — re-verified after the three merges). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -124,9 +134,12 @@ bindings) live here, vendored or system, pinned either way.
   notes. `bench/email/` is the RFC 5322 specimen; `bench/loglines/` is the
   log-line search set ([B11.1]) -- mostly-FAILING log text, shaped around
   whether PCRE2's required-code-unit dismissal is available for a pattern,
-  and the measurement pcrec's [OPT-5] is built or not on. `make check`'s
-  generic gates enumerate `bench/*/` rather than naming a set. See their
-  CLAUDE.mds.
+  and the measurement pcrec's [OPT-5] is built or not on; `bench/bounded/`
+  is the bounded-repeat set ([B11.4]) -- the compile axis as a count
+  ladder with the refusal as a first-class outcome, the match axis as
+  everyday shapes with near-misses that fail at the last repetition.
+  `make check`'s generic gates enumerate `bench/*/` rather than naming a
+  set. See their CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
   (auto, nocaps, vm, the `-in` variants, at a pinned commit — 36d5963,
   abi 11 — with `list_axes.tsv`, the pin's `--list-axes` registry
@@ -155,10 +168,12 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 75 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 82 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
-                        # gen_*.py re-derives under --check, the expectations
+                        # gen_*.py re-derives under --check (loglines'
+                        # pattern_facts; bounded's pattern_facts and
+                        # oracle_limits), the expectations
                         # re-derive from the libpcre2 oracle and a driver
                         # answers the set's floor pattern by the oracle;
                         # both drivers smoke, the
