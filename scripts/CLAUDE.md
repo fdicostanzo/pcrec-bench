@@ -8,7 +8,7 @@ the latest edit.
 
 | file | role |
 |---|---|
-| `run_window.sh` | one quiet-window measurement run: `pcrecbench quiet` warm-up, then `pcrecbench run` per testee in `$TESTEES` (env-overridable, see its own header), retrying an `rc == 3` quiet-gate refusal thrice with a 20 s backoff, plus a flat `sleep 15` before every cell AFTER the first (the post-cell transient every cell but the first needed a retry for on 2026-08-28); `pcrecbench index` at the end; a `WINDOW_RUN_COMPLETE` sentinel line. `--dry-run` (or the `EXTRA`/`STORE`/`TRIALS` env vars it sets for you) makes every cell synthetic, skips the quiet gate, and runs one trial into a scratch store — see the script's own header for the exact combination and the refusal it applies if `STORE` still resolves to the canonical `store/`. |
+| `run_window.sh` | one quiet-window measurement run: `pcrecbench quiet` warm-up, then `pcrecbench run` per testee in `$TESTEES` (env-overridable, see its own header), retrying an `rc == 3` quiet-gate refusal up to twelve times with a 30 s backoff (3 × 20 s lost cells on 2026-08-29 — the header says why), plus a flat `sleep 15` before every cell AFTER the first (the post-cell transient every cell but the first needed a retry for on 2026-08-28); `pcrecbench index` at the end; a `WINDOW_RUN_COMPLETE` sentinel line. `--dry-run` (or the `EXTRA`/`STORE`/`TRIALS` env vars it sets for you) makes every cell synthetic, skips the quiet gate, and runs one trial into a scratch store — see the script's own header for the exact combination and the refusal it applies if `STORE` still resolves to the canonical `store/`. |
 
 ## Running it
 

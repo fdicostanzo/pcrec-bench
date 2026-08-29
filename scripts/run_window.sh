@@ -51,6 +51,15 @@
 # before the retries, which already sleep 20) is cheap insurance against
 # that specific transient and is provably harmless: a truly quiet box
 # stays quiet across 15 idle seconds.
+#
+# THE GATE BUDGET (2026-08-29, the 36d5963 window): 3 x 20 s LOST cells
+# that day -- a peer lane's breach and, after it, the two managers' own
+# claude processes (~9 % + ~6 % CPU while streaming) left an 11 % residue
+# on one core against the gate's 10 % limit, and a refused cell's next
+# cell meets the same box. 12 x 30 s (six minutes per cell) carried every
+# one of the 12 + 3 cells that day on attempt 1-3. The `sleep 15` did NOT
+# cover the post-cell transient (every cell after the first still refused
+# once); the budget is what covers it.
 set -u
 export LC_ALL=C
 
@@ -117,14 +126,14 @@ for t in $TESTEES; do
   fi
   first=0
   echo "-- cell $SUBBENCH x $t $(date -Is) load=$(cut -d' ' -f1-3 /proc/loadavg)" | tee -a "$LOG"
-  for attempt in 1 2 3; do
+  for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
     gnutimeout 3000 python3 -m pcrecbench run --subbench "$SUBBENCH" --testee "$t" \
         --trials "$TRIALS" --pin "$PIN" --subject-timeout 60 --driver-timeout 900 \
         --store "$STORE" $EXTRA --note "$NOTE" >> "$LOG" 2>&1
     rc=$?
     echo "   attempt $attempt rc=$rc $(date -Is)" | tee -a "$LOG"
     [ "$rc" -eq 3 ] || break
-    sleep 20
+    sleep 30
   done
 done
 
