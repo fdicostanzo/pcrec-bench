@@ -1703,6 +1703,57 @@ def test_dfa_scan_legend_b16_r1():
            "the three absences must not render identically")
 
 
+def test_b18_offsets_and_match_form_in_legend():
+    """[B18] (pcrec abi 9-11): `dfa_prefilter_offsets` rides on the `dfa:`
+    clause and `dfa_match` is its own clause -- BOTH only where the record
+    carries the pair, so a record from an older pin renders byte-for-byte
+    as before (the control), and a VM hybrid, which carries the offsets
+    but NO match form (match_api.md 6.3's two different iffs), shows
+    exactly that."""
+    uuid = {"abi": 11, "engine": "dfa", "dfa_scan": "unanchored",
+            "dfa_prefilter": "offset-set-bounded",
+            "dfa_prefilter_offsets": "0,8*,13", "dfa_table": "premultiplied",
+            "dfa_match": "unwrapped", "max_emit_bytes": 1000000}
+    clause = report._dfa_scan_display(uuid)
+    _check(clause.endswith(" offsets=0,8*,13"),
+           f"an offset-set artifact's dfa clause names its offsets, got {clause!r}")
+    _check(report._match_form_display(uuid) == "unwrapped",
+           "a DFA artifact at abi 10+ has a match form")
+    line = report._testee_legend_line("pcrec_36d5963_auto-caps-simdna", uuid,
+                                      scope="`uuid` plain")
+    _check("offsets=0,8*,13" in line and "match=unwrapped, rungs=" in line,
+           f"the legend line carries both new clauses, got {line!r}")
+
+    # CONTROL 1: an abi-8 record has neither pair and renders as before.
+    old = {"abi": 8, "engine": "dfa", "dfa_scan": "unanchored",
+           "dfa_prefilter": "byte-class", "dfa_table": "premultiplied"}
+    _check(report._dfa_scan_display(old)
+           == "scan=unanchored prefilter=byte-class table=premultiplied",
+           "an abi-8 record's dfa clause is unchanged by [B18]")
+    _check(report._match_form_display(old) is None,
+           "no dfa_match pair -> no clause, never a guess")
+    _check("match=" not in report._testee_legend_line("t", old),
+           "an abi-8 legend line has no match clause")
+
+    # CONTROL 2: a VM HYBRID carries the offsets (it contains a DFA scan)
+    # and NO match form (its _match is the VM's own body).
+    hybrid = {"abi": 11, "engine": "vm", "prefilter": "hybrid",
+              "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
+              "dfa_prefilter_offsets": "none", "dfa_table": "premultiplied",
+              "unroll_k": 8, "unroll_k_why": "default"}
+    hl = report._testee_legend_line("t", hybrid)
+    _check("offsets=none" in hl and "match=" not in hl,
+           f"a hybrid: offsets yes, match form no; got {hl!r}")
+
+    # And the column map knows both names (a dropped pair is an absent key).
+    cols = report._mechanism_stamp_columns(uuid)
+    _check(cols["dfa_prefilter_offsets"] == "0,8*,13"
+           and cols["dfa_match"] == "unwrapped",
+           "the mechanism columns carry the two new pairs")
+    _check(report._mechanism_stamp_columns(old)["dfa_match"] == "-",
+           "an absent pair is `-` in the columns, as every other absent pair")
+
+
 def test_fast_tier_legend_b16_r2():
     """[B16] R2: [OPT-1]'s two-tier default entry in the legend, including
     pcrec's ONLY spelling of 'this artifact has one tier' (fast == stamped
@@ -2088,6 +2139,7 @@ TESTS = [
     test_reporter_v4_r10,
     # [B16]
     test_dfa_scan_legend_b16_r1,
+    test_b18_offsets_and_match_form_in_legend,
     test_fast_tier_legend_b16_r2,
     test_engine_reading_and_scoped_legend_b16_r3,
     test_giveup_names_engine_and_selection_changed_b16_r4,
