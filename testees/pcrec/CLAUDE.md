@@ -8,7 +8,7 @@ Provides five testees at the commit pinned in `configs.toml`, and one —
 | `pcrec-auto` | `--features all` | the defaults: engine chosen automatically, captures on |
 | `pcrec-nocaps` | `+ --no-captures` | the axis that recovers a pure-DFA artifact for a group-bearing pattern |
 | `pcrec-vm` | `+ --engine=vm` | the VM forced, prefilter off, so the VM derives the whole span independently |
-| `pcrec-auto-in` | `--features all` + `buffer_frames = 32768`, `buffer_trail = 131072` | the defaults, matched through the `_in` entries with a caller-provided frame buffer. INERT wherever `auto` picks the DFA — which is still every artifact of `bench/email` (RE-VERIFIED at pin 35e1ab1, 2026-08-28: all six `auto`/`nocaps` artifacts stamp `RX_ENGINE "dfa"`), so it is DEFINED but NOT MEASURED there (the checks use it; it goes live on a sub-bench with VM-selected patterns under `auto`) |
+| `pcrec-auto-in` | `--features all` + `buffer_frames = 32768`, `buffer_trail = 131072` | the defaults, matched through the `_in` entries with a caller-provided frame buffer. INERT wherever `auto` picks the DFA — which is still every artifact of `bench/email` (RE-VERIFIED at pin 36d5963, 2026-08-29: all six `auto`/`nocaps` artifacts stamp `RX_ENGINE "dfa"`, both forms), so it is DEFINED but NOT MEASURED there (the checks use it; it goes live on a sub-bench with VM-selected patterns under `auto` — and since 36d5963 `bench/loglines` HAS one: `level-context` is a VM artifact under `auto`, the [SEL-1] fallback) |
 | `pcrec-vm-in` | `+ --engine=vm` + the same two capacities | RULED 2026-08-25 (manager + pcrec manager; Frank's word pending via the inbox): the VM forced with the buffer, the one entry on `bench/email` where the depth path is reachable and the capacities were measured — the sixth cell of the [B8] window |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
@@ -19,6 +19,7 @@ Provides five testees at the commit pinned in `configs.toml`, and one —
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
 | `configs.toml` | the config ids, `pin = "<commit>"`, the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
+| `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved |
 
 ## `pin.sh` never writes inside pcrec
 
@@ -380,6 +381,9 @@ than five). What arrived, and where each pair comes from:
 | 6 ([DD-13c]) | `RX_DFA_SCAN "empty"`; the two `_DFA_*` macros extended to VM HYBRIDS; `rx_info.scan` / `.prefilter` appended | (the fields are CONTROLS, not pairs) |
 | 7 ([OPT-3]) | `RX_DFA_TABLE` | `dfa_table` |
 | 8 ([ENG-FORM]) | nothing a consumer reads — the emitted scan loop moved | — |
+| 9 ([OPT-K], [B18]) | `RX_DFA_PREFILTER` gains `offset-set` / `offset-set-bounded`; `RX_DFA_PREFILTER_OFFSETS` (`"0,8*,13"` / `"none"`) on every artifact that contains a DFA scan; `-fno-offset-skip` (bit 16) | `dfa_prefilter_offsets` (a `string` pair: a fact about the machine, not a closed set) |
+| 10 ([ENG-ABS], [B18]) | `RX_DFA_MATCH` (`unwrapped` / `search-filter`) on every DFA artifact and NO VM artifact, hybrids included; `rx_info.match_form` appended (NULL where the macro is absent); `-fno-anchored-dfa` (bit 17) | `dfa_match` (the field is its CONTROL, and it raised the shim's floor to 10) |
+| 11 ([ART-SIZE], [B18]) | `RX_UNROLL_K` / `RX_UNROLL_K_WHY` (seven values) / `RX_MAX_EMIT_CODE_BYTES` on every VM artifact; `RX_MAX_EMIT_BYTES` on every artifact; `-fno-size-term` (bit 18) denies the K selection, never the caps | `unroll_k`, `unroll_k_why`, `max_emit_code_bytes`, `max_emit_bytes` |
 
 **Rule 1: never infer a fact from a stamp's ABSENCE. Read the VALUE.**
 This is pcrec's own inbox I-5 hazard, which broke four of pcrec's checks
@@ -404,6 +408,18 @@ The scope rules those absences obey, exactly (match_api.md §6.3 (a)):
   ahead of its program at all; the second says what candidate-start filter
   THAT scan carries. A hybrid answers both, independently, and both are
   recorded.
+- `RX_DFA_PREFILTER_OFFSETS` — the scan family's scope (abi 9): with the
+  three above, hybrids included. `"none"` IFF `RX_DFA_PREFILTER` is not an
+  `offset-set` value; the adapter checks that iff from both sides.
+- `RX_DFA_MATCH` — a DIFFERENT iff, and the difference is the fact (abi
+  10, match_api.md §6.3): it describes the `_match` ENTRY, not a scan, so
+  it is on every artifact whose `RX_ENGINE` is `"dfa"` and on NO VM
+  artifact — a hybrid contains a DFA scan but its `_match` is the VM's own
+  body. `rx_info.match_form` is NULL exactly where the macro is absent.
+- `RX_UNROLL_K` / `_UNROLL_K_WHY` / `_MAX_EMIT_CODE_BYTES` — every **VM**
+  artifact and no DFA one (a DFA artifact has no counter rung to have
+  chosen a K for; the code-bytes cap bounds a VM quantity).
+  `RX_MAX_EMIT_BYTES` — **every** artifact, both engines.
 
 **Rule 2: one derivation per column; a second spelling is spent as a
 CONTROL.** pcrec publishes three facts twice and asserts on its own side
@@ -422,29 +438,52 @@ the two would carry the bug forward as a number:
    reports the mechanism that ACTUALLY RUNS and never the coarse `"hybrid"`
    (consequence 3).
 
+5. ([B18]) `<PREFIX>_DFA_MATCH` present IFF `rx_info.match_form` is
+   non-NULL, and equal to it.
+6. ([B18]) `dfa_prefilter_offsets` is `"none"` IFF `dfa_prefilter` is not
+   an offset-set value, and names a scanned offset (`*`) when it is one.
+7. ([B18]) **THE SCOPE TABLE** (`adapter.STAMP_SCOPE`): at the artifact's
+   own abi, every stamp pcrec emits UNCONDITIONALLY (its D81) is present
+   inside its scope and absent outside an exclusive one. This is what lets
+   the shim keep reading macros through `#ifdef` (so an artifact between
+   the floor and a macro's abi links and records "not stamped") without
+   ever letting a stamp that should be there go quietly blank: a missing
+   unconditional stamp is an `AdapterError`, never a "not stamped".
+
 Each is an `AdapterError` naming both values. An absent MACRO is checked
 only against the field's own absence — rule 1, applied to the control
-rather than to the datum.
+rather than to the datum — and the scope table applies from each stamp's
+own abi.
 
 ### The ABI FLOOR, and where it lives
 
-`shim.c` reads `rx_info.scan` / `.prefilter`, appended at pcrec abi 6, so 6
-is the lowest artifact it can read and `PB_SHIM_MIN_ABI` says so ONCE.
+`shim.c` reads three `rx_info` FIELDS pcrec appended after abi 2: `scan` /
+`prefilter` (abi 6) and, since [B18], `match_form` (abi 10, the runtime
+mirror of `RX_DFA_MATCH`, read so the macro has its control) — so **10 is
+the lowest artifact it can read** and `PB_SHIM_MIN_ABI` says so ONCE. The
+rule that moved it: the floor rises iff a FIELD is added to what the shim
+reads; the abi 9 and abi 11 MACROS it also gained did not move it, because
+a macro read through `#ifdef` has a legitimate "not stamped" absence. (Why
+that `#ifdef` is not an inference from absence: the scope table above.)
 `driver.c` compares `pb_abi()` against it before reading anything else and
 refuses a lower artifact by name (`error abi-below-shim-floor: …`, carrying
 both numbers, exit 3); `adapter.py` recognises that line and re-raises it
 as a clean `AdapterError` **without keeping a second copy of the number**.
-An artifact older still (abi < 6) does not link this shim at all — the
+An artifact older still (abi < 10) does not link this shim at all — the
 field access is a compile error, which is the loudest form of the same
-refusal and cannot be mistaken for a measurement.
+refusal and cannot be mistaken for a measurement. Consequence for the
+edit-test loop: `pcrec-local` pointed at a pcrec before 808740c (abi 10)
+is refused — at gcc for abi < 10 (no `match_form` member), never as a
+number.
 
 `make check-harness`'s `abi floor` block is the SABOTAGE that keeps the
-path exercised: a real artifact's `.abi = 8` edited to `5` in a copy, built
+path exercised: a real artifact's `.abi = 11` edited to `5` in a copy, built
 with the ordinary shim and run by the ordinary driver, must be refused by
 name — with the unmodified artifact loading in the same run as the positive
-control, and the token the adapter watches for checked against the
-diagnostic the driver actually produced (two copies of one string, in two
-languages, with nothing else enforcing that they agree).
+control, the floor the refusal must name read out of `shim.c` by the check
+rather than retyped, and the token the adapter watches for checked against
+the diagnostic the driver actually produced (two copies of one string, in
+two languages, with nothing else enforcing that they agree).
 
 ### MEASURED at pin 35e1ab1, 2026-08-28 — one artifact of each KIND
 
@@ -471,9 +510,90 @@ measured `indexed` and `mixed` at ZERO corpus population — every ordinary
 pattern is small enough that the pre-multiplied form wins — so a check that
 only ever sees `premultiplied` cannot tell a working stamp from a constant,
 and this bench would then be filtering on a column that never varies.
-`check_dfa_table_deny_flag` uses `-fno-premul-table` (tuning.md §2.13, an
-answer-identity-preserving deny flag) through `pcrec-local` to reach
-`indexed` on the census's own witness pattern.
+`check_deny_flag_controls` (`check_dfa_table_deny_flag` until [B18]) uses
+`-fno-premul-table` (tuning.md §2.13, an answer-identity-preserving deny
+flag) through `pcrec-local` to reach `indexed` on the census's own witness
+pattern — and, since [B18], the same shape for every stamp the re-pin
+added a deny flag for (next section).
+
+### MEASURED at pin 36d5963, 2026-08-29 — the abi 9-11 stamps ([B18])
+
+Asserted by VALUE in `make check-harness` (`check_mechanism_stamps`), on
+the four kinds above plus an anchored `attempt` one, and — new — on the
+bench's OWN patterns, because these are the rows pcrec's inbox
+I-15/I-16/I-17 made predictions about (`LEDGER_STAMP_CASES`): on those a
+corpus witness moving IS the finding.
+
+| kind / pattern | config | engine | dfa_prefilter | offsets | dfa_match | K / why | caps (code / total) |
+|---|---|---|---|---|---|---|---|
+| `foo[0-9]+bar` | auto | dfa | memchr | none | **unwrapped** | — | — / 1,000,000 |
+| `a(b\|c)+d` (hybrid) | auto | vm | memchr (the scan's) | **none** (present: a hybrid has the scan) | **absent**, `match_form` NULL | 8 / default | 500,000 / 1,000,000 |
+| `a(b\|c)+d` | `--engine=vm` | vm | — (no scan) | absent | absent, NULL | 8 / default | 500,000 / 1,000,000 |
+| `[^\x00-\xff]` (empty) | auto | dfa | none | none | **search-filter** | — | — / 1,000,000 |
+| `^foo[0-9]+bar` (attempt) | auto | dfa | none | none | **search-filter** | — | — / 1,000,000 |
+| loglines `uuid` | auto, nocaps | dfa | **offset-set-bounded** | **`0,8*,13`** | unwrapped | — | — / 1,000,000 |
+| loglines `iso-ts` | auto, nocaps | dfa | **offset-set** | **`0,4*`** | unwrapped | — | — / 1,000,000 |
+| loglines `stack-frame` | auto, nocaps | dfa | **offset-set-bounded** | **`0,1*`** | unwrapped | — | — / 1,000,000 |
+| loglines `ipv6` | auto | dfa | byte-class | none | unwrapped | — | — / 1,000,000 |
+| loglines `kv-quoted`, `bignum`, `hex32-id` | auto | dfa | byte-class-bounded | none | unwrapped | — | — / 1,000,000 |
+| loglines `ipv4` | auto | dfa | byte-class | none | unwrapped | — | — / 1,000,000 |
+| loglines `http-5xx` | auto | dfa | memchr-bounded | none | unwrapped | — | — / 1,000,000 |
+| loglines `level-context` | **auto, nocaps** | **vm** (was did-not-compile at 35e1ab1) | — (no scan; `RX_VM_PREFILTER none`) | absent | absent, NULL | 8 / default | 500,000 / 1,000,000 |
+| email `orig`, `factored` | auto, nocaps | dfa | byte-class (plain) / byte-class-bounded (`\z`) | **none** (declined: `@` sits at a variable offset) | unwrapped | — | — / 1,000,000 |
+| email `floor` | auto, nocaps | dfa | memchr / memchr-bounded | none | unwrapped | — | — / 1,000,000 |
+| every pattern | `--engine=vm` | vm | — | absent | absent, NULL | **8 / default** | 500,000 / 1,000,000 |
+
+`abi` reads **11** on all of them. The `\z` form of every DFA artifact
+carries the same offsets as its plain form and the `-bounded` prefilter
+value (the [B16] asymmetry, unchanged: `iso-ts` is `offset-set` plain and
+`offset-set-bounded` under `\z`); `uuid` and `stack-frame` are `-bounded`
+in BOTH forms because their `\b` is a word-context accept.
+
+**Every I-15/I-16/I-17 prediction about a stamp VALUE held**: the three
+offset strings, the six declined loglines rows, both email patterns
+declined, `unwrapped` on every DFA artifact of both sub-benches,
+`K=8`/`default` on every VM artifact, 54/54 emits accepted, and
+`level-context` under `auto` compiling as a VM artifact whose diagnostic
+is `RX_ENGINE_WHY: dfa overflowed: >32000 states at pattern offset 0`
+(the [SEL-1] fallback; Frank's ask (b) has its first row). Three things
+the inbox said that the artifacts and the spec say differently:
+
+1. **`RX_MAX_EMIT_CODE_BYTES` is NOT on every artifact.** I-17 (4) and
+   pcrec `limits.md` §8 say both caps are stamped "on every artifact";
+   the artifacts (and `match_api.md` §6.3 + `artifact_size_term.md` §7.1,
+   which say "VM-artifact-scoped for the first two … `_MAX_EMIT_BYTES` is
+   on BOTH engines") put `_CODE_BYTES` on VM artifacts only. The adapter
+   follows the artifacts; `limits.md` §8's sentence is the stale one.
+2. **The registry's `size-term` axis carries no `stamp_value`** for
+   `RX_UNROLL_K_WHY` (both rows empty), although the macro is name-valued
+   (seven values). `unroll_k_why`'s declared set is therefore the spec's,
+   and `registry_check` cannot cover it. Likewise the `table` axis lists
+   only the two candidates the selector walks; `none` (an `attempt` /
+   `empty` scan, measured above) and `mixed` are OUTCOME values the
+   registry does not enumerate (`adapter.REGISTRY_OUTCOME_VALUES`).
+3. **Registry.md §6 says "45 rows / 18 axes"**; the live dump at 36d5963
+   prints 47 / 19 (I-17's number), the `size-term` axis being the new one.
+
+### The deny-flag controls at 36d5963 ([B18])
+
+Each of the four stamps whose corpus population is one-sided has a deny
+flag that reaches the OTHER value on a real artifact, and
+`check_deny_flag_controls` proves each, through `pcrec-local` at the
+pin's binary, with the flag's SPELLING read from `list_axes.tsv` (the
+axis's order-1 row) rather than typed:
+
+| axis / flag (bit) | witness | default | denied |
+|---|---|---|---|
+| `table` / `-fno-premul-table` (15) | `(?:[a-z]+)@(?:[a-z]+)` | `dfa_table premultiplied` | `indexed` |
+| `prefilter` / `-fno-offset-skip` (16) | loglines `uuid` | `offset-set-bounded`, offsets `0,8*,13` | `byte-class-bounded`, offsets `none` (TWO pairs move: the iff seen from the flag's side) |
+| `match` / `-fno-anchored-dfa` (17) | email `floor` | `dfa_match unwrapped` | `search-filter` (and the artifact is 4,824 B smaller: the third machine is gone) |
+| `size-term` / `-fno-size-term` (18) | email `orig`, `--engine=vm` | `unroll_k_why default`, K 8 | `denied`, K 8 (the flag denies the SELECTION; nothing was selected here, so K does not move) |
+
+`--unroll=4` on the same VM artifact reads `unroll_k 4` / `option`, the
+third value reachable on this corpus; `size-model`, `size-model-declined`,
+`cap-rescue` and `capacity-declined` need a pattern over the 120,000-code-
+byte threshold, which nothing in either sub-bench is ([B11.4]
+bounded-repeat is where they will first be seen).
 
 ### RE-MEASURED at 35e1ab1: `bench/email`'s own artifacts
 
@@ -555,3 +675,43 @@ root, same command shape throughout (`orig` and `floor`, plain form):
 The consequence for a re-pin report: the compile-cost columns will move on
 the DFA rows by much more than the ±5 % pcrec's notes predict, and
 `artifact bytes` ([B14] R7) is the column that says why.
+
+### RE-MEASURED at 36d5963 ([B18], 2026-08-29): emitted-C size, 35e1ab1 → 36d5963
+
+Compile-only, same method both columns (`-o artifact.c`, the bench's own
+flag sets, the size of the `.c` as written — comments INCLUDED, which is
+why these read ~1.4× pcrec's own `bench_acceptance.sh` numbers, which
+count comment-excluded bytes: its `level-context` 22,905 B is this
+table's 32,761 B). Every number here is 4 B below the [B16] table's
+method on every row (a pattern-text difference in how the two scripts
+invoked the CLI), so the DELTAS are the comparable quantity.
+
+| pattern / form / config | 35e1ab1 (abi 8) | 36d5963 (abi 11) | Δ |
+|---|---|---|---|
+| `orig` plain / auto, nocaps | 74,589 | 88,719 | **+14,130 (+18.9 %)** |
+| `orig` `\z` / auto, nocaps | 85,056 | 101,061 | **+16,005 (+18.8 %)** |
+| `orig` plain / vm | 57,587 | 57,740 | +153 (+0.3 %) |
+| `factored` plain / auto | 75,256 | 89,386 | +14,130 (+18.8 %) |
+| `factored` `\z` / auto | 85,723 | 101,728 | +16,005 (+18.7 %) |
+| `factored` plain / vm | 70,354 | 70,507 | +153 (+0.2 %) |
+| `floor` plain / auto | 16,462 | 21,433 | +4,971 (+30.2 %) |
+| `floor` `\z` / auto | 18,320 | 24,147 | +5,827 (+31.8 %) |
+| `floor` plain / vm | 19,731 | 19,884 | +153 (+0.8 %) |
+| loglines `uuid` plain / auto (offset-set) | 28,279 | 40,596 | +12,317 (+43.6 %) |
+| loglines `iso-ts` plain / auto (offset-set) | 25,520 | 36,068 | +10,548 (+41.3 %) |
+| loglines `stack-frame` plain / auto (offset-set) | 52,944 | 73,286 | +20,342 (+38.4 %) |
+| loglines `ipv4` plain / auto (declined) | 23,053 | 30,345 | +7,292 (+31.6 %) |
+| loglines `http-5xx` plain / auto (declined) | 40,096 | 59,177 | +19,081 (+47.6 %) |
+| loglines `level-context` plain / auto | did-not-compile | 32,761 | now a VM artifact ([SEL-1]) |
+| every VM artifact, both sets | | | **+153 B flat** (I-16 said +63 for abi 10, artifact_size_term.md +128 for abi 11) |
+
+**DFA artifacts grew far more than I-15 + I-16 predicted** ("+1.4-1.9 KB
+where the k-set is selected, +40 B declined" and "+2,605 B source median,
+p99 +6.7 KB"): +14.1 KB on both email patterns (declined), +5.0 KB on
+`floor`, +7-20 KB across loglines, with the `http-5xx` control (declined)
+growing +19.1 KB. The pin-by-pin attribution is below; the reading is the
+same as [B16]'s finding 3 — pcrec's medians are over a corpus of small
+patterns, and the [ENG-ABS] third machine scales with the machine. The
+`.o` delta is the smaller quantity (I-16: 2-11 % of the source delta —
+the anchored table is verbose decimal C), and `artifact bytes` ([B14] R7)
+is the column that says which.

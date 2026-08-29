@@ -14,8 +14,8 @@
 # `std1`, which excludes the named-groups and recursion modules, so
 # bench/email's `factored.rx` is refused with "requires module
 # 'named-groups'" (MEASURED 2026-08-25 against pin 8da6120, re-verified at
-# 692c2e8 and RE-VERIFIED at 35e1ab1, 2026-08-28: same refusal, same
-# wording -- "(?<...) requires module 'named-groups' (pattern offset 3)").
+# 692c2e8, at 35e1ab1 and RE-VERIFIED at 36d5963, 2026-08-29: same refusal,
+# same wording -- "(?<...) requires module 'named-groups' (pattern offset 3)").
 # That is a
 # BUILD/RUN flag of the testee -- the pattern text handed to pcrec is
 # byte-identical either way -- not a pattern variant. bench/email/NOTES.md
@@ -75,12 +75,17 @@ description = "pcrec --engine=vm: the VM forced, which also disables the DFA pre
 # The table above is HISTORY (pin 692c2e8) and is not re-derived at every
 # re-pin: it is a capacity search, not a timing. What IS re-proved at the
 # CURRENT pin, on every `make check-harness`, is the conclusion the numbers
-# were chosen for -- selfcheck's `buffer-matters` arm shows, at 35e1ab1,
-# the stamped default giving up PCREC_ERR_FRAMES on s-059, a tiny 4/4
-# caller buffer giving up BY NAME, and THESE capacities matching the whole
-# subject. [OPT-1]'s tiered default entry (abi 5) did not move them: it
-# escalates to the same stamped default, so the give-up boundary is where
-# it was (pcrec I-8's counter measured the escalations, not new give-ups).
+# were chosen for -- selfcheck's `buffer-matters` arm shows, at 36d5963
+# (2026-08-29; at 35e1ab1 before it), the stamped default giving up
+# PCREC_ERR_FRAMES on s-059, a tiny 4/4 caller buffer giving up BY NAME, and
+# THESE capacities matching the whole subject. [OPT-1]'s tiered default
+# entry (abi 5) did not move them: it escalates to the same stamped default,
+# so the give-up boundary is where it was (pcrec I-8's counter measured the
+# escalations, not new give-ups). Neither did abi 9-11 ([B18]): the
+# `factored` VM artifact still stamps RX_RESUME_FRAMES 2048 / RX_TRAIL_FRAMES
+# 3072 / frame sizes 24 / 16, and [ART-SIZE]'s capacity floor (limits.md 8a)
+# forbids the size term from lowering a declared capacity below the default
+# K's -- on this sub-bench no K moved at all (every VM artifact K=8/default).
 
 [testees.pcrec-auto-in]
 engine_mode = "auto-in"

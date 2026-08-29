@@ -11,17 +11,29 @@ STATUS (2026-08-28): M1 COMPLETE — charter (APPROACH.md), requirements v3
 `bench/email/` specimen, the pcre2 and pcrec adapters ([B3]+[B4]), the
 reporter ([B5], `pcrecbench/report.py`, `--grain set|subject`), and the
 first production sample in `store/` + `reports/` ([B6], pcrec pin
-8da6120). M2 is in progress: [B16] re-pinned pcrec to **35e1ab1**
-(abi 8) — one adapter change absorbing five pcrec pins of new
-observability (pcrec inbox I-5/I-6/I-11/I-12/I-13): the shim reads
-`RX_ENGINE`, `RX_DFA_SCAN`/`_PREFILTER`/`_TABLE`, `RX_FAST_FRAMES`/
-`_TRAIL` and `rx_info.scan`/`.prefilter`, with an abi FLOOR the driver
-refuses below by name and a macro-vs-field control on every artifact,
-so a pcrec record can now be bucketed by its candidate-start
-MECHANISM on both engines (the gap [B8] filed as pcrec I-3, closed);
-the REPORTER is v5 with I-7 §3/§5's rulings ([B16] R1-R8), which
-turned one committed `faster ×13.45` into `selection changed
-(vm → dfa)`. Earlier in M2: [B8] re-pinned pcrec to **692c2e8** and added
+8da6120). M2 is in progress. 2026-08-29: [B18] (e) re-pinned pcrec to
+**36d5963** (abi 11) — one adapter change absorbing three pcrec pins
+(inbox I-15/I-16/I-17): the shim reads `RX_DFA_PREFILTER`'s
+`offset-set` values + `RX_DFA_PREFILTER_OFFSETS` (abi 9, [OPT-K]),
+`RX_DFA_MATCH` + `rx_info.match_form` (abi 10, [ENG-ABS]; the shim's
+abi FLOOR is now 10), `RX_UNROLL_K`/`_WHY` + the two `_MAX_EMIT_*` caps
+(abi 11, [ART-SIZE]); every unconditional stamp is checked PRESENT in
+its scope at the artifact's abi (`STAMP_SCOPE`), the three new deny
+flags are `make check-harness` controls, `pcrec --list-axes` is
+archived (`testees/pcrec/list_axes.tsv`) and diffed against the pin,
+and loglines `level-context` under `pcrec-auto` now COMPILES as the
+[SEL-1] VM fallback (100/100 harness checks). The window (a)/(b) and
+outbox O-8 are the manager's next step. Before it, [B16] re-pinned
+pcrec to **35e1ab1** (abi 8) — one adapter change absorbing five
+pcrec pins of new observability (pcrec inbox I-5/I-6/I-11/I-12/I-13):
+the shim reads `RX_ENGINE`, `RX_DFA_SCAN`/`_PREFILTER`/`_TABLE`,
+`RX_FAST_FRAMES`/`_TRAIL` and `rx_info.scan`/`.prefilter`, with an abi
+FLOOR the driver refuses below by name and a macro-vs-field control on
+every artifact, so a pcrec record can now be bucketed by its
+candidate-start MECHANISM on both engines (the gap [B8] filed as pcrec
+I-3, closed); the REPORTER is v5 with I-7 §3/§5's rulings ([B16]
+R1-R8), which turned one committed `faster ×13.45` into `selection
+changed (vm → dfa)`. Earlier in M2: [B8] re-pinned pcrec to **692c2e8** and added
 the caller-provided frame-buffer testees (`pcrec-vm-in` measured,
 `pcrec-auto-in` defined) and measured the six-cell re-pin sample — the
 before/after is `reports/*-repin-692c2e8.*`; [B10] landed the EDIT-TEST
@@ -39,7 +51,7 @@ pcre2_pattern_info). Both were MEASURED the same day
 findings to pcrec — the [OPT-5] precheck is parity, the offset-k skip
 is the ask). Next: pcrec's answers to O-7; [B11.2]..[B11.5] the
 remaining sub-benches; [B13] the interpreter is chartered. `make check`
-is green (3/56/0, 75/75, 50/50). Manager sessions start with the
+is green (3/56/0, 100/100, 50/50). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -93,7 +105,7 @@ bindings) live here, vendored or system, pinned either way.
   (gitignored hand-off brief). See docs/dev/CLAUDE.md.
 - `docs/design/` — living design notes (requirements, the record schema,
   set format position, adapter notes, measurement dirs). See its CLAUDE.md.
-- `schema/` — the RECORD format at **v1.2**: `record.schema.json` (JSON
+- `schema/` — the RECORD format at **v1.3**: `record.schema.json` (JSON
   Schema draft 2020-12), `validate.py` (the validator the harness and the
   reporter share; rules X1..X29), `check_fields.py`, `check_rules.py`, and
   `examples/` + `examples/bad/` (records that must validate, and sabotaged
@@ -116,8 +128,10 @@ bindings) live here, vendored or system, pinned either way.
   generic gates enumerate `bench/*/` rather than naming a set. See their
   CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
-  (auto, nocaps, vm, the `-in` variants, at a pinned commit; and
-  `pcrec-local`, a PROVIDED binary at no pin). See their CLAUDE.mds.
+  (auto, nocaps, vm, the `-in` variants, at a pinned commit — 36d5963,
+  abi 11 — with `list_axes.tsv`, the pin's `--list-axes` registry
+  archived verbatim; and `pcrec-local`, a PROVIDED binary at no pin).
+  See their CLAUDE.mds.
 - `store/` — the CANONICAL record store (the `.canonical` marker):
   `records/<subbench>@<version>/<testee_id>/<record_id>.jsonl`,
   `index.tsv`, `machines.tsv`. Pinned records only; scratch records live
