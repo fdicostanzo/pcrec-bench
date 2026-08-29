@@ -36,6 +36,8 @@ COLUMNS
   min_length         PCRE2's minimum match length, in bytes
   match_m_n          how many of the match-regime subjects MATCH whole
   search_m_n         how many of the search-band subjects contain a match
+  tput_m_n           how many of the throughput runs contain a match (the
+                     count of matches per run is in expectations.tsv)
   oracle             the libpcre2 version the PCRE2 facts were read from
 
 The text facts come from a small scanner over the pattern bytes that
@@ -56,7 +58,7 @@ from pcrecbench.subbench import load as load_subbench  # noqa: E402
 
 HEADER = ("pattern\tbytes\tmax_count\tnest_depth\tcount_product\tlazy"
           "\tfirst_code_unit\trequired_code_unit\tmin_length"
-          "\tmatch_m_n\tsearch_m_n\toracle")
+          "\tmatch_m_n\tsearch_m_n\ttput_m_n\toracle")
 OUT = os.path.join(HERE, "pattern_facts.tsv")
 
 _QUANT = re.compile(rb"\{(\d+)(?:(,)(\d*))?\}(\?)?")
@@ -150,7 +152,7 @@ def derive(sb):
         info = rx.pattern_info()
         max_count, depth, prod, lazy = count_facts(text)
         mn = {}
-        for regime in ("match", "search_short"):
+        for regime in ("match", "search_short", "throughput"):
             matched = total = 0
             for subj in sb.subjects_for(regime):
                 total += 1
@@ -162,7 +164,7 @@ def derive(sb):
                      "yes" if lazy else "no", show_first(info),
                      show_byte(info["required_code_unit"]),
                      str(info["min_length"]), mn["match"], mn["search_short"],
-                     version))
+                     mn["throughput"], version))
     return rows, version
 
 

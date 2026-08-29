@@ -9,9 +9,9 @@ is the entry point and the place the sub-bench's own directory is named.
     python3 bench/bounded/gen_expectations.py            # write
     python3 bench/bounded/gen_expectations.py --check     # re-derive + diff
 
-30 patterns x (43 match + 41 search_short) subject slots. No `throughput`
-regime is declared (NOTES.md, "Regimes"): this set's sweep is a COUNT sweep
-in the patterns, not a size sweep in the subjects, so no row carries it.
+29 patterns x (38 match + 38 search_short + 4 throughput) subject slots.
+The `throughput` rows are the ladder's large rungs under find-all search,
+not a size sweep (NOTES.md, "Regimes").
 
 Run it under `gnutimeout`: the nested rungs are backtracking hazards by
 design, and the subjects are sized so the oracle FINISHES every cell

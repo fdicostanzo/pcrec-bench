@@ -12,33 +12,28 @@ f-pw-65	65	9a42baf67e2af42d01b52143e62e0962a5d4d5dafdfd796604dd30013a16005b	fiel
 f-quad-4	12	cfa70d62675ad68156a45c96ac6fa810298c0402007fa0cbdae653151595eed8	field/match dotted4: four octets	no
 f-quad-3	8	b34dae7180da95e33fc91b8dd8d71f6856f836bd9197c94fae03cdaf8b1fb727	field/near-miss dotted4: three octets, fails inside the 3rd group repetition	no
 f-quad-4x	13	f912bffbfbb77b1e5970d04105645b369a544b6b2c259ca8fabf32f542473c8e	field/over-run dotted4: last octet has 4 digits, \z fails	no
-f-mac-6	17	f524a4a3b6aa550cc2a19d1a4ebcaa36db4b9bdd8040e9ead3cba38be143f856	field/match mac6: six groups	no
-f-mac-5	14	8064a5f9dd0dd1103a3008ef51d35c920a22dbc36a4a08108a47452d65165852	field/near-miss mac6: five groups, fails at the 5th `{5}` repetition's separator	no
-f-csv-5	19	a8fac28494928ada203bfb860c70f0686ca8f053fba98e0ee21d8d158c273f91	field/match csv5: five fields	no
-f-csv-4	15	70eb0edeb06b138ca579d3eff04d75ab71c1dd4ae55a387ccaf3a3cd46f9704f	field/near-miss csv5: four fields, fails at the 4th `{4}` repetition's comma	no
-l-00	43	d7f76b26349d0733af67d7544ba1e753bb998104c507551fdf1223d83951425f	line/ctx-gap-32 whole: starts with `fail`, ends with `disk`, 35 B between -- a whole-subject match for every ctx rung whose count covers the gap	no
-l-01	147	4ce15d4521dcc812d3dad09059e4b027d817259598099477a3b6f7f3926f6dd7	line/ctx-gap-128 whole: starts with `panic`, ends with `disk`, 138 B between -- a whole-subject match for every ctx rung whose count covers the gap	no
-l-02	595	08fbdf7ccc832b0a6e5d61f5b35feb24c0ae91665c66917ff45f509ccfb02f2f	line/ctx-gap-512: `panic` then `disk` 514 B later, mid-line; shapes: year4	no
-l-03	971	e7b8c7c65d016d05939b335b125c64c7825cdeae03166b8f00d2e1b2687ac6ed	line/ctx-gap-840: `abort` then `disk` 849 B later, mid-line; shapes: hex32+mac6	no
-l-04	505	447e29cb30bd8c373a4eba999860031d676dc6b38630dca1cfa5a51f5b696bd9	line/ctx-no-context: trigger `abort` and no context word after it (the lazy gap walks its full count and finds nothing); shapes: year4	no
-l-05	998	1323e31238e0f4b68a835aa72e6563c41932d7ffe827bd4639fcaa3a7e4a4979	line/ctx-no-context: trigger `abort` and no context word after it (the lazy gap walks its full count and finds nothing); shapes: year4+csv5	no
-l-06	304	af9b6ec796e286932302f9d5daffe39313fe1b18bfe6e6a5849ab6500bad107a	line/ctx-wrong-order: context word `memory` BEFORE trigger `panic`; shapes: mac6	no
-l-07	151	6a1d148987519ed1db1387a06f479ddb81fc265767cd08c562c412df2ef518fe	line/ctx-near-miss: `abort`/`disk`-class near-miss words only, no whole-word trigger or context; shapes: dotted4	no
-l-08	134	6616d2648e049653bc6b15461897584ece0001e2d1289a2fcdfe81b583e54776	line/background: ops prose of near-misses; shapes: dotted4	no
-l-09	402	50ab7e41389b3efb51a04b9dbe7f21c007725b896b7b1855527318607b2a205e	line/background: ops prose of near-misses (no shape injected)	no
-l-10	255	66047af1ae6bcc8ffd288696047d550816e8c6433be285a784b6ab22eb10a376	line/background: ops prose of near-misses (no shape injected)	no
-l-11	883	9b60ef555131ff93b581ad4ed3b313d5701a89b7291d9e97e495be4b67078b73	line/background: ops prose of near-misses; shapes: hex32+dotted4+csv5	no
-r-00016	16	478ffd3de75c979609755bb3c490b0e41e364381b85cb05c39707c56bb716306	run/letters: 16 random lowercase letters	no
-r-00017	17	2b2c75a7284b1b395ff2ebd1019f7c2a7ee21be26fdf6d5afd70f50712f75c20	run/letters: 17 random lowercase letters	no
-r-00036	36	54ac5e06c224e2b8243a18fe1ae98490e0d29ebeccd88a0ae0474fb4f2281ed8	run/letters: 36 random lowercase letters	no
-r-00037	37	d29ce892f37014bbc888bb910d08ec162c69beec137f2feb63bbebc7df2bc3cd	run/letters: 37 random lowercase letters	no
-r-00255	255	eed74b3a8a74481d809cd0cd96e93bfd0e1dec615f0e163f5b7bcd09b9bf06d7	run/letters: 255 random lowercase letters	no
-r-00256	256	2821c509a7db4caedb4c5647a6b900656a7fda3c088c54e00c42dd471085b1a4	run/letters: 256 random lowercase letters	no
-r-00257	257	26a1cdcc03fc0678440d13c36ac86eb2ccb5fbf6f20fd65cba7edf8ae4230edd	run/letters: 257 random lowercase letters	no
-r-04096	4096	7becd7ee93c5972e9ac97047724af321ab85b28df7e504477000160d9f9a81fb	run/letters: 4096 random lowercase letters	no
-r-16384	16384	1b161f842084a671314a0d36bfdc067ef7931bc951b056b82f42258bc03fe7b6	run/letters: 16384 random lowercase letters	no
-d-00016	16	e4dd362c7ae3f169db1f0d5294e78a3b6fd36f30fc0765b85ab4a9d15dfaa095	run/digits: 16 random digits	no
-d-00017	17	22a8d8e31241154e1298bb99a5960fe0c0cf8949d3e9bcfb95dbd8e65ed12f99	run/digits: 17 random digits	no
-d-00027	27	df958c5798bfbe10b1932d0b1dfd63dca52f91e3bb40aafcc83fc20ca6ede447	run/digits: 27 random digits	no
-d-00028	28	0d167630bef889e4ca5cc59cb84bdd42aaa812fa92bca0804ed1159dd6b2cf0a	run/digits: 28 random digits	no
-d-00256	256	f06e054994319358249296e8bb7212abc4f6e2875ad892eca05f0dd79bf510c8	run/digits: 256 random digits	no
+f-csv-5	20	e01dd4a8619bb8b462774d584a5967c4e0415c89e3d665d7e601d3259bc3a392	field/match csv5: five fields	no
+f-csv-4	18	3f37688611ff783e6fddbaa992ff7a9a24712ef06f7c34d8bcee5f736c4c4fa9	field/near-miss csv5: four fields, fails at the 4th `{4}` repetition's comma	no
+l-00	43	96a13b44da6ccdf5dcd43a17212821915d2fc0a5a049093c4bb7269864b893b1	line/ctx-gap-32 whole: starts with `abort`, ends with `disk`, 34 B between -- a whole-subject match for every ctx rung whose count covers the gap	no
+l-01	151	1245a664dcaecf394fcd5d2d214433c98d6d9591056423232597c790be99a752	line/ctx-gap-128 whole: starts with `abort`, ends with `memory`, 140 B between -- a whole-subject match for every ctx rung whose count covers the gap	no
+l-02	610	7c931330d13de49ffa0b29bf598020705300d0f5eb7de4ab7108a023c15f6fa1	line/ctx-gap-512: `panic` then `memory` 523 B later, mid-line; shapes: year4+dotted4	no
+l-03	917	4f5e0d34f4ba04cd65e08a322038f83e1e67706373f1da80f4effd2c173964c7	line/ctx-gap-840: `fail` then `socket` 842 B later, mid-line	no
+l-04	508	e1c0c287425facb6a0c6d5659cbeb5fab3ca0f9bc1552e2235519ef4bdaf490c	line/ctx-no-context: trigger `fail` and no context word after it (the lazy gap walks its full count and finds nothing)	no
+l-05	997	05201289c5c29fb35befd87f04828858046a897c1759e95d24e4ce346f12ee0f	line/ctx-no-context: trigger `fail` and no context word after it (the lazy gap walks its full count and finds nothing); shapes: dotted4	no
+l-06	304	00f9a6e5fc13f2acce3c9127ca2c6c34cd1d9527d13d8a1262f3e9d89fc0cf91	line/ctx-wrong-order: context word `disk` BEFORE trigger `abort`	no
+l-07	155	c4b502e76d03987c07e4cadb4410b9fdda70db036c1c0f56187de575832f1220	line/ctx-near-miss: `fail`/`socket`-class near-miss words only, no whole-word trigger or context; shapes: year4	no
+l-08	156	0d57f66a1bb0b3b9abe49590b0c410654d9424473aa9f0f0423b86265bd31ef4	line/background: ops prose of near-misses; shapes: hex32	no
+l-09	446	d6d4478d5cc7ba28c948b718c3070ad4710d5b6fb097b8f2c3f8ece658f1c89a	line/background: ops prose of near-misses; shapes: year4+dotted4+csv5	no
+l-10	862	93361c7b8092dd36307a83d21bd3cb7632d39ff88db0b6000ac8e93de6438e81	line/background: ops prose of near-misses; shapes: hex32+csv5	no
+r-00016	16	c14cf996f6fa99067dc02004a77eae7a367294226e34e7d53bffe26114c9364f	run/letters: 16 random lowercase letters	no
+r-00017	17	bd8c245c95e4089ee176a9939cd2dd91717f4734daf584c67f155e84eaa0acbb	run/letters: 17 random lowercase letters	no
+r-00036	36	e5e99ba8f674dc265f6b9dca8a887cfff1172689da0151d424fcb781142c00d9	run/letters: 36 random lowercase letters	no
+r-00037	37	45b56f73c5e54f0fed039d2f4c141ce8c0177da6ee85fad07abf21b89e74ee55	run/letters: 37 random lowercase letters	no
+r-00255	255	d9f4680d09a990b4943063f0ba09acb9abcfaa7222077e0de94ef92e8f77f9a7	run/letters: 255 random lowercase letters	no
+r-00256	256	0ba817971065767e67d6b9328b878b40b63b735bf2611839cff31b1e3075b971	run/letters: 256 random lowercase letters	no
+r-00257	257	ac488fa2bd8658984e0c62b2f3e819cefc90de5f2e60adfc2910607a3fbb1c13	run/letters: 257 random lowercase letters	no
+d-00016	16	61a51b2c93b67509650ea5fb81f81cfad33774634827314bad6bf1a8b2b87e59	run/digits: 16 random digits	no
+d-00017	17	9373010038aec5b5f25b7346f88f44baba3f21ddea9b5b702c1a638a4f9d2395	run/digits: 17 random digits	no
+d-00027	27	78aa47a66ea55291b86c02ef19378cf61b8be9f3ae8490a5370fbf6102eac899	run/digits: 27 random digits	no
+d-00028	28	2c9390a80240fdee49ae625d2ecf559c577804af75053485529044e4876e0eb6	run/digits: 28 random digits	no
+d-00256	256	a04d90bc857bf7f8803d5f7e5c68025a34103f0cb5f5f15728bd0fc9eb8da1d1	run/digits: 256 random digits	no

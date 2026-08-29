@@ -17,33 +17,36 @@ gap before a word-boundary alternation; an ambiguous nested count) on \
 subjects that match, that fail at the last repetition, and that over-run \
 the count and fail only at the end anchor."""
 description = """\
-Thirty patterns in two families. ELEVEN everyday bounded shapes: a 4-digit \
+Twenty-nine patterns in two families. TEN everyday bounded shapes: a 4-digit \
 year, a 32-hex id, a password length rule `.{8,64}`, a line-length rule \
-`.{80,}`, a dotted quad `(?:\\d{1,3}\\.){3}\\d{1,3}`, a six-group MAC, a \
-five-field CSV record, and a bounded-context shape `\\b(?:fail|abort|panic)\
+`.{80,}`, a dotted quad `(?:\\d{1,3}\\.){3}\\d{1,3}`, a five-field CSV \
+record, and a bounded-context shape `\\b(?:fail|abort|panic)\
 \\b.{0,N}?\\b(?:disk|memory|socket|quota)\\b` as a count ladder N = 64 / 256 \
 / 1024 plus its greedy twin at 256. EIGHTEEN count-ladder rungs on a few \
 skeletons: `[a-z]{0,n}` for n = 16 .. 65535 (PCRE2's own ceiling), the \
 exact `{n}`, the open `{n,}`, the lazy `{0,n}?`, a group body \
 `(?:a|[b-z]){0,n}`, two- and three-deep nests `(?:\\d{1,k}){1,k}`, and one \
 ambiguous nest over letters whose near-misses a backtracker pays for. Plus \
-the floor. Subjects: 17 whole-string FIELDS (each shape's exact match, its \
-near-miss at the last repetition, its over-run), 12 LINES of near-miss ops \
-prose (43-999 B) carrying the shapes in an allocated minority and the \
-trigger/context pairs at designed gaps, and 14 RUNS of random letters or \
-digits sitting on the ladder's rungs and one off them (16 B - 16 KB). \
-Regimes `match` + `search_short` (1024 B band); no throughput sweep -- the \
+the floor. Subjects: 15 whole-string FIELDS (each shape's exact match, its \
+near-miss at the last repetition, its over-run), 11 LINES of near-miss ops \
+prose (43-998 B) carrying the shapes in an allocated minority and the \
+trigger/context pairs at designed gaps, 12 RUNS of random letters or \
+digits sitting on the ladder's small rungs and one off them (16-257 B), and \
+four LARGE runs (4 KB / 16 KB / 64 KB) in a `throughput` regime that is the \
+ladder's top rungs driven to their full count, not a size sweep -- the \
 sweep here is the COUNT, in the patterns. See NOTES.md for the pattern \
 table with m/n, the ladder and the predicted first-refusal counts, the \
 oracle's own limits, and the cell-time estimate."""
 
-# `match` and `search_short`, NOT `throughput` -- a declaration, not an
-# omission (NOTES.md, "Regimes"): the give-up axis this set sweeps is the
-# COUNT in the pattern, and inbox I-2 1(b)'s "the size at which it first
-# fires" is here "the count at which it first fires", which lives in the
-# count ladder, not in a subject-size sweep. The longest subject (16 KB) is
-# in `match` only.
-regimes = ["match", "search_short"]
+# All three. `throughput` here is NOT a size sweep (NOTES.md, "Regimes"):
+# the give-up axis this set sweeps is the COUNT in the pattern, and inbox
+# I-2 1(b)'s "the size at which it first fires" is here "the count at which
+# it first fires", which lives in the count ladder. The four throughput
+# subjects are the LARGE rungs' runs (4 KB / 16 KB / 64 KB), placed in their
+# own regime so the ladder's top counts are driven to their full value under
+# find-all search without a 16 KB subject sitting in a match set whose
+# median is 40 B (gen_throughput_subjects.py says why that matters).
+regimes = ["match", "search_short", "throughput"]
 
 # THE MEMBERS. `feature_tier`: `base` is pcrec's frozen `std1` set; the four
 # `ctx-*` rungs use `\b` (the `assertions` module, built but not in `std1`),
@@ -105,16 +108,6 @@ hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
 tags = ["everyday", "nested-count", "group-body", "tier-base"]
-role = "member"
-
-[[patterns]]
-name = "mac6"
-file = "patterns/mac6.rx"
-feature_tier = "base"
-hazard_class = "none"
-size_class = "small"
-convention = "perl-leftmost-first"
-tags = ["everyday", "nested-count", "group-body", "hex", "tier-base"]
 role = "member"
 
 [[patterns]]
@@ -386,11 +379,11 @@ role = "floor"
 [subjects]
 generator = "gen_subjects.py"
 manifest = "manifest.tsv"
-# No throughput pair: no `throughput` regime is declared (above).
-# 1024, between bench/email's 256 and bench/loglines' 4096: every field and
-# every line (43-999 B) is in the search band; the 4096- and 16384-byte runs
-# are the count ladder's match-regime subjects and are excluded from search
-# by this bound, which is what keeps the search band cost-uniform.
+throughput_generator = "gen_throughput_subjects.py"
+throughput_manifest = "manifest_throughput.tsv"
+# 1024, between bench/email's 256 and bench/loglines' 4096: every field,
+# line (43-998 B) and small run is in the search band, so the two short
+# regimes see the same 38 subjects.
 short_search_max_bytes = 1024
 
 [expectations]
@@ -398,7 +391,7 @@ file = "expectations.tsv"
 default_method = "libpcre2-differential"
 
 # Per-testee notes. No testee runs a VARIANT of any pattern in this sub-bench:
-# all thirty are canonical PCRE2 spellings and every adapter runs the
+# all twenty-nine are canonical PCRE2 spellings and every adapter runs the
 # canonical text (requirements 4.5 -- the record still STATES that, as
 # `patterns[].variant = null`). `options` is empty for both engines: the
 # patterns carry their own semantics inline and neither adapter passes a

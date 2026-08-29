@@ -11,7 +11,7 @@ serves both, so there are three:
 
   FIELDS  4-65 B candidate strings for the MATCH regime -- the thing a
           validator is handed whole: a year, a 32-hex id, a password, a
-          dotted quad, a MAC, a CSV record. Each shape appears as the exact
+          dotted quad, a CSV record. Each shape appears as the exact
           match, as a NEAR-MISS THAT FAILS AT THE LAST REPETITION (31 hex
           where 32 are wanted; three octets where four are), and as an
           over-run that fails only at the end anchor.
@@ -30,7 +30,11 @@ serves both, so there are three:
           them (255/256/257 letters for the 256 rung; 16/17 and 27/28 digits
           for the nested rungs). They are the count ladder's MATCH-regime
           subjects: the exact count matches, one short fails at the last
-          repetition, one long fails at the end anchor.
+          repetition, one long fails at the end anchor. The LARGE rungs
+          (4096 .. 65535) get 4 KB / 16 KB / 64 KB runs in the `throughput`
+          regime instead (gen_throughput_subjects.py), where find-all
+          search drives each counter to its full value without a 16 KB
+          subject sitting in a match set whose median is 40 B.
 
 WHY THE RUNS ARE RANDOM WITHIN THE CLASS AND NOT A REPEATED BYTE. Inbox
 I-10 / [B17]: a periodic subject flatters any per-byte number by making the
@@ -229,10 +233,6 @@ def hex32(rng):
 
 def dotted4(rng):
     return ".".join(str(rng.between(0, 255)) for _ in range(4))
-
-
-def mac6(rng):
-    return ":".join(rng.hexs(2) for _ in range(6))
 
 
 def csv5(rng):

@@ -3,12 +3,17 @@
 (gitignored) + `manifest.tsv` (committed).
 
 Three families from one grammar (`boundedtext.py`, whose header says why
-three): FIELDS (4-65 B whole-string candidates, each everyday shape as its
+three): FIELDS (3-65 B whole-string candidates, each everyday shape as its
 exact match, its last-repetition near-miss and its end-anchor over-run),
-LINES (80-1000 B ops prose, near-miss background, the everyday shapes
+LINES (43-998 B ops prose, near-miss background, the everyday shapes
 injected into an exactly allocated minority, and the bounded-context lines
 with a trigger word and a context word at a DESIGNED gap), and RUNS
-(random letters / digits at the count ladder's rungs and one off them).
+(random letters / digits at the count ladder's SMALL rungs and one off
+them, 16-257 B). The ladder's LARGE rungs are exercised by the
+`throughput/` runs (`gen_throughput_subjects.py`), not here: a 16 KB
+subject in the `match` regime beside 40 subjects of ~40 B would drive the
+harness's median-calibrated loop into its 20 s per-trial cap on every
+length-proportional pattern (NOTES.md, "Cell-time estimate").
 
 Every subject is ONE line with NO trailing newline: `.` does not match `\\n`,
 so a trailing newline would make every `.{80,}`-class whole-subject match
@@ -42,8 +47,7 @@ OUT = os.path.join(HERE, "subjects")
 MANIFEST = os.path.join(HERE, "manifest.tsv")
 
 # Lines are capped at MAX_LINE bytes and the sidecar's short_search_max_bytes
-# is 1024, so every field and every line is in the search band; only the
-# 4096- and 16384-byte runs are match-regime-only.
+# is 1024, so every subject here is in BOTH short regimes.
 MAX_LINE = 1000
 
 # ---------------------------------------------------------------- fields
@@ -70,9 +74,6 @@ def fields(rng):
     out.append(("f-quad-4", "field/match dotted4: four octets", q))
     out.append(("f-quad-3", "field/near-miss dotted4: three octets, fails inside the 3rd group repetition", q.rsplit(".", 1)[0]))
     out.append(("f-quad-4x", "field/over-run dotted4: last octet has 4 digits, \\z fails", nonperiodic(rng, lambda r: q + r.digits(1))))
-    m = nonperiodic(rng, bt.mac6, lambda v: v[:14])
-    out.append(("f-mac-6", "field/match mac6: six groups", m))
-    out.append(("f-mac-5", "field/near-miss mac6: five groups, fails at the 5th `{5}` repetition's separator", m[:14]))
     c = nonperiodic(rng, bt.csv5, lambda v: v.rsplit(",", 1)[0])
     out.append(("f-csv-5", "field/match csv5: five fields", c))
     out.append(("f-csv-4", "field/near-miss csv5: four fields, fails at the 4th `{4}` repetition's comma", c.rsplit(",", 1)[0]))
@@ -101,16 +102,16 @@ CTX_LINES = (
     ("l-06", 300,  None, "wrong-order"),
     ("l-07", 150,  None, "near-miss"),
 )
-BACKGROUND_LINES = (("l-08", 120), ("l-09", 400), ("l-10", 250), ("l-11", 800))
+BACKGROUND_LINES = (("l-08", 120), ("l-09", 400), ("l-10", 800))
 
-# HOW MANY of the ten non-whole lines carry each everyday shape -- an exact
+# HOW MANY of the nine non-whole lines carry each everyday shape -- an exact
 # allocation without replacement (bench/loglines' lesson: a per-line coin
-# flip at n=10 would make the match rate an accident of the seed). The two
+# flip at n=9 would make the match rate an accident of the seed). The two
 # `whole` ctx lines are not in the pool: an injected token would break
 # "ends with the context word".
-COUNTS = (("year4", 3), ("hex32", 2), ("dotted4", 3), ("mac6", 2), ("csv5", 2))
+COUNTS = (("year4", 3), ("hex32", 2), ("dotted4", 3), ("csv5", 2))
 SHAPES = {"year4": bt.year4, "hex32": bt.hex32, "dotted4": bt.dotted4,
-          "mac6": bt.mac6, "csv5": bt.csv5}
+          "csv5": bt.csv5}
 
 
 def _pad(rng, parts, total):
@@ -193,7 +194,7 @@ def lines(rng):
 
 # ------------------------------------------------------------------ runs
 
-LETTER_RUNS = (16, 17, 36, 37, 255, 256, 257, 4096, 16384)
+LETTER_RUNS = (16, 17, 36, 37, 255, 256, 257)
 DIGIT_RUNS = (16, 17, 27, 28, 256)
 
 
