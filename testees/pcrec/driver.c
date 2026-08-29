@@ -48,14 +48,17 @@
  *
  * WHAT IS PRINTED FOR THE MECHANISM STAMPS, and the rule none of it breaks
  * (pcrec I-5): NOTHING IS EVER INFERRED FROM A STAMP'S ABSENCE. Each of
- * `info dfa_scan / dfa_prefilter / dfa_table / fast_frames / fast_trail` is
- * printed only when the artifact stamps it, and a consumer of these lines
- * reads a MISSING line as "not stamped" and nothing else -- never as "DFA",
- * never as "not a hybrid". The one fact that IS readable from an absence is
- * the spec's own iff and comes from a FIELD rather than a macro:
- * `info rxinfo_scan_present 0` on a VM artifact is "not a hybrid"
- * (match_api.md 6, consequence 2), and it is printed on EVERY artifact so
- * that reading is never made from silence either.
+ * `info dfa_scan / dfa_prefilter / dfa_table / dfa_prefilter_offsets /
+ * dfa_match / fast_frames / fast_trail / unroll_k / unroll_k_why /
+ * max_emit_code_bytes / max_emit_bytes` is printed only when the artifact
+ * stamps it, and a consumer of these lines reads a MISSING line as "not
+ * stamped" and nothing else -- never as "DFA", never as "not a hybrid". The
+ * two facts that ARE readable from an absence are the spec's own iffs and
+ * come from FIELDS rather than macros: `info rxinfo_scan_present 0` on a VM
+ * artifact is "not a hybrid" (match_api.md 6, consequence 2) and
+ * `info rxinfo_match_form_present 0` is "this artifact's _match is not a
+ * DFA form" ([ENG-ABS]); both are printed on EVERY artifact so that reading
+ * is never made from silence either.
  */
 
 #define _GNU_SOURCE
@@ -98,6 +101,16 @@ static int       (*pb_has_dfa_stamps)(void);
 static const char *(*pb_dfa_scan)(void);
 static const char *(*pb_dfa_prefilter)(void);
 static const char *(*pb_dfa_table)(void);
+static const char *(*pb_dfa_prefilter_offsets)(void);
+static const char *(*pb_dfa_match)(void);
+static const char *(*pb_info_match_form)(void);
+static int       (*pb_has_unroll_k)(void);
+static long long (*pb_unroll_k)(void);
+static const char *(*pb_unroll_k_why)(void);
+static int       (*pb_has_max_emit_code_bytes)(void);
+static long long (*pb_max_emit_code_bytes)(void);
+static int       (*pb_has_max_emit_bytes)(void);
+static long long (*pb_max_emit_bytes)(void);
 static int       (*pb_has_fast_tier)(void);
 static long long (*pb_fast_frames)(void);
 static long long (*pb_fast_trail)(void);
@@ -293,6 +306,10 @@ int main(int argc, char **argv) {
     SYM(pb_shim_min_abi); SYM(pb_info_scan); SYM(pb_info_prefilter);
     SYM(pb_has_dfa_stamps); SYM(pb_dfa_scan); SYM(pb_dfa_prefilter);
     SYM(pb_dfa_table);
+    SYM(pb_dfa_prefilter_offsets); SYM(pb_dfa_match); SYM(pb_info_match_form);
+    SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
+    SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
+    SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
     SYM(pb_has_fast_tier); SYM(pb_fast_frames); SYM(pb_fast_trail);
     SYM(pb_search); SYM(pb_match_caps);
     SYM(pb_has_in_entries); SYM(pb_buffer_align);
@@ -308,14 +325,16 @@ int main(int argc, char **argv) {
      * classifies a negative return by RANGE against these, never by a list.
      * See shim.c. */
     /* THE ABI FLOOR, before anything else is read or printed. shim.c reads
-     * `rx_info.scan` / `.prefilter`, appended to the struct at pcrec's abi 6;
-     * an older artifact has no such fields and this shim would be reading
-     * past them. Refuse by NAME, carrying both numbers, and stop. */
+     * `rx_info.scan` / `.prefilter` (appended at pcrec's abi 6) and
+     * `rx_info.match_form` (appended at abi 10); an older artifact has no
+     * such fields and this shim would be reading past them. Refuse by NAME,
+     * carrying both numbers, and stop. The number itself is shim.c's. */
     if (pb_abi() < pb_shim_min_abi()) {
         printf("error\tabi-below-shim-floor: artifact rx_info.abi %d is below "
                "the %d this shim was written for (testees/pcrec/shim.c reads "
-               "rx_info.scan/.prefilter, appended at pcrec abi 6). Re-pin, or "
-               "point PCREC_BIN at a pcrec at or after that abi.\n",
+               "rx_info.scan/.prefilter, appended at pcrec abi 6, and "
+               "rx_info.match_form, appended at abi 10). Re-pin, or point "
+               "PCREC_BIN at a pcrec at or after that abi.\n",
                pb_abi(), pb_shim_min_abi());
         fflush(stdout);
         return 3;
@@ -369,11 +388,42 @@ int main(int argc, char **argv) {
      * as nothing at all rather than as a value. */
     if (pb_has_dfa_stamps()) {
         const char *ds = pb_dfa_scan(), *dp = pb_dfa_prefilter();
-        const char *dt = pb_dfa_table();
+        const char *dt = pb_dfa_table(), *dofs = pb_dfa_prefilter_offsets();
         if (ds) printf("info\tdfa_scan\t%s\n", ds);
         if (dp) printf("info\tdfa_prefilter\t%s\n", dp);
         if (dt) printf("info\tdfa_table\t%s\n", dt);
+        /* [OPT-K], abi 9: same scope as the three above. */
+        if (dofs) printf("info\tdfa_prefilter_offsets\t%s\n", dofs);
     }
+
+    /* [ENG-ABS], abi 10: the `_match` ENTRY's form. NOT gated on
+     * pb_has_dfa_stamps() -- its scope is "RX_ENGINE is dfa", which a VM
+     * hybrid (which has the DFA-scan stamps) is NOT in. The macro is printed
+     * when stamped; the FIELD's presence is printed on EVERY artifact, so a
+     * NULL match_form on a VM artifact is a value the adapter reads, and the
+     * macro-vs-field agreement is checked there. */
+    {
+        const char *dm = pb_dfa_match();
+        const char *mf = pb_info_match_form();
+        if (dm) printf("info\tdfa_match\t%s\n", dm);
+        printf("info\trxinfo_match_form_present\t%d\n", mf ? 1 : 0);
+        if (mf) printf("info\trxinfo_match_form\t%s\n", mf);
+    }
+
+    /* [ART-SIZE], abi 11: the size term's four stamps. `unroll_k` /
+     * `unroll_k_why` / `max_emit_code_bytes` are VM-only; `max_emit_bytes`
+     * is on both engines. Each printed only when stamped -- an absence is
+     * "not stamped", and the adapter decides from the abi whether that is
+     * a contract violation. */
+    if (pb_has_unroll_k()) {
+        const char *why = pb_unroll_k_why();
+        printf("info\tunroll_k\t%lld\n", pb_unroll_k());
+        if (why) printf("info\tunroll_k_why\t%s\n", why);
+    }
+    if (pb_has_max_emit_code_bytes())
+        printf("info\tmax_emit_code_bytes\t%lld\n", pb_max_emit_code_bytes());
+    if (pb_has_max_emit_bytes())
+        printf("info\tmax_emit_bytes\t%lld\n", pb_max_emit_bytes());
 
     /* The two-tier default entry's capacities ([OPT-1], abi 5): VM-only,
      * never absent on a VM artifact. `fast_frames == resume_frames` IS

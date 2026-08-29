@@ -21,7 +21,7 @@
 # byte-identical either way -- not a pattern variant. bench/email/NOTES.md
 # says so where a reader of the numbers will find it.
 
-pin = "35e1ab1"
+pin = "36d5963"
 
 [testees.pcrec-auto]
 engine_mode = "auto"

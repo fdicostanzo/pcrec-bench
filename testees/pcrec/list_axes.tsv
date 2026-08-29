@@ -1,0 +1,99 @@
+# testees/pcrec/list_axes.tsv -- the pcrec optimization-axis REGISTRY at the
+# pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
+# header). Everything below this header is the unmodified output of:
+#
+#     build/pcrec-36d5963/build/pcrec --list-axes
+#
+# pcrec commit 36d59631fc712871694575938c00bf1f94a6ba3e (abi 11), archived by
+# testees/pcrec/pin.sh on 2026-08-29 (PIN.tsv); captured 2026-08-29 by lane
+# b18repin ([B18]). 47 data rows / 19 axes / 12 columns -- the FOURTH
+# registry surface (pcrec docs/spec/registry.md 6, [CHK-2]).
+#
+# WHAT THIS FILE IS FOR: adapter.py's declared stamp value sets are CHECKED
+# against it (`registry_check`), and `make check-harness` diffs this copy
+# against the pin's live `--list-axes` output (tools/selfcheck.py,
+# `check_list_axes_registry`), so a candidate pcrec adds -- a new prefilter
+# form, a new match form -- surfaces as a failing check naming the value,
+# not as the first record's X15 rejection. Re-archive at every re-pin: the
+# diff IS the list of what moved. The registry's own boundary (registry.md
+# 6): it proves what the compiler THINKS its axes are; the artifacts
+# `check_mechanism_stamps` reads are the independent side.
+#
+# KNOWN GAP AT THIS PIN (a finding for pcrec, [B18]): the `size-term` axis
+# names `RX_UNROLL_K_WHY` as its stamp_macro but carries an EMPTY
+# stamp_value on both rows, although that macro is name-valued (seven
+# values, match_api.md 6.3) -- so `unroll_k_why`'s declared set comes from
+# the spec, not from here, and `registry_check` does not cover it.
+# ---------------------------------------------------------------------------
+# pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
+# TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
+# PREFERENCE order within the axis (order 1 is tried first).
+#
+# kind: "list" — a real candidate-list-of-objects exists in
+#   src/gen/emit_dfa.c and this row's name/deny came straight off it.
+#   "both" — axis F (scan direction): not a preference list, both
+#   candidates are ALWAYS emitted, once each, per machine.
+#   "predicate" — no candidate-list-as-data exists yet for this axis
+#   ([ENG-FORM] relayered emit_dfa.c only); name/deny are hand-stated
+#   from lib/pcrec.h's own enum symbols and docs/spec/tuning.md's
+#   prose. See this file's (src/parse/axes_dump.c) own header comment
+#   for the full boundary this dump does and does not prove.
+#
+# stamp_macro/stamp_value: the emitted #define this candidate is
+# reported through and the value it takes when chosen — empty when no
+# such macro exists (axes C/D/E/F; the activity-count axes, whose
+# stamp is a NUMBER rather than a named value).
+# deny_macro/deny_bit, force_macro/force_bit: the PCREC_NO_*/
+# PCREC_FORCE_* bit (lib/pcrec.h) that removes/forces this candidate,
+# empty when none exists — axis B's own missing deny flag is a named
+# finding (docs/design/emitter_form.md §3), not an omission here.
+# cli_flag: the -f/-fno-/--engine= spelling, empty for a candidate
+# reached only as a fallback.
+#axis	order	candidate	kind	stamp_macro	stamp_value	deny_macro	deny_bit	force_macro	force_bit	cli_flag	applies
+table	1	premultiplied	list	RX_DFA_TABLE	premultiplied	PCREC_NO_PREMUL_TABLE	15			-fno-premul-table	this machine's states*classes <= 65535 and no emitted seed cell is negative
+table	2	indexed	list	RX_DFA_TABLE	indexed						always (fallback)
+prefilter	1	offset-set-bounded	list	RX_DFA_PREFILTER	offset-set-bounded	PCREC_NO_OFFSET_SKIP	16			-fno-offset-skip	forward scan, an offset-k candidate SET was selected, under a $/\Z/\z view or a word-context accept ([OPT-K])
+prefilter	2	offset-set	list	RX_DFA_PREFILTER	offset-set	PCREC_NO_OFFSET_SKIP	16			-fno-offset-skip	forward scan, an offset-k candidate SET was selected: one memchr at the chosen offset k*, the other offsets verified per candidate ([OPT-K])
+prefilter	3	memchr-bounded	list	RX_DFA_PREFILTER	memchr-bounded						forward scan, one candidate byte, under a $/\Z/\z view or a word-context accept
+prefilter	4	memchr	list	RX_DFA_PREFILTER	memchr						forward scan, one candidate byte
+prefilter	5	byte-class-bounded	list	RX_DFA_PREFILTER	byte-class-bounded						forward scan, several candidate bytes, under a $/\Z/\z view or a word-context accept
+prefilter	6	byte-class	list	RX_DFA_PREFILTER	byte-class						forward scan, several candidate bytes
+prefilter	7	none	list	RX_DFA_PREFILTER	none						always (fallback) — also the reverse machine, and every case where the start state itself accepts (no skip is sound there)
+view	1	end+eol	list								both a \z view and a $/\Z view exist on this machine
+view	2	end	list								a \z view exists and no $/\Z view does
+view	3	eol	list								a $/\Z view exists and no \z view does
+view	4	none	list								always (fallback) — no position view at all
+seed	1	seeded	list								mechanism 4: the start state depends on a context byte (\b, (?m)^, ...)
+seed	2	constant	list								always (fallback)
+accept	1	by-class	list								some state's accept depends on the next byte (\b/(?m)$'s class axis)
+accept	2	scalar-viewed	list								a position view exists (D11: recorded AFTER the view selector, never before)
+accept	3	scalar-plain	list								always (fallback) — recorded at the top of the loop
+direction	1	forward	both								always — finds where a match ENDS
+direction	2	reverse	both								always — finds where that match BEGINS
+direction	3	anchored	both								always on a DFA artifact that selects the unwrapped match-here form ([ENG-ABS]) — finds where the match beginning at ctx->pos ends
+match	1	unwrapped	list	RX_DFA_MATCH	unwrapped	PCREC_NO_ANCHORED_DFA	17			-fno-anchored-dfa	the artifact's own ENG_UNANCH _match, and its anchored machine built inside the DFA caps ([ENG-ABS])
+match	2	search-filter	list	RX_DFA_MATCH	search-filter						always (fallback) — ENG_ATTEMPT, the empty engine, an anchored machine over a cap, or the deny flag
+possessify	1	possessive	predicate	RX_VM_STRATS	PCREC_VM_STRAT_POSSESSIVE	PCREC_NO_POSSESSIFY	4			-fno-possessify	per A_REP: possessify.c proves the loop's body can never profitably re-enter
+possessify	2	backtracking	predicate	RX_VM_STRATS	PCREC_VM_STRAT_BACKTRACKING						always (fallback)
+revdet	1	revdet	predicate	RX_VM_RUNGS	PCREC_VM_RUNG_REVDET	PCREC_NO_REVDET	5			-fno-revdet	per A_REP: forward unique-iteration lets the body run backward with no choice points
+revdet	2	denied	predicate	RX_VM_RUNGS							always (fallback) — the ladder's next rung (counter, or literal frames)
+counter	1	counter	predicate	RX_VM_RUNGS	PCREC_VM_RUNG_COUNTER	PCREC_NO_COUNTER	6			-fno-counter	per A_REP: a bounded repeat, unrolled by --unroll=K (default PCREC_DEFAULT_UNROLL_K), below the replication cap
+counter	2	denied	predicate	RX_VM_RUNGS							always (fallback) — literal replication (frames)
+size-term	1	size-model	predicate	RX_UNROLL_K_WHY		PCREC_NO_SIZE_TERM	18			-fno-size-term	per artifact: the counter rung is live and the emitted size is over PCREC_SIZE_TERM_THRESHOLD, so K is chosen by re-emitting the ladder and taking argmin nodes
+size-term	2	default	predicate	RX_UNROLL_K_WHY							always (fallback) — K stays at --unroll=K or PCREC_DEFAULT_UNROLL_K
+length-prune	1	clamped	predicate	RX_VM_PRUNES	PCREC_VM_PRUNE_CLAMPED	PCREC_NO_LENGTH_PRUNE	7			-fno-length-prune	per A_REP: a minimum-remaining-length bound is derivable for this quantifier's rung
+length-prune	2	unclamped	predicate	RX_VM_PRUNES	PCREC_VM_PRUNE_UNCLAMPED						always (fallback) — no bound derivable, or the axis denied
+vm-prefilter	1	hybrid	predicate	RX_VM_PREFILTER	hybrid	PCREC_NO_PREFILTER	8	PCREC_FORCE_PREFILTER	9	-fno-prefilter / -fprefilter	auto+captures selects it jointly with the engine (select_engine.c); -fprefilter REFUSES on a pure-DFA-selected pattern (do-or-die)
+vm-prefilter	2	none	predicate	RX_VM_PREFILTER	none						always (fallback) — also the --engine=vm side effect (R21 E-6)
+altcls-merge	1	merged	predicate	RX_ALTCLS_MERGES		PCREC_NO_ALTCLS_MERGE	10			-fno-altcls-merge	a maximal run of single-character alternation branches qualifies (runs before either engine is built)
+altcls-merge	2	denied	predicate	RX_ALTCLS_MERGES							always (fallback)
+altcls-factor	1	factored	predicate	RX_ALTCLS_FACTORED		PCREC_NO_ALTCLS_FACTOR	11			-fno-altcls-factor	a maximal run sharing a literal first byte qualifies, on stage 1's own output
+altcls-factor	2	denied	predicate	RX_ALTCLS_FACTORED							always (fallback)
+atomic-discharge	1	discharged	predicate			PCREC_NO_ATOMIC_DISCHARGE	12			-fno-atomic-discharge	possessify's own verdict proves the A_ATOMIC node's cut is a no-op (docs/design/atomic_groups_design.md §5.3)
+atomic-discharge	2	denied	predicate								always (fallback) — ENGINE-SELECTING: the A_ATOMIC node stays, which is DFA-excluding, so RX_ENGINE can move to "vm"
+splice-calls	1	spliced	predicate	RX_VM_CALL_SPLICED		PCREC_NO_SPLICE_CALLS	13			-fno-splice-calls	the callee is not in a call-graph cycle and its expansion fits the splice size budget (PCREC_MAX_SPLICE_NODES/_TOTAL)
+splice-calls	2	linked	predicate	RX_VM_CALL_LINKED							always (fallback) — ENGINE-SELECTING: a linked call is structurally VM-only
+tiered-entry	1	tiered	predicate	RX_FAST_FRAMES		PCREC_NO_TIERED_ENTRY	14			-fno-tiered-entry	the stamped default resume/trail storage does not fit one 4KB page (docs/spec/match_api.md §10.9)
+tiered-entry	2	single-tier	predicate	RX_FAST_FRAMES							always (fallback) — FAST_FRAMES==RESUME_FRAMES, FAST_TRAIL==TRAIL_FRAMES
+engine	1	vm	predicate	RX_ENGINE	vm					--engine=vm	auto: any construct select_engine.c decides is VM-only (captures, possessive quantifiers, \K, backreferences, calls, ...); forced by --engine=vm (also disables the DFA hybrid prefilter, R21 E-6)
+engine	2	dfa	predicate	RX_ENGINE	dfa					--engine=dfa	auto: always, when no construct forces the VM; --engine=dfa REFUSES a pattern needing VM-only machinery (do-or-die)

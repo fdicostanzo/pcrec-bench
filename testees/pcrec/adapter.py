@@ -65,6 +65,21 @@ pin and 35e1ab1, and this adapter absorbs all of it at once:
   abi 7 ([OPT-3])   `RX_DFA_TABLE`.
   abi 8 ([ENG-FORM]) nothing a consumer reads -- the emitted scan loop moved.
 
+[B18] (pin 36d5963 = pcrec abi 11) absorbed three more in one change:
+
+  abi 9 ([OPT-K])    `RX_DFA_PREFILTER` gains `offset-set` /
+                     `offset-set-bounded`; `RX_DFA_PREFILTER_OFFSETS`
+                     (`"0,8*,13"` / `"none"`) on every artifact that
+                     contains a DFA scan; `-fno-offset-skip` (bit 16).
+  abi 10 ([ENG-ABS]) `RX_DFA_MATCH` (`unwrapped` / `search-filter`) on every
+                     DFA artifact and NO VM artifact, hybrids included;
+                     `rx_info.match_form` appended as its mirror (NULL where
+                     the macro is absent); `-fno-anchored-dfa` (bit 17).
+  abi 11 ([ART-SIZE]) `RX_UNROLL_K` / `RX_UNROLL_K_WHY` (seven values) and
+                     `RX_MAX_EMIT_CODE_BYTES` on every VM artifact;
+                     `RX_MAX_EMIT_BYTES` on every artifact; `-fno-size-term`
+                     (bit 18) denies the K selection, never the caps.
+
 Two rules govern how they are read, and both exist because they were paid
 for on the pcrec side first:
 
@@ -80,13 +95,25 @@ for on the pcrec side first:
    two spellings are CHECKED AGAINST EACH OTHER rather than both recorded.
    `engine` is `rx_info.engine`, checked against `RX_ENGINE`; `dfa_scan` /
    `dfa_prefilter` are the macros, checked against `rx_info.scan` /
-   `.prefilter`. A disagreement is an AdapterError naming both values --
-   pcrec asserts field == macro on every artifact of both engines
+   `.prefilter`; `dfa_match` is the macro, checked against
+   `rx_info.match_form`. A disagreement is an AdapterError naming both
+   values -- pcrec asserts field == macro on every artifact of both engines
    (`tests/codegen/run_dfa_stamps.sh`), so a disagreement seen here is a
    pcrec bug or a shim bug and is worth stopping for, not averaging.
+3. AN UNCONDITIONAL STAMP THAT IS MISSING IS A CONTRACT VIOLATION, NOT A
+   BLANK ([B18]). pcrec stamps its selection facts whether or not they
+   fired (its D81), each with a scope and the abi it landed at.
+   `STAMP_SCOPE` states both per pair; `_check_agreement` asserts that at
+   the artifact's own abi every such pair IS present within its scope and
+   ABSENT outside it (the exclusive scopes: `dfa_match` on no VM artifact,
+   the size term's VM-only trio on no DFA artifact). The shim still reads
+   the macros through #ifdef so an artifact between the floor and a
+   macro's abi links and records "not stamped" -- and this rule is what
+   keeps that #ifdef from ever hiding a stamp that should have been there.
 
-The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 6 -- the abi that
-appended the two fields it reads) and is enforced in `driver.c`, which
+The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 10 since [B18] -- the
+abi that appended `match_form`, the third field it reads; 6 before, for
+`scan` / `prefilter`) and is enforced in `driver.c`, which
 refuses a lower artifact by name before printing anything else. This file
 does NOT keep a second copy of the number: it recognises the driver's
 refusal line and re-raises it as an AdapterError carrying pcrec's own two
@@ -212,9 +239,11 @@ METADATA_DECL = {
     "dfa_prefilter": {
         "type": "enum", "scope": "pattern",
         "values": ["none", "memchr", "byte-class", "memchr-bounded",
-                   "byte-class-bounded"],
+                   "byte-class-bounded", "offset-set", "offset-set-bounded"],
         "source": "<PREFIX>_DFA_PREFILTER, read through pb_dfa_prefilter(); "
-                  "CHECKED against rx_info.prefilter (pb_info_prefilter())",
+                  "CHECKED against rx_info.prefilter (pb_info_prefilter()); "
+                  "the value set is CHECKED against `pcrec --list-axes` "
+                  "(testees/pcrec/list_axes.tsv, axis `prefilter`)",
         "description": "the CANDIDATE-START mechanism that DFA scan carries. "
                        "`none`'s largest cause is that the start state "
                        "ACCEPTS (no skip is sound), not that no filter was "
@@ -222,7 +251,92 @@ METADATA_DECL = {
                        "difference in what the mechanism buys under a "
                        "$/\\Z/\\z view -- every skip stops one byte short "
                        "and the memchr arm loses its early-out -- and not a "
-                       "spelling of the unbounded pair",
+                       "spelling of the unbounded pair. The two `offset-set` "
+                       "values ([OPT-K], pcrec abi 9) scan for ONE byte at a "
+                       "chosen offset k* inside the fixed-length prefix and "
+                       "verify the other offsets per candidate; WHICH offsets "
+                       "is `dfa_prefilter_offsets`",
+    },
+    "dfa_prefilter_offsets": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_DFA_PREFILTER_OFFSETS ([OPT-K], pcrec abi 9+), "
+                  "read through pb_dfa_prefilter_offsets(); same scope as "
+                  "dfa_scan (every artifact that CONTAINS a DFA scan, VM "
+                  "hybrids included); CHECKED to be \"none\" iff "
+                  "dfa_prefilter is not an offset-set value",
+        "description": "WHICH byte offsets from the candidate's own start the "
+                       "offset-set filter tests, ascending, comma-separated, "
+                       "`*` marking the one the scan searches for -- "
+                       "`0,8*,13` on the uuid shape -- or `none` on every "
+                       "artifact whose dfa_prefilter is not one of the two "
+                       "offset-set values. A fact about the individual "
+                       "MACHINE (free text), deliberately not folded into "
+                       "dfa_prefilter's closed value set",
+    },
+    "dfa_match": {
+        "type": "enum", "scope": "pattern",
+        "values": ["unwrapped", "search-filter"],
+        "source": "<PREFIX>_DFA_MATCH ([ENG-ABS], pcrec abi 10+), read "
+                  "through pb_dfa_match(); CHECKED against rx_info.match_form "
+                  "(pb_info_match_form()), which is NULL wherever the macro "
+                  "is absent. Scope: every artifact whose engine is `dfa`, "
+                  "and NO VM artifact, hybrids included -- it describes the "
+                  "_match ENTRY, not a scan (match_api.md 6.3)",
+        "description": "HOW `<prefix>_match` / `_match_caps` answer on a DFA "
+                       "artifact: `unwrapped` (a THIRD, anchored forward "
+                       "machine run from ctx->pos -- no reverse pass, a "
+                       "failing probe stops at the first byte that cannot "
+                       "continue a match here) or `search-filter` (the "
+                       "unanchored search with non-pos starts rejected: "
+                       "`attempt` and `empty` scans, an anchored machine "
+                       "over PCREC_ANCHORED_MAX_STATES, or -fno-anchored-dfa)",
+    },
+    "unroll_k": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_UNROLL_K ([ART-SIZE], pcrec abi 11+), read "
+                  "through pb_unroll_k(); VM artifacts only",
+        "description": "the unroll factor the VM counter rung was emitted "
+                       "at (8 by default); `unroll_k_why` says who chose it",
+    },
+    "unroll_k_why": {
+        "type": "enum", "scope": "pattern",
+        "values": ["default", "option", "denied", "size-model",
+                   "size-model-declined", "cap-rescue", "capacity-declined"],
+        "source": "<PREFIX>_UNROLL_K_WHY ([ART-SIZE], pcrec abi 11+), read "
+                  "through pb_unroll_k_why(); VM artifacts only. The seven "
+                  "values are match_api.md 6.3's / limits.md 8's; the "
+                  "registry (`--list-axes`, axis `size-term`) names the "
+                  "macro but carries NO stamp_value for it",
+        "description": "WHY unroll_k is what it is: `default` (the term ran, "
+                       "the artifact was under its 120,000-code-byte "
+                       "threshold), `option` (--unroll=K), `denied` "
+                       "(-fno-size-term), `size-model` (the ladder's K was "
+                       "taken), `size-model-declined` (the materiality bar "
+                       "rejected it), `cap-rescue` (a size cap took it "
+                       "anyway), `capacity-declined` (the K it wanted would "
+                       "have lowered the declared frame_capacity / "
+                       "subject_ceiling below the default's -- limits.md 8a)",
+    },
+    "max_emit_code_bytes": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_MAX_EMIT_CODE_BYTES ([ART-SIZE], pcrec abi 11+), "
+                  "read through pb_max_emit_code_bytes(); VM artifacts only, "
+                  "like the quantity it bounds",
+        "description": "the EFFECTIVE cap on comment-excluded C bytes OUTSIDE "
+                       "table initializers this artifact was built under "
+                       "(500,000 by default; --max-emit-code-bytes=N is "
+                       "raise-only). An emergency failsafe, not a tuned "
+                       "threshold (pcrec D84)",
+    },
+    "max_emit_bytes": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_MAX_EMIT_BYTES ([ART-SIZE], pcrec abi 11+), read "
+                  "through pb_max_emit_bytes(); EVERY artifact, both engines",
+        "description": "the EFFECTIVE cap on total comment-excluded emitted "
+                       "bytes this artifact was built under (1,000,000 by "
+                       "default; --max-emit-bytes=N is raise-only), so an "
+                       "artifact that fitted is distinguishable from one "
+                       "built with a raised cap without the command line",
     },
     "dfa_table": {
         "type": "enum", "scope": "pattern",
@@ -334,14 +448,83 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "step_budget",
              "work_budget", "frame_capacity", "subject_ceiling",
              "resume_frames", "trail_frames", "resume_frame_size",
              "trail_frame_size", "buffer_frames", "buffer_trail",
-             "fast_frames", "fast_trail")
+             "fast_frames", "fast_trail",
+             "unroll_k", "max_emit_code_bytes", "max_emit_bytes")
 
 #: The `info` names carrying a STRING-valued pair, and the declared name each
 #: lands under. Kept beside INT_PAIRS so a pair can never be printed by the
 #: driver and silently dropped here (`engine_stamp` was, from abi 4 until
 #: [B16]: the driver printed it and `_metadata` had no line for it, so the
 #: unconditional engine stamp reached no record for five pins).
-STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table")
+STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
+             "dfa_prefilter_offsets", "dfa_match", "unroll_k_why")
+
+#: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
+#: (its D81 -- a selection fact is stamped whether or not it fired), the abi
+#: it landed at and the artifact population it is on. `_check_agreement`
+#: asserts, at the artifact's own abi, presence INSIDE the scope and -- for
+#: the exclusive scopes -- absence OUTSIDE it. Scopes:
+#:   every     every artifact, both engines
+#:   dfa-scan  every artifact that CONTAINS a DFA scan: rx_info.scan non-NULL
+#:             (every DFA artifact and every VM hybrid; match_api.md 6.3 (a))
+#:   dfa       every artifact whose engine is `dfa` -- and NO other, hybrids
+#:             included (RX_DFA_MATCH describes the _match ENTRY, 6.3)
+#:   vm        every VM artifact -- and no DFA artifact (6.3 family (b);
+#:             the size term's VM-only trio)
+#: The abi thresholds are the spec's (match_api.md 6.3, limits.md 8): the
+#: `dfa-scan` rows start at 6 because before [DD-13c] hybrids did not stamp.
+STAMP_SCOPE = {
+    "engine":                ("every",    4),
+    "dfa_scan":              ("dfa-scan", 6),
+    "dfa_prefilter":         ("dfa-scan", 6),
+    "dfa_table":             ("dfa-scan", 7),
+    "dfa_prefilter_offsets": ("dfa-scan", 9),
+    "dfa_match":             ("dfa",      10),
+    "fast_frames":           ("vm",       5),
+    "fast_trail":            ("vm",       5),
+    "unroll_k":              ("vm",       11),
+    "unroll_k_why":          ("vm",       11),
+    "max_emit_code_bytes":   ("vm",       11),
+    "max_emit_bytes":        ("every",    11),
+}
+
+#: `dfa_prefilter` values for which `dfa_prefilter_offsets` is NOT "none"
+#: (match_api.md 6.3's iff, checked from both sides).
+OFFSET_SET_VALUES = ("offset-set", "offset-set-bounded")
+
+#: The committed copy of `pcrec --list-axes` at the pin -- the FOURTH
+#: registry surface (pcrec docs/spec/registry.md 6; I-15 (5)). The stamp
+#: value sets declared above are CHECKED against it (`registry_check`), and
+#: `make check-harness` diffs this copy against the pin's live output, so a
+#: candidate pcrec adds appears here as a failing check by name rather than
+#: as an X15 rejection of the first record that carries it.
+LIST_AXES_TSV = os.path.join(HERE, "list_axes.tsv")
+
+#: Which declared pair each registry `stamp_macro` lands in. Only the
+#: NAME-valued macros (a registry row with a non-empty `stamp_value`);
+#: the count-valued ones (`RX_FAST_FRAMES`, `RX_ALTCLS_MERGES`, ...) and
+#: the masks (`RX_VM_RUNGS`/`_STRATS`) are declared with their own types.
+REGISTRY_STAMP_PAIRS = {
+    "RX_ENGINE": "engine",
+    "RX_VM_PREFILTER": "prefilter",
+    "RX_DFA_PREFILTER": "dfa_prefilter",
+    "RX_DFA_TABLE": "dfa_table",
+    "RX_DFA_MATCH": "dfa_match",
+}
+
+#: Declared values the registry's candidate lists do NOT enumerate because
+#: they are OUTCOMES rather than candidates the selector walks (MEASURED at
+#: 36d5963, [B18]): `RX_DFA_TABLE "none"` is stamped on an `attempt` or
+#: `empty` scan (no numeric table exists to have chosen a form for -- the
+#: provably-empty witness in tools/selfcheck.py reads it) and `"mixed"` is
+#: the forward and reverse machines taking different forms (match_api.md
+#: 6.3), while the registry's `table` axis lists only `premultiplied` /
+#: `indexed`. Listed here so the reverse direction of `registry_check` still
+#: fires on any OTHER declared value the registry lacks; a finding for pcrec
+#: (the axis's candidate list under-covers its stamp's value set).
+REGISTRY_OUTCOME_VALUES = {
+    "dfa_table": {"none", "mixed"},
+}
 
 #: The driver's refusal token for an artifact below shim.c's PB_SHIM_MIN_ABI.
 #: The NUMBER lives in shim.c and nowhere else; this is only how the refusal
@@ -422,6 +605,74 @@ def _mask_names(name, value):
             "a stamp bit; add it to MASK_BITS and to METADATA_DECL together, "
             "or the record would claim a mask it cannot spell." % (name, unknown))
     return out
+
+
+def registry_rows(path=LIST_AXES_TSV):
+    """The committed `--list-axes` TSV as a list of dicts (the `#axis ...`
+    line is the header; every other `#` line is pcrec's own comment and
+    is kept verbatim in the file but skipped here). The bench's own source
+    header at the top of the file is `#`-prefixed too and is skipped the
+    same way."""
+    rows, cols = [], None
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.rstrip("\n")
+            if line.startswith("#axis\t"):
+                cols = line[1:].split("\t")
+                continue
+            if not line or line.startswith("#"):
+                continue
+            if cols is None:
+                raise _ad.AdapterError(
+                    "%s: a data row before the `#axis` header" % path)
+            vals = line.split("\t")
+            if len(vals) != len(cols):
+                raise _ad.AdapterError(
+                    "%s: row has %d columns, header %d: %r"
+                    % (path, len(vals), len(cols), line))
+            rows.append(dict(zip(cols, vals)))
+    return rows
+
+
+def registry_check(rows=None):
+    """The declared stamp VALUE SETS against the registry ([B18], I-15 (5)):
+    every `stamp_value` the registry lists for a macro in
+    REGISTRY_STAMP_PAIRS must be a declared value of that pair, and every
+    declared value of a pair whose axis is `kind = list` (the emitter's
+    own candidate arrays, read live by the dump) must appear in the
+    registry or in REGISTRY_OUTCOME_VALUES -- a value this adapter declares
+    that pcrec no longer has is as much a drift as one it lacks.
+    `predicate` axes are hand-stated prose on pcrec's side and get the
+    one-way check only. Returns a list of problem strings; empty means the
+    map agrees with the registry."""
+    rows = registry_rows() if rows is None else rows
+    problems = []
+    seen = {}
+    kinds = {}
+    for r in rows:
+        macro, val = r.get("stamp_macro", ""), r.get("stamp_value", "")
+        if macro in REGISTRY_STAMP_PAIRS and val:
+            seen.setdefault(macro, set()).add(val)
+            kinds.setdefault(macro, set()).add(r.get("kind", ""))
+    for macro, pair in REGISTRY_STAMP_PAIRS.items():
+        declared = set(METADATA_DECL[pair].get("values") or [])
+        reg = seen.get(macro, set())
+        if not reg:
+            problems.append("%s: the registry lists no stamp_value for it "
+                            "(pair %s)" % (macro, pair))
+            continue
+        for v in sorted(reg - declared):
+            problems.append("%s stamps %r in the registry; pair %s does not "
+                            "declare it -- add it to METADATA_DECL"
+                            % (macro, v, pair))
+        if kinds.get(macro) == {"list"}:
+            extra = declared - reg - REGISTRY_OUTCOME_VALUES.get(pair, set())
+            for v in sorted(extra):
+                problems.append("pair %s declares %r; the registry's `list` "
+                                "axis for %s does not have it and it is not "
+                                "a documented outcome value "
+                                "(REGISTRY_OUTCOME_VALUES)" % (pair, v, macro))
+    return problems
 
 
 def _find_repo_beside(start):
@@ -867,10 +1118,26 @@ class Adapter(_ad.Adapter):
            that ACTUALLY RUNS and never the coarse `"hybrid"`, so on a hybrid
            it is the DFA's vocabulary that must match -- consequence 3.
 
+        [B18] added three more, in the same spirit:
+
+        5. `<PREFIX>_DFA_MATCH` is present IFF `rx_info.match_form` is
+           non-NULL, and equal to it ([ENG-ABS]; the field is NULL on every
+           VM artifact, hybrids included, and that NULL is read as a value).
+        6. `dfa_prefilter_offsets` is `"none"` IFF `dfa_prefilter` is not an
+           offset-set value ([OPT-K], 6.3's iff from both sides), and names
+           a scanned offset (`*`) when it is one.
+        7. THE SCOPE TABLE (`STAMP_SCOPE`): at the artifact's own abi, every
+           stamp pcrec emits unconditionally is present inside its scope
+           and absent outside an exclusive one. This is how "never infer
+           from absence" and "the shim reads macros through #ifdef" coexist:
+           the #ifdef keeps an older artifact linking, and this rule makes
+           a missing unconditional stamp an error instead of a blank.
+
         A pcrec too old to stamp a given macro is not a disagreement: an
         absent macro is checked only against the field's own absence, never
-        against a value. That is rule 1 of the module docstring, applied to
-        the control rather than to the datum."""
+        against a value, and the scope table applies from each stamp's own
+        abi. That is rule 1 of the module docstring, applied to the control
+        rather than to the datum."""
         engine = meta.get("engine")
         stamp = info.get("engine_stamp")
         if stamp is not None and engine is not None and stamp != engine:
@@ -919,6 +1186,86 @@ class Adapter(_ad.Adapter):
                     "pcrec artifact has no DFA scan, so rx_info.prefilter "
                     "should be <PREFIX>_VM_PREFILTER's value %r; it reads "
                     "%r." % (macro_vm_pf, field_pf))
+
+        # 5. ([B18], [ENG-ABS]) `<PREFIX>_DFA_MATCH` is present IFF
+        #    `rx_info.match_form` is non-NULL, and equal to it. The field is
+        #    printed on every artifact, so a VM artifact's NULL is a value.
+        field_mf = info.get("rxinfo_match_form")
+        has_mf = info.get("rxinfo_match_form_present") == "1"
+        macro_mf = meta.get("dfa_match")
+        if macro_mf is not None and not has_mf:
+            raise _ad.AdapterError(
+                "pcrec artifact stamps <PREFIX>_DFA_MATCH %r but "
+                "rx_info.match_form is NULL (match_api.md 6.3: the field "
+                "mirrors the macro)." % (macro_mf,))
+        if macro_mf is None and has_mf:
+            raise _ad.AdapterError(
+                "pcrec artifact has rx_info.match_form %r but no "
+                "<PREFIX>_DFA_MATCH stamp." % (field_mf,))
+        if macro_mf is not None and field_mf != macro_mf:
+            raise _ad.AdapterError(
+                "pcrec artifact disagrees with itself about its _match "
+                "FORM: <PREFIX>_DFA_MATCH is %r, rx_info.match_form reads "
+                "%r." % (macro_mf, field_mf))
+
+        # 6. ([B18], [OPT-K]) `dfa_prefilter_offsets` is "none" IFF
+        #    `dfa_prefilter` is not an offset-set value (6.3's iff, both
+        #    sides), whenever both are recorded.
+        ofs = meta.get("dfa_prefilter_offsets")
+        if ofs is not None and macro_dfa_pf is not None:
+            is_set = macro_dfa_pf in OFFSET_SET_VALUES
+            if is_set and ofs == "none":
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_DFA_PREFILTER %r but "
+                    "<PREFIX>_DFA_PREFILTER_OFFSETS \"none\" -- an offset-set "
+                    "filter with no offsets (match_api.md 6.3's iff)."
+                    % (macro_dfa_pf,))
+            if not is_set and ofs != "none":
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_DFA_PREFILTER %r (not an "
+                    "offset-set value) but <PREFIX>_DFA_PREFILTER_OFFSETS %r "
+                    "-- the offsets stamp must read \"none\" there."
+                    % (macro_dfa_pf, ofs))
+            if is_set and "*" not in ofs:
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_DFA_PREFILTER_OFFSETS %r "
+                    "with no `*` -- no offset is marked as the scanned one."
+                    % (ofs,))
+
+        # 7. ([B18]) THE SCOPE TABLE: every unconditional stamp is present
+        #    within its scope at the artifact's own abi, and the exclusive
+        #    scopes are empty outside it. An absence here is a contract
+        #    violation (pcrec's D81), never "not stamped".
+        abi = meta.get("abi")
+        if abi is None:
+            return
+        in_scope = {
+            "every": True,
+            "dfa-scan": has_field,
+            "dfa": engine == "dfa",
+            "vm": engine == "vm",
+        }
+        for pair, (scope, since) in STAMP_SCOPE.items():
+            if abi < since:
+                continue
+            present = pair in meta
+            if in_scope[scope] and not present:
+                raise _ad.AdapterError(
+                    "pcrec artifact at abi %d is missing the `%s` pair, "
+                    "which pcrec stamps UNCONDITIONALLY on %s since abi %d "
+                    "(D81). An unconditional stamp that went silent is a "
+                    "compiler or shim bug, not a blank."
+                    % (abi, pair, {"every": "every artifact",
+                                   "dfa-scan": "every artifact containing a "
+                                               "DFA scan",
+                                   "dfa": "every DFA artifact",
+                                   "vm": "every VM artifact"}[scope], since))
+            if scope in ("dfa", "vm") and present and not in_scope[scope]:
+                raise _ad.AdapterError(
+                    "pcrec artifact (engine %r) carries the `%s` pair, which "
+                    "is scoped to %s only (match_api.md 6.3)."
+                    % (engine, pair, "DFA artifacts" if scope == "dfa"
+                       else "VM artifacts"))
 
     # -------------------------------------------------------------- measure
 
