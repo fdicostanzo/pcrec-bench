@@ -1176,3 +1176,72 @@ BLINDED author denied ~/pcrec beyond docs/spec/ and this repo's
 testees/, store/, reports/) on `bench/bounded@0.1`. Watchdog cron every
 10 min. The window opens after b18repin merges; lanes get STOPPED
 before it (last session's lesson).
+
+## 2026-08-29 (EDT, ~16:4x), fourth session (part 2) — [B18] (e) merged; THE WINDOW at 36d5963: 12 cells, two HOLD breaches, the two-manager gate residue, three re-runs
+
+Lane b18repin delivered in ~40 min and was merged as a541cbf: the shim
+reads the abi 9-11 stamps by value (`_DFA_PREFILTER_OFFSETS`,
+`RX_DFA_MATCH` + `rx_info.match_form` — the floor rises 6 → 10 because a
+FIELD is read, the macros never move it — `_UNROLL_K`/`_WHY`, both
+`_MAX_EMIT_*` caps), a `STAMP_SCOPE` table that makes a missing
+unconditional stamp an AdapterError rather than a blank, `list_axes.tsv`
+archived under a D35 header and diffed against the pin on every check,
+four deny-flag controls (`-fno-offset-skip`, `-fno-anchored-dfa`,
+`-fno-size-term`, `-fno-premul-table`) each reaching the other value,
+thirteen LEDGER_STAMP_CASES on the bench's own patterns at pcrec's
+predicted values (uuid `0,8*,13`, iso-ts `0,4*`, stack-frame `0,1*`, the
+six declined loglines rows and both email patterns `none`, every DFA
+artifact `unwrapped`, every VM artifact K=8/`default`, and the [SEL-1]
+fallback: `level-context` under auto is a VM artifact stamped
+`RX_ENGINE_WHY: dfa overflowed: >32000 states at pattern offset 0`).
+make check 3/56/0 · 100/100 · 51. Four findings for O-8 (journal part 3
+carries them with the numbers): `RX_MAX_EMIT_CODE_BYTES` is VM-only, not
+"every artifact"; registry gaps (empty `stamp_value` on the size-term
+rows, `table` lacks `none`/`mixed`, registry.md §6's 45/18 vs live
+47/19); the DFA artifacts grew +5-20 KB and ALL of it is abi 10's third
+machine (abi 9 and 11 exactly as predicted); the fallback's reason is
+prose, not a stamp. Part (d): `quick` cannot address the throughput
+subjects in the match regime (`Subbench.subjects_for()` maps `match` to
+the short set); a regime addition is a version bump — deferred.
+
+THE WINDOW. Lanes paused (b12close WIP-committed and idled on request;
+b114bounded delivered, then stopped by TaskStop); pcrecdev1 told WINDOW
+OPEN at 14:44. Launched under setsid at 14:45 (150-s lead): cell 1
+(email × pcre2-interp) ran 14:48-14:57 — and at 14:56:30 pcrecdev1's
+[OPT-4] lane started a `tests/harness/run.sh` section (load1 1.6 →
+9.4) despite the HOLD; cell 2's gate refused twice, I killed my own
+launcher by PID before the cascade (each refused cell costs a minute
+and the next gate meets the same load), pcrecdev1 killed the section.
+Relaunched 14:58 — and at 14:59 the same lane started
+`tests/codegen/run_size_term.sh` under its watchdog (SECOND breach);
+paused again, pcrecdev1 stopped the lane outright (TaskStop) and later
+parked all three of its lanes and went idle. Relaunched 15:02; the
+gate then refused on the RESIDUE: "busiest non-target core 11.11 %
+busy (limit 10.00 %)" with load1 1.4 — the two claude processes
+themselves (~9.5 % + ~6.5 % CPU while streaming); last session's
+windows ran with ONE manager on the box and the per-core limit was
+derived for that. Both sessions went silent; I widened the script's
+gate budget from 3×20 s to 12×30 s and relaunched at 15:05. From then
+every cell passed on attempt 2-3 (the first refusal after each cell is
+the known 1-s post-cell transient — `sleep 15` does not cover it) and
+loglines × pcre2-interp passed first time. Email 15:06-15:43 (five
+cells), loglines 15:43-16:37 (six). 12 records, index 38.
+
+THREE `inconclusive-load` RECORDS, read from their own environment:
+email × pcre2-interp — genuinely loaded at its tail (after: load1 11.4,
+a core 41 % busy — the 14:56 breach); email × pcrec-vm and loglines ×
+pcrec-nocaps — load1 1.18 / 1.06 but the single 1-s post-cell occupancy
+sample read 11.11 % / 13.0 %: OD-B12's false positive (the post-cell
+transient has the same shape as a busy box; average it). Re-ran all
+three in a second window (≈ 25 min) rather than argue with the status.
+
+LESSONS (for wake.md and BD-n): a HOLD relayed to a lane is not a HOLD
+until the lane's processes are gone — verify by cwd before OPEN, and
+after every cell if the peer has lanes at all; the quiet gate's
+per-core limit does not survive two streaming claude processes — both
+managers must be IDLE for the window, not merely "not heavy"; the
+script's gate budget is 12×30 s now (commit it in scripts/run_window.sh);
+never grep the process table with a pattern that matches your own
+command line (exit 144, twice); the launcher lives under setsid and a
+kill-by-PID of one's own launcher is the right move the moment a gate
+refuses for a reason that will not clear in 60 s.
