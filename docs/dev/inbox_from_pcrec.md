@@ -508,3 +508,61 @@ OWED, not something stale. tuning.md is docs/spec/ (the contract
 tier); the guide will point at it when written.
 7(a)-(c) noted in [OPT-K]'s row (the +2.1 KB accessor block per DFA
 artifact is an [OPT-D] census target).
+
+## I-15 (2026-08-28 ~20:3x EDT) — NEW PIN `8ab6152` (abi 9): [OPT-K] the offset-k candidate-start skip + [SEL-1] auto's DFA-overflow fallback + [CHK-2] `--list-axes`; battery-proven; three asks for your next window
+
+CODE unchanged since 7603c4d (later commits are tests/docs/plan); the
+union battery ran on it: `make -k -j12 test` 1,644 checks / 0 failed,
+solo stages clean, mech 184 rows / 0 unexpected / the expected six
+undetected / 0 anomalies, `make san` green on both axes (rc 0, 0 report
+lines), `make test-axes` 15/15 axes answer-identical over 22,105 cases
+(the new `-fno-offset-skip` axis 22,105/22,105), form census green.
+Pin 8ab6152 (or 7603c4d — they measure the same).
+
+WHAT MOVED FOR YOUR ADAPTER (abi 8 → 9): (1) `RX_DFA_PREFILTER` gains two
+VALUES, `"offset-set"` and `"offset-set-bounded"` (the k-set skip: one
+byte scanned for at offset k*, the other offsets verified before the
+transition loop); (2) a NEW unconditional stamp on every DFA artifact,
+`<P>_DFA_PREFILTER_OFFSETS` — a string like `"0,8*,13"` (the chosen
+offsets, `*` marks the scanned one) or `"none"` when declined — D81's
+unconditional-stamp rule; read it, never `#ifdef` it; (3) `.abi = 9`
+for that scaffolding line; (4) `-fno-offset-skip` (bit 16,
+`PCREC_NO_OFFSET_SKIP`) is the deny flag = the control build; (5)
+`pcrec --list-axes` prints every axis/candidate as a TSV (the fourth
+registry surface, docs/spec/registry.md §6) — your adapter can derive
+its flag/stamp map from it instead of hand tables; (6) under `auto`, a
+DFA-cap overflow now FALLS BACK to the VM (an auto-selected prefilter
+whose DFA overflows is dropped), `RX_ENGINE_WHY "dfa overflowed: …"`
+names it — so `level-context` under `pcrec-auto` now COMPILES as a VM
+artifact (your O-7 item 6); `--engine=dfa` and `-fprefilter` stay
+do-or-die.
+
+WHAT TO EXPECT ON YOUR SETS (pcrec's own measurement, 1 MB log text, 9
+interleaved trials, controls flat — hold us to it in the ledger):
+loglines search band: stack-frame 10.18×/6.19× (match/fail arms), uuid
+4.45×/9.58×, iso-ts 6.13×/5.75×; ipv4 1.02×, hex32-id 1.00×, http-5xx
+1.01×; ipv6/kv-quoted/bignum DECLINED (stamp `"none"`); BOTH email
+patterns DECLINED and byte-for-byte untouched apart from the new stamp
+line (your P-list: predict no movement on email-specimen@0.2 outside
+spread; DFA artifacts +~1.4-1.9 KB where selected, +40 B where
+declined; gcc time within ±5 %). The offsets stamp for uuid should read
+`"0,8*,13"`, iso-ts `"0,4*"`, stack-frame `"0,1*"`.
+
+THREE ASKS FOR THE NEXT BENCH SESSION: (a) re-pin to 8ab6152 and
+re-measure loglines + email (the ledger above); (b) FRANK'S ASK: for
+every pattern where auto's DFA fallback trips (`RX_ENGINE_WHY` starts
+"dfa overflowed"), pcrec-auto (now a VM artifact) vs pcre2-jit timing —
+level-context is the first; a did-not-compile row becomes a measured
+row; (c) [B11.4] bounded-repeat as the next sub-bench (I-14's
+recommendation stands; two more reasons today: [ART-SIZE] — Frank's
+concern about a 2 MB VM artifact, censused at docs/dev/
+artifact_size_census.md: the shipped `.o` is median 6.8 KB / p99 14 KB
+over 2,772 patterns and every outlier is counter-rung body replication
+under nested bounded repeats — your `.o`-size column on that sub-bench
+is the design input for the size term).
+
+Also for your records: a D6 panel on the [OPT-K] design found a
+MISCOMPILE before the emitter shipped (docs/dev/reviews/2026-08-28-r39-
+optk-design.md; `\b\.[0-9]{4}Z` on "ab.1234Z" lost its match) — fixed,
+oracle-verified, sabotage-rowed. Nothing heavy runs on the box after
+~22:00 tonight; announce your window as before.
