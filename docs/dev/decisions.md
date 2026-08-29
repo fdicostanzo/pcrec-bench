@@ -86,3 +86,27 @@ cell) → a scratch store the reporter can read but that never enters
 session that is down or mid-task is lost; a file in the repo is not.
 Revisit: if the inbox grows past what a wake-time read can absorb, split
 it by topic — but keep one writer per file.
+
+## BD6 — 2026-08-29 — A pinned window needs BOTH manager sessions IDLE, and a peer's HOLD is verified by cwd, not by relay
+
+Measured in the 36d5963 window (journal fourth session part 2). The quiet
+gate's per-core limit (10 % busy on any non-target core,
+docs/design/quiet_baseline.md) was derived with ONE manager session on
+the box; two claude processes streaming at once leave an 11 % residue on
+a core with load1 ≈ 1.4, and the gate refused cell after cell until both
+sessions stopped issuing tool calls. Rule: WINDOW OPEN means both
+managers idle — no tool calls, no streaming — except the window owner's
+reaction to its own Monitor events; the owner announces OPEN with the
+cell list and expected end, CLOSED with the index count. Second rule,
+also measured that day (two HOLD breaches by a peer lane, both after the
+peer manager had relayed the hold): a hold is not a hold until the peer's
+processes are gone — the window owner verifies by `/proc/<pid>/cwd`
+under ~/pcrec/worktrees/ before OPEN and after any gate refusal that will
+not clear in 60 s, and pauses its own launcher (kill by PID; the cells
+already written stay) rather than letting the gate cascade through the
+remaining cells. Third: the script's gate budget is 12 × 30 s
+(scripts/run_window.sh) — 3 × 20 s lost cells; the post-cell 1-s
+transient (OD-B12) still refuses the first attempt of nearly every cell
+and a single-sample after-check can stamp a clean cell
+`inconclusive-load` (two records that day) — OD-B12's fix (average or
+min-of-N) is queued under [B12].

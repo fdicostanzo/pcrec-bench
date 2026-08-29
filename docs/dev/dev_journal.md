@@ -1245,3 +1245,56 @@ never grep the process table with a pattern that matches your own
 command line (exit 144, twice); the launcher lives under setsid and a
 kill-by-PID of one's own launcher is the right move the moment a gate
 refuses for a reason that will not clear in 60 s.
+
+## 2026-08-29 (EDT, ~18:0x), fourth session (part 3, CLOSE) — the ledger read; O-8; the probe; bench/bounded merged; make check 107/107
+
+THE LEDGER (lane ledger36d extracted; reports/2026-08-29-*-repin-36d5963.*;
+the numbers are in O-8 item by item). [OPT-K] on the loglines search
+band moved MORE than pcrec predicted: uuid ×20.13 (predicted 4.45×/
+9.58×) and now 1.65× AHEAD of the JIT; iso-ts ×10.30 (6.13×/5.75×) at
+parity; stack-frame ×17.39 (10.18×/6.19×), 1.83× behind — "within 2×
+of the JIT" holds on the band. At 1 MB uuid is ahead on all three
+flavours, iso-ts 0.7-1.7×, stack-frame 3.0-6.5× BEHIND (scalar
+memchr-at-k*+verify ≈ 0.4 ns/B vs the JIT's SIMD pair scan at 0.07-0.09).
+Controls flat except http-5xx `slower ×1.03`. [ENG-ABS] on the email
+match regime: matching 1.037 (pred 1.031), all-85 1.164 (1.161),
+non-matching 1.539 (1.550) — three confirmed; the 35 short valid emails
+0.566 (pred 0.482). pcrec-auto is now 7.3× faster than the JIT on the
+match regime; search rows flat. [SEL-1]: level-context under auto = the
+VM to four digits (13.4× behind the JIT on the band, 12.6-14.5× at
+1 MB) — and its emit-c is 511/720 ms vs 1.6/3.4 ms for --engine=vm: the
+DFA attempt to 32,000 states is paid before the fallback (313×). SIZE:
+the compile table's `artifact bytes` is the .so (adapter.py:1063);
+DFA .so +4.7-8.9 KB, VM +4.5-8.6 KB; gcc −4…+24 % (18/34 DFA pairs over
++5 %; VM within ±7.5 %). The pin-by-pin source attribution (b18repin):
+abi 10's third machine is the whole DFA growth.
+
+THE PROBE (lane b18probe, docs/dev/measurements/2026-08-29-engabs-
+longsubject-match-probe.txt + its script; the directory is new, D35
+rules in its CLAUDE.md): `(?:orig)\z` on the five 1 MB subjects + 64 KB
+/ 4 KB prefixes, six arms, five interleaved trials, box not gated.
+Unwrapped 12.3 ns FLAT at 4 KB / 64 KB / 1 MB where the machine dies at
+byte 4; the -fno-anchored-dfa control 7.8 µs / 124 µs / 2.0 ms; 1.0×
+where the machine is alive to the last byte. The driver's own floor
+(the `@` pattern in the same form) is 10.3-10.6 ns — the number to hold
+beside pcrec's 5.5 ns, not against it.
+
+MERGES: b12-close (ef87b5d: R10 reporter v7; scripts/run_window.sh;
+test_report 275 → 48 s via one cached real-store load) and b114-bounded
+(485a230: bench/bounded@0.1, 24 patterns, 30 + 4 subjects, 1,536
+expectations, oracle_limits.tsv, predictions on record; its author
+recommends splitting the two axes into two sub-benches — a scope ruling
+for the next session). The two 2026-08-28 report sets were re-rendered
+at v7 WITH an `--until 2026-08-29T00:00:00Z` bound: the pcre2 testee_ids
+carry no pin, so newest-measured-wins would otherwise have pulled
+today's pcre2 records into the 35e1ab1 sample's files (reports/CLAUDE.md
+says so). `make check` on master after the three merges: 3/56/0 ·
+107/107 · check-report OK (51). O-8 committed (739ccdd) and pcrecdev1
+told; BD6 records the two-manager window protocol. Gate budget 12×30 s
+committed to scripts/run_window.sh.
+
+STATE AT CLOSE: master clean at this commit; no lanes, no worktrees, no
+cron, no monitors; the box is pcrecdev1's ([OPT-4] battery pending on
+its side). Store 41 records (15 today). Next session: bench/bounded's
+window (six cells ≈ 80 min, both managers idle), the [B12] OD-B12 fix,
+pcrec's answers to O-8 as I-18, then [B11.2] wide alternations.

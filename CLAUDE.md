@@ -59,7 +59,7 @@ per skeleton; the predicted first pcrec refusal is the abi-11 size cap
 at the 32768 rung — a first-class `did-not-compile` outcome, to be
 measured in a window next). [B18]'s WINDOW ran the same day: 12 cells
 at 36d5963 on email-specimen@0.2 and loglines@0.1, every one `measured`
-(store index 41); outbox O-8 carries the ledger. Next: bounded's window;
+(store index 41); outbox O-8 (739ccdd) carries the ledger — [OPT-K] moved more than predicted on the search band, [ENG-ABS] three of four aggregates confirmed, level-context = the VM with a 0.5-0.7 s compile-time DFA attempt; the long-subject `_match` probe is archived under `docs/dev/measurements/`. Next: bounded's window;
 [B11.2] wide alternations; [B13] the interpreter is chartered. `make check`
 is green (3/56/0, 107/107, 51/51 — re-verified after the three merges). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
