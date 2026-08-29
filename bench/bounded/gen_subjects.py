@@ -105,11 +105,12 @@ CTX_LINES = (
 )
 BACKGROUND_LINES = (("l-07", 230),)
 
-# HOW MANY of the six non-whole lines carry each everyday shape -- an exact
-# allocation without replacement (bench/loglines' lesson: a per-line coin
-# flip at n=6 would make the match rate an accident of the seed). The two
-# `whole` ctx lines are not in the pool: an injected token would break
-# "ends with the context word".
+# HOW MANY of the five lines in the pool carry each everyday shape -- an
+# exact allocation without replacement (bench/loglines' lesson: a per-line
+# coin flip at n=5 would make the match rate an accident of the seed). The
+# two `whole` ctx lines and the `gap` line are not in the pool: an injected
+# token would break "ends with the context word" on the first two and push
+# the third past MAX_LINE, cutting its context word off.
 COUNTS = (("year4", 2), ("hex32", 2), ("dotted4", 2), ("csv5", 2))
 SHAPES = {"year4": bt.year4, "hex32": bt.hex32, "dotted4": bt.dotted4,
           "csv5": bt.csv5}
@@ -137,7 +138,7 @@ def _inject(rng, words, shapes, lo, hi):
 
 
 def lines(rng):
-    pool = [row[0] for row in CTX_LINES if row[3] != "whole"] \
+    pool = [row[0] for row in CTX_LINES if row[3] not in ("whole", "gap")] \
         + [row[0] for row in BACKGROUND_LINES]
     assigned = {i: [] for i in pool}
     for name, k in COUNTS:
@@ -162,7 +163,7 @@ def lines(rng):
             words = head + [trig] + between + [ctx]
             realised = sum(len(w) + 1 for w in between) + 1
             desc = "line/ctx-gap-%d: `%s` then `%s` %d B later, mid-line" % (gap, trig, ctx, realised)
-            lo, hi = 1, len(head)          # inject BEFORE the trigger only
+            lo, hi = 1, 1                  # never in the pool (above)
         elif kind == "no-context":
             words = head + [trig]
             desc = ("line/ctx-no-context: trigger `%s` and no context word after it (the lazy gap "
