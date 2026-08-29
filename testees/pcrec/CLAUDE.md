@@ -715,3 +715,39 @@ patterns, and the [ENG-ABS] third machine scales with the machine. The
 `.o` delta is the smaller quantity (I-16: 2-11 % of the source delta —
 the anchored table is verbose decimal C), and `artifact bytes` ([B14] R7)
 is the column that says which.
+
+#### Where the growth came from (attributed pin by pin)
+
+Compiled at each of the three pins that span the re-pin, in a scratch
+build root (`pin.sh --build-root`), same command shape throughout:
+
+| artifact | 35e1ab1 (abi 8) | 8ab6152 (abi 9, [OPT-K]) | 808740c (abi 10, [ENG-ABS]) | 36d5963 (abi 11, [ART-SIZE]) |
+|---|---|---|---|---|
+| `orig` plain / auto (DFA, declined) | 74,589 | 74,629 **+40** | 88,685 **+14,056** | 88,719 **+34** |
+| `orig` `\z` / auto | 85,056 | 85,096 **+40** | 101,027 **+15,931** | 101,061 **+34** |
+| `floor` plain / auto (DFA, declined) | 16,462 | 16,502 **+40** | 21,399 **+4,897** | 21,433 **+34** |
+| loglines `uuid` / auto (offset-set `0,8*,13`) | 28,279 | 30,488 **+2,209** | 40,562 **+10,074** | 40,596 **+34** |
+| loglines `iso-ts` / auto (offset-set `0,4*`) | 25,520 | 27,222 **+1,702** | 36,034 **+8,812** | 36,068 **+34** |
+| loglines `stack-frame` / auto (offset-set `0,1*`) | 52,944 | 53,061 **+117** | 73,252 **+20,191** | 73,286 **+34** |
+| loglines `http-5xx` / auto (declined) | 40,096 | 40,136 **+40** | 59,143 **+19,007** | 59,177 **+34** |
+| loglines `ipv4` / auto (declined) | 23,053 | 23,093 **+40** | 30,311 **+7,218** | 30,345 **+34** |
+| `orig` plain / vm | 57,587 | 57,587 **+0** | 57,612 **+25** | 57,740 **+128** |
+| `floor` plain / vm | 19,731 | 19,731 **+0** | 19,756 **+25** | 19,884 **+128** |
+| loglines `level-context` / auto ([SEL-1] VM fallback) | did-not-compile | 32,608 | 32,633 **+25** | 32,761 **+128** |
+
+- **abi 9 ([OPT-K]) costs exactly what I-15 said**: +40 B on every
+  declined DFA artifact (the stamp line), +2.2 KB / +1.7 KB where the
+  k-set is selected on `uuid` / `iso-ts` (I-15: "+1.4-1.9 KB") — and only
+  +117 B on `stack-frame`, whose `0,1*` set has one verified offset. A VM
+  artifact does not move (+0). It is also the pin at which
+  `level-context` under `auto` starts compiling ([SEL-1]).
+- **abi 10 ([ENG-ABS]) is the whole story on the DFA side**: +4.9 KB on
+  the tiny `floor` pattern, +14.1 KB on both email patterns, +7.2 KB to
+  +20.2 KB across loglines — the third (anchored) machine's table,
+  scaling with the machine. I-16's "+2,605 B source median, p99 +6.7 KB"
+  was over pcrec's corpus; every DFA artifact of both sub-benches but
+  `floor` is above that p99. A VM artifact pays +25 B (I-16 said +63).
+- **abi 11 ([ART-SIZE]) is +34 B per DFA artifact and +128 B per VM
+  artifact, FLAT** — the design note's own estimate for the VM side
+  (artifact_size_term.md §7: "≈ 130 B … +128 B on 1,689 artifacts") to
+  the byte.
