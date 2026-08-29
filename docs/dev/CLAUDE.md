@@ -29,6 +29,7 @@ decisions) so cross-references between the two repos are never ambiguous.
   rewritten from scratch at every session end or significant pause. On any
   disagreement the committed docs win.
 
+- `measurements/` — ARCHIVED PROBES (pcrec D35 style: stable `YYYY-MM-DD-<topic>.txt` names, verbatim driver output under a source header, a reproducing script beside each, never a ranking input — the store is where ranked numbers live). First row 2026-08-29: the [ENG-ABS] long-subject failing-`_match` probe ([B18] (d)). See its CLAUDE.md.
 - `reviews/` — D6-style critic-panel records, `YYYY-MM-DD-rN-<topic>.md`,
   each with the findings table, dispositions, and what is owed to Frank.
   R1 (2026-08-24): the requirements note, 29 findings, 27 fixed in v2.
