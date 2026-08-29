@@ -1,0 +1,34 @@
+# docs/dev/measurements/ — archived driver probes
+
+One-off MEASUREMENTS that answer a question a `pcrecbench run` cell cannot
+express (a subject set the regime does not map to, a control flag no
+testee carries, a length curve), archived in pcrec's D35 style. The rule
+is the same as ~/pcrec's `docs/design/*_measurements/` and its D35:
+
+1. **Stable file name**: `YYYY-MM-DD-<topic>.txt`, never renamed; a
+   re-measurement is a NEW file with a new date, and the old one stays.
+2. **Verbatim output**: the driver's own stdout, every trial, unedited,
+   after a source header. The summary table at the bottom is DERIVED from
+   the verbatim block by the archived script and carries numbers only —
+   no interpretation beyond "flat" / "proportional to length"; the reading
+   is the manager's, in plan.md / dev_journal.md / the outbox.
+3. **Source header**: the bench commit, the pcrec pin (commit + binary
+   sha256), the engine library version, the compiler, the box, the exact
+   command per arm, every flag, the load samples (`/proc/loadavg` before
+   and after every sweep) and whether the box was GATED — a probe run
+   beside another session's lanes says so, in the file.
+4. **Reproducible**: the script that produced the archive is committed
+   beside it (`probe_<topic>.py`), reuses the adapters' own compile and
+   driver paths (never a second copy of a flag set or a pattern
+   spelling), and runs from the repo root.
+5. **NEVER a ranking input.** Nothing here is a record: no schema, no
+   `store/`, no reporter. Scratch tier by construction. A number that
+   matters for a ranking goes through a sub-bench version bump and a
+   pinned cell.
+
+| file | what |
+|---|---|
+| `probe_engabs_longsubject_match.py` | ([B18] (d)) the LONG-SUBJECT FAILING anchored `_match` probe: pcrec's [ENG-ABS] claim (inbox I-16, "O(divergence), not O(subject)") measured with the bench's own `(?:orig)\z` whole-subject artifact on the five 1 MB throughput subjects of bench/email + 64 KB / 4 KB prefixes + two short sanity subjects, six arms (pcrec-auto at the pin; the same pin with `-fno-anchored-dfa` as the CONTROL; `--engine=vm`; pcre2-jit; pcre2-interp; the set's floor pattern as the per-call floor), per-(arm, subject) iteration calibration, interleaved trials, `taskset -c 11`, the divergence byte of each subject from libpcre2 partial matching |
+| `2026-08-29-engabs-longsubject-match-probe.txt` | its archive at pcrec pin 36d5963 (abi 11), 5 trials, box NOT gated (pcrecdev1's lanes running; load sampled) |
+
+Maintenance: update this file when files are added/removed or change role.
