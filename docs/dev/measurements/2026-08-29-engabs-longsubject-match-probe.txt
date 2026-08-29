@@ -1,0 +1,2516 @@
+# [B18] (d) -- the long-subject FAILING anchored `_match` probe ([ENG-ABS], pcrec inbox I-16 ask (c))
+# ARCHIVED DRIVER PROBE (pcrec D35 style): stable name, verbatim driver output, source header. SCRATCH TIER by construction:
+# not a record, not in store/, never a ranking input. Numbers only; the reading is the manager's.
+#
+# date (UTC)        2026-08-29T21:21:48+00:00 .. 2026-08-29T21:23:14+00:00
+# bench commit      850557a9ac49243ab5a9910c7adf4b5cd3433f67
+# pcrec pin         36d5963 = 36d59631fc712871694575938c00bf1f94a6ba3e (36d5963); binary /home/duxevents/pcrec-bench/build/pcrec-36d5963/build/pcrec sha256 3f53e85189ac595d8bfff22dbac1e29579426c61753f055a7622cf38f27d820c
+# libpcre2          10.46 2025-08-27 (the distribution libpcre2-8.so.0, dlopen'ed by the pcre2 driver)
+# compiler          gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0 (artifacts: $CC -O2 -std=gnu11 -fPIC -shared shim.c; drivers: $CC -O2 -std=gnu11)
+# box               budu-ryzen1600 (ubuntubudu, amd-ryzen-5-1600-six-core-processor, 12 cores; store/machines.tsv); kernel 7.0.0-29-generic
+# pinning           every driver invocation: taskset -c 11 gnutimeout -k 5 600 <driver> ...
+# BOX NOT GATED     another manager session (pcrecdev1) had light lanes running; no quiet gate was applied. /proc/loadavg was sampled before and after every (trial, arm) sweep -- see LOAD below.
+# script            docs/dev/measurements/probe_engabs_longsubject_match.py
+# invocation        docs/dev/measurements/probe_engabs_longsubject_match.py --out docs/dev/measurements/2026-08-29-engabs-longsubject-match-probe.txt --workdir <workdir> --trials 5 --target-seconds 0.25
+#
+# PATTERN  bench/email/patterns/orig.rx (email-specimen@0.2), the WHOLE-SUBJECT form `(?:orig)\z` on pcrec (pcrecbench.record.whole_subject_text, the harness's own spelling); the plain pattern under PCRE2_ANCHORED|PCRE2_ENDANCHORED on libpcre2 -- exactly what the harness's `match` regime measures. Captures on. The floor arm uses patterns/floor.rx (`@`) the same way.
+# OPERATION per call: pcrec driver `pb_match_caps(s, n, 0, caps) == n` (testees/pcrec/driver.c --mode match, the shim building an rx_ctx per call); pcre2 driver `pcre2_match_8(code, s, n, 0, ANCHORED|ENDANCHORED, md, NULL)`. One clock reading around the WHOLE loop of `iters` calls (CLOCK_MONOTONIC); ns/call = elapsed / iters.
+# ITERS: calibrated per (arm, subject) so one loop runs >= 0.25 s (cap 100000000); the harness calibrates on a set's median subject, which would put a 5 ns call at the timer floor. Same iters on every trial of a cell.
+# TRIALS: 5, each a fresh driver process (dlopen / compile per process, outside the timed loop), INTERLEAVED across arms: trial 1 of every arm, then trial 2, ...
+# TIMER FLOOR: two clock_gettime(CLOCK_MONOTONIC) reads bracket the loop, so the clock's own cost is amortised over `iters` (at 10^7 iters, < 0.01 ns/call). What is NOT amortised is the per-call harness cost inside the loop -- the indirect call, the shim's rx_ctx, the volatile stores -- which the `floor` arm measures directly: its anchored machine dies at byte 0 of every subject.
+#
+# ARMS
+#   pcrec-auto         testee pcrec-auto   the pin: DFA, RX_DFA_MATCH unwrapped
+#                      compile: /home/duxevents/pcrec-bench/build/pcrec-36d5963/build/pcrec -p rx --features all -o artifact.c -- (?:(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]))\z
+#                      stamps: engine=dfa dfa_scan=unanchored dfa_prefilter=byte-class-bounded dfa_match=unwrapped abi=11
+#                      measure: <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters <N> --list <id\tpath>
+#   pcrec-auto-noabs   testee pcrec-local  CONTROL: the same pin, -fno-anchored-dfa (RX_DFA_MATCH search-filter)
+#                      env: PCREC_BIN=/home/duxevents/pcrec-bench/build/pcrec-36d5963/build/pcrec PCREC_LOCAL_FLAGS=-fno-anchored-dfa
+#                      compile: /home/duxevents/pcrec-bench/build/pcrec-36d5963/build/pcrec -p rx --features all -fno-anchored-dfa -o artifact.c -- (?:(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]))\z
+#                      stamps: engine=dfa dfa_scan=unanchored dfa_prefilter=byte-class-bounded dfa_match=search-filter abi=11
+#                      measure: <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters <N> --list <id\tpath>
+#   pcrec-vm           testee pcrec-vm     --engine=vm at the pin
+#                      compile: /home/duxevents/pcrec-bench/build/pcrec-36d5963/build/pcrec -p rx --features all --engine=vm -o artifact.c -- (?:(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]))\z
+#                      stamps: engine=vm dfa_scan=- dfa_prefilter=none dfa_match=- (absent) abi=11  [RX_ENGINE_WHY: --engine=vm]
+#                      measure: <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters <N> --list <id\tpath>
+#   pcre2-jit          testee pcre2-jit    libpcre2 JIT, PCRE2_ANCHORED|PCRE2_ENDANCHORED
+#                      compile: (driver) --pattern <orig.rx> --mode match --jit  [PCRE2_ANCHORED|PCRE2_ENDANCHORED at match time]
+#                      measure: <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters <N> --list <id\tpath>
+#   pcre2-interp       testee pcre2-interp libpcre2 interpreter, PCRE2_ANCHORED|PCRE2_ENDANCHORED
+#                      compile: (driver) --pattern <orig.rx> --mode match  [PCRE2_ANCHORED|PCRE2_ENDANCHORED at match time]
+#                      measure: <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters <N> --list <id\tpath>
+#   floor              testee pcrec-auto   CONTROL: the set's floor pattern (`@`), same form, pcrec-auto
+#                      compile: /home/duxevents/pcrec-bench/build/pcrec-36d5963/build/pcrec -p rx --features all -o artifact.c -- (?:@)\z
+#                      stamps: engine=dfa dfa_scan=unanchored dfa_prefilter=memchr-bounded dfa_match=unwrapped abi=11
+#                      measure: <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters <N> --list <id\tpath>
+#
+# SUBJECTS   (divergence = smallest prefix length p at which `(?:orig)\z` anchored at 0 has NO matching extension of subject[:p], by libpcre2 PCRE2_ANCHORED|PCRE2_PARTIAL_HARD bisection; `-` = alive/matching to the end)
+#   id                             bytes divergence  what
+#   t-a-valid-addrs              1048576         26  bench/email/throughput (manifest_throughput.tsv)  sha256 e408283db8afef78
+#   t-b-no-at                    1048576          4  bench/email/throughput (manifest_throughput.tsv)  sha256 543b4587f6c8256d
+#   t-c-long-atom-run            1048576          -  bench/email/throughput (manifest_throughput.tsv)  sha256 9bc1b2a288b26af7
+#   t-d-prose-sparse-addrs       1048576          6  bench/email/throughput (manifest_throughput.tsv)  sha256 d55c0e8f42702226
+#   t-e-prose-no-at              1048576          6  bench/email/throughput (manifest_throughput.tsv)  sha256 ee92cda733b1ef82
+#   t-b-no-at-64k                  65536          4  head -c 65536 of t-b-no-at.bin  sha256 5c936ef9c3cab6d1
+#   t-b-no-at-4k                    4096          4  head -c 4096 of t-b-no-at.bin  sha256 e0f094b93d8a6204
+#   t-c-long-atom-run-64k          65536          -  head -c 65536 of t-c-long-atom-run.bin  sha256 bf718b6f653bebc1
+#   t-c-long-atom-run-4k            4096          -  head -c 4096 of t-c-long-atom-run.bin  sha256 c93eee2d0db02f10
+#   s-000                             16          -  short, expected match (valid dot-atom simple)  sha256 b4c9a289323b21a0
+#   s-040                             15          -  short, expected nomatch (missing @ entirely)  sha256 c3c54a8037a38a70
+#
+# LOAD  /proc/loadavg around the compile phase: 6.04 3.38 2.18 3/947 2395137 | 5.88 3.39 2.19 4/946 2397312
+# LOAD  /proc/loadavg before | after each (trial, arm) sweep over all 11 subjects:
+#   trial 1 pcrec-auto         5.35 3.43 2.23 2/946 2416195 | 5.16 3.42 2.23 2/943 2418009
+#   trial 1 pcrec-auto-noabs   5.16 3.42 2.23 2/943 2418009 | 5.16 3.42 2.23 3/949 2418620
+#   trial 1 pcrec-vm           5.16 3.42 2.23 3/949 2418620 | 5.07 3.43 2.24 4/949 2419118
+#   trial 1 pcre2-jit          5.07 3.43 2.24 3/949 2419118 | 5.07 3.43 2.24 4/984 2419856
+#   trial 1 pcre2-interp       5.07 3.43 2.24 4/984 2419856 | 5.30 3.51 2.27 4/950 2420715
+#   trial 1 floor              5.30 3.51 2.27 4/950 2420715 | 5.20 3.52 2.28 4/954 2421394
+#   trial 2 pcrec-auto         5.20 3.52 2.28 4/954 2421394 | 5.20 3.52 2.28 4/954 2421940
+#   trial 2 pcrec-auto-noabs   5.20 3.52 2.28 4/954 2421940 | 5.18 3.54 2.30 4/954 2423281
+#   trial 2 pcrec-vm           5.18 3.54 2.30 4/954 2423281 | 5.18 3.54 2.30 5/957 2426258
+#   trial 2 pcre2-jit          5.18 3.54 2.30 5/957 2426258 | 5.25 3.58 2.32 4/950 2429269
+#   trial 2 pcre2-interp       5.25 3.58 2.32 4/950 2429269 | 5.25 3.58 2.32 3/951 2431185
+#   trial 2 floor              5.25 3.58 2.32 3/951 2431185 | 5.15 3.59 2.33 4/951 2433306
+#   trial 3 pcrec-auto         5.15 3.59 2.33 4/951 2433306 | 5.29 3.65 2.35 3/954 2435015
+#   trial 3 pcrec-auto-noabs   5.29 3.65 2.35 3/953 2435015 | 5.29 3.65 2.35 5/957 2437806
+#   trial 3 pcrec-vm           5.29 3.65 2.35 5/957 2437806 | 5.19 3.65 2.36 7/957 2440618
+#   trial 3 pcre2-jit          5.19 3.65 2.36 7/957 2440618 | 5.19 3.65 2.36 4/956 2444911
+#   trial 3 pcre2-interp       5.19 3.65 2.36 5/956 2444911 | 5.18 3.68 2.37 5/967 2449258
+#   trial 3 floor              5.18 3.68 2.37 5/967 2449258 | 5.18 3.68 2.37 3/951 2452755
+#   trial 4 pcrec-auto         5.18 3.68 2.37 3/951 2452755 | 5.08 3.68 2.38 5/953 2454894
+#   trial 4 pcrec-auto-noabs   5.08 3.68 2.38 5/953 2454894 | 5.15 3.72 2.40 4/953 2457664
+#   trial 4 pcrec-vm           5.15 3.72 2.40 4/954 2457665 | 5.15 3.72 2.40 4/957 2461277
+#   trial 4 pcre2-jit          5.15 3.72 2.40 4/957 2461277 | 5.06 3.73 2.41 5/953 2464229
+#   trial 4 pcre2-interp       5.06 3.73 2.41 5/953 2464229 | 5.06 3.73 2.41 3/953 2467478
+#   trial 4 floor              5.06 3.73 2.41 3/953 2467478 | 5.30 3.80 2.44 3/964 2471488
+#   trial 5 pcrec-auto         5.30 3.80 2.44 3/964 2471488 | 5.30 3.80 2.44 3/965 2474965
+#   trial 5 pcrec-auto-noabs   5.30 3.80 2.44 4/965 2474965 | 5.27 3.82 2.46 5/958 2478747
+#   trial 5 pcrec-vm           5.27 3.82 2.46 5/958 2478747 | 5.17 3.82 2.46 3/955 2482313
+#   trial 5 pcre2-jit          5.17 3.82 2.46 3/955 2482313 | 5.17 3.82 2.46 4/959 2485867
+#   trial 5 pcre2-interp       5.17 3.82 2.46 4/959 2485867 | 5.16 3.84 2.48 5/955 2489704
+#   trial 5 floor              5.16 3.84 2.48 5/955 2489704 | 5.16 3.84 2.48 3/953 2492151
+#
+# ITERS per (arm, subject), and how it was chosen:
+#   pcrec-auto         t-a-valid-addrs               5702717  predicted from the probe
+#   pcrec-auto         t-b-no-at                    20585566  predicted from the probe
+#   pcrec-auto         t-c-long-atom-run                 128  probe met target at 128
+#   pcrec-auto         t-d-prose-sparse-addrs       18760843  probe met target at 18760843
+#   pcrec-auto         t-e-prose-no-at              18962497  predicted from the probe
+#   pcrec-auto         t-b-no-at-64k                20458078  predicted from the probe
+#   pcrec-auto         t-b-no-at-4k                 20149061  probe met target at 20149061
+#   pcrec-auto         t-c-long-atom-run-64k            2044  probe met target at 2044
+#   pcrec-auto         t-c-long-atom-run-4k            32727  probe met target at 32727
+#   pcrec-auto         s-000                         7132232  probe met target at 7132232
+#   pcrec-auto         s-040                         9131818  probe met target at 9131818
+#   pcrec-auto-noabs   t-a-valid-addrs                   124  probe met target at 124
+#   pcrec-auto-noabs   t-b-no-at                         126  probe met target at 126
+#   pcrec-auto-noabs   t-c-long-atom-run                 125  probe met target at 125
+#   pcrec-auto-noabs   t-d-prose-sparse-addrs             74  probe met target at 74
+#   pcrec-auto-noabs   t-e-prose-no-at                    73  probe met target at 73
+#   pcrec-auto-noabs   t-b-no-at-64k                    1985  probe met target at 1985
+#   pcrec-auto-noabs   t-b-no-at-4k                    32493  probe met target at 32493
+#   pcrec-auto-noabs   t-c-long-atom-run-64k            2011  probe met target at 2011
+#   pcrec-auto-noabs   t-c-long-atom-run-4k            32346  probe met target at 32346
+#   pcrec-auto-noabs   s-000                         3272285  predicted from the probe
+#   pcrec-auto-noabs   s-040                         7646927  predicted from the probe
+#   pcrec-vm           t-a-valid-addrs                887355  probe met target at 887355
+#   pcrec-vm           t-b-no-at                    11555477  probe met target at 11555477
+#   pcrec-vm           t-c-long-atom-run                 309  predicted from the probe
+#   pcrec-vm           t-d-prose-sparse-addrs       11208377  predicted from the probe
+#   pcrec-vm           t-e-prose-no-at              11441460  predicted from the probe
+#   pcrec-vm           t-b-no-at-64k                11836031  predicted from the probe
+#   pcrec-vm           t-b-no-at-4k                 11710073  probe met target at 11710073
+#   pcrec-vm           t-c-long-atom-run-64k            5105  probe met target at 5105
+#   pcrec-vm           t-c-long-atom-run-4k            81088  probe met target at 81088
+#   pcrec-vm           s-000                         5607751  predicted from the probe
+#   pcrec-vm           s-040                        10910758  predicted from the probe
+#   pcre2-jit          t-a-valid-addrs                140468  probe met target at 140468
+#   pcre2-jit          t-b-no-at                     1847610  probe met target at 1847610
+#   pcre2-jit          t-c-long-atom-run                 249  probe met target at 249
+#   pcre2-jit          t-d-prose-sparse-addrs        1768500  predicted from the probe
+#   pcre2-jit          t-e-prose-no-at               1780993  predicted from the probe
+#   pcre2-jit          t-b-no-at-64k                 1820862  probe met target at 1820862
+#   pcre2-jit          t-b-no-at-4k                  2954211  probe met target at 2954211
+#   pcre2-jit          t-c-long-atom-run-64k            4152  predicted from the probe
+#   pcre2-jit          t-c-long-atom-run-4k          2953670  probe met target at 2953670
+#   pcre2-jit          s-000                          454145  probe met target at 454145
+#   pcre2-jit          s-040                         7249415  predicted from the probe
+#   pcre2-interp       t-a-valid-addrs                140124  predicted from the probe
+#   pcre2-interp       t-b-no-at                     1808156  predicted from the probe
+#   pcre2-interp       t-c-long-atom-run                 262  predicted from the probe
+#   pcre2-interp       t-d-prose-sparse-addrs        1797043  predicted from the probe
+#   pcre2-interp       t-e-prose-no-at               1778890  predicted from the probe
+#   pcre2-interp       t-b-no-at-64k                 1837559  probe met target at 1837559
+#   pcre2-interp       t-b-no-at-4k                  2953512  predicted from the probe
+#   pcre2-interp       t-c-long-atom-run-64k            4169  probe met target at 4169
+#   pcre2-interp       t-c-long-atom-run-4k          2914378  probe met target at 2914378
+#   pcre2-interp       s-000                          462023  predicted from the probe
+#   pcre2-interp       s-040                         7045785  predicted from the probe
+#   floor              t-a-valid-addrs              24459972  probe met target at 24459972
+#   floor              t-b-no-at                    24408251  probe met target at 24408251
+#   floor              t-c-long-atom-run            24530337  probe met target at 24530337
+#   floor              t-d-prose-sparse-addrs       24472701  probe met target at 24472701
+#   floor              t-e-prose-no-at              24291796  predicted from the probe
+#   floor              t-b-no-at-64k                24484829  probe met target at 24484829
+#   floor              t-b-no-at-4k                 24529001  probe met target at 24529001
+#   floor              t-c-long-atom-run-64k        24511336  predicted from the probe
+#   floor              t-c-long-atom-run-4k         24537835  probe met target at 24537835
+#   floor              s-000                        23804816  probe met target at 23804816
+#   floor              s-040                        24305231  predicted from the probe
+
+==============================================================================
+VERBATIM DRIVER OUTPUT  (one block per (arm, subject); trial, argv, then the driver's stdout: `subject\tID\tANSWER\tSTART\tEND\tNCAPS\tCONSUMED\tITERS\tSECONDS\tNMATCHES\tCAPS`; info lines omitted after trial 1)
+==============================================================================
+
+--- pcrec-auto / t-a-valid-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5702717 --list /tmp/engabs-probe-r4cx9gx8/subjects.tsv  (rc 0)
+compile	1	load	0.000079911
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	5702717	0.258332721	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5702717 --list /tmp/engabs-probe-0j4yo7ix/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	5702717	0.245869808	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5702717 --list /tmp/engabs-probe-q9rh455c/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	5702717	0.250276774	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5702717 --list /tmp/engabs-probe-4xs5aulq/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	5702717	0.257943279	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5702717 --list /tmp/engabs-probe-w1vipsav/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	5702717	0.263283111	-	-
+
+--- pcrec-auto / t-b-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20585566 --list /tmp/engabs-probe-hcv9qhu5/subjects.tsv  (rc 0)
+compile	1	load	0.000075841
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-b-no-at	nomatch	-	-	0	1048576	20585566	0.263234090	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20585566 --list /tmp/engabs-probe-09zezetw/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	20585566	0.260141002	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20585566 --list /tmp/engabs-probe-auc0p508/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	20585566	0.250445815	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20585566 --list /tmp/engabs-probe-yiofo8tp/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	20585566	0.249995022	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20585566 --list /tmp/engabs-probe-ysv4wnxl/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	20585566	0.252506907	-	-
+
+--- pcrec-auto / t-c-long-atom-run
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 128 --list /tmp/engabs-probe-k_iyi5br/subjects.tsv  (rc 0)
+compile	1	load	0.000097521
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	128	0.250773167	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 128 --list /tmp/engabs-probe-x57ughk4/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	128	0.251347680	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 128 --list /tmp/engabs-probe-vdv664bh/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	128	0.253401032	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 128 --list /tmp/engabs-probe-8oh0rwt5/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	128	0.254642059	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 128 --list /tmp/engabs-probe-lmrgr5zj/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	128	0.261106977	-	-
+
+--- pcrec-auto / t-d-prose-sparse-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 18760843 --list /tmp/engabs-probe-oylpk9gt/subjects.tsv  (rc 0)
+compile	1	load	0.000082690
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	18760843	0.239247238	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 18760843 --list /tmp/engabs-probe-vdsx86fv/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	18760843	0.265189292	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 18760843 --list /tmp/engabs-probe-ajx1q3ew/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	18760843	0.237940891	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 18760843 --list /tmp/engabs-probe-5pqkaoys/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	18760843	0.256398920	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 18760843 --list /tmp/engabs-probe-8l4uxlgw/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	18760843	0.261186958	-	-
+
+--- pcrec-auto / t-e-prose-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 18962497 --list /tmp/engabs-probe-2fspm0kd/subjects.tsv  (rc 0)
+compile	1	load	0.000082781
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	18962497	0.248634704	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 18962497 --list /tmp/engabs-probe-yuubmng8/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	18962497	0.241340031	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 18962497 --list /tmp/engabs-probe-cfvgbkum/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	18962497	0.245378785	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 18962497 --list /tmp/engabs-probe-unfa84_e/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	18962497	0.244457100	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 18962497 --list /tmp/engabs-probe-ti2533_m/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	18962497	0.249252247	-	-
+
+--- pcrec-auto / t-b-no-at-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20458078 --list /tmp/engabs-probe-zr0kxvur/subjects.tsv  (rc 0)
+compile	1	load	0.000085490
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	20458078	0.245498585	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20458078 --list /tmp/engabs-probe-kjlvn5_j/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	20458078	0.253358952	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20458078 --list /tmp/engabs-probe-kup15jx5/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	20458078	0.248712954	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20458078 --list /tmp/engabs-probe-9_zsdizn/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	20458078	0.253737734	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20458078 --list /tmp/engabs-probe-9a4o3vpn/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	20458078	0.272162513	-	-
+
+--- pcrec-auto / t-b-no-at-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20149061 --list /tmp/engabs-probe-vr9fzj6g/subjects.tsv  (rc 0)
+compile	1	load	0.000078250
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	20149061	0.251094808	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20149061 --list /tmp/engabs-probe-5h6yuz7z/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	20149061	0.249001036	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20149061 --list /tmp/engabs-probe-wbzjjja6/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	20149061	0.246588932	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20149061 --list /tmp/engabs-probe-1bzca249/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	20149061	0.246703283	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 20149061 --list /tmp/engabs-probe-e0tvwqx5/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	20149061	0.266436760	-	-
+
+--- pcrec-auto / t-c-long-atom-run-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 2044 --list /tmp/engabs-probe-mbfsrmtk/subjects.tsv  (rc 0)
+compile	1	load	0.000082771
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	2044	0.251011498	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 2044 --list /tmp/engabs-probe-vjqflbi1/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	2044	0.250209223	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 2044 --list /tmp/engabs-probe-85dtlnby/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	2044	0.252134404	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 2044 --list /tmp/engabs-probe-u3u0loym/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	2044	0.255113082	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 2044 --list /tmp/engabs-probe-5v5tksz_/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	2044	0.257373496	-	-
+
+--- pcrec-auto / t-c-long-atom-run-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32727 --list /tmp/engabs-probe-s54o12qt/subjects.tsv  (rc 0)
+compile	1	load	0.000084160
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	32727	0.251817062	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32727 --list /tmp/engabs-probe-c_ij_7ps/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	32727	0.253910255	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32727 --list /tmp/engabs-probe-741sj7jl/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	32727	0.257829949	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32727 --list /tmp/engabs-probe-1qybfpl1/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	32727	0.253854435	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32727 --list /tmp/engabs-probe-evaag7mu/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	32727	0.254684640	-	-
+
+--- pcrec-auto / s-000
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 7132232 --list /tmp/engabs-probe-kse36dyh/subjects.tsv  (rc 0)
+compile	1	load	0.000077371
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	s-000	match	0	16	0	16	7132232	0.238317153	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 7132232 --list /tmp/engabs-probe-mjoqsfid/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	7132232	0.242643079	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 7132232 --list /tmp/engabs-probe-ig2_kqhx/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	7132232	0.241783184	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 7132232 --list /tmp/engabs-probe-wtt8s03u/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	7132232	0.235065424	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 7132232 --list /tmp/engabs-probe-e0uo1iet/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	7132232	0.253980565	-	-
+
+--- pcrec-auto / s-040
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 9131818 --list /tmp/engabs-probe-5z8v_fhj/subjects.tsv  (rc 0)
+compile	1	load	0.000083790
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	s-040	nomatch	-	-	0	15	9131818	0.246286690	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 9131818 --list /tmp/engabs-probe-595n7xta/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	9131818	0.240729267	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 9131818 --list /tmp/engabs-probe-6lx0mhxj/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	9131818	0.254510078	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 9131818 --list /tmp/engabs-probe-nabb4h1j/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	9131818	0.264483837	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto/pcrec_driver --lib <workdir>/pcrec-auto/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 9131818 --list /tmp/engabs-probe-kzks63_b/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	9131818	0.261503250	-	-
+
+--- pcrec-auto-noabs / t-a-valid-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 124 --list /tmp/engabs-probe-n44p1x6b/subjects.tsv  (rc 0)
+compile	1	load	0.000073811
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	124	0.243459333	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 124 --list /tmp/engabs-probe-d3s0y90m/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	124	0.243735334	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 124 --list /tmp/engabs-probe-qb51wayq/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	124	0.245232813	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 124 --list /tmp/engabs-probe-c33tcdp_/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	124	0.246475311	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 124 --list /tmp/engabs-probe-c34a41tx/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	124	0.249556560	-	-
+
+--- pcrec-auto-noabs / t-b-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 126 --list /tmp/engabs-probe-gg9tvmce/subjects.tsv  (rc 0)
+compile	1	load	0.000074351
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-b-no-at	nomatch	-	-	0	1048576	126	0.255620856	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 126 --list /tmp/engabs-probe-bo90l7l5/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	126	0.251615392	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 126 --list /tmp/engabs-probe-ax9ep6ac/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	126	0.261467120	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 126 --list /tmp/engabs-probe-bv0e_66i/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	126	0.250497325	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 126 --list /tmp/engabs-probe-yfzx63f1/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	126	0.255343613	-	-
+
+--- pcrec-auto-noabs / t-c-long-atom-run
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 125 --list /tmp/engabs-probe-u3_rqwnq/subjects.tsv  (rc 0)
+compile	1	load	0.000084661
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	125	0.248467922	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 125 --list /tmp/engabs-probe-zreuumoy/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	125	0.264608158	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 125 --list /tmp/engabs-probe-b1akyofs/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	125	0.250220033	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 125 --list /tmp/engabs-probe-kqbuxpu5/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	125	0.249810940	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 125 --list /tmp/engabs-probe-vml_l5p0/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	125	0.254056126	-	-
+
+--- pcrec-auto-noabs / t-d-prose-sparse-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 74 --list /tmp/engabs-probe-vehxtb65/subjects.tsv  (rc 0)
+compile	1	load	0.000083091
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	74	0.247877649	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 74 --list /tmp/engabs-probe-4uligc89/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	74	0.249199168	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 74 --list /tmp/engabs-probe-3e4t2x0i/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	74	0.251396800	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 74 --list /tmp/engabs-probe-7tcl1bvr/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	74	0.251183059	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 74 --list /tmp/engabs-probe-r44obkbh/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	74	0.256068867	-	-
+
+--- pcrec-auto-noabs / t-e-prose-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 73 --list /tmp/engabs-probe-ptcs8m_o/subjects.tsv  (rc 0)
+compile	1	load	0.000082621
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	73	0.243949196	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 73 --list /tmp/engabs-probe-ntcawmwn/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	73	0.247928150	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 73 --list /tmp/engabs-probe-01dbt2xf/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	73	0.248829805	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 73 --list /tmp/engabs-probe-a8cshtd1/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	73	0.247030884	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 73 --list /tmp/engabs-probe-irclw3d6/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	73	0.247619648	-	-
+
+--- pcrec-auto-noabs / t-b-no-at-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 1985 --list /tmp/engabs-probe-92veuf2h/subjects.tsv  (rc 0)
+compile	1	load	0.000091661
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1985	0.261459339	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 1985 --list /tmp/engabs-probe-pxj_wkj1/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1985	0.244717321	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 1985 --list /tmp/engabs-probe-2d2a94ra/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1985	0.251154128	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 1985 --list /tmp/engabs-probe-pqbbmss_/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1985	0.244410639	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 1985 --list /tmp/engabs-probe-eucjr7hp/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1985	0.246827283	-	-
+
+--- pcrec-auto-noabs / t-b-no-at-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32493 --list /tmp/engabs-probe-58ejdbtq/subjects.tsv  (rc 0)
+compile	1	load	0.000084460
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	32493	0.252309215	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32493 --list /tmp/engabs-probe-pjo56k0g/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	32493	0.252760608	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32493 --list /tmp/engabs-probe-v05357w6/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	32493	0.251857693	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32493 --list /tmp/engabs-probe-watoeuvp/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	32493	0.252207055	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32493 --list /tmp/engabs-probe-2pplyqcg/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	32493	0.257983299	-	-
+
+--- pcrec-auto-noabs / t-c-long-atom-run-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 2011 --list /tmp/engabs-probe-ad5kzo_l/subjects.tsv  (rc 0)
+compile	1	load	0.000075650
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	2011	0.249574359	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 2011 --list /tmp/engabs-probe-biaedpz3/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	2011	0.255022272	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 2011 --list /tmp/engabs-probe-jq47hfcv/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	2011	0.254936641	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 2011 --list /tmp/engabs-probe-bwbz40ov/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	2011	0.253794354	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 2011 --list /tmp/engabs-probe-qphx7fa5/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	2011	0.254968431	-	-
+
+--- pcrec-auto-noabs / t-c-long-atom-run-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32346 --list /tmp/engabs-probe-78if25qh/subjects.tsv  (rc 0)
+compile	1	load	0.000081520
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	32346	0.250420064	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32346 --list /tmp/engabs-probe-38_a0y04/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	32346	0.252690028	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32346 --list /tmp/engabs-probe-8uovgq8c/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	32346	0.254514119	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32346 --list /tmp/engabs-probe-d9fdo6kg/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	32346	0.258080329	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 32346 --list /tmp/engabs-probe-qxlzualj/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	32346	0.252507147	-	-
+
+--- pcrec-auto-noabs / s-000
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 3272285 --list /tmp/engabs-probe-lj5vakww/subjects.tsv  (rc 0)
+compile	1	load	0.000085630
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	s-000	match	0	16	0	16	3272285	0.231041079	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 3272285 --list /tmp/engabs-probe-8s31ne2x/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	3272285	0.235241074	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 3272285 --list /tmp/engabs-probe-xjo4stng/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	3272285	0.239315709	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 3272285 --list /tmp/engabs-probe-do5pnd76/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	3272285	0.238294773	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 3272285 --list /tmp/engabs-probe-i8jelww3/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	3272285	0.242214446	-	-
+
+--- pcrec-auto-noabs / s-040
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 7646927 --list /tmp/engabs-probe-oh9lzdht/subjects.tsv  (rc 0)
+compile	1	load	0.000071950
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	byte-class-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	byte-class-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	search-filter
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	search-filter
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	s-040	nomatch	-	-	0	15	7646927	0.239601161	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 7646927 --list /tmp/engabs-probe-9oqm4ct9/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7646927	0.235948289	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 7646927 --list /tmp/engabs-probe-odkvajeo/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7646927	0.252773738	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 7646927 --list /tmp/engabs-probe-n1pekbd0/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7646927	0.236330571	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-auto-noabs/pcrec_driver --lib <workdir>/pcrec-auto-noabs/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 7646927 --list /tmp/engabs-probe-yea9yr2_/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7646927	0.247153555	-	-
+
+--- pcrec-vm / t-a-valid-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 887355 --list /tmp/engabs-probe-lcc3szfi/subjects.tsv  (rc 0)
+compile	1	load	0.000077630
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	887355	0.235417445	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 887355 --list /tmp/engabs-probe-w8yf9_5b/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	887355	0.239869032	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 887355 --list /tmp/engabs-probe-67e89uyz/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	887355	0.239566340	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 887355 --list /tmp/engabs-probe-evir1sdh/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	887355	0.241987794	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 887355 --list /tmp/engabs-probe-xty1y9re/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	887355	0.246811884	-	-
+
+--- pcrec-vm / t-b-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11555477 --list /tmp/engabs-probe-3kryx7o0/subjects.tsv  (rc 0)
+compile	1	load	0.000086321
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	t-b-no-at	nomatch	-	-	0	1048576	11555477	0.253240031	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11555477 --list /tmp/engabs-probe-nwhvgz5y/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	11555477	0.251997174	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11555477 --list /tmp/engabs-probe-6p12fgk5/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	11555477	0.248075241	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11555477 --list /tmp/engabs-probe-rljldblz/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	11555477	0.258081610	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11555477 --list /tmp/engabs-probe-ng1249ya/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	11555477	0.258254651	-	-
+
+--- pcrec-vm / t-c-long-atom-run
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 309 --list /tmp/engabs-probe-3gk7o0fi/subjects.tsv  (rc 0)
+compile	1	load	0.000081610
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	309	0.248575283	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 309 --list /tmp/engabs-probe-gypdqukx/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	309	0.256940553	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 309 --list /tmp/engabs-probe-i06twaws/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	309	0.251900893	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 309 --list /tmp/engabs-probe-lp61th29/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	309	0.256458570	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 309 --list /tmp/engabs-probe-nhwwo9bm/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	309	0.258414792	-	-
+
+--- pcrec-vm / t-d-prose-sparse-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11208377 --list /tmp/engabs-probe-1o6i80rj/subjects.tsv  (rc 0)
+compile	1	load	0.000081510
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	11208377	0.247056645	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11208377 --list /tmp/engabs-probe-hdryjjbx/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	11208377	0.255213743	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11208377 --list /tmp/engabs-probe-yu5kv7z3/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	11208377	0.257526037	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11208377 --list /tmp/engabs-probe-x9eflp4h/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	11208377	0.256280339	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11208377 --list /tmp/engabs-probe-h287epps/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	11208377	0.256508580	-	-
+
+--- pcrec-vm / t-e-prose-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11441460 --list /tmp/engabs-probe-4a_py20j/subjects.tsv  (rc 0)
+compile	1	load	0.000082660
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	11441460	0.248070361	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11441460 --list /tmp/engabs-probe-i7codxnq/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	11441460	0.257457646	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11441460 --list /tmp/engabs-probe-odgwv98m/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	11441460	0.264050325	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11441460 --list /tmp/engabs-probe-t323ntha/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	11441460	0.306397016	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11441460 --list /tmp/engabs-probe-ewt8gytz/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	11441460	0.259934661	-	-
+
+--- pcrec-vm / t-b-no-at-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11836031 --list /tmp/engabs-probe-tre1h3n2/subjects.tsv  (rc 0)
+compile	1	load	0.000084490
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	11836031	0.250534875	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11836031 --list /tmp/engabs-probe-gnxit4dq/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	11836031	0.261641711	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11836031 --list /tmp/engabs-probe-71s16t20/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	11836031	0.265496473	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11836031 --list /tmp/engabs-probe-1xwgfc69/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	11836031	0.262961268	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11836031 --list /tmp/engabs-probe-s377hgtc/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	11836031	0.300889294	-	-
+
+--- pcrec-vm / t-b-no-at-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11710073 --list /tmp/engabs-probe-66guiik2/subjects.tsv  (rc 0)
+compile	1	load	0.000081810
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	11710073	0.252540927	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11710073 --list /tmp/engabs-probe-sbjousz_/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	11710073	0.259999321	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11710073 --list /tmp/engabs-probe-2ftkyjfb/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	11710073	0.265692955	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11710073 --list /tmp/engabs-probe-pamdxnfk/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	11710073	0.253267021	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 11710073 --list /tmp/engabs-probe-l91evc2r/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	11710073	0.253086891	-	-
+
+--- pcrec-vm / t-c-long-atom-run-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5105 --list /tmp/engabs-probe-b8uph8au/subjects.tsv  (rc 0)
+compile	1	load	0.000076280
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	5105	0.249735150	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5105 --list /tmp/engabs-probe-m9sk9oz2/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	5105	0.267109823	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5105 --list /tmp/engabs-probe-2fqmqrya/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	5105	0.262562846	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5105 --list /tmp/engabs-probe-0d9p7929/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	5105	0.253914576	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5105 --list /tmp/engabs-probe-dl9djz9e/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	5105	0.259109856	-	-
+
+--- pcrec-vm / t-c-long-atom-run-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 81088 --list /tmp/engabs-probe-rkj1wfhe/subjects.tsv  (rc 0)
+compile	1	load	0.000074150
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	81088	0.253188481	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 81088 --list /tmp/engabs-probe-s1ycz0oc/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	81088	0.255671285	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 81088 --list /tmp/engabs-probe-if0dzv6v/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	81088	0.269237676	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 81088 --list /tmp/engabs-probe-g_lnuoda/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	81088	0.256376190	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 81088 --list /tmp/engabs-probe-wgi7fve5/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	81088	0.266847251	-	-
+
+--- pcrec-vm / s-000
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5607751 --list /tmp/engabs-probe-bgpevbui/subjects.tsv  (rc 0)
+compile	1	load	0.000089650
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	s-000	match	0	16	0	16	5607751	0.257061164	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5607751 --list /tmp/engabs-probe-mmszq_o3/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	5607751	0.266587840	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5607751 --list /tmp/engabs-probe-ilr91g5b/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	5607751	0.256475250	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5607751 --list /tmp/engabs-probe-tl8p_k5h/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	5607751	0.259574458	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 5607751 --list /tmp/engabs-probe-xae3xa9v/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	5607751	0.273910803	-	-
+
+--- pcrec-vm / s-040
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 10910758 --list /tmp/engabs-probe-75fen18d/subjects.tsv  (rc 0)
+compile	1	load	0.000087941
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	vm
+info	step_budget	500000000
+info	work_budget	1000000000
+info	frame_capacity	2048
+info	subject_ceiling	256
+info	engine_why	--engine=vm
+info	prefilter	none
+info	vm_rungs	0x7
+info	vm_strats	0x3
+info	vm_prunes	0x1
+info	engine_stamp	vm
+info	rxinfo_scan_present	0
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	none
+info	rxinfo_match_form_present	0
+info	unroll_k	8
+info	unroll_k_why	default
+info	max_emit_code_bytes	500000
+info	max_emit_bytes	1000000
+info	fast_frames	61
+info	fast_trail	92
+info	resume_frames	2048
+info	trail_frames	3072
+info	resume_frame_size	24
+info	trail_frame_size	16
+info	buffer_align	8
+subject	s-040	nomatch	-	-	0	15	10910758	0.251143179	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 10910758 --list /tmp/engabs-probe-_f1g2szn/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	10910758	0.263899624	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 10910758 --list /tmp/engabs-probe-bkgh418v/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	10910758	0.262884708	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 10910758 --list /tmp/engabs-probe-lk2j75n4/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	10910758	0.256968403	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcrec-vm/pcrec_driver --lib <workdir>/pcrec-vm/p-orig/whole-subject/t1/artifact-1.so --mode match --iters 10910758 --list /tmp/engabs-probe-g_ukuen0/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	10910758	0.272777436	-	-
+
+--- pcre2-jit / t-a-valid-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 140468 --list /tmp/engabs-probe-uwk7i4sg/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000048480
+compile	1	jit-compile	0.000116901
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	140468	0.250281364	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 140468 --list /tmp/engabs-probe-yl9hgibn/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	140468	0.258348561	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 140468 --list /tmp/engabs-probe-8vcbji20/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	140468	0.265724785	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 140468 --list /tmp/engabs-probe-6zhmoo1b/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	140468	0.254248307	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 140468 --list /tmp/engabs-probe-5bxzp_zq/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	140468	0.260057041	-	-
+
+--- pcre2-jit / t-b-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1847610 --list /tmp/engabs-probe-73x_10du/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000049550
+compile	1	jit-compile	0.000116311
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	t-b-no-at	nomatch	-	-	0	1048576	1847610	0.257735088	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1847610 --list /tmp/engabs-probe-faw_yu53/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	1847610	0.271785091	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1847610 --list /tmp/engabs-probe-ysxlob8a/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	1847610	0.258036479	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1847610 --list /tmp/engabs-probe-2bvcps91/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	1847610	0.275085070	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1847610 --list /tmp/engabs-probe-o14yvhuj/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	1847610	0.260691856	-	-
+
+--- pcre2-jit / t-c-long-atom-run
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 249 --list /tmp/engabs-probe-42hm8zxz/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000046140
+compile	1	jit-compile	0.000119251
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	249	0.238182921	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 249 --list /tmp/engabs-probe-w92wxkh5/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	249	0.244297268	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 249 --list /tmp/engabs-probe-71oqtblk/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	249	0.262495696	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 249 --list /tmp/engabs-probe-o56t7qry/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	249	0.248181421	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 249 --list /tmp/engabs-probe-ha0jvbqa/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	249	0.244886352	-	-
+
+--- pcre2-jit / t-d-prose-sparse-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1768500 --list /tmp/engabs-probe-2697r0xp/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000044210
+compile	1	jit-compile	0.000116141
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	1768500	0.251131619	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1768500 --list /tmp/engabs-probe-rli8d3p4/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	1768500	0.252672057	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1768500 --list /tmp/engabs-probe-bc5e4glh/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	1768500	0.263331031	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1768500 --list /tmp/engabs-probe-n7mfu6bn/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	1768500	0.253209021	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1768500 --list /tmp/engabs-probe-zotp95op/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	1768500	0.273552331	-	-
+
+--- pcre2-jit / t-e-prose-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1780993 --list /tmp/engabs-probe-_36p4cww/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000048891
+compile	1	jit-compile	0.000115250
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	1780993	0.258073810	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1780993 --list /tmp/engabs-probe-h5ql838w/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	1780993	0.255166042	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1780993 --list /tmp/engabs-probe-azil09f6/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	1780993	0.267359455	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1780993 --list /tmp/engabs-probe-lo0qfue0/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	1780993	0.250565745	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1780993 --list /tmp/engabs-probe-e5s2b0ju/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	1780993	0.261966153	-	-
+
+--- pcre2-jit / t-b-no-at-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1820862 --list /tmp/engabs-probe-ne41fojx/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000046580
+compile	1	jit-compile	0.000118261
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1820862	0.251197869	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1820862 --list /tmp/engabs-probe-fssuoh4r/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1820862	0.251797532	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1820862 --list /tmp/engabs-probe-c65fkstu/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1820862	0.278935794	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1820862 --list /tmp/engabs-probe-kd40zuay/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1820862	0.257495706	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 1820862 --list /tmp/engabs-probe-8t2v_u1j/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1820862	0.257362696	-	-
+
+--- pcre2-jit / t-b-no-at-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 2954211 --list /tmp/engabs-probe-alw1fjza/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000048030
+compile	1	jit-compile	0.000125931
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	2954211	0.259097496	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 2954211 --list /tmp/engabs-probe-72hvq6rt/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	2954211	0.274230116	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 2954211 --list /tmp/engabs-probe-xxvqex1o/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	2954211	0.277934657	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 2954211 --list /tmp/engabs-probe-au4qtj0x/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	2954211	0.264059095	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 2954211 --list /tmp/engabs-probe-qyywx5uu/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	2954211	0.263084659	-	-
+
+--- pcre2-jit / t-c-long-atom-run-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 4152 --list /tmp/engabs-probe-nne060bk/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000048580
+compile	1	jit-compile	0.000119131
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	4152	0.249022646	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 4152 --list /tmp/engabs-probe-ghy_hj_p/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	4152	0.256957263	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 4152 --list /tmp/engabs-probe-kaadvjws/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	4152	0.260384843	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 4152 --list /tmp/engabs-probe-778qc9gr/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	4152	0.252674498	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 4152 --list /tmp/engabs-probe-5ajd3v_3/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	4152	0.277000822	-	-
+
+--- pcre2-jit / t-c-long-atom-run-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 2953670 --list /tmp/engabs-probe-c52t32z8/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000049100
+compile	1	jit-compile	0.000131941
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	2953670	0.250410254	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 2953670 --list /tmp/engabs-probe-wujyz3m3/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	2953670	0.279358226	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 2953670 --list /tmp/engabs-probe-ojfizmip/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	2953670	0.264162466	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 2953670 --list /tmp/engabs-probe-ffbgyo96/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	2953670	0.298490309	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 2953670 --list /tmp/engabs-probe-0eupikh4/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	2953670	0.257910688	-	-
+
+--- pcre2-jit / s-000
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 454145 --list /tmp/engabs-probe-zf3gg9f0/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000049341
+compile	1	jit-compile	0.000117000
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	s-000	match	0	16	0	16	454145	0.250762046	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 454145 --list /tmp/engabs-probe-zkas4ww6/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	454145	0.250533875	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 454145 --list /tmp/engabs-probe-bhmm9aa1/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	454145	0.262960138	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 454145 --list /tmp/engabs-probe-57awrksw/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	454145	0.257653488	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 454145 --list /tmp/engabs-probe-b_myprmm/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	454145	0.252828839	-	-
+
+--- pcre2-jit / s-040
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 7249415 --list /tmp/engabs-probe-sj2bt2sg/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	on
+compile	1	compile	0.000051311
+compile	1	jit-compile	0.000117350
+info	capturecount	0
+info	compiled_size_bytes	1609
+info	jit_size_bytes	3910
+subject	s-040	nomatch	-	-	0	15	7249415	0.269717999	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 7249415 --list /tmp/engabs-probe-rznhrkvy/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7249415	0.261086158	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 7249415 --list /tmp/engabs-probe-lkvi9h7x/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7249415	0.266873252	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 7249415 --list /tmp/engabs-probe-b9gl7mso/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7249415	0.254042336	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-jit/pcre2_driver --pattern <workdir>/pcre2-jit/p-orig/pattern.rx --mode match --jit --iters 7249415 --list /tmp/engabs-probe-ukehb8ow/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7249415	0.254809080	-	-
+
+--- pcre2-interp / t-a-valid-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 140124 --list /tmp/engabs-probe-93k4oqc9/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000055670
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	140124	0.260116092	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 140124 --list /tmp/engabs-probe-1hjj3zpt/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	140124	0.255674446	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 140124 --list /tmp/engabs-probe-j_rakjbi/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	140124	0.266254978	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 140124 --list /tmp/engabs-probe-8q3j9z78/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	140124	0.252686158	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 140124 --list /tmp/engabs-probe-tt2i7p7o/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	140124	0.256350169	-	-
+
+--- pcre2-interp / t-b-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1808156 --list /tmp/engabs-probe-sgt349si/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000079450
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	t-b-no-at	nomatch	-	-	0	1048576	1808156	0.249786461	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1808156 --list /tmp/engabs-probe-tck6ft3i/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	1808156	0.245518185	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1808156 --list /tmp/engabs-probe-7anf7zzd/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	1808156	0.257625727	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1808156 --list /tmp/engabs-probe-efnf1el7/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	1808156	0.252022264	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1808156 --list /tmp/engabs-probe-ylhg1g8g/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	1808156	0.254142637	-	-
+
+--- pcre2-interp / t-c-long-atom-run
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 262 --list /tmp/engabs-probe-kmtd0n01/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000046480
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	262	0.254736619	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 262 --list /tmp/engabs-probe-_hv5bt1d/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	262	0.260884517	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 262 --list /tmp/engabs-probe-tp_mebuv/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	262	0.263229300	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 262 --list /tmp/engabs-probe-ue9dwah9/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	262	0.263489812	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 262 --list /tmp/engabs-probe-9m2tar58/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	262	0.260894956	-	-
+
+--- pcre2-interp / t-d-prose-sparse-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1797043 --list /tmp/engabs-probe-o_crhhjx/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000049250
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	1797043	0.263511932	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1797043 --list /tmp/engabs-probe-7es22dvn/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	1797043	0.263411392	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1797043 --list /tmp/engabs-probe-xv0njv4_/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	1797043	0.263319621	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1797043 --list /tmp/engabs-probe-2rlbdk99/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	1797043	0.259004256	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1797043 --list /tmp/engabs-probe-oyhfkh9x/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	1797043	0.261425589	-	-
+
+--- pcre2-interp / t-e-prose-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1778890 --list /tmp/engabs-probe-crngiqcp/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000069350
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	1778890	0.250726006	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1778890 --list /tmp/engabs-probe-tl4qk1tm/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	1778890	0.257626917	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1778890 --list /tmp/engabs-probe-73b43unq/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	1778890	0.258711073	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1778890 --list /tmp/engabs-probe-fvi1zlo5/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	1778890	0.259039755	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1778890 --list /tmp/engabs-probe-t2cxgbq8/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	1778890	0.258970645	-	-
+
+--- pcre2-interp / t-b-no-at-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1837559 --list /tmp/engabs-probe-7226j3bx/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000054520
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1837559	0.262807708	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1837559 --list /tmp/engabs-probe-d2uu1tzg/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1837559	0.279146985	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1837559 --list /tmp/engabs-probe-ao4ztalt/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1837559	0.255919437	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1837559 --list /tmp/engabs-probe-04edpsmt/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1837559	0.261208778	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 1837559 --list /tmp/engabs-probe-l190sq25/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	1837559	0.265602074	-	-
+
+--- pcre2-interp / t-b-no-at-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 2953512 --list /tmp/engabs-probe-bjpalhkv/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000050881
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	2953512	0.262918448	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 2953512 --list /tmp/engabs-probe-r47n_wlg/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	2953512	0.261114188	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 2953512 --list /tmp/engabs-probe-9skoycwx/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	2953512	0.264947661	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 2953512 --list /tmp/engabs-probe-gcqdjbq1/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	2953512	0.262729717	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 2953512 --list /tmp/engabs-probe-pbf7nlq2/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	2953512	0.277008312	-	-
+
+--- pcre2-interp / t-c-long-atom-run-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 4169 --list /tmp/engabs-probe-nibc6gcc/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000065841
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	4169	0.256001448	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 4169 --list /tmp/engabs-probe-7y2_7ltb/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	4169	0.253417163	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 4169 --list /tmp/engabs-probe-tldgahyb/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	4169	0.259655110	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 4169 --list /tmp/engabs-probe-g0v0m8ff/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	4169	0.267049072	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 4169 --list /tmp/engabs-probe-4_6xk71x/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	4169	0.259806680	-	-
+
+--- pcre2-interp / t-c-long-atom-run-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 2914378 --list /tmp/engabs-probe-6p7ey_y8/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000047750
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	2914378	0.249136397	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 2914378 --list /tmp/engabs-probe-yc3b2e1u/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	2914378	0.262228224	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 2914378 --list /tmp/engabs-probe-lub4hr83/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	2914378	0.263552292	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 2914378 --list /tmp/engabs-probe-mtdd_c1s/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	2914378	0.251320510	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 2914378 --list /tmp/engabs-probe-cpachr7j/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	2914378	0.262609246	-	-
+
+--- pcre2-interp / s-000
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 462023 --list /tmp/engabs-probe-_v3349ie/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000048720
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	s-000	match	0	16	0	16	462023	0.271468509	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 462023 --list /tmp/engabs-probe-03ogw6ej/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	462023	0.251829613	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 462023 --list /tmp/engabs-probe-won_a889/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	462023	0.278046088	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 462023 --list /tmp/engabs-probe-6e7ud6bc/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	462023	0.262557486	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 462023 --list /tmp/engabs-probe-0lhopn7c/subjects.tsv  (rc 0)
+subject	s-000	match	0	16	0	16	462023	0.261003137	-	-
+
+--- pcre2-interp / s-040
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 7045785 --list /tmp/engabs-probe-39btam0p/subjects.tsv  (rc 0)
+info	version	10.46 2025-08-27
+info	jit	off
+compile	1	compile	0.000046110
+info	capturecount	0
+info	compiled_size_bytes	1609
+subject	s-040	nomatch	-	-	0	15	7045785	0.245208104	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 7045785 --list /tmp/engabs-probe-979desq7/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7045785	0.245605596	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 7045785 --list /tmp/engabs-probe-ai7slq3_/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7045785	0.262979059	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 7045785 --list /tmp/engabs-probe-3a2onbof/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7045785	0.250300694	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/pcre2-interp/pcre2_driver --pattern <workdir>/pcre2-interp/p-orig/pattern.rx --mode match --iters 7045785 --list /tmp/engabs-probe-a493ao6f/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	7045785	0.267789747	-	-
+
+--- floor / t-a-valid-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24459972 --list /tmp/engabs-probe-zri5o7ys/subjects.tsv  (rc 0)
+compile	1	load	0.000088111
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	24459972	0.253211971	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24459972 --list /tmp/engabs-probe-ayo68k72/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	24459972	0.254666650	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24459972 --list /tmp/engabs-probe-b4altnuk/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	24459972	0.255581875	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24459972 --list /tmp/engabs-probe-l2h5hkax/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	24459972	0.264903810	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24459972 --list /tmp/engabs-probe-umfggm9v/subjects.tsv  (rc 0)
+subject	t-a-valid-addrs	nomatch	-	-	0	1048576	24459972	0.254323157	-	-
+
+--- floor / t-b-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24408251 --list /tmp/engabs-probe-xqvq_3qo/subjects.tsv  (rc 0)
+compile	1	load	0.000085861
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-b-no-at	nomatch	-	-	0	1048576	24408251	0.253902675	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24408251 --list /tmp/engabs-probe-156prggw/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	24408251	0.249897422	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24408251 --list /tmp/engabs-probe-ln4c4v1e/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	24408251	0.251808732	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24408251 --list /tmp/engabs-probe-_yam003v/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	24408251	0.266635380	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24408251 --list /tmp/engabs-probe-_i8cxpyz/subjects.tsv  (rc 0)
+subject	t-b-no-at	nomatch	-	-	0	1048576	24408251	0.255525755	-	-
+
+--- floor / t-c-long-atom-run
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24530337 --list /tmp/engabs-probe-4qz0824n/subjects.tsv  (rc 0)
+compile	1	load	0.000093671
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	24530337	0.251023438	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24530337 --list /tmp/engabs-probe-7yvo4td4/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	24530337	0.250740457	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24530337 --list /tmp/engabs-probe-h4wk4qpr/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	24530337	0.259002995	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24530337 --list /tmp/engabs-probe-vcbv7kzq/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	24530337	0.261466760	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24530337 --list /tmp/engabs-probe-rrkf2335/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run	nomatch	-	-	0	1048576	24530337	0.254781360	-	-
+
+--- floor / t-d-prose-sparse-addrs
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24472701 --list /tmp/engabs-probe-543k_wbh/subjects.tsv  (rc 0)
+compile	1	load	0.000094280
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	24472701	0.251947083	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24472701 --list /tmp/engabs-probe-eush687h/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	24472701	0.253598913	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24472701 --list /tmp/engabs-probe-6k2sqavl/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	24472701	0.251810002	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24472701 --list /tmp/engabs-probe-_wguz0vt/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	24472701	0.256184719	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24472701 --list /tmp/engabs-probe-4a3u3o36/subjects.tsv  (rc 0)
+subject	t-d-prose-sparse-addrs	nomatch	-	-	0	1048576	24472701	0.251343980	-	-
+
+--- floor / t-e-prose-no-at
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24291796 --list /tmp/engabs-probe-lrbjdrzj/subjects.tsv  (rc 0)
+compile	1	load	0.000088081
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	24291796	0.250413524	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24291796 --list /tmp/engabs-probe-boh52vbu/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	24291796	0.254230237	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24291796 --list /tmp/engabs-probe-y5xa0nwr/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	24291796	0.251767652	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24291796 --list /tmp/engabs-probe-nbghh55q/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	24291796	0.253488942	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24291796 --list /tmp/engabs-probe-ez6ysosk/subjects.tsv  (rc 0)
+subject	t-e-prose-no-at	nomatch	-	-	0	1048576	24291796	0.248637834	-	-
+
+--- floor / t-b-no-at-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24484829 --list /tmp/engabs-probe-_essrvt0/subjects.tsv  (rc 0)
+compile	1	load	0.000087810
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	24484829	0.255030892	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24484829 --list /tmp/engabs-probe-t3zxquas/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	24484829	0.256503740	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24484829 --list /tmp/engabs-probe-ipa9wcw7/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	24484829	0.264180727	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24484829 --list /tmp/engabs-probe-b8a7zqgf/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	24484829	0.256516150	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24484829 --list /tmp/engabs-probe-zds9h9br/subjects.tsv  (rc 0)
+subject	t-b-no-at-64k	nomatch	-	-	0	65536	24484829	0.254998002	-	-
+
+--- floor / t-b-no-at-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24529001 --list /tmp/engabs-probe-vs94ixlz/subjects.tsv  (rc 0)
+compile	1	load	0.000084060
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	24529001	0.253472712	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24529001 --list /tmp/engabs-probe-5bdojv_v/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	24529001	0.255156333	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24529001 --list /tmp/engabs-probe-me5gvmfw/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	24529001	0.260695216	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24529001 --list /tmp/engabs-probe-cm6j98_m/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	24529001	0.273836953	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24529001 --list /tmp/engabs-probe-m0ja2kkk/subjects.tsv  (rc 0)
+subject	t-b-no-at-4k	nomatch	-	-	0	4096	24529001	0.252282596	-	-
+
+--- floor / t-c-long-atom-run-64k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24511336 --list /tmp/engabs-probe-2e_nk1fc/subjects.tsv  (rc 0)
+compile	1	load	0.000074660
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	24511336	0.250118413	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24511336 --list /tmp/engabs-probe-nkh0zkn4/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	24511336	0.253668464	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24511336 --list /tmp/engabs-probe-ouw0hpp0/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	24511336	0.256736642	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24511336 --list /tmp/engabs-probe-kr4atf88/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	24511336	0.262313025	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24511336 --list /tmp/engabs-probe-8eugqnmi/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-64k	nomatch	-	-	0	65536	24511336	0.251852373	-	-
+
+--- floor / t-c-long-atom-run-4k
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24537835 --list /tmp/engabs-probe-xvs7hnau/subjects.tsv  (rc 0)
+compile	1	load	0.000080710
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	24537835	0.250407674	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24537835 --list /tmp/engabs-probe-c86j2h8p/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	24537835	0.257070814	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24537835 --list /tmp/engabs-probe-giq3ppsc/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	24537835	0.259747239	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24537835 --list /tmp/engabs-probe-jkpj0o5e/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	24537835	0.259205386	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24537835 --list /tmp/engabs-probe-94rjtvha/subjects.tsv  (rc 0)
+subject	t-c-long-atom-run-4k	nomatch	-	-	0	4096	24537835	0.250470394	-	-
+
+--- floor / s-000
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 23804816 --list /tmp/engabs-probe-jte12ez_/subjects.tsv  (rc 0)
+compile	1	load	0.000080620
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	s-000	nomatch	-	-	0	16	23804816	0.244000726	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 23804816 --list /tmp/engabs-probe-6_qq0g2j/subjects.tsv  (rc 0)
+subject	s-000	nomatch	-	-	0	16	23804816	0.249725110	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 23804816 --list /tmp/engabs-probe-1_qto6bb/subjects.tsv  (rc 0)
+subject	s-000	nomatch	-	-	0	16	23804816	0.245374885	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 23804816 --list /tmp/engabs-probe-h9wvkntf/subjects.tsv  (rc 0)
+subject	s-000	nomatch	-	-	0	16	23804816	0.247840299	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 23804816 --list /tmp/engabs-probe-du7x13b1/subjects.tsv  (rc 0)
+subject	s-000	nomatch	-	-	0	16	23804816	0.251029598	-	-
+
+--- floor / s-040
+trial 1: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24305231 --list /tmp/engabs-probe-srd5wt_4/subjects.tsv  (rc 0)
+compile	1	load	0.000076620
+info	err_floor	-5
+info	err_giveup_top	-2
+info	err_internal	-6
+info	abi	11
+info	ncaps	1
+info	ngroups	0
+info	nnames	0
+info	engine	dfa
+info	step_budget	-1
+info	work_budget	-1
+info	frame_capacity	-1
+info	subject_ceiling	0
+info	engine_stamp	dfa
+info	rxinfo_scan_present	1
+info	rxinfo_scan	unanchored
+info	rxinfo_prefilter_present	1
+info	rxinfo_prefilter	memchr-bounded
+info	dfa_scan	unanchored
+info	dfa_prefilter	memchr-bounded
+info	dfa_table	premultiplied
+info	dfa_prefilter_offsets	none
+info	dfa_match	unwrapped
+info	rxinfo_match_form_present	1
+info	rxinfo_match_form	unwrapped
+info	max_emit_bytes	1000000
+info	resume_frames	0
+info	trail_frames	0
+info	resume_frame_size	0
+info	trail_frame_size	0
+info	buffer_align	1
+subject	s-040	nomatch	-	-	0	15	24305231	0.249527539	-	-
+trial 2: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24305231 --list /tmp/engabs-probe-pbaj80bk/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	24305231	0.258885835	-	-
+trial 3: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24305231 --list /tmp/engabs-probe-408ejgw9/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	24305231	0.258070769	-	-
+trial 4: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24305231 --list /tmp/engabs-probe-73a0qrwp/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	24305231	0.258694064	-	-
+trial 5: taskset -c 11 gnutimeout -k 5 600 <workdir>/floor/pcrec_driver --lib <workdir>/floor/p-floor/whole-subject/t1/artifact-1.so --mode match --iters 24305231 --list /tmp/engabs-probe-zdwo2fyz/subjects.tsv  (rc 0)
+subject	s-040	nomatch	-	-	0	15	24305231	0.249568460	-	-
+
+==============================================================================
+SUMMARY  median ns/call over 5 trials; spread = (max - min) / median; answer as the driver reported it
+==============================================================================
+subject                        bytes divergence              pcrec-auto        pcrec-auto-noabs                pcrec-vm               pcre2-jit            pcre2-interp                   floor
+t-a-valid-addrs              1048576         26       45.23 ns   6.8% n       1.978 ms   2.5% n      270.32 ns   4.8% n        1.84 us   6.0% n        1.83 us   5.3% n       10.41 ns   4.6% n
+t-b-no-at                    1048576          4       12.27 ns   5.2% n       2.027 ms   4.3% n       21.92 ns   4.0% n      141.10 ns   6.7% n      139.38 ns   4.8% n       10.40 ns   6.6% n
+t-c-long-atom-run            1048576          -       1.980 ms   4.1% n       2.002 ms   6.5% n      829.96 us   3.8% n      983.48 us   9.9% n      995.78 us   3.4% n       10.39 ns   4.2% n
+t-d-prose-sparse-addrs       1048576          6       13.67 ns  10.6% n       3.394 ms   3.3% n       22.87 ns   4.1% n      143.18 ns   8.9% n      146.53 ns   1.7% n       10.30 ns   1.9% n
+t-e-prose-no-at              1048576          6       12.94 ns   3.2% n       3.392 ms   2.0% n       22.72 ns  22.4% n      144.90 ns   6.5% n      145.43 ns   3.2% n       10.36 ns   2.2% n
+t-b-no-at-64k                  65536          4       12.38 ns  10.5% n      124.35 us   6.9% n       22.22 ns  19.1% n      141.34 ns  10.8% n      143.02 ns   8.8% n       10.48 ns   3.6% n
+t-b-no-at-4k                    4096          4       12.36 ns   8.0% n        7.77 us   2.4% n       21.63 ns   5.2% n       89.38 ns   7.1% n       89.02 ns   6.0% n       10.40 ns   8.4% n
+t-c-long-atom-run-64k          65536          -      123.35 us   2.8% n      126.77 us   2.1% n       50.76 us   6.7% n       61.89 us  10.9% n       62.28 us   5.3% n       10.35 ns   4.8% n
+t-c-long-atom-run-4k            4096          -        7.76 us   2.4% n        7.81 us   3.0% n        3.16 us   6.3% n       89.44 ns  18.2% n       89.98 ns   5.5% n       10.48 ns   3.6% n
+s-000                             16          -       33.90 ns   7.8% M       72.82 ns   4.7% M       46.29 ns   6.7% M      556.71 ns   4.9% M      568.28 ns  10.0% M       10.41 ns   2.8% n
+s-040                             15          -       27.87 ns   9.3% n       31.33 ns   7.0% n       24.09 ns   8.2% n       36.01 ns   6.0% n       35.52 ns   9.0% n       10.62 ns   3.6% n
+
+(M = the driver answered `match`, n = `nomatch`; a give-up or error is printed in place of the number. ns/call is per whole-subject anchored probe; a `-` divergence is a subject whose anchored machine is alive to its last byte.)
+
+RATIOS  pcrec-auto-noabs / pcrec-auto (the same pin, the control flag vs the pin), by subject:
+  t-a-valid-addrs              1048576  43723.46x
+  t-b-no-at                    1048576  165212.92x
+  t-c-long-atom-run            1048576      1.01x
+  t-d-prose-sparse-addrs       1048576  248367.51x
+  t-e-prose-no-at              1048576  262132.43x
+  t-b-no-at-64k                  65536  10040.64x
+  t-b-no-at-4k                    4096    628.34x
+  t-c-long-atom-run-64k          65536      1.03x
+  t-c-long-atom-run-4k            4096      1.01x
+  s-000                             16      2.15x
+  s-040                             15      1.12x
