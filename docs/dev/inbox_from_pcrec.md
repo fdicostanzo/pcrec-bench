@@ -566,3 +566,82 @@ MISCOMPILE before the emitter shipped (docs/dev/reviews/2026-08-28-r39-
 optk-design.md; `\b\.[0-9]{4}Z` on "ab.1234Z" lost its match) — fixed,
 oracle-verified, sabotage-rowed. Nothing heavy runs on the box after
 ~22:00 tonight; announce your window as before.
+
+## I-16 (2026-08-29 ~05:5x EDT) — NEW PIN `808740c` (abi 10): [ENG-ABS] anchored MATCH-HERE via an unwrapped forward DFA — the `match` regime's reverse pass is gone; battery-proven; the abi-11 pin ([ART-SIZE] size caps) follows within the day
+
+CODE = 517be95 (merge dfd112b; later commits are docs/plan/journal);
+the union battery ran on 808740c: `make -k -j12 test` 1,711 checks / 0
+failed, 27/27 sections (only the known load cells red, all cleared
+solo), `make san` rc 0 / 0 report lines both axes, mech 186 rows /
+0 unexpected / the expected six undetected / 0 anomalies. The r41
+close panel (docs/dev/reviews/2026-08-28-r41-engabs-close.md) found NO
+MISCOMPILE over 148,917 differential cells (three compilers + libpcre2
+PCRE2_ANCHORED at startoffset = pos, a generated alphabet, 1-4 KB
+subjects). Pin 808740c (or 517be95 — same code).
+
+WHAT MOVED FOR YOUR ADAPTER (abi 9 → 10): (1) a DFA artifact's
+`<prefix>_match` / `_match_caps` / their `_in` routes now run a THIRD,
+UNWRAPPED forward machine from `ctx->pos` — no reverse pass, no
+start-anywhere self-loop, first-divergent-byte failure; `_search` is
+BYTE-IDENTICAL to abi 9 (verified 260/260 artifacts) and its answers
+identical on every cell; (2) a NEW unconditional stamp on every DFA
+artifact, `<P>_DFA_MATCH` = `"unwrapped"` (the new form) or
+`"search-filter"` (the abi-9 form: ENG_ATTEMPT artifacts, the four
+no-loop `empty` artifacts, and any pattern whose anchored machine
+exceeds its own ceiling — see 4); VM artifacts and VM hybrids carry NO
+`RX_DFA_MATCH` (it describes the `_match` ENTRY, not a scan —
+match_api.md §6.3 says why) and `rx_info.match_form` is NULL there;
+(3) `rx_info.match_form` mirrors the stamp; `.abi = 10`; (4)
+`PCREC_ANCHORED_MAX_STATES = 4,096`: the optional machine is not built
+above it (it cost +46 % compiler CPU on 30,000-state shapes without
+one) — seven named fallback members in the tree, none of them a bench
+pattern; (5) `-fno-anchored-dfa` (bit 17, `PCREC_NO_ANCHORED_DFA`) is
+the deny flag = the control build, and its artifacts differ from abi
+9 by exactly eleven distinct lines (stamp, `.abi`, `.match_form`, the
+member's declaration) — measured over 2,498 patterns; (6)
+`pcrec --list-axes` now prints 45 rows / 18 axes (axis G `match`:
+`unwrapped` with its deny bit, `search-filter` as the fallback); the
+registry check is 64.
+
+WHAT TO EXPECT ON YOUR SETS (pcrec's own measurement on the email
+compliance set, `(?:orig)\z` spelling, taskset -c 3, median of 5
+interleaved trials; r41's independent re-measurement in brackets):
+MATCH regime, matching subjects: DFA/VM **1.031×** [1.036×] — from
+2.077× (the reverse pass was ~50 % of the DFA's cost there); the 35
+SHORT valid emails **0.482×** [0.489×] — the DFA is now 2.07× FASTER
+than the VM on them (from 1.207× behind); ALL 85: 2.132× → 1.161×;
+NON-MATCHING: 2.306× → 1.550× (what remains there is the forward scan
+on a near-miss email — [OPT-3]/[OPT-K] territory, not this row's). A
+FAILING `_match` probe at byte 3 of a 1 MB subject: 5.5 ns flat at
+every length (~62 % of that is the harness call) vs 1.99 ms before —
+O(divergence), not O(subject). `-fno-anchored-dfa` reproduces the
+abi-9 numbers within 1 %, so the "on" column is comparable to your
+existing ledger, not to a new baseline. SIZE: DFA artifacts +2,605 B
+source median (1.175×; p99 +6.7 KB; max +44 KB on `a{1,2000}`), but
+the `.o` delta is only 2-11 % of the source delta (the anchored table
+is verbose decimal C that compresses); VM artifacts +63 B flat; the
+SEARCH regime's numbers do not move (nothing in `_search` changed —
+your throughput rows are a control on this pin: predict flat).
+
+NOTE FOR YOUR NEXT WINDOW — abi 11 is coming (one lane from delivery):
+[ART-SIZE] STEP 2 lands TWO emitted-size caps as EMERGENCY FAILSAFES
+(Frank, D84): code bytes > 500,000 or total emitted bytes > 1,000,000
+(comment-excluded C source; ≈ 85 KB / 170 KB of `.o`) REFUSE with a
+documented diagnostic — raise-only overrides `--max-emit-code-bytes=N`
+/ `--max-emit-bytes=N`, never deniable — plus the counter rung choosing
+its unroll K from a size ladder (the 2 MB witness → 87 KB). Every
+pattern in pcrec's tree whose acceptance moves is listed in that
+change; we are ALSO surveying your bench patterns (read-only) before
+it ships so no bench row starts refusing unannounced — if one does
+(the `level-context` VM artifact is the candidate), I-17 names it with
+the override that re-accepts it. Two new unconditional stamps
+(`_UNROLL_K`, `_UNROLL_K_WHY`) + the effective caps on every artifact;
+bit 18; registry 67; `--list-axes` 71 rows / 42 axes.
+
+THREE ASKS FOR THE NEXT BENCH SESSION: (a) re-pin to 808740c and
+re-measure the MATCH regime on the compliance/email sets (the ledger
+above), with the search rows as the flat control; (b) I-15's asks (b)
+and (c) stand — the fallback-vs-JIT rows (Frank's) and [B11.4]
+bounded-repeat; (c) if your harness has a `_match` probe against long
+subjects anywhere (a failing anchored probe on a 1 MB buffer), it is
+the row this pin was built for — measure it.
