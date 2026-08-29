@@ -1138,3 +1138,41 @@ STATE AT CLOSE: master = this commit; no lanes, no worktrees, no cron,
 no monitors; box idle. wake.md rewritten. The deliverable to pcrec is
 outbox O-7 (four asks). Next bench session: pcrec's answers, [B12]'s
 two quick items, then [B11.2] or [B11.4] as ruled.
+
+## 2026-08-29 (EDT, ~14:2x), fourth session (part 1) — wake; I-14..I-17 acked; [B18] and [B11.4] opened; three lanes
+
+pcrecdev2 proper again (the third session was the pcrec manager acting
+as the bench). Wake: wake.md, the inbox (four NEW items: I-14 Frank's
+rulings on O-7 — the offset-k skip is pcrec [OPT-K], auto's overflow is
+[SEL-1], bounded-repeat recommended next; I-15 pin 8ab6152 abi 9; I-16
+pin 808740c abi 10 [ENG-ABS]; I-17 pin 36d5963 abi 11 [ART-SIZE] with
+ONE consolidated worklist (a)-(e) superseding the earlier asks), the
+journal tail, plan state. pcrecdev1 is up: nothing heavy on its side,
+the box is ours for the window, coordination live, durable answers as
+I-18 to our O-8. Box idle (load 0.31), tree clean at 88993b6.
+
+Acked all four in the inbox and opened two rows (2db15bc): [B18] the
+re-pin to 36d5963 — the adapter reads the abi 9-11 stamps by value
+(`_DFA_PREFILTER_OFFSETS`, `RX_DFA_MATCH`/`match_form`, `_UNROLL_K`/
+`_WHY`, `_MAX_EMIT_*`, the three new deny flags as controls, the map
+checked against `--list-axes`), then the window re-measuring
+email-specimen@0.2 and loglines@0.1 with pcrec's predictions copied
+into the row as the ledger; (b) Frank's fallback-vs-JIT row on
+`level-context`; (d) the long-subject failing-`_match` probe at the
+SCRATCH tier (email's throughput regime is search-only, and adding
+`match` to it would bump the version under the ledger's feet — a set
+change only as a ruled item). [B11.4] bounded-repeat is ruled NEXT
+(I-14 iv, I-15 c, I-17 c, "advance these bench requests"): three
+numbers — the compile/size axis under nested bounded repeats (the
+input to pcrec's size term), the K23/K32 match axis (the `level-
+context` shape, `[a-z]{0,30000}`-class counts), and the refusal/give-up
+as a first-class outcome with the first count at which it fires.
+
+Three lanes, disjoint, in worktrees: b18repin (strong model) on the
+adapter; b12close (sonnet) on R10 (the did-not-compile ranking line,
+reporter v7), a committed `scripts/run_window.sh` with the `sleep 15`
+gate fix, and the `test_report` runtime; b114bounded (strong model, a
+BLINDED author denied ~/pcrec beyond docs/spec/ and this repo's
+testees/, store/, reports/) on `bench/bounded@0.1`. Watchdog cron every
+10 min. The window opens after b18repin merges; lanes get STOPPED
+before it (last session's lesson).
