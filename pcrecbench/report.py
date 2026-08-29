@@ -866,6 +866,13 @@ def _mechanism_stamp_columns(engine_metadata):
         "dfa_scan": em.get("dfa_scan", "-"),
         "dfa_prefilter": em.get("dfa_prefilter", "-"),
         "dfa_table": em.get("dfa_table", "-"),
+        # [B18] (pcrec abi 9-11): WHICH offsets an offset-set prefilter
+        # tests, and the `_match` ENTRY's form on a DFA artifact. Both are
+        # rendered ONLY where the record carries them (see
+        # `_dfa_scan_display` / `_match_form_display`), so a record from an
+        # older pin renders exactly as it did.
+        "dfa_prefilter_offsets": em.get("dfa_prefilter_offsets", "-"),
+        "dfa_match": em.get("dfa_match", "-"),
         "vm_rungs": vm_rungs,
         "buffer_frames": em.get("buffer_frames", "-"),
         "buffer_trail": em.get("buffer_trail", "-"),
@@ -930,8 +937,33 @@ def _dfa_scan_display(engine_metadata):
     if table is None:
         table = ("n/s (pcrec abi %s, before [OPT-3]'s stamp at abi 7)"
                  % (abi if abi is not None else "?"))
-    return (f"scan={scan} prefilter={em.get('dfa_prefilter', 'n/s')} "
-            f"table={table}")
+    out = (f"scan={scan} prefilter={em.get('dfa_prefilter', 'n/s')} "
+           f"table={table}")
+    # [B18] / pcrec abi 9 ([OPT-K]): the offsets an `offset-set` prefilter
+    # tests (`0,8*,13`, `*` = the scanned one), `none` on every other
+    # prefilter value. Same scope as the three above, and appended only
+    # when the record carries it -- an abi-8 record renders unchanged.
+    ofs = em.get("dfa_prefilter_offsets")
+    if ofs is not None:
+        out += f" offsets={ofs}"
+    return out
+
+
+def _match_form_display(engine_metadata):
+    """[B18] / pcrec abi 10 ([ENG-ABS]): HOW a DFA artifact's `_match`
+    entry answers -- `unwrapped` (its own anchored machine from ctx->pos,
+    O(divergence) on a failing probe) or `search-filter` (the unanchored
+    search with non-pos starts rejected, the pre-abi-10 form). It is a
+    fact about the ENTRY, not the scan, so unlike the `dfa:` clause it is
+    on no VM artifact, hybrids included (match_api.md 6.3). Returns None
+    where the record has no pair -- a VM artifact at any abi, or a DFA
+    artifact from before abi 10 -- and the legend then prints nothing:
+    the two absences are told apart by the record's own `abi` + `engine`
+    pairs, which the reader has on the same line, and NOT rendered as a
+    guess (pcrec I-5's rule, as for `_dfa_scan_display`)."""
+    em = engine_metadata or {}
+    mf = em.get("dfa_match")
+    return None if mf is None else str(mf)
 
 
 def _fast_tier_display(engine_metadata):
@@ -1146,10 +1178,12 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
     stamps = _mechanism_stamp_columns(engine_metadata)
     display, stamped = _engine_reading(testee_id, engine_metadata)
     label = f"`{testee_id}`" if not scope else f"`{testee_id}` / {scope}"
+    match_form = _match_form_display(engine_metadata)
     line = (f"- {label}: engine={display}, entry={stamps['entry']}, "
             f"vm_prefilter={stamps['prefilter']}, "
             f"dfa: {_dfa_scan_display(engine_metadata)}, "
-            f"rungs={stamps['vm_rungs']}, "
+            + (f"match={match_form}, " if match_form is not None else "")
+            + f"rungs={stamps['vm_rungs']}, "
             f"fast tier={_fast_tier_display(engine_metadata)}, "
             f"buffers={_buffers_display(engine_metadata)}, "
             f"frame={_frame_size_display(engine_metadata)}")
@@ -2614,6 +2648,9 @@ def render_tsv(rd: ReportData):
                 ("prefilter", stamps["prefilter"]), ("vm_rungs", stamps["vm_rungs"]),
                 ("buffers", _buffers_display(r.sample_engine_metadata)),
                 ("frame", _frame_size_display(r.sample_engine_metadata)),
+                # [B18]: the two abi 9/10 pairs, emitted only when carried.
+                *[(k, stamps[k]) for k in ("dfa_prefilter_offsets", "dfa_match")
+                  if stamps[k] != "-"],
             ):
                 lines.append("\t".join(["compile_stamp", "", "", "", "", "", testee_id,
                                          "", "", "", name, str(val), "", "", "", "", "", ""]))

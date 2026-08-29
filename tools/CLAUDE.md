@@ -91,18 +91,44 @@ miss:
   check whose witness is a corpus pattern stops being a check the day
   engine selection moves under it — which is exactly what happened to
   `factored` between 8da6120 and 692c2e8.
-- `check_dfa_table_deny_flag` is the control that keeps `dfa_table` from
-  being indistinguishable from a constant. pcrec's own form census
-  measured `indexed` and `mixed` at ZERO corpus population, so nothing
-  this bench measures will ever move that stamp; `-fno-premul-table`
-  (tuning.md §2.13) reaches `indexed` on the census's own witness
-  pattern, through `pcrec-local` at the pin's binary.
+  [B18] extended it to the abi 9-11 pairs on every case, added the
+  anchored `attempt` kind, the LEDGER rows (`LEDGER_STAMP_CASES`: the
+  bench's own loglines/email patterns at the values pcrec's inbox
+  I-15/I-16/I-17 predicted — `uuid` offsets `0,8*,13`, `iso-ts` `0,4*`,
+  `stack-frame` `0,1*`, the declined rows `none`, every VM artifact
+  `K=8`/`default`, and `level-context` under `auto` compiling as the
+  [SEL-1] VM fallback with `RX_ENGINE_WHY: dfa overflowed` in its
+  diagnostic — on those rows a corpus witness moving IS the finding), the
+  scope rules for the new pairs in both directions, and one fact read
+  off the DRIVER rather than the record: `rx_info.match_form`'s presence,
+  so "NULL on a VM artifact" is a value the check saw.
+- `check_deny_flag_controls` (`check_dfa_table_deny_flag` until [B18]) is
+  the control that keeps a one-sided stamp from being indistinguishable
+  from a constant. pcrec's own form census measured `indexed` and `mixed`
+  at ZERO corpus population, so nothing this bench measures will ever
+  move `dfa_table`; the same is true of `dfa_match` (every DFA artifact
+  is `unwrapped`) and `unroll_k_why` (every VM artifact `default`).
+  Table-driven (`DENY_CONTROLS`): `-fno-premul-table` → `indexed`,
+  `-fno-offset-skip` → `byte-class-bounded` AND offsets `none` on `uuid`,
+  `-fno-anchored-dfa` → `search-filter` on `floor`, `-fno-size-term` →
+  `denied` on `orig`/vm — through `pcrec-local` at the pin's binary, the
+  flag's SPELLING read from `testees/pcrec/list_axes.tsv` (the axis's
+  order-1 row) and its `stamp_value` checked against the default arm
+  where the registry carries one.
+- `check_list_axes_registry` ([B18]): the committed `list_axes.tsv` is
+  byte-identical below its source header to the pin's live
+  `pcrec --list-axes`, and `adapter.registry_check()` finds every
+  registry `stamp_value` for the five name-valued macros declared (and
+  nothing declared that the registry's `list` axes lack, outcome values
+  `dfa_table none`/`mixed` excepted).
 - `check_abi_floor_refusal` is the SABOTAGE, and the path is unreachable
-  without one: the pin is abi 8, so nothing in the corpus can be below
-  the floor. A real artifact's `.abi = 8` is edited to `5` in a copy,
+  without one: the pin's abi is at or above the floor by construction
+  (11 vs a floor of 10 since [B18]), so nothing in the corpus can be
+  below it. A real artifact's `.abi = N` is edited to `5` in a copy,
   built with the ordinary shim and run by the ordinary driver, and must
-  be refused BY NAME carrying both numbers — with the unmodified
-  artifact loading in the same run as the positive control (a refusal
+  be refused BY NAME carrying both numbers (the floor read out of
+  `shim.c`, never retyped) — with the unmodified artifact loading in the
+  same run as the positive control (a refusal
   that fired on everything would pass a check written without it), and
   the token the adapter watches for checked against the diagnostic the
   driver actually produced, since that is two copies of one string in

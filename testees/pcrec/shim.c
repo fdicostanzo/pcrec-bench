@@ -34,15 +34,19 @@
  * `pb_has_vm_stamps()` returns 0, and the adapter forwards no VM pairs.
  *
  * THE ABI FLOOR (`PB_SHIM_MIN_ABI`, exported as `pb_shim_min_abi()`). This
- * shim reads two `struct rx_info` FIELDS that did not exist before pcrec's
- * abi 6 -- `scan` and `prefilter` ([DD-13c], match_api.md 6) -- so 6 is the
- * lowest artifact this file can read, and it says so in one place instead of
- * leaving the fact implicit in a field access. The driver compares
- * `pb_abi()` against it at load and REFUSES a lower artifact by name; the
- * adapter turns that into a clean AdapterError carrying both numbers. An
- * artifact older still (abi < 6) does not link this shim at all -- the field
- * access is a compile error, which is the loudest possible form of the same
- * refusal and cannot be mistaken for a measurement.
+ * shim reads three `struct rx_info` FIELDS that pcrec appended after abi 2:
+ * `scan` and `prefilter` at abi 6 ([DD-13c], match_api.md 6) and
+ * `match_form` at abi 10 ([ENG-ABS], the runtime mirror of `RX_DFA_MATCH`)
+ * -- so 10 is the lowest artifact this file can read, and it says so in one
+ * place instead of leaving the fact implicit in a field access. The driver
+ * compares `pb_abi()` against it at load and REFUSES a lower artifact by
+ * name; the adapter turns that into a clean AdapterError carrying both
+ * numbers. An artifact older still (abi < 10) does not link this shim at all
+ * -- the field access is a compile error, which is the loudest possible form
+ * of the same refusal and cannot be mistaken for a measurement. [B18]
+ * raised the floor from 6 to 10 for exactly the reason the rule below
+ * states: a FIELD was added to what this file reads; the abi 9 and abi 11
+ * MACROS it also gained did not move it.
  *
  * THE THREE STAMP FAMILIES THIS FILE READS, and the rule for each
  * (match_api.md 6.3's (a)/(b) split, tuning.md 3):
@@ -51,15 +55,43 @@
  *       engines produce, since abi 4. Read as a string and CROSS-CHECKED
  *       against `rx_info.engine`'s integer by the adapter.
  *   (a) SELECTION, per-MECHANISM: `RX_DFA_SCAN` / `RX_DFA_PREFILTER`
- *       (abi 4; extended to VM hybrids at abi 6) and `RX_DFA_TABLE`
- *       (abi 7). Present IFF the artifact CONTAINS a DFA scan -- every DFA
- *       artifact and every VM HYBRID, and no other artifact. `rx_info.scan`
- *       / `.prefilter` are the runtime mirrors of the first two.
+ *       (abi 4; extended to VM hybrids at abi 6), `RX_DFA_TABLE` (abi 7)
+ *       and `RX_DFA_PREFILTER_OFFSETS` (abi 9, [OPT-K]: WHICH offsets the
+ *       offset-set filter tests, `"0,8*,13"`, or `"none"` on every other
+ *       prefilter value). Present IFF the artifact CONTAINS a DFA scan --
+ *       every DFA artifact and every VM HYBRID, and no other artifact.
+ *       `rx_info.scan` / `.prefilter` are the runtime mirrors of the first
+ *       two.
+ *   (a) SELECTION, per-ENTRY: `RX_DFA_MATCH` (abi 10, [ENG-ABS]) --
+ *       `"unwrapped"` (a third, anchored forward machine run from
+ *       ctx->pos) or `"search-filter"` (the unanchored search with
+ *       non-pos starts rejected). Its scope is NOT the scan family's: it
+ *       describes the artifact's `_match` ENTRY, so it is on every artifact
+ *       whose RX_ENGINE is "dfa" and on NO VM artifact, hybrids included
+ *       (match_api.md 6.3 says why). `rx_info.match_form` mirrors it and
+ *       is NULL wherever the macro is absent.
+ *   (a) SELECTION, the size term ([ART-SIZE], abi 11): `RX_UNROLL_K` /
+ *       `RX_UNROLL_K_WHY` (seven values) and `RX_MAX_EMIT_CODE_BYTES` on
+ *       every VM artifact; `RX_MAX_EMIT_BYTES` on EVERY artifact, both
+ *       engines. The two caps are the EFFECTIVE limits the artifact was
+ *       built under, so a raised cap is a recorded fact.
  *   (b) CAPACITY, VM-only: `RX_FAST_FRAMES` / `RX_FAST_TRAIL` (abi 5), the
  *       capacities the un-suffixed entries' fast tier runs on (10.9). Never
  *       absent on a VM artifact -- `RX_FAST_FRAMES == RX_RESUME_FRAMES` IS
  *       the statement "this artifact has one tier", and it is the only
  *       spelling of it.
+ *
+ * WHY THE MACROS ARE STILL READ THROUGH #ifdef (D81 says the EMITTER stamps
+ * them unconditionally): the #ifdef is on the CONSUMER side and exists so
+ * that an artifact at or above the floor but below a macro's own abi (an
+ * abi-10 artifact has no RX_UNROLL_K) still links and is recorded as "not
+ * stamped" -- a state record_schema.md 7 defines -- instead of failing gcc
+ * with an undeclared identifier that would be filed as the ARTIFACT not
+ * building. Nothing is inferred from the absence: the adapter checks that
+ * every stamp pcrec calls unconditional at the artifact's own abi IS
+ * present in its declared scope (`Adapter._check_agreement`'s scope table),
+ * and raises when one is missing, so an unconditional stamp that went
+ * silent is a contract violation, never a blank.
  *
  * NEVER INFER A FACT FROM A STAMP'S ABSENCE (pcrec I-5's hazard, which broke
  * four of pcrec's own checks the day the stamps landed). Every getter below
@@ -115,10 +147,12 @@
 #define PB_UNSUPPORTED (-1000000)
 
 /* The lowest `rx_info.abi` this file can read: abi 6 appended `scan` and
- * `prefilter` to the struct ([DD-13c]). Bump it only when a field access
- * below needs a newer one -- a macro this shim reads through #ifdef does NOT
- * raise the floor, because its absence is a legitimate "not stamped". */
-#define PB_SHIM_MIN_ABI 6
+ * `prefilter` to the struct ([DD-13c]); abi 10 appended `match_form`
+ * ([ENG-ABS]), which pb_info_match_form() reads, so the floor is 10. Bump it
+ * only when a field access below needs a newer one -- a macro this shim
+ * reads through #ifdef does NOT raise the floor, because its absence is a
+ * legitimate "not stamped". */
+#define PB_SHIM_MIN_ABI 10
 
 int pb_shim_min_abi(void) { return PB_SHIM_MIN_ABI; }
 
@@ -144,6 +178,14 @@ const char *pb_engine_why(void)   { return PB_INFO.engine_why; }
  * adapter's job is to check that the two agree. */
 const char *pb_info_scan(void)      { return PB_INFO.scan; }
 const char *pb_info_prefilter(void) { return PB_INFO.prefilter; }
+
+/* The abi-10 runtime mirror of RX_DFA_MATCH ([ENG-ABS], match_api.md 6):
+ * "unwrapped" / "search-filter" on a DFA artifact, NULL on every VM
+ * artifact, HYBRIDS INCLUDED -- its NULL rule is not `scan`'s (a hybrid
+ * contains a DFA scan, but its `_match` entry is the VM's own body, which
+ * this axis does not describe). The field is printed on every artifact so
+ * "no anchored form here" is read from a VALUE, never from silence. */
+const char *pb_info_match_form(void) { return PB_INFO.match_form; }
 
 /* --------------------------------------------- the give-up code SPACE */
 
@@ -271,6 +313,105 @@ const char *pb_dfa_table(void) {
     return RX_DFA_TABLE;
 #else
     return (const char *)0;
+#endif
+}
+
+/* [OPT-K], abi 9. WHICH offsets the offset-set candidate-start filter tests
+ * -- an ascending comma-separated list of byte offsets from the candidate's
+ * own start, `*` marking the one the scan searches for ("0,8*,13" on the
+ * uuid shape) -- or "none" on every artifact whose RX_DFA_PREFILTER is not
+ * one of the two `offset-set` values. Same scope as the three above (every
+ * artifact that contains a DFA scan, hybrids included); the adapter checks
+ * the "none"-iff against RX_DFA_PREFILTER in both directions. A free-text
+ * fact about the individual machine, deliberately NOT folded into
+ * RX_DFA_PREFILTER's closed value set (match_api.md 6.3). */
+const char *pb_dfa_prefilter_offsets(void) {
+#ifdef RX_DFA_PREFILTER_OFFSETS
+    return RX_DFA_PREFILTER_OFFSETS;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* [ENG-ABS], abi 10. HOW the artifact's `_match` / `_match_caps` answer:
+ * "unwrapped" or "search-filter". On every artifact whose RX_ENGINE is
+ * "dfa" and on no other -- NOT the scan family's scope, see the header.
+ * rx_info.match_form is the mirror and the adapter's control. */
+const char *pb_dfa_match(void) {
+#ifdef RX_DFA_MATCH
+    return RX_DFA_MATCH;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* ------------------------------ the size term ([ART-SIZE], abi 11) */
+
+/* The VM counter rung's unroll factor and WHY it is what it is: "default"
+ * (the term ran, the artifact was under its threshold), "option"
+ * (--unroll=K), "denied" (-fno-size-term), "size-model" (the ladder's K was
+ * taken), "size-model-declined", "cap-rescue", "capacity-declined"
+ * (limits.md 8, 8a). VM artifacts only: a DFA artifact has no counter rung
+ * to have chosen a K for. */
+int pb_has_unroll_k(void) {
+#ifdef RX_UNROLL_K
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_unroll_k(void) {
+#ifdef RX_UNROLL_K
+    return (long long)RX_UNROLL_K;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_unroll_k_why(void) {
+#ifdef RX_UNROLL_K_WHY
+    return RX_UNROLL_K_WHY;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* The EFFECTIVE emitted-size caps this artifact was built under (limits.md
+ * 8: the defaults, or a raise-only --max-emit-*-bytes=N override), so an
+ * artifact that fitted is distinguishable from one built with a raised cap
+ * without the command line. `_CODE_BYTES` bounds bytes outside table
+ * initializers and is on VM artifacts only, like the quantity it bounds;
+ * `_MAX_EMIT_BYTES` bounds the whole artifact and is on BOTH engines. */
+int pb_has_max_emit_code_bytes(void) {
+#ifdef RX_MAX_EMIT_CODE_BYTES
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_max_emit_code_bytes(void) {
+#ifdef RX_MAX_EMIT_CODE_BYTES
+    return (long long)RX_MAX_EMIT_CODE_BYTES;
+#else
+    return 0;
+#endif
+}
+
+int pb_has_max_emit_bytes(void) {
+#ifdef RX_MAX_EMIT_BYTES
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_max_emit_bytes(void) {
+#ifdef RX_MAX_EMIT_BYTES
+    return (long long)RX_MAX_EMIT_BYTES;
+#else
+    return 0;
 #endif
 }
 

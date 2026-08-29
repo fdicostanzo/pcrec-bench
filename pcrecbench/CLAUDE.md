@@ -320,6 +320,48 @@ their own ruling's facts instead of a sentence another ruling owns.
   get it (`test_per_subject_subtable_b16_r9`). `reporter: v6 (2026-08-28)`;
   every committed report re-rendered.
 
+## The reporter, [B18] (2026-08-29) -- the abi-11 re-pin's half
+
+The re-pin to pcrec `36d5963` (abi 11; inbox I-15/I-16/I-17) added six
+`engine_metadata` pairs to every pcrec compile row (`dfa_prefilter_offsets`,
+`dfa_match`, `unroll_k`, `unroll_k_why`, `max_emit_code_bytes`,
+`max_emit_bytes`; `dfa_prefilter` gains `offset-set` / `offset-set-bounded`).
+The reporter change is deliberately SMALL and additive -- no version bump,
+no re-render, every committed report byte-identical:
+
+- `_mechanism_stamp_columns` carries `dfa_prefilter_offsets` and `dfa_match`
+  (`-` when absent, as every other absent pair).
+- `_dfa_scan_display` appends ` offsets=0,8*,13` to the `dfa:` clause when
+  the record carries the pair; `_match_form_display` gives the legend a
+  `match=unwrapped` / `match=search-filter` clause when the record carries
+  `dfa_match` -- and NOTHING when it does not, because that absence has two
+  causes (a VM artifact at any abi, a DFA artifact before abi 10) that the
+  reader tells apart from the `engine` and `abi` on the same line, and
+  rendering a guess is pcrec I-5's hazard again. The TSV gets a
+  `compile_stamp` row for each of the two only when carried.
+  `test_b18_offsets_and_match_form_in_legend` pins both directions (50
+  tests).
+- RECORDED BUT NOT RENDERED, for the manager to rule: `unroll_k` /
+  `unroll_k_why` / `max_emit_code_bytes` / `max_emit_bytes`. On both
+  sub-benches every VM artifact reads `8` / `default` under the default
+  caps (I-17: 0 K movements, 54/54 accept), so a column would be constant
+  today; the pairs are in every record for the day a K moves or a cap is
+  raised, and [B11.4] bounded-repeat is where that is expected first.
+- THE [SEL-1] FALLBACK AND HOW IT IS BUCKETED. `level-context` under
+  `pcrec-auto` is now a VM artifact (`engine=vm`, `vm_prefilter=none`, no
+  DFA scan, `K=8/default`) whose compile row's `diagnostic` is
+  `RX_ENGINE_WHY: dfa overflowed: >32000 states at pattern offset 0`. The
+  reporter shows the mechanism stamps as for any VM artifact, and its
+  ranking compares the cell against the JIT as a measured row (Frank's ask
+  (b)); what it does NOT show is WHY `auto` chose the VM -- that fact
+  exists only as prose (record_schema.md 7 keeps `RX_ENGINE_WHY` out of the
+  pairs), and the [B9] R9 rule is that a mechanism column never reads
+  `diagnostic`. Separating "auto picked the VM" from "auto fell back to the
+  VM" as a STRUCTURED fact needs pcrec to stamp the selection reason as an
+  enum (an O-8 ask), or a bench-side rule that a `diagnostic` prefix may
+  feed one declared pair -- a ruling, not a lane's call. Until then the
+  distinction is readable in the compile-cost table's diagnostic column.
+
 ## The reporter ([B5], merged 2026-08-25)
 
 STATUS (this worktree, lane/b5report): only `report.py` and its package

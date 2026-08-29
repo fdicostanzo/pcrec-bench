@@ -634,15 +634,19 @@ row's `diagnostic`, unindexed.
 | name | type | scope | source in the pcrec artifact |
 |---|---|---|---|
 | `engine` | enum `dfa`,`vm` | pattern | `rx_info.engine` (`PCREC_ENGINE_DFA`=1 / `PCREC_ENGINE_VM`=2, emitted in every artifact's `PCREC_RX_ABI_H` block — `~/pcrec/src/gen/emit_dfa.c:462-497`) |
-| `abi` | integer | pattern | `rx_info.abi` (**8** at the current pin; 2 when this example was written) |
+| `abi` | integer | pattern | `rx_info.abi` (**11** at the current pin, 36d5963; 8 at 35e1ab1; 2 when this example was written) |
 | `ncaps` | integer | pattern | `rx_info.ncaps` |
 | `ngroups` | integer | pattern | `rx_info.ngroups` |
 | `step_budget` | integer | pattern | `rx_info.step_budget` (-1 = none) |
 | `work_budget` | integer | pattern | `rx_info.work_budget` (-1 = none) |
 | `prefilter` | enum `hybrid`,`none` | pattern | `<PREFIX>_VM_PREFILTER` (`~/pcrec/src/gen/emit_vm.c`, the [M4.6f] stamp) |
 | `dfa_scan` | enum `unanchored`,`attempt`,`empty` | pattern | `<PREFIX>_DFA_SCAN`, checked against `rx_info.scan` |
-| `dfa_prefilter` | enum `none`,`memchr`,`byte-class`,`memchr-bounded`,`byte-class-bounded` | pattern | `<PREFIX>_DFA_PREFILTER`, checked against `rx_info.prefilter` |
+| `dfa_prefilter` | enum `none`,`memchr`,`byte-class`,`memchr-bounded`,`byte-class-bounded`,`offset-set`,`offset-set-bounded` | pattern | `<PREFIX>_DFA_PREFILTER`, checked against `rx_info.prefilter`; the value set checked against `pcrec --list-axes` ([B18]) |
+| `dfa_prefilter_offsets` | **string** (`0,8*,13` / `none`) | pattern | `<PREFIX>_DFA_PREFILTER_OFFSETS` (pcrec abi 9+, [OPT-K]); the scan family's scope; `none` iff `dfa_prefilter` is not an offset-set value ([B18]) |
 | `dfa_table` | enum `premultiplied`,`indexed`,`mixed`,`none` | pattern | `<PREFIX>_DFA_TABLE` (pcrec abi 7+; no `rx_info` mirror exists) |
+| `dfa_match` | enum `unwrapped`,`search-filter` | pattern | `<PREFIX>_DFA_MATCH` (pcrec abi 10+, [ENG-ABS]), checked against `rx_info.match_form`; on every DFA artifact and NO VM artifact, hybrids included — an ENTRY fact, not a scan fact ([B18]) |
+| `unroll_k`, `unroll_k_why` | integer; enum `default`,`option`,`denied`,`size-model`,`size-model-declined`,`cap-rescue`,`capacity-declined` | pattern | `<PREFIX>_UNROLL_K` / `_UNROLL_K_WHY` (pcrec abi 11+, [ART-SIZE]; VM artifacts only) |
+| `max_emit_code_bytes`, `max_emit_bytes` | integer | pattern | `<PREFIX>_MAX_EMIT_CODE_BYTES` (VM only) / `_MAX_EMIT_BYTES` (both engines) — the EFFECTIVE caps (pcrec abi 11+) |
 | `fast_frames`, `fast_trail` | integer | pattern | `<PREFIX>_FAST_FRAMES` / `_TRAIL` (pcrec abi 5+, VM artifacts only) |
 | `vm_rungs` | mask | pattern | `<PREFIX>_VM_RUNGS`, bits `PCREC_VM_RUNG_CURSOR`, `_FRAMES_BOUNDED`, `_FRAMES_UNBOUNDED`, `_REVDET`, `_COUNTER` (D46/[ABI-NS] D60) |
 | `vm_strats` | mask | pattern | `<PREFIX>_VM_STRATS`, bits `PCREC_VM_STRAT_POSSESSIVE`, `_BACKTRACKING` |
@@ -672,12 +676,21 @@ Two notes an adapter author must not lose:
   checks broke by inferring a fact from a stamp's absence).
 - **Where an engine publishes one fact TWICE, the second spelling is
   spent as a CONTROL, not as a second pair.** pcrec mirrors `engine`,
-  `dfa_scan` and `dfa_prefilter` in both a preprocessor stamp and an
-  `rx_info` field and asserts on its own side that they agree; the
-  adapter reads both and raises on a disagreement rather than recording
-  either (`testees/pcrec/adapter.py`'s `_check_agreement`). One
-  derivation per column keeps a record from carrying a compiler bug
-  forward as a number.
+  `dfa_scan`, `dfa_prefilter` and (abi 10) `dfa_match` in both a
+  preprocessor stamp and an `rx_info` field and asserts on its own side
+  that they agree; the adapter reads both and raises on a disagreement
+  rather than recording either (`testees/pcrec/adapter.py`'s
+  `_check_agreement`). One derivation per column keeps a record from
+  carrying a compiler bug forward as a number.
+- **An UNCONDITIONAL stamp that is absent within its scope is a contract
+  violation, not "not stamped"** (added [B18], 2026-08-29, at the 36d5963
+  re-pin). pcrec stamps its selection facts whether or not they fired
+  (its D81), each from a known abi and with a known scope; the adapter
+  states both per pair (`STAMP_SCOPE`) and raises when one is missing at
+  an abi where it must be present, or present outside an exclusive scope
+  (`dfa_match` on a VM artifact, the size term's trio on a DFA one). "Not
+  stamped" remains the reading for an artifact from BEFORE the stamp's
+  abi — the record's `abi` pair decides which, and nothing else.
 - `rx_info` is a `.rodata` symbol, readable by linking against the
   artifact; the `<PREFIX>_*` stamps are preprocessor-visible at compile
   time. The adapter may read either, and must record which in the
