@@ -1,7 +1,11 @@
 # The quiet gate's shape after BD7 — record schema v1.4, the SPEC (2026-08-30)
 
-STATUS: **SPEC, the r3 critic panel APPLIED (2026-08-30), awaiting the
-implementation lane** (plan row [B20]; the manager skill §6). Written by
+STATUS: **IMPLEMENTED (2026-08-30, the [B20] implementation lane, branch
+b20-impl): §4-§8 landed as schema v1.4, the harness, reporter v9 and the
+ten §8 checks; §9 Q1 (the first v1.4 window's target-core distribution)
+and Q3 (the measured positive control) are the follow-ups.** Before
+that: SPEC, the r3 critic panel APPLIED (2026-08-30), awaiting the
+implementation lane (plan row [B20]; the manager skill §6). Written by
 the [B20] design lane from the PROPOSAL below (kept verbatim as §H,
 "History") after Frank's ruling (inbox I-19 (1)): BD7 — the 5-s mpstat
 average — is RATIFIED as the gate; his items (2)-(4) ARE the v1.4 spread
