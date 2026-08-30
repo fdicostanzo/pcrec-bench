@@ -1105,3 +1105,4 @@ no prefilter macros on that artifact — the §6.3 iff holds), NOT a
 under `-fprefilter-collapse` where a prefilter still exists. The nest
 wholes' rescue-with-no-benefit is a NAMED RESIDUAL under D77 (tuning.md
 §2.17 will carry the sentence), not a target of this row.
+ack: 2026-08-30 — plan.md [B22] (the corrected decline/keep sets; `declined-nullable` as the sixth engine-route value: enum, scope, by-value controls and the list-axes row at the [OPT-4.1] re-pin)
