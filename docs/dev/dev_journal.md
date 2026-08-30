@@ -1631,3 +1631,48 @@ the AFTER reports hold one pin each, so R8's Δ column fired on 0 of
 3,636 rows — a repin-form render with both pins follows ([B19] close-out).
 O-10 (this commit) carries all of it plus [B19]'s four stamp findings and
 six asks. U2 re-measured. Reports lane: make check running; merge next.
+
+## 2026-08-30 (EDT, ~13:5x), fifth session (part 7) — reporter v8 and every report regenerated (lane reports96 merged 1de2ad0); make check green on master; [B20]'s design lane opened
+
+LANE reports96 (sonnet, worktree; ~2 h 40 min, slowed by serial renders
+under the battery until told to parallelise): REPORTER_VERSION v7 → v8
+(the [B19] `K=`/`caps=`, `sel=`/`lang=` and emit-bytes clauses change
+every committed report carrying abi-11+ pairs — precedent R10 → v7); all
+21 committed reports regenerated in place with their own queries and a
+CLASSIFIED diff per file: the 8da6120/692c2e8/35e1ab1 sets by the
+version line + the store-index candidate count only; the three 36d5963
+sets by those plus the `K=`/`caps=` clauses and the legend note. THE
+LANE STOPPED ONCE, correctly: the three 36d5963 queries picked up the
+[B19] AFTER sample that had entered the store the same morning — E and
+F had NO date bound (their entries had said every record already
+existed; no longer true) and G's `--until 2026-08-30T12:00:00Z` (my
+guess, set after the 10:00Z re-run but before the AFTER window's start
+was known) fell INSIDE the window and admitted one 96e44c2 record —
+a half-contaminated file. Ruled `--until 2026-08-30T11:00:00Z` for all
+three (every 36d5963 record ≤ 10:00:09Z; the AFTER's first is 11:12Z)
+and the standing rule in reports/CLAUDE.md: EVERY report is rendered
+with an explicit bound, because the next window always adds newer
+records under the unpinned pcre2 ids. The three abi-12 AFTER reports
+(`--since 2026-08-30T11:00:00Z`, 6 records each, ids verified) were
+re-rendered after merging master (the I-19 bucket tweak 9e45d92 changed
+the `sel=` legend note that prints only on abi-12 reports). `make check`
+in the worktree and on master after the merge: 3/56/0 · 141/141 ·
+54/54. Reviewed: two 36d5963 reports' diffs re-checked by class (no
+disallowed line), the AFTER headers, the rule sentence (reports/
+CLAUDE.md:88). Worktree removed.
+
+STILL OWED for [B19]'s close: the repin-form AFTER reports (both pins in
+one query, `--since 2026-08-29T00:00:00Z --until 2026-08-30T15:00:00Z`,
+`…-repin-96e44c2.*`) so the reporter's R8 Δ column carries the verdicts
+the abi-12 ledger computed by hand — rendering now, three sets in
+parallel, untimed beside pcrecdev1's battery.
+
+[B20] OPENED as a design lane (b20design, strong model, worktree): the
+proposal becomes the SPEC — the ratified BD7 gate + Frank's item-1
+second clause (the target core read before the run), X13 revised to the
+pre-flight, the after-samples as provenance, `inconclusive-spread` with
+a `trial_agreement` setup block whose numbers are recomputable (X30/X31
+in X20's shape), and the rule's constants k and F MEASURED by a probe
+over the store's 68 records (zero false positives on a store measured
+quiet is the bar; the probe and its census archived under
+docs/dev/measurements/ per D35) — then a critic panel.
