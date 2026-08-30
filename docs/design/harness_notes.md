@@ -300,8 +300,12 @@ was what the staging assumed:
    `limit_busy_pct` travels beside them, and rule X26 recomputes each
    verdict from its own number — so a stored combined verdict could
    disagree with the numbers under it and there is deliberately nowhere to
-   put one. `quiet.occupancy_ok()` reduces the two for the STATUS gate and
-   the record stores no reduction.
+   put one. `quiet.occupancy_ok()` reduced the two for the STATUS gate and
+   the record stores no reduction. (Since schema v1.4, [B20]: the reduction
+   is `quiet.preflight_ok()` over the BEFORE sample only — the after sample
+   is provenance, `quiet.after_notes()` — and `trial_agreement` is the one
+   stored per-record derivation, counts under recomputation rule X32;
+   docs/design/gate_shape_v14.md.)
 2. **`calibration.probe_iterations` has `minimum: 1`.** The staged
    "fixed-iters records `probe_iterations: 0`" is invalid. A fixed
    `--iters N > 1` now runs a REAL probe for provenance and carries a
