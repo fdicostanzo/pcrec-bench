@@ -420,6 +420,16 @@ no version bump (still `v7`), every committed report byte-identical,
   tests): the firing case, the default K, a DFA control, an abi-8 control,
   the note's presence and absence.
 
+I-19 (3) follow-up (2026-08-30, manager): until pcrec's [LIM-1] gives the
+SIZE-CAP rescue its own `RX_ENGINE_SEL` value, `_engine_sel_display`
+also buckets a `selected` artifact whose `vm_prefilter_lang_why` starts
+`size cap retry`, rendered `sel=selected (DFA fallback tripped: size-cap
+rescue)`; the legend note says so; a `selected` hybrid with any other
+why stays outside the bucket (the test's control). No committed report
+changes: no record in the store carries a size-cap rescue (census over
+the 96e44c2 records: 760 forced / 580 selected / 160 collapsed-prefilter,
+every why a `dfa overflow retry`).
+
 ## The reporter, [B12] R10 (2026-08-29) -- a did-not-compile cell is not-ranked, not invisible
 
 M1 close item (docs/dev/plan.md row [B12], "[ADDED 2026-08-28]"; lane
