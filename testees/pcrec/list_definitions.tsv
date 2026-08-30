@@ -1,0 +1,74 @@
+# testees/pcrec/list_definitions.tsv -- pcrec's DEFINITIONS TABLE at the pin
+# (the FIFTH registry surface, [DD-11] / pcrec D85, docs/spec/registry.md
+# 9), archived VERBATIM under a source header. Everything below this header
+# is the unmodified output of:
+#
+#     build/pcrec-96e44c2/build/pcrec --list-definitions | grep -v '^#'
+#
+# pcrec commit 96e44c25cdc9a5de9fe785ad9505bd79b9a83e30 (abi 12), archived
+# 2026-08-30 by lane b19repin ([B19]; inbox I-18 (4)). 50 data rows / 7
+# columns: kind, selector, syntax, order, predicate, definition, applies --
+# one row per construct DEFINED in terms of another (`\d` = `[0-9]`, the
+# POSIX classes, `\R`, the `\c`/`\x`/`\o` decoders as text functions), the
+# predicate being the option-scope tag's own name (a closed vocabulary).
+# The grep strips pcrec's own `#` comment/header lines, so the data rows
+# are the whole body; the column header is restated here for a reader:
+#
+#     kind	selector	syntax	order	predicate	definition	applies
+#
+# WHAT THIS FILE IS FOR: nothing the adapter reads depends on it (the
+# emitted code is unchanged by [DD-11]); it is archived beside
+# list_axes.tsv under the same rule -- `make check-harness` diffs it against
+# the pin's live output (`check_list_definitions_registry`), so a definition
+# pcrec adds or changes between pins is a named diff here rather than an
+# unexplained answer change in a record. Re-archive at every re-pin.
+esc	d	\d	1	DEF_ALWAYS	[0-9]	active
+esc	D	\D	1	DEF_ALWAYS	[^0-9]	active
+esc	s	\s	1	DEF_ALWAYS	[\t\n\x0b\f\r ]	active
+esc	S	\S	1	DEF_ALWAYS	[^\t\n\x0b\f\r ]	active
+esc	w	\w	1	DEF_ALWAYS	[A-Za-z0-9_]	active
+esc	W	\W	1	DEF_ALWAYS	[^A-Za-z0-9_]	active
+esc	h	\h	1	DEF_ALWAYS	[\t \xa0]	active
+esc	H	\H	1	DEF_ALWAYS	[^\t \xa0]	active
+esc	v	\v	1	DEF_ALWAYS	[\n\x0b\f\r\x85]	active
+esc	V	\V	1	DEF_ALWAYS	[^\n\x0b\f\r\x85]	active
+esc	N	\N	1	DEF_ALWAYS	[^\n]	active
+esc	N	\N{U+0041}	1	DEF_ALWAYS	\N{U+HHHH} = code point HHHH -- byte today, a sequence under utf8 (encoding tag's 2nd row)	active
+esc	b	\b	1	DEF_ALWAYS	(?:(?<=\w)(?!\w)|(?<!\w)(?=\w))	active
+esc	B	\B	1	DEF_ALWAYS	(?:(?<=\w)(?=\w)|(?<!\w)(?!\w))	active
+esc	Z	\Z	1	DEF_ALWAYS	(?=\n?\z)	active
+esc	R	\R	1	DEF_ALWAYS	(?>\r\n|\n|\x0b|\f|\r|\x85)	active
+esc	c	\cX	1	DEF_ALWAYS	\cX = byte (X uppercased, then xor 0x40)	active
+esc	o	\o{101}	1	DEF_ALWAYS	\o{OOO} = byte OOO (octal)	active
+esc	0	\0	1	DEF_ALWAYS	\0OO = byte OOO (octal, never a backreference)	active
+esc	a	\a	1	DEF_ALWAYS	\x07	active
+esc	e	\e	1	DEF_ALWAYS	\x1b	active
+esc	f	\f	1	DEF_ALWAYS	\x0c	active
+esc	n	\n	1	DEF_ALWAYS	\x0a	active
+esc	r	\r	1	DEF_ALWAYS	\x0d	active
+esc	t	\t	1	DEF_ALWAYS	\x09	active
+esc	x	\x41	1	DEF_ALWAYS	\xHH or \x{HHHH} = byte HH..HHHH (hex)	active
+class-bracket	:	[[:alpha:]]	1	DEF_ALWAYS	[[:alnum:]] ≡ [0-9A-Za-z]	active
+class-bracket	:	[[:alpha:]]	2	DEF_ALWAYS	[[:alpha:]] ≡ [A-Za-z]	active
+class-bracket	:	[[:alpha:]]	3	DEF_ALWAYS	[[:ascii:]] ≡ [\x00-\x7f]	active
+class-bracket	:	[[:alpha:]]	4	DEF_ALWAYS	[[:blank:]] ≡ [\t ]	active
+class-bracket	:	[[:alpha:]]	5	DEF_ALWAYS	[[:cntrl:]] ≡ [\x00-\x1f\x7f]	active
+class-bracket	:	[[:alpha:]]	6	DEF_ALWAYS	[[:digit:]] ≡ [0-9]	active
+class-bracket	:	[[:alpha:]]	7	DEF_ALWAYS	[[:graph:]] ≡ [!-~]	active
+class-bracket	:	[[:alpha:]]	8	DEF_ALWAYS	[[:lower:]] ≡ [a-z]	active
+class-bracket	:	[[:alpha:]]	9	DEF_ALWAYS	[[:print:]] ≡ [ -~]	active
+class-bracket	:	[[:alpha:]]	10	DEF_ALWAYS	[[:punct:]] ≡ [!-/:-@[-`{-~]	active
+class-bracket	:	[[:alpha:]]	11	DEF_ALWAYS	[[:space:]] ≡ [\t\n\x0b\f\r ]	active
+class-bracket	:	[[:alpha:]]	12	DEF_ALWAYS	[[:upper:]] ≡ [A-Z]	active
+class-bracket	:	[[:alpha:]]	13	DEF_ALWAYS	[[:word:]] ≡ [A-Za-z0-9_]	active
+class-bracket	:	[[:alpha:]]	14	DEF_ALWAYS	[[:xdigit:]] ≡ [0-9A-Fa-f]	active
+quant-suffix	*	a*+	1	DEF_ALWAYS	X<quant>+ ≡ (?>X<quant>)	active
+quant-suffix	+	a++	1	DEF_ALWAYS	X<quant>+ ≡ (?>X<quant>)	active
+quant-suffix	?	a?+	1	DEF_ALWAYS	X<quant>+ ≡ (?>X<quant>)	active
+quant-suffix	{	a{1,2}+	1	DEF_ALWAYS	X<quant>+ ≡ (?>X<quant>)	active
+bare	^	^	1	DEF_MULTILINE	\A|(?<=\n)(?!\z)	active
+bare	^	^	2	DEF_ALWAYS	^	identity
+bare	$	$	1	DEF_MULTILINE	(?=\n)|\z	active
+bare	$	$	2	DEF_ALWAYS	= \Z	active
+bare	(	(a)	1	DEF_NOCAP	(?n)(X) ≡ (?:X)	active
+bare	(	(a)	2	DEF_ALWAYS	(a)	identity

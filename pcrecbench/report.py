@@ -152,6 +152,38 @@ docs/design/requirements.md OD-B11, OD-B13, OD-B14, OD-B15):
   DIRECTORY name (resolved via `bench/<dir>/subbench.toml`'s own `id`)
   as well as the sidecar id.
 
+[B19] (2026-08-30, pcrec pin 96e44c2 = abi 12; inbox I-18) -- additive,
+conditional, no version bump (as [B18]): every clause and column below
+renders ONLY where the record carries the pair, so a record from an
+older pin renders byte for byte as before:
+
+* the legend line gains `sel=<engine_sel>` after `engine=` -- pcrec's
+  `RX_ENGINE_SEL`, the engine-selection decision as a closed token
+  (O-8 6(d), ruled) -- suffixed ` (DFA fallback tripped)` when the token
+  is not `selected` and not `forced` (Frank's ask (b), DERIVED from the
+  record by that rule and no other: `_engine_sel_display`); and
+  `lang=<vm_prefilter_lang> (<vm_prefilter_lang_why>)` after
+  `vm_prefilter=` on a VM hybrid (`_prefilter_lang_display`). A
+  `size cap retry` why is a rescue the `sel` bucket does NOT see (it
+  stamps `selected`; measured at the pin), so the legend note under the
+  lines says so whenever a `sel=` appears.
+* the compile-cost table gains two SOURCE-bytes columns beside the
+  `.so`'s `artifact bytes` -- `emit bytes` (comment-excluded, what
+  pcrec's total cap measures) and `code bytes` (that minus table
+  initializers, what the code cap measures; the one that tracks gcc
+  time) -- when any row of the table carries them; `(warned)` on the
+  emit cell where pcrec's advisory `--warn-emit-bytes` line fired
+  (`warned_emit_bytes`, never a failure).
+* the TSV gets `compile_stamp` rows for the three abi-12 pairs and
+  `compile` rows for the three size facts, at `artifact_bytes`'s grain.
+* SCOPE ADDITION (manager, 2026-08-30): the abi-11 [ART-SIZE] stamps,
+  recorded since [B18] and never rendered, join the same legend line on
+  VM artifacts -- `K=<unroll_k>/<unroll_k_why>` and
+  `caps=<max_emit_code_bytes>/<max_emit_bytes>` (`_size_term_display`,
+  `_caps_display`; a DFA artifact shows neither) -- with a legend note
+  naming them. bounded's first sample's only K movement (`nest3-16`
+  K=1/size-model) is now readable from the report.
+
 [B14] (2026-08-25) additions, rulings R1-R10 (docs/dev/plan.md row [B14];
 docs/dev/feedback_pcrecdev1_2026-08-25-repin-v2.md, the pcrec manager's
 second reading of the reporter-v2 re-pin rendering -- "still missing"
@@ -921,6 +953,14 @@ def _mechanism_stamp_columns(engine_metadata):
         # older pin renders exactly as it did.
         "dfa_prefilter_offsets": em.get("dfa_prefilter_offsets", "-"),
         "dfa_match": em.get("dfa_match", "-"),
+        # [B19] (pcrec abi 12): the route token, the prefilter language
+        # pair, and the adapter's two source-bytes facts + the warning.
+        "engine_sel": em.get("engine_sel", "-"),
+        "vm_prefilter_lang": em.get("vm_prefilter_lang", "-"),
+        "vm_prefilter_lang_why": em.get("vm_prefilter_lang_why", "-"),
+        "emit_bytes": em.get("emit_bytes", "-"),
+        "emit_code_bytes": em.get("emit_code_bytes", "-"),
+        "warned_emit_bytes": em.get("warned_emit_bytes", "-"),
         "vm_rungs": vm_rungs,
         "buffer_frames": em.get("buffer_frames", "-"),
         "buffer_trail": em.get("buffer_trail", "-"),
@@ -1012,6 +1052,93 @@ def _match_form_display(engine_metadata):
     em = engine_metadata or {}
     mf = em.get("dfa_match")
     return None if mf is None else str(mf)
+
+
+def _engine_sel_display(engine_metadata):
+    """[B19] / pcrec abi 12 ([OPT-4]): the engine-selection decision as a
+    TOKEN -- `selected` / `forced` / `overflowed-dfa` /
+    `overflowed-prefilter` / `collapsed-prefilter` -- with Frank's ask (b)
+    bucket derived from it and from nothing else: a token that is neither
+    `selected` nor `forced` is `auto FELL BACK`, rendered as
+    ` (DFA fallback tripped)`. Returns None where the record has no pair
+    (a pin before abi 12), and the legend prints nothing: the reader has
+    the `abi` on the same line (pcrec I-5's rule, as for every clause
+    here). What this does NOT flag: the SIZE-CAP retry rung, which stamps
+    `selected` (measured at 96e44c2) -- `_prefilter_lang_display` carries
+    that rescue's own why, and the legend note names the gap."""
+    em = engine_metadata or {}
+    sel = em.get("engine_sel")
+    if sel is None:
+        return None
+    if sel in ("selected", "forced"):
+        return str(sel)
+    return f"{sel} (DFA fallback tripped)"
+
+
+def _prefilter_lang_display(engine_metadata):
+    """[B19] / pcrec abi 12 ([OPT-4]): WHICH LANGUAGE a VM hybrid's
+    prefilter DFA recognises -- `exact` (the default) or `count-collapsed`
+    (a sound superset that does not scale with a bounded count) -- with
+    its why in parentheses (`exact`, `no counted repeat`, `forced`, `dfa
+    overflow retry, exact nfa N`, `size cap retry, exact N > cap`). On
+    every VM hybrid and no other artifact (match_api.md 6.3's own iff),
+    so None -- and no clause -- on a DFA artifact, a forced-VM artifact,
+    or any record from before abi 12; the three absences are told apart
+    by `engine`, `vm_prefilter` and `abi` on the same line."""
+    em = engine_metadata or {}
+    lang = em.get("vm_prefilter_lang")
+    if lang is None:
+        return None
+    why = em.get("vm_prefilter_lang_why")
+    return f"{lang} ({why})" if why is not None else str(lang)
+
+
+def _size_term_display(engine_metadata):
+    """[B19] scope addition (manager, 2026-08-30): the [ART-SIZE] stamps
+    the adapter has recorded on every VM artifact since abi 11 and the
+    reporter never rendered -- bounded's first sample's only K movement
+    (`nest3-16` = K=1 / size-model on every VM form) had to be read out of
+    the JSONL. `K=<unroll_k>/<unroll_k_why>`: the VM counter rung's unroll
+    factor and WHO chose it (`default`, `option`, `denied`, `size-model`,
+    `size-model-declined`, `cap-rescue`, `capacity-declined` -- limits.md
+    8). VM artifacts only (a DFA artifact has no counter rung and stamps
+    no `unroll_k`), so None -- and no clause -- on a DFA row or any record
+    from before abi 11."""
+    em = engine_metadata or {}
+    k = em.get("unroll_k")
+    if k is None:
+        return None
+    why = em.get("unroll_k_why")
+    return f"{k}/{why}" if why is not None else str(k)
+
+
+def _caps_display(engine_metadata):
+    """[B19] scope addition: `caps=<max_emit_code_bytes>/<max_emit_bytes>`,
+    the EFFECTIVE emitted-size caps the artifact was built under (limits.md
+    8: 500,000 code bytes / 1,000,000 total by default, raise-only), so an
+    artifact built under a raised cap is distinguishable from one that
+    fitted. Rendered on VM artifacts only, keyed on `max_emit_code_bytes`
+    (VM-only by design -- a DFA artifact stamps only the total cap and
+    shows neither here, by the manager's ruling); None otherwise."""
+    em = engine_metadata or {}
+    code = em.get("max_emit_code_bytes")
+    if code is None:
+        return None
+    total = em.get("max_emit_bytes")
+    return f"{code:,}/{total:,}" if total is not None else f"{code:,}/-"
+
+
+def _emit_bytes_display(engine_metadata):
+    """[B19] (d)/(e): the `emit bytes` cell -- the comment-excluded C
+    source pcrec's total cap measures, `(warned)` when pcrec's advisory
+    `--warn-emit-bytes` line fired on that compile (limits.md 8: never a
+    refusal; the artifact and the exit code are what they would have
+    been). `-` where the record has no pair, never a number."""
+    em = engine_metadata or {}
+    eb = em.get("emit_bytes")
+    if eb is None:
+        return "-"
+    return f"{eb:,} (warned)" if em.get("warned_emit_bytes") is not None else f"{eb:,}"
 
 
 def _fast_tier_display(engine_metadata):
@@ -1227,12 +1354,21 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
     display, stamped = _engine_reading(testee_id, engine_metadata)
     label = f"`{testee_id}`" if not scope else f"`{testee_id}` / {scope}"
     match_form = _match_form_display(engine_metadata)
-    line = (f"- {label}: engine={display}, entry={stamps['entry']}, "
+    sel = _engine_sel_display(engine_metadata)
+    lang = _prefilter_lang_display(engine_metadata)
+    size_term = _size_term_display(engine_metadata)
+    caps = _caps_display(engine_metadata)
+    line = (f"- {label}: engine={display}, "
+            + (f"sel={sel}, " if sel is not None else "")
+            + f"entry={stamps['entry']}, "
             f"vm_prefilter={stamps['prefilter']}, "
-            f"dfa: {_dfa_scan_display(engine_metadata)}, "
+            + (f"lang={lang}, " if lang is not None else "")
+            + f"dfa: {_dfa_scan_display(engine_metadata)}, "
             + (f"match={match_form}, " if match_form is not None else "")
             + f"rungs={stamps['vm_rungs']}, "
-            f"fast tier={_fast_tier_display(engine_metadata)}, "
+            + (f"K={size_term}, " if size_term is not None else "")
+            + (f"caps={caps}, " if caps is not None else "")
+            + f"fast tier={_fast_tier_display(engine_metadata)}, "
             f"buffers={_buffers_display(engine_metadata)}, "
             f"frame={_frame_size_display(engine_metadata)}")
     if stamped is None:
@@ -2603,7 +2739,38 @@ def render_markdown(rd: ReportData):
                         gcc_median_ns=pm.get("gcc"),
                         giveup_engines=_giveup_engines_for(
                             rd, sb_l, testee_l, pattern_l, form_l)))
+            # [B19]: the bucket's definition, printed once under the lines
+            # that use it -- and only when one does -- so a reader never
+            # has to know pcrec's token set to read `(DFA fallback
+            # tripped)`, and is told the one rescue the bucket misses.
+            if any(_engine_sel_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - sel = pcrec's `RX_ENGINE_SEL`; `DFA fallback "
+                           "tripped` = sel not in (selected, forced) -- the "
+                           "three tokens that share one `dfa overflowed` "
+                           "RX_ENGINE_WHY and differ in what survived. A "
+                           "`lang=count-collapsed (size cap retry, ...)` is a "
+                           "RESCUE the sel bucket does not see: the size-cap "
+                           "rung stamps sel=selected (measured at pcrec 96e44c2).")
+            # [B19] scope addition: the [ART-SIZE] clauses, named once
+            # under the lines that carry them (VM artifacts at abi 11+).
+            if any(_size_term_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - K = pcrec's `RX_UNROLL_K`/`_WHY`: the VM counter "
+                           "rung's unroll factor and who chose it (default / option "
+                           "/ denied / size-model / size-model-declined / cap-rescue "
+                           "/ capacity-declined -- limits.md 8); caps = the EFFECTIVE "
+                           "`RX_MAX_EMIT_CODE_BYTES`/`RX_MAX_EMIT_BYTES` the artifact "
+                           "was built under (raise-only; 500,000/1,000,000 by "
+                           "default). VM artifacts only: a DFA artifact has no "
+                           "counter rung and stamps no code cap.")
             out.append("")
+
+        # [B19]: the two SOURCE-bytes columns, when any row of this table
+        # carries them (a record from an older pin has neither, and the
+        # table then renders as before -- R5's rule for an empty column).
+        show_emit = any((r.sample_engine_metadata or {}).get("emit_bytes") is not None
+                        for _sb, _p, _t, _f, r in rows_for_class)
 
         # [B14] R5: a jitter column empty on EVERY row of this table is
         # dropped rather than rendered as a wall of blanks.
@@ -2624,6 +2791,8 @@ def render_markdown(rd: ReportData):
         if rd.show_form:
             header.append("form")
         header += ["testee", label, "min", "max", "stddev", "n costed", "artifact bytes"]
+        if show_emit:
+            header += ["emit bytes", "code bytes"]
         if show_jitter:
             header.append("jitter")
         header.append("outcomes")
@@ -2639,6 +2808,11 @@ def render_markdown(rd: ReportData):
             row += [f"`{testee_id}`", _fmt_ns(r.median_ns), _fmt_ns(r.min_ns), _fmt_ns(r.max_ns),
                     _fmt_ns(r.stddev_ns), str(r.n_costed),
                     (f"{r.artifact_bytes:,}" if r.artifact_bytes is not None else "-")]
+            if show_emit:
+                em_r = r.sample_engine_metadata or {}
+                cb = em_r.get("emit_code_bytes")
+                row += [_emit_bytes_display(em_r),
+                        f"{cb:,}" if cb is not None else "-"]
             if show_jitter:
                 row.append(jitter_by_row[(sb, pattern_id, testee_id, form)])
             row.append(outcomes)
@@ -2760,6 +2934,12 @@ def render_tsv(rd: ReportData):
             lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
                                      "", "artifact_bytes", str(r.artifact_bytes),
                                      "", "", "", "", "", ""]))
+        # [B19]: the three size facts at the same grain, when carried.
+        for name in ("emit_bytes", "emit_code_bytes", "warned_emit_bytes"):
+            val = (r.sample_engine_metadata or {}).get(name)
+            if val is not None:
+                lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
+                                         "", name, str(val), "", "", "", "", "", ""]))
         # [B14] R8: the mechanism-stamp LEGEND facts, once per testee
         # (declared-consistent across pattern/form -- same basis as the
         # markdown legend) rather than a fresh set of columns.
@@ -2773,6 +2953,10 @@ def render_tsv(rd: ReportData):
                 ("frame", _frame_size_display(r.sample_engine_metadata)),
                 # [B18]: the two abi 9/10 pairs, emitted only when carried.
                 *[(k, stamps[k]) for k in ("dfa_prefilter_offsets", "dfa_match")
+                  if stamps[k] != "-"],
+                # [B19]: the three abi-12 pairs, the same way.
+                *[(k, stamps[k]) for k in ("engine_sel", "vm_prefilter_lang",
+                                           "vm_prefilter_lang_why")
                   if stamps[k] != "-"],
             ):
                 lines.append("\t".join(["compile_stamp", "", "", "", "", "", testee_id,

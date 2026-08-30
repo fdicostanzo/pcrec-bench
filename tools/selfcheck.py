@@ -150,6 +150,7 @@ sys.path.insert(0, ROOT)
 
 from pcrecbench import adapters as _ad                    # noqa: E402
 from pcrecbench.driverrun import build_driver, run_driver  # noqa: E402
+from pcrecbench import record as _rec                      # noqa: E402
 from pcrecbench.harness import outcome_for                # noqa: E402
 from pcrecbench.subbench import Subbench, Expectation     # noqa: E402
 
@@ -1783,28 +1784,72 @@ _CAPS_VM = {"unroll_k": 8, "unroll_k_why": "default",
             "max_emit_code_bytes": 500000, "max_emit_bytes": 1000000}
 _CAPS_DFA = {"max_emit_bytes": 1000000}
 
+# [B19] (abi 12): an expected value may be a compiled regex, matched with
+# `fullmatch` -- for the two `_LANG_WHY` values that carry a number
+# (`size cap retry, exact N > cap` -- N is the exact artifact's byte count
+# and moves with the emitter's own text).
+_SIZE_CAP_RETRY = re.compile(r"size cap retry, exact \d+ > \d+")
+_DFA_OVERFLOW_RETRY = re.compile(r"dfa overflow retry, exact nfa \d+")
+
+# K41's second fuzz-gate witness (pcrec tests/codegen/run_prefilter_collapse.sh,
+# known_issues.md K41): the one pattern in reach whose EXACT artifact the
+# code cap refuses (~671,000 code bytes > 500,000) and which the [OPT-4]
+# size-cap rung rescues in ~50 ms as a count-collapsed hybrid of ~152,000.
+# Chosen over `(a|b){0,30000}` (the total-cap witness, 24 s a compile).
+_K41W2 = (rb"(?:(0{28,30}|[\n\t]?(?:c{1}?c{28,30}?a|1{1,}a{0,30}0|c){5,10}?\n)"
+          rb"{0,3}?b[\x6]|[^abc]b(0{2,}[\]]|(b{0,30}a??|a{0,3}?\n)[-a]|^))a?"
+          rb"|a(\n{1,2}b{1,2}|0)??a{0,30}$")
+
+
+def _stamp_ok(got, want):
+    if isinstance(want, re.Pattern):
+        return isinstance(got, str) and want.fullmatch(got) is not None
+    return got == want
+
+
 STAMP_CASES = (
     # (label, testee, pattern, expected {pair: value})
     ("pure DFA", "pcrec-auto", b"foo[0-9]+bar",
      {"engine": "dfa", "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
       "dfa_table": "premultiplied", "dfa_prefilter_offsets": "none",
-      "dfa_match": "unwrapped", **_CAPS_DFA}),
+      "dfa_match": "unwrapped", "engine_sel": "selected", **_CAPS_DFA}),
     ("VM hybrid", "pcrec-auto", b"a(b|c)+d",
      {"engine": "vm", "prefilter": "hybrid", "dfa_scan": "unanchored",
       "dfa_prefilter": "memchr", "dfa_table": "premultiplied",
-      "dfa_prefilter_offsets": "none", **_CAPS_VM}),
+      "dfa_prefilter_offsets": "none", "engine_sel": "selected",
+      "vm_prefilter_lang": "exact",
+      "vm_prefilter_lang_why": "no counted repeat", **_CAPS_VM}),
     ("VM, no DFA scan", "pcrec-vm", b"a(b|c)+d",
-     {"engine": "vm", "prefilter": "none", **_CAPS_VM}),
+     {"engine": "vm", "prefilter": "none", "engine_sel": "forced",
+      **_CAPS_VM}),
     ("provably-empty DFA", "pcrec-auto", b"[^\\x00-\\xff]",
      {"engine": "dfa", "dfa_scan": "empty", "dfa_prefilter": "none",
       "dfa_table": "none", "dfa_prefilter_offsets": "none",
-      "dfa_match": "search-filter", **_CAPS_DFA}),
+      "dfa_match": "search-filter", "engine_sel": "selected", **_CAPS_DFA}),
     # [B18]: the `attempt` scan (an anchored pattern) is the other
     # `search-filter` population I-16 names, and the other `dfa_table none`.
     ("anchored attempt DFA", "pcrec-auto", b"^foo[0-9]+bar",
      {"engine": "dfa", "dfa_scan": "attempt", "dfa_prefilter": "none",
       "dfa_table": "none", "dfa_prefilter_offsets": "none",
-      "dfa_match": "search-filter", **_CAPS_DFA}),
+      "dfa_match": "search-filter", "engine_sel": "selected", **_CAPS_DFA}),
+    # [B19]: a VM hybrid with a counted repeat that nothing collapses --
+    # the `exact` language's OTHER why value, and the pattern the force
+    # control below moves to `count-collapsed` / `forced`.
+    ("VM hybrid, counted repeat, exact", "pcrec-auto", b"a(b|c){2,5}d",
+     {"engine": "vm", "prefilter": "hybrid", "engine_sel": "selected",
+      "vm_prefilter_lang": "exact", "vm_prefilter_lang_why": "exact",
+      **_CAPS_VM}),
+    # [B19]: THE SIZE-CAP RUNG (limits.md 8, [OPT-4]): the exact artifact
+    # is REFUSED by the code cap and the retry ships a count-collapsed
+    # hybrid -- and it stamps `engine_sel selected`, NOT
+    # `collapsed-prefilter` (MEASURED at 96e44c2; match_api.md 6.3's table
+    # reserves that token for a DFA-build overflow). Frank's ask (b)
+    # bucket therefore does not see this rescue; `vm_prefilter_lang_why`'s
+    # `size cap retry` prefix is the only structured trace of it.
+    ("size-cap rung rescue (K41 witness 2)", "pcrec-auto", _K41W2,
+     {"engine": "vm", "prefilter": "hybrid", "engine_sel": "selected",
+      "vm_prefilter_lang": "count-collapsed",
+      "vm_prefilter_lang_why": _SIZE_CAP_RETRY, **_CAPS_VM}),
 )
 
 
@@ -1824,44 +1869,84 @@ LEDGER_STAMP_CASES = (
     # (label, testee, subbench, pattern, expected)
     ("uuid: the k-set skip, scanned at 8", "pcrec-auto", "loglines", "uuid",
      {"engine": "dfa", "dfa_prefilter": "offset-set-bounded",
-      "dfa_prefilter_offsets": "0,8*,13", "dfa_match": "unwrapped"}),
+      "dfa_prefilter_offsets": "0,8*,13", "dfa_match": "unwrapped",
+      "engine_sel": "selected"}),
     ("iso-ts: the k-set skip, scanned at 4", "pcrec-auto", "loglines", "iso-ts",
      {"engine": "dfa", "dfa_prefilter": "offset-set",
-      "dfa_prefilter_offsets": "0,4*", "dfa_match": "unwrapped"}),
+      "dfa_prefilter_offsets": "0,4*", "dfa_match": "unwrapped",
+      "engine_sel": "selected"}),
     ("stack-frame: the k-set skip, scanned at 1", "pcrec-auto", "loglines",
      "stack-frame",
      {"engine": "dfa", "dfa_prefilter": "offset-set-bounded",
-      "dfa_prefilter_offsets": "0,1*", "dfa_match": "unwrapped"}),
+      "dfa_prefilter_offsets": "0,1*", "dfa_match": "unwrapped",
+      "engine_sel": "selected"}),
     ("ipv6: declined", "pcrec-auto", "loglines", "ipv6",
      {"engine": "dfa", "dfa_prefilter": "byte-class",
-      "dfa_prefilter_offsets": "none"}),
+      "dfa_prefilter_offsets": "none", "engine_sel": "selected"}),
     ("kv-quoted: declined", "pcrec-auto", "loglines", "kv-quoted",
      {"engine": "dfa", "dfa_prefilter": "byte-class-bounded",
-      "dfa_prefilter_offsets": "none"}),
+      "dfa_prefilter_offsets": "none", "engine_sel": "selected"}),
     ("bignum: declined", "pcrec-auto", "loglines", "bignum",
      {"engine": "dfa", "dfa_prefilter": "byte-class-bounded",
-      "dfa_prefilter_offsets": "none"}),
+      "dfa_prefilter_offsets": "none", "engine_sel": "selected"}),
     ("ipv4: control, declined", "pcrec-auto", "loglines", "ipv4",
-     {"engine": "dfa", "dfa_prefilter_offsets": "none"}),
+     {"engine": "dfa", "dfa_prefilter_offsets": "none",
+      "engine_sel": "selected"}),
     ("hex32-id: control, declined", "pcrec-auto", "loglines", "hex32-id",
-     {"engine": "dfa", "dfa_prefilter_offsets": "none"}),
+     {"engine": "dfa", "dfa_prefilter_offsets": "none",
+      "engine_sel": "selected"}),
     ("http-5xx: control, declined", "pcrec-auto", "loglines", "http-5xx",
-     {"engine": "dfa", "dfa_prefilter_offsets": "none"}),
+     {"engine": "dfa", "dfa_prefilter_offsets": "none",
+      "engine_sel": "selected"}),
     ("email orig: declined (`@` at a variable offset)", "pcrec-auto", "email",
      "orig",
      {"engine": "dfa", "dfa_prefilter": "byte-class",
-      "dfa_prefilter_offsets": "none", "dfa_match": "unwrapped"}),
+      "dfa_prefilter_offsets": "none", "dfa_match": "unwrapped",
+      "engine_sel": "selected"}),
     ("email factored: declined", "pcrec-auto", "email", "factored",
      {"engine": "dfa", "dfa_prefilter": "byte-class",
-      "dfa_prefilter_offsets": "none", "dfa_match": "unwrapped"}),
+      "dfa_prefilter_offsets": "none", "dfa_match": "unwrapped",
+      "engine_sel": "selected"}),
     ("email orig under --engine=vm: K=8/default", "pcrec-vm", "email", "orig",
-     {"engine": "vm", "prefilter": "none", **_CAPS_VM}),
+     {"engine": "vm", "prefilter": "none", "engine_sel": "forced",
+      **_CAPS_VM}),
     # THE [SEL-1] FALLBACK (I-15 (6), Frank's ask (b)): under `auto` a DFA cap
     # overflow is a SELECTION OUTCOME -- the compile falls back to the VM. At
-    # 35e1ab1 this cell was did-not-compile.
+    # 35e1ab1 this cell was did-not-compile; at 36d5963 a VM artifact with NO
+    # prefilter; at 96e44c2 ([OPT-4], [B19]) the [SEL-1] rung KEEPS a
+    # prefilter rebuilt from the count-collapsed language -- I-18 (ii)'s
+    # prediction (vm / collapsed-prefilter / count-collapsed / "dfa overflow
+    # retry, exact nfa 462"), asserted here as MEASURED: every one held.
     ("level-context under auto: the [SEL-1] VM fallback", "pcrec-auto",
      "loglines", "level-context",
-     {"engine": "vm", "prefilter": "none", **_CAPS_VM}),
+     {"engine": "vm", "prefilter": "hybrid", "dfa_scan": "unanchored",
+      "engine_sel": "collapsed-prefilter",
+      "vm_prefilter_lang": "count-collapsed",
+      "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 462",
+      **_CAPS_VM}),
+    # [B19] bounded's class ladder at the pin (I-18 (v), MEASURED there as
+    # single compiles): the 32768 rung -- the set's PREDICTED first refusal
+    # -- is RESCUED as a 32 KB collapsed-prefilter VM artifact whose
+    # prefilter admits `[a-z]*`.
+    ("bounded cls-upto-32768: the state-cap rung's rescue", "pcrec-auto",
+     "bounded", "cls-upto-32768",
+     {"engine": "vm", "prefilter": "hybrid",
+      "engine_sel": "collapsed-prefilter",
+      "vm_prefilter_lang": "count-collapsed",
+      "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 65538",
+      **_CAPS_VM}),
+    # [B19] (e): the 16384 rung is a DFA that WARNS (limits.md 8,
+    # `--warn-emit-bytes` default 250,000) -- the warning is captured as a
+    # pair, the outcome stays `compiled`, and the two source-bytes pairs
+    # are the message's own numbers. I-18's table says 725,692 bytes for a
+    # file named `[a-z]{0,16384}`; the adapter's `artifact.c`/`.h` names
+    # make it 724,699 comment-excluded (the count includes the emitted
+    # #include line). ~8 s a compile under load.
+    ("bounded cls-upto-16384: the DFA that warns", "pcrec-auto",
+     "bounded", "cls-upto-16384",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "unanchored",
+      "warned_emit_bytes": 724699, "emit_bytes": 724699,
+      "emit_code_bytes": 11589, **_CAPS_DFA}),
 )
 
 
@@ -1899,8 +1984,14 @@ def check_mechanism_stamps():
     predicted, the [SEL-1] fallback included), the new scope rules, and
     ONE thing read off the driver rather than the record: `rx_info.
     match_form`'s presence, so that "NULL on a VM artifact" is a VALUE
-    this check saw and not the absence of a pair."""
-    print("-- the abi 4-11 mechanism stamps (pcrec I-5/I-6/I-11/I-13/I-15/I-16/I-17) --")
+    this check saw and not the absence of a pair. [B19] added the abi-12
+    pairs (`engine_sel` on every artifact; `vm_prefilter_lang` / `_why` on
+    every VM HYBRID and no other -- the letter said "every VM artifact",
+    the spec and the artifacts say hybrids), the size-cap rescue kind
+    (K41's witness 2), two bounded ledger rows (the 32768 rescue, the
+    16384 DFA that warns), Frank's ask (b) bucket derived from the record,
+    and the two source-bytes pairs with the warning pair."""
+    print("-- the abi 4-12 mechanism stamps (pcrec I-5/I-6/I-11/I-13/I-15/I-16/I-17/I-18) --")
     try:
         adapter = _ad.discover()["pcrec"]
     except KeyError:
@@ -1927,14 +2018,14 @@ def check_mechanism_stamps():
             handles[label] = cr.handle
             diags[label] = cr.diagnostic or ""
             wrong = {k: (em.get(k), v) for k, v in expected.items()
-                     if em.get(k) != v}
+                     if not _stamp_ok(em.get(k), v)}
             if wrong:
                 bad("%s: %s" % (kind, label),
                     "; ".join("%s: got %r, want %r" % (k, got, want)
                               for k, (got, want) in sorted(wrong.items())))
                 continue
             ok("%s: %s" % (kind, label),
-               ", ".join("%s=%s" % (k, expected[k]) for k in sorted(expected)))
+               ", ".join("%s=%s" % (k, em.get(k)) for k in sorted(expected)))
 
         # -- the [SEL-1] fallback names its cap (I-15 (6)): the prose is
         # the compile row's diagnostic, exactly where record_schema.md 7
@@ -2067,6 +2158,93 @@ def check_mechanism_stamps():
             bad("scope: max_emit_bytes on EVERY artifact, both engines",
                 "missing on %s" % ", ".join(missing_cap))
 
+        # -- [B19] the abi-12 route token: on EVERY artifact, both engines,
+        # and its value set is the registry's `engine-route` axis --
+        missing_sel = [l for l, em in metas.items() if "engine_sel" not in em]
+        if metas and not missing_sel:
+            ok("scope: engine_sel on EVERY artifact, both engines",
+               "%d artifacts; values %s"
+               % (len(metas), ", ".join(sorted({em["engine_sel"]
+                                                for em in metas.values()}))))
+        elif metas:
+            bad("scope: engine_sel on EVERY artifact, both engines",
+                "missing on %s" % ", ".join(missing_sel))
+
+        # -- [B19] the language pair: on every VM HYBRID and on NO other
+        # artifact -- not the forced-VM one (no prefilter), not a DFA one.
+        # I-18 said "every VM artifact"; match_api.md 6.3 and the artifacts
+        # say hybrids, and this is the check that would have caught the
+        # letter's wording had the adapter followed it. --
+        want_lang = {l: (em.get("engine") == "vm" and em.get("prefilter") == "hybrid")
+                     for l, em in metas.items()}
+        has_lang = {l: ("vm_prefilter_lang" in em and "vm_prefilter_lang_why" in em)
+                    for l, em in metas.items()}
+        any_lang = {l: ("vm_prefilter_lang" in em or "vm_prefilter_lang_why" in em)
+                    for l, em in metas.items()}
+        if metas and has_lang == want_lang and any_lang == want_lang:
+            n_h = sum(want_lang.values())
+            ok("scope: vm_prefilter_lang / _why on every VM HYBRID and on NO other artifact",
+               "%d hybrids with, %d others (forced VM, DFA) without"
+               % (n_h, len(metas) - n_h))
+        elif metas:
+            bad("scope: vm_prefilter_lang / _why on every VM HYBRID and on NO other artifact",
+                "has %r wanted %r" % (has_lang, want_lang))
+
+        # -- [B19] Frank's ask (b), derived from the RECORD: the `DFA
+        # fallback tripped` bucket is engine_sel not in (selected, forced)
+        # (adapter.ENGINE_SEL_FALLBACK). Asserted to be EXACTLY the two
+        # state-cap rescues -- and NOT the size-cap rescue, which stamps
+        # `selected` and is visible only through its `_why` prefix. --
+        mod = _pcrec_adapter_module()
+        tripped = sorted(l for l, em in metas.items()
+                         if em.get("engine_sel") in mod.ENGINE_SEL_FALLBACK)
+        want_tripped = sorted(l for l in metas
+                              if l.startswith("level-context under auto")
+                              or l.startswith("bounded cls-upto-32768"))
+        size_rescue = sorted(l for l, em in metas.items()
+                             if _SIZE_CAP_RETRY.fullmatch(
+                                 em.get("vm_prefilter_lang_why") or ""))
+        if metas and tripped == want_tripped and tripped:
+            ok("bucket: `DFA fallback tripped` (engine_sel not in selected/forced) is exactly the state-cap rescues",
+               "%s; the size-cap rescue (%s) stamps engine_sel=selected and "
+               "is OUTSIDE it -- read vm_prefilter_lang_why"
+               % (", ".join(tripped), ", ".join(size_rescue) or "none seen"))
+        elif metas:
+            bad("bucket: `DFA fallback tripped` (engine_sel not in selected/forced) is exactly the state-cap rescues",
+                "tripped %r, wanted %r" % (tripped, want_tripped))
+
+        # -- [B19] (d)/(e) the two source-bytes pairs on every compiled
+        # artifact; the warning pair only where the message fired, and equal
+        # to emit_bytes there (the adapter refuses a disagreement before
+        # this check could see one; this is the record-side statement). --
+        no_size = [l for l, em in metas.items()
+                   if "emit_bytes" not in em or "emit_code_bytes" not in em]
+        bad_order = [l for l, em in metas.items()
+                     if "emit_bytes" in em and "emit_code_bytes" in em
+                     and not (0 < em["emit_code_bytes"] <= em["emit_bytes"])]
+        warned = {l: em["warned_emit_bytes"] for l, em in metas.items()
+                  if "warned_emit_bytes" in em}
+        warn_wrong = [l for l, v in warned.items() if v != metas[l]["emit_bytes"]]
+        if metas and not no_size and not bad_order and not warn_wrong:
+            ok("emit_bytes / emit_code_bytes on every compiled artifact; warned_emit_bytes only where pcrec warned",
+               "%d artifacts sized (0 < code <= total); warned: %s"
+               % (len(metas), ", ".join("%s=%d" % kv for kv in sorted(warned.items()))
+                  or "none"))
+        elif metas:
+            bad("emit_bytes / emit_code_bytes on every compiled artifact; warned_emit_bytes only where pcrec warned",
+                "unsized %r; code>total %r; warned!=total %r"
+                % (no_size, bad_order, warn_wrong))
+        lbl16 = "bounded cls-upto-16384: the DFA that warns"
+        if lbl16 in diags:
+            d = diags[lbl16]
+            if "pcrec stderr: pcrec: warning: large artifact: 724699 bytes" in d \
+                    and "over --warn-emit-bytes=250000" in d:
+                ok("the --warn-emit-bytes line is captured in the compile row's diagnostic, and the outcome is `compiled`",
+                   d.split("pcrec stderr: ")[1][:100])
+            else:
+                bad("the --warn-emit-bytes line is captured in the compile row's diagnostic, and the outcome is `compiled`",
+                    "diagnostic %r" % d[:200])
+
         # -- one abi, and it is at or above the shim's floor --
         abis = {label: em.get("abi") for label, em in metas.items()}
         distinct = set(abis.values())
@@ -2094,16 +2272,59 @@ def check_mechanism_stamps():
 # order-1 row for the axis (`cli_flag`); the values are the spec's. The
 # `size-term` axis's registry rows carry no stamp_value (a documented gap,
 # list_axes.tsv's header), so its values are hand-stated here.
+#
+# [B19] generalised: a sixth element names the ARM the flag produces --
+# `deny` (the registry row's `-fno-` spelling removes the order-1 candidate;
+# the DEFAULT arm is where that candidate was chosen, so the registry's
+# `stamp_value` is checked against it) or `force` (the `-f` spelling makes
+# the candidate apply; the FLAGGED arm is where it was chosen). The
+# `prefilter-lang` axis's order-1 row carries BOTH spellings in one
+# `cli_flag` cell (`-fno-prefilter-collapse / -fprefilter-collapse`), split
+# on ` / ` and picked by prefix. An expected flagged value of
+# DID_NOT_COMPILE says the flag turns a compile into a REFUSAL by name. The
+# FIRST pair of each dict is the one the registry row's `stamp_value` is
+# compared with (the row's own stamp); the rest ride along.
+DID_NOT_COMPILE = object()
 DENY_CONTROLS = (
     ("dfa_table", "table", ("literal", b"(?:[a-z]+)@(?:[a-z]+)"), "",
-     {"dfa_table": ("premultiplied", "indexed")}),
+     {"dfa_table": ("premultiplied", "indexed")}, "deny"),
     ("dfa_prefilter + offsets", "prefilter", ("loglines", "uuid"), "",
      {"dfa_prefilter": ("offset-set-bounded", "byte-class-bounded"),
-      "dfa_prefilter_offsets": ("0,8*,13", "none")}),
+      "dfa_prefilter_offsets": ("0,8*,13", "none")}, "deny"),
     ("dfa_match", "match", ("email", "floor"), "",
-     {"dfa_match": ("unwrapped", "search-filter")}),
+     {"dfa_match": ("unwrapped", "search-filter")}, "deny"),
     ("unroll_k_why", "size-term", ("email", "orig"), "--engine=vm",
-     {"unroll_k_why": ("default", "denied"), "unroll_k": (8, 8)}),
+     {"unroll_k_why": ("default", "denied"), "unroll_k": (8, 8)}, "deny"),
+    # [B19] (abi 12, [OPT-4]) -- the collapse denied on the [SEL-1] rung:
+    # the rescue becomes the OLD fallback (no prefilter at all, the
+    # 36d5963 shape), NOT a refusal -- limits.md 8: "the [SEL-1] rung ...
+    # where the alternative is no prefilter at all rather than a refusal".
+    # I-18 said the flag "turns a rescue into a refusal"; that is the
+    # SIZE-CAP rung's truth (next row), measured here as each rung's own.
+    # THREE pairs move: the route token, the language pair (to ABSENT --
+    # the scope iff seen from the flag's side) and the VM's own prefilter
+    # decision.
+    ("engine_sel + vm_prefilter_lang: the [SEL-1] rung denied -> prefilter dropped",
+     "prefilter-lang", ("loglines", "level-context"), "",
+     {"vm_prefilter_lang": ("count-collapsed", None),   # first: the row's own stamp
+      "vm_prefilter_lang_why": ("dfa overflow retry, exact nfa 462", None),
+      "engine_sel": ("collapsed-prefilter", "overflowed-dfa"),
+      "prefilter": ("hybrid", "none")}, "deny"),
+    # ... and denied on the SIZE-CAP rung: the rescue becomes the cap's
+    # REFUSAL, `did-not-compile` by name ("pattern too large: N bytes of
+    # emitted code (limit 500000)").
+    ("vm_prefilter_lang: the size-cap rung denied -> REFUSED",
+     "prefilter-lang", ("literal", _K41W2), "",
+     {"vm_prefilter_lang": ("count-collapsed", DID_NOT_COMPILE),
+      "vm_prefilter_lang_why": (_SIZE_CAP_RETRY, DID_NOT_COMPILE)}, "deny"),
+    # -fprefilter-collapse (bit 20) on a hybrid that would otherwise be
+    # exact: the language moves, its why reads `forced`, the route token
+    # does NOT move (nothing overflowed -- `selected` both arms).
+    ("vm_prefilter_lang: -fprefilter-collapse forces the collapse",
+     "prefilter-lang", ("literal", b"a(b|c){2,5}d"), "",
+     {"vm_prefilter_lang": ("exact", "count-collapsed"),
+      "vm_prefilter_lang_why": ("exact", "forced"),
+      "engine_sel": ("selected", "selected")}, "force"),
 )
 
 
@@ -2162,27 +2383,53 @@ def check_deny_flag_controls():
     saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
     try:
         os.environ["PCREC_BIN"] = adapter.pin_binary()
-        for label, axis, src, base, pairs in DENY_CONTROLS:
+        for label, axis, src, base, pairs, arm_kind in DENY_CONTROLS:
             first = [r for r in rows if r["axis"] == axis and r["order"] == "1"]
             if len(first) != 1 or not first[0].get("cli_flag"):
                 bad("deny control: %s" % label,
                     "the registry has no order-1 row with a cli_flag for axis "
                     "%r (rows %r)" % (axis, first))
                 continue
-            flag = first[0]["cli_flag"]
-            bit = first[0].get("deny_bit", "")
+            spellings = [f.strip() for f in first[0]["cli_flag"].split(" / ")]
+            if arm_kind == "deny":
+                flag = next((f for f in spellings if f.startswith("-fno-")), None)
+                bit = first[0].get("deny_bit", "")
+            else:
+                flag = next((f for f in spellings
+                             if f.startswith("-f") and not f.startswith("-fno-")), None)
+                bit = first[0].get("force_bit", "")
+            if not flag:
+                bad("deny control: %s" % label,
+                    "the registry's cli_flag %r for axis %r has no %s spelling"
+                    % (first[0]["cli_flag"], axis, arm_kind))
+                continue
+            flagged = "denied" if arm_kind == "deny" else "forced"
             if src[0] == "literal":
                 pattern = src[1]
             else:
                 pattern = _bench_pattern(src[0], src[1])
+            want = {"default": {k: v[0] for k, v in pairs.items()},
+                    flagged: {k: v[1] for k, v in pairs.items()}}
+            expect_refusal = any(v is DID_NOT_COMPILE for v in want[flagged].values())
             got = {}
             failed = False
-            for arm, extra in (("default", base), ("denied", (base + " " + flag).strip())):
+            for arm, extra in (("default", base), (flagged, (base + " " + flag).strip())):
                 os.environ["PCREC_LOCAL_FLAGS"] = extra
                 adapter.prepare("pcrec-local", tmp)
-                pid = re.sub(r"[^A-Za-z0-9]+", "-", "%s-%s" % (label, arm)).strip("-")
+                pid = re.sub(r"[^A-Za-z0-9]+", "-", "%s-%s" % (label, arm)).strip("-")[:48]
                 cr = adapter.compile("pcrec-local", pid, pattern, {}, 1,
                                      tmp).get(_ad.FORM_PLAIN)
+                if arm == flagged and expect_refusal:
+                    if cr.outcome == "did-not-compile" and "pattern too large" in (cr.diagnostic or ""):
+                        got[arm] = {k: DID_NOT_COMPILE for k in pairs}
+                    else:
+                        bad("deny control: %s" % label,
+                            "%s arm (%r) should have been REFUSED by a size cap; "
+                            "got %s: %s" % (arm, extra, cr.outcome,
+                                            (cr.diagnostic or "")[:160]))
+                        failed = True
+                        break
+                    continue
                 if cr.outcome != "compiled":
                     bad("deny control: %s" % label,
                         "%s arm (%r) did not compile: %s" % (arm, extra, cr.diagnostic))
@@ -2191,26 +2438,27 @@ def check_deny_flag_controls():
                 got[arm] = {k: cr.engine_metadata.get(k) for k in pairs}
             if failed:
                 continue
-            want = {"default": {k: v[0] for k, v in pairs.items()},
-                    "denied": {k: v[1] for k, v in pairs.items()}}
-            if got == want:
+            agree = all(_stamp_ok(got[a][k], want[a][k]) for a in want for k in pairs)
+            if agree:
                 reg_val = first[0].get("stamp_value", "")
                 note = ""
                 main_pair = next(iter(pairs))
-                if reg_val and reg_val != want["default"][main_pair]:
+                chosen_arm = "default" if arm_kind == "deny" else flagged
+                if reg_val and reg_val != got[chosen_arm][main_pair]:
                     bad("deny control: %s" % label,
                         "the registry says %s's order-1 candidate stamps %r; the "
-                        "default arm read %r" % (axis, reg_val, want["default"][main_pair]))
+                        "%s arm read %r" % (axis, reg_val, chosen_arm, got[chosen_arm][main_pair]))
                     continue
                 if reg_val:
-                    note = "; registry stamp_value %r agrees" % reg_val
+                    note = "; registry stamp_value %r agrees (%s arm)" % (reg_val, chosen_arm)
                 else:
                     note = "; registry carries no stamp_value for this axis (documented gap)"
+                fmt = lambda d: ", ".join(
+                    "%s=%s" % (k, "REFUSED" if v is DID_NOT_COMPILE else v)
+                    for k, v in d.items())
                 ok("deny control: %s" % label,
                    "%s (bit %s, from the registry): %s -> %s%s"
-                   % (flag, bit or "?",
-                      ", ".join("%s=%s" % kv for kv in want["default"].items()),
-                      ", ".join("%s=%s" % kv for kv in want["denied"].items()), note))
+                   % (flag, bit or "?", fmt(got["default"]), fmt(got[flagged]), note))
             else:
                 bad("deny control: %s" % label,
                     "%s: got %r, want %r -- a stamp that cannot move is not a stamp"
@@ -2291,6 +2539,168 @@ def check_list_axes_registry():
     else:
         bad("list-axes: the declared value sets agree with the registry",
             "; ".join(problems))
+
+
+def check_list_definitions_registry():
+    """THE FIFTH REGISTRY SURFACE, ARCHIVED AND CHECKED ([B19], pcrec I-18
+    (4), [DD-11], registry.md 9). `testees/pcrec/list_definitions.tsv` --
+    `pcrec --list-definitions | grep -v '^#'` at the pin, under a bench
+    source header -- is byte-identical (below that header) to what the
+    pin's binary prints NOW. A re-pin that forgets to re-archive fails
+    here, and the diff is the list of definitions that moved. Nothing the
+    adapter reads depends on the file (the emitted code is unchanged by
+    [DD-11]); the check is the archive's guarantee of being verbatim."""
+    print("-- the --list-definitions table: archived copy vs the pin --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("list-definitions", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    proc = run([adapter.pin_binary(), "--list-definitions"], timeout=60)
+    if proc.returncode != 0:
+        bad("list-definitions: the pin prints its table", proc.stderr[-300:])
+        return
+    live = [l for l in proc.stdout.splitlines() if l and not l.startswith("#")]
+    try:
+        with open(mod.LIST_DEFINITIONS_TSV, "r", encoding="utf-8") as f:
+            committed = [l for l in f.read().splitlines()
+                         if l and not l.startswith("#")]
+    except OSError as e:
+        bad("list-definitions: the archived copy exists", str(e))
+        return
+    if committed == live:
+        kinds = sorted({l.split("\t")[0] for l in live})
+        ok("list-definitions: the archived copy matches the pin's live output",
+           "%d rows (kinds %s), byte-identical below the source header"
+           % (len(live), ", ".join(kinds)))
+    else:
+        import difflib
+        diff = list(difflib.unified_diff(committed, live, "committed", "live",
+                                         lineterm="", n=0))
+        bad("list-definitions: the archived copy matches the pin's live output",
+            "re-archive testees/pcrec/list_definitions.tsv; diff: %s"
+            % " | ".join(diff[2:12]))
+
+
+# [B19] (d): the artifact KINDS the size port is checked on, against the
+# pin's OWN numbers. Each exercises a different branch of the classifier:
+# a table-dominated unanchored DFA (multi-line `= {` initializers), an
+# `attempt` DFA (the one-line computed-goto jump table pcrec's first
+# instrument could not see -- compile.c's own comment), a VM hybrid (code-
+# dominated), and a `\z` form (the whole-subject artifact the adapter also
+# builds). `--warn-emit-bytes=1` makes the advisory line fire on every one
+# of them, and the line prints the two quantities in the order the port
+# returns them.
+EMIT_SIZE_WITNESSES = (
+    ("table-dominated DFA (email orig)", ("email", "orig"), ""),
+    ("attempt DFA, one-line jump table", ("literal", b"^foo[0-9]+bar"), ""),
+    ("VM hybrid", ("literal", b"a(b|c)+d"), ""),
+    ("VM hybrid, forced collapse", ("literal", b"a(b|c){2,5}d"),
+     "-fprefilter-collapse"),
+)
+
+
+def check_emit_size_port():
+    """THE SIZE PORT AGAINST THE PIN'S OWN NUMBERS ([B19] (d), I-18 (iv)).
+
+    `adapter.emit_size()` is a port of pcrec src/core/compile.c's
+    `emit_size_measure` -- the ONE definition the two caps enforce and the
+    `--warn-emit-bytes` message prints (total minus comments; that minus
+    table initializers). A port is a second implementation of someone
+    else's definition, which is exactly the shape that drifts (pcrec's own
+    r40 F1: "this row's own measuring instrument disagreed with the
+    artifact it was measuring"), so it is checked here against the
+    definition's owner: the pin's binary is run with `--warn-emit-bytes=1`
+    on artifacts of each kind, its message's two numbers are parsed by
+    THIS check (not by the adapter), and they must equal the port's over
+    the same two files. The adapter separately refuses any compile whose
+    warning disagrees with the port (`_emit_facts`); this is the check
+    that proves that refusal is not decorative, and that the port is right
+    where no warning fires at the default threshold (every artifact of
+    both sub-benches but one)."""
+    print("-- the emit-size port vs pcrec's --warn-emit-bytes numbers --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("emit-size port", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    pcrec = adapter.pin_binary()
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-emitsize-")
+    try:
+        for i, (label, src, extra) in enumerate(EMIT_SIZE_WITNESSES):
+            pattern = src[1] if src[0] == "literal" else _bench_pattern(src[0], src[1])
+            forms = ((_ad.FORM_PLAIN, pattern),
+                     (_ad.FORM_WHOLE_SUBJECT, _rec.whole_subject_text(pattern)))
+            for form, text in forms:
+                d = os.path.join(tmp, "w%d-%s" % (i, form))
+                os.makedirs(d, exist_ok=True)
+                art = os.path.join(d, "artifact.c")
+                argv = [pcrec, "-p", "rx", "--features", "all",
+                        "--warn-emit-bytes=1"] + extra.split() + \
+                       ["-o", art, "--", text.decode("latin-1")]
+                proc = run(argv, timeout=120)
+                if proc.returncode != 0:
+                    bad("emit-size port: %s / %s" % (label, form),
+                        "pcrec did not emit: %s" % proc.stderr[-200:])
+                    continue
+                m = mod.WARN_RE.search(proc.stderr or "")
+                if not m:
+                    bad("emit-size port: %s / %s" % (label, form),
+                        "--warn-emit-bytes=1 did not make the advisory line "
+                        "fire (stderr %r)" % proc.stderr[-200:])
+                    continue
+                pin_tot, pin_code = int(m.group(1)), int(m.group(2))
+                files = [art] + ([art[:-2] + ".h"] if os.path.exists(art[:-2] + ".h") else [])
+                port = mod.emit_size(files)
+                if port == (pin_tot, pin_code):
+                    raw = sum(os.path.getsize(f) for f in files)
+                    ok("emit-size port: %s / %s" % (label, form),
+                       "pin says %d total / %d code; the port agrees "
+                       "(raw file bytes %d, %d files)"
+                       % (pin_tot, pin_code, raw, len(files)))
+                else:
+                    bad("emit-size port: %s / %s" % (label, form),
+                        "pin says %d / %d, the port %d / %d over %s -- "
+                        "re-derive adapter.emit_size() against compile.c"
+                        % (pin_tot, pin_code, port[0], port[1], files))
+        # The NEGATIVE control: a file the port must not mistake -- a
+        # comment line inside a table initializer stays PROSE, a `= {`
+        # that is not `static const` stays CODE, and a block comment that
+        # opens and closes on one line is one line of prose. Hand-built,
+        # with a hand-counted answer.
+        # The CLASSIFICATION is the hand part; each line's byte count is
+        # arithmetic (its length plus the newline it ends with).
+        probe_lines = (
+            (b"/* one-line comment */", "prose"),
+            (b"int x = 1;", "code"),
+            (b"static const int rx_t[2] = {", "table"),
+            (b"    /* inside */", "prose"),     # a comment INSIDE a table
+            (b"    1, 2 };", "table"),          # the closing line is table
+            (b"struct s v[1] = { 0 };", "code"),  # `= {` but not static const
+            (b"/* open", "prose"),
+            (b"   still */ int y;", "prose"),   # the closing line is prose
+            (b"// tail", "prose"),
+        )
+        probe = b"".join(l + b"\n" for l, _c in probe_lines)
+        pf = os.path.join(tmp, "probe.c")
+        with open(pf, "wb") as f:
+            f.write(probe)
+        total = len(probe)
+        prose = sum(len(l) + 1 for l, c in probe_lines if c == "prose")
+        tables = sum(len(l) + 1 for l, c in probe_lines if c == "table")
+        want = (total - prose, total - prose - tables)
+        got = mod.emit_size([pf])
+        if got == want:
+            ok("emit-size port: the hand-counted probe",
+               "%d bytes: prose %d, tables %d -> total %d, code %d"
+               % (total, prose, tables, want[0], want[1]))
+        else:
+            bad("emit-size port: the hand-counted probe",
+                "want %r, got %r" % (want, got))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def check_abi_floor_refusal():
@@ -2604,6 +3014,8 @@ def main():
     check_mechanism_stamps()
     check_deny_flag_controls()
     check_list_axes_registry()
+    check_list_definitions_registry()
+    check_emit_size_port()
     check_abi_floor_refusal()
     check_note_length_guard()
     check_occupancy_average()

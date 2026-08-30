@@ -364,6 +364,62 @@ no re-render, every committed report byte-identical:
   feed one declared pair -- a ruling, not a lane's call. Until then the
   distinction is readable in the compile-cost table's diagnostic column.
 
+## The reporter, [B19] (2026-08-30) -- the abi-12 re-pin's half
+
+The re-pin to pcrec `96e44c2` (abi 12; inbox I-18, [OPT-4] ruling B +
+[DD-11]) added six `engine_metadata` pairs to every pcrec compile row:
+three stamps (`engine_sel` on every artifact; `vm_prefilter_lang` +
+`vm_prefilter_lang_why` on every VM HYBRID and no other artifact) and
+three adapter-side facts (`emit_bytes` / `emit_code_bytes` on every
+compiled artifact -- pcrec's own size definition, ported and controlled;
+`warned_emit_bytes` only where pcrec's advisory `--warn-emit-bytes` line
+fired). The reporter change is again SMALL, additive and CONDITIONAL --
+no version bump (still `v7`), every committed report byte-identical,
+`test_b19_engine_sel_lang_and_emit_bytes` pins both directions (54 tests with the scope addition below):
+
+- THE LEGEND LINE gains `sel=<engine_sel>` right after `engine=`, and
+  `lang=<vm_prefilter_lang> (<why>)` right after `vm_prefilter=` -- each
+  only where the record carries the pair (`_engine_sel_display`,
+  `_prefilter_lang_display`; None -> no clause, as [B18]'s `match=`).
+- FRANK'S ASK (b), DERIVED FROM THE RECORD BY ONE RULE: a `sel` that is
+  neither `selected` nor `forced` renders as
+  `sel=collapsed-prefilter (DFA fallback tripped)`. The rule is the
+  ruling's own (`_ENGINE_SEL not in (selected, forced)`), not an
+  enumerated copy of pcrec's token set, and a legend NOTE under the lines
+  (printed only when a `sel=` appears) states it so a reader need not
+  know the tokens. What the [B18] note above called "a ruling, not a
+  lane's call" is answered: pcrec stamped the reason as a closed set,
+  and the mechanism column never reads `diagnostic`.
+- THE ONE RESCUE THE BUCKET MISSES, stated in that note: the SIZE-CAP
+  retry rung (an emitted-size cap refused the exact artifact; the retry
+  ships a count-collapsed hybrid) stamps `sel=selected` -- measured at
+  the pin on K41's witness 2 -- so its only trace is
+  `lang=count-collapsed (size cap retry, exact N > cap)`. A finding for
+  the outbox; the legend shows both facts side by side.
+- THE COMPILE-COST TABLE gains `emit bytes` and `code bytes` beside
+  `artifact bytes` (the `.so`) when any row of the table carries them
+  (R5's rule for an empty column -- an older pin's table renders as
+  before): comment-excluded C source (what pcrec's total cap measures)
+  and that minus table initializers (what the code cap measures; the
+  quantity that tracks gcc time -- a table-dominated DFA artifact is
+  large in the first and small in the second). The emit cell reads
+  `724,699 (warned)` where `warned_emit_bytes` is present
+  (`_emit_bytes_display`); the warning is never an outcome.
+- THE TSV gets `compile_stamp` rows for the three abi-12 pairs and
+  `compile` rows for the three size facts at `artifact_bytes`'s grain,
+  each only when carried.
+- SCOPE ADDITION (manager, 2026-08-30, same branch): the abi-11
+  [ART-SIZE] stamps recorded since [B18] and never rendered -- bounded's
+  first sample's only K movement (`nest3-16` = K=1 / size-model on every
+  VM form) had to be read out of the JSONL -- now sit on the same legend
+  line for VM artifacts: `K=<unroll_k>/<unroll_k_why>` and
+  `caps=<max_emit_code_bytes>/<max_emit_bytes>` (`_size_term_display`,
+  `_caps_display`, after `rungs=`), with a legend note naming them. A
+  DFA artifact shows neither (no counter rung; the code cap is absent from
+  its metadata by design). `test_b19_size_term_and_caps_in_legend` (54
+  tests): the firing case, the default K, a DFA control, an abi-8 control,
+  the note's presence and absence.
+
 ## The reporter, [B12] R10 (2026-08-29) -- a did-not-compile cell is not-ranked, not invisible
 
 M1 close item (docs/dev/plan.md row [B12], "[ADDED 2026-08-28]"; lane

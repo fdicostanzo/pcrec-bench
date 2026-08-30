@@ -46,7 +46,11 @@
  * of the same refusal and cannot be mistaken for a measurement. [B18]
  * raised the floor from 6 to 10 for exactly the reason the rule below
  * states: a FIELD was added to what this file reads; the abi 9 and abi 11
- * MACROS it also gained did not move it.
+ * MACROS it also gained did not move it. Neither did abi 12's ([B19]):
+ * `RX_ENGINE_SEL` and the two `_VM_PREFILTER_LANG*` macros have no
+ * rx_info mirror, so an abi-10/11 artifact still links and records them
+ * as "not stamped" -- and the adapter's scope table says at which abi that
+ * absence stops being legitimate.
  *
  * THE THREE STAMP FAMILIES THIS FILE READS, and the rule for each
  * (match_api.md 6.3's (a)/(b) split, tuning.md 3):
@@ -75,6 +79,24 @@
  *       every VM artifact; `RX_MAX_EMIT_BYTES` on EVERY artifact, both
  *       engines. The two caps are the EFFECTIVE limits the artifact was
  *       built under, so a raised cap is a recorded fact.
+ *   (a) SELECTION, the engine ROUTE and the prefilter LANGUAGE ([OPT-4],
+ *       abi 12, [B19]): `RX_ENGINE_SEL` -- ONE token from the registry's
+ *       `engine-route` axis (`selected` / `forced` / `overflowed-dfa` /
+ *       `overflowed-prefilter` / `collapsed-prefilter`) on EVERY artifact,
+ *       both engines (D81: `"selected"` is a fact, stamped whether or not
+ *       anything fell back); it is the same decision `RX_ENGINE_WHY`
+ *       narrates, as a closed set a consumer can bucket on. And
+ *       `RX_VM_PREFILTER_LANG` (`"exact"` / `"count-collapsed"`) with
+ *       `RX_VM_PREFILTER_LANG_WHY` (free text: `"exact"`, `"no counted
+ *       repeat"`, `"forced"`, `"dfa overflow retry, exact nfa N"`, `"size
+ *       cap retry, exact N > cap"`) -- and their scope is NARROWER than
+ *       "every VM artifact": match_api.md 6.3 puts them on every artifact
+ *       whose `RX_VM_PREFILTER` reads `"hybrid"` and on no other (a
+ *       forced `--engine=vm` artifact has no prefilter and no language to
+ *       stamp; MEASURED at 96e44c2, which is where pcrec's own inbox
+ *       letter said "every VM artifact"). Read through #ifdef like every
+ *       other macro; the adapter's scope table is what makes a missing
+ *       one an error.
  *   (b) CAPACITY, VM-only: `RX_FAST_FRAMES` / `RX_FAST_TRAIL` (abi 5), the
  *       capacities the un-suffixed entries' fast tier runs on (10.9). Never
  *       absent on a VM artifact -- `RX_FAST_FRAMES == RX_RESUME_FRAMES` IS
@@ -412,6 +434,63 @@ long long pb_max_emit_bytes(void) {
     return (long long)RX_MAX_EMIT_BYTES;
 #else
     return 0;
+#endif
+}
+
+/* --------------- the engine route and the prefilter language ([OPT-4], abi 12) */
+
+/* `RX_ENGINE_SEL`: the engine-selection decision as ONE closed-set token,
+ * on every artifact of both engines (match_api.md 6.3, "[OPT-4]
+ * `<PREFIX>_ENGINE_SEL`"). It has NO rx_info mirror (on RX_DFA_TABLE's
+ * precedent), so this macro is the only surface; the adapter checks it
+ * against the CONFIG instead ("forced" iff the testee named `--engine=`)
+ * and against the prefilter stamps it implies. */
+int pb_has_engine_sel(void) {
+#ifdef RX_ENGINE_SEL
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_engine_sel(void) {
+#ifdef RX_ENGINE_SEL
+    return RX_ENGINE_SEL;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* `RX_VM_PREFILTER_LANG` / `_WHY`: WHICH LANGUAGE the VM's prefilter DFA
+ * recognises -- the pattern's own (`"exact"`, the default under ruling B)
+ * or the count-collapsed SUPERSET (`"count-collapsed"`: every X{m,n}
+ * lowered to X{min(m,1),}, so the machine does not scale with the count;
+ * a sound filter either way, D46). A THIRD independent selection beside
+ * RX_VM_PREFILTER and RX_DFA_PREFILTER. Present IFF RX_VM_PREFILTER reads
+ * "hybrid" (6.3's own iff for this pair), which is why the getter is not
+ * gated on pb_has_vm_stamps(): a non-hybrid VM artifact has the D46
+ * stamps and NOT these. */
+int pb_has_vm_prefilter_lang(void) {
+#ifdef RX_VM_PREFILTER_LANG
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_vm_prefilter_lang(void) {
+#ifdef RX_VM_PREFILTER_LANG
+    return RX_VM_PREFILTER_LANG;
+#else
+    return (const char *)0;
+#endif
+}
+
+const char *pb_vm_prefilter_lang_why(void) {
+#ifdef RX_VM_PREFILTER_LANG_WHY
+    return RX_VM_PREFILTER_LANG_WHY;
+#else
+    return (const char *)0;
 #endif
 }
 

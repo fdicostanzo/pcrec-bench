@@ -121,9 +121,36 @@ miss:
   registry `stamp_value` for the five name-valued macros declared (and
   nothing declared that the registry's `list` axes lack, outcome values
   `dfa_table none`/`mixed` excepted).
+- [B19] (2026-08-30, the abi-12 re-pin to 96e44c2) extended the three
+  above and added two: `check_mechanism_stamps` asserts `engine_sel` on
+  every case (the ledger's `level-context` row at I-18's PREDICTED values
+  — `collapsed-prefilter` / `count-collapsed` / `dfa overflow retry, exact
+  nfa 462` — all of which HELD), two new kinds (a hybrid with a counted
+  repeat that stays `exact`; K41's witness 2, the SIZE-CAP rung's rescue,
+  which stamps `sel=selected`), two bounded ledger rows (`cls-upto-32768`
+  rescued as a collapsed-prefilter hybrid; `cls-upto-16384` the DFA that
+  WARNS, `warned_emit_bytes 724699`, outcome `compiled`, the line in the
+  diagnostic), the language pair's scope in both directions (5 hybrids
+  with, 17 others without — the letter said "every VM artifact"; the spec
+  and the artifacts say hybrids), Frank's ask (b) bucket DERIVED from the
+  records and asserted to be exactly the two state-cap rescues (the
+  size-cap one outside it), and `emit_bytes`/`emit_code_bytes` on every
+  artifact. `check_deny_flag_controls` is table-driven with a sixth
+  `deny`/`force` column (the `prefilter-lang` row's `cli_flag` carries
+  both spellings): `-fno-prefilter-collapse` on `level-context` → the
+  prefilter is DROPPED (`overflowed-dfa`, the language pair absent — three
+  pairs move), on K41 witness 2 → REFUSED by name (`DID_NOT_COMPILE`);
+  `-fprefilter-collapse` on `a(b|c){2,5}d` → `count-collapsed`/`forced`.
+  `check_list_definitions_registry` diffs `testees/pcrec/list_definitions.tsv`
+  (the fifth registry surface, [DD-11]) against the pin's live output.
+  `check_emit_size_port` runs the pin at `--warn-emit-bytes=1` on four
+  artifact kinds × two forms and compares the warning's two numbers with
+  `adapter.emit_size()`'s over the same files (8/8 byte-exact) — the
+  control that a PORT of someone else's size definition is that
+  definition — plus a hand-classified probe with a hand-derived answer.
 - `check_abi_floor_refusal` is the SABOTAGE, and the path is unreachable
   without one: the pin's abi is at or above the floor by construction
-  (11 vs a floor of 10 since [B18]), so nothing in the corpus can be
+  (12 at 96e44c2 vs a floor of 10 since [B18]; abi 12 added no field), so nothing in the corpus can be
   below it. A real artifact's `.abi = N` is edited to `5` in a copy,
   built with the ordinary shim and run by the ordinary driver, and must
   be refused BY NAME carrying both numbers (the floor read out of

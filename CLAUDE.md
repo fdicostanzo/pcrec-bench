@@ -22,8 +22,23 @@ its scope at the artifact's abi (`STAMP_SCOPE`), the three new deny
 flags are `make check-harness` controls, `pcrec --list-axes` is
 archived (`testees/pcrec/list_axes.tsv`) and diffed against the pin,
 and loglines `level-context` under `pcrec-auto` now COMPILES as the
-[SEL-1] VM fallback (100/100 harness checks). The window (a)/(b) and
-outbox O-8 are the manager's next step. Before it, [B16] re-pinned
+[SEL-1] VM fallback (100/100 harness checks). 2026-08-30: [B19] re-pinned
+pcrec to **96e44c2** (abi 12; inbox I-18, [OPT-4] ruling B + [DD-11]) —
+the shim reads `RX_ENGINE_SEL` on every artifact (the engine route as a
+closed token; Frank's ask (b) buckets on `not in (selected, forced)`) and
+`RX_VM_PREFILTER_LANG`/`_WHY` on every VM HYBRID (not every VM artifact —
+the spec's iff, measured), `PB_SHIM_MIN_ABI` stays 10; every compile row
+carries `emit_bytes` / `emit_code_bytes` (pcrec's own size definition,
+ported and controlled byte-exactly against `--warn-emit-bytes`) and
+`warned_emit_bytes` where the advisory line fired (never a failure);
+`list_axes.tsv` re-archived (54/21), `list_definitions.tsv` archived; the
+abi-12 stamps asserted BY VALUE (level-context = I-18's prediction to
+the letter; the size-cap rescue stamps `sel=selected` — a finding), the
+bits 19/20 controls, the reporter's `sel=`/`lang=` clauses and two
+source-bytes columns, and the abi-11 `K=`/`caps=` clauses (141/141 harness checks, 54 reporter tests). The
+windows at 96e44c2 (bounded's AFTER sample first) are the manager's next
+step. Before it, the window (a)/(b) and
+outbox O-8 were the manager's step after [B18]. Before it, [B16] re-pinned
 pcrec to **35e1ab1** (abi 8) — one adapter change absorbing five
 pcrec pins of new observability (pcrec inbox I-5/I-6/I-11/I-12/I-13):
 the shim reads `RX_ENGINE`, `RX_DFA_SCAN`/`_PREFILTER`/`_TABLE`,
@@ -61,7 +76,7 @@ measured in a window next). [B18]'s WINDOW ran the same day: 12 cells
 at 36d5963 on email-specimen@0.2 and loglines@0.1, every one `measured`
 (store index 41); outbox O-8 (739ccdd) carries the ledger — [OPT-K] moved more than predicted on the search band, [ENG-ABS] three of four aggregates confirmed, level-context = the VM with a 0.5-0.7 s compile-time DFA attempt; the long-subject `_match` probe is archived under `docs/dev/measurements/`. Next: bounded's window;
 [B11.2] wide alternations; [B13] the interpreter is chartered. `make check`
-is green (3/56/0, 119/119, 51/51 — re-verified after the note-guard and BD7 fixes). Manager sessions start with the
+is green (3/56/0, 141/141, 54/54 — re-verified after the [B19] re-pin). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -141,9 +156,10 @@ bindings) live here, vendored or system, pinned either way.
   `make check`'s generic gates enumerate `bench/*/` rather than naming a
   set. See their CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
-  (auto, nocaps, vm, the `-in` variants, at a pinned commit — 36d5963,
-  abi 11 — with `list_axes.tsv`, the pin's `--list-axes` registry
-  archived verbatim; and `pcrec-local`, a PROVIDED binary at no pin).
+  (auto, nocaps, vm, the `-in` variants, at a pinned commit — 96e44c2,
+  abi 12 — with `list_axes.tsv` and `list_definitions.tsv`, the pin's
+  `--list-axes` / `--list-definitions` registry surfaces archived
+  verbatim; and `pcrec-local`, a PROVIDED binary at no pin).
   See their CLAUDE.mds.
 - `store/` — the CANONICAL record store (the `.canonical` marker):
   `records/<subbench>@<version>/<testee_id>/<record_id>.jsonl`,
@@ -168,7 +184,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 82 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 141 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -205,8 +221,15 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # a stamp distinguishable from a constant), and an
                         # artifact whose rx_info.abi is SABOTAGED below
                         # shim.c's floor refused BY NAME with the unmodified
-                        # one loading in the same run
-                        # (~4 min; needs libpcre2-8-0 and a C compiler)
+                        # one loading in the same run; and ([B18]/[B19]) the
+                        # abi 9-12 stamps by value on the bench's own
+                        # patterns at the values pcrec predicted, every
+                        # deny/force flag as a control (the size-cap rung
+                        # denied = a refusal BY NAME), the archived
+                        # --list-axes / --list-definitions diffed against
+                        # the pin, and the emit-size port checked against
+                        # pcrec's own --warn-emit-bytes numbers
+                        # (~5 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets
 
