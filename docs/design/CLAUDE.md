@@ -48,8 +48,12 @@ docs/dev/'s append-only records.
   9 is the one with a real hole in it — the MATCH regime presumes an
   end-anchor and pcrec has none. For the M1 panel.
 
-- `gate_shape_v14.md` — **SPEC, the r3 critic panel APPLIED (2026-08-30,
-  plan row [B20]), awaiting the implementation lane** (ruled by inbox
+- `gate_shape_v14.md` — **IMPLEMENTED (2026-08-30, the [B20]
+  implementation lane, branch b20-impl): §4-§8 landed as schema v1.4, the
+  harness, reporter v9 and the ten selfcheck checks; §9 Q1/Q3 remain the
+  follow-ups (the first v1.4 window's target-core distribution; the
+  measured positive control as its own plan row).** Before that: SPEC,
+  the r3 critic panel applied (2026-08-30, plan row [B20]) (ruled by inbox
   I-19 (1): BD7 ratified as the gate, Frank's (2)-(4) the v1.4 spread
   rule; the panel's 45 findings and the manager's rulings R-1..R-20 in
   `docs/dev/reviews/2026-08-30-r3-gate-shape-v14.md`): record schema

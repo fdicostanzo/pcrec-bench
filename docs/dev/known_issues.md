@@ -71,3 +71,11 @@ the cost of a refusal is the BENCH's clock around the pcrec exec (wall
 + rusage, regardless of exit). So this is a bench-side fix: the adapter
 times the `emit-c` phase on every outcome; the schema question above
 decides where the number lands on a `did-not-compile` row.
+**Schema half DONE at v1.4 ([B20], 2026-08-30, gate_shape_v14.md §4
+S5 / ruling R-9): `compile_row`'s "no cost for a compile that did not
+happen" branch is REMOVED — `cost` may sit beside any `compile_outcome`
+(still REQUIRED when `compiled` and not `lazy-jit`), and the 1.4
+example carries a `did-not-compile` row with a `cost`. What remains of
+KB-4 is the ADAPTER half (time the pcrec exec on every outcome and
+record it on the refusal row) and the reporter half — their own plan
+row, which can now land without a schema change.**

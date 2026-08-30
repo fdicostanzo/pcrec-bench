@@ -12,9 +12,9 @@ the record's shape is `docs/design/record_schema.md`.
 | `adapters.py` | the `Adapter` interface, discovery, and **the DRIVER PROTOCOL** (in full, at the top of the file) |
 | `driverrun.py` | build/run/parse a driver; the resume-after-driver-death rule |
 | `record.py` | builds the record dict; every derived id comes FROM `schema/validate.py`'s own functions |
-| `reduce.py` | the SET-GRAIN reduction `quick` prints and the reporter ranks (R5, [B10]): `reduce_set_cell`, `reduce_match_cell`, `cells_from_record`, `giveup_code`; pinned by a hand-computed fixture in `tools/selfcheck.py` |
+| `reduce.py` | the SET-GRAIN reduction `quick` prints and the reporter ranks (R5, [B10]): `reduce_set_cell`, `reduce_match_cell`, `cells_from_record`, `giveup_code`; pinned by a hand-computed fixture in `tools/selfcheck.py`. Since [B20] also THE ONE derivation of the v1.4 `trial_agreement` block (`judge_trial_agreement`, gate_shape_v14.md §3.5) and its shared rendering (`agreement_line`) — the harness stamps with it, `quick` prints it, the reporter renders it, and `schema/validate.py` carries a deliberate SECOND implementation X32 compares it against |
 | `store.py` | the store path rule, never-clobber, validate-before-write, the index; the TIERS: `.canonical` marks the canonical store, which refuses a `tier: scratch` record on write and on index; `scratch_store()` is `$PCRECBENCH_SCRATCH_STORE` or `build/scratch-store/` |
-| `quiet.py` | the quiet-box instrument and its two thresholds (`docs/design/quiet_baseline.md`) — since BD7 (2026-08-30) the occupancy sample is `mpstat -P ALL 1 5` judged on its `Average:` block (`judge_mpstat`, pure; `split_mpstat`); `OCCUPANCY_SECONDS` |
+| `quiet.py` | the quiet-box instrument and its two thresholds (`docs/design/quiet_baseline.md`) — since BD7 (2026-08-30) the occupancy sample is `mpstat -P ALL 1 5` judged on its `Average:` block (`judge_mpstat`, pure; `split_mpstat`); `OCCUPANCY_SECONDS`. Since [B20] (schema v1.4) `judge_mpstat` also writes the TARGET core's tri-state `target_busy_pct`, `gate()` is the whole PRE-FLIGHT (load1, the non-target average, the target's own reading, the missing-row refusal — the `quiet` CLI judges through it too), `preflight_ok`/`after_notes` replace `occupancy_ok` (the after samples are PROVENANCE), and `cpu_times`/`timeline_item` read the per-group `/proc/stat` timeline |
 | `env.py` | the `environment` block; the machine registry |
 | `oracle_pcre2.py` | the libpcre2 ctypes binding, copied from pcrec (see its header) and extended: anchoring bits, `find_all`, an explicit give-up surface, and `pattern_info()` ([B11.1] — PCRE2's own first/REQUIRED code unit and min length, the analysis `bench/loglines` is built around) |
 | `periodic.py` | the `periodic` manifest column's DEFINITION (inbox I-10, [B17]): `smallest_period` / `periodic_field`, the smallest exact repeat period in [1, 4096] bytes or `no`. Moved here from `bench/email/` when `bench/loglines` became its second caller ([B11.1]) — the column means the same thing in every manifest because one function computes it |
@@ -544,6 +544,61 @@ and fails judged alone; a sustained 100 % core fails; the target core is
 excluded iff asked; a single-interval capture is judged as itself).
 Ruling and evidence: docs/dev/decisions.md BD7,
 docs/design/quiet_baseline.md (2026-08-30 section).
+
+## The harness and reporter, [B20] THE GATE'S SHAPE — schema v1.4 (2026-08-30)
+
+`docs/design/gate_shape_v14.md` (SPEC; Frank's ruling I-19: BD7 ratified
+as the gate, the after samples provenance, trial agreement decides),
+implemented here as one wave. What a reader of this package must know:
+
+- **The PRE-FLIGHT is the gate.** `run_cell` computes `pinning` FIRST and
+  passes `pinning["cpu"]` into `quiet.check` (one source for "the target
+  core", ruling R-2); `quiet.gate()` refuses (exit 3) on load1 before,
+  the busiest non-target 5-s average, the TARGET core's own reading, a
+  target row missing from the capture, or an unavailable sample. On a
+  quiet box `--force-unquiet` changes nothing (the flag is not a status).
+- **The AFTER samples are provenance.** Recorded exactly as before, X19/
+  X26 still enforced, never a verdict on the status; `quiet.after_notes`
+  renders each failure as one sentence ("after-sample (provenance, not a
+  verdict): ..."), into `note` on a measured record and `status_detail`
+  otherwise. The old "occupancy differed across the run" sentence is
+  retired.
+- **Trial agreement decides `measured` vs `inconclusive-spread`.**
+  `reduce.judge_trial_agreement(rows)` (rule `v1.4-group`: k=1.5,
+  d_min=2, share_c=3, N ≥ 5 and odd; the arithmetic is gate_shape_v14.md
+  §3.5, spelled a second time in `schema/validate.py` for X32) stamps
+  `setup.trial_agreement` on EVERY record (X33); the pure
+  `harness.derive_status(reasons, agreement, tier)` implements the §5
+  decision table — `inconclusive-load` takes precedence (both facts in
+  `status_detail`); a PINNED record without five odd trials is
+  `inconclusive-spread`; a SCRATCH one keeps the pre-flight's status
+  (E-2: `quick`'s 3 trials and the `--trials 1` smoke never write
+  `inconclusive-spread`).
+- **The sentences are ORDERED and the status one never elided.**
+  `record.join_notes(notes, prefix=, first=)`: `first` (the gate's
+  reasons or the §3.4 trial-agreement line) sits at offset 0 and cannot
+  be dropped; elision only ever removes calibration/adapter notes and
+  the marker names that class (ruling R-4). Today's `note`/
+  `status_detail` split is kept (R-5).
+- **Exit code 4** (contract 4): the written record is
+  `inconclusive-spread`; `scripts/run_window.sh` re-measures such a cell
+  ONCE (the first record stays); `pcrecbench index` prints a per-status
+  breakdown (`store.status_breakdown`).
+- **The per-group timeline** (§3.6, provenance only): on a pinned run
+  with a readable `/proc/stat`, one `occupancy.timeline[]` item per
+  (pattern, regime, form) group — the target core (our own driver), its
+  SMT sibling, the busiest other core over the group's passes. No rule
+  reads it; the reporter shows it under `--include-provenance`.
+
+The reporter's half is v9 — R1 (an `inconclusive-spread` bullet printed
+FROM THE BLOCK), R3 (the trial-agreement legend), R4 (`agreement:` per
+record line; `n/a (v1.x)` for a pre-1.4 record, never re-judged), R4′
+(the X13 rule marker: the `status rule:` legend line, and
+`measured@1.3`/`measured@1.4` status cells when one query mixes X13
+versions), R5 (`--include-provenance`), R5′ (the unconditional `after:
+load1 … / occ …%` clause on a record whose after sample failed) — see
+the module docstring's "[B20] SCHEMA v1.4 WAVE" section and
+`tests/CLAUDE.md`.
 
 ## The reporter ([B5], merged 2026-08-25)
 
