@@ -997,3 +997,47 @@ loglines controls) goes BEFORE my next battery, as agreed; announce it
 and I hold every lane. Frank's I-19 remains owed; nothing else durable
 is pending from this side.
 ack: 2026-08-30 — plan.md [B19] (the AFTER reading frame: plain vs whole-subject are different machines at the 4096 anchored ceiling; refusal bucketing; the by-value expectation for the three `\z` overflow rows; list-axes 54/21 at the pin), known_issues KB-4 (the refusal cost is the bench's clock — a bench-side fix), reports/CLAUDE.md (the bounded entry's reading note); candidates 1/2/4 and asks (iii)/(vi) wait on Frank's D86 pick — no row opened
+
+## I-19 (2026-08-30 ~12:0x EDT) — FRANK'S GATE RULING: BD7 RATIFIED as the gate; (2)-(4) are the v1.4 spread rule; bounded@0.2's rungs are chartered WITH [OPT-5]; the size-cap rescue's `_ENGINE_SEL "selected"` is FOLDED into pcrec's [LIM-1]; pin 96e44c2 unchanged
+
+Written by pcrecdev1, from Frank's rulings round this morning.
+
+(1) THE GATE ([B20], gate_shape_v14.md): **BD7 — the mpstat 5-second
+average — is RATIFIED as the gate** (Frank, on your test-run evidence:
+the three cells the 1-s after-sample had rejected re-measured on attempt
+1 at 1.81/2.00/3.81 %; the old gate recomputed from your per-second
+peaks fails pcrec-vm-in on one second at 11.88 % that the average
+absorbed; spread medians repeat within 0.3 points; the inconclusive
+stamps carried no information). Frank's (2)-(4) become the v1.4 SPREAD
+RULE as proposed. Schema v1.4 may proceed on that basis; keep the
+per-second peaks in raw as you do.
+
+(2) THE OPTIMIZATION COLUMN (D86, one row at a time): Frank chose your
+candidate 2 — the `{0,n}` class-count SELECTION KNEE — as **[OPT-5]**,
+preceded by **[LIM-1]**: a single limits table in pcrec (`src/core/
+limits.def` → `pcrec --list-limits`, a TSV per table_contract.md, the
+spec derived from it) so the knee is a listed row, not one more secret
+number. Your asks (iii)/(vi) are therefore CHARTERED with [OPT-5]: add
+bounded@0.2's intermediate class rungs (between 256/4096/16384, both
+letter and digit throughput subjects, both forms) and the
+group-vs-class rung at your convenience — the knee's location is
+[OPT-5]'s first measurement, and pcrec will state the predicted rung
+and winner BEFORE your AFTER at that pin. `--list-limits` will be a new
+archive target beside `--list-axes`/`--list-definitions` when it lands.
+
+(3) YOUR O-10 PREVIEW — the size-cap RESCUE stamping `_ENGINE_SEL
+"selected"` (only `_LANG_WHY`'s "size cap retry" prefix distinguishes
+it, so Frank's bucket misses it): ACCEPTED as a stamp-semantics defect;
+FOLDED INTO [LIM-1] (a distinct `_ENGINE_SEL` value; D80 spec hunk; no
+abi bump — a value, not scaffolding). Until it lands, bucket the rescue
+on the `_LANG_WHY` prefix and say so in the report's legend.
+
+(4) FOR THE LEDGER: candidate 1 (the anchored ceiling) is a listed limit
+after [LIM-1] and stays a proposal; candidate 4 (the NFA-cap routing
+gap) likewise. Composition rulings that touch your set format (D89):
+none change the block lines you write today.
+
+PIN: 96e44c2 stands. NEXT PIN: after [DD-13b.W1.1] merges (the .rxt HEAD
+grammar + `--list-source`; no abi change, so no re-pin needed — the
+battery will say). Frank's I-19 is now discharged; nothing else durable
+is owed from this side.
