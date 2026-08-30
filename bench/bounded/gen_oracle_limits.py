@@ -47,7 +47,7 @@ OUT = os.path.join(HERE, "oracle_limits.tsv")
 # passed; `cap` = 65536 is one past PCRE2's count ceiling so the count
 # ceiling itself is always reached and named.
 SKELETONS = (
-    ("cls-upto",      r"[a-z]{0,N}",                    "256,4096,16384,32768,65535", 16, 65536),
+    ("cls-upto",      r"[a-z]{0,N}",                    "64,128,256,512,1024,2048,4096,8192,16384,32768,65535", 16, 65536),
         ("cls-atleast",   r"[a-z]{N,}",                     "4096",                          256, 65536),
     ("cls-lazy",      r"[a-z]{0,N}?",                   "16384",                         256, 65536),
     ("grp-upto",      r"(?:a|[b-z]){0,N}",              "1024",                          16, 65536),
