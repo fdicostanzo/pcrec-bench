@@ -1,11 +1,11 @@
 # pcrec-bench report
 
-reporter: v6 (2026-08-28)
+reporter: v8 (2026-08-30)
 
 ## Query
 
 - filters: subbench=email-specimen, until=2026-08-25T07:00:00Z
-- record source: store/index.tsv (26 candidate file(s))
+- record source: store/index.tsv (68 candidate file(s))
 - records included: 5
     - `email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T062213Z` (store/records/email-specimen@0.1/libpcre2_10.46_interp-caps-simdna/email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T062213Z.jsonl)
     - `email-specimen@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260825T062944Z` (store/records/email-specimen@0.1/libpcre2_10.46_jit-caps-simdna/email-specimen@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260825T062944Z.jsonl)
