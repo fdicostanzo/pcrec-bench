@@ -440,6 +440,25 @@ label rather than restarting at R1 (docs/dev/plan.md row [B12], "[ADDED
   the gap this closes. `REPORTER_VERSION` bumps to `v7 (2026-08-29)`;
   every committed report under `reports/` regenerated -- see
   `reports/CLAUDE.md`.
+
+THE [B19] SCOPE ADDITION (2026-08-30) -- v8, precedent R10 above
+-------------------------------------------------------------------------
+
+* [B19]'s own landing (see its section, above: `sel=`/`lang=` clauses,
+  `emit bytes`/`code bytes` columns) kept `REPORTER_VERSION` at `v7`
+  because every committed report was byte-identical against it -- no
+  record in `store/` at the time carried the abi-12 pairs. The SCOPE
+  ADDITION the same section describes (the abi-11 `K=<unroll_k>/<why>`
+  and `caps=<max_emit_code_bytes>/<max_emit_bytes>` clauses on a VM
+  artifact's legend line, plus the legend note naming them) renders
+  DIFFERENTLY against records already in the store: bench/bounded's
+  first sample (`reports/2026-08-30-bounded-0.1-*`) and the two
+  36d5963 re-pin reports (`reports/2026-08-29-*-repin-36d5963.*`) all
+  carry `unroll_k`/`max_emit_bytes` pairs on their VM rows. Same rule
+  as R8/R10: a rendering change to EXISTING records re-bumps the
+  version and re-regenerates every committed report. `REPORTER_VERSION`
+  bumps to `v8 (2026-08-30)`; every committed report under `reports/`
+  regenerated -- see `reports/CLAUDE.md`.
 """
 
 from __future__ import annotations
@@ -458,7 +477,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v7 (2026-08-29)"
+REPORTER_VERSION = "v8 (2026-08-30)"
 
 _MISSING = object()
 

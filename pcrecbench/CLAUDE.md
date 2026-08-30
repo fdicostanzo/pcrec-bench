@@ -420,6 +420,18 @@ no version bump (still `v7`), every committed report byte-identical,
   tests): the firing case, the default K, a DFA control, an abi-8 control,
   the note's presence and absence.
 
+**v8 (2026-08-30).** The `sel=`/`lang=`/emit-bytes half above landed
+`REPORTER_VERSION` unchanged at `v7` -- no record in the store at the
+time carried the abi-12 pairs, so every committed report was
+byte-identical. The SCOPE ADDITION just above (the abi-11 `K=`/`caps=`
+legend clauses and their note) does not have that luxury: bench/bounded's
+first sample and both 36d5963 re-pin reports already carry
+`unroll_k`/`max_emit_bytes` pairs on their VM rows, so rendering those
+EXISTING records changes under this addition -- the same case R8/R10
+bump the version for. `REPORTER_VERSION` bumps to `v8 (2026-08-30)`
+(precedent: [B12] R10 below); every committed report under `reports/`
+regenerated with its own named query -- see `reports/CLAUDE.md`.
+
 ## The reporter, [B12] R10 (2026-08-29) -- a did-not-compile cell is not-ranked, not invisible
 
 M1 close item (docs/dev/plan.md row [B12], "[ADDED 2026-08-28]"; lane
