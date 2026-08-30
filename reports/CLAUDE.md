@@ -16,6 +16,29 @@ immediately after a regeneration — the reporter is deterministic, so a
 non-empty diff after a bare rerun (no query change, no reporter change)
 means either the store changed or the reporter regressed determinism.
 
+**[B20] (2026-08-30) regenerated every report below against reporter
+`v9 (2026-08-30)` — the schema v1.4 wave** (docs/design/gate_shape_v14.md
+§6; the regeneration is forced by R3/R4/R4′/R5′ changing the rendering of
+EXISTING records, not by the schema bump itself). Same queries as before,
+byte for byte (each file's own header query, all 13 triplets re-rendered
+into scratch first, the diff CLASSIFIED per file, then copied in). The
+diff on every file is exactly: the version line (`v8` → `v9`); two new
+legend lines (the `trial-agreement policy` bullet and the `status rule:`
+line — every committed report reads `v1.1-1.3 X13 (both samples quiet)
+on N record(s)`, since no v1.4 record exists in `store/` yet); each
+header record line gaining `— agreement: n/a (v1.x)` (the record's own
+schema version; the reporter never invents a block for a pre-1.4 record)
+and, on the records whose AFTER sample failed under the old gate, the
+unconditional `; after: load1 … / occ …%` clause (R5′ — the demoted
+instrument kept visible); and, in the `.tsv` files, the header comment's
+three new fields plus one `record` row per included record. NO number,
+ranking, verdict or legend fact moved — 39 files, zero unexplained
+lines under the classifier (`test_v13_record_still_renders` holds the
+same rule over the fixture store). The first report with a real
+`agreement: agree (… 5 trials)` line, a `measured@1.3`/`measured@1.4`
+marker or an `inconclusive-spread` bullet will be the first v1.4
+window's.
+
 **[B19] scope addition (2026-08-30) regenerated every report below
 against reporter `v8 (2026-08-30)`.** Same queries as before, with three
 of them CHANGED (below): the abi-11 `K=<unroll_k>/<why>` and
