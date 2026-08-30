@@ -1129,10 +1129,14 @@ def check_run_smoke():
     print("-- a full `run` of one cell into a scratch store --")
     scratch = os.path.join(ROOT, "build", "selfcheck-store")
     shutil.rmtree(scratch, ignore_errors=True)
+    # `--tier scratch` since v1.4 (gate_shape_v14.md 3.4, ruling E-2): a
+    # PINNED `--trials 1` run is `inconclusive-spread` by the rule's own
+    # precondition (exit 4 -- `check_exit_code_4` is where THAT is proved);
+    # the smoke is a scratch record, whose status is the pre-flight's.
     proc = run([sys.executable, "-m", "pcrecbench", "run",
                 "--subbench", "email", "--testee", "pcre2-interp",
                 "--trials", "1", "--iters", "1", "--regimes", "match",
-                "--force-unquiet", "--store", scratch,
+                "--force-unquiet", "--store", scratch, "--tier", "scratch",
                 "--machine-id", "selfcheck-box", "--synthetic",
                 "--quiet-output",
                 "--note", "make check smoke -- NOT a measurement"],
@@ -2990,6 +2994,715 @@ def check_occupancy_average():
         bad("occupancy: single interval", repr(s5)[:200])
 
 
+# ------------------------------- 27 the gate's shape, schema v1.4 ([B20])
+#
+# docs/design/gate_shape_v14.md 8, each check with the CONTROL the spec
+# names. No sleep injection in the production drivers (ruling R-10): the
+# end-to-end assertions go through hand-assembled records and `store.write`,
+# which VALIDATES -- so X31/X32/X33 fire on the harness's own stamp, which
+# is the reason `check_spread_status_stamped` is end-to-end at all.
+
+def _capture_without_cpu(text, cpu):
+    """A synthetic capture with every row of `cpu` removed (the target row
+    ABSENT: an offline core, a restricted cpuset, a row the parser skipped)."""
+    return "\n".join(ln for ln in text.splitlines()
+                     if not re.match(r"^\S+\s+%d\s" % cpu, ln)) + "\n"
+
+
+def check_target_core_preflight():
+    """gate_shape_v14.md 1 (c)/(c'), ruling R-2: the pre-flight judges the
+    TARGET core's own reading and refuses a capture with no target row.
+    Three synthetic captures with exclude_cpu = 11 (the fixture shares no
+    source with judge_mpstat); the CONTROL is twofold -- the non-target
+    verdict is `pass` in all three (the refusals come from the NEW clauses,
+    not X26's), and the same captures with exclude_cpu = None carry no
+    field and refuse nothing (the clause is inert when nothing is pinned)."""
+    print("-- the target-core pre-flight (v1.4) --")
+    from pcrecbench import quiet
+    load = {"load1": 0.5}
+    busy = _mpstat_capture([{11: 60.0}] * 5)
+    idle = _mpstat_capture([{11: 4.0}] * 5)
+    absent = _capture_without_cpu(_mpstat_capture([{11: 4.0}] * 5), 11)
+    s_busy = quiet.judge_mpstat(busy, exclude_cpu=11, siblings=[5])
+    s_idle = quiet.judge_mpstat(idle, exclude_cpu=11, siblings=[5])
+    s_abs = quiet.judge_mpstat(absent, exclude_cpu=11, siblings=[5])
+    if (s_busy["target_busy_pct"] == 60.0 and s_busy["verdict"] == "pass"
+            and s_idle["target_busy_pct"] == 4.0 and s_idle["verdict"] == "pass"
+            and s_abs["target_busy_pct"] is None and s_abs["verdict"] == "pass"):
+        ok("target: the tri-state field (60 / 4 / None), verdict pass in all three",
+           "the non-target judgement is untouched (X26)")
+    else:
+        bad("target: tri-state field", "%r %r %r" % (
+            s_busy.get("target_busy_pct"), s_idle.get("target_busy_pct"),
+            s_abs.get("target_busy_pct", "ABSENT")))
+        return
+    r_busy = quiet.gate(load, s_busy, force=True)
+    r_idle = quiet.gate(load, s_idle, force=True)
+    r_abs = quiet.gate(load, s_abs, force=True)
+    if (len(r_busy) == 1 and "TARGET core cpu11 reads 60.00% busy" in r_busy[0]
+            and r_idle == []
+            and len(r_abs) == 1 and "target core cpu11 does not appear" in r_abs[0]):
+        ok("target: gate() refuses the busy target and the missing row BY NAME",
+           "busy -> '%s...'; idle -> no reason; absent -> '%s...'"
+           % (r_busy[0][:40], r_abs[0][:44]))
+    else:
+        bad("target: gate() clauses", "%r / %r / %r" % (r_busy, r_idle, r_abs))
+    try:
+        quiet.gate(load, s_busy, force=False)
+        bad("target: a busy target is a REFUSAL without --force-unquiet")
+    except quiet.QuietRefusal as e:
+        ok("target: a busy target is a REFUSAL without --force-unquiet",
+           "QuietRefusal (exit 3): %s" % str(e).splitlines()[1].strip()[:60])
+    # the CONTROL: nothing pinned => no field, and the TARGET clauses inert
+    # on all three (the 60 % capture is then refused by the NON-target
+    # clause, as it should be: cpu 11 is just another core when unpinned)
+    ctl = [quiet.judge_mpstat(t, exclude_cpu=None) for t in (busy, idle, absent)]
+    reasons = [quiet.gate(load, c, force=True) for c in ctl]
+    if all("target_busy_pct" not in c for c in ctl) \
+            and not any("TARGET core" in r or "does not appear" in r
+                        for rs in reasons for r in rs) \
+            and reasons[1] == [] and reasons[2] == [] \
+            and reasons[0] and reasons[0][0].startswith("occupancy: busiest non-target core 60.00%"):
+        ok("target: CONTROL -- unpinned, the field is absent and the target clauses inert",
+           "the 60 % capture is refused by the NON-target clause instead")
+    else:
+        bad("target: control", "%r %r" % ([c.get("target_busy_pct", "ABSENT") for c in ctl], reasons))
+    # and the `unavailable` early return carries null when pinned (H1)
+    u = quiet.judge_mpstat("garbage with no rows", exclude_cpu=11, siblings=[5])
+    if u["verdict"] == "unavailable" and u.get("target_busy_pct", "ABSENT") is None \
+            and quiet.gate(load, u, force=True) == [
+                "occupancy: %s is unavailable -- recorded, not skipped "
+                "(requirements 9(b))" % " ".join(quiet.MPSTAT_CMD)]:
+        ok("target: `unavailable` carries target null and only the unavailable reason")
+    else:
+        bad("target: unavailable early return", repr(u)[:200])
+
+
+def check_quiet_cli_agrees_with_gate():
+    """Ruling R-7: `pcrecbench quiet` reduces each sample through the SAME
+    `gate()` a run's pre-flight uses. One synthetic sample (load1 over the
+    limit AND the target busy): the CLI's printed reasons are gate()'s
+    list, verbatim, and it exits 3; CONTROL: a sample that passes both
+    prints no reason and exits 0."""
+    print("-- the quiet CLI judges through gate() (v1.4) --")
+    import io
+    import contextlib
+    from pcrecbench import quiet, __main__ as cli
+
+    class Args:
+        samples = 1
+        pin = 11
+
+    def run_cli(load1, capture):
+        sample = quiet.judge_mpstat(capture, exclude_cpu=11, siblings=[5])
+        load = {"loadavg_raw": "%.2f 0.1 0.1 1/1 1" % load1, "sampled_at": "x",
+                "load1": load1, "load5": 0.1, "load15": 0.1}
+        saved = (quiet.check, quiet.pinning)
+        quiet.check = lambda exclude_cpu=None, **kw: (load, sample)
+        quiet.pinning = lambda cpu=None: {"mode": "taskset", "cpu": 11}
+        buf = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(buf):
+                rc = cli.cmd_quiet(Args())
+        finally:
+            quiet.check, quiet.pinning = saved
+        printed = [ln.strip()[2:] for ln in buf.getvalue().splitlines()
+                   if ln.strip().startswith("- ")]
+        return rc, printed, quiet.gate(load, sample, force=True)
+
+    rc, printed, want = run_cli(3.4, _mpstat_capture([{11: 60.0}] * 5))
+    if rc == 3 and printed == want and len(want) == 2 \
+            and want[0].startswith("load1 3.40 exceeds"):
+        ok("quiet CLI: prints exactly gate()'s reasons (load1 + the target), exit 3",
+           "%d reason(s)" % len(want))
+    else:
+        bad("quiet CLI vs gate()", "rc %s printed %r want %r" % (rc, printed, want))
+    rc2, printed2, want2 = run_cli(0.4, _mpstat_capture([{11: 4.0}] * 5))
+    if rc2 == 0 and printed2 == [] and want2 == []:
+        ok("quiet CLI: CONTROL -- a passing sample prints no reason, exit 0")
+    else:
+        bad("quiet CLI control", "rc %s printed %r want %r" % (rc2, printed2, want2))
+
+
+def _example_14():
+    """The generated 1.4 good example (schema/examples), as (setup, rows)."""
+    import glob as _glob
+    import json as _json
+    f = [x for x in _glob.glob(os.path.join(ROOT, "schema", "examples", "*.jsonl"))
+         if "20260830T120000Z" in x][0]
+    lines = [ln for ln in open(f, encoding="utf-8").read().split("\n") if ln.strip()]
+    return _json.loads(lines[0]), [_json.loads(ln) for ln in lines[1:]]
+
+
+def _write_scratch(setup, rows, name):
+    """Write a hand-assembled record through store.write into a scratch
+    store (VALIDATING), -> (path, setup as written) or raises StoreError."""
+    from pcrecbench import store as _store
+    root = os.path.join(ROOT, "build", "selfcheck-%s-store" % name)
+    shutil.rmtree(root, ignore_errors=True)
+    path, rid = _store.write(root, setup, rows)
+    from pcrecbench import reduce as _rd
+    return path, _rd.read_record(path)[0]
+
+
+def check_after_sample_is_provenance():
+    """gate_shape_v14.md 2: a FAILED after sample never disqualifies a v1.4
+    record. The 1.4 example with its after occupancy at 40 % (pre-flight
+    passed, rows agree, 5 trials) stamped by `derive_status` and joined by
+    `join_notes` comes back `measured`, its `note` carrying the provenance
+    sentence SECOND (after the operator's prefix), `occupancy.after.verdict
+    = fail` (X26 holds), and it VALIDATES at 1.4 through store.write.
+    CONTROL: the same record re-stamped 1.3 is REJECTED -- by X13 (the v1.1
+    text reads the after sample) and by X33 (the block on a 1.3 record)."""
+    print("-- the after sample is provenance (v1.4) --")
+    import json as _json
+    from pcrecbench import harness as _h, quiet, record as _rec, store as _store
+    setup, rows = _example_14()
+    occ = setup["environment"]["occupancy"]
+    occ["after"]["max_busy_pct"] = 40.0
+    occ["after"]["verdict"] = "fail"
+    status, first = _h.derive_status([], setup["trial_agreement"], "pinned")
+    after = quiet.after_notes(occ, setup["environment"]["load"])
+    setup["status"] = status
+    setup.pop("status_detail", None)
+    setup["note"] = _rec.join_notes(after + ["calibration for (x) = 1 iters: capped"],
+                                    prefix="quiet window run", first=first)
+    try:
+        path, written = _write_scratch(setup, rows, "afterprov")
+    except _store.StoreError as e:
+        bad("after-sample: the record validates at 1.4", str(e)[-300:])
+        return
+    parts = written["note"].split(" | ", 1)[1].split("; ")
+    if (written["status"] == "measured" and parts[0].startswith(
+            "after-sample (provenance, not a verdict): occupancy after the run 40.00%")
+            and written["note"].startswith("quiet window run | ")
+            and written["environment"]["occupancy"]["after"]["verdict"] == "fail"
+            and len(after) == 2):
+        ok("after-sample: 40 % after -> measured; the sentence SECOND in note; X26 holds",
+           "note = prefix | %s..." % parts[0][:48])
+    else:
+        bad("after-sample as provenance", "status %s note %r"
+            % (written["status"], written.get("note", "")[:200]))
+    # the CONTROL: the same record stamped 1.3 is rejected by X13 AND X33
+    ctl = dict(written)
+    ctl["schema_version"] = "1.3"
+    root = os.path.join(ROOT, "build", "selfcheck-afterprov-ctl")
+    shutil.rmtree(root, ignore_errors=True)
+    try:
+        _store.write(root, ctl, rows)
+        bad("after-sample: CONTROL -- the same record at 1.3 must be REJECTED")
+    except _store.StoreError as e:
+        msg = str(e)
+        if "[X13]" in msg and "[X33]" in msg:
+            ok("after-sample: CONTROL -- re-stamped 1.3 it is rejected by X13 and X33",
+               "one sabotage, two versions, two verdicts")
+        else:
+            bad("after-sample control", msg[-300:])
+    shutil.rmtree(root, ignore_errors=True)
+
+
+def _ta_row(pid, sid, regime, trial, seq, ns=None, outcome="matched-as-expected",
+            iterations=1000):
+    row = {"kind": "match", "pattern_id": pid, "subject_id": sid, "regime": regime,
+           "trial": trial, "seq": seq, "match_outcome": outcome,
+           "consumed_length": None}
+    if regime == "large-subject-throughput":
+        row["truncation_check"] = "verified"
+    if outcome == "matched-as-expected":
+        row["timing"] = {"elapsed_ns": int(round(ns * iterations)),
+                         "iterations": iterations, "bytes_processed": 0}
+        if iterations > 1:
+            row["calibration"] = {"target_ns": 1000, "probe_iterations": 1,
+                                  "probe_elapsed_ns": 100000}
+    elif outcome == "timed-out":
+        row["diagnostic"] = "the per-subject alarm fired (fixture)"
+    return row
+
+
+def _ta_fixture(trials=5):
+    """gate_shape_v14.md 8's hand-computed fixture: group A of 4 rows (clean;
+    one 3x trial; two 1.6x trials; one 0.6x trial) => d = 2 of n = 4,
+    DISAGREES under (2, 3); group B of 5 rows, one disagreeing => d = 1;
+    group C of 3 rows at iterations = 1 => unjudged (few_timed_trials);
+    group D: one row EVERY trial timed-out (all_timed_out), one MIXED (two
+    timed-out, three timed) => judged and disagreeing, d = 1 of n = 1.
+    Plus the two BOUNDARY rows in group B: a trial at exactly k*m (not
+    slow) and a minimum at exactly m/k (not fast)."""
+    S = "short-subject-search"
+    M = "match-compliance"
+    spec = [
+        ("pa", "a1", S, [100, 101, 99, 100, 102]),
+        ("pa", "a2", S, [100, 300, 100, 100, 100]),
+        ("pa", "a3", S, [100, 160, 100, 160, 100]),
+        ("pa", "a4", S, [100, 100, 60, 100, 100]),
+        ("pb", "b1", S, [100, 100, 100, 100, 100]),
+        ("pb", "b2", S, [150, 150, 150, 150, 225]),      # 225 == 1.5 * 150: NOT slow
+        ("pb", "b3", S, [150, 150, 150, 100, 150]),      # 100 == 150 / 1.5: NOT fast
+        ("pb", "b4", S, [100, 101, 100, 99, 100]),
+        ("pb", "b5", S, [100, 160, 100, 160, 100]),
+    ]
+    rows, seq = [], 0
+    for pid, sid, reg, vals in spec:
+        for t in range(1, trials + 1):
+            seq += 1
+            rows.append(_ta_row(pid, sid, reg, t, seq, vals[t - 1]))
+    for sid in ("c1", "c2", "c3"):
+        for t in range(1, trials + 1):
+            seq += 1
+            rows.append(_ta_row("pc", sid, M, t, seq, 100, iterations=1))
+    for t in range(1, trials + 1):
+        seq += 1
+        rows.append(_ta_row("pd", "d1", M, t, seq, outcome="timed-out"))
+    for t in range(1, trials + 1):
+        seq += 1
+        if t in (2, 4):
+            rows.append(_ta_row("pd", "d2", M, t, seq, outcome="timed-out"))
+        else:
+            rows.append(_ta_row("pd", "d2", M, t, seq, 100))
+    return rows
+
+
+def _assemble(rows, base=None, trials_hint=None):
+    """A VALID setup for hand-built rows: the 1.4 example's setup with the
+    rosters replaced and one `plain` compile row per pattern prepended."""
+    import json as _json
+    setup, _ex_rows = _example_14() if base is None else base
+    setup = _json.loads(_json.dumps(setup))
+    pats = sorted({r["pattern_id"] for r in rows})
+    subs = sorted({r["subject_id"] for r in rows if r["kind"] == "match"})
+    setup["patterns"] = [{"pattern_id": p, "canonical_sha256": "0" * 64,
+                          "hazard_class": "none", "size_class": "tiny", "variant": None}
+                         for p in pats]
+    setup["subjects"] = [{"subject_id": s_, "role": "single", "n_subjects": 1,
+                          "bytes_offered": 64, "sha256": "0" * 64} for s_ in subs]
+    setup["subbench"]["regimes"] = ["match-compliance", "short-subject-search",
+                                    "large-subject-throughput"]
+    compile_rows = [{"kind": "compile", "pattern_id": p, "trial": 1,
+                     "compile_outcome": "compiled", "cost_class": "compiled-aot",
+                     "cost": {"total_ns": 1000}} for p in pats]
+    all_rows = compile_rows + [dict(r) for r in rows]
+    for i, r in enumerate(all_rows, start=1):
+        r["seq"] = i
+    setup["environment"]["occupancy"].pop("timeline", None)
+    setup["environment"]["occupancy"].pop("timeline_tool", None)
+    setup.pop("status_detail", None)
+    setup.pop("note", None)
+    return setup, all_rows
+
+
+def check_trial_agreement_fixture():
+    """gate_shape_v14.md 8: `reduce.judge_trial_agreement` on the
+    hand-computed fixture gives the stated integers; `share_c = 1` flips
+    it to `agree`; truncated to 3 trials it is `n/a-trials` with every key
+    unjudged under `na_trials`. CONTROL: `schema/validate.py`'s X32
+    recomputation (its OWN implementation, no shared source) on the same
+    rows gives the same integers and the same worst group -- called
+    directly AND through store.write, where X32 fires on the block."""
+    print("-- the trial-agreement fixture: two implementations, one answer --")
+    import importlib.util
+    from pcrecbench import reduce as _rd, store as _store
+    rows = _ta_fixture()
+    want = {"trials": 5, "groups_judged": 3, "groups_disagreeing": 1,
+            "rows_judged": 10, "rows_disagreeing": 4, "rows_unjudged": 4,
+            "rows_unjudged_reasons": {"few_timed_trials": 3, "all_timed_out": 1,
+                                      "na_trials": 0},
+            "worst_group": {"pattern_id": "pa", "regime": "short-subject-search",
+                            "form": "plain", "d": 2, "n": 4}}
+    got = _rd.judge_trial_agreement(rows)
+    if all(got[k] == v for k, v in want.items()) and got["verdict"] == "disagree":
+        ok("agreement: the fixture's integers (3 groups, 1 disagrees; 10/4/4 rows; A d=2 n=4)",
+           "verdict disagree; boundary rows at exactly k*m and m/k are not disagreements")
+    else:
+        bad("agreement: fixture", repr({k: got.get(k) for k in list(want) + ["verdict"]}))
+        return
+    g1 = _rd.judge_trial_agreement(rows, share_c=1)
+    if g1["verdict"] == "agree" and g1["groups_disagreeing"] == 0 \
+            and g1["rows_disagreeing"] == 4:
+        ok("agreement: share_c = 1 flips the verdict to agree (the same 4 rows)")
+    else:
+        bad("agreement: share_c=1", repr(g1))
+    g3 = _rd.judge_trial_agreement(_ta_fixture(trials=3))
+    if g3["verdict"] == "n/a-trials" and g3["rows_unjudged"] == 14 \
+            and g3["rows_unjudged_reasons"]["na_trials"] == 14 \
+            and g3["rows_judged"] == g3["groups_judged"] == 0 and g3["worst_group"] is None:
+        ok("agreement: 3 trials -> n/a-trials, 14 keys unjudged under na_trials")
+    else:
+        bad("agreement: 3 trials", repr(g3))
+    # the CONTROL: validate.py's second implementation, directly
+    spec = importlib.util.spec_from_file_location(
+        "pb_validate", os.path.join(ROOT, "schema", "validate.py"))
+    V = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(V)
+    v = V.judge_trial_agreement(rows, 1.5, 2, 3)
+    same = all(v[k] == got[k] for k in want)
+    v1 = V.judge_trial_agreement(rows, 1.5, 2, 1)
+    if same and v1["groups_disagreeing"] == 0 and V.expected_verdict(got) == "disagree":
+        ok("agreement: CONTROL -- validate.py's own implementation gives the same integers",
+           "no shared source; counts and worst_group key equal")
+    else:
+        bad("agreement: validate.py disagrees", "%r vs %r" % (v, {k: got[k] for k in want}))
+    # ... and through store.write, where X32 fires on the stamped block
+    setup, all_rows = _assemble(rows)
+    setup["trial_agreement"] = _rd.judge_trial_agreement(all_rows)
+    setup["status"] = "inconclusive-spread"
+    setup["status_detail"] = "fixture"
+    try:
+        _write_scratch(setup, all_rows, "tafix")
+        ok("agreement: the fixture written as a record VALIDATES (X31/X32/X33 on the stamp)")
+    except _store.StoreError as e:
+        bad("agreement: fixture record rejected", str(e)[-400:])
+    setup["trial_agreement"]["rows_disagreeing"] = 3            # the stamp sabotaged
+    try:
+        _write_scratch(setup, all_rows, "tafix2")
+        bad("agreement: a sabotaged stamp must be REJECTED by X32")
+    except _store.StoreError as e:
+        if "[X32]" in str(e):
+            ok("agreement: a stamp of 3 beside rows that say 4 is rejected by X32")
+        else:
+            bad("agreement: sabotage rejected for the wrong reason", str(e)[-200:])
+
+
+def check_spread_status_stamped():
+    """Ruling R-10: `harness.derive_status` on all five rows of the 5
+    decision table returns the stated status and sentence order; then a
+    hand-assembled record whose rows make one group disagree, stamped
+    through the same function and written through store.write (which
+    VALIDATES), comes back `inconclusive-spread` with the block's numbers
+    and the 3.4 line at offset 0 of `status_detail`. CONTROL: the same
+    rows with ONE slow trial per row instead of two => `measured` -- the
+    rule tolerates one, and the check shows it does."""
+    print("-- the status decision table, and inconclusive-spread stamped --")
+    from pcrecbench import harness as _h, reduce as _rd, store as _store, record as _rec
+    agree = {"verdict": "agree", "rule": "v1.4-group", "groups_judged": 2}
+    disagree = {"verdict": "disagree", "rule": "v1.4-group", "k": 1.5, "d_min": 2,
+                "share_c": 3, "trials": 5, "groups_disagreeing": 1, "groups_judged": 2,
+                "rows_disagreeing": 2, "rows_judged": 4, "rows_unjudged": 0,
+                "worst_group": {"pattern_id": "pa", "regime": "short-subject-search",
+                                "form": "plain", "d": 2, "n": 2}}
+    na = {"verdict": "n/a-trials", "rule": "v1.4-group", "trials": 3, "rows_unjudged": 9}
+    R = ["load1 3.00 exceeds the limit 2.00"]
+    table = [
+        ((R, disagree, "pinned"), ("inconclusive-load", [R[0], "trial agreement (v1.4-group, k=1.5"])),
+        ((R, agree, "scratch"), ("inconclusive-load", [R[0]])),
+        (([], agree, "pinned"), ("measured", [])),
+        (([], disagree, "scratch"), ("inconclusive-spread", ["trial agreement (v1.4-group, k=1.5"])),
+        (([], na, "pinned"), ("inconclusive-spread", ["trial agreement (v1.4-group): n/a-trials (3 trials"])),
+        (([], na, "scratch"), ("measured", ["trial agreement (v1.4-group): n/a-trials (3 trials"])),
+    ]
+    fails = []
+    for (r, v, tier), (w_status, w_prefixes) in table:
+        st, sent = _h.derive_status(r, v, tier)
+        if st != w_status or len(sent) != len(w_prefixes) or \
+                not all(x.startswith(pfx) for x, pfx in zip(sent, w_prefixes)):
+            fails.append("(%r, %s, %s) -> %s %r" % (r, v["verdict"], tier, st, sent))
+    if not fails:
+        ok("status: derive_status matches the decision table on all six cases",
+           "R x {agree, disagree, n/a-trials} x tier; the 3.4 line where the table says")
+    else:
+        bad("status: decision table", "; ".join(fails)[:300])
+    # end to end: two rows with two slow trials each => the group disagrees
+    def rows_with(slow_trials):
+        rows, seq = [], 0
+        for sid in ("s1", "s2"):
+            for t in range(1, 6):
+                seq += 1
+                v = 200 if t in slow_trials else 100
+                rows.append(_ta_row("pa", sid, "short-subject-search", t, seq, v))
+        return rows
+    for label, slow, want_status in (("two slow trials per row", (2, 4), "inconclusive-spread"),
+                                     ("CONTROL: one slow trial per row", (3,), "measured")):
+        setup, all_rows = _assemble(rows_with(slow))
+        block = _rd.judge_trial_agreement(all_rows)
+        status, first = _h.derive_status([], block, "pinned")
+        setup["status"] = status
+        if status != "measured":
+            setup["status_detail"] = _rec.join_notes([], first=first)
+        setup["trial_agreement"] = block
+        try:
+            path, written = _write_scratch(setup, all_rows, "spread")
+        except _store.StoreError as e:
+            bad("status: %s" % label, str(e)[-300:])
+            continue
+        sd = written.get("status_detail", "")
+        if written["status"] == want_status and (
+                want_status == "measured" or (
+                    sd.startswith("trial agreement (v1.4-group, k=1.5, d_min=2, share_c=3, "
+                                  "trials=5): 1 of 1 groups disagree; 2 of 2 rows disagree, "
+                                  "0 unjudged; worst group pa / short-subject-search / plain: "
+                                  "d=2 of n=2")
+                    and written["trial_agreement"]["verdict"] == "disagree")):
+            ok("status: %s -> %s, written and validated" % (label, want_status),
+               "status_detail[0:24] = %r" % sd[:24] if sd else "no status_detail")
+        else:
+            bad("status: %s" % label, "%s %r" % (written["status"], sd[:160]))
+
+
+def check_status_sentence_never_elided():
+    """Ruling R-4: a record whose calibration sentences exceed the free_text
+    cap (bench/bounded's 72-sentence shape) still has its status-deciding
+    sentence at offset 0 and the elision marker names the class dropped;
+    CONTROL: the same sentences joined WITHOUT `first=` -- the status
+    sentence appended last, as before v1.4 -- show it elided."""
+    print("-- the status sentence is never elided (v1.4) --")
+    from pcrecbench import record as rec
+    status = ("trial agreement (v1.4-group, k=1.5, d_min=2, share_c=3, trials=5): "
+              "1 of 72 groups disagree; 23 of 1536 rows disagree, 0 unjudged; worst "
+              "group cls-upto-32768 / match-compliance / plain: d=23 of n=30")
+    cal = [("calibration for (cls-upto-%d, plain, search_short) = 471032 iters: the "
+            "median subject would need iters=900000 for 50 ms, capped to 471032 by "
+            "the 20 s per-trial budget") % i for i in range(72)]
+    joined = rec.join_notes(cal, first=[status])
+    if joined.startswith(status) and len(joined) <= rec.FREE_TEXT_MAX \
+            and "calibration/adapter note(s) elided" in joined:
+        ok("elision: the status sentence is at offset 0; the marker names the class",
+           "%d bytes, %d calibration sentence(s) kept" % (len(joined), joined.count("calibration for")))
+    else:
+        bad("elision: status sentence", joined[:120] + " ... " + joined[-120:])
+    ctl = rec.join_notes(cal + [status])
+    if status not in ctl and len(ctl) <= rec.FREE_TEXT_MAX:
+        ok("elision: CONTROL -- appended last without first=, the status sentence is elided")
+    else:
+        bad("elision: control", "the status sentence survived without first= (%d bytes)" % len(ctl))
+
+
+def check_smoke_block_na_trials():
+    """gate_shape_v14.md 8: the `--trials 1` smoke record (check_run_smoke's,
+    scratch tier) carries the block with `n/a-trials`, `trials: 1`, every
+    count 0, `rows_unjudged` = its row keys, and validated (it was written);
+    its status is the PRE-FLIGHT's on the scratch tier (5 row 5: never
+    `inconclusive-spread`). CONTROLS: `x33-trial-agreement-missing` is
+    rejected by X33; the same record re-tiered `pinned` through
+    `derive_status` is `inconclusive-spread` (row 4)."""
+    print("-- the smoke record carries the block (n/a-trials) --")
+    import glob as _glob
+    from pcrecbench import harness as _h, reduce as _rd
+    files = _glob.glob(os.path.join(ROOT, "build", "selfcheck-store", "records",
+                                    "*", "*", "*.jsonl"))
+    if not files:
+        bad("smoke block: no smoke record found (check_run_smoke did not run?)")
+        return
+    setup, rows = _rd.read_record(files[0])
+    ta = setup.get("trial_agreement") or {}
+    keys = {(r["pattern_id"], r["regime"], r.get("form", "plain"), r["subject_id"])
+            for r in rows if r["kind"] == "match"}
+    if (setup["schema_version"] == "1.4" and setup.get("tier") == "scratch"
+            and ta.get("verdict") == "n/a-trials" and ta.get("trials") == 1
+            and ta.get("rows_unjudged") == len(keys)
+            and ta["rows_unjudged_reasons"]["na_trials"] == len(keys)
+            and all(ta.get(k) == 0 for k in ("groups_judged", "groups_disagreeing",
+                                             "rows_judged", "rows_disagreeing"))
+            and ta.get("worst_group") is None
+            and setup["status"] != "inconclusive-spread"):
+        ok("smoke block: n/a-trials, trials 1, %d keys unjudged, status %s (scratch)"
+           % (len(keys), setup["status"]))
+    else:
+        bad("smoke block", "%s %r" % (setup.get("status"), ta))
+    st, _s = _h.derive_status([], ta, "scratch")
+    st_p, sent = _h.derive_status([], ta, "pinned")
+    if st == "measured" and st_p == "inconclusive-spread" and sent \
+            and sent[0].startswith("trial agreement (v1.4-group): n/a-trials (1 trials"):
+        ok("smoke block: CONTROL -- scratch keeps the pre-flight's status; pinned "
+           "is inconclusive-spread", "derive_status rows 5 and 4")
+    else:
+        bad("smoke block: re-tiered control", "%s / %s %r" % (st, st_p, sent))
+    proc = _validate(["--expect-reject", "--expect-rule", "X33",
+                      os.path.join(ROOT, "schema", "examples", "bad",
+                                   "x33-trial-agreement-missing.jsonl")])
+    if proc.returncode == 0:
+        ok("smoke block: CONTROL -- a 1.4 record with no block is rejected by X33")
+    else:
+        bad("smoke block: X33 control", (proc.stderr or proc.stdout)[-200:])
+
+
+def check_scratch_carries_block():
+    """gate_shape_v14.md 8: `quick --trials 5` writes a scratch record WITH
+    the block and prints the agreement line FROM it; CONTROL: `quick` at its
+    default 3 trials writes the block with `n/a-trials` and prints
+    `n/a (3 trials -- the rule needs 5, odd; ...)`. The verdict at 5 trials
+    is `agree` on a quiet box; this check asserts the block is CARRIED and
+    PRINTED (a disagreeing verdict on a busy box is reported, not failed:
+    the box is not what this check is about)."""
+    print("-- `quick` carries the block and prints it (v1.4) --")
+    import glob as _glob
+    from pcrecbench import reduce as _rd
+    for trials, label in ((5, "--trials 5"), (None, "CONTROL: the default 3 trials")):
+        scratch = os.path.join(ROOT, "build", "selfcheck-quick14-store")
+        shutil.rmtree(scratch, ignore_errors=True)
+        argv = ["gnutimeout", "300", sys.executable, "-m", "pcrecbench", "quick",
+                "--subbench", "email", "--pattern", "orig", "--regime", "search",
+                "--testee", "pcre2-jit", "--subjects", "5", "--store", scratch,
+                "--synthetic", "--quiet-output"]
+        if trials:
+            argv += ["--trials", str(trials)]
+        proc = run(argv, cwd=ROOT, timeout=330)
+        files = _glob.glob(os.path.join(scratch, "records", "*", "*", "*.jsonl"))
+        if proc.returncode != 0 or len(files) != 1:
+            bad("quick block: %s" % label, (proc.stderr or proc.stdout)[-200:])
+            continue
+        setup, _rows = _rd.read_record(files[0])
+        ta = setup.get("trial_agreement") or {}
+        line = next((ln for ln in proc.stdout.splitlines()
+                     if ln.startswith("trial agreement:")), "")
+        if trials:
+            if ta.get("verdict") in ("agree", "disagree") and ta.get("trials") == 5 \
+                    and _rd.agreement_line(ta) in line:
+                ok("quick block: --trials 5 carries the block (%s) and prints it"
+                   % ta["verdict"], line[16:96])
+            else:
+                bad("quick block: --trials 5", "%r / %r" % (ta, line))
+        else:
+            if ta.get("verdict") == "n/a-trials" and ta.get("trials") == 3 \
+                    and "n/a (3 trials -- the rule needs 5, odd; pass --trials 5 to judge)" in line:
+                ok("quick block: CONTROL -- 3 trials -> n/a-trials, printed as such")
+            else:
+                bad("quick block: 3-trial control", "%r / %r" % (ta, line))
+        shutil.rmtree(scratch, ignore_errors=True)
+
+
+def check_exit_code_4():
+    """Ruling R-6 / contract 4: a `run` whose record is `inconclusive-spread`
+    returns 4 with the record WRITTEN and INDEXED, and `pcrecbench index`
+    prints the per-status breakdown. The deterministic way to such a record
+    without sleep injection: a PINNED-tier `--trials 1` run into a scratch
+    store (n/a-trials on the ranked tier, 3.4) -- with the pre-flight's
+    SAMPLES simulated quiet in-process (`quiet.check` returning a quiet
+    load line and a synthetic idle capture, so the REAL `gate()` finds no
+    reason and X13's own clauses hold on the written record: on a busy box
+    `inconclusive-load` would rightly take precedence, R-15, and the exit
+    code would be 0 for a reason this check is not about). `cmd_run` is
+    called in-process so its return value IS the exit code.
+    CONTROL: the same run at tier scratch returns 0 (its status is the
+    pre-flight's, row 5)."""
+    print("-- exit code 4 (v1.4) --")
+    import glob as _glob
+    import io
+    import contextlib
+    from pcrecbench import quiet, reduce as _rd, __main__ as cli
+
+    class Args:
+        subbench = "email"
+        testee = "pcre2-interp"
+        regimes = ["match"]
+        trials = 1
+        iters = 1
+        force_unquiet = True
+        machine_id = "selfcheck-box"
+        pin = None
+        subject_timeout = 60
+        driver_timeout = 900
+        note = "make check exit-code probe -- NOT a measurement"
+        synthetic = True
+        quiet_output = True
+
+    def quiet_samples(exclude_cpu=None, **_kw):
+        import time as _time
+        load = {"loadavg_raw": "0.50 0.40 0.30 1/512 30412",
+                "sampled_at": _time.strftime("%Y-%m-%dT%H:%M:%SZ", _time.gmtime()),
+                "load1": 0.5, "load5": 0.4, "load15": 0.3}
+        return load, quiet.judge_mpstat(_mpstat_capture([{}] * 5), exclude_cpu=exclude_cpu)
+
+    saved = quiet.check
+    for tier, want_rc in (("pinned", 4), ("scratch", 0)):
+        scratch = os.path.join(ROOT, "build", "selfcheck-rc4-store")
+        shutil.rmtree(scratch, ignore_errors=True)
+        args = Args()
+        args.tier = tier
+        args.store = scratch
+        quiet.check = quiet_samples              # a quiet box's samples, simulated
+        buf = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(buf):
+                rc = cli.cmd_run(args)
+        except Exception as e:                                 # noqa: BLE001
+            bad("exit 4: %s run" % tier, "%s" % e)
+            quiet.check = saved
+            continue
+        finally:
+            quiet.check = saved
+        files = _glob.glob(os.path.join(scratch, "records", "*", "*", "*.jsonl"))
+        setup = _rd.read_record(files[0])[0] if files else {}
+        idx = run([sys.executable, "-m", "pcrecbench", "index", "--store", scratch],
+                  cwd=ROOT)
+        by_status = next((ln for ln in idx.stdout.splitlines()
+                          if ln.startswith("index: by status:")), "")
+        if tier == "pinned":
+            good = (rc == 4 and len(files) == 1
+                    and setup.get("status") == "inconclusive-spread"
+                    and "inconclusive-spread 1" in by_status
+                    and "status     inconclusive-spread" in buf.getvalue())
+            label = "exit 4: a pinned --trials 1 run is inconclusive-spread, written, indexed"
+        else:
+            good = (rc == 0 and len(files) == 1 and setup.get("status") == "measured")
+            label = "exit 4: CONTROL -- the same run at tier scratch is measured, returns 0"
+        if good:
+            ok(label, "rc %d, status %s; %s" % (rc, setup.get("status"), by_status[7:60]))
+        else:
+            bad(label, "rc %s files %d status %s" % (rc, len(files), setup.get("status")))
+        shutil.rmtree(scratch, ignore_errors=True)
+
+
+def check_timeline_provenance():
+    """gate_shape_v14.md 3.6 / 8: a PINNED run on a box with /proc/stat
+    writes one `timeline` item per group with `elapsed_ms > 0` and the
+    target core reading our own driver (>= 50 % busy over the group; the
+    busiest core on a quiet box), and validates; CONTROL: the same run with
+    /proc/stat made unreadable (the module's path pointed at a file that
+    does not exist -- in-process, no production hook) writes NO `timeline`
+    and no `timeline_tool`, and validates."""
+    print("-- the per-group occupancy timeline (v1.4, provenance) --")
+    from pcrecbench import harness as _h, quiet
+    try:
+        cpu = min(os.sched_getaffinity(0))
+    except (AttributeError, OSError):
+        cpu = 0
+    if shutil.which("taskset") is None:
+        bad("timeline: taskset missing; a pinned run cannot be made")
+        return
+    saved = quiet.PROC_STAT_PATH
+    for label, path in (("with /proc/stat", saved),
+                        ("CONTROL: /proc/stat unreadable", "/nonexistent/proc/stat")):
+        scratch = os.path.join(ROOT, "build", "selfcheck-timeline-store")
+        shutil.rmtree(scratch, ignore_errors=True)
+        quiet.PROC_STAT_PATH = path
+        try:
+            res = _h.run_cell("email", "pcre2-interp", regimes=["match"], trials=1,
+                              iters=None, force_unquiet=True, store_root=scratch,
+                              machine_id="selfcheck-box", pin_cpu=cpu,
+                              synthetic=True, tier="scratch", patterns=["floor"],
+                              subject_limit=5, budget=2.0,
+                              note="make check timeline probe -- NOT a measurement")
+        except Exception as e:                             # noqa: BLE001
+            bad("timeline: %s" % label, "%s" % e)
+            quiet.PROC_STAT_PATH = saved
+            continue
+        finally:
+            quiet.PROC_STAT_PATH = saved
+        occ = res.setup["environment"]["occupancy"]
+        tl = occ.get("timeline")
+        if path == saved:
+            groups = {(r["pattern_id"], r["regime"], r.get("form", "plain"))
+                      for r in res.rows if r["kind"] == "match"}
+            if (tl and len(tl) == len(groups) and occ.get("timeline_tool") == "/proc/stat"
+                    and all(it["elapsed_ms"] > 0 for it in tl)
+                    and all(it["target_busy_pct"] >= 50.0 for it in tl)
+                    and res.setup["environment"]["pinning"]["cpu"] == cpu):
+                busiest = all(it["target_busy_pct"] >= it["max_other_busy_pct"] for it in tl)
+                ok("timeline: one item per group (%d), elapsed > 0, target cpu%d reads "
+                   "our driver" % (len(tl), cpu),
+                   "target %.1f%%, sibling %s, busiest other cpu%d %.1f%%%s" % (
+                       tl[0]["target_busy_pct"], tl[0]["sibling_busy_pct"],
+                       tl[0]["max_other_cpu"], tl[0]["max_other_busy_pct"],
+                       "" if busiest else " (NOT the busiest: the box was loaded)"))
+            else:
+                bad("timeline: %s" % label, "%r pin %r" % (tl, res.setup["environment"]["pinning"]))
+        else:
+            if tl is None and "timeline_tool" not in occ:
+                ok("timeline: CONTROL -- /proc/stat unreadable writes no timeline; validated")
+            else:
+                bad("timeline: control", "%r %r" % (tl, occ.get("timeline_tool")))
+        shutil.rmtree(scratch, ignore_errors=True)
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -3019,6 +3732,16 @@ def main():
     check_abi_floor_refusal()
     check_note_length_guard()
     check_occupancy_average()
+    check_target_core_preflight()
+    check_quiet_cli_agrees_with_gate()
+    check_after_sample_is_provenance()
+    check_trial_agreement_fixture()
+    check_spread_status_stamped()
+    check_status_sentence_never_elided()
+    check_smoke_block_na_trials()
+    check_scratch_carries_block()
+    check_exit_code_4()
+    check_timeline_provenance()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))
