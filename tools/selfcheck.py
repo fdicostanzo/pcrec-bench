@@ -2481,6 +2481,105 @@ def check_note_length_guard():
         bad("note guard: schema rejects the joined string", str(e)[:120])
 
 
+# ------------------------------------- 26 the occupancy AVERAGE (OD-B12)
+
+def _mpstat_capture(busy_by_second, cpus=12):
+    """A synthetic `mpstat -P ALL 1 N` capture in LC_ALL=C layout: one
+    header+block per second, then the `Average:` block mpstat itself
+    prints. `busy_by_second[s][cpu]` is that core's busy %% in second s
+    (missing = 2 %%)."""
+    hdr = ("%s     CPU    %%usr   %%nice    %%sys %%iowait    %%irq   %%soft  "
+           "%%steal  %%guest  %%gnice   %%idle")
+    def row(stamp, cpu, busy):
+        return ("%s %7s %7.2f    0.00    0.00    0.00    0.00    0.00    0.00"
+                "    0.00    0.00 %7.2f" % (stamp, cpu, busy, 100.0 - busy))
+    out = ["Linux 7.0.0 (synthetic) \t08/30/26 \t_x86_64_\t(%d CPU)" % cpus, ""]
+    n = len(busy_by_second)
+    for sec, per in enumerate(busy_by_second):
+        stamp = "00:00:%02d" % (sec + 1)
+        out.append(hdr % stamp)
+        allb = sum(per.get(c, 2.0) for c in range(cpus)) / cpus
+        out.append(row(stamp, "all", allb))
+        for c in range(cpus):
+            out.append(row(stamp, c, per.get(c, 2.0)))
+        out.append("")
+    out.append(hdr % "Average:")
+    avg = {c: sum(per.get(c, 2.0) for per in busy_by_second) / n
+           for c in range(cpus)}
+    out.append(row("Average:", "all", sum(avg.values()) / cpus))
+    for c in range(cpus):
+        out.append(row("Average:", c, avg[c]))
+    return "\n".join(out) + "\n"
+
+
+def check_occupancy_average():
+    """BD7 / OD-B12 (2026-08-30): the occupancy instrument is a 5 x 1 s
+    mpstat run judged on its AVERAGE block. Five of five inconclusive-load
+    stamps in the 2026-08-29/30 windows were one-second after-samples that
+    caught a burst (10.1-20.2 %% on one core, load quiet). The CONTROLS: the
+    same synthetic capture judged one second at a time DOES fail on the
+    burst second -- so the rule, not the fixture, is what passes it -- and
+    a sustained competitor still fails on the average."""
+    sys.path.insert(0, ROOT)
+    from pcrecbench import quiet
+    if quiet.OCCUPANCY_SECONDS == 5 and quiet.MPSTAT_CMD[-1] == "5" \
+            and " ".join(quiet.MPSTAT_CMD).endswith("1 5"):
+        ok("occupancy: the instrument is mpstat -P ALL 1 5",
+           " ".join(quiet.MPSTAT_CMD))
+    else:
+        bad("occupancy: instrument is not 5 x 1 s", " ".join(quiet.MPSTAT_CMD))
+        return
+    # (a) a one-second 30 % burst on core 3; the pinned core 11 at 100 %.
+    burst = [{11: 100.0}, {11: 100.0, 3: 30.0}, {11: 100.0}, {11: 100.0},
+             {11: 100.0}]
+    cap = _mpstat_capture(burst)
+    avg = quiet.judge_mpstat(cap, exclude_cpu=11)
+    secs, average = quiet.split_mpstat(cap)
+    if len(secs) == 5 and average:
+        ok("occupancy: capture splits into 5 seconds + an Average block")
+    else:
+        bad("occupancy: split", "%d seconds, average=%r" % (len(secs), bool(average)))
+        return
+    one, _ = quiet.parse_mpstat(secs[1])
+    burst_alone = round(100.0 - min(v for c, v in one.items() if c != 11), 2)
+    if avg["verdict"] == "pass" and abs(avg["max_busy_pct"] - 7.6) < 0.05 \
+            and burst_alone == 30.0:
+        ok("occupancy: a 1-s 30 % burst averages to 7.6 % -> pass",
+           "the burst second alone reads %.1f %% (the old rule's fail)"
+           % burst_alone)
+    else:
+        bad("occupancy: burst averaging", "%r alone=%s" % (avg, burst_alone))
+    if "per-second peak" in avg["raw"] and "30.00" in avg["raw"] \
+            and avg["raw"].startswith("Average:"):
+        ok("occupancy: raw keeps the Average block and the per-second peaks")
+    else:
+        bad("occupancy: raw content", avg["raw"][:200])
+    # (b) a sustained competitor on core 5 for all five seconds.
+    sustained = [{11: 100.0, 5: 100.0}] * 5
+    s2 = quiet.judge_mpstat(_mpstat_capture(sustained), exclude_cpu=11)
+    if s2["verdict"] == "fail" and s2["max_busy_pct"] == 100.0:
+        ok("occupancy: a sustained 100 % core still fails on the average")
+    else:
+        bad("occupancy: sustained competitor", repr(s2))
+    # (c) the pinned core is excluded: at 100 % throughout it never counts.
+    quiet_box = [{11: 100.0}] * 5
+    s3 = quiet.judge_mpstat(_mpstat_capture(quiet_box), exclude_cpu=11)
+    s4 = quiet.judge_mpstat(_mpstat_capture(quiet_box), exclude_cpu=None)
+    if s3["verdict"] == "pass" and s4["verdict"] == "fail":
+        ok("occupancy: the target core is excluded iff asked",
+           "pass with exclude_cpu=11, fail without")
+    else:
+        bad("occupancy: exclude_cpu", "%r / %r" % (s3["verdict"], s4["verdict"]))
+    # (d) a single-interval capture (no Average block) is still judged.
+    single = _mpstat_capture([{11: 100.0, 4: 12.0}])
+    single = single.split("\nAverage:")[0]
+    s5 = quiet.judge_mpstat(single, exclude_cpu=11)
+    if s5["verdict"] == "fail" and s5["max_busy_pct"] == 12.0:
+        ok("occupancy: a single-interval capture is judged as itself")
+    else:
+        bad("occupancy: single interval", repr(s5)[:200])
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -2507,6 +2606,7 @@ def main():
     check_list_axes_registry()
     check_abi_floor_refusal()
     check_note_length_guard()
+    check_occupancy_average()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))

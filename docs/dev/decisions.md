@@ -110,3 +110,32 @@ transient (OD-B12) still refuses the first attempt of nearly every cell
 and a single-sample after-check can stamp a clean cell
 `inconclusive-load` (two records that day) — OD-B12's fix (average or
 min-of-N) is queued under [B12].
+
+## BD7 — 2026-08-30 — The occupancy instrument is five 1-s mpstat intervals judged on their AVERAGE, not one 1-s sample (OD-B12 closed)
+
+Five of five `inconclusive-load` records from the pinned windows of
+2026-08-29 and 2026-08-30 failed on the AFTER occupancy sample alone:
+one non-target core at 10.1-20.2 % on a single `mpstat -P ALL 1 1`
+interval, load1 quiet, the before-sample clean, nothing sustained on the
+box. `pidstat` during the bounded window named the bursts (the VS Code
+remote server waking on the store write, a streaming Claude session's
+~9 %, a half-second `gh pr list` from the status line). A one-second
+sample cannot distinguish a burst from a competitor; three of six
+bounded cells (about 60 minutes of a quiet window) were lost to it.
+
+Ruled: `pcrecbench.quiet` samples `mpstat -P ALL 1 5` and judges the
+`Average:` block (per-core busy averaged over five seconds), same
+instrument at both ends, bar unchanged at 10 %; `occupancy.tool` names
+the command so the two instruments' records are distinguishable; `raw`
+keeps the Average block and the per-second peaks; X26 unchanged; no
+schema change. Average, not min-of-N: the question the after-sample
+answers is "was something else working on the box while this was
+measured", and an average over five seconds is that quantity; a
+minimum would also hide a competitor that paused. Why not raise the
+bar: the measured noise floor (docs/design/quiet_baseline.md, 2-7 % per
+core) has not moved, and a bar that admits an 11 % steady residue
+admits a second manager streaming through a window, which BD6 forbids
+for a reason. Controls: `tools/selfcheck.py check_occupancy_average`.
+Records judged by the old instrument keep their verdicts; the three
+bounded cells are re-measured under the new one in the next window.
+

@@ -835,7 +835,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `environment.load.limit` | number >0 | R | the threshold THIS run used | OD-B8 is unruled — the number is data, not a schema constant |
 | `environment.load.verdict` | enum | R | `loaded` iff either sample's `load1` exceeds `limit` (X20); FILTERABLE | §9(a); ties to `status` (§9 rule X13). X20 is what stops the verdict being an opinion beside the numbers |
 | `environment.occupancy` | object | R | — | §9(b) |
-| `environment.occupancy.tool` | string | o | DIAGNOSTIC; one tool for both samples | e.g. `mpstat -P ALL 1 1` |
+| `environment.occupancy.tool` | string | o | DIAGNOSTIC; one tool for both samples | e.g. `mpstat -P ALL 1 5` (BD7, 2026-08-30: five 1-s intervals judged on mpstat's `Average:` block; records before that date say `mpstat -P ALL 1 1`, one interval) |
 | `environment.occupancy.limit_busy_pct` | number 0-100 | R | the busy-percentage threshold THIS run used | ADDITION, the exact counterpart of `load.limit`: OD-B8 is unruled, so the number is data. It is also what makes the verdict checkable (X26) — the same argument as X20, and the reason a verdict beside a number is worth having at all |
 | `environment.occupancy.before` | object | R | the per-core check BEFORE the run | §9(b) |
 | `environment.occupancy.before.verdict` | enum | R | `pass`/`fail`/`unavailable` | §9(b) "machine-readable pass/fail with `unavailable` when mpstat is missing — recorded, never silently skipped" (C6) |

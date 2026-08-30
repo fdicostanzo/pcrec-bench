@@ -14,7 +14,7 @@ the record's shape is `docs/design/record_schema.md`.
 | `record.py` | builds the record dict; every derived id comes FROM `schema/validate.py`'s own functions |
 | `reduce.py` | the SET-GRAIN reduction `quick` prints and the reporter ranks (R5, [B10]): `reduce_set_cell`, `reduce_match_cell`, `cells_from_record`, `giveup_code`; pinned by a hand-computed fixture in `tools/selfcheck.py` |
 | `store.py` | the store path rule, never-clobber, validate-before-write, the index; the TIERS: `.canonical` marks the canonical store, which refuses a `tier: scratch` record on write and on index; `scratch_store()` is `$PCRECBENCH_SCRATCH_STORE` or `build/scratch-store/` |
-| `quiet.py` | the quiet-box instrument and its two thresholds (`docs/design/quiet_baseline.md`) |
+| `quiet.py` | the quiet-box instrument and its two thresholds (`docs/design/quiet_baseline.md`) — since BD7 (2026-08-30) the occupancy sample is `mpstat -P ALL 1 5` judged on its `Average:` block (`judge_mpstat`, pure; `split_mpstat`); `OCCUPANCY_SECONDS` |
 | `env.py` | the `environment` block; the machine registry |
 | `oracle_pcre2.py` | the libpcre2 ctypes binding, copied from pcrec (see its header) and extended: anchoring bits, `find_all`, an explicit give-up surface, and `pattern_info()` ([B11.1] — PCRE2's own first/REQUIRED code unit and min length, the analysis `bench/loglines` is built around) |
 | `periodic.py` | the `periodic` manifest column's DEFINITION (inbox I-10, [B17]): `smallest_period` / `periodic_field`, the smallest exact repeat period in [1, 4096] bytes or `no`. Moved here from `bench/email/` when `bench/loglines` became its second caller ([B11.1]) — the column means the same thing in every manifest because one function computes it |
@@ -443,6 +443,27 @@ shape, and validates the joined strings against the schema's own
 `free_text` -- a control sharing no source with the constant it checks.
 The rejected record itself was moved out of `store/` (never indexed);
 the cell was re-measured.
+
+## The harness, [B12] the occupancy AVERAGE (BD7, 2026-08-30, the same window)
+
+Three of the six bounded cells came back `inconclusive-load` on the
+1-s occupancy AFTER-sample alone (10.10 %, 20.2 % on one non-target
+core; load quiet; before-sample clean) -- the fifth such record in two
+windows. `pidstat -u 1` named the bursts: the VS Code remote server
+(~40 % of a core for a second when the store or the window log
+changes), the streaming manager's own ~9 %, a per-refresh `gh pr list`
+from the status line. `quiet.occupancy()` now runs `mpstat -P ALL 1 5`
+and `judge_mpstat()` (pure -- `split_mpstat` separates the per-second
+blocks from mpstat's own `Average:` block) judges the five-second
+per-core AVERAGE against the unchanged 10 % bar; `raw` keeps the
+Average block and the per-second peaks; `occupancy.tool` names the
+command, so pre-BD7 records (`... 1 1`) stay distinguishable; schema and
+X26 untouched. `tools/selfcheck.py check_occupancy_average`: seven
+controls on a synthetic capture (a 1-s 30 % burst passes on the average
+and fails judged alone; a sustained 100 % core fails; the target core is
+excluded iff asked; a single-interval capture is judged as itself).
+Ruling and evidence: docs/dev/decisions.md BD7,
+docs/design/quiet_baseline.md (2026-08-30 section).
 
 ## The reporter ([B5], merged 2026-08-25)
 

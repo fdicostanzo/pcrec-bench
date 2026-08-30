@@ -191,7 +191,7 @@ status, rows) — committed with the records.
 `quiet.py` (OD-B8): measure the idle baseline of THIS box (load1 over a
 quiet minute, per-core %idle from mpstat) at [B3] and set the default
 thresholds from it (proposal: quiet iff load1 < 1.0 AND every core's
-%idle ≥ 90 over a 1 s mpstat sample; the numbers are the lane's to
+%idle ≥ 90 over a 5 × 1 s mpstat sample judged on its average (BD7, 2026-08-30; a single 1 s sample before that); the numbers are the lane's to
 measure and report, not to assume); both samples go into the record.
 
 ## 5. The reporter (`report.py`, [B5])

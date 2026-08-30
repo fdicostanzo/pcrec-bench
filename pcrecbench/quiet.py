@@ -52,10 +52,25 @@ from .env import C_ENV
 # 93-98% idle, so the instrument's own noise floor is ~2-7% busy per core; a
 # 10% bar clears that floor with headroom while still refusing every sample
 # taken while another session's test battery was running.
+#
+# OCCUPANCY_SECONDS -- 5 (BD7, 2026-08-30; OD-B12 closed). The occupancy
+# instrument was ONE 1-second mpstat sample at each end of a run. Five of
+# the five `inconclusive-load` records stamped in the two pinned windows of
+# 2026-08-29/30 failed on the AFTER sample alone -- 10.1 / 11.1 / 13.0 /
+# 20.2 % on ONE non-target core, load1 quiet, nothing sustained on the box:
+# a VS Code server waking on the record write, a streaming manager's ~9 %,
+# a half-second `gh` refresh at ~40 %. A 1-s sample cannot tell a burst
+# from a competitor; a 5-s AVERAGE can: the half-second burst becomes 4 %,
+# a competing process stays at 100 %, a streaming session stays at 9 %.
+# mpstat's own `Average:` block is the number; the per-second peaks are
+# kept in `raw` beside it so the burst is still visible. Same instrument
+# at both ends (check() below); `environment.occupancy.tool` names the
+# command, so a record says which instrument judged it.
 LOAD1_LIMIT = 2.0
 MAX_BUSY_PCT_LIMIT = 10.0
+OCCUPANCY_SECONDS = 5
 
-MPSTAT_CMD = ["mpstat", "-P", "ALL", "1", "1"]
+MPSTAT_CMD = ["mpstat", "-P", "ALL", "1", str(OCCUPANCY_SECONDS)]
 
 
 class QuietRefusal(Exception):
@@ -149,9 +164,100 @@ def parse_mpstat(text):
     return per_cpu, all_idle
 
 
-def occupancy(exclude_cpu=None, limit=MAX_BUSY_PCT_LIMIT, timeout=30):
+def split_mpstat(text):
+    """-> (per_second_texts, average_text). mpstat prints one header+block
+    per interval and, for more than one interval, a final block whose rows
+    start with `Average:`. Each returned text carries its own header row so
+    `parse_mpstat` can locate %idle in it."""
+    seconds, average, current = [], [], []
+    for line in text.splitlines():
+        if line.startswith("Average:"):
+            average.append(line)
+            continue
+        if "%idle" in line:
+            if current:
+                seconds.append("\n".join(current))
+            current = [line]
+        elif current and line.strip():
+            current.append(line)
+    if current:
+        seconds.append("\n".join(current))
+    return seconds, "\n".join(average)
+
+
+def smt_siblings(cpu):
+    """The SMT siblings of `cpu` (itself excluded), from sysfs; [] when
+    unknown. On this box CPU 11's sibling is CPU 5: a competitor there
+    shares the measured core's execution resources, which is why the
+    sibling is NEVER excluded from the occupancy judgement -- it is a
+    non-target core whose business matters most."""
+    if cpu is None:
+        return []
+    try:
+        with open("/sys/devices/system/cpu/cpu%d/topology/thread_siblings_list"
+                  % int(cpu)) as fh:
+            spec = fh.read().strip()
+    except (OSError, ValueError):
+        return []
+    out = set()
+    for part in spec.split(","):
+        if "-" in part:
+            a, b = part.split("-", 1)
+            out.update(range(int(a), int(b) + 1))
+        elif part.strip():
+            out.add(int(part))
+    out.discard(int(cpu))
+    return sorted(out)
+
+
+def judge_mpstat(text, exclude_cpu=None, limit=MAX_BUSY_PCT_LIMIT,
+                 siblings=None):
+    """The occupancy VERDICT from an mpstat capture -- pure, so a selfcheck
+    can hand it a synthetic capture and show what the rule does to a burst.
+
+    Over `OCCUPANCY_SECONDS` intervals the judged number is the per-core
+    AVERAGE (mpstat's own `Average:` block); with a single interval there is
+    no such block and the one sample is the average. `raw` keeps the
+    Average block verbatim plus the per-second peak of the busiest non-target
+    core, so a reader sees both the number that was judged and the transient
+    it absorbed."""
+    block = {"verdict": "unavailable", "max_busy_pct": None, "raw": ""}
+    seconds, average = split_mpstat(text)
+    judged_text = average if average else (seconds[-1] if seconds else text)
+    per_cpu, _all_idle = parse_mpstat(judged_text)
+    considered = {c: i for c, i in per_cpu.items() if c != exclude_cpu}
+    peaks = []
+    for sec in seconds:
+        pc, _ = parse_mpstat(sec)
+        cons = {c: i for c, i in pc.items() if c != exclude_cpu}
+        if cons:
+            peaks.append(round(100.0 - min(cons.values()), 2))
+    raw = judged_text.strip()
+    if average and peaks:
+        raw += ("\nper-second peak busy%% of the busiest non-target core: %s"
+                % " ".join("%.2f" % v for v in peaks))
+    if exclude_cpu is not None:
+        sib = siblings if siblings is not None else smt_siblings(exclude_cpu)
+        sib_busy = ["cpu%d %.2f%%" % (c, 100.0 - per_cpu[c])
+                    for c in sib if c in per_cpu]
+        raw += ("\ntarget cpu%d excluded from the judgement; its SMT "
+                "sibling(s) %s judged like any other core"
+                % (exclude_cpu, (", ".join(sib_busy) or "unknown")))
+    block["raw"] = raw
+    if not considered:
+        block["raw"] = (text.strip() + "\n(no per-cpu rows could be parsed "
+                        "from the above)").strip()
+        return block
+    max_busy = round(100.0 - min(considered.values()), 2)
+    block["max_busy_pct"] = max_busy
+    block["verdict"] = "pass" if max_busy <= limit else "fail"
+    return block
+
+
+def occupancy(exclude_cpu=None, limit=MAX_BUSY_PCT_LIMIT, timeout=60):
     """record_schema.md `environment.occupancy`. `unavailable` when mpstat is
-    absent or unparseable -- requirements 9(b): recorded, never skipped."""
+    absent or unparseable -- requirements 9(b): recorded, never skipped.
+    Takes OCCUPANCY_SECONDS wall seconds; the verdict is `judge_mpstat`'s."""
     # `$defs/occupancy_sample`: verdict + max_busy_pct + raw, and nothing
     # else. `max_busy_pct` is null EXACTLY when the verdict is `unavailable`
     # (the schema enforces the iff), so `raw` then has to carry the reason
@@ -173,19 +279,7 @@ def occupancy(exclude_cpu=None, limit=MAX_BUSY_PCT_LIMIT, timeout=30):
         block["raw"] = "mpstat failed: %s" % (e,)
         return block
     full = (out.stdout or "") + (out.stderr or "")
-    per_cpu, _all_idle = parse_mpstat(full)
-    # `mpstat -P ALL 1 1` prints the sample block and then an `Average:` block
-    # that repeats it verbatim; keep only the first for the record.
-    block["raw"] = full.split("\nAverage:", 1)[0].strip()
-    considered = {c: i for c, i in per_cpu.items() if c != exclude_cpu}
-    if not considered:
-        block["raw"] = (block["raw"] + "\n(no per-cpu rows could be parsed "
-                        "from the above)").strip()
-        return block
-    max_busy = round(100.0 - min(considered.values()), 2)
-    block["max_busy_pct"] = max_busy
-    block["verdict"] = "pass" if max_busy <= limit else "fail"
-    return block
+    return judge_mpstat(full, exclude_cpu=exclude_cpu, limit=limit)
 
 
 # ---------------------------------------------------------------- pinning

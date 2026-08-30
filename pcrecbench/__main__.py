@@ -177,11 +177,16 @@ def cmd_quiet(args):
     for i in range(args.samples):
         load = quiet.loadavg()
         occ = quiet.occupancy(exclude_cpu=args.pin)
-        print("load1 %.2f  occupancy %s  max_busy_pct %s"
-              % (load[0], occ["verdict"], occ["max_busy_pct"]))
+        print("load1 %.2f  occupancy %s  max_busy_pct %s  (%d s average)"
+              % (load[0], occ["verdict"], occ["max_busy_pct"],
+                 quiet.OCCUPANCY_SECONDS))
         if occ["max_busy_pct"] is not None:
             worst = max(worst or 0.0, occ["max_busy_pct"])
     print()
+    if args.pin is not None:
+        print("target cpu%d excluded; its SMT sibling(s) %s are judged like "
+              "any other core (BD7)"
+              % (args.pin, quiet.smt_siblings(args.pin) or "unknown"))
     print("thresholds in force: load1 <= %.2f, max_busy_pct <= %.2f"
           % (quiet.LOAD1_LIMIT, quiet.MAX_BUSY_PCT_LIMIT))
     print("derivation: docs/design/quiet_baseline.md")
@@ -369,7 +374,10 @@ min/max, pass-rate, give-ups by code, and the ratio testee/vs.
     i.set_defaults(func=cmd_index)
 
     q = sub.add_parser("quiet", help="sample the box and print the verdict")
-    q.add_argument("--samples", type=int, default=1)
+    q.add_argument("--samples", type=int, default=1,
+                   help="how many occupancy samples to take; each is "
+                        "quiet.OCCUPANCY_SECONDS x 1 s of mpstat judged on "
+                        "its average (BD7)")
     q.add_argument("--pin", type=int, default=None, metavar="CPU",
                    help="exclude this core from the occupancy check")
     q.set_defaults(func=cmd_quiet)

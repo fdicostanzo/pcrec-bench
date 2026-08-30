@@ -92,5 +92,52 @@ cannot promote a contaminated run.
    own after-sample can approach 1.0 on its own; if the limit is ever
    tightened toward 1.0 for the before-sample, the after-sample needs its
    own, looser number.
-3. **`mpstat -P ALL 1 1` costs one wall second per check**, taken twice
-   per run. Cheap, and not on the timed path.
+3. ~~**`mpstat -P ALL 1 1` costs one wall second per check**, taken twice
+   per run. Cheap, and not on the timed path.~~ Superseded 2026-08-30:
+   the instrument is now `mpstat -P ALL 1 5` (five wall seconds per
+   check, still off the timed path) -- see the section below.
+
+## 2026-08-30 -- the occupancy sample is 5 x 1 s judged on its AVERAGE (BD7; OD-B12 closed)
+
+EVIDENCE. Every `inconclusive-load` record the pinned windows produced
+-- two on 2026-08-29 (`email x pcrec-vm` 11.1 %, `loglines x
+pcrec-nocaps` 13.0 %) and three on 2026-08-30 (bench/bounded@0.1's
+`pcre2-jit` 10.10 %, `pcrec-auto` 20.2 %, `pcrec-vm-in`) -- failed on
+the AFTER sample alone: one non-target core over the 10 % bar on a
+single 1-second `mpstat` interval, load1 quiet (1.0-1.2, the cell's own
+driver), the before-sample clean, and nothing sustained on the box. The
+culprits were identified by `pidstat -u 1` during the 2026-08-30
+window: the VS Code remote server (`~/.vscode-server/.../node`, 40 % of
+a core for about a second when a file it watches changes -- the store
+write and the window log are such files), a streaming Claude session's
+own ~9 %, and a per-refresh `gh pr list` from the sessions' status
+lines (~40 % for ~0.5 s; since switched off). None of these touches the
+pinned core; a 1-s sample cannot tell such a burst from a competitor.
+
+RULING (BD7). `pcrecbench.quiet` runs `mpstat -P ALL 1 5` and judges
+mpstat's own `Average:` block: the per-core busy AVERAGED over five
+seconds. A half-second 40 % burst reads 4 %; a competing process at
+100 % still reads 100 %; a streaming session at 9 % still reads 9 %.
+The SAME instrument is used at both ends (`quiet.check()`: one code
+path, two calls). `environment.occupancy.tool` names the command, so a
+record judged by the 1-s instrument (`mpstat -P ALL 1 1`, every record
+before 2026-08-30) is distinguishable from one judged by the 5-s one;
+X26 (verdict iff `max_busy_pct <= limit_busy_pct`) is unchanged, and
+`raw` now carries the Average block plus the per-second peak of the
+busiest non-target core, so the transient the average absorbed is
+still visible. The 10 % bar is NOT moved: the noise floor measured
+above (2-7 % per core) is the same floor, and the two-manager residue
+(a second streaming session, ~9 %) is now a steady number the average
+reports honestly rather than a coin-flip the sample may or may not
+catch -- both managers idle for a window remains the protocol (BD6).
+
+CONTROLS (`tools/selfcheck.py check_occupancy_average`, seven checks on
+a synthetic capture, no mpstat needed): a one-second 30 % burst
+averages to 7.6 % and passes while the burst second judged ALONE reads
+30 % (the old rule's fail -- so the rule, not the fixture, is what
+passes it); a core at 100 % for all five seconds still fails; the
+target core is excluded iff asked; a single-interval capture (no
+Average block) is judged as itself; `raw` keeps the Average block and
+the peaks. Cost: five wall seconds per check, twice per cell, plus the
+window script's `quiet --samples 6` warm-up (30 s) -- off the timed
+path.
