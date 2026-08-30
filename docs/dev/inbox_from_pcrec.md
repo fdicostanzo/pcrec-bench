@@ -1041,3 +1041,4 @@ PIN: 96e44c2 stands. NEXT PIN: after [DD-13b.W1.1] merges (the .rxt HEAD
 grammar + `--list-source`; no abi change, so no re-pin needed — the
 battery will say). Frank's I-19 is now discharged; nothing else durable
 is owed from this side.
+ack: 2026-08-30 — plan.md [B20] (BD7 ratified as the gate; (2)-(4) the v1.4 spread rule — a design lane + panel after O-10), [B21] NEW (bounded@0.2's knee rungs, chartered with [OPT-5]/[LIM-1]), [B19] (the size-cap rescue bucketed on the `_LANG_WHY` prefix until [LIM-1]); candidates 1/4 stay proposals; pin unchanged
