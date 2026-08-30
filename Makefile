@@ -107,8 +107,9 @@ deps:
 #      unsupported-by-declaration, filter semantics, the mixed-schema-
 #      version refusal, invalid-record handling, deterministic
 #      rendering);
-#   2. every fixture in pcrecbench/tests/fixtures/store/, /store_walk_only/
-#      and the two "ok" halves of mixed_version/{major_mismatch,minor_pair}/
+#   2. every fixture in pcrecbench/tests/fixtures/store/, /store_walk_only/,
+#      /v14_pair/ (the [B20] 1.3 + 1.4 pair and the inconclusive-spread
+#      record) and the two "ok" halves of mixed_version/{major_mismatch,minor_pair}/
 #      (but NOT their deliberately-invalid halves -- a v1.1-future 2.0 file
 #      and a pre-v1.1 schema-1.0-SHAPED file respectively; see
 #      fixtures/mixed_version/CLAUDE.md) independently accepted by
@@ -127,6 +128,7 @@ check-report:
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store_walk_only/records/*/*/*.jsonl
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/mixed_version/major_mismatch/records/*110000Z.jsonl
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/mixed_version/minor_pair/records/*090500Z.jsonl
+	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/v14_pair/store/records/*/*/*.jsonl
 	@echo
 	@echo "-- CLI smoke: a report over fixtures/store, both formats, both grains --"
 	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \

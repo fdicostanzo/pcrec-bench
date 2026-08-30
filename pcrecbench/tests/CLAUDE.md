@@ -183,6 +183,30 @@ which is expected and not a bug in this suite.
   `render_markdown`/`render_tsv` ever mutates a `LoadedRecord` after
   `report.load_all` returns it. Measured before/after on this box, same
   51 tests, all green both times: 274.6 s -> 47.6 s.
+  **[B20] additions (2026-08-30, 5 new tests, 56 + 3 → 59 total; schema
+  v1.4, `docs/design/gate_shape_v14.md` §6 R8)**:
+  `test_status_gate_r1` gains the `inconclusive-spread` case (unranked,
+  its bullet printed FROM THE BLOCK -- the control is the free-text
+  `status_detail` it must NOT echo -- and ranked under
+  `--include-unmeasured`); `test_trial_agreement_legend_and_na_v13` (the
+  legend once, `n/a (v1.3)` on the 1.3 half, the block's numbers on the
+  1.4 half, both reducing in one `--all-records` query);
+  `test_rule_marker_on_mixed_x13_versions` (R4': `measured@1.3` /
+  `measured@1.4` in markdown and TSV rows when one query mixes X13
+  versions; control: the single-version default query carries no
+  suffix); `test_v13_record_still_renders` (the existing 1.1 fixture
+  store against `fixtures/golden/store_v8.md`: the ONLY differing lines
+  are the version line, the two legend lines and the `agreement: n/a
+  (v1.1)` suffixes -- the classifier `_classify_v9_diff` refuses a
+  rendering with one number changed, the control);
+  `test_provenance_flag` (the after-sample sentences only under
+  `--include-provenance`, read from `status_detail` or `note` wherever
+  they sit) and `test_after_clause_unconditional` (R5': `after: load1
+  11.40 / occ 41.41%` on the record line whenever an after sample
+  failed, no flag; control: the clean record carries none; the TSV's
+  `record` rows carry the same). `test_all_fixtures_validate` covers the
+  new `fixtures/v14_pair/` store and asserts the spread fixture's block
+  disagrees on one 2-row group; `test_reporter_version_pin` pins v9.
 - `fixtures/` -- the synthetic store this suite reads. See its own
   CLAUDE.md.
 - `__init__.py` -- makes this a package so

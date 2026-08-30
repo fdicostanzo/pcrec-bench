@@ -155,6 +155,53 @@ set, per trial, then reduce over trials) indistinguishable from
   (`test_floor_pattern_fixture_r9`) through the real loader path now
   that the schema actually allows it.
 
+- `v14_pair/store/` -- [B20] (schema v1.4, `docs/design/gate_shape_v14.md`
+  §6 R8 / §4 M1): the VALID 1.3 + 1.4 pair panel B B16.2 asked for (the
+  older `mixed_version/minor_pair` proves only that a minor spread is not
+  refused; its old half is invalid by construction), plus the
+  `inconclusive-spread` record. Three records, all validator-accepted,
+  built from `store/`'s pcrec record by a scratch script (not committed,
+  the precedent above):
+    - `pcrec_…__20260825T120000Z` -- the pcrec record re-stamped
+      `schema_version: 1.3` at 12:00: NO `trial_agreement` block (X33
+      forbids one below 1.4), judged by the pre-1.4 X13; the reporter
+      renders `agreement: n/a (v1.3)` and never re-judges it.
+    - `pcrec_…__20260825T120500Z` -- the SAME cell at `1.4`, `tier:
+      pinned`, every match-row key grown to FIVE trials (trials 4/5 =
+      trial 1 x 1.02 / x 0.99), `occupancy.<sample>.target_busy_pct` on
+      both samples, the block computed by `pcrecbench.reduce.
+      judge_trial_agreement` (X32 re-derives it at validation). Verdict
+      `agree` with `rows_disagreeing: 1` -- DELIBERATE: `s-num-2`'s
+      trials [50, 90, 160, 51, 49.5] have two above 1.5x their median
+      (51), so that ROW disagrees, and the (p-digits, match-compliance)
+      group still does not (d = 1 < d_min = 2): one row is not a
+      disturbed group, ruling R-16, witnessed by a fixture. Under the
+      default dedup it is the NEWEST MEASURED record of the cell and the
+      12:00 half is superseded; `--all-records` includes both, which is
+      how `test_rule_marker_on_mixed_x13_versions` gets a query that
+      MIXES X13 versions (`measured@1.3` / `measured@1.4`).
+    - `libpcre2_10.46_jit-caps-simdna__…__20260825T121000Z` -- a 1.4 record
+      of the JIT testee (a different testee id, so dedup keeps it beside
+      the pair) whose (p-digits, match-compliance, plain) group DISAGREES:
+      both its rows (`s-num-1`, `s-num-2`) carry two 2x trials, d = 2 of
+      n = 2 under (2, 3); `status: inconclusive-spread`, `status_detail`
+      the harness's own sentence shape (the §3.4 line first, the two
+      after-sample provenance sentences second), and BOTH after samples
+      FAILED (`occupancy.after` 41.41 % `fail`, `load.after.load1` 11.40,
+      `load.verdict: loaded`) -- the R5' `after:` clause and the R5
+      `--include-provenance` sentences have a record to fire on. Its
+      compile rows are `eager-jit` with `cost.total_ns` only (no declared
+      phases).
+- `golden/store_v8.md` -- the v8 reporter's rendering of `store/`
+  (rendered 2026-08-30 from master's `report.py` at 2aca1cd, same cwd, so
+  the paths match), the GOLDEN for `test_v13_record_still_renders`: the
+  v9 rendering of the same store may differ from it ONLY by the version
+  line, the R3/R4' legend lines and the per-record `agreement: n/a (v1.1)`
+  suffix; a rendering with one number changed is refused by the same
+  classifier (the test's control). Regenerate it only when a LATER
+  reporter version deliberately changes the rendering of these records,
+  and say so here.
+
 ## Editing
 
 If a match/compile row's timing values change, the setup line's
