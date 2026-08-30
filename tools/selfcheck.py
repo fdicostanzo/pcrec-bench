@@ -2417,6 +2417,70 @@ def _pcrec_adapter_token():
     return _pcrec_adapter_module().ABI_FLOOR_TOKEN
 
 
+# --------------------------------------------- 25 the free_text note guard
+
+def check_note_length_guard():
+    """[B12] (2026-08-29, bounded's first window): a record's `note` /
+    `status_detail` are schema `free_text` (maxLength 8192), and the harness
+    filled them from a per-cell LIST that grew with the set -- 24 patterns x 3
+    regimes = 72 calibration sentences (~12 KB) -- so a 21-minute cell was
+    measured and then REJECTED at validation. `record.join_notes` is now the
+    only path from that list to a record. The CONTROL reads the cap FROM THE
+    SCHEMA JSON, not from record.py, so the constant and the schema cannot
+    drift apart unnoticed; the sentences are the real ones (the rejected
+    record's own shape, 72 x ~165 bytes)."""
+    import json as _json
+    sys.path.insert(0, ROOT)
+    from pcrecbench import record as rec
+    with open(os.path.join(ROOT, "schema", "record.schema.json")) as fh:
+        schema = _json.load(fh)
+    cap = schema["$defs"]["free_text"]["maxLength"]
+    if rec.FREE_TEXT_MAX == cap:
+        ok("note guard: record.FREE_TEXT_MAX == schema free_text cap",
+           "%d" % cap)
+    else:
+        bad("note guard: record.FREE_TEXT_MAX != schema free_text cap",
+            "%d vs %d" % (rec.FREE_TEXT_MAX, cap))
+        return
+    sentence = ("iters for (cls-upto-%d, plain, search_short) = 471032: median "
+                "per-iteration 0.106 us (subject d-00256) -> iters=471032 for "
+                "a 50 ms loop")
+    seventy_two = [sentence % i for i in range(72)]
+    raw = "quiet window run | " + "; ".join(seventy_two)
+    if len(raw) <= cap:
+        bad("note guard: the 72-sentence shape does not exceed the cap",
+            "%d bytes -- the control is not a control" % len(raw))
+        return
+    joined = rec.join_notes(seventy_two, prefix="quiet window run")
+    elided = 72 - joined.count("iters for (")
+    if len(joined) <= cap and "note(s) elided" in joined and \
+            ("[+%d note(s) elided" % elided) in joined:
+        ok("note guard: 72 real sentences fit under the cap",
+           "%d -> %d bytes, %d elided, marker names the count"
+           % (len(raw), len(joined), elided))
+    else:
+        bad("note guard: 72 real sentences", "len=%d joined=%r"
+            % (len(joined), joined[-160:]))
+    short = rec.join_notes(seventy_two[:3], prefix="x")
+    if short == "x | " + "; ".join(seventy_two[:3]):
+        ok("note guard: a short list joins verbatim (no marker)")
+    else:
+        bad("note guard: short list altered", repr(short[:120]))
+    huge = rec.join_notes([], prefix="y" * (cap * 2))
+    if len(huge) == cap and huge.endswith("free_text cap]"):
+        ok("note guard: an over-cap prefix is cut to the cap with a marker")
+    else:
+        bad("note guard: over-cap prefix", "len=%d" % len(huge))
+    # And the schema itself agrees: the joined string validates as free_text.
+    try:
+        import jsonschema
+        jsonschema.validate(joined, schema["$defs"]["free_text"])
+        jsonschema.validate(huge, schema["$defs"]["free_text"])
+        ok("note guard: the joined strings validate as schema free_text")
+    except Exception as e:  # noqa: BLE001 -- the check reports, never raises
+        bad("note guard: schema rejects the joined string", str(e)[:120])
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -2442,6 +2506,7 @@ def main():
     check_deny_flag_controls()
     check_list_axes_registry()
     check_abi_floor_refusal()
+    check_note_length_guard()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))

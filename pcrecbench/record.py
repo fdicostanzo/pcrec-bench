@@ -24,6 +24,52 @@ SCHEMA_VERSION = "1.3"
 #: around the batched loop -- never a wall clock, never a per-call timer.
 CLOCK_SOURCE = "clock_monotonic"
 
+#: The schema's `free_text` cap (`schema/record.schema.json` $defs.free_text,
+#: maxLength 8192). `note` and `status_detail` are both free_text, and the
+#: harness fills them from a per-cell LIST of sentences whose length grows
+#: with the set: bench/bounded@0.1's 24 patterns x 3 regimes made 72
+#: calibration sentences (~12 KB) and a 21-minute cell was measured and then
+#: REJECTED at validation (2026-08-29, the first bounded window). The join
+#: below is the only way those lists reach a record.
+FREE_TEXT_MAX = 8192
+NOTE_SEP = "; "
+
+
+def join_notes(notes, prefix=None, limit=FREE_TEXT_MAX):
+    """Join the harness's per-cell sentences into ONE string that VALIDATES.
+
+    `prefix` (the operator's `--note`) comes first, then the sentences joined
+    by NOTE_SEP. If the whole would exceed `limit`, sentences are dropped from
+    the END and the string ends with an explicit marker saying how many were
+    elided -- silently truncating a diagnostic would be worse than losing it,
+    and the per-row `calibration` blocks carry the calibration facts anyway.
+    A prefix that alone exceeds `limit` is cut hard with the same marker.
+    """
+    notes = [str(n) for n in (notes or [])]
+    prefix = str(prefix) if prefix else ""
+
+    def build(kept, elided):
+        parts = []
+        if prefix:
+            parts.append(prefix)
+        body = NOTE_SEP.join(kept)
+        if elided:
+            body = (body + NOTE_SEP if body else "") + (
+                "[+%d note(s) elided to fit the schema's %d-byte free_text "
+                "cap; the per-row calibration blocks carry the calibration "
+                "facts]" % (elided, limit))
+        if body:
+            parts.append(body)
+        return " | ".join(parts)
+
+    for keep in range(len(notes), -1, -1):
+        out = build(notes[:keep], len(notes) - keep)
+        if len(out) <= limit:
+            return out
+    # Even zero sentences did not fit: the prefix itself is over the cap.
+    marker = " [cut to fit the schema's %d-byte free_text cap]" % limit
+    return prefix[:max(limit - len(marker), 0)] + marker
+
 
 def _validator_module():
     """Import `schema/validate.py` as a module so the derivations here are

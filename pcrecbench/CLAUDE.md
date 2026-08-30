@@ -417,6 +417,33 @@ nothing about what is asserted. Suite runtime: 274.6s -> 47.6s (measured
 `reporter: v7 (2026-08-29)`; every committed report under `reports/`
 regenerated -- see `reports/CLAUDE.md`.
 
+## The harness, [B12] the free_text note guard (2026-08-29, bounded's first window)
+
+A record's `note` and `status_detail` are schema `free_text` (maxLength
+8192, `schema/record.schema.json` $defs), and `harness.run_cell` filled
+them from a per-cell LIST of sentences whose length grew with the set:
+one "iters for (pattern, form, regime) = N: median per-iteration ..."
+per calibration, 72 of them on bench/bounded@0.1 (24 patterns x 3
+regimes, ~12 KB). The first bounded cell (pcre2-interp, 21 min on a
+quiet box) was measured and then REJECTED at validation -- contract 4
+step 5, a harness bug, nothing written -- and every following cell
+would have been. Two changes: (1) the ROUTINE calibration sentence is
+no longer a note at all -- every match row's `calibration` block
+(`probe_iterations`, `probe_elapsed_ns`, `target_ns`) and its
+`timing.iterations` already carry it; only a calibration that did NOT
+meet its target (`calibration_note` set: capped by the per-trial
+budget, no usable probe timing, a fixed count) is still a sentence,
+"calibration for (...) = N iters: <why>"; (2) `record.join_notes(notes,
+prefix)` is the ONLY path from the list to either field: it joins under
+`record.FREE_TEXT_MAX`, dropping sentences from the END and ending with
+"[+N note(s) elided ...]" so a truncation is visible, never silent.
+`tools/selfcheck.py check_note_length_guard` (five checks) reads the cap
+FROM THE SCHEMA JSON, replays the rejected record's own 72-sentence
+shape, and validates the joined strings against the schema's own
+`free_text` -- a control sharing no source with the constant it checks.
+The rejected record itself was moved out of `store/` (never indexed);
+the cell was re-measured.
+
 ## The reporter ([B5], merged 2026-08-25)
 
 STATUS (this worktree, lane/b5report): only `report.py` and its package

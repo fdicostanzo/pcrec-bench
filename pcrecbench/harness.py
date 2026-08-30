@@ -521,8 +521,15 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             n_iters, why, cal = calibrate(adapter, handle, regime, subjects,
                                           iters, driver_timeout,
                                           subject_timeout, budget=budget)
-            notes.append("iters for (%s, %s, %s) = %d: %s"
-                         % (p.name, form, regime, n_iters, why))
+            # The routine calibration ("median per-iteration X -> iters=N")
+            # is NOT a note: every row's `calibration` block and
+            # `timing.iterations` carry it, and one sentence per (pattern,
+            # form, regime) blew the schema's free_text cap on a 24-pattern
+            # set (record.FREE_TEXT_MAX says when). Only a calibration that
+            # did NOT meet its target is worth a sentence a reader sees first.
+            if cal is not None and cal.get("calibration_note"):
+                notes.append("calibration for (%s, %s, %s) = %d iters: %s"
+                             % (p.name, form, regime, n_iters, why))
             say("measuring %s / %s [%s] / %s: %d subject(s) x %d iter(s) x %d "
                 "trial(s)" % (testee_id, p.name, form, regime, len(subjects),
                               n_iters, trials))
@@ -613,7 +620,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         [record.pattern_entry(sb, p.name) for p in cell_patterns],
         [record.subject_entry(subject_ids[k]) for k in sorted(subject_ids)],
         status,
-        status_detail="; ".join(notes) if notes and status != "measured" else None,
+        status_detail=(record.join_notes(notes)
+                       if notes and status != "measured" else None),
         note=note)
     if synthetic:
         setup["synthetic"] = True
@@ -621,7 +629,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     # but a record that says which tier it is beats one that implies it.
     setup["tier"] = tier
     if notes and "status_detail" not in setup:
-        setup["note"] = "; ".join(notes) if not note else note + " | " + "; ".join(notes)
+        setup["note"] = record.join_notes(notes, prefix=note)
 
     # (6)+(7) write and index ----------------------------------------------
     # PROJECT to the emitted schema version LAST, so everything above worked
