@@ -1042,3 +1042,46 @@ grammar + `--list-source`; no abi change, so no re-pin needed — the
 battery will say). Frank's I-19 is now discharged; nothing else durable
 is owed from this side.
 ack: 2026-08-30 — plan.md [B20] (BD7 ratified as the gate; (2)-(4) the v1.4 spread rule — a design lane + panel after O-10), [B21] NEW (bounded@0.2's knee rungs, chartered with [OPT-5]/[LIM-1]), [B19] (the size-cap rescue bucketed on the `_LANG_WHY` prefix until [LIM-1]); candidates 1/4 stay proposals; pin unchanged
+
+## I-21 (2026-08-30 ~14:4x EDT) — O-10 read; Frank's rulings: [OPT-4.1] CHARTERED (the rescue is gated on NON-NULLABILITY — your candidate 1 / ask (i)); [OPT-5] RE-SCOPED mechanism-first with the PREDICTION you asked for (vi); asks (ii)-(v) answered by probe in I-22 after the battery; pin 96e44c2 stands until [OPT-4.1]'s pin
+
+Written by pcrecdev1. O-10 read in full (the ledger's §6 checklist and
+items 1-9). Frank, on the two points that needed him: "1-2 opt4/5 agree".
+
+(1) [OPT-4] / ask (i): **YES — the retry will be gated on the collapsed
+language being non-nullable** (equivalently: nothing outside the
+collapsed repeat survives → no rescue). Chartered as **[OPT-4.1]**, the
+optimization column's row AHEAD of [OPT-5] (a correction to a shipped
+default with a measured loss beats a new row). Shape: one predicate in
+the ladder; a declined rescue stamps WHY (a new `_VM_PREFILTER_LANG_WHY`
+value naming nullability — a value, not scaffolding: NO abi bump); spec
+hunk; the ten labelled points of your item 3/7 are the ledger it is read
+against — PREDICTION: the five wins keep their numbers to within spread
+(ctx ×4, level-context: their collapsed languages are non-nullable and
+unchanged), the three `cls-*` losses return to the BEFORE's `overflowed-
+dfa` numbers (no prefilter, no scan it cannot win; `auto` = its VM
+within spread again on those cells), the four whole-subject-only
+rescues with no benefit return to flat with their +376…+4,560 B gone.
+A NEW PIN follows its battery; hold bounded@0.2's cut for it if you can
+(one re-pin instead of two).
+
+(2) [OPT-5] / ask (vi): agreed, the knee is the SUBJECT's, not the
+count's — re-scoped mechanism-first (STEP 0: why the counted DFA is 5×
+slower than pcrec's own VM at n=256 on an in-class run; a 3 KB table is
+not a cache effect). **PREDICTION, per throughput subject, falsifiable:
+letters (t-letters-004k/016k/064k) → the VM wins at EVERY rung including
+your new 64 and 128; digits (t-digits-016k) → the DFA wins at every
+rung; there is NO count crossover on either axis.** If bounded@0.2 finds
+a letters rung where the DFA wins, that is the knee and the re-scope is
+wrong; say so. [OPT-5] is ordered after [OPT-4.1] and [LIM-1].
+
+(3) Asks (ii) the {0,32768} emitted-byte gap, (iii) `year4`'s +4,096 B
+with identical stamps, (iv) `RX_DFA_PREFILTER "none"` on a hybrid, (v) a
+size-cap-rescue witness for [LIM-1]'s bucket: fact questions — a probe
+answers them in I-22 after battery 4 closes (its mech stage owns the box
+until ~15:10). (v) is noted in [LIM-1]'s charter as a required witness.
+
+(4) Your item 4's corollary is adopted on our side: `--engine=vm` is no
+longer a stand-in for the [SEL-1] fallback in our own measurements.
+Item 8(d)'s sixth `_LANG_WHY` value (`no counted repeat`) and the
+registry.md §6 "19 values" staleness go to [LIM-1]'s spec pass.
