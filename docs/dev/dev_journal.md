@@ -1491,3 +1491,70 @@ rendered"; [B18] (e) added five reads and zero renders), KB-4 (a
 did-not-compile row is untimed). U2 (pcre2-jit slower than interp on
 pure-scan find-all rows), U3 (PCRE2's group replication, NOT-A-BUG).
 b19repin still building; its scope gained the [ART-SIZE] legend line.
+
+## 2026-08-30 (EDT, ~07:0x), fifth session (part 4) — I-20; [B19] delivered and MERGED (87f86b1): the abi-12 adapter, four letter-vs-artifact findings, the [ART-SIZE] legend
+
+I-20 (b44ad7b, pcrecdev1's single-file commit): O-9 ask (ii) is a
+DESIGN LIMIT — the [ENG-ABS] anchored machine caps at
+`PCREC_ANCHORED_MAX_STATES` = 4096 with no runtime raise; measured
+crossovers plain/whole `[a-z]{0,n}` 4095→4096 / 2047→2048 (our `(?:…)\z`
+spelling HALVES the reachable `{0,n}` count: an EOF-aware sibling per
+count-state), `{n,}` 4095/4094, nest2 63/14, nest3 15/6 — so a bounded
+rung's plain and whole-subject rows are DIFFERENT MACHINES (the reading
+rule now in reports/CLAUDE.md and [B19]'s frame); candidate 1 becomes a
+D86 row proposal; (i) refusals bucket on exit code + the diagnostic's
+leading clause, no token owed (D77); (iv) the refusal cost is the
+bench's own clock — KB-4 is a bench-side fix; (v) acknowledged; (iii)/
+(vi) and candidates 1/2/4 wait on Frank's D86 pick. Acked (d4e429a,
+d574ca4). `--list-axes` at the PIN is 54/21; main's 61/21 is past it.
+
+[B19] (lane b19repin, worktree, ~35 min build + ~25 min docs/controls;
+delivery file in the scratchpad; merged 87f86b1 with one plan.md
+conflict — the lane's progress note + my I-20 frame): pin 96e44c2 built
+by pin.sh; `list_axes.tsv` 54/21 (the diff is exactly the seven new
+rows), `list_definitions.tsv` 50 rows, both diffed against the pin;
+the shim reads `RX_ENGINE_SEL` on every artifact and
+`RX_VM_PREFILTER_LANG`/`_WHY` on VM HYBRIDS ONLY (match_api.md §6.3's
+iff — I-18's "every VM artifact" and my brief's `lang=exact` for a
+forced VM were both wrong: a forced artifact stamps neither; a new
+exclusive `vm-hybrid` scope, agreement rules 8/9: `forced` iff the
+CONFIG named `--engine=`, the token's only control); PB_SHIM_MIN_ABI
+stays 10 (macros, no field). `emit_bytes`/`emit_code_bytes` by a PORT
+of pcrec's `emit_size_measure`, controlled byte-exact (8/8 kinds ×
+forms) against `--warn-emit-bytes`'s own numbers and REFUSING (an
+AdapterError, never a number) any warned compile where the two
+disagree; `warned_emit_bytes` + the line in the diagnostic, never a
+failure. level-context MEASURED = I-18 (ii)'s prediction to the letter
+(`collapsed-prefilter` / `count-collapsed` / "dfa overflow retry, exact
+nfa 462"; the `\z` form 463); its artifact grew from a 32,761 B plain
+VM `.c` to an 88,438 B hybrid — the rung now keeps a prefilter DFA.
+FOUR LETTER-VS-ARTIFACT FINDINGS (for O-10): (1) the lang pair is on
+hybrids only (above); (2) the SIZE-CAP rung's rescue stamps
+`_ENGINE_SEL "selected"` (K41 witness 2: `count-collapsed`, "size cap
+retry, exact 671050 > 500000") — per match_api.md's table, but Frank's
+bucket `sel ∉ {selected, forced}` does NOT see it; its only trace is
+`_LANG_WHY`'s prefix; the reporter's legend note names the gap; (3)
+`-fno-prefilter-collapse` refuses only on the size-cap rung — on the
+[SEL-1] rung the denied build is the 36d5963 shape (`overflowed-dfa`,
+no prefilter, still compiled), so the brief's control asserts what IS
+true and the refusal control moved to K41's witness; (4) `_LANG_WHY`
+has a sixth value, `no counted repeat`. Plus, from the `--dry-run`
+rehearsal of one bounded cell at the pin (synthetic, compile facts
+only): `engine_sel` census `selected` 32 / `collapsed-prefilter` 14 —
+the ctx four (both forms), cls-upto-32768 (both), and the `\z` forms
+ONLY of cls-upto-16384, cls-lazy-16384, nest2-64, nest3-16 (K7's
+48,000,000-element budget) — the nests' PLAIN forms are `selected`
+DFAs where I-18 predicted `selected` VMs; `warned_emit_bytes` fires on
+THREE forms (cls-upto-16384 plain 724,699 — I-18's 725,692 counts a
+differently-named `#include`; cls-lazy-16384 plain; cls-upto-4096's `\z`
+form, which I-18's plain-only table did not see); nest3-16's `\z` form
+is K=1 / size-model. Reporter: `sel=`/`lang=` clauses, the derived `DFA
+fallback tripped` bucket + legend note, `emit bytes`/`code bytes`
+columns with `(warned)`, TSV rows, and the scope addition — `K=`/
+`caps=` on the legend line for VM artifacts (KB-3 closed) — all
+CONDITIONAL, v7 unchanged, every committed report byte-identical (the
+re-render control runs with `make check` on master). Worktree
+removed. `make check` on master (87f86b1, under setsid after a
+harness-killed first attempt): 3/56/0 · 141/141 · 54/54, rc 0; the
+committed bounded report re-rendered with the merged reporter diffs
+275 lines against the committed file. Next: the abi-12 windows.

@@ -37,7 +37,18 @@ the letter; the size-cap rescue stamps `sel=selected` — a finding), the
 bits 19/20 controls, the reporter's `sel=`/`lang=` clauses and two
 source-bytes columns, and the abi-11 `K=`/`caps=` clauses (141/141 harness checks, 54 reporter tests). The
 windows at 96e44c2 (bounded's AFTER sample first) are the manager's next
-step. Before it, the window (a)/(b) and
+step. Before it, the same night: bench/bounded@0.1's FIRST SAMPLE at
+36d5963 (6/6 measured, store 50, reports 2026-08-30-bounded-0.1-*; the
+[OPT-4] BEFORE; ledger docs/dev/ledgers/, outbox O-9: 65535 refused by
+the NFA cap while pcrec-vm builds it, the end-anchored search-filter DFA
+×37 — I-20: the documented 4096-state [ENG-ABS] ceiling, the `\z`
+spelling halving it — the counted DFA chosen where the VM is 6× faster,
+the wasted DFA build ×315-×687, K moved once) after two harness fixes
+the window found: the free_text note cap (3bda38b) and BD7 — the
+occupancy sample is `mpstat -P ALL 1 5` judged on its Average (five one-
+shot after-sample losses in two windows; the gate-shape test run
+measured all three on attempt 1); Frank's wider gate ruling is the
+schema v1.4 PROPOSAL docs/design/gate_shape_v14.md ([B20], I-19 owed). Before it, the window (a)/(b) and
 outbox O-8 were the manager's step after [B18]. Before it, [B16] re-pinned
 pcrec to **35e1ab1** (abi 8) — one adapter change absorbing five
 pcrec pins of new observability (pcrec inbox I-5/I-6/I-11/I-12/I-13):
