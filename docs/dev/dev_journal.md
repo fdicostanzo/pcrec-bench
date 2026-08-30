@@ -1794,3 +1794,47 @@ timeline accepted as PROVENANCE only; timed-out trials count as
 disagreeing; k stays 1.5 with its margin stated. Lane b20r3 (strong
 model, worktree) compiles r3 with these dispositions and applies them to
 the spec; watchdog cron.
+
+## 2026-08-30 (EDT, ~14:4x), fifth session (part 10) — r3 compiled and applied (2aca1cd): the GROUP rule; E-1..E-3; the implementation lane opened
+
+LANE b20r3 (strong model, worktree, ~35 min): docs/dev/reviews/2026-08-
+30-r3-gate-shape-v14.md — all 45 findings (A 11, B 17, C 17) in the r2
+format with dispositions citing R-1..R-20: 29 accepted, 15 accepted-
+amended, 1 deferred (C-F17, code comments), 0 rejected whole; the spec
+rewritten §0-§9 with every accepted change (§H verbatim, §H.2 added).
+THE GROUP RULE `v1.4-group`: a row disagrees at ≥ 2 slow trials
+(> 1.5 × its median) or one fast (< median / 1.5) or a mixed timed-out
+trial; a GROUP (pattern, regime, form) disagrees at d ≥ 2 AND 3·d ≥ n;
+a record disagrees at ≥ 1 disagreeing group, judged only at N ≥ 5 and
+odd. Constants from the group census (probe --groups; archived
+2026-08-30-trial-agreement-census-groups.txt): at k = 1.5 the largest d
+in any group in the store is 1, so every candidate gives zero
+disagreeing groups; (2,3) and (2,4) are the only pairs flagging both
+R-16 shapes (a whole-group two-pass disturbance and a half-pass
+overlap) at n = 4/5/30/85/112 ((2,2) fails the half shape at odd n;
+D_MIN = 3 fails at n = 4, 5); (2,3) chosen — margins over the store
+2/1/10/29/38 rows; the k margin at group level: the loaded record
+flags at k ≤ 1.40, clears at 1.45. ESCALATIONS RULED: E-1 — the store's
+five timed-out rows are ALL-five-trials engine refusals (pcre2-jit ×
+factored / 1 MB atom run — U1), not disturbances: a MIXED row
+disagrees, an all-timed-out row is unjudged under
+rows_unjudged_reasons.all_timed_out; E-2 — a scratch-tier n/a-trials
+record keeps the pre-flight's status (quick and the smoke suite never
+write inconclusive-spread; scratch is never ranked); E-3 — (2,3)
+confirmed as the least sensitive pair flagging both shapes, (2,4)
+recorded as the tighter option to revisit after the first v1.4 window.
+Merged 2aca1cd (docs only).
+
+LANE b20impl OPENED (strong model, worktree): the implementation in
+five committed steps — schema + validator (1.4, the tri-state target
+field, the block, X13 versioned, X31-X33, KB-4's schema half,
+record_schema.md's §4 clause and tables, the examples against the real
+store), harness (the target clause + missing-row refusal, the quiet CLI
+through gate(), ONE derivation in reduce.py, the status table, the note
+order, exit code 4, run_window's single retry), reporter (the agreement
+legend, R1 from the block, the mixed 1.3+1.4 fixture, v9 iff the
+rendering changes → every report regenerated and classified), the §8
+checks each with its control, docs. Box rule: check-harness and the
+regeneration wait for "box free" (pcrecdev1's battery to ~15:45-16:00).
+Watchdog cron. The r3 lane's delivery file and the panel files stay in
+the scratchpad.
