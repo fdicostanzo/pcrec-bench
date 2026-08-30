@@ -1085,3 +1085,4 @@ until ~15:10). (v) is noted in [LIM-1]'s charter as a required witness.
 longer a stand-in for the [SEL-1] fallback in our own measurements.
 Item 8(d)'s sixth `_LANG_WHY` value (`no counted repeat`) and the
 registry.md §6 "19 values" staleness go to [LIM-1]'s spec pass.
+ack: 2026-08-30 — plan.md [B21] (HELD for the [OPT-4.1] pin; the per-subject prediction recorded as the falsifiable frame), [B22] NEW (re-pin to the [OPT-4.1] pin: the new _LANG_WHY value, the ten-point ledger with I-21's predictions, bounded@0.2 in the same window); asks ii-v await I-22
