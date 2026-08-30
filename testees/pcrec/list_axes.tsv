@@ -2,29 +2,31 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-36d5963/build/pcrec --list-axes
+#     build/pcrec-96e44c2/build/pcrec --list-axes
 #
-# pcrec commit 36d59631fc712871694575938c00bf1f94a6ba3e (abi 11), archived by
-# testees/pcrec/pin.sh on 2026-08-29 (PIN.tsv); captured 2026-08-29 by lane
-# b18repin ([B18]). 47 data rows / 19 axes / 12 columns -- the FOURTH
-# registry surface (pcrec docs/spec/registry.md 6, [CHK-2]).
+# pcrec commit 96e44c25cdc9a5de9fe785ad9505bd79b9a83e30 (abi 12), archived by
+# testees/pcrec/pin.sh on 2026-08-30 (PIN.tsv); captured 2026-08-30 by lane
+# b19repin ([B19]). 54 data rows / 21 axes / 12 columns -- the FOURTH
+# registry surface (pcrec docs/spec/registry.md 6, [CHK-2]). The diff from
+# the 36d5963 copy (47 / 19, [B18]) is exactly SEVEN rows, two new axes:
+# `prefilter-lang` (2 rows: `count-collapsed` deny bit 19 / force bit 20,
+# `exact` the fallback) and `engine-route` (5 rows: forced,
+# collapsed-prefilter, overflowed-dfa, overflowed-prefilter, selected --
+# the RX_ENGINE_SEL value set, O-8 6(d) ruled as a stamp). No row moved.
 #
 # WHAT THIS FILE IS FOR: adapter.py's declared stamp value sets are CHECKED
 # against it (`registry_check`), and `make check-harness` diffs this copy
 # against the pin's live `--list-axes` output (tools/selfcheck.py,
 # `check_list_axes_registry`), so a candidate pcrec adds -- a new prefilter
-# form, a new match form -- surfaces as a failing check naming the value,
-# not as the first record's X15 rejection. Re-archive at every re-pin: the
-# diff IS the list of what moved. The registry's own boundary (registry.md
-# 6): it proves what the compiler THINKS its axes are; the artifacts
-# `check_mechanism_stamps` reads are the independent side.
-#
-# KNOWN GAP AT THIS PIN (a finding for pcrec, [B18]): the `size-term` axis
-# names `RX_UNROLL_K_WHY` as its stamp_macro but carries an EMPTY
-# stamp_value on both rows, although that macro is name-valued (seven
-# values, match_api.md 6.3) -- so `unroll_k_why`'s declared set comes from
-# the spec, not from here, and `registry_check` does not cover it.
-# ---------------------------------------------------------------------------
+# form, a new match form, a new route token -- surfaces as a failing check
+# naming the value, not as the first record's X15 rejection. Re-archive at
+# every re-pin: the diff IS the list of what moved. The registry's own
+# boundary (registry.md 6): it proves what the compiler THINKS its axes
+# are; the artifacts `check_mechanism_stamps` reads are the independent
+# side. Known gaps carried from [B18]: the `size-term` rows have no
+# `stamp_value` (RX_UNROLL_K_WHY is name-valued); the `table` axis lists no
+# `none` / `mixed` outcome rows -- I-18 (iii): both fixed on pcrec's admin
+# lane ([REG-SV]), landing in the NEXT pin's diff as 61 rows / 21 axes.
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).
@@ -85,6 +87,8 @@ length-prune	1	clamped	predicate	RX_VM_PRUNES	PCREC_VM_PRUNE_CLAMPED	PCREC_NO_LE
 length-prune	2	unclamped	predicate	RX_VM_PRUNES	PCREC_VM_PRUNE_UNCLAMPED						always (fallback) — no bound derivable, or the axis denied
 vm-prefilter	1	hybrid	predicate	RX_VM_PREFILTER	hybrid	PCREC_NO_PREFILTER	8	PCREC_FORCE_PREFILTER	9	-fno-prefilter / -fprefilter	auto+captures selects it jointly with the engine (select_engine.c); -fprefilter REFUSES on a pure-DFA-selected pattern (do-or-die)
 vm-prefilter	2	none	predicate	RX_VM_PREFILTER	none						always (fallback) — also the --engine=vm side effect (R21 E-6)
+prefilter-lang	1	count-collapsed	predicate	RX_VM_PREFILTER_LANG	count-collapsed	PCREC_NO_PREFILTER_COLLAPSE	19	PCREC_FORCE_PREFILTER_COLLAPSE	20	-fno-prefilter-collapse / -fprefilter-collapse	these machines serve only as the VM's prefilter (the DFA is not the engine), a counted repeat with rmin > 1 or rmax > 1 exists, AND either -fprefilter-collapse was passed or compile_driver took a retry rung (a DFA state cap overflowed, or an emitted-size cap refused the exact artifact). There is no state-count knee: the default is the exact language (Frank's ruling B). Every X{m,n} then lowers as X{min(m,1),}
+prefilter-lang	2	exact	predicate	RX_VM_PREFILTER_LANG	exact						always (fallback) — the pattern's own language, which is also what the collapse produces for a pattern that has nothing to collapse
 altcls-merge	1	merged	predicate	RX_ALTCLS_MERGES		PCREC_NO_ALTCLS_MERGE	10			-fno-altcls-merge	a maximal run of single-character alternation branches qualifies (runs before either engine is built)
 altcls-merge	2	denied	predicate	RX_ALTCLS_MERGES							always (fallback)
 altcls-factor	1	factored	predicate	RX_ALTCLS_FACTORED		PCREC_NO_ALTCLS_FACTOR	11			-fno-altcls-factor	a maximal run sharing a literal first byte qualifies, on stage 1's own output
@@ -97,3 +101,8 @@ tiered-entry	1	tiered	predicate	RX_FAST_FRAMES		PCREC_NO_TIERED_ENTRY	14			-fno-
 tiered-entry	2	single-tier	predicate	RX_FAST_FRAMES							always (fallback) — FAST_FRAMES==RESUME_FRAMES, FAST_TRAIL==TRAIL_FRAMES
 engine	1	vm	predicate	RX_ENGINE	vm					--engine=vm	auto: any construct select_engine.c decides is VM-only (captures, possessive quantifiers, \K, backreferences, calls, ...); forced by --engine=vm (also disables the DFA hybrid prefilter, R21 E-6)
 engine	2	dfa	predicate	RX_ENGINE	dfa					--engine=dfa	auto: always, when no construct forces the VM; --engine=dfa REFUSES a pattern needing VM-only machinery (do-or-die)
+engine-route	1	forced	predicate	RX_ENGINE_SEL	forced					--engine=vm / --engine=dfa	the caller named the engine, so auto selected nothing
+engine-route	2	collapsed-prefilter	predicate	RX_ENGINE_SEL	collapsed-prefilter						auto, a DFA build overflowed a cap, and compile_driver's retry KEPT a prefilter by rebuilding it from the count-collapsed language ([OPT-4]/K39; -fno-prefilter-collapse skips this rung)
+engine-route	3	overflowed-dfa	predicate	RX_ENGINE_SEL	overflowed-dfa						auto, the DFA was to be the ENGINE, its build overflowed, and no prefilter survived the fallback ([SEL-1]/K40)
+engine-route	4	overflowed-prefilter	predicate	RX_ENGINE_SEL	overflowed-prefilter						auto, the VM was already chosen for another reason, and only its auto-selected PREFILTER's DFA overflowed, so the prefilter was dropped
+engine-route	5	selected	predicate	RX_ENGINE_SEL	selected						always (fallback) — auto chose on the AST and nothing overflowed

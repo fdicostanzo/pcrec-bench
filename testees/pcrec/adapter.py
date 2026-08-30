@@ -80,6 +80,39 @@ pin and 35e1ab1, and this adapter absorbs all of it at once:
                      `RX_MAX_EMIT_BYTES` on every artifact; `-fno-size-term`
                      (bit 18) denies the K selection, never the caps.
 
+[B19] (pin 96e44c2 = pcrec abi 12, inbox I-18) absorbed one more, plus two
+adapter-side facts that are not stamps at all:
+
+  abi 12 ([OPT-4])   `RX_ENGINE_SEL` on EVERY artifact, both engines -- one
+                     token from the registry's `engine-route` axis
+                     (`selected` / `forced` / `overflowed-dfa` /
+                     `overflowed-prefilter` / `collapsed-prefilter`): the
+                     decision `RX_ENGINE_WHY` narrates, as a closed set
+                     (O-8 6(d), RULED). `RX_VM_PREFILTER_LANG` (`exact` /
+                     `count-collapsed`) and `RX_VM_PREFILTER_LANG_WHY` on
+                     every VM HYBRID -- where `RX_VM_PREFILTER` reads
+                     `hybrid` -- and on NO other artifact (match_api.md 6.3;
+                     I-18 said "every VM artifact", the artifacts and the
+                     spec say hybrids: a forced `--engine=vm` artifact has
+                     no prefilter and stamps neither). `-fno-prefilter-
+                     collapse` (bit 19) denies both retry rungs;
+                     `-fprefilter-collapse` (bit 20) forces the collapse.
+  (adapter)          `emit_bytes` / `emit_code_bytes`: the artifact's C
+                     source measured by pcrec's OWN definition (compile.c's
+                     `emit_size_measure`, ported to `emit_size()` below and
+                     CONTROLLED against the pin's `--warn-emit-bytes`
+                     message, which prints both numbers, wherever it fires):
+                     total bytes minus comment bytes (the size log's
+                     quantity, what `RX_MAX_EMIT_BYTES` caps), and that
+                     minus table initializers (what `_CODE_BYTES` caps).
+                     Both files pcrec emits (.c + .h) are summed, as pcrec
+                     sums them. `warned_emit_bytes`: present ONLY when the
+                     compile printed the advisory `--warn-emit-bytes` line
+                     (default 250,000; the warning is NEVER a failure, the
+                     exit code is 0 and the artifact is what it would have
+                     been); the value is the total the message names, and
+                     the line itself is appended to the row's diagnostic.
+
 Two rules govern how they are read, and both exist because they were paid
 for on the pcrec side first:
 
@@ -106,10 +139,17 @@ for on the pcrec side first:
    `STAMP_SCOPE` states both per pair; `_check_agreement` asserts that at
    the artifact's own abi every such pair IS present within its scope and
    ABSENT outside it (the exclusive scopes: `dfa_match` on no VM artifact,
-   the size term's VM-only trio on no DFA artifact). The shim still reads
+   the size term's VM-only trio on no DFA artifact, [B19]'s language pair
+   on no artifact that is not a VM hybrid). The shim still reads
    the macros through #ifdef so an artifact between the floor and a
    macro's abi links and records "not stamped" -- and this rule is what
    keeps that #ifdef from ever hiding a stamp that should have been there.
+4. A STAMP WITH NO MIRROR IS CHECKED AGAINST WHAT IT IMPLIES ([B19]).
+   `RX_ENGINE_SEL` has no rx_info field, so its control is the CONFIG and
+   the stamps beside it: `forced` IFF the testee named `--engine=`;
+   `collapsed-prefilter` implies a VM hybrid whose language is
+   `count-collapsed`; the two `overflowed-*` values imply a VM artifact
+   with no prefilter (match_api.md 6.3's table, read as implications).
 
 The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 10 since [B18] -- the
 abi that appended `match_form`, the third field it reads; 6 before, for
@@ -338,6 +378,127 @@ METADATA_DECL = {
                        "artifact that fitted is distinguishable from one "
                        "built with a raised cap without the command line",
     },
+    # -- [OPT-4] (pcrec abi 12, [B19]): the engine ROUTE as a closed set,
+    # and the prefilter LANGUAGE pair. The route is on EVERY artifact; the
+    # language pair is on every VM HYBRID and no other artifact -- a THIRD
+    # independent selection beside `prefilter` (does the VM run a DFA ahead
+    # of its program) and `dfa_prefilter` (what candidate-start filter that
+    # DFA's scan carries): WHICH LANGUAGE that DFA recognises.
+    "engine_sel": {
+        "type": "enum", "scope": "pattern",
+        "values": ["selected", "forced", "overflowed-dfa",
+                   "overflowed-prefilter", "collapsed-prefilter"],
+        "source": "<PREFIX>_ENGINE_SEL ([OPT-4], pcrec abi 12+), read through "
+                  "pb_engine_sel(); EVERY artifact, both engines; no rx_info "
+                  "mirror -- CHECKED against the config (`forced` iff "
+                  "--engine= was named) and against the prefilter stamps it "
+                  "implies; the value set is CHECKED against `pcrec "
+                  "--list-axes` (axis `engine-route`)",
+        "description": "HOW the engine was chosen, as one token: `selected` "
+                       "(auto chose on the AST and nothing overflowed -- the "
+                       "common case on both engines), `forced` (--engine=vm "
+                       "or =dfa, so auto selected nothing), `overflowed-dfa` "
+                       "(auto, the DFA was to be the ENGINE, its build "
+                       "overflowed a cap and no prefilter survived -- "
+                       "[SEL-1]), `overflowed-prefilter` (auto, the VM was "
+                       "already chosen and only its prefilter's DFA "
+                       "overflowed, so the prefilter was dropped), "
+                       "`collapsed-prefilter` (auto, a DFA build overflowed "
+                       "and the retry KEPT a prefilter by rebuilding it from "
+                       "the count-collapsed language -- [OPT-4]). The last "
+                       "three are all `fell back`; a consumer wanting only "
+                       "\"did this compile fall back?\" tests "
+                       "`not in (selected, forced)` (Frank's ask (b)). "
+                       "MEASURED at 96e44c2: the SIZE-CAP retry rung (an "
+                       "emitted-size cap refused the exact artifact, "
+                       "`vm_prefilter_lang_why` = `size cap retry, ...`) "
+                       "stamps `selected`, not `collapsed-prefilter`, so "
+                       "that bucket does not see it -- read the `_why` pair",
+    },
+    "vm_prefilter_lang": {
+        "type": "enum", "scope": "pattern",
+        "values": ["exact", "count-collapsed"],
+        "source": "<PREFIX>_VM_PREFILTER_LANG ([OPT-4], pcrec abi 12+), read "
+                  "through pb_vm_prefilter_lang(); every VM HYBRID (where "
+                  "`prefilter` reads `hybrid`) and NO other artifact -- "
+                  "match_api.md 6.3's own iff for this pair, checked in "
+                  "both directions by STAMP_SCOPE; the value set is CHECKED "
+                  "against `pcrec --list-axes` (axis `prefilter-lang`)",
+        "description": "WHICH LANGUAGE the VM's prefilter DFA recognises: "
+                       "`exact` (the pattern's own -- the DEFAULT under "
+                       "ruling B, prefilter_count_independence.md 10a) or "
+                       "`count-collapsed` (a sound SUPERSET: every X{m,n} "
+                       "lowered to X{min(m,1),}, so the machine does not "
+                       "scale with the count; the filter's rejection is "
+                       "still sound and the answers identical, but it "
+                       "cannot bound the match END, so the artifact reads "
+                       "`RX_VM_PRUNE_CEILING subject-end`). Reached only by "
+                       "-fprefilter-collapse or by a retry rung of "
+                       "compile_driver's ladder -- `vm_prefilter_lang_why` "
+                       "says which",
+    },
+    "vm_prefilter_lang_why": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_VM_PREFILTER_LANG_WHY ([OPT-4], pcrec abi 12+), "
+                  "read through pb_vm_prefilter_lang_why(); same scope as "
+                  "vm_prefilter_lang. FREE TEXT (two of its values carry a "
+                  "number), so a `string` pair rather than an enum",
+        "description": "WHY the language is what it is: `exact` / `no "
+                       "counted repeat` (the default, nothing to collapse "
+                       "or nothing collapsed), `forced` (-fprefilter-"
+                       "collapse), `dfa overflow retry, exact nfa N` (the "
+                       "[SEL-1] rung: a DFA STATE cap overflowed and the "
+                       "retry rebuilt the prefilter from the collapsed "
+                       "language -- N is the exact prefilter NFA's state "
+                       "count), `size cap retry, exact N > cap` (the "
+                       "[OPT-4] rung: an emitted-size cap refused the exact "
+                       "artifact at N bytes). The two `retry` prefixes are "
+                       "the RESCUES; `-fno-prefilter-collapse` denies both "
+                       "rungs (the state-cap one then drops the prefilter, "
+                       "the size-cap one then REFUSES the pattern)",
+    },
+    # -- the ADAPTER's own two size facts and the warning ([B19], I-18
+    # (iv)/(3)): not stamps, measured on the emitted files by pcrec's own
+    # definition. Every compiled artifact carries the first two.
+    "emit_bytes": {
+        "type": "integer", "scope": "pattern",
+        "source": "adapter.emit_size() over the emitted .c and .h -- a port "
+                  "of pcrec src/core/compile.c's `emit_size_measure` (total "
+                  "minus comment bytes; tests/lib/size_count.sh's rule), "
+                  "CONTROLLED byte-exactly against the `--warn-emit-bytes` "
+                  "message's first number wherever that warning fires",
+        "description": "the artifact's emitted C source in bytes, comments "
+                       "EXCLUDED, .c + .h summed as pcrec sums them -- the "
+                       "quantity `max_emit_bytes` caps and the size log / "
+                       "[ART-SIZE] census measure; beside `artifact_bytes` "
+                       "(the .so) so gcc time and object size can be read "
+                       "against the source that produced them",
+    },
+    "emit_code_bytes": {
+        "type": "integer", "scope": "pattern",
+        "source": "adapter.emit_size() -- `emit_bytes` minus every byte of "
+                  "a `static const ... rx_*[N] = {` initializer (the table "
+                  "rule of artifact_size_term.md 4.2); CONTROLLED against "
+                  "the `--warn-emit-bytes` message's second number",
+        "description": "the comment-excluded bytes OUTSIDE table "
+                       "initializers -- the quantity `max_emit_code_bytes` "
+                       "caps (the one that tracks gcc time; a table-"
+                       "dominated DFA artifact has a large `emit_bytes` "
+                       "and a small one of these)",
+    },
+    "warned_emit_bytes": {
+        "type": "integer", "scope": "pattern",
+        "source": "the `pcrec: warning: large artifact: B bytes ...` line on "
+                  "the emit-c step's stderr (limits.md 8, `--warn-emit-"
+                  "bytes`, default 250,000; exit code unchanged), parsed by "
+                  "WARN_RE; the whole line is also appended to the row's "
+                  "diagnostic",
+        "description": "PRESENT ONLY when pcrec printed its advisory "
+                       "large-artifact warning for this compile; the value "
+                       "is the total the message names (== emit_bytes, "
+                       "checked). ABSENT means no warning -- never a "
+                       "failure either way",
+    },
     "dfa_table": {
         "type": "enum", "scope": "pattern",
         "values": ["premultiplied", "indexed", "mixed", "none"],
@@ -449,7 +610,8 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "step_budget",
              "resume_frames", "trail_frames", "resume_frame_size",
              "trail_frame_size", "buffer_frames", "buffer_trail",
              "fast_frames", "fast_trail",
-             "unroll_k", "max_emit_code_bytes", "max_emit_bytes")
+             "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
+             "emit_bytes", "emit_code_bytes", "warned_emit_bytes")
 
 #: The `info` names carrying a STRING-valued pair, and the declared name each
 #: lands under. Kept beside INT_PAIRS so a pair can never be printed by the
@@ -457,7 +619,8 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "step_budget",
 #: [B16]: the driver printed it and `_metadata` had no line for it, so the
 #: unconditional engine stamp reached no record for five pins).
 STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
-             "dfa_prefilter_offsets", "dfa_match", "unroll_k_why")
+             "dfa_prefilter_offsets", "dfa_match", "unroll_k_why",
+             "engine_sel", "vm_prefilter_lang", "vm_prefilter_lang_why")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
 #: (its D81 -- a selection fact is stamped whether or not it fired), the abi
@@ -471,6 +634,10 @@ STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
 #:             included (RX_DFA_MATCH describes the _match ENTRY, 6.3)
 #:   vm        every VM artifact -- and no DFA artifact (6.3 family (b);
 #:             the size term's VM-only trio)
+#:   vm-hybrid ([B19]) every VM artifact whose `prefilter` reads `hybrid` --
+#:             and NO other artifact: not a forced-VM one (no prefilter at
+#:             all), not a DFA one (6.3, [OPT-4]: "on every artifact with a
+#:             VM PREFILTER DECISION that came out hybrid"). Exclusive.
 #: The abi thresholds are the spec's (match_api.md 6.3, limits.md 8): the
 #: `dfa-scan` rows start at 6 because before [DD-13c] hybrids did not stamp.
 STAMP_SCOPE = {
@@ -486,7 +653,24 @@ STAMP_SCOPE = {
     "unroll_k_why":          ("vm",       11),
     "max_emit_code_bytes":   ("vm",       11),
     "max_emit_bytes":        ("every",    11),
+    "engine_sel":            ("every",    12),
+    "vm_prefilter_lang":     ("vm-hybrid", 12),
+    "vm_prefilter_lang_why": ("vm-hybrid", 12),
 }
+
+#: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
+#: `every` and `dfa-scan`, have no outside worth asserting on: `dfa-scan`'s
+#: iff is checked directly against rx_info.scan in _check_agreement 3).
+EXCLUSIVE_SCOPES = ("dfa", "vm", "vm-hybrid")
+
+#: `engine_sel` values that mean "auto FELL BACK" (Frank's ask (b): the
+#: three values that share one RX_ENGINE_WHY prose and differ in what
+#: survived). The reporter derives its `DFA fallback tripped` bucket from
+#: this set; the SIZE-CAP retry rung is NOT in it (it stamps `selected` --
+#: measured at 96e44c2), which is why `vm_prefilter_lang_why` is recorded
+#: as its own pair.
+ENGINE_SEL_FALLBACK = ("overflowed-dfa", "overflowed-prefilter",
+                       "collapsed-prefilter")
 
 #: `dfa_prefilter` values for which `dfa_prefilter_offsets` is NOT "none"
 #: (match_api.md 6.3's iff, checked from both sides).
@@ -510,7 +694,24 @@ REGISTRY_STAMP_PAIRS = {
     "RX_DFA_PREFILTER": "dfa_prefilter",
     "RX_DFA_TABLE": "dfa_table",
     "RX_DFA_MATCH": "dfa_match",
+    # [B19] (abi 12): both `predicate` axes, so the registry gets the
+    # one-way check (every registry value declared); the reverse direction
+    # is the by-value witnesses in tools/selfcheck.py.
+    "RX_ENGINE_SEL": "engine_sel",
+    "RX_VM_PREFILTER_LANG": "vm_prefilter_lang",
 }
+
+#: The committed copy of `pcrec --list-definitions | grep -v '^#'` at the
+#: pin -- the FIFTH registry surface ([DD-11], pcrec registry.md 9; I-18
+#: (4)): one row per construct DEFINED in terms of another (`\d` = `[0-9]`,
+#: the POSIX classes, `\R`, ...). Nothing this adapter reads depends on it;
+#: it is archived beside `list_axes.tsv` under the same rule (re-archive at
+#: every re-pin, the diff is what moved) and `make check-harness` diffs it
+#: against the pin's live output. The bench's own `#` source header is
+#: skipped by the same rule as list_axes.tsv's; pcrec's own `#` comment
+#: lines are NOT in this file (the grep strips them), so the data rows are
+#: the whole body.
+LIST_DEFINITIONS_TSV = os.path.join(HERE, "list_definitions.tsv")
 
 #: Declared values the registry's candidate lists do NOT enumerate because
 #: they are OUTCOMES rather than candidates the selector walks (MEASURED at
@@ -530,6 +731,125 @@ REGISTRY_OUTCOME_VALUES = {
 #: The NUMBER lives in shim.c and nowhere else; this is only how the refusal
 #: is recognised.
 ABI_FLOOR_TOKEN = "abi-below-shim-floor"
+
+
+#: The advisory large-artifact line pcrec writes to stderr past both caps
+#: (limits.md 8, `--warn-emit-bytes=N`, default 250,000; 0 disables): the
+#: two numbers are the SAME two quantities `emit_size()` computes, in the
+#: same order, which is what makes the message a control on that port.
+WARN_RE = re.compile(
+    r"pcrec: warning: large artifact: (\d+) bytes of emitted C source "
+    r"\((\d+) of code\), over --warn-emit-bytes=(\d+)\.")
+
+
+def _emit_size_table_open(ln):
+    """Does this line open a table initializer? pcrec's rule verbatim
+    (src/core/compile.c `emit_size_table_open`): after leading blanks the
+    line starts `static const `, has a `[` somewhere after that, and an
+    `=` followed (blanks allowed) by `{` somewhere after the `[` -- not
+    necessarily at the line's end, because the emitter writes a
+    computed-goto jump table (`static const void *const rx_targets_7[11] =
+    { &&rx_s1, ... };`) on ONE line. Anchored on `static const ` rather
+    than on a type spelling, for the reason pcrec's own comment gives (a
+    type pattern is what its first instrument could not cross)."""
+    kw = b"static const "
+    p = ln.lstrip(b" \t")
+    if not p.startswith(kw):
+        return False
+    lb = p.find(b"[")
+    if lb < 0:
+        return False
+    q = lb
+    while True:
+        q = p.find(b"=", q)
+        if q < 0:
+            return False
+        r = q + 1
+        while r < len(p) and p[r:r + 1] in (b" ", b"\t"):
+            r += 1
+        if r < len(p) and p[r:r + 1] == b"{":
+            return True
+        q += 1
+
+
+def emit_size(paths):
+    """-> (emit_bytes, emit_code_bytes) over the emitted files, by pcrec's
+    OWN definition -- a port of src/core/compile.c's `emit_size_measure`
+    ([ART-SIZE], artifact_size_term.md 4.2; tests/lib/size_count.sh's
+    comment rule), summed over the files the way pcrec sums its .c and .h
+    buffers before it compares them with the caps or prints the warning.
+
+    The rules, verbatim from the C: every line counts its bytes INCLUDING
+    its newline; a line whose first non-blank opens a block comment is
+    PROSE in full, and a block opener that does not close on its own line
+    runs to the line that closes it; a `//` line is prose; a line that
+    opens a table initializer (`_emit_size_table_open`) is TABLE, and so
+    is every line until the braces balance (the closing line included).
+    total = the artifact minus its prose (the size log's quantity, what
+    `max_emit_bytes` caps); code = that minus its tables (what
+    `max_emit_code_bytes` caps). Bytes, never characters (K35: the
+    emitter's comments carry multi-byte punctuation), which is why the
+    files are read in binary.
+
+    Why a port and not the size log's awk: the C is the definition the
+    caps and the warning ENFORCE, the awk only the size log's half of it
+    (no table split). The control that the port IS the C: wherever the
+    `--warn-emit-bytes` line fires, `_compile_one` asserts its two numbers
+    equal this function's, and tools/selfcheck.py forces the warning at
+    `--warn-emit-bytes=1` on artifacts of each kind (a table-dominated DFA,
+    a one-line jump table, a VM hybrid) for the same comparison."""
+    total = prose = tables = 0
+    for path in paths:
+        with open(path, "rb") as f:
+            src = f.read()
+        in_comment = False
+        in_table = 0
+        i, n = 0, len(src)
+        while i < n:
+            j = src.find(b"\n", i)
+            if j < 0:
+                ln, lb, i = src[i:], n - i, n
+            else:
+                ln, lb, i = src[i:j], j - i + 1, j + 1
+            total += lb
+            t = ln.lstrip(b" \t")
+            if in_comment:
+                prose += lb
+                if b"*/" in ln:
+                    in_comment = False
+            elif t.startswith(b"/*"):
+                prose += lb
+                # closed on its own line? the C scans from two past the
+                # opener, so `/*/` does not count as closed.
+                k = (len(ln) - len(t)) + 2
+                if b"*/" not in ln[k:]:
+                    in_comment = True
+            elif t.startswith(b"//"):
+                prose += lb
+            elif in_table:
+                tables += lb
+                in_table += ln.count(b"{") - ln.count(b"}")
+                if in_table < 0:
+                    in_table = 0
+            elif _emit_size_table_open(ln):
+                tables += lb
+                d = ln.count(b"{") - ln.count(b"}")
+                in_table = d if d > 0 else 0
+    tot = total - prose
+    return tot, (tot - tables if tot > tables else 0)
+
+
+def parse_warn_line(stderr_text):
+    """-> (warned_total, warned_code, threshold, line) for pcrec's advisory
+    large-artifact warning on `stderr_text`, or None when it did not
+    fire. The warning is NOT a failure (limits.md 8: exit code unchanged,
+    nothing emitted differently); it is a fact about the artifact and is
+    recorded as one."""
+    for line in (stderr_text or "").splitlines():
+        m = WARN_RE.search(line)
+        if m:
+            return int(m.group(1)), int(m.group(2)), int(m.group(3)), line.strip()
+    return None
 
 
 def buffer_capacities(cfg):
@@ -1008,6 +1328,19 @@ class Adapter(_ad.Adapter):
                 return _ad.CompileResult("did-not-compile",
                                          diagnostic=diag or "pcrec exit %d"
                                          % proc.returncode)
+            if t == 1:
+                # [B19] the two source-bytes facts and the advisory warning,
+                # measured on the files THIS trial's emit produced (every
+                # trial emits the same bytes; the first is read). The .h is
+                # emitted beside the .c and pcrec sums both before it caps
+                # or warns, so both are summed here.
+                emit_files = [art_c]
+                art_h = art_c[:-2] + ".h"
+                if os.path.exists(art_h):
+                    emit_files.append(art_h)
+                emit_meta = self._emit_facts(
+                    emit_files,
+                    (proc.stderr or b"").decode("utf-8", "replace"))
 
             # phase 2: gcc ---------------------------------------------------
             so = os.path.join(cdir, "artifact-%d.so" % t)
@@ -1057,7 +1390,14 @@ class Adapter(_ad.Adapter):
                                   "load": load_s})
             libs.append(so)
             if t == 1:
-                meta, engine_why = self._metadata(out.info)
+                forced = any(f.startswith("--engine=")
+                             for f in cfg.get("flags", []))
+                meta, engine_why = self._metadata(out.info, forced=forced)
+                pairs, warn_line = emit_meta
+                meta.update(pairs)
+                if warn_line:
+                    engine_why = ((engine_why + "\n") if engine_why else "") \
+                        + "pcrec stderr: " + warn_line
                 self._giveup_bounds = (int(out.info.get("err_floor", -5)),
                                        int(out.info.get("err_giveup_top", -2)))
                 artifact_bytes = os.path.getsize(so)
@@ -1070,10 +1410,37 @@ class Adapter(_ad.Adapter):
                                  artifact_bytes=artifact_bytes,
                                  diagnostic=engine_why)
 
-    def _metadata(self, info):
+    @staticmethod
+    def _emit_facts(emit_files, stderr_text):
+        """-> ({emit_bytes, emit_code_bytes[, warned_emit_bytes]}, warn_line)
+        for one emit-c run ([B19]). The port is CONTROLLED here on every
+        compile whose warning fired: pcrec's two numbers must equal the
+        port's, or the record would carry a size computed by a definition
+        that is not the one the caps enforce -- an AdapterError, never a
+        number."""
+        tot, code = emit_size(emit_files)
+        pairs = {"emit_bytes": tot, "emit_code_bytes": code}
+        warn = parse_warn_line(stderr_text)
+        if warn is None:
+            return pairs, None
+        w_tot, w_code, _thr, line = warn
+        if (w_tot, w_code) != (tot, code):
+            raise _ad.AdapterError(
+                "pcrec's --warn-emit-bytes line says the artifact is %d "
+                "bytes (%d of code) but this adapter's port of pcrec's "
+                "emit_size_measure counts %d (%d of code) over %s. The two "
+                "must agree byte for byte (the same definition, src/core/"
+                "compile.c); re-derive emit_size() against the pin."
+                % (w_tot, w_code, tot, code, ", ".join(emit_files)))
+        pairs["warned_emit_bytes"] = w_tot
+        return pairs, line
+
+    def _metadata(self, info, forced=False):
         """The driver's `info` pairs -> declared engine_metadata, plus the
         prose `engine_why` which is returned SEPARATELY: requirements 4.2 is
         explicit that it is kept only as an unindexed diagnostic string.
+        `forced` is whether the CONFIG named `--engine=` -- the control on
+        `engine_sel` ([B19]), which has no rx_info mirror.
 
         Every pair recorded here is DECLARED in METADATA_DECL (rule X15
         rejects an undeclared one), comes from a STRUCTURED field or a
@@ -1090,12 +1457,12 @@ class Adapter(_ad.Adapter):
         for name in MASK_BITS:
             if name in info:
                 meta[name] = _mask_names(name, int(info[name], 0))
-        self._check_agreement(info, meta)
+        self._check_agreement(info, meta, forced=forced)
         why = info.get("engine_why")
         return meta, ("RX_ENGINE_WHY: %s" % why) if why else None
 
     @staticmethod
-    def _check_agreement(info, meta):
+    def _check_agreement(info, meta, forced=False):
         """pcrec publishes three facts TWICE -- once as a preprocessor stamp
         and once as an `rx_info` field -- and asserts on its own side, over
         its whole corpus and on both engines, that the two agree
@@ -1132,6 +1499,17 @@ class Adapter(_ad.Adapter):
            from absence" and "the shim reads macros through #ifdef" coexist:
            the #ifdef keeps an older artifact linking, and this rule makes
            a missing unconditional stamp an error instead of a blank.
+
+        [B19] added two for the abi-12 stamps, which have no rx_info mirror:
+
+        8. `engine_sel` is `forced` IFF the config named `--engine=` (the
+           registry's `engine-route` order-1 row: "the caller named the
+           engine, so auto selected nothing").
+        9. `engine_sel` implies its neighbours (match_api.md 6.3's table):
+           `collapsed-prefilter` -> engine vm, prefilter hybrid, language
+           `count-collapsed`; `overflowed-dfa` / `overflowed-prefilter` ->
+           engine vm, prefilter `none` (no prefilter survived). And the
+           language pair's own iff is the scope table's `vm-hybrid` row.
 
         A pcrec too old to stamp a given macro is not a disagreement: an
         absent macro is checked only against the field's own absence, never
@@ -1232,6 +1610,43 @@ class Adapter(_ad.Adapter):
                     "with no `*` -- no offset is marked as the scanned one."
                     % (ofs,))
 
+        # 8. ([B19], [OPT-4]) `engine_sel` "forced" IFF the config named
+        #    --engine= -- the stamp has no field mirror, so the CONFIG is
+        #    its control.
+        sel = meta.get("engine_sel")
+        if sel is not None:
+            if forced and sel != "forced":
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_ENGINE_SEL %r but this "
+                    "testee named --engine= on the command line; the "
+                    "registry's engine-route axis says a named engine "
+                    "stamps \"forced\" (auto selected nothing)." % (sel,))
+            if not forced and sel == "forced":
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_ENGINE_SEL \"forced\" "
+                    "but this testee named no --engine= -- nothing forced "
+                    "it; a compiler or shim bug, or a flag this adapter did "
+                    "not pass on purpose.")
+            # 9. the implications of the three fallback tokens.
+            lang = meta.get("vm_prefilter_lang")
+            if sel == "collapsed-prefilter" and not (
+                    engine == "vm" and macro_vm_pf == "hybrid"
+                    and lang == "count-collapsed"):
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_ENGINE_SEL "
+                    "\"collapsed-prefilter\" (the retry KEPT a prefilter "
+                    "rebuilt from the collapsed language) but reads engine "
+                    "%r, <PREFIX>_VM_PREFILTER %r, <PREFIX>_VM_PREFILTER_LANG "
+                    "%r -- match_api.md 6.3's table says vm / hybrid / "
+                    "count-collapsed." % (engine, macro_vm_pf, lang))
+            if sel in ("overflowed-dfa", "overflowed-prefilter") and not (
+                    engine == "vm" and macro_vm_pf == "none"):
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_ENGINE_SEL %r (no "
+                    "prefilter survived the fallback) but reads engine %r, "
+                    "<PREFIX>_VM_PREFILTER %r -- match_api.md 6.3's table "
+                    "says vm / none." % (sel, engine, macro_vm_pf))
+
         # 7. ([B18]) THE SCOPE TABLE: every unconditional stamp is present
         #    within its scope at the artifact's own abi, and the exclusive
         #    scopes are empty outside it. An absence here is a contract
@@ -1244,7 +1659,14 @@ class Adapter(_ad.Adapter):
             "dfa-scan": has_field,
             "dfa": engine == "dfa",
             "vm": engine == "vm",
+            "vm-hybrid": engine == "vm" and macro_vm_pf == "hybrid",
         }
+        scope_name = {"every": "every artifact",
+                      "dfa-scan": "every artifact containing a DFA scan",
+                      "dfa": "every DFA artifact",
+                      "vm": "every VM artifact",
+                      "vm-hybrid": "every VM HYBRID (RX_VM_PREFILTER "
+                                   "\"hybrid\")"}
         for pair, (scope, since) in STAMP_SCOPE.items():
             if abi < since:
                 continue
@@ -1255,17 +1677,12 @@ class Adapter(_ad.Adapter):
                     "which pcrec stamps UNCONDITIONALLY on %s since abi %d "
                     "(D81). An unconditional stamp that went silent is a "
                     "compiler or shim bug, not a blank."
-                    % (abi, pair, {"every": "every artifact",
-                                   "dfa-scan": "every artifact containing a "
-                                               "DFA scan",
-                                   "dfa": "every DFA artifact",
-                                   "vm": "every VM artifact"}[scope], since))
-            if scope in ("dfa", "vm") and present and not in_scope[scope]:
+                    % (abi, pair, scope_name[scope], since))
+            if scope in EXCLUSIVE_SCOPES and present and not in_scope[scope]:
                 raise _ad.AdapterError(
-                    "pcrec artifact (engine %r) carries the `%s` pair, which "
-                    "is scoped to %s only (match_api.md 6.3)."
-                    % (engine, pair, "DFA artifacts" if scope == "dfa"
-                       else "VM artifacts"))
+                    "pcrec artifact (engine %r, RX_VM_PREFILTER %r) carries "
+                    "the `%s` pair, which is scoped to %s only (match_api.md "
+                    "6.3)." % (engine, macro_vm_pf, pair, scope_name[scope]))
 
     # -------------------------------------------------------------- measure
 

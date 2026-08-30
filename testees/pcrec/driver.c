@@ -50,7 +50,8 @@
  * (pcrec I-5): NOTHING IS EVER INFERRED FROM A STAMP'S ABSENCE. Each of
  * `info dfa_scan / dfa_prefilter / dfa_table / dfa_prefilter_offsets /
  * dfa_match / fast_frames / fast_trail / unroll_k / unroll_k_why /
- * max_emit_code_bytes / max_emit_bytes` is printed only when the artifact
+ * max_emit_code_bytes / max_emit_bytes / engine_sel / vm_prefilter_lang /
+ * vm_prefilter_lang_why` is printed only when the artifact
  * stamps it, and a consumer of these lines reads a MISSING line as "not
  * stamped" and nothing else -- never as "DFA", never as "not a hybrid". The
  * two facts that ARE readable from an absence are the spec's own iffs and
@@ -111,6 +112,11 @@ static int       (*pb_has_max_emit_code_bytes)(void);
 static long long (*pb_max_emit_code_bytes)(void);
 static int       (*pb_has_max_emit_bytes)(void);
 static long long (*pb_max_emit_bytes)(void);
+static int       (*pb_has_engine_sel)(void);
+static const char *(*pb_engine_sel)(void);
+static int       (*pb_has_vm_prefilter_lang)(void);
+static const char *(*pb_vm_prefilter_lang)(void);
+static const char *(*pb_vm_prefilter_lang_why)(void);
 static int       (*pb_has_fast_tier)(void);
 static long long (*pb_fast_frames)(void);
 static long long (*pb_fast_trail)(void);
@@ -310,6 +316,9 @@ int main(int argc, char **argv) {
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
+    SYM(pb_has_engine_sel); SYM(pb_engine_sel);
+    SYM(pb_has_vm_prefilter_lang); SYM(pb_vm_prefilter_lang);
+    SYM(pb_vm_prefilter_lang_why);
     SYM(pb_has_fast_tier); SYM(pb_fast_frames); SYM(pb_fast_trail);
     SYM(pb_search); SYM(pb_match_caps);
     SYM(pb_has_in_entries); SYM(pb_buffer_align);
@@ -424,6 +433,23 @@ int main(int argc, char **argv) {
         printf("info\tmax_emit_code_bytes\t%lld\n", pb_max_emit_code_bytes());
     if (pb_has_max_emit_bytes())
         printf("info\tmax_emit_bytes\t%lld\n", pb_max_emit_bytes());
+
+    /* [OPT-4], abi 12 ([B19]): the engine ROUTE token (every artifact,
+     * both engines) and the prefilter LANGUAGE pair (every VM HYBRID --
+     * where RX_VM_PREFILTER reads "hybrid" -- and no other artifact,
+     * match_api.md 6.3). Each printed only when stamped; the adapter's
+     * scope table decides from the abi whether an absence is a contract
+     * violation. Nothing is inferred from a missing line. */
+    if (pb_has_engine_sel()) {
+        const char *sel = pb_engine_sel();
+        if (sel) printf("info\tengine_sel\t%s\n", sel);
+    }
+    if (pb_has_vm_prefilter_lang()) {
+        const char *lang = pb_vm_prefilter_lang();
+        const char *lwhy = pb_vm_prefilter_lang_why();
+        if (lang) printf("info\tvm_prefilter_lang\t%s\n", lang);
+        if (lwhy) printf("info\tvm_prefilter_lang_why\t%s\n", lwhy);
+    }
 
     /* The two-tier default entry's capacities ([OPT-1], abi 5): VM-only,
      * never absent on a VM artifact. `fast_frames == resume_frames` IS
