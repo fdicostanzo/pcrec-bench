@@ -1838,3 +1838,41 @@ checks each with its control, docs. Box rule: check-harness and the
 regeneration wait for "box free" (pcrecdev1's battery to ~15:45-16:00).
 Watchdog cron. The r3 lane's delivery file and the panel files stay in
 the scratchpad.
+
+## 2026-08-30 (EDT, ~16:4x), fifth session (part 11) — [B20] COMPLETE: schema v1.4 merged green; the I-21 correction; [B23]
+
+BATTERY DONE 15:46:59 (green by diagnosis; no abi change; pin 96e44c2
+stands) → "box free" to lane b20impl, which closed out in ~50 min: make
+check GREEN in the worktree and then ON MASTER after the merge
+(8b6d585; one plan.md conflict resolved) — check-schema 4/72/0 (the
+generated 1.4 example + 16 one-rule sabotages), check-harness 170/170,
+check-report 59. All 13 committed report triplets (39 files — the
+brief's ~25 undercounted) re-rendered at reporter v9 with their own
+header queries and classified: 39/39 clean, zero unexplained lines, no
+number moved. Zero escalations; eight deliberate calls all confirmed
+(the §3.6 timeline only when pinned; the v1.1-1.3 rule label; the
+advisory warm-up; the reported-not-asserted quick verdict; the
+simulated-quiet exit-4 check; TSV reusing columns; the one-row fixture
+witnessing R-16; the two identity-preserved unbounded queries). THE
+FIRST LIVE FIRING of the target clause: the rehearsal's pre-flight
+named pcrecdev1's battery on cpu11 (66.20 % over the 5-s average) —
+the uniform competitor trial agreement cannot see, caught before the
+run by the clause Frank's item 1 asked for. Two pre-existing checks
+took premise updates (6ea51e3, verified genuine). [B20] ARCHIVED;
+follow-ups: Q1 → [B22]'s first v1.4 window; Q3 → [B23] NEW (the
+measured positive control, gated on Frank's perf hold); KB-4's other
+halves stay filed.
+
+THE I-21 CORRECTION (ce8fca9, landed mid-merge): [OPT-4.1]'s
+code-derived minw analysis corrects the prediction — the nest wholes
+(minw 1) are NON-nullable and KEEP their rescue (a named residual under
+pcrec D77); the decline set is exactly the nullable cls-* cells
+(cls-upto-32768 both forms, cls-upto-16384 whole, cls-lazy-16384
+whole), and a decline stamps `RX_ENGINE_SEL "declined-nullable"` — a
+SIXTH engine-route value the adapter reads at the [OPT-4.1] re-pin
+([B22]: enum, scope, by-value controls, the list-axes row);
+`_LANG_WHY "nullable collapsed language"` exists only under
+-fprefilter-collapse. Acked 842599b.
+
+Frank's performance-test hold (relayed ~15:3x) stands: no windows until
+lifted; [B21]/[B22]/[B23] queued. I-22 (asks ii-v by probe) still owed.
