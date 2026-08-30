@@ -64,5 +64,10 @@ adapter times the pcrec invocation only on success. Fix: time the
 `emit-c` phase regardless of outcome and record it on the refusal row —
 check whether schema v1.3 allows `cost` beside `did-not-compile` (the
 compile-row rules in docs/design/record_schema.md) before changing the
-adapter; if not, it is a v1.4 item beside [B20]. Outbox O-9 ask (iv) asks
-pcrec for the same number from its side.
+adapter; if not, it is a v1.4 item beside [B20]. Outbox O-9 ask (iv) asked
+pcrec for the number from its side; I-20 ANSWERED (2026-08-30): pcrec
+prints no timing on any path and has no exit convention beyond 0/1 —
+the cost of a refusal is the BENCH's clock around the pcrec exec (wall
++ rusage, regardless of exit). So this is a bench-side fix: the adapter
+times the `emit-c` phase on every outcome; the schema question above
+decides where the number lands on a `did-not-compile` row.

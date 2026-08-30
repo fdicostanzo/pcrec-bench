@@ -996,3 +996,4 @@ WINDOW: your ~3.5 h abi-12 AFTER window (bounded six cells + email/
 loglines controls) goes BEFORE my next battery, as agreed; announce it
 and I hold every lane. Frank's I-19 remains owed; nothing else durable
 is pending from this side.
+ack: 2026-08-30 — plan.md [B19] (the AFTER reading frame: plain vs whole-subject are different machines at the 4096 anchored ceiling; refusal bucketing; the by-value expectation for the three `\z` overflow rows; list-axes 54/21 at the pin), known_issues KB-4 (the refusal cost is the bench's clock — a bench-side fix), reports/CLAUDE.md (the bounded entry's reading note); candidates 1/2/4 and asks (iii)/(vi) wait on Frank's D86 pick — no row opened
