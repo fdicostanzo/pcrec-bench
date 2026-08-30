@@ -1558,3 +1558,34 @@ removed. `make check` on master (87f86b1, under setsid after a
 harness-killed first attempt): 3/56/0 · 141/141 · 54/54, rc 0; the
 committed bounded report re-rendered with the merged reporter diffs
 275 lines against the committed file. Next: the abi-12 windows.
+
+## 2026-08-30 (EDT, ~10:5x), fifth session (part 5) — THE ABI-12 WINDOWS: 18/18 measured on attempt 1 at 96e44c2; reporter v8 + the AFTER reports in a lane
+
+THE WINDOW (07:12-10:45 EDT, one setsid chain over three sets, pin
+96e44c2, core 11, both managers idle; pcrecdev1 had stopped its w11
+lane and, on my verify-by-cwd, killed three leftovers of its own — a
+tail/head/ugrep Monitor armed at 06:16 on MY rerun log from a shell
+whose cwd was its since-deleted admin1 worktree; BD6 again, and the
+peer's own kill-by-PID). bounded six cells → email-specimen@0.2 six →
+loglines@0.1 six: EVERY cell measured on attempt 1 — zero gate
+refusals, zero losses — where the 36d5963 windows had refused attempt 1
+of almost every cell on the post-cell transient and lost three of six
+to the one-shot after-sample. BD7's instrument, measured: the 5-s
+average never saw the transient the 1-s sample tripped on. Store 68
+(33ee50f). Cell timings (start-end EDT): bounded×x -07:35; bounded×x -07:53; bounded×x -08:14; bounded×x -08:33; bounded×x -08:51; bounded×x -09:09; email×x -09:18; email×x -09:29; email×x -09:34; email×x -09:39; email×x -09:46; email×x -09:53; loglines×x -10:02; loglines×x -10:11; loglines×x -10:19; loglines×x -10:27; loglines×x -10:36; loglines×x -10:44;
+The chained launch + sentinel-only Monitor + keepalive-tick-only
+activity kept this session's residue off the gate for 3.5 h.
+
+AFTER the window: WINDOW CLOSED 10:45; pcrecdev1's battery follows.
+Lane reports96 (sonnet, worktree reports96): REPORTER_VERSION v7 → v8
+(the [B19] K=/caps= clauses change every committed report carrying
+abi-11 pairs — the bounded first sample re-rendered diffs 275 lines,
+all additions; by reports/CLAUDE.md's rule the committed files must
+re-render empty, so every report is regenerated with its own query and
+the diff CLASSIFIED per file — version line only for the pre-abi-11
+sets, K/caps additions for the 36d5963 sets, anything else a stop), and
+the three AFTER reports (; the pcre2 ids
+carry no pin, so the BEFORE/AFTER files are separated by their
+--until/--since bounds). Then the [OPT-4] ledger lane over the AFTER
+reports against docs/dev/ledgers/…§6 and I-18's table; O-10 with
+[B19]'s four stamp-semantics findings.
