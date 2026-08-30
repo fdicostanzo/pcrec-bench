@@ -1638,16 +1638,18 @@ def test_reporter_version_pin():
     both moved -- so it became v5; [B16] R9 (the per-subject sub-table
     keyed on the regime) took it to v6; [B12] R10 (the did-not-compile
     ranking line, `test_did_not_compile_ranking_line_r10` below) took it
-    to v7."""
-    _check(report.REPORTER_VERSION == "v7 (2026-08-29)",
-           f"expected REPORTER_VERSION == 'v7 (2026-08-29)', got {report.REPORTER_VERSION!r}")
+    to v7; [B19]'s scope addition (the abi-11 K=/caps= legend clauses,
+    which render differently against records already in the store) took
+    it to v8."""
+    _check(report.REPORTER_VERSION == "v8 (2026-08-30)",
+           f"expected REPORTER_VERSION == 'v8 (2026-08-30)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v7 (2026-08-29)" in md, f"expected the v7 header line:\n{md[:200]}")
+    _check("reporter: v8 (2026-08-30)" in md, f"expected the v8 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v7 (2026-08-29)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v8 (2026-08-30)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
 
 
 def test_did_not_compile_ranking_line_r10():

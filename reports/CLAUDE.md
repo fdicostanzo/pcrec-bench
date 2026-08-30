@@ -16,6 +16,37 @@ immediately after a regeneration — the reporter is deterministic, so a
 non-empty diff after a bare rerun (no query change, no reporter change)
 means either the store changed or the reporter regressed determinism.
 
+**[B19] scope addition (2026-08-30) regenerated every report below
+against reporter `v8 (2026-08-30)`.** Same queries as before, with three
+of them CHANGED (below): the abi-11 `K=<unroll_k>/<why>` and
+`caps=<max_emit_code_bytes>/<max_emit_bytes>` legend clauses + note
+(`pcrecbench/report.py`'s "[B19] SCOPE ADDITION" docstring paragraph)
+render on any VM artifact's legend line whose record carries those
+pairs — every `36d5963`-pinned pcrec record does (abi 11), so the three
+sets built on it (`2026-08-30-bounded-0.1-*-first-sample-36d5963`,
+`2026-08-29-*-repin-36d5963`) gain the clauses; the `8da6120` /
+`692c2e8` / `35e1ab1` sets (abi 2/3/8, before those stamps existed) only
+gain the version-line bump. **Also from this wave: every report's
+`record source: store/index.tsv (N candidate file(s))` count moved with
+the store's growth since it was last rendered — this is NOT a
+reporter-version effect (verified across the store's whole regeneration
+history: this count has moved on every prior wave while `records
+included` never has) and is not itself grounds to reject a diff.**
+Separately, the store gaining the abi-12 `96e44c2` AFTER sample the same
+day ([B19], commit 33ee50f, index 68) broke the "no bound needed"/loose
+`--until` premise of three queries whose filters do not exclude an
+unpinned pcre2 record or a same-config pcrec record newer than their
+sample window — `2026-08-29-email-specimen-0.2-*-repin-36d5963`,
+`2026-08-29-loglines-0.1-*-repin-36d5963` (previously no date bound at
+all) and `2026-08-30-bounded-0.1-*-first-sample-36d5963` (previously
+`--until 2026-08-30T12:00:00Z`, which fell INSIDE the AFTER window and
+admitted one partial record). All three now carry `--until
+2026-08-30T11:00:00Z` (manager ruling, 2026-08-30): see each entry below
+and the new rule paragraph near the `--until` explanation. With that
+bound in place, the K=/caps= clauses and the version/candidate-count
+lines are the ONLY diff each of the three shows against its previously
+committed content — no record, ranking, or number moved.
+
 **[B12] R10 (2026-08-29) regenerated every report below against reporter
 `v7 (2026-08-29)`.** Same queries, same records — one ruling, and it
 changes the rendering of exactly one file's RANKING content: a
@@ -50,6 +81,15 @@ ruling list ([B9]'s R1-R9, [B14]'s R1-R10, [B16]'s R1-R8, [B12]'s R10 —
 the ruling sets share numbers by coincidence of separate `R1..`
 sequences, not by design; read each set's own dated section) and the
 notes below for what each wave changed in these files specifically.
+
+**RULE, added 2026-08-30 (the [B19] scope-addition wave, above):** every
+report committed here from this date on is rendered with an EXPLICIT
+`--until` (or a `--since`/`--until` pair) at render time, never a bare
+unbounded query — the next measurement window always adds newer records
+under the unpinned pcre2 testee_ids (and, as of [B19], under a matching
+pcrec `engine`+`config` too), so an unbounded or loosely-bounded query
+silently drifts out from under a report's own committed name the moment
+the store grows again.
 
 - `2026-08-25-email-specimen-0.1-budu-ryzen1600.md` — the FIRST
   PRODUCTION SAMPLE: email-specimen@0.1 × {pcre2-interp, pcre2-jit,
@@ -236,10 +276,16 @@ an older measured one) restores it.
   1-s occupancy instrument) and three RE-RUN 05:22-06:17 EDT under BD7
   (pcre2-jit, pcrec-auto, pcrec-vm-in; their first runs are in the store
   as `inconclusive-load` history, OD-B12 → BD7 → [B20]); `--trials 5`,
-  quiet windows, reporter v7. Query: `report --subbench bounded --version
-  0.1 --until 2026-08-30T12:00:00Z --format md` (the `--until` bound
-  present from the first render: the pcre2 testee_ids carry no pin, and
-  the abi-12 window at 96e44c2 ([B19]) enters the store next).
+  quiet windows, reporter v8. Query: `report --subbench bounded --version
+  0.1 --until 2026-08-30T11:00:00Z --format md` (the `--until` bound
+  present from the first render: the pcre2 testee_ids carry no pin. The
+  bound MOVED 12:00Z → 11:00Z at the v8 regeneration, 2026-08-30, manager
+  ruling: the original 12:00Z guess was set before the [B19] AFTER
+  window's start time was known and landed INSIDE that window
+  (11:12Z-14:45Z), admitting one `pcrec_96e44c2_auto-caps-simdna` record
+  — measured 11:54:09Z — as a partial, inconsistent contamination; every
+  36d5963 record is ≤ 2026-08-30T10:00:09Z, so 11:00Z is the shared
+  boundary with the AFTER reports' `--since 2026-08-30T11:00:00Z` below).
   `.subject-grain.md` (`--grain subject`) and `.tsv` the same query. This
   is the [OPT-4] BEFORE (inbox I-18 (i)). Read beside
   `bench/bounded/NOTES.md`'s predictions and `oracle_limits.tsv`: the
@@ -287,20 +333,75 @@ an older measured one) restores it.
   `inconclusive-load` — journal fourth session part 2 — and stay in the
   store as history; the report's newest-measured-wins rule picks the
   re-runs), `--trials 5`, quiet window with BOTH manager sessions idle,
-  reporter v7. Query: `report --subbench email-specimen --version 0.2
-  --format md` — 10 records: the four 35e1ab1 pcrec testees (the
-  cross-pin Δ baseline), the four 36d5963 ones, and the newest pcre2
-  pair. This is the [ENG-ABS] ledger (inbox I-16: the `match` regime's
-  DFA/VM ratios; the search rows are the flat control) — outbox O-8.
+  reporter v8. Query: `report --subbench email-specimen --version 0.2
+  --until 2026-08-30T11:00:00Z --format md` — 10 records: the four
+  35e1ab1 pcrec testees (the cross-pin Δ baseline), the four 36d5963
+  ones, and the newest pcre2 pair. The `--until` bound was ADDED at the
+  v8 regeneration (2026-08-30): the query originally needed none ("every
+  record already existed when first generated"), but the [B19] AFTER
+  sample landed in the store the same day (index 68) under the same
+  unpinned pcre2 testee_ids and the same `email-specimen@0.2` filter, so
+  a bare re-run now pulls in newer pcre2 records and four
+  `pcrec_96e44c2_*` rows — the same boundary as bounded's entry above and
+  the AFTER reports' `--since` below. This is the [ENG-ABS] ledger (inbox
+  I-16: the `match` regime's DFA/VM ratios; the search rows are the flat
+  control) — outbox O-8.
   `.subject-grain.md` (`--grain subject`) carries the per-subject match
   rows the ledger is read on; `.tsv` the set-grain query.
 - `2026-08-29-loglines-0.1-budu-ryzen1600-repin-36d5963.md` — the [B18]
   re-pin sample at pcrec **36d5963** on `loglines@0.1`: six cells
   `measured` 15:43-16:37 EDT plus one re-run (`pcrec-nocaps`, 16:55),
-  same protocol, reporter v7. Query: `report --subbench loglines
-  --version 0.1 --format md` — 10 records as above. This is the [OPT-K]
-  ledger (inbox I-15: uuid / iso-ts / stack-frame the exercising rows,
-  ipv4 / hex32-id / http-5xx the controls) and Frank's [SEL-1] row
+  same protocol, reporter v8. Query: `report --subbench loglines
+  --version 0.1 --until 2026-08-30T11:00:00Z --format md` — 10 records as
+  above. The `--until` bound was ADDED at the v8 regeneration
+  (2026-08-30), same reason and same boundary as the email-specimen
+  0.2/36d5963 entry above (the [B19] AFTER sample landed in the store the
+  same day under the same unpinned pcre2 testee_ids). This is the
+  [OPT-K] ledger (inbox I-15: uuid / iso-ts / stack-frame the exercising
+  rows, ipv4 / hex32-id / http-5xx the controls) and Frank's [SEL-1] row
   (`level-context` under `pcrec-auto`, a VM artifact now, vs pcre2-jit)
   — outbox O-8. `.subject-grain.md` carries the 16 KB-1 MB sweep per
   flavour; `.tsv` the set-grain query.
+
+- `2026-08-30-bounded-0.1-budu-ryzen1600-after-96e44c2.md` — the [OPT-4]
+  AFTER sample (inbox I-18 (i)) on `bench/bounded@0.1` at pcrec
+  **96e44c2** (abi 12, the [B19] re-pin): six cells `measured` 07:12-10:45
+  EDT 2026-08-30 (window: both managers idle, BD7's 5-s occupancy gate,
+  18/18 cells across the three sets on attempt 1, zero retries), `--trials
+  5`, reporter v8. Query: `report --subbench bounded --version 0.1
+  --since 2026-08-30T11:00:00Z --format md` — 6 records: the two
+  libpcre2 baseline re-runs plus the four `pcrec_96e44c2_*` testees, none
+  of the 36d5963 BEFORE records (the `--since` bound is the mirror of the
+  first-sample entry's `--until` above — the two files share the
+  2026-08-30T11:00:00Z boundary because the pcre2 testee_ids carry no
+  pin). Read against `docs/dev/ledgers/2026-08-30-bounded-0.1-first-sample-36d5963.md`
+  §6 (the BEFORE ledger's predictions) and the first-sample entry above:
+  `cls-upto-65535` is still `did-not-compile` under both `auto` and
+  `nocaps` (NFA cap, unchanged pin-to-pin). `.subject-grain.md`
+  (`--grain subject`) and `.tsv` the same query.
+- `2026-08-30-email-specimen-0.2-budu-ryzen1600-after-96e44c2.md` — the
+  [OPT-4] AFTER sample on `email-specimen@0.2` at pcrec **96e44c2**,
+  same window and protocol as the bounded entry above, reporter v8.
+  Query: `report --subbench email-specimen --version 0.2 --since
+  2026-08-30T11:00:00Z --format md` — 6 records, same shape as bounded's
+  (two libpcre2 + four `pcrec_96e44c2_*`). Read against the
+  2026-08-29 `-repin-36d5963` report above (the [ENG-ABS] ledger) for the
+  pin-to-pin comparison: no `sel=collapsed-prefilter (DFA fallback
+  tripped)` cell fires in this set (only the legend NOTE mentions the
+  bucket, since a note prints whenever any `sel=` clause appears in the
+  table, matching the entry above's census — every `email-specimen`
+  artifact here is `sel=forced` or `sel=selected`, not a fallback).
+  `.subject-grain.md` (`--grain subject`) and `.tsv` the same query.
+- `2026-08-30-loglines-0.1-budu-ryzen1600-after-96e44c2.md` — the
+  [OPT-4] AFTER sample on `loglines@0.1` at pcrec **96e44c2**, same
+  window and protocol, reporter v8. Query: `report --subbench loglines
+  --version 0.1 --since 2026-08-30T11:00:00Z --format md` — 6 records,
+  same shape. Read against the 2026-08-29 `-repin-36d5963` report above
+  (the [OPT-K] ledger and Frank's [SEL-1] row): `level-context` under
+  both `pcrec-auto` and `pcrec-nocaps` still selects the VM and now shows
+  it structurally — `sel=collapsed-prefilter (DFA fallback tripped)`,
+  `lang=count-collapsed (dfa overflow retry, exact nfa 462/463)` — the
+  fact [B18]'s note called "readable only as prose" (pcrecbench/CLAUDE.md
+  "THE [SEL-1] FALLBACK") is now a stamped, queryable field via [B19].
+  `.subject-grain.md` (`--grain subject`) carries the 16 KB-1 MB sweep
+  per flavour; `.tsv` the set-grain query.
