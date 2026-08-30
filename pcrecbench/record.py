@@ -1,11 +1,20 @@
 """record.py -- build the record dict the schema describes.
 
-Every DERIVED identifier is derived here by the SAME rule `schema/validate.py`
+Every DERIVED IDENTIFIER is derived here by the SAME rule `schema/validate.py`
 checks it against (record_schema.md 3, 6.4, X3/X5/X6) -- but by importing the
 validator's own functions rather than reimplementing them. Two implementations
 of one derivation is exactly the shape of bug pcrec's check-design lesson
 warns about, one level up: a check whose expected value shares a source with
 the thing it checks proves nothing.
+
+That rule is SCOPED to derivations-of-convention (gate_shape_v14.md 4 V6,
+panel B B14): X3/X5/X6 derive identifiers FROM A CONVENTION -- there is no
+fact of the matter to check, and a second implementation only creates drift
+that rejects honest records. The v1.4 `trial_agreement` block is the other
+case: X32 checks A VERDICT THE HARNESS STAMPED BESIDE ROWS IT ALSO WROTE --
+X20's and X26's situation exactly -- so there the validator carries its OWN
+implementation of the arithmetic (validate.py `judge_trial_agreement`), and
+the harness's (`pcrecbench/reduce.py`'s) is deliberately not imported by it.
 """
 
 import hashlib
@@ -18,7 +27,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # The schema version this harness emits. Bumping it is a deliberate act: the
 # fields below and `schema/record.schema.json` move together, and
 # `make check` is what proves they did.
-SCHEMA_VERSION = "1.3"
+SCHEMA_VERSION = "1.4"
 
 #: What the drivers actually call. Both use `clock_gettime(CLOCK_MONOTONIC)`
 #: around the batched loop -- never a wall clock, never a per-call timer.
@@ -35,7 +44,7 @@ FREE_TEXT_MAX = 8192
 NOTE_SEP = "; "
 
 
-def join_notes(notes, prefix=None, limit=FREE_TEXT_MAX):
+def join_notes(notes, prefix=None, first=None, limit=FREE_TEXT_MAX):
     """Join the harness's per-cell sentences into ONE string that VALIDATES.
 
     `prefix` (the operator's `--note`) comes first, then the sentences joined
@@ -44,20 +53,29 @@ def join_notes(notes, prefix=None, limit=FREE_TEXT_MAX):
     elided -- silently truncating a diagnostic would be worse than losing it,
     and the per-row `calibration` blocks carry the calibration facts anyway.
     A prefix that alone exceeds `limit` is cut hard with the same marker.
+
+    `first` (v1.4, ruling R-4): the STATUS-DECIDING sentence(s) -- the gate's
+    reasons or the trial-agreement line. They are placed at offset 0 of the
+    body (after `prefix`) and are NEVER elided: the drop-from-the-end rule
+    can only ever remove `notes` -- the calibration / adapter sentences --
+    and the elision marker names that class, because under this ordering it
+    is the only class it can drop. The sentence that explains a status must
+    survive the sentences that merely annotate it.
     """
     notes = [str(n) for n in (notes or [])]
+    first = [str(n) for n in (first or [])]
     prefix = str(prefix) if prefix else ""
 
     def build(kept, elided):
         parts = []
         if prefix:
             parts.append(prefix)
-        body = NOTE_SEP.join(kept)
+        body = NOTE_SEP.join(first + kept)
         if elided:
             body = (body + NOTE_SEP if body else "") + (
-                "[+%d note(s) elided to fit the schema's %d-byte free_text "
-                "cap; the per-row calibration blocks carry the calibration "
-                "facts]" % (elided, limit))
+                "[+%d calibration/adapter note(s) elided to fit the schema's "
+                "%d-byte free_text cap; the per-row calibration blocks carry "
+                "the calibration facts]" % (elided, limit))
         if body:
             parts.append(body)
         return " | ".join(parts)
@@ -66,9 +84,11 @@ def join_notes(notes, prefix=None, limit=FREE_TEXT_MAX):
         out = build(notes[:keep], len(notes) - keep)
         if len(out) <= limit:
             return out
-    # Even zero sentences did not fit: the prefix itself is over the cap.
+    # Even zero sentences did not fit: the prefix (or a `first` sentence)
+    # itself is over the cap -- cut hard, and say so.
+    head = build([], 0)
     marker = " [cut to fit the schema's %d-byte free_text cap]" % limit
-    return prefix[:max(limit - len(marker), 0)] + marker
+    return head[:max(limit - len(marker), 0)] + marker
 
 
 def _validator_module():
@@ -190,7 +210,11 @@ def subject_entry(subj):
 
 
 def build_setup(sb, testee_block, environment, run_block, regimes,
-                patterns, subjects, status, status_detail=None, note=None):
+                patterns, subjects, status, status_detail=None, note=None,
+                trial_agreement=None):
+    """The setup layer. `trial_agreement` (v1.4, X33: REQUIRED on every
+    record this harness writes) is `reduce.judge_trial_agreement(rows)`,
+    computed by the caller AFTER every row exists."""
     setup = {
         "kind": "setup",
         "schema_version": SCHEMA_VERSION,
@@ -216,6 +240,8 @@ def build_setup(sb, testee_block, environment, run_block, regimes,
         setup["status_detail"] = status_detail
     if note:
         setup["note"] = note
+    if trial_agreement is not None:
+        setup["trial_agreement"] = dict(trial_agreement)
     setup["testee"]["testee_id"] = derive_testee_id(setup["testee"])
     setup["record_id"] = derive_record_id(setup)
     setup["content_hash"] = {"algorithm": "sha256", "value": "0" * 64}
@@ -233,9 +259,11 @@ def compile_row(pattern_id, trial, outcome, cost_class, phases=None,
         "compile_outcome": outcome,
         "cost_class": cost_class,
     }
-    # record_schema.md: `cost` is present IFF outcome == compiled AND the
-    # class is not lazy-jit. A lazy-jit row carries `derivation` instead --
-    # neither adapter here is one, so that branch is stated and unbuilt.
+    # record_schema.md: `cost` is REQUIRED when outcome == compiled AND the
+    # class is not lazy-jit (a lazy-jit row carries `derivation` instead --
+    # neither adapter here is one, so that branch is stated and unbuilt).
+    # Since v1.4 (KB-4's schema half) a refusal MAY carry `cost` too; the
+    # adapter half that times a refusal is KB-4's own row, not this one.
     if outcome == "compiled" and cost_class != "lazy-jit" and phase_seconds:
         total = sum(phase_seconds.get(p, 0.0) for p in (phases or []))
         row["cost"] = {

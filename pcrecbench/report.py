@@ -460,6 +460,53 @@ THE [B19] SCOPE ADDITION (2026-08-30) -- v8, precedent R10 above
   version and re-regenerates every committed report. `REPORTER_VERSION`
   bumps to `v8 (2026-08-30)`; every committed report under `reports/`
   regenerated -- see `reports/CLAUDE.md`.
+
+THE [B20] SCHEMA v1.4 WAVE (2026-08-30) -- v9, docs/design/gate_shape_v14.md 6
+-------------------------------------------------------------------------
+
+* R1 -- the status gate is UNCHANGED (`measured` ranks; anything else is
+  `not ranked: <testee> -- <status> (...)`), and gains a status: an
+  `inconclusive-spread` record (the pre-flight passed, the trials did not
+  agree) prints its parenthesis FROM THE BLOCK (`_spread_excerpt`: `1 of
+  72 groups disagree, worst <pattern> / <regime> / <form> d=23 of n=30,
+  k=1.5`), never from the free text -- `_excerpt`'s 120 characters cut
+  the harness's own sentence mid-token. Other statuses keep `_excerpt`.
+* R2 -- dedup is unchanged in code: an `inconclusive-spread` record newer
+  than a measured one is "newer, not measured"; between the two
+  inconclusive values dedup has no preference.
+* R3 -- a LEGEND line under the status policy names the trial-agreement
+  rule (`v1.4-group`, k=1.5, d_min=2, c=3, N >= 5 odd) and what the
+  after-run samples are at v1.4 (provenance).
+* R4 -- every record line of the header carries `agreement: ...` FROM
+  THE BLOCK (`reduce.agreement_line`, the string `run`/`quick` print):
+  `agree (0 of 72 groups; 0 of 1536 rows; 0 unjudged; k=1.5, 2/3; 5
+  trials)`, `disagree (1 of 72 groups; worst ... d=23 of n=30; ...)`,
+  `agree 0/0 groups -- nothing judged (N rows unjudged)`, `n/a (3
+  trials)`, and for a pre-1.4 record `n/a (v1.3)` -- the reporter never
+  invents a block for an older record and never re-judges it.
+* R4' -- THE RULE MARKER (record_schema.md 4's rule-revision clause,
+  ruling R-1 (iii)): the legend names the X13 rule version(s) the query's
+  records were judged by (`status rule: v1.1-1.3 X13 (both samples
+  quiet) on N records; v1.4 X13 (pre-flight + trial agreement) on M`),
+  and when ONE query mixes them every ranking row's status cell carries
+  the record's schema version (`measured@1.3` / `measured@1.4`), in
+  markdown and TSV alike -- a table never carries one token meaning two
+  things without saying so. A single-version query's rows are unchanged.
+* R5 -- `--include-provenance` (default off): under a record's header
+  line, the after-sample provenance sentence(s) from `note` or
+  `status_detail` wherever they sit, the `load.verdict = loaded` fact
+  beside a `measured` status, and the per-group occupancy timeline
+  (only the groups whose target / sibling / busiest-other reading
+  departs from the run's median by more than the noise floor). Off by
+  default because the notes are provenance by ruling.
+* R5' -- ALWAYS: when either AFTER sample failed, the record line carries
+  `after: load1 11.40 / occ 41.41%` (nine of the store's records
+  historically), so the demoted instrument stays visible where a reader
+  looks for provenance.
+* R7 -- `REPORTER_VERSION` bumps to `v9 (2026-08-30)`; every committed
+  report regenerated (R3/R4/R4'/R5' change the rendering of EXISTING
+  records: the legend lines, `agreement: n/a (v1.x)` per pre-1.4 record,
+  the `after:` clause on the nine) -- see `reports/CLAUDE.md`.
 """
 
 from __future__ import annotations
@@ -478,7 +525,23 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v8 (2026-08-30)"
+REPORTER_VERSION = "v9 (2026-08-30)"
+
+# The schema minor from which X13 is the v1.4 text (record_schema.md 4's
+# rule-revision clause). A record below it was judged by the v1.1 text.
+X13_V14_MINOR = 4
+# gate_shape_v14.md 6 R5: a timeline line is printed only for a group whose
+# reading departs from the run's median by more than the instrument's own
+# noise floor -- 2-7 % busy per core measured in quiet_baseline.md.
+_TIMELINE_NOISE_PCT = 7.0
+
+
+def _x13_rule_label(minor):
+    """R4': the name of the X13 text a record of this schema minor was
+    judged by."""
+    if minor is not None and minor >= X13_V14_MINOR:
+        return "v1.4 X13 (pre-flight + trial agreement)"
+    return "v1.1-1.3 X13 (both samples quiet)"
 
 _MISSING = object()
 
@@ -731,6 +794,7 @@ from pcrecbench.reduce import (  # noqa: E402
     MatchCell as MatchCellReduction,
     SetCell as SetCellReduction,
     WRONG_ANSWER_OUTCOMES,
+    agreement_line,
     cells_from_record,
     giveup_code,
     reduce_match_cell,
@@ -1927,6 +1991,100 @@ class ReportData:
     # bullet even though the testee is absent from `match_cells`/`set_cells`
     # entirely. See the module docstring's [B12] R10 section.
     did_not_compile_by_pattern: dict = field(default_factory=dict)
+    # [B20] v1.4 (gate_shape_v14.md 6): threaded beside status_by_testee.
+    agreement_by_record: dict = field(default_factory=dict)   # record_id -> block | None
+    schema_version_by_record: dict = field(default_factory=dict)  # record_id -> "1.4"
+    schema_version_by_testee: dict = field(default_factory=dict)  # (sb, testee_id) -> "1.4"
+    after_by_record: dict = field(default_factory=dict)       # record_id -> (load1|None, occ|None)
+    provenance_by_record: dict = field(default_factory=dict)  # record_id -> {sentences, loaded_beside_measured, timeline}
+    x13_rule_counts: dict = field(default_factory=dict)       # rule label -> n records
+    include_provenance: bool = False
+
+    @property
+    def mixed_x13(self):
+        """R4': does this query mix X13 rule versions?"""
+        return len(self.x13_rule_counts) > 1
+
+
+def _after_failures(setup):
+    """R5': (load1_after, occ_after_busy) -- each None unless that AFTER
+    sample FAILED its own limit."""
+    env = setup.get("environment", {}) or {}
+    load = env.get("load", {}) or {}
+    occ = env.get("occupancy", {}) or {}
+    l_after = (load.get("after") or {}).get("load1")
+    l_limit = load.get("limit")
+    l_fail = l_after if (isinstance(l_after, (int, float)) and isinstance(l_limit, (int, float))
+                         and l_after > l_limit) else None
+    o_after = occ.get("after") or {}
+    o_fail = o_after.get("max_busy_pct") if o_after.get("verdict") == "fail" else None
+    return l_fail, o_fail
+
+
+_PROVENANCE_PREFIX = "after-sample (provenance, not a verdict)"
+
+
+def _provenance_of(setup):
+    """R5: the provenance a record carries -- the after-sample sentences
+    wherever the harness put them (`note` on a measured record,
+    `status_detail` otherwise; ruling R-5), the loaded-beside-measured
+    fact, and the per-group timeline."""
+    sentences = []
+    for fld in ("note", "status_detail"):
+        text = setup.get(fld)
+        if not text:
+            continue
+        for part in re.split(r";\s+|\s+\|\s+", str(text)):
+            if part.strip().startswith(_PROVENANCE_PREFIX):
+                sentences.append(part.strip())
+    env = setup.get("environment", {}) or {}
+    loaded = ((env.get("load") or {}).get("verdict") == "loaded"
+              and setup.get("status") == "measured")
+    timeline = (env.get("occupancy") or {}).get("timeline") or []
+    return {"sentences": sentences, "loaded_beside_measured": loaded,
+            "timeline": timeline}
+
+
+def _timeline_outliers(timeline):
+    """R5: the timeline items whose target / sibling / busiest-other reading
+    departs from the run's median by more than `_TIMELINE_NOISE_PCT`."""
+    if not timeline:
+        return []
+    med = {}
+    for key in ("target_busy_pct", "sibling_busy_pct", "max_other_busy_pct"):
+        vals = [it.get(key) for it in timeline if isinstance(it.get(key), (int, float))]
+        med[key] = statistics.median(vals) if vals else None
+    out = []
+    for it in timeline:
+        for key, m in med.items():
+            v = it.get(key)
+            if m is not None and isinstance(v, (int, float)) and abs(v - m) > _TIMELINE_NOISE_PCT:
+                out.append(it)
+                break
+    return out
+
+
+def _spread_excerpt(block):
+    """R1: an `inconclusive-spread` record's not-ranked parenthesis, FROM
+    THE BLOCK."""
+    if not isinstance(block, dict):
+        return ""
+    wg = block.get("worst_group") or {}
+    if block.get("verdict") == "n/a-trials":
+        return (f"n/a-trials: {block.get('trials', 0)} trials, the rule requires "
+                f">= 5 odd; {block.get('rows_unjudged', 0)} rows unjudged")
+    return (f"{block.get('groups_disagreeing', 0)} of {block.get('groups_judged', 0)} "
+            f"groups disagree, worst {wg.get('pattern_id')} / {wg.get('regime')} / "
+            f"{wg.get('form')} d={wg.get('d', 0)} of n={wg.get('n', 0)}, "
+            f"k={block.get('k')}")
+
+
+def _agreement_display(block, schema_version):
+    """R4: the header's `agreement:` string -- from the block, or
+    `n/a (v1.3)` for a record stamped before the block existed."""
+    if not isinstance(block, dict):
+        return f"n/a (v{schema_version})"
+    return agreement_line(block)
 
 
 def build_report(loaded, args):
@@ -2034,6 +2192,14 @@ def build_report(loaded, args):
     record_ts_by_testee = {}
     subject_bytes = {}
     floor_pattern_by_sb = {}  # [B14] R9: sb -> pattern_id of its `role: floor` pattern, if any
+    # [B20] v1.4: the block, the after-sample failures, the provenance and
+    # the X13 rule version, per RECORD (there is no per-testee line).
+    agreement_by_record = {}
+    schema_version_by_record = {}
+    schema_version_by_testee = {}
+    after_by_record = {}
+    provenance_by_record = {}
+    x13_rule_counts = Counter()
     # `form` (schema v1.1, record_schema.md 5 ADDITIONS 3) is part of every
     # match- and compile-cell key: a testee with no end-anchored mode
     # compiles and times a SEPARATE `whole-subject` artifact for the
@@ -2063,6 +2229,12 @@ def build_report(loaded, args):
         # "absent = pinned" ahead of the schema landing it.
         tier_by_testee[(sb, testee_id)] = s.get("tier", "pinned")
         record_ts_by_testee[(sb, testee_id)] = s.get("run", {}).get("timestamp")
+        agreement_by_record[record_id] = s.get("trial_agreement")
+        schema_version_by_record[record_id] = str(s.get("schema_version", ""))
+        schema_version_by_testee[(sb, testee_id)] = str(s.get("schema_version", ""))
+        after_by_record[record_id] = _after_failures(s)
+        provenance_by_record[record_id] = _provenance_of(s)
+        x13_rule_counts[_x13_rule_label(r.schema_minor)] += 1
         for subj in s.get("subjects", []) or []:
             subject_bytes[subj["subject_id"]] = subj.get("bytes_offered")
         # [B14] R9: schema v1.3's optional `patterns[].role` (not yet
@@ -2181,7 +2353,31 @@ def build_report(loaded, args):
         subbench_alias_note=getattr(args, "_subbench_alias_note", None),
         floor_pattern_by_sb=floor_pattern_by_sb,
         did_not_compile_by_pattern=did_not_compile_by_pattern,
+        agreement_by_record=agreement_by_record,
+        schema_version_by_record=schema_version_by_record,
+        schema_version_by_testee=schema_version_by_testee,
+        after_by_record=after_by_record,
+        provenance_by_record=provenance_by_record,
+        x13_rule_counts=dict(x13_rule_counts),
+        include_provenance=bool(getattr(args, "include_provenance", False)),
     ), None
+
+
+def _status_cell(rd: ReportData, sb, testee_id, status):
+    """R4': the status token, suffixed `@<schema_version>` iff the query
+    mixes X13 rule versions."""
+    if rd.mixed_x13:
+        return f"{status}@{rd.schema_version_by_testee.get((sb, testee_id), '?')}"
+    return status
+
+
+def _not_ranked_excerpt(rd: ReportData, sb, testee_id, status, status_detail):
+    """R1: the not-ranked parenthesis -- from the BLOCK for an
+    `inconclusive-spread` record, `_excerpt` of status_detail otherwise."""
+    if status == "inconclusive-spread":
+        _st, _sd, rid = _status_lookup(rd, sb, testee_id)
+        return _spread_excerpt(rd.agreement_by_record.get(rid))
+    return _excerpt(status_detail)
 
 
 # -------------------------------------------------------------- rendering
@@ -2280,7 +2476,41 @@ def render_markdown(rd: ReportData):
     out.append(f"- record source: {rd.source_desc}")
     out.append(f"- records included: {len(rd.included)}")
     for rid, path in rd.included:
-        out.append(f"    - `{rid}` ({os.path.relpath(path)})")
+        # [B20] R4 / R5': the agreement FROM THE BLOCK, and the after-sample
+        # failures whenever there were any.
+        line = (f"    - `{rid}` ({os.path.relpath(path)}) — agreement: "
+                f"{_agreement_display(rd.agreement_by_record.get(rid), rd.schema_version_by_record.get(rid, '?'))}")
+        l_fail, o_fail = rd.after_by_record.get(rid, (None, None))
+        if l_fail is not None or o_fail is not None:
+            parts = []
+            if l_fail is not None:
+                parts.append(f"load1 {l_fail:.2f}")
+            if o_fail is not None:
+                parts.append(f"occ {o_fail:.2f}%")
+            line += f"; after: {' / '.join(parts)}"
+        out.append(line)
+        if rd.include_provenance:
+            prov = rd.provenance_by_record.get(rid) or {}
+            for sent in prov.get("sentences", []):
+                out.append(f"        - provenance: {sent}")
+            if prov.get("loaded_beside_measured"):
+                out.append("        - provenance: `load.verdict = loaded` beside "
+                            "`status = measured` (v1.4 X20 is an either-sample "
+                            "fact; X13 reads the before sample)")
+            tl = prov.get("timeline") or []
+            if tl:
+                outliers = _timeline_outliers(tl)
+                out.append(f"        - timeline: {len(tl)} group(s) (/proc/stat, "
+                            f"provenance); {len(outliers)} depart from the run's "
+                            f"median by > {_TIMELINE_NOISE_PCT:.0f} points")
+                for it in outliers:
+                    sib = it.get("sibling_busy_pct")
+                    out.append(f"            - `{it.get('pattern_id')}` / "
+                                f"`{it.get('regime')}` / `{it.get('form')}`: "
+                                f"{it.get('elapsed_ms')} ms, target "
+                                f"{it.get('target_busy_pct')}%, sibling "
+                                f"{sib if sib is not None else 'n/a'}%, busiest other "
+                                f"cpu{it.get('max_other_cpu')} {it.get('max_other_busy_pct')}%")
     if rd.excluded_invalid:
         out.append(f"- records excluded (failed validation): {len(rd.excluded_invalid)}")
         for path, problems in rd.excluded_invalid:
@@ -2341,6 +2571,23 @@ def render_markdown(rd: ReportData):
                 "<status> (<status_detail excerpt>)`; `--include-unmeasured` "
                 "ranks it instead, with `status` shown"
                 + (" [ACTIVE]" if rd.include_unmeasured else ""))
+    # [B20] R3 / R4': the trial-agreement policy and the X13 rule marker.
+    out.append("- trial-agreement policy (schema v1.4, rule v1.4-group, X31-X33): "
+                "a record's five trials must agree to within k=1.5 on every "
+                "group of its rows — one slow trial of five tolerated; two, "
+                "or one fast, is a disagreeing row; a group disagrees at >= 2 "
+                "disagreeing rows reaching a third of it (d_min=2, c=3); a "
+                "record with a disagreeing group, or with fewer than five odd "
+                "trials, is `inconclusive-spread` and unranked like "
+                "`inconclusive-load`; the after-run load/occupancy samples are "
+                "provenance (v1.4 X13), shown under --include-provenance"
+                + (" [ACTIVE]" if rd.include_provenance else ""))
+    rules = "; ".join(f"{label} on {n} record(s)"
+                      for label, n in sorted(rd.x13_rule_counts.items()))
+    out.append(f"- status rule: {rules or '(no records)'}"
+                + (" — MIXED: every ranking row's status cell carries the "
+                   "record's schema version (`measured@1.3` / `measured@1.4`)"
+                   if rd.mixed_x13 else ""))
     out.append("- tier policy (R3, schema v1.2 `tier`, absent = `pinned`): "
                 "a `scratch`-tier row is excluded from ranking by default, "
                 "listed as `scratch: <testee>`; `--include-scratch` ranks "
@@ -2552,7 +2799,7 @@ def render_markdown(rd: ReportData):
                 tier = _tier_lookup(rd, sb, t)
                 ratio_baseline = r.median_ns / ref_ns if ref_ns else float("nan")
                 ratio_best = r.median_ns / best_ns if best_ns else float("nan")
-                row = [str(i), f"`{t}`", status]
+                row = [str(i), f"`{t}`", _status_cell(rd, sb, t, status)]
                 if rd.show_form:
                     row += [f"`{form}`", _form_fact(form)]
                 row.append(_fmt_ns(r.median_ns))
@@ -2644,7 +2891,7 @@ def render_markdown(rd: ReportData):
 
         if group_not_ranked:
             for t, form, r, status, status_detail in group_not_ranked:
-                excerpt = _excerpt(status_detail)
+                excerpt = _not_ranked_excerpt(rd, sb, t, status, status_detail)
                 out.append(f"- not ranked: `{t}` — {status}"
                             + (f" ({excerpt})" if excerpt else ""))
             out.append("")
@@ -2871,11 +3118,27 @@ def render_tsv(rd: ReportData):
          f"single_subject_regimes: {','.join(rd.single_subject_regimes)}",
          f"include_unmeasured: {rd.include_unmeasured}",
          f"include_scratch: {rd.include_scratch}",
-         f"all_records: {rd.all_records}"]))
+         f"all_records: {rd.all_records}",
+         "x13_rules: " + "; ".join(f"{label} on {n}" for label, n
+                                   in sorted(rd.x13_rule_counts.items())),
+         f"mixed_x13: {rd.mixed_x13}",
+         f"include_provenance: {rd.include_provenance}"]))
     header = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
               "testee", "status", "tier", "rank_or_na", "metric", "value", "n", "pass_rate",
               "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
     lines.append("\t".join(header))
+
+    # [B20] R4 in TSV: one `record` row per included record -- the
+    # agreement string in `gave_up_summary`'s slot (a free-text column),
+    # the after-sample failures in `delta_verdict`'s.
+    for rid, _path in rd.included:
+        l_fail, o_fail = rd.after_by_record.get(rid, (None, None))
+        after = " / ".join(x for x in (f"load1 {l_fail:.2f}" if l_fail is not None else "",
+                                       f"occ {o_fail:.2f}%" if o_fail is not None else "") if x)
+        lines.append("\t".join(["record", "", "", "", "", "", rid, "", "", "", "agreement",
+                                 _agreement_display(rd.agreement_by_record.get(rid),
+                                                    rd.schema_version_by_record.get(rid, "?")),
+                                 "", "", "", "", "", ("after: " + after) if after else ""]))
 
     groups = _ranking_groups(rd, grain)
     for gkey in sorted(groups):
@@ -2900,7 +3163,7 @@ def render_tsv(rd: ReportData):
             if tier == "scratch" and not rd.include_scratch:
                 others.append((t, form, r, "scratch", status, tier))
                 continue
-            rankable.append((t, form, r, status, tier))
+            rankable.append((t, form, r, _status_cell(rd, sb, t, status), tier))
         rankable.sort(key=lambda x: x[2].median_ns)
         ref = next((r for t, form, r, _s, _ti in rankable if _is_reference(None, t)), None)
         ref_ns = ref.median_ns if ref else (rankable[0][2].median_ns if rankable else None)
@@ -3046,6 +3309,13 @@ def build_argparser():
                      help="[B9] R3: rank `tier: scratch` rows too (default: "
                           "excluded, listed as 'scratch'), with a `tier` "
                           "column.")
+    ap.add_argument("--include-provenance", action="store_true",
+                     help="[B20] R5 (schema v1.4): print each record's "
+                          "after-sample provenance sentence(s), the "
+                          "loaded-beside-measured fact and the per-group "
+                          "occupancy timeline under its header line "
+                          "(default: off -- provenance by ruling, not a "
+                          "caveat on the number).")
     return ap
 
 

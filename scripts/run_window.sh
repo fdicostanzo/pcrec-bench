@@ -13,7 +13,11 @@
 #
 # One cell at a time, pinned to one core, records into the REAL store; rc 3
 # == the harness's own quiet gate refused a cell on a transient (OD-B12) --
-# retried thrice with a 20 s backoff, as before this script existed.
+# retried up to twelve times with a 30 s backoff (THE GATE BUDGET below);
+# rc 4 (schema v1.4, [B20], contract 4) == the cell was WRITTEN and indexed
+# as `inconclusive-spread` (the box was quiet, the trials did not agree) --
+# re-measured ONCE, logged, then on to the next cell: a spread is not a
+# gate transient, and the first record is never deleted (ruling R-6).
 #
 # ENV-OVERRIDABLE (defaults shown; every one may be set on the command line
 # before this script, e.g. `SUBBENCH=loglines TRIALS=5 scripts/run_window.sh`):
@@ -117,7 +121,12 @@ mkdir -p "$(dirname "$LOG")" || exit 9
 
 echo "== window run start $(date -Is) subbench=$SUBBENCH store=$STORE dry_run=$DRY_RUN load=$(cat /proc/loadavg)" | tee -a "$LOG"
 
-gnutimeout 120 python3 -m pcrecbench quiet --samples 6 --pin "$PIN" 2>&1 | tail -4 | tee -a "$LOG"
+# The warm-up is ADVISORY: `quiet` now judges every sample through the same
+# `gate()` a run's pre-flight uses (v1.4, ruling R-7), but its exit code is
+# discarded by this pipe on purpose -- the per-cell `run` below makes the
+# binding decision, with the retry budget, and a window that refused to
+# start on one warm-up sample would lose the cells that budget carries.
+gnutimeout 120 python3 -m pcrecbench quiet --samples 6 --pin "$PIN" 2>&1 | tail -6 | tee -a "$LOG"
 
 first=1
 for t in $TESTEES; do
@@ -126,17 +135,29 @@ for t in $TESTEES; do
   fi
   first=0
   echo "-- cell $SUBBENCH x $t $(date -Is) load=$(cut -d' ' -f1-3 /proc/loadavg)" | tee -a "$LOG"
+  spread_retried=0
   for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
     gnutimeout 3000 python3 -m pcrecbench run --subbench "$SUBBENCH" --testee "$t" \
         --trials "$TRIALS" --pin "$PIN" --subject-timeout 60 --driver-timeout 900 \
         --store "$STORE" $EXTRA --note "$NOTE" >> "$LOG" 2>&1
     rc=$?
     echo "   attempt $attempt rc=$rc $(date -Is)" | tee -a "$LOG"
+    if [ "$rc" -eq 4 ]; then
+      # inconclusive-spread: the record is written; re-measure ONCE (R-6).
+      if [ "$spread_retried" -eq 0 ]; then
+        spread_retried=1
+        echo "   inconclusive-spread: re-measuring this cell once (the first record stays)" | tee -a "$LOG"
+        sleep 15
+        continue
+      fi
+      echo "   inconclusive-spread twice: moving on" | tee -a "$LOG"
+      break
+    fi
     [ "$rc" -eq 3 ] || break
     sleep 30
   done
 done
 
-gnutimeout 120 python3 -m pcrecbench index --store "$STORE" 2>&1 | tail -2 | tee -a "$LOG"
+gnutimeout 120 python3 -m pcrecbench index --store "$STORE" 2>&1 | tail -3 | tee -a "$LOG"
 echo "== window run end $(date -Is) load=$(cat /proc/loadavg)" | tee -a "$LOG"
 echo "WINDOW_RUN_COMPLETE" >> "$LOG"

@@ -23,6 +23,47 @@ and it picks its two subjects BY THE EXPECTATION rather than by looking for a
 byte -- a set whose floor matches every subject (bench/loglines' is `:`) has
 no missing one, and the check says so rather than failing.
 
+The [B20] block (2026-08-30, schema v1.4 — the gate's shape) adds ten
+checks, every one carrying the control gate_shape_v14.md §8 names and
+none injecting a sleep into a production driver (ruling R-10):
+`check_target_core_preflight` (three synthetic captures: a busy target,
+an idle one, the target's ROW ABSENT — the tri-state field and `gate()`
+refusing BY NAME; unpinned, the field is absent and the 60 % capture is
+refused by the NON-target clause instead), `check_quiet_cli_agrees_with_gate`
+(the CLI's printed reasons are `gate()`'s list verbatim, exit 3; a
+passing sample exits 0), `check_after_sample_is_provenance` (a 40 %
+after sample on an agreeing 5-trial record → `measured`, the provenance
+sentence SECOND in `note`, X26 holding, validated through `store.write`;
+the SAME record re-stamped 1.3 rejected by X13 AND X33 — one sabotage,
+two versions, two verdicts), `check_trial_agreement_fixture` (the
+hand-computed fixture: group A d=2 of n=4 disagrees under (2,3), a
+tolerated single 3× trial, a fast row, unjudged rows under BOTH reason
+tokens, the boundary rows at exactly k·m and m/k; `share_c=1` flips it;
+3 trials → `n/a-trials`; `validate.py`'s OWN implementation — no shared
+source — gives the same integers, directly and through `store.write`,
+and a stamp of 3 beside rows that say 4 is rejected by X32),
+`check_spread_status_stamped` (`derive_status` on every decision-table
+row, then a disagreeing record stamped and written → `inconclusive-spread`
+with the §3.4 line at offset 0 of `status_detail`; ONE slow trial per
+row → `measured`, the rule tolerates one), `check_status_sentence_never_elided`
+(72 real calibration sentences over the cap: the status sentence at
+offset 0, the marker naming the dropped class; joined WITHOUT `first=`
+it is elided), `check_smoke_block_na_trials` (the `--trials 1` smoke
+record carries the block, `n/a-trials`, every key unjudged, scratch
+status = the pre-flight's; re-tiered pinned through `derive_status` →
+`inconclusive-spread`; the X33 missing-block control),
+`check_scratch_carries_block` (`quick --trials 5` carries and prints the
+block; the default 3 trials print `n/a (3 trials …)` — the verdict at 5
+trials is reported, not asserted `agree`, because the box is not what
+the check is about), `check_exit_code_4` (`cmd_run` in-process with the
+pre-flight's SAMPLES simulated quiet: a pinned `--trials 1` run returns
+4, written and indexed with the per-status line; the same at tier
+scratch is `measured` and returns 0) and `check_timeline_provenance`
+(a pinned calibrated run writes one `/proc/stat` timeline item per group
+with the target reading our own driver; the module's path pointed at a
+nonexistent file — in-process, no production hook — writes NO timeline,
+and both validate).
+
 `selfcheck.py`'s organising principle is pcrec's check-design lesson: every
 gate is exercised against an input it must REJECT in the same run that
 exercises it against one it must accept. A check with no failing case proves

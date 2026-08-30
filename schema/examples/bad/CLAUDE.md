@@ -8,10 +8,13 @@ proves nothing about the rule it claims to enforce.
 Each file is a good example with exactly ONE thing wrong, and its
 content hash restamped so the sabotage is the only defect — a control
 that fails for two reasons is not a control. (`x6-tampered-hash` is the
-deliberate exception: not restamping IS its sabotage.) All but one are
-built from the pcrec example; `x16-lazy-jit-no-warmup` is built from the
-v8 one, because the rule it controls only exists for a `lazy-jit`
-testee and the pcrec example is `compiled-aot`. Where a rule could be
+deliberate exception: not restamping IS its sabotage.) The pre-1.4
+controls are built from the pcrec 1.1 example (`x16-lazy-jit-no-warmup`
+and `x30-two-floor-patterns` from the v8 one, because the rules they
+control only exist for a `lazy-jit` testee / a second pattern); the
+sixteen v1.4 controls ([B20]) are built from the GENERATED 1.4 example
+(`../gen_example_14.py`'s output), each a one-field mutation of it
+constructed to fire ONLY its rule. Where a rule could be
 sabotaged on several rows, the row is chosen to keep OTHER rules out of
 it — `x7` sabotages the untimed `wrong-span-or-captures` row precisely
 so X11 does not fire alongside.
@@ -82,6 +85,22 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x28-local-binary-not-scratch.jsonl` | X28 | `engine_version: local:0123456789ab` — a binary nobody pinned by commit — on a record with no `tier`, which is `pinned`. `testee.binary` is present (so X29 stays out), the ids are re-derived (so X3/X5 stay out) and X22 exempts the shape: the one defect is a local binary claiming the pinned tier, which is exactly what "a bench number never comes from a dirty tree" forbids |
 | `x29-scratch-without-binary.jsonl` | X29 | `tier: scratch` with no `testee.binary` — a scratch record that does not say what the binary was, which is the one thing a scratch record's engine identity consists of |
 | `x30-two-floor-patterns.jsonl` | X30 | *(built from the **v8** example, like `x16`)* both patterns carry `role: "floor"` — a record may declare at most one: the floor pattern's whole point is a SINGLE per-call baseline the rest of the set reads against, and two of them leave that baseline ambiguous |
+| `x13-measured-but-target-core-busy.jsonl` | X13 (v1.4) | *(built from the **1.4** example, like every row below)* `occupancy.before.target_busy_pct: 55.0` beside `status: measured` and `pinning.cpu: 2` — the TARGET core was busy before the run: a competitor pinned where the cell was measured sits under every trial uniformly, which trial agreement cannot see (clause 3) |
+| `x13-measured-but-target-busy-null.jsonl` | X13 (v1.4) | `occupancy.before.target_busy_pct: null` beside `verdict: pass`, `pinning.cpu: 2`, `status: measured` — the target's row was missing from the capture, the same unknown as `unavailable` (the missing-row control, ruling R-2; the pre-flight refuses it before the run, X13 clause 3 refuses `measured` for it after) |
+| `x13-measured-but-trials-disagree.jsonl` | X13 (v1.4) | both judged rows of (`p-addrspec`, match-compliance, whole-subject) given two 2× trials, the block RECOMPUTED to `disagree` (d = 2 of n = 2), status left `measured` — X31/X32 quiet, X13 clause 4 alone |
+| `x13-measured-but-load-before-high.jsonl` | X13 (v1.4) | `load.before.load1: 9.8` (its `loadavg_raw` edited to match, so X19 stays out), `load.verdict` already `loaded` (X20 quiet), `status: measured` — the control that shows the v1.4 X13 reads the BEFORE sample and not the verdict (clause 1) |
+| `x13-measured-but-na-trials-pinned.jsonl` | X13 (v1.4) | the example truncated to 3 trials (`seq` renumbered, the block recomputed to `n/a-trials` with every count 0 and every row key unjudged under `na_trials`), `tier: pinned`, `status: measured` — a pinned record without the five odd trials the rule needs is `inconclusive-spread` (ruling R-12; clause 4) |
+| `x31-verdict-contradicts-groups.jsonl` | X31 | the same two-slow-trial sabotage, every count stamped CORRECTLY (`groups_disagreeing: 1`), only `verdict: agree` wrong — X32 quiet (the counts recompute), X13 quiet (`agree` satisfies clause 4), X31 alone |
+| `x32-groups-disagreeing-not-recomputable.jsonl` | X32 | the same rows, the block left as the CLEAN record's (`groups_disagreeing: 0`, `rows_disagreeing: 0`, `verdict: agree`, `worst_group` d = 0) — self-consistent, so X31 is quiet: the "stamp 0 beside the rows" sabotage, which is the whole reason X32 exists |
+| `x32-trials-not-recomputable.jsonl` | X32 | `trial_agreement.trials: 7` on a 5-trial record (7 is odd and ≥ 5, so X31 stays quiet) |
+| `x32-rows-unjudged-not-recomputable.jsonl` | X32 | `rows_unjudged: 4` where the rows say 3 (the reasons object left correct, so it is the count alone) |
+| `x32-worst-group-unknown-pattern.jsonl` | X32 | `worst_group.pattern_id: p-nonexistent` — the key neither recomputes nor exists in `setup.patterns[]` |
+| `x33-trial-agreement-missing.jsonl` | X33 | a 1.4 record with NO `trial_agreement` block (X13 clause 4 deliberately does not read an absent block, so X33 is the only finding) |
+| `x33-trial-agreement-on-a-v13-record.jsonl` | X33 | the block on a record re-stamped `1.3` (its status set `inconclusive-load` so the v1.1 X13 stays out of it) — the OTHER direction: a block on a record stamped before the version that defined it is a mis-stamped record, not a forward-compatible one |
+| `schema-status-inconclusive-spread-misspelt.jsonl` | SCHEMA | `status: inconclusive_spread` — the token-spelling rule (record_schema.md §5) |
+| `schema-target-busy-beside-unavailable.jsonl` | SCHEMA | `occupancy.after.verdict: unavailable`, `max_busy_pct: null` and `target_busy_pct: 3.0` — a target number beside a sample that measured nothing, which S2's `then` branch forbids (on the AFTER sample so the v1.4 X13 stays out) |
+| `schema-trial-agreement-unknown-member.jsonl` | SCHEMA | the block carrying the earlier draft's dropped `worst_row` array — `additionalProperties: false` is what makes a removal stick |
+| `schema-timeline-item-missing-member.jsonl` | SCHEMA | a `timeline[]` item with no `elapsed_ms` — the denominator of its percentages, required |
 
 ## Adding one
 
@@ -96,7 +115,10 @@ mutation function, and these files change only when a rule does.
 
 `--expect-rule` requires the NAMED rule to be among those that fired; it
 does not require it to be alone. Three controls legitimately fire more
-than one, and all three are honest rather than sloppy:
+than one, and all three are honest rather than sloppy (every v1.4
+control fires exactly one rule — `x32-groups-disagreeing-not-recomputable`
+and `x32-worst-group-unknown-pattern` report several X32 problems, all
+X32):
 
 - `x14-missing-compile-row` also fires X11 and X27 — it deletes BOTH
   forms' compile rows for one pattern, so that pattern's timed plain

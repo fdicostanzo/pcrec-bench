@@ -58,6 +58,15 @@ STORE_WALK_ONLY = os.path.join(FIXDIR, "store_walk_only")
 # other's refusal -- see fixtures/mixed_version/CLAUDE.md.
 MIXED_VERSION_MAJOR = os.path.join(FIXDIR, "mixed_version", "major_mismatch")
 MIXED_VERSION_MINOR = os.path.join(FIXDIR, "mixed_version", "minor_pair")
+# [B20] (schema v1.4): a VALID 1.3 + 1.4 pair of ONE cell (the pcrec fixture
+# re-stamped 1.3 at 12:00; the same grown to 5 trials with the
+# trial_agreement block at 12:05) plus a 1.4 `inconclusive-spread` record
+# of the jit testee with FAILED after samples -- see fixtures/CLAUDE.md.
+V14_PAIR = os.path.join(FIXDIR, "v14_pair", "store")
+GOLDEN_V8 = os.path.join(FIXDIR, "golden", "store_v8.md")
+V13_RID = "fixture-mini@1.0__pcrec_1.0.0-gdeadbee_vm-caps-simdna__repfix-box__20260825T120000Z"
+V14_RID = "fixture-mini@1.0__pcrec_1.0.0-gdeadbee_vm-caps-simdna__repfix-box__20260825T120500Z"
+SPREAD_RID = "fixture-mini@1.0__libpcre2_10.46_jit-caps-simdna__repfix-box__20260825T121000Z"
 
 TESTEE_A = "pcrec_1.0.0-gdeadbee_vm-caps-simdna"
 TESTEE_B = "libpcre2_10.46_interp-caps-simdna"
@@ -261,11 +270,21 @@ def test_all_fixtures_validate():
         (missing v1.1-required fields), NOT X17, since its major (1)
         agrees with the validator's; record_schema.md 4.1's own point
         that "a 1.0-stamped file is NOT readable as 1.1"."""
-    for store_dir in (STORE, STORE_WALK_ONLY):
+    for store_dir in (STORE, STORE_WALK_ONLY, V14_PAIR):
         loaded, paths, _source = _load_store(store_dir)
         for rec in loaded:
             _check(not rec.problems,
                    f"{rec.path} unexpectedly failed validation: {rec.problems}")
+    # [B20] R8: the inconclusive-spread fixture's block RECOMPUTES (X32 fired
+    # on it at validation above, so this only names the fact) and one
+    # group of >= 2 rows with two slow trials each is what disagrees.
+    loaded, _p, _s = _load_store(V14_PAIR)
+    spread = next(r for r in loaded if r.setup["record_id"] == SPREAD_RID)
+    blk = spread.setup["trial_agreement"]
+    _check(spread.setup["status"] == "inconclusive-spread" and blk["verdict"] == "disagree"
+           and blk["groups_disagreeing"] == 1 and blk["worst_group"]["d"] == 2
+           and blk["worst_group"]["n"] == 2,
+           f"the spread fixture must disagree on one 2-row group: {blk}")
 
     mm_paths, _source = report.discover_records(MIXED_VERSION_MAJOR)
     mm_loaded = report.load_all(mm_paths, check_filename=True)
@@ -808,6 +827,30 @@ def test_status_gate_r1():
     md2 = report.render_markdown(rd2)
     _check("`engine-b_1.0.0_cfg-caps-simdna` | inconclusive-load |" in md2,
            f"--include-unmeasured must rank the row with its status shown:\n{md2}")
+
+    # [B20] R1 (v1.4): an `inconclusive-spread` record is unranked like
+    # `inconclusive-load`, and its parenthesis prints FROM THE BLOCK, never
+    # from the free text -- the CONTROL: the measured fixture in the same
+    # group ranks, and the spread record's `status_detail` is a decoy the
+    # bullet must not echo.
+    loaded, _p, _s = _load_store(V14_PAIR)
+    args3 = _args(store=V14_PAIR, include_synthetic=True)
+    rd3, err3 = report.build_report(loaded, args3)
+    _check(err3 is None, f"unexpected refusal: {err3}")
+    md3 = report.render_markdown(rd3)
+    _check("not ranked: `libpcre2_10.46_jit-caps-simdna` — inconclusive-spread "
+           "(1 of 4 groups disagree, worst p-digits / match-compliance / plain "
+           "d=2 of n=2, k=1.5)" in md3,
+           f"the spread bullet must print the block's numbers:\n{md3}")
+    _check("the trials' agreement decided" not in md3.split("## Ranking")[1],
+           "the not-ranked bullet must come from the block, not from status_detail")
+    _check("`pcrec_1.0.0-gdeadbee_vm-caps-simdna` | measured |" in md3,
+           f"the measured 1.4 record in the same group must rank:\n{md3}")
+    args4 = _args(store=V14_PAIR, include_synthetic=True, include_unmeasured=True)
+    rd4, _e = report.build_report(loaded, args4)
+    md4 = report.render_markdown(rd4)
+    _check("`libpcre2_10.46_jit-caps-simdna` | inconclusive-spread |" in md4,
+           f"--include-unmeasured must rank the spread row with its status:\n{md4}")
 
 
 def test_duplicate_record_dedup_r2():
@@ -1640,16 +1683,18 @@ def test_reporter_version_pin():
     ranking line, `test_did_not_compile_ranking_line_r10` below) took it
     to v7; [B19]'s scope addition (the abi-11 K=/caps= legend clauses,
     which render differently against records already in the store) took
-    it to v8."""
-    _check(report.REPORTER_VERSION == "v8 (2026-08-30)",
-           f"expected REPORTER_VERSION == 'v8 (2026-08-30)', got {report.REPORTER_VERSION!r}")
+    it to v8; [B20] (schema v1.4: the trial-agreement legend and the
+    per-record `agreement:` line, which render on every existing record)
+    took it to v9."""
+    _check(report.REPORTER_VERSION == "v9 (2026-08-30)",
+           f"expected REPORTER_VERSION == 'v9 (2026-08-30)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v8 (2026-08-30)" in md, f"expected the v8 header line:\n{md[:200]}")
+    _check("reporter: v9 (2026-08-30)" in md, f"expected the v9 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v8 (2026-08-30)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v9 (2026-08-30)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
 
 
 def test_did_not_compile_ranking_line_r10():
@@ -2392,6 +2437,179 @@ def test_per_subject_subtable_b16_r9():
            f"a dominated cell WITH a sub-table must say 'below':\n{md_d}")
 
 
+# --------------------------------------------------- [B20] schema v1.4 (v9)
+
+def test_trial_agreement_legend_and_na_v13():
+    """[B20] R3/R4 over the NEW valid 1.3 + 1.4 pair (`--all-records`, so
+    both halves of one cell are included): the legend line prints once;
+    the 1.3 record shows `agreement: n/a (v1.3)` (never re-judged, never
+    invented); the 1.4 record shows its block's numbers; both reduce in
+    one invocation. CONTROL: `test_mixed_schema_versions_refused` (the
+    MAJOR pair) is still refused."""
+    loaded, _p, _s = _load_store(V14_PAIR)
+    args = _args(store=V14_PAIR, include_synthetic=True, all_records=True)
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"a 1.3 + 1.4 pair must NOT be refused: {err}")
+    md = report.render_markdown(rd)
+    _check(md.count("- trial-agreement policy (schema v1.4, rule v1.4-group, X31-X33):") == 1,
+           "the legend line must print exactly once")
+    _check(f"`{V13_RID}`" in md and " — agreement: n/a (v1.3)" in md,
+           f"the 1.3 record must show agreement n/a (v1.3):\n{md[:2000]}")
+    # (the measured 1.4 half carries ONE disagreeing row -- s-num-2's trials
+    # [50, 90, 160, 51, 49.5] have two above 1.5 x their median -- and is
+    # still `agree`: d = 1 < d_min, one row is not a disturbed group, R-16)
+    _check("agreement: agree (0 of 4 groups; 1 of 5 rows; 0 unjudged; k=1.5, 2/3; 5 trials)" in md,
+           f"the 1.4 record must show its block's numbers:\n{md[:2000]}")
+    _check("agreement: disagree (1 of 4 groups; worst p-digits / match-compliance / plain "
+           "d=2 of n=2; 0 unjudged)" in md,
+           f"the spread record must show its block's numbers:\n{md[:2500]}")
+    testees = {k[1] for k in rd.set_cells}
+    _check(any(t.endswith("@20260825T120000Z") for t in testees)
+           and any(t.endswith("@20260825T120500Z") for t in testees),
+           f"both halves of the pair must reduce in one invocation: {testees}")
+    _check(rd.agreement_by_record[V13_RID] is None
+           and rd.agreement_by_record[V14_RID]["verdict"] == "agree",
+           "the block is threaded per record, None for the 1.3 half")
+
+
+def test_rule_marker_on_mixed_x13_versions():
+    """[B20] R4' (record_schema.md 4's rule-revision clause, R-1 (iii)):
+    when one query mixes X13 versions every ranking row's status cell
+    carries the record's schema version and the legend names both rules;
+    CONTROL: the single-version default query (the 1.3 half deduped away
+    under the newer measured 1.4 record) carries no suffix."""
+    loaded, _p, _s = _load_store(V14_PAIR)
+    rd, err = report.build_report(loaded, _args(store=V14_PAIR, include_synthetic=True,
+                                                 all_records=True))
+    _check(err is None, err)
+    _check(rd.mixed_x13, f"--all-records over the pair must mix X13 versions: {rd.x13_rule_counts}")
+    md = report.render_markdown(rd)
+    _check("| measured@1.3 |" in md and "| measured@1.4 |" in md,
+           f"mixed rows must carry the version marker:\n{md}")
+    _check("- status rule: v1.1-1.3 X13 (both samples quiet) on 1 record(s); "
+           "v1.4 X13 (pre-flight + trial agreement) on 2 record(s) — MIXED" in md,
+           f"the legend must name both rules:\n{md[:3000]}")
+    tsv = report.render_tsv(rd)
+    _check("\tmeasured@1.3\t" in tsv and "\tmeasured@1.4\t" in tsv and "mixed_x13: True" in tsv,
+           "the TSV rows carry the marker too")
+    rd1, _e = report.build_report(loaded, _args(store=V14_PAIR, include_synthetic=True))
+    _check(not rd1.mixed_x13, f"the default query is single-version: {rd1.x13_rule_counts}")
+    md1 = report.render_markdown(rd1)
+    _check("measured@" not in md1 and "| measured |" in md1,
+           "a single-version query's rows carry no suffix")
+    _check("- status rule: v1.4 X13 (pre-flight + trial agreement) on 2 record(s)" in md1
+           and "MIXED" not in md1, f"the single-version legend names one rule:\n{md1[:3000]}")
+
+
+_V9_ALLOWED_ADDED = (
+    "- trial-agreement policy (schema v1.4, rule v1.4-group, X31-X33):",
+    "- status rule: ",
+)
+
+
+def _classify_v9_diff(golden_text, new_text):
+    """[B20] `test_v13_record_still_renders`'s classifier: every line that
+    differs between the committed v8 rendering and the v9 one must be (a)
+    the version line, (b) an R3/R4' legend line, (c) a record line that
+    only GAINED ` — agreement: n/a (v1.x)` and/or an `; after: ...`
+    clause. Returns the list of UNEXPLAINED differing lines."""
+    import difflib
+    old_lines = golden_text.splitlines()
+    new_lines = new_text.splitlines()
+    unexplained = []
+    sm = difflib.SequenceMatcher(a=old_lines, b=new_lines, autojunk=False)
+    for tag, i1, i2, j1, j2 in sm.get_opcodes():
+        if tag == "equal":
+            continue
+        removed, added = old_lines[i1:i2], new_lines[j1:j2]
+        for line in added:
+            if line.startswith("reporter: v9 "):
+                continue
+            if any(line.startswith(a) for a in _V9_ALLOWED_ADDED):
+                continue
+            m = re.match(r"^(    - `[^`]+` \([^)]*\)) — agreement: n/a \(v1\.\d\)(; after: .*)?$", line)
+            if m and m.group(1) in removed:
+                continue
+            unexplained.append("+ " + line)
+        for line in removed:
+            if line.startswith("reporter: v8 "):
+                continue
+            if re.match(r"^    - `[^`]+` \([^)]*\)$", line) and any(
+                    a.startswith(line + " — agreement: n/a") for a in added):
+                continue
+            unexplained.append("- " + line)
+    return unexplained
+
+
+def test_v13_record_still_renders():
+    """[B20] (panel C F13): the existing fixture store (schema 1.1, judged by
+    the pre-1.4 X13) still renders under v9, and the ONLY lines that differ
+    from the committed v8 rendering (`fixtures/golden/store_v8.md`) are the
+    version line, the R3/R4' legend lines and the per-record `agreement:
+    n/a (v1.1)` suffix -- no number, no ranking, no other line. CONTROL: the
+    same diff with ONE number changed in the v9 rendering is refused."""
+    with open(GOLDEN_V8, encoding="utf-8") as fh:
+        golden = fh.read()
+    loaded, paths, source = _load_store(STORE)
+    args = _args(store=STORE, include_synthetic=True)
+    args._source_desc = f"{source} ({len(paths)} candidate file(s))"   # as the CLI says it
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, err)
+    md = report.render_markdown(rd)
+    unexplained = _classify_v9_diff(golden, md)
+    _check(not unexplained, "v9 changed more than the legend and the agreement "
+                            "suffix against the v8 golden:\n" + "\n".join(unexplained))
+    _check(md != golden, "the v9 rendering must differ from v8 at all (the legend)")
+    # the CONTROL: one number changed => the classifier refuses
+    mutated = md.replace("| 20.0 | 19.0 | 21.0 |", "| 20.5 | 19.0 | 21.0 |", 1)
+    _check(mutated != md, "the control's target number must exist in the rendering")
+    _check(_classify_v9_diff(golden, mutated),
+           "the classifier must refuse a rendering with a number changed")
+
+
+def test_provenance_flag():
+    """[B20] R5: the after-sample provenance sentence(s) appear under a
+    record's header line ONLY under --include-provenance, from wherever
+    they sit (`status_detail` on the spread record, `note` on a measured
+    one); the default rendering of the same store lacks them."""
+    loaded, _p, _s = _load_store(V14_PAIR)
+    rd, err = report.build_report(loaded, _args(store=V14_PAIR, include_synthetic=True))
+    _check(err is None, err)
+    md = report.render_markdown(rd)
+    _check("provenance: after-sample (provenance, not a verdict)" not in md,
+           "the provenance sentence must be OFF by default")
+    rdp, _e = report.build_report(loaded, _args(store=V14_PAIR, include_synthetic=True,
+                                                 include_provenance=True))
+    mdp = report.render_markdown(rdp)
+    _check("        - provenance: after-sample (provenance, not a verdict): occupancy after "
+           "the run 41.41% busy" in mdp
+           and "        - provenance: after-sample (provenance, not a verdict): load1 after "
+           "the run 11.40 exceeds the limit 6.00" in mdp,
+           f"--include-provenance must print both after-sample sentences:\n{mdp[:3000]}")
+    _check("[ACTIVE]" in mdp.split("trial-agreement policy")[1].split("\n")[0],
+           "the legend must flag the flag as active")
+
+
+def test_after_clause_unconditional():
+    """[B20] R5': when either AFTER sample failed the record's header line
+    carries `after: load1 11.40 / occ 41.41%` WITHOUT any flag; CONTROL: the
+    record whose after samples are clean carries no such clause."""
+    loaded, _p, _s = _load_store(V14_PAIR)
+    rd, err = report.build_report(loaded, _args(store=V14_PAIR, include_synthetic=True))
+    _check(err is None, err)
+    md = report.render_markdown(rd)
+    spread_line = next(l for l in md.splitlines() if f"`{SPREAD_RID}`" in l)
+    clean_line = next(l for l in md.splitlines() if f"`{V14_RID}`" in l)
+    _check(spread_line.endswith("; after: load1 11.40 / occ 41.41%"),
+           f"the failed-after record must carry the clause: {spread_line}")
+    _check("after:" not in clean_line,
+           f"a record with clean after samples must carry no clause: {clean_line}")
+    tsv = report.render_tsv(rd)
+    _check(f"record\t\t\t\t\t\t{SPREAD_RID}\t\t\t\tagreement\t" in tsv
+           and "after: load1 11.40 / occ 41.41%" in tsv,
+           "the TSV carries a `record` row per record with the agreement and the clause")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -2450,6 +2668,12 @@ TESTS = [
     test_per_subject_subtable_b16_r9,
     # [B12]
     test_did_not_compile_ranking_line_r10,
+    # [B20] schema v1.4 (v9)
+    test_trial_agreement_legend_and_na_v13,
+    test_rule_marker_on_mixed_x13_versions,
+    test_v13_record_still_renders,
+    test_provenance_flag,
+    test_after_clause_unconditional,
 ]
 
 

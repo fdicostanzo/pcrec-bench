@@ -3,14 +3,36 @@
 The seven steps of contract 4, in order, and each is one function below:
 
   (1) load the sub-bench            `subbench.find`
-  (2) `quiet.check()` + the gate    refuse (exit 3) unless quiet or forced
-  (3) prepare + compile + measure   the adapter
-  (4) sample load AFTER             requirements 9(a): a box that went busy
-                                    partway is just as compromised
-  (5) build the record, VALIDATE    a record that fails validation is never
-                                    written -- the failure is a harness bug
+  (2) `quiet.check()` + the gate    the PRE-FLIGHT: refuse (exit 3) unless
+                                    quiet or forced (gate_shape_v14.md 1)
+  (3) prepare + compile + measure   the adapter; /proc/stat read at every
+                                    group boundary (the timeline, provenance)
+  (4) sample load + occupancy AFTER requirements 9(a); since v1.4 PROVENANCE
+                                    (a note), never a verdict on the status
+  (5) build the record, VALIDATE    the trial-agreement block stamped, the
+                                    status DERIVED by `derive_status` (the
+                                    decision table below); a record that
+                                    fails validation is never written -- the
+                                    failure is a harness bug
   (6) write it                      store.write, never silently clobbering
   (7) `index`                       store.index
+
+THE STATUS (v1.4, [B20], docs/design/gate_shape_v14.md 5): `derive_status`
+is a PURE function of the gate's reasons R, the trial-agreement verdict V
+and the tier -- the decision table, every row with its status and the
+sentences that explain it, first in `status_detail` and never elided:
+
+    R non-empty          -> inconclusive-load   (R; then the 3.4 line iff V is
+                                                 disagree or pinned n/a; then A)
+    R empty, V agree     -> measured            (note: A; then O)
+    R empty, V disagree  -> inconclusive-spread (the 3.4 line; then A)
+    R empty, V n/a, pinned  -> inconclusive-spread (the n/a line; then A)
+    R empty, V n/a, scratch -> measured         (note: the n/a line; A; O)
+
+A = the after-sample provenance sentences (`quiet.after_notes`), O = every
+other sentence (scratch-tier, calibration, adapter, did-not-compile).
+`harness-failure` appears in no row: no code path produces it (ruling R-8).
+Exit code 4 (contract 4) is the CLI's word for `inconclusive-spread`.
 
 THE TIER (schema v1.2, record_schema.md 6.8; Frank's I-4). `run_cell` takes
 `tier`; an adapter whose testee is scratch BY CONSTRUCTION (`pcrec-local`)
@@ -60,9 +82,11 @@ class HarnessError(Exception):
 
 
 class RunResult:
-    """What `run_cell` returns. `setup`/`rows` are what was WRITTEN (narrowed
-    to the emitted schema version); `full_setup`/`full_rows` are what was
-    BUILT, with every v1.1 field the harness measures."""
+    """What `run_cell` returns. `setup`/`rows` are what was WRITTEN;
+    `full_setup`/`full_rows` are the same objects -- `store.serialize`
+    performs NO projection (the emitted schema version is the built one),
+    so the rows the trial-agreement rule judged are the rows the file
+    carries. The two names survive from the v1.1 readiness control."""
 
     __slots__ = ("path", "record_id", "setup", "rows", "full_setup",
                  "full_rows")
@@ -339,6 +363,69 @@ def _iters_meeting_target(target_ns, probe_ns, probe_n):
     return iters
 
 
+# ------------------------------------------------------------ the status
+
+STATUS_MEASURED = "measured"
+STATUS_LOAD = "inconclusive-load"
+STATUS_SPREAD = "inconclusive-spread"
+
+
+def trial_agreement_sentence(block):
+    """The 3.4 sentence for a block, FROM THE BLOCK (gate_shape_v14.md 3.4):
+    the status-deciding line for a disagreeing or `n/a-trials` record, and
+    the U4 note for a record that judged nothing."""
+    v = block.get("verdict")
+    if v == "n/a-trials":
+        return ("trial agreement (%s): n/a-trials (%d trials; the rule requires "
+                ">= 5, odd) -- nothing judged, %d rows unjudged"
+                % (block.get("rule"), block.get("trials", 0),
+                   block.get("rows_unjudged", 0)))
+    if v == "disagree":
+        wg = block.get("worst_group") or {}
+        return ("trial agreement (%s, k=%s, d_min=%d, share_c=%d, trials=%d): "
+                "%d of %d groups disagree; %d of %d rows disagree, %d unjudged; "
+                "worst group %s / %s / %s: d=%d of n=%d"
+                % (block.get("rule"), block.get("k"), block.get("d_min", 0),
+                   block.get("share_c", 0), block.get("trials", 0),
+                   block.get("groups_disagreeing", 0), block.get("groups_judged", 0),
+                   block.get("rows_disagreeing", 0), block.get("rows_judged", 0),
+                   block.get("rows_unjudged", 0), wg.get("pattern_id"),
+                   wg.get("regime"), wg.get("form"), wg.get("d", 0), wg.get("n", 0)))
+    if block.get("groups_judged", 0) == 0:
+        return ("trial agreement (%s): agree 0/0 groups -- nothing judged "
+                "(%d rows unjudged)" % (block.get("rule"), block.get("rows_unjudged", 0)))
+    return None
+
+
+def derive_status(reasons, agreement, tier):
+    """THE DECISION TABLE (module docstring; gate_shape_v14.md 5), pure.
+
+    -> (status, status_sentences). `reasons` is `quiet.gate()`'s list (empty
+    on a quiet box, even under --force-unquiet: the flag is not a status);
+    `agreement` the `trial_agreement` block; `tier` `pinned` or `scratch`.
+    `status_sentences` are the STATUS-DECIDING sentences, in order, for
+    `status_detail` (a non-measured record) or the head of `note` (row 5, a
+    scratch record under `n/a-trials`) -- never elided (record.join_notes
+    `first=`). The after-sample sentences and the other notes are the
+    caller's to append AFTER these."""
+    reasons = list(reasons or [])
+    verdict = (agreement or {}).get("verdict")
+    pinned = tier != store.TIER_SCRATCH
+    ta_line = trial_agreement_sentence(agreement or {})
+    if reasons:
+        sentences = list(reasons)
+        if verdict == "disagree" or (pinned and verdict == "n/a-trials"):
+            sentences.append(ta_line)              # both facts, ruling R-15
+        return STATUS_LOAD, sentences
+    if verdict == "agree":
+        return STATUS_MEASURED, []
+    if verdict == "disagree":
+        return STATUS_SPREAD, [ta_line]
+    if pinned:
+        return STATUS_SPREAD, [ta_line]            # n/a-trials, pinned (R-12)
+    return STATUS_MEASURED, [ta_line]              # n/a-trials, scratch (E-2)
+
+
 # ----------------------------------------------------------------- the run
 
 def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
@@ -417,11 +504,16 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         # below, and `status` is still what the samples say.
         force_unquiet = True
 
-    # (2) the quiet gate ----------------------------------------------------
-    say("checking the box (mpstat takes ~1 s)...")
-    load_before, occ_before = quiet.check(exclude_cpu=pin_cpu)
-    reasons = quiet.gate(load_before, occ_before, force=force_unquiet)
+    # (2) the quiet gate: the PRE-FLIGHT ------------------------------------
+    # `pinning` FIRST, and its `cpu` is what the occupancy sample excludes
+    # from the non-target judgement and judges as the target (ruling R-2,
+    # gate_shape_v14.md 5 H0): one source for "the target core", so a
+    # record's `pinning` block and its judgement are provably about the
+    # same core. `taskset` missing => cpu None => the target clauses inert.
     pinning = quiet.pinning(pin_cpu)
+    say("checking the box (mpstat takes ~%d s)..." % quiet.OCCUPANCY_SECONDS)
+    load_before, occ_before = quiet.check(exclude_cpu=pinning["cpu"])
+    reasons = quiet.gate(load_before, occ_before, force=force_unquiet)
 
     timestamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     # A scratch store borrows the canonical registry's machine id (6.5):
@@ -457,12 +549,22 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         # X29: a scratch record says what the binary was.
         testee_block["binary"] = adapter.binary_identity(testee_id, workdir)
 
-    notes = list(reasons)
+    # O, the OTHER sentences (module docstring): the scratch-tier sentence,
+    # did-not-compile, calibration and adapter notes. The gate's reasons are
+    # NOT among them -- they are status-deciding and go first, via
+    # `derive_status` (v1.4).
+    notes = []
     if scratch:
         notes.append("tier scratch: the quiet GATE was not applied "
                      "(record_schema.md 6.8); the box was still sampled and "
                      "status is what the samples say")
     rows = []
+    # (3b) the per-group occupancy TIMELINE (gate_shape_v14.md 3.6,
+    # provenance only): a /proc/stat read at every group boundary, iff the
+    # run is pinned (the item reads the TARGET core) and /proc/stat reads.
+    timeline = ([] if isinstance(pinning["cpu"], int)
+                and quiet.cpu_times() is not None else None)
+    siblings = quiet.smt_siblings(pinning["cpu"]) if timeline is not None else []
     compiled = {}
     # v1.1 (1): a monotonic emission order across the WHOLE record, compile
     # and match rows alike. Row order is not significant to the schema, so
@@ -533,12 +635,20 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             say("measuring %s / %s [%s] / %s: %d subject(s) x %d iter(s) x %d "
                 "trial(s)" % (testee_id, p.name, form, regime, len(subjects),
                               n_iters, trials))
+            enum = REGIME_TO_ENUM[regime]
+            t_before = quiet.cpu_times() if timeline is not None else None
+            t_start = time.monotonic()
             rows_by_trial, _info, mnotes = adapter.measure(
                 handle, regime, subjects, n_iters, trials,
                 timeout=driver_timeout)
             notes.extend(mnotes)
+            if t_before is not None:
+                t_after = quiet.cpu_times()
+                if t_after is not None:
+                    timeline.append(quiet.timeline_item(
+                        t_before, t_after, (time.monotonic() - t_start) * 1000.0,
+                        pinning["cpu"], p.name, enum, form, siblings=siblings))
 
-            enum = REGIME_TO_ENUM[regime]
             for trial, trial_rows in enumerate(rows_by_trial, start=1):
                 for r in trial_rows:
                     subj = sb.subject(r.subject_id)
@@ -572,30 +682,32 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     # is just as load-compromised (requirements 9(a), C7) -- and the measured
     # finding of docs/design/quiet_baseline.md is that the instrument which
     # actually notices that is the per-core one, not load1.
-    say("re-checking the box after the run (mpstat takes ~1 s)...")
-    load_after, occ_after = quiet.check(exclude_cpu=pin_cpu)
+    say("re-checking the box after the run (mpstat takes ~%d s)..."
+        % quiet.OCCUPANCY_SECONDS)
+    load_after, occ_after = quiet.check(exclude_cpu=pinning["cpu"])
     environment["load"] = quiet.load_block(load_before, load_after)
     # `limit_busy_pct` travels WITH the samples (X26): the verdict on each is
     # recomputed from its own number against this threshold, so a threshold
     # change is re-judgeable later without re-measuring.
     occ = quiet.occupancy_block(occ_before, occ_after)
+    if timeline:
+        occ["timeline"] = timeline
+        occ["timeline_tool"] = quiet.TIMELINE_TOOL
     environment["occupancy"] = occ
 
     # (5) the record --------------------------------------------------------
-    # `measured` requires BOTH ends clean, on BOTH instruments. `occ` already
-    # carries the WORSE of the two occupancy samples, so this reads as one
-    # test and enforces two.
-    status = "measured"
-    if environment["load"]["verdict"] != "quiet":
-        status = "inconclusive-load"
-    occ_ok, occ_reasons = quiet.occupancy_ok(occ)
-    if not occ_ok:
-        status = "inconclusive-load"
-        notes.extend(occ_reasons)
-        if occ_before["verdict"] != occ_after["verdict"]:
-            notes.append("occupancy differed across the run: before=%s "
-                         "after=%s -- the box changed while it was measured"
-                         % (occ_before["verdict"], occ_after["verdict"]))
+    # v1.4 (gate_shape_v14.md 5): the trial-agreement block is computed
+    # AFTER every row exists and BEFORE store.write validates it (X32
+    # re-derives it there); the status is the decision table's; the after
+    # samples produce NOTES (provenance), never a status.
+    from . import reduce as _rd
+    agreement = _rd.judge_trial_agreement(rows)
+    status, status_sentences = derive_status(reasons, agreement, tier)
+    after_sentences = quiet.after_notes(occ, environment["load"])
+    if status == STATUS_MEASURED and agreement["verdict"] == "agree":
+        nothing = trial_agreement_sentence(agreement)      # U4: 0/0 judged
+        if nothing:
+            notes.append(nothing)
     driver_flags, driver_cc = driverrun.driver_build_provenance()
     run_block = {
         # `run.run_id` is a schema SLUG (lowercase), so the stamp is
@@ -614,26 +726,38 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         "clock_source": record.CLOCK_SOURCE,
     }
 
+    # WHERE THE SENTENCES GO (rulings R-4 / R-5; gate_shape_v14.md 2):
+    # `status_detail` ONLY when the status is not `measured` -- the
+    # status-deciding sentences FIRST and never elided, the after-sample
+    # provenance second; `note` = the operator's --note prefix, then (on a
+    # measured record) the row-5 n/a line, the provenance sentences, and
+    # last the other sentences, which are the only class elision can drop.
+    if status == STATUS_MEASURED:
+        status_detail = None
+        note_text = record.join_notes(after_sentences + notes, prefix=note,
+                                      first=status_sentences)
+    else:
+        status_detail = record.join_notes(after_sentences, first=status_sentences)
+        note_text = record.join_notes(notes, prefix=note)
     setup = record.build_setup(
         sb, testee_block, environment, run_block,
         [REGIME_TO_ENUM[r] for r in regimes],
         [record.pattern_entry(sb, p.name) for p in cell_patterns],
         [record.subject_entry(subject_ids[k]) for k in sorted(subject_ids)],
         status,
-        status_detail=(record.join_notes(notes)
-                       if notes and status != "measured" else None),
-        note=note)
+        status_detail=status_detail or None,
+        note=note_text or None,
+        trial_agreement=agreement)
     if synthetic:
         setup["synthetic"] = True
     # Stamped on EVERY record, both tiers: absent means pinned by the schema,
     # but a record that says which tier it is beats one that implies it.
     setup["tier"] = tier
-    if notes and "status_detail" not in setup:
-        setup["note"] = record.join_notes(notes, prefix=note)
 
     # (6)+(7) write and index ----------------------------------------------
-    # PROJECT to the emitted schema version LAST, so everything above worked
-    # with the full-fidelity record and only the write is versioned.
+    # No projection happens here: `store.serialize` writes the objects as
+    # built (the identity), so the rows X32 will re-judge at validation are
+    # exactly the rows `judge_trial_agreement` stamped from.
     full = (setup, rows)
     path, rid = store.write(store_root, setup, rows)
     store.index(store_root)

@@ -6,14 +6,23 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X30 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X33 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
     expectation" rule, engine_metadata declarations, the record-status
     gates, (v1.2) the record TIER: a local binary is never `pinned`
-    (X28) and a `scratch` record says what its binary was (X29), and
-    (v1.3) at most one `patterns[]` entry may be the set's FLOOR (X30).
+    (X28) and a `scratch` record says what its binary was (X29),
+    (v1.3) at most one `patterns[]` entry may be the set's FLOOR (X30),
+    and (v1.4, [B20], docs/design/gate_shape_v14.md) the TRIAL-AGREEMENT
+    block: its verdict follows from its counts (X31), its counts are
+    RECOMPUTED from the match rows by this file's own second
+    implementation of the rule's arithmetic (X32, `judge_trial_agreement`
+    below -- deliberately NOT imported from pcrecbench/reduce.py, because
+    a verdict a harness stamped beside rows it also wrote is only
+    evidence when something independent re-derives it), and the block is
+    present iff the record is stamped >= 1.4 (X33). X13 is VERSIONED at
+    1.4: the record's own `schema_version` selects which text judges it.
 
 Every message names the FILE, the 1-based LINE and the field path.
 
@@ -58,6 +67,7 @@ RESERVED_KINDS = {
 SIMD_SLUG = {"on": "simd", "off": "nosimd", "n-a": "simdna"}
 DEFAULT_FORM = "plain"          # an absent `form` IS `plain` (the note 5)
 DEFAULT_TIER = "pinned"         # an absent `tier` IS `pinned` (the note 6.8)
+X13_V14_MINOR = 4               # X13's v1.4 text applies from 1.4 (the note 4)
 LOCAL_VERSION_PREFIX = "local:"  # the local-binary engine_version shape (6.2)
 
 # docs/design/record_schema.md 6.2. A RELEASE TAG is a plain dotted version,
@@ -180,6 +190,104 @@ def derive_record_id(setup):
             f"__{stamp}")
 
 
+# --------------------------------------- trial agreement, the SECOND implementation
+#
+# docs/design/gate_shape_v14.md 3.5 -- "the rule, as arithmetic" -- spelled
+# here a second time ON PURPOSE (its 4 V6): pcrecbench/reduce.py's
+# `judge_trial_agreement` is what the harness stamps and the reporter
+# renders; THIS is what X32 re-derives the stamp from. The two share no
+# source, so a harness that stamps `0 of 72 groups` beside rows that say
+# otherwise is caught rather than echoed. X32 compares the INTEGER counts
+# and the worst group's key only -- never a float -- so the two agree on a
+# verdict, not on a bit pattern; a row exactly on a boundary (`x == k*m`
+# is not slow, `min == m/k` is not fast) yields the same integer in both
+# as long as both spell the expressions as 3.5 does.
+
+MATCHED_AS_EXPECTED = "matched-as-expected"
+TIMED_OUT = "timed-out"
+
+
+def judge_trial_agreement(rows, k, d_min, share_c):
+    """The 3.5 arithmetic over a record's MATCH rows (dicts as written).
+    -> the `trial_agreement` block minus `rule`/`k`/`d_min`/`share_c`."""
+    import statistics
+    match = [r for r in rows if isinstance(r, dict) and r.get("kind") == "match"]
+    keys = {}
+    for r in match:
+        key = (r.get("pattern_id"), r.get("regime"), r.get("form") or DEFAULT_FORM,
+               r.get("subject_id"))
+        keys.setdefault(key, []).append(r)
+    trials = max((int(r.get("trial") or 0) for r in match), default=0)
+    out = {"trials": trials, "groups_judged": 0, "groups_disagreeing": 0,
+           "rows_judged": 0, "rows_disagreeing": 0, "rows_unjudged": 0,
+           "rows_unjudged_reasons": {"few_timed_trials": 0, "all_timed_out": 0,
+                                     "na_trials": 0},
+           "worst_group": None}
+    if trials < 5 or trials % 2 == 0:
+        out["rows_unjudged"] = len(keys)
+        out["rows_unjudged_reasons"]["na_trials"] = len(keys)
+        return out
+    groups = {}   # group key -> [n, d, min_seq]
+    for key, krows in keys.items():
+        timed = {}
+        n_timed_out = 0
+        for r in krows:
+            if r.get("match_outcome") == TIMED_OUT:
+                n_timed_out += 1
+            t = r.get("timing") or {}
+            it = t.get("iterations")
+            if (r.get("match_outcome") == MATCHED_AS_EXPECTED
+                    and isinstance(it, int) and it > 1
+                    and isinstance(t.get("elapsed_ns"), int)):
+                timed[r.get("trial")] = float(t["elapsed_ns"]) / it
+        if n_timed_out >= 1 and len(timed) >= 1:
+            disagreeing = True                      # a MIXED row (R-19 as amended)
+        elif n_timed_out == len(krows):
+            out["rows_unjudged"] += 1               # the engine's consistent answer
+            out["rows_unjudged_reasons"]["all_timed_out"] += 1
+            continue
+        elif len(timed) >= 2:
+            xs = [timed[t] for t in sorted(timed)]
+            m = statistics.median(xs)
+            slow = sum(1 for x in xs if x > k * m)
+            fast = 1 if min(xs) < m / k else 0
+            disagreeing = (slow >= 2 or fast == 1)
+        else:
+            out["rows_unjudged"] += 1
+            out["rows_unjudged_reasons"]["few_timed_trials"] += 1
+            continue
+        out["rows_judged"] += 1
+        g = groups.setdefault(key[:3], [0, 0, None])
+        g[0] += 1
+        if disagreeing:
+            out["rows_disagreeing"] += 1
+            g[1] += 1
+        seqs = [r.get("seq") for r in krows if isinstance(r.get("seq"), int)]
+        if seqs:
+            lo = min(seqs)
+            g[2] = lo if g[2] is None else min(g[2], lo)
+    out["groups_judged"] = len(groups)
+    out["groups_disagreeing"] = sum(1 for n, d, _s in groups.values()
+                                    if d >= d_min and share_c * d >= n)
+    if groups:
+        def rank(item):
+            (_pid, _reg, _form), (n, d, min_seq) = item
+            return (d, -n, -(min_seq if min_seq is not None else 0))
+        (pid, reg, form), (n, d, _s) = max(groups.items(), key=rank)
+        out["worst_group"] = {"pattern_id": pid, "regime": reg, "form": form,
+                              "d": d, "n": n}
+    return out
+
+
+def expected_verdict(block):
+    """X31: the verdict the block's own counts require."""
+    trials = block.get("trials")
+    if not isinstance(trials, int) or trials < 5 or trials % 2 == 0:
+        return "n/a-trials"
+    gd = block.get("groups_disagreeing")
+    return "disagree" if isinstance(gd, int) and gd >= 1 else "agree"
+
+
 # ---------------------------------------------------------------- the checks
 
 class RecordValidator:
@@ -286,6 +394,7 @@ class RecordValidator:
 
         # schema version this validator implements
         sv = str(setup.get("schema_version", ""))
+        f_minor = None
         if re.match(r"^\d+\.\d+$", sv):
             f_major, f_minor = (int(x) for x in sv.split("."))
             o_major, o_minor = (int(x) for x in self.schema_version.split("."))
@@ -655,8 +764,13 @@ class RecordValidator:
                             f"was {busy}% against a limit of {occ_limit}%, "
                             f"which is {want_v!r}", "X26"))
 
-        # X13 / X14 the record-status gates
-        if setup.get("status") == "measured":
+        # X13 / X14 the record-status gates. X13 is VERSIONED (the note 4's
+        # rule-revision clause, v1.4): a record is judged by the text of its
+        # own schema_version -- older records keep the verdict of their day.
+        v14 = f_minor is not None and f_minor >= X13_V14_MINOR
+        ta = setup.get("trial_agreement")
+        pin_cpu = (env.get("pinning") or {}).get("cpu")
+        if setup.get("status") == "measured" and not v14:
             if load.get("verdict") != "quiet":
                 add(Problem(path, 1, "status",
                             "is `measured` but environment.load.verdict is not "
@@ -671,6 +785,68 @@ class RecordValidator:
                                 f"`pass`; only a passing occupancy check on "
                                 f"BOTH samples supports `measured` "
                                 f"(the v1.1 ruling, §9)", "X13"))
+        if setup.get("status") == "measured" and v14:
+            # v1.4 (gate_shape_v14.md 2): the PRE-FLIGHT plus trial
+            # agreement. The after samples are provenance and never
+            # disqualify; `load.verdict` stays X20's either-sample fact.
+            before = load.get("before") if isinstance(load.get("before"), dict) else {}
+            l1 = before.get("load1")
+            if isinstance(l1, (int, float)) and isinstance(limit, (int, float)) \
+                    and l1 > limit:
+                add(Problem(path, 1, "status",
+                            f"is `measured` but load.before.load1 {l1} exceeds "
+                            f"the limit {limit}: the pre-flight's load clause "
+                            f"failed (v1.4 X13 clause 1)", "X13"))
+            ob = occ.get("before") if isinstance(occ.get("before"), dict) else {}
+            if ob.get("verdict") != "pass":
+                add(Problem(path, 1, "status",
+                            f"is `measured` but the per-core occupancy check "
+                            f"BEFORE the run is {ob.get('verdict')!r}, not "
+                            f"`pass` (v1.4 X13 clause 2; `unavailable` is "
+                            f"still not `measured`, the v1.1 ruling on the "
+                            f"pre-flight sample)", "X13"))
+            if isinstance(pin_cpu, int) and not isinstance(pin_cpu, bool):
+                tb = ob.get("target_busy_pct", None)
+                if "target_busy_pct" not in ob:
+                    add(Problem(path, 1, "environment.occupancy.before.target_busy_pct",
+                                f"is ABSENT but pinning.cpu is {pin_cpu}: a "
+                                f"`measured` record on a pinned run must "
+                                f"carry the target core's own reading "
+                                f"(v1.4 X13 clause 3)", "X13"))
+                elif not isinstance(tb, (int, float)) or isinstance(tb, bool):
+                    add(Problem(path, 1, "environment.occupancy.before.target_busy_pct",
+                                f"is {tb!r} beside status `measured` and "
+                                f"pinning.cpu {pin_cpu}: the target core's "
+                                f"row was not in the capture, which is the "
+                                f"same unknown as `unavailable` (v1.4 X13 "
+                                f"clause 3)", "X13"))
+                elif isinstance(occ_limit, (int, float)) and tb > occ_limit:
+                    add(Problem(path, 1, "environment.occupancy.before.target_busy_pct",
+                                f"is {tb}% beside status `measured` against a "
+                                f"limit of {occ_limit}%: the TARGET core "
+                                f"cpu{pin_cpu} was busy before the run -- a "
+                                f"competitor pinned where this cell was "
+                                f"measured sits under every trial (v1.4 X13 "
+                                f"clause 3)", "X13"))
+            if isinstance(ta, dict):
+                verdict_ta = ta.get("verdict")
+                if tier == "scratch":
+                    if verdict_ta == "disagree":
+                        add(Problem(path, 1, "status",
+                                    "is `measured` but trial_agreement.verdict "
+                                    "is `disagree` (v1.4 X13 clause 4, scratch "
+                                    "tier: a disagreeing record is "
+                                    "`inconclusive-spread`)", "X13"))
+                elif verdict_ta != "agree":
+                    add(Problem(path, 1, "status",
+                                f"is `measured` but trial_agreement.verdict is "
+                                f"{verdict_ta!r} on a pinned record (v1.4 X13 "
+                                f"clause 4: `agree` is required -- a pinned "
+                                f"record that disagrees, or lacks the five odd "
+                                f"trials the rule needs, is "
+                                f"`inconclusive-spread`)", "X13"))
+            # an ABSENT block on a 1.4 record is X33's finding, not X13's
+        if setup.get("status") == "measured":
             # The PLAIN artifact is what every pattern must have; the
             # whole-subject one exists only for a testee that needs it.
             missing = sorted(x for x in pat_ids
@@ -680,6 +856,66 @@ class RecordValidator:
                             f"is `measured` but patterns {missing} have no "
                             f"`plain` compile row; a record that stopped "
                             f"halfway is `harness-failure`", "X14"))
+
+        # X33 the trial-agreement block is present iff the record is >= 1.4
+        if f_minor is not None:
+            if v14 and not isinstance(ta, dict):
+                add(Problem(path, 1, "trial_agreement",
+                            f"is absent on a record stamped {sv}: at schema "
+                            f"1.4 every record carries the trial-agreement "
+                            f"block, pinned or scratch, whatever its trial "
+                            f"count (X33; gate_shape_v14.md 3.3)", "X33"))
+            if not v14 and ta is not None:
+                add(Problem(path, 1, "trial_agreement",
+                            f"is present on a record stamped {sv}, before the "
+                            f"version that defined it (1.4): a mis-stamped "
+                            f"record, not a forward-compatible one (X33)",
+                            "X33"))
+
+        # X31 / X32 the block's verdict follows from its counts, and the
+        # counts follow from the rows (this file's own recomputation)
+        if isinstance(ta, dict):
+            want_v = expected_verdict(ta)
+            if ta.get("verdict") != want_v:
+                add(Problem(path, 1, "trial_agreement.verdict",
+                            f"is {ta.get('verdict')!r} but the block's own "
+                            f"counts (trials {ta.get('trials')}, "
+                            f"groups_disagreeing {ta.get('groups_disagreeing')}) "
+                            f"require {want_v!r} (X31)", "X31"))
+            k, d_min, share_c = ta.get("k"), ta.get("d_min"), ta.get("share_c")
+            if isinstance(k, (int, float)) and isinstance(d_min, int) \
+                    and isinstance(share_c, int) and k > 1 and d_min >= 1 \
+                    and share_c >= 1:
+                want = judge_trial_agreement([r for _n, r in rows], k, d_min, share_c)
+                for fld in ("trials", "groups_judged", "groups_disagreeing",
+                            "rows_judged", "rows_disagreeing", "rows_unjudged"):
+                    if ta.get(fld) != want[fld]:
+                        add(Problem(path, 1, f"trial_agreement.{fld}",
+                                    f"is {ta.get(fld)!r} but the record's own "
+                                    f"match rows recompute to {want[fld]} under "
+                                    f"gate_shape_v14.md 3.5 with k={k}, "
+                                    f"d_min={d_min}, share_c={share_c} (X32)",
+                                    "X32"))
+                reasons = ta.get("rows_unjudged_reasons")
+                if reasons != want["rows_unjudged_reasons"]:
+                    add(Problem(path, 1, "trial_agreement.rows_unjudged_reasons",
+                                f"is {reasons!r} but the rows recompute to "
+                                f"{want['rows_unjudged_reasons']} (X32)", "X32"))
+                wg = ta.get("worst_group")
+                if wg != want["worst_group"]:
+                    add(Problem(path, 1, "trial_agreement.worst_group",
+                                f"is {wg!r} but the rows recompute to "
+                                f"{want['worst_group']!r} (largest d, then "
+                                f"smallest n, then lowest seq; X32)", "X32"))
+                if isinstance(wg, dict):
+                    if wg.get("pattern_id") not in pat_ids:
+                        add(Problem(path, 1, "trial_agreement.worst_group.pattern_id",
+                                    f"{wg.get('pattern_id')!r} is not in "
+                                    f"setup.patterns[] (X32)", "X32"))
+                    if wg.get("regime") not in regimes:
+                        add(Problem(path, 1, "trial_agreement.worst_group.regime",
+                                    f"{wg.get('regime')!r} is not among the "
+                                    f"sub-bench's declared regimes (X32)", "X32"))
         return p
 
     @staticmethod
@@ -741,7 +977,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X30 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X33 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")

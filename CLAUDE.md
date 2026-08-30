@@ -42,8 +42,19 @@ repin-form files; ledger docs/dev/ledgers/2026-08-30-abi12-after-96e44c2.md;
 outbox O-10: [OPT-4] SPLITS — the ctx band 2.2-3.1× and level-context 4.6×
 faster where structure survives the collapse, `[a-z]{0,32768}` 3.6× slower
 where the collapsed language is nullable — one predicate for pcrec;
-Frank's I-19: BD7 ratified, (2)-(4) the v1.4 spread rule → [B20] in
-design; bounded@0.2's knee rungs → [B21] with pcrec's [OPT-5]). [B19] is
+Frank's I-19: BD7 ratified, (2)-(4) the v1.4 spread rule → [B20],
+IMPLEMENTED 2026-08-30 as record schema **v1.4**: the PRE-FLIGHT
+(BD7's average + the TARGET core's own tri-state reading) decides
+`inconclusive-load`, the AFTER samples are PROVENANCE, TRIAL AGREEMENT
+(rule `v1.4-group`, k=1.5 d_min=2 share_c=3 N≥5 odd, constants measured
+over the store's 68 records) decides `measured` vs the new
+`inconclusive-spread` (exit code 4, re-measured once by the window
+script) — X13 VERSIONED under record_schema.md §4's new rule-revision
+clause, X31-X33, the `trial_agreement` block on every record, the
+per-group `/proc/stat` timeline as provenance, KB-4's schema half,
+reporter **v9**, ten new harness checks (docs/design/gate_shape_v14.md
+→ IMPLEMENTED); bounded@0.2's knee rungs → [B21] with pcrec's
+[OPT-5]). [B19] is
 COMPLETE and archived. Before it, the same night: bench/bounded@0.1's FIRST SAMPLE at
 36d5963 (6/6 measured, store 50, reports 2026-08-30-bounded-0.1-*; the
 [OPT-4] BEFORE; ledger docs/dev/ledgers/, outbox O-9: 65535 refused by
@@ -55,7 +66,7 @@ the window found: the free_text note cap (3bda38b) and BD7 — the
 occupancy sample is `mpstat -P ALL 1 5` judged on its Average (five one-
 shot after-sample losses in two windows; the gate-shape test run
 measured all three on attempt 1); Frank's wider gate ruling is the
-schema v1.4 PROPOSAL docs/design/gate_shape_v14.md ([B20], I-19 owed). Before it, the window (a)/(b) and
+schema v1.4 spec docs/design/gate_shape_v14.md ([B20], since IMPLEMENTED). Before it, the window (a)/(b) and
 outbox O-8 were the manager's step after [B18]. Before it, [B16] re-pinned
 pcrec to **35e1ab1** (abi 8) — one adapter change absorbing five
 pcrec pins of new observability (pcrec inbox I-5/I-6/I-11/I-12/I-13):
@@ -94,7 +105,7 @@ measured in a window next). [B18]'s WINDOW ran the same day: 12 cells
 at 36d5963 on email-specimen@0.2 and loglines@0.1, every one `measured`
 (store index 41); outbox O-8 (739ccdd) carries the ledger — [OPT-K] moved more than predicted on the search band, [ENG-ABS] three of four aggregates confirmed, level-context = the VM with a 0.5-0.7 s compile-time DFA attempt; the long-subject `_match` probe is archived under `docs/dev/measurements/`. Next: bounded's window;
 [B11.2] wide alternations; [B13] the interpreter is chartered. `make check`
-is green (3/56/0, 141/141, 54/54 — re-verified after the [B19] re-pin). Manager sessions start with the
+is green (4/72/0, 170/170, 59 reporter tests — re-verified after [B20]'s v1.4 wave). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -148,13 +159,14 @@ bindings) live here, vendored or system, pinned either way.
   (gitignored hand-off brief). See docs/dev/CLAUDE.md.
 - `docs/design/` — living design notes (requirements, the record schema,
   set format position, adapter notes, measurement dirs). See its CLAUDE.md.
-- `schema/` — the RECORD format at **v1.3**: `record.schema.json` (JSON
+- `schema/` — the RECORD format at **v1.4**: `record.schema.json` (JSON
   Schema draft 2020-12), `validate.py` (the validator the harness and the
-  reporter share; rules X1..X29), `check_fields.py`, `check_rules.py`, and
+  reporter share; rules X1..X33), `check_fields.py`, `check_rules.py`, and
   `examples/` + `examples/bad/` (records that must validate, and sabotaged
   ones that must not). Designed in `docs/design/record_schema.md`; the
   record TIERS (`pinned` / `scratch`) are its §6.8. See its CLAUDE.md.
-- `pcrecbench/` — the HARNESS package: `harness.py` (run a cell),
+- `pcrecbench/` — the HARNESS package: `harness.py` (run a cell; the
+  v1.4 pre-flight, `derive_status`, the trial-agreement block),
   `subbench.py`, `adapters.py` (the interface + **the driver protocol, in
   full, at the top of the file**), `driverrun.py`, `record.py`, `store.py`
   (the two tiers, the `.canonical` marker), `reduce.py` (the set-grain
@@ -202,7 +214,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 141 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 170 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -247,6 +259,23 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # --list-axes / --list-definitions diffed against
                         # the pin, and the emit-size port checked against
                         # pcrec's own --warn-emit-bytes numbers
+                        # and ([B20], schema v1.4) the gate's shape: the
+                        # target-core pre-flight on synthetic captures
+                        # (busy / idle / row ABSENT, each refusal BY NAME,
+                        # inert unpinned), the quiet CLI agreeing with
+                        # gate(), a failed AFTER sample leaving a record
+                        # `measured` at 1.4 and REJECTED re-stamped 1.3,
+                        # the hand-computed trial-agreement fixture pinned
+                        # against validate.py's independent second
+                        # implementation (boundary rows included), the
+                        # status decision table + an inconclusive-spread
+                        # record stamped through store.write (one slow
+                        # trial per row stays measured), the status
+                        # sentence never elided, the smoke block
+                        # n/a-trials, quick carrying and printing the
+                        # block, exit code 4 with the per-status index
+                        # line, and the /proc/stat timeline (absent when
+                        # unreadable)
                         # (~5 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets
@@ -280,7 +309,11 @@ into a ranking):
     python3 -m pcrecbench run --subbench email --testee pcrec-auto --tier scratch
     python3 -m pcrecbench index --store build/scratch-store   # its own index
 
-`run --tier scratch --store store` (or `--testee pcrec-local --store
+A `run` exits 0 (written), 3 (the pre-flight refused, nothing written)
+or 4 (v1.4: written and indexed as `inconclusive-spread` — the box was
+quiet, the five trials did not agree; `scripts/run_window.sh`
+re-measures such a cell once). `run --tier scratch --store store` (or
+`--testee pcrec-local --store
 store`) is REFUSED before anything is measured: the canonical store's
 `.canonical` marker is what `store.py` checks, on write and on index.
 

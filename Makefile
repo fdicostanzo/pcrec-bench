@@ -28,11 +28,15 @@ BAD      = $(EXAMPLES)/bad
 #   4. every record in examples/bad/ must be REJECTED, and rejected FOR THE
 #      RULE ITS NAME CLAIMS -- the file name's leading token (`x11-...`,
 #      `schema-...`) is the rule id the run requires to fire. A control that
-#      rejects for an unrelated reason is not a control.
+#      rejects for an unrelated reason is not a control;
+#   5. (v1.4, [B20]) the GENERATED 1.4 example reproduces byte for byte from
+#      schema/examples/gen_example_14.py -- every v1.4 sabotage in bad/ is a
+#      one-field mutation of that output, so the output must be pinned.
 check-schema:
 	@echo "== check-schema =="
 	@$(PYTHON) schema/check_fields.py
 	@$(PYTHON) schema/check_rules.py
+	@$(PYTHON) schema/examples/gen_example_14.py --check
 	@echo
 	@echo "-- good examples (must be ACCEPTED) --"
 	@$(VALIDATE) --check-filename $(EXAMPLES)/*.jsonl
@@ -63,7 +67,7 @@ check-schema:
 
 ## check: every self-check -- the schema's, the harness's and the reporter's (contract 6)
 #
-# check-schema is [B2]'s (the record schema, its examples, its 15 sabotages).
+# check-schema is [B2]'s (the record schema, its examples, its sabotages).
 # check-harness is [B3]'s: the sub-bench generators reproduce their committed
 # manifests, the expectations re-derive from the libpcre2 oracle, each driver
 # smokes, the deliberately-wrong fixture yields the outcome it must, the two
@@ -103,8 +107,9 @@ deps:
 #      unsupported-by-declaration, filter semantics, the mixed-schema-
 #      version refusal, invalid-record handling, deterministic
 #      rendering);
-#   2. every fixture in pcrecbench/tests/fixtures/store/, /store_walk_only/
-#      and the two "ok" halves of mixed_version/{major_mismatch,minor_pair}/
+#   2. every fixture in pcrecbench/tests/fixtures/store/, /store_walk_only/,
+#      /v14_pair/ (the [B20] 1.3 + 1.4 pair and the inconclusive-spread
+#      record) and the two "ok" halves of mixed_version/{major_mismatch,minor_pair}/
 #      (but NOT their deliberately-invalid halves -- a v1.1-future 2.0 file
 #      and a pre-v1.1 schema-1.0-SHAPED file respectively; see
 #      fixtures/mixed_version/CLAUDE.md) independently accepted by
@@ -123,6 +128,7 @@ check-report:
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store_walk_only/records/*/*/*.jsonl
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/mixed_version/major_mismatch/records/*110000Z.jsonl
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/mixed_version/minor_pair/records/*090500Z.jsonl
+	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/v14_pair/store/records/*/*/*.jsonl
 	@echo
 	@echo "-- CLI smoke: a report over fixtures/store, both formats, both grains --"
 	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \

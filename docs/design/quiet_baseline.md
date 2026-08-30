@@ -141,3 +141,18 @@ Average block) is judged as itself; `raw` keeps the Average block and
 the peaks. Cost: five wall seconds per check, twice per cell, plus the
 window script's `quiet --samples 6` warm-up (30 s) -- off the timed
 path.
+
+## 2026-08-30 (later) -- the gate's SHAPE moved to gate_shape_v14.md ([B20])
+
+This note remains the INSTRUMENT and its measured thresholds; what the
+harness DOES with the samples is, since schema v1.4,
+`docs/design/gate_shape_v14.md` (Frank's ruling I-19): the BEFORE
+sample is the PRE-FLIGHT -- load1, the busiest non-target 5-s average
+(unchanged from BD7 above), plus the TARGET core's own reading
+(`target_busy_pct`, judged against the same 10 % bar: an idle core's
+noise floor is the same floor) and a refusal when the target's row is
+missing from the capture; the AFTER sample is PROVENANCE (recorded,
+X26 enforced, a sentence in the record, never a verdict on the
+status); TRIAL AGREEMENT decides `measured` vs `inconclusive-spread`.
+The `quiet` CLI judges every sample through the same `quiet.gate()` a
+run's pre-flight uses.

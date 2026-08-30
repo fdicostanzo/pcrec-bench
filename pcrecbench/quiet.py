@@ -4,21 +4,30 @@ Three separable facts, each recorded whether or not it passes, because
 requirements 9(b) is explicit that an unavailable tool is RECORDED, never
 silently skipped:
 
-  (a) LOAD -- `/proc/loadavg` sampled BEFORE and AFTER the run, both kept, and
-      the AFTER sample re-checked against the same limit. pcrec's compare R3.10
-      lesson (requirements 9(a)): a box that was quiet at the start and got
-      busy partway through is just as load-compromised, so `verdict` is
-      `loaded` if EITHER sample exceeds the limit.
-  (b) OCCUPANCY -- per-core %idle from `mpstat -P ALL 1 1`, reduced to the
-      busiest NON-TARGET core (`max_busy_pct` = 100 - min %idle over the cores
-      we are not pinned to), sampled at BOTH ENDS for exactly the reason load
-      is. Verdict `pass` / `fail` / `unavailable`, and the combined verdict is
-      the WORSE of the two samples: a box that stayed under the load limit
-      while another job occupied a core is the case this instrument was
-      measured to catch (docs/design/quiet_baseline.md), and it can start
-      after the run does.
-  (d) PINNING -- `taskset` after the occupancy check; `none` when the harness
-      was told not to pin, `unavailable` when taskset is missing or refuses.
+  (a) LOAD -- `/proc/loadavg` sampled BEFORE and AFTER the run, both kept.
+      `verdict` is `loaded` if EITHER sample exceeds the limit (X20, an
+      either-sample FACT). Since schema v1.4 ([B20], gate_shape_v14.md 2)
+      only the BEFORE sample decides the STATUS: the pre-flight's load clause.
+  (b) OCCUPANCY -- per-core %idle from `mpstat -P ALL 1 5` judged on its
+      `Average:` block (BD7), reduced to the busiest NON-TARGET core
+      (`max_busy_pct` = 100 - min %idle over the cores we are not pinned to)
+      -- the target's SMT sibling judged like any other core -- PLUS, since
+      v1.4, the TARGET core's own reading (`target_busy_pct`, tri-state:
+      absent when nothing is pinned, null when its row is missing, a number
+      otherwise): nothing of ours runs there before the run, so a busy target
+      is a competitor that will sit UNDER every trial uniformly, which trial
+      agreement cannot see. Sampled at BOTH ENDS with one instrument; the
+      BEFORE sample is the PRE-FLIGHT (the gate: `gate()`), the AFTER sample
+      is PROVENANCE (`after_notes()`: a sentence, never a verdict on the
+      status -- Frank's ruling I-19, BD7 ratified as the gate).
+  (c) THE PER-GROUP TIMELINE (v1.4, gate_shape_v14.md 3.6) -- `/proc/stat`
+      read at every group boundary of the run, the busy % of the target core,
+      its sibling and the busiest other core over each group's passes.
+      Provenance only: no rule reads it. `cpu_times()` / `timeline_item()`.
+  (d) PINNING -- `taskset`; `none` when the harness was told not to pin,
+      `unavailable` when taskset is missing or refuses. Computed BEFORE the
+      occupancy check and passed to it as `exclude_cpu` (one source for "the
+      target core", ruling R-2).
 
 THE THRESHOLDS ARE MEASURED, NOT ASSUMED (OD-B8, requirements 9(c)). What was
 measured on this box on 2026-08-25, and the derivation, is in
@@ -222,10 +231,18 @@ def judge_mpstat(text, exclude_cpu=None, limit=MAX_BUSY_PCT_LIMIT,
     core, so a reader sees both the number that was judged and the transient
     it absorbed."""
     block = {"verdict": "unavailable", "max_busy_pct": None, "raw": ""}
+    pinned = exclude_cpu is not None
+    if pinned:
+        # v1.4 tri-state: the key EXISTS iff a core is pinned; None until the
+        # target's own row is found in the judged block (a missing row is
+        # the pre-flight refusal gate() makes, never silently a pass).
+        block["target_busy_pct"] = None
     seconds, average = split_mpstat(text)
     judged_text = average if average else (seconds[-1] if seconds else text)
     per_cpu, _all_idle = parse_mpstat(judged_text)
     considered = {c: i for c, i in per_cpu.items() if c != exclude_cpu}
+    if pinned and exclude_cpu in per_cpu:
+        block["target_busy_pct"] = round(100.0 - per_cpu[exclude_cpu], 2)
     peaks = []
     for sec in seconds:
         pc, _ = parse_mpstat(sec)
@@ -236,13 +253,17 @@ def judge_mpstat(text, exclude_cpu=None, limit=MAX_BUSY_PCT_LIMIT,
     if average and peaks:
         raw += ("\nper-second peak busy%% of the busiest non-target core: %s"
                 % " ".join("%.2f" % v for v in peaks))
-    if exclude_cpu is not None:
+    if pinned:
         sib = siblings if siblings is not None else smt_siblings(exclude_cpu)
         sib_busy = ["cpu%d %.2f%%" % (c, 100.0 - per_cpu[c])
                     for c in sib if c in per_cpu]
-        raw += ("\ntarget cpu%d excluded from the judgement; its SMT "
+        tgt = block["target_busy_pct"]
+        raw += ("\ntarget cpu%d excluded from the non-target judgement (its "
+                "own reading %s is judged by the target clause, v1.4); its SMT "
                 "sibling(s) %s judged like any other core"
-                % (exclude_cpu, (", ".join(sib_busy) or "unknown")))
+                % (exclude_cpu,
+                   ("%.2f%%" % tgt) if tgt is not None else "MISSING from the capture",
+                   (", ".join(sib_busy) or "unknown")))
     block["raw"] = raw
     if not considered:
         block["raw"] = (text.strip() + "\n(no per-cpu rows could be parsed "
@@ -267,6 +288,8 @@ def occupancy(exclude_cpu=None, limit=MAX_BUSY_PCT_LIMIT, timeout=60):
         "max_busy_pct": None,
         "raw": "",
     }
+    if exclude_cpu is not None:
+        block["target_busy_pct"] = None     # v1.4: null beside `unavailable`
     if shutil.which("mpstat") is None:
         block["raw"] = ("mpstat not installed on this box, so per-core "
                         "occupancy could not be measured (%s)"
@@ -326,9 +349,10 @@ def occupancy_block(before, after, limit=MAX_BUSY_PCT_LIMIT):
 
     There is deliberately no combined verdict here. Each sample carries its
     own, rule X26 recomputes each from its own number against
-    `limit_busy_pct`, and `occupancy_ok()` below is the only place the two are
-    reduced to one answer -- a reduction the record does not store, because a
-    stored one could disagree with the numbers under it."""
+    `limit_busy_pct`; `gate()` judges the BEFORE sample (the pre-flight) and
+    `after_notes()` turns a failed AFTER sample into a provenance sentence --
+    reductions the record does not store as a verdict, because a stored one
+    could disagree with the numbers under it."""
     return {
         "tool": " ".join(MPSTAT_CMD),
         "limit_busy_pct": limit,
@@ -337,45 +361,97 @@ def occupancy_block(before, after, limit=MAX_BUSY_PCT_LIMIT):
     }
 
 
-def occupancy_ok(block):
-    """-> (ok, reasons). `pass` is required at BOTH ends (requirements 9(b),
-    ruled 2026-08-25): `unavailable` or `fail` on either sample is not a
-    measured record. A box that was clean at the start and shared partway
-    through was still shared while it was measured."""
-    reasons = []
-    for when in ("before", "after"):
-        sample = block.get(when) or {}
-        v = sample.get("verdict")
-        if v == "fail":
-            reasons.append("occupancy %s: busiest non-target core %.2f%% busy "
-                           "(limit %.2f%%)"
-                           % (when, sample.get("max_busy_pct") or 0.0,
-                              block.get("limit_busy_pct", MAX_BUSY_PCT_LIMIT)))
-        elif v != "pass":
-            reasons.append("occupancy %s: %s is unavailable -- recorded, "
-                           "never skipped (requirements 9(b))"
-                           % (when, block.get("tool", "mpstat")))
+def preflight_ok(block, load_limit=LOAD1_LIMIT):
+    """-> (ok, reasons) for the PRE-FLIGHT half of an `environment.occupancy`
+    block (v1.4: the `before` sample only -- its verdict and the target
+    clauses), exactly as `gate()` would say them. The after sample is not
+    read here; see `after_notes()`."""
+    sample = block.get("before") or {}
+    reasons = _occupancy_reasons(sample, block.get("limit_busy_pct", MAX_BUSY_PCT_LIMIT))
     return (not reasons), reasons
 
 
-def gate(load_before, occ_sample, force=False, load_limit=LOAD1_LIMIT):
+def after_notes(occ_block, load_block):
+    """The v1.4 PROVENANCE sentences (gate_shape_v14.md 2), 0, 1 or 2 -- one
+    per instrument whose AFTER sample failed. A NOTE, never a status: the
+    after samples are recorded with their X19/X26 verdicts and never
+    disqualify a v1.4 record; the sentence carries the number and says who
+    decided the status instead."""
+    out = []
+    occ_after = (occ_block or {}).get("after") or {}
+    limit = (occ_block or {}).get("limit_busy_pct", MAX_BUSY_PCT_LIMIT)
+    if occ_after.get("verdict") == "fail":
+        out.append("after-sample (provenance, not a verdict): occupancy after "
+                   "the run %.2f%% busy on the busiest non-target core (limit "
+                   "%.2f%%); the trials' agreement decided the status (v1.4 X13)"
+                   % (occ_after.get("max_busy_pct") or 0.0, limit))
+    load_after = (load_block or {}).get("after") or {}
+    l_limit = (load_block or {}).get("limit", LOAD1_LIMIT)
+    l1 = load_after.get("load1")
+    if isinstance(l1, (int, float)) and l1 > l_limit:
+        out.append("after-sample (provenance, not a verdict): load1 after the "
+                   "run %.2f exceeds the limit %.2f; the trials' agreement "
+                   "decided the status (v1.4 X13)" % (l1, l_limit))
+    return out
+
+
+def _occupancy_reasons(occ_sample, limit=MAX_BUSY_PCT_LIMIT):
+    """The occupancy clauses of the pre-flight, on ONE sample: (b) the
+    busiest non-target core, (c) the target core's own reading, (c') the
+    target's row present at all, (d) the sample available. `target_busy_pct`
+    being a KEY of the sample is the one source for "a core is pinned"
+    (judge_mpstat / occupancy() write it iff `exclude_cpu` was an integer,
+    which the harness takes from `pinning.cpu` -- ruling R-2)."""
+    reasons = []
+    verdict = occ_sample.get("verdict")
+    if verdict == "fail":
+        reasons.append("occupancy: busiest non-target core %.2f%% busy "
+                       "(limit %.2f%%)" % (occ_sample["max_busy_pct"], limit))
+    if verdict == "unavailable":
+        reasons.append("occupancy: %s is unavailable -- recorded, not skipped "
+                       "(requirements 9(b))" % " ".join(MPSTAT_CMD))
+    if "target_busy_pct" in occ_sample:
+        cpu = _target_cpu_from_raw(occ_sample)
+        tb = occ_sample["target_busy_pct"]
+        if isinstance(tb, (int, float)) and tb > limit:
+            reasons.append("occupancy: the TARGET core cpu%s reads %.2f%% busy "
+                           "before the run (limit %.2f%%) -- a competitor is "
+                           "pinned where this cell will be" % (cpu, tb, limit))
+        elif tb is None and verdict != "unavailable":
+            reasons.append("occupancy: the target core cpu%s does not appear in "
+                           "the mpstat capture; the clause that judges it "
+                           "cannot run" % cpu)
+    return reasons
+
+
+def _target_cpu_from_raw(occ_sample):
+    """The pinned core's number, for a message: read back out of the
+    sample's own `raw` line (`target cpuN ...`), which judge_mpstat wrote
+    from the same `exclude_cpu`; `?` when it is not there."""
+    m = re.search(r"target cpu(\d+)", occ_sample.get("raw") or "")
+    return m.group(1) if m else "?"
+
+
+def gate(load_before, occ_sample, force=False, load_limit=LOAD1_LIMIT,
+         occupancy_limit=MAX_BUSY_PCT_LIMIT):
     """Contract 4 step (2): refuse unless quiet, or `--force-unquiet`.
 
-    Returns a REASONS list -- empty when the box is quiet. A non-empty list
-    with `force` set is what makes the record `inconclusive-load`
-    (record_schema.md X13); without `force` the caller raises."""
+    THE PRE-FLIGHT (gate_shape_v14.md 1): (a) load1 before the run under the
+    limit; (b) every non-target core's 5-s average under the limit; (c) the
+    TARGET core's own average under the limit, iff a core is pinned; (c') the
+    target's row present in the capture, iff a core is pinned; (d) the sample
+    not `unavailable`. Returns a REASONS list -- empty when the box is quiet
+    (so `--force-unquiet` on a quiet box changes nothing: the flag is not a
+    status). A non-empty list with `force` set is what makes the record
+    `inconclusive-load` (record_schema.md X13); without `force` the caller
+    raises (exit 3). The `quiet` CLI reduces its samples through THIS
+    function too (ruling R-7): one instrument, one decision, both ends."""
     reasons = []
     load1 = load_before["load1"] if isinstance(load_before, dict) else load_before[0]
     if load1 > load_limit:
         reasons.append("load1 %.2f exceeds the limit %.2f"
                        % (load1, load_limit))
-    if occ_sample["verdict"] == "fail":
-        reasons.append("occupancy: busiest non-target core %.2f%% busy "
-                       "(limit %.2f%%)"
-                       % (occ_sample["max_busy_pct"], MAX_BUSY_PCT_LIMIT))
-    if occ_sample["verdict"] == "unavailable":
-        reasons.append("occupancy: %s is unavailable -- recorded, not skipped "
-                       "(requirements 9(b))" % " ".join(MPSTAT_CMD))
+    reasons.extend(_occupancy_reasons(occ_sample, occupancy_limit))
     if reasons and not force:
         raise QuietRefusal(
             "the box is not quiet:\n  - " + "\n  - ".join(reasons)
@@ -383,3 +459,67 @@ def gate(load_before, occ_sample, force=False, load_limit=LOAD1_LIMIT):
               "anyway (the record is then written with status "
               "`inconclusive-load` and the reporter will not rank it).")
     return reasons
+
+
+# ------------------------------------ the per-group timeline (v1.4, provenance)
+
+PROC_STAT_PATH = "/proc/stat"
+TIMELINE_TOOL = "/proc/stat"
+
+
+def cpu_times(path=None):
+    """-> {cpu: (busy_jiffies, total_jiffies)} from one read of /proc/stat,
+    or None when it cannot be read or parsed (the harness then writes no
+    timeline at all -- an absent field, never a zero). `busy` is every
+    column but idle and iowait (the reading `mpstat`'s %idle complements)."""
+    try:
+        with open(path or PROC_STAT_PATH, "r", encoding="ascii") as fh:
+            lines = fh.read().splitlines()
+    except (OSError, ValueError):
+        return None
+    out = {}
+    for line in lines:
+        cols = line.split()
+        if len(cols) < 5 or not cols[0].startswith("cpu") or cols[0] == "cpu":
+            continue
+        try:
+            n = int(cols[0][3:])
+            vals = [int(x) for x in cols[1:]]
+        except ValueError:
+            continue
+        total = sum(vals)
+        idle = vals[3] + (vals[4] if len(vals) > 4 else 0)
+        out[n] = (total - idle, total)
+    return out or None
+
+
+def _busy_pct(before, after, cpu):
+    b0, t0 = before.get(cpu, (0, 0))
+    b1, t1 = after.get(cpu, (0, 0))
+    dt = t1 - t0
+    if dt <= 0:
+        return 0.0
+    return round(max(0.0, min(100.0, 100.0 * (b1 - b0) / dt)), 2)
+
+
+def timeline_item(before, after, elapsed_ms, target_cpu, pattern_id, regime,
+                  form, siblings=None):
+    """One `environment.occupancy.timeline[]` item (gate_shape_v14.md 3.6)
+    from two `cpu_times()` readings around one group's passes."""
+    sib = siblings if siblings is not None else smt_siblings(target_cpu)
+    others = [c for c in after if c != target_cpu and c not in sib and c in before]
+    if others:
+        worst = max(others, key=lambda c: (_busy_pct(before, after, c), -c))
+        max_other, max_other_cpu = _busy_pct(before, after, worst), worst
+    else:
+        max_other, max_other_cpu = 0.0, 0
+    sib_present = [c for c in sib if c in before and c in after]
+    return {
+        "pattern_id": pattern_id, "regime": regime, "form": form or "plain",
+        "elapsed_ms": int(max(elapsed_ms, 0)),
+        "target_busy_pct": _busy_pct(before, after, target_cpu),
+        "sibling_busy_pct": (max(_busy_pct(before, after, c) for c in sib_present)
+                             if sib_present else None),
+        "max_other_busy_pct": max_other,
+        "max_other_cpu": int(max_other_cpu),
+    }
