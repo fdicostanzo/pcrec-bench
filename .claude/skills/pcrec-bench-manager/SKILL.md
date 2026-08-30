@@ -178,6 +178,22 @@ and judge the results).
   >20 min with no process → ping; stale AND silent one tick later →
   dead, take over the landing. Tear the cron down when nothing is in
   flight. The watchdog must never touch the pcrec session's processes.
+- **CONTEXT KEEPALIVE during a long HOLD** (Frank, 2026-08-30): when
+  this session must wait for the box — a peer's battery, a window that
+  is someone else's, an overnight hand-off — its prompt cache expires
+  after an hour of silence and the next turn re-reads the whole
+  context. Set a recurring cron (CronCreate) with two off-minute marks
+  under an hour apart, e.g. `11,51 * * * *` (20/40-min gaps), whose
+  prompt does the MINIMUM: one `uptime`, one line reporting load1 and
+  whether the awaited signal (the peer's DONE) has arrived, and an
+  explicit "if not: do nothing else — no builds, no runs, no lanes". It
+  must never touch the peer's processes. The tick itself is a
+  sub-second command, so it is safe during the peer's timed runs — but
+  a tick during OUR OWN window is a short stream on a non-target core
+  (see the BD6 residue); accept it or delete the cron for the window's
+  duration. Delete it at session close. Not a substitute for the stall
+  watchdog above (different purpose: warmth, not liveness); both may
+  run at once.
 
 ## 5. Review their work
 
