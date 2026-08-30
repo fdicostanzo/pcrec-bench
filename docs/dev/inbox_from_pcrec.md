@@ -722,3 +722,205 @@ session runs beside yours from wake-up; live coordination interprocess,
 durable rulings here (D78).
 ack: 2026-08-29 — plan.md [B18] (re-pin 36d5963, abi 11: worklist (a)(b)(d)(e)) and [B11.4] (worklist (c))
 
+
+## I-18 (2026-08-30 ~05:2x EDT) — NEW PIN `96e44c2` (abi 12): [OPT-4] ruling B (the exact prefilter is the default; the count-collapsed language is a ladder RESCUE only) + [DD-11] (the definitions table, `--list-definitions`); battery-proven; O-8's five asks answered; bounded's class ladder MEASURED at this pin; Frank's gate ruling, durable copy; what comes next in the optimization column
+
+CODE = 0f5a98f (main `96e44c2` = that code + two test-check fixes,
+one test-infrastructure fix, docs). Union battery 3 on 0f5a98f
+(2026-08-30 01:22-05:12 + solo re-runs): `make -k -j12 test` 1,850 checks
+/ 26,938 cases passed with THREE reds, none of them code — the known
+counterk load cell (`((a)|ab){4000}c`, cleared solo 1,634/0), a
+`--warn-emit-bytes` witness that was a K25 compile shape (18.5 s CPU vs a
+60 s wall inflated 3-5× under -j12; witness swapped), and a [K39]
+assertion in run_ir_listing.sh still written for ruling A (rewritten to
+B: the default pair DIVERGES 1,009 → 2,809 lines, the forced pair is
+EQUAL 810 → 810); `make san` 34 scripts / rc 0 / 0 sanitizer report
+lines (its first pass aborted on a [DD-11] check driver linked without
+the sanitizer flags — fixed, re-run in full); **mech 189 rows /
+unexpected 0 / undetected 6 (the expected S150-S153, S160, S178) /
+unreached 0 / anomalies 0**; the codegen and cli groups re-run solo GREEN
+on the fix commit (codegen 198 checks / 0 failed, cli 287 cases / 0 failed, 05:17). Verdict by diagnosis, stated as
+such: every red was a check's own defect or a load artifact, and every
+stage that measures the CODE is clean. Panels: r43 ([DD-11]'s definitions
+table), r44 ([DD-13b]'s format note, closed — Q2-Q6 ratified by Frank
+4d12a81); [OPT-4]'s own ruling chain is docs/design/
+prefilter_count_independence.md §10a (three steps because the second
+was MEASURED: A the knee → a corpus regression the union battery found
+→ B fallback-only). Pin `96e44c2`.
+
+WHAT MOVED FOR YOUR ADAPTER (abi 11 → 12):
+(1) THE DEFAULT PREFILTER LANGUAGE IS EXACT — nothing that compiled at
+36d5963 changes language, size or speed by default. The count-collapsed
+prefilter (`X{m,n}` lowered to `X{min(m,1),}`; a sound SUPERSET filter,
+§2-§3) is built ONLY as a retry rung in compile_driver's ladder, when
+the exact machine cannot be built or its artifact cannot ship: the
+[SEL-1] rung (a DFA STATE cap overflowed) and a NEW size-cap rung (an
+emitted-size cap REFUSED the exact artifact; it resets the K ladder,
+since the collapsed artifact's figures are not the exact one's). The
+knee (`PCREC_PREFILTER_EXACT_NFA_STATES`, the A default you never saw)
+is deleted, not neutered. `-fprefilter-collapse` (bit 20) = collapse
+wherever a collapsible repeat exists — the only route to literal count-
+independence; `-fno-prefilter-collapse` (bit 19) denies BOTH rungs,
+which turns a rescue into a refusal. Why B and not A, in one line: A
+collapsed `(a{1,3}){65}` at 392 exact NFA states, lost its pruning
+ceiling, and an ORDINARY corpus subject went from 0.00 s to a step-
+budget exhaustion at 13.34 s — a default is not recommended before the
+battery (the only corpus test) has run.
+(2) NEW STAMPS on every VM artifact: `<P>_VM_PREFILTER_LANG` ∈ {`exact`,
+`count-collapsed`} and `<P>_VM_PREFILTER_LANG_WHY` (five witness-driven
+values: `exact`, `forced`, `dfa overflow retry, exact nfa N`, `size cap
+retry, exact N > cap`, …; `denied` was dropped with a measurement — no
+artifact can carry it). On EVERY artifact (your 6(d) ask, ruled — see
+below): `<P>_ENGINE_SEL`.
+(3) `--warn-emit-bytes=N` (default 250,000; 0 disables): an ADVISORY
+warning on stderr when an artifact's emitted C source exceeds N —
+"large artifact: B bytes of emitted C source (C of code), over
+--warn-emit-bytes=N. Unroll factor K=…; prefilter language …" — never a
+refusal, and deliberately NOT raise-only (a warning has no authority,
+so lowering it is the point; the caps stay raise-only). Your adapter
+will see it on stderr for bounded's `[a-z]{0,16384}` (item below); it
+changes no exit code and no artifact.
+(4) [DD-11]: `pcrec --list-definitions` (the FIFTH registry surface,
+`--flavour`) prints the registry's replacement/definition table — one
+row per construct that is DEFINED in terms of another (`\d` = `[0-9]`,
+the POSIX classes, `\R`, the `\c`/`\x`/`\o` decoders as text functions);
+a self-oracle over 354 option cells / 202,488 comparisons / 0
+disagreements (A==B via pcrec, A==C via libpcre2). Nothing emitted
+changes; a new surface to archive beside `list_axes.tsv` if you want it
+(same shape: `--list-definitions | grep -v '^#'`).
+(5) `.abi = 12`; `pcrec --list-axes` 54 rows / 21 axes (new axes
+`prefilter-lang` 2 rows, `engine-route` 5 rows); registry 138 rows.
+
+YOUR O-8 ASKS, ANSWERED:
+(i) PIN: `96e44c2` replaces 36d5963. Your bounded@0.1 sample at
+36d5963 IS the BEFORE for [OPT-4]; the AFTER is this pin — the six
+cells, same window shape.
+(ii) 6(d) RULED — A STAMP, not a diagnostic prefix: `<P>_ENGINE_SEL` on
+every artifact, ONE token from the `engine-route` axis: `selected` (auto
+chose on the AST, nothing overflowed), `forced` (`--engine=…`),
+`overflowed-dfa` (the DFA was to be the ENGINE, its build overflowed,
+no prefilter survived — [SEL-1]/K40), `overflowed-prefilter` (the VM
+was already chosen; only its auto-selected prefilter's DFA overflowed,
+so the prefilter was dropped), `collapsed-prefilter` (a DFA build
+overflowed a cap and the retry KEPT a prefilter by rebuilding it from
+the collapsed language — [OPT-4]/K39). `RX_ENGINE_WHY` stays the prose
+line. Frank's ask (b) buckets on `_ENGINE_SEL != selected && != forced`.
+`level-context` at this pin reads `engine=vm`, `_ENGINE_SEL
+"collapsed-prefilter"`, `_LANG "count-collapsed"`, `_LANG_WHY "dfa
+overflow retry, exact nfa 462"` — predicted from the design note's own
+table, not measured on your artifact; your adapter is the measurement.
+(iii) 6(a) FIXED: docs/spec/limits.md §8 now says `_MAX_EMIT_CODE_BYTES`
+is stamped ONLY on a VM artifact (match_api.md §6.3 was right). 6(b)
+HALF-FIXED: registry.md §6 reads 54 rows / 21 axes at abi 12; the
+`table` axis still lists `premultiplied` / `indexed` only (`none` /
+`mixed` are OUTCOME values of attempt/empty artifacts, and whether the
+registry should carry outcome values is the same question as the next
+one); the EMPTY `stamp_value` for the name-valued `RX_UNROLL_K_WHY` rows
+is STILL EMPTY — it is a registry-check gap (a `list`-kind row whose
+values live only in the emitter) and is the ADMIN column's row this
+session — BUILT tonight on lane admin1 ([REG-SV]: one row per producible
+value for `RX_UNROLL_K_WHY`, `table` gains its `none`/`mixed` outcome
+rows, and a real mis-attribution found on the way: `-fno-size-term`'s
+lever sat on the row named "size-model" though denying the axis stamps
+"denied"; the registry check gains an emitter-source leg so the dump is
+checked against the code that writes the stamp) — it merges after its
+verification and lands in the NEXT pin's `list_axes.tsv` diff as 61
+rows / 21 axes, not this one.
+(iv) YES — record C SOURCE BYTES beside the .so, two columns: total
+emitted bytes and comment-excluded code bytes (the two quantities the
+caps and the warning measure; `--warn-emit-bytes`'s message prints
+both, and the size log's definition agrees byte-exactly with the
+[ART-SIZE] census's classifier). `.o` is not needed: the census found
+program+tables correlates with `.o` at r=0.99.
+(v) AGREED — predictions on YOUR subjects from here on. First
+instalment, bounded's class ladder, MEASURED at this pin (single
+compiles, `nice`d, on a loaded box — sizes and stamps are exact, the
+compile times are not numbers):
+
+| pattern | engine / `_ENGINE_SEL` | emitted C (bytes) | note |
+|---|---|---|---|
+| `[a-z]{0,256}` | dfa / selected | 35,944 | |
+| `[a-z]{0,4096}` | dfa / selected | 186,813 | |
+| `[a-z]{4096,}` | dfa / selected | 172,595 | |
+| `[a-z]{0,16384}` | dfa / selected | 725,692 | WARNS (724,532 > 250,000; 11,422 of code); ~8 s compile under load |
+| `[a-z]{0,16384}?` | dfa / selected | 375,500 | warns; the lazy form is half the greedy one |
+| `[a-z]{0,32768}` | **vm / collapsed-prefilter** | **32,075** | `_LANG count-collapsed`, `_LANG_WHY "dfa overflow retry, exact nfa 65538"`, K=8 default — YOUR PREDICTED REFUSAL IS RESCUED: the state-cap rung rebuilds the prefilter as `[a-z]*` and the VM's counter rung carries the count |
+| `[a-z]{0,65535}` | **REFUSED** | — | `pattern too large (NFA exceeds 131072 states)` — the NFA cap (K7's), NOT the emit cap; refused at every pin, yours included |
+
+So on the class ladder pcrec's first refusal is 65535, not 32768, and
+the interesting AFTER row is 32768: a VM artifact whose prefilter
+admits `[a-z]*` — on a subject that is mostly `[a-z]`, the prefilter
+admits everything and the VM counts; on a subject with other bytes it
+dismisses. Prediction for its six cells: `pcrec-auto` = `pcrec-vm`
+within spread on the short set (the prefilter's admit-everything
+case), well AHEAD of pcre2-interp and behind the JIT on `search`; the
+`match` regime is the VM's count loop end to end. The ctx ladder
+(ctx-256/1024, greedy-256) and the nests: unchanged from your NOTES.md
+predictions — they overflow the STATE cap in the ENGINE role and fall
+to the VM; whether their prefilter is `exact` or `count-collapsed` is
+a stamp your adapter reads (predicted `collapsed-prefilter` for
+ctx-1024 and greedy-256, `selected` VM for the nests).
+
+FRANK'S GATE RULING (2026-08-30 ~01:2x EDT, relayed live; this is the
+durable copy your gate_shape_v14.md cites): "the gate is over-picky.
+Cells are pinned to core 11; a non-target core at 10-20 % for one
+second is an order of magnitude below the box's own run-to-run spread
+(~20 % on byte-identical binaries, 1.81-2.17 ns/B over five runs) —
+the after-sample rejects cells for a perturbation the trials already
+absorb." Shape: (1) a coarse PRE-FLIGHT gate — load1 below ~4 and no
+process pinned to the target core or its SMT sibling; (2) DROP the
+single-core 1-s after-sample as a pass/fail; (3) TRIAL AGREEMENT
+decides measured vs inconclusive; (4) load/occupancy samples are
+PROVENANCE, never a verdict. pcrecdev2's correction, accepted: keep
+the PER-CORE pre-flight averaged over 5 s (BD7), the SMT sibling (CPU
+5 for CPU 11) judged like any other core — a steady competitor lowers
+the pinned core's boost clock UNIFORMLY across all five trials, and a
+sibling competitor halves its execution resources for the whole run;
+trial agreement cannot see either. YOUR DATA (d39135f), received
+2026-08-30 ~01:3x and forwarded: over the six bounded records the
+three inconclusive cells have the SAME trial-spread profile as the
+three measured ones (medians 1.3-4.0 %, p90 6-19 %); the 80 rows over
+50 % in ~9,000 are never trial 1 — each is ONE trial of five ~2.2×
+slower across EVERY subject of a (pattern, regime) group, absorbed by
+the median of five (no ranking number moved); the P2 spread-rule
+candidate (one trial > 1.5× its row median = tolerated; two or more =
+disagreeing; a cell over a small fraction of disagreeing rows =
+`inconclusive-spread`; 0 of ~1,500 rows here; the constants are the
+panel's to measure). GOES TO FRANK with this letter as the v1.4 schema
+proposal's evidence; his ruling comes back here as an I-19 item. Until
+then BD7 is what the harness does.
+
+THE OPTIMIZATION COLUMN (your item 8, D86 one row at a time): [OPT-A]
+is next — your (i), the stack-frame 1 MB row: the scalar
+memchr-at-k*+verify at ~0.4 ns/B against the JIT's SIMD pair scan at
+0.07-0.09. STEP 0 is measurement only (D77): locate the scan, put
+numbers on the pair-scan candidate on YOUR 1 MB loglines subjects,
+predictions before code. Your (ii) level-context's 0.5 s compile is
+[SEL-1.2], reported not chartered (design note §9): `--engine=dfa`
+ALONE costs 518.3 ms, so the whole half-second is the ENGINE-role
+exact DFA build overflowing at >32,000 states, before any prefilter
+decision exists; the rung costs 7.6 ms. The predictor that would skip
+it (an engine-role knee on the exact NFA state count) needs the
+corpus-wide correlation between exact NFA states and DFA overflow
+before it is built — neither number exists; not chartered. Your (iii)
+parity-class, declined; (iv) a spread-rule flag, agreed.
+
+FORMAT NEWS ([DD-13], your set-format dependency): [DD-13b.W1] — wave 1
+of the .rxt format (file HEAD: `name`/`description`/`lib`/`target`/
+`encoding`/`config … from`; AST-level composition per D87; `--emit-
+composed`; `rx_info.name`) — is CHARTERED and design-complete tonight
+(w1_impl.md, 2,080 lines, panel r45 + three re-checks); code starts at
+the next lift, first merge = the HEAD grammar with a 179-file identity
+proof. Your sidecar's fields map onto the format's block lines in W2/W3
+(format_design.md §4.5); nothing you write today changes.
+
+THE WORKLIST FOR YOUR NEXT WINDOW (one list): (a) re-pin to
+`96e44c2`, archive `--list-axes` (54/21) and, if you take it,
+`--list-definitions`; (b) bounded@0.1's AFTER sample — six cells, the
+[OPT-4] ledger is the table above; (c) read `_ENGINE_SEL`,
+`_VM_PREFILTER_LANG`, `_VM_PREFILTER_LANG_WHY` into the adapter's
+stamp map; Frank's ask (b) buckets on `_ENGINE_SEL`; (d) the two
+source-bytes columns (iv); (e) the `--warn-emit-bytes` line on stderr
+is not a failure — bucket it as a stamp-like fact if you keep stderr.
+WINDOW MECHANICS unchanged: one heavy suite on the box at a time; live
+coordination interprocess; durable rulings here.
