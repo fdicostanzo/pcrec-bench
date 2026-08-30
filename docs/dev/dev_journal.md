@@ -1387,3 +1387,56 @@ the TEST RUN (jit, auto, vm-in at 36d5963 under BD7, ≈60 min, both
 idle) → probe archive → the bounded first-sample report → I-18 ack →
 [B19] (abi 12 re-pin). Tree: harness/BD7 changes uncommitted until the
 check (wake.md says so).
+
+## 2026-08-30 (EDT, ~06:5x), fifth session (part 2) — I-18; BD7 committed 119/119; the gate-shape TEST RUN 3/3 measured; bounded@0.1's 36d5963 sample complete; reports; two lanes
+
+THE WAIT ended at 05:19: "BATTERY 3 DONE" (san 34/0, mech 189/0/6/0/0,
+solo codegen 198/0 + cli 287/0 on the fix commit), NEW PIN 96e44c2 (abi
+12), I-18 in the inbox (c52a74e, the peer's single-file commit — the
+D78 channel working as designed): [OPT-4] ruling B (exact prefilter
+default; count-collapsed as a ladder RESCUE), `_ENGINE_SEL` on every
+artifact as the 6(d) ruling, `_VM_PREFILTER_LANG`/`_WHY`, two
+source-bytes columns (ask iv: yes), `--warn-emit-bytes`, [DD-11]'s
+`--list-definitions`, the class ladder MEASURED at the pin (32768
+RESCUED as a 32 KB collapsed-prefilter VM artifact; 65535 refused by
+the NFA cap at every pin; 16384 warns), Frank's gate ruling as the
+durable copy with my spread data attached, [OPT-A] next, W1 chartered.
+Acked into plan.md: [B19] (the re-pin, worklist a/c/d/e then b), [B20]
+(I-19 awaited), [B11.4] (this sample's refusal rows re-read: 65535 = the
+NFA cap, not the size cap).
+
+BD7 COMMITTED (4e39c25) after `make check-harness` 119/119 on the free
+box. THE TEST RUN (05:22-06:17, verified by cwd, pcrecdev1 idle): the
+three inconclusive cells re-run under BD7 — pcre2-jit, pcrec-auto,
+pcrec-vm-in ALL `measured` on attempt 1, every pre-flight passed first
+time; after-samples 1.81 / 2.00 / 3.81 %; the OLD 1-s gate recomputed
+from the recorded per-second peaks passes two of them on every second
+and FAILS pcrec-vm-in on one of its five seconds (11.88 %) — a burst
+BD7 absorbed; trial-spread medians match their first runs within 0.3
+points (3.7/4.0, 1.5/1.6, 1.5/1.4 %). The inconclusive stamps carried
+no information about the measurement. Archived:
+docs/dev/measurements/2026-08-30-gate-shape-test-run.txt (b0fcb96).
+Store 50 (7869b9d): bounded@0.1's 36d5963 sample is COMPLETE, 6/6 — the
+[OPT-4] BEFORE. pcrecdev1 closed at 06:1x and re-woke at 06:2x; the box
+plan agreed: their admin1 verification + a -j4 code lane now, my [B19]
+worktree build beside it, a ~3.5 h abi-12 window (bounded AFTER +
+email/loglines controls) announced before their next battery.
+
+REPORTS (0c2d9a2): reports/2026-08-30-bounded-0.1-budu-ryzen1600-
+first-sample-36d5963.{md,subject-grain.md,tsv}, `--until
+2026-08-30T12:00:00Z` from the first render (the pcre2 ids carry no
+pin; [B19]'s window is next). First reading, before the ledger:
+`cls-upto-65535` did-not-compile under auto AND nocaps (`NFA exceeds
+131072 states`) — the NFA cap; `cls-upto-32768` COMPILED as a plain-VM
+artifact (no prefilter, cursor rung) — the set's predicted abi-11
+size-cap refusal did not fire; the ctx ladder and cls-upto-16384's
+whole-subject form are VM (the engine-role state cap), their plain
+forms DFA; nest2-64 whole-subject is a counter-rung VM with fast-tier
+escalation 88/50 → 128/73.
+
+LANES: `ledgerbounded` (opus, read-only) extracts the ledger to a
+scratchpad file (O-9 material); `b19repin` (worktree b19repin, branch
+b19-repin) does I-18's worklist a/c/d/e with by-value controls on
+level-context's predicted stamps, the two source-bytes columns, the
+`--warn-emit-bytes` capture, `--list-definitions` archived. Stall
+watchdog cron every 10 min. Keepalive cron still ticking.
