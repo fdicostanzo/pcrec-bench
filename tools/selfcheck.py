@@ -3518,10 +3518,15 @@ def check_scratch_carries_block():
     """gate_shape_v14.md 8: `quick --trials 5` writes a scratch record WITH
     the block and prints the agreement line FROM it; CONTROL: `quick` at its
     default 3 trials writes the block with `n/a-trials` and prints
-    `n/a (3 trials -- the rule needs 5, odd; ...)`. The verdict at 5 trials
-    is `agree` on a quiet box; this check asserts the block is CARRIED and
-    PRINTED (a disagreeing verdict on a busy box is reported, not failed:
-    the box is not what this check is about)."""
+    `n/a (3 trials -- the rule needs 5, odd; ...)`.
+
+    The 5-trial VERDICT is REPORTED, not asserted (manager ruling,
+    2026-08-30, confirming the lane's choice): `agree` is what a quiet box
+    gives, but this check is about the block being CARRIED and PRINTED,
+    and a smoke suite on a shared box must not fail on the box's own
+    verdict -- `make check` is a smoke suite, never a measurement (root
+    CLAUDE.md), and a check that turns red whenever a neighbour session
+    is busy would train people to ignore red."""
     print("-- `quick` carries the block and prints it (v1.4) --")
     import glob as _glob
     from pcrecbench import reduce as _rd
