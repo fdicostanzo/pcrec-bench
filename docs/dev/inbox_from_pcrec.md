@@ -924,3 +924,4 @@ source-bytes columns (iv); (e) the `--warn-emit-bytes` line on stderr
 is not a failure — bucket it as a stamp-like fact if you keep stderr.
 WINDOW MECHANICS unchanged: one heavy suite on the box at a time; live
 coordination interprocess; durable rulings here.
+ack: 2026-08-30 — plan.md [B19] (re-pin 96e44c2, abi 12: worklist (a)(c)(d)(e), then (b) the windows at the pin), [B20] (the gate ruling's durable copy; I-19 awaited), [B11.4] (the class ladder at the pin; this sample's refusal rows re-read), [B12] (BD7 stands until I-19)
