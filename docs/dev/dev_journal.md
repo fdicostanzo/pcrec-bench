@@ -1676,3 +1676,61 @@ in X20's shape), and the rule's constants k and F MEASURED by a probe
 over the store's 68 records (zero false positives on a store measured
 quiet is the bar; the probe and its census archived under
 docs/dev/measurements/ per D35) — then a critic panel.
+
+## 2026-08-30 (EDT, ~14:0x), fifth session (part 8) — [B19] closed; [B20]'s SPEC merged with measured constants; the critic panel opened
+
+[B19] COMPLETED (f0b56e7): the repin-form AFTER reports — both pins in
+one query (`--since 2026-08-29T00:00:00Z --until 2026-08-30T15:00:00Z`,
+10 records per set) — make the reporter's R8 `Δ vs previous version`
+column fire on every pcrec row, so the abi-12 ledger's hand ratios now
+have the reporter's own spread verdicts beside them (the TSV carries no
+Δ column; the `-after-` files stay the clean single-pin sample). Root
+STATUS updated; [B19] archived (19 completed rows).
+
+[B20] DESIGN (lane b20design, strong model, worktree; ~30 min; merged
+fa152d3 with the same plan.md hunk resolved by hand): gate_shape_v14.md
+is the SPEC. The census (probe_trial_agreement.py, archived D35 as
+2026-08-30-trial-agreement-census.txt): 68 records, 62,923 timed rows,
+all with 5 trials; at k = 1.5 ZERO rows have two slow trials and ONE has
+a fast outlier (a 3-2 split at 9-14 ns on the floor pattern); at 2.0
+nothing; at 1.25 the clean spread is reached (21 slow pairs, 37 fast
+outliers, 20 records touched). Rule `v1.4-1of5`: k = 1.5, F = 1 % — zero
+false positives on the store, margin 4.9× (worst 1 of 490 rows vs 4
+allowed); flags any two-pass disturbance of one group (every group has
+≥ 23 subjects); the fast clause catches a moved median. The store's one
+loaded record (email × interp 08-29 18:48Z, load1 11.4 after) has zero
+disagreeing rows at 1.5 and its medians sit within 0.2-1.8 % of its
+clean re-run — the competitor arrived as the cell ended; the rule's
+silence is right, and k = 1.25 would have flagged good numbers. Honest
+limit: no store record has numbers a competitor actually moved (Q3 asks
+for one deliberate scratch-tier control). Decisions: the target-core
+pre-flight as an optional `occupancy.<sample>.target_busy_pct` (X26
+untouched); X13 versioned, reading load.before directly (X20 unchanged
+— a v1.4 record can be `loaded` + `measured`, Q8); the `trial_agreement`
+SETUP block required iff trials ≥ 2 (X33), X31 verdict-vs-fraction, X32
+recomputation as a DELIBERATE second implementation in the validator
+(the control that shares no source); precedence -load > -spread. Two
+corrections to my brief: X30 exists (the new rules are X31-X33); the
+historical inconclusive-load population is NINE (three more on
+2026-08-25 + the loaded one), all left as history. Findings: trial-1
+outliers exist store-wide (36 of 387 single-slow rows, the LEAST
+frequent index — the test run's "never trial 1" was true of six
+records); `harness-failure` is a status the harness never stamps (Q2).
+Ten open questions.
+
+THE PANEL (skill §6): three read-only opus critics, briefed to refute —
+A measurement validity of the rule (the base rate under the clean
+spread; is 1.5 at a cliff; the positive case constructed analytically;
+the fast clause; N ≠ 5; small cells; the timer floor; the probe's row
+selection), B schema/validator consistency (every hunk writable from
+the text; X13-as-versioned vs v1.1/1.2/1.3 records; target_busy_pct
+under additionalProperties: false; X32 vs record.py's "derivations are
+imported, never reimplemented"; §10.3; the nine records; one bad
+example per rule), C harness/reporter/checks/migration (the target-core
+reading when judge_mpstat excludes the target; the status decision
+table; the one derivation's input shape; R1/R2/R8 with inconclusive-
+spread; each §8 check's control; whether v1.4 forces a report
+regeneration; harness-failure's exception paths; KB-4 riding along).
+Findings → docs/dev/reviews/2026-08-30-r3-gate-shape-v14.md with
+dispositions (r1 requirements, r2 record schema exist). Watchdog cron
+e18385c9. Keepalive cron still ticking.
