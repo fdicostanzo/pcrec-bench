@@ -164,9 +164,10 @@ older pin renders byte for byte as before:
   record by that rule and no other: `_engine_sel_display`); and
   `lang=<vm_prefilter_lang> (<vm_prefilter_lang_why>)` after
   `vm_prefilter=` on a VM hybrid (`_prefilter_lang_display`). A
-  `size cap retry` why is a rescue the `sel` bucket does NOT see (it
-  stamps `selected`; measured at the pin), so the legend note under the
-  lines says so whenever a `sel=` appears.
+  `size cap retry` why is a rescue that stamps `selected` (measured at
+  the pin), so the bucket ALSO fires on that why prefix, marked
+  `size-cap rescue`, until pcrec's [LIM-1] gives it a token (I-19 (3));
+  the legend note under the lines says so whenever a `sel=` appears.
 * the compile-cost table gains two SOURCE-bytes columns beside the
   `.so`'s `artifact bytes` -- `emit bytes` (comment-excluded, what
   pcrec's total cap measures) and `code bytes` (that minus table
@@ -1082,14 +1083,20 @@ def _engine_sel_display(engine_metadata):
     ` (DFA fallback tripped)`. Returns None where the record has no pair
     (a pin before abi 12), and the legend prints nothing: the reader has
     the `abi` on the same line (pcrec I-5's rule, as for every clause
-    here). What this does NOT flag: the SIZE-CAP retry rung, which stamps
-    `selected` (measured at 96e44c2) -- `_prefilter_lang_display` carries
-    that rescue's own why, and the legend note names the gap."""
+    here). The SIZE-CAP retry rung stamps `selected` (measured at 96e44c2),
+    so until pcrec's [LIM-1] gives it its own token (inbox I-19 (3)) the
+    bucket ALSO fires on a `vm_prefilter_lang_why` that starts `size cap
+    retry` -- rendered ` (DFA fallback tripped: size-cap rescue)` so the
+    two routes into the bucket stay distinguishable; the legend note says
+    so."""
     em = engine_metadata or {}
     sel = em.get("engine_sel")
     if sel is None:
         return None
     if sel in ("selected", "forced"):
+        why = em.get("vm_prefilter_lang_why") or ""
+        if str(why).startswith("size cap retry"):
+            return f"{sel} (DFA fallback tripped: size-cap rescue)"
         return str(sel)
     return f"{sel} (DFA fallback tripped)"
 
@@ -2767,10 +2774,12 @@ def render_markdown(rd: ReportData):
                 out.append("    - sel = pcrec's `RX_ENGINE_SEL`; `DFA fallback "
                            "tripped` = sel not in (selected, forced) -- the "
                            "three tokens that share one `dfa overflowed` "
-                           "RX_ENGINE_WHY and differ in what survived. A "
-                           "`lang=count-collapsed (size cap retry, ...)` is a "
-                           "RESCUE the sel bucket does not see: the size-cap "
-                           "rung stamps sel=selected (measured at pcrec 96e44c2).")
+                           "RX_ENGINE_WHY and differ in what survived -- OR a "
+                           "`lang=count-collapsed (size cap retry, ...)`: the "
+                           "size-cap rescue stamps sel=selected (measured at "
+                           "pcrec 96e44c2), so it is bucketed on its why prefix "
+                           "and marked `size-cap rescue` until pcrec's [LIM-1] "
+                           "gives it a token (inbox I-19 (3)).")
             # [B19] scope addition: the [ART-SIZE] clauses, named once
             # under the lines that carry them (VM artifacts at abi 11+).
             if any(_size_term_display(em) is not None

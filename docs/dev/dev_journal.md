@@ -1558,3 +1558,36 @@ removed. `make check` on master (87f86b1, under setsid after a
 harness-killed first attempt): 3/56/0 · 141/141 · 54/54, rc 0; the
 committed bounded report re-rendered with the merged reporter diffs
 275 lines against the committed file. Next: the abi-12 windows.
+
+## 2026-08-30 (EDT, ~10:5x), fifth session (part 5) — THE ABI-12 WINDOWS: 18/18 measured on attempt 1 at 96e44c2; reporter v8 + the AFTER reports in a lane
+
+THE WINDOW (07:12-10:45 EDT, one setsid chain over three sets, pin
+96e44c2, core 11, both managers idle; pcrecdev1 had stopped its w11
+lane and, on my verify-by-cwd, killed three leftovers of its own — a
+tail/head/ugrep Monitor armed at 06:16 on MY rerun log from a shell
+whose cwd was its since-deleted admin1 worktree; BD6 again, and the
+peer's own kill-by-PID). bounded six cells → email-specimen@0.2 six →
+loglines@0.1 six: EVERY cell measured on attempt 1 — zero gate
+refusals, zero losses — where the 36d5963 windows had refused attempt 1
+of almost every cell on the post-cell transient and lost three of six
+to the one-shot after-sample. BD7's instrument, measured: the 5-s
+average never saw the transient the 1-s sample tripped on. Store 68
+(33ee50f). Cell timings (start-end EDT): bounded x pcre2-interp 07:12-07:35; bounded x pcre2-jit 07:35-07:53; bounded x pcrec-auto 07:54-08:14; bounded x pcrec-nocaps 08:14-08:33; bounded x pcrec-vm 08:33-08:51; bounded x pcrec-vm-in 08:51-09:09; email x pcre2-interp 09:10-09:18; email x pcre2-jit 09:18-09:29; email x pcrec-auto 09:29-09:34; email x pcrec-nocaps 09:34-09:39; email x pcrec-vm 09:39-09:46; email x pcrec-vm-in 09:46-09:53; loglines x pcre2-interp 09:53-10:02; loglines x pcre2-jit 10:02-10:11; loglines x pcrec-auto 10:11-10:19; loglines x pcrec-nocaps 10:19-10:27; loglines x pcrec-vm 10:28-10:36; loglines x pcrec-vm-in 10:36-10:44;
+The chained launch + sentinel-only Monitor + keepalive-tick-only
+activity kept this session's residue off the gate for 3.5 h.
+
+AFTER the window: WINDOW CLOSED 10:45; pcrecdev1's battery follows.
+Lane reports96 (sonnet, worktree reports96): REPORTER_VERSION v7 → v8
+(the [B19] K=/caps= clauses change every committed report carrying
+abi-11 pairs — the bounded first sample re-rendered diffs 275 lines,
+all additions; by reports/CLAUDE.md's rule the committed files must
+re-render empty, so every report is regenerated with its own query and
+the diff CLASSIFIED per file — version line only for the pre-abi-11
+sets, K/caps additions for the 36d5963 sets, anything else a stop), and
+the three AFTER reports (`--since 2026-08-30T11:00:00Z`; the pcre2 ids
+carry no pin, so the BEFORE/AFTER files are separated by their
+--until/--since bounds). Then the [OPT-4] ledger lane over the AFTER
+reports against docs/dev/ledgers/…§6 and I-18's table; O-10 with
+[B19]'s four stamp-semantics findings. (This entry re-written once: an
+unquoted heredoc had shell-substituted its backticked text — a lesson
+for wake.md.)

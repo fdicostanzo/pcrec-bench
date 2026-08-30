@@ -432,6 +432,18 @@ bump the version for. `REPORTER_VERSION` bumps to `v8 (2026-08-30)`
 (precedent: [B12] R10 below); every committed report under `reports/`
 regenerated with its own named query -- see `reports/CLAUDE.md`.
 
+I-19 (3) follow-up (2026-08-30, manager): until pcrec's [LIM-1] gives the
+SIZE-CAP rescue its own `RX_ENGINE_SEL` value, `_engine_sel_display`
+also buckets a `selected` artifact whose `vm_prefilter_lang_why` starts
+`size cap retry`, rendered `sel=selected (DFA fallback tripped: size-cap
+rescue)`; the legend note says so; a `selected` hybrid with any other
+why stays outside the bucket (the test's control). No committed report
+changes: no record in the store carries a size-cap rescue (census over
+the 96e44c2 records: 760 forced / 580 selected / 160 collapsed-prefilter,
+every why a `dfa overflow retry`) -- this covers the [B19] AFTER sample
+too (the only 96e44c2 records in the store), so the AFTER reports
+rendered after this merge show no size-cap-rescue bucket either.
+
 ## The reporter, [B12] R10 (2026-08-29) -- a did-not-compile cell is not-ranked, not invisible
 
 M1 close item (docs/dev/plan.md row [B12], "[ADDED 2026-08-28]"; lane

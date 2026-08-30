@@ -1908,9 +1908,16 @@ def test_b19_engine_sel_lang_and_emit_bytes():
                "vm_prefilter_lang": "count-collapsed",
                "vm_prefilter_lang_why": "size cap retry, exact 671050 > 500000"}
     sl = report._testee_legend_line("t", sizecap)
-    _check("sel=selected, entry=" in sl and "tripped" not in sl
+    _check("sel=selected (DFA fallback tripped: size-cap rescue), entry=" in sl
            and "lang=count-collapsed (size cap retry, exact 671050 > 500000)" in sl,
-           f"the size-cap rescue: sel=selected, the why says rescue; got {sl!r}")
+           f"the size-cap rescue: sel=selected, bucketed on the why prefix (I-19 (3)); got {sl!r}")
+    # CONTROL: a `selected` hybrid whose why is NOT a size-cap retry stays
+    # outside the bucket -- the prefix, not the hybrid-ness, is the rule.
+    plain_hybrid = dict(sizecap, vm_prefilter_lang="exact",
+                        vm_prefilter_lang_why="no counted repeat")
+    pl = report._testee_legend_line("t", plain_hybrid)
+    _check("sel=selected, entry=" in pl and "tripped" not in pl,
+           f"a selected exact hybrid is not bucketed; got {pl!r}")
 
     # CONTROL: an abi-11 record has none of the pairs and renders as before.
     old = {"abi": 11, "engine": "vm", "prefilter": "none", "unroll_k": 8,
@@ -1954,7 +1961,8 @@ def test_b19_engine_sel_lang_and_emit_bytes():
            f"the two source-bytes columns follow artifact bytes:\n{md}")
     _check("| 39,448 | 75,812 (warned) | 33,983 |" in md,
            f"the row carries the .so bytes, the warned emit bytes and the code bytes:\n{md}")
-    _check("sel = pcrec's `RX_ENGINE_SEL`; `DFA fallback tripped` = sel not in (selected, forced)" in md,
+    _check("sel = pcrec's `RX_ENGINE_SEL`; `DFA fallback tripped` = sel not in (selected, forced)" in md
+           and "bucketed on its why prefix" in md,
            f"the legend note defines the bucket:\n{md}")
     tsv = report.render_tsv(rd)
     for needle in ("\temit_bytes\t75812\t", "\temit_code_bytes\t33983\t",
