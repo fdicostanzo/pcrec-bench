@@ -229,6 +229,28 @@ an older measured one) restores it.
   (`--grain subject`) carries the periodic-vs-prose rows that answer
   pcrec's I-10; `.tsv` the same set-grain query as TSV.
 
+- `2026-08-30-bounded-0.1-budu-ryzen1600-first-sample-36d5963.md` — the
+  FIRST SAMPLE of sub-bench #4, `bench/bounded@0.1` ([B11.4]), at pcrec
+  **36d5963** (abi 11): six cells `measured` — three in the window of
+  2026-08-29/30 23:21-01:21 EDT (pcre2-interp, pcrec-nocaps, pcrec-vm; the
+  1-s occupancy instrument) and three RE-RUN 05:22-06:17 EDT under BD7
+  (pcre2-jit, pcrec-auto, pcrec-vm-in; their first runs are in the store
+  as `inconclusive-load` history, OD-B12 → BD7 → [B20]); `--trials 5`,
+  quiet windows, reporter v7. Query: `report --subbench bounded --version
+  0.1 --until 2026-08-30T12:00:00Z --format md` (the `--until` bound
+  present from the first render: the pcre2 testee_ids carry no pin, and
+  the abi-12 window at 96e44c2 ([B19]) enters the store next).
+  `.subject-grain.md` (`--grain subject`) and `.tsv` the same query. This
+  is the [OPT-4] BEFORE (inbox I-18 (i)). Read beside
+  `bench/bounded/NOTES.md`'s predictions and `oracle_limits.tsv`: the
+  class ladder's `cls-upto-65535` is `did-not-compile` under both
+  `pcrec-auto` and `pcrec-nocaps` (`pattern too large (NFA exceeds 131072
+  states)` — the NFA cap, at every pin), while `cls-upto-32768` COMPILED
+  as a plain-VM artifact (no prefilter, cursor rung) — the set's predicted
+  abi-11 size-cap refusal at that rung did not fire; the ctx ladder and
+  `cls-upto-16384`'s whole-subject form are VM artifacts (the DFA state
+  cap in the engine role), their `plain` forms DFA.
+
 - `2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.md` — the
   FIRST SAMPLE of sub-bench #2, `bench/loglines@0.1` ([B11.1]), at pcrec
   **35e1ab1** (abi 8): six cells `measured` 2026-08-28 11:00-11:50 EDT,
