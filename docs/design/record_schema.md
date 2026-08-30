@@ -1,6 +1,6 @@
 # The record schema — [B2]
 
-STATUS: DRAFT 1, 2026-08-25. Written against
+STATUS: v1.4 (2026-08-30, [B20]; §4.1). DRAFT 1 2026-08-25, written against
 `docs/design/requirements.md` ADOPTED v3 and the R1 panel's findings
 (`docs/dev/reviews/2026-08-24-r1-requirements.md`). Every field below
 cites the requirements section or the R1 finding that put it there; a
@@ -162,13 +162,25 @@ that repeated it would be 2-6 thousand copies of one fact (requirements
 §6's own size estimate).
 
 - **MINOR bump** — purely additive: a new OPTIONAL field, a new ENUM
-  VALUE, a new declared `engine_metadata` name. A reader on an older
-  minor MUST accept the file, and MUST treat an enum value it does not
-  know as *un-filterable on that field*, never as a reason to drop the
-  row. Growing any enum in §5 is a minor bump and requires a line in
+  VALUE, a new declared `engine_metadata` name. A reader on a NEWER
+  minor MUST accept every older minor's file unchanged; a reader on an
+  older minor REFUSES a newer one by name (X17: upgrade the validator
+  rather than read it half-blind — the validator's behaviour is the
+  rule, ruling R-1 of [B20]). A reader MUST treat an enum value it does
+  not know as *un-filterable on that field*, never as a reason to drop
+  the row. Growing any enum in §5 is a minor bump and requires a line in
   this note saying why.
 - **MAJOR bump** — anything else: a removed or renamed field, a
   narrowed type, a changed meaning, a removed enum value.
+- **A cross-line RULE may be revised at a MINOR bump** (v1.4, X13)
+  provided (i) the revision is KEYED ON `schema_version` in the
+  validator, so a record is judged by the rule of its own version;
+  (ii) older records keep the verdict of their own version — never
+  re-stamped, never re-judged; (iii) the reporter renders the rule's
+  version beside every status it ranks — a `rule:` marker in the
+  ranking rows and the legend, not only in a per-record column
+  (docs/design/gate_shape_v14.md §6 R4′). A revision that fails any
+  of the three is a changed meaning and MAJOR by the bullet above.
 
 **Mixing policy** (R1 finding A10). The reporter refuses to reduce
 records of different schema versions into one cell unless a declared
@@ -191,6 +203,7 @@ migration exists. Concretely, and enforced by `validate.py`:
 | 1.1 | 2026-08-25 | the post-merge panel's twelve findings (§11) |
 | 1.2 | 2026-08-25 | the RECORD TIERS ([B10], inbox I-4): optional `tier` (`pinned`/`scratch`, absent = `pinned`), optional `testee.binary` {path, sha256}, the `local:` shape of `engine_version`, rules X28/X29, X22 exempts `local:` (§6.2, §6.8) |
 | 1.3 | 2026-08-25 | the FLOOR PATTERN ([B15], pcrecdev1's feedback item 1(d)): optional `patterns[].role` (`member`/`floor`, absent = `member`), rule X30 (at most one `floor` pattern per record) |
+| 1.4 | 2026-08-30 | THE GATE'S SHAPE after BD7 ([B20], `docs/design/gate_shape_v14.md`, Frank's ruling I-19): `status` gains `inconclusive-spread`; `occupancy.<sample>.target_busy_pct` (tri-state, keyed on `pinning.cpu`); the `trial_agreement` setup block (rule `v1.4-group`, k = 1.5, d_min = 2, share_c = 3, N ≥ 5 and odd) REQUIRED at 1.4 and FORBIDDEN below (X33), its counts recomputed (X32) and its verdict required to follow (X31); the per-group `occupancy.timeline` (provenance); X13 VERSIONED (the pre-flight + trial agreement at ≥ 1.4; the v1.1 text below); KB-4's schema half (`cost` may sit beside a non-`compiled` outcome) |
 
 **1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
 the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
@@ -243,6 +256,41 @@ check-schema` proves it on the 1.1 and 1.2 examples, which are
 deliberately left stamped at their own versions (the same reasoning
 1.1 → 1.2 gave for leaving the 1.1 examples alone).
 
+**1.3 → 1.4 is a MINOR bump under the rule-revision clause above —
+NO REWRITE, no record re-stamped** ([B20], 2026-08-30;
+`docs/design/gate_shape_v14.md` §4 and §7). The additive items are
+MINOR as written: one enum value (`inconclusive-spread`), optional-in-
+the-schema fields (`occupancy_sample.target_busy_pct`, the
+`trial_agreement` block, the occupancy `timeline`), a relaxed
+constraint (`cost` beside a refused compile, KB-4), and rules that only
+fire on a record carrying the new block (X31, X32) or stamped at the
+new version (X33's required direction). The revision of X13 is what
+the clause exists for: a v1.3 `measured` asserts both samples quiet and
+both occupancy samples `pass`; a v1.4 `measured` asserts the PRE-FLIGHT
+(load1 before, occupancy before, the target core) plus trial agreement,
+and may carry `load.verdict = loaded` beside `status = measured` (the
+after samples are provenance). `validate.py` keys X13 on the record's
+own `schema_version`, so every 1.1/1.2/1.3 record in the store keeps
+the verdict of its day; `make check-schema` witnesses the 1.1 and 1.2
+acceptance branches on the examples left at their versions, and
+`check-report`'s fixture gate and the store's 54 × 1.3 records witness
+the 1.3 branch (there is no 1.3 good example). The NINE historical
+`inconclusive-load` records — every one failed on an AFTER sample with
+its pre-flight clean, every one with a `measured` re-run of the same
+testee in the store — stay as they are, as history:
+`email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T173402Z`,
+`email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T175131Z`,
+`email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T175534Z`,
+`email-specimen@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260829T184841Z`,
+`email-specimen@0.2__pcrec_36d5963_vm-caps-simdna__budu-ryzen1600__20260829T192934Z`,
+`loglines@0.1__pcrec_36d5963_auto-nocaps-simdna__budu-ryzen1600__20260829T201129Z`,
+`bounded@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260830T034510Z`,
+`bounded@0.1__pcrec_36d5963_auto-caps-simdna__budu-ryzen1600__20260830T040352Z`,
+`bounded@0.1__pcrec_36d5963_vm-in-caps-simdna__budu-ryzen1600__20260830T050354Z`.
+The reporter renders a pre-1.4 record's agreement as `n/a (v1.3)` and,
+when one query mixes X13 versions, the rule version beside every ranked
+status (`measured@1.3` / `measured@1.4`).
+
 ## 5. The fixed enums (OD-B4 (a))
 
 **Token spelling rule.** Every enum token is lowercase, ASCII, words
@@ -276,7 +324,7 @@ The enums, in full:
 | `captures` | `on` `off` | §4.3 |
 | `simd` | `on` `off` `n-a` | §4.3 |
 | `regime` | `large-subject-throughput` `short-subject-search` `match-compliance` | §3 |
-| `status` | `measured` `harness-failure` `inconclusive-load` | §6 |
+| `status` | `measured` `harness-failure` `inconclusive-load` `inconclusive-spread` | §6; `inconclusive-spread` v1.4 ([B20], gate_shape_v14.md §3.4) |
 | `compile_outcome` | `compiled` `did-not-compile` `crashed` `timed-out` `unsupported-by-declaration` | §4.4 |
 | `match_outcome` | `matched-as-expected` `did-not-match-as-expected` `wrong-span-or-captures` `truncated-subject` + `crashed` `timed-out` `gave-up` | §4.4 + ADDITIONS |
 | `truncation_check` | `verified` `unverified-for-truncation` `not-applicable` | §4.4 + ADDITION |
@@ -572,6 +620,23 @@ stating once:
   dirty tree" true for the numbers that count, while letting a pcrec
   lane bench its own worktree binary before delivering.
 
+### 6.9 Trial agreement (v1.4, [B20])
+
+The `trial_agreement` setup block and the `inconclusive-spread` status
+are designed in `docs/design/gate_shape_v14.md` (§3 the rule and its
+measured constants, §3.3 the block, §3.4 the status, §3.5 the
+arithmetic both implementations follow). One sentence here so a reader
+of this note is not surprised: at v1.4 `status = measured` on a PINNED
+record requires the record's five (or more, odd) trials to AGREE on
+every group of its rows under rule `v1.4-group` (k = 1.5: a row
+disagrees at two trials above 1.5× its median or one below its median
+/ 1.5, or a `timed-out` trial beside timed ones; a group disagrees at
+d ≥ 2 disagreeing rows reaching a third of it); a SCRATCH record
+carries the same block and, under `n/a-trials` (fewer than five odd
+trials — `quick`'s default), keeps the pre-flight's status. The block
+is the ONE place this schema stores numbers derived from rows —
+COUNTS under a recomputation rule (X32), never a time — see §10.3.
+
 ### 6.7 `kernel` and `compiler`
 
 `kernel` = `uname -s` and `uname -r`, lowercased, joined by `-`:
@@ -745,7 +810,7 @@ reverse: what is filtered must be enumerated or normalized.
 | `content_hash` | object | R | §3 | §2 "plus a content hash" |
 | `content_hash.algorithm` | const `"sha256"` | R | — | names the algorithm so a later one is a schema change, not a guess |
 | `content_hash.value` | hex64 | R | §3's covering rule | as above |
-| `status` | enum | R | `measured`/`harness-failure`/`inconclusive-load` | §6; pcrec D14's clean-vs-not-measured distinction |
+| `status` | enum | R | `measured`/`harness-failure`/`inconclusive-load`/`inconclusive-spread` (v1.4); X13 (versioned), X14 | §6; pcrec D14's clean-vs-not-measured distinction; `inconclusive-spread` (v1.4, gate_shape_v14.md §3.4): the pre-flight passed but the trials do not agree, or a pinned record lacks the five odd trials the rule needs |
 | `status_detail` | string | o | DIAGNOSTIC | what failed, for a non-`measured` record |
 | `synthetic` | boolean | o | default `false`; FILTERABLE | ADDITION: an example or a schema test must be unmistakable as a non-measurement, and prose in `note` is not machine-checkable. The reporter excludes `synthetic` records from every query |
 | `tier` | enum | o | `pinned` (the default when ABSENT) / `scratch`; FILTERABLE; §6.8. X28: a `local:` engine version requires `scratch`; the store refuses `scratch` into the canonical tree | v1.2 ADDITION (I-4, [B10]): the edit-test loop needs numbers from a binary nobody has pinned, and the rankings must never see them. One field says which tier a record is in, so the exclusion is a filter and not a convention |
@@ -845,15 +910,60 @@ reverse: what is filtered must be enumerated or normalized.
 | `environment.occupancy.before.verdict` | enum | R | `pass`/`fail`/`unavailable` | §9(b) "machine-readable pass/fail with `unavailable` when mpstat is missing — recorded, never silently skipped" (C6) |
 | `environment.occupancy.before.max_busy_pct` | number/null | R | the busiest non-target core; `null` iff `unavailable` | the number behind the verdict, so a threshold change is re-judgeable without re-measuring |
 | `environment.occupancy.before.raw` | string | R | the mpstat block (pcrec `pinned_measure.sh:59-64`'s output), or why there is none | DIAGNOSTIC, and the evidence half of the verdict — required for the same reason `loadavg_raw` is |
+| `environment.occupancy.before.target_busy_pct` | number 0-100 / null | o | v1.4, TRI-STATE keyed on `pinning.cpu` (gate_shape_v14.md §1): ABSENT when `pinning.cpu` is not an integer; `null` when the target's row was not in the capture (and always `null` when the sample is `unavailable` — the schema enforces that direction only); a number otherwise. NOT part of `verdict` (X26 judges `max_busy_pct` alone); X13 clause 3 (v1.4) requires a NUMBER ≤ `limit_busy_pct` on a `measured` record when `pinning.cpu` is an integer | the number the pre-flight's target-core clause judged, beside the verdict it does not enter: a competitor pinned where this cell will be sits under every trial uniformly, and trial agreement cannot see it |
 | `environment.occupancy.after` | object | R | the per-core check AFTER the run | ADDITION: §9(a)'s own argument for the after-load applies unchanged to occupancy. A neighbour process that starts up midway is exactly the case a before-only check cannot see, and it is the case that moves a number |
 | `environment.occupancy.after.verdict` | enum | R | as above | as above |
 | `environment.occupancy.after.max_busy_pct` | number/null | R | as above | as above |
 | `environment.occupancy.after.raw` | string | R | as above | as above |
+| `environment.occupancy.after.target_busy_pct` | number 0-100 / null | o | v1.4, the same tri-state; the harness writes it whenever it writes `before`'s (a convention, not a rule — no rule reads it) | DIAGNOSTIC: our own driver's decay after the run, which is what the NEXT cell's pre-flight sees |
+| `environment.occupancy.timeline` | array | o | v1.4 (gate_shape_v14.md §3.6), PROVENANCE ONLY — no rule reads it, no status depends on it; written by the harness whenever `/proc/stat` is readable, the run is pinned and it measured ≥ 1 group, absent otherwise; one item per (pattern, regime, form) group in measurement order | the occupancy of the box WHILE each group was measured, which neither sample sees; the only instrument that can look at §3.2's blind band at all |
+| `environment.occupancy.timeline[].pattern_id` | slug | R | the group's key | the same key as `trial_agreement.worst_group` |
+| `environment.occupancy.timeline[].regime` | enum | R | as above | as above |
+| `environment.occupancy.timeline[].form` | enum | R | as above; ALWAYS explicit (`plain` when the rows omit it) | as above |
+| `environment.occupancy.timeline[].elapsed_ms` | integer ≥0 | R | the group's wall time, all its passes, from the `/proc/stat` readings' timestamps | the denominator of the busy percentages |
+| `environment.occupancy.timeline[].target_busy_pct` | number 0-100 | R | the target core's busy % over `elapsed_ms` — OUR driver, so ~100 % is expected | a value well UNDER that is the signal: the core was shared |
+| `environment.occupancy.timeline[].sibling_busy_pct` | number 0-100 / null | R | the target's SMT sibling (`null` when the topology names none) | the sibling shares execution resources |
+| `environment.occupancy.timeline[].max_other_busy_pct` | number 0-100 | R | the busiest core other than the target and its sibling | a steady competitor elsewhere (boost clock) |
+| `environment.occupancy.timeline[].max_other_cpu` | integer ≥0 | R | which core that was | as above |
+| `environment.occupancy.timeline_tool` | string | o | present iff `timeline` is; `/proc/stat` | BD7's `tool` argument: the instrument's name beside its numbers |
 | `environment.pinning` | object | R | — | §9(d) "pinned cores after the occupancy check" |
 | `environment.pinning.mode` | enum | R | `taskset`/`chrt+taskset`/`none`/`unavailable` | pcrec degrades quietly when unprivileged (`compare.sh` `PIN_NOTE`); the record must say which |
 | `environment.pinning.cpu` | integer/null | o | the pinned core | as above |
 | `environment.governor` | string/null | o | DIAGNOSTIC | `compare.sh`'s machine-context table records it; frequency policy changes absolute numbers |
 | `environment.turbo` | string/null | o | DIAGNOSTIC | as above |
+
+#### `trial_agreement` — the trial-agreement verdict with its evidence (v1.4, [B20])
+
+Designed in `docs/design/gate_shape_v14.md` §3.3; the arithmetic every
+number below is recomputed by is its §3.5. REQUIRED on every record at
+`schema_version` ≥ 1.4 and FORBIDDEN below (X33); every count
+recomputed from the match rows (X32); the verdict required to follow
+from the counts (X31).
+
+| field | type | req | rule / enum | why |
+|---|---|---|---|---|
+| `trial_agreement` | object | c | REQUIRED at ≥ 1.4 on EVERY record (pinned or scratch, any trial count, even a record with no match rows: then `n/a-trials` with `trials: 0`); FORBIDDEN on a record stamped < 1.4 (X33) | the status depends on it, so the record must carry what decided the status — the same argument as `load.limit` beside `load.verdict` (X20) and `limit_busy_pct` beside the occupancy verdicts (X26) |
+| `trial_agreement.rule` | const `"v1.4-group"` | R | names THIS definition (gate_shape_v14.md §3.5); a changed definition is a new const and a schema bump | a verdict without the rule that produced it is re-judgeable by nobody |
+| `trial_agreement.k` | number > 1 | R | the outlier ratio the run used (1.5) | data, not a schema constant (quiet_baseline.md's own argument for `load.limit`) |
+| `trial_agreement.d_min` | integer ≥ 1 | R | the least disagreeing rows a group needs (2) | as above |
+| `trial_agreement.share_c` | integer ≥ 1 | R | the share denominator: a group disagrees at `share_c · d ≥ n` (3) | as above |
+| `trial_agreement.trials` | integer ≥ 0 | R | the run's trial count: the largest `trial` among the record's match rows, 0 when there are none (X32) | the precondition the verdict depends on: the same `k` denotes different rules at N = 2, 3, 4, 5, so N is in the block |
+| `trial_agreement.groups_judged` | integer ≥ 0 | R | groups with ≥ 1 judged row (X32); 0 under `n/a-trials` | the denominator of the verdict |
+| `trial_agreement.groups_disagreeing` | integer ≥ 0 | R | judged groups that DISAGREE (X32); 0 under `n/a-trials` | the numerator of the verdict |
+| `trial_agreement.rows_judged` | integer ≥ 0 | R | judged rows (X32); 0 under `n/a-trials` | the evidence behind the group counts |
+| `trial_agreement.rows_disagreeing` | integer ≥ 0 | R | judged rows that DISAGREE (X32); 0 under `n/a-trials` | as above |
+| `trial_agreement.rows_unjudged` | integer ≥ 0 | R | row keys NOT judged: fewer than 2 timed trials and no mixed `timed-out` trial, or EVERY trial `timed-out`; under `n/a-trials` every row key; `rows_judged + rows_unjudged` = the record's match-row keys (X32) | a record that is 30 % unjudgeable cannot present "0 of 42 groups disagree" as though the cell had been examined; the reporter renders it |
+| `trial_agreement.rows_unjudged_reasons` | object | R | `{few_timed_trials, all_timed_out, na_trials}`, summing to `rows_unjudged` (X32) | an all-timed-out row is the engine's consistent answer — a refusal, not a spread — and a reader must be able to tell it from a row the budget could not time |
+| `trial_agreement.rows_unjudged_reasons.few_timed_trials` | integer ≥ 0 | R | rows with < 2 timed trials and no mixed `timed-out` trial | as above |
+| `trial_agreement.rows_unjudged_reasons.all_timed_out` | integer ≥ 0 | R | rows whose EVERY trial timed out (E-1) | as above |
+| `trial_agreement.rows_unjudged_reasons.na_trials` | integer ≥ 0 | R | every row key, under `n/a-trials`; 0 otherwise | as above |
+| `trial_agreement.worst_group` | object / null | R | `null` iff `groups_judged = 0`; else the judged group with the LARGEST `d`, ties → the SMALLEST `n`, ties → the LOWEST `seq` among its rows (X32); its ids must exist in the record | the reader's first look, without re-reducing 1,500 rows: the group nearest the threshold, with its two integers |
+| `trial_agreement.worst_group.pattern_id` | slug | R | in `setup.patterns[]` | as above |
+| `trial_agreement.worst_group.regime` | enum | R | in `subbench.regimes` | as above |
+| `trial_agreement.worst_group.form` | enum | R | ALWAYS explicit (`plain` when the rows omit it) | as above |
+| `trial_agreement.worst_group.d` | integer ≥ 0 | R | the group's disagreeing rows (X32) | as above |
+| `trial_agreement.worst_group.n` | integer ≥ 0 | R | the group's judged rows (X32) | as above |
+| `trial_agreement.verdict` | enum | R | `agree`/`disagree`/`n/a-trials`; X31: `n/a-trials` iff `trials < 5` or even; else `disagree` iff `groups_disagreeing ≥ 1`; else `agree`; FILTERABLE | the verdict beside its numbers, required to agree with them |
 
 #### `patterns[]` — the roster the rows reference
 
@@ -941,7 +1051,7 @@ property of compiling, and this is the compiling row.
 | `trial` | integer ≥1 | R | 1..N contiguous per pattern | C4: pcrec's single-sample GCC-TIME swung 1.87× on a quiet box (`~/pcrec/tests/bench/CLAUDE.md:78`), so compile cost is median-of-N with spread like everything else — which means N RAW trials here |
 | `compile_outcome` | enum | R | FILTERABLE | §4.4 per-(pattern, testee) set |
 | `cost_class` | enum | R | MUST equal `setup.testee.execution_model` | §3 "Reports never reduce compile costs of different classes into one cell without labelling the class"; the same four tokens are used on both fields so the check is literal equality and no mapping table can be got wrong |
-| `cost` | object | c | present IFF `compile_outcome` = `compiled` AND `cost_class` ≠ `lazy-jit` | §3's per-class protocol (A6) |
+| `cost` | object | c | REQUIRED when `compile_outcome` = `compiled` AND `cost_class` ≠ `lazy-jit`; OPTIONAL otherwise (v1.4, KB-4: a refusal's cost — the bench's own clock around the engine's exec); FORBIDDEN on a `lazy-jit` row | §3's per-class protocol (A6) |
 | `cost.total_ns` | integer ≥0 | R | the whole compile/setup for this trial | §3 "on its own axis, never folded into match time" (APPROACH §3) |
 | `cost.phases` | array | o | names and order must equal `setup.testee.compile_phases` | §3 AOT: "pattern → C → gcc → loadable object, all phases, each timed" |
 | `cost.phases[].name` | slug | R | — | as above |
@@ -988,7 +1098,7 @@ both ways before being believed.
 | X10 | `compile_row.cost_class` equals `testee.execution_model` | §3; brief |
 | X11 | A match row carries `timing` only if `match_outcome` = `matched-as-expected` AND every compile row for that (pattern, FORM) has `compile_outcome` = `compiled` | §4.4/§7; brief |
 | X12 | `cost.phases` names and order equal `testee.compile_phases` | §3 |
-| X13 | `status` = `measured` requires `load.verdict` = `quiet` and BOTH `occupancy.before.verdict` AND `occupancy.after.verdict` = `pass`. `unavailable` disqualifies exactly as `fail` does — see the RULING below | §9(a) "a record whose after-load exceeds it is `inconclusive-load`, not measured" (C7); §9(b); the v1.1 ruling |
+| X13 | VERSIONED on the record's own `schema_version` (§4's rule-revision clause). **< 1.4:** `status` = `measured` requires `load.verdict` = `quiet` and BOTH `occupancy.before.verdict` AND `occupancy.after.verdict` = `pass`; `unavailable` disqualifies exactly as `fail` does — see the RULING below. **≥ 1.4** (gate_shape_v14.md §2): `status` = `measured` requires (1) `load.before.load1 ≤ load.limit` (NOT the verdict, which stays X20's either-sample fact and becomes provenance); (2) `occupancy.before.verdict` = `pass`; (3) when `pinning.cpu` is an integer, `occupancy.before.target_busy_pct` is PRESENT, a NUMBER and ≤ `limit_busy_pct` (a target row missing from the capture is the same unknown as `unavailable`); (4) `trial_agreement.verdict` = `agree` on a `pinned` record (`tier` absent = `pinned`) and ≠ `disagree` on a `scratch` one; the AFTER samples never disqualify | §9(a) (C7); §9(b); the v1.1 ruling; v1.4: Frank's ruling I-19 (BD7 ratified as the gate; the after samples provenance; trial agreement decides) |
 | X14 | `status` = `measured` requires a `plain` compile row for every pattern in the roster (`whole-subject` is optional — only a testee that needs the second artifact has one) | makes `harness-failure` mean something: a record that stopped halfway cannot claim to be measured |
 | X15 | Every `engine_metadata` name is declared; its `scope` matches the row kind; its value matches the declared type (`enum` value in `values`, `mask` bits in `bits`, integer, string) | §4.2, §7 rule 1 |
 | X16 | `testee.warmup_trials` ≥ 1 when `execution_model` = `lazy-jit` | §3 (A6) |
@@ -1006,6 +1116,9 @@ both ways before being believed.
 | X28 | A `testee.engine_version` of the `local:` shape (§6.2) requires `tier` = `scratch` (absent `tier` is `pinned`, and is rejected) | §6.8 (v1.2), I-4: a local binary can never be pinned. Without it a lane could bench a dirty worktree and file the number as canonical |
 | X29 | `tier` = `scratch` requires `testee.binary` = {`path`, `sha256` (64 hex)} | §6.8 (v1.2), I-4's "plus what the binary was": a scratch record's only engine identity is the file, so the record must name it |
 | X30 | At most one entry in `patterns[]` has `role` = `floor` | §5 ADDITIONS 7 (v1.3): the floor pattern's whole point is a SINGLE per-call baseline the rest of the set reads against; two of them leave that baseline ambiguous |
+| X31 | `trial_agreement.verdict` is `n/a-trials` iff `trials < 5` or `trials` is even; else `disagree` iff `groups_disagreeing ≥ 1`; else `agree` | v1.4 (gate_shape_v14.md §3.3): the verdict beside its numbers, required to agree with them — X20's argument for the third instrument |
+| X32 | `trials`, `groups_judged`, `groups_disagreeing`, `rows_judged`, `rows_disagreeing`, `rows_unjudged` and `rows_unjudged_reasons` equal the values RECOMPUTED from the record's match rows under gate_shape_v14.md §3.5 with the block's own `k`, `d_min`, `share_c`; `worst_group` (when not null) equals the recomputed one (key, `d`, `n`) and its ids exist among the record's patterns/regimes; `rows_judged + rows_unjudged` = the record's row keys. The validator's recomputation is a DELIBERATE second implementation of §3.5 (no `pcrecbench` import) comparing INTEGER counts and the group key, never floats | v1.4: without X32, X31 is inert — a harness can stamp `0 of 72` beside rows that say otherwise (X20's and X26's situation exactly) |
+| X33 | TWO-DIRECTIONAL: for `schema_version ≥ 1.4` the `trial_agreement` block is REQUIRED on every record; for `< 1.4` it is FORBIDDEN | v1.4: a block on a record stamped before the version that defined it is a mis-stamped record, not a forward-compatible one (X17 never looks at fields, so this needs its own rule and control) |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each
@@ -1037,6 +1150,16 @@ nothing known; it is not known. A record with it is exactly what
 
 `mpstat` is installed on this box, so the practical cost here is zero.
 requirements §9(b)'s wording is amended at the merge to match.
+
+**At v1.4 ([B20], 2026-08-30) this ruling is true of the `before`
+sample only.** X13 is versioned: a v1.4 `measured` record requires the
+PRE-FLIGHT's occupancy sample to be `pass` (so still never `unavailable`
+— a box without `mpstat` still cannot produce a `measured` record) and
+the target core's own reading to be a number under the limit, while the
+AFTER sample is recorded exactly as before, X26 still enforced on it,
+and never disqualifies: it is provenance (gate_shape_v14.md §2). The
+`validate.py` message for the `< 1.4` branch keeps the "BOTH samples"
+wording; the `≥ 1.4` branch names the clause that failed.
 
 Two corollaries worth stating because they surprised the author:
 
@@ -1119,12 +1242,24 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
 - **`environment.load.limit`** carries whatever threshold the run used
   because OD-B8 (what "quiet" means numerically) is measured at [B3].
   The schema constrains it to be positive and present, nothing more.
+- **`environment.occupancy.timeline`** (v1.4) is the one field written
+  as PROVENANCE ONLY: no rule reads it and no status depends on it. It
+  exists because gate_shape_v14.md §3.2 states a blind band (a slowdown
+  ≤ k on several passes) that only an instrument looking DURING the run
+  can see, and the harness half (a `/proc/stat` read at every group
+  boundary) landed in the same change as the field — a field no
+  mechanism fills would be a claim in a schema's clothes (§10.3).
 
 ### 10.3 Absent on purpose
 
 - **Any statistic.** No median, min, max, stddev, spread, `n`,
   pass-rate, MB/s or ns/call. OD-B1 (the comparables set) can be
-  re-ruled at [B5] without invalidating a single record.
+  re-ruled at [B5] without invalidating a single record. The single
+  argued exception (v1.4, [B20]): `trial_agreement` stores COUNTS the
+  rows determine, under a recomputation rule (X32) and beside the
+  verdict they decide (X31) — a verdict with its evidence held to the
+  X20/X26 standard, and NOT a per-call time, so "no ns/call" stays true
+  as written.
 - **Any correctness verdict beyond the outcome enums.** The
   expectation lives in the sub-bench; the record says which outcome was
   observed against it.
@@ -1148,6 +1283,10 @@ belongs to [B3]. **Flagged for the panel (§11.3).**
   number when coverage < 100% (B5) — the reporter computes both from
   the roster (expected rows) against the rows present. Storing a count
   that the rows themselves determine is a second source of one truth.
+  The same single exception applies: `trial_agreement`'s counts
+  (`trials`, the group and row counts, `rows_unjudged`) are stored
+  BECAUSE they are required to agree with the rows (X32) — a second
+  source that the validator refuses to let disagree with the first.
 
 ## 11. For the panel — what I am least sure of
 

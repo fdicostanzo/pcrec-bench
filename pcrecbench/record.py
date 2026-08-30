@@ -1,11 +1,20 @@
 """record.py -- build the record dict the schema describes.
 
-Every DERIVED identifier is derived here by the SAME rule `schema/validate.py`
+Every DERIVED IDENTIFIER is derived here by the SAME rule `schema/validate.py`
 checks it against (record_schema.md 3, 6.4, X3/X5/X6) -- but by importing the
 validator's own functions rather than reimplementing them. Two implementations
 of one derivation is exactly the shape of bug pcrec's check-design lesson
 warns about, one level up: a check whose expected value shares a source with
 the thing it checks proves nothing.
+
+That rule is SCOPED to derivations-of-convention (gate_shape_v14.md 4 V6,
+panel B B14): X3/X5/X6 derive identifiers FROM A CONVENTION -- there is no
+fact of the matter to check, and a second implementation only creates drift
+that rejects honest records. The v1.4 `trial_agreement` block is the other
+case: X32 checks A VERDICT THE HARNESS STAMPED BESIDE ROWS IT ALSO WROTE --
+X20's and X26's situation exactly -- so there the validator carries its OWN
+implementation of the arithmetic (validate.py `judge_trial_agreement`), and
+the harness's (`pcrecbench/reduce.py`'s) is deliberately not imported by it.
 """
 
 import hashlib
@@ -18,7 +27,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # The schema version this harness emits. Bumping it is a deliberate act: the
 # fields below and `schema/record.schema.json` move together, and
 # `make check` is what proves they did.
-SCHEMA_VERSION = "1.3"
+SCHEMA_VERSION = "1.4"
 
 #: What the drivers actually call. Both use `clock_gettime(CLOCK_MONOTONIC)`
 #: around the batched loop -- never a wall clock, never a per-call timer.

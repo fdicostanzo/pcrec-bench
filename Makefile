@@ -28,11 +28,15 @@ BAD      = $(EXAMPLES)/bad
 #   4. every record in examples/bad/ must be REJECTED, and rejected FOR THE
 #      RULE ITS NAME CLAIMS -- the file name's leading token (`x11-...`,
 #      `schema-...`) is the rule id the run requires to fire. A control that
-#      rejects for an unrelated reason is not a control.
+#      rejects for an unrelated reason is not a control;
+#   5. (v1.4, [B20]) the GENERATED 1.4 example reproduces byte for byte from
+#      schema/examples/gen_example_14.py -- every v1.4 sabotage in bad/ is a
+#      one-field mutation of that output, so the output must be pinned.
 check-schema:
 	@echo "== check-schema =="
 	@$(PYTHON) schema/check_fields.py
 	@$(PYTHON) schema/check_rules.py
+	@$(PYTHON) schema/examples/gen_example_14.py --check
 	@echo
 	@echo "-- good examples (must be ACCEPTED) --"
 	@$(VALIDATE) --check-filename $(EXAMPLES)/*.jsonl
@@ -63,7 +67,7 @@ check-schema:
 
 ## check: every self-check -- the schema's, the harness's and the reporter's (contract 6)
 #
-# check-schema is [B2]'s (the record schema, its examples, its 15 sabotages).
+# check-schema is [B2]'s (the record schema, its examples, its sabotages).
 # check-harness is [B3]'s: the sub-bench generators reproduce their committed
 # manifests, the expectations re-derive from the libpcre2 oracle, each driver
 # smokes, the deliberately-wrong fixture yields the outcome it must, the two
