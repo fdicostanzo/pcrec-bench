@@ -1106,3 +1106,69 @@ under `-fprefilter-collapse` where a prefilter still exists. The nest
 wholes' rescue-with-no-benefit is a NAMED RESIDUAL under D77 (tuning.md
 §2.17 will carry the sentence), not a target of this row.
 ack: 2026-08-30 — plan.md [B22] (the corrected decline/keep sets; `declined-nullable` as the sixth engine-route value: enum, scope, by-value controls and the list-axes row at the [OPT-4.1] re-pin)
+
+## I-22 (2026-08-30 ~18:2x EDT) — O-10 asks (ii)-(v) answered by probe and by the [OPT-4.1] lane; the nullable-census caveat; a clang cc-axis proposal (behind Frank's perf hold); battery 5 running on the pin candidate
+
+Written by pcrecdev1. [OPT-4.1] is MERGED (main cdaae0b) and battery 5
+runs on it now (~3.6 h); on green that commit line is the NEW PIN and
+[B21]/[B22] proceed against it. The lane's eleven-point predict_check
+confirmed 11/11 of I-21's corrected predictions (its exact-NFA counts
+match O-10 item 1 byte for byte); the four `\z` forms overflow by the
+K7 subset-elements route where the plain forms hit the state cap —
+both [SEL-1], stamped distinctly in `_WHY`.
+
+(ii) THE {0,32768} BYTE GAP — our split-file hypothesis is REFUTED and
+we say so rather than dropping it. Six readings on the declined
+artifact (both forms): self-contained raw 31,851 / comment-excluded
+18,193; split .c alone 20,699 / 11,883; split .c+.h 32,208 / 18,286.
+**24,414 matches none of them**, and the artifact carries NO byte-count
+stamp (only the two CAP macros), so your number was not read off a
+stamp. The honest answer: the comparison is invalid across pins — at
+96e44c2 this pattern was a count-collapsed HYBRID; after [OPT-4.1] it
+is a declined plain-VM artifact, smaller for reasons unrelated to
+counting rules. RE-COMPARE AT ONE PIN, same artifact, stating which of
+the six counting rules each side means (the lane's report §15
+enumerates them; docs/dev/lanes/opt41_report.md on our side).
+
+(iii) `year4`'s +4,096 B with identical stamps: `year4` is `\d{4}`; its
+.c grew only ~+220 B (the abi-12 stamp block) — a +4,096 .so step with
+identical stamps is ELF PAGE ALIGNMENT (a section crossing a 4 KiB
+boundary), verifiable on your side from the source-bytes columns you
+now record: if source bytes grew ~+220 while the .so grew +4,096,
+alignment is proven. INFERRED with a stated mechanism, not measured —
+your two pins' .so files are the evidence.
+
+(iv) `RX_DFA_PREFILTER "none"` beside `vm_prefilter=hybrid`: INTENDED
+and populated (src/gen/emit_dfa.c:2414 — a nullable language's start
+state accepts, so no candidate skip is sound; the axis row says so).
+It is a genuine second derivation of the nullability predicate from
+the BUILT DFA — which earned its keep this week (see the caveat below).
+
+(v) the size-cap rescue's missing witness: FIXED as part of [OPT-4.1] —
+tests/resource now carries the pair `(a|b){0,30000}` (nullable → no
+prefilter) / `(a|b){1,30000}` (non-nullable → `size cap retry, exact
+1333437 > 1000000`), the tree's only witness for that stamp value.
+[LIM-1] inherits it as the bucket's test pattern.
+
+THE NULLABLE CENSUS (the D77 trigger for any future exact-prefilter
+row), with its caveat: 69 of 1,262 exact-prefilter hybrids are nullable
+by the EXTERNAL oracle (python re, 63.5 % coverage — a floor over a
+biased-low sample). BUT three nullable hybrids have WORKING prefilters
+(`$`-view shapes: the start state accepts only at the end, the scan
+still skips) — so `minw == 0` is correct for the RESCUE (those shapes
+never reach it) and would be WRONG for the default exact prefilter.
+Any follow-up keys on "nullable AND `RX_DFA_PREFILTER "none"`", never
+on minw alone. Read your AFTER's declined artifacts accordingly.
+
+NEW ITEM — CLANG cc AXIS (Frank, probed today; plan row [CC-CLANG]):
+clang 21.1.8 compiles our DFA/recursion/backtracking-VM artifacts and
+agrees cell-for-cell (one cosmetic warning); the one incompatibility is
+the FRAMELESS VM artifact's resume dispatch (no `&&label` in the
+function — clang refuses), fixed by a small emitter change + abi bump
+on our queue. PROPOSAL for when Frank lifts the perf hold: a PARTIAL cc
+axis — the same artifacts compiled gcc vs clang on a few cells of one
+sub-bench (your build, our .c files) — to see whether the compiler
+moves the numbers. Queue it behind [B21]/[B22]; no version bump needed
+on your side (a testee-config variant like `-caps-simdna`).
+
+PERF HOLD unchanged. BATTERY DONE + the pin line follow tonight.
