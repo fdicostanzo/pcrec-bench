@@ -1972,6 +1972,77 @@ def test_b19_engine_sel_lang_and_emit_bytes():
            f"an abi-11 record's compile table is unchanged by [B19]:\n{md_o}")
 
 
+def test_b19_size_term_and_caps_in_legend():
+    """[B19] scope addition (manager, 2026-08-30): the [ART-SIZE] stamps
+    the adapter has recorded on every VM artifact since abi 11 are
+    rendered on the legend line -- `K=<unroll_k>/<unroll_k_why>` and
+    `caps=<max_emit_code_bytes>/<max_emit_bytes>` -- and a DFA artifact
+    shows NEITHER (it has no counter rung; `max_emit_code_bytes` is absent
+    from its metadata by design, and its total cap alone is not shown).
+    bounded's first sample's K movement (`nest3-16` = K=1 / size-model)
+    is the firing case."""
+    nest3 = {"abi": 11, "engine": "vm", "prefilter": "hybrid",
+             "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
+             "dfa_prefilter_offsets": "none", "dfa_table": "premultiplied",
+             "unroll_k": 1, "unroll_k_why": "size-model",
+             "max_emit_code_bytes": 500000, "max_emit_bytes": 1000000}
+    _check(report._size_term_display(nest3) == "1/size-model",
+           f"K clause, got {report._size_term_display(nest3)!r}")
+    _check(report._caps_display(nest3) == "500,000/1,000,000",
+           f"caps clause, got {report._caps_display(nest3)!r}")
+    line = report._testee_legend_line("pcrec_36d5963_auto-caps-simdna", nest3,
+                                      scope="`nest3-16` plain")
+    _check("rungs=-, K=1/size-model, caps=500,000/1,000,000, fast tier=" in line,
+           f"both clauses sit on the legend line after rungs, got {line!r}")
+
+    # the default K on an ordinary VM artifact
+    plain_vm = {"abi": 11, "engine": "vm", "prefilter": "none",
+                "unroll_k": 8, "unroll_k_why": "default",
+                "max_emit_code_bytes": 500000, "max_emit_bytes": 1000000}
+    _check("K=8/default, caps=500,000/1,000,000" in report._testee_legend_line("t", plain_vm),
+           "the default K renders too (a constant is still a fact)")
+
+    # CONTROL 1: a DFA artifact carries max_emit_bytes (both engines) but
+    # no unroll_k and no max_emit_code_bytes -> NEITHER clause.
+    dfa = {"abi": 11, "engine": "dfa", "dfa_scan": "unanchored",
+           "dfa_prefilter": "memchr", "dfa_prefilter_offsets": "none",
+           "dfa_table": "premultiplied", "dfa_match": "unwrapped",
+           "max_emit_bytes": 1000000}
+    _check(report._size_term_display(dfa) is None and report._caps_display(dfa) is None,
+           "a DFA artifact has no K and shows no caps")
+    dl = report._testee_legend_line("t", dfa)
+    _check("K=" not in dl and "caps=" not in dl,
+           f"a DFA legend line carries neither clause, got {dl!r}")
+    # CONTROL 2: a pre-abi-11 VM record renders as before.
+    old = {"abi": 8, "engine": "vm", "prefilter": "none"}
+    ol = report._testee_legend_line("t", old)
+    _check("K=" not in ol and "caps=" not in ol,
+           f"an abi-8 legend line is unchanged, got {ol!r}")
+
+    # THE NOTE: printed under a compile table whose legend carries a K.
+    setup = _mini_setup("pcrec_36d5963_auto-caps-simdna")
+    row = {"kind": "compile", "pattern_id": "nest3-16", "trial": 1, "seq": 1,
+           "compile_outcome": "compiled", "cost_class": "compiled-aot",
+           "cost": {"total_ns": 1000,
+                    "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                               {"name": "gcc", "elapsed_ns": 500},
+                               {"name": "load", "elapsed_ns": 100}]},
+           "artifact_bytes": 30000, "engine_metadata": nest3}
+    rd, err = report.build_report([_mk_loaded("k.jsonl", setup, [row])],
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("K=1/size-model, caps=500,000/1,000,000" in md
+           and "K = pcrec's `RX_UNROLL_K`/`_WHY`" in md,
+           f"the legend line and its note render:\n{md}")
+    row_dfa = dict(row, engine_metadata=dfa)
+    rd_d, _e = report.build_report([_mk_loaded("d.jsonl", setup, [row_dfa])],
+                                   _args(store="x", include_synthetic=True))
+    md_d = report.render_markdown(rd_d)
+    _check("K=" not in md_d and "K = pcrec's" not in md_d,
+           f"a DFA-only table has neither the clause nor the note:\n{md_d}")
+
+
 def test_fast_tier_legend_b16_r2():
     """[B16] R2: [OPT-1]'s two-tier default entry in the legend, including
     pcrec's ONLY spelling of 'this artifact has one tier' (fast == stamped
@@ -2359,6 +2430,7 @@ TESTS = [
     test_dfa_scan_legend_b16_r1,
     test_b18_offsets_and_match_form_in_legend,
     test_b19_engine_sel_lang_and_emit_bytes,
+    test_b19_size_term_and_caps_in_legend,
     test_fast_tier_legend_b16_r2,
     test_engine_reading_and_scoped_legend_b16_r3,
     test_giveup_names_engine_and_selection_changed_b16_r4,

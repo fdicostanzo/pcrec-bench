@@ -176,6 +176,13 @@ older pin renders byte for byte as before:
   (`warned_emit_bytes`, never a failure).
 * the TSV gets `compile_stamp` rows for the three abi-12 pairs and
   `compile` rows for the three size facts, at `artifact_bytes`'s grain.
+* SCOPE ADDITION (manager, 2026-08-30): the abi-11 [ART-SIZE] stamps,
+  recorded since [B18] and never rendered, join the same legend line on
+  VM artifacts -- `K=<unroll_k>/<unroll_k_why>` and
+  `caps=<max_emit_code_bytes>/<max_emit_bytes>` (`_size_term_display`,
+  `_caps_display`; a DFA artifact shows neither) -- with a legend note
+  naming them. bounded's first sample's only K movement (`nest3-16`
+  K=1/size-model) is now readable from the report.
 
 [B14] (2026-08-25) additions, rulings R1-R10 (docs/dev/plan.md row [B14];
 docs/dev/feedback_pcrecdev1_2026-08-25-repin-v2.md, the pcrec manager's
@@ -1086,6 +1093,41 @@ def _prefilter_lang_display(engine_metadata):
     return f"{lang} ({why})" if why is not None else str(lang)
 
 
+def _size_term_display(engine_metadata):
+    """[B19] scope addition (manager, 2026-08-30): the [ART-SIZE] stamps
+    the adapter has recorded on every VM artifact since abi 11 and the
+    reporter never rendered -- bounded's first sample's only K movement
+    (`nest3-16` = K=1 / size-model on every VM form) had to be read out of
+    the JSONL. `K=<unroll_k>/<unroll_k_why>`: the VM counter rung's unroll
+    factor and WHO chose it (`default`, `option`, `denied`, `size-model`,
+    `size-model-declined`, `cap-rescue`, `capacity-declined` -- limits.md
+    8). VM artifacts only (a DFA artifact has no counter rung and stamps
+    no `unroll_k`), so None -- and no clause -- on a DFA row or any record
+    from before abi 11."""
+    em = engine_metadata or {}
+    k = em.get("unroll_k")
+    if k is None:
+        return None
+    why = em.get("unroll_k_why")
+    return f"{k}/{why}" if why is not None else str(k)
+
+
+def _caps_display(engine_metadata):
+    """[B19] scope addition: `caps=<max_emit_code_bytes>/<max_emit_bytes>`,
+    the EFFECTIVE emitted-size caps the artifact was built under (limits.md
+    8: 500,000 code bytes / 1,000,000 total by default, raise-only), so an
+    artifact built under a raised cap is distinguishable from one that
+    fitted. Rendered on VM artifacts only, keyed on `max_emit_code_bytes`
+    (VM-only by design -- a DFA artifact stamps only the total cap and
+    shows neither here, by the manager's ruling); None otherwise."""
+    em = engine_metadata or {}
+    code = em.get("max_emit_code_bytes")
+    if code is None:
+        return None
+    total = em.get("max_emit_bytes")
+    return f"{code:,}/{total:,}" if total is not None else f"{code:,}/-"
+
+
 def _emit_bytes_display(engine_metadata):
     """[B19] (d)/(e): the `emit bytes` cell -- the comment-excluded C
     source pcrec's total cap measures, `(warned)` when pcrec's advisory
@@ -1314,6 +1356,8 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
     match_form = _match_form_display(engine_metadata)
     sel = _engine_sel_display(engine_metadata)
     lang = _prefilter_lang_display(engine_metadata)
+    size_term = _size_term_display(engine_metadata)
+    caps = _caps_display(engine_metadata)
     line = (f"- {label}: engine={display}, "
             + (f"sel={sel}, " if sel is not None else "")
             + f"entry={stamps['entry']}, "
@@ -1322,7 +1366,9 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
             + f"dfa: {_dfa_scan_display(engine_metadata)}, "
             + (f"match={match_form}, " if match_form is not None else "")
             + f"rungs={stamps['vm_rungs']}, "
-            f"fast tier={_fast_tier_display(engine_metadata)}, "
+            + (f"K={size_term}, " if size_term is not None else "")
+            + (f"caps={caps}, " if caps is not None else "")
+            + f"fast tier={_fast_tier_display(engine_metadata)}, "
             f"buffers={_buffers_display(engine_metadata)}, "
             f"frame={_frame_size_display(engine_metadata)}")
     if stamped is None:
@@ -2706,6 +2752,18 @@ def render_markdown(rd: ReportData):
                            "`lang=count-collapsed (size cap retry, ...)` is a "
                            "RESCUE the sel bucket does not see: the size-cap "
                            "rung stamps sel=selected (measured at pcrec 96e44c2).")
+            # [B19] scope addition: the [ART-SIZE] clauses, named once
+            # under the lines that carry them (VM artifacts at abi 11+).
+            if any(_size_term_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - K = pcrec's `RX_UNROLL_K`/`_WHY`: the VM counter "
+                           "rung's unroll factor and who chose it (default / option "
+                           "/ denied / size-model / size-model-declined / cap-rescue "
+                           "/ capacity-declined -- limits.md 8); caps = the EFFECTIVE "
+                           "`RX_MAX_EMIT_CODE_BYTES`/`RX_MAX_EMIT_BYTES` the artifact "
+                           "was built under (raise-only; 500,000/1,000,000 by "
+                           "default). VM artifacts only: a DFA artifact has no "
+                           "counter rung and stamps no code cap.")
             out.append("")
 
         # [B19]: the two SOURCE-bytes columns, when any row of this table

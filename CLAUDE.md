@@ -35,7 +35,7 @@ ported and controlled byte-exactly against `--warn-emit-bytes`) and
 abi-12 stamps asserted BY VALUE (level-context = I-18's prediction to
 the letter; the size-cap rescue stamps `sel=selected` — a finding), the
 bits 19/20 controls, the reporter's `sel=`/`lang=` clauses and two
-source-bytes columns (141/141 harness checks, 53 reporter tests). The
+source-bytes columns, and the abi-11 `K=`/`caps=` clauses (141/141 harness checks, 54 reporter tests). The
 windows at 96e44c2 (bounded's AFTER sample first) are the manager's next
 step. Before it, the window (a)/(b) and
 outbox O-8 were the manager's step after [B18]. Before it, [B16] re-pinned
@@ -76,7 +76,7 @@ measured in a window next). [B18]'s WINDOW ran the same day: 12 cells
 at 36d5963 on email-specimen@0.2 and loglines@0.1, every one `measured`
 (store index 41); outbox O-8 (739ccdd) carries the ledger — [OPT-K] moved more than predicted on the search band, [ENG-ABS] three of four aggregates confirmed, level-context = the VM with a 0.5-0.7 s compile-time DFA attempt; the long-subject `_match` probe is archived under `docs/dev/measurements/`. Next: bounded's window;
 [B11.2] wide alternations; [B13] the interpreter is chartered. `make check`
-is green (3/56/0, 141/141, 53/53 — re-verified after the [B19] re-pin). Manager sessions start with the
+is green (3/56/0, 141/141, 54/54 — re-verified after the [B19] re-pin). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope

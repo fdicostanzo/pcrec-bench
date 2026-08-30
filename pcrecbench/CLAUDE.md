@@ -375,7 +375,7 @@ compiled artifact -- pcrec's own size definition, ported and controlled;
 `warned_emit_bytes` only where pcrec's advisory `--warn-emit-bytes` line
 fired). The reporter change is again SMALL, additive and CONDITIONAL --
 no version bump (still `v7`), every committed report byte-identical,
-`test_b19_engine_sel_lang_and_emit_bytes` pins both directions (53 tests):
+`test_b19_engine_sel_lang_and_emit_bytes` pins both directions (54 tests with the scope addition below):
 
 - THE LEGEND LINE gains `sel=<engine_sel>` right after `engine=`, and
   `lang=<vm_prefilter_lang> (<why>)` right after `vm_prefilter=` -- each
@@ -408,9 +408,17 @@ no version bump (still `v7`), every committed report byte-identical,
 - THE TSV gets `compile_stamp` rows for the three abi-12 pairs and
   `compile` rows for the three size facts at `artifact_bytes`'s grain,
   each only when carried.
-- STILL RECORDED BUT NOT RENDERED (as [B18]): `unroll_k` / `unroll_k_why`
-  / `max_emit_code_bytes` / `max_emit_bytes` -- constant on every record
-  so far; bounded is where a K first moves.
+- SCOPE ADDITION (manager, 2026-08-30, same branch): the abi-11
+  [ART-SIZE] stamps recorded since [B18] and never rendered -- bounded's
+  first sample's only K movement (`nest3-16` = K=1 / size-model on every
+  VM form) had to be read out of the JSONL -- now sit on the same legend
+  line for VM artifacts: `K=<unroll_k>/<unroll_k_why>` and
+  `caps=<max_emit_code_bytes>/<max_emit_bytes>` (`_size_term_display`,
+  `_caps_display`, after `rungs=`), with a legend note naming them. A
+  DFA artifact shows neither (no counter rung; the code cap is absent from
+  its metadata by design). `test_b19_size_term_and_caps_in_legend` (54
+  tests): the firing case, the default K, a DFA control, an abi-8 control,
+  the note's presence and absence.
 
 ## The reporter, [B12] R10 (2026-08-29) -- a did-not-compile cell is not-ranked, not invisible
 
