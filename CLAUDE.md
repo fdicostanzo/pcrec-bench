@@ -105,7 +105,7 @@ measured in a window next). [B18]'s WINDOW ran the same day: 12 cells
 at 36d5963 on email-specimen@0.2 and loglines@0.1, every one `measured`
 (store index 41); outbox O-8 (739ccdd) carries the ledger — [OPT-K] moved more than predicted on the search band, [ENG-ABS] three of four aggregates confirmed, level-context = the VM with a 0.5-0.7 s compile-time DFA attempt; the long-subject `_match` probe is archived under `docs/dev/measurements/`. Next: bounded's window;
 [B11.2] wide alternations; [B13] the interpreter is chartered. `make check`
-is green (3/56/0, 141/141, 54/54 — re-verified after the [B19] re-pin). Manager sessions start with the
+is green (4/72/0, 170/170, 59 reporter tests — re-verified after [B20]'s v1.4 wave). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -214,7 +214,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 141 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 170 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -259,6 +259,23 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # --list-axes / --list-definitions diffed against
                         # the pin, and the emit-size port checked against
                         # pcrec's own --warn-emit-bytes numbers
+                        # and ([B20], schema v1.4) the gate's shape: the
+                        # target-core pre-flight on synthetic captures
+                        # (busy / idle / row ABSENT, each refusal BY NAME,
+                        # inert unpinned), the quiet CLI agreeing with
+                        # gate(), a failed AFTER sample leaving a record
+                        # `measured` at 1.4 and REJECTED re-stamped 1.3,
+                        # the hand-computed trial-agreement fixture pinned
+                        # against validate.py's independent second
+                        # implementation (boundary rows included), the
+                        # status decision table + an inconclusive-spread
+                        # record stamped through store.write (one slow
+                        # trial per row stays measured), the status
+                        # sentence never elided, the smoke block
+                        # n/a-trials, quick carrying and printing the
+                        # block, exit code 4 with the per-status index
+                        # line, and the /proc/stat timeline (absent when
+                        # unreadable)
                         # (~5 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets
