@@ -1876,3 +1876,25 @@ SIXTH engine-route value the adapter reads at the [OPT-4.1] re-pin
 
 Frank's performance-test hold (relayed ~15:3x) stands: no windows until
 lifted; [B21]/[B22]/[B23] queued. I-22 (asks ii-v by probe) still owed.
+
+## 2026-08-30 (EDT, ~19:5x), fifth session (part 12) — bounded@0.2 CUT and merged; I-22 acked earlier; battery 5 runs on the pin candidate
+
+LANE b21cut (blinded, D27, ~55 min incl. its own check-harness under
+battery-5 load): bench/bounded@0.2 — six knee rungs (cls-upto-64 / 128
+/ 512 / 1024 / 2048 / 8192; the class ladder is now 11 factor-of-2
+rungs 64..65535), the group-vs-class pair completed WITHOUT a seventh
+pattern (the lane saw that cls-upto-1024 IS the class half against
+grp-upto-1024 — tagged group-pair), t-digits-004k appended LAST in the
+generator so all four 0.1 runs reproduce byte for byte (sha256s
+unchanged; every 0.1 pattern byte-identical — 0.2 records stay
+comparable per cell, and NOTES states the never-pool rule for set
+sums), 1,950 oracle expectations with zero give-ups, oracle_limits
+extended without touching the 0.1 probe content, sidecar 0.2, NOTES
+"What 0.2 added" with the oracle-side knee curve (find-all counts
+65/33/17/9/5/3… down the letters ladder — the 1/n curve; digit runs
+flat) and the updated cell-time (~12-15 min per cell, floor 8.1 min).
+The diff's footprint: bench/bounded/ only — the blinding held. Merged
+(this commit's parent), worktree removed; check-harness 170/170 in the
+worktree at identical content, so master's full re-check waits for the
+next code change. [B21] STATE:started — the window is gated on the
+[OPT-4.1] pin (battery 5 on cdaae0b, ~21:50) and Frank's perf hold.
