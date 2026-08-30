@@ -1869,6 +1869,109 @@ def test_b18_offsets_and_match_form_in_legend():
            "an absent pair is `-` in the columns, as every other absent pair")
 
 
+def test_b19_engine_sel_lang_and_emit_bytes():
+    """[B19] (pcrec abi 12, pin 96e44c2): the route token and the prefilter
+    language ride on the legend line; Frank's ask (b) bucket is DERIVED
+    from the record by one rule (`sel not in (selected, forced)` -> `DFA
+    fallback tripped`); the two source-bytes pairs become compile-table
+    columns -- all ONLY where the record carries the pairs, so an abi-11
+    record renders byte for byte as before (the control)."""
+    # the [SEL-1] rescue as measured at 96e44c2 on loglines' level-context
+    lc = {"abi": 12, "engine": "vm", "prefilter": "hybrid",
+          "engine_sel": "collapsed-prefilter",
+          "vm_prefilter_lang": "count-collapsed",
+          "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 462",
+          "dfa_scan": "unanchored", "dfa_prefilter": "byte-class",
+          "dfa_prefilter_offsets": "none", "dfa_table": "premultiplied",
+          "unroll_k": 8, "unroll_k_why": "default",
+          "emit_bytes": 75812, "emit_code_bytes": 33983}
+    _check(report._engine_sel_display(lc) == "collapsed-prefilter (DFA fallback tripped)",
+           f"a fallback token is bucketed, got {report._engine_sel_display(lc)!r}")
+    _check(report._prefilter_lang_display(lc)
+           == "count-collapsed (dfa overflow retry, exact nfa 462)",
+           f"lang clause carries the why, got {report._prefilter_lang_display(lc)!r}")
+    line = report._testee_legend_line("pcrec_96e44c2_auto-caps-simdna", lc,
+                                      scope="`level-context` plain")
+    _check("engine=vm, sel=collapsed-prefilter (DFA fallback tripped), entry=" in line
+           and "vm_prefilter=hybrid, lang=count-collapsed (dfa overflow retry, exact nfa 462), dfa:" in line,
+           f"the legend line carries both clauses in place, got {line!r}")
+
+    # `selected` and `forced` are NOT bucketed; the size-cap rescue stamps
+    # `selected` (measured), so its only trace is the lang clause.
+    forced = {"abi": 12, "engine": "vm", "prefilter": "none", "engine_sel": "forced"}
+    fl = report._testee_legend_line("t", forced)
+    _check("sel=forced, entry=" in fl and "tripped" not in fl and "lang=" not in fl,
+           f"forced: no bucket, no lang clause (not a hybrid); got {fl!r}")
+    sizecap = {"abi": 12, "engine": "vm", "prefilter": "hybrid", "engine_sel": "selected",
+               "vm_prefilter_lang": "count-collapsed",
+               "vm_prefilter_lang_why": "size cap retry, exact 671050 > 500000"}
+    sl = report._testee_legend_line("t", sizecap)
+    _check("sel=selected, entry=" in sl and "tripped" not in sl
+           and "lang=count-collapsed (size cap retry, exact 671050 > 500000)" in sl,
+           f"the size-cap rescue: sel=selected, the why says rescue; got {sl!r}")
+
+    # CONTROL: an abi-11 record has none of the pairs and renders as before.
+    old = {"abi": 11, "engine": "vm", "prefilter": "none", "unroll_k": 8,
+           "unroll_k_why": "default"}
+    _check(report._engine_sel_display(old) is None
+           and report._prefilter_lang_display(old) is None,
+           "no pair -> no clause, never a guess")
+    ol = report._testee_legend_line("t", old)
+    _check("sel=" not in ol and "lang=" not in ol,
+           f"an abi-11 legend line is unchanged by [B19], got {ol!r}")
+    _check(report._emit_bytes_display(old) == "-",
+           "no emit_bytes pair -> `-`, never a number")
+    _check(report._emit_bytes_display(lc) == "75,812"
+           and report._emit_bytes_display({"emit_bytes": 724699, "warned_emit_bytes": 724699})
+           == "724,699 (warned)",
+           "emit bytes render with the warning marker only where pcrec warned")
+    cols = report._mechanism_stamp_columns(lc)
+    _check(cols["engine_sel"] == "collapsed-prefilter"
+           and cols["vm_prefilter_lang"] == "count-collapsed"
+           and cols["emit_code_bytes"] == 33983
+           and report._mechanism_stamp_columns(old)["engine_sel"] == "-",
+           "the column map carries the new pairs, `-` when absent")
+
+    # THE TABLE: the two columns appear when a row carries the pairs, and
+    # not otherwise; the legend note appears under a `sel=` line.
+    setup = _mini_setup("pcrec_96e44c2_auto-caps-simdna")
+    setup["testee"]["engine_name"] = "pcrec"
+    row_new = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+               "compile_outcome": "compiled", "cost_class": "compiled-aot",
+               "cost": {"total_ns": 1000,
+                        "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                                   {"name": "gcc", "elapsed_ns": 500},
+                                   {"name": "load", "elapsed_ns": 100}]},
+               "artifact_bytes": 39448,
+               "engine_metadata": dict(lc, warned_emit_bytes=75812)}
+    loaded = [_mk_loaded("k.jsonl", setup, [row_new])]
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("| artifact bytes | emit bytes | code bytes |" in md,
+           f"the two source-bytes columns follow artifact bytes:\n{md}")
+    _check("| 39,448 | 75,812 (warned) | 33,983 |" in md,
+           f"the row carries the .so bytes, the warned emit bytes and the code bytes:\n{md}")
+    _check("sel = pcrec's `RX_ENGINE_SEL`; `DFA fallback tripped` = sel not in (selected, forced)" in md,
+           f"the legend note defines the bucket:\n{md}")
+    tsv = report.render_tsv(rd)
+    for needle in ("\temit_bytes\t75812\t", "\temit_code_bytes\t33983\t",
+                   "\twarned_emit_bytes\t75812\t", "\tengine_sel\tcollapsed-prefilter\t",
+                   "\tvm_prefilter_lang\tcount-collapsed\t",
+                   "\tvm_prefilter_lang_why\tdfa overflow retry, exact nfa 462\t"):
+        _check(needle in tsv, f"the TSV carries {needle!r}:\n{tsv}")
+    # ... and not otherwise (the control record).
+    setup_o = _mini_setup("pcrec_36d5963_auto-caps-simdna")
+    row_old = dict(row_new, engine_metadata=old)
+    rd_o, err_o = report.build_report([_mk_loaded("o.jsonl", setup_o, [row_old])],
+                                      _args(store="x", include_synthetic=True))
+    _check(err_o is None, f"unexpected refusal: {err_o}")
+    md_o = report.render_markdown(rd_o)
+    _check("emit bytes" not in md_o and "sel = pcrec's" not in md_o
+           and "| 39,448 |" in md_o,
+           f"an abi-11 record's compile table is unchanged by [B19]:\n{md_o}")
+
+
 def test_fast_tier_legend_b16_r2():
     """[B16] R2: [OPT-1]'s two-tier default entry in the legend, including
     pcrec's ONLY spelling of 'this artifact has one tier' (fast == stamped
@@ -2255,6 +2358,7 @@ TESTS = [
     # [B16]
     test_dfa_scan_legend_b16_r1,
     test_b18_offsets_and_match_form_in_legend,
+    test_b19_engine_sel_lang_and_emit_bytes,
     test_fast_tier_legend_b16_r2,
     test_engine_reading_and_scoped_legend_b16_r3,
     test_giveup_names_engine_and_selection_changed_b16_r4,
