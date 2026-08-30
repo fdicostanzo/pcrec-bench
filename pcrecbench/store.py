@@ -327,3 +327,22 @@ def index(store_root):
               encoding="utf-8", newline="\n") as f:
         f.writelines(lines)
     return n
+
+
+def status_breakdown(store_root):
+    """-> [(status, count)] over `<store>/index.tsv`, most frequent first
+    (v1.4, ruling R-6: `pcrecbench index` prints it beside the total)."""
+    from collections import Counter
+    counts = Counter()
+    path = os.path.join(store_root, "index.tsv")
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            header = f.readline().rstrip("\n").split("\t")
+            col = header.index("status") if "status" in header else 6
+            for line in f:
+                cols = line.rstrip("\n").split("\t")
+                if len(cols) > col:
+                    counts[cols[col]] += 1
+    except OSError:
+        return []
+    return sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))

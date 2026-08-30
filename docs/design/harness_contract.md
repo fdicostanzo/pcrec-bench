@@ -170,13 +170,22 @@ artifact's match entry; captures per config.
 
 `python3 -m pcrecbench run --subbench email --testee pcre2-jit [--trials 5]
 [--regimes match,search_short,throughput] [--force-unquiet]` →
-(1) load the sub-bench; (2) `quiet.check()` — load1 sampled, mpstat
-per-core, refuse (exit 3, message) unless quiet or `--force-unquiet`
-(then status `inconclusive-load`); (3) prepare + compile + measure;
-(4) load AND per-core occupancy re-sampled after (raw text kept;
-`measured` requires both occupancy verdicts `pass` — `unavailable` or
-`fail` on either sample ⇒ `inconclusive-load`, schema v1.1 X13);
-(5) build the record (setup + rows), VALIDATE it
+(1) load the sub-bench; (2) `quiet.check()` — the PRE-FLIGHT: load1
+sampled, mpstat per-core (the 5-s average, BD7), the TARGET core's own
+reading when pinned (schema v1.4, gate_shape_v14.md §1) — refuse (exit
+3, message) unless quiet or `--force-unquiet` (then status
+`inconclusive-load`); (3) prepare + compile + measure, `/proc/stat`
+read at every group boundary (the occupancy `timeline`, provenance);
+(4) load AND per-core occupancy re-sampled after (raw text kept; since
+v1.4 the after samples are PROVENANCE — a note, never a verdict on the
+status; before v1.4 `measured` required both occupancy verdicts `pass`,
+which the validator still enforces on records stamped < 1.4: X13 is
+versioned); (5) build the record (setup + rows) — the `trial_agreement`
+block stamped from the rows, the status derived by the decision table
+(`harness.derive_status`: `inconclusive-load` > `inconclusive-spread` >
+`measured`; **exit code 4** = the written record's status is
+`inconclusive-spread`, the record IS written and indexed, and a window
+script re-measures such a cell once) — and VALIDATE it
 with schema/validate.py (a record that fails validation is never
 written — the failure is a harness bug); (6) write
 `store/records/<subbench>@<version>/<testee_id>/<record_id>.jsonl` where
@@ -193,6 +202,14 @@ quiet minute, per-core %idle from mpstat) at [B3] and set the default
 thresholds from it (proposal: quiet iff load1 < 1.0 AND every core's
 %idle ≥ 90 over a 5 × 1 s mpstat sample judged on its average (BD7, 2026-08-30; a single 1 s sample before that); the numbers are the lane's to
 measure and report, not to assume); both samples go into the record.
+The `quiet` CLI judges every sample through the same `quiet.gate()` a
+run's pre-flight uses (v1.4, ruling R-7): one instrument, one decision.
+
+Exit codes of `run` (contract 4): 0 the record is written (`measured`,
+or `inconclusive-load` under `--force-unquiet`); 1 a harness / adapter
+/ store error, nothing written; 3 the pre-flight refused, nothing
+written; 4 (v1.4) the record is written and indexed with status
+`inconclusive-spread`.
 
 ## 5. The reporter (`report.py`, [B5])
 

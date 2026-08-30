@@ -45,8 +45,25 @@ def cmd_run(args):
     print("record_id  %s" % rid)
     print("tier       %s" % setup.get("tier", "pinned"))
     print("status     %s" % setup["status"])
+    print("agreement  %s" % rd_agreement_line(setup))
     print("rows       %d (%d compile, %d match)" % (len(rows), ncomp, nmatch))
+    # Contract 4, exit code 4 (v1.4, ruling R-6): the record IS written and
+    # indexed; the code is what tells a script (scripts/run_window.sh) that
+    # the cell's trials did not agree, so it can re-measure ONCE.
+    if setup["status"] == harness.STATUS_SPREAD:
+        return 4
     return 0
+
+
+def rd_agreement_line(setup):
+    """The trial-agreement line FROM THE BLOCK (v1.4), the shape `run`,
+    `quick` and the reporter share (`reduce.agreement_line`); `n/a (v1.3)`
+    for a record with no block."""
+    from . import reduce as rd
+    block = setup.get("trial_agreement")
+    if not isinstance(block, dict):
+        return "n/a (v%s)" % setup.get("schema_version", "?")
+    return rd.agreement_line(block)
 
 
 # `quick` speaks the loop's spellings and the sub-bench's; both map to the
@@ -152,6 +169,15 @@ def cmd_quick(args):
             print("ratio  %s / %s = -  (a cell is excluded; no number to compare)"
                   % (reduced[0][0], reduced[1][0]))
     print("wall   %.1f s" % wall)
+    # v1.4 (gate_shape_v14.md 5 H9): the verdict line FROM THE BLOCK, per
+    # testee; at quick's default 3 trials the rule cannot judge and says so.
+    for tid, res, _f, _r in reduced:
+        block = res.setup.get("trial_agreement") or {}
+        if block.get("verdict") == "n/a-trials":
+            print("trial agreement: %-14s n/a (%d trials -- the rule needs 5, "
+                  "odd; pass --trials 5 to judge)" % (tid, block.get("trials", 0)))
+        else:
+            print("trial agreement: %-14s %s" % (tid, rd.agreement_line(block)))
     for tid, res, _f, _r in reduced:
         print("record %s" % res.path)
     if args.report:
@@ -168,30 +194,52 @@ def cmd_index(args):
     n = store.index(args.store)
     print("index: %d record(s) -> %s"
           % (n, os.path.join(args.store, "index.tsv")))
+    # v1.4 (ruling R-6): the per-status breakdown beside the total, so a
+    # window script's log says how many cells landed `inconclusive-spread`.
+    counts = store.status_breakdown(args.store)
+    print("index: by status: %s"
+          % (", ".join("%s %d" % (k, v) for k, v in counts) or "(none)"))
     return 0
 
 
 def cmd_quiet(args):
+    """Sample the box and judge EVERY sample through `quiet.gate()` -- the
+    same instrument and the same decision function a `run`'s pre-flight
+    uses (ruling R-7): load1, the per-core 5-s average, the target core's
+    own reading and the missing-row clause. Exit 3 if any sample produced
+    a reason. `pinning` is computed first, as the harness does, so the
+    target clauses are keyed on the same `cpu` a run would pin to."""
     from . import quiet
-    worst = None
+    pinning = quiet.pinning(args.pin)
+    any_reasons = False
     for i in range(args.samples):
-        load = quiet.loadavg()
-        occ = quiet.occupancy(exclude_cpu=args.pin)
-        print("load1 %.2f  occupancy %s  max_busy_pct %s  (%d s average)"
-              % (load[0], occ["verdict"], occ["max_busy_pct"],
+        load, occ = quiet.check(exclude_cpu=pinning["cpu"])
+        reasons = quiet.gate(load, occ, force=True)
+        tgt = occ.get("target_busy_pct", "n/a") if "target_busy_pct" in occ else "n/a (unpinned)"
+        print("load1 %.2f  occupancy %s  max_busy_pct %s  target_busy_pct %s  "
+              "(%d s average)"
+              % (load["load1"], occ["verdict"], occ["max_busy_pct"], tgt,
                  quiet.OCCUPANCY_SECONDS))
-        if occ["max_busy_pct"] is not None:
-            worst = max(worst or 0.0, occ["max_busy_pct"])
+        for r in reasons:
+            print("   - %s" % r)
+        any_reasons = any_reasons or bool(reasons)
     print()
-    if args.pin is not None:
-        print("target cpu%d excluded; its SMT sibling(s) %s are judged like "
-              "any other core (BD7)"
-              % (args.pin, quiet.smt_siblings(args.pin) or "unknown"))
-    print("thresholds in force: load1 <= %.2f, max_busy_pct <= %.2f"
-          % (quiet.LOAD1_LIMIT, quiet.MAX_BUSY_PCT_LIMIT))
-    print("derivation: docs/design/quiet_baseline.md")
-    if worst is not None and worst > quiet.MAX_BUSY_PCT_LIMIT:
-        print("VERDICT: NOT QUIET (worst sample %.2f%% busy)" % worst)
+    if pinning["cpu"] is not None:
+        print("target cpu%d judged by its own clause (v1.4); its SMT "
+              "sibling(s) %s are judged like any other core (BD7)"
+              % (pinning["cpu"], quiet.smt_siblings(pinning["cpu"]) or "unknown"))
+    elif args.pin is not None:
+        print("--pin %d given but pinning is %s on this box: the target "
+              "clauses are inert, as they would be in a run"
+              % (args.pin, pinning["mode"]))
+    print("thresholds in force: load1 <= %.2f, max_busy_pct <= %.2f, "
+          "target_busy_pct <= %.2f"
+          % (quiet.LOAD1_LIMIT, quiet.MAX_BUSY_PCT_LIMIT, quiet.MAX_BUSY_PCT_LIMIT))
+    print("derivation: docs/design/quiet_baseline.md; the gate: "
+          "docs/design/gate_shape_v14.md 1")
+    if any_reasons:
+        print("VERDICT: NOT QUIET (a run's pre-flight would refuse; the "
+              "reasons are listed per sample above)")
         return 3
     print("VERDICT: quiet")
     return 0
@@ -239,6 +287,10 @@ def build_parser():
 A CELL is one (sub-bench version x testee) pair. The run refuses on a box
 that is not quiet (exit 3) unless --force-unquiet, in which case the record
 is written with status `inconclusive-load` and the reporter will not rank it.
+Exit 4 (v1.4): the record was written and indexed with status
+`inconclusive-spread` -- the box was quiet but the trials did not agree
+(or a pinned run lacked the five odd trials the rule needs); a window
+script re-measures such a cell ONCE.
 
 NOTE ON --testee: the id here is the adapter's CONFIG id (`pcre2-jit`). The
 record and the store path use the DERIVED testee_id
@@ -379,7 +431,9 @@ min/max, pass-rate, give-ups by code, and the ratio testee/vs.
                         "quiet.OCCUPANCY_SECONDS x 1 s of mpstat judged on "
                         "its average (BD7)")
     q.add_argument("--pin", type=int, default=None, metavar="CPU",
-                   help="exclude this core from the occupancy check")
+                   help="the core a run would pin to: excluded from the "
+                        "non-target judgement and judged by the target "
+                        "clause (v1.4), exactly as `run --pin` does")
     q.set_defaults(func=cmd_quiet)
 
     t = sub.add_parser("testees", help="list the testees the adapters provide")
