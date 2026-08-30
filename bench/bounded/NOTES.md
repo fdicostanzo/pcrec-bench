@@ -56,16 +56,16 @@ compiler's size follows). m/n is match / search_short / throughput.
 
 | pattern | text | purpose | m/n |
 |---|---|---|---|
-| `year4` | `\d{4}` | a fixed-width digit field; the near-miss is 3 digits | 1/30 · 13/30 · 1/4 |
-| `hex32` | `[0-9a-f]{32}` | a 32-hex id; the near-miss is 31 hex (fails at the 32nd repetition) | 1/30 · 4/30 · 1/4 |
-| `pw-8-64` | `.{8,64}` | a password length rule; 7 bytes fails at the 8th repetition, 65 fails at `\z` after 64 | 16/30 · 27/30 · 4/4 |
-| `line-80` | `.{80,}` | a line-length rule: an OPEN count; the everyday `{n,}` | 10/30 · 10/30 · 4/4 |
-| `dotted4` | `(?:\d{1,3}\.){3}\d{1,3}` | nested counts with a literal separator: unambiguous; three octets fails inside the 3rd group repetition, a 4-digit last octet fails at `\z` | 1/30 · 4/30 · 0/4 |
-| `csv5` | `(?:[^,\n]{0,32},){4}[^,\n]{0,32}` | a five-field record: a bounded negated class under a bounded group; four fields fails at the 4th comma | 1/30 · 3/30 · 0/4 |
-| `ctx-lazy-64` | `\b(?:fail\|abort\|panic)\b.{0,64}?\b(?:disk\|memory\|socket\|quota)\b` | the bounded-context shape, rung 64 | 1/30 · 1/30 · 0/4 |
-| `ctx-lazy-256` | … `.{0,256}?` … | rung 256 — one rung above the count the loglines witness overflowed pcrec's DFA at | 2/30 · 3/30 · 0/4 |
-| `ctx-lazy-1024` | … `.{0,1024}?` … | rung 1024 | 2/30 · 3/30 · 0/4 |
-| `ctx-greedy-256` | … `.{0,256}` … | the greedy twin of rung 256: same language, same count, greedy gap — separates "lazy" from "a bounded gap before a `\b` alternation" as the cause | 2/30 · 3/30 · 0/4 |
+| `year4` | `\d{4}` | a fixed-width digit field; the near-miss is 3 digits | 1/30 · 13/30 · 2/5 |
+| `hex32` | `[0-9a-f]{32}` | a 32-hex id; the near-miss is 31 hex (fails at the 32nd repetition) | 1/30 · 4/30 · 2/5 |
+| `pw-8-64` | `.{8,64}` | a password length rule; 7 bytes fails at the 8th repetition, 65 fails at `\z` after 64 | 16/30 · 27/30 · 5/5 |
+| `line-80` | `.{80,}` | a line-length rule: an OPEN count; the everyday `{n,}` | 10/30 · 10/30 · 5/5 |
+| `dotted4` | `(?:\d{1,3}\.){3}\d{1,3}` | nested counts with a literal separator: unambiguous; three octets fails inside the 3rd group repetition, a 4-digit last octet fails at `\z` | 1/30 · 4/30 · 0/5 |
+| `csv5` | `(?:[^,\n]{0,32},){4}[^,\n]{0,32}` | a five-field record: a bounded negated class under a bounded group; four fields fails at the 4th comma | 1/30 · 3/30 · 0/5 |
+| `ctx-lazy-64` | `\b(?:fail\|abort\|panic)\b.{0,64}?\b(?:disk\|memory\|socket\|quota)\b` | the bounded-context shape, rung 64 | 1/30 · 1/30 · 0/5 |
+| `ctx-lazy-256` | … `.{0,256}?` … | rung 256 — one rung above the count the loglines witness overflowed pcrec's DFA at | 2/30 · 3/30 · 0/5 |
+| `ctx-lazy-1024` | … `.{0,1024}?` … | rung 1024 | 2/30 · 3/30 · 0/5 |
+| `ctx-greedy-256` | … `.{0,256}` … | the greedy twin of rung 256: same language, same count, greedy gap — separates "lazy" from "a bounded gap before a `\b` alternation" as the cause | 2/30 · 3/30 · 0/5 |
 
 The four `ctx-*` patterns are a count ladder of their own, on the MATCH-axis
 shape. `pattern_facts.tsv` says what PCRE2's analysis makes of them: NO
@@ -77,20 +77,26 @@ precheck helps them and every engine scans.
 
 | pattern | text | rung / product | what it isolates | m/n |
 |---|---|---|---|---|
-| `cls-upto-256` | `[a-z]{0,256}` | 256 | the class-body `{0,n}` skeleton — [ENG-COUNT]'s shape — at its small end | 3/30 · 30/30 · 4/4 |
-| `cls-upto-4096` | `[a-z]{0,4096}` | 4096 | ″ | 4/30 · 30/30 · 4/4 |
-| `cls-upto-16384` | `[a-z]{0,16384}` | 16384 | ″ — predicted the LARGEST ACCEPTED artifact in the bench (below) | 4/30 · 30/30 · 4/4 |
-| `cls-upto-32768` | `[a-z]{0,32768}` | 32768 | ″ — the predicted first REFUSAL for pcrec (below) | 4/30 · 30/30 · 4/4 |
-| `cls-upto-65535` | `[a-z]{0,65535}` | 65535 | ″ at PCRE2's own count ceiling (`{0,65536}` is refused by the oracle) | 4/30 · 30/30 · 4/4 |
-| `cls-atleast-4096` | `[a-z]{4096,}` | 4096 / open | the OPEN count: 4096 mandatory repetitions then a loop — the control with no upper bound to unroll | 0/30 · 0/30 · 3/4 |
-| `cls-lazy-16384` | `[a-z]{0,16384}?` | 16384 | the lazy twin of the 16384 rung (greedy vs lazy at a large count) | 4/30 · 30/30 · 4/4 |
-| `grp-upto-1024` | `(?:a\|[b-z]){0,1024}` | 1024 | the GROUP body, same language as `[a-z]{0,1024}`: a DFA sees a class, a body-replicating compiler sees a group, PCRE2 replicates it per count (its last accepted octave: 2048 is refused, `oracle_limits.tsv`) | 4/30 · 30/30 · 4/4 |
-| `nest2-4` | `(?:\d{1,4}){1,4}` | 4 / 16 | two-deep nest, small: 17 digits is a near-miss the oracle finishes | 3/30 · 26/30 · 1/4 |
-| `nest2-64` | `(?:\d{1,64}){1,64}` | 64 / 4096 | two-deep nest, large: the census's "nested bounded repeat" shape at product 4096 | 7/30 · 26/30 · 1/4 |
-| `nest3-3` | `(?:(?:\d{1,3}){1,3}){1,3}` | 3 / 27 | three-deep nest, small: 28 digits is a near-miss the oracle finishes (≈ 3 ms on the interpreter) | 5/30 · 26/30 · 1/4 |
-| `nest3-16` | `(?:(?:\d{1,16}){1,16}){1,16}` | 16 / 4096 | three-deep nest, large: product 4096 at depth 3 vs `nest2-64`'s at depth 2 | 7/30 · 26/30 · 1/4 |
-| `nest2-letters-6` | `(?:[a-z]{1,6}){1,6}` | 6 / 36 | the ambiguous nest the MATCH axis pays for: every letter run over 36 is a near-miss a backtracker decomposes 7^6 ways (≈ 1.7 ms on the interpreter, measured on the oracle) while a DFA is linear | 1/30 · 20/30 · 3/4 |
-| `floor` | `:` | — | the per-call floor control (below) | 0/30 · 6/30 · 0/4 |
+| `cls-upto-64` | `[a-z]{0,64}` | 64 | 0.2 knee rung: the skeleton below the everyday band (`pw-8-64`'s count) | 2/30 · 30/30 · 5/5 |
+| `cls-upto-128` | `[a-z]{0,128}` | 128 | 0.2 knee rung: the 64/256 midpoint | 2/30 · 30/30 · 5/5 |
+| `cls-upto-256` | `[a-z]{0,256}` | 256 | the class-body `{0,n}` skeleton — [ENG-COUNT]'s shape — the 0.1 ladder's small end | 3/30 · 30/30 · 5/5 |
+| `cls-upto-512` | `[a-z]{0,512}` | 512 | 0.2 knee rung | 4/30 · 30/30 · 5/5 |
+| `cls-upto-1024` | `[a-z]{0,1024}` | 1024 | 0.2: the group-vs-class pair's class half — same count and language as `grp-upto-1024` | 4/30 · 30/30 · 5/5 |
+| `cls-upto-2048` | `[a-z]{0,2048}` | 2048 | 0.2 knee rung | 4/30 · 30/30 · 5/5 |
+| `cls-upto-4096` | `[a-z]{0,4096}` | 4096 | the skeleton at 4096 (0.1) | 4/30 · 30/30 · 5/5 |
+| `cls-upto-8192` | `[a-z]{0,8192}` | 8192 | 0.2 knee rung | 4/30 · 30/30 · 5/5 |
+| `cls-upto-16384` | `[a-z]{0,16384}` | 16384 | (0.1) — predicted the LARGEST ACCEPTED artifact in the bench (below) | 4/30 · 30/30 · 5/5 |
+| `cls-upto-32768` | `[a-z]{0,32768}` | 32768 | (0.1) — the predicted first REFUSAL for pcrec (below) | 4/30 · 30/30 · 5/5 |
+| `cls-upto-65535` | `[a-z]{0,65535}` | 65535 | (0.1) at PCRE2's own count ceiling (`{0,65536}` is refused by the oracle) | 4/30 · 30/30 · 5/5 |
+| `cls-atleast-4096` | `[a-z]{4096,}` | 4096 / open | the OPEN count: 4096 mandatory repetitions then a loop — the control with no upper bound to unroll | 0/30 · 0/30 · 3/5 |
+| `cls-lazy-16384` | `[a-z]{0,16384}?` | 16384 | the lazy twin of the 16384 rung (greedy vs lazy at a large count) | 4/30 · 30/30 · 5/5 |
+| `grp-upto-1024` | `(?:a\|[b-z]){0,1024}` | 1024 | the GROUP body, same language as `[a-z]{0,1024}`: a DFA sees a class, a body-replicating compiler sees a group, PCRE2 replicates it per count (its last accepted octave: 2048 is refused, `oracle_limits.tsv`) | 4/30 · 30/30 · 5/5 |
+| `nest2-4` | `(?:\d{1,4}){1,4}` | 4 / 16 | two-deep nest, small: 17 digits is a near-miss the oracle finishes | 3/30 · 26/30 · 2/5 |
+| `nest2-64` | `(?:\d{1,64}){1,64}` | 64 / 4096 | two-deep nest, large: the census's "nested bounded repeat" shape at product 4096 | 7/30 · 26/30 · 2/5 |
+| `nest3-3` | `(?:(?:\d{1,3}){1,3}){1,3}` | 3 / 27 | three-deep nest, small: 28 digits is a near-miss the oracle finishes (≈ 3 ms on the interpreter) | 5/30 · 26/30 · 2/5 |
+| `nest3-16` | `(?:(?:\d{1,16}){1,16}){1,16}` | 16 / 4096 | three-deep nest, large: product 4096 at depth 3 vs `nest2-64`'s at depth 2 | 7/30 · 26/30 · 2/5 |
+| `nest2-letters-6` | `(?:[a-z]{1,6}){1,6}` | 6 / 36 | the ambiguous nest the MATCH axis pays for: every letter run over 36 is a near-miss a backtracker decomposes 7^6 ways (≈ 1.7 ms on the interpreter, measured on the oracle) while a DFA is linear | 1/30 · 20/30 · 3/5 |
+| `floor` | `:` | — | the per-call floor control (below) | 0/30 · 6/30 · 0/5 |
 
 **Why `{0,n}` in search reads 30/30.** An optional repeat matches the empty
 string at offset 0 on every subject, so every `cls-upto-*`, `cls-lazy-*`
@@ -100,15 +106,16 @@ The regimes where those rungs do work are `match` (the run must be the
 whole subject: 256 letters match `{0,256}`, 257 fail at `\z`) and
 `throughput` (find-all over a 4/16/64 KB run drives the counter to its full
 value: `cls-upto-65535` on the 64 KB run is one match of 65535 bytes and a
-1-byte remainder). `cls-lazy-16384` under find-all is 4097 / 16385 / 65537
-EMPTY matches — the lazy quantifier's honest answer, and a per-call number.
+1-byte remainder). `cls-lazy-16384` under find-all is 4097 / 16385 / 65537 empty
+matches on the letter runs and 4097 / 16385 on the digit runs — the lazy
+quantifier's honest answer, and a per-call number.
 
 **Everything nests non-capturing.** Every group in the set is `(?:…)`;
 `gen_expectations.py` re-checks on every run that no capturing group
 participated in any match and says so on stderr (shared code,
 `pcrecbench/expectations.py`). The span is the whole observable answer.
 
-**Declared variants: none.** All twenty-four patterns are canonical PCRE2
+**Declared variants: none.** All thirty patterns are canonical PCRE2
 spellings and every adapter runs the canonical text byte for byte, so every
 record carries `patterns[].variant = null`.
 
@@ -125,7 +132,9 @@ point at which it first fires. Here that point is a COUNT. The ladder is
 geometric where growth is the question (256 → 4096 → 16384: three accepted
 points spanning two decades) and dense where the refusal is predicted
 (16384 → 32768 → 65535), so the first refusing rung brackets the boundary
-to within 2×. A refusal is recorded by the harness as `did-not-compile` with
+to within 2×; since 0.2 ([B21]) the class-body skeleton is FILLED to a
+uniform factor-of-2 spacing from 64 up ("What 0.2 added", below), so a
+strategy change anywhere on it is bracketed the same way. A refusal is recorded by the harness as `did-not-compile` with
 the engine's own diagnostic, per pattern and per form, and the cell simply
 has no match rows under it (harness.py: a pattern that did not compile is
 skipped, never an error). NOTHING BELOW IS A MEASUREMENT — every line is a
@@ -204,6 +213,81 @@ accepts and states (below, "What was cut").
   same per call on a backtracker — the 1024 rung's number should not exceed
   the 64 rung's there.
 
+## What 0.2 added ([B21]): the knee rungs, the group-vs-class pair, t-digits-004k
+
+**What changed, and what did not.** Six class-ladder rungs (`cls-upto-64`,
+`-128`, `-512`, `-1024`, `-2048`, `-8192`) and one throughput subject
+(`t-digits-004k`, 4096 random digits). NOTHING ELSE: every 0.1 pattern keeps
+its id and its exact bytes, `manifest.tsv` is byte-identical, and the four
+0.1 throughput subjects reproduce byte for byte — the new run is drawn AFTER
+them in `gen_throughput_subjects.py`, so their rng draws are the same stream
+prefix, and `manifest_throughput.tsv`'s four 0.1 sha256s are unchanged.
+
+**Why: the knee.** The 0.1 class ladder was three points spanning two
+decades (256 / 4096 / 16384) plus the dense refusal band. If an
+implementation changes strategy for `[a-z]{0,n}` somewhere — a count at
+which one way of compiling or running the repeat stops being the faster
+choice — three points two decades apart can only say "somewhere in here". At
+uniform factor-of-2 spacing (64, 128, 256, 512, 1024, 2048, 4096, 8192,
+16384, 32768, 65535) any knee in 64..65535 is bracketed within 2× by
+adjacent rungs, and 64/128 bracket BELOW the everyday band (`hex32` at 32,
+`pw-8-64` at 64), where 0.1 had no ladder point at all.
+
+**The group-vs-class pair.** `cls-upto-1024` is `[a-z]{0,1024}` beside 0.1's
+`grp-upto-1024` (`(?:a|[b-z]){0,1024}`): the same count, the same language
+cardinality, group vs class body — so the difference between the two rows in
+artifact size or compile time, on any engine, is the body representation and
+nothing else. On the ORACLE the pair is already a reading: `oracle_limits
+.tsv` has the class skeleton accepting every count to the 65535 ceiling
+while the group skeleton's compiled-size ceiling refuses at 2048 — a
+repeated group is replicated per count, a repeated single unit is one
+opcode with a counter.
+
+**t-digits-004k.** With it both content axes have a small and a large run
+(letters 4 / 16 / 64 KB; digits 4 / 16 KB), so the knee is readable PER
+SUBJECT on the matching-content axis (letters: the counter runs to the rung
+or the run end) and on the non-matching axis (digits: `{0,n}` of `[a-z]` is
+empty matches at every offset — pure per-call dispatch).
+
+**Predicted readings — the oracle's own behaviour, nothing else** (this
+author is blinded to engine internals, as 0.1's was; whether any TESTEE has
+a knee, and at which rung, is exactly what the window measures):
+
+- On the letter runs the find-all match count halves as the rung doubles,
+  until the rung reaches the run: on `t-letters-004k` the ladder reads
+  65 / 33 / 17 / 9 / 5 / 3 / 2 / 2 / 2 / 2 / 2 matches (`expectations.tsv`)
+  — a known 1/n curve, so a testee's per-subject time read against it
+  separates per-match dispatch from per-byte scanning, rung by rung.
+- On the digit runs every `cls-upto-*` cell is 4097 / 16385 empty matches:
+  identical answers at every rung, so a digit-run time that MOVES with the
+  rung is a count-dependent per-call cost — the knee's signature on the
+  non-matching axis.
+- In `match` the new rungs read 2 / 2 / 4 / 4 / 4 / 4 of 30 (the 36/37-
+  letter runs fit every rung; 256/257 fit from 512 up); in `search_short`
+  all six are 30/30 empty-or-leading matches at 0, like every `{0,n}` rung
+  (above) — dispatch-dominated by design.
+- The oracle compiles all six new rungs (single-unit repeats below its
+  count ceiling; the re-derived `cls-upto` row of `oracle_limits.tsv` is
+  the proof), and no oracle give-up occurred on any of the 1950
+  expectation cells.
+
+**0.1 and 0.2 records NEVER POOL.** The subject sets differ (65 subject
+slots per pattern against 64) and the pattern sets differ, so a set-grain
+sum or median over `bounded@0.1` and one over `bounded@0.2` are sums over
+different work; the reporter's version filter keeps them apart (records
+compare only within one `id@version`, bench/CLAUDE.md). What REMAINS
+comparable across the bump, by construction: any (pattern, subject, regime)
+cell whose pattern id and subject appear in both versions — every 0.1
+pattern and every 0.1 subject is byte-identical in 0.2 — read cell against
+cell, never sum against sum.
+
+**The cost.** Patterns 24 → 30, subject slots 64 → 65: the estimate below
+(updated in place) grows by ≈ 2 min per cell, all of it dispatch-dominated
+`{0,n}` cells — the price of reading the knee's location to within 2×. The
+six new rungs are predicted on the compile axis to behave as the 0.1 rungs
+below 16384 do (all sit below the smallest predicted refusal), so the
+refusal predictions above are untouched by 0.2.
+
 ## The subjects
 
 `gen_subjects.py`, seed **20260829**; `gen_throughput_subjects.py`, seed
@@ -212,7 +296,7 @@ primitive is `random.Random(seed).getrandbits(32)` — `choice`, `sample`,
 `randrange` and `shuffle` are avoided because their internals have moved
 between CPython releases and a committed manifest cannot rest on that.
 
-**Three families, 30 short subjects (3-257 B) + 4 large runs.** The
+**Three families, 30 short subjects (3-257 B) + 5 large runs.** The
 manifest's `description` names the family and the arm in a fixed spelling
 (`field/match`, `field/near-miss`, `field/over-run`, `line/ctx-gap-N`,
 `line/ctx-no-context`, `line/ctx-wrong-order`, `line/ctx-near-miss`,
@@ -225,7 +309,7 @@ column (the loader accepts four or five).
 | FIELDS `f-*` | 13 | 3-65 B | whole-string candidates for the everyday shapes: each shape's exact match, its NEAR-MISS ONE UNIT SHORT (fails at the last repetition: `f-year-3`, `f-hex-31`, `f-pw-7`, `f-quad-3`, `f-csv-4`), and for `pw-8-64` and `dotted4` an OVER-RUN that satisfies the repeat and fails only at `\z` (`f-pw-65`, `f-quad-4x`) |
 | LINES `l-*` | 8 | 50-254 B | ops prose of near-misses (`boundedtext.py`: numbers of ≤ 3 digits, hex of ≤ 12, three-part versions, five-group MACs, `failure`/`aborted`/`panicked`/`disks` where the ctx patterns want whole words); the everyday shapes injected into an exactly allocated minority (`COUNTS`: year4 2, hex32 2, dotted4 2, csv5 2 over the five pool lines); and the ctx structure per line — two WHOLE lines that start with a trigger and end with a context word at gaps 39 and 100 B (`l-00`, `l-01`: the match arm), a mid-line pair at gap 169 (`l-02`), two trigger-and-NO-context lines (`l-03`, `l-04`: the lazy walk finds nothing), one context-before-trigger (`l-05`), one near-miss-words-only (`l-06`), one background (`l-07`) |
 | RUNS `r-*`, `d-*` | 9 | 16-257 B | random letters at 36 / 37 (the `nest2-letters-6` exact maximum and its near-miss) and 256 / 257 (the 256 rung's exact maximum and its over-run); random digits at 16 / 17 (`nest2-4`), 27 / 28 (`nest3-3`) and 256 (`nest2-64`'s and `nest3-16`'s territory, below every large rung's maximum) |
-| LARGE RUNS `t-*` | 4 | 4-64 KB | `throughput/`: letters at 4096, 16384, 65536 and digits at 16384 — the ladder's top rungs driven to their full count under find-all search (`gen_throughput_subjects.py` says why they live here) |
+| LARGE RUNS `t-*` | 5 | 4-64 KB | `throughput/`: letters at 4096, 16384, 65536 and digits at 4096 (0.2) and 16384 — the ladder's top rungs driven to their full count under find-all search, a small and a large run on BOTH content axes since 0.2 (`gen_throughput_subjects.py` says why they live here) |
 
 **The runs are random WITHIN their class, not a repeated byte, and every
 subject reads `periodic: no`.** Inbox I-10 / [B17]: a periodic subject makes
@@ -281,9 +365,9 @@ is a whole-string question.
 
 | regime | subjects | semantics | expectations |
 |---|---|---|---|
-| `match` | all 30 short | `PCRE2_ANCHORED\|PCRE2_ENDANCHORED` at 0 | 87 of 720 cells match |
-| `search_short` | all 30 short (`short_search_max_bytes = 512`; every subject is ≤ 257 B) | unanchored at offset 0 | first-match span; 411 of 720 cells match, most of them the `{0,n}` rungs' empty-or-leading matches at 0 |
-| `throughput` | the 4 large runs | unanchored, find-all | first span + count; 48 of 96 cells match |
+| `match` | all 30 short | `PCRE2_ANCHORED\|PCRE2_ENDANCHORED` at 0 | 107 of 900 cells match |
+| `search_short` | all 30 short (`short_search_max_bytes = 512`; every subject is ≤ 257 B) | unanchored at offset 0 | first-match span; 591 of 900 cells match, most of them the `{0,n}` rungs' empty-or-leading matches at 0 |
+| `throughput` | the 5 large runs | unanchored, find-all | first span + count; 93 of 150 cells match |
 
 `short_search_max_bytes = 512` — between `bench/email`'s 256 and
 `bench/loglines`'s 4096: the LINES are held to ≤ 256 B by the generator
@@ -295,9 +379,10 @@ therefore see the same 30 subjects.
 **The `throughput` regime is declared for the ladder's TOP RUNGS, not for a
 size sweep** — a declaration, not an omission, and the opposite choice from
 `bench/loglines`. This set's give-up axis is the COUNT in the pattern
-(above); the subject size is not swept for its own sake, and the four large
-runs sit on the ladder's rungs (4096 / 16384 / 65536) so `[a-z]{0,4096}`,
-the 16384 rungs and `[a-z]{0,65535}` are each driven to their full count.
+(above); the subject size is not swept for its own sake, and the five large
+runs sit on the ladder's rungs (4 / 16 / 64 KB letters, 4 / 16 KB digits) so
+`[a-z]{0,4096}`, the 16384 rungs and `[a-z]{0,65535}` are each driven to
+their full count, on both content axes since 0.2 (`t-digits-004k`).
 They live in their own regime rather than in `subjects/` for two reasons
 `gen_throughput_subjects.py` states in full: the harness calibrates a
 regime's loop on its MEDIAN subject and caps a trial at 20 s, so a 16 KB
@@ -319,7 +404,7 @@ search m/n 6/30, first-match span [9,10) on all six), and NOWHERE ELSE in
 this set: the two whole ctx lines carry no prefix, no field contains one,
 no run does. So the floor's search number on 24 of the 30 subjects is a
 memchr-class MISS over 3-257 bytes, its match number is a miss on all 30,
-and its throughput number is a full-subject miss on the 4 runs. That is a
+and its throughput number is a full-subject miss on the 5 runs. That is a
 different floor from `bench/loglines`'s (a hit within 30 bytes on 112/112)
 and it is stated so the reader reads it right: here the floor is dispatch
 plus a short memchr, and a member's per-call number read net of it is the
@@ -362,8 +447,8 @@ named.
   ladder's upper rungs stamped `RX_ENGINE_WHY`, and the nests as the
   `_UNROLL_K` candidates. Because pcrec compiles a `plain` and a
   `whole-subject` artifact per pattern, every refusal and every stamp
-  appears twice per record, and the cell-time estimate counts 240 compiles
-  per cell rather than 120. An `_in` (caller-provided frame buffer) entry
+  appears twice per record, and the cell-time estimate counts 300 compiles
+  per cell rather than 150. An `_in` (caller-provided frame buffer) entry
   has something to bind only on VM artifacts, i.e. the `ctx-*` fallbacks and
   whatever `auto` sends to the VM; on a pure-DFA cell the `-in` testees read
   nothing, as on the two earlier sets.
@@ -375,7 +460,8 @@ named.
 
 ## Cell-time estimate, and what was cut to get there
 
-One cell = one testee × 24 patterns × three regimes, at `--trials 5`. The
+One cell = one testee × 30 patterns × three regimes, at `--trials 5`
+(updated in place for 0.2's six rungs and fifth run; "What 0.2 added"). The
 harness calibrates each (pattern, regime) loop so the MEDIAN subject's loop
 is 50 ms and caps a trial's predicted sweep at 20 s (`harness.py`), so a
 trial's sweep is 50 ms × Σᵢ(costᵢ / cost_median) — ≈ n × 50 ms when costs
@@ -384,28 +470,28 @@ are uniform, and more when they are not.
 - `match`: 30 subjects, median 32-36 B. Most patterns diverge within a few
   bytes on most subjects → ≈ 1.5 s per trial; the length-proportional ones
   (`line-80`, the `cls-*` rungs on the 256/257 runs) ≤ 3.8 s (Σ bytes /
-  median ≈ 76). → ≈ 24 × ~2 s ≈ **48 s per trial**. Two hazard rows on
+  median ≈ 76). → ≈ 30 × ~2 s ≈ **60 s per trial**. Two hazard rows on
   BACKTRACKING testees are the exception: `nest2-letters-6` (three
   near-misses at ≈ 1.7 ms against a microsecond median) and `nest3-3` (two
   at ≈ 3 ms) predict the 20 s cap → **+ 2 × 20 s** on `pcre2-*` and
   `pcrec-vm`, not on `pcrec-auto`.
 - `search_short`: 30 subjects; a failing search scans the subject, so the
   mostly-failing everyday shapes cost up to Σ/median ≈ 76 × 50 ms ≈ 3.8 s,
-  while the `{0,n}` rungs match at 0 and cost ≈ 1.5 s → ≈ **60 s per trial**.
-- `throughput`: 4 runs, median 16 KB → Σ/median ≈ 6.25 → ≈ 0.3 s per
-  pattern → **≈ 8 s per trial** (`cls-lazy-16384`'s 65537 empty matches on
+  while the `{0,n}` rungs match at 0 and cost ≈ 1.5 s → ≈ **70 s per trial**.
+- `throughput`: 5 runs, median 16 KB → Σ/median ≈ 6.5 → ≈ 0.33 s per
+  pattern → **≈ 10 s per trial** (`cls-lazy-16384`'s 65537 empty matches on
   the 64 KB run are ≈ 2 ms per iteration; inside that).
-- compile, pcrec only: 24 patterns × 2 forms × 5 trials = 240 emits. The
+- compile, pcrec only: 30 patterns × 2 forms × 5 trials = 300 emits. The
   table artifacts are predicted cheap for gcc (the spec's 0.34 s for
   1.37 MB), the two predicted refusals cost only pcrec's own emit, and the
   unknown is the two large nests under body replication — 1-30 s of gcc
   each, × 10. → **1-6 min**, dominated by `nest2-64` / `nest3-16`.
 
-**≈ 10 min for a pcrec-auto cell before compile (11-16 with it), ≈ 13 min
+**≈ 12 min for a pcrec-auto cell before compile (13-18 with it), ≈ 15 min
 for a pcre2 or pcrec-vm cell** (the two cap-hitting hazard rows are 3 of
-those minutes). At `--trials 3`: ≈ 6 / 8 min. The dominant term is
-`n_subjects × 50 ms × patterns × regimes × trials` — 24 × 64 slots × 0.05 s
-× 5 = 6.4 min as a FLOOR before any skew — so the levers are, in order,
+those minutes). At `--trials 3`: ≈ 7 / 9 min. The dominant term is
+`n_subjects × 50 ms × patterns × regimes × trials` — 30 × 65 slots × 0.05 s
+× 5 = 8.1 min as a FLOOR before any skew — so the levers are, in order,
 `--trials`, the pattern count, and the subject count.
 
 **What was cut to get here** (the first cut was 30 patterns × 43 short
