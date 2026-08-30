@@ -1171,8 +1171,12 @@ def check_tier_schema():
     ex = os.path.join(ROOT, "schema", "examples")
     scratch = [f for f in _glob.glob(os.path.join(ex, "*.jsonl"))
                if "_local-" in os.path.basename(f)]
+    # "old" = the examples with NO `tier` key at all -- the 1.1 pair. The
+    # 1.4 example ([B20]) carries `tier: pinned` explicitly and is the
+    # ACCEPT half of check-schema's own gates, not this check's subject.
     old = [f for f in _glob.glob(os.path.join(ex, "*.jsonl"))
-           if "_local-" not in os.path.basename(f)]
+           if "_local-" not in os.path.basename(f)
+           and "tier" not in _json.loads(open(f, encoding="utf-8").readline())]
     if len(scratch) != 1:
         bad("scratch example present", "found %d" % len(scratch))
         return
@@ -2868,9 +2872,9 @@ def check_note_length_guard():
     joined = rec.join_notes(seventy_two, prefix="quiet window run")
     elided = 72 - joined.count("iters for (")
     if len(joined) <= cap and "note(s) elided" in joined and \
-            ("[+%d note(s) elided" % elided) in joined:
+            ("[+%d calibration/adapter note(s) elided" % elided) in joined:
         ok("note guard: 72 real sentences fit under the cap",
-           "%d -> %d bytes, %d elided, marker names the count"
+           "%d -> %d bytes, %d elided, marker names the count and the class"
            % (len(raw), len(joined), elided))
     else:
         bad("note guard: 72 real sentences", "len=%d joined=%r"
