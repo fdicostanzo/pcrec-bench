@@ -89,7 +89,9 @@ JIT's entry cost exceeds the interpreter's memchr-class dismissal. Ledger
 docs/dev/ledgers/2026-08-30-bounded-0.1-first-sample-36d5963.md §2.7.
 Reading (unverified): JIT call overhead + its own scan loop vs the
 interpreter's `memchr`/first-code-unit fast path. Not a bug; a shape
-where "jit = faster" does not hold. Next: none owed.
+where "jit = faster" does not hold. Re-measured at the 96e44c2 window
+(2026-08-30, the same binaries): csv5 3,151 vs 1,723 ns (×1.83), floor
+4,063 vs 1,716 (×2.37) — stable. Next: none owed.
 
 ## U3 — libpcre2 10.46 compiles a bounded REPEATED GROUP by replication (~51 B per repetition; `(?:a|[b-z]){0,1024}` = 52,377 B, interp compile 33,030 ns, jit 108,590 ns) where a repeated CLASS is count-independent (197 B flat from `{0,256}` to `{0,65535}`) (OBSERVED 2026-08-30; NOT-A-BUG)
 

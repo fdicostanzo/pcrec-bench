@@ -1591,3 +1591,43 @@ reports against docs/dev/ledgers/…§6 and I-18's table; O-10 with
 [B19]'s four stamp-semantics findings. (This entry re-written once: an
 unquoted heredoc had shell-substituted its backticked text — a lesson
 for wake.md.)
+
+## 2026-08-30 (EDT, ~13:4x), fifth session (part 6) — the abi-12 AFTER ledger read: [OPT-4] SPLITS; O-10 sent; I-19 acked ([B20] proceeds, [B21] opened)
+
+I-19 (071638f): BD7 RATIFIED as the gate on the test-run evidence; Frank's
+(2)-(4) become the v1.4 SPREAD RULE — [B20] proceeds (design + panel
+after O-10); candidate 2 (the {0,n} class-count knee) is pcrec's [OPT-5]
+behind [LIM-1] (a single limits table, `--list-limits`); O-9 asks
+(iii)/(vi) chartered → [B21] bounded@0.2; the size-cap rescue's
+`_ENGINE_SEL "selected"` folded into [LIM-1] — bucketed on the `_LANG_WHY`
+prefix meanwhile (9e45d92, test + control).
+
+THE AFTER LEDGER (lane ledgerafter, opus, read-only, ~25 min; archived
+docs/dev/ledgers/2026-08-30-abi12-after-96e44c2.md, 872 lines; the AFTER
+reports read from the reports96 worktree before their merge). [OPT-4]
+SPLITS by whether anything survives the collapse: the ctx band (search
+22,5xx → 8,1xx-8,8xx ns/set, 4.0-5.0× behind the JIT → 1.5-1.8×;
+throughput 4.15 → 1.86 ns/B) and level-context (search ×4.60 faster,
+13.44× → 2.92× behind the JIT; 1 MB 9.83 → 2.67 ns/B) WIN — the largest
+gain the bench has measured on a pin — and the rescued fallback now beats
+pcrec's own `--engine=vm` 2.2-4.6× (auto ÷ vm 1.00 → 0.32-0.45; vm flat):
+checklist 13's finding fired. `[a-z]{0,32768}` LOSES 3.6×: `X{m,n}` →
+`X{min(m,1),}` makes it `[a-z]*`, nullable, admitting at every position;
+t-digits-016k, the subject I-18 said would dismiss, is ×1.65 slower; the
+three `cls-*` hybrids stamp `dfa prefilter=none` beside
+`vm_prefilter=hybrid` — the structured signal that separates the losing
+shape. Ten labelled points, one predicate (non-nullability of the
+collapsed language) — O-10 candidate 1, ask (i). Controls flat (+216/224
+B stamp block everywhere; [OPT-K]/[ENG-ABS]/cliffs/floors unmoved;
+cls-upto-65535 still refused; the wasted DFA builds unchanged; http-5xx's
+×1.03 flag retired) except `year4` +4,096 B with identical stamps (ask
+iii). The emit/code-bytes survey: the class ladder is 100 % table data
+(code flat 11.6-12.7 KB; ~41-43 B of C and ~12 B of .so per count). The
+[OPT-5] frame: the counted DFA loses 5.1-5.9× to the VM on letters at
+EVERY rung from 256 and wins 1.75× on digits at every rung — the knee is
+a property of the subject, not the count; [B21] adds rungs at 64/128 too
+and asks for predictions per subject. Checklist 12/3/2/1. Reporter gap:
+the AFTER reports hold one pin each, so R8's Δ column fired on 0 of
+3,636 rows — a repin-form render with both pins follows ([B19] close-out).
+O-10 (this commit) carries all of it plus [B19]'s four stamp findings and
+six asks. U2 re-measured. Reports lane: make check running; merge next.

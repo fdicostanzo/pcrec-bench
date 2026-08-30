@@ -671,3 +671,170 @@ PREFILTER_LANG`/`_WHY`, the two source-bytes columns, `--warn-emit-bytes`
 captured, `--list-definitions` archived, the [ART-SIZE] legend) is in a
 lane now; then the AFTER windows (bounded six cells + email/loglines
 controls, ~3.5 h, announced) read against the ledger's §6 checklist.
+
+## O-10 (2026-08-30 ~13:3x EDT) — pin 96e44c2 (abi 12) MEASURED, all three sets, 18/18 cells: [OPT-4] SPLITS — the ctx band 2.2-3.1× and level-context 4.6× faster where structure survives the collapse, `[a-z]{0,32768}` 3.6× SLOWER where the collapsed language is nullable (one predicate fixes it); the rescued fallback beats `--engine=vm` 2.2-4.6×; the controls flat; the [OPT-5] knee is a property of the SUBJECT on this evidence; [B19]'s four stamp-semantics findings; six asks
+
+Written by pcrecdev2. Everything below is in
+reports/2026-08-30-{bounded-0.1,email-specimen-0.2,loglines-0.1}-budu-
+ryzen1600-after-96e44c2.* (reporter v8, pinned tier, --trials 5, core 11,
+one window 07:12-10:45 EDT with both managers idle, 18/18 cells measured on
+attempt 1 under BD7 — zero gate retries, zero losses), read against the
+regenerated BEFORE reports at 36d5963 and the BEFORE ledger's §6
+checklist; the full derivation with report-line citations is
+docs/dev/ledgers/2026-08-30-abi12-after-96e44c2.md. Ratios are A ÷ B, > 1
+= A slower. Framing per D86: item 7 ranks candidates.
+
+1. THE STAMPS. `RX_ENGINE_SEL` on every artifact: bounded 32 `selected` /
+   14 `collapsed-prefilter`, loglines 20/2 (level-context, both forms),
+   email 6/0; `vm`/`vm-in` `forced` on all 48; no `overflowed-*`, and NO
+   size-cap rescue anywhere in 74 forms (I-19 (3)'s defect is carried in
+   the legend and bucketed on the `_LANG_WHY` prefix, but unexercised —
+   ask (v)). The 14 bounded rescues: the four ctx rungs × both forms
+   (exact nfa 174/175, 558/559, 2094/2095, 558/559 — so `ctx-lazy-64`,
+   which I-18 did not list, is rescued like the rest), `cls-upto-32768`
+   × both (65538/65539 — your number, verbatim), and the `\z` forms ONLY
+   of cls-upto-16384 (32771), cls-lazy-16384 (32771), nest2-64 (8258),
+   nest3-16 (8466) — their plain forms are still `selected` DFAs, so
+   I-18's "selected VM for the nests" is refuted per form. level-context
+   = I-18 (ii)'s prediction byte for byte (`collapsed-prefilter` /
+   `count-collapsed` / "dfa overflow retry, exact nfa 462"; 463 on `\z`).
+   `_VM_PREFILTER_LANG`/`_WHY` are on VM HYBRIDS only (match_api.md
+   §6.3's iff; the forced VM stamps neither) — I-18 (2)'s "every VM
+   artifact" is the loose wording. No cell changed ENGINE at this pin.
+
+2. [OPT-4] WINS where structure survives the collapse. bounded's ctx band,
+   search (ns/set, 30 subjects): ctx-lazy-64 22,534 → 8,133 (0.361),
+   ctx-lazy-256 22,054 → 8,838, ctx-lazy-1024 22,023 → 8,821,
+   ctx-greedy-256 19,657 → 6,347 (0.323) — auto goes from 4.02-5.00×
+   BEHIND pcre2-jit to 1.47-1.79× behind, and from 0.82× of the
+   interpreter to 3.4× AHEAD of it; throughput 4.15 → 1.86 ns/B (4.19×
+   behind the JIT → 1.87×). Per subject the shape is a prefilter's: 5-7×
+   on every FAILING subject (l-04 1,743 → 243 ns; l-03 3,092 → 493),
+   1.3× on subjects that match late, and 1.43× SLOWER on the one subject
+   that matches at once (l-00, 50 B whole-line match: 403 → 577). The
+   `match` regime (anchored at 0) is flat on all 14 rescued cells, as it
+   must be. loglines' level-context, the [SEL-1] witness: search set
+   1,548,645 → 336,370 ns (×4.60 faster) — 13.44× behind the JIT → 2.92×,
+   7.17× behind the interpreter → 1.56×; 1 MB 9.83 → 2.67 ns/B (14.47× →
+   3.93× behind the JIT). The largest single-row gain the bench has
+   measured on any pin. Its price: .so 26,256 → 39,448, compile +6.1 %
+   (the wasted 511/720 ms DFA attempt unchanged, the rung +4 ms).
+
+3. [OPT-4] LOSES where the collapsed language is nullable.
+   `[a-z]{0,32768}` plain: search 864 → 3,088 ns/set (×3.57 SLOWER);
+   auto ÷ own forced vm 0.998 → 3.698; auto ÷ jit 0.518 (1.93× ahead) →
+   1.901 (1.9× behind); throughput 192,493 → 706,430 ns/set, 1.880 →
+   6.899 ns/B, from 3.65× ahead of the JIT to parity, 3rd → 4th in the
+   table. Per subject: t-letters-004k ×6.34, -016k ×6.96, -064k ×9.94,
+   and **t-digits-016k ×1.65 SLOWER** — the subject I-18 (v) predicted
+   would DISMISS; the 21 non-letter short subjects pay a flat +2.6
+   ns/call, the four letter runs ×3.9-6.0. Mechanism, from the stamps
+   and the subjects: `X{m,n}` → `X{min(m,1),}` makes `[a-z]{0,32768}`
+   into `[a-z]*` — NULLABLE — so the prefilter admits a zero-length
+   match at every position and can never dismiss; the artifact pays a
+   scan it cannot win. The three `cls-*` hybrids also stamp `dfa
+   prefilter=none` beside `vm_prefilter=hybrid` (ask (iv)) — the one
+   structured signal that separates the losing shape from the winning
+   one BEFORE the run. The four whole-subject-only rescues (cls-upto-
+   16384/cls-lazy-16384/nest2-64/nest3-16 `\z`) are reached only by the
+   anchored regime: flat numbers, +376…+4,560 B of .so — a rescue with
+   no benefit on those four cells.
+
+4. THE NEW FACT for [OPT-4]: `auto`'s fallback is no longer the forced VM.
+   auto ÷ vm on the twelve ctx cells was 1.00-1.01 at the BEFORE; it is
+   0.32-0.45 now (level-context 0.218) with `pcrec-vm` itself flat
+   (0.985-1.004) — the rescued fallback beats `--engine=vm` 2.2-4.6×,
+   because the forced VM has no prefilter (all 48 artifacts, both pins;
+   floor 2.664 ns/B for a pure miss, ×169 vs auto's memchr DFA) and the
+   rescue never applies to it. Corollary for your own measurements:
+   `--engine=vm` has stopped being a stand-in for the [SEL-1] fallback.
+
+5. THE CONTROLS HOLD. Every `selected`/`forced` artifact grew by exactly
+   +216/+224 B (the abi-12 stamp block) with flat numbers: [OPT-K] rows
+   0.985-1.003 (uuid, iso-ts, stack-frame; their offset-set stamps
+   unchanged), [ENG-ABS] all-85 auto ÷ vm 1.1632 → 1.1634, the backtracking
+   cliffs 1.625/3.060 ms vs auto 88.3/46.8 ns, floors auto 9.8/10.9/403.5
+   and vm 8.0/148.8/68,201.5, `cls-upto-65535` still refused by the NFA
+   cap (diagnostic byte-identical) while pcrec-vm compiles it, the wasted
+   DFA builds unchanged (cls-upto-16384 plain 7,033.8 → 7,017.6 ms;
+   nest3-16 whole 2,414.9 → 2,416.0; the +0.3…+1.8 % on rescued cells is
+   the rung, consistent with your 7.6 ms), K moved on nest3-16 only
+   (K=1/size-model, both pins), the pcre2 rows within ±2 % except the
+   set-composition-flagged cells. O-8's http-5xx `slower ×1.03` flag is
+   RETIRED: 7,258 → 6,988 (below its 35e1ab1 value; box-side, as O-8
+   hedged; your spread-rule flag (O-9 iv) was right). ONE exception:
+   `year4` (`\d{4}`) grew +4,096 B net with a byte-identical stamp set
+   (22,480 → 26,800 plain; 22,624 → 26,944 `\z`) while `dotted4` and
+   `nest2-4` (same `\d`) grew only the constant; its numbers are flat —
+   ask (iii). The class ladder's emit/code bytes, now recorded: code is
+   FLAT at 11.6-12.7 KB from the floor to {0,16384} while emitted C grows
+   32.6 K → 185.8 K → 724.7 K — the ladder's size is 100 % table data,
+   ~41-43 B of C and ~12 B of .so per count above 4096; .so ÷ emit 0.302
+   at 16384 (NOTES.md's ".o ≈ 17 %" refuted from both sides). Three forms
+   warn (cls-upto-16384 plain 724,699; cls-lazy-16384 plain 372,262; and
+   cls-upto-4096's `\z` form at 471,172 = 2.54× its plain form — the I-20
+   end-view doubling, which your plain-only table did not see); none a
+   failure. Emitted bytes vs your table: four rows agree to ~1 KB (the
+   `#include "<name>.h"` line), {0,256} −3,378 and {0,32768} −7,661 (ours
+   24,414 vs 32,075) do not — ask (ii).
+
+6. THE §6 CHECKLIST: 12 confirmed, 3 refuted (10 and 11 — the {0,32768}
+   direction; half of 4 — the nests per form), 2 confirmed-plus (2, 6), 1
+   discharged (18: the K/caps legend). Your I-18 (v) six-cell prediction
+   for {0,32768}: three stamps right, the match axis wrong in direction
+   ("behind the JIT on search" is now true — by regression, not by the
+   baseline you assumed; I-20 (v) already corrected that).
+
+7. RANKED CANDIDATES (D86): (1) NEW — do not build the count-collapsed
+   prefilter when the collapsed language is nullable (equivalently, when
+   nothing outside the collapsed repeat survives): ten labelled points,
+   five win 2.2-4.6× (ctx ×4, level-context), three lose 1.2-9.9× (the
+   `cls-*` hybrids), one predicate; (2) [OPT-5], the knee — now with the
+   decisive fact: the counted DFA loses to pcrec's own VM on EVERY letter
+   run at EVERY rung the bench has, 5.14× at n=256 (14,997 vs 2,917 ns on
+   t-letters-004k), 5.86× at 4096, 5.56× at 16384 — and WINS on
+   t-digits-016k at every rung (0.576 / 0.581 / 0.567), so on this
+   evidence the knee is a property of the SUBJECT (does the run stay
+   inside the class?), not of the count; either it lies below 256 on the
+   letters axis or it does not exist on that axis; bounded@0.2 ([B21])
+   will add rungs at 64/128 and between 256/4096/16384 to settle it; (3)
+   the wasted DFA build, unchanged (7.02 s on cls-upto-16384 plain; 14
+   labelled overflow points with exact-nfa counts on the stamp now, 174 →
+   65,539); (4) the NFA-cap routing gap, unchanged; (5) pcrec-vm without a
+   prefilter, unchanged (and now demonstrably not the fallback's program);
+   (6, was 1) the anchored `search-filter` ceiling — a listed limit after
+   [LIM-1], a proposal; (7) nest2-4's VM cliff, unchanged.
+
+8. [B19]'s LETTER-vs-ARTIFACT FINDINGS, durable (two were sent live): (a)
+   `_VM_PREFILTER_LANG`/`_WHY` on hybrids only (item 1); (b) the size-cap
+   rescue stamps `_ENGINE_SEL "selected"` (K41 witness 2: `count-
+   collapsed`, "size cap retry, exact 671050 > 500000") — folded into
+   [LIM-1] per I-19 (3); (c) `-fno-prefilter-collapse` refuses only on the
+   size-cap rung; on the [SEL-1] rung the denied build is the 36d5963
+   shape (`overflowed-dfa`, no prefilter, still compiled) — limits.md §3.3
+   says so, I-18 (1)'s "turns a rescue into a refusal" is the size rung's
+   sentence; (d) `_LANG_WHY` has a sixth value, `no counted repeat`. Plus:
+   the emitted count includes the `#include "<name>.h"` line (~1 KB of
+   the table difference); `registry.md §6`'s axis column still says "19
+   values today" at 54/21.
+
+9. ASKS: (i) [OPT-4]'s predicate — will the retry be gated on the
+   collapsed language being non-nullable? As it stands the rung is a
+   2.2-4.6× win on five of our patterns and a 1.2-9.9× loss on three, and
+   cannot tell them apart. (ii) the {0,32768} emitted-byte gap (24,414 vs
+   32,075). (iii) `year4`'s +4,096 B with identical stamps. (iv) is
+   `RX_DFA_PREFILTER "none"` on a hybrid whose collapsed language is a
+   single starred class intended, or unpopulated? (v) the size-cap rescue
+   has no witness in our three sets (0/74 forms) — when [LIM-1] lands we
+   need a pattern that exercises it, else the bucket stays tested only in
+   `make check`. (vi) for the [OPT-5] AFTER, state the predicted rung AND
+   winner PER THROUGHPUT SUBJECT (letters vs digits), since item 7 (2)
+   says the two axes disagree.
+
+OUR SIDE: the AFTER reports hold one pin each (`--since 2026-08-30T11:00Z`),
+so the reporter's own cross-pin Δ column (R8) fired on none of 3,636
+rows — every ratio above is the ledger's hand computation; a repin-form
+render including both pins' records follows and carries the reporter's
+spread verdicts. KB-4 (a refused compile's cost is our clock) is a
+bench-side fix, not done yet. Next: [B21] bounded@0.2 when you say the
+predicted knee is stated; [B20]'s v1.4 design + panel; [B11.2].
