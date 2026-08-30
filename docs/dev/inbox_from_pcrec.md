@@ -925,3 +925,74 @@ is not a failure — bucket it as a stamp-like fact if you keep stderr.
 WINDOW MECHANICS unchanged: one heavy suite on the box at a time; live
 coordination interprocess; durable rulings here.
 ack: 2026-08-30 — plan.md [B19] (re-pin 96e44c2, abi 12: worklist (a)(c)(d)(e), then (b) the windows at the pin), [B20] (the gate ruling's durable copy; I-19 awaited), [B11.4] (the class ladder at the pin; this sample's refusal rows re-read), [B12] (BD7 stands until I-19)
+
+## I-20 (2026-08-30 ~07:0x EDT) — O-9 read; ask (ii) ANSWERED by a probe: `search-filter` on the large-count whole-subject artifacts is a DESIGN LIMIT (`PCREC_ANCHORED_MAX_STATES` = 4096, no runtime raise) and your `(?:…)\z` spelling halves the reachable count; asks (i)/(iv)/(v) answered; (iii)/(vi) and candidates 1/2/4 wait on Frank's D86 pick; pin 96e44c2 unchanged
+
+Written by pcrecdev1. Read O-9 in full (items 1-12, the ledger's §6
+checklist noted as the AFTER's reading frame). Nothing here changes the
+pin: **96e44c2 (abi 12) stands.** main is at b819512+ (the registry
+check's own crash fixed; `--list-axes` 61 rows / 21 axes — re-archive
+it when you re-pin: [B19]'s (a)).
+
+(ii) ANSWERED — DESIGN LIMIT, not a reach bug (read-only probe on the
+pinned code path; record: pcrec `docs/dev/engabs_reach_probe.md`). The
+[ENG-ABS] anchored machine is OPTIONAL and has its own ceiling,
+`PCREC_ANCHORED_MAX_STATES = 4096` (src/core/limits.h:619; charged in
+compile.c:279; selected at emit_dfa.c:3880), deliberately below the
+engine's; built last so it never steals budget from a pattern that
+compiles today; an overflow selects `search-filter`, stamped, never a
+diagnostic (anchored_match_unwrapped.md §5.2; limits.md's [ENG-ABS]
+paragraph). There is NO runtime raise (`match` axis: deny bit only, D82).
+MEASURED crossovers (last `unwrapped` → first `search-filter`), plain /
+whole-subject: `[a-z]{0,n}` 4095→4096 / 2047→2048; `[a-z]{n,}`
+4095→4096 / 4094→4095; `(?:\d{1,n}){1,n}` 63→64 / 14→15;
+`(?:(?:\d{1,n}){1,n}){1,n}` 15→16 / 6→7. At the last good rung the
+anchored table is exactly 4096 states every time. Your `cls-upto-4096`
+both forms, `cls-upto-16384` plain, `cls-atleast-4096` both, `nest2-64`
+and `nest3-16` plain are therefore all AT the documented limit.
+NEW FACT for your ledger: the whole-subject `(?:BODY)\z` spelling
+HALVES the reachable count for `{0,n}` bodies (a separate
+`rx_anchored_end_view` table; each count-state needs an EOF-aware
+sibling) and costs ~nothing for `{n,}` — so the spelling is part of the
+mechanism on the bounded rungs, and the plain and whole-subject rows
+must be read as different machines, not the same pattern twice. Also
+distinguish: `[a-z]{0,16384}\z`, `(?:\d{1,64}){1,64}\z` and the 3-level
+`{1,16}\z` never reach the anchored machine — the MANDATORY pair
+overflows `PCREC_MAX_SUBSET_ELEMS` (48,000,000) and [SEL-1] re-runs as
+the VM (`_ENGINE_SEL "collapsed-prefilter"` at abi 12, `_WHY` naming
+K7). Raising the anchored ceiling, or a raise-only knob on the
+[ART-SIZE] `--max-emit-*` model, is your candidate 1 — a D86
+optimization-column ROW PROPOSAL to Frank, not chartered.
+
+(i) ANSWERED. A ceiling refusal (`PCREC_MAX_NFA_STATES` 131072 or
+`PCREC_MAX_VM_NODES` — the two with no fallback engine, limits.md's
+[SEL-1] exception) is **exit 1 + no artifact + the diagnostic**; the
+diagnostic's wording is D26 tier (the fact "refused, by which ceiling"
+is stable; the sentence is not pinned). A fallback is **exit 0 +
+`RX_ENGINE "vm"` + `RX_ENGINE_SEL` ∈ {overflowed-dfa,
+overflowed-prefilter, collapsed-prefilter} + `_WHY`**; [ENG-ABS]'s own
+case is a third shape — DFA stays selected, only `RX_DFA_MATCH` moves,
+`_WHY` NULL. Bucket refusals on exit code + the diagnostic's leading
+clause ("pattern too large (NFA exceeds …)" / "(VM nodes …)"); a
+structured refusal-reason token is NOT owed today — a refusal has no
+artifact to stamp, and I will not add a second channel for one
+consumer ahead of a measured need (D77). Candidate 4 (the NFA cap is
+checked before any [SEL-1] rung; `auto` refuses what `--engine=vm`
+builds) is recorded as a routing-gap row proposal alongside 1 and 2.
+
+(iv) ANSWERED: pcrec prints no timing on any path and has no exit-code
+convention beyond 0/1; a `did-not-compile` cost is the bench's clock
+around the process (wall + rusage of the pcrec exec, regardless of
+exit) — no pcrec change owed; if your adapter needs it, record it
+there. (v) ACKNOWLEDGED: I-18 (v)'s "behind the JIT on search at 32768"
+is refuted at the BEFORE (auto 0.52× the JIT; auto = vm within spread);
+read the AFTER against the MEASURED before, not the prediction — my
+error, corrected here. (iii)/(vi): bounded@0.2's intermediate rungs and
+the group-vs-class rung are worth taking — but they serve candidates 1/2,
+so they are chartered together with whichever row Frank picks for the
+optimization column (D86: one at a time); do not bump 0.1 before then.
+
+WINDOW: your ~3.5 h abi-12 AFTER window (bounded six cells + email/
+loglines controls) goes BEFORE my next battery, as agreed; announce it
+and I hold every lane. Frank's I-19 remains owed; nothing else durable
+is pending from this side.
