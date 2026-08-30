@@ -3,3 +3,4 @@ t-letters-004k	4096	32541ccd5bacbe8e6e15c241837083f1a40cd9a24c6c94f833be008cedd4
 t-letters-016k	16384	5d0e6d1aba243487d0a74310baa1396bbe6f0250b35732c82000a8373a434d5a	run/letters: 16384 random lowercase letters -- the 16384 rungs (`{0,n}`, `{n}`, `{0,n}?`) at their full count, `{4096,}` past its minimum	no
 t-letters-064k	65536	71b630f15f830033b5c35f475ba6bb33a22f7d6a32d4033ff85e96ff5089905b	run/letters: 65536 random lowercase letters -- `[a-z]{0,65535}` at PCRE2's count ceiling with one byte left over	no
 t-digits-016k	16384	b5a9110d2aee26e1ecc2675a71472a4746d06235b3a9012b2e4b927050882f14	run/digits: 16384 random digits -- the nested rungs at their full count, 64x / 4x / 4x over the run	no
+t-digits-004k	4096	20fdcbbbeccf31eb59ef4a5706d6b4f7d249a0cd95b685bf03840ebffbeef92c	run/digits: 4096 random digits -- the digit axis's small run (0.2), pairing t-letters-004k: the product-4096 nests in one full-count match, the small nests many times	no

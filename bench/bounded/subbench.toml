@@ -4,7 +4,7 @@
 # when it lands.
 
 id = "bounded"
-version = "0.1"
+version = "0.2"
 objective_kind = "hazard"
 objective = """\
 Bounded repeats on both axes: what an engine pays to COMPILE a counted \
@@ -17,22 +17,25 @@ gap before a word-boundary alternation; an ambiguous nested count) on \
 subjects that match, that fail at the last repetition, and that over-run \
 the count and fail only at the end anchor."""
 description = """\
-Twenty-four patterns in two families. TEN everyday bounded shapes: a 4-digit \
+Thirty patterns in two families. TEN everyday bounded shapes: a 4-digit \
 year, a 32-hex id, a password length rule `.{8,64}`, a line-length rule \
 `.{80,}`, a dotted quad `(?:\\d{1,3}\\.){3}\\d{1,3}`, a five-field CSV \
 record, and a bounded-context shape `\\b(?:fail|abort|panic)\
 \\b.{0,N}?\\b(?:disk|memory|socket|quota)\\b` as a count ladder N = 64 / 256 \
-/ 1024 plus its greedy twin at 256. THIRTEEN count-ladder rungs on a few \
-skeletons: `[a-z]{0,n}` for n = 256 .. 65535 (PCRE2's own ceiling), the \
-open `{n,}`, the lazy `{0,n}?`, a group body `(?:a|[b-z]){0,1024}`, two- \
+/ 1024 plus its greedy twin at 256. NINETEEN count-ladder rungs on a few \
+skeletons: `[a-z]{0,n}` for n = 64 .. 65535 (eleven geometric rungs, since \
+0.2, to PCRE2's own ceiling), the \
+open `{n,}`, the lazy `{0,n}?`, a group body `(?:a|[b-z]){0,1024}` beside \
+the class rung at the same count (the 0.2 group-vs-class pair), two- \
 and three-deep nests `(?:\\d{1,k}){1,k}`, and one ambiguous nest over \
 letters whose near-misses a backtracker pays for. Plus the floor. \
 Subjects: 13 whole-string FIELDS (each shape's exact match, its near-miss \
 at the last repetition, its over-run), 8 LINES of near-miss ops prose \
 (43-256 B) carrying the shapes in an allocated minority and the \
 trigger/context pairs at designed gaps, 9 RUNS of random letters or digits \
-sitting on the ladder's small rungs and one off them (16-257 B), and four \
-LARGE runs (4 KB / 16 KB / 64 KB) in a `throughput` regime that is the \
+sitting on the ladder's small rungs and one off them (16-257 B), and five \
+LARGE runs (4 / 16 / 64 KB letters, 4 / 16 KB digits) in a `throughput` \
+regime that is the \
 ladder's top rungs driven to their full count, not a size sweep -- the \
 sweep here is the COUNT, in the patterns. The set is sized to the \
 harness's batched-loop protocol (NOTES.md, "Cell-time estimate"), which is \
@@ -171,6 +174,32 @@ role = "member"
 # ---- the count ladder ----
 
 [[patterns]]
+# 0.2 ([B21]): the KNEE rungs. The 0.1 class ladder was geometric at
+# 256 / 4096 / 16384 then dense at the predicted refusal; 0.2 fills it
+# to a uniform factor-of-2 spacing from 64 up (64, 128, 512, 1024, 2048,
+# 8192 added), so a change of implementation strategy anywhere in
+# 64..65535 is bracketed within 2x by adjacent rungs. Same skeleton,
+# same subjects; every 0.1 rung's id and bytes are unchanged.
+name = "cls-upto-64"
+file = "patterns/cls-upto-64.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "knee", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-upto-128"
+file = "patterns/cls-upto-128.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "knee", "tier-base"]
+role = "member"
+
+[[patterns]]
 name = "cls-upto-256"
 file = "patterns/cls-upto-256.rx"
 feature_tier = "base"
@@ -181,6 +210,40 @@ tags = ["ladder", "class-body", "upto", "tier-base"]
 role = "member"
 
 [[patterns]]
+name = "cls-upto-512"
+file = "patterns/cls-upto-512.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "knee", "tier-base"]
+role = "member"
+
+[[patterns]]
+# 0.2: ALSO the group-vs-class pair's class half -- same count, same
+# language cardinality as `grp-upto-1024` (`(?:a|[b-z]){0,1024}`), so
+# the size and compile-time difference between the two rows is the
+# body representation (group vs class) and nothing else.
+name = "cls-upto-1024"
+file = "patterns/cls-upto-1024.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "knee", "group-pair", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-upto-2048"
+file = "patterns/cls-upto-2048.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "knee", "tier-base"]
+role = "member"
+
+[[patterns]]
 name = "cls-upto-4096"
 file = "patterns/cls-upto-4096.rx"
 feature_tier = "base"
@@ -188,6 +251,16 @@ hazard_class = "large-count"
 size_class = "tiny"
 convention = "perl-leftmost-first"
 tags = ["ladder", "class-body", "upto", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-upto-8192"
+file = "patterns/cls-upto-8192.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "knee", "tier-base"]
 role = "member"
 
 [[patterns]]

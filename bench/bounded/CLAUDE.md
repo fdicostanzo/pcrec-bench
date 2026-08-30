@@ -1,4 +1,4 @@
-# bench/bounded/ — the bounded-repeat sub-bench (`bounded@0.1`)
+# bench/bounded/ — the bounded-repeat sub-bench (`bounded@0.2`)
 
 WHAT IT IS FOR. Bounded repeats on BOTH axes (plan row [B11.4]): what an
 engine pays to COMPILE a counted repeat as the count grows, nests and changes
@@ -11,7 +11,13 @@ that match, that fail at the LAST repetition, and that over-run the count
 and fail only at the end anchor. The compile-side columns are the design
 input pcrec's [ART-SIZE] size term asked for (inbox I-15 (c), I-17); the
 `ctx-*` ladder is the [SEL-1] witness's shape at three counts; the class
-ladder brackets [ENG-COUNT]'s `[a-z]{0,30000}`.
+ladder brackets [ENG-COUNT]'s `[a-z]{0,30000}`. 0.2 ([B21]) filled the
+class ladder to ELEVEN factor-of-2 rungs (64..65535, the KNEE-bracketing
+ladder), made `[a-z]{0,1024}` the group-vs-class pair with `grp-upto-1024`
+(same count, same language, body representation the only difference), and
+added the 4 KB digits run so both content axes have a small and a large
+throughput subject; every 0.1 pattern and subject is byte-identical, and
+0.1/0.2 records never pool (NOTES.md, "What 0.2 added").
 
 **Read `NOTES.md` first** — the objective, the pattern table with purpose
 and m/n, the ladder and the PREDICTED first refusal per engine (stated from
@@ -28,13 +34,13 @@ here.
 | file | role |
 |---|---|
 | `subbench.toml` | the SIDECAR: fields only, no grammar ([DD-13] untouched). Declares `match` + `search_short` + `throughput` and `short_search_max_bytes = 512` |
-| `patterns/*.rx` | the 23 members + `floor.rx`, raw bytes, no trailing newline. Every group is `(?:…)`: no capture participates anywhere |
+| `patterns/*.rx` | the 29 members + `floor.rx`, raw bytes, no trailing newline. Every group is `(?:…)`: no capture participates anywhere |
 | `boundedtext.py` | the subject GRAMMAR both generators draw from: `Rng` (the one randomness primitive), the near-miss ops vocabulary, the everyday shapes; re-exports `pcrecbench.periodic` |
 | `gen_subjects.py` | writes `subjects/` (gitignored) + `manifest.tsv`: 13 fields + 8 lines + 9 runs, 3-257 B, seed 20260829; shapes ALLOCATED exactly over the pool lines; `nonperiodic()` draws every subject until the `periodic` column reads `no` |
-| `gen_throughput_subjects.py` | writes `throughput/` (gitignored) + `manifest_throughput.tsv`: the four LARGE runs (4 KB / 16 KB / 64 KB letters, 16 KB digits), seed 20260830 — the ladder's top rungs under find-all, NOT a size sweep |
-| `manifest.tsv`, `manifest_throughput.tsv` | committed: id, len, sha256, description (family and ARM in a fixed spelling: `field/near-miss`, `line/ctx-gap-160`, `run/digits` …), **periodic** (`no` on all 34) |
+| `gen_throughput_subjects.py` | writes `throughput/` (gitignored) + `manifest_throughput.tsv`: the five LARGE runs (4 / 16 / 64 KB letters, 4 / 16 KB digits; `t-digits-004k` appended LAST so the four 0.1 draws reproduce byte for byte), seed 20260830 — the ladder's top rungs under find-all, NOT a size sweep |
+| `manifest.tsv`, `manifest_throughput.tsv` | committed: id, len, sha256, description (family and ARM in a fixed spelling: `field/near-miss`, `line/ctx-gap-160`, `run/digits` …), **periodic** (`no` on all 35) |
 | `gen_expectations.py` | the entry point; the derivation is shared (`pcrecbench/expectations.py`). `--check` re-derives and diffs |
-| `expectations.tsv` | 1536 rows: 24 patterns × (30 match + 30 search_short + 4 throughput) |
+| `expectations.tsv` | 1950 rows: 30 patterns × (30 match + 30 search_short + 5 throughput) |
 | `gen_pattern_facts.py` | derives `pattern_facts.tsv`: the COUNT facts from the pattern text (max count, nesting depth, count product, lazy) + PCRE2's own analysis (first / required code unit, min length) + m/n per regime |
 | `pattern_facts.tsv` | one row per pattern; the table NOTES.md's pattern tables are read from |
 | `gen_oracle_limits.py` | probes each ladder skeleton BEYOND the set's rungs on the oracle (compile only, doubling) and derives `oracle_limits.tsv` |

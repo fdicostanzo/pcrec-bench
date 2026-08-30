@@ -2,12 +2,13 @@
 """gen_throughput_subjects.py -- the bounded-repeat sub-bench's LARGE runs:
 `throughput/` (gitignored) + `manifest_throughput.tsv` (committed).
 
-Four subjects, and why they are here rather than in `subjects/`:
+Five subjects, and why they are here rather than in `subjects/`:
 
   t-letters-004k   4096 random lowercase letters   `[a-z]{0,4096}` at its full count
   t-letters-016k  16384 random lowercase letters   `[a-z]{0,16384}` / `{16384}` / `{0,16384}?` / `{4096,}` at theirs
   t-letters-064k  65536 random lowercase letters   `[a-z]{0,65535}` at PCRE2's own count ceiling, with one byte over
   t-digits-016k   16384 random digits              the nested rungs (`(?:\\d{1,64}){1,64}` = 4096, `nest3-16` = 4096) at theirs, repeatedly
+  t-digits-004k    4096 random digits              (0.2, [B21]) the digit axis's small run, pairing t-letters-004k: the product-4096 nests in ONE full-count match
 
 They exercise the count ladder's LARGE rungs at match time -- the row
 [ENG-COUNT] (inbox I-17 (c): "large DFA-side counts like `[a-z]{0,30000}`
@@ -60,6 +61,10 @@ RUNS = (
      "run/letters: 65536 random lowercase letters -- `[a-z]{0,65535}` at PCRE2's count ceiling with one byte left over"),
     ("t-digits-016k", "digits", 16384,
      "run/digits: 16384 random digits -- the nested rungs at their full count, 64x / 4x / 4x over the run"),
+    # 0.2 ([B21]): APPENDED LAST so the four 0.1 subjects consume the same
+    # prefix of the rng stream and reproduce byte for byte.
+    ("t-digits-004k", "digits", 4096,
+     "run/digits: 4096 random digits -- the digit axis's small run (0.2), pairing t-letters-004k: the product-4096 nests in one full-count match, the small nests many times"),
 )
 
 
