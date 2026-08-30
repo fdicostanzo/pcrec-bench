@@ -1734,3 +1734,63 @@ regeneration; harness-failure's exception paths; KB-4 riding along).
 Findings → docs/dev/reviews/2026-08-30-r3-gate-shape-v14.md with
 dispositions (r1 requirements, r2 record schema exist). Watchdog cron
 e18385c9. Keepalive cron still ticking.
+
+## 2026-08-30 (EDT, ~14:1x), fifth session (part 9) — the [B20] panel: three verdicts, five blockers, the manager's rulings; the r3 compile-and-apply lane
+
+THE PANEL (three read-only opus critics, ~15 min each; findings in the
+scratchpad, to be consolidated into docs/dev/reviews/2026-08-30-r3-gate-
+shape-v14.md by lane b20r3): all three say "the design is sound, not
+implementable as written". BLOCKERS: A1 — F = 1 % lands EXACTLY on a
+group boundary: disagreements are GROUP-quantised (a burst hits one pass
+of one group, all its rows or none); email's throughput groups hold 5
+subjects against F·N = 5.00/5.01 on seven real records (margin 0.00-0.01
+rows), and no fraction-shaped F is safe (2 % silences a fully disturbed
+30-subject bounded group) → a group-level rule with integer arithmetic;
+B2 — target_busy_pct's "null iff unavailable" contradicts the harness's
+own null case (a missing target row on a pass sample) and the schema's
+three-branch allOf is not named → the hunk cannot be written; B3 — MINOR
+is not defensible under record_schema.md's own rule ("a changed meaning"
+is MAJOR) and MINOR is exactly the relation that pools a 1.3 measured
+and a 1.4 measured in one table → a ruling; F2 — a missing target row
+would stamp `measured` and be REJECTED at store.write after the whole
+cell (the [B12] failure mode reintroduced) → a pre-flight refusal; F5 —
+the status-deciding sentence lands LAST in the note list, exactly where
+join_notes elides (bounded already over the cap) and _excerpt cuts at
+120 chars → first, and R1 renders from the block. MUST-FIXES: the blind
+band (3-4 of 5 passes slowed ≤ 1.5× moves the ranked median up to 49 %
+and reads agree; 46 % of the store's ≥ 1.3× perturbations are below
+1.5×); power unstated and non-monotone (P(flag) 0-2 % at 2 s, 57-92 %
+at 30 s, 54-68 % at 600 s — a long competitor covers all five passes
+and goes invisible); a PASS is 0.07-20.2 s, not "1-2 s"; one constant
+denotes four rules across N (N = 3 cannot fire the slow clause; quick
+defaults to 3); X32's arithmetic unpinned (six ambiguities; the failure
+mode a destroyed pinned cell); the quiet CLI bypasses gate(); no exit
+code for inconclusive-spread; exclude_cpu vs pinning.cpu; check_fields
+needs 15 field-table rows; the examples plan is wrong about which
+examples exist (no 1.3 good example); status_detail's meaning change.
+REVERSED: Q9 — the single fast row is a REAL 51 % bimodality (12.2 vs
+18.7 ms over 1.32 M iterations; flat in the other artifact), the rule's
+only demonstrated true positive. ANSWERED: harness-failure is
+unreachable (leave it); KB-4's schema half rides with v1.4; R3+R4 force
+the regeneration, not the bump; k = 1.5 is 0.20 from a false positive
+(the contaminated record clears at k ≥ 1.35) and the store is
+uninformative in [1.55, 2.0]; the slowest-trial histogram is dominated by
+one record (158 of 387 events).
+
+THE RULINGS (R-1..R-20, docs/dev/reviews/2026-08-30-r3-rulings-gate-
+shape-v14.md, copied verbatim from the scratchpad): MINOR with §4
+amended for rule-versioning (the validator's X17 behaviour is the rule);
+the target core as a tri-state field keyed on pinning.cpu with a
+PRE-FLIGHT refusal on a missing row; §3.5 "the rule as arithmetic" with
+integer-count comparison; the status sentence FIRST and R1 from the
+block; today's note/status_detail split kept; exit code 4; the CLI
+through gate(); harness-failure left unreachable; KB-4's schema half;
+no sleep injection in the drivers; pinned requires N ≥ 5 and odd (else
+n/a-trials, not measured); no timer-floor exemption (the fast row is
+real); THE GROUP-LEVEL RULE replaces F (constants D_MIN and c chosen by
+a recompute over the store, archived as a new census); the blind band
+and A's power table stated in §3; the per-group /proc/stat occupancy
+timeline accepted as PROVENANCE only; timed-out trials count as
+disagreeing; k stays 1.5 with its margin stated. Lane b20r3 (strong
+model, worktree) compiles r3 with these dispositions and applies them to
+the spec; watchdog cron.
