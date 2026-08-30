@@ -1572,7 +1572,7 @@ refusals, zero losses — where the 36d5963 windows had refused attempt 1
 of almost every cell on the post-cell transient and lost three of six
 to the one-shot after-sample. BD7's instrument, measured: the 5-s
 average never saw the transient the 1-s sample tripped on. Store 68
-(33ee50f). Cell timings (start-end EDT): bounded×x -07:35; bounded×x -07:53; bounded×x -08:14; bounded×x -08:33; bounded×x -08:51; bounded×x -09:09; email×x -09:18; email×x -09:29; email×x -09:34; email×x -09:39; email×x -09:46; email×x -09:53; loglines×x -10:02; loglines×x -10:11; loglines×x -10:19; loglines×x -10:27; loglines×x -10:36; loglines×x -10:44;
+(33ee50f). Cell timings (start-end EDT): bounded x pcre2-interp 07:12-07:35; bounded x pcre2-jit 07:35-07:53; bounded x pcrec-auto 07:54-08:14; bounded x pcrec-nocaps 08:14-08:33; bounded x pcrec-vm 08:33-08:51; bounded x pcrec-vm-in 08:51-09:09; email x pcre2-interp 09:10-09:18; email x pcre2-jit 09:18-09:29; email x pcrec-auto 09:29-09:34; email x pcrec-nocaps 09:34-09:39; email x pcrec-vm 09:39-09:46; email x pcrec-vm-in 09:46-09:53; loglines x pcre2-interp 09:53-10:02; loglines x pcre2-jit 10:02-10:11; loglines x pcrec-auto 10:11-10:19; loglines x pcrec-nocaps 10:19-10:27; loglines x pcrec-vm 10:28-10:36; loglines x pcrec-vm-in 10:36-10:44;
 The chained launch + sentinel-only Monitor + keepalive-tick-only
 activity kept this session's residue off the gate for 3.5 h.
 
@@ -1584,8 +1584,10 @@ all additions; by reports/CLAUDE.md's rule the committed files must
 re-render empty, so every report is regenerated with its own query and
 the diff CLASSIFIED per file — version line only for the pre-abi-11
 sets, K/caps additions for the 36d5963 sets, anything else a stop), and
-the three AFTER reports (; the pcre2 ids
+the three AFTER reports (`--since 2026-08-30T11:00:00Z`; the pcre2 ids
 carry no pin, so the BEFORE/AFTER files are separated by their
 --until/--since bounds). Then the [OPT-4] ledger lane over the AFTER
 reports against docs/dev/ledgers/…§6 and I-18's table; O-10 with
-[B19]'s four stamp-semantics findings.
+[B19]'s four stamp-semantics findings. (This entry re-written once: an
+unquoted heredoc had shell-substituted its backticked text — a lesson
+for wake.md.)
