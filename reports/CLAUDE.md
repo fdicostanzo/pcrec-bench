@@ -249,7 +249,14 @@ an older measured one) restores it.
   as a plain-VM artifact (no prefilter, cursor rung) — the set's predicted
   abi-11 size-cap refusal at that rung did not fire; the ctx ladder and
   `cls-upto-16384`'s whole-subject form are VM artifacts (the DFA state
-  cap in the engine role), their `plain` forms DFA.
+  cap in the engine role), their `plain` forms DFA. READING RULE (inbox I-20, after O-9 ask (ii)): the
+  `dfa_match=search-filter` rows at the large counts are the documented
+  [ENG-ABS] ceiling (`PCREC_ANCHORED_MAX_STATES` = 4096, no runtime
+  raise), and the whole-subject `(?:BODY)\z` spelling HALVES the
+  reachable `{0,n}` count (crossover 2047→2048 vs plain 4095→4096) —
+  a rung's `plain` and `whole-subject` rows are DIFFERENT MACHINES, not
+  the same pattern twice; the reporter's form caveat (pcrec [OS-4]) is
+  literal here.
 
 - `2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.md` — the
   FIRST SAMPLE of sub-bench #2, `bench/loglines@0.1` ([B11.1]), at pcrec
