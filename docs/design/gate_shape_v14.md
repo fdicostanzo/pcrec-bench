@@ -54,9 +54,33 @@ load1 quiet, the before-sample clean. `pcrec-vm` passed at exactly
 
 The after-sample's verdict has no visible relation to trial agreement:
 the "inconclusive" cells sit inside the "measured" cells' spread profile.
-(The per-row outliers — max 64-514 % — are a separate finding: single
-rows, mostly one trial of five, to be characterised by the probe before
-any spread rule is set.)
+
+**The per-row outliers, characterised** (`probe_gate_shape.py
+--outliers=50`, the same six records): 80 rows over 50 % in ~9,000; NOT
+trial-1 warm-ups (odd-trial histogram over all six: t2:20 t3:21 t4:25
+t5:7, t1: none). Each is ONE trial of five running ~2.2x slower across
+EVERY subject of one (pattern, regime) group — `pcrec-auto
+cls-upto-32768 / match`: trial 4 = 24.5 ns vs 10.9 on all 23 subjects;
+`pcrec-vm dotted4 / match`: trial 3 = 38.8 vs 22.1 on all five `d-*`;
+`pcrec-vm year4 / match`: trial 3 = 22-25 vs 9-11; `pcre2-jit nest2-64
+/ search_short`: trial 4 = 346 vs 204 on both `r-*`. A trial is one
+pass over the group's subjects (~1-2 s of wall time); a uniform ~2x on
+the PINNED core for exactly one pass is a burst on its SMT sibling (CPU
+5 shares core 11's execution resources) or a boost-clock drop — the
+perturbations the after-sample was catching DO reach the measured core,
+for one pass, and the median of five trials (`reduce.py`, the reporter's
+own reduction) absorbs every one of them: no ranking number moved. That
+is Frank's claim, measured: the trials absorb what the gate rejected.
+
+**The spread rule this suggests (P2):** the odd trial is always SLOWER,
+never faster (a burst can only add time), so the robust statistics are
+the median and the minimum. Rule candidate: per (pattern, regime,
+subject) row, count trials above 1.5x the row's median; a row with ONE
+such trial is a tolerated perturbation (the median is untouched); a row
+with TWO or more (of five) is a disagreeing row; a cell with disagreeing
+rows above a small fraction (to be set — 0 of ~1,500 in these six) is
+`inconclusive-spread`. The 1.5x and the fraction are the panel's to
+measure, not to pick.
 
 ## The proposal
 

@@ -22,6 +22,12 @@ D35 rules (docs/dev/measurements/CLAUDE.md): stable name, verbatim output,
 the source header below, NEVER a ranking input (nothing here is a record).
 
     python3 docs/dev/measurements/probe_gate_shape.py store/records/bounded@0.1/*/*.jsonl
+    python3 docs/dev/measurements/probe_gate_shape.py --outliers=50 <records>   # + the worst rows
+
+`--outliers[=PCT]` lists, per record, the rows whose spread exceeds PCT
+(default 50) with their per-trial ns/iteration and which trial is the odd
+one, plus a histogram of the odd trial's index -- "is it always trial 1?"
+is the warm-up question the v1.4 spread rule must answer first.
 """
 import glob
 import json
@@ -105,6 +111,31 @@ def one(path):
         med = statistics.median(vals)
         if med > 0:
             spreads.append((max(vals) - min(vals)) / med * 100.0)
+    if OUTLIERS:
+        worst = []
+        for key, vals in per.items():
+            if len(vals) < 2:
+                continue
+            med = statistics.median(vals)
+            if med <= 0:
+                continue
+            sp = (max(vals) - min(vals)) / med * 100.0
+            if sp > OUTLIERS:
+                odd = max(range(len(vals)), key=lambda i: abs(vals[i] - med))
+                worst.append((sp, key, vals, odd + 1))
+        worst.sort(reverse=True)
+        print("   rows with spread > %.0f%%: %d (pattern / regime / subject: "
+              "per-trial ns/iter, odd trial)" % (OUTLIERS, len(worst)))
+        odd_trials = {}
+        for sp, key, vals, odd in worst:
+            odd_trials[odd] = odd_trials.get(odd, 0) + 1
+        for sp, key, vals, odd in worst[:OUTLIER_ROWS]:
+            print("     %6.1f%%  %-16s %-18s %-14s  %s  odd=t%d"
+                  % (sp, key[0], key[1], key[2],
+                     " ".join("%.1f" % v for v in vals), odd))
+        if worst:
+            print("     odd trial histogram: %s"
+                  % " ".join("t%d:%d" % (t, n) for t, n in sorted(odd_trials.items())))
     if spreads:
         spreads.sort()
         n = len(spreads)
@@ -118,9 +149,17 @@ def one(path):
     print()
 
 
+OUTLIERS = 0.0       # --outliers[=PCT]: list rows whose spread exceeds PCT
+OUTLIER_ROWS = 12    # how many of the worst rows to print per record
+
+
 def main(argv):
+    global OUTLIERS
     paths = []
     for a in argv or ["store/records/bounded@0.1/*/*.jsonl"]:
+        if a.startswith("--outliers"):
+            OUTLIERS = float(a.split("=", 1)[1]) if "=" in a else 50.0
+            continue
         paths.extend(sorted(glob.glob(a)))
     header(paths)
     for p in paths:
