@@ -20,6 +20,7 @@ Provides five testees at the commit pinned in `configs.toml`, and one —
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
 | `configs.toml` | the config ids, `pin = "<commit>"`, the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 | `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved |
+| `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
 
 ## `pin.sh` never writes inside pcrec
 
@@ -384,6 +385,7 @@ than five). What arrived, and where each pair comes from:
 | 9 ([OPT-K], [B18]) | `RX_DFA_PREFILTER` gains `offset-set` / `offset-set-bounded`; `RX_DFA_PREFILTER_OFFSETS` (`"0,8*,13"` / `"none"`) on every artifact that contains a DFA scan; `-fno-offset-skip` (bit 16) | `dfa_prefilter_offsets` (a `string` pair: a fact about the machine, not a closed set) |
 | 10 ([ENG-ABS], [B18]) | `RX_DFA_MATCH` (`unwrapped` / `search-filter`) on every DFA artifact and NO VM artifact, hybrids included; `rx_info.match_form` appended (NULL where the macro is absent); `-fno-anchored-dfa` (bit 17) | `dfa_match` (the field is its CONTROL, and it raised the shim's floor to 10) |
 | 11 ([ART-SIZE], [B18]) | `RX_UNROLL_K` / `RX_UNROLL_K_WHY` (seven values) / `RX_MAX_EMIT_CODE_BYTES` on every VM artifact; `RX_MAX_EMIT_BYTES` on every artifact; `-fno-size-term` (bit 18) denies the K selection, never the caps | `unroll_k`, `unroll_k_why`, `max_emit_code_bytes`, `max_emit_bytes` |
+| 12 ([OPT-4], [B19]) | `RX_ENGINE_SEL` on EVERY artifact (one `engine-route` token: `selected` / `forced` / `overflowed-dfa` / `overflowed-prefilter` / `collapsed-prefilter` — O-8 6(d) ruled as a stamp); `RX_VM_PREFILTER_LANG` (`exact` / `count-collapsed`) + `RX_VM_PREFILTER_LANG_WHY` on every VM HYBRID and no other artifact; `-fno-prefilter-collapse` (bit 19) denies both retry rungs, `-fprefilter-collapse` (bit 20) forces the collapse; `--warn-emit-bytes=N` (advisory stderr line, default 250,000) | `engine_sel`, `vm_prefilter_lang`, `vm_prefilter_lang_why` (a `string`: two of its values carry a number) — and the adapter's own `emit_bytes` / `emit_code_bytes` (pcrec's size definition, ported and controlled) + `warned_emit_bytes` (present only when the warning fired) |
 
 **Rule 1: never infer a fact from a stamp's ABSENCE. Read the VALUE.**
 This is pcrec's own inbox I-5 hazard, which broke four of pcrec's checks
@@ -420,6 +422,16 @@ The scope rules those absences obey, exactly (match_api.md §6.3 (a)):
   artifact and no DFA one (a DFA artifact has no counter rung to have
   chosen a K for; the code-bytes cap bounds a VM quantity).
   `RX_MAX_EMIT_BYTES` — **every** artifact, both engines.
+- ([B19]) `RX_ENGINE_SEL` — **every** artifact, both engines (D81:
+  `"selected"` is a fact). No `rx_info` mirror; its controls are the
+  CONFIG and the stamps beside it (rules 8-9 below).
+- ([B19]) `RX_VM_PREFILTER_LANG` / `_LANG_WHY` — every **VM HYBRID** (where
+  `RX_VM_PREFILTER` reads `"hybrid"`) and **no other artifact** — narrower
+  than "every VM artifact" (I-18's wording) and narrower than the scan
+  family's "contains a DFA scan" (which a plain DFA artifact satisfies):
+  a DFA artifact takes no VM-prefilter decision, and a forced `--engine=vm`
+  artifact has no prefilter and no language to name. MEASURED at 96e44c2
+  on the forced `level-context`: `RX_VM_PREFILTER "none"`, neither macro.
 
 **Rule 2: one derivation per column; a second spelling is spent as a
 CONTROL.** pcrec publishes three facts twice and asserts on its own side
@@ -449,6 +461,15 @@ the two would carry the bug forward as a number:
    the floor and a macro's abi links and records "not stamped") without
    ever letting a stamp that should be there go quietly blank: a missing
    unconditional stamp is an `AdapterError`, never a "not stamped".
+8. ([B19]) `engine_sel` is `forced` IFF the config named `--engine=` —
+   the stamp has no field mirror, so the CONFIG is its control (the
+   registry's `engine-route` order-1 row: "the caller named the engine,
+   so auto selected nothing").
+9. ([B19]) `engine_sel` implies its neighbours (match_api.md §6.3's table
+   read as implications): `collapsed-prefilter` → engine `vm`, prefilter
+   `hybrid`, language `count-collapsed`; `overflowed-dfa` /
+   `overflowed-prefilter` → engine `vm`, prefilter `none`. The language
+   pair's own iff is the scope table's `vm-hybrid` row (both directions).
 
 Each is an `AdapterError` naming both values. An absent MACRO is checked
 only against the field's own absence — rule 1, applied to the control
@@ -463,7 +484,12 @@ mirror of `RX_DFA_MATCH`, read so the macro has its control) — so **10 is
 the lowest artifact it can read** and `PB_SHIM_MIN_ABI` says so ONCE. The
 rule that moved it: the floor rises iff a FIELD is added to what the shim
 reads; the abi 9 and abi 11 MACROS it also gained did not move it, because
-a macro read through `#ifdef` has a legitimate "not stamped" absence. (Why
+a macro read through `#ifdef` has a legitimate "not stamped" absence — and
+neither did abi 12's three ([B19]: `RX_ENGINE_SEL` and the language pair
+have no `rx_info` mirror; an abi-10/11 artifact still links and records
+them as "not stamped", the scope table saying at which abi that stops
+being legitimate). **`PB_SHIM_MIN_ABI` is 10 at pin 96e44c2**, by that
+rule: a `pcrec-local` binary from 808740c on still loads. (Why
 that `#ifdef` is not an inference from absence: the scope table above.)
 `driver.c` compares `pb_abi()` against it before reading anything else and
 refuses a lower artifact by name (`error abi-below-shim-floor: …`, carrying
@@ -594,6 +620,111 @@ third value reachable on this corpus; `size-model`, `size-model-declined`,
 `cap-rescue` and `capacity-declined` need a pattern over the 120,000-code-
 byte threshold, which nothing in either sub-bench is ([B11.4]
 bounded-repeat is where they will first be seen).
+
+### MEASURED at pin 96e44c2, 2026-08-30 — the abi-12 stamps ([B19])
+
+Asserted by VALUE in `make check-harness` (`check_mechanism_stamps`), on
+the kinds above plus two new ones, and on the ledger rows pcrec's inbox
+I-18 made predictions about. `abi` reads **12** on all of them;
+`PB_SHIM_MIN_ABI` stays 10.
+
+| kind / pattern | config | engine / `engine_sel` | `prefilter` | `vm_prefilter_lang` / `_why` | emit / code bytes |
+|---|---|---|---|---|---|
+| `foo[0-9]+bar`, `[^\x00-\xff]`, `^foo[0-9]+bar`, every loglines/email DFA row | auto | dfa / **selected** | — | absent (not a hybrid) | e.g. email `orig` 81,673 / 13,146 |
+| `a(b\|c)+d` (hybrid) | auto | vm / selected | hybrid | **exact** / `no counted repeat` | 26,267 / 22,745 |
+| `a(b\|c){2,5}d` (hybrid, a counted repeat) | auto | vm / selected | hybrid | **exact** / `exact` | 26,317 / 22,795 |
+| `a(b\|c)+d`, email `orig`, loglines `level-context` | `--engine=vm` | vm / **forced** | none | **absent** (no prefilter, no language) | `level-context` 29,270 / 28,807 |
+| loglines `level-context` | **auto, nocaps** | vm / **collapsed-prefilter** | **hybrid** (was `none` at 36d5963) | **count-collapsed** / `dfa overflow retry, exact nfa 462` | 75,812 / 33,983 |
+| bounded `cls-upto-32768` (`[a-z]{0,32768}`) | auto | vm / **collapsed-prefilter** | hybrid | count-collapsed / `dfa overflow retry, exact nfa 65538` | 32 KB (a `[a-z]*` prefilter; the set's predicted first refusal, RESCUED) |
+| bounded `cls-upto-16384`, plain | auto | dfa / selected | — | absent | **724,699 / 11,589 — WARNS** (`warned_emit_bytes 724699`; over `--warn-emit-bytes=250000`; outcome `compiled`) |
+| bounded `cls-upto-16384`, `\z` form | auto | vm / **collapsed-prefilter** | hybrid | count-collapsed / `dfa overflow retry, exact nfa 32771` | 26,128 / 22,617 — the K7 element budget, not the state cap (`RX_ENGINE_WHY "dfa overflowed: subset construction exceeds 48000000 state-set elements"`) |
+| K41's fuzz-gate witness 2 (the SIZE-CAP rung) | auto | vm / **selected** | hybrid | count-collapsed / `size cap retry, exact 671050 > 500000` | 158,756 / 152,409 (the exact artifact was refused at 671,050 code bytes) |
+
+**I-18 (ii)'s prediction for `level-context` HELD to the letter**: engine
+`vm`, `_ENGINE_SEL collapsed-prefilter`, `_LANG count-collapsed`,
+`_LANG_WHY "dfa overflow retry, exact nfa 462"` (the `\z` form reads
+`463`). So did (v)'s class-ladder rows the check reaches (32768 rescued as
+a collapsed-prefilter hybrid at `exact nfa 65538`; 16384 a DFA that
+warns; the emitted byte count differs from the table's 725,692 because
+the adapter names its files `artifact.c`/`.h` and the count includes the
+emitted `#include` line). Four things the inbox said that the artifacts
+and the spec say differently — each now a check that asserts what IS
+true:
+
+1. **The language pair is NOT on every VM artifact.** I-18 (2) says "on
+   every VM artifact"; match_api.md §6.3 ("on every artifact with a VM
+   PREFILTER DECISION that came out hybrid … and on no DFA artifact") and
+   the forced artifacts say VM HYBRIDS only. `STAMP_SCOPE`'s `vm-hybrid`
+   scope is exclusive in both directions, and the [B18]-style scope check
+   proves it on 5 hybrids vs 17 others. The letter's "`--engine=vm` →
+   `sel=forced`, `lang=exact`" is therefore half right: `forced`, and NO
+   `lang` at all.
+2. **`-fno-prefilter-collapse` does not turn every rescue into a
+   refusal.** limits.md §8 says which: the [SEL-1] rung's alternative is
+   NO PREFILTER, the size-cap rung's is the cap's refusal. Measured:
+   `level-context` denied → `overflowed-dfa` / `prefilter none` / no
+   language pair (the 36d5963 shape; still `compiled`); K41 witness 2
+   denied → `did-not-compile`, "pattern too large: 671050 bytes of
+   emitted code (limit 500000)". Both are `check_deny_flag_controls` rows.
+3. **The size-cap rescue stamps `engine_sel "selected"`**, not
+   `collapsed-prefilter` — match_api.md's table reserves that token for a
+   DFA BUILD overflow, and an emitted-size refusal is not one. Frank's
+   ask (b) bucket (`_ENGINE_SEL not in (selected, forced)`) therefore does
+   NOT see this rescue; its only structured trace is `_LANG_WHY`'s
+   `size cap retry` prefix, which is why `vm_prefilter_lang_why` is
+   recorded as its own pair and the reporter's legend note names the gap.
+   The `bucket:` check asserts the bucket is exactly the two state-cap
+   rescues and that the size-cap witness is outside it. An outbox item.
+4. **`_LANG_WHY` has a sixth value**, `no counted repeat` (a hybrid with
+   nothing to collapse), beside I-18's `exact`; a `string` pair, not an
+   enum.
+
+**The two source-bytes pairs and the warning ((d), (e)).** `emit_bytes` /
+`emit_code_bytes` are measured by `adapter.emit_size()`, a port of pcrec
+`src/core/compile.c`'s `emit_size_measure` (the ONE definition the two
+caps enforce and the size log / [ART-SIZE] census use: total minus comment
+bytes; that minus `static const … rx_*[N] = {` initializers, a
+computed-goto jump table's one-liner included), summed over the `.c` and
+`.h` as pcrec sums its two buffers. The control that the port IS the
+definition: `_emit_facts` refuses any compile whose `--warn-emit-bytes`
+line disagrees with it, and `check_emit_size_port` forces that line at
+`--warn-emit-bytes=1` on four kinds × two forms (a table-dominated DFA, an
+`attempt` DFA with the one-line jump table, a hybrid, a forced-collapse
+hybrid) — 8/8 byte-exact — plus a hand-classified probe (a comment inside
+a table, a `= {` that is not `static const`, a block comment closing on a
+later line). `warned_emit_bytes` is present ONLY where the line fired; the
+line itself is appended to the compile row's `diagnostic` after
+`RX_ENGINE_WHY`; the exit code and the artifact are what they would have
+been (limits.md §8: never a refusal). On both flat sets nothing warns at
+the default 250,000; on bounded, `cls-upto-16384`'s plain form does.
+
+### The deny-flag controls at 96e44c2 ([B19])
+
+`check_deny_flag_controls` grew a sixth column (`deny` / `force`) because
+the `prefilter-lang` axis's order-1 row carries BOTH spellings in one
+`cli_flag` cell (`-fno-prefilter-collapse / -fprefilter-collapse`): the
+flag is picked by prefix, and the registry's `stamp_value` is checked
+against the arm in which that candidate was CHOSEN (the default arm of a
+deny, the flagged arm of a force). The four [B18] rows are unchanged.
+
+| axis / flag (bit) | witness | default | flagged |
+|---|---|---|---|
+| `prefilter-lang` / `-fno-prefilter-collapse` (19) | loglines `level-context` | `count-collapsed` / `dfa overflow retry, exact nfa 462`, `collapsed-prefilter`, `hybrid` | language pair ABSENT, `overflowed-dfa`, `none` — the [SEL-1] rung denied drops the prefilter (THREE pairs move: the scope iff seen from the flag's side) |
+| `prefilter-lang` / `-fno-prefilter-collapse` (19) | K41 witness 2 | `count-collapsed` / `size cap retry, exact 671050 > 500000` | **REFUSED**, `did-not-compile` "pattern too large … (limit 500000)" — the size-cap rung denied restores the cap's refusal |
+| `prefilter-lang` / `-fprefilter-collapse` (20) | `a(b\|c){2,5}d` | `exact` / `exact`, `selected` | `count-collapsed` / `forced`, `selected` (the route token does not move: nothing overflowed) |
+
+`overflowed-prefilter` (the VM already chosen, only its prefilter's DFA
+overflowed) is the one `engine_sel` value no witness in reach produces —
+noted, not asserted.
+
+**Emitted-C size, 36d5963 → 96e44c2.** I-18 (1): "nothing that compiled
+at 36d5963 changes language, size or speed by default" — true of every
+artifact whose route is `selected` or `forced` (the abi-12 stamps are
+three `#define` lines). The exception is the [SEL-1] fallback itself,
+which now KEEPS a prefilter: `level-context` under `auto` went from a
+32,761 B plain-VM `.c` to a 88,438 B hybrid (a count-collapsed prefilter
+DFA's tables), `.so` 39,448 vs 26,480 for the forced VM. Not surveyed
+beyond that row; the window's `emit bytes` column is the survey.
 
 ### RE-MEASURED at 35e1ab1: `bench/email`'s own artifacts
 
