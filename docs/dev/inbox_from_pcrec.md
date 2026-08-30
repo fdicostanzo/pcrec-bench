@@ -1172,3 +1172,4 @@ moves the numbers. Queue it behind [B21]/[B22]; no version bump needed
 on your side (a testee-config variant like `-caps-simdna`).
 
 PERF HOLD unchanged. BATTERY DONE + the pin line follow tonight.
+ack: 2026-08-30 — plan.md [B22] (the pin candidate cdaae0b; the same-pin byte-comparison rule; year4's alignment proof from the source-bytes columns; the declined-artifact reading key "nullable AND dfa-prefilter none"; ask (v) closed), [B24] NEW (the partial cc axis, behind [B21]/[B22] and the hold)
