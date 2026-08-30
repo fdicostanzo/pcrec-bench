@@ -362,3 +362,46 @@ an older measured one) restores it.
   (`level-context` under `pcrec-auto`, a VM artifact now, vs pcre2-jit)
   — outbox O-8. `.subject-grain.md` carries the 16 KB-1 MB sweep per
   flavour; `.tsv` the set-grain query.
+
+- `2026-08-30-bounded-0.1-budu-ryzen1600-after-96e44c2.md` — the [OPT-4]
+  AFTER sample (inbox I-18 (i)) on `bench/bounded@0.1` at pcrec
+  **96e44c2** (abi 12, the [B19] re-pin): six cells `measured` 07:12-10:45
+  EDT 2026-08-30 (window: both managers idle, BD7's 5-s occupancy gate,
+  18/18 cells across the three sets on attempt 1, zero retries), `--trials
+  5`, reporter v8. Query: `report --subbench bounded --version 0.1
+  --since 2026-08-30T11:00:00Z --format md` — 6 records: the two
+  libpcre2 baseline re-runs plus the four `pcrec_96e44c2_*` testees, none
+  of the 36d5963 BEFORE records (the `--since` bound is the mirror of the
+  first-sample entry's `--until` above — the two files share the
+  2026-08-30T11:00:00Z boundary because the pcre2 testee_ids carry no
+  pin). Read against `docs/dev/ledgers/2026-08-30-bounded-0.1-first-sample-36d5963.md`
+  §6 (the BEFORE ledger's predictions) and the first-sample entry above:
+  `cls-upto-65535` is still `did-not-compile` under both `auto` and
+  `nocaps` (NFA cap, unchanged pin-to-pin). `.subject-grain.md`
+  (`--grain subject`) and `.tsv` the same query.
+- `2026-08-30-email-specimen-0.2-budu-ryzen1600-after-96e44c2.md` — the
+  [OPT-4] AFTER sample on `email-specimen@0.2` at pcrec **96e44c2**,
+  same window and protocol as the bounded entry above, reporter v8.
+  Query: `report --subbench email-specimen --version 0.2 --since
+  2026-08-30T11:00:00Z --format md` — 6 records, same shape as bounded's
+  (two libpcre2 + four `pcrec_96e44c2_*`). Read against the
+  2026-08-29 `-repin-36d5963` report above (the [ENG-ABS] ledger) for the
+  pin-to-pin comparison: no `sel=collapsed-prefilter (DFA fallback
+  tripped)` cell fires in this set (only the legend NOTE mentions the
+  bucket, since a note prints whenever any `sel=` clause appears in the
+  table, matching the entry above's census — every `email-specimen`
+  artifact here is `sel=forced` or `sel=selected`, not a fallback).
+  `.subject-grain.md` (`--grain subject`) and `.tsv` the same query.
+- `2026-08-30-loglines-0.1-budu-ryzen1600-after-96e44c2.md` — the
+  [OPT-4] AFTER sample on `loglines@0.1` at pcrec **96e44c2**, same
+  window and protocol, reporter v8. Query: `report --subbench loglines
+  --version 0.1 --since 2026-08-30T11:00:00Z --format md` — 6 records,
+  same shape. Read against the 2026-08-29 `-repin-36d5963` report above
+  (the [OPT-K] ledger and Frank's [SEL-1] row): `level-context` under
+  both `pcrec-auto` and `pcrec-nocaps` still selects the VM and now shows
+  it structurally — `sel=collapsed-prefilter (DFA fallback tripped)`,
+  `lang=count-collapsed (dfa overflow retry, exact nfa 462/463)` — the
+  fact [B18]'s note called "readable only as prose" (pcrecbench/CLAUDE.md
+  "THE [SEL-1] FALLBACK") is now a stamped, queryable field via [B19].
+  `.subject-grain.md` (`--grain subject`) carries the 16 KB-1 MB sweep
+  per flavour; `.tsv` the set-grain query.
