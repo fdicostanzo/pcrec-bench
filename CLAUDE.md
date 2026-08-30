@@ -36,8 +36,15 @@ abi-12 stamps asserted BY VALUE (level-context = I-18's prediction to
 the letter; the size-cap rescue stamps `sel=selected` — a finding), the
 bits 19/20 controls, the reporter's `sel=`/`lang=` clauses and two
 source-bytes columns, and the abi-11 `K=`/`caps=` clauses (141/141 harness checks, 54 reporter tests). The
-windows at 96e44c2 (bounded's AFTER sample first) are the manager's next
-step. Before it, the same night: bench/bounded@0.1's FIRST SAMPLE at
+windows at 96e44c2 RAN the same morning (07:12-10:45 EDT, 18/18 cells
+measured on attempt 1 under BD7; store 68; reports at v8, the AFTER and
+repin-form files; ledger docs/dev/ledgers/2026-08-30-abi12-after-96e44c2.md;
+outbox O-10: [OPT-4] SPLITS — the ctx band 2.2-3.1× and level-context 4.6×
+faster where structure survives the collapse, `[a-z]{0,32768}` 3.6× slower
+where the collapsed language is nullable — one predicate for pcrec;
+Frank's I-19: BD7 ratified, (2)-(4) the v1.4 spread rule → [B20] in
+design; bounded@0.2's knee rungs → [B21] with pcrec's [OPT-5]). [B19] is
+COMPLETE and archived. Before it, the same night: bench/bounded@0.1's FIRST SAMPLE at
 36d5963 (6/6 measured, store 50, reports 2026-08-30-bounded-0.1-*; the
 [OPT-4] BEFORE; ledger docs/dev/ledgers/, outbox O-9: 65535 refused by
 the NFA cap while pcrec-vm builds it, the end-anchored search-filter DFA

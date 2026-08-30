@@ -363,6 +363,22 @@ an older measured one) restores it.
   — outbox O-8. `.subject-grain.md` carries the 16 KB-1 MB sweep per
   flavour; `.tsv` the set-grain query.
 
+- `2026-08-30-{bounded-0.1,email-specimen-0.2,loglines-0.1}-budu-ryzen1600-repin-96e44c2.md` —
+  the REPIN-FORM renders of the abi-12 AFTER sample: the same three sets
+  queried with BOTH pins' records in one query, `report --subbench <set>
+  --version <v> --since 2026-08-29T00:00:00Z --until 2026-08-30T15:00:00Z
+  --format md` (10 records included per set: the four `pcrec_36d5963_*`
+  and four `pcrec_96e44c2_*` ids plus the two pcre2 ids deduped
+  newest-wins; the superseded 36d5963 pcre2 and inconclusive records
+  listed under OD-B15), so the reporter's R8 `Δ vs previous version`
+  column FIRES on every pcrec row (matched by testee-id root across the
+  pins) and carries the spread verdicts the abi-12 ledger
+  (docs/dev/ledgers/2026-08-30-abi12-after-96e44c2.md) had to compute by
+  hand — its §6(a) is the reason these files exist. The `-after-96e44c2`
+  files above stay the clean single-pin sample; read the two families
+  side by side. `.subject-grain.md` and `.tsv` the same query (the TSV
+  carries no Δ column). Rendered 2026-08-30 13:24-13:33 EDT by the
+  manager on the merged v8 reporter, untimed, beside pcrecdev1's battery.
 - `2026-08-30-bounded-0.1-budu-ryzen1600-after-96e44c2.md` — the [OPT-4]
   AFTER sample (inbox I-18 (i)) on `bench/bounded@0.1` at pcrec
   **96e44c2** (abi 12, the [B19] re-pin): six cells `measured` 07:12-10:45
