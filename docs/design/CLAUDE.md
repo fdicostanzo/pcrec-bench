@@ -48,25 +48,39 @@ docs/dev/'s append-only records.
   9 is the one with a real hole in it — the MATCH regime presumes an
   end-anchor and pcrec has none. For the M1 panel.
 
-- `gate_shape_v14.md` — **SPEC, awaiting the critic panel (2026-08-30,
-  plan row [B20]; ruled by inbox I-19 (1): BD7 ratified as the gate,
-  Frank's (2)-(4) the v1.4 spread rule)**: record schema v1.4 — the
-  pre-flight (BD7's per-core 5-s average, plus the TARGET core's own
-  reading as a new `occupancy.<sample>.target_busy_pct` field, X26
-  untouched), the AFTER samples as provenance (X13 revised by version:
-  `load.before`, `occupancy.before`, the target clause, trial agreement),
-  TRIAL AGREEMENT with its constants MEASURED over all 68 store records
-  (`docs/dev/measurements/2026-08-30-trial-agreement-census.txt`: rule
-  `v1.4-1of5`, k = 1.5, F = 1 % — zero slow pairs and one fast outlier
-  in 62,923 rows; the store's worst record 0.204 %, a 4.9× margin; the
-  one `loaded` record's numbers shown unmoved against its clean re-run),
-  the `trial_agreement` setup block and `inconclusive-spread` status,
-  the enumerated validator/schema (X13 versioned, X31-X33, the examples
-  by name), harness, reporter and check changes, the migration (the
-  NINE historical `inconclusive-load` records listed and left as
-  history) and ten open questions for the panel; the proposal it grew
-  from is kept verbatim as its §H. quiet_baseline.md's 2026-08-30
-  section is what the harness DOES now.
+- `gate_shape_v14.md` — **SPEC, the r3 critic panel APPLIED (2026-08-30,
+  plan row [B20]), awaiting the implementation lane** (ruled by inbox
+  I-19 (1): BD7 ratified as the gate, Frank's (2)-(4) the v1.4 spread
+  rule; the panel's 45 findings and the manager's rulings R-1..R-20 in
+  `docs/dev/reviews/2026-08-30-r3-gate-shape-v14.md`): record schema
+  v1.4 — the pre-flight (BD7's per-core 5-s average, plus the TARGET
+  core's own reading as `occupancy.<sample>.target_busy_pct`, a
+  TRI-STATE keyed on `pinning.cpu` with a missing target row refused
+  BEFORE the run, X26 untouched), the AFTER samples as provenance (X13
+  revised by version: `load.before`, `occupancy.before`, the target
+  clause, trial agreement; the status-deciding sentence first and never
+  elided, today's `note`/`status_detail` split kept), TRIAL AGREEMENT as
+  a GROUP rule `v1.4-group` with its constants MEASURED over all 68
+  store records (`docs/dev/measurements/2026-08-30-trial-agreement-
+  census.txt` the row census, `-census-groups.txt` the group census:
+  k = 1.5, a group disagrees at d ≥ 2 and 3·d ≥ n, N ≥ 5 and odd —
+  zero disagreeing groups on the store, the margin in k stated as
+  0.05-0.10 and the store uninformative above 1.55, the three blind
+  bands and the power table stated), the `trial_agreement` setup block
+  (`trials`, the group and row counts, `rows_unjudged`, a two-integer
+  `worst_group`, verdict `agree`/`disagree`/`n/a-trials`) and the
+  `inconclusive-spread` status, §3.5 the arithmetic both
+  implementations follow, §3.6 a per-group `/proc/stat` timeline as
+  provenance only, the enumerated validator/schema (MINOR under a
+  drafted §4 amendment, X13 versioned, X31-X33, KB-4's schema half, the
+  examples plan against the examples that exist), harness (the status
+  decision table, exit code 4, the `quiet` CLI through `gate()`),
+  reporter and check changes (every check with its control), the
+  migration (the NINE historical `inconclusive-load` records left as
+  history), §9 the three escalations E-1..E-3 (ruled the same day) and the residue; the
+  proposal it grew from is kept verbatim as its §H, the panel's summary
+  as §H.2. quiet_baseline.md's 2026-08-30 section is what the harness
+  DOES now.
 - `quiet_baseline.md` — **[B3]'s answer to OD-B8, MEASURED 2026-08-25**:
   what "quiet" means numerically on this box, the 12 samples behind it,
   and the two thresholds `pcrecbench/quiet.py` defaults to. It carries a
