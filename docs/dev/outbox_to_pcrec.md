@@ -441,3 +441,233 @@ you want .o / source bytes recorded beside the .so (item 7); (v) for the
 ledger's next round, state predictions on the bench's OWN subjects (the
 loglines flavours, the email set) rather than your log text — the arm
 split in item 2 is the difference.
+
+## O-9 (2026-08-30 ~07:3x EDT) — bench/bounded@0.1 MEASURED at 36d5963 (abi 11), the [OPT-4] BEFORE: the first refusal is 65535 by the NFA cap and `auto` refuses what its own VM builds in 2.9 ms; an end-anchored DFA on `search-filter` pays ×37 where [ENG-ABS] should apply; `auto` picks the counted DFA on exactly the rungs where the VM is 6× faster; the wasted DFA build reaches ×687; `RX_UNROLL_K` moved once (depth, not product); the gate-shape test run for I-19; six asks
+
+Written by pcrecdev2. Everything below is in
+reports/2026-08-30-bounded-0.1-budu-ryzen1600-first-sample-36d5963.*
+(reporter v7, pinned tier, --trials 5, core 11, six cells every one
+`measured`: three in the 23:21-01:21 EDT window, three RE-RUN 05:22-06:17
+under BD7 after their first runs landed `inconclusive-load` on the 1-s
+after-sample — item 9), the full ledger with report-line citations in
+docs/dev/ledgers/2026-08-30-bounded-0.1-first-sample-36d5963.md (its §6
+is the 18-point checklist the AFTER sample at 96e44c2 will be read
+against), and docs/dev/measurements/2026-08-30-gate-shape-test-run.txt.
+Framing per your D86: item 8 ranks CANDIDATES; nothing is an ask for a row.
+
+1. THE COMPILE AXIS — the ladder's first refusal. NOTES.md predicted the
+   abi-11 emit-size cap at the 32768 rung. REFUTED twice: `[a-z]{0,32768}`
+   COMPILES under `auto` (a plain-VM artifact, `prefilter: none`, cursor
+   rung, 22,120 B .so, 188 ms) and the first refusal is `[a-z]{0,65535}` —
+   `pattern too large (NFA exceeds 131072 states)`, diagnostic byte-
+   identical to I-18's, under `auto` AND `nocaps`, both forms. I-18 (v)
+   says 32768 is "RESCUED" at abi 12: precisely, there was nothing to
+   rescue at abi 11 — the rung already compiled; what abi 12 adds is a
+   PREFILTER on that artifact (checklist §6.2). `pcrec-vm` and `pcrec-vm-
+   in` compile 65535 without complaint (22,120 B, emit-c 1.5-2.9 ms) and
+   answer all three regimes at 0.7-1.4× pcrec's own best. So `auto`
+   refuses a pattern its own VM handles trivially: the NFA cap is checked
+   BEFORE any [SEL-1] rung can route to the VM — a routing gap (candidate
+   4). pcrec-vm's compile is FLAT on the whole ladder (emit-c 1.37-2.93 ms,
+   128.9-157.4 ms total incl. gcc, 22,040-22,120 B at every rung); ALL the
+   ladder's compile growth is `auto`'s DFA build: emit-c 3.14 ms (256) →
+   425.9 ms (4096) → 7,032 ms (16384) net of the floor = O(n^1.8-2.0),
+   while the .so is LINEAR at ~12 B/count above 4096 (218,896 B at 16384
+   = 0.30 of I-18's 725,692 emitted bytes; NOTES.md's ".o ≈ 17 %" was low)
+   and gcc is 3 % of emit-c at the top rung (117.9 ms vs 7.03 s net).
+   The lazy form is 0.552 of the greedy (I-18 measured 0.517 in emitted
+   bytes). PCRE2: 197 B flat from 256 to 65535 on the class ladder; the
+   repeated GROUP `(?:a|[b-z]){0,1024}` is 52,377 B (~51 B/repetition),
+   40× interp / 17× jit compile time vs a class rung — as oracle_limits
+   predicted. pcrec-vm does NOT replicate a repeated group: 22,120 B.
+
+2. WHERE THE DFA→VM TRANSITION HAPPENS, PER SKELETON (36d5963): `[a-z]
+   {0,n}` PLAIN: DFA to 16384, VM from 32768, refused 65535; WHOLE-
+   SUBJECT `(?:…)\z`: DFA to 4096, VM from 16384. `cls-lazy-16384`: plain
+   DFA, whole-subject VM. `nest2-64` and `nest3-16`: plain DFA (71,488 B,
+   `search-filter`), whole-subject VM. `cls-atleast-4096`, `grp-upto-1024`,
+   `nest2-4`, `nest3-3`, `nest2-letters-6`, the everyday shapes: DFA both
+   forms. THE CTX LADDER: ALL FOUR rungs are VM in BOTH forms — including
+   `ctx-lazy-64`, which NOTES.md predicted "fits" and I-18's list omits
+   (checklist §6.3); the greedy twin `ctx-greedy-256` overflows too,
+   byte-identical in size (26,256 B) to the three lazy rungs — the
+   "states come from position-in-gap × progress-into-alternation, not
+   from laziness" claim holds. The whole-subject form is ALWAYS the harder
+   compile: it grows the table (×1.23-×2.15) or overflows where plain did
+   not; no pattern goes the other way. I-18's "selected VM for the nests"
+   must be read PER FORM: at abi 11 the nests are DFA in plain.
+
+3. THE WASTED DFA BUILD, AT BOUNDED'S SCALE. `auto` emit-c ÷ `pcrec-vm`
+   emit-c on the byte-identical fallback artifact: `cls-upto-32768`
+   whole ×687 (1,778 ms vs 2.59 ms); `cls-lazy-16384` whole ×683;
+   `cls-upto-16384` whole ×641; `nest2-64` whole ×617; `ctx-lazy-64`
+   whole ×355; `nest3-16` whole ×315 (2,415 ms vs 7.68 ms); `ctx-lazy-64`
+   plain ×140. Seven cells over ×300 — loglines' level-context (O-8
+   §5(b): ×313 / ×211, 0.51 / 0.72 s) at 2.2× the absolute cost and 2.2×
+   the ratio. I-18 says [SEL-1.2] is "reported, not chartered" for want
+   of a corpus correlation between exact NFA states and DFA overflow:
+   bounded now supplies EIGHT labelled overflow points (the four ctx
+   rungs, cls-upto-16384 whole, cls-upto-32768 both forms, cls-lazy-16384
+   whole, nest2-64 whole, nest3-16 whole) against 40 non-overflowing
+   ones, all with the exact pattern text in bench/bounded/patterns/. The
+   ctx ladder's attempt cost is FLAT across the count (389.6-397.6 ms
+   plain for 64/256/1024/greedy-256) — the overflow point does not move
+   with the gap count.
+
+4. RX_UNROLL_K MOVED — once. `nest3-16`: `K=1 / size-model` on every VM
+   form (pcrec-vm both forms, vm-in both, auto/nocaps' whole-subject
+   fallback), 26,296 B. `nest2-64` at the SAME count product (4096), one
+   level shallower, stays `K=8 / default` at 30,392 B: DEPTH, not count
+   product, is the trigger. No `cap-rescue` anywhere; `max_emit_code_
+   bytes` 500,000 / `max_emit_bytes` 1,000,000 on every VM artifact and
+   absent from every DFA artifact (confirms 6(a)/I-18 (iii)). The first
+   K movement in the bench after 0 in 54 emits at abi 11 (I-17) — and our
+   reporter did not render it (item 10(a); fixed in [B19]).
+
+5. THE MATCH AXIS. `match` (30 short subjects, anchored both ends):
+   pcrec-auto 1st-or-2nd on 10 of 22 ranked members and faster than
+   pcre2-jit on 20 of 22; the two it loses are `cls-atleast-4096` (4.29×
+   behind the JIT) and `cls-upto-4096` (1.52×) — item 6. THE CLIFFS:
+   `nest2-letters-6` on `r-00037` (one letter over the maximum): interp
+   1,622,929 ns, jit 1,609,520, auto 88.3, vm 342,224 — auto FLAT across
+   the cliff (68.7 → 88.3 ns from r-00036 to r-00037), ×18,400 faster
+   than the JIT; `nest3-3` on `d-00028`: jit 3,058,179 vs auto 46.7 ns,
+   ×65,500; `nest2-4` on `d-00017`: jit 12,536 vs auto 27.5 vs vm 2,226.7
+   (pcrec-vm's own small cliff, ×81 vs the DFA). pcrec-vm pays the big
+   cliffs too (342 / 478 µs; 4.7× / 6.4× faster than the JIT, same
+   class). `search` (30 subjects, unanchored): auto 1st-or-2nd on 13 of
+   22, faster than the JIT on 12 of 22; behind on the ctx band (4.02-
+   5.00× — a milder level-context: ahead of the interpreter at 0.64-0.89×,
+   4-5× behind the JIT), `cls-atleast-4096` 2.68×, `line-80` 2.42×,
+   `pw-8-64` 2.32×, and the three greedy `cls-upto` rungs it compiles to
+   a DFA (1.47-1.49×; at 32768, where auto = the VM, 0.52× — AHEAD of the
+   JIT). `throughput` (4 KB / 16 KB / 64 KB letters, 16 KB digits, find-
+   all): auto's weakest regime — 1st-or-2nd on 7 of 22, faster than the
+   JIT on 9 of 22; pcrec-vm 1st on the whole greedy class ladder. On the
+   ctx band auto is 4.18-4.43× behind the JIT in throughput. `auto` = `vm`
+   within spread on all 12 ctx cells (ratios 1.00-1.01): the [SEL-1]
+   fallback is complete and the selected VM is exactly the forced VM.
+   `nocaps` ÷ `auto` = 0.995-1.008 on all 69 shared cells (no capturing
+   group in the set; a null control). Floors (per call): match auto 10.2
+   / vm 7.1 / jit 28.8 / interp 28.9 ns; search auto 11.0 / vm 149.2 /
+   jit 39.6 / interp 46.5; throughput (102,400 B) auto 404.5 / vm
+   68,303.6 / jit 1,013 / interp 427.4. Seven everyday shapes sit within
+   2× of auto's per-call floor in `match` (dispatch-dominated, as
+   NOTES.md said the count ladder's field rows would be — labelled so).
+
+6. THE BIGGEST NON-CLIFF GAP: an end-anchored DFA that falls back to
+   `dfa_match=search-filter`. `cls-upto-4096` whole-subject / `match` on
+   `l-07`: auto 405.9 ns vs pcrec-vm 10.9 ns (×37); ×7.04 on the set;
+   `cls-atleast-4096` ×6.14 on the set; the same skeleton at 256
+   (`unwrapped`) costs 10.4 ns on the same subject. Stamps: engine=dfa,
+   dfa_match=search-filter, dfa_prefilter=byte-class-bounded,
+   dfa_scan=unanchored. [ENG-ABS]'s `unwrapped` form is NOT reaching the
+   large-count class rungs (cls-upto-4096 both forms, cls-upto-16384
+   plain, cls-atleast-4096 both forms) nor the two large nests' plain
+   artifacts (nest2-64, nest3-16). The artifact pays the full subject
+   even when the match dies at byte 0. Candidate 1; ask (ii).
+
+7. `auto` SELECTS THE COUNTED DFA ON EXACTLY THE RUNGS WHERE THE VM
+   WINS. `cls-upto-16384` throughput on `t-letters-004k`: the DFA 3.61
+   ns/B vs pcrec's own VM 0.61 ns/B (×5.96) and vs pcre2-jit ×5.89; set
+   ratios auto÷vm 1.98 / 2.05 / 2.05 at 256 / 4096 / 16384 and 1.00 at
+   32768 (where auto IS the VM) — the 32768 rung is 5.5× FASTER than the
+   16384 rung's DFA on the same subject. Same inversion in search (auto÷vm
+   2.81-2.82 at 256/4096/16384, 1.00 at 32768). Mechanism: a premultiplied
+   table at ~12 B/count on a run that stays inside the class — the table
+   loses to the counter rung. The DFA still wins on `t-digits-016k` (82.8
+   vs 140.5 µs). Set-composition caveat: the reporter flags `t-digits-
+   016k` at 90.7-95.5 % of the pcre2 testees' set on all five rungs; the
+   per-subject tables are the honest view; the pcrec rows read `spread`.
+   Candidate 2; ask (iii).
+
+8. RANKED CANDIDATES (D86, largest measured gap first, mechanism from
+   the stamps): (1) the end-anchored `search-filter` DFA — ×37 on a
+   subject, ×7 on the set, six artifacts (item 6); (2) a selection knee
+   on the count for the `{0,n}` class body — ×2 on the set, ×6 on the
+   worst subject, no new code path (the VM route is chosen one rung
+   higher) (item 7); (3) the wasted DFA build — ×315-×687, seven cells,
+   eight labelled overflow points for [SEL-1.2]'s missing correlation
+   (item 3); (4) `auto` refusing `[a-z]{0,65535}` that `pcrec-vm` builds
+   in 2.9 ms — the NFA cap checked before the [SEL-1] rung; a routing
+   gap (item 1); (5) `pcrec-vm` has NO prefilter on any of the 48 VM
+   artifacts — 2.67 ns/B for a pure miss on the floor (×169 vs auto's
+   memchr DFA at 0.016 ns/B; csv5 throughput ×10,650; floor search
+   ×13.5); every [SEL-1] fallback lands here, so an overflowing pattern
+   loses the prefilter with the engine — THIS is the row that measures
+   whether abi 12's `_VM_PREFILTER_LANG` rebuild works, and these are its
+   BEFORE numbers; (6) `nest2-4` — pcrec-vm's own cliff (×81 vs the DFA on
+   d-00017), covered by auto, listed for completeness. Upstream (ours to
+   file, not yours): pcre2-jit SLOWER than pcre2-interp on the pure-scan
+   throughput rows (csv5 ×1.82, floor ×2.37) where the start-code
+   dismissal does the work; the group-replication compile.
+
+9. THE GATE-SHAPE TEST RUN (for I-19; docs/dev/measurements/2026-08-30-
+   gate-shape-test-run.txt; docs/design/gate_shape_v14.md updated): under
+   BD7 (mpstat 1 5 judged on its Average) the three cells the 1-s after-
+   sample had rejected (10.10 / 20.20 / 10.10 %) re-measured on attempt 1
+   with after-samples 1.81 / 2.00 / 3.81 %; the OLD 1-s gate recomputed
+   from the recorded per-second peaks passes two on every second and
+   FAILS `pcrec-vm-in` on one of its five seconds (11.88 %) — a burst BD7
+   absorbed; trial-spread medians match their first runs within 0.3
+   points (3.7/4.0, 1.5/1.6, 1.5/1.4 %); the 80 rows over 50 % in ~9,000
+   are ONE trial of five ~2.2× slower across a whole (pattern, regime)
+   group, never trial 1, absorbed by the median. The inconclusive stamps
+   carried no information about the measurement. Frank's ruling (2)-(4)
+   remains the v1.4 proposal ([B20]) awaiting I-19; BD7 is what runs.
+
+10. ADAPTER-SIDE / HARNESS FINDINGS (ours): (a) the reporter rendered
+    none of the abi-11 [ART-SIZE] stamps (K, K_WHY, the two caps) — the
+    axis this set was built for was invisible; fixed in [B19] before the
+    AFTER report (KB-3); (b) a `did-not-compile` compile row carries no
+    `cost` — the time pcrec spends before refusing is not in the record
+    (KB-4; ask (iv)); (c) `dfa_match` splits the DFA artifacts into two
+    performance classes and nothing ranks on it — the legend shows it, a
+    grouping is owed; (d) `vm-in` ÷ `vm` = 1.15-1.17 on every `cls-*`
+    throughput rung and 1.486 on `cls-lazy-16384` (the 32768/131072
+    caller buffer vs a stamped 1/1-2/2 default) — this REVERSES O-4
+    ("vm-in faster on every regime"); the plausible mechanism is cache
+    footprint, unproven; both readings stated. (e) O-8's OD-B12 is closed
+    as BD7; the harness also fixed a free_text cap overflow on 24-pattern
+    sets (3bda38b) that cost the window one 21-minute cell.
+
+11. PREDICTIONS ON OUR SUBJECTS — your I-18 (v) row for `[a-z]{0,32768}`
+    read at the BEFORE pin: "auto = vm within spread on the short set" —
+    ALREADY TRUE (search 864 vs 866; match 731 vs 733); "well ahead of
+    pcre2-interp and BEHIND the JIT on search" — HALF FALSE ALREADY: auto
+    864 vs jit 1,668 ns = 0.52×, pcrec 1.93× AHEAD of the JIT; "the match
+    regime is the VM's count loop end to end" — TRUE (whole-subject VM,
+    auto = vm). Flagging so the AFTER is not read against a prediction
+    the BEFORE refutes. NOTES.md's own ledger: 25 predictions — 17
+    confirmed, 4 refuted (the 32768 refusal; ".o ≈ 17 %"; "ctx-64 fits";
+    "64 costs the same as 256/1024 on the failing arm" — on the 251 B
+    line `l-03` the 64 rung is 1.8× CHEAPER because the count truncates
+    the walk; on the 130 B `l-04` all three rungs are flat to 0.3 %), 2
+    half-confirmed (only nest3-16 moves K; 256 vs 1024 flat), 2 not
+    testable (no 1024 class rung; the 20-s calibration cap is not
+    surfaced by the reporter).
+
+12. ASKS (durable): (i) Does `_ENGINE_SEL` (abi 12) or any stamp
+    distinguish the NFA-cap REFUSAL (candidate 4) from the DFA-state-cap
+    fallback? A refused pattern carries no artifact, so the only
+    structured fact is the diagnostic string — is a refusal-reason token
+    owed, or is the diagnostic the contract? (ii) Is `dfa_match=search-
+    filter` on a WHOLE-SUBJECT artifact intended, or the [ENG-ABS]
+    `unwrapped` path failing to apply at large counts (item 6)? The answer
+    decides bug vs design limit for the sample's largest non-cliff gap.
+    (iii) Candidate 2 wants a selection knee on the count for `{0,n}`
+    class bodies; bounded brackets it (DFA wins at 256/4096 on digits,
+    loses 6× at 4096/16384 on letters). Say the word and the bench adds
+    intermediate rungs to locate the knee (a version bump, bounded@0.2).
+    (iv) Time a refused compile — a stderr line or an exit convention —
+    so a `did-not-compile` has a cost. (v) I-18 (v)'s "behind the JIT" is
+    already false at the BEFORE pin (item 11). (vi) `grp-upto-1024` vs a
+    `[a-z]{0,1024}` rung (NOTES.md's group-vs-class size term) is
+    untestable in 0.1; one added rung if [ART-SIZE] wants it (same bump
+    as (iii)).
+
+NEXT ON OUR SIDE: [B19] (the abi-12 re-pin: `_ENGINE_SEL`, `_VM_
+PREFILTER_LANG`/`_WHY`, the two source-bytes columns, `--warn-emit-bytes`
+captured, `--list-definitions` archived, the [ART-SIZE] legend) is in a
+lane now; then the AFTER windows (bounded six cells + email/loglines
+controls, ~3.5 h, announced) read against the ledger's §6 checklist.

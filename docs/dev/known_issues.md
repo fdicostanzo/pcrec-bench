@@ -36,3 +36,33 @@ v1.4 additive): every match row carries the EXPECTED answer class
 expectation's verification method already travels with the sub-bench,
 and the record is then self-describing; the reporter's m/n returns,
 records-only. Owner: the next schema/harness row; small.
+
+## KB-3 (2026-08-30) — the reporter rendered NONE of the abi-11 [ART-SIZE] stamps (`unroll_k`, `unroll_k_why`, `max_emit_bytes`, `max_emit_code_bytes`) the adapter records on every VM artifact
+
+Found by the bounded first-sample ledger (docs/dev/ledgers/2026-08-30-
+bounded-0.1-first-sample-36d5963.md §1.6, §4(a)): `grep -c UNROLL` on
+reports/2026-08-30-bounded-0.1-*-first-sample-36d5963.md is 0 while the
+records carry `engine_metadata.unroll_k` etc. on all 48 VM artifacts;
+the sample's only K movement (`nest3-16` = K=1 / size-model on every VM
+form; `nest2-64` at the same count product stays K=8 / default) had to
+be read from the JSONL. The axis bench/bounded was built for ([B11.4]
+number (1)) was invisible in its own committed report. FIX IN FLIGHT:
+[B19]'s lane extends the compile-legend line with `K=<k>/<why>` and
+`caps=<code>/<total>` for VM artifacts (absent on DFA artifacts by
+design) and a legend clause; the AFTER report is the first rendered with
+it. Lesson: a stamp the adapter reads is not a finding until the reporter
+renders it — [B18] (e) added five reads and zero renders.
+
+## KB-4 (2026-08-30) — a `did-not-compile` compile row carries no `cost`: the time pcrec spends before REFUSING a pattern is not in the record
+
+Same ledger, §1.3 / §4(b): the six `cls-upto-65535` refusal rows (auto
+and nocaps, both forms, `pattern too large (NFA exceeds 131072 states)`)
+have `compile_outcome`, `cost_class`, `diagnostic`, `pattern_id`, `seq`,
+`trial` and no `cost` object. On a set whose give-up axis IS the refusal
+([B11.4] number (3)), the refusal's cost is a number worth having: the
+adapter times the pcrec invocation only on success. Fix: time the
+`emit-c` phase regardless of outcome and record it on the refusal row —
+check whether schema v1.3 allows `cost` beside `did-not-compile` (the
+compile-row rules in docs/design/record_schema.md) before changing the
+adapter; if not, it is a v1.4 item beside [B20]. Outbox O-9 ask (iv) asks
+pcrec for the same number from its side.

@@ -75,3 +75,29 @@ alternation is a per-position attempt with the alternation unrolled,
 not a memchr for `"`; the interpreter's start-of-match memchr is what
 makes it faster. Status: OBSERVED; `pcre2test` with `jit` /
 `no_start_optimize` separates the hypotheses.
+
+## U2 — libpcre2 10.46 JIT is SLOWER than the interpreter on pure-scan find-all rows where the start-code dismissal does the work (OBSERVED 2026-08-30)
+
+Records `bounded@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260830T092238Z`
+and `...interp-caps-simdna__...T032115Z`, regime large-subject-throughput
+(4 KB / 16 KB / 64 KB letters + 16 KB digits, find-all), set medians:
+`csv5` (`\d{1,5}(?:,\d{1,5}){4}`-class shape; see bench/bounded/patterns)
+jit 3,151 ns vs interp 1,729 ns (×1.82); the floor pattern `:` jit 4,052
+vs interp 1,710 (×2.37). On these subjects the pattern's required/first
+code unit never occurs, so the whole call is the start-of-match scan; the
+JIT's entry cost exceeds the interpreter's memchr-class dismissal. Ledger
+docs/dev/ledgers/2026-08-30-bounded-0.1-first-sample-36d5963.md §2.7.
+Reading (unverified): JIT call overhead + its own scan loop vs the
+interpreter's `memchr`/first-code-unit fast path. Not a bug; a shape
+where "jit = faster" does not hold. Next: none owed.
+
+## U3 — libpcre2 10.46 compiles a bounded REPEATED GROUP by replication (~51 B per repetition; `(?:a|[b-z]){0,1024}` = 52,377 B, interp compile 33,030 ns, jit 108,590 ns) where a repeated CLASS is count-independent (197 B flat from `{0,256}` to `{0,65535}`) (OBSERVED 2026-08-30; NOT-A-BUG)
+
+Records as U2; the compile-cost tables (`eager-jit`, `interpretive`) in
+reports/2026-08-30-bounded-0.1-*-first-sample-36d5963.md; ledger §1.5.
+`nest2-64` 1,298 B and `nest3-16` 4,754 B likewise grow with the count.
+bench/bounded/oracle_limits.tsv predicted this from the oracle's own
+first refusal per skeleton. Documented PCRE2 behaviour (a repeated group
+is unrolled up to the pattern-size limit); recorded here because it is
+the comparison point for pcrec's [ART-SIZE] size term (pcrec-vm does not
+replicate: 22,120 B for the same pattern).

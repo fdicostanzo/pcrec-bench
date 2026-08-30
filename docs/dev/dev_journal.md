@@ -1440,3 +1440,54 @@ b19-repin) does I-18's worklist a/c/d/e with by-value controls on
 level-context's predicted stamps, the two source-bytes columns, the
 `--warn-emit-bytes` capture, `--list-definitions` archived. Stall
 watchdog cron every 10 min. Keepalive cron still ticking.
+
+## 2026-08-30 (EDT, ~07:4x), fifth session (part 3) — the bounded ledger read; O-9 sent; [B11.4] COMPLETED; KB-3/KB-4; U2/U3; docs/dev/ledgers/
+
+THE LEDGER (lane ledgerbounded, opus, read-only, 15 min; archived as
+docs/dev/ledgers/2026-08-30-bounded-0.1-first-sample-36d5963.md, 895
+lines, the new directory's first file — the derivation behind an outbox
+item, with report-line citations, so O-9's numbers trace to tables).
+What bounded's first sample says at 36d5963, in the order O-9 sends it:
+the set's predicted first refusal (the abi-11 emit cap at 32768) is
+REFUTED twice — 32768 compiles under auto as a plain-VM artifact and the
+first refusal is 65535 by the NFA cap (131,072 states), which `pcrec-vm`
+builds in 2.9 ms and answers at 0.7-1.4× pcrec's best: auto refuses
+what its own VM handles, the NFA cap checked before any [SEL-1] rung (a
+ROUTING gap, candidate 4); all the ladder's compile growth is auto's DFA
+build — emit-c O(n^1.8-2.0), the .so linear at ~12 B/count, gcc 3 % —
+while pcrec-vm's compile is flat at every rung; the DFA→VM transition
+per skeleton and form (whole-subject always the harder compile; ALL
+FOUR ctx rungs VM in both forms, refuting NOTES.md's "64 fits"; the
+greedy twin overflows too, byte-identical); the wasted DFA build ×315-
+×687 on seven cells (2.2× level-context's), with eight labelled
+overflow points for [SEL-1.2]'s missing correlation; RX_UNROLL_K moved
+ONCE — nest3-16 K=1/size-model, nest2-64 at the same product K=8: depth
+not product — and the reporter did not render it (KB-3, folded into
+[B19]'s lane: K/why/caps on the compile legend); the match axis — auto
+1st-or-2nd on 10/13/7 of 22 members in match/search/throughput, faster
+than the JIT on 20/12/9; the cliffs ×18,400 (nest2-letters-6 r-00037)
+and ×65,500 (nest3-3 d-00028) with auto FLAT across them and pcrec-vm
+paying them in the JIT's class; the ctx band 4-5× behind the JIT in
+search and throughput (a milder level-context), auto = vm on all 12 ctx
+cells; the biggest non-cliff gap — an end-anchored DFA on
+`dfa_match=search-filter` paying ×37 on one subject (cls-upto-4096
+whole/l-07: 405.9 vs 10.9 ns) where [ENG-ABS]'s unwrapped form does not
+reach (candidate 1); auto selecting the counted DFA on exactly the
+rungs where the VM is 6× faster (cls-upto-16384 throughput 3.61 vs
+0.61 ns/B; the 32768 rung, VM, 5.5× faster than 16384's DFA — candidate
+2, a selection knee on the count); pcrec-vm with NO prefilter on any of
+48 artifacts (2.67 ns/B for a pure miss, ×169 on the floor row — the
+BEFORE of abi 12's `_VM_PREFILTER_LANG` rebuild, candidate 5); vm-in
+1.15-1.49× SLOWER than vm on throughput (reverses O-4). 25 NOTES.md
+predictions: 17 confirmed, 4 refuted, 2 half, 2 untestable; I-18's own
+"32768 behind the JIT on search" already false at the BEFORE (0.52×).
+O-9 carries all of it plus the test-run numbers for I-19 and six asks
+(a refusal-reason stamp; is whole-subject search-filter intended; a
+knee-locating 0.2; time a refused compile; the prediction; a 1024 class
+rung). [B11.4] COMPLETED and archived (its three numbers produced);
+[B11] notes #3 [B11.2] next after the abi-12 windows. KB-3 (the
+reporter's [ART-SIZE] blindness — "a stamp read is not a finding until
+rendered"; [B18] (e) added five reads and zero renders), KB-4 (a
+did-not-compile row is untimed). U2 (pcre2-jit slower than interp on
+pure-scan find-all rows), U3 (PCRE2's group replication, NOT-A-BUG).
+b19repin still building; its scope gained the [ART-SIZE] legend line.
