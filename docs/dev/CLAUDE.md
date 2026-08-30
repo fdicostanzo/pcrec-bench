@@ -38,7 +38,8 @@ decisions) so cross-references between the two repos are never ambiguous.
   by the schema v1.1 lane. R3 (2026-08-30): the gate-shape SPEC
   (schema v1.4), three lenses, 45 findings, 44 applied to the spec
   under the manager's rulings R-1..R-20 by the r3 lane, one deferred
-  to the implementation lane, three items escalated (E-1..E-3).
+  to the implementation lane, three items escalated and ruled the
+  same day (E-1..E-3).
 
 - `feedback_pcrecdev1_2026-08-25.md` — the pcrec manager session's
   feedback on the first production sample (what is missing to act on an

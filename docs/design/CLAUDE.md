@@ -77,7 +77,7 @@ docs/dev/'s append-only records.
   decision table, exit code 4, the `quiet` CLI through `gate()`),
   reporter and check changes (every check with its control), the
   migration (the NINE historical `inconclusive-load` records left as
-  history), §9 the three escalations E-1..E-3 and the residue; the
+  history), §9 the three escalations E-1..E-3 (ruled the same day) and the residue; the
   proposal it grew from is kept verbatim as its §H, the panel's summary
   as §H.2. quiet_baseline.md's 2026-08-30 section is what the harness
   DOES now.

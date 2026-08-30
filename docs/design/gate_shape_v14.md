@@ -17,8 +17,9 @@ row-level census — and `2026-08-30-trial-agreement-census-groups.txt`
 — the group-level census the r3 rule is read from; both from
 `probe_trial_agreement.py`), not picked. Nothing in this note changes a
 record today: the harness does what quiet_baseline.md's 2026-08-30
-section says until the implementation lane lands §4-§8. The items the
-panel left for the manager are listed in §9 under "escalated".
+section says until the implementation lane lands §4-§8. The three items the
+compile lane escalated were RULED the same day (§9, E-1..E-3) and are
+applied here.
 
 Sections: §1 the gate · §2 the after samples as provenance · §3 trial
 agreement (the census, the rule as a GROUP rule, its constants, what it
@@ -217,8 +218,12 @@ pinned) — archived verbatim TWICE: the ROW-level census
 (`2026-08-30-trial-agreement-census.txt`, the no-argument run: 62,923
 judged rows, every one with exactly 5 trials) and the GROUP-level
 census (`2026-08-30-trial-agreement-census-groups.txt`, `--groups`,
-the §3.5 arithmetic: 63,028 row keys, 62,928 judged — the 62,923 plus
-five rows R-19 counts, below — 100 unjudged, 1,731 groups). Per row:
+the §3.5 arithmetic as first applied: 63,028 row keys, 62,928 judged
+— the 62,923 plus five ALL-trials-`timed-out` rows the archive counted
+under R-19's first wording — 100 unjudged, 1,731 groups. Under R-19 AS
+AMENDED by the E-1 ruling (§3.5) those five rows are `all_timed_out`
+unjudged: 62,923 judged, 105 unjudged, every group verdict unchanged;
+the tables below carry the amended numbers where they differ). Per row:
 the per-trial ns/iter, the median; a trial is a SLOW outlier at k if it
 is strictly above k × median, a FAST outlier if the row's minimum is
 below median / k. The row-level table:
@@ -340,8 +345,10 @@ with `m` the median of the row's per-trial ns/iter:
 
 - `slow` = the number of trials with ns/iter **> k · m**;
 - `fast` = 1 if **min(ns/iter) < m / k**, else 0;
-- the row **DISAGREES** iff `slow ≥ 2` OR `fast = 1` (or, ruling R-19,
-  it carries a `timed-out` trial — §3.5, and the escalation in §9 E-1).
+- the row **DISAGREES** iff `slow ≥ 2` OR `fast = 1` — or it is a
+  MIXED row, a `timed-out` trial beside ≥ 1 timed trial (ruling R-19 as
+  amended by E-1, §3.5; a row whose EVERY trial timed out is the
+  engine's consistent answer and is unjudged).
 
 Per GROUP (pattern, regime, form), with `n` its judged rows and `d`
 its disagreeing rows: the group **DISAGREES** iff **`d ≥ D_MIN` AND
@@ -377,18 +384,19 @@ kept so the margin is visible):
 | 1.60-2.00 | 300-128 | 0 | 0 | 0 | 0.0000 % | 0 |
 
 And the same sweep at the GROUP level under the chosen (D_MIN = 2,
-c = 3), from the group census (its "per k" block; the five `timed-out`
-rows R-19 counts are in every line, d = 1 each, and never flag):
+c = 3), from the group census (its "per k" block, which counted the
+five all-timed-out rows as d = 1 each under R-19's first wording; they
+are subtracted here per E-1 — no group verdict changes):
 
 | k | rows disagreeing | largest d in any group (where) | groups disagreeing (2,3) |
 |---|---|---|---|
-| 1.25 | 63 | 10 (`loglines@0.1 × libpcre2 interp` 08-28, `kv-quoted / short-subject-search`, n = 112) | 2 (1 record) |
-| 1.30 | 40 | 7 (the same group) | 1 |
-| 1.35 | 22 | 4 (the same group) | 1 |
-| 1.40 | 13 | 3 (**the `loaded` control record**, `floor / large-subject-throughput`, n = 5) | **1** |
-| 1.45 | 9 | 1 | 0 |
-| **1.50** | **6** | **1** | **0** |
-| 1.55-2.00 | 5 | 1 (the five timed-out rows only) | 0 |
+| 1.25 | 58 | 10 (`loglines@0.1 × libpcre2 interp` 08-28, `kv-quoted / short-subject-search`, n = 112) | 2 (1 record) |
+| 1.30 | 35 | 7 (the same group) | 1 |
+| 1.35 | 17 | 4 (the same group) | 1 |
+| 1.40 | 8 | 3 (**the `loaded` control record**, `floor / large-subject-throughput`, n = 5) | **1** |
+| 1.45 | 4 | 1 | 0 |
+| **1.50** | **1** | **1** | **0** |
+| 1.55-2.00 | 0 | 0 | 0 |
 
 The store bounds k from BELOW and not from above: under the group rule
 the contaminated-but-correct record of §3.1 is flagged at k ≤ 1.40 (3 of
@@ -396,7 +404,7 @@ its 5 floor-throughput rows carry two trials 1.4× over their median —
 numbers its clean re-run shows were right to within 1.8 %) and clears
 at k ≥ 1.45; **k = 1.5 is 0.05-0.10 from a false positive, not 4.9×
 away**, and the store is UNINFORMATIVE above 1.55 (every k from 1.55 to
-2.0 gives the same five timed-out rows and nothing else). The case
+2.0 gives nothing at all). The case
 for 1.5 over a higher k therefore rests on the four characterised burst
 magnitudes of the gate-shape probe — 2.25× (`cls-upto-32768 / match`,
 24.5 vs 10.9), 1.76× (`dotted4 / match`, 38.8 vs 22.1), 1.70×
@@ -418,15 +426,19 @@ every named group size (n = 4, 5, 30, 85, 112): a WHOLE-group two-pass
 disturbance (every row two slow trials, d = n) and a HALF-pass overlap
 (a window covering 1.5 passes, so the rows hit on both passes are half
 the group, d = ⌊n/2⌋ — the pessimistic half). Constraint (i) pushes the
-threshold up, (ii) pulls it down; "least sensitive" is the reading under
-which the pair is determined (the more sensitive (2, 4) also satisfies
-both and is the runner-up, §9). Group sizes actually present in the
+threshold up, (ii) pulls it down; "least sensitive" — the largest
+margin at zero false positives — is the reading the manager CONFIRMED
+(E-3 ruling). The more sensitive (2, 4) also satisfies both and is
+recorded here as the tighter option the panel may revisit after the
+first v1.4 window: T = ⌈n/4⌉ = 2 / 2 / 8 / 22 / 28 at n = 4 / 5 / 30 /
+85 / 112, margins over the store 2 / 2 / 8 / 22 / 28, of the half shape
+0 / 0 / 7 / 20 / 28. Group sizes actually present in the
 store (per sub-bench, judged rows per group; this corrects the earlier
 draft's "≥ 23 subjects" and panel A F10's list): bounded 4 and 30;
 email@0.1 2, 3, 77, 80, 85; email@0.2 4, 5, 77, 80, 85; loglines 12 and
 112. The store's largest d in any group at k = 1.5 is **1** (the fast
-row of §3.1 fact 3, 1 of 77; and the five timed-out rows, 1 of 3 or
-1 of 5) — so EVERY candidate satisfies (i). Constraint (ii):
+row of §3.1 fact 3, 1 of 77; the five all-timed-out rows the archive
+counted are unjudged under E-1) — so EVERY candidate satisfies (i). Constraint (ii):
 
 | candidate | flags WHOLE at every size | flags HALF at every named size | fails at |
 |---|---|---|---|
@@ -443,11 +455,11 @@ the half shape stops flagging; "whole" is n − T:
 | n | T | margin over the store | margin of the HALF shape | margin of the WHOLE shape |
 |---|---|---|---|---|
 | 4 | 2 | 2 | 0 | 2 |
-| 5 | 2 | **1** (a d = 1 timed-out row exists at n = 5) | 0 | 3 |
+| 5 | 2 | 2 | 0 | 3 |
 | 30 | 10 | 10 | 5 | 20 |
 | 85 | 29 | 29 | 13 | 56 |
 | 112 | 38 | 38 | 18 | 74 |
-| (2, 3, 12, 77, 80 — also present) | 2, 2, 4, 26, 27 | 2, 1, 4, 25, 27 | −1, −1, 2, 12, 13 | 0, 1, 8, 51, 53 |
+| (2, 3, 12, 77, 80 — also present) | 2, 2, 4, 26, 27 | 2, 2, 4, 25, 27 | −1, −1, 2, 12, 13 | 0, 1, 8, 51, 53 |
 
 So the whole-group shape flags at every size in the store; the half
 shape flags at every named size, with no rows to spare at n = 4 and 5
@@ -455,9 +467,9 @@ shape flags at every named size, with no rows to spare at n = 4 and 5
 or 5 rows on both passes) and 5-18 rows to spare on the match/search
 groups; the 2- and 3-row groups of email@0.1 cannot show the half shape
 at all (⌊n/2⌋ = 1 < D_MIN), which is the price of "never one row". The
-store's single fast row (1 of 77) and its five timed-out rows (1 of 3,
-1 of 5) remain NON-disagreements, as R-16 requires: one row is not a
-disturbed group.
+store's single fast row (1 of 77) remains a NON-disagreement, as R-16
+requires: one row is not a disturbed group; its five all-timed-out rows
+are not judged at all (E-1).
 
 **What the rule cannot see, stated in full (ruling R-17; panel A F2,
 F3).** Three blind bands, in decreasing order of how much they can move
@@ -546,7 +558,8 @@ bench/bounded the two populations differ materially.
 | `trial_agreement.groups_disagreeing` | integer ≥ 0 | R | the count of judged groups that DISAGREE per §3.2 (X32 recomputes it); 0 under `n/a-trials` | the numerator of the verdict |
 | `trial_agreement.rows_judged` | integer ≥ 0 | R | the count of judged rows (§3.5; X32 recomputes it); 0 under `n/a-trials` | the evidence behind the group counts |
 | `trial_agreement.rows_disagreeing` | integer ≥ 0 | R | the count of judged rows that DISAGREE (X32 recomputes it); 0 under `n/a-trials` | as above |
-| `trial_agreement.rows_unjudged` | integer ≥ 0 | R | the count of row keys NOT judged — fewer than 2 timed trials and no `timed-out` trial (`iterations ≤ 1` rows, expectation-failing rows); under `n/a-trials` EVERY row key; `rows_judged + rows_unjudged` = the record's match-row keys (X32 recomputes it) | a record that is 30 % unjudgeable cannot present "0 of 42 groups disagree" as though the cell had been examined (panel A F5); the reporter renders it |
+| `trial_agreement.rows_unjudged` | integer ≥ 0 | R | the count of row keys NOT judged: fewer than 2 timed trials and no mixed `timed-out` trial (`iterations ≤ 1` rows, expectation-failing rows), or EVERY trial `timed-out` (E-1); under `n/a-trials` EVERY row key; `rows_judged + rows_unjudged` = the record's match-row keys (X32 recomputes it) | a record that is 30 % unjudgeable cannot present "0 of 42 groups disagree" as though the cell had been examined (panel A F5); the reporter renders it |
+| `trial_agreement.rows_unjudged_reasons` | object | R | `{few_timed_trials: n, all_timed_out: n, na_trials: n}` — the reason tokens (E-1 ruling), integers ≥ 0, summing to `rows_unjudged` (X32 recomputes them); under `n/a-trials` every row key is under `na_trials` and the other two are 0 | an all-timed-out row is the engine's consistent answer — a refusal, not a spread — and a reader must be able to tell it from a row the budget could not time; the reporter renders `N rows unjudged (M all-timed-out)` |
 | `trial_agreement.worst_group` | object / null | R | `null` iff `groups_judged = 0`; else `{pattern_id, regime, form, d, n}` of the judged group with the LARGEST `d`, ties → the SMALLEST `n`, ties → the LOWEST `seq` among the group's rows; `form` always spelled explicitly (`plain` when the rows omit it); its ids must exist in the record (X7's argument) and `d`/`n` recompute (X32) | the reader's first look, without re-reducing 1,500 rows — the group nearest the threshold, with its two integers. The earlier draft's `worst_row` with its per-trial `ns_per_iter` array is DROPPED (ruling R-16; panel B B8/B9: a stored per-call time checked by nobody is the shape X20 and X26 were written to end, and the ids are the irreducible part) |
 | `trial_agreement.verdict` | enum `agree` / `disagree` / `n/a-trials` | R | X31: `n/a-trials` iff `trials < 5` or `trials` is even; else `disagree` iff `groups_disagreeing ≥ 1`; else `agree` (so `groups_judged = 0` with 5 trials ⇒ `agree`, "0 of 0 groups disagree", which the reporter renders DISTINCTLY, §6 R4); FILTERABLE | the verdict beside its numbers, required to agree with them |
 
@@ -590,14 +603,17 @@ block with `verdict: n/a-trials`, all counts 0, `rows_unjudged` = every
 row key, `worst_group: null`, and is `inconclusive-spread` (so a
 `--trials 1` pinned run is not `measured`, closing the earlier draft's
 Q6/Q7). A SCRATCH record (`quick`'s default is 3 trials) carries the
-same block with `n/a-trials` and — the choice this spec makes, flagged
-in §9 for the manager — keeps the PRE-FLIGHT's status: `measured` when
-the box was quiet, because the ruling separates the two tiers ("never
-ranked anyway") and because the smoke suite (`--trials 1 --iters 1`,
-scratch, `synthetic`) would otherwise write `inconclusive-spread` on
-every clean run; the block says `n/a-trials` in the record, `quick`
-prints `agreement: n/a (3 trials)`, and the reporter never ranks the
-tier. X13 clause 4 is worded per tier for exactly this (§2). A pinned
+same block with `n/a-trials` and — CONFIRMED by the E-2 ruling — keeps
+the PRE-FLIGHT's status: `measured` when the box was quiet, because
+the tiers are separate and because the smoke suite (`--trials 1
+--iters 1`, scratch, `synthetic`) would otherwise write
+`inconclusive-spread` on every clean run; the block carries the fact,
+`quick` prints `agreement: n/a (3 trials)`, and `quick` and the smoke
+suite never write `inconclusive-spread`. X13 clause 4 is worded per
+tier for exactly this (§2: pinned requires N ≥ 5 and odd for
+`measured`; scratch does not). **Scratch-tier records are never
+ranked, regardless of status** (record_schema.md §6.8; the reporter's
+R1 reads the tier before the status). A pinned
 record with 5 trials and `rows_judged = 0` (every timed row at
 `iterations ≤ 1`, or every subject expectation-failing — reachable on
 bench/bounded) is `agree` and `measured` with `rows_unjudged` saying
@@ -638,13 +654,17 @@ pins both (§8).
     trials       = max(row.trial over all match rows), or 0 with none
     if trials < 5 or trials % 2 == 0:
         verdict = "n/a-trials"; every count = 0; rows_unjudged = len(row keys);
+        reasons = {few_timed_trials: 0, all_timed_out: 0, na_trials: len(row keys)};
         worst_group = null; STOP
     for each row key, in any order:
         timed  = { trial: elapsed_ns / iterations (float64)
                    for the key's rows with match_outcome == "matched-as-expected"
                    and timing.iterations > 1 }            # a TRIAL is timed iff both
-        if any of the key's rows has match_outcome == "timed-out":
-            judged, disagreeing = True, True               # R-19 (see 9 E-1)
+        n_timed_out = count of the key's rows with match_outcome == "timed-out"
+        if n_timed_out >= 1 and len(timed) >= 1:           # a MIXED row: the alarm hit some passes
+            judged, disagreeing = True, True               # R-19 as amended (E-1)
+        elif n_timed_out == len(the key's rows):           # EVERY trial timed out: the engine's answer
+            judged = False; rows_unjudged += 1; reasons.all_timed_out += 1; continue
         elif len(timed) >= 2:                              # a ROW is judged iff >= 2 timed trials
             xs   = [timed[t] for t in sorted(timed)]       # sorted by trial; mixed outcomes: judged on the timed ones
             m    = statistics.median(xs)                   # even count: the mean of the two middle values
@@ -652,7 +672,7 @@ pins both (§8).
             fast = 1 if min(xs) < m / k else 0             # spelled exactly so (not min*k < m)
             judged, disagreeing = True, (slow >= 2 or fast == 1)
         else:
-            judged = False; rows_unjudged += 1; continue
+            judged = False; rows_unjudged += 1; reasons.few_timed_trials += 1; continue
         rows_judged += 1; group[n] += 1
         if disagreeing: rows_disagreeing += 1; group[d] += 1
     groups_judged      = the groups with n >= 1
@@ -759,14 +779,14 @@ know …" (the rest unchanged).
 | S6 | the §3.6 `timeline` array and `timeline_tool` on `environment.occupancy` (optional; `additionalProperties: false` throughout) | `schema/record.schema.json` |
 | V1 | **X13 revised, VERSIONED:** for `schema_version ≥ 1.4` the §2 clauses 1-5 (clause 3's tri-state; clause 4 per tier); for `< 1.4` the v1.1 text unchanged (both samples pass, `load.verdict = quiet`). The validator already parses the minor (X17's branch) — X13 becomes the first rule that reads it, under the §4 clause above | `schema/validate.py` |
 | V2 | **X31** (new): `trial_agreement.verdict` is `n/a-trials` iff `trials < 5` or even; else `disagree` iff `groups_disagreeing ≥ 1`; else `agree` | `schema/validate.py` |
-| V3 | **X32** (new): `trials`, `groups_judged`, `groups_disagreeing`, `rows_judged`, `rows_disagreeing`, `rows_unjudged` equal the values RECOMPUTED from the record's match rows under §3.5 with the block's own `k`, `d_min`, `share_c`; `worst_group` (when not null) equals the recomputed one (key, `d`, `n`) and its ids exist among the record's patterns/subjects/regimes; `rows_judged + rows_unjudged` = the record's row keys. X20's argument: without X32, X31 is inert — a harness can stamp `0 of 72` beside rows that say otherwise | `schema/validate.py` |
+| V3 | **X32** (new): `trials`, `groups_judged`, `groups_disagreeing`, `rows_judged`, `rows_disagreeing`, `rows_unjudged` and `rows_unjudged_reasons` equal the values RECOMPUTED from the record's match rows under §3.5 with the block's own `k`, `d_min`, `share_c`; `worst_group` (when not null) equals the recomputed one (key, `d`, `n`) and its ids exist among the record's patterns/subjects/regimes; `rows_judged + rows_unjudged` = the record's row keys. X20's argument: without X32, X31 is inert — a harness can stamp `0 of 72` beside rows that say otherwise | `schema/validate.py` |
 | V4 | **X33** (new, TWO-DIRECTIONAL, panel B B4): for `schema_version ≥ 1.4` the `trial_agreement` block is REQUIRED on every record; for `< 1.4` it is FORBIDDEN — a block on a record stamped before the version that defined it is a mis-stamped record, not a forward-compatible one (X17 never looks at fields, so this needs its own rule and control) | `schema/validate.py` |
 | V5 | the `--expect-rule` help string and the module docstring: `X1..X33`; the X13 message text (`validate.py`'s "only a passing occupancy check on BOTH samples supports `measured`") becomes version-specific | `schema/validate.py` |
 | V6 | `validate.py`'s X32 recomputation is a SEPARATE implementation from `pcrecbench/reduce.py`'s (§5 H4): ~30 lines, no import of `pcrecbench`. Why this is right here and importing is right for X3/X5/X6 (panel B B14, reconciling `record.py`'s docstring): X3/X5/X6 derive IDENTIFIERS FROM A CONVENTION — there is no fact of the matter to check, and a second implementation only creates drift that rejects honest records, so `record.py` imports the validator's functions; X32 checks A VERDICT A HARNESS STAMPED BESIDE ROWS IT ALSO WROTE — X20's and X26's situation exactly, where an imported recomputation would make X31 inert. The implementation lane scopes `record.py`'s docstring to derivations-of-convention in the same change. The drift risk this accepts is tolerable only because §3.5 leaves no room for it, and X32 compares integers | `schema/validate.py`, `pcrecbench/record.py` (docstring) |
 | E1 | `schema/examples/` — the ACTUAL store is three good records: pcrec 1.1, v8 1.1, local 1.2; there is NO 1.3 good example (ruling R-10, panel B B10). ADD ONE 1.4 good example, built FROM the pcrec example, and bump nothing else (the 1.1 → 1.2 → 1.3 precedent is that no example was ever re-stamped): `email-specimen@0.1__pcrec_…__example-box__<new timestamp>.jsonl` with a new `run.timestamp` → new `record_id` → new filename (X3/X4/X5) and a re-stamped `content_hash`, GROWN TO 5 TRIALS (X9 dense 1..5 per row, X18 `seq` renumbered dense over all rows, X21 calibration on every timed row), `tier: pinned`, `pinning.cpu = 2`, `target_busy_pct` on both samples (a number on `before` ≤ limit), a `trial_agreement` block whose counts X32 recomputes (`verdict: agree`), a FAILED after sample (`occupancy.after.verdict = fail` at 20.20 % with X26 holding, `load.after.load1` 11.40 with `load.verdict = loaded` so X20 holds) so the after-as-provenance and the loaded-beside-measured cases are both exercised by the record that validates, ONE did-not-compile compile row carrying `cost` (S5), and a `timeline` with one item per group (S6); `status = measured`. The 1.4 example must be GENERATED (a script under `schema/examples/`, committed, deterministic), not hand-written: five trials × 12 rows with dense `seq` and per-row calibration is not hand-edit material, and every bad example below is a one-field sabotage of its output | `schema/examples/` + its CLAUDE.md |
 | E2 | `schema/examples/bad/`, one per new rule, each the 1.4 good example with exactly ONE thing wrong and the hash re-stamped, and each constructed to fire ONLY its rule (panel B B7): `x13-measured-but-target-core-busy.jsonl` (`before.target_busy_pct` 55, status `measured`); `x13-measured-but-target-busy-null.jsonl` (`before.target_busy_pct: null` beside `verdict: pass`, `pinning.cpu = 2`, status `measured` — the missing-row control, ruling R-2); `x13-measured-but-trials-disagree.jsonl` (rows of one group sabotaged so it disagrees, the block RECOMPUTED to `disagree`, status left `measured` — X31/X32 quiet, X13 alone fires); `x13-measured-but-load-before-high.jsonl` (`load.before.load1` 9.8, `load.verdict` `loaded` so X20 stays quiet, status `measured` — the control that shows v1.4 X13 reads the BEFORE sample); `x13-measured-but-na-trials-pinned.jsonl` (the example truncated to 3 trials, the block recomputed to `n/a-trials`, status `measured`, `tier: pinned`); `x31-verdict-contradicts-groups.jsonl` (rows of one group sabotaged to disagree, `groups_disagreeing: 1` and every count CORRECT, only `verdict: agree` wrong — X32 quiet, X31 alone); `x32-groups-disagreeing-not-recomputable.jsonl` (rows that disagree, block stamped `0` and `verdict: agree` — self-consistent, X31 quiet, X32 alone: the "stamp 0 beside the rows" sabotage); `x32-trials-not-recomputable.jsonl` (`trials: 7` on a 5-trial record); `x32-rows-unjudged-not-recomputable.jsonl`; `x32-worst-group-unknown-pattern.jsonl`; `x33-trial-agreement-missing.jsonl` (1.4, no block); `x33-trial-agreement-on-a-v13-record.jsonl` (the block on a record stamped 1.3 — the other direction); `schema-status-inconclusive-spread-misspelt.jsonl` (`inconclusive_spread` — the token-spelling rule); `schema-target-busy-beside-unavailable.jsonl` (a number beside `unavailable` — S2's `then`); `schema-trial-agreement-unknown-member.jsonl` (`additionalProperties`); `schema-timeline-item-missing-member.jsonl` (S6) | `schema/examples/bad/` + its CLAUDE.md |
 | E3 | the EXISTING controls `x13-occupancy-after-fail.jsonl`, `x13-occupancy-unavailable.jsonl` AND `x13-measured-but-loaded.jsonl` are **v1.1**-stamped (as is every file in `bad/` except `x17-future-major-version` at 2.0 — the earlier draft's "v1.3-stamped" was wrong, panel B B15) and STAY: they prove the `< 1.4` branch of X13 still fires; the third is Q8's case exactly (load1 11.40 after, both occupancy samples `pass`), LEGAL at 1.4 and rejected at 1.1. The "same sabotage, two versions, two verdicts" pair is: those three (rejected at 1.1) against the E1 good example (which carries the SAME after-sample failure and the SAME loaded `load.verdict`, accepted at 1.4). No re-stamped copy is needed | `schema/examples/bad/` (unchanged files) |
-| C1 | `check_fields.py`: the §8 field tables of record_schema.md gain, in the SETUP table, exactly these paths (the walk expands `$ref`s once per parent and descends `items` only for objects with named properties, so an array of numbers is one row and each `timeline[]` member is one): `environment.occupancy.before.target_busy_pct`, `environment.occupancy.after.target_busy_pct`, `environment.occupancy.timeline`, `environment.occupancy.timeline[].pattern_id`, `…[].regime`, `…[].form`, `…[].elapsed_ms`, `…[].target_busy_pct`, `…[].sibling_busy_pct`, `…[].max_other_busy_pct`, `…[].max_other_cpu`, `environment.occupancy.timeline_tool`, `trial_agreement`, `trial_agreement.rule`, `.k`, `.d_min`, `.share_c`, `.trials`, `.groups_judged`, `.groups_disagreeing`, `.rows_judged`, `.rows_disagreeing`, `.rows_unjudged`, `.worst_group`, `.worst_group.pattern_id`, `.worst_group.regime`, `.worst_group.form`, `.worst_group.d`, `.worst_group.n`, `.verdict` (29 setup rows); and in the COMPILE table the `cost` row's rule cell changes from "present IFF `compile_outcome` = `compiled` AND …" to "REQUIRED when `compile_outcome` = `compiled` AND `cost_class` ≠ `lazy-jit`; OPTIONAL otherwise (v1.4, KB-4: a refusal's cost)" (no new path). A field in one and not the other fails the build | `docs/design/record_schema.md` §8; `schema/check_fields.py` unchanged |
+| C1 | `check_fields.py`: the §8 field tables of record_schema.md gain, in the SETUP table, exactly these paths (the walk expands `$ref`s once per parent and descends `items` only for objects with named properties, so an array of numbers is one row and each `timeline[]` member is one): `environment.occupancy.before.target_busy_pct`, `environment.occupancy.after.target_busy_pct`, `environment.occupancy.timeline`, `environment.occupancy.timeline[].pattern_id`, `…[].regime`, `…[].form`, `…[].elapsed_ms`, `…[].target_busy_pct`, `…[].sibling_busy_pct`, `…[].max_other_busy_pct`, `…[].max_other_cpu`, `environment.occupancy.timeline_tool`, `trial_agreement`, `trial_agreement.rule`, `.k`, `.d_min`, `.share_c`, `.trials`, `.groups_judged`, `.groups_disagreeing`, `.rows_judged`, `.rows_disagreeing`, `.rows_unjudged`, `.rows_unjudged_reasons`, `.rows_unjudged_reasons.few_timed_trials`, `.rows_unjudged_reasons.all_timed_out`, `.rows_unjudged_reasons.na_trials`, `.worst_group`, `.worst_group.pattern_id`, `.worst_group.regime`, `.worst_group.form`, `.worst_group.d`, `.worst_group.n`, `.verdict` (33 setup rows); and in the COMPILE table the `cost` row's rule cell changes from "present IFF `compile_outcome` = `compiled` AND …" to "REQUIRED when `compile_outcome` = `compiled` AND `cost_class` ≠ `lazy-jit`; OPTIONAL otherwise (v1.4, KB-4: a refusal's cost)" (no new path). A field in one and not the other fails the build | `docs/design/record_schema.md` §8; `schema/check_fields.py` unchanged |
 | C2 | `check_rules.py`: the §9 rule table gains X31, X32, X33 and the revised (versioned) X13 text; the directory gains E2's files (a rule with no control, or a control naming no rule, fails the build). The two `schema-`-prefixed controls work as named (`check_rules.py` exempts the `schema` token; the Makefile uppercases it) | `docs/design/record_schema.md` §9; `schema/check_rules.py` unchanged |
 | D1 | `record_schema.md`, the SAME-COMMIT edit list (panel B B13): §4 the two amendments drafted above (the rule-revision clause; the MINOR bullet's reader sentence); §4.1 the 1.4 row; §5 the `status` enum row; §8 the C1 rows and the `cost` cell; §9 X13 (versioned text), X31-X33; the v1.1 RULING "`unavailable` occupancy is not `measured`" gains a v1.4 paragraph (at 1.4 it is true of the `before` sample only; `validate.py`'s message text likewise); a §6.9 "trial agreement" subsection pointing here; §10.3's "Any statistic" bullet AND its "coverage or `n` field" bullet each gain one sentence naming `trial_agreement` as the single argued exception (counts under a recomputation rule, X32) — and the first bullet's "no ns/call" stays true because the block stores none; §10.2 gains the `timeline` as a v1.4 field. `schema/CLAUDE.md`: the `record.schema.json` bullet's version sentence ("IMPLEMENTS (1.3)" → 1.4), the `validate.py` bullet's rule list (X33 the last named), and "Rules for changing the format → No statistics" qualified by the same exception. `schema/examples/CLAUDE.md` and `bad/CLAUDE.md`: E1-E3 as written (no 1.3 example exists; nothing re-stamped) | `docs/design/record_schema.md`, `schema/CLAUDE.md`, `schema/examples/*/CLAUDE.md` |
 | M1 | **What stays byte-identical for older records:** every v1.1/1.2/1.3 record in the store validates unchanged (X13's `< 1.4` branch; X31/X32 never fire without the block; X33's `< 1.4` direction is satisfied by every existing record; the new fields are optional in JSON Schema; S5 relaxes). `make check-schema` witnesses the 1.1 and 1.2 acceptance branches on the examples left at their versions; **the 1.3 acceptance branch is witnessed by `check-report`'s fixture gate and by the store's 54 × 1.3 records, NOT by `check-schema`** (there is no 1.3 example, panel B B10 (a)); and the reporter's reduction of a 1.3 and a 1.4 record in one invocation is witnessed by a NEW fixture pair (§6 R8 — the existing `mixed_version/minor_pair` fixture is a 1.0-shaped INVALID record beside a valid 1.1 one and proves only that the query is not refused, panel B B16.2) | — |
@@ -820,7 +840,7 @@ absent block at 1.4 — X33; the `< 1.4` branch does not read it); U6
 | R1 | the status gate is UNCHANGED: `measured` ranks; anything else is listed under its table as `not ranked: <testee> — <status> (…)`. For an `inconclusive-spread` record the parenthesis is printed FROM THE BLOCK (ruling R-4, panel C F5): `1 of 72 groups disagree, worst cls-upto-32768 / match-compliance / plain d=23 of n=30, k=1.5` — not from the free text, whose 120-character `_excerpt` cut the earlier draft's 191-character sentence mid-token; `_excerpt` stays 120 for other statuses. `--include-unmeasured` ranks it with `status` in the row, as today |
 | R2 | dedup is UNCHANGED in code and gains a case: an `inconclusive-spread` record NEWER than a measured one is "newer, not measured"; a measured re-run supersedes it; between the two inconclusive values dedup has no preference (§3.4) |
 | R3 | a LEGEND line under the status-policy bullet: `- trial-agreement policy (schema v1.4, rule v1.4-group, X31-X33): a record's five trials must agree to within k=1.5 on every group of its rows — one slow trial of five tolerated; two, or one fast, is a disagreeing row; a group disagrees at >= 2 disagreeing rows reaching a third of it (d_min=2, c=3); a record with a disagreeing group, or with fewer than five odd trials, is `inconclusive-spread` and unranked like `inconclusive-load`; the after-run load/occupancy samples are provenance (v1.4 X13), shown under --include-provenance` |
-| R4 | the header's record list gains, per RECORD line (there is no per-testee line — `rd.included` is `[(record_id, path)]`; the block is threaded into `ReportData` as `agreement_by_record` beside `status_by_testee`, panel C F12), `agreement: agree (0 of 72 groups; 0 of 1536 rows; 0 unjudged; k=1.5, 2/3; 5 trials)` from the BLOCK — not re-derived, so a reader sees what the harness stamped (the validator proved it recomputes); the stated strings for every other case (panel B B16.1, panel C F9): `agreement: disagree (1 of 72 groups; worst cls-upto-32768 / match-compliance / plain d=23 of n=30)`; `agreement: agree 0/0 groups — nothing judged (1536 rows unjudged)`; `agreement: n/a (3 trials)`; and for a pre-1.4 record `agreement: n/a (v1.3)` — the MIXED-VERSION rule: a v1.3 record has no block, the reporter never invents one, and never re-judges it (§7) |
+| R4 | the header's record list gains, per RECORD line (there is no per-testee line — `rd.included` is `[(record_id, path)]`; the block is threaded into `ReportData` as `agreement_by_record` beside `status_by_testee`, panel C F12), `agreement: agree (0 of 72 groups; 0 of 1536 rows; 0 unjudged; k=1.5, 2/3; 5 trials)` from the BLOCK — not re-derived, so a reader sees what the harness stamped (the validator proved it recomputes); the stated strings for every other case (panel B B16.1, panel C F9): `agreement: disagree (1 of 72 groups; worst cls-upto-32768 / match-compliance / plain d=23 of n=30)`; `agreement: agree 0/0 groups — nothing judged (1536 rows unjudged)`; `… N rows unjudged (M all-timed-out)` whenever `all_timed_out > 0`; `agreement: n/a (3 trials)`; and for a pre-1.4 record `agreement: n/a (v1.3)` — the MIXED-VERSION rule: a v1.3 record has no block, the reporter never invents one, and never re-judges it (§7) |
 | R4′ | **the rule marker (ruling R-1 (iii)):** the status-policy legend names the X13 rule version(s) the query's records were judged by (`status rule: v1.3 X13 (both samples quiet) on 54 records; v1.4 X13 (pre-flight + trial agreement) on 12`), and when ONE query mixes X13 versions every ranking row's status cell carries the version (`measured@1.3` / `measured@1.4`) — so a table never carries one token meaning two things without saying so; a single-version query's rows are unchanged |
 | R5 | `--include-provenance` (new flag, default off): prints the §2 after-sample sentence(s) in the excerpt of a `measured` row's header line, from `note` or `status_detail` wherever they sit (ruling R-5), the `load.verdict = loaded` fact, and the §3.6 timeline (one line per group whose target/sibling/other reading departs from the run's median by more than the noise floor). Default off because the notes are provenance by ruling, and a report that printed them beside every measured row would read as a caveat on a number that has none |
 | R5′ | ALWAYS, flag or not: when either after sample FAILED, the header's record line carries one short clause — `after: load1 11.40 / occ 41.41%` (9 of 68 records historically) — so the demoted instrument stays visible where a reader looks for provenance (panel C F12) |
@@ -889,14 +909,14 @@ passes `validate=False` and loses it.
 |---|---|---|---|
 | check-schema | the 1.4 example accepted | the generated 1.4 good example (E1: 5 trials, both samples' `target_busy_pct`, the block, the failed after sample, the loaded verdict, the `cost` on a refusal, the timeline) validates | E2's sixteen sabotages, each rejected FOR ITS OWN RULE (the Makefile loop; `check_rules.py` enforces rule ↔ control pairing) |
 | check-schema | older examples still accepted | the 1.1 (pcrec, v8) and 1.2 (local) examples validate under the 1.4 validator | E3's three 1.1-stamped X13 controls, rejected at 1.1 for sabotages the 1.4 example carries legally |
-| check-schema | `check_fields` / `check_rules` | the note's tables match the schema (C1's 29 + 1 cells); X31-X33 each have a control | delete any E2 file → build fails (existing mechanism) |
+| check-schema | `check_fields` / `check_rules` | the note's tables match the schema (C1's 33 + 1 cells); X31-X33 each have a control | delete any E2 file → build fails (existing mechanism) |
 | check-schema | X13 is VERSIONED | `x13-occupancy-after-fail.jsonl`, `x13-occupancy-unavailable.jsonl` and `x13-measured-but-loaded.jsonl` (1.1) are still rejected by X13; the 1.4 example carrying the same after-sample failure and the same `loaded` verdict is ACCEPTED | the pair itself: the same sabotage, two versions, two verdicts |
 | check-schema | X33 both directions | `x33-trial-agreement-missing` (1.4, no block) and `x33-trial-agreement-on-a-v13-record` (1.3, a block) both rejected by X33 | the 1.4 example (block, accepted) and the 1.1 examples (no block, accepted) |
 | check-schema | the example generator is deterministic | running `schema/examples/gen_example_14.py` reproduces the committed 1.4 example byte for byte | the generic gate `make check-harness` already applies to `gen_*.py` |
 | check-harness | `check_target_core_preflight` (synthetic captures, like `check_occupancy_average`; `_mpstat_capture` shares no source with `judge_mpstat`) | THREE captures with `exclude_cpu = 11`: target at 60 %, others idle ⇒ `target_busy_pct = 60`, `verdict = pass`, `gate()` REFUSES naming the target core; target at 4 % ⇒ no refusal; the target's ROW ABSENT ⇒ `target_busy_pct is None`, `verdict = pass`, `gate()` REFUSES with the missing-row reason (ruling R-2) | the non-target verdict is `pass` in all three — the refusals come from the new clauses, not from X26's; and the same three captures with `exclude_cpu = None` ⇒ no field, no refusal (clause inert, H0) |
 | check-harness | `check_quiet_cli_agrees_with_gate` (ruling R-7) | one synthetic capture: `cmd_quiet`'s reduction and `gate()`'s reasons are the same list, including load1 | a capture that passes both |
 | check-harness | `check_after_sample_is_provenance` | a synthetic after sample at 40 % on a run whose pre-flight passed and whose rows agree (5 trials): `status = measured`, `note` carries the §2 sentence SECOND (after the prefix), `occupancy.after.verdict = fail` (X26 still holds), the record validates at 1.4 | the same record re-stamped 1.3 is REJECTED by X13 (and by X33, honestly — both fire) |
-| check-harness | `check_trial_agreement_fixture` | `reduce.judge_trial_agreement` on a hand-computed fixture — 5 trials; group A of 4 rows: one clean, one with a single 3× trial (tolerated), one with two 1.6× trials (disagreeing), one with a 0.6× trial (disagreeing) ⇒ d = 2, n = 4, DISAGREES at (2, 3); group B of 5 rows, one disagreeing ⇒ d = 1, does not; group C of 3 rows all `iterations = 1` ⇒ unjudged: `trials 5`, `groups_judged 2`, `groups_disagreeing 1`, `rows_judged 9`, `rows_disagreeing 3`, `rows_unjudged 3`, `worst_group` = A (d = 2, n = 4), verdict `disagree`; with `share_c = 1` ⇒ `agree`; truncated to 3 trials ⇒ `n/a-trials` with every count 0 and `rows_unjudged 12` | `validate.py`'s X32 recomputation on the same fixture written as a record gives the same integers and the same `worst_group` — two implementations, one fixture, no shared source (V6); PLUS the boundary rows: a trial at exactly `k · m` (not slow) and a minimum at exactly `m / k` (not fast) give the same counts in both |
+| check-harness | `check_trial_agreement_fixture` | `reduce.judge_trial_agreement` on a hand-computed fixture — 5 trials; group A of 4 rows: one clean, one with a single 3× trial (tolerated), one with two 1.6× trials (disagreeing), one with a 0.6× trial (disagreeing) ⇒ d = 2, n = 4, DISAGREES at (2, 3); group B of 5 rows, one disagreeing ⇒ d = 1, does not; group C of 3 rows all `iterations = 1` ⇒ unjudged (`few_timed_trials`); group D of 2 rows: one with EVERY trial `timed-out` ⇒ unjudged (`all_timed_out`), one MIXED (two `timed-out`, three timed) ⇒ judged and disagreeing, so D has d = 1, n = 1 and does NOT disagree (d < D_MIN): `trials 5`, `groups_judged 3`, `groups_disagreeing 1`, `rows_judged 10`, `rows_disagreeing 4`, `rows_unjudged 4`, `rows_unjudged_reasons {few_timed_trials: 3, all_timed_out: 1, na_trials: 0}`, `worst_group` = A (d = 2, n = 4), verdict `disagree`; with `share_c = 1` ⇒ `agree`; truncated to 3 trials ⇒ `n/a-trials` with every count 0 and `rows_unjudged 14` under `na_trials` | `validate.py`'s X32 recomputation on the same fixture written as a record gives the same integers and the same `worst_group` — two implementations, one fixture, no shared source (V6); PLUS the boundary rows: a trial at exactly `k · m` (not slow) and a minimum at exactly `m / k` (not fast) give the same counts in both |
 | check-harness | `check_spread_status_stamped` (ruling R-10) | `harness.derive_status` on all five rows of the §5 decision table returns the stated status and the stated sentence order; then a hand-assembled record whose rows make one group disagree, stamped through the same function and written through `store.write` into a scratch store, comes back `inconclusive-spread` with the block's numbers and the §3.4 line at offset 0 of `status_detail` | the same rows with ONE slow trial per row instead of two ⇒ `measured` — the rule tolerates one, and the check shows it does |
 | check-harness | `check_status_sentence_never_elided` (ruling R-4) | a record whose calibration sentences exceed the free_text cap (bench/bounded's shape) still has its status-deciding sentence at offset 0 and the elision marker names the class dropped | the same sentences joined WITHOUT `first=` show the status sentence elided |
 | check-harness | `check_smoke_block_na_trials` | the existing `--trials 1` smoke record carries the block with `verdict: n/a-trials`, `trials: 1`, every count 0, `rows_unjudged` = its row keys, and validates; its status is `measured` on the scratch tier (§5 row 5) | X33's `x33-trial-agreement-missing` control; and the same record re-tiered `pinned` through `derive_status` ⇒ `inconclusive-spread` (§5 row 4) |
@@ -919,40 +939,32 @@ stays, counts only, both §10.3 bullets amended), Q6/Q7 (N ≥ 5 and odd,
 R-12), Q8 (confirmed, R-13), Q9 (no exemption — the row is real, R-14
 as amended), Q10 (confirmed, R-15).
 
-**Escalated — the manager must rule:**
+**Escalated by the compile lane and RULED the same day (2026-08-30);
+applied above:**
 
-- **E-1 — R-19 and the five all-trials-`timed-out` rows.** R-19 counts a
-  row with a `timed-out` trial as DISAGREEING ("a trial that hit the
-  alarm is a disturbance, not a measurement"). The group census finds
-  five such rows in the store, and every one is `libpcre2 jit ×
-  factored / large-subject-throughput / t-c-long-atom-run` with ALL
-  FIVE trials `timed-out` (two records of email@0.1, three of
-  email@0.2): a consistent engine refusal on a 1 MB subject, not a
-  disturbance — the trials AGREE that the engine cannot do it inside
-  the budget. Under (2, 3) they do not flag (d = 1 of 3 or 5), so the
-  store is clean either way; but a second such subject in the 5-row
-  email@0.2 throughput group WOULD make that record `inconclusive-spread`
-  for a fact about the engine, and the margin at n = 5 is one row. §3.5
-  applies R-19 as ruled and this spec asks whether it should instead
-  read: a row with a `timed-out` trial BESIDE ≥ 1 timed trial (a MIXED
-  row — the alarm hit some passes and not others) disagrees; a row whose
-  EVERY trial timed out is an outcome, not a spread, and is counted in
-  `rows_unjudged`. The census numbers are the same under both readings
-  today.
-- **E-2 — the scratch tier under `n/a-trials`.** §3.4/§5 row 5 keep the
-  pre-flight's status (`measured`) on a scratch record whose block says
-  `n/a-trials`, so `quick`'s default and the smoke suite do not write
-  `inconclusive-spread` on every clean run; R-12 rules the pinned case
-  and separates the tiers without saying this. Confirm, or rule the
-  status tier-independent (then `check_after_sample_is_provenance` and
-  the smoke suite run at `--trials 5`, or assert `inconclusive-spread`).
-- **E-3 — the reading of R-16's second constraint.** §3.2 chose (2, 3)
-  as the LEAST SENSITIVE candidate that still flags both shapes at
-  every named size; (2, 4) also satisfies both (T = ⌈n/4⌉: 2, 2, 8, 22,
-  28 at n = 4, 5, 30, 85, 112; half-shape margins 0, 0, 7, 20, 28;
-  store margins 2, 1, 8, 22, 28). If "the smallest threshold" meant the
-  smaller T, the constants are (2, 4) — a one-line change, every table
-  in §3.2 carries both.
+- **E-1 — R-19 and the five all-trials-`timed-out` rows.** R-19's first
+  wording counted any row with a `timed-out` trial as disagreeing; the
+  group census found five such rows in the store, every one `libpcre2
+  jit × factored / large-subject-throughput / t-c-long-atom-run` with
+  ALL FIVE trials `timed-out` (two records of email@0.1, three of
+  email@0.2) — a consistent engine refusal on a 1 MB subject, not a
+  disturbance. RULED (R-19 amended): a MIXED row (≥ 1 `timed-out` trial
+  beside timed trials) DISAGREES; a row whose EVERY trial timed out is
+  the engine's consistent answer — a refusal/give-up — counted in
+  `rows_unjudged` under the reason token `all_timed_out`, rendered by
+  the reporter (§3.3, §3.5, §6 R4). The store's numbers: 62,923 judged,
+  105 unjudged, no group verdict changed.
+- **E-2 — the scratch tier under `n/a-trials`.** RULED as §3.4 writes it:
+  a scratch-tier record with `verdict: n/a-trials` keeps the pre-flight's
+  status (`measured` when the pre-flight passed); the block carries the
+  fact; `quick` and the `--trials 1` smoke suite never write
+  `inconclusive-spread`; X13 clause 4 is worded per tier; scratch
+  records are never ranked regardless.
+- **E-3 — the reading of R-16's second constraint.** RULED: (2, 3) — the
+  least sensitive pair that still flags both shapes at every group size,
+  i.e. the largest margin at zero false positives; (2, 4) is recorded in
+  §3.2 as the tighter option the panel may revisit after the first v1.4
+  window.
 
 **Open, not gating the implementation:**
 
@@ -1166,5 +1178,7 @@ never re-judged, the rule version rendered beside every ranked status);
 the examples plan was rewritten against the examples that actually
 exist; KB-4's schema half rides along; a per-group `/proc/stat`
 timeline was designed as provenance only; and `harness-failure` stays
-an enum value no code path produces. Three items are escalated (§9
-E-1..E-3).
+an enum value no code path produces. Three items were escalated and
+ruled the same day (§9 E-1..E-3: all-timed-out rows are unjudged with a
+reason token, the scratch tier keeps the pre-flight's status under
+`n/a-trials`, (2, 3) confirmed with (2, 4) recorded).
