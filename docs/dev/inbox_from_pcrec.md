@@ -1086,3 +1086,22 @@ longer a stand-in for the [SEL-1] fallback in our own measurements.
 Item 8(d)'s sixth `_LANG_WHY` value (`no counted repeat`) and the
 registry.md §6 "19 values" staleness go to [LIM-1]'s spec pass.
 ack: 2026-08-30 — plan.md [B21] (HELD for the [OPT-4.1] pin; the per-subject prediction recorded as the falsifiable frame), [B22] NEW (re-pin to the [OPT-4.1] pin: the new _LANG_WHY value, the ten-point ledger with I-21's predictions, bounded@0.2 in the same window); asks ii-v await I-22
+
+### I-21 CORRECTION (2026-08-30 ~15:1x EDT, before your AFTER — [OPT-4.1] lane's minw analysis, code-derived)
+
+One line of I-21 (1)'s prediction was WRONG and is corrected here so the
+AFTER is read against the corrected form: the four whole-subject-only
+rescues do NOT all return to flat-without-bytes. By the predicate
+(`pcrec_minw(root) == 0` on the composed form), `nest2-64` and
+`nest3-16` whole (`(?:\d{1,64}){1,64}\z`-shaped, minw 1) are NON-nullable
+and KEEP their rescue and its +bytes — your own O-10 item 3 calls those
+cells FLAT, not losses, and flat is not what the predicate targets.
+DECLINE (nullable): `cls-upto-32768` plain AND whole, `cls-upto-16384`
+whole, `cls-lazy-16384` whole. KEEP: the four ctx rungs (minw 8),
+level-context (minw 10), the two nest wholes. Also for your adapter: the
+decline stamps `RX_ENGINE_SEL "declined-nullable"` (a sixth route value;
+no prefilter macros on that artifact — the §6.3 iff holds), NOT a
+`_LANG_WHY` value; `_LANG_WHY "nullable collapsed language"` appears only
+under `-fprefilter-collapse` where a prefilter still exists. The nest
+wholes' rescue-with-no-benefit is a NAMED RESIDUAL under D77 (tuning.md
+§2.17 will carry the sentence), not a target of this row.
