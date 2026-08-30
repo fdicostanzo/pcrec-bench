@@ -48,16 +48,25 @@ docs/dev/'s append-only records.
   9 is the one with a real hole in it — the MATCH regime presumes an
   end-anchor and pcrec has none. For the M1 panel.
 
-- `gate_shape_v14.md` — **PROPOSAL, not adopted (2026-08-30, plan row
-  [B20])**: Frank's gate-shape ruling (the AFTER occupancy sample as
-  provenance, trial agreement deciding `measured`, a coarse pre-flight)
-  written up as a schema v1.4 migration — X13 revised, a new
-  `inconclusive-spread` status, the reporter's R1 — with the manager's
-  accepted correction (the pre-flight stays PER-CORE: a steady competitor
-  or one on the target's SMT sibling is invisible to trial agreement),
-  the six-record evidence table, and what decides it (the gate-shape
-  test run under BD7, `docs/dev/measurements/probe_gate_shape.py`).
-  quiet_baseline.md's 2026-08-30 section is what the harness DOES now.
+- `gate_shape_v14.md` — **SPEC, awaiting the critic panel (2026-08-30,
+  plan row [B20]; ruled by inbox I-19 (1): BD7 ratified as the gate,
+  Frank's (2)-(4) the v1.4 spread rule)**: record schema v1.4 — the
+  pre-flight (BD7's per-core 5-s average, plus the TARGET core's own
+  reading as a new `occupancy.<sample>.target_busy_pct` field, X26
+  untouched), the AFTER samples as provenance (X13 revised by version:
+  `load.before`, `occupancy.before`, the target clause, trial agreement),
+  TRIAL AGREEMENT with its constants MEASURED over all 68 store records
+  (`docs/dev/measurements/2026-08-30-trial-agreement-census.txt`: rule
+  `v1.4-1of5`, k = 1.5, F = 1 % — zero slow pairs and one fast outlier
+  in 62,923 rows; the store's worst record 0.204 %, a 4.9× margin; the
+  one `loaded` record's numbers shown unmoved against its clean re-run),
+  the `trial_agreement` setup block and `inconclusive-spread` status,
+  the enumerated validator/schema (X13 versioned, X31-X33, the examples
+  by name), harness, reporter and check changes, the migration (the
+  NINE historical `inconclusive-load` records listed and left as
+  history) and ten open questions for the panel; the proposal it grew
+  from is kept verbatim as its §H. quiet_baseline.md's 2026-08-30
+  section is what the harness DOES now.
 - `quiet_baseline.md` — **[B3]'s answer to OD-B8, MEASURED 2026-08-25**:
   what "quiet" means numerically on this box, the 12 samples behind it,
   and the two thresholds `pcrecbench/quiet.py` defaults to. It carries a
