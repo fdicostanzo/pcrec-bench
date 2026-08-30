@@ -35,7 +35,10 @@ decisions) so cross-references between the two repos are never ambiguous.
   each with the findings table, dispositions, and what is owed to Frank.
   R1 (2026-08-24): the requirements note, 29 findings, 27 fixed in v2.
   R2 (2026-08-25): the merged record schema, 22 findings, all carried
-  by the schema v1.1 lane.
+  by the schema v1.1 lane. R3 (2026-08-30): the gate-shape SPEC
+  (schema v1.4), three lenses, 45 findings, 44 applied to the spec
+  under the manager's rulings R-1..R-20 by the r3 lane, one deferred
+  to the implementation lane, three items escalated (E-1..E-3).
 
 - `feedback_pcrecdev1_2026-08-25.md` — the pcrec manager session's
   feedback on the first production sample (what is missing to act on an
