@@ -1298,3 +1298,92 @@ cron, no monitors; the box is pcrecdev1's ([OPT-4] battery pending on
 its side). Store 41 records (15 today). Next session: bench/bounded's
 window (six cells ≈ 80 min, both managers idle), the [B12] OD-B12 fix,
 pcrec's answers to O-8 as I-18, then [B11.2] wide alternations.
+
+## 2026-08-30 (EDT, ~01:3x), fifth session (part 1) — the hold; bounded's first window; the note-length harness bug; five one-shot after-samples → BD7; Frank's gate-shape ruling → the v1.4 proposal
+
+THE HOLD. Frank: "hold until pcrecdev1 give green light then proceed
+with dev items". pcrecdev1's [OPT-4] merge battery (main ba69380, abi
+12) ran 19:5x-22:49 EDT; a keepalive cron (Frank's ask) ticked `uptime`
+at :11/:51. The battery found a corpus regression under [OPT-4]'s
+default; Frank re-ruled it fallback-only (ruling B); battery 3 on
+4d12a81 runs AFTER our CLOSED, I-18 with the abi-12 pin after its green.
+Ruled during the hold, in wake.md: the window FIRST (bounded at 36d5963
+as built — [OPT-4] is a bounded-repeat change, so this sample is its
+BEFORE; no axis split before a first sample), the OD-B12 fix after.
+
+THE WINDOW (bench/bounded@0.1, six testees, pin 36d5963, core 11).
+"MECH DONE" at 22:4x was NOT a clear box: verify-by-cwd found pcrecdev1's
+`make test-recursion-identity` (pid 318965, watchdog recidB, launched
+22:35 before their HOLD) live at ~23 % of a core — BD6 exactly; not
+touched; it exited 22:49:03 on its own; ALL CLEAR; re-verified; OPEN
+22:49. Cell 1 (pcre2-interp) measured for 21 min and was REJECTED at
+validation: `note` (schema free_text, maxLength 8192) carried one
+"iters for (pattern, form, regime) = N: …" sentence per calibration —
+72 on a 24-pattern set, ~12 KB (email: 9, loglines: 33 — it fit). A
+harness bug (contract 4 step 5), every cell would have failed. Killed
+my own launcher by PID (it was in a gate backoff, nothing measured),
+told pcrecdev1 "PAUSED, relaunch by 23:40 or the box is yours". FIX
+3bda38b: `record.join_notes(notes, prefix)` is the only path from the
+per-cell list to `note`/`status_detail` — joins under
+`record.FREE_TEXT_MAX`, drops from the end, ends with "[+N note(s)
+elided …]"; the ROUTINE calibration sentence is no note at all (every
+row's `calibration` block + `timing.iterations` carry it) — only a
+capped / no-timing / fixed calibration remains a sentence.
+`check_note_length_guard`: five controls, the cap read from the SCHEMA
+JSON, the rejected record's own 72-sentence shape replayed; a bounded
+`--dry-run` cell validated end to end; `make check-harness` 112/112;
+committed; RE-OPENED 23:21. The rejected record went to the scratchpad,
+never the store.
+
+THE SIX CELLS: interp measured (23 min); jit `inconclusive-load`
+(after-sample 10.10 % vs 10.00); auto `inconclusive-load` (20.20 %);
+nocaps measured; vm measured at exactly 10.00 %; vm-in
+`inconclusive-load` (10.10 %). Load quiet (1.0-1.2) at both ends of
+every cell; before-samples clean. `pidstat -u 1` during cell 4 named
+the bursts: the VS Code remote server (`~/.vscode-server/…/node`, ~40 %
+of a core for a second when the store or the log changes), a `btop` on
+Frank's pts/19 (closed on request), the sessions' status-line
+`gh pr list` refreshers (~40 % for ~0.5 s; pcrecdev1 had Frank switch
+them off), and MY OWN claude at ~9 % while I investigated — the BD6
+residue applied to myself; I stopped, replaced the per-event Monitor
+by a sentinel-only one, and stayed idle. A 120-s awk over mpstat
+"found" 96 busy seconds — a 12-h-clock column shift in my shell's
+locale; `pidstat` was the ground truth. CLOSED 01:21; store 47 (commit
+of the six records); pcrecdev1's battery 3 launched ~01:2x (≈2.5 h).
+
+BD7 (written during battery 3, edit-only): `quiet.occupancy()` runs
+`mpstat -P ALL 1 5` and `judge_mpstat()` (pure) judges mpstat's own
+`Average:` block — a 1-s 30 % burst averages to 7.6 % and passes, a
+sustained 100 % core still fails, the bar stays 10 %, same instrument
+both ends, `occupancy.tool` names the command (pre-BD7 records say
+`… 1 1`), `raw` keeps the Average block + the per-second peaks + the
+target's SMT SIBLING (CPU 5 for CPU 11, from sysfs) judged like any
+core. `check_occupancy_average`: seven controls on a synthetic capture
+(the burst second judged ALONE reads 30 % — the old rule's fail — so
+the rule, not the fixture, passes it). quiet_baseline.md's 2026-08-30
+section; decisions.md BD7; plan [B12] (i) DONE. `make check-harness`
+OWED: it waits for "BATTERY 3 DONE" (edit/commit only meanwhile); the
+harness commit follows it.
+
+FRANK'S GATE-SHAPE RULING (via pcrecdev1, ~01:2x): coarse pre-flight
+(load1 < ~4, nothing on the target or its SMT sibling), the after-sample
+as provenance, TRIAL AGREEMENT decides measured vs inconclusive, a test
+run on the three cells. My answer, accepted for I-18: items 2-4 are a
+SCHEMA-RULE change — X13 (validator-enforced) makes `measured` require
+both occupancy verdicts, and the status enum has no spread value — so
+they are a v1.4 proposal for Frank to rule on WITH the test-run data
+(`docs/design/gate_shape_v14.md`, P1-P4; plan row [B20]); one
+correction: keep the PER-CORE pre-flight — a steady competitor (load1
+≈ 2) lowers the measured core's boost clock uniformly and a sibling
+competitor halves its resources, both invisible to trial agreement.
+`docs/dev/measurements/probe_gate_shape.py` over the six records:
+trial spread medians 1.3-4.0 %, p90 6-19 %, the three inconclusive
+cells INSIDE the measured cells' profile — the after-sample verdict
+has no visible relation to trial agreement. Per-row outliers (max
+64-514 %, single rows) to characterise before any spread rule.
+
+NEXT: on "BATTERY 3 DONE" — `make check-harness` (BD7's commit) →
+the TEST RUN (jit, auto, vm-in at 36d5963 under BD7, ≈60 min, both
+idle) → probe archive → the bounded first-sample report → I-18 ack →
+[B19] (abi 12 re-pin). Tree: harness/BD7 changes uncommitted until the
+check (wake.md says so).

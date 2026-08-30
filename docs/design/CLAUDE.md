@@ -48,6 +48,16 @@ docs/dev/'s append-only records.
   9 is the one with a real hole in it — the MATCH regime presumes an
   end-anchor and pcrec has none. For the M1 panel.
 
+- `gate_shape_v14.md` — **PROPOSAL, not adopted (2026-08-30, plan row
+  [B20])**: Frank's gate-shape ruling (the AFTER occupancy sample as
+  provenance, trial agreement deciding `measured`, a coarse pre-flight)
+  written up as a schema v1.4 migration — X13 revised, a new
+  `inconclusive-spread` status, the reporter's R1 — with the manager's
+  accepted correction (the pre-flight stays PER-CORE: a steady competitor
+  or one on the target's SMT sibling is invisible to trial agreement),
+  the six-record evidence table, and what decides it (the gate-shape
+  test run under BD7, `docs/dev/measurements/probe_gate_shape.py`).
+  quiet_baseline.md's 2026-08-30 section is what the harness DOES now.
 - `quiet_baseline.md` — **[B3]'s answer to OD-B8, MEASURED 2026-08-25**:
   what "quiet" means numerically on this box, the 12 samples behind it,
   and the two thresholds `pcrecbench/quiet.py` defaults to. It carries a
