@@ -16,6 +16,23 @@ immediately after a regeneration — the reporter is deterministic, so a
 non-empty diff after a bare rerun (no query change, no reporter change)
 means either the store changed or the reporter regressed determinism.
 
+**[B22] (2026-08-31) regenerated every report below against reporter
+`v10 (2026-08-31)` — the VALUE-only fallback bucket** (pcrec pin 263b013;
+inbox I-25: pcrec's [LIM-1] gave the size-cap rescue its own
+`RX_ENGINE_SEL` token, so `_engine_sel_display`'s I-19 (3) interim rule —
+bucketing a `selected` artifact on its `vm_prefilter_lang_why`'s
+`size cap retry` prefix — is RETIRED and the bucket reads
+`sel not in (selected, forced)` and nothing else). Same queries as
+before, byte for byte (each file's own header query). The diff on every
+file is exactly: the version line (`v9` → `v10`), and — only on the
+twelve `96e44c2` `.md` files, the ones whose legends print a `sel=`
+clause — the reworded legend-note bullet naming the five tokens. NO
+number, ranking, verdict or other legend fact moved (no stored record
+carries a size-cap rescue — the [B19] census — so the retired rule never
+fired on a committed rendering); the `.tsv` files move only on the
+version line ("sel" renders raw in TSV rows). Classified per file by
+the same method as [B20]'s wave; zero unexplained lines.
+
 **[B20] (2026-08-30) regenerated every report below against reporter
 `v9 (2026-08-30)` — the schema v1.4 wave** (docs/design/gate_shape_v14.md
 §6; the regeneration is forced by R3/R4/R4′/R5′ changing the rendering of
