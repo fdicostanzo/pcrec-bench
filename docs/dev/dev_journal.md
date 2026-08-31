@@ -1980,3 +1980,29 @@ merged master running at write time. NEXT: WINDOW OPEN handshake →
 bounded@0.2 × 6 testees (first v1.4 window: read the target-core
 pre-flight distribution, §9 Q1) + loglines@0.1 × auto/vm (the KEEP
 points), against ledger §8 + I-26's two-flat-lines frame.
+
+## 2026-08-31 (EDT, ~14:2x), sixth session (part 3) — THE [B22] WINDOW: 8/8 cells at 263b013; §9 Q1 read
+
+The window ran 10:43-14:08 EDT under the agreed handshake (pcrecdev1
+halted its lane by .hold and confirmed QUIET; WINDOW CLOSED sent at
+14:1x, their battery queues behind us). bounded@0.2's first sample: six
+cells, every gate passed on ATTEMPT 1 (BD7 again; cells ~19-27 min,
+above the 12-15 min estimate — the 0.2 cut is simply bigger). One
+honest v1.4 outcome: pcrec-vm-in came back rc=4 `inconclusive-spread`
+on attempt 1 (record kept per R-6), the once-only re-measure agreed
+and stamped `measured` — the spread rule's first production firing,
+and it behaved exactly per contract. Then loglines@0.1 × pcrec-auto /
+pcrec-vm (the [OPT-4.1] KEEP-point arms), both attempt-1 measured.
+Nine records committed (67ff0c2), all schema 1.4; store 67 measured /
+9 inconclusive-load / 1 inconclusive-spread. §9 Q1 (gate_shape_v14,
+first v1.4 window): the target-core pre-flight distribution over the
+nine records is 0.4-2.6 %, mean 1.58 % — the target-core clause never
+approached its 10 % bar on a held box; the bar is generous but the
+instrument reads clean; no refusal, no missing row. Monitor lesson:
+the log Monitor missed/delayed the bounded WINDOW_RUN_COMPLETE
+sentinel (~24 min lost); the keepalive cron's log-tail caught it —
+the fallback earned its keep, and the loglines monitor added the
+"window run end" line as a second completion signature. NEXT: lane
+b22reports (sonnet) renders the two report files; then the read-only
+ledger lane against ledger §8 + I-21-corrected + I-26's two flat
+lines; then O-11.
