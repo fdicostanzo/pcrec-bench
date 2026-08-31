@@ -1927,3 +1927,28 @@ twice (v8 then v9) and classified clean both times; I-18..I-22 acked
 with two corrections absorbed; bounded@0.2 cut blinded and merged;
 [B22]/[B23]/[B24] chartered. Six lanes, three critics, two windows,
 zero lost cells after BD7.
+
+## 2026-08-31 (EDT, ~09:2x), sixth session (part 1) — wake; I-23..I-26 acked; hold lifted; [B22] re-pin lane launched at pin 263b013
+
+Wake per the skill: wake.md, inbox, journal, plan. Four new inbox
+items acked in e1c9358: I-23 (pin fa01910, superseded), I-24 (FRANK
+LIFTED THE PERF HOLD), I-25 (THE PIN IS 263b013 — [LIM-1]; adds
+--list-limits as a third registry archive target and a DISTINCT
+RX_ENGINE_SEL value for the size-cap rescue, replacing the "selected"
+mislabel: the bucket reads the value now), I-26 ([OPT-5] STEP 0: the
+letters/digits split is address-only vs data-dependent loop-carried
+registers — mechanism-backed TWO FLAT LINES predicted for [B21]'s
+rungs, NO count crossover, not a limits row; perf_event_paranoid=4
+box note appended to quiet_baseline.md). Handshake with pcrecdev1:
+263b013 confirmed still the pin (main's commits above it are doc-only);
+their one light lane (quoting) runs concurrently, compiles fine; their
+next battery (~3.6 h) SEQUENCED AFTER our windows; window protocol =
+message WINDOW OPEN, they halt by .hold artifact and confirm QUIET,
+sentinel-only monitors, WINDOW CLOSED to release. Lane b22repin
+spawned (worktree worktrees/b22repin): pin.sh 263b013, the three
+registry archives, declined-nullable + the distinct rescue value in
+adapter/reporter, the corrected decline/keep by-value controls, the
+K7-vs-state-cap _WHY split, the same-pin emit-byte re-comparison
+(I-22 (ii), their counting rule opt41_report.md §15), year4's
+alignment note (I-22 (iii)). Watchdog cron up (10 min). Windows held
+until the lane lands and is reviewed.
