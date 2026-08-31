@@ -103,9 +103,30 @@ per skeleton; the predicted first pcrec refusal is the abi-11 size cap
 at the 32768 rung — a first-class `did-not-compile` outcome, to be
 measured in a window next). [B18]'s WINDOW ran the same day: 12 cells
 at 36d5963 on email-specimen@0.2 and loglines@0.1, every one `measured`
-(store index 41); outbox O-8 (739ccdd) carries the ledger — [OPT-K] moved more than predicted on the search band, [ENG-ABS] three of four aggregates confirmed, level-context = the VM with a 0.5-0.7 s compile-time DFA attempt; the long-subject `_match` probe is archived under `docs/dev/measurements/`. Next: bounded's window;
+(store index 41); outbox O-8 (739ccdd) carries the ledger — [OPT-K] moved more than predicted on the search band, [ENG-ABS] three of four aggregates confirmed, level-context = the VM with a 0.5-0.7 s compile-time DFA attempt; the long-subject `_match` probe is archived under `docs/dev/measurements/`.
+2026-08-31: [B22] re-pinned pcrec to **263b013** (abi 12 UNCHANGED — the
+[OPT-4.1] + [LIM-1] pin; inbox I-21-correction/I-22/I-25): two new
+`RX_ENGINE_SEL` VALUES read by the same shim — `declined-nullable` (the
+count-collapsed rescue DECLINED where the collapsed language is nullable:
+no prefilter, no language pair, the §6.3 iff both ways) and
+`size-cap-retry` (the size rung's own token, closing the `sel=selected`
+mislabel O-8/O-10 flagged) — the fallback bucket now reads the VALUE only
+(five tokens; the [B19] `_LANG_WHY`-prefix rule retired, adapter +
+reporter v10, every committed report regenerated); `_LANG_WHY` gains
+`nullable collapsed language` (the `-fprefilter-collapse` POLICY,
+a force control); the I-21-corrected DECLINE/KEEP sets asserted by value
+(11/11 as pcrec predicted; the plain-vs-`\z` overflow routes distinct —
+the state cap vs K7), `list_limits.tsv` archived as the THIRD registry
+target (44 rows; `--list-axes` 54 → 63/21: engine-route 5 → 7, size-term
+2 → 7 now WITH stamp_values, table + none/mixed — [B18]'s registry gaps
+closed), the declined `{0,32768}` same-pin emit-byte re-comparison
+(I-22 (ii)), and `year4`'s +4,096 B CLOSED by derivation (I-22 (iii):
+ELF page alignment triggered by the [B19] shim's own +384 B; pcrec's
+source +33 B; docs/dev/measurements/2026-08-31-year4-elf-page-alignment.txt).
+Next: bounded's window;
 [B11.2] wide alternations; [B13] the interpreter is chartered. `make check`
-is green (4/72/0, 170/170, 59 reporter tests — re-verified after [B20]'s v1.4 wave). Manager sessions start with the
+is green (4/72/0, 185/185, 59 reporter tests — re-verified at [B22]'s
+re-pin). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -186,9 +207,10 @@ bindings) live here, vendored or system, pinned either way.
   `make check`'s generic gates enumerate `bench/*/` rather than naming a
   set. See their CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
-  (auto, nocaps, vm, the `-in` variants, at a pinned commit — 96e44c2,
-  abi 12 — with `list_axes.tsv` and `list_definitions.tsv`, the pin's
-  `--list-axes` / `--list-definitions` registry surfaces archived
+  (auto, nocaps, vm, the `-in` variants, at a pinned commit — 263b013,
+  abi 12 — with `list_axes.tsv`, `list_definitions.tsv` and
+  `list_limits.tsv`, the pin's `--list-axes` / `--list-definitions` /
+  `--list-limits` registry surfaces archived
   verbatim; and `pcrec-local`, a PROVIDED binary at no pin).
   See their CLAUDE.mds.
 - `store/` — the CANONICAL record store (the `.canonical` marker):
@@ -214,7 +236,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 170 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 185 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -259,6 +281,20 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # --list-axes / --list-definitions diffed against
                         # the pin, and the emit-size port checked against
                         # pcrec's own --warn-emit-bytes numbers
+                        # and ([B22], pin 263b013) the I-21-corrected
+                        # DECLINE/KEEP sets by value (declined-nullable on
+                        # cls-upto-32768 both forms + the two 16384 wholes,
+                        # no prefilter, no language pair; the ctx rungs and
+                        # nest wholes keep their collapsed-prefilter rescue;
+                        # the plain-vs-\z overflow ROUTES asserted distinct
+                        # -- state cap vs the K7 subset-elements budget),
+                        # the size-cap rescue by its OWN token
+                        # (size-cap-retry) with the ask-(b) bucket VALUE-only,
+                        # the -fprefilter-collapse nullability POLICY
+                        # ("nullable collapsed language" on (x){0,5}),
+                        # list_limits.tsv (the third registry archive)
+                        # diffed against the pin, and the declined {0,32768}
+                        # same-pin emit-size re-comparison
                         # and ([B20], schema v1.4) the gate's shape: the
                         # target-core pre-flight on synthetic captures
                         # (busy / idle / row ABSENT, each refusal BY NAME,

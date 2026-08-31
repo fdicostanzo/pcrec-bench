@@ -21,6 +21,7 @@ Provides five testees at the commit pinned in `configs.toml`, and one —
 | `configs.toml` | the config ids, `pin = "<commit>"`, the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 | `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved |
 | `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
+| `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing the adapter reads depends on it (every cap/capacity it needs is stamped per artifact); `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
 
 ## `pin.sh` never writes inside pcrec
 
@@ -488,7 +489,8 @@ a macro read through `#ifdef` has a legitimate "not stamped" absence — and
 neither did abi 12's three ([B19]: `RX_ENGINE_SEL` and the language pair
 have no `rx_info` mirror; an abi-10/11 artifact still links and records
 them as "not stamped", the scope table saying at which abi that stops
-being legitimate). **`PB_SHIM_MIN_ABI` is 10 at pin 96e44c2**, by that
+being legitimate). **`PB_SHIM_MIN_ABI` is 10 at pin 263b013** (unchanged
+through 96e44c2 — [B22] added VALUES, not stamps), by that
 rule: a `pcrec-local` binary from 808740c on still loads. (Why
 that `#ifdef` is not an inference from absence: the scope table above.)
 `driver.c` compares `pb_abi()` against it before reading anything else and
@@ -715,7 +717,60 @@ deny, the flagged arm of a force). The four [B18] rows are unchanged.
 
 `overflowed-prefilter` (the VM already chosen, only its prefilter's DFA
 overflowed) is the one `engine_sel` value no witness in reach produces —
-noted, not asserted.
+noted, not asserted (still true at 263b013, now one of SEVEN values).
+
+### MEASURED at pin 263b013, 2026-08-31 — the [OPT-4.1] + [LIM-1] VALUES ([B22])
+
+The pin adds NO stamp and NO abi (still 12); it adds two `RX_ENGINE_SEL`
+VALUES, one `_LANG_WHY` value, and the `--list-limits` surface. Asserted
+by VALUE in `check_mechanism_stamps` on the I-21-corrected DECLINE/KEEP
+sets (stamped 11/11 as pcrec predicted — inbox I-23/I-25):
+
+| kind / pattern (form) | `engine_sel` | `prefilter` | lang / why | notes |
+|---|---|---|---|---|
+| bounded `cls-upto-32768` plain AND whole | **`declined-nullable`** | none | **absent** (no pair) | was a 32 KB `collapsed-prefilter` hybrid at 96e44c2 — the artifact CHANGED KIND (I-22 (ii)); emit = code = 18,291 / 18,496 B (no table initializers at all) |
+| bounded `cls-upto-16384` whole, `cls-lazy-16384` whole | `declined-nullable` | none | absent | the two other nullable declines; their PLAIN forms are unchanged (16384 = the DFA that WARNS, 724,699 B) |
+| bounded ctx rungs ×4, plain | `collapsed-prefilter` | hybrid | count-collapsed / `dfa overflow retry, exact nfa 174 / 558 / 558 / 2094` | the KEEP set: minw 8, non-nullable |
+| bounded `nest2-64` / `nest3-16` whole | `collapsed-prefilter` | hybrid | count-collapsed / `exact nfa 8258` / `8466` | minw 1, non-nullable (the I-21 CORRECTION's two rows; nest3-16 is still the corpus's one K mover: K=1 / size-model) |
+| loglines `level-context`, auto | `collapsed-prefilter` | hybrid | count-collapsed / `exact nfa 462` | unchanged from 96e44c2 |
+| K41 witness 2 (the size-cap rung) | **`size-cap-retry`** | hybrid | count-collapsed / `size cap retry, exact N > cap` | [LIM-1]: its OWN token, replacing the `selected` mislabel O-8/O-10 flagged ([B19] finding 3, CLOSED) |
+| `(x){0,5}` under `-fprefilter-collapse` | `selected` | hybrid | **exact** / **`nullable collapsed language`** | the flag reached a POLICY, not the collapse: the prefilter is kept on the EXACT language (tuning.md §2.17); a `check_deny_flag_controls` force row (`reg_arm skip`) |
+
+Three readings a consumer of 263b013 records needs:
+
+1. **The fallback bucket reads the VALUE, and nothing else.** Frank's
+   ask (b) (`engine_sel not in (selected, forced)`) now covers all FIVE
+   fallbacks, the size-cap rescue included; the [B19]-era rule that also
+   bucketed a `selected` artifact on its `_LANG_WHY`'s `size cap retry`
+   prefix (I-19 (3)) is RETIRED (inbox I-25). `ENGINE_SEL_FALLBACK` has
+   five members; the reporter's `_engine_sel_display` follows.
+2. **The plain and `\z` forms of the declined class rungs overflow by
+   DIFFERENT caps**, read in `RX_ENGINE_WHY` (the diagnostic): plain
+   `dfa overflowed: >32000 states` (`PCREC_MAX_DFA_STATES_TABLE`), whole
+   `subset construction exceeds 48000000 state-set elements (K7)`
+   (`PCREC_MAX_SUBSET_ELEMS`) — both now resolvable by name against
+   `list_limits.tsv`. Asserted distinct.
+3. **A declined artifact is read by "nullable AND no prefilter", never
+   minw alone** (I-22 (iv)'s census caveat: three nullable hybrids have
+   WORKING prefilters — the `$`-view shapes; `(x){0,5}` above is the
+   in-reach witness of a nullable hybrid whose prefilter exists).
+
+The REGISTRY moved 54 → 63 rows / 21 axes (the diff is list_axes.tsv's
+header): `engine-route` 5 → 7 (the two new values), `size-term` 2 → 7
+with `stamp_value` on every row ([B18]'s documented gap CLOSED — so
+`RX_UNROLL_K_WHY` joined `REGISTRY_STAMP_PAIRS` and the `-fno-size-term`
+flag row moved off order 1, which `check_deny_flag_controls` now finds
+by its `cli_flag` cell), `table` 2 → 4 (the `none`/`mixed` OUTCOME rows;
+`REGISTRY_OUTCOME_VALUES` is now empty). `list_definitions.tsv` is
+byte-identical below its header. The same-pin emit-size re-comparison
+(I-22 (ii)) is `check_emit_size_port`'s fifth witness: the declined
+`{0,32768}` artifact, both forms, the pin's own `--warn-emit-bytes=1`
+numbers vs the port, byte-exact, counting rule stated (comment-excluded,
+`.c` + `.h` summed — pcrec opt41_report.md §15's "split `.c` + `.h`"
+reading). `year4`'s +4,096 B (I-22 (iii)) is CLOSED by derivation:
+docs/dev/measurements/2026-08-31-year4-elf-page-alignment.txt — ELF page
+alignment triggered by the [B19] SHIM's own +384 B, pcrec's source +33 B,
+and a one-shim control building both pins byte-identical.
 
 **Emitted-C size, 36d5963 → 96e44c2.** I-18 (1): "nothing that compiled
 at 36d5963 changes language, size or speed by default" — true of every

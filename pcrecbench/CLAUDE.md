@@ -444,6 +444,34 @@ every why a `dfa overflow retry`) -- this covers the [B19] AFTER sample
 too (the only 96e44c2 records in the store), so the AFTER reports
 rendered after this merge show no size-cap-rescue bucket either.
 
+## The reporter, [B22] (2026-08-31) -- the fallback bucket reads the VALUE (v10)
+
+The re-pin to pcrec `263b013` (abi 12 UNCHANGED; inbox I-25, pcrec
+[OPT-4.1] + [LIM-1]) adds no pair -- it adds two `engine_sel` VALUES
+(`declined-nullable`, `size-cap-retry`) and one `vm_prefilter_lang_why`
+value (`nullable collapsed language`). The reporter change is ONE rule
+and its note:
+
+- `_engine_sel_display`'s bucket is `sel not in (selected, forced)` and
+  NOTHING else. The I-19 (3) interim rule -- also bucketing a `selected`
+  artifact whose `vm_prefilter_lang_why` starts `size cap retry`,
+  rendered `size-cap rescue` -- is RETIRED (inbox I-25: pcrec's [LIM-1]
+  gave that rescue its own token, and "your bucket reads the value now,
+  not the _LANG_WHY prefix"). An OLD (96e44c2) record with that shape
+  renders `sel=selected` unbucketed, its why still readable in the
+  `lang=` clause; no stored record carries the shape (the [B19] census),
+  so no committed NUMBER moved.
+- The legend note's wording changes accordingly on every report that
+  prints a `sel=` clause -- twelve committed files -- which is the
+  regenerate-everything case: `REPORTER_VERSION` bumps to
+  `v10 (2026-08-31)` and every committed report under `reports/` was
+  regenerated from its own header query (see `reports/CLAUDE.md`).
+- `test_b19_engine_sel_lang_and_emit_bytes` now pins the retirement both
+  ways (the old shape unbucketed -- the control; `size-cap-retry` and
+  `declined-nullable` bucketed by value, the decline with no `lang=`
+  clause), and `_classify_v9_diff` skips the CURRENT version line
+  instead of a hard-coded `v9`. 59 tests, count unchanged.
+
 ## The reporter, [B12] R10 (2026-08-29) -- a did-not-compile cell is not-ranked, not invisible
 
 M1 close item (docs/dev/plan.md row [B12], "[ADDED 2026-08-28]"; lane

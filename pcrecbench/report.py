@@ -168,6 +168,8 @@ older pin renders byte for byte as before:
   the pin), so the bucket ALSO fires on that why prefix, marked
   `size-cap rescue`, until pcrec's [LIM-1] gives it a token (I-19 (3));
   the legend note under the lines says so whenever a `sel=` appears.
+  (That prefix rule is RETIRED at [B22]: [LIM-1] gave the rescue its
+  own token -- see the 2026-08-31 section below.)
 * the compile-cost table gains two SOURCE-bytes columns beside the
   `.so`'s `artifact bytes` -- `emit bytes` (comment-excluded, what
   pcrec's total cap measures) and `code bytes` (that minus table
@@ -507,6 +509,29 @@ THE [B20] SCHEMA v1.4 WAVE (2026-08-30) -- v9, docs/design/gate_shape_v14.md 6
   report regenerated (R3/R4/R4'/R5' change the rendering of EXISTING
   records: the legend lines, `agreement: n/a (v1.x)` per pre-1.4 record,
   the `after:` clause on the nine) -- see `reports/CLAUDE.md`.
+
+[B22] (2026-08-31, pcrec pin 263b013 -- abi 12 unchanged; inbox I-25,
+pcrec [OPT-4.1] + [LIM-1]) -- THE FALLBACK BUCKET READS THE VALUE:
+
+* pcrec's `RX_ENGINE_SEL` gained two values with no abi bump:
+  `declined-nullable` ([OPT-4.1]: a retry rung OFFERED the
+  count-collapsed prefilter and DECLINED it because the collapsed
+  language is nullable; no prefilter survives, no language pair) and
+  `size-cap-retry` ([LIM-1]: the size rung's SUCCESS, which stamped
+  `selected` until this pin -- the mislabel O-8/O-10 flagged). Both are
+  in `not in (selected, forced)`, so Frank's ask (b) bucket
+  (`_engine_sel_display`) now sees every fallback BY VALUE and the
+  I-19 (3) interim rule -- also bucketing a `selected` artifact whose
+  `vm_prefilter_lang_why` starts `size cap retry`, marked `size-cap
+  rescue` -- is RETIRED (inbox I-25: "your bucket reads the value now,
+  not the _LANG_WHY prefix"). A 96e44c2-or-older record with that why
+  shape would today render `sel=selected` unbucketed; no record in the
+  store carries one (the [B19] census: every stored why is a `dfa
+  overflow retry`), so no COMMITTED number changes -- but the legend
+  NOTE's wording changes on every report that prints a `sel=` clause,
+  which is the same regenerate-everything case as R10/[B20] R7.
+* `REPORTER_VERSION` bumps to `v10 (2026-08-31)`; every committed report
+  regenerated -- see `reports/CLAUDE.md`.
 """
 
 from __future__ import annotations
@@ -525,7 +550,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v9 (2026-08-30)"
+REPORTER_VERSION = "v10 (2026-08-31)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -1141,26 +1166,27 @@ def _match_form_display(engine_metadata):
 def _engine_sel_display(engine_metadata):
     """[B19] / pcrec abi 12 ([OPT-4]): the engine-selection decision as a
     TOKEN -- `selected` / `forced` / `overflowed-dfa` /
-    `overflowed-prefilter` / `collapsed-prefilter` -- with Frank's ask (b)
-    bucket derived from it and from nothing else: a token that is neither
-    `selected` nor `forced` is `auto FELL BACK`, rendered as
-    ` (DFA fallback tripped)`. Returns None where the record has no pair
-    (a pin before abi 12), and the legend prints nothing: the reader has
-    the `abi` on the same line (pcrec I-5's rule, as for every clause
-    here). The SIZE-CAP retry rung stamps `selected` (measured at 96e44c2),
-    so until pcrec's [LIM-1] gives it its own token (inbox I-19 (3)) the
-    bucket ALSO fires on a `vm_prefilter_lang_why` that starts `size cap
-    retry` -- rendered ` (DFA fallback tripped: size-cap rescue)` so the
-    two routes into the bucket stay distinguishable; the legend note says
-    so."""
+    `overflowed-prefilter` / `collapsed-prefilter`, and since pin 263b013
+    ([B22]) `declined-nullable` ([OPT-4.1]) / `size-cap-retry` ([LIM-1])
+    -- with Frank's ask (b) bucket derived from it and from NOTHING else:
+    a token that is neither `selected` nor `forced` is `auto FELL BACK`,
+    rendered as ` (DFA fallback tripped)`. Returns None where the record
+    has no pair (a pin before abi 12), and the legend prints nothing: the
+    reader has the `abi` on the same line (pcrec I-5's rule, as for every
+    clause here). The [B19]-era interim rule -- the SIZE-CAP retry rung
+    stamped `selected` at 96e44c2, so the bucket ALSO fired on a
+    `vm_prefilter_lang_why` starting `size cap retry` (I-19 (3)) -- is
+    RETIRED ([B22], inbox I-25): pcrec's [LIM-1] gave that rescue its own
+    token, and the bucket reads the VALUE, never the why prefix. (No
+    stored 96e44c2 record carries the old shape -- the [B19] census --
+    so nothing a committed report ranked changes; a reader of an OLD
+    record's `sel=selected` beside a `size cap retry` why has both facts
+    on one line.)"""
     em = engine_metadata or {}
     sel = em.get("engine_sel")
     if sel is None:
         return None
     if sel in ("selected", "forced"):
-        why = em.get("vm_prefilter_lang_why") or ""
-        if str(why).startswith("size cap retry"):
-            return f"{sel} (DFA fallback tripped: size-cap rescue)"
         return str(sel)
     return f"{sel} (DFA fallback tripped)"
 
@@ -3019,14 +3045,16 @@ def render_markdown(rd: ReportData):
             if any(_engine_sel_display(em) is not None
                    for _sb, em, _pm in legend_by_key.values()):
                 out.append("    - sel = pcrec's `RX_ENGINE_SEL`; `DFA fallback "
-                           "tripped` = sel not in (selected, forced) -- the "
-                           "three tokens that share one `dfa overflowed` "
-                           "RX_ENGINE_WHY and differ in what survived -- OR a "
-                           "`lang=count-collapsed (size cap retry, ...)`: the "
-                           "size-cap rescue stamps sel=selected (measured at "
-                           "pcrec 96e44c2), so it is bucketed on its why prefix "
-                           "and marked `size-cap rescue` until pcrec's [LIM-1] "
-                           "gives it a token (inbox I-19 (3)).")
+                           "tripped` = sel not in (selected, forced), and "
+                           "NOTHING else -- since pcrec 263b013 ([LIM-1] / "
+                           "[OPT-4.1]) every fallback has its own token "
+                           "(`overflowed-dfa`, `overflowed-prefilter`, "
+                           "`collapsed-prefilter`, `declined-nullable`, "
+                           "`size-cap-retry`), the size-cap rescue included; "
+                           "at pcrec 96e44c2 that rescue stamped "
+                           "`sel=selected` and only its "
+                           "`lang=count-collapsed (size cap retry, ...)` "
+                           "clause says so.")
             # [B19] scope addition: the [ART-SIZE] clauses, named once
             # under the lines that carry them (VM artifacts at abi 11+).
             if any(_size_term_display(em) is not None

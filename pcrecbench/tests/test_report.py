@@ -1685,16 +1685,18 @@ def test_reporter_version_pin():
     which render differently against records already in the store) took
     it to v8; [B20] (schema v1.4: the trial-agreement legend and the
     per-record `agreement:` line, which render on every existing record)
-    took it to v9."""
-    _check(report.REPORTER_VERSION == "v9 (2026-08-30)",
-           f"expected REPORTER_VERSION == 'v9 (2026-08-30)', got {report.REPORTER_VERSION!r}")
+    took it to v9; [B22] (the value-only fallback bucket: the legend
+    NOTE's wording changes on every report that prints a `sel=` clause,
+    twelve committed files) took it to v10."""
+    _check(report.REPORTER_VERSION == "v10 (2026-08-31)",
+           f"expected REPORTER_VERSION == 'v10 (2026-08-31)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v9 (2026-08-30)" in md, f"expected the v9 header line:\n{md[:200]}")
+    _check("reporter: v10 (2026-08-31)" in md, f"expected the v10 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v9 (2026-08-30)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v10 (2026-08-31)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
 
 
 def test_did_not_compile_ranking_line_r10():
@@ -1943,22 +1945,40 @@ def test_b19_engine_sel_lang_and_emit_bytes():
            and "vm_prefilter=hybrid, lang=count-collapsed (dfa overflow retry, exact nfa 462), dfa:" in line,
            f"the legend line carries both clauses in place, got {line!r}")
 
-    # `selected` and `forced` are NOT bucketed; the size-cap rescue stamps
-    # `selected` (measured), so its only trace is the lang clause.
+    # `selected` and `forced` are NOT bucketed.
     forced = {"abi": 12, "engine": "vm", "prefilter": "none", "engine_sel": "forced"}
     fl = report._testee_legend_line("t", forced)
     _check("sel=forced, entry=" in fl and "tripped" not in fl and "lang=" not in fl,
            f"forced: no bucket, no lang clause (not a hybrid); got {fl!r}")
-    sizecap = {"abi": 12, "engine": "vm", "prefilter": "hybrid", "engine_sel": "selected",
-               "vm_prefilter_lang": "count-collapsed",
-               "vm_prefilter_lang_why": "size cap retry, exact 671050 > 500000"}
-    sl = report._testee_legend_line("t", sizecap)
-    _check("sel=selected (DFA fallback tripped: size-cap rescue), entry=" in sl
+    # [B22]: THE PREFIX RULE IS RETIRED (inbox I-25). An OLD (96e44c2)
+    # record's size-cap rescue -- `sel=selected` beside a `size cap retry`
+    # why -- is NO LONGER bucketed: the bucket reads the value and nothing
+    # else. This is the retirement's own control.
+    sizecap_old = {"abi": 12, "engine": "vm", "prefilter": "hybrid",
+                   "engine_sel": "selected",
+                   "vm_prefilter_lang": "count-collapsed",
+                   "vm_prefilter_lang_why": "size cap retry, exact 671050 > 500000"}
+    sl = report._testee_legend_line("t", sizecap_old)
+    _check("sel=selected, entry=" in sl and "tripped" not in sl
            and "lang=count-collapsed (size cap retry, exact 671050 > 500000)" in sl,
-           f"the size-cap rescue: sel=selected, bucketed on the why prefix (I-19 (3)); got {sl!r}")
-    # CONTROL: a `selected` hybrid whose why is NOT a size-cap retry stays
-    # outside the bucket -- the prefix, not the hybrid-ness, is the rule.
-    plain_hybrid = dict(sizecap, vm_prefilter_lang="exact",
+           f"an old-pin size-cap rescue: sel=selected UNBUCKETED (the prefix "
+           f"rule is retired, [B22]); the why stays readable in the lang "
+           f"clause; got {sl!r}")
+    # ... and the 263b013 shape IS bucketed, by its own token ([LIM-1]).
+    sizecap_new = dict(sizecap_old, engine_sel="size-cap-retry")
+    snl = report._testee_legend_line("t", sizecap_new)
+    _check("sel=size-cap-retry (DFA fallback tripped), entry=" in snl,
+           f"the size-cap rescue's own token is bucketed by value; got {snl!r}")
+    # ... as is [OPT-4.1]'s decline: a plain-VM artifact, no lang clause
+    # (no prefilter, no language pair -- the 6.3 iff).
+    declined = {"abi": 12, "engine": "vm", "prefilter": "none",
+                "engine_sel": "declined-nullable"}
+    dl = report._testee_legend_line("t", declined)
+    _check("sel=declined-nullable (DFA fallback tripped), entry=" in dl
+           and "lang=" not in dl,
+           f"declined-nullable is bucketed, with no lang clause; got {dl!r}")
+    # CONTROL: a `selected` hybrid with an ordinary why stays outside.
+    plain_hybrid = dict(sizecap_old, vm_prefilter_lang="exact",
                         vm_prefilter_lang_why="no counted repeat")
     pl = report._testee_legend_line("t", plain_hybrid)
     _check("sel=selected, entry=" in pl and "tripped" not in pl,
@@ -2007,8 +2027,9 @@ def test_b19_engine_sel_lang_and_emit_bytes():
     _check("| 39,448 | 75,812 (warned) | 33,983 |" in md,
            f"the row carries the .so bytes, the warned emit bytes and the code bytes:\n{md}")
     _check("sel = pcrec's `RX_ENGINE_SEL`; `DFA fallback tripped` = sel not in (selected, forced)" in md
-           and "bucketed on its why prefix" in md,
-           f"the legend note defines the bucket:\n{md}")
+           and "NOTHING else" in md and "size-cap-retry" in md
+           and "bucketed on its why prefix" not in md,
+           f"the legend note defines the VALUE-only bucket ([B22]):\n{md}")
     tsv = report.render_tsv(rd)
     for needle in ("\temit_bytes\t75812\t", "\temit_code_bytes\t33983\t",
                    "\twarned_emit_bytes\t75812\t", "\tengine_sel\tcollapsed-prefilter\t",
@@ -2523,7 +2544,9 @@ def _classify_v9_diff(golden_text, new_text):
             continue
         removed, added = old_lines[i1:i2], new_lines[j1:j2]
         for line in added:
-            if line.startswith("reporter: v9 "):
+            # the CURRENT version line, whatever it is (the classifier is
+            # not re-edited at every bump -- [B22]).
+            if line.startswith("reporter: v"):
                 continue
             if any(line.startswith(a) for a in _V9_ALLOWED_ADDED):
                 continue

@@ -2,17 +2,33 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-96e44c2/build/pcrec --list-axes
+#     build/pcrec-263b013/build/pcrec --list-axes
 #
-# pcrec commit 96e44c25cdc9a5de9fe785ad9505bd79b9a83e30 (abi 12), archived by
-# testees/pcrec/pin.sh on 2026-08-30 (PIN.tsv); captured 2026-08-30 by lane
-# b19repin ([B19]). 54 data rows / 21 axes / 12 columns -- the FOURTH
+# pcrec commit 263b013ac7bc2aae4e1a85305410003f12b918e3 (abi 12), archived by
+# testees/pcrec/pin.sh on 2026-08-31 (PIN.tsv); captured 2026-08-31 by lane
+# b22repin ([B22]). 63 data rows / 21 axes / 12 columns -- the FOURTH
 # registry surface (pcrec docs/spec/registry.md 6, [CHK-2]). The diff from
-# the 36d5963 copy (47 / 19, [B18]) is exactly SEVEN rows, two new axes:
-# `prefilter-lang` (2 rows: `count-collapsed` deny bit 19 / force bit 20,
-# `exact` the fallback) and `engine-route` (5 rows: forced,
-# collapsed-prefilter, overflowed-dfa, overflowed-prefilter, selected --
-# the RX_ENGINE_SEL value set, O-8 6(d) ruled as a stamp). No row moved.
+# the 96e44c2 copy (54 / 21, [B19]) is NINE rows, no new axis:
+#
+#   - `engine-route` 5 -> 7 rows: `declined-nullable` (order 3 -- [OPT-4.1],
+#     the nullability decline, the SIXTH route value) and `size-cap-retry`
+#     (order 6 -- [LIM-1], the [OPT-4] size rung's SUCCESS, replacing the
+#     `selected` mislabel O-8/O-10 flagged; distinct from
+#     `collapsed-prefilter`, the [SEL-1] state-cap rung's own success).
+#   - `size-term` 2 -> 7 rows, every row now carrying its `stamp_value`
+#     (option / denied / default / cap-rescue / size-model /
+#     capacity-declined / size-model-declined): [B18]'s documented gap
+#     (RX_UNROLL_K_WHY name-valued with no registry values) is CLOSED, and
+#     the `-fno-size-term` deny flag now sits on the `denied` row (order 2),
+#     no longer on order 1 -- the rows are in preference order of the
+#     SELECTOR, and an explicit --unroll=K (`option`) outranks everything.
+#   - `table` 2 -> 4 rows: the `none` / `mixed` OUTCOME rows (I-18 (iii)),
+#     each with its stamp_value -- adapter.REGISTRY_OUTCOME_VALUES' two
+#     entries are now registry rows (kind `predicate` beside the two `list`
+#     candidates).
+#
+# (Inbox I-23/I-25 expected 61/21 at fa01910 growing by "maybe one" row at
+# 263b013; measured 63 -- the reading is the list above, verbatim.)
 #
 # WHAT THIS FILE IS FOR: adapter.py's declared stamp value sets are CHECKED
 # against it (`registry_check`), and `make check-harness` diffs this copy
@@ -23,10 +39,8 @@
 # every re-pin: the diff IS the list of what moved. The registry's own
 # boundary (registry.md 6): it proves what the compiler THINKS its axes
 # are; the artifacts `check_mechanism_stamps` reads are the independent
-# side. Known gaps carried from [B18]: the `size-term` rows have no
-# `stamp_value` (RX_UNROLL_K_WHY is name-valued); the `table` axis lists no
-# `none` / `mixed` outcome rows -- I-18 (iii): both fixed on pcrec's admin
-# lane ([REG-SV]), landing in the NEXT pin's diff as 61 rows / 21 axes.
+# side. [B18]'s two known gaps are both closed at this pin (size-term
+# stamp_values, the table outcome rows -- pcrec [REG-SV]).
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).
@@ -54,6 +68,8 @@
 #axis	order	candidate	kind	stamp_macro	stamp_value	deny_macro	deny_bit	force_macro	force_bit	cli_flag	applies
 table	1	premultiplied	list	RX_DFA_TABLE	premultiplied	PCREC_NO_PREMUL_TABLE	15			-fno-premul-table	this machine's states*classes <= 65535 and no emitted seed cell is negative
 table	2	indexed	list	RX_DFA_TABLE	indexed						always (fallback)
+table	3	none	predicate	RX_DFA_TABLE	none						the artifact has no DFA scan-table at all: a proven-empty engine (dfa_engine_is_empty), or the ENG_ATTEMPT label-dispatch engine, which is asked first (src/gen/CLAUDE.md's [DD-13c] #5)
+table	4	mixed	predicate	RX_DFA_TABLE	mixed						the artifact's own machines took DIFFERENT per-machine table representations (dfa_table_name(): forward vs. reverse, and since [ENG-ABS] the anchored machine, disagree) — a per-artifact composition, never a single machine's own selection
 prefilter	1	offset-set-bounded	list	RX_DFA_PREFILTER	offset-set-bounded	PCREC_NO_OFFSET_SKIP	16			-fno-offset-skip	forward scan, an offset-k candidate SET was selected, under a $/\Z/\z view or a word-context accept ([OPT-K])
 prefilter	2	offset-set	list	RX_DFA_PREFILTER	offset-set	PCREC_NO_OFFSET_SKIP	16			-fno-offset-skip	forward scan, an offset-k candidate SET was selected: one memchr at the chosen offset k*, the other offsets verified per candidate ([OPT-K])
 prefilter	3	memchr-bounded	list	RX_DFA_PREFILTER	memchr-bounded						forward scan, one candidate byte, under a $/\Z/\z view or a word-context accept
@@ -81,8 +97,13 @@ revdet	1	revdet	predicate	RX_VM_RUNGS	PCREC_VM_RUNG_REVDET	PCREC_NO_REVDET	5			-
 revdet	2	denied	predicate	RX_VM_RUNGS							always (fallback) — the ladder's next rung (counter, or literal frames)
 counter	1	counter	predicate	RX_VM_RUNGS	PCREC_VM_RUNG_COUNTER	PCREC_NO_COUNTER	6			-fno-counter	per A_REP: a bounded repeat, unrolled by --unroll=K (default PCREC_DEFAULT_UNROLL_K), below the replication cap
 counter	2	denied	predicate	RX_VM_RUNGS							always (fallback) — literal replication (frames)
-size-term	1	size-model	predicate	RX_UNROLL_K_WHY		PCREC_NO_SIZE_TERM	18			-fno-size-term	per artifact: the counter rung is live and the emitted size is over PCREC_SIZE_TERM_THRESHOLD, so K is chosen by re-emitting the ladder and taking argmin nodes
-size-term	2	default	predicate	RX_UNROLL_K_WHY							always (fallback) — K stays at --unroll=K or PCREC_DEFAULT_UNROLL_K
+size-term	1	option	predicate	RX_UNROLL_K_WHY	option						an explicit --unroll=K on the command line: the term never runs (compile.c: defo.unroll_k > 0 && st_phase == ST_DEFAULT)
+size-term	2	denied	predicate	RX_UNROLL_K_WHY	denied	PCREC_NO_SIZE_TERM	18			-fno-size-term	the axis is denied: K stays at --unroll=K or PCREC_DEFAULT_UNROLL_K
+size-term	3	default	predicate	RX_UNROLL_K_WHY	default						the counter rung is not live, or the emitted CODE size did not exceed PCREC_SIZE_TERM_THRESHOLD, so the ladder never ran
+size-term	4	cap-rescue	predicate	RX_UNROLL_K_WHY	cap-rescue						the ladder ran; the materiality bar declined its argmin K on bytes alone, but an emitted-size cap (--max-emit-bytes/--max-emit-code-bytes) took a smaller K anyway — natural corpus population 0 at the shipped caps (tests/codegen/run_size_term.sh §5/§6), reached only through a lowered-cap reference build
+size-term	5	size-model	predicate	RX_UNROLL_K_WHY	size-model						the ladder ran and its argmin K saved at least 25% of the default K's bytes, so the materiality bar took it
+size-term	6	capacity-declined	predicate	RX_UNROLL_K_WHY	capacity-declined						the ladder ran; the K it wanted would have lowered this artifact's declared capacity (.frame_capacity or .subject_ceiling, §3.3a) below the default K's, so that rung was excluded before the materiality bar was ever asked — natural corpus population 0 at the shipped threshold (tests/codegen/run_size_term.sh §7/§7b), reached only through a lowered-threshold reference build
+size-term	7	size-model-declined	predicate	RX_UNROLL_K_WHY	size-model-declined						always (fallback) — the ladder ran and the materiality bar rejected its argmin K on bytes alone, with no capacity exclusion in play
 length-prune	1	clamped	predicate	RX_VM_PRUNES	PCREC_VM_PRUNE_CLAMPED	PCREC_NO_LENGTH_PRUNE	7			-fno-length-prune	per A_REP: a minimum-remaining-length bound is derivable for this quantifier's rung
 length-prune	2	unclamped	predicate	RX_VM_PRUNES	PCREC_VM_PRUNE_UNCLAMPED						always (fallback) — no bound derivable, or the axis denied
 vm-prefilter	1	hybrid	predicate	RX_VM_PREFILTER	hybrid	PCREC_NO_PREFILTER	8	PCREC_FORCE_PREFILTER	9	-fno-prefilter / -fprefilter	auto+captures selects it jointly with the engine (select_engine.c); -fprefilter REFUSES on a pure-DFA-selected pattern (do-or-die)
@@ -103,6 +124,8 @@ engine	1	vm	predicate	RX_ENGINE	vm					--engine=vm	auto: any construct select_en
 engine	2	dfa	predicate	RX_ENGINE	dfa					--engine=dfa	auto: always, when no construct forces the VM; --engine=dfa REFUSES a pattern needing VM-only machinery (do-or-die)
 engine-route	1	forced	predicate	RX_ENGINE_SEL	forced					--engine=vm / --engine=dfa	the caller named the engine, so auto selected nothing
 engine-route	2	collapsed-prefilter	predicate	RX_ENGINE_SEL	collapsed-prefilter						auto, a DFA build overflowed a cap, and compile_driver's retry KEPT a prefilter by rebuilding it from the count-collapsed language ([OPT-4]/K39; -fno-prefilter-collapse skips this rung)
-engine-route	3	overflowed-dfa	predicate	RX_ENGINE_SEL	overflowed-dfa						auto, the DFA was to be the ENGINE, its build overflowed, and no prefilter survived the fallback ([SEL-1]/K40)
-engine-route	4	overflowed-prefilter	predicate	RX_ENGINE_SEL	overflowed-prefilter						auto, the VM was already chosen for another reason, and only its auto-selected PREFILTER's DFA overflowed, so the prefilter was dropped
-engine-route	5	selected	predicate	RX_ENGINE_SEL	selected						always (fallback) — auto chose on the AST and nothing overflowed
+engine-route	3	declined-nullable	predicate	RX_ENGINE_SEL	declined-nullable						auto, a DFA build overflowed a cap, compile_driver's retry OFFERED the count-collapsed prefilter and it was DECLINED because the collapsed language is NULLABLE — it matches the empty string, so the filter can never dismiss a position ([OPT-4.1]; pcrec-bench O-10 measured 1.2-9.9x slower than no prefilter). No prefilter survives. -fprefilter is do-or-die and is never silently dropped, but it does not override THIS rung's decline: it makes the [SEL-1] rung ineligible, so the compile refuses instead. On the SIZE rung -fprefilter does override the decline. -fprefilter-collapse overrides neither
+engine-route	4	overflowed-dfa	predicate	RX_ENGINE_SEL	overflowed-dfa						auto, the DFA was to be the ENGINE, its build overflowed, and no prefilter survived the fallback ([SEL-1]/K40)
+engine-route	5	overflowed-prefilter	predicate	RX_ENGINE_SEL	overflowed-prefilter						auto, the VM was already chosen for another reason, and only its auto-selected PREFILTER's DFA overflowed, so the prefilter was dropped
+engine-route	6	size-cap-retry	predicate	RX_ENGINE_SEL	size-cap-retry						auto, an emitted-size cap (--max-emit-code-bytes/--max-emit-bytes) REFUSED the exact artifact, and compile_driver's [OPT-4] size rung rebuilt a smaller one with a prefilter from the count-collapsed language that SURVIVED (docs/spec/tuning.md §2.17; distinct from collapsed-prefilter above, which is the [SEL-1] DFA-state-cap rung's own success)
+engine-route	7	selected	predicate	RX_ENGINE_SEL	selected						always (fallback) — auto chose on the AST and nothing overflowed

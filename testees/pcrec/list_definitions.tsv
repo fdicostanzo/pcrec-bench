@@ -3,14 +3,15 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-96e44c2/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-263b013/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit 96e44c25cdc9a5de9fe785ad9505bd79b9a83e30 (abi 12), archived
-# 2026-08-30 by lane b19repin ([B19]; inbox I-18 (4)). 50 data rows / 7
-# columns: kind, selector, syntax, order, predicate, definition, applies --
-# one row per construct DEFINED in terms of another (`\d` = `[0-9]`, the
-# POSIX classes, `\R`, the `\c`/`\x`/`\o` decoders as text functions), the
-# predicate being the option-scope tag's own name (a closed vocabulary).
+# pcrec commit 263b013ac7bc2aae4e1a85305410003f12b918e3 (abi 12), archived
+# 2026-08-31 by lane b22repin ([B22]). 50 data rows / 7 columns: kind,
+# selector, syntax, order, predicate, definition, applies -- one row per
+# construct DEFINED in terms of another (`\d` = `[0-9]`, the POSIX classes,
+# `\R`, the `\c`/`\x`/`\o` decoders as text functions), the predicate being
+# the option-scope tag's own name (a closed vocabulary). BYTE-IDENTICAL to
+# the 96e44c2 copy below the header: no definition moved between the pins.
 # The grep strips pcrec's own `#` comment/header lines, so the data rows
 # are the whole body; the column header is restated here for a reader:
 #

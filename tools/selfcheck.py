@@ -1849,13 +1849,13 @@ STAMP_CASES = (
       **_CAPS_VM}),
     # [B19]: THE SIZE-CAP RUNG (limits.md 8, [OPT-4]): the exact artifact
     # is REFUSED by the code cap and the retry ships a count-collapsed
-    # hybrid -- and it stamps `engine_sel selected`, NOT
-    # `collapsed-prefilter` (MEASURED at 96e44c2; match_api.md 6.3's table
-    # reserves that token for a DFA-build overflow). Frank's ask (b)
-    # bucket therefore does not see this rescue; `vm_prefilter_lang_why`'s
-    # `size cap retry` prefix is the only structured trace of it.
+    # hybrid. At 96e44c2 it stamped `engine_sel selected` -- the mislabel
+    # O-8/O-10 flagged, whose only structured trace was the `_why`'s
+    # `size cap retry` prefix; since 263b013 ([LIM-1], [B22]) it stamps its
+    # OWN token, `size-cap-retry`, and Frank's ask (b) bucket sees it by
+    # VALUE (the prefix bucketing is RETIRED -- inbox I-25).
     ("size-cap rung rescue (K41 witness 2)", "pcrec-auto", _K41W2,
-     {"engine": "vm", "prefilter": "hybrid", "engine_sel": "selected",
+     {"engine": "vm", "prefilter": "hybrid", "engine_sel": "size-cap-retry",
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": _SIZE_CAP_RETRY, **_CAPS_VM}),
 )
@@ -1932,16 +1932,20 @@ LEDGER_STAMP_CASES = (
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 462",
       **_CAPS_VM}),
-    # [B19] bounded's class ladder at the pin (I-18 (v), MEASURED there as
-    # single compiles): the 32768 rung -- the set's PREDICTED first refusal
-    # -- is RESCUED as a 32 KB collapsed-prefilter VM artifact whose
-    # prefilter admits `[a-z]*`.
-    ("bounded cls-upto-32768: the state-cap rung's rescue", "pcrec-auto",
+    # [B22] bounded's 32768 rung at pin 263b013: the artifact CHANGED KIND
+    # (I-22 (ii)'s reason the cross-pin byte comparison was invalid). At
+    # 96e44c2 the state-cap rung RESCUED it as a 32 KB collapsed-prefilter
+    # hybrid (`exact nfa 65538`); [OPT-4.1] gates the rescue on the
+    # collapsed language being NON-nullable, `[a-z]*` is nullable, so the
+    # offer is DECLINED: a plain-VM artifact, `declined-nullable`, NO
+    # prefilter, NO language pair -- and emit_bytes == emit_code_bytes
+    # (18,291: a declined plain-VM artifact has no table initializers at
+    # all). The BY-VALUE control [B22] (d) names.
+    ("bounded cls-upto-32768: the rescue declined (nullable)", "pcrec-auto",
      "bounded", "cls-upto-32768",
-     {"engine": "vm", "prefilter": "hybrid",
-      "engine_sel": "collapsed-prefilter",
-      "vm_prefilter_lang": "count-collapsed",
-      "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 65538",
+     {"engine": "vm", "prefilter": "none",
+      "engine_sel": "declined-nullable",
+      "emit_bytes": 18291, "emit_code_bytes": 18291,
       **_CAPS_VM}),
     # [B19] (e): the 16384 rung is a DFA that WARNS (limits.md 8,
     # `--warn-emit-bytes` default 250,000) -- the warning is captured as a
@@ -1949,12 +1953,92 @@ LEDGER_STAMP_CASES = (
     # are the message's own numbers. I-18's table says 725,692 bytes for a
     # file named `[a-z]{0,16384}`; the adapter's `artifact.c`/`.h` names
     # make it 724,699 comment-excluded (the count includes the emitted
-    # #include line). ~8 s a compile under load.
+    # #include line). Unchanged at 263b013 (RE-MEASURED: [OPT-4.1]/[LIM-1]
+    # touch no `selected` DFA artifact). ~8 s a compile under load.
     ("bounded cls-upto-16384: the DFA that warns", "pcrec-auto",
      "bounded", "cls-upto-16384",
      {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "unanchored",
       "warned_emit_bytes": 724699, "emit_bytes": 724699,
       "emit_code_bytes": 11589, **_CAPS_DFA}),
+    # ------ [B22] THE DECLINE/KEEP SETS at 263b013 (the I-21 CORRECTION's
+    # code-derived minw analysis, stamped 11/11 as predicted -- inbox
+    # I-23/I-25; plan [B22]). DECLINE (`pcrec_minw(root) == 0` on the
+    # composed form): `declined-nullable`, VM, prefilter `none`, no
+    # language pair. The whole-subject (`(?:...)\z`) forms overflow by the
+    # K7 SUBSET-ELEMENTS budget where the plain forms hit the state cap --
+    # distinct RX_ENGINE_WHY prose, asserted after the loop. A sixth tuple
+    # element names the FORM (default plain).
+    ("bounded cls-upto-32768 whole: declined, the K7 route", "pcrec-auto",
+     "bounded", "cls-upto-32768",
+     {"engine": "vm", "prefilter": "none",
+      "engine_sel": "declined-nullable",
+      "emit_bytes": 18496, "emit_code_bytes": 18496,
+      **_CAPS_VM}, "whole-subject"),
+    ("bounded cls-upto-16384 whole: declined", "pcrec-auto",
+     "bounded", "cls-upto-16384",
+     {"engine": "vm", "prefilter": "none",
+      "engine_sel": "declined-nullable", **_CAPS_VM}, "whole-subject"),
+    ("bounded cls-lazy-16384 whole: declined", "pcrec-auto",
+     "bounded", "cls-lazy-16384",
+     {"engine": "vm", "prefilter": "none",
+      "engine_sel": "declined-nullable", **_CAPS_VM}, "whole-subject"),
+    # KEEP (minw > 0: the collapsed language is NON-nullable): the rescue
+    # and its bytes stay -- the four ctx rungs (minw 8), and the two nest
+    # wholes (minw 1; I-21's original "return to flat" line was WRONG for
+    # these two, corrected the same day -- their rescue-with-no-benefit is
+    # a NAMED RESIDUAL under pcrec D77, not a target).
+    ("bounded ctx-greedy-256: the rescue kept", "pcrec-auto",
+     "bounded", "ctx-greedy-256",
+     {"engine": "vm", "prefilter": "hybrid",
+      "engine_sel": "collapsed-prefilter",
+      "vm_prefilter_lang": "count-collapsed",
+      "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 558",
+      **_CAPS_VM}),
+    ("bounded ctx-lazy-64: the rescue kept", "pcrec-auto",
+     "bounded", "ctx-lazy-64",
+     {"engine": "vm", "prefilter": "hybrid",
+      "engine_sel": "collapsed-prefilter",
+      "vm_prefilter_lang": "count-collapsed",
+      "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 174",
+      **_CAPS_VM}),
+    ("bounded ctx-lazy-256: the rescue kept", "pcrec-auto",
+     "bounded", "ctx-lazy-256",
+     {"engine": "vm", "prefilter": "hybrid",
+      "engine_sel": "collapsed-prefilter",
+      "vm_prefilter_lang": "count-collapsed",
+      "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 558",
+      **_CAPS_VM}),
+    ("bounded ctx-lazy-1024: the rescue kept", "pcrec-auto",
+     "bounded", "ctx-lazy-1024",
+     {"engine": "vm", "prefilter": "hybrid",
+      "engine_sel": "collapsed-prefilter",
+      "vm_prefilter_lang": "count-collapsed",
+      "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 2094",
+      **_CAPS_VM}),
+    ("bounded nest2-64 whole: the rescue kept (non-nullable)", "pcrec-auto",
+     "bounded", "nest2-64",
+     {"engine": "vm", "prefilter": "hybrid",
+      "engine_sel": "collapsed-prefilter",
+      "vm_prefilter_lang": "count-collapsed",
+      "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 8258",
+      **_CAPS_VM}, "whole-subject"),
+    # (nest3-16 is the corpus's one K MOVER -- bounded@0.1's first-sample
+    # finding, K=1 / size-model on every VM form -- so its caps dict
+    # overrides _CAPS_VM's default K.)
+    ("bounded nest3-16 whole: the rescue kept (non-nullable)", "pcrec-auto",
+     "bounded", "nest3-16",
+     {"engine": "vm", "prefilter": "hybrid",
+      "engine_sel": "collapsed-prefilter",
+      "vm_prefilter_lang": "count-collapsed",
+      "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 8466",
+      **dict(_CAPS_VM, unroll_k=1, unroll_k_why="size-model")},
+     "whole-subject"),
+    # ... and the CONTRAST that keeps the whole rows readable: the same
+    # nest2-64 pattern's PLAIN form is an ordinary selected DFA (the two
+    # forms are different machines at these counts -- I-20).
+    ("bounded nest2-64 plain: an ordinary selected DFA", "pcrec-auto",
+     "bounded", "nest2-64",
+     {"engine": "dfa", "engine_sel": "selected", **_CAPS_DFA}),
 )
 
 
@@ -1998,8 +2082,16 @@ def check_mechanism_stamps():
     the spec and the artifacts say hybrids), the size-cap rescue kind
     (K41's witness 2), two bounded ledger rows (the 32768 rescue, the
     16384 DFA that warns), Frank's ask (b) bucket derived from the record,
-    and the two source-bytes pairs with the warning pair."""
-    print("-- the abi 4-12 mechanism stamps (pcrec I-5/I-6/I-11/I-13/I-15/I-16/I-17/I-18) --")
+    and the two source-bytes pairs with the warning pair. [B22] (pin
+    263b013, abi 12 unchanged) re-pointed the size-cap kind at its OWN
+    route token (`size-cap-retry`, [LIM-1]) and added the I-21-corrected
+    DECLINE/KEEP sets as ledger rows -- the four nullable declines
+    (`declined-nullable`, [OPT-4.1]: no prefilter, no language pair, the
+    plain-vs-`\\z` overflow routes distinct in RX_ENGINE_WHY) against the
+    six kept rescues (the ctx rungs, the nest wholes) -- with the bucket
+    re-asserted as the VALUE-only rule (the `_why`-prefix special case
+    retired, inbox I-25)."""
+    print("-- the abi 4-12 mechanism stamps (pcrec I-5/I-6/I-11/I-13/I-15/I-16/I-17/I-18/I-21/I-25) --")
     try:
         adapter = _ad.discover()["pcrec"]
     except KeyError:
@@ -2010,14 +2102,18 @@ def check_mechanism_stamps():
     handles = {}
     diags = {}
     try:
-        cases = [(label, tid, pattern, expected, "stamps")
+        cases = [(label, tid, pattern, expected, "stamps", _ad.FORM_PLAIN)
                  for label, tid, pattern, expected in STAMP_CASES]
-        cases += [(label, tid, _bench_pattern(sb, name), expected, "ledger")
-                  for label, tid, sb, name, expected in LEDGER_STAMP_CASES]
-        for label, tid, pattern, expected, kind in cases:
+        # [B22]: a LEDGER case may carry a sixth element naming the FORM it
+        # asserts on (`whole-subject` for the `(?:...)\z` artifact the match
+        # regime uses) -- the decline/keep sets are per (pattern, form).
+        cases += [(c[0], c[1], _bench_pattern(c[2], c[3]), c[4], "ledger",
+                   c[5] if len(c) > 5 else _ad.FORM_PLAIN)
+                  for c in LEDGER_STAMP_CASES]
+        for label, tid, pattern, expected, kind, form in cases:
             adapter.prepare(tid, tmp)
             pid = re.sub(r"[^A-Za-z0-9]+", "-", label).strip("-")[:40]
-            cr = adapter.compile(tid, pid, pattern, {}, 1, tmp).get(_ad.FORM_PLAIN)
+            cr = adapter.compile(tid, pid, pattern, {}, 1, tmp).get(form)
             if cr.outcome != "compiled":
                 bad("%s: %s" % (kind, label), "%s: %s" % (cr.outcome, cr.diagnostic))
                 continue
@@ -2049,6 +2145,26 @@ def check_mechanism_stamps():
             else:
                 bad("ledger: the fallback's diagnostic names the cap",
                     "expected `RX_ENGINE_WHY: dfa overflowed...`, got %r" % d[:120])
+
+        # -- [B22] the OVERFLOW ROUTE is distinct per form (I-22/I-23,
+        # I-20's mechanism): the plain form hits the DFA STATE cap
+        # (PCREC_MAX_DFA_STATES_TABLE, ">32000 states"), the `(?:...)\z`
+        # form the K7 SUBSET-ELEMENTS budget (PCREC_MAX_SUBSET_ELEMS,
+        # "subset construction exceeds 48000000 state-set elements (K7)")
+        # -- two different limits rows in list_limits.tsv, told apart ONLY
+        # by RX_ENGINE_WHY's prose in the compile row's diagnostic. Both
+        # values asserted, and asserted DISTINCT.
+        p32 = diags.get("bounded cls-upto-32768: the rescue declined (nullable)")
+        w32 = diags.get("bounded cls-upto-32768 whole: declined, the K7 route")
+        if p32 is not None and w32 is not None:
+            state_cap = "RX_ENGINE_WHY: dfa overflowed: >32000 states"
+            k7 = "subset construction exceeds 48000000 state-set elements (K7)"
+            if p32.startswith(state_cap) and k7 in w32 and k7 not in p32:
+                ok("ledger: the plain form overflows by the STATE cap, the `\\z` form by the K7 subset-elements budget -- distinct RX_ENGINE_WHY values",
+                   "plain %r; whole %r" % (p32[:60], w32[:100]))
+            else:
+                bad("ledger: the plain form overflows by the STATE cap, the `\\z` form by the K7 subset-elements budget -- distinct RX_ENGINE_WHY values",
+                    "plain %r, whole %r" % (p32[:120], w32[:120]))
 
         # -- the SCOPE rules, in both directions (match_api.md 6.3 (a)) --
         dfa_keys = ("dfa_scan", "dfa_prefilter", "dfa_table")
@@ -2198,27 +2314,40 @@ def check_mechanism_stamps():
             bad("scope: vm_prefilter_lang / _why on every VM HYBRID and on NO other artifact",
                 "has %r wanted %r" % (has_lang, want_lang))
 
-        # -- [B19] Frank's ask (b), derived from the RECORD: the `DFA
+        # -- [B19]/[B22] Frank's ask (b), derived from the RECORD: the `DFA
         # fallback tripped` bucket is engine_sel not in (selected, forced)
-        # (adapter.ENGINE_SEL_FALLBACK). Asserted to be EXACTLY the two
-        # state-cap rescues -- and NOT the size-cap rescue, which stamps
-        # `selected` and is visible only through its `_why` prefix. --
+        # (adapter.ENGINE_SEL_FALLBACK -- FIVE values since 263b013).
+        # Asserted to be EXACTLY the fallback witnesses above: the
+        # state-cap rescues (collapsed-prefilter), the nullable DECLINES
+        # (declined-nullable) and -- new at this pin -- the SIZE-CAP rescue
+        # by its OWN token (size-cap-retry; it stamped `selected` at
+        # 96e44c2 and was bucketed on its `_why` prefix, I-19 (3) -- that
+        # prefix bucketing is RETIRED, inbox I-25: the bucket reads the
+        # VALUE and nothing else). The controls: every `selected` /
+        # `forced` witness stays outside, hybrids with `exact` language
+        # included. --
         mod = _pcrec_adapter_module()
         tripped = sorted(l for l, em in metas.items()
                          if em.get("engine_sel") in mod.ENGINE_SEL_FALLBACK)
+        # (the loglines "declined" labels are DFA-PREFILTER declines on
+        # `selected` artifacts and stay outside -- the phrases below are
+        # this table's own, chosen not to collide with them)
         want_tripped = sorted(l for l in metas
                               if l.startswith("level-context under auto")
-                              or l.startswith("bounded cls-upto-32768"))
+                              or l.startswith("size-cap rung rescue")
+                              or ": the rescue declined" in l
+                              or ": the rescue kept" in l
+                              or "whole: declined" in l)
         size_rescue = sorted(l for l, em in metas.items()
-                             if _SIZE_CAP_RETRY.fullmatch(
-                                 em.get("vm_prefilter_lang_why") or ""))
-        if metas and tripped == want_tripped and tripped:
-            ok("bucket: `DFA fallback tripped` (engine_sel not in selected/forced) is exactly the state-cap rescues",
-               "%s; the size-cap rescue (%s) stamps engine_sel=selected and "
-               "is OUTSIDE it -- read vm_prefilter_lang_why"
-               % (", ".join(tripped), ", ".join(size_rescue) or "none seen"))
+                             if em.get("engine_sel") == "size-cap-retry")
+        if metas and tripped == want_tripped and tripped and size_rescue:
+            ok("bucket: `DFA fallback tripped` (engine_sel not in selected/forced) is exactly the fallback witnesses, size-cap rescue INCLUDED by value",
+               "%d witnesses: %s; the size-cap rescue (%s) is INSIDE it by "
+               "its own token -- the [B19]-era _why-prefix bucketing is "
+               "retired" % (len(tripped), ", ".join(tripped),
+                            ", ".join(size_rescue)))
         elif metas:
-            bad("bucket: `DFA fallback tripped` (engine_sel not in selected/forced) is exactly the state-cap rescues",
+            bad("bucket: `DFA fallback tripped` (engine_sel not in selected/forced) is exactly the fallback witnesses, size-cap rescue INCLUDED by value",
                 "tripped %r, wanted %r" % (tripped, want_tripped))
 
         # -- [B19] (d)/(e) the two source-bytes pairs on every compiled
@@ -2282,16 +2411,26 @@ def check_mechanism_stamps():
 # list_axes.tsv's header), so its values are hand-stated here.
 #
 # [B19] generalised: a sixth element names the ARM the flag produces --
-# `deny` (the registry row's `-fno-` spelling removes the order-1 candidate;
-# the DEFAULT arm is where that candidate was chosen, so the registry's
-# `stamp_value` is checked against it) or `force` (the `-f` spelling makes
-# the candidate apply; the FLAGGED arm is where it was chosen). The
-# `prefilter-lang` axis's order-1 row carries BOTH spellings in one
+# `deny` (the registry row's `-fno-` spelling removes a candidate) or
+# `force` (the `-f` spelling makes the candidate apply). The
+# `prefilter-lang` axis's flag row carries BOTH spellings in one
 # `cli_flag` cell (`-fno-prefilter-collapse / -fprefilter-collapse`), split
 # on ` / ` and picked by prefix. An expected flagged value of
 # DID_NOT_COMPILE says the flag turns a compile into a REFUSAL by name. The
 # FIRST pair of each dict is the one the registry row's `stamp_value` is
 # compared with (the row's own stamp); the rest ride along.
+#
+# [B22] generalised twice more, both forced by the 263b013 registry:
+# (1) the flag ROW is found by its `cli_flag` cell within the axis, no
+# longer assumed to be order 1 -- the `size-term` axis now lists its rows
+# in the SELECTOR's preference order with `-fno-size-term` on the `denied`
+# row (order 2); (2) an OPTIONAL seventh element `reg_arm` names the arm
+# the flag row's `stamp_value` describes -- "default" (a deny flag on the
+# candidate it removes: the [B19] rule), "flagged" (a flag on the OUTCOME
+# row it produces: size-term's `denied`), or "skip" (the row's value
+# matches neither arm by design: the nullability decline, where the flag
+# asked for a collapse the policy refused). Omitted, the [B19] rule
+# applies (deny -> default arm, force -> flagged arm).
 DID_NOT_COMPILE = object()
 DENY_CONTROLS = (
     ("dfa_table", "table", ("literal", b"(?:[a-z]+)@(?:[a-z]+)"), "",
@@ -2301,8 +2440,12 @@ DENY_CONTROLS = (
       "dfa_prefilter_offsets": ("0,8*,13", "none")}, "deny"),
     ("dfa_match", "match", ("email", "floor"), "",
      {"dfa_match": ("unwrapped", "search-filter")}, "deny"),
+    # [B22]: since 263b013 the registry's `-fno-size-term` flag sits on the
+    # `denied` row (order 2, stamp_value "denied" -- the value the FLAGGED
+    # arm reads), no longer on an order-1 row; the seventh element says so.
     ("unroll_k_why", "size-term", ("email", "orig"), "--engine=vm",
-     {"unroll_k_why": ("default", "denied"), "unroll_k": (8, 8)}, "deny"),
+     {"unroll_k_why": ("default", "denied"), "unroll_k": (8, 8)}, "deny",
+     "flagged"),
     # [B19] (abi 12, [OPT-4]) -- the collapse denied on the [SEL-1] rung:
     # the rescue becomes the OLD fallback (no prefilter at all, the
     # 36d5963 shape), NOT a refusal -- limits.md 8: "the [SEL-1] rung ...
@@ -2333,6 +2476,21 @@ DENY_CONTROLS = (
      {"vm_prefilter_lang": ("exact", "count-collapsed"),
       "vm_prefilter_lang_why": ("exact", "forced"),
       "engine_sel": ("selected", "selected")}, "force"),
+    # [B22] ([OPT-4.1], pin 263b013): -fprefilter-collapse on a hybrid
+    # whose COLLAPSED language is nullable reaches the nullability POLICY,
+    # not the collapse -- the flag chooses a language, not whether a filter
+    # exists, and a nullable one can never dismiss a position, so the
+    # prefilter is KEPT and built from the EXACT language:
+    # `_LANG "exact"` / `_LANG_WHY "nullable collapsed language"` (pcrec
+    # tuning.md 2.17; the value I-21's correction named). The route token
+    # stays `selected` in both arms (nothing overflowed), and the registry
+    # row's stamp_value (`count-collapsed`, the collapse that was DECLINED)
+    # matches neither arm -- `reg_arm` "skip" says so rather than failing.
+    ("vm_prefilter_lang_why: -fprefilter-collapse declined as nullable",
+     "prefilter-lang", ("literal", b"(x){0,5}"), "",
+     {"vm_prefilter_lang": ("exact", "exact"),
+      "vm_prefilter_lang_why": ("exact", "nullable collapsed language"),
+      "engine_sel": ("selected", "selected")}, "force", "skip"),
 )
 
 
@@ -2391,13 +2549,20 @@ def check_deny_flag_controls():
     saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
     try:
         os.environ["PCREC_BIN"] = adapter.pin_binary()
-        for label, axis, src, base, pairs, arm_kind in DENY_CONTROLS:
-            first = [r for r in rows if r["axis"] == axis and r["order"] == "1"]
-            if len(first) != 1 or not first[0].get("cli_flag"):
+        for row_spec in DENY_CONTROLS:
+            label, axis, src, base, pairs, arm_kind = row_spec[:6]
+            reg_arm = (row_spec[6] if len(row_spec) > 6
+                       else ("default" if arm_kind == "deny" else "flagged"))
+            # [B22]: find the axis row CARRYING the flag (its cli_flag
+            # cell), wherever the selector's preference order put it.
+            flagrows = [r for r in rows
+                        if r["axis"] == axis and r.get("cli_flag", "").startswith("-f")]
+            if len(flagrows) < 1:
                 bad("deny control: %s" % label,
-                    "the registry has no order-1 row with a cli_flag for axis "
-                    "%r (rows %r)" % (axis, first))
+                    "the registry has no row with a -f cli_flag for axis %r"
+                    % (axis,))
                 continue
+            first = flagrows[:1]
             spellings = [f.strip() for f in first[0]["cli_flag"].split(" / ")]
             if arm_kind == "deny":
                 flag = next((f for f in spellings if f.startswith("-fno-")), None)
@@ -2451,16 +2616,20 @@ def check_deny_flag_controls():
                 reg_val = first[0].get("stamp_value", "")
                 note = ""
                 main_pair = next(iter(pairs))
-                chosen_arm = "default" if arm_kind == "deny" else flagged
-                if reg_val and reg_val != got[chosen_arm][main_pair]:
+                chosen_arm = "default" if reg_arm == "default" else flagged
+                if reg_arm == "skip":
+                    note = ("; registry stamp_value %r deliberately matches "
+                            "neither arm (the flag reached a policy, not the "
+                            "candidate -- reg_arm skip)" % (reg_val,))
+                elif reg_val and reg_val != got[chosen_arm][main_pair]:
                     bad("deny control: %s" % label,
-                        "the registry says %s's order-1 candidate stamps %r; the "
+                        "the registry says %s's flag row stamps %r; the "
                         "%s arm read %r" % (axis, reg_val, chosen_arm, got[chosen_arm][main_pair]))
                     continue
-                if reg_val:
+                elif reg_val:
                     note = "; registry stamp_value %r agrees (%s arm)" % (reg_val, chosen_arm)
                 else:
-                    note = "; registry carries no stamp_value for this axis (documented gap)"
+                    note = "; registry carries no stamp_value for this row"
                 fmt = lambda d: ", ".join(
                     "%s=%s" % (k, "REFUSED" if v is DID_NOT_COMPILE else v)
                     for k, v in d.items())
@@ -2539,11 +2708,14 @@ def check_list_axes_registry():
         bad("list-axes: the declared value sets agree with the registry", str(e))
         return
     if not problems:
+        allowed = ", ".join("%s:%s" % (k, "/".join(sorted(v)))
+                            for k, v in sorted(mod.REGISTRY_OUTCOME_VALUES.items()))
         ok("list-axes: the declared value sets agree with the registry",
-           "%s checked both ways (outcome values %s allowed)"
+           "%s checked both ways (%s)"
            % (", ".join(sorted(mod.REGISTRY_STAMP_PAIRS)),
-              ", ".join("%s:%s" % (k, "/".join(sorted(v)))
-                        for k, v in sorted(mod.REGISTRY_OUTCOME_VALUES.items()))))
+              ("outcome values %s allowed" % allowed) if allowed
+              else "no outcome-value exceptions: the registry enumerates "
+                   "them all at this pin -- [B22]"))
     else:
         bad("list-axes: the declared value sets agree with the registry",
             "; ".join(problems))
@@ -2591,6 +2763,59 @@ def check_list_definitions_registry():
             % " | ".join(diff[2:12]))
 
 
+def check_list_limits_registry():
+    """THE SIXTH REGISTRY SURFACE, ARCHIVED AND CHECKED ([B22], pcrec D90 /
+    [LIM-1], inbox I-25: "ARCHIVE IT beside --list-axes at your re-pin").
+    `testees/pcrec/list_limits.tsv` -- `pcrec --list-limits` at the pin,
+    under a bench source header -- is byte-identical (below that header) to
+    what the pin's binary prints NOW: the same rule as the other two
+    archives (a re-pin that forgets to re-archive fails here, and the diff
+    is the list of limits that MOVED -- exactly the kind of change that
+    would otherwise surface only as an unexplained selection or refusal
+    change in a record). Nothing the adapter reads depends on the file:
+    every cap and capacity it needs is stamped per artifact."""
+    print("-- the --list-limits table: archived copy vs the pin --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("list-limits", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    proc = run([adapter.pin_binary(), "--list-limits"], timeout=60)
+    if proc.returncode != 0:
+        bad("list-limits: the pin prints its table", proc.stderr[-300:])
+        return
+    live = proc.stdout
+    try:
+        with open(mod.LIST_LIMITS_TSV, "r", encoding="utf-8") as f:
+            committed = f.read()
+    except OSError as e:
+        bad("list-limits: the archived copy exists", str(e))
+        return
+    first_live = live.splitlines(True)[0] if live else ""
+    idx = committed.find(first_live) if first_live else -1
+    if idx < 0:
+        bad("list-limits: the archived copy matches the pin's live output",
+            "the live output's first line %r is not in %s"
+            % (first_live.strip()[:60], mod.LIST_LIMITS_TSV))
+        return
+    body = committed[idx:]
+    n_rows = sum(1 for l in live.splitlines() if l and not l.startswith("#"))
+    if body == live:
+        kinds = sorted({l.split("\t")[3] for l in live.splitlines()
+                        if l and not l.startswith("#")})
+        ok("list-limits: the archived copy matches the pin's live output",
+           "%d rows (kinds: %s), byte-identical below the source header"
+           % (n_rows, ", ".join(kinds)))
+    else:
+        import difflib
+        diff = list(difflib.unified_diff(body.splitlines(), live.splitlines(),
+                                         "committed", "live", lineterm="", n=0))
+        bad("list-limits: the archived copy matches the pin's live output",
+            "re-archive testees/pcrec/list_limits.tsv; diff: %s"
+            % " | ".join(diff[2:12]))
+
+
 # [B19] (d): the artifact KINDS the size port is checked on, against the
 # pin's OWN numbers. Each exercises a different branch of the classifier:
 # a table-dominated unanchored DFA (multi-line `= {` initializers), an
@@ -2606,6 +2831,24 @@ EMIT_SIZE_WITNESSES = (
     ("VM hybrid", ("literal", b"a(b|c)+d"), ""),
     ("VM hybrid, forced collapse", ("literal", b"a(b|c){2,5}d"),
      "-fprefilter-collapse"),
+    # [B22] (e), inbox I-22 (ii): THE SAME-PIN RE-COMPARISON on the one
+    # artifact whose cross-pin byte comparison was INVALID -- bounded's
+    # `[a-z]{0,32768}`, a count-collapsed HYBRID at 96e44c2 and a DECLINED
+    # plain-VM artifact since [OPT-4.1] (it changed KIND, so any
+    # before/after byte delta says nothing about counting rules). Both
+    # sides at ONE pin, with the counting rule STATED (pcrec
+    # docs/dev/lanes/opt41_report.md 15 enumerates six readings; the one
+    # this bench and the caps mean is "split `.c` + `.h`, comment-excluded"
+    # -- emit_size() summed over both emitted files, the definition
+    # `emit_size_measure` enforces): the pin's own `--warn-emit-bytes=1`
+    # numbers vs the port, byte-exact, both forms. The absolute value is
+    # name-dependent (the emitted `#include "<basename>.h"` line -- the
+    # [B16] finding), which is WHY the comparison is same-files, never a
+    # constant: with the adapter's `artifact.c` naming it reads
+    # 18,291 plain / 18,496 whole, and emit_bytes == emit_code_bytes (a
+    # declined plain-VM artifact carries no table initializers at all).
+    ("declined plain-VM artifact (bounded cls-upto-32768)",
+     ("bounded", "cls-upto-32768"), ""),
 )
 
 
@@ -3737,6 +3980,7 @@ def main():
     check_deny_flag_controls()
     check_list_axes_registry()
     check_list_definitions_registry()
+    check_list_limits_registry()
     check_emit_size_port()
     check_abi_floor_refusal()
     check_note_length_guard()
