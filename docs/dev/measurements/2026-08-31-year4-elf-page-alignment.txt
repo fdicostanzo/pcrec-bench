@@ -1,0 +1,88 @@
+# docs/dev/measurements/2026-08-31-year4-elf-page-alignment.txt
+#
+# [B22] (f), inbox I-22 (iii): bounded `year4`'s (+4,320 gross / "+4,096 B
+# net") .so step between the store's 36d5963 and 96e44c2 records, DERIVED
+# from the pins' own artifacts -- ELF page alignment CONFIRMED, with the
+# attribution REFINED (a derivation from existing artifacts and the two
+# committed pin snapshots; no measurement window, no timing).
+#
+# Source: python3 docs/dev/measurements/probe_year4_elf_alignment.py
+# (the reproducing script beside this file), run 2026-08-31 on
+# budu-ryzen1600 in worktree b22repin at branch head; pins built by
+# testees/pcrec/pin.sh into the main tree's build/. Store rows cited:
+# bounded@0.1 pcrec_36d5963_auto-caps-simdna (store index 50, measured
+# 2026-08-30 ~00:xx, BEFORE [B19]'s shim) and pcrec_96e44c2_auto-caps-
+# simdna (store 68, the AFTER sample, [B19]'s shim), year4 compile rows.
+#
+# WHAT IT SHOWS (the three-line summary):
+#   1. pcrec's own emitted source for `\d{4}` grew +33 B across the
+#      re-pin (raw == comment-excluded == code delta: the three abi-12
+#      stamp lines; I-22's "~+220 B" estimate was high) -- both forms.
+#   2. The recorded +4,320 .so step is NOT the artifact: rebuilt with the
+#      ERA-CORRECT shim each record's .so was actually built with (the
+#      BEFORE predates [B19]'s shim -- commit 4d666dd vs cb169df), the
+#      +4,320 delta REPRODUCES EXACTLY on both forms, and it decomposes
+#      as ~+384 B of SHIM growth ([B19]'s new pb_engine_sel /
+#      pb_vm_prefilter_lang* readers: the two R LOAD segments' filesz,
+#      +248 and +136) plus +4,096 B of ELF PAGE ALIGNMENT: the RW
+#      segment's file offset steps one whole 0x1000 page (0x3d50 ->
+#      0x4d50) with its filesz unchanged, because the read-only data
+#      segment's end crossed a page boundary under that +384 B.
+#   3. The CONTROL: both pins' artifacts built under ONE (current) shim
+#      produce BYTE-IDENTICAL .so files (+0 of 26,800 / 26,944) -- the
+#      pcrec-side contribution to the .so step is zero pages.
+#
+# Reading for the ledger (revises 2026-08-30-abi12-after-96e44c2.md 3.2's
+# open item): I-22 (iii)'s mechanism -- "a section crossing a 4 KiB
+# boundary" -- is CONFIRMED as the +4,096; the trigger was the [B19]
+# shim's own +384 B (bench-side), not pcrec's +33 B, and the other
+# `selected` DFA artifacts' +216/+224 B under the same shim change are
+# the same shim growth landing in symbol tables / padding WITHOUT
+# crossing a page. `year4` is not a pcrec size effect at all.
+#
+# Era-shim rebuilds land +8 B above the recorded artifact_bytes on all
+# four cells (22,488/22,632/26,808/26,952 vs 22,480/22,624/26,800/26,944)
+# -- a constant offset consistent with toolchain drift between the window
+# day and today (gcc 15.2.0 now; the DELTAS, the derived quantity, are
+# exact, and the current-shim 96e44c2 builds reproduce the AFTER's bytes
+# to the byte).
+#
+# Verbatim probe output follows.
+# ---------------------------------------------------------------------
+cc: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+
+== year4 (\d{4}): source and .so, era-correct shim per pin ==
+pin        form           shim      raw .c+.h       emit       code        .so   vs the store's artifact_bytes
+36d5963    plain          36d5963       34889      19237      12628      22488   (store 22480)
+36d5963    plain          current       34889      19237      12628      26800   (store 22480)
+36d5963    whole-subject  36d5963       37824      21543      14541      22632   (store 22624)
+36d5963    whole-subject  current       37824      21543      14541      26944   (store 22624)
+96e44c2    plain          96e44c2       34922      19270      12661      26808   (store 26800)
+96e44c2    plain          current       34922      19270      12661      26800   == store 26800
+96e44c2    whole-subject  96e44c2       37857      21576      14574      26952   (store 26944)
+96e44c2    whole-subject  current       37857      21576      14574      26944   == store 26944
+
+== deltas 36d5963 -> 96e44c2, era shims (the store's own pair) ==
+plain: raw +33, emit +33, code +33, .so +4320
+whole-subject: raw +33, emit +33, code +33, .so +4320
+
+== the CONTROL: both pins under ONE (current) shim ==
+plain: emit +33, .so +0 (of 26800)
+whole-subject: emit +33, .so +0 (of 26944)
+
+== LOAD segments (readelf -lW), plain form, era shims ==
+36d5963 (shim 4d666dd): 3 LOAD segments, align 0x1000/0x1000/0x1000
+   off 0x000000  filesz 0x0010e0 (  4320)  end 0x0010e0  R
+   off 0x003000  filesz 0x000cd0 (  3280)  end 0x003cd0  R
+   off 0x003d50  filesz 0x0002e8 (   744)  end 0x004038  RW
+   summed LOAD content: 8344 bytes; file: 22488
+96e44c2 (shim cb169df): 3 LOAD segments, align 0x1000/0x1000/0x1000
+   off 0x000000  filesz 0x0011d8 (  4568)  end 0x0011d8  R
+   off 0x003000  filesz 0x000d58 (  3416)  end 0x003d58  R
+   off 0x004d50  filesz 0x0002e8 (   744)  end 0x005038  RW
+   summed LOAD content: 8728 bytes; file: 26808
+
+== per-segment movement (plain), era shims ==
+   R: off +0, filesz +248
+   R: off +0, filesz +136
+   RW: off +4096, filesz +0
