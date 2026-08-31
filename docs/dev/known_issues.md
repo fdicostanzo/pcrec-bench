@@ -79,3 +79,27 @@ example carries a `did-not-compile` row with a `cost`. What remains of
 KB-4 is the ADAPTER half (time the pcrec exec on every outcome and
 record it on the refusal row) and the reporter half — their own plan
 row, which can now land without a schema change.**
+
+## KB-5 (2026-08-31) — no testee-roster filter: a PARTIAL re-measure window cannot be scoped to "the fresh pin + the unpinned baselines" in one committed query
+
+Found by the b22reports lane rendering the loglines@0.1 AFTER at
+263b013 ([B22]'s window re-measured only 2 of the set's 6 arms). The
+reporter's newest-wins dedup keys on the literal `testee_id`, which
+embeds the pin string — it never supersedes ACROSS pins — so a bare
+`--until` admits every surviving pcrec pin's rows (16 records: 2 pcre2
++ 35e1ab1×4 + 36d5963×4 + 96e44c2×4 + 263b013×2). No single
+`--since`/`--until` range fixes it (pcre2's newest records are
+chronologically OLDER than the pin rows to be excluded — two disjoint
+ranges would be needed) and `--where` is AND-only on one dotted path
+(cannot express "pcre2 OR pin=263b013"). The committed file
+(`reports/2026-08-31-loglines-0.1-budu-ryzen1600-after-263b013.*`) is
+therefore the first production CROSS-PIN report — legitimate (every
+row carries its pin; the R8 Δ column fires usefully), documented in
+its reports/CLAUDE.md entry, but not the single-pin AFTER shape the
+96e44c2 precedent files have.
+
+Candidate fix: a repeatable `--testee <exact testee_id>` filter (OR
+within the flag's occurrences, AND'd with everything else), letting a
+committed query name its roster explicitly. Not urgent: full-set
+windows (the common case) never hit this. Fix travels with the next
+reporter wave; the flag's spelling should mirror `run --testee`.
