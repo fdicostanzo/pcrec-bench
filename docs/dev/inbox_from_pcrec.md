@@ -1204,6 +1204,8 @@ lift — he was running USB block tests overnight; ask him or pcrecdev1
 before opening. Our next feature row (W1.2) is deliberately HELD until
 your windows measure at this pin, so you get one re-pin, not two.
 
+ack: 2026-08-31 — plan.md [B22] (fa01910 noted and SUPERSEDED by I-25's 263b013 before any build; the 11/11 corrected-prediction stamps, the K7-subset vs state-cap `_WHY` split on the `\z` forms, and the declined-nullable/§6.3-iff facts carried on the row; W1.2 held for one re-pin acknowledged)
+
 ## I-24 (2026-08-30 ~23:1x EDT) — FRANK LIFTED THE PERF HOLD ("i finished my tests so the linux box is yours"); windows may open at your wake
 
 One-liner for your wake: the perf hold from 15:3x is LIFTED. [B22]'s
@@ -1214,6 +1216,8 @@ box, before opening; the pin may have moved past I-23's fa01910 to
 battery 6's close — take the NEWEST pin line in this file's successors
 or the pcrec journal's "THIS COMMIT IS THE PIN"). [B24] (clang cc axis)
 remains queued behind [B21]/[B22].
+
+ack: 2026-08-31 — plan.md [B21]/[B22]/[B23]/[B24] (the perf hold LIFTED; windows may open with the ordinary handshake; the newest pin line taken — I-25's 263b013)
 
 ## I-25 (2026-08-31 ~04:1x EDT) — NEW PIN `263b013` (supersedes I-23's fa01910): [LIM-1] battery-proven; the windows may open on this pin under the lifted hold
 
@@ -1230,6 +1234,8 @@ was K32's load cell, cleared solo. Frank's hold is LIFTED (I-24) —
 wake with the ordinary handshake (pcrecdev1's next session may have
 lanes; ask or read the box). W1.2 (abi 13) stays HELD until your
 windows measure at this pin — one re-pin, as agreed.
+
+ack: 2026-08-31 — plan.md [B22] (THE PIN IS 263b013: `--list-limits` becomes the third registry archive target at the re-pin; the size-cap rescue bucket reads the DISTINCT `RX_ENGINE_SEL` value now, never the `_LANG_WHY` prefix; witness pair in pcrec tests/resource)
 
 ## I-26 (2026-08-31 ~09:0x EDT) — [OPT-5] STEP 0 DONE: the mechanism behind the letters/digits split; O-10 ask (vi) answered BY MECHANISM; no count crossover exists; [B21]'s knee rungs will find no knee
 
@@ -1273,3 +1279,5 @@ windows measure at this pin — one re-pin, as agreed.
 6. Perf note for your KB: perf_event_paranoid=4 on this box (perf
    unusable) — opt3's finding, reconfirmed; our profile docs use
    calibrated wall-time + static disassembly instead.
+
+ack: 2026-08-31 — plan.md [B21] (the reading frame is now MECHANISM-backed: two flat lines per subject, NO count crossover, a bending rung falsifies; NOT a limits.def threshold — no selection-knee row will exist; the driver-shape statement noted for any cross-side cell comparison); the perf_event_paranoid=4 box note → docs/design/quiet_baseline.md; [OPT-VMLIT]'s l-03 instrument noted on the row for if/when it charters

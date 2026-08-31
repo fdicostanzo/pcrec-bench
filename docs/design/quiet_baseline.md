@@ -156,3 +156,12 @@ X26 enforced, a sentence in the record, never a verdict on the
 status); TRIAL AGREEMENT decides `measured` vs `inconclusive-spread`.
 The `quiet` CLI judges every sample through the same `quiet.gate()` a
 run's pre-flight uses.
+
+## 2026-08-31 -- box fact: `perf` is unusable here
+
+`/proc/sys/kernel/perf_event_paranoid` is 4 on this box (inbox I-26
+item 6; pcrec's opt3 finding, reconfirmed by pcrecdev1 2026-08-31), so
+`perf stat`/`perf record` cannot be used by either manager or any
+lane. Profiling claims on this box rest on calibrated wall-time plus
+static disassembly (the method pcrec's opt5_step0_profile.md uses);
+briefs for measurement lanes should not ask for perf counters.
