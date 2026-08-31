@@ -207,6 +207,18 @@ which is expected and not a bug in this suite.
   `record` rows carry the same). `test_all_fixtures_validate` covers the
   new `fixtures/v14_pair/` store and asserts the spread fixture's block
   disagrees on one 2-row group; `test_reporter_version_pin` pins v9.
+  **[B22] changes (2026-08-31, no new test, 59 total)**:
+  `test_b19_engine_sel_lang_and_emit_bytes` re-pinned to the VALUE-only
+  fallback bucket (reporter v10, pin 263b013): the old 96e44c2 size-cap
+  shape (`sel=selected` + a `size cap retry` why) is now the RETIREMENT
+  CONTROL (unbucketed, the why readable in `lang=`), the new
+  `size-cap-retry` and `declined-nullable` tokens are bucketed by value
+  (the decline with no `lang=` clause -- the 6.3 iff), and the legend-note
+  needle asserts the [B22] wording (and the ABSENCE of the retired
+  "bucketed on its why prefix" sentence); `test_reporter_version_pin`
+  pins v10; `_classify_v9_diff` skips whatever the CURRENT version line
+  is instead of a hard-coded `v9` (the classifier is not re-edited at
+  every bump).
 - `fixtures/` -- the synthetic store this suite reads. See its own
   CLAUDE.md.
 - `__init__.py` -- makes this a package so

@@ -2022,13 +2022,17 @@ LEDGER_STAMP_CASES = (
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 8258",
       **_CAPS_VM}, "whole-subject"),
+    # (nest3-16 is the corpus's one K MOVER -- bounded@0.1's first-sample
+    # finding, K=1 / size-model on every VM form -- so its caps dict
+    # overrides _CAPS_VM's default K.)
     ("bounded nest3-16 whole: the rescue kept (non-nullable)", "pcrec-auto",
      "bounded", "nest3-16",
      {"engine": "vm", "prefilter": "hybrid",
       "engine_sel": "collapsed-prefilter",
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 8466",
-      **_CAPS_VM}, "whole-subject"),
+      **dict(_CAPS_VM, unroll_k=1, unroll_k_why="size-model")},
+     "whole-subject"),
     # ... and the CONTRAST that keeps the whole rows readable: the same
     # nest2-64 pattern's PLAIN form is an ordinary selected DFA (the two
     # forms are different machines at these counts -- I-20).

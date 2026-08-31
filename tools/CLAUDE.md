@@ -189,9 +189,36 @@ miss:
   `adapter.emit_size()`'s over the same files (8/8 byte-exact) — the
   control that a PORT of someone else's size definition is that
   definition — plus a hand-classified probe with a hand-derived answer.
+- [B22] (2026-08-31, the re-pin to 263b013 -- abi 12 unchanged; inbox
+  I-21-correction/I-22/I-25) extended the same checks for a pin that adds
+  VALUES, not stamps: `check_mechanism_stamps`' size-cap kind re-pointed
+  at its OWN route token (`size-cap-retry`, [LIM-1] -- the `selected`
+  mislabel closed), eleven ledger rows for the I-21-corrected
+  DECLINE/KEEP sets with a sixth FORM element on the case tuples (the
+  four nullable declines stamp `declined-nullable` with prefilter `none`
+  and NO language pair -- cls-upto-32768 both forms with its emit bytes
+  pinned 18,291/18,496 (= code: no tables at all), the two 16384 wholes;
+  the six kept rescues stamp `collapsed-prefilter` with their exact-nfa
+  whys -- ctx ×4, the nest wholes, nest3-16 still the one K mover), the
+  plain-vs-`\z` overflow ROUTES asserted distinct in RX_ENGINE_WHY (the
+  state cap vs the K7 subset-elements budget -- two list_limits.tsv rows
+  by name), and the ask-(b) bucket re-asserted as the VALUE-only rule
+  over all witnesses (the `_why`-prefix special case retired, the
+  size-cap witness now INSIDE). `check_deny_flag_controls` finds the
+  flag row by its `cli_flag` cell (the 263b013 registry moved
+  `-fno-size-term` off order 1 onto the `denied` row) and takes an
+  optional `reg_arm` column ("default"/"flagged"/"skip"); a new force
+  row proves `-fprefilter-collapse` reaching the nullability POLICY on
+  `(x){0,5}` (`_LANG "exact"` / `_LANG_WHY "nullable collapsed
+  language"`, route `selected` both arms). `check_list_limits_registry`
+  is the THIRD registry-archive diff (44 rows, pcrec D90/[LIM-1]).
+  `check_emit_size_port` gains the fifth witness: the declined
+  `{0,32768}` artifact, both forms -- I-22 (ii)'s same-pin re-comparison,
+  the counting rule stated (comment-excluded, .c + .h summed).
 - `check_abi_floor_refusal` is the SABOTAGE, and the path is unreachable
   without one: the pin's abi is at or above the floor by construction
-  (12 at 96e44c2 vs a floor of 10 since [B18]; abi 12 added no field), so nothing in the corpus can be
+  (12 at 263b013 vs a floor of 10 since [B18]; neither abi 12 nor the
+  [B22] values added a field), so nothing in the corpus can be
   below it. A real artifact's `.abi = N` is edited to `5` in a copy,
   built with the ordinary shim and run by the ordinary driver, and must
   be refused BY NAME carrying both numbers (the floor read out of
