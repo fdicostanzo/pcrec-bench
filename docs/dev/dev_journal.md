@@ -1952,3 +1952,31 @@ K7-vs-state-cap _WHY split, the same-pin emit-byte re-comparison
 (I-22 (ii), their counting rule opt41_report.md §15), year4's
 alignment note (I-22 (iii)). Watchdog cron up (10 min). Windows held
 until the lane lands and is reviewed.
+
+## 2026-08-31 (EDT, ~10:5x), sixth session (part 2) — [B22]'s re-pin half MERGED (a7f0938); windows next
+
+LANE b22repin delivered in ~75 min, five commits, reviewed and merged.
+The registry surprise: list_axes 54 → 63/21 (not 61+1) — engine-route
+5→7 (declined-nullable, size-cap-retry), size-term 2→7 now WITH
+stamp_values ([B18]'s documented gap closed by pcrec [REG-SV]), table
++none/+mixed. list_definitions byte-identical (50); list_limits.tsv
+NEW (44 rows, third registry archive + check). All 11 I-21-corrected
+points by value; the size-cap rescue reads its OWN token
+(size-cap-retry) and the ask-(b) bucket is VALUE-only in adapter and
+reporter v10 — the [B19] _LANG_WHY-prefix rule retired; 39 reports
+regenerated, zero numbers moved (census: no stored record carries the
+old why shape). Emit-byte same-pin re-comparison BYTE-EXACT on the
+declined {0,32768} (18,291 plain / 18,496 whole, emit == code — no
+table initializers on a declined plain-VM artifact). YEAR4 CLOSED and
+RE-ATTRIBUTED (docs/dev/measurements/2026-08-31-year4-elf-page-
+alignment.txt): pcrec's source grew +33 B (I-22's ~+220 was high); the
++4,320 .so step = our OWN [B19] shim's +384 B pushing the RW segment's
+offset across one 0x1000 page — era-correct shim rebuild reproduces it
+exactly, one-shim control byte-identical → the trigger is BENCH-side,
+zero pcrec pages; goes to O-11. One honest first-run red: nest3-16
+whole keeps K=1 via the size model (expectation fixed, a finding kept).
+make check on the lane's tree 4/72/0 · 185/185 · 59; full re-check on
+merged master running at write time. NEXT: WINDOW OPEN handshake →
+bounded@0.2 × 6 testees (first v1.4 window: read the target-core
+pre-flight distribution, §9 Q1) + loglines@0.1 × auto/vm (the KEEP
+points), against ledger §8 + I-26's two-flat-lines frame.
