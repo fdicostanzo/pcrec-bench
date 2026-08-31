@@ -80,16 +80,24 @@
  *       engines. The two caps are the EFFECTIVE limits the artifact was
  *       built under, so a raised cap is a recorded fact.
  *   (a) SELECTION, the engine ROUTE and the prefilter LANGUAGE ([OPT-4],
- *       abi 12, [B19]): `RX_ENGINE_SEL` -- ONE token from the registry's
+ *       abi 12, [B19]; two VALUES added at pin 263b013 with no abi bump,
+ *       [B22]): `RX_ENGINE_SEL` -- ONE token from the registry's
  *       `engine-route` axis (`selected` / `forced` / `overflowed-dfa` /
- *       `overflowed-prefilter` / `collapsed-prefilter`) on EVERY artifact,
+ *       `overflowed-prefilter` / `collapsed-prefilter` / since 263b013
+ *       `declined-nullable` ([OPT-4.1]: the offered count-collapsed
+ *       prefilter declined as nullable, no prefilter survives) and
+ *       `size-cap-retry` ([LIM-1]: the size rung's success, replacing a
+ *       `selected` mislabel)) on EVERY artifact,
  *       both engines (D81: `"selected"` is a fact, stamped whether or not
  *       anything fell back); it is the same decision `RX_ENGINE_WHY`
  *       narrates, as a closed set a consumer can bucket on. And
  *       `RX_VM_PREFILTER_LANG` (`"exact"` / `"count-collapsed"`) with
  *       `RX_VM_PREFILTER_LANG_WHY` (free text: `"exact"`, `"no counted
  *       repeat"`, `"forced"`, `"dfa overflow retry, exact nfa N"`, `"size
- *       cap retry, exact N > cap"`) -- and their scope is NARROWER than
+ *       cap retry, exact N > cap"`, and since 263b013 `"nullable collapsed
+ *       language"` -- -fprefilter-collapse reached the nullability POLICY
+ *       and the prefilter is kept on the exact language) -- and their
+ *       scope is NARROWER than
  *       "every VM artifact": match_api.md 6.3 puts them on every artifact
  *       whose `RX_VM_PREFILTER` reads `"hybrid"` and on no other (a
  *       forced `--engine=vm` artifact has no prefilter and no language to

@@ -113,6 +113,28 @@ adapter-side facts that are not stamps at all:
                      been); the value is the total the message names, and
                      the line itself is appended to the row's diagnostic.
 
+[B22] (pin 263b013, still abi 12; inbox I-21 correction / I-22 / I-25)
+absorbed two new VALUES and one new surface -- no new stamp, no abi bump:
+
+  (values)           `RX_ENGINE_SEL` gains `declined-nullable` ([OPT-4.1]:
+                     a retry rung OFFERED the count-collapsed prefilter and
+                     DECLINED it because the collapsed language is nullable;
+                     no prefilter survives, so the artifact reads
+                     `RX_VM_PREFILTER "none"` and carries NO language pair
+                     -- the 6.3 iff, both directions) and `size-cap-retry`
+                     ([LIM-1]: the [OPT-4] size rung's SUCCESS, which
+                     stamped `selected` at 96e44c2 -- the mislabel O-8/O-10
+                     flagged, closed; the fallback bucket reads the VALUE
+                     now, never the `_LANG_WHY` prefix). And
+                     `RX_VM_PREFILTER_LANG_WHY` gains `nullable collapsed
+                     language` (`-fprefilter-collapse` with no rung: the
+                     flag reached a POLICY, the prefilter is kept and built
+                     from the EXACT language -- pcrec tuning.md 2.17).
+  (surface)          `pcrec --list-limits`, the 44-row numeric-limits table
+                     (pcrec D90), archived as `list_limits.tsv` -- the
+                     THIRD registry archive target beside list_axes /
+                     list_definitions.
+
 Two rules govern how they are read, and both exist because they were paid
 for on the pcrec side first:
 
@@ -147,9 +169,10 @@ for on the pcrec side first:
 4. A STAMP WITH NO MIRROR IS CHECKED AGAINST WHAT IT IMPLIES ([B19]).
    `RX_ENGINE_SEL` has no rx_info field, so its control is the CONFIG and
    the stamps beside it: `forced` IFF the testee named `--engine=`;
-   `collapsed-prefilter` implies a VM hybrid whose language is
-   `count-collapsed`; the two `overflowed-*` values imply a VM artifact
-   with no prefilter (match_api.md 6.3's table, read as implications).
+   `collapsed-prefilter` and ([B22]) `size-cap-retry` imply a VM hybrid
+   whose language is `count-collapsed`; the two `overflowed-*` values and
+   ([B22]) `declined-nullable` imply a VM artifact with no prefilter
+   (match_api.md 6.3's table, read as implications).
 
 The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 10 since [B18] -- the
 abi that appended `match_form`, the third field it reads; 6 before, for
@@ -344,9 +367,11 @@ METADATA_DECL = {
                    "size-model-declined", "cap-rescue", "capacity-declined"],
         "source": "<PREFIX>_UNROLL_K_WHY ([ART-SIZE], pcrec abi 11+), read "
                   "through pb_unroll_k_why(); VM artifacts only. The seven "
-                  "values are match_api.md 6.3's / limits.md 8's; the "
-                  "registry (`--list-axes`, axis `size-term`) names the "
-                  "macro but carries NO stamp_value for it",
+                  "values are match_api.md 6.3's / limits.md 8's; since pin "
+                  "263b013 the registry's `size-term` axis carries a "
+                  "stamp_value on every row ([B18]'s documented gap, closed "
+                  "by pcrec [REG-SV]), so the value set is CHECKED against "
+                  "`pcrec --list-axes` like the other name-valued macros",
         "description": "WHY unroll_k is what it is: `default` (the term ran, "
                        "the artifact was under its 120,000-code-byte "
                        "threshold), `option` (--unroll=K), `denied` "
@@ -387,10 +412,13 @@ METADATA_DECL = {
     "engine_sel": {
         "type": "enum", "scope": "pattern",
         "values": ["selected", "forced", "overflowed-dfa",
-                   "overflowed-prefilter", "collapsed-prefilter"],
-        "source": "<PREFIX>_ENGINE_SEL ([OPT-4], pcrec abi 12+), read through "
-                  "pb_engine_sel(); EVERY artifact, both engines; no rx_info "
-                  "mirror -- CHECKED against the config (`forced` iff "
+                   "overflowed-prefilter", "collapsed-prefilter",
+                   "declined-nullable", "size-cap-retry"],
+        "source": "<PREFIX>_ENGINE_SEL ([OPT-4], pcrec abi 12+; two values "
+                  "added at 263b013 -- [OPT-4.1]'s `declined-nullable` and "
+                  "[LIM-1]'s `size-cap-retry` -- with no abi bump), read "
+                  "through pb_engine_sel(); EVERY artifact, both engines; no "
+                  "rx_info mirror -- CHECKED against the config (`forced` iff "
                   "--engine= was named) and against the prefilter stamps it "
                   "implies; the value set is CHECKED against `pcrec "
                   "--list-axes` (axis `engine-route`)",
@@ -404,16 +432,24 @@ METADATA_DECL = {
                        "already chosen and only its prefilter's DFA "
                        "overflowed, so the prefilter was dropped), "
                        "`collapsed-prefilter` (auto, a DFA build overflowed "
-                       "and the retry KEPT a prefilter by rebuilding it from "
-                       "the count-collapsed language -- [OPT-4]). The last "
-                       "three are all `fell back`; a consumer wanting only "
+                       "a STATE cap and the [SEL-1] retry KEPT a prefilter "
+                       "by rebuilding it from the count-collapsed language "
+                       "-- [OPT-4]), `declined-nullable` (auto, a [SEL-1] OR "
+                       "[OPT-4] retry OFFERED the count-collapsed prefilter "
+                       "and DECLINED it because the collapsed language is "
+                       "NULLABLE -- it matches the empty string, so the "
+                       "filter could never dismiss a position; no prefilter "
+                       "survives -- [OPT-4.1]), `size-cap-retry` (auto, an "
+                       "emitted-SIZE cap refused the exact artifact and the "
+                       "[OPT-4] size rung's count-collapsed prefilter "
+                       "SURVIVED -- [LIM-1], replacing the `selected` "
+                       "mislabel this bench's O-8/O-10 flagged). The last "
+                       "FIVE are all `fell back`; a consumer wanting only "
                        "\"did this compile fall back?\" tests "
-                       "`not in (selected, forced)` (Frank's ask (b)). "
-                       "MEASURED at 96e44c2: the SIZE-CAP retry rung (an "
-                       "emitted-size cap refused the exact artifact, "
-                       "`vm_prefilter_lang_why` = `size cap retry, ...`) "
-                       "stamps `selected`, not `collapsed-prefilter`, so "
-                       "that bucket does not see it -- read the `_why` pair",
+                       "`not in (selected, forced)` (Frank's ask (b)) -- "
+                       "since 263b013 that bucket reads the VALUE and "
+                       "nothing else (never the `_why` prefix: the size-cap "
+                       "rescue has its own token now)",
     },
     "vm_prefilter_lang": {
         "type": "enum", "scope": "pattern",
@@ -452,7 +488,15 @@ METADATA_DECL = {
                        "language -- N is the exact prefilter NFA's state "
                        "count), `size cap retry, exact N > cap` (the "
                        "[OPT-4] rung: an emitted-size cap refused the exact "
-                       "artifact at N bytes). The two `retry` prefixes are "
+                       "artifact at N bytes), `nullable collapsed language` "
+                       "([OPT-4.1], 263b013: -fprefilter-collapse asked for "
+                       "the collapse and the POLICY declined it -- the "
+                       "collapsed language is nullable -- so the prefilter "
+                       "is kept and built from the EXACT language; exists "
+                       "ONLY under that flag, because on a ladder rung the "
+                       "same decline leaves no prefilter at all and stamps "
+                       "`engine_sel declined-nullable` instead -- pcrec "
+                       "tuning.md 2.17). The two `retry` prefixes are "
                        "the RESCUES; `-fno-prefilter-collapse` denies both "
                        "rungs (the state-cap one then drops the prefilter, "
                        "the size-cap one then REFUSES the pattern)",
@@ -663,14 +707,21 @@ STAMP_SCOPE = {
 #: iff is checked directly against rx_info.scan in _check_agreement 3).
 EXCLUSIVE_SCOPES = ("dfa", "vm", "vm-hybrid")
 
-#: `engine_sel` values that mean "auto FELL BACK" (Frank's ask (b): the
-#: three values that share one RX_ENGINE_WHY prose and differ in what
-#: survived). The reporter derives its `DFA fallback tripped` bucket from
-#: this set; the SIZE-CAP retry rung is NOT in it (it stamps `selected` --
-#: measured at 96e44c2), which is why `vm_prefilter_lang_why` is recorded
-#: as its own pair.
+#: `engine_sel` values that mean "auto FELL BACK" (Frank's ask (b)). FIVE
+#: values since pin 263b013 (match_api.md 6.3: "the last five are all
+#: 'fell back'"): the three 96e44c2 values, [OPT-4.1]'s `declined-nullable`
+#: (the collapse offered and refused as useless -- a DIFFERENT outcome from
+#: `overflowed-dfa`, where no rescue was available), and [LIM-1]'s
+#: `size-cap-retry` (the size rung's SUCCESS, which stamped the `selected`
+#: mislabel until this pin -- O-8/O-10's finding, closed). The reporter
+#: derives its `DFA fallback tripped` bucket from this set, and since
+#: 263b013 the bucket reads the VALUE and nothing else -- the [B19]-era
+#: `vm_prefilter_lang_why` `size cap retry` prefix special-case is RETIRED
+#: (inbox I-25: "your bucket reads the value now, not the _LANG_WHY
+#: prefix").
 ENGINE_SEL_FALLBACK = ("overflowed-dfa", "overflowed-prefilter",
-                       "collapsed-prefilter")
+                       "collapsed-prefilter", "declined-nullable",
+                       "size-cap-retry")
 
 #: `dfa_prefilter` values for which `dfa_prefilter_offsets` is NOT "none"
 #: (match_api.md 6.3's iff, checked from both sides).
@@ -699,6 +750,11 @@ REGISTRY_STAMP_PAIRS = {
     # is the by-value witnesses in tools/selfcheck.py.
     "RX_ENGINE_SEL": "engine_sel",
     "RX_VM_PREFILTER_LANG": "vm_prefilter_lang",
+    # [B22] (pin 263b013): the `size-term` axis's rows now carry
+    # stamp_values (pcrec [REG-SV] closed [B18]'s documented gap), so
+    # RX_UNROLL_K_WHY joins the checked macros -- a `predicate` axis, the
+    # one-way check.
+    "RX_UNROLL_K_WHY": "unroll_k_why",
 }
 
 #: The committed copy of `pcrec --list-definitions | grep -v '^#'` at the
@@ -713,19 +769,26 @@ REGISTRY_STAMP_PAIRS = {
 #: the whole body.
 LIST_DEFINITIONS_TSV = os.path.join(HERE, "list_definitions.tsv")
 
+#: The committed copy of `pcrec --list-limits` at the pin -- the SIXTH
+#: registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD
+#: archive target ([B22], inbox I-25): one row per numeric limit in pcrec's
+#: src/core/limits.def (44 at 263b013), in the table's own order. Nothing
+#: this adapter reads depends on it (every cap and capacity it needs is
+#: STAMPED per artifact); archived under the same rule as the other two
+#: (re-archive at every re-pin, the diff is what moved) and diffed against
+#: the pin's live output by `make check-harness`
+#: (`check_list_limits_registry`).
+LIST_LIMITS_TSV = os.path.join(HERE, "list_limits.tsv")
+
 #: Declared values the registry's candidate lists do NOT enumerate because
-#: they are OUTCOMES rather than candidates the selector walks (MEASURED at
-#: 36d5963, [B18]): `RX_DFA_TABLE "none"` is stamped on an `attempt` or
-#: `empty` scan (no numeric table exists to have chosen a form for -- the
-#: provably-empty witness in tools/selfcheck.py reads it) and `"mixed"` is
-#: the forward and reverse machines taking different forms (match_api.md
-#: 6.3), while the registry's `table` axis lists only `premultiplied` /
-#: `indexed`. Listed here so the reverse direction of `registry_check` still
-#: fires on any OTHER declared value the registry lacks; a finding for pcrec
-#: (the axis's candidate list under-covers its stamp's value set).
-REGISTRY_OUTCOME_VALUES = {
-    "dfa_table": {"none", "mixed"},
-}
+#: they are OUTCOMES rather than candidates the selector walks. EMPTY since
+#: pin 263b013: the `table` axis gained `none` / `mixed` OUTCOME rows (kind
+#: `predicate` beside the two `list` candidates -- I-18 (iii), pcrec
+#: [REG-SV]), so [B18]'s two entries here are now ordinary registry rows
+#: and the reverse direction of `registry_check` covers them directly. The
+#: mechanism stays for the next outcome value a stamp grows before its
+#: registry row does.
+REGISTRY_OUTCOME_VALUES = {}
 
 #: The driver's refusal token for an artifact below shim.c's PB_SHIM_MIN_ABI.
 #: The NUMBER lives in shim.c and nowhere else; this is only how the refusal
@@ -985,7 +1048,10 @@ def registry_check(rows=None):
             problems.append("%s stamps %r in the registry; pair %s does not "
                             "declare it -- add it to METADATA_DECL"
                             % (macro, v, pair))
-        if kinds.get(macro) == {"list"}:
+        # [B22]: an axis may mix `list` candidate rows with `predicate`
+        # OUTCOME rows (the `table` axis since 263b013); the reverse check
+        # applies wherever a candidate list exists at all.
+        if "list" in kinds.get(macro, set()):
             extra = declared - reg - REGISTRY_OUTCOME_VALUES.get(pair, set())
             for v in sorted(extra):
                 problems.append("pair %s declares %r; the registry's `list` "
@@ -1506,9 +1572,11 @@ class Adapter(_ad.Adapter):
            registry's `engine-route` order-1 row: "the caller named the
            engine, so auto selected nothing").
         9. `engine_sel` implies its neighbours (match_api.md 6.3's table):
-           `collapsed-prefilter` -> engine vm, prefilter hybrid, language
-           `count-collapsed`; `overflowed-dfa` / `overflowed-prefilter` ->
-           engine vm, prefilter `none` (no prefilter survived). And the
+           `collapsed-prefilter` / `size-cap-retry` ([B22]) -> engine vm,
+           prefilter hybrid, language `count-collapsed`; `overflowed-dfa` /
+           `overflowed-prefilter` / `declined-nullable` ([B22]) ->
+           engine vm, prefilter `none` (no prefilter survived, or the
+           offered rescue was declined as nullable). And the
            language pair's own iff is the scope table's `vm-hybrid` row.
 
         A pcrec too old to stamp a given macro is not a disagreement: an
@@ -1627,23 +1695,30 @@ class Adapter(_ad.Adapter):
                     "but this testee named no --engine= -- nothing forced "
                     "it; a compiler or shim bug, or a flag this adapter did "
                     "not pass on purpose.")
-            # 9. the implications of the three fallback tokens.
+            # 9. the implications of the five fallback tokens ([B22]: the
+            #    263b013 pair joins them -- `size-cap-retry` is a surviving
+            #    collapsed prefilter like `collapsed-prefilter`, and
+            #    `declined-nullable` leaves no prefilter like the two
+            #    `overflowed-*` values; the language pair's absence on a
+            #    declined artifact is the scope table's vm-hybrid row).
             lang = meta.get("vm_prefilter_lang")
-            if sel == "collapsed-prefilter" and not (
+            if sel in ("collapsed-prefilter", "size-cap-retry") and not (
                     engine == "vm" and macro_vm_pf == "hybrid"
                     and lang == "count-collapsed"):
                 raise _ad.AdapterError(
-                    "pcrec artifact stamps <PREFIX>_ENGINE_SEL "
-                    "\"collapsed-prefilter\" (the retry KEPT a prefilter "
-                    "rebuilt from the collapsed language) but reads engine "
+                    "pcrec artifact stamps <PREFIX>_ENGINE_SEL %r (the retry "
+                    "KEPT a prefilter rebuilt from the collapsed language) "
+                    "but reads engine "
                     "%r, <PREFIX>_VM_PREFILTER %r, <PREFIX>_VM_PREFILTER_LANG "
                     "%r -- match_api.md 6.3's table says vm / hybrid / "
-                    "count-collapsed." % (engine, macro_vm_pf, lang))
-            if sel in ("overflowed-dfa", "overflowed-prefilter") and not (
+                    "count-collapsed." % (sel, engine, macro_vm_pf, lang))
+            if sel in ("overflowed-dfa", "overflowed-prefilter",
+                       "declined-nullable") and not (
                     engine == "vm" and macro_vm_pf == "none"):
                 raise _ad.AdapterError(
                     "pcrec artifact stamps <PREFIX>_ENGINE_SEL %r (no "
-                    "prefilter survived the fallback) but reads engine %r, "
+                    "prefilter survived the fallback, or the offered rescue "
+                    "was declined as nullable) but reads engine %r, "
                     "<PREFIX>_VM_PREFILTER %r -- match_api.md 6.3's table "
                     "says vm / none." % (sel, engine, macro_vm_pf))
 

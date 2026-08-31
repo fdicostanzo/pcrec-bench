@@ -1,0 +1,100 @@
+# testees/pcrec/list_limits.tsv -- pcrec's NUMERIC-LIMITS TABLE at the pin
+# (the SIXTH registry surface, pcrec D90 / [LIM-1],
+# docs/spec/table_contract.md), archived VERBATIM under a source header --
+# the THIRD archive target beside list_axes.tsv / list_definitions.tsv
+# (inbox I-25: "ARCHIVE IT beside --list-axes at your re-pin"). Everything
+# below this header is the unmodified output of:
+#
+#     build/pcrec-263b013/build/pcrec --list-limits
+#
+# pcrec commit 263b013ac7bc2aae4e1a85305410003f12b918e3 (abi 12), archived
+# 2026-08-31 by lane b22repin ([B22]). 44 data rows / 7 columns (name,
+# value, unit, kind, override, anchor, desc) -- one row per numeric limit
+# in pcrec src/core/limits.def, in the table's own order; FIRST archive of
+# this surface (the table is new at this pin -- I-25's 44 rows, measured
+# 44). The rows this bench has already met by name:
+# PCREC_MAX_DFA_STATES_TABLE 32000 (the ">32000 states" [SEL-1] overflow),
+# PCREC_MAX_SUBSET_ELEMS 48000000 (the K7 subset-elements budget the `\z`
+# forms overflow by -- I-22/I-23's distinct `_WHY` route),
+# PCREC_ANCHORED_MAX_STATES 4096 (the [ENG-ABS] ceiling, I-20),
+# PCREC_MAX_EMIT_BYTES 1000000 / PCREC_MAX_VM_EMIT_CODE_BYTES 500000 (the
+# [ART-SIZE] caps), PCREC_DEFAULT_WARN_EMIT_BYTES 250000,
+# PCREC_SIZE_TERM_THRESHOLD 120000, PCREC_MAX_REPEAT 65535 (bounded's
+# ladder top), and VM_DEFAULT_RESUME_FRAMES 2048 / VM_DEFAULT_TRAIL_FRAMES
+# 3072 (the stamped default capacities the `_in` testees exist for).
+#
+# WHAT THIS FILE IS FOR: nothing the adapter reads depends on it today (the
+# caps and capacities it needs are STAMPED per artifact and read from the
+# artifact, never from this table); it is archived so a limit pcrec moves
+# between pins is a named diff here rather than an unexplained selection
+# or refusal change in a record, and `make check-harness` diffs it against
+# the pin's live output (`check_list_limits_registry`). NOT a limits row:
+# the [OPT-5] letters/digits selection split (inbox I-26: the deciding
+# variable is run-time-only, no selection-knee row will be added).
+# Re-archive at every re-pin: the diff is the list of what moved.
+# pcrec numeric-limits registry (docs/spec/table_contract.md, the
+# SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
+# src/core/limits.def, in the table's own order.
+#
+# unit: the quantity's dimension, or empty for a dimensionless
+# magnitude ceiling.
+# kind: "compile budget" (bounds the COMPILER's own analysis or
+#   emission; crossing it can refuse a pattern) | "runtime
+#   capacity" (bounds the EMITTED MATCHER's own resource use;
+#   crossing it is a give-up, never a wrong answer) | "size cap"
+#   (bounds emitted artifact bytes) | "selection knee" (a
+#   threshold or default that steers a selection mechanism, not a
+#   hard ceiling) | "identifier cap" (bounds a name's length or a
+#   naming-tied count).
+# override: "flag" (a CLI flag or pcrec_options field moves it per
+#   compile) | "-D" (only a build-time -D at pcrec's OWN compile
+#   moves it) | "none" (fixed).
+# anchor: the docs/spec/limits.md section this number is
+#   documented in, empty when it is not (limits.md states caller-
+#   facing PROMISES, not an internals catalogue — see this file's
+#   own header and src/core/limits.def's for the boundary).
+#name	value	unit	kind	override	anchor	desc
+PCREC_MAX_PREFIX_LEN	60	bytes	identifier cap	none		generated-symbol prefix (-p): a C identifier bound
+PCREC_MAX_EMIT_NAME_LEN	156	bytes	identifier cap	none		K38: fixed buffer size for every emitted identifier/sub-expression built from the -p prefix
+PCREC_DFA_OVERFLOW_WHY_LEN	96	bytes	identifier cap	none		[SEL-1]: fixed size of the DFA-cap-overflow reason string (RX_ENGINE_WHY source)
+PCREC_MAX_NFA_STATES	131072	states	compile budget	none	3.3	M2.8: NFA state-count ceiling; a memory backstop, the DFA caps below usually bind first
+PCREC_MAX_DFA_STATES_GOTO	10000	states	compile budget	none	3.3	computed-goto DFA attempt engine's state ceiling
+PCREC_MAX_DFA_STATES_TABLE	32000	states	compile budget	none	3.3	table-engine DFA state ceiling; must fit in a C short
+PCREC_MAX_TABLE_ENTRIES	2000000	entries	compile budget	none	3.3	states*classes bound on the DFA transition table (~12 MB source)
+PCREC_MAX_SUBSET_ELEMS	48000000	elements	compile budget	none	3.3	[M4.7b]/K7: total NFA-state-list elements the priority subset construction may intern, summed over both machines
+PCREC_MAX_VM_NODES	131072	nodes	compile budget	none	3.3	[M4.5b]: the VM emitter's own node-count size backstop
+PCREC_MAX_VM_REPEAT_COPIES	64	copies	compile budget	none		[M4.5c]: how many times a bounded repeat may replicate a body with a choice point
+PCREC_MAX_VM_REPLICATION_PRODUCT	131072	nodes	compile budget	none		[K22]: total replication product along a chain of nested bounded repeats — a literal alias of PCREC_MAX_VM_NODES, not tuned separately
+PCREC_DEFAULT_UNROLL_K	8	count	selection knee	flag		[ENG-BREP]: the counter rung's default unroll factor K, overridden by --unroll=N
+PCREC_MAX_POSSESS_POSITIONS	256	positions	compile budget	none		[ENG-BREP]: byte-consuming positions a quantifier body may have before possessify.c declines it
+PCREC_MAX_REVDET_BODY_GROUPS	64	groups	compile budget	none		[ENG-BREP]: capturing groups a quantifier body may contain before revdet.c declines the reverse-deterministic rung
+PCREC_MAX_ALTCLS_FACTOR_DEPTH	64	levels	compile budget	none		[OPT-ALTCLS] stage 2: how deep prefix factoring may recurse into a group that just split
+PCREC_MAX_REPEAT	65535	count	compile budget	none		FIX-1/K5: the largest {n,m} quantifier count PCRE2 accepts (measured against libpcre2 10.46)
+PCREC_MAX_GROUP_DEPTH	250	levels	compile budget	none		PCRE2's own nested-group depth ceiling (measured); also bounds parser/AST recursion depth
+PCREC_MAX_GROUP_NAME	128	bytes	identifier cap	none		[M6.3]: a named group's name, measured against libpcre2 10.46 (PCRE2 error 148 above it)
+PCREC_VERB_NAME_MAX	128	bytes	identifier cap	none		a (*VERB) name; PCRE2-internals tier, measured over both name tables
+PCREC_VERB_LIMIT_ACC_MAX	429496728		compile budget	none		(*LIMIT_MATCH=N) and friends: the accumulator magnitude PCRE2 refuses at (UINT32_MAX/10 - 1)
+PCREC_UPROP_NAME_MAX	48	chars	identifier cap	none		\p{...}/\P{...} property name, in SIGNIFICANT characters (measured against libpcre2 10.46)
+PCREC_MAX_SPLICE_NODES	512	nodes	compile budget	none		[DD-14 wave G]: per-call-site AST-node splice budget before a call linkage is forced
+PCREC_MAX_SPLICE_TOTAL	8192	nodes	compile budget	none		[DD-14 wave G]: total added AST nodes across every spliced call site in one compile
+PCREC_ANCHORED_MAX_STATES	4096	states	compile budget	-D		[ENG-ABS]: the optional anchored match-here machine's own DFA state ceiling, lower than the mandatory pair's
+PCREC_MAX_VM_EMIT_CODE_BYTES	500000	bytes	size cap	-D	8	[ART-SIZE]/D84: emitted C bytes OUTSIDE table initializers; --max-emit-code-bytes ALSO raises it per-compile (raise-only); -D moves the built-in default (run_size_term.sh's reference-compiler consumer)
+PCREC_DEFAULT_WARN_EMIT_BYTES	250000	bytes	size cap	-D	8	[OPT-4]: the advisory --warn-emit-bytes default (never refuses, 0 disables) ALSO settable per-compile; -D moves the built-in default
+PCREC_MAX_EMIT_BYTES	1000000	bytes	size cap	-D	8	[ART-SIZE]/D84: the whole comment-excluded artifact; --max-emit-bytes ALSO raises it per-compile (raise-only); -D moves the built-in default
+PCREC_SIZE_TERM_THRESHOLD	120000	bytes	selection knee	-D		[ART-SIZE]: the emitted-size knee above which the unroll-K size term evaluates the ladder at all
+VM_DEFAULT_STEP_BUDGET	500000000	steps	runtime capacity	flag	3.1	D51: default backtrack-resumption budget; --step-budget=N overrides per compile
+VM_DEFAULT_WORK_BUDGET	1000000000	work-units	runtime capacity	flag	3.1	D49: default forward-only-work budget, a separate counter from steps; --work-budget=N overrides
+VM_DEFAULT_RESUME_FRAMES	2048	frames	runtime capacity	flag	3.2	D73: default resume-stack capacity for the UNBOUNDED-depth class; --backtrack-frames=N overrides
+VM_DEFAULT_TRAIL_FRAMES	3072	frames	runtime capacity	flag	3.2	D73: default trail capacity paired with VM_DEFAULT_RESUME_FRAMES
+VM_MAX_AUTO_RESUME_FRAMES	2048	frames	runtime capacity	flag	3.2	[M4.6a]: clamp ceiling for the BOUNDED-depth class's exact auto-sizing under --backtrack-frames
+VM_MAX_AUTO_TRAIL_FRAMES	3072	frames	runtime capacity	flag	3.2	[M4.6a]: trail's own clamp ceiling, paired with VM_MAX_AUTO_RESUME_FRAMES
+PCREC_PREFIX_K_MAX	24	count	compile budget	none		src/opt/prefix_k.c: how many literal-prefix candidates the offset-skip analysis may carry
+PCREC_OFSK_MAX_SET	4	count	compile budget	none		src/opt/prefix_k.c: how many offsets the selected offset-set prefilter candidate may carry
+PCREC_MINW_MAX	1099511627776		compile budget	none		src/opt/callgraph.c: the minimum-width analysis' saturation ceiling (== PCREC_W_UNBOUNDED)
+RC_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_recursion.c: saturation ceiling for a (?N)/(?+N)/(?-N) recursion-call number
+BR_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_backrefs.c: saturation ceiling for a \N/\g{N} backreference number
+LA_MSG_MAX	256	bytes	identifier cap	none		src/parse/mod_lookaround.c: fixed buffer size for the §2.5/§2.7 lookaround diagnostic text
+RXT_CONFIG_NAME_MAX	127	bytes	identifier cap	none	3.5	a .rxt `config` block's own name
+RXT_TARGET_PREFIX_MAX	127	bytes	identifier cap	none	3.5	a .rxt `target` block's -p prefix
+RXT_TARGET_DEF_MAX	127	bytes	identifier cap	none	3.5	a .rxt `target` block's definition name
+RXT_FROM_NEST_MAX	64	levels	compile budget	none	3.5	a .rxt `config ... from` cascade's nesting depth before the head parser refuses
