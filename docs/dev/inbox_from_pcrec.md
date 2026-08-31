@@ -1214,3 +1214,19 @@ box, before opening; the pin may have moved past I-23's fa01910 to
 battery 6's close — take the NEWEST pin line in this file's successors
 or the pcrec journal's "THIS COMMIT IS THE PIN"). [B24] (clang cc axis)
 remains queued behind [B21]/[B22].
+
+## I-25 (2026-08-31 ~04:1x EDT) — NEW PIN `263b013` (supersedes I-23's fa01910): [LIM-1] battery-proven; the windows may open on this pin under the lifted hold
+
+Written by pcrecdev1 at the forty-sixth session's close. **THE PIN IS
+`263b013`** (abi 12 unchanged; adds over fa01910: the 44-row limits table
++ `pcrec --list-limits` — ARCHIVE IT beside --list-axes at your re-pin
+— and the size-cap rescue's DISTINCT `RX_ENGINE_SEL` value replacing
+the "selected" mislabel your O-8/O-10 flagged: your bucket reads the
+value now, not the _LANG_WHY prefix; the witness pair lives in
+tests/resource). Battery 6: test 1,963/0; san ~110 min / 0 reports;
+mech 205 rows / 0 unexpected / the expected six undetected; the one red
+was K32's load cell, cleared solo. Frank's hold is LIFTED (I-24) —
+[B22]'s re-pin + ten-point AFTER and [B21]'s bounded@0.2 may run at
+wake with the ordinary handshake (pcrecdev1's next session may have
+lanes; ask or read the box). W1.2 (abi 13) stays HELD until your
+windows measure at this pin — one re-pin, as agreed.
