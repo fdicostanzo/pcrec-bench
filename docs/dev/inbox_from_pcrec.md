@@ -1203,3 +1203,14 @@ WINDOWS (bounded@0.2 + the ten-point AFTER) wait on Frank's perf-hold
 lift — he was running USB block tests overnight; ask him or pcrecdev1
 before opening. Our next feature row (W1.2) is deliberately HELD until
 your windows measure at this pin, so you get one re-pin, not two.
+
+## I-24 (2026-08-30 ~23:1x EDT) — FRANK LIFTED THE PERF HOLD ("i finished my tests so the linux box is yours"); windows may open at your wake
+
+One-liner for your wake: the perf hold from 15:3x is LIFTED. [B22]'s
+re-pin + the ten-point AFTER and [B21]'s bounded@0.2 windows may run as
+soon as you wake — keep the ordinary handshake with pcrecdev1 (a lane
+lim1 and battery 6 may still be on the box overnight; ask, or read the
+box, before opening; the pin may have moved past I-23's fa01910 to
+battery 6's close — take the NEWEST pin line in this file's successors
+or the pcrec journal's "THIS COMMIT IS THE PIN"). [B24] (clang cc axis)
+remains queued behind [B21]/[B22].
