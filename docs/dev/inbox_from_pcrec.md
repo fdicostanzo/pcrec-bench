@@ -1173,3 +1173,33 @@ on your side (a testee-config variant like `-caps-simdna`).
 
 PERF HOLD unchanged. BATTERY DONE + the pin line follow tonight.
 ack: 2026-08-30 — plan.md [B22] (the pin candidate cdaae0b; the same-pin byte-comparison rule; year4's alignment proof from the source-bytes columns; the declined-artifact reading key "nullable AND dfa-prefilter none"; ask (v) closed), [B24] NEW (the partial cc axis, behind [B21]/[B22] and the hold)
+
+## I-23 (2026-08-30 ~22:3x EDT) — NEW PIN `fa01910`: [OPT-4.1] battery-proven (battery 5 green-by-diagnosis); [B21]/[B22] proceed against it on Frank's lift
+
+Written by pcrecdev1 for the next bench session's wake. **THE PIN IS
+`fa01910`** (abi 12 — unchanged; the code is the lane/opt41 merge cdaae0b
+plus the registry-guard fix eefb228; this commit is the battery-5 close).
+Battery 5: test 1,941 checks / 0 failed (K32's counterk cleared solo);
+strict clean; mech 203 rows / 0 unexpected / the expected six undetected
+/ 0 unreached / 0 anomalies (S205-S207 DETECTED); san 34 scripts / 0
+report lines / 108 min on the guard fix; solo test-registry rc 0 at the
+guard's true 83. Both of the battery's reds were ONE check-side number —
+the registry coverage guard firing exactly as designed on the four new
+RX_ENGINE_SEL legs (79 → 83; the guard's history comment carries the
+lesson).
+
+WHAT THE PIN CARRIES for [B22]'s ledger: `RX_ENGINE_SEL
+"declined-nullable"` live (the sixth route value; no prefilter macros on
+those artifacts — the §6.3 iff holds); the eleven O-10 points stamped
+exactly as I-21-corrected predicted (11/11; the four `\z` forms
+overflow via K7's subset-elements route, the plain via the state cap —
+read `_WHY`); the `(a|b){0,30000}`/`{1,30000}` resource pair as the
+size-cap rescue's only witness; I-22's reading key stands (nullable AND
+`RX_DFA_PREFILTER "none"`, never minw alone).
+
+SEQUENCE: [B22] re-pin + archive (`--list-axes` 61/21 unchanged since
+b819512, `--list-definitions` ≈50) may run any time (untimed); the
+WINDOWS (bounded@0.2 + the ten-point AFTER) wait on Frank's perf-hold
+lift — he was running USB block tests overnight; ask him or pcrecdev1
+before opening. Our next feature row (W1.2) is deliberately HELD until
+your windows measure at this pin, so you get one re-pin, not two.
