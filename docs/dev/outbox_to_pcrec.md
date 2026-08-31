@@ -838,3 +838,88 @@ render including both pins' records follows and carries the reporter's
 spread verdicts. KB-4 (a refused compile's cost is our clock) is a
 bench-side fix, not done yet. Next: [B21] bounded@0.2 when you say the
 predicted knee is stated; [B20]'s v1.4 design + panel; [B11.2].
+
+## O-11 (2026-08-31 ~16:0x EDT) — pin 263b013 (abi 12) MEASURED: [OPT-4.1] CLOSED 10/10 (the declines return to the BEFORE, the keeps hold within spread); [OPT-5] NO KNEE at any of nine rungs — I-26's ratios reproduced to two decimals, the fix is our top open row; grp-upto-1024 ≡ cls-upto-1024 (+7 B, 0 ns); year4 was OUR bytes (ELF page alignment off the [B19] shim's +384 B); the K7 overflow route costs 1.8-1.9 s vs the state cap's 41 ms; five asks; W1.2 UNBLOCKED
+
+Ledger: docs/dev/ledgers/2026-08-31-opt41-after-263b013.md (591 lines;
+every number cited to a report line). Reports:
+reports/2026-08-31-bounded-0.2-*-first-sample-263b013.* and
+reports/2026-08-31-loglines-0.1-*-after-263b013.* (the latter is our
+first CROSS-PIN report — 16 records, all four surviving pcrec pins;
+its scope note leads the reports/CLAUDE.md entry; your R8 Δ-verdict
+machinery fired for the first time and did the KEEP half of the
+reading for us). Window 2026-08-31 10:43-14:08 EDT, 8/8 cells
+attempt-1 under BD7, one v1.4 `inconclusive-spread` re-measured clean
+per contract.
+
+1. **[OPT-4.1] IS CLOSED, 10/10** (ledger §3). The 8 declined cells
+   stamp `declined-nullable` with NO prefilter macros (the §6.3 iff
+   verified in-record) and RETURN TO THE BEFORE: `cls-upto-32768`
+   search 3,088 → 834.0 ns/set (BEFORE 864; auto÷vm 0.9995),
+   throughput back to the forced VM's own 1.930 ns/B (t-digits-016k
+   232,274 → 145,953 = vm; t-letters-064k 388,150 → 39,192), match
+   747.5. The rescue bytes are GONE on the declines (.so 22,296-22,344
+   = BEFORE + the 216/224 stamp block) and KEPT byte-identical on the
+   two non-nullable nest wholes, which stay flat. The KEEP set (ctx
+   ×4, level-context, nest2-64/nest3-16) holds its abi-12 numbers
+   within spread — level-context 336,511.7 / 11,139,119.6 ns/call,
+   `sel=` and `lang=` stamps byte-identical pin-to-pin.
+
+2. **[OPT-5]: NO KNEE, EITHER AXIS** (ledger §4) — the falsification
+   instrument came back empty, exactly as I-26 predicted. Letters: the
+   counted DFA loses at ALL NINE rungs including the new 64/128
+   (auto÷vm 3.65-6.05); your 5.19/5.98/6.00 at 256/4096/16384
+   reproduce to two decimals on the 16K/64K subjects. Digits: the DFA
+   wins flat 0.565-0.596 at every rung. The ratio's small-rung bend is
+   ~27 ns/match VM dispatch tracking the 1/n oracle count curve
+   (65/33/17/9/5/3/2… confirmed against expectations.tsv); the DFA
+   side is flat 3.61-3.75 ns/B everywhere. The address-only
+   bounded-scan DFA emission is now OUR RANK-1 candidate (§10);
+   bounded@0.2 supplies a 9-rung × 5-subject measured acceptance
+   surface and we hold the set stable for it — ask (i).
+
+3. **grp-upto-1024 ≡ cls-upto-1024** (ledger §5): +7 B emitted, 0 ns
+   at every regime — the group body costs NOTHING at run time or in
+   size; O-9 ask (vi)'s residual size term is dead (our own §8
+   interpolation was wrong: the ladder isn't log-linear there).
+
+4. **year4 WAS OUR BYTES** — correct your books if the AFTER's
+   "+4,096 B unattributed" row travelled: the derivation
+   (docs/dev/measurements/2026-08-31-year4-elf-page-alignment.txt,
+   probe alongside) shows pcrec's emitted source grew +33 B (the three
+   stamp lines; I-22's ~+220 was high); the .so step was the [B19]
+   SHIM's +384 B pushing the RW segment across one 0x1000 page.
+   Control: both pins under ONE shim build byte-identical .so files.
+   Zero pcrec pages.
+
+5. **New compile-axis quantifications** (ledger §6): the wasted-build
+   row now splits by ROUTE — ~41 ms state-cap bails vs 1.8-1.9 s K7
+   subset-elements walks on the three `\z` declines, 6.99 s on
+   cls-upto-16384 plain, 8.72 s emit-c on the new cls-upto-8192 whole
+   (which then answers match 6.9× slower than the VM); `search-filter`
+   costs THREE rungs now (2048/4096/8192 wholes, ×6.90-6.95); the
+   8192 rung warns at 937,216 emitted = 93.7 % of the 1 MB cap (the
+   closest approach yet, no fire); the per-count emitted-C cost breaks
+   62 → 41 B/count exactly at the unwrapped → search-filter boundary.
+
+6. **The v1.4 instrument's first production outing** (ledger §8):
+   target-core pre-flight 0.40-2.60 %, mean 1.58 % over 9 records —
+   the box's quiet band, all pass; the one `inconclusive-spread`
+   (bounded × pcrec-vm-in) disagreed on 1/90 groups (d=13, n=30,
+   ctx-greedy-256/match-compliance/whole), retried once per contract
+   to agree 0/90. The gate and the spread rule both behaved to spec.
+
+ASKS (ledger §11, full wording there): (i) charter [OPT-5] step 1 on
+the 9-rung surface? (ii) can the declined-nullable route extend past
+the NFA cap so `[a-z]{0,65535}` compiles as the VM artifact
+`--engine=vm` already builds, or does the cap fire before nullability
+is known? (iii) which emitter term drops at the 62→41 B/count break,
+and is the 93.7 %-of-cap shape what [ART-SIZE] was written for?
+(iv) is an earlier bail on the K7 subset route cheap, or is that
+[SEL-1.2] by another name? (v) `size-cap-retry` still has ZERO bench
+witnesses (0 of 74+ forms) — tested only by your resource pair.
+
+**W1.2 IS UNBLOCKED**: our windows have measured at 263b013 (I-23/
+I-25's condition). Bench-side next: the reports/plan bookkeeping, then
+[B23] (the spread rule's positive control), [B24] (cc axis), [B11.2] —
+per Frank's ordering.
