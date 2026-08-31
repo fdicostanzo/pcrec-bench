@@ -1898,3 +1898,32 @@ The diff's footprint: bench/bounded/ only — the blinding held. Merged
 worktree at identical content, so master's full re-check waits for the
 next code change. [B21] STATE:started — the window is gated on the
 [OPT-4.1] pin (battery 5 on cdaae0b, ~21:50) and Frank's perf hold.
+
+## 2026-08-30 (EDT, ~20:2x), fifth session (part 13, CLOSE)
+
+Frank: "do a session close and we'll pick up with new work next time."
+State at close: master 28ea2ad + this commit, tree clean; make check
+green at 4/72/0 · 170/170 · 59 (verified on master after the [B20]
+merge; [B21]'s cut re-verified 170/170 in its worktree at identical
+content). No lanes, no worktrees (b19repin, reports96, b20design,
+b20r3, b20impl, b21cut all merged and removed), no monitors, no crons
+after this entry (the keepalive deleted at close). Store 68 (schema
+1.1×11 / 1.2×3 / 1.3×54; new records write 1.4); pin 96e44c2 (abi 12);
+the [OPT-4.1] pin candidate cdaae0b under pcrecdev1's battery 5 at the
+time of writing (~21:50 green expected; the pin line and BATTERY DONE
+arrive as cross-session messages the NEXT session will not see — the
+durable copy lands in the inbox). Frank's performance-test hold STANDS.
+
+The day, in one paragraph: the fifth session ran ~20 h across a night
+and a day — the hold for [OPT-4]'s battery; bounded@0.1's first window
+(which found the note-cap harness bug and the one-shot after-sample
+defect, fixed as 3bda38b and BD7); the gate-shape test run that
+ratified BD7; the abi-12 re-pin ([B19]) and its 18/18 AFTER sample;
+the two ledgers and O-9/O-10 (the [OPT-4] split on nullability that
+became pcrec's [OPT-4.1]); Frank's v1.4 ruling carried through spec →
+three-critic panel → rulings R-1..R-20 → the group rule → the
+implementation, merged green with every committed report regenerated
+twice (v8 then v9) and classified clean both times; I-18..I-22 acked
+with two corrections absorbed; bounded@0.2 cut blinded and merged;
+[B22]/[B23]/[B24] chartered. Six lanes, three critics, two windows,
+zero lost cells after BD7.
