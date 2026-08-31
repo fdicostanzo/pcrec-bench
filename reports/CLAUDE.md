@@ -461,3 +461,72 @@ an older measured one) restores it.
   "THE [SEL-1] FALLBACK") is now a stamped, queryable field via [B19].
   `.subject-grain.md` (`--grain subject`) carries the 16 KB-1 MB sweep
   per flavour; `.tsv` the set-grain query.
+
+- `2026-08-31-bounded-0.2-budu-ryzen1600-first-sample-263b013.md` — the
+  [B22] WINDOW's FIRST SAMPLE of `bench/bounded@0.2` at pcrec **263b013**
+  (abi 12 unchanged; inbox I-21-correction/I-22/I-25): six cells
+  14:43-17:04 EDT (two libpcre2 baseline runs plus `pcrec_263b013_auto`/
+  `auto-nocaps`/`vm`/`vm-in`), reporter v10. Query: `report --subbench
+  bounded --version 0.2 --until 2026-09-01T00:00:00Z --format md` — 6
+  records (bounded@0.2 has no earlier sample at any pin, so this bound is
+  generous headroom, not a tight cut; the never-pool rule,
+  bench/bounded/NOTES.md, means bounded@0.1 records never enter this
+  query's set sums regardless of bound). `pcrec-vm-in`'s FIRST run
+  (16:42:45Z) is the schema v1.4 wave's first production
+  `inconclusive-spread` record (store commit 67ff0c2's own journal entry
+  names it so): trial agreement `disagree` on 1 of 90 groups (13 of 1950
+  rows), worst group `ctx-greedy-256` / `match-compliance` /
+  `whole-subject` (d=13 of n=30); `scripts/run_window.sh`'s one-retry
+  rule re-measured it (17:04:25Z, `agree`), which is the record this
+  report ranks — the first run is listed under the header as superseded
+  history (OD-B15), not pooled into any number. Compile cost:
+  `cls-upto-65535` is still `did-not-compile` under both `auto` and
+  `nocaps` (NFA cap, unchanged pin-to-pin, same diagnostic as every prior
+  pin). Mechanism legend: 8 `sel=declined-nullable (DFA fallback
+  tripped)` cells fire (both `auto`/`auto-nocaps`, `cls-lazy-16384` and
+  `cls-upto-16384`'s `whole-subject` forms, `cls-upto-32768`'s `plain`
+  and `whole-subject` forms) — the new [B22] token (inbox I-25:
+  `RX_ENGINE_SEL`'s nullable-collapsed decline, `-fprefilter-collapse`
+  DECLINED rather than shipping a rescue on a nullable collapsed
+  language); no `sel=size-cap-retry` cell fires in this set. `.tsv` gets
+  the same 6 records; `.subject-grain.md` the per-subject drill-down.
+
+- `2026-08-31-loglines-0.1-budu-ryzen1600-after-263b013.md` — the [B22]
+  WINDOW's two fresh cells on `loglines@0.1` at pcrec **263b013**:
+  `pcrec_263b013_auto`/`vm` measured 17:51-18:00 EDT, reporter v10.
+  Query: `report --subbench loglines --version 0.1 --until
+  2026-09-01T00:00:00Z --format md`. NAMED "AFTER" BY THE SAME PATTERN AS
+  THE 96e44c2 FILES ABOVE, BUT NOT THE SAME SHAPE — read this note before
+  the numbers: those files' `--since` bound worked because that window
+  remeasured all SIX loglines arms (2 pcre2 + 4 pcrec) fresh, so one
+  bound cleanly cut off every older record. Today's window remeasured
+  only 2 of the 6 arms (`auto`, `vm` — `nocaps`/`vm-in` were not rerun,
+  and neither was pcre2). Dedup keys on the record's literal `testee_id`
+  (`pcrecbench/report.py`'s `dup_groups`), which embeds the pin
+  (`pcrec_263b013_...` vs `pcrec_96e44c2_...` etc.) — it never supersedes
+  ACROSS pins. pcre2's newest record (2026-08-30 13:54-14:03Z) is
+  chronologically OLDER than `pcrec_96e44c2`'s (2026-08-30 14:11-14:36Z),
+  so no single `--since`/`--until` range admits "pcre2 08-30 +
+  pcrec_263b013 08-31" while excluding `pcrec_96e44c2`/`36d5963`/
+  `35e1ab1` — that needs two disjoint ranges, which the reporter's
+  filters (a single AND'd range; `--where` is also AND-only) do not
+  express. Rather than guess at a narrower query or hand-edit the
+  rendering, this file is the literal bare `--until` the window brief
+  asked for: **16 records** — the 2 newest pcre2 plus all FOUR surviving
+  pcrec pins' testees (35e1ab1 ×4, 36d5963 ×4, 96e44c2 ×4, 263b013 ×2;
+  `pcrec_36d5963_auto-nocaps`'s first run superseded by its
+  20:55:45Z remeasure, OD-B15). This gives the reporter's R8 `Δ vs
+  previous version` column real content (matched by testee-id root
+  across all four pins, not just the newest two) alongside the newest
+  pcre2 comparison arm the window brief asked for — read it as a
+  four-pin history view, closer in shape to the `-repin-` files above
+  than to the clean single-pin `-after-96e44c2` files. `level-context`
+  under `pcrec_263b013_auto` still reads `sel=collapsed-prefilter (DFA
+  fallback tripped)`, `lang=count-collapsed (dfa overflow retry, exact
+  nfa 462/463)` — unchanged pin-to-pin, the count-collapsed rescue is
+  still the KEEP case here (I-21-correction), distinct from bounded's
+  DECLINE cases above. `level-context`/`pcrec_35e1ab1_auto*` is still
+  `did-not-compile` (the abi-8 pin, before the [SEL-1] fallback landed;
+  unchanged from its own first-sample entry). `.subject-grain.md`
+  (`--grain subject`) carries the 16 KB-1 MB sweep per flavour;
+  `.tsv` the same query (no Δ column, as the `-repin-` `.tsv`s above).
