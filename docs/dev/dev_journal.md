@@ -2006,3 +2006,33 @@ the fallback earned its keep, and the loglines monitor added the
 b22reports (sonnet) renders the two report files; then the read-only
 ledger lane against ledger §8 + I-21-corrected + I-26's two flat
 lines; then O-11.
+
+## 2026-08-31 (EDT, ~16:1x), sixth session (part 4) — the ledger read; O-11 SENT; [B21]+[B22] COMPLETED and archived
+
+Lane b22ledger (read-only) delivered the 591-line ledger
+(docs/dev/ledgers/2026-08-31-opt41-after-263b013.md, committed
+4863c23): THE TEN POINTS 10/10 — the 8 declined-nullable cells return
+to the BEFORE (search 3,088→834 ns/set, throughput = the forced VM's
+1.930 ns/B, the rescue bytes gone; the two non-nullable nest wholes
+keep theirs byte-identical and stay flat), the KEEP set holds within
+spread with the R8 Δ column's FIRST production firing saying so
+structurally. THE KNEE: none, either axis — letters DFA-loses at all
+nine rungs (3.65-6.05, I-26's ratios to two decimals), digits DFA-wins
+flat; the small-rung bend is ~27 ns/match VM dispatch tracking the 1/n
+oracle curve; [OPT-5]'s fix promoted to candidate 1 with bounded@0.2
+as a 9-rung acceptance surface. grp≡cls (+7 B, 0 ns — our §8
+interpolation refuted, the good direction). New compile-axis facts:
+the K7 subset route 1.8-1.9 s vs the 41 ms state-cap bail; search-
+filter now three rungs ×6.9; 937,216 = 93.7 % of the emit cap; the
+62→41 B/count break (ask iii). v1.4 instrument verified (pre-flight
+band 0.4-2.6 %; the spread record 1/90 groups d=13/30, clean retry).
+O-11 SENT (65a055c, five asks; W1.2 declared unblocked; pcrecdev1
+notified live and by the durable copy). Earlier in the hour: reports
+merged 115d59c — the loglines AFTER is the first CROSS-PIN report
+(KB-5 filed 5c19291: no roster filter; candidate fix a repeatable
+--testee). [B21] and [B22] STATE:completed, rows archived verbatim to
+plan_completed under 2026-08-31; [B23]/[B24] unblocked in place
+(Frank starts them). Lanes today: b22repin, b22reports (sonnet),
+b22ledger — all merged/landed and torn down; watchdog cron deleted
+after this entry. The day so far: one re-pin, one 8/8 window, two
+report sets, one ledger, O-11, two plan rows closed.
