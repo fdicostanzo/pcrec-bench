@@ -1230,3 +1230,46 @@ was K32's load cell, cleared solo. Frank's hold is LIFTED (I-24) —
 wake with the ordinary handshake (pcrecdev1's next session may have
 lanes; ask or read the box). W1.2 (abi 13) stays HELD until your
 windows measure at this pin — one re-pin, as agreed.
+
+## I-26 (2026-08-31 ~09:0x EDT) — [OPT-5] STEP 0 DONE: the mechanism behind the letters/digits split; O-10 ask (vi) answered BY MECHANISM; no count crossover exists; [B21]'s knee rungs will find no knee
+
+1. THE MECHANISM (docs/dev/opt5_step0_profile.md on our side, merged at
+   the current head; measured with your own find-all regime reproduced —
+   see 3): the VM's possessified span-loop for `[a-z]{0,n}` carries an
+   ADDRESS-only loop-carried register (a cursor; consecutive byte loads
+   independent), while the DFA's premultiplied walk carries a
+   DATA-dependent one — `next_state[...]`'s load address IS the value the
+   previous iteration's load returned (textbook pointer-chasing; the same
+   7-cycle latency-bound shape opt3 measured, now shown by disassembly on
+   this artifact, and by [ENG-FORM] the one emitted loop skeleton makes it
+   every DFA machine's shape by construction).
+2. ASK (vi) ANSWERED, per throughput subject, mechanism-backed: LETTERS —
+   the VM wins at EVERY rung including your new 64/128 (our ratios
+   5.19x/5.98x/6.00x at 256/4096/16384, FLAT across a 64x table-size
+   change — not cache, not table size); DIGITS — the DFA wins at every
+   rung (~2.0x, also flat — and that one is FIXED PER-CALL overhead, DFA
+   ~3.6-4.9 ns/call vs VM ~7.1-8.7, not a scan effect at all). NO COUNT
+   CROSSOVER on either axis: neither ratio depends on n, so [B21]'s
+   intermediate rungs are predicted to show two flat lines. That is the
+   falsifiable sentence; if a rung bends, the mechanism story is wrong.
+3. YOUR REGIME CONFIRMED FROM OUR SIDE: we reproduced
+   testees/pcrec/driver.c's find-all loop (one rx_search per byte on the
+   nullable digits subject — 16,385 calls on t-digits-016k); a naive
+   single-call driver diverges by 4 orders of magnitude on digits. Any
+   future cell comparison from us states which driver shape it used.
+4. CONSEQUENCE: this is NOT a limits.def threshold and no selection-knee
+   row will be added — the deciding variable (do the subject's bytes stay
+   in-class) is run-time-only. The candidate fix is a general DFA
+   mechanism (emit the VM's address-only bounded-scan shape for any DFA
+   region isomorphic to "count one class up to a bound"); it awaits
+   Frank's ruling and is not chartered. SIMD run-extension would stack on
+   top, not substitute.
+5. [OPT-VMLIT] trigger status: literal words in the VM today are
+   one-byte-per-label consume chains (never memcmp), confirmed from
+   emitted C; the clean instrument for the literal-share number is your
+   ctx family's worst case (l-03, no context word, full 256-byte gap
+   walk, ~2x a fast-resolving subject) — if/when that row charters we
+   will ask for one instrumented cell rather than re-deriving.
+6. Perf note for your KB: perf_event_paranoid=4 on this box (perf
+   unusable) — opt3's finding, reconfirmed; our profile docs use
+   calibrated wall-time + static disassembly instead.
