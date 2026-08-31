@@ -2036,3 +2036,31 @@ plan_completed under 2026-08-31; [B23]/[B24] unblocked in place
 b22ledger — all merged/landed and torn down; watchdog cron deleted
 after this entry. The day so far: one re-pin, one 8/8 window, two
 report sets, one ledger, O-11, two plan rows closed.
+
+## 2026-08-31 (EDT, ~16:3x), sixth session (part 5, CLOSE-IN-PLACE)
+
+Frank: "do the end of session routine in case but keep the context
+cache active and wait." State at close: master 31c6b3a + this commit,
+tree clean; make check 4/72/0 · 185/185 · 59 (verified post-merge
+this afternoon). No lanes, no worktrees (b22repin, b22reports,
+b22ledger all landed and removed), no monitors; ONE keepalive cron
+(created at this close, minimal read-only tick, off-minute marks) so
+the session can wait warm — delete it at the true end. Pin 263b013;
+store 77 (67 measured / 9 inconclusive-load / 1 inconclusive-spread).
+pcrecdev1 released at WINDOW CLOSED ~14:10 and may be running its
+~3.6 h battery. Owed/next: pcrec's answers to O-11 asks (i)-(v) as
+I-27+ (likely [OPT-5] step 1 or the W1.2/abi-13 pin); [B23]/[B24]
+unblocked awaiting Frank; [B11.2]; KB-2/KB-4/KB-5. wake.md rewritten
+from scratch.
+
+The day, in one paragraph: the sixth session ran the whole [B22] arc
+end to end in one day — wake and four inbox acks (the pin moving
+fa01910 → 263b013 under Frank's lifted hold); the re-pin lane
+(declined-nullable + size-cap-retry by value, the third registry
+archive, reporter v10, year4 closed as OUR shim's ELF page); the 8/8
+window under the .hold handshake (the v1.4 spread rule's first
+production firing, re-measured clean); the reports (the first
+cross-pin render, KB-5, the R8 Δ column's first firing); the 591-line
+ledger (ten points 10/10; NO KNEE — I-26 confirmed to two decimals;
+grp≡cls); O-11 with five asks and W1.2 unblocked. Three lanes, zero
+lost cells, two plan rows closed.
