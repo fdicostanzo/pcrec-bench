@@ -123,8 +123,21 @@ closed), the declined `{0,32768}` same-pin emit-byte re-comparison
 (I-22 (ii)), and `year4`'s +4,096 B CLOSED by derivation (I-22 (iii):
 ELF page alignment triggered by the [B19] shim's own +384 B; pcrec's
 source +33 B; docs/dev/measurements/2026-08-31-year4-elf-page-alignment.txt).
-Next: bounded's window;
-[B11.2] wide alternations; [B13] the interpreter is chartered. `make check`
+The WINDOW at 263b013 RAN the same day
+(10:43-14:08 EDT, 8/8 cells attempt-1 under BD7: bounded@0.2's first
+sample × 6 testees + the loglines KEEP arms; the v1.4 spread rule's
+first production firing re-measured clean per contract; store 67
+measured, records at schema 1.4); reports at
+`2026-08-31-*-263b013.*` (the loglines AFTER is the first CROSS-PIN
+report — KB-5; the R8 Δ column's first firing); the ledger
+docs/dev/ledgers/2026-08-31-opt41-after-263b013.md; outbox O-11:
+[OPT-4.1] CLOSED 10/10, [OPT-5] NO KNEE at any of nine rungs (the fix
+is candidate 1; bounded@0.2 is its 9-rung acceptance surface),
+grp-upto-1024 ≡ cls-upto-1024, year4 was the bench's own shim bytes
+(ELF page alignment), five asks; W1.2 unblocked. [B21]/[B22] archived.
+Next: [B23] (spread-rule positive control) and [B24] (cc axis) are
+unblocked awaiting Frank; [B11.2] wide alternations; [B13] the
+interpreter is chartered. `make check`
 is green (4/72/0, 185/185, 59 reporter tests — re-verified at [B22]'s
 re-pin). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
