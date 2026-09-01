@@ -177,7 +177,8 @@ has no match rows under it (harness.py: a pattern that did not compile is
 skipped, never an error). NOTHING BELOW IS A MEASUREMENT — every line is a
 prediction from the goal and from pcrec's published contract
 (`docs/spec/limits.md`, the only pcrec document this author read), stated
-so the window can confirm or refute it.
+so the window can confirm or refute it. (0.3 adds one clearly-fenced
+exception, "P4's first firing", labelled in place.)
 
 **The oracle's own edge (`oracle_limits.tsv`, derived, re-checked by `make
 check`).** Two ceilings, told apart by PCRE2's diagnostic. The COUNT ceiling
@@ -534,6 +535,53 @@ subject sits below the counts the 0.2 predictions are about, so the predicted
 pcrec refusals (the emitted-size cap at `cls-upto-32768` and `-65535`) and
 the `ctx-*` fallbacks are untouched by 0.3.
 
+### P4's first firing — a SCRATCH-TIER SMOKE, not a measurement
+
+Stated apart from everything above because it is the one paragraph in this
+file that carries numbers off a run rather than off a prediction, a ledger or
+the oracle. **It is not a measurement and must never be a ranking input**: two
+`pcrecbench quick` cells at the scratch tier, `--trials 3`, on a box running
+another lane's `make check` — both records stamped `inconclusive-load` by the
+pre-flight, exactly as they should be. What survives that is the RATIO between
+two arms measured back to back under the same load with a flat control, not
+any absolute. The window at the night's pin is what measures it.
+
+`bounded@0.3`, `match`, `pcrec-auto` at a7e0bdf, `cls-upto-2048`
+(`search-filter`) ÷ `cls-upto-1024` (`unwrapped`), per subject, with
+`pcrec-vm` as the control:
+
+| subject | auto ×2048/×1024 | vm control |
+|---|---|---|
+| `r-00064` … `r-01024` (the matching letters runs, 64 → 1024 B) | **1.97 – 2.04** | 0.90 – 0.99 |
+| `r-00004` / `r-00008` / `r-00016` / `r-00032` / `r-00036` / `r-00037` | 1.81 – 2.60 | 0.91 – 1.10 |
+| `f-year-4` (4 digits, fails) | 1.80 | 1.00 |
+| **`d-01024`** (1024 digits, fails at byte 0) | **37.4** (11.6 → 432.4 ns) | 0.99 |
+
+**P4 confirmed, and the two-pass account with it.** On every matching letters
+run from 64 B up the two-pass entry costs almost exactly twice the unwrapped
+one — same skeleton, same subject, same engine, same pin, one rung apart,
+with the VM arm flat. The ×2.0 residual the acceptance ledger left on the
+table IS the reverse pass, and that is now readable without a second pin.
+
+**And one thing P4 did not predict, which is worth more than P4.** On
+`d-01024` — a subject `[a-z]{0,n}` cannot match, and rejects at byte 0 — the
+unwrapped entry costs 11.6 ns (the dispatch floor) and the search-filter
+entry costs **432 ns**: it scans the whole 1024-byte subject for candidate
+starts before rejecting every one of them. That is O(subject) where
+O(divergence) suffices, on a FAILING anchored match — the same claim
+[ENG-ABS] makes for the unwrapped form ("O(divergence), not O(subject)",
+inbox I-16), not held by the entry three of the nine rungs actually use. So
+STEP 2's win on the match axis is ×2 on matching calls and **unbounded in the
+subject length on failing ones**, which is the commoner case in the field.
+The 0.3 set can only show ×37 of it because its longest match subject is
+1024 B; the effect grows with the subject.
+
+Two asks follow, and they are the window's to confirm: (a) is the
+`search-filter` choice on `cls-upto-2048/4096/8192` and `cls-atleast-4096`
+deliberate, given that the five rungs below them are `unwrapped` on the same
+skeleton? (b) does STEP 2 remove the failing-call scan as well as the reverse
+pass — because the second is the larger number.
+
 ## The subjects
 
 `gen_subjects.py`, seed **20260829**; `gen_throughput_subjects.py`, seed
@@ -720,11 +768,15 @@ named.
   has something to bind only on VM artifacts, i.e. the `ctx-*` fallbacks and
   whatever `auto` sends to the VM; on a pure-DFA cell the `-in` testees read
   nothing, as on the two earlier sets.
-- **No engine note claims a measurement.** The only figures in this file
-  are properties of the corpus, of PCRE2's compile-time analysis
-  (re-derived by `make check`), of the oracle's compile ceilings (same), of
-  design-time oracle probes (stated as such), and of pcrec's published
-  contract (`docs/spec/limits.md`, cited by section).
+- **No engine note claims a measurement.** The figures in this file are
+  properties of the corpus, of PCRE2's compile-time analysis (re-derived by
+  `make check`), of the oracle's compile ceilings (same), of design-time
+  oracle probes (stated as such), of pcrec's published contract
+  (`docs/spec/limits.md`, cited by section) and — since 0.3 — of this
+  bench's OWN committed records, cited by ledger and by census file. The one
+  paragraph carrying numbers off a RUN is "P4's first firing", which says in
+  its first sentence that it is a scratch-tier smoke on a loaded box and not
+  a measurement.
 
 ## Cell-time estimate, and what was cut to get there
 
@@ -796,7 +848,8 @@ background lines and three fields (`f-year-5`, `f-hex-32g` — a 31-hex-then-
 `g` near-miss on a wrong byte, whose cost is `f-hex-31`'s — and the runs at
 16 / 17 / 255); the lines held to ≤ 256 B (they were 43-999 B, which alone
 made the search band's Σ/median ≈ 150); and five ladder rungs —
-`cls-upto-16` (the 256 rung is the small end), `grp-upto-256` (1024 stands
+`cls-upto-16` (the 256 rung is the small end — 0.3 restored it and its three
+siblings; ask (ii) is what paid for them), `grp-upto-256` (1024 stands
 alone; growth on the group body is readable from the 1024 rung against the
 class rung at the same count), `cls-exact-256` and `cls-exact-16384` (the
 exact `{n}` form; `hex32` and `year4` are exact counts with near-misses at
