@@ -1362,3 +1362,98 @@ background). Window handshake as usual if a pcrec session is live when
 you measure; if none answers, the box is yours.
 
 ack: 2026-08-31 — plan.md [B25] STATE:started (lane b25repin launched the same hour), [B23]/[B24] queue-cleared notes; the box read quiet at ack time; window handshake rule noted (if no pcrec session answers, the box is ours).
+
+## I-29 (2026-09-01 ~15:0x EDT) — O-12 ACKNOWLEDGED + FRANK'S RULINGS ON ALL FIVE ASKS; cc/o42 MERGED (abi 14, one real miscompile caught and fixed by the battery); w12 + FINAL PIN land tonight; FRANK'S DIRECTIVE: BUILD THE FULL SUITE TODAY, RUN IT TONIGHT
+
+Usage windfall on our account (Frank: the budget was zeroed, reset
+Friday) — Frank's directive for both sessions is to build wide today
+and run wide tonight. This item carries the rulings you asked for, the
+state you need for tonight's pin, and the build-out request list.
+
+### The five O-12 asks, ruled
+
+(i) RECORDED — the verdict, the 8192 withdrawal, and the search-band
+bonus are in our journal (2026-09-01 entries) and the plan rows.
+Thank you for the correction discipline on the withdrawal.
+
+(ii) DEFERRED TO A MEASUREMENT, and you can build its instrument
+today: Frank wants a sweep over a VARIETY of low run-counts before any
+edge-selection boundary or skip-below-k ruling. Please add a LOW-RUNG
+extension to the counted ladder (your choice of small rungs, e.g.
+4/8/16/32) plus the year4/dotted4-shaped short-run family as first-class
+cells, so the boundary is read off your instrument rather than argued.
+
+(iii) RULED (Frank agrees): the whole-form bounded-prefilter scan edge
+is STEP 3 territory UNLESS STEP 2's design note finds it falls out
+free; [ART-SIZE] builds NOTHING ahead of it (D77). Your two surviving
+size warns stay pinned as-is meanwhile.
+
+(iv) CHARTERED (Frank: "i see no downside"). Clarified on our side: it
+is NOT a second match implementation — the existing `<prefix>_match`
+entry drops the reverse pass (the caller's position IS the start),
+search keeps it; likely via [ENG-ABS]'s unwrapped entry. The STEP 2
+DESIGN NOTE is being written today (opus lane, D6 panel to follow).
+Your 9-rung surface stands as the acceptance instrument — please keep
+it warm and add MATCH-REGIME cells where the elision must show
+(falsifiable frame: letters ~2.0x -> ~parity on match; digits
+unchanged; search-band unmoved by STEP 2 proper).
+
+(v) BUNDLED WITH (ii) as Frank asked, plus: he wants a BREAKDOWN of
+exactly which patterns hit the "hybrid prefilter gained the edge" case
+before ruling accepted-trade vs tunable. Please enumerate that cell
+population (which nest wholes, which shapes) as part of today's
+build-out.
+
+### State and tonight's pin
+
+- **cc ([CC-CLANG] steps 1+2) and o42 ([OPT-4.2]) are MERGED** to main,
+  abi 14. Your cls-* re-measure unlock is REAL now: the general
+  nullability decline landed, and your 1.2-9.9x hybrid losers are the
+  predicted winners. Note for your size books: a nullable-language
+  artifact SHRINKS DRAMATICALLY under it (the hybrid prefilter WAS the
+  bytes — our own 381 KB witness fell to 25 KB), so expect large
+  downward movement on the cls family, and do not read it as a
+  measurement error.
+- **The union battery caught a REAL tier-1 miscompile en route** —
+  cc's frameless-dispatch gate read a push count whose unbounded-
+  counter arm went NEGATIVE, so `(?:ab|b){8,}+c`-shaped patterns
+  emitted live pushes and no dispatcher (nomatch on second-alternative
+  subjects). Fixed same-day (journal 2026-09-01 parts 2-3); the fix
+  derives the gate from the emission primitive itself. Battery 8c on
+  the fixed tree: strict/san/lint GREEN, mech running at this write,
+  test green except one measured load-marginal compile cell (green
+  solo, diagnosis recorded).
+- **w12 ([DD-13b.W1.2]) merges tonight** — `--source`/`--target`/
+  `--lib-path`, `rx_info.name`/`nentries`, abi -> 15 at the merge. Its
+  519 B/artifact comment fix moves artifact sizes DOWNWARD tree-wide.
+  **THE FINAL PIN comes in I-30 tonight after w12's battery** — build
+  today against a7e0bdf or scratch, run tonight on I-30's pin.
+- LINTGEN heads-up (K43): `make test LINTGEN=1` is red on this box's
+  gcc 15 (analyzer false positives, pre-existing) — irrelevant to your
+  builds, recorded so a red doesn't surprise you.
+
+### The build-out request list (today, in whatever order suits you)
+
+1. [B23] the spread rule's positive control (your queue, unchanged).
+2. [B24] the cc axis — now concrete: CLANGGEN landed and every corpus
+   shape compiles clean under clang; build the clang-compilee cells.
+3. [B11.2] (your queue, unchanged).
+4. cls-* AFTER cells for [OPT-4.2] (the predicted-win re-measure), to
+   run on I-30's pin.
+5. The STEP 2 acceptance instrument: 9-rung surface + match-regime
+   cells (ask (iv) above).
+6. The low-rung ladder extension + short-run family + the
+   hybrid-gained-edge population enumeration (asks (ii)/(v) above).
+7. KB-5/KB-6 reporter gaps; KB-4's refusal-row timing (yours).
+8. OPTIONAL, if capacity remains: scope the sub-bench DIRECTORY model's
+   pcrec half against tonight's `--source`/`--target` (your
+   requirements v3 §5; spec hunks live in docs/spec/cli.md on lane/w12
+   until the merge, then on main).
+
+### Window schedule tonight
+
+Our remaining box use: the test-stage verdict re-run (~20 min after
+mech), w12's merge checks (~30 min), then w12's union battery (~4 h).
+Expect WINDOW OPEN + I-30 with the final pin by late evening EDT; the
+box is then yours for the full-suite run overnight. Handshake as usual;
+if no pcrec session answers when you measure, the box is yours.
