@@ -14,15 +14,17 @@
 # `std1`, which excludes the named-groups and recursion modules, so
 # bench/email's `factored.rx` is refused with "requires module
 # 'named-groups'" (MEASURED 2026-08-25 against pin 8da6120, re-verified at
-# 692c2e8, at 35e1ab1, at 36d5963, at 96e44c2 and RE-VERIFIED at 263b013,
-# 2026-08-31: same refusal,
-# same wording -- "(?<...) requires module 'named-groups' (pattern offset 3)").
-# That is a
-# BUILD/RUN flag of the testee -- the pattern text handed to pcrec is
-# byte-identical either way -- not a pattern variant. bench/email/NOTES.md
-# says so where a reader of the numbers will find it.
+# 692c2e8, at 35e1ab1, at 36d5963, at 96e44c2, at 263b013 and RE-VERIFIED
+# at a7e0bdf, 2026-08-31: same refusal, same wording -- "(?<...) requires
+# module 'named-groups' (pattern offset 3)"). That is a BUILD/RUN flag of
+# the testee -- the pattern text handed to pcrec is byte-identical either
+# way -- not a pattern variant. bench/email/NOTES.md says so where a
+# reader of the numbers will find it. Since a7e0bdf ([M4-QUOTING]) std1
+# also excludes the new `quoting` module (`\Q...\E`; "\Q requires module
+# 'quoting'", MEASURED) -- `--features all` includes it, but no bench
+# pattern uses \Q, so nothing measured changes until a set charters it.
 
-pin = "263b013"
+pin = "a7e0bdf"
 
 [testees.pcrec-auto]
 engine_mode = "auto"

@@ -5,33 +5,33 @@
 # (inbox I-25: "ARCHIVE IT beside --list-axes at your re-pin"). Everything
 # below this header is the unmodified output of:
 #
-#     build/pcrec-263b013/build/pcrec --list-limits
+#     build/pcrec-a7e0bdf/build/pcrec --list-limits
 #
-# pcrec commit 263b013ac7bc2aae4e1a85305410003f12b918e3 (abi 12), archived
-# 2026-08-31 by lane b22repin ([B22]). 44 data rows / 7 columns (name,
+# pcrec commit a7e0bdfc3abf60056abee10d0f4ca4c2010da533 (abi 13), archived
+# 2026-08-31 by lane b25repin ([B25]). 45 data rows / 7 columns (name,
 # value, unit, kind, override, anchor, desc) -- one row per numeric limit
-# in pcrec src/core/limits.def, in the table's own order; FIRST archive of
-# this surface (the table is new at this pin -- I-25's 44 rows, measured
-# 44). The rows this bench has already met by name:
+# in pcrec src/core/limits.def, in the table's own order. The diff from
+# the 263b013 copy (44 rows, [B22]) is ONE row: PCREC_MAX_SCAN_EDGES (4,
+# `selection knee`, no override -- [OPT-5]: how many scan edges one DFA
+# machine may carry; src/opt/scanedge.c takes the longest chains first),
+# inserted after PCREC_MINW_MAX. The rows this bench has already met by
+# name:
 # PCREC_MAX_DFA_STATES_TABLE 32000 (the ">32000 states" [SEL-1] overflow),
 # PCREC_MAX_SUBSET_ELEMS 48000000 (the K7 subset-elements budget the `\z`
 # forms overflow by -- I-22/I-23's distinct `_WHY` route),
 # PCREC_ANCHORED_MAX_STATES 4096 (the [ENG-ABS] ceiling, I-20),
 # PCREC_MAX_EMIT_BYTES 1000000 / PCREC_MAX_VM_EMIT_CODE_BYTES 500000 (the
-# [ART-SIZE] caps), PCREC_DEFAULT_WARN_EMIT_BYTES 250000,
-# PCREC_SIZE_TERM_THRESHOLD 120000, PCREC_MAX_REPEAT 65535 (bounded's
-# ladder top), and VM_DEFAULT_RESUME_FRAMES 2048 / VM_DEFAULT_TRAIL_FRAMES
-# 3072 (the stamped default capacities the `_in` testees exist for).
+# [ART-SIZE] caps every artifact stamps as its effective limits),
+# PCREC_NFA_MAX_STATES 131072 (the "NFA exceeds 131072 states" refusal the
+# 65535 rung meets -- O-9/I-20, UNCHANGED at this pin per I-27 (3): [OPT-5]
+# STEP 1 acts after construction, and the caps fire DURING it).
 #
-# WHAT THIS FILE IS FOR: nothing the adapter reads depends on it today (the
-# caps and capacities it needs are STAMPED per artifact and read from the
-# artifact, never from this table); it is archived so a limit pcrec moves
-# between pins is a named diff here rather than an unexplained selection
-# or refusal change in a record, and `make check-harness` diffs it against
-# the pin's live output (`check_list_limits_registry`). NOT a limits row:
-# the [OPT-5] letters/digits selection split (inbox I-26: the deciding
-# variable is run-time-only, no selection-knee row will be added).
-# Re-archive at every re-pin: the diff is the list of what moved.
+# WHAT THIS FILE IS FOR: nothing the adapter reads depends on it (every
+# cap and capacity a record needs is STAMPED per artifact); it is the
+# table this bench's overflow readings resolve against BY NAME, archived
+# so the pin's limit surface is diffable across re-pins, and `make
+# check-harness` diffs it against the pin's live output
+# (check_list_limits_registry).
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.
@@ -91,6 +91,7 @@ VM_MAX_AUTO_TRAIL_FRAMES	3072	frames	runtime capacity	flag	3.2	[M4.6a]: trail's 
 PCREC_PREFIX_K_MAX	24	count	compile budget	none		src/opt/prefix_k.c: how many literal-prefix candidates the offset-skip analysis may carry
 PCREC_OFSK_MAX_SET	4	count	compile budget	none		src/opt/prefix_k.c: how many offsets the selected offset-set prefilter candidate may carry
 PCREC_MINW_MAX	1099511627776		compile budget	none		src/opt/callgraph.c: the minimum-width analysis' saturation ceiling (== PCREC_W_UNBOUNDED)
+PCREC_MAX_SCAN_EDGES	4	count	selection knee	none		[OPT-5]: how many scan edges one DFA machine may carry — src/opt/scanedge.c takes the longest chains first, src/gen/emit_dfa.c sizes its array by it, and each edge costs one compare on the emitted loop's generic path
 RC_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_recursion.c: saturation ceiling for a (?N)/(?+N)/(?-N) recursion-call number
 BR_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_backrefs.c: saturation ceiling for a \N/\g{N} backreference number
 LA_MSG_MAX	256	bytes	identifier cap	none		src/parse/mod_lookaround.c: fixed buffer size for the §2.5/§2.7 lookaround diagnostic text

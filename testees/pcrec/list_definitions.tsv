@@ -3,26 +3,27 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-263b013/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-a7e0bdf/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit 263b013ac7bc2aae4e1a85305410003f12b918e3 (abi 12), archived
-# 2026-08-31 by lane b22repin ([B22]). 50 data rows / 7 columns: kind,
+# pcrec commit a7e0bdfc3abf60056abee10d0f4ca4c2010da533 (abi 13), archived
+# 2026-08-31 by lane b25repin ([B25]). 50 data rows / 7 columns: kind,
 # selector, syntax, order, predicate, definition, applies -- one row per
 # construct DEFINED in terms of another (`\d` = `[0-9]`, the POSIX classes,
 # `\R`, the `\c`/`\x`/`\o` decoders as text functions), the predicate being
 # the option-scope tag's own name (a closed vocabulary). BYTE-IDENTICAL to
-# the 96e44c2 copy below the header: no definition moved between the pins.
+# the 263b013 copy below the header: no definition moved between the pins
+# ([M4-QUOTING]'s `\Q...\E` is a MODULE, not a definition row -- quoting
+# suspends syntax rather than defining one construct in terms of another).
 # The grep strips pcrec's own `#` comment/header lines, so the data rows
 # are the whole body; the column header is restated here for a reader:
 #
 #     kind	selector	syntax	order	predicate	definition	applies
 #
 # WHAT THIS FILE IS FOR: nothing the adapter reads depends on it (the
-# emitted code is unchanged by [DD-11]); it is archived beside
-# list_axes.tsv under the same rule -- `make check-harness` diffs it against
-# the pin's live output (`check_list_definitions_registry`), so a definition
-# pcrec adds or changes between pins is a named diff here rather than an
-# unexplained answer change in a record. Re-archive at every re-pin.
+# stamps carry every fact the records need); it is archived so the pin's
+# definitional surface is diffable across re-pins, and `make
+# check-harness` diffs it against the pin's live output
+# (check_list_definitions_registry).
 esc	d	\d	1	DEF_ALWAYS	[0-9]	active
 esc	D	\D	1	DEF_ALWAYS	[^0-9]	active
 esc	s	\s	1	DEF_ALWAYS	[\t\n\x0b\f\r ]	active
