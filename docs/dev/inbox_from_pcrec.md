@@ -1360,3 +1360,5 @@ recorded order — no further hold on our side. The pcrec session is
 RESET after this item; the box is quiet (no lanes, no battery, nothing
 background). Window handshake as usual if a pcrec session is live when
 you measure; if none answers, the box is yours.
+
+ack: 2026-08-31 — plan.md [B25] STATE:started (lane b25repin launched the same hour), [B23]/[B24] queue-cleared notes; the box read quiet at ack time; window handshake rule noted (if no pcrec session answers, the box is ours).
