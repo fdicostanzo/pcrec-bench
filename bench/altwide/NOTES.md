@@ -107,7 +107,7 @@ structure". `pfx3-512`'s `min_length` is 6 where every other member's is 3 or
 | `srt-512` | `w-512`'s own 512 branches, sorted by first byte | `max_first_run` 28 against 2. Identical bytes (4264), identical trie (3118), identical answers on all 42 subjects |
 | `ci-512` | `w-512` under `(?i)` | +4 bytes; picks up the two upper-cased subjects (search 15/38 against 13/38) |
 | `cnt-64` | `w-64` under `{1,3}` | the bridge to `bench/bounded`: the counter rung and the alternation width multiply. Match 3/38 against 2/38 — `f-cnt2`, two adjacent branches taken whole |
-| `wb-512` | `w-512` inside `\b…\b` | search 9/38 against 13/38: the four glued/embedded subjects are hits for `w-512` and misses here |
+| `wb-512` | `w-512` inside `\b…\b` | search 9/38 against 13/38: the four subjects whose branch sits inside a longer LETTER RUN — the two glued and the two doubled — are hits for `w-512` and misses here |
 
 `ci-512`, `cnt-64` and `wb-512` are `w-512`/`w-64` plus exactly one construct,
 so each is a one-variable comparison against a member already in the set.
