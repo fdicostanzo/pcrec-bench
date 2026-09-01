@@ -2195,3 +2195,31 @@ deliberate, and does STEP 2 remove the failing-call scan too. I-29
 (iv)'s frame is restated: the unwrapped rungs will not move. Lane
 b28report (KB-5/KB-6) opened in the freed slot; b112alt on its second
 make check.
+
+## 2026-09-01 (EDT, ~17:1x), seventh session (part 3) — build-out complete: four lanes merged, master green 4/72/0 · 217/217 · 61; waiting for I-30
+
+[B11.2] (lane b112alt, blinded, 8a2a4b7): bench/altwide@0.1 — 20
+patterns on width × structure × order × wrapper, the oracle's own
+compiled-size ceiling capping the 3-12 B ladder at 2048 (the short-
+word pool carries 4096), srt-512 as the falsifiable ALTCLS pair; a
+BLOCKER found and fixed in record.py — four rungs exceed the schema's
+8192 B free_text cap on canonical_text, now OMITTED above the cap
+(never truncated) with a gate reading the cap from the schema; make
+check ~5 → ~11-15 min (1600 interpreter expectations — a future
+wave's cache). [B28] (lane b28report, sonnet): KB-5's --testee
+roster filter and KB-6's edge= clause, reporter v11, 61 tests, every
+report regenerated, and one drift caught — an open-ended --since
+query on the 2026-08-30 loglines file had silently grown two next-day
+263b013 records; pinned by roster. Master 2a8051f + this merge: the
+final tree's make check 4/72/0 · 217/217 (11 min under the peer's
+load). Lessons today: wait for a lane's FINAL message before
+removing its worktree (b27bounded's confirming check died under it);
+a `pgrep -f` on a command string matches the shell issuing it —
+filter by PID and pattern; a lane told to "wait for a background
+task" goes idle and is lost — briefs must say "block in the
+foreground with a bounded poll". The night: tonight's suite is
+bounded(0.3) → loglines → email → altwide → bounded:clang →
+loglines:clang via scripts/run_suite.sh (rehearsed dry), ~8-10 h;
+the cls-* AFTER reads cell-against-cell on 0.3's byte-identical cls
+rungs (the harness takes a set's version from its sidecar only). The
+re-pin brief is drafted; launched the minute I-30 lands.
