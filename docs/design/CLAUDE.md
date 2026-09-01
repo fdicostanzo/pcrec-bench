@@ -85,6 +85,25 @@ docs/dev/'s append-only records.
   proposal it grew from is kept verbatim as its §H, the panel's summary
   as §H.2. quiet_baseline.md's 2026-08-30 section is what the harness
   DOES now.
+- `subbench_directory_model.md` — **[B29] the scoping note, 2026-09-01
+  (DESIGN ONLY — no code, no schema change, no sidecar change)**: the
+  sub-bench DIRECTORY model's pcrec half against pcrec's
+  `--source` / `--target` / `--lib-path` ([DD-13b.W1.2], merged to pcrec
+  main as abi 15). What the directory model and its sidecar are today
+  and how each field answers R-BENCH-1..9; what W1.2 delivers exactly
+  (the four `.rxt` head declarations, the `-o` shape rule, D88's one
+  artifact per TU, D93's file-wins-over-flag, `rx_info.name`/`nentries`)
+  and what it does not — the sidecar's descriptive needs are the
+  format's own W2/W3, which name pcrec-bench as their waiting consumer;
+  the field-by-field MAPPING with the two measured obstacles (the `.rx`
+  → `pattern`-line encoding is lossless in all 77 files; 63 of 77
+  pattern names are illegal as a `.rxt` block name); the compile-cost
+  axis the bench cannot give up (one `--source` clock for N targets
+  cannot fill N compile rows); and the recommendation — DO NOTHING now,
+  an optional exporter only if pcrec wants the artifact, `--source` in
+  the adapter not before W3 — with six open questions and who rules
+  each. Partially covers the `set_format.md` slot below; see its Q1.
+
 - `quiet_baseline.md` — **[B3]'s answer to OD-B8, MEASURED 2026-08-25**:
   what "quiet" means numerically on this box, the 12 samples behind it,
   and the two thresholds `pcrecbench/quiet.py` defaults to. It carries a
