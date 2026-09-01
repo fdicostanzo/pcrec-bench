@@ -2154,3 +2154,44 @@ loglines ~10, bounded ~22 → ~10 h for the whole suite incl. the new
 set and clang configs; order bounded@0.2 (cls AFTER) → loglines →
 email → bounded@0.3 → the new set → clang cells. Stall watchdog cron
 up (10 min); no keepalive (the session is active).
+
+## 2026-09-01 (EDT, ~16:3x), seventh session (part 2) — [B24] and [B27] merged; the two-pass residual confirmed on one pin, and a bigger effect behind it
+
+[B24] (lane b24cc, 3 commits, ec838a6): the cc axis is a per-config
+`cc` in configs.toml — absent is byte-identical to before (proven
+against a committed production record), present is an identity
+(`cc-clang` in the derived testee_id, the compiler + version line in
+build_flags, a contradicting $CC refused by name); three `-clang`
+configs; the driver stays on $CC so a pair differs in exactly one
+variable; 18 named checks (205/205). The finding: at a7e0bdf clang
+21.1.8 refuses 50 of 264 (pattern × mode × form) cells with ONE cause
+(a frameless VM artifact's indirect goto into a function with no
+&&label — the [CC-CLANG] step-1 fix at abi 14), 0 of 264 at the
+ae3e6ca scratch build. So the clang cells are measured only after the
+re-pin. run_suite.sh (fe41292) chains several sets through
+run_window.sh in priority order, rehearsed dry over two sets.
+
+[B27] (lane b27bounded, b61ed9a): bounded@0.3 — the STEP 2 match
+instrument is letters runs 4..1024 B as MATCH-ONLY subjects (the
+short manifest, `short_search_max_bytes` 512 → 258; no regime, no
+schema change; caveat 2's arithmetic re-done at Σ/median ≈ 50), the
+low rungs cls-upto-4/8/16/32, the short-run digit family
+dig-exact/dig-upto at 2..32, 19 subjects, 0.2 byte-identical;
+predictions P1-P4 committed before any run. The ask-(v) census: four
+cells, two artifacts (nest2-64 / nest3-16 whole-subject × the auto
+testees), match only; the ledger's "trade" was between two DIFFERENT
+artifacts; the edge costs +6..12 ns fixed per matching call. Then P4
+fired on a scratch smoke (inconclusive-load, a flag): the ladder's
+whole-subject artifacts split by match_form (64..1024 unwrapped;
+2048/4096/8192 + atleast-4096 search-filter; 16384+ VM), and one rung
+apart on the same subject cls-upto-2048/1024 is ×2.0 on matching runs
+(the reverse pass — the acceptance ledger's residual, confirmed
+without a second pin) and ×37 on a FAILING 1024 B run: the
+search-filter entry scans the whole subject for candidate starts
+before rejecting, O(subject) where [ENG-ABS] promises O(divergence).
+Relayed to pcrecdev1 live (its STEP 2 design note is being written
+today) with two asks: is search-filter on those four artifacts
+deliberate, and does STEP 2 remove the failing-call scan too. I-29
+(iv)'s frame is restated: the unwrapped rungs will not move. Lane
+b28report (KB-5/KB-6) opened in the freed slot; b112alt on its second
+make check.
