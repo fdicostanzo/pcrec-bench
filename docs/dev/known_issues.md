@@ -104,6 +104,24 @@ committed query name its roster explicitly. Not urgent: full-set
 windows (the common case) never hit this. Fix travels with the next
 reporter wave; the flag's spelling should mirror `run --testee`.
 
+**FIXED 2026-09-01 (lane b28report, [B28], commit 18ad03a0cdfdfe730befc77493288d8a4cda52ed).**
+`pcrecbench/report.py` gained `--testee TESTEE_ID` exactly as the
+candidate fix above proposed: repeatable, exact match on the literal
+`testee.testee_id`, OR'd within its own occurrences and AND'd with
+every other filter. One addition beyond the candidate: an id matching
+NO record anywhere in the loaded store (checked before any other filter
+narrows the selection) REFUSES, naming the unknown id(s) and the known
+ones, rather than silently rendering an empty report — every other
+filter here narrows silently, but a committed roster query is worth
+protecting from a typo that would otherwise produce a quietly-empty
+table. Printed in the Query header as `testee=<id>` per occurrence.
+`REPORTER_VERSION` bumped to `v11 (2026-09-01)`; the flag is additive
+(no committed query used it, so no existing report's rendering moved).
+`test_testee_filter_kb5` (`pcrecbench/tests/test_report.py`) covers the
+narrow, the OR, the AND-with-another-filter case, the unknown-id
+refusal and the known+unknown mix. Documented in `report.py`'s module
+docstring, `--help`, `pcrecbench/CLAUDE.md` and `reports/CLAUDE.md`.
+
 ## KB-6 (2026-08-31) — the reporter renders NO clause for the abi-13 `dfa_scan_edge` stamp
 
 Found by the b25reports lane on the first a7e0bdf report: every
@@ -117,3 +135,35 @@ next reporter wave alongside KB-5's `--testee` roster filter. The
 mechanism-bucketing rules ([B16] R1-R8) may also want the scan-edge
 value in the `sel=` line's company — design call for that wave, not a
 patch tonight.
+
+**FIXED 2026-09-01 (lane b28report, [B28], commit 18ad03a0cdfdfe730befc77493288d8a4cda52ed).**
+`_dfa_scan_edge_display` renders `edge=<range|bitmap|mixed|none>` on
+the legend line, placed directly after the `dfa: scan=... prefilter=...
+table=... [offsets=...]` composite clause — the SAME scope
+(`dfa-scan`: every artifact whose DFA scan is stamped, VM hybrids
+included, testees/pcrec/adapter.py's `STAMP_SCOPE`) as that clause and
+`offsets=`, not `dfa_match`'s narrower dfa-only scope; conditional
+(absent on a forced-VM artifact, a non-hybrid VM artifact, or any
+record from before abi 13). A legend note names the four values,
+printed once under the lines that carry the clause. `REPORTER_VERSION`
+bumped to `v11 (2026-09-01)`; every committed report under `reports/`
+regenerated — the twelve `pcrec_a7e0bdf` reports' mechanism legends
+change (the `edge=` clause and the new note), no other report's
+rendering moves. `test_dfa_scan_edge_legend_kb6` covers the firing
+case, the VM-hybrid case (edge present, no `match=`), the forced-VM
+control (no scope, no clause), the abi-12 control (no pair), and the
+note's presence/absence.
+
+The MECHANISM-BUCKETING QUESTION this row's last paragraph raised is
+answered as a RECOMMENDATION, not a code change: scan-edge is a fact
+about the machine's transition-table SHAPE, stamped unconditionally
+regardless of whether `auto` fell back to anything, so folding it into
+`_engine_sel_display`'s fallback bucket would conflate two independent
+facts (a `range` scan sits on a `sel=selected` artifact or a
+`sel=overflowed-dfa` one alike); it also does not obviously belong in
+the [B16] R1-R8 ranking-group bucketing, which groups rows for RANKING
+rather than carrying a per-row legend fact (same footing as
+`dfa_prefilter`, never bucketed on). See `report.py`'s module
+docstring, "[B28]" section, for the full reasoning — left for the
+manager to rule on if a future finding wants rows grouped by scan-edge
+shape.
