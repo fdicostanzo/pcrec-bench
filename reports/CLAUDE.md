@@ -579,13 +579,20 @@ an older measured one) restores it.
   `t-digits-*` sits at `auto÷vm` ≈ 0.60 (auto ~1.67× FASTER than vm, not
   "noise-flat" — digits was never the collapse target, so this ratio is
   pin-INVARIANT: `pcrec_263b013`'s own digits ratios match to three
-  figures) except at `cls-upto-8192`, which prints `auto÷vm` ≈ 1.77 for
-  digits and ≈ 0.13 for letters — the INVERSE of every neighboring
-  rung's pattern; not yet explained, flagged for the ledger lane rather
-  than resolved here (a rendering artifact was ruled out: the raw
-  per-subject sub-table under `cls-upto-8192` / `large-subject-throughput`
-  in the committed file shows the same inverted numbers, i.e. the store's
-  own records disagree with the surrounding rungs, not the reporter).
+  figures) — WITH NO EXCEPTION: the `cls-upto-8192`
+  "inversion" this entry originally flagged (≈1.77 digits / ≈0.13
+  letters) was REFUTED by the ledger lane the same night
+  (docs/dev/ledgers/2026-08-31-opt5-step1-acceptance-a7e0bdf.md §4,
+  from the records): the rung's true ratios are letters
+  1.967/1.993/2.000 and digits 0.601/0.602, exactly in line with its
+  neighbors. The flagged 1.77 was the `vs best` CELL of the a7e0bdf
+  vm row in a digits sub-table (the digits sub-tables are the only
+  ones the OLD pin tops, so `vs best` there compares against
+  263b013-auto and reads inverted), and the 0.13 was a CROSS-SUBJECT
+  pairing (letters auto ÷ DIGITS vm). READER'S CAVEAT, general: in
+  the per-subject sub-tables, `vs best` inverts VISUALLY wherever a
+  superseded pin's row ranks first — read `auto÷vm` from same-pin
+  same-subject rows, never from `vs best` across pins.
   Compile cost: `cls-upto-65535` is still `did-not-compile` under both
   `auto` and `auto-nocaps` at a7e0bdf (`pattern too large (NFA exceeds
   131072 states)`, byte-identical diagnostic to every prior pin — the NFA
