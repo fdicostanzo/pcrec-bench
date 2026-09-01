@@ -1,8 +1,22 @@
 """testees/pcrec/adapter.py -- the pcrec adapter (harness contract 3).
 
-Provides `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm`, and the caller-provided
-frame-buffer variants `pcrec-auto-in` / `pcrec-vm-in`, all at the pin in
-`configs.toml` -- and `pcrec-local`, a PROVIDED binary at no pin at all.
+Provides `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm`, their clang siblings
+`pcrec-auto-clang` / `pcrec-nocaps-clang` / `pcrec-vm-clang`, and the
+caller-provided frame-buffer variants `pcrec-auto-in` / `pcrec-vm-in`, all at
+the pin in `configs.toml` -- and `pcrec-local`, a PROVIDED binary at no pin
+at all.
+
+THE COMPILEE TOOLCHAIN AXIS ([B24]; pcrec [CC-CLANG]). pcrec emits C and
+stops, so the compiler that turns that C into a .so is OURS -- phase 2 below
+-- and it is a property of the testee, spelled `cc = "gcc" | "clang"` in
+configs.toml (whose comment carries the ruling and the precedence). A config
+that declares none behaves exactly as it did before the key existed ($CC,
+else gcc; no `config_extra`; the same build_flags string). A config that
+declares one PINS it: `config_extra = "cc-<name>"` joins the derived
+testee_id, build_flags names the compiler and its `--version` first line, and
+a conflicting `$CC` is refused rather than allowed to make the id lie. The
+timing driver is built by `build_driver()` from `$CC` on every config, so a
+clang testee differs from its gcc sibling in exactly one variable.
 
 THE LOCAL TESTEE (Frank's I-4 (c), [B10]; record_schema.md 6.2 and 6.8).
 `$PCREC_BIN` names the binary, `$PCREC_LOCAL_FLAGS` adds flags; pin.sh is
@@ -975,6 +989,57 @@ def parse_warn_line(stderr_text):
     return None
 
 
+# ------------------------------------------------ the compilee toolchain axis
+#
+# [B24] (pcrec [CC-CLANG], their docs/testing.md "CLANGGEN"). pcrec emits C
+# and stops; whoever runs a C compiler on that C is the COMPILEE toolchain,
+# and here that is this file's phase 2. So the axis is a property of the
+# TESTEE and lives in configs.toml as `cc`, whose long comment carries the
+# ruling. Two functions, because the resolution and the naming are asked for
+# separately (describe() wants both, _compile_one only the first).
+CC_VALUES = ("gcc", "clang")
+
+
+def effective_cc(testee_id, cfg):
+    """-> (compiler, config_extra_or_None) for one testee.
+
+    ABSENT `cc` -> ($CC or gcc, None): today's behaviour byte for byte, and
+    `None` is what keeps an existing config's `build_flags` and derived
+    `testee_id` unchanged. PRESENT `cc` -> (it, "cc-<it>"): an IDENTITY
+    claim, so a conflicting `$CC` is REFUSED rather than silently winning
+    (which would put a compiler in the testee_id that never ran). `$CC` may
+    be a path; only its basename is compared."""
+    declared = cfg.get("cc")
+    env = os.environ.get("CC") or ""
+    if declared is None:
+        return (env or "gcc"), None
+    if declared not in CC_VALUES:
+        raise _ad.AdapterError(
+            "%s: cc = %r is not a compilee toolchain this adapter knows "
+            "(%s; testees/pcrec/configs.toml). The value is part of the "
+            "derived testee_id, so it is a closed set on purpose."
+            % (testee_id, declared, ", ".join(CC_VALUES)))
+    if env and os.path.basename(env) != declared:
+        raise _ad.AdapterError(
+            "%s declares cc = %r in testees/pcrec/configs.toml but $CC=%r "
+            "is set. That key is an IDENTITY -- it names the compiler in "
+            "the derived testee_id -- so it is not something $CC may "
+            "override behind the record's back. Unset $CC (or set it to "
+            "%s) and run again; $CC still decides the compiler for every "
+            "config that declares none, and it always builds the timing "
+            "driver." % (testee_id, declared, env, declared))
+    return declared, "cc-" + declared
+
+
+def cc_version_line(cc):
+    """The compiler's `--version` FIRST LINE, verbatim -- the same string
+    `environment.compiler_raw` carries for the box's toolchain
+    (record_schema.md 6.7), computed by the same function, so the artifact's
+    compiler and the driver's are comparable side by side."""
+    from pcrecbench import env as _env
+    return _env.compiler_raw(cc)
+
+
 def buffer_capacities(cfg):
     """-> (frames, trail) from a config's `buffer_frames` / `buffer_trail`,
     or None when the config has neither. Both or neither: a non-NULL
@@ -1206,9 +1271,16 @@ class Adapter(_ad.Adapter):
         `captures` are DERIVED from them, so every consumer of `flags`,
         `engine_mode` and `captures` -- describe(), the compile phases, the
         buffer plumbing -- sees one truth and the derived testee_id says
-        what actually ran."""
+        what actually ran.
+
+        [B24]: `cc` is RESOLVED here too, for every config -- the compiler
+        that will build the artifact, and the `config_extra` slug that puts
+        it in the testee_id (None where the config declares no `cc`, which
+        is every config that existed before the axis and is why their ids
+        and build_flags are unchanged)."""
         cfg = dict(_ad.Adapter.config(self, testee_id))
         if not cfg.get("local"):
+            cfg["cc"], cfg["cc_extra"] = effective_cc(testee_id, cfg)
             return cfg
         flags = list(cfg.get("flags", []))
         extra_var = cfg.get("extra_flags")
@@ -1226,6 +1298,7 @@ class Adapter(_ad.Adapter):
                 % (testee_id, mode, ", ".join(ENGINE_MODES)))
         cfg["engine_mode"] = mode
         cfg["captures"] = "off" if "--no-captures" in flags else "on"
+        cfg["cc"], cfg["cc_extra"] = effective_cc(testee_id, cfg)
         return cfg
 
     def local_binary(self, testee_id):
@@ -1320,6 +1393,22 @@ class Adapter(_ad.Adapter):
         else:
             full, desc = self.pin_provenance()
         caps = buffer_capacities(cfg)
+        # [B24] the compilee toolchain. A config that declares no `cc` gets
+        # the literal `$CC` this file has always written and NO cc clause,
+        # so its build_flags string is byte-identical to the pre-[B24] one;
+        # a config that declares one names it, states its `--version` first
+        # line, and says in the same breath that the DRIVER did not move
+        # (run.driver_compiler is the other half of the pair).
+        cc_text, cc_extra = "$CC", cfg.get("cc_extra")
+        cc_note = ""
+        if cc_extra:
+            cc_text = cfg["cc"]
+            cc_note = ("; COMPILEE TOOLCHAIN pinned by configs.toml to `%s` "
+                       "-- %s -- while the timing driver stays on $CC "
+                       "(run.driver_compiler), so this testee differs from "
+                       "its gcc sibling in exactly one variable ([B24], "
+                       "pcrec [CC-CLANG])"
+                       % (cfg["cc"], cc_version_line(cfg["cc"])))
         buffer_note = ""
         runtime = runtime_options(cfg.get("flags", []))
         if caps:
@@ -1360,14 +1449,17 @@ class Adapter(_ad.Adapter):
             "engine_mode": cfg["engine_mode"],
             "simd": "n-a",
             "build_flags": "%s; pcrec flags %s; artifact built with "
-                           "$CC -O2 -fPIC -shared%s"
+                           "%s -O2 -fPIC -shared%s%s"
                            % (provenance, " ".join(cfg.get("flags", [])),
-                              buffer_note),
+                              cc_text, cc_note, buffer_note),
             "runtime_options": runtime,
             "compile_cost_definition": (
                 "AOT (requirements 3): every phase from pattern text to a "
                 "loadable object, each timed -- `emit-c` (the pcrec CLI), "
-                "`gcc` (the artifact + shim into a .so), `load` (dlopen). Each "
+                "`gcc` (the artifact + shim into a .so -- the phase's NAME, "
+                "fixed so a clang testee's phase compares against its gcc "
+                "sibling's; which compiler ran it is in `build_flags` and "
+                "in the testee_id, [B24]), `load` (dlopen). Each "
                 "trial builds its own .so, because the dynamic loader caches "
                 "by path and a repeated dlopen of one path measures the cache. "
                 "Median of N with spread is the REPORTER's reduction; the "
@@ -1376,6 +1468,14 @@ class Adapter(_ad.Adapter):
             "warmup_trials": 0,
             "engine_metadata_declaration": dict(METADATA_DECL),
         }
+        if cc_extra:
+            # record_schema.md 6.4's `config_extra`: "the escape hatch for
+            # two testees that differ ONLY in build_flags (which is never
+            # filtered)". The cc axis is exactly that case -- same engine,
+            # same version, same mode, same captures, same simd -- so
+            # without this the clang sibling and the gcc one would DERIVE
+            # THE SAME testee_id and land on top of each other in the store.
+            block["config_extra"] = cc_extra
         if local:
             # SCRATCH BY CONSTRUCTION (record_schema.md 6.8, X28/X29): the
             # harness lifts `tier` to the setup layer; `binary` stays here.
@@ -1425,7 +1525,12 @@ class Adapter(_ad.Adapter):
         pcrec = self.binary_for(testee_id)
         drv = build_driver(os.path.join(HERE, "driver.c"),
                            os.path.join(workdir, "pcrec_driver"), extra=["-ldl"])
-        cc = os.environ.get("CC", "gcc")
+        # [B24]: the config decides the COMPILEE toolchain, falling back to
+        # `$CC` and then gcc for a config that declares none (`config()`
+        # resolves it; `effective_cc` is the one rule). The shim is compiled
+        # by the same command -- it #includes the artifact, they are one
+        # translation unit -- so the pair can never drift apart.
+        cc = cfg["cc"]
         bufargs = buffer_args(cfg)
 
         phase_seconds = []

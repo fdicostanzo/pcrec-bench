@@ -24,6 +24,51 @@
 # 'quoting'", MEASURED) -- `--features all` includes it, but no bench
 # pattern uses \Q, so nothing measured changes until a set charters it.
 
+# ---------------------------------------------------------------------------
+# THE COMPILEE TOOLCHAIN AXIS -- `cc` ([B24]; pcrec [CC-CLANG], its
+# docs/testing.md "CLANGGEN").
+#
+# pcrec is an AHEAD-OF-TIME compiler: it emits C and stops. Whoever invokes a
+# C compiler on that C is the COMPILEE TOOLCHAIN, and on this bench that is
+# US -- the adapter's phase-2 command line (`_compile_one`). pcrec therefore
+# has no `--cc` flag to pass through and never will; the axis is a property
+# of the TESTEE, exactly like `--engine=vm` or `--no-captures`, so it is
+# spelled here.
+#
+#   cc = "gcc" | "clang"      OPTIONAL, per config.
+#
+# ABSENT means "whatever `$CC` says, else gcc" -- today's behaviour, byte for
+# byte: no `cc` clause in `build_flags`, no `config_extra`, the same derived
+# `testee_id` as before this key existed. PRESENT is an IDENTITY CLAIM: the
+# artifact AND the shim (they are one translation unit -- shim.c #includes
+# artifact.c) are compiled by that compiler, `config_extra = "cc-<name>"`
+# joins the derived `testee_id` (record_schema.md 6.4's escape hatch for two
+# testees differing only in build flags), and `build_flags` names the
+# compiler and its `--version` first line.
+#
+# PRECEDENCE, and why it is not pcrec's. In pcrec's `CLANGGEN=1` an explicit
+# `CC=` on the command line always wins, because there `CLANGGEN` is a
+# DEFAULT. Here `cc` is part of the testee's identity: a `pcrec-vm-clang`
+# record built by gcc would carry a testee_id that lies, and a record whose
+# id lies is worse than no record. So:
+#
+#   * a config with NO `cc`   -> `$CC` if set, else gcc  (unchanged)
+#   * a config WITH `cc`      -> that compiler
+#   * both, and they DISAGREE -> a clean AdapterError naming both, before
+#                                anything is measured. Unset `$CC` (or set it
+#                                to match) and run again.
+#
+# THE DRIVER DOES NOT MOVE. `driver.c` is built by `build_driver()` from
+# `$CC` on every config, so a `-clang` testee differs from its gcc sibling in
+# exactly ONE variable: the compiler that built the artifact under
+# measurement. The record says so twice -- `run.driver_compiler` (the
+# driver's) beside `testee.build_flags` (the artifact's).
+#
+# `environment.compiler` remains the BOX's toolchain dimension (the schema's
+# 6.7, and its 11.4 note "one `compiler` field ... is the box's C compiler
+# still an environment dimension"): on a `-clang` testee it still reads gcc,
+# and the artifact's compiler is read off `testee.build_flags` /
+# `testee_id`. Flagged for the schema panel, not worked around here.
 pin = "a7e0bdf"
 
 [testees.pcrec-auto]
@@ -43,6 +88,47 @@ engine_mode = "vm"
 captures = "on"
 flags = ["--features", "all", "--engine=vm"]
 description = "pcrec --engine=vm: the VM forced, which also disables the DFA prefilter so the VM derives the whole span independently"
+
+# ---------------------------------------------------------------------------
+# THE CLANG SIBLINGS ([B24]). Each is its gcc sibling above with ONE key
+# added -- same pin, same pcrec flags, same engine mode, same captures -- so
+# a pair of records differs in the compilee toolchain and nothing else. The
+# `-in` variants stay gcc-only on purpose: the frame-buffer axis and the
+# compiler axis crossed would give four cells whose differences no single
+# comparison can attribute (BD3's one-variable rule applied to the roster).
+#
+# NOT EVERY ARTIFACT COMPILES UNDER CLANG AT EVERY PIN, and that is a
+# first-class outcome, not a harness failure. MEASURED at a7e0bdf (abi 13,
+# 2026-09-01, clang 21.1.8): a VM artifact that never pushes a resume frame
+# emits `goto *run->resume_stack[...].resume_label;` while the function
+# contains no `&&label` expression, and clang refuses it --
+#
+#     error: indirect goto in function with no address-of-label expressions
+#
+# -- a `did-not-compile` row with clang's own diagnostic, which is exactly
+# what the bench is for. pcrec's [CC-CLANG] step 1 fixed it on their side at
+# abi 14 (`src/gen/emit_vm.c`'s `has_push`); the day this bench's pin crosses
+# that, the refusals stop appearing and the rows become numbers.
+[testees.pcrec-auto-clang]
+engine_mode = "auto"
+captures = "on"
+cc = "clang"
+flags = ["--features", "all"]
+description = "pcrec defaults, artifact compiled by CLANG: the compilee-toolchain axis ([B24]) against pcrec-auto -- same pin, same flags, one variable moved"
+
+[testees.pcrec-nocaps-clang]
+engine_mode = "auto"
+captures = "off"
+cc = "clang"
+flags = ["--features", "all", "--no-captures"]
+description = "pcrec --no-captures, artifact compiled by CLANG: the compilee-toolchain axis ([B24]) against pcrec-nocaps"
+
+[testees.pcrec-vm-clang]
+engine_mode = "vm"
+captures = "on"
+cc = "clang"
+flags = ["--features", "all", "--engine=vm"]
+description = "pcrec --engine=vm, artifact compiled by CLANG: the compilee-toolchain axis ([B24]) against pcrec-vm -- the VM artifacts are where the two compilers have the most room to differ, and at abi 13 where some of them refuse outright"
 
 # ---------------------------------------------------------------------------
 # THE CALLER-PROVIDED FRAME BUFFER TESTEES (pcrec match_api.md 10, [DD-14.FB]).

@@ -2760,6 +2760,377 @@ def check_deny_flag_controls():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+# ------------------------------------------------- the compilee toolchain axis
+
+#: [B24]. pcrec emits C and stops, so the compiler that turns that C into a
+#: .so is the bench's own -- `testees/pcrec/adapter.py`'s phase 2 -- and the
+#: axis is a property of the TESTEE, spelled `cc` in configs.toml. Five arms,
+#: each with the case that would expose the change having done something
+#: other than what it claims:
+#:
+#:   1. NOTHING MOVED FOR THE OLD CONFIGS. The six configs that predate the
+#:      axis derive the same `testee_id` and render the same `build_flags`
+#:      as they did without it -- checked against a FROZEN copy of the
+#:      pre-[B24] format string kept right here, so an edit to describe()
+#:      that quietly re-words an existing testee's provenance is caught
+#:      rather than shipped (and the store's committed a7e0bdf records stay
+#:      comparable with the ones tonight's window writes).
+#:   2. THE PRECEDENCE RULE, all three arms: `$CC` still decides for a
+#:      config that declares no `cc`; a declared `cc` names both the
+#:      compiler and the `config_extra` slug; a `$CC` that CONTRADICTS a
+#:      declared one is refused BY NAME rather than silently winning, which
+#:      is the only outcome that could put a compiler in a testee_id that
+#:      never ran.
+#:   3. THE TWO COMPILERS AGREE. Each artifact KIND is compiled twice --
+#:      once by each sibling config -- and the two .so are asked the same
+#:      smoke subjects; every row must agree on answer, span AND captures
+#:      (captures included because a shim that dropped the vector would
+#:      otherwise agree with one that did not). A disagreement is a
+#:      compiler or shim bug and is a `bad`, never a number.
+#:   4. A REFUSAL IS NAMED, NEVER SKIPPED. At pin a7e0bdf (abi 13) some VM
+#:      artifacts do NOT compile under clang, and that is the finding [B24]
+#:      exists to record: pcrec emits `goto *run->resume_stack[...]` into a
+#:      function containing no `&&label` expression when the artifact never
+#:      pushes a resume frame, and clang rejects exactly that. A clang
+#:      refusal therefore passes ONLY when its diagnostic carries that
+#:      cause verbatim; any other refusal FAILS, as a finding nobody has
+#:      read yet. pcrec's [CC-CLANG] step 1 fixed it at abi 14, so the day
+#:      this bench's pin crosses that the refusal set goes empty and these
+#:      rows become agreements -- which is why the arm is written to be
+#:      green either way and to PRINT the set rather than freeze it.
+#:   5. THE TOKEN REACHES THE RECORD. Each clang config runs a whole cell
+#:      into a scratch store, the run validates it, and the written
+#:      record's own `testee_id` carries the token.
+_PRE_B24_BUILD_FLAGS = ("%s; pcrec flags %s; artifact built with "
+                        "$CC -O2 -fPIC -shared%s")
+_PRE_B24_BUFFER_NOTE = ("; caller-provided frame buffer (match_api.md 10): "
+                        "%d resume frames, %d trail entries -- CAPACITIES, "
+                        "sized per artifact from its stamped frame sizes; "
+                        "the _in entries used in every regime")
+
+#: The six configs that predate the axis and must be untouched by it.
+_PRE_B24_CONFIGS = ("pcrec-auto", "pcrec-nocaps", "pcrec-vm",
+                    "pcrec-auto-in", "pcrec-vm-in", "pcrec-local")
+
+#: clang's own words for the frameless-VM incompatibility ([CC-CLANG]).
+_CC_KNOWN_REFUSAL = "indirect goto in function with no address-of-label expressions"
+
+#: (label, gcc testee, clang testee, pattern, subjects, min_matches). The
+#: KINDS are the ones `check_mechanism_stamps` uses, for the same reason:
+#: hand-chosen shapes rather than corpus patterns, so the check does not
+#: stop being one the day engine selection moves under it. Each subject list
+#: holds at least one match and at least one non-match, and `min_matches`
+#: is what stops an agreement being VACUOUS -- two .so that both answer "no"
+#: to everything agree perfectly and prove nothing. The provably-empty
+#: artifact is the one kind that CANNOT match, so it carries 0 and is held
+#: to the opposite statement instead: every row answered no-match.
+CC_KIND_CASES = (
+    ("pure DFA", "pcrec-auto", "pcrec-auto-clang", b"foo[0-9]+bar",
+     (b"xxfoo123barzz", b"foo0bar", b"foobar", b"", b"nothing here",
+      b"foo9876543210bar"), 5),
+    ("VM hybrid", "pcrec-auto", "pcrec-auto-clang", b"a(b|c)+d",
+     (b"xabcbd", b"ad", b"abd", b"acccd", b"", b"abcbcbcbcbcbcbcx"), 3),
+    ("VM, no DFA scan", "pcrec-vm", "pcrec-vm-clang", b"a(b|c)+d",
+     (b"xabcbd", b"ad", b"abd", b"acccd", b"", b"abcbcbcbcbcbcbcx"), 3),
+    ("provably-empty DFA", "pcrec-auto", "pcrec-auto-clang", b"[^\\x00-\\xff]",
+     (b"", b"anything at all", b"\xff\x00\x7f"), 0),
+    ("anchored attempt DFA", "pcrec-auto", "pcrec-auto-clang",
+     b"^foo[0-9]+bar",
+     (b"foo123bar", b"xfoo123bar", b"foobar", b"", b"foo7barfoo7bar"), 3),
+    ("VM hybrid, counted repeat", "pcrec-auto", "pcrec-auto-clang",
+     b"a(b|c){2,5}d",
+     (b"abcd", b"abbd", b"abcbcd", b"abd", b"abbbbbbd", b""), 3),
+    # The VM shape that DOES push a resume frame, so its function carries
+    # `&&label` expressions and clang accepts it even at abi 13. Without
+    # this row the agreement arm at this pin would be DFA-only, and the
+    # axis would be measured only on the artifacts least likely to differ.
+    ("VM, frame-pushing", "pcrec-vm", "pcrec-vm-clang", b"(a+)+b",
+     (b"aaab", b"b", b"xaab", b"aaa", b""), 3),
+    ("nocaps DFA", "pcrec-nocaps", "pcrec-nocaps-clang", b"a(b|c)+d",
+     (b"xabcbd", b"ad", b"abd", b"acccd", b"", b"abcbcbcbcbcbcbcx"), 3),
+)
+
+
+class _CCSubject:
+    def __init__(self, i, path, n):
+        self.subject_id, self.path, self.length = "s-%d" % i, path, n
+
+
+def _cc_rows(adapter, tid, label, pattern, subjects, tmp):
+    """-> (outcome, diagnostic, rows) for one (testee, pattern): compile
+    both forms and measure every smoke subject on each, in the regime that
+    form is for. `rows` is {(form, subject_id): (answer, start, end, caps)}
+    -- the WHOLE answer, so the comparison covers the capture vector too."""
+    adapter.prepare(tid, tmp)
+    pid = re.sub(r"[^A-Za-z0-9]+", "-", "%s-%s" % (label, tid)).strip("-")[:44]
+    cp = adapter.compile(tid, pid, pattern, {}, 1, tmp)
+    subj = []
+    for i, s in enumerate(subjects):
+        p = os.path.join(tmp, "%s-s%d.bin" % (pid, i))
+        with open(p, "wb") as f:
+            f.write(s)
+        subj.append(_CCSubject(i, p, len(s)))
+    rows = {}
+    for form, regime in ((_ad.FORM_PLAIN, "search_short"),
+                         (_ad.FORM_WHOLE_SUBJECT, "match")):
+        cr = cp.get(form)
+        if cr is None:
+            continue
+        if cr.outcome != "compiled":
+            return cr.outcome, (cr.diagnostic or ""), None
+        got, _i, _n = adapter.measure(dict(cr.handle), regime, subj, 1, 1,
+                                      timeout=180)
+        for r in (got[0] if got else []):
+            rows[(form, r.subject_id)] = (r.answer, r.start, r.end, r.caps)
+    return "compiled", "", rows
+
+
+def check_cc_axis():
+    """THE COMPILEE TOOLCHAIN AXIS ([B24]; pcrec [CC-CLANG]). The five arms
+    and what each is built to catch are documented above CC_KIND_CASES."""
+    print("-- the compilee toolchain axis: gcc vs clang ([B24], pcrec [CC-CLANG]) --")
+    import json as _json
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("cc axis", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    eff, bufcaps, ccver = (mod.effective_cc, mod.buffer_capacities,
+                           mod.cc_version_line)
+
+    # ---- 1. the six pre-[B24] configs are untouched -------------------
+    saved = dict(os.environ)
+    os.environ["PCREC_BIN"] = adapter.pin_binary()
+    os.environ.pop("PCREC_LOCAL_FLAGS", None)
+    os.environ.pop("CC", None)
+    try:
+        offenders, seen = [], []
+        for tid in _PRE_B24_CONFIGS:
+            cfg = adapter.config(tid)
+            block = adapter.describe(tid)
+            got = block["build_flags"]
+            prov, _sep, _rest = got.partition("; pcrec flags ")
+            caps = bufcaps(cfg)
+            want = _PRE_B24_BUILD_FLAGS % (
+                prov, " ".join(cfg.get("flags", [])),
+                (_PRE_B24_BUFFER_NOTE % caps) if caps else "")
+            tid_got = _rec.derive_testee_id(block)
+            seen.append("%s -> %s" % (tid, tid_got))
+            if got != want:
+                offenders.append("%s: build_flags is %r but the frozen "
+                                 "pre-[B24] renderer gives %r" % (tid, got, want))
+            if block.get("config_extra") is not None:
+                offenders.append("%s: gained config_extra %r"
+                                 % (tid, block["config_extra"]))
+            if len(tid_got.split("_")) != 3:
+                offenders.append("%s: derived testee_id %r is no longer the "
+                                 "three-part id" % (tid, tid_got))
+        if offenders:
+            bad("cc axis: the six pre-[B24] configs derive an UNCHANGED "
+                "testee_id and build_flags", "; ".join(offenders)[:700])
+        else:
+            ok("cc axis: the six pre-[B24] configs derive an UNCHANGED "
+               "testee_id and build_flags", "; ".join(seen))
+
+        # ---- 2. the precedence rule --------------------------------
+        os.environ["CC"] = "clang"
+        pa = dict(adapter.testees()["pcrec-auto"])
+        vc = dict(adapter.testees()["pcrec-vm-clang"])
+        got = eff("pcrec-auto", pa)
+        if got == ("clang", None):
+            ok("cc axis: $CC still decides for a config that declares no "
+               "`cc`, and adds no token",
+               "$CC=clang -> pcrec-auto builds with clang, config_extra "
+               "None -- the pre-[B24] behaviour, unchanged")
+        else:
+            bad("cc axis: $CC still decides for a config that declares no "
+                "`cc`, and adds no token",
+                "got %r, want ('clang', None)" % (got,))
+        try:
+            agree = eff("pcrec-vm-clang", vc)
+            if agree == ("clang", "cc-clang"):
+                ok("cc axis: a $CC that AGREES with a declared `cc` is "
+                   "accepted", "$CC=clang + cc=clang -> clang / cc-clang")
+            else:
+                bad("cc axis: a $CC that AGREES with a declared `cc` is "
+                    "accepted", "got %r" % (agree,))
+        except _ad.AdapterError as e:
+            bad("cc axis: a $CC that AGREES with a declared `cc` is accepted",
+                "raised anyway: %s" % str(e)[:200])
+        os.environ["CC"] = "gcc"
+        try:
+            eff("pcrec-vm-clang", vc)
+            bad("cc axis: a $CC that CONTRADICTS a declared `cc` is refused "
+                "BY NAME",
+                "effective_cc returned instead of raising -- a record whose "
+                "testee_id says clang would carry gcc numbers")
+        except _ad.AdapterError as e:
+            s = str(e)
+            if "pcrec-vm-clang" in s and "'clang'" in s and "'gcc'" in s:
+                ok("cc axis: a $CC that CONTRADICTS a declared `cc` is "
+                   "refused BY NAME", s.split(".")[0][:160])
+            else:
+                bad("cc axis: a $CC that CONTRADICTS a declared `cc` is "
+                    "refused BY NAME",
+                    "raised, but the message names neither side: %s" % s[:250])
+        os.environ.pop("CC", None)
+
+        # ---- 3. the token round-trips into describe() ----------------
+        rt, ver = [], ccver("clang")
+        for tid, sib in (("pcrec-auto-clang", "pcrec-auto"),
+                         ("pcrec-nocaps-clang", "pcrec-nocaps"),
+                         ("pcrec-vm-clang", "pcrec-vm")):
+            b = adapter.describe(tid)
+            tid_got = _rec.derive_testee_id(b)
+            sib_id = _rec.derive_testee_id(adapter.describe(sib))
+            problems = []
+            if b.get("config_extra") != "cc-clang":
+                problems.append("config_extra %r" % b.get("config_extra"))
+            if tid_got != sib_id + "_cc-clang":
+                problems.append("testee_id %r does not extend the gcc "
+                                "sibling's %r" % (tid_got, sib_id))
+            if "artifact built with clang -O2" not in b["build_flags"]:
+                problems.append("build_flags does not name clang")
+            if ver not in b["build_flags"]:
+                problems.append("build_flags lacks clang's --version first "
+                                "line %r" % ver)
+            if problems:
+                rt.append("%s: %s" % (tid, ", ".join(problems)))
+        if rt:
+            bad("cc axis: the cc token round-trips into testee_id and "
+                "build_flags", "; ".join(rt)[:500])
+        else:
+            ok("cc axis: the cc token round-trips into testee_id and "
+               "build_flags",
+               "the three clang configs derive <gcc sibling>_cc-clang and "
+               "name `%s` beside the driver's own compiler" % ver)
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+
+    # ---- 4. the kinds: agreement, or a NAMED refusal ------------------
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-cc-")
+    agreed, agreed_vm, refused = [], [], []
+    try:
+        for (label, gcc_tid, clang_tid, pattern, subjects,
+                min_matches) in CC_KIND_CASES:
+            g_out, g_diag, g_rows = _cc_rows(adapter, gcc_tid, label,
+                                             pattern, subjects, tmp)
+            if g_out != "compiled":
+                bad("cc axis: %s" % label,
+                    "the GCC arm did not compile (%s: %s) -- the control's "
+                    "premise is gone" % (g_out, " ".join(g_diag.split())[:200]))
+                continue
+            c_out, c_diag, c_rows = _cc_rows(adapter, clang_tid, label,
+                                             pattern, subjects, tmp)
+            title = ("cc axis: %s -- the gcc and clang .so agree on every "
+                     "smoke row" % label)
+            if c_out != "compiled":
+                flat = " ".join(c_diag.split())
+                if c_out == "did-not-compile" and _CC_KNOWN_REFUSAL in flat:
+                    refused.append(label)
+                    ok("cc axis: %s -- clang REFUSES at this pin, by the "
+                       "one named [CC-CLANG] cause" % label,
+                       flat[flat.index("error:"):][:150] if "error:" in flat
+                       else flat[:150])
+                else:
+                    bad("cc axis: %s -- clang refused for an UNKNOWN reason"
+                        % label,
+                        "%s: %s -- NOT the frameless-VM indirect goto; a new "
+                        "finding, to be read before it is absorbed"
+                        % (c_out, flat[:400]))
+                continue
+            keys = sorted(set(g_rows) | set(c_rows))
+            diff = [k for k in keys if g_rows.get(k) != c_rows.get(k)]
+            matched = sum(1 for k in keys
+                          if str((g_rows.get(k) or ("",))[0]).startswith("match"))
+            if diff:
+                bad(title,
+                    "; ".join("%s/%s: gcc %r vs clang %r"
+                              % (k[0], k[1], g_rows.get(k), c_rows.get(k))
+                              for k in diff[:4]))
+            elif matched < min_matches:
+                bad(title,
+                    "%d rows agreed but only %d matched (this kind's "
+                    "subjects promise %d) -- an agreement in which nothing "
+                    "matched proves nothing, so it is a failure, not a pass"
+                    % (len(keys), matched, min_matches))
+            elif min_matches == 0 and matched:
+                bad(title,
+                    "the provably-empty artifact MATCHED %d of %d rows -- "
+                    "both compilers agree, and both are wrong" % (matched, len(keys)))
+            else:
+                agreed.append(label)
+                if "VM" in label:
+                    agreed_vm.append(label)
+                ok(title,
+                   "%d rows (%d subjects x 2 forms), %d matching%s; answer "
+                   "+ span + captures identical"
+                   % (len(keys), len(subjects), matched,
+                      " (0 by construction -- every row a no-match)"
+                      if min_matches == 0 else ""))
+
+        # The arm is only worth having if it covered a VM artifact: a DFA
+        # artifact is a table walk both compilers render much the same way,
+        # and the VM is where [CC-CLANG] found its incompatibility.
+        if agreed_vm:
+            ok("cc axis: the agreement arm covered a VM artifact (not "
+               "vacuously DFA-only)", ", ".join(agreed_vm))
+        else:
+            bad("cc axis: the agreement arm covered a VM artifact (not "
+                "vacuously DFA-only)",
+                "every VM kind refused under clang at this pin, so the axis "
+                "is unmeasured for the VM; CC_KIND_CASES needs a shape that "
+                "pushes a resume frame")
+        # THE FINDING, printed rather than frozen: at a7e0bdf the refusal
+        # set is the frameless VM artifacts; at pcrec abi 14 ([CC-CLANG]
+        # step 1) it is empty. Both pass -- what must never pass is a
+        # refusal for a cause nobody read, which the per-kind arm rejects.
+        ok("cc axis: every clang refusal at this pin has the ONE known cause "
+           "([CC-CLANG] step 1, fixed at pcrec abi 14)",
+           "%d refused (%s); %d agreed (%s)"
+           % (len(refused), ", ".join(refused) or "none",
+              len(agreed), ", ".join(agreed)))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # ---- 5. a whole cell per clang config, into a scratch store -------
+    scratch = os.path.join(ROOT, "build", "selfcheck-cc-store")
+    shutil.rmtree(scratch, ignore_errors=True)
+    for tid in ("pcrec-auto-clang", "pcrec-nocaps-clang", "pcrec-vm-clang"):
+        title = ("cc axis: %s runs one cell into a scratch store and "
+                 "validates" % tid)
+        proc = run([sys.executable, "-m", "pcrecbench", "run",
+                    "--subbench", "email", "--testee", tid,
+                    "--trials", "1", "--iters", "1", "--regimes", "match",
+                    "--force-unquiet", "--store", scratch, "--tier", "scratch",
+                    "--machine-id", "selfcheck-box", "--synthetic",
+                    "--quiet-output",
+                    "--note", "make check smoke -- NOT a measurement"],
+                   cwd=ROOT, timeout=1800)
+        if proc.returncode != 0:
+            bad(title, (proc.stderr or proc.stdout).strip()[-400:])
+            continue
+        m = re.search(r"^(\S+\.jsonl)$", proc.stdout, re.M)
+        stamped = ""
+        if m:
+            path = m.group(1)
+            if not os.path.isabs(path):
+                path = os.path.join(ROOT, path)
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    stamped = _json.loads(f.readline())["testee"]["testee_id"]
+            except (OSError, ValueError, KeyError):
+                stamped = ""
+        if stamped.endswith("_cc-clang"):
+            ok(title, "%s, %s" % (stamped, " ".join(proc.stdout.split()[-4:])))
+        else:
+            bad(title,
+                "the written record's testee_id is %r -- the cc token did "
+                "not reach the store" % stamped)
+
+
 def check_list_axes_registry():
     """THE FOURTH REGISTRY SURFACE, ARCHIVED AND CHECKED ([B18], pcrec I-15
     (5), registry.md 6). Two facts:
@@ -4089,6 +4460,7 @@ def main():
     check_kb1_runtime_options()
     check_mechanism_stamps()
     check_deny_flag_controls()
+    check_cc_axis()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()
