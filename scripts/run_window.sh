@@ -42,7 +42,9 @@
 #              `--dry-run` below sets exactly this combination for you.)
 #
 # --dry-run: the rehearsal mode spelled as a flag instead of three env
-# vars to remember -- sets EXTRA to include `--synthetic --force-unquiet`
+# vars to remember -- sets EXTRA to include `--synthetic --force-unquiet
+# --tier scratch` (the tier: a one-trial PINNED record is inconclusive-spread
+# by rule R-12 and would be re-measured; see below)
 # (appended to whatever EXTRA already had), TRIALS=1 unless already set,
 # and STORE to a scratch dir under build/ unless STORE was already
 # pointed somewhere under build/ or $PCRECBENCH_SCRATCH_STORE. Refuses to
@@ -105,6 +107,17 @@ if [ "$DRY_RUN" -eq 1 ]; then
   case " $EXTRA " in
     *" --force-unquiet "*) : ;;
     *) EXTRA="$EXTRA --force-unquiet" ;;
+  esac
+  # SCRATCH TIER, too (2026-09-01, [B26]'s rehearsal of the full suite): a
+  # PINNED record with fewer than five trials is `inconclusive-spread` by
+  # the status table's own rule (harness.py: "R empty, V n/a, pinned" --
+  # ruling R-12), so a one-trial rehearsal on a QUIET box exited 4 and was
+  # re-measured once per cell -- twice the rehearsal time to prove the same
+  # thing. At the scratch tier the same n/a verdict reads `measured` (E-2),
+  # which is what a rehearsal is: never a ranking input either way.
+  case " $EXTRA " in
+    *" --tier scratch "*) : ;;
+    *) EXTRA="$EXTRA --tier scratch" ;;
   esac
   EXTRA="${EXTRA# }"
   [ -n "$_trials_was_set" ] || TRIALS=1
