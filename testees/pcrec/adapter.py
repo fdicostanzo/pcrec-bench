@@ -135,6 +135,28 @@ absorbed two new VALUES and one new surface -- no new stamp, no abi bump:
                      THIRD registry archive target beside list_axes /
                      list_definitions.
 
+[B25] (pin a7e0bdf = pcrec abi 13, inbox I-27) absorbed one more:
+
+  abi 13 ([OPT-5])   `RX_DFA_SCAN_EDGE` on every artifact that CONTAINS a
+                     DFA scan -- the scan family's own iff, joined
+                     unchanged (match_api.md 6.3): HOW the scan tests the
+                     class of a SCAN EDGE, the address-only bounded-scan
+                     block that replaced a counted class run's interior
+                     states (STEP 1; the states are DELETED, so this is
+                     the first abi bump that moved a MACHINE and not only
+                     emitted text). `range` (contiguous class: subtract-
+                     and-compare, no memory but the subject) / `bitmap`
+                     (a 256-byte membership read, VALUE-addressed) /
+                     `mixed` (machines took both forms) / `none` (no
+                     collapsible run; `attempt` / `empty` scans; or
+                     denied). TWO registry axes (tuning.md 2.18, D82):
+                     `scan-edge` (per state -- what `-fno-scan-edge`,
+                     bit 21, denies) and `scan-body` (per edge -- what
+                     the stamp reports); `PCREC_MAX_SCAN_EDGES` (4)
+                     joined --list-limits (45 rows). No rx_info mirror
+                     (struct rx_info byte-identical 12 -> 13), so the
+                     shim floor stays 10.
+
 Two rules govern how they are read, and both exist because they were paid
 for on the pcrec side first:
 
@@ -335,6 +357,34 @@ METADATA_DECL = {
                        "offset-set values. A fact about the individual "
                        "MACHINE (free text), deliberately not folded into "
                        "dfa_prefilter's closed value set",
+    },
+    "dfa_scan_edge": {
+        "type": "enum", "scope": "pattern",
+        "values": ["none", "range", "bitmap", "mixed"],
+        "source": "<PREFIX>_DFA_SCAN_EDGE ([OPT-5] STEP 1, pcrec abi 13+), "
+                  "read through pb_dfa_scan_edge(); same scope as dfa_scan "
+                  "(every artifact that CONTAINS a DFA scan, VM hybrids "
+                  "included -- match_api.md 6.3: the iff joined unchanged); "
+                  "no rx_info mirror; the value set is CHECKED against "
+                  "`pcrec --list-axes` (axis `scan-body`)",
+        "description": "HOW that scan tests the class of a SCAN EDGE -- a "
+                       "maximal run of states differing only in how many "
+                       "bytes of ONE fixed class have been counted, "
+                       "replaced by a bounded cursor loop whose only "
+                       "loop-carried value is the cursor and DELETED from "
+                       "the transition table (tuning.md 2.18): `range` "
+                       "(every edge tests a contiguous byte range -- "
+                       "subtract-and-compare against two immediates), "
+                       "`bitmap` (at least one edge's class is not "
+                       "contiguous: a 256-byte membership read, addressed "
+                       "by the byte just read, never by a previous load's "
+                       "result), `mixed` (an artifact-level composition: "
+                       "its machines took both forms), `none` (no machine "
+                       "carries a collapsible run, an `attempt`/`empty` "
+                       "scan, or -fno-scan-edge). The stamp reports the "
+                       "`scan-body` axis; the companion `scan-edge` axis "
+                       "(per STATE: edge at all?) is the one the deny "
+                       "flag removes",
     },
     "dfa_match": {
         "type": "enum", "scope": "pattern",
@@ -663,7 +713,8 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "step_budget",
 #: [B16]: the driver printed it and `_metadata` had no line for it, so the
 #: unconditional engine stamp reached no record for five pins).
 STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
-             "dfa_prefilter_offsets", "dfa_match", "unroll_k_why",
+             "dfa_prefilter_offsets", "dfa_scan_edge", "dfa_match",
+             "unroll_k_why",
              "engine_sel", "vm_prefilter_lang", "vm_prefilter_lang_why")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
@@ -690,6 +741,7 @@ STAMP_SCOPE = {
     "dfa_prefilter":         ("dfa-scan", 6),
     "dfa_table":             ("dfa-scan", 7),
     "dfa_prefilter_offsets": ("dfa-scan", 9),
+    "dfa_scan_edge":         ("dfa-scan", 13),
     "dfa_match":             ("dfa",      10),
     "fast_frames":           ("vm",       5),
     "fast_trail":            ("vm",       5),
@@ -755,6 +807,13 @@ REGISTRY_STAMP_PAIRS = {
     # RX_UNROLL_K_WHY joins the checked macros -- a `predicate` axis, the
     # one-way check.
     "RX_UNROLL_K_WHY": "unroll_k_why",
+    # [B25] (abi 13, [OPT-5]): the `scan-body` axis enumerates all four
+    # values -- `range`/`bitmap` as `list` candidates, `none`/`mixed` as
+    # `predicate` outcome rows -- so both directions of the check cover
+    # the whole declared set. (The companion `scan-edge` axis carries no
+    # stamp_macro: it is the per-state selection `-fno-scan-edge` denies,
+    # and the deny-control row reads its flag spelling from it.)
+    "RX_DFA_SCAN_EDGE": "dfa_scan_edge",
 }
 
 #: The committed copy of `pcrec --list-definitions | grep -v '^#'` at the
@@ -772,7 +831,8 @@ LIST_DEFINITIONS_TSV = os.path.join(HERE, "list_definitions.tsv")
 #: The committed copy of `pcrec --list-limits` at the pin -- the SIXTH
 #: registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD
 #: archive target ([B22], inbox I-25): one row per numeric limit in pcrec's
-#: src/core/limits.def (44 at 263b013), in the table's own order. Nothing
+#: src/core/limits.def (44 at 263b013; 45 at a7e0bdf -- [OPT-5]'s
+#: PCREC_MAX_SCAN_EDGES joined), in the table's own order. Nothing
 #: this adapter reads depends on it (every cap and capacity it needs is
 #: STAMPED per artifact); archived under the same rule as the other two
 #: (re-archive at every re-pin, the diff is what moved) and diffed against

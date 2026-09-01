@@ -2,45 +2,34 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-263b013/build/pcrec --list-axes
+#     build/pcrec-a7e0bdf/build/pcrec --list-axes
 #
-# pcrec commit 263b013ac7bc2aae4e1a85305410003f12b918e3 (abi 12), archived by
+# pcrec commit a7e0bdfc3abf60056abee10d0f4ca4c2010da533 (abi 13), archived by
 # testees/pcrec/pin.sh on 2026-08-31 (PIN.tsv); captured 2026-08-31 by lane
-# b22repin ([B22]). 63 data rows / 21 axes / 12 columns -- the FOURTH
+# b25repin ([B25]). 69 data rows / 23 axes / 12 columns -- the FOURTH
 # registry surface (pcrec docs/spec/registry.md 6, [CHK-2]). The diff from
-# the 96e44c2 copy (54 / 21, [B19]) is NINE rows, no new axis:
+# the 263b013 copy (63 / 21, [B22]) is SIX rows in TWO NEW AXES ([OPT-5]
+# STEP 1, tuning.md 2.18 -- the mechanism modelled at D82's two levels),
+# inserted after the `match` axis; no existing row moved:
 #
-#   - `engine-route` 5 -> 7 rows: `declined-nullable` (order 3 -- [OPT-4.1],
-#     the nullability decline, the SIXTH route value) and `size-cap-retry`
-#     (order 6 -- [LIM-1], the [OPT-4] size rung's SUCCESS, replacing the
-#     `selected` mislabel O-8/O-10 flagged; distinct from
-#     `collapsed-prefilter`, the [SEL-1] state-cap rung's own success).
-#   - `size-term` 2 -> 7 rows, every row now carrying its `stamp_value`
-#     (option / denied / default / cap-rescue / size-model /
-#     capacity-declined / size-model-declined): [B18]'s documented gap
-#     (RX_UNROLL_K_WHY name-valued with no registry values) is CLOSED, and
-#     the `-fno-size-term` deny flag now sits on the `denied` row (order 2),
-#     no longer on order 1 -- the rows are in preference order of the
-#     SELECTOR, and an explicit --unroll=K (`option`) outranks everything.
-#   - `table` 2 -> 4 rows: the `none` / `mixed` OUTCOME rows (I-18 (iii)),
-#     each with its stamp_value -- adapter.REGISTRY_OUTCOME_VALUES' two
-#     entries are now registry rows (kind `predicate` beside the two `list`
-#     candidates).
+#   - `scan-edge` (2 rows: `scan-edge` / `table-walk`), per STATE: does
+#     this state emit a scan edge at all? Order 1 carries the deny flag
+#     `-fno-scan-edge` (PCREC_NO_SCAN_EDGE, bit 21) and NO stamp_macro --
+#     the stamp lives on the companion axis. `table-walk` is the always-
+#     available fallback (and everything under the deny flag).
+#   - `scan-body` (4 rows: `range` / `bitmap` as `list` candidates,
+#     `none` / `mixed` as `predicate` outcome rows), per EDGE: which
+#     run-extension body does the edge use? All four rows carry
+#     stamp_macro RX_DFA_SCAN_EDGE with their stamp_value, so
+#     `registry_check` covers the adapter's `dfa_scan_edge` enum in both
+#     directions with no REGISTRY_OUTCOME_VALUES exception.
 #
-# (Inbox I-23/I-25 expected 61/21 at fa01910 growing by "maybe one" row at
-# 263b013; measured 63 -- the reading is the list above, verbatim.)
-#
-# WHAT THIS FILE IS FOR: adapter.py's declared stamp value sets are CHECKED
-# against it (`registry_check`), and `make check-harness` diffs this copy
-# against the pin's live `--list-axes` output (tools/selfcheck.py,
-# `check_list_axes_registry`), so a candidate pcrec adds -- a new prefilter
-# form, a new match form, a new route token -- surfaces as a failing check
-# naming the value, not as the first record's X15 rejection. Re-archive at
-# every re-pin: the diff IS the list of what moved. The registry's own
-# boundary (registry.md 6): it proves what the compiler THINKS its axes
-# are; the artifacts `check_mechanism_stamps` reads are the independent
-# side. [B18]'s two known gaps are both closed at this pin (size-term
-# stamp_values, the table outcome rows -- pcrec [REG-SV]).
+# adapter.registry_check() checks the declared stamp value sets against
+# this file both ways; `make check-harness` diffs it against the pin's
+# live output (a re-pin that forgets to re-archive fails there, and the
+# diff is the list of what moved) and reads the deny/force flags'
+# SPELLINGS from it (check_deny_flag_controls finds each flag row by its
+# `cli_flag` cell within the axis).
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).
@@ -91,6 +80,12 @@ direction	2	reverse	both								always — finds where that match BEGINS
 direction	3	anchored	both								always on a DFA artifact that selects the unwrapped match-here form ([ENG-ABS]) — finds where the match beginning at ctx->pos ends
 match	1	unwrapped	list	RX_DFA_MATCH	unwrapped	PCREC_NO_ANCHORED_DFA	17			-fno-anchored-dfa	the artifact's own ENG_UNANCH _match, and its anchored machine built inside the DFA caps ([ENG-ABS])
 match	2	search-filter	list	RX_DFA_MATCH	search-filter						always (fallback) — ENG_ATTEMPT, the empty engine, an anchored machine over a cap, or the deny flag
+scan-edge	1	scan-edge	list			PCREC_NO_SCAN_EDGE	21			-fno-scan-edge	per STATE: src/opt/scanedge.c found a maximal run of states differing only in how many bytes of ONE class have been counted, rooted here, and DELETED the run's interior from the table -- so this state's edge is mandatory, not an accelerator ([OPT-5])
+scan-edge	2	table-walk	list								always (fallback) -- this state counts nothing, or the axis is denied and the pass left every state where it was
+scan-body	1	range	list	RX_DFA_SCAN_EDGE	range						the edge's class is a CONTIGUOUS byte set: subtract-and-compare against two immediates, no memory touched but the subject ([OPT-5])
+scan-body	2	bitmap	list	RX_DFA_SCAN_EDGE	bitmap						always (fallback) -- any other byte set, tested by a 256-byte membership table. The load is VALUE-addressed, not result-addressed, so the cursor is still the only loop-carried register. A per-ISA SIMD run-extension form would sit ABOVE these two ([OPT-SIMD]; ISA-neutral by ruling, scalar forms always the fallback)
+scan-body	3	none	predicate	RX_DFA_SCAN_EDGE	none						the artifact carries no scan edge, so there is no body to name: no machine has a collapsible counted run, or the engine is ENG_ATTEMPT (label dispatch, no table walk to shorten) or provably empty -- and it is also what every artifact stamps under -fno-scan-edge, which denies the scan-edge axis above rather than this one
+scan-body	4	mixed	predicate	RX_DFA_SCAN_EDGE	mixed						the artifact's own edges took DIFFERENT bodies (dfa_scan_edge_name(): one machine's edge tests a contiguous range, another's reads a membership table) -- a per-artifact composition, never a single edge's own selection
 possessify	1	possessive	predicate	RX_VM_STRATS	PCREC_VM_STRAT_POSSESSIVE	PCREC_NO_POSSESSIFY	4			-fno-possessify	per A_REP: possessify.c proves the loop's body can never profitably re-enter
 possessify	2	backtracking	predicate	RX_VM_STRATS	PCREC_VM_STRAT_BACKTRACKING						always (fallback)
 revdet	1	revdet	predicate	RX_VM_RUNGS	PCREC_VM_RUNG_REVDET	PCREC_NO_REVDET	5			-fno-revdet	per A_REP: forward unique-iteration lets the body run backward with no choice points

@@ -50,7 +50,10 @@
  * `RX_ENGINE_SEL` and the two `_VM_PREFILTER_LANG*` macros have no
  * rx_info mirror, so an abi-10/11 artifact still links and records them
  * as "not stamped" -- and the adapter's scope table says at which abi that
- * absence stops being legitimate.
+ * absence stops being legitimate. Nor abi 13's ([B25]): `RX_DFA_SCAN_EDGE`
+ * is a macro with no rx_info mirror (struct rx_info is byte-identical
+ * between abi 12 and 13 -- MEASURED at the a7e0bdf re-pin), read through
+ * #ifdef like the rest, so the floor stays 10.
  *
  * THE THREE STAMP FAMILIES THIS FILE READS, and the rule for each
  * (match_api.md 6.3's (a)/(b) split, tuning.md 3):
@@ -59,13 +62,18 @@
  *       engines produce, since abi 4. Read as a string and CROSS-CHECKED
  *       against `rx_info.engine`'s integer by the adapter.
  *   (a) SELECTION, per-MECHANISM: `RX_DFA_SCAN` / `RX_DFA_PREFILTER`
- *       (abi 4; extended to VM hybrids at abi 6), `RX_DFA_TABLE` (abi 7)
- *       and `RX_DFA_PREFILTER_OFFSETS` (abi 9, [OPT-K]: WHICH offsets the
+ *       (abi 4; extended to VM hybrids at abi 6), `RX_DFA_TABLE` (abi 7),
+ *       `RX_DFA_PREFILTER_OFFSETS` (abi 9, [OPT-K]: WHICH offsets the
  *       offset-set filter tests, `"0,8*,13"`, or `"none"` on every other
- *       prefilter value). Present IFF the artifact CONTAINS a DFA scan --
- *       every DFA artifact and every VM HYBRID, and no other artifact.
- *       `rx_info.scan` / `.prefilter` are the runtime mirrors of the first
- *       two.
+ *       prefilter value) and `RX_DFA_SCAN_EDGE` (abi 13, [OPT-5] STEP 1,
+ *       [B25]: HOW the scan tests the class of a SCAN EDGE -- a maximal
+ *       run of states differing only in how many bytes of one fixed
+ *       class have been counted, replaced by a bounded cursor loop and
+ *       DELETED from the transition table -- `"range"` /  `"bitmap"` /
+ *       `"mixed"` / `"none"`, tuning.md 2.18). Present IFF the artifact
+ *       CONTAINS a DFA scan -- every DFA artifact and every VM HYBRID,
+ *       and no other artifact. `rx_info.scan` / `.prefilter` are the
+ *       runtime mirrors of the first two.
  *   (a) SELECTION, per-ENTRY: `RX_DFA_MATCH` (abi 10, [ENG-ABS]) --
  *       `"unwrapped"` (a third, anchored forward machine run from
  *       ctx->pos) or `"search-filter"` (the unanchored search with
@@ -358,6 +366,29 @@ const char *pb_dfa_table(void) {
 const char *pb_dfa_prefilter_offsets(void) {
 #ifdef RX_DFA_PREFILTER_OFFSETS
     return RX_DFA_PREFILTER_OFFSETS;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* [OPT-5] STEP 1, abi 13 ([B25]). HOW the scan tests the class of a SCAN
+ * EDGE -- the address-only bounded-scan block that replaced a counted
+ * class run's interior states (tuning.md 2.18): "range" (every edge tests
+ * a contiguous byte range -- subtract-and-compare against two immediates,
+ * no memory touched but the subject), "bitmap" (at least one edge's class
+ * is not contiguous, so its test is a 256-byte membership read -- VALUE-
+ * addressed, never result-addressed, so the cursor is still the only
+ * loop-carried register), "mixed" (an ARTIFACT-level composition: its
+ * machines took both forms), "none" (no machine carries a collapsible
+ * run; an `attempt` or `empty` scan; or -fno-scan-edge). Same scope as
+ * the scan family above (every artifact that CONTAINS a DFA scan, hybrids
+ * included -- match_api.md 6.3 says the iff joins unchanged); no rx_info
+ * mirror. The stamp names the `scan-body` axis's chosen object; the
+ * companion `scan-edge` axis (per state: edge at all?) is what
+ * -fno-scan-edge denies. */
+const char *pb_dfa_scan_edge(void) {
+#ifdef RX_DFA_SCAN_EDGE
+    return RX_DFA_SCAN_EDGE;
 #else
     return (const char *)0;
 #endif

@@ -49,9 +49,9 @@
  * WHAT IS PRINTED FOR THE MECHANISM STAMPS, and the rule none of it breaks
  * (pcrec I-5): NOTHING IS EVER INFERRED FROM A STAMP'S ABSENCE. Each of
  * `info dfa_scan / dfa_prefilter / dfa_table / dfa_prefilter_offsets /
- * dfa_match / fast_frames / fast_trail / unroll_k / unroll_k_why /
- * max_emit_code_bytes / max_emit_bytes / engine_sel / vm_prefilter_lang /
- * vm_prefilter_lang_why` is printed only when the artifact
+ * dfa_scan_edge / dfa_match / fast_frames / fast_trail / unroll_k /
+ * unroll_k_why / max_emit_code_bytes / max_emit_bytes / engine_sel /
+ * vm_prefilter_lang / vm_prefilter_lang_why` is printed only when the artifact
  * stamps it, and a consumer of these lines reads a MISSING line as "not
  * stamped" and nothing else -- never as "DFA", never as "not a hybrid". The
  * two facts that ARE readable from an absence are the spec's own iffs and
@@ -103,6 +103,7 @@ static const char *(*pb_dfa_scan)(void);
 static const char *(*pb_dfa_prefilter)(void);
 static const char *(*pb_dfa_table)(void);
 static const char *(*pb_dfa_prefilter_offsets)(void);
+static const char *(*pb_dfa_scan_edge)(void);
 static const char *(*pb_dfa_match)(void);
 static const char *(*pb_info_match_form)(void);
 static int       (*pb_has_unroll_k)(void);
@@ -312,7 +313,8 @@ int main(int argc, char **argv) {
     SYM(pb_shim_min_abi); SYM(pb_info_scan); SYM(pb_info_prefilter);
     SYM(pb_has_dfa_stamps); SYM(pb_dfa_scan); SYM(pb_dfa_prefilter);
     SYM(pb_dfa_table);
-    SYM(pb_dfa_prefilter_offsets); SYM(pb_dfa_match); SYM(pb_info_match_form);
+    SYM(pb_dfa_prefilter_offsets); SYM(pb_dfa_scan_edge);
+    SYM(pb_dfa_match); SYM(pb_info_match_form);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -398,11 +400,15 @@ int main(int argc, char **argv) {
     if (pb_has_dfa_stamps()) {
         const char *ds = pb_dfa_scan(), *dp = pb_dfa_prefilter();
         const char *dt = pb_dfa_table(), *dofs = pb_dfa_prefilter_offsets();
+        const char *dse = pb_dfa_scan_edge();
         if (ds) printf("info\tdfa_scan\t%s\n", ds);
         if (dp) printf("info\tdfa_prefilter\t%s\n", dp);
         if (dt) printf("info\tdfa_table\t%s\n", dt);
         /* [OPT-K], abi 9: same scope as the three above. */
         if (dofs) printf("info\tdfa_prefilter_offsets\t%s\n", dofs);
+        /* [OPT-5], abi 13: same scope again (match_api.md 6.3: the scan
+         * edge "joins that iff unchanged"). */
+        if (dse) printf("info\tdfa_scan_edge\t%s\n", dse);
     }
 
     /* [ENG-ABS], abi 10: the `_match` ENTRY's form. NOT gated on

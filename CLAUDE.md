@@ -138,7 +138,7 @@ grp-upto-1024 ≡ cls-upto-1024, year4 was the bench's own shim bytes
 Next: [B23] (spread-rule positive control) and [B24] (cc axis) are
 unblocked awaiting Frank; [B11.2] wide alternations; [B13] the
 interpreter is chartered. `make check`
-is green (4/72/0, 185/185, 59 reporter tests — re-verified at [B22]'s
+is green (4/72/0, 187/187, 59 reporter tests — re-verified at [B25]'s
 re-pin). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
@@ -220,8 +220,8 @@ bindings) live here, vendored or system, pinned either way.
   `make check`'s generic gates enumerate `bench/*/` rather than naming a
   set. See their CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
-  (auto, nocaps, vm, the `-in` variants, at a pinned commit — 263b013,
-  abi 12 — with `list_axes.tsv`, `list_definitions.tsv` and
+  (auto, nocaps, vm, the `-in` variants, at a pinned commit — a7e0bdf,
+  abi 13 — with `list_axes.tsv`, `list_definitions.tsv` and
   `list_limits.tsv`, the pin's `--list-axes` / `--list-definitions` /
   `--list-limits` registry surfaces archived
   verbatim; and `pcrec-local`, a PROVIDED binary at no pin).
@@ -249,7 +249,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 185 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 187 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -308,6 +308,17 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # list_limits.tsv (the third registry archive)
                         # diffed against the pin, and the declined {0,32768}
                         # same-pin emit-size re-comparison
+                        # and ([B25], pin a7e0bdf, abi 13) dfa_scan_edge by
+                        # value on every stamp/ledger case (range down to
+                        # the one-state [0-9]+ form; bitmap on ipv6; none
+                        # on attempt/empty and untaken runs; absent where
+                        # no DFA scan -- four _DFA_* pairs both directions),
+                        # the 16384 rung re-derived as the [OPT-5] collapse
+                        # (724,699 warning -> 16,352 silent; warned pair
+                        # asserted ABSENT), the -fno-scan-edge deny row
+                        # (the warning returns -- the warn-capture positive
+                        # witness), and the 65535 NFA-cap refusal asserted
+                        # unchanged by name
                         # and ([B20], schema v1.4) the gate's shape: the
                         # target-core pre-flight on synthetic captures
                         # (busy / idle / row ABSENT, each refusal BY NAME,
