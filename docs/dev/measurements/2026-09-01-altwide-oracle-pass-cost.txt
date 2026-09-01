@@ -1,0 +1,87 @@
+2026-09-01 — bench/altwide ([B11.2]): the ORACLE's own per-pass cost over the
+set's own subjects, as the sizing input for NOTES.md's cell-time estimate.
+
+WHAT THIS IS. One pass per (pattern, regime) through `pcrecbench.oracle_pcre2`
+— libpcre2 10.46, the INTERPRETER, no JIT — over `bench/altwide`'s 38 short
+subjects and 4 throughput subjects, at the pattern set committed in
+bench/altwide@0.1. `match` is anchored+end-anchored at offset 0, `search_short`
+is unanchored at offset 0, `throughput` is find-all; the same three semantics
+`pcrecbench/expectations.py` derives the expectations under.
+
+WHAT THIS IS NOT. A measurement. It ran on a box carrying another session's
+battery (load average 6.7-8.0 on 12 cores, `uptime` before and after), with no
+quiet gate, no repetition and no spread, and it is one pass rather than a
+median of five. It is an UPPER BOUND on an interpreter's per-pass cost, used
+to size a cell and to choose the throughput subjects' byte counts. Nothing
+here is a number to compare an engine against; the store is where those live.
+
+WHY IT WAS RUN. The set's throughput subjects were 1 MB in the first design
+(plan row [B11.2]'s "1 MB-class prose"). The question the probe answers is
+whether a backtracking testee's throughput trial would sit on the harness's
+20 s per-trial cap at that size — the arithmetic said yes and this says by how
+much, which is how the subjects came to be 128 KB and 512 KB
+(bench/altwide/NOTES.md, "Cell-time estimate, and what was cut").
+
+SOURCE: the probe script, run as
+  python3 <this script>
+with the repo root on sys.path. Reproduced verbatim below the numbers.
+
+pattern     compile_s    match_s   search_s     tput_s
+w-8            0.0001     0.0002     0.0004     0.0455
+w-64           0.0001     0.0002     0.0049     0.6531
+w-256          0.0002     0.0003     0.0107     3.2128
+w-512          0.0003     0.0004     0.0400     6.1085
+w-1024         0.0004     0.0003     0.0388    12.7155
+w-2048         0.0008     0.0005     0.0828    24.6766
+s-2048         0.0007     0.0008     0.1406    22.6024
+s-4096         0.0012     0.0016     0.2140    44.2776
+sh1-64         0.0001     0.0001     0.0003     0.0381
+sh1-512        0.0003     0.0002     0.0014     0.2751
+pfx3-512       0.0003     0.0002     0.0012     0.2985
+sfx-64         0.0001     0.0002     0.0026     0.7264
+sfx-512        0.0003     0.0002     0.0196     5.6732
+nar4-64        0.0001     0.0001     0.0007     0.1911
+nar4-512       0.0003     0.0002     0.0075     1.1320
+srt-512        0.0002     0.0003     0.0240     6.1382
+ci-512         0.0002     0.0003     0.0334     7.7956
+cnt-64         0.0001     0.0003     0.0036     0.7008
+wb-512         0.0002     0.0003     0.0048     0.8773
+floor          0.0000     0.0002     0.0002     0.0001
+TOTAL          0.0058     0.0069     0.6315   138.1386
+
+READING. `search_short` and `match` are one pass over all 38 subjects;
+`throughput` is one find-all pass over all four (896 KB in total). The
+throughput column is the whole cost of a backtracking cell: 138 s for one
+pass over twenty patterns, of which s-4096 alone is 44 s and the four
+widest rungs are 104 s. The short regimes together are 0.64 s.
+
+--- the script, verbatim ---
+"""Design-time timing probe: how long ONE pass costs the ORACLE (libpcre2,
+interpreter, no JIT) per pattern per regime, over this set's own subjects.
+Not a measurement in the pinned sense -- a sizing input for the cell-time
+estimate, run on a box whose load is not controlled."""
+import sys, time
+sys.path.insert(0,'/home/duxevents/pcrec-bench/worktrees/b112alt')
+from pcrecbench.subbench import load
+from pcrecbench import oracle_pcre2 as oracle
+sb = load('/home/duxevents/pcrec-bench/worktrees/b112alt/bench/altwide')
+short = sb.subjects_for('search_short')
+tput  = sb.subjects_for('throughput')
+sb_bytes = {s.subject_id: sb.subject_bytes(s.subject_id) for s in short+tput}
+print("%-10s %10s %10s %10s %10s" % ("pattern","compile_s","match_s","search_s","tput_s"))
+tot = {"c":0.0,"m":0.0,"s":0.0,"t":0.0}
+for p in sb.patterns:
+    txt = sb.pattern_bytes(p.name)
+    t0=time.perf_counter(); rx=oracle.compile(txt); c=time.perf_counter()-t0
+    t0=time.perf_counter()
+    for s in short: rx.match(sb_bytes[s.subject_id],0)
+    m=time.perf_counter()-t0
+    t0=time.perf_counter()
+    for s in short: rx.search(sb_bytes[s.subject_id],0)
+    se=time.perf_counter()-t0
+    t0=time.perf_counter()
+    for s in tput: rx.find_all(sb_bytes[s.subject_id])
+    tp=time.perf_counter()-t0
+    print("%-10s %10.4f %10.4f %10.4f %10.4f"%(p.name,c,m,se,tp))
+    tot["c"]+=c; tot["m"]+=m; tot["s"]+=se; tot["t"]+=tp
+print("%-10s %10.4f %10.4f %10.4f %10.4f"%("TOTAL",tot["c"],tot["m"],tot["s"],tot["t"]))
