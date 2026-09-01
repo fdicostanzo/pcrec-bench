@@ -472,6 +472,53 @@ and its note:
   clause), and `_classify_v9_diff` skips the CURRENT version line
   instead of a hard-coded `v9`. 59 tests, count unchanged.
 
+## The reporter, [B28] (2026-09-01) -- KB-5's `--testee` roster filter, KB-6's `edge=` clause (v11)
+
+Two independent reporter-only fixes, one wave (docs/dev/known_issues.md
+KB-5, KB-6):
+
+- **KB-5 -- `--testee TESTEE_ID`.** Repeatable, exact match on the
+  literal `testee.testee_id` (same spelling as `run --testee`), OR'd
+  within its own occurrences and AND'd with every other filter -- same
+  shape as `--where`. Lets a committed query name its roster explicitly
+  (`--testee pcrec_a7e0bdf_auto-caps-simdna --testee
+  libpcre2_10.46_jit-caps-simdna`) instead of relying on a
+  `--since`/`--until` range that cannot express "this pin OR that
+  unpinned baseline" -- the gap the loglines@0.1 AFTER-at-263b013 report
+  hit (KB-5's own history). Deliberately UNLIKE every other filter here:
+  an id matching NO record anywhere in the loaded store (checked before
+  any other filter narrows the selection) is a REFUSAL naming the
+  unknown id(s) and the known ones, not a silently empty report --
+  `--subbench nope` still narrows to nothing. Printed in the Query
+  header as one `testee=<id>` line per occurrence.
+- **KB-6 -- `edge=<range|bitmap|mixed|none>`.** pcrec abi 13's
+  `RX_DFA_SCAN_EDGE` ([OPT-5] STEP 1, pin a7e0bdf) on the legend line,
+  right after the `dfa: scan=... prefilter=... table=... [offsets=...]`
+  composite clause -- the SAME scope (`dfa-scan`: every artifact whose
+  DFA scan is stamped, VM hybrids included) rather than `dfa_match`'s
+  narrower dfa-only scope, so it sits beside `offsets=` rather than
+  among the VM-only `K=`/`caps=` pair. Conditional (no clause on a
+  forced-VM artifact, a non-hybrid VM artifact, or a pre-abi-13 record).
+  A legend note names the four values, printed once under the lines that
+  carry the clause. KB-6's own closing question -- whether the value
+  belongs in the `sel=` fallback bucket or the [B16] R1-R8 ranking-group
+  bucketing -- is answered as a RECOMMENDATION only (report.py's module
+  docstring, "[B28]" section): scan-edge is a mechanism FACT independent
+  of whether selection fell back, and the wave takes no bucketing
+  action; a future finding that wants rows grouped by scan-edge shape is
+  a new ruling, not a rendering change.
+- `REPORTER_VERSION` bumps to `v11 (2026-09-01)`; every committed report
+  under `reports/` regenerated -- see `reports/CLAUDE.md`. KB-5 is
+  additive (no committed query used `--testee`, so no report's rendering
+  moves from it alone); KB-6 changes the twelve `pcrec_a7e0bdf` reports'
+  mechanism legends and adds the new note.
+- Two new tests (`test_testee_filter_kb5`, `test_dfa_scan_edge_legend_kb6`),
+  each with the shape's controls: KB-5's narrow/OR/AND/unknown-id-refusal/
+  known+unknown-mix cases; KB-6's DFA-artifact firing case, the VM-hybrid
+  case (edge present, no `match=`), the forced-VM control (no scope, no
+  clause), the abi-12 control (no pair), and the note's presence/absence.
+  61 total (`pcrecbench/tests/CLAUDE.md`).
+
 ## The reporter, [B12] R10 (2026-08-29) -- a did-not-compile cell is not-ranked, not invisible
 
 M1 close item (docs/dev/plan.md row [B12], "[ADDED 2026-08-28]"; lane
