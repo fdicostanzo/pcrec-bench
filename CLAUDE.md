@@ -135,8 +135,23 @@ docs/dev/ledgers/2026-08-31-opt41-after-263b013.md; outbox O-11:
 is candidate 1; bounded@0.2 is its 9-rung acceptance surface),
 grp-upto-1024 ≡ cls-upto-1024, year4 was the bench's own shim bytes
 (ELF page alignment), five asks; W1.2 unblocked. [B21]/[B22] archived.
-Next: [B23] (spread-rule positive control) and [B24] (cc axis) are
-unblocked awaiting Frank; [B11.2] wide alternations; [B13] the
+THE SAME NIGHT, [B25]: pcrec shipped that rank-1 candidate within
+hours (I-27, pin **a7e0bdf**, abi 13) and the whole cycle ran to
+acceptance — re-pin a8a2d1f (`RX_DFA_SCAN_EDGE` by value with the
+`-fno-scan-edge` deny control; registries 69/23 / 50 / 45; shim floor
+stays 10, rx_info byte-identical), the 4/4 window, the cross-pin
+acceptance report, and the ledger
+(docs/dev/ledgers/2026-08-31-opt5-step1-acceptance-a7e0bdf.md):
+**[OPT-5] STEP 1 ACCEPTED on both axes at all nine rungs** — letters
+3.65-6.05 → 1.76-2.00 (64/128 better than predicted), digits held
+(entry cost ×1.04-1.06, inside the stated 1.08), the "8192 inversion"
+REFUTED as a cross-pin vs-best mis-reading (reader's caveat in
+reports/CLAUDE.md), the search band a ×1.69-2.24 bonus, the
+whole-form ladder NOT collapsed (edge=none — asks); outbox O-12
+(4d7dc4f, five asks incl. the two-pass charter). [B25] archived;
+KB-5/KB-6 queue the next reporter wave.
+Next (I-28's cleared order): [B23] (spread-rule positive control),
+[B24] (cc axis), [B11.2] wide alternations; [B13] the
 interpreter is chartered. `make check`
 is green (4/72/0, 187/187, 59 reporter tests — re-verified at [B25]'s
 re-pin). Manager sessions start with the
