@@ -16,6 +16,48 @@ immediately after a regeneration — the reporter is deterministic, so a
 non-empty diff after a bare rerun (no query change, no reporter change)
 means either the store changed or the reporter regressed determinism.
 
+**[B28] (2026-09-01) regenerated every report below against reporter
+`v11 (2026-09-01)` — KB-5's `--testee` roster filter, KB-6's `edge=`
+clause** (docs/dev/known_issues.md KB-5, KB-6). Same queries as before,
+byte for byte (each file's own header query), with ONE deliberate
+exception explained below. The diff on every file is the version line
+(`v10` → `v11`); on the three `pcrec_a7e0bdf` bounded@0.2 files
+(`2026-08-31-bounded-0.2-*-after-a7e0bdf.*`) it is ALSO the new `edge=`
+clause on every `pcrec_a7e0bdf` legend line plus its legend note (110
+lines changed on each `.md`, 3 on the `.tsv` — the KB-6 `compile_stamp`
+row) — no number, ranking, verdict or other legend fact moved. Every
+other file's diff is the version line alone. Classified per file by
+`git diff --numstat` against the expected shape (2/2 for a bare version
+bump; the a7e0bdf trio's larger, expected counts); zero unexplained
+lines.
+
+THE ONE EXCEPTION: regenerating `2026-08-30-loglines-0.1-budu-ryzen1600-
+after-96e44c2.{md,subject-grain.md,tsv}` from its LITERAL committed
+query (`subbench=loglines, version=0.1, since=2026-08-30T11:00:00Z` --
+an OPEN upper bound) picked up two records this file never had: the
+`pcrec_263b013` loglines KEEP-arm rows the 263b013 window measured the
+NEXT day (`20260831T175140Z`/`20260831T180012Z`), which also satisfy
+`since=2026-08-30T11:00:00Z` and were not yet in the store the last time
+this file was rendered. That is real STORE GROWTH unrelated to this
+wave's rendering rules — exactly the failure mode KB-5 exists to fix
+(a `since`-only query has no ceiling, so it silently absorbs whatever
+the store gains later), caught here reproducing on an OLDER report
+than the one KB-5's own history names. Folding those two records in
+under a bare version-bump regen would have violated this file's own
+rule ("the ONLY diffs must be the version line") by smuggling in a
+real content change, and would have quietly turned a single-pin AFTER
+report into a second, undocumented cross-pin one. FIXED by using KB-5's
+own new flag: the three files' query now ALSO carries the six
+`--testee` values the original committed content named (unchanged
+roster, explicit instead of implicit), so their diff is back to the
+version line plus the query header's own `testee=` echo (3 lines
+changed on the `.md`/`.subject-grain.md`, 1 on the `.tsv` — the header
+comment). The three files' own header query line now reads the full
+explicit roster; every other `since`-only or `until`-only report in
+this directory was checked against today's store and confirmed stable
+(no candidate file count / record count drift) before being classified
+clean above.
+
 **[B22] (2026-08-31) regenerated every report below against reporter
 `v10 (2026-08-31)` — the VALUE-only fallback bucket** (pcrec pin 263b013;
 inbox I-25: pcrec's [LIM-1] gave the size-cap rescue its own

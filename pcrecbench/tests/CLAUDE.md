@@ -219,6 +219,18 @@ which is expected and not a bug in this suite.
   pins v10; `_classify_v9_diff` skips whatever the CURRENT version line
   is instead of a hard-coded `v9` (the classifier is not re-edited at
   every bump).
+  **[B28] additions (2026-09-01, 2 new tests, 61 total; KB-5/KB-6)**:
+  `test_testee_filter_kb5` (a single id narrows; two occurrences OR; a
+  known id AND'd with an excluding `--until` narrows to nothing with no
+  error; an unknown id refuses naming it and a known id for contrast; a
+  known+unknown mix still refuses, naming only the unknown one) and
+  `test_dfa_scan_edge_legend_kb6` (`edge=` fires right after the `dfa:`
+  clause on a DFA artifact; a VM hybrid carries `edge=` with no `match=`
+  beside it -- the dfa-scan vs dfa-only scope distinction; CONTROL 1 a
+  forced-VM artifact has neither scope nor clause; CONTROL 2 an abi-12
+  record carries no pair; the legend note's presence on a table that
+  carries the clause and absence on one that does not).
+  `test_reporter_version_pin` pins v11.
 - `fixtures/` -- the synthetic store this suite reads. See its own
   CLAUDE.md.
 - `__init__.py` -- makes this a package so

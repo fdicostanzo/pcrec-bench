@@ -624,6 +624,66 @@ def test_subbench_and_version_filters():
     _check(not rd_wrong.included, "an unmatched --subbench should select nothing")
 
 
+def test_testee_filter_kb5():
+    """KB-5 (docs/dev/known_issues.md), fixed [B28]: a repeatable
+    `--testee TESTEE_ID` filter -- OR within its own occurrences, AND'd
+    with every other filter (same shape as `--where`) -- so a committed
+    query can name its roster explicitly instead of relying on a
+    `--since`/`--until` range that cannot express "this pin OR that
+    testee". Deliberately UNLIKE `--subbench`/`--where` (see
+    `test_subbench_and_version_filters`, `test_where_filter_dotted_path`
+    above): an id matching NO record anywhere in the loaded store is a
+    REFUSAL naming it, not an empty report."""
+    loaded, _paths, _source = _load_store(STORE)
+
+    # one id narrows to that testee alone, named in the query header
+    args = _args(store=STORE, include_synthetic=True, testee=[TESTEE_A])
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    testees_present = {tid for (_sb, tid, *_r), (_t, _red) in rd.match_cells.items()}
+    _check(testees_present == {TESTEE_A},
+           f"--testee {TESTEE_A!r} should isolate that testee only, got {testees_present}")
+    _check(f"testee={TESTEE_A}" in rd.query_desc,
+           f"the query header must name the filter: {rd.query_desc}")
+
+    # two occurrences OR together
+    args_or = _args(store=STORE, include_synthetic=True, testee=[TESTEE_A, TESTEE_B])
+    rd_or, err_or = report.build_report(loaded, args_or)
+    _check(err_or is None, f"unexpected refusal: {err_or}")
+    testees_or = {tid for (_sb, tid, *_r), (_t, _red) in rd_or.match_cells.items()}
+    _check(testees_or == {TESTEE_A, TESTEE_B},
+           f"two --testee occurrences should OR together, got {testees_or}")
+
+    # AND'd with --until: a known id excluded by the date range narrows
+    # to nothing -- an ordinary empty report, since the id ITSELF is known
+    args_until = _args(store=STORE, include_synthetic=True, testee=[TESTEE_A],
+                       until="2000-01-01")
+    rd_until, err_until = report.build_report(loaded, args_until)
+    _check(err_until is None, f"unexpected refusal: {err_until}")
+    _check(not rd_until.included,
+           "--testee AND'd with an excluding --until narrows to nothing, no error")
+
+    # an unknown id: a clear refusal naming it, not an empty report
+    args_bad = _args(store=STORE, include_synthetic=True, testee=["nonexistent-testee-id"])
+    rd_bad, err_bad = report.build_report(loaded, args_bad)
+    _check(rd_bad is None and err_bad is not None,
+           "an unknown --testee id must refuse, not silently report empty")
+    _check("nonexistent-testee-id" in err_bad,
+           f"the refusal must name the unknown id verbatim: {err_bad!r}")
+    _check(TESTEE_A in err_bad,
+           f"the refusal should also list a known id, to help the typo be found: {err_bad!r}")
+
+    # one known id + one unknown id: still a refusal (an OR does not
+    # rescue a typo), naming only the id that is actually unknown
+    args_mixed = _args(store=STORE, include_synthetic=True,
+                       testee=[TESTEE_A, "nonexistent-testee-id"])
+    rd_mixed, err_mixed = report.build_report(loaded, args_mixed)
+    _check(rd_mixed is None and err_mixed is not None,
+           "a mix of a known and an unknown --testee id must still refuse")
+    _check("nonexistent-testee-id" in err_mixed,
+           f"the refusal must name the unknown one: {err_mixed!r}")
+
+
 def test_synthetic_excluded_by_default():
     loaded, _paths, _source = _load_store(STORE)
     args = _args(store=STORE, include_synthetic=False)
@@ -1687,16 +1747,19 @@ def test_reporter_version_pin():
     per-record `agreement:` line, which render on every existing record)
     took it to v9; [B22] (the value-only fallback bucket: the legend
     NOTE's wording changes on every report that prints a `sel=` clause,
-    twelve committed files) took it to v10."""
-    _check(report.REPORTER_VERSION == "v10 (2026-08-31)",
-           f"expected REPORTER_VERSION == 'v10 (2026-08-31)', got {report.REPORTER_VERSION!r}")
+    twelve committed files) took it to v10; [B28] (KB-6's `edge=` clause
+    and its note, rendering differently on the twelve `a7e0bdf` reports'
+    mechanism legends -- KB-5's `--testee` filter is additive and moves
+    nothing by itself) took it to v11."""
+    _check(report.REPORTER_VERSION == "v11 (2026-09-01)",
+           f"expected REPORTER_VERSION == 'v11 (2026-09-01)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v10 (2026-08-31)" in md, f"expected the v10 header line:\n{md[:200]}")
+    _check("reporter: v11 (2026-09-01)" in md, f"expected the v11 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v10 (2026-08-31)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v11 (2026-09-01)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
 
 
 def test_did_not_compile_ranking_line_r10():
@@ -2117,6 +2180,78 @@ def test_b19_size_term_and_caps_in_legend():
     md_d = report.render_markdown(rd_d)
     _check("K=" not in md_d and "K = pcrec's" not in md_d,
            f"a DFA-only table has neither the clause nor the note:\n{md_d}")
+
+
+def test_dfa_scan_edge_legend_kb6():
+    """KB-6 (docs/dev/known_issues.md), fixed [B28]: pcrec abi 13's
+    `RX_DFA_SCAN_EDGE` ([OPT-5] STEP 1) renders as `edge=<value>`
+    directly after the `dfa: scan=... prefilter=... table=...
+    [offsets=...]` composite clause -- the SAME scope as that clause and
+    as `offsets=` (`dfa-scan`: every artifact whose DFA scan is stamped,
+    VM hybrids included, testees/pcrec/adapter.py's `STAMP_SCOPE`), not
+    `dfa_match`'s narrower dfa-only scope."""
+    dfa13 = {"abi": 13, "engine": "dfa", "dfa_scan": "unanchored",
+             "dfa_prefilter": "byte-class", "dfa_prefilter_offsets": "none",
+             "dfa_table": "premultiplied", "dfa_match": "unwrapped",
+             "dfa_scan_edge": "range"}
+    _check(report._dfa_scan_edge_display(dfa13) == "range",
+           f"edge clause, got {report._dfa_scan_edge_display(dfa13)!r}")
+    line = report._testee_legend_line("pcrec_a7e0bdf_auto-caps-simdna", dfa13)
+    _check("table=premultiplied offsets=none, edge=range, match=unwrapped" in line,
+           f"edge sits right after the dfa: clause and before match=, got {line!r}")
+
+    # a VM HYBRID carries the pair too (dfa-scan scope, not dfa-only --
+    # it has no dfa_match, which IS dfa-only, so edge= appears with no
+    # match= clause beside it).
+    hybrid13 = {"abi": 13, "engine": "vm", "prefilter": "hybrid",
+                "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
+                "dfa_prefilter_offsets": "none", "dfa_table": "premultiplied",
+                "dfa_scan_edge": "bitmap"}
+    _check(report._dfa_scan_edge_display(hybrid13) == "bitmap",
+           "a VM hybrid must carry the pair too")
+    hline = report._testee_legend_line("t", hybrid13)
+    _check("edge=bitmap" in hline and "match=" not in hline,
+           f"a hybrid carries edge= with no match= clause, got {hline!r}")
+
+    # CONTROL 1: a forced-VM artifact (no prefilter at all, no DFA scan)
+    # has no dfa-scan scope and stamps no edge.
+    forced_vm = {"abi": 13, "engine": "vm", "prefilter": "none"}
+    _check(report._dfa_scan_edge_display(forced_vm) is None,
+           "a forced-VM artifact carries no DFA scan and stamps no edge")
+    fline = report._testee_legend_line("t", forced_vm)
+    _check("edge=" not in fline, f"no edge clause on a forced-VM artifact, got {fline!r}")
+
+    # CONTROL 2: a pre-abi-13 DFA record (abi 12) renders unchanged.
+    old = {"abi": 12, "engine": "dfa", "dfa_scan": "unanchored",
+           "dfa_prefilter": "byte-class", "dfa_prefilter_offsets": "none",
+           "dfa_table": "premultiplied", "dfa_match": "unwrapped"}
+    _check(report._dfa_scan_edge_display(old) is None,
+           "an abi-12 record carries no dfa_scan_edge pair")
+    oline = report._testee_legend_line("t", old)
+    _check("edge=" not in oline, f"an abi-12 legend line is unchanged, got {oline!r}")
+
+    # THE NOTE: printed under a compile table whose legend carries edge=,
+    # and ABSENT from a table whose legend never does.
+    setup = _mini_setup("pcrec_a7e0bdf_auto-caps-simdna")
+    row = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+           "compile_outcome": "compiled", "cost_class": "compiled-aot",
+           "cost": {"total_ns": 1000,
+                    "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                               {"name": "gcc", "elapsed_ns": 500},
+                               {"name": "load", "elapsed_ns": 100}]},
+           "artifact_bytes": 30000, "engine_metadata": dfa13}
+    rd, err = report.build_report([_mk_loaded("e.jsonl", setup, [row])],
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("edge=range" in md and "edge = pcrec's `RX_DFA_SCAN_EDGE`" in md,
+           f"the legend line and its note render:\n{md}")
+    row_novm = dict(row, engine_metadata=forced_vm)
+    rd_n, _e = report.build_report([_mk_loaded("n.jsonl", setup, [row_novm])],
+                                   _args(store="x", include_synthetic=True))
+    md_n = report.render_markdown(rd_n)
+    _check("edge=" not in md_n and "edge = pcrec's" not in md_n,
+           f"a forced-VM-only table has neither the clause nor the note:\n{md_n}")
 
 
 def test_fast_tier_legend_b16_r2():
@@ -2648,6 +2783,7 @@ TESTS = [
     test_where_filter_dotted_path,
     test_regime_filter_restricts_match_rows_only,
     test_subbench_and_version_filters,
+    test_testee_filter_kb5,
     test_synthetic_excluded_by_default,
     test_mixed_schema_versions_refused,
     test_minor_version_pair_not_refused,
@@ -2697,6 +2833,8 @@ TESTS = [
     test_v13_record_still_renders,
     test_provenance_flag,
     test_after_clause_unconditional,
+    # [B28] KB-5/KB-6
+    test_dfa_scan_edge_legend_kb6,
 ]
 
 

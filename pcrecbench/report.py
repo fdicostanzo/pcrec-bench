@@ -532,6 +532,76 @@ pcrec [OPT-4.1] + [LIM-1]) -- THE FALLBACK BUCKET READS THE VALUE:
   which is the same regenerate-everything case as R10/[B20] R7.
 * `REPORTER_VERSION` bumps to `v10 (2026-08-31)`; every committed report
   regenerated -- see `reports/CLAUDE.md`.
+
+[B28] (2026-09-01) -- THE REPORTER WAVE: KB-5 (a testee-roster filter)
+and KB-6 (the abi-13 `dfa_scan_edge` clause)
+-------------------------------------------------------------------------
+
+* KB-5 -- `--testee TESTEE_ID` (docs/dev/known_issues.md KB-5, found by
+  the b22reports lane: no single `--since`/`--until` range could scope a
+  PARTIAL re-measure window to "the fresh pin plus the unpinned
+  baselines" in one committed query, so the first cross-pin report
+  admitted every surviving pcrec pin's rows). Repeatable, EXACT match on
+  the literal `testee.testee_id` (the same spelling `run --testee`
+  takes, pin string included), OR'd within its own occurrences and AND'd
+  with every other filter -- same shape as `--where`. An id matching NO
+  record anywhere in the loaded store (independent of every other
+  filter: checked before `matches_filters` narrows anything, so a typo
+  is caught even under a `--subbench`/`--since` that would itself have
+  excluded every record) is a REFUSAL naming the unknown id(s) and the
+  known ones, not an empty report -- deliberately UNLIKE every other
+  filter here (`--subbench nope` silently selects nothing; a committed
+  roster query is worth protecting from a silently-empty table a typo
+  would produce). Printed in the Query header as one `testee=<id>` line
+  per occurrence, same style as `where <f>=<v>`.
+
+* KB-6 -- the abi-13 `RX_DFA_SCAN_EDGE` stamp ([OPT-5] STEP 1, pcrec pin
+  a7e0bdf; docs/dev/known_issues.md KB-6, found by the b25reports lane:
+  every `pcrec_a7e0bdf` record carries the pair and nothing rendered it)
+  gains `edge=<range|bitmap|mixed|none>` on the legend line
+  (`_dfa_scan_edge_display`), placed directly after the `dfa: scan=...
+  prefilter=... table=... [offsets=...]` composite clause -- the SAME
+  scope (`dfa-scan`: every artifact whose DFA scan is stamped, VM
+  hybrids included, testees/pcrec/adapter.py's `STAMP_SCOPE`) as that
+  clause and as `offsets=`, so it sits beside its own facts rather than
+  among the VM-only `K=`/`caps=` pair or `sel=`'s fallback-bucket
+  company. Conditional, as every abi-11/12 clause is: None -- no clause
+  -- on a forced-VM artifact (no prefilter), a non-hybrid VM artifact,
+  or any record from before abi 13, told apart by `engine`/
+  `vm_prefilter`/`abi` on the same line. A legend note names the four
+  values in one line each, printed once under the lines that carry the
+  clause (same pattern as the `sel=`/`K=`-`caps=` notes).
+
+  KB-6's OWN LAST SENTENCE asks whether the scan-edge value belongs in
+  the `sel=` line's fallback-bucket company or in the R1-R8
+  mechanism-BUCKETING rules ([B16]) -- a design call left to the
+  manager, not decided by this wave. Recommendation, not a change made
+  here: scan-edge is a FACT about the machine's transition-table SHAPE
+  (which byte-class test a scan compiles to), stamped unconditionally on
+  every DFA-scan-carrying artifact regardless of whether `auto` fell
+  back to anything -- it answers a different question than `sel=`'s
+  "did selection take its default route", and folding it into that
+  bucket would conflate "the scan is a bitmap-class edge" with "auto
+  overflowed the DFA and retried", two independent facts that can and do
+  vary independently (a `range` scan can sit on a `sel=selected`
+  artifact or a `sel=overflowed-dfa` one alike). It does not obviously
+  belong in the R1-R8 ranking-group bucketing either (R1-R8 groups rows
+  for RANKING and Δ comparison across pins/engines; `edge=` is a legend
+  fact about ONE row's mechanism, same footing as `dfa_prefilter`, which
+  the [B16] rulings never bucketed on). This wave therefore renders it
+  as its own conditional clause and takes no bucketing action; if a
+  future finding wants rows GROUPED by scan-edge shape (e.g. "how much
+  of the [OPT-5] win is bitmap-class patterns"), that is a new ruling
+  over the mechanism-stamp columns (R9, [B9]), not a change to this
+  clause's rendering.
+
+* `REPORTER_VERSION` bumps to `v11 (2026-09-01)`; every committed report
+  under `reports/` regenerated -- see `reports/CLAUDE.md`. KB-5 changes
+  no committed report's rendering by itself (no committed query uses
+  `--testee`, so the flag is additive); KB-6 changes the twelve
+  `pcrec_a7e0bdf` reports' legend lines and adds the new note where they
+  print a `sel=`/mechanism legend -- see `reports/CLAUDE.md`'s entry for
+  the exact diff classification.
 """
 
 from __future__ import annotations
@@ -550,7 +620,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v10 (2026-08-31)"
+REPORTER_VERSION = "v11 (2026-09-01)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -770,6 +840,8 @@ def matches_filters(rec: LoadedRecord, args):
     if args.version and str(s.get("subbench", {}).get("version")) != args.version:
         return False
     if args.machine and s.get("environment", {}).get("machine_id") != args.machine:
+        return False
+    if args.testee and s.get("testee", {}).get("testee_id") not in args.testee:
         return False
     if args.since or args.until:
         ts = ts_key(s.get("run", {}).get("timestamp", ""))
@@ -1062,6 +1134,10 @@ def _mechanism_stamp_columns(engine_metadata):
         # older pin renders exactly as it did.
         "dfa_prefilter_offsets": em.get("dfa_prefilter_offsets", "-"),
         "dfa_match": em.get("dfa_match", "-"),
+        # KB-6, fixed [B28] (pcrec abi 13, [OPT-5] STEP 1): the SCAN EDGE's
+        # byte-class shape, same `dfa-scan` scope as `dfa_prefilter_offsets`
+        # above.
+        "dfa_scan_edge": em.get("dfa_scan_edge", "-"),
         # [B19] (pcrec abi 12): the route token, the prefilter language
         # pair, and the adapter's two source-bytes facts + the warning.
         "engine_sel": em.get("engine_sel", "-"),
@@ -1255,6 +1331,34 @@ def _emit_bytes_display(engine_metadata):
     if eb is None:
         return "-"
     return f"{eb:,} (warned)" if em.get("warned_emit_bytes") is not None else f"{eb:,}"
+
+
+def _dfa_scan_edge_display(engine_metadata):
+    """KB-6, fixed [B28]: `edge=<none|range|bitmap|mixed>`, pcrec's
+    `RX_DFA_SCAN_EDGE` ([OPT-5] STEP 1, abi 13+) -- HOW a DFA scan tests
+    the class of a SCAN EDGE (a maximal run of states differing only in
+    how many bytes of one fixed class have been counted, collapsed to a
+    bounded cursor loop and deleted from the transition table):
+    `range` (every edge is a contiguous byte range -- subtract-and-compare
+    against two immediates), `bitmap` (at least one edge's class is not
+    contiguous -- a 256-byte membership read), `mixed` (an artifact-level
+    composition: its machines took both forms), `none` (no machine
+    carries a collapsible run, an `attempt`/`empty` scan, or
+    `-fno-scan-edge`).
+
+    Same SCOPE as `dfa_scan`/`dfa_prefilter_offsets` (testees/pcrec/
+    adapter.py's `STAMP_SCOPE`: `dfa-scan` -- every artifact that
+    CONTAINS a DFA scan, VM hybrids included, and no other) rather than
+    `dfa`'s narrower `engine == dfa` -- so a VM hybrid legend can carry
+    `edge=` while showing no `match=` clause, same as it already can for
+    `offsets=`. Returns None where the record has no pair (a forced-VM
+    artifact with no prefilter, a non-hybrid VM artifact, or any record
+    from before abi 13): the legend then prints no clause, told apart
+    from the other absences by `engine`/`vm_prefilter`/`abi` on the same
+    line (pcrec I-5's rule, as for every clause here)."""
+    em = engine_metadata or {}
+    edge = em.get("dfa_scan_edge")
+    return None if edge is None else str(edge)
 
 
 def _fast_tier_display(engine_metadata):
@@ -1474,12 +1578,14 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
     lang = _prefilter_lang_display(engine_metadata)
     size_term = _size_term_display(engine_metadata)
     caps = _caps_display(engine_metadata)
+    edge = _dfa_scan_edge_display(engine_metadata)
     line = (f"- {label}: engine={display}, "
             + (f"sel={sel}, " if sel is not None else "")
             + f"entry={stamps['entry']}, "
             f"vm_prefilter={stamps['prefilter']}, "
             + (f"lang={lang}, " if lang is not None else "")
             + f"dfa: {_dfa_scan_display(engine_metadata)}, "
+            + (f"edge={edge}, " if edge is not None else "")
             + (f"match={match_form}, " if match_form is not None else "")
             + f"rungs={stamps['vm_rungs']}, "
             + (f"K={size_term}, " if size_term is not None else "")
@@ -2115,7 +2221,34 @@ def _agreement_display(block, schema_version):
 
 def build_report(loaded, args):
     """Returns (ReportData | None, error_message | None). On a refusal
-    (mixed major schema versions), returns (None, message)."""
+    (mixed major schema versions, or an unknown --testee id), returns
+    (None, message)."""
+    # KB-5 (2026-08-31), fixed [B28]: an unknown --testee id is a clear
+    # ERROR naming it, not an empty report -- unlike every other filter
+    # (--subbench, --where, ...), which silently narrows to nothing on a
+    # value nothing matches. Checked against the WHOLE STORE (every
+    # `loaded` record with a readable testee_id, before any other filter
+    # narrows the selection -- "matching no record in the store", KB-5's
+    # own wording), so a typo'd id is caught even when it is combined
+    # with a --subbench/--since that would have excluded every record
+    # anyway. `args.testee` is repeatable (OR within its occurrences,
+    # AND'd with every other filter via `matches_filters` above).
+    if getattr(args, "testee", None):
+        known_ids = {
+            r.setup["testee"]["testee_id"] for r in loaded
+            if r.setup and "testee" in r.setup
+            and "testee_id" in r.setup["testee"]
+        }
+        unknown = [t for t in args.testee if t not in known_ids]
+        if unknown:
+            return None, (
+                "--testee names an id with no matching record in the "
+                "store: " + ", ".join(repr(t) for t in unknown)
+                + (f" (known ids: {', '.join(sorted(known_ids))})"
+                   if known_ids else " (the store has no readable "
+                   "testee_id at all)")
+            )
+
     selected = [r for r in loaded if matches_filters(r, args)]
 
     # Mixed-schema-version refusal (requirements 6; record_schema.md 4).
@@ -2349,6 +2482,8 @@ def build_report(loaded, args):
             query_desc.append(f"{name}={v}")
     for f, v in args.where:
         query_desc.append(f"where {f}={v}")
+    for t in getattr(args, "testee", None) or []:
+        query_desc.append(f"testee={t}")
     if args.include_synthetic:
         query_desc.append("include-synthetic")
 
@@ -3067,6 +3202,20 @@ def render_markdown(rd: ReportData):
                            "was built under (raise-only; 500,000/1,000,000 by "
                            "default). VM artifacts only: a DFA artifact has no "
                            "counter rung and stamps no code cap.")
+            # KB-6, fixed [B28]: the abi-13 SCAN-EDGE clause, named once
+            # under the lines that carry it (every artifact whose DFA scan
+            # is stamped -- the `dfa:` clause's own scope, hybrids
+            # included).
+            if any(_dfa_scan_edge_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - edge = pcrec's `RX_DFA_SCAN_EDGE` ([OPT-5] STEP "
+                           "1, abi 13+), how a DFA scan tests a SCAN EDGE's byte "
+                           "class: `range` = a contiguous run (subtract-and-"
+                           "compare against two immediates); `bitmap` = a "
+                           "non-contiguous class (a 256-byte membership read); "
+                           "`mixed` = one artifact whose machines took both "
+                           "forms; `none` = no collapsible run (an attempt/empty "
+                           "scan, or -fno-scan-edge).")
             out.append("")
 
         # [B19]: the two SOURCE-bytes columns, when any row of this table
@@ -3273,6 +3422,9 @@ def render_tsv(rd: ReportData):
                 # [B18]: the two abi 9/10 pairs, emitted only when carried.
                 *[(k, stamps[k]) for k in ("dfa_prefilter_offsets", "dfa_match")
                   if stamps[k] != "-"],
+                # KB-6, fixed [B28]: the abi-13 scan-edge pair, the same way.
+                *[(k, stamps[k]) for k in ("dfa_scan_edge",)
+                  if stamps[k] != "-"],
                 # [B19]: the three abi-12 pairs, the same way.
                 *[(k, stamps[k]) for k in ("engine_sel", "vm_prefilter_lang",
                                            "vm_prefilter_lang_why")
@@ -3301,6 +3453,18 @@ def build_argparser():
     ap.add_argument("--version", help="filter: subbench.version equals this")
     ap.add_argument("--regime", help="restrict match rows to this regime")
     ap.add_argument("--machine", help="filter: environment.machine_id equals this")
+    ap.add_argument("--testee", action="append", default=[], metavar="TESTEE_ID",
+                     help="[B28]/KB-5: filter: testee.testee_id equals this "
+                          "EXACT literal (the same spelling `run --testee` "
+                          "takes, pin string included); repeatable, OR'd "
+                          "together, AND'd with every other filter -- so a "
+                          "committed query can name its roster explicitly "
+                          "(e.g. the fresh pin plus the unpinned baselines) "
+                          "instead of relying on --since/--until to exclude "
+                          "the pins it does not want. An id matching no "
+                          "record anywhere in the store is a REFUSAL naming "
+                          "it, not an empty report -- unlike every other "
+                          "filter here, which narrows silently.")
     ap.add_argument("--since", help="filter: run.timestamp >= this "
                                     "(RFC 3339 or YYYY-MM-DD)")
     ap.add_argument("--until", help="filter: run.timestamp <= this "

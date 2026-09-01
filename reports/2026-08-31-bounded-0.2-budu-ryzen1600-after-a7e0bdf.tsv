@@ -1,4 +1,4 @@
-# reporter: v10 (2026-08-31); filters: subbench=bounded, version=0.2, until=2026-09-02T00:00:00Z; source: store/index.tsv (81 candidate file(s)); records: 10; excluded_invalid: 0; superseded: 1; newer_not_measured: 0; subbench_versions: bounded@0.2; machines: budu-ryzen1600; schema_versions: 1.4; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 10; mixed_x13: False; include_provenance: False
+# reporter: v11 (2026-09-01); filters: subbench=bounded, version=0.2, until=2026-09-02T00:00:00Z; source: store/index.tsv (81 candidate file(s)); records: 10; excluded_invalid: 0; superseded: 1; newer_not_measured: 0; subbench_versions: bounded@0.2; machines: budu-ryzen1600; schema_versions: 1.4; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 10; mixed_x13: False; include_provenance: False
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 record						bounded@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260831T144345Z				agreement	agree (0 of 90 groups; 0 of 1950 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
 record						bounded@0.2__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260831T150853Z				agreement	agree (0 of 90 groups; 0 of 1950 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
@@ -6781,6 +6781,7 @@ compile_stamp						pcrec_a7e0bdf_auto-caps-simdna				buffers	0 (DFA)
 compile_stamp						pcrec_a7e0bdf_auto-caps-simdna				frame	0 (DFA)						
 compile_stamp						pcrec_a7e0bdf_auto-caps-simdna				dfa_prefilter_offsets	none						
 compile_stamp						pcrec_a7e0bdf_auto-caps-simdna				dfa_match	search-filter						
+compile_stamp						pcrec_a7e0bdf_auto-caps-simdna				dfa_scan_edge	range						
 compile_stamp						pcrec_a7e0bdf_auto-caps-simdna				engine_sel	selected						
 compile	cls-atleast-4096			whole-subject	separate artifact	pcrec_a7e0bdf_auto-caps-simdna				median_total_ns	1248360045.000000	5					
 compile	cls-atleast-4096			whole-subject	separate artifact	pcrec_a7e0bdf_auto-caps-simdna				jitter	0.017						
@@ -7084,6 +7085,7 @@ compile_stamp						pcrec_a7e0bdf_auto-nocaps-simdna				buffers	0 (DFA)
 compile_stamp						pcrec_a7e0bdf_auto-nocaps-simdna				frame	0 (DFA)						
 compile_stamp						pcrec_a7e0bdf_auto-nocaps-simdna				dfa_prefilter_offsets	none						
 compile_stamp						pcrec_a7e0bdf_auto-nocaps-simdna				dfa_match	search-filter						
+compile_stamp						pcrec_a7e0bdf_auto-nocaps-simdna				dfa_scan_edge	range						
 compile_stamp						pcrec_a7e0bdf_auto-nocaps-simdna				engine_sel	selected						
 compile	cls-atleast-4096			whole-subject	separate artifact	pcrec_a7e0bdf_auto-nocaps-simdna				median_total_ns	1276526760.000000	5					
 compile	cls-atleast-4096			whole-subject	separate artifact	pcrec_a7e0bdf_auto-nocaps-simdna				jitter	0.025						
