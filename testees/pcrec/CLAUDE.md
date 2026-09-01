@@ -179,6 +179,19 @@ stamps at all.
 loader caches by path, so a repeated dlopen of one path measures the cache
 and not the load.
 
+**A REFUSAL carries a cost too (KB-4, docs/dev/known_issues.md, fixed
+2026-09-01, [B28]).** pcrec prints no timing on any path and has no exit
+convention beyond 0/1 (inbox I-20), so a refused compile's cost is the
+BENCH's own clock around the pcrec exec — `_compile_one` times phase 1
+(`emit-c`) regardless of exit code and carries that number forward on
+BOTH `did-not-compile` paths: pcrec's own refusal (e.g. the bounded
+`cls-upto-65535` rung, `NFA exceeds 131072 states`) and a compiler
+refusal one phase later (pcrec succeeded; only gcc/clang refused — see
+"A clang refusal is a first-class outcome" above). The record row's
+`cost` carries `total_ns` ONLY, never a `cost.phases` array: rule X12
+requires `phases[].name` to equal `compile_phases` EXACTLY when the key
+is present at all, and a refusal never ran every declared phase.
+
 ## The MATCH regime uses a SECOND artifact — `(?:<pattern>)\z`
 
 RULED by the manager, 2026-08-25, from the pcrec manager: pcrec has no

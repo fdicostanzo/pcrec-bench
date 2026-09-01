@@ -2158,6 +2158,7 @@ def check_mechanism_stamps():
     metas = {}
     handles = {}
     diags = {}
+    results = {}  # KB-4: label -> CompileResult, for the compiled-cost control below
     try:
         cases = [(label, tid, pattern, expected, "stamps", _ad.FORM_PLAIN)
                  for label, tid, pattern, expected in STAMP_CASES]
@@ -2178,6 +2179,7 @@ def check_mechanism_stamps():
             metas[label] = em
             handles[label] = cr.handle
             diags[label] = cr.diagnostic or ""
+            results[label] = cr
             wrong = {k: (em.get(k), v) for k, v in expected.items()
                      if not _stamp_ok(em.get(k), v)}
             if wrong:
@@ -2244,6 +2246,79 @@ def check_mechanism_stamps():
                 "outcome %s: %r -- if it COMPILED, [OPT-5] STEP 3 has "
                 "landed and the ladder's ceiling rows need re-deriving"
                 % (cr65.outcome, (cr65.diagnostic or "")[:140]))
+
+        # -- KB-4 (docs/dev/known_issues.md, adapter half, fixed [B28]
+        # 2026-09-01): the SAME refusal now carries its COST -- the
+        # bench's own clock around the pcrec exec (I-20's ruling), timed
+        # regardless of exit code by `_compile_one` and carried forward
+        # on the `did-not-compile` result it returns. Two assertions:
+        # the `CompileResult` itself carries the timing (the same
+        # one-dict-per-trial `phase_seconds` shape a `compiled` result
+        # uses), and the RECORD ROW `record.compile_row` builds from it
+        # carries a positive `cost.total_ns` with NO `cost.phases` array
+        # (X12 requires `phases[].name` to equal the testee's declared
+        # `compile_phases` EXACTLY when the key is present at all, and a
+        # refusal never ran `gcc`/`load` -- so `total_ns` alone is the
+        # only schema-legal shape, the same shape
+        # schema/examples/...20260830T120000Z.jsonl's KB-4 row uses) --
+        # and validates against the schema's own `compile_row` $def.
+        if cr65.phase_seconds and len(cr65.phase_seconds) == 1 \
+                and set(cr65.phase_seconds[0]) == {"emit-c"} \
+                and cr65.phase_seconds[0]["emit-c"] > 0:
+            ok("KB-4: the 65535 refusal's CompileResult carries the timed emit-c phase",
+               "phase_seconds=%r" % cr65.phase_seconds)
+        else:
+            bad("KB-4: the 65535 refusal's CompileResult carries the timed emit-c phase",
+                "got %r" % (cr65.phase_seconds,))
+
+        row65 = _rec.compile_row(
+            "b25-wall-65535", 1, cr65.outcome, "compiled-aot",
+            phases=["emit-c", "gcc", "load"],
+            phase_seconds=(cr65.phase_seconds[0] if cr65.phase_seconds else None),
+            diagnostic=cr65.diagnostic, seq=1)
+        cost65 = row65.get("cost")
+        if cost65 and cost65.get("total_ns", 0) > 0 and "phases" not in cost65:
+            ok("KB-4: the 65535 refusal's RECORD ROW carries a positive cost.total_ns, no phases array",
+               "cost=%r" % cost65)
+        else:
+            bad("KB-4: the 65535 refusal's RECORD ROW carries a positive cost.total_ns, no phases array",
+                "row=%r" % row65)
+
+        import json as _json
+        with open(os.path.join(ROOT, "schema", "record.schema.json")) as _fh:
+            _schema65 = _json.load(_fh)
+        _cr_sub = dict(_schema65["$defs"]["compile_row"])
+        _cr_sub["$defs"] = _schema65["$defs"]
+        try:
+            import jsonschema
+            jsonschema.validate(row65, _cr_sub)
+            ok("KB-4: the refusal's record row validates as schema compile_row",
+               "did-not-compile with cost, no phases")
+        except Exception as e:  # noqa: BLE001
+            bad("KB-4: the refusal's record row validates as schema compile_row",
+                str(e)[:200])
+
+        # ... and a COMPILED row's cost is UNCHANGED IN SHAPE (the
+        # control: the new branch above must not touch the old one) --
+        # `total_ns` PLUS the full three-phase `phases` array.
+        cr_ok = results.get(STAMP_CASES[0][0])
+        if cr_ok is not None and cr_ok.outcome == "compiled" and cr_ok.phase_seconds:
+            row_ok = _rec.compile_row(
+                "b25-wall-control", 1, cr_ok.outcome, "compiled-aot",
+                phases=["emit-c", "gcc", "load"],
+                phase_seconds=cr_ok.phase_seconds[0],
+                diagnostic=cr_ok.diagnostic, seq=1)
+            cost_ok = row_ok.get("cost") or {}
+            phase_names = [p["name"] for p in cost_ok.get("phases", [])]
+            if cost_ok.get("total_ns", 0) > 0 and phase_names == ["emit-c", "gcc", "load"]:
+                ok("KB-4: a COMPILED row's cost is unchanged in shape (total_ns + all three phases)",
+                   "total_ns=%r phases=%r" % (cost_ok.get("total_ns"), phase_names))
+            else:
+                bad("KB-4: a COMPILED row's cost is unchanged in shape (total_ns + all three phases)",
+                    "row=%r" % row_ok)
+        else:
+            bad("KB-4: a COMPILED row's cost is unchanged in shape (total_ns + all three phases)",
+                "no compiled witness found for %r" % (STAMP_CASES[0][0],))
 
         # -- the SCOPE rules, in both directions (match_api.md 6.3 (a)) --
         dfa_keys = ("dfa_scan", "dfa_prefilter", "dfa_table",

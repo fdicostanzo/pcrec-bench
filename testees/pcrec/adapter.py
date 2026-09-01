@@ -1463,7 +1463,11 @@ class Adapter(_ad.Adapter):
                 "trial builds its own .so, because the dynamic loader caches "
                 "by path and a repeated dlopen of one path measures the cache. "
                 "Median of N with spread is the REPORTER's reduction; the "
-                "record keeps the raw trials."),
+                "record keeps the raw trials. A REFUSAL's cost (KB-4, "
+                "docs/dev/known_issues.md; pcrec I-20: it prints no timing "
+                "on any path) is the bench's own clock around the pcrec "
+                "exec -- `emit-c` only, since a refused compile never "
+                "reaches `gcc`/`load`."),
             "compile_phases": ["emit-c", "gcc", "load"],
             "warmup_trials": 0,
             "engine_metadata_declaration": dict(METADATA_DECL),
@@ -1554,9 +1558,20 @@ class Adapter(_ad.Adapter):
             proc = subprocess.run(argv, capture_output=True, env=C_ENV,
                                   timeout=600)
             t1 = time.monotonic()
+            # KB-4 (docs/dev/known_issues.md, adapter half; I-20's ruling):
+            # the pcrec exec is timed regardless of exit code -- `t1 - t0`
+            # is computed above whether or not `proc` refused -- so a
+            # REFUSAL carries that number forward as its `phase_seconds`,
+            # in the same one-dict-per-trial shape a `compiled` result uses
+            # (record.compile_row reads phase_seconds[t-1] the same way
+            # either way; harness.py already forces trial count to 1 for a
+            # non-`compiled` outcome). `emit-c` is the ONLY phase that ran
+            # before this refusal, so it is the only key: never invent a
+            # `gcc`/`load` number for a phase pcrec never reached.
             if proc.returncode != 0:
                 diag = (proc.stderr or b"").decode("utf-8", "replace").strip()
                 return _ad.CompileResult("did-not-compile",
+                                         phase_seconds=[{"emit-c": t1 - t0}],
                                          diagnostic=diag or "pcrec exit %d"
                                          % proc.returncode)
             if t == 1:
@@ -1586,8 +1601,12 @@ class Adapter(_ad.Adapter):
                                    env=C_ENV, timeout=900)
             g1 = time.monotonic()
             if gproc.returncode != 0:
+                # KB-4 again: the pcrec exec DID succeed on this path (only
+                # gcc/clang refused), so its emit-c timing is a real number
+                # too -- carried the same way as the emit-c refusal above.
                 return _ad.CompileResult(
                     "did-not-compile",
+                    phase_seconds=[{"emit-c": t1 - t0}],
                     diagnostic="the artifact did not build:\n%s\n%s"
                                % (" ".join(gargv), gproc.stderr))
 
