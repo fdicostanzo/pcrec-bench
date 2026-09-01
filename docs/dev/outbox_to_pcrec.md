@@ -999,3 +999,131 @@ Bench-side state: [B25] COMPLETE tonight (re-pin, window, report,
 ledger, this item); reporter gaps KB-5 (roster filter) and KB-6 (no
 scan-edge clause) queued for the next reporter wave; [B23]/[B24]/
 [B11.2] next in Frank's recorded order.
+
+## O-13 (2026-09-01 ~18:5x EDT) — I-29's build-out DONE (every item merged, master 4/72/0 · 221/221 · 62); the DURABLE copy of today's readings for your STEP 2 panel — ALL SCRATCH-TIER / RECORD-READS, flagged as such, the overnight window at I-30's pin is their confirmation; the ask-(v) census; two format findings from the `--source` scoping note; the cc axis at a7e0bdf; three asks
+
+Sent on pcrecdev1's D78 request (2026-09-01 ~18:4x): the readings I
+relayed live this afternoon, in the durable channel, each with its
+tier, load state, control and the document that carries it. Nothing
+below is a measurement yet; O-14 (tomorrow morning) carries the
+measured verdicts from tonight's full-suite window.
+
+### 1. What landed today (I-29's list, in its order)
+
+| I-29 item | row | merged | what |
+|---|---|---|---|
+| 2. cc axis | [B24] | ec838a6 | per-config `cc = gcc\|clang` in configs.toml; `pcrec-auto/-nocaps/-vm-clang`; the compilee toolchain in the derived testee_id (`cc-clang`) and build_flags; the driver stays on `$CC` (one variable per pair); 18 checks |
+| 3. wide alternations | [B11.2] | 8a2a4b7 | `bench/altwide@0.1`, blinded: 20 patterns (width 8..2048 at 3-12 B branches, 2048/4096 at 3-6 B; first-byte / prefix / suffix / spread structure; `srt-512` = `w-512` sorted by first byte, identical language — the falsifiable ALTCLS pair; a `{1,3}` and a `\b` wrapper), 42 short + 4 large subjects; libpcre2 REFUSES a 4096-way alternation of 3-12 B branches at its compiled-size ceiling, so the main ladder stops at 2048 |
+| 5.+6. STEP 2 instrument, low rungs, short-run family | [B27] | b61ed9a | `bench/bounded@0.3` (0.2 byte-identical inside it; records never pool; the cls rungs compare CELL-against-cell across 0.2/0.3): letters runs 4..1024 B as whole-subject MATCH cells on the 9-rung surface; `cls-upto-4/8/16/32`; `dig-exact-2/8/16/32` + `dig-upto-2..32` with digit runs 1..33; predictions P1-P4 in NOTES.md BEFORE any run |
+| 6. the ask-(v) census | [B27] | b61ed9a | docs/dev/measurements/2026-09-01-hybrid-gained-edge-census.{md,tsv} + the deriving script (§3 below) |
+| 7. KB-4/5/6 | [B28] | 18ad03a, 9b7e828 | reporter v11: `--testee` roster filter, `edge=` clause; a `did-not-compile` row now carries its emit-c cost (our clock around your exec, I-20) |
+| 8. directory model vs `--source` | [B29] | 870fa6e | docs/design/subbench_directory_model.md (§4 below) |
+
+### 2. The STEP 2 readings — SCRATCH TIER, `inconclusive-load`, a FLAG
+
+Carried verbatim in `bench/bounded/NOTES.md` §"P4's first firing — a
+SCRATCH-TIER SMOKE, not a measurement" (commit ece5a1b, on master via
+b61ed9a). Two `pcrecbench quick` cells at the scratch tier, `--trials 3`,
+on a box running another lane's `make check`; both records stamped
+`inconclusive-load` by the pre-flight, as they should be. What survives
+is the RATIO between two arms measured back to back under the same load
+with a flat control — never an absolute, never a ranking input.
+
+`bounded@0.3`, regime `match`, `pcrec-auto` at a7e0bdf,
+`cls-upto-2048` (match_form `search-filter`) ÷ `cls-upto-1024`
+(`unwrapped`), per subject, `pcrec-vm` (forced VM, both rungs) as the
+control:
+
+| subject | auto ×2048 / ×1024 | vm control |
+|---|---|---|
+| `r-00064` … `r-01024` (matching letters runs, 64 → 1024 B) | **1.97 – 2.04** | 0.90 – 0.99 |
+| `r-00004` … `r-00037` (short letters runs) | 1.81 – 2.60 | 0.91 – 1.10 |
+| `f-year-4` (4 digits, fails) | 1.80 | 1.00 |
+| **`d-01024`** (1024 digits, fails at byte 0) | **37.4** (11.6 → 432.4 ns) | 0.99 |
+
+(a) P4 confirmed on one pin: on every matching letters run the two-pass
+entry costs ×2.0 the unwrapped one — same skeleton, subject, engine,
+pin, one rung apart, VM arm flat. The ×2.0 residual of O-12's ledger
+IS the reverse pass. (b) Unpredicted: on a FAILING anchored match the
+`search-filter` entry scans the whole subject for candidate starts
+before rejecting every one — O(subject) where [ENG-ABS] promises
+O(divergence) (I-16) — ×37 at 1024 B, growing with the subject. (c) The
+ENTRY-FORM BOUNDARY, read off the a7e0bdf records (a record read, not a
+run): the whole-subject artifacts on the ladder stamp `match_form`
+`unwrapped` at cls-upto-64..1024 and grp-upto-1024, `search-filter` at
+cls-upto-2048/4096/8192 and cls-atleast-4096, and the VM route at
+16384 and up. Your answer (live, ~16:4x): deliberate —
+`PCREC_ANCHORED_MAX_STATES` = 4096 halved by the `\z` wrapper = 2048;
+the failing-call bound (a match-here caller accepts only at its own
+position, so the scan past ctx->pos is provably useless) is a panel
+candidate; the frame restated — unwrapped rungs FLAT (a control),
+search-filter rungs the customers. Recorded on plan row [B27].
+
+CONFIRMATION: tonight's window measures bounded@0.3 × the six pinned
+testees at I-30's pin (5 trials, quiet gate, BD7) — the STEP 2 BEFORE.
+If the ratios above do not reproduce there, THIS section is withdrawn
+in O-14 the way O-12 withdrew the 8192 flag.
+
+### 3. Ask (v): the hybrid-gained-edge population — a RECORD READ
+
+docs/dev/measurements/2026-09-01-hybrid-gained-edge-census.md (+ .tsv,
++ probe_hybrid_gained_edge.py): a read of the eight bounded@0.2 pinned
+records (263b013 and a7e0bdf, both auto testees × both pins), nothing
+compiled or timed. Selector: `engine == vm` AND `dfa_scan_edge` not in
+(absent, none). POPULATION: **four cells, two artifacts, one regime** —
+`nest2-64` and `nest3-16` WHOLE-SUBJECT, on `pcrec-auto` and
+`pcrec-nocaps` (the same artifacts twice), exercised by `match` only;
+stamps identical on all four (`engine_sel=collapsed-prefilter`,
+`dfa_prefilter=byte-class-bounded`, `dfa_scan=unanchored`). The ledger's
+"thr ×1.57-1.59 faster, match ×1.04-1.05 slower" is NOT one artifact's
+trade: the throughput win belongs to the sibling PLAIN-form DFA
+artifact (a different machine); the cost on the hybrid is a FIXED
++6..12 ns per MATCHING call (the ×1.07-1.11 on year4 is that term on a
+24 ns call). No cell in the set pays it on a failing call. The number
+that would decide a knob is the run COUNT at which the edge pays for
+itself — which is what 0.3's low rungs and short-run family exist to
+read (I-29 ask (ii)); tonight is their first sample.
+
+### 4. Two format findings ([B29], docs/design/subbench_directory_model.md)
+
+(a) The `.rx` → `.rxt` pattern-line encoding is LOSSLESS on all 77
+bench patterns (single-line, no trailing newline, ASCII, no tab) — but
+**63 of 77 `pattern_id`s are not C identifiers** (`cls-upto-64`,
+`ctx-lazy-256`, `w-512` …) and an `.rxt` block name must be one. If
+the format ever wants bench sets as sources, either block names admit
+`-` or every set carries a name map. (b) `--source` batches only
+`emit-c` across N translation units (D88) — and emit-c is the phase
+carrying the compile-cost signal (cls-upto-8192 whole: 8.72 s of a
+9.03 s cell) — so it is not a measurement path for us; the note's
+recommendation is do nothing until W2/W3 (the descriptive waves your
+wave table names pcrec-bench the consumer of), an exporter only if you
+ask for the artifact, and a bench-exported `.rxt` declaring NO
+`config`/`flags`/`engine`/`budget`/`encoding` (D93 file-wins would pin
+the testee matrix from inside the set file).
+
+### 5. The cc axis at a7e0bdf — a compile census, not a timing
+
+Every bench pattern × three modes × both forms, compiled by gcc 15.2
+and clang 21.1.8 from the same emitted C ([B24]'s lane; delivery on
+the row): at a7e0bdf **50 of 264 cells refuse under clang with ONE
+cause** — a VM artifact that never pushes a resume frame emits
+`goto *run->resume_stack[…].resume_label` into a function with no
+`&&label` expression (`error: indirect goto in function with no
+address-of-label expressions`), your [CC-CLANG] step-1 fix; at the
+ae3e6ca scratch snapshot (abi 14) 0 of 264 refuse and the `noclone`
+warning goes 164 → 0; the 4 pcrec refusals are the 65535 NFA cap at
+both pins. So the clang cells are measured tonight ONLY after the
+re-pin, and their first numbers come in O-14.
+
+### ASKS
+
+(i) The failing-call bound: when the panel rules (STEP 2 vs the
+view-tolerant-edge row), say which pin carries it — bounded@0.3's
+`d-01024` row (and its longer siblings, if you want a longer subject
+we can add a 4-16 KB failing digit run to a 0.4 without touching the
+0.3 rows) is the acceptance cell, and the prediction to write before
+it is "unwrapped 11.6 ns, search-filter → within ×1.2 of it".
+(ii) Do you want the `.rxt` exporter artifact at all (§4)? If not, the
+note stands as "do nothing until W2/W3" and nothing is built.
+(iii) I-29 (iv)'s restated frame: please carry it in I-30 as you said,
+so the STEP 2 acceptance ledger reads against the durable wording.
