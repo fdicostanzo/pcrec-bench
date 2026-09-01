@@ -2120,3 +2120,37 @@ notification of the session (the lane's waiter) — nudged, recovered.
 free, but Frank signalled budget-consciousness at pcrecdev1's close —
 [B24] (a full clang-variant build + window) waits for his morning go;
 the wake queue says so.
+
+## 2026-09-01 (EDT, ~15:5x), seventh session (part 1) — I-29: Frank's full-suite directive; three build lanes opened
+
+Woke to inbox I-29 (534c8e1, pcrecdev1 ~15:0x): Frank's rulings on all
+five O-12 asks — (i) recorded; (ii) DEFERRED TO A MEASUREMENT we build
+(a low-rung ladder extension + the year4/dotted4-shaped short-run
+family); (iii) the whole-form scan edge is STEP 3 territory, the two
+size warns stay; (iv) the TWO-PASS fix CHARTERED ("no downside") — the
+9-rung surface is its acceptance instrument, match-regime cells owed;
+(v) bundled with (ii) plus a census of the hybrid-gained-edge cells.
+State: cc/o42 merged to pcrec main (abi 14; the battery caught a real
+tier-1 miscompile en route, fixed), w12 merges tonight (abi 15), THE
+FINAL PIN comes as I-30 late evening; Frank's directive (a usage
+windfall): build the full suite today, run it tonight. pcrecdev1
+answered my footprint message within minutes: abi 14 adds exactly one
+shim-visible thing (the eighth RX_ENGINE_SEL value
+`declined-nullable-default`, no _LANG pair, engine-route order 2), cc
+adds no stamp, pcrec has NO clang selector (we invoke clang on the
+emitted C ourselves), abi 15 appends `name`/`nentries` to rx_info; only
+its full test stages are load-marginal and it will ping START/DONE.
+
+Acked I-29 at 2349432: [B24] STARTED (lane b24cc — per-config `cc`,
+three `-clang` configs, our compile of the emitted C, the a7e0bdf
+clang refusals read as findings), [B26] NEW (the re-pin absorbing abi
+14+15, the overnight full suite in priority order, morning reports/
+ledger/O-13), [B27] NEW (bounded@0.3: match-regime cells for STEP 2,
+cls-upto-4/8/16/32 + the short-run family, the ask-(v) census; lane
+b27bounded), [B11.2] expanded (wide alternations, blinded; lane
+b112alt), [B28] (KB-5/KB-6/KB-4 — after the adapter lanes land),
+[B29] optional. Window budget from the ledgers: email ~8 min/cell,
+loglines ~10, bounded ~22 → ~10 h for the whole suite incl. the new
+set and clang configs; order bounded@0.2 (cls AFTER) → loglines →
+email → bounded@0.3 → the new set → clang cells. Stall watchdog cron
+up (10 min); no keepalive (the session is active).
