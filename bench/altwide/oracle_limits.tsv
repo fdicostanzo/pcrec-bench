@@ -1,0 +1,11 @@
+skeleton	pool	branch_bytes	set_rungs	probed	last_accepted	first_refused	diagnostic	oracle
+w	main	3-12	8,64,256,512,1024,2048	8,16,32,64,128,256,512,1024,2048,4096	2048	4096	regular expression is too large	10.46 2025-08-27
+s	short	3-6	2048,4096	8,16,32,64,128,256,512,1024,2048,4096,8192	4096	8192	regular expression is too large	10.46 2025-08-27
+sh1	sh1	3-12	64,512	8,16,32,64,128,256,512,1024,2048,4096	2048	4096	regular expression is too large	10.46 2025-08-27
+pfx3	pfx3	6-12	512	8,16,32,64,128,256,512,1024,2048,4096	2048	4096	regular expression is too large	10.46 2025-08-27
+sfx	sfx	6-12	64,512	8,16,32,64,128,256,512,1024,2048,4096	2048	4096	regular expression is too large	10.46 2025-08-27
+nar4	nar4	3-12	64,512	8,16,32,64,128,256,512,1024,2048,4096	2048	4096	regular expression is too large	10.46 2025-08-27
+srt	main	3-12	512	8,16,32,64,128,256,512,1024,2048,4096	2048	4096	regular expression is too large	10.46 2025-08-27
+ci	main	3-12	512	8,16,32,64,128,256,512,1024,2048,4096	2048	4096	regular expression is too large	10.46 2025-08-27
+cnt	main	3-12	64	8,16,32,64,128,256,512,1024,2048	1024	2048	regular expression is too large	10.46 2025-08-27
+wb	main	3-12	512	8,16,32,64,128,256,512,1024,2048,4096	2048	4096	regular expression is too large	10.46 2025-08-27

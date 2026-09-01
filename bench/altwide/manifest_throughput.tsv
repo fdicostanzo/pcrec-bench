@@ -1,0 +1,5 @@
+id	len	sha256	description	periodic
+t-128k-clean	131072	7ea5f6065cc62675b8647093bf0e22c0e7c1d158832f7c121b79d786cc73c1b2	run/prose 131072 B, 0 branch occurrence(s) -- the failing scan alone: no branch of any pool occurs	no
+t-128k-sparse	131072	192a069d46b0390cacd25adc13091b7ce8bab00450b0241e45a3f1471792bc41	run/prose 131072 B, 16 branch occurrence(s) -- one occurrence per 8 KB, each of the sixteen HIT_WORDS once	no
+t-128k-dense	131072	e56c3aca9124d72786aa4603546cbedb4e9abd1cb6aebb6a4f15d063fdf2dab1	run/prose 131072 B, 1024 branch occurrence(s) -- one occurrence per 128 B, each of the sixteen HIT_WORDS 64 times	no
+t-512k-sparse	524288	a7f553a2f682537f7568a893d1124f2c69f2263ac591b3ea3a998767a7769096	run/prose 524288 B, 64 branch occurrence(s) -- the SIZE arm: 4x t-128k-sparse's bytes at t-128k-sparse's density	no

@@ -3624,6 +3624,85 @@ def check_note_length_guard():
         bad("note guard: schema rejects the joined string", str(e)[:120])
 
 
+def check_pattern_text_cap():
+    """[B11.2] (2026-09-01, bench/altwide): `patterns[].canonical_text` is
+    schema `free_text` (maxLength 8192) and the harness filled it from the
+    pattern bytes unconditionally -- fine while the largest pattern in the
+    tree was bench/email's 1.4 KB specimen, and fatal the day a set carries a
+    2048-way alternation. Four altwide rungs are 8.7-24 KB, so four of every
+    twenty pattern entries would have been REJECTED at validation.
+
+    The field is REPRODUCIBILITY-ONLY and optional (record_schema.md 8), so
+    the fix OMITS it rather than truncating: a truncated string under a field
+    name that claims to be the pattern is worse than no string, and
+    `canonical_sha256` + `subbench.content_hash` are the identity either way.
+    This gate reads the cap FROM THE SCHEMA JSON, uses the REAL patterns on
+    both sides of it, and validates both entries against the schema's own
+    `pattern_entry` definition -- so it fails if the constant drifts, if the
+    omission stops happening, or if a short pattern ever loses its text."""
+    print("-- [B11.2]: an over-cap pattern omits canonical_text, and validates --")
+    import json as _json
+    sys.path.insert(0, ROOT)
+    from pcrecbench import record as rec
+    with open(os.path.join(ROOT, "schema", "record.schema.json")) as fh:
+        schema = _json.load(fh)
+    cap = schema["$defs"]["free_text"]["maxLength"]
+
+    over = under = None
+    for name, bench in subbench_dirs():
+        sb = Subbench(bench)
+        for pat in sb.patterns:
+            n = len(sb.pattern_bytes(pat.name))
+            if n > cap and over is None:
+                over = (sb, pat.name, n)
+            elif n <= cap and under is None:
+                under = (sb, pat.name, n)
+    if under is None:
+        bad("[B11.2] pattern-text cap: a under-cap pattern exists", "none found")
+        return
+    if over is None:
+        ok("[B11.2] pattern-text cap: no set carries an over-cap pattern",
+           "nothing to exercise; the under-cap side is checked below")
+    else:
+        sb, name, n = over
+        entry = rec.pattern_entry(sb, name)
+        if "canonical_text" not in entry:
+            ok("[B11.2] an over-cap pattern OMITS canonical_text",
+               "%s/%s is %d B > the schema's %d B free_text cap"
+               % (sb.id, name, n, cap))
+        else:
+            bad("[B11.2] an over-cap pattern omits canonical_text",
+                "%s/%s (%d B) carried %d B of text"
+                % (sb.id, name, n, len(entry["canonical_text"])))
+        _validates(schema, entry, "%s/%s (over cap)" % (sb.id, name))
+
+    sb, name, n = under
+    entry = rec.pattern_entry(sb, name)
+    if entry.get("canonical_text") == sb.pattern_bytes(name).decode("utf-8"):
+        ok("[B11.2] an under-cap pattern still carries its text VERBATIM",
+           "%s/%s, %d B" % (sb.id, name, n))
+    else:
+        bad("[B11.2] an under-cap pattern carries its text verbatim",
+            "%s/%s: %r" % (sb.id, name, entry.get("canonical_text", "")[:60]))
+    _validates(schema, entry, "%s/%s (under cap)" % (sb.id, name))
+
+
+def _validates(schema, entry, label):
+    """One pattern entry against the schema's own `pattern_entry` $def."""
+    try:
+        import jsonschema
+        # The `$def` carries `$ref`s into `#/$defs/...`, so it is validated
+        # as a root schema that CARRIES `$defs` -- no RefResolver, which is
+        # deprecated in current jsonschema and would make this gate noisy.
+        sub = dict(schema["$defs"]["pattern_entry"])
+        sub["$defs"] = schema["$defs"]
+        jsonschema.validate(entry, sub)
+        ok("[B11.2] the entry validates as schema pattern_entry", label)
+    except Exception as e:  # noqa: BLE001 -- the check reports, never raises
+        bad("[B11.2] schema rejects the pattern entry",
+            "%s: %s" % (label, str(e)[:160]))
+
+
 # ------------------------------------- 26 the occupancy AVERAGE (OD-B12)
 
 def _mpstat_capture(busy_by_second, cpus=12):
@@ -4467,6 +4546,7 @@ def main():
     check_emit_size_port()
     check_abi_floor_refusal()
     check_note_length_guard()
+    check_pattern_text_cap()
     check_occupancy_average()
     check_target_core_preflight()
     check_quiet_cli_agrees_with_gate()

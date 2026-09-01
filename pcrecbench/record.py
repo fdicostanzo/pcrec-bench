@@ -182,13 +182,24 @@ def pattern_entry(sb, name):
     # identical to what it always produced.
     if getattr(p, "role", "member") != "member":
         entry["role"] = p.role
+    # `canonical_text` is REPRODUCIBILITY-ONLY and OPTIONAL
+    # (record_schema.md 8: "convenience for reading a record alone; the
+    # sub-bench is the source of truth"). It is omitted, never mangled, in
+    # the two cases where it cannot be carried honestly:
+    #
+    #   * a pattern with non-UTF-8 bytes (bench/email's classes have them);
+    #   * a pattern LONGER THAN THE SCHEMA'S `free_text` CAP -- four of
+    #     bench/altwide's wide-alternation rungs are 8.7-24 KB of pattern
+    #     text ([B11.2], 2026-09-01). Truncating would put a string in the
+    #     record that is not the pattern, under a field name that says it
+    #     is; the sha256 beside it and `subbench.content_hash` are the
+    #     identity either way, which is why dropping it costs nothing.
     try:
-        entry["canonical_text"] = text.decode("utf-8")
+        decoded = text.decode("utf-8")
     except UnicodeDecodeError:
-        # REPRODUCIBILITY-ONLY and optional; a pattern with non-UTF-8 bytes
-        # (this sub-bench's classes have them) is pinned by its sha256 and by
-        # `subbench.content_hash`, which is the actual source of truth.
-        pass
+        decoded = None
+    if decoded is not None and len(decoded) <= FREE_TEXT_MAX:
+        entry["canonical_text"] = decoded
     tags = list(p.tags)
     if p.feature_tier:
         tags.append("tier:" + p.feature_tier)

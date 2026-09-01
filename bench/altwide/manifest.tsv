@@ -1,0 +1,39 @@
+id	len	sha256	description	periodic
+f-w0	12	38ab3f791adccecc1cdeb333d2e94e3125672ec3d60a805afc8196eb095264f2	field/hit `main` word 0: branch 1 of every w-* rung, of ci-512, cnt-64 and wb-512, and branch 481 of srt-512	no
+f-w7	4	8e9a08b04adcf5aa7806cf7c5753ea59609613f1570120384eb45e6bb0a78536	field/hit `main` word 7: the LAST branch of w-8 and the eighth of every wider rung -- the leftmost-first identity arm	no
+f-w255	7	083bf9e9a45201256ed182bb11fe44357f2c32f75badbf70a15c7383247ca8a2	field/hit `main` word 255: the last branch of w-256, absent from w-8 and w-64	no
+f-w511	6	907e8ad27d98746a45911c3a7e4d6d777399b2bbeadf5b28850d027df422cc6a	field/hit `main` word 511: the last branch of w-512, ci-512, srt-512 and wb-512	no
+f-w2047	8	e9f8948aa84f026b0cf84a1e11915c061d30a47fc982824dfecb4daf8af47055	field/hit `main` word 2047: the last branch of w-2048 and of no narrower rung	no
+f-s0	4	c48eab75ea16d9fac1c83251c02e2019ac30e73da6580facf180db90e9dd35b2	field/hit `short` word 0: branch 1 of s-2048 and s-4096	no
+f-s4095	4	1fe476d89b9a5cede059ec6d5812a992a4156159cf751b80c60014d5cfc0c698	field/hit `short` word 4095: the last branch of s-4096 and of nothing else in the set	no
+f-sh1	5	0e6d1c9ffeea15bf2dcfecc4e19d77700c9b1f7c4ef4f03656db5f9e38cb0b57	field/hit `sh1` word 0: the shared-first-byte arm	no
+f-pfx3	8	0ab673b98913321f3f41d7c5755b0ce1c3690a04536ce04a71149f835445d26f	field/hit `pfx3` word 0: the shared-3-byte-prefix arm	no
+f-sfx	9	9cbef782e7623b38aad7d95cdb0bec2be29dbee2c8f7cbc2a5b1eab854338a4c	field/hit `sfx` word 0: the shared-suffix arm (the only patterns in the set with a PCRE2 required code unit)	no
+f-nar4	9	e2fbd0d9b4a5e8bdc79e702c98a87b0784cb5bede8d2e1d8a92812fbdf826eb9	field/hit `nar4` word 0: the four-first-bytes arm	no
+f-upper	12	3a905ddbd9eec427f20502061f00592419e25e2726015f759690843952f7c84c	field/hit `main` word 0 upper-cased: a whole-subject match for ci-512 and for nothing else	no
+f-cnt2	16	20a4ba5c2f67d7b401a3a7b820ee8c1c92cb005e6e13922a4463ad01f8eb0397	field/hit `main` words 0 + 1 concatenated: two `main` branches concatenated: cnt-64 matches it WHOLE at two repetitions; every plain rung matches only its first half, so this is a match-regime miss for them and a search hit	no
+f-near	12	a43b5446e8a01fb5cbaf78c9c14361263a8320b9fba3babc9772e054af47d79b	field/near-miss `main` word 0 with its last byte changed: every branch is rejected on one byte	no
+f-prefix	11	f3d5c0720580a797f84ccdcc8cd2da8c58ec0d4f99f10d7da140746b205e4824	field/near-miss a proper PREFIX of `main` word 0: no shorter branch rescues it because the pools are prefix-free	no
+f-glued	18	8ab3fbebee03f616741a68af76dcba26bc3f5690f2ba42319bb201a96e306950	field/near-miss `main` word 0 buried in a longer letter run: a search hit for every plain rung, a MISS for wb-512, and a match-regime miss for all of them	no
+f-bg	8	6ca99782aac62041884a32e1f86422fa0b0abae7aaeba395933e27504c66efe5	field/miss a background word in no pool: the all-miss control	no
+l-w0-early	230	d2c24d8aaf787fdbec8337191882966da9208bb939b99d69e0b1860075ae6c10	line/carry-early `main` word 0 at byte 6 of 230	no
+l-w0-last	240	c90dcfed76d29bec905ffe1a9456aaae676feac2deab019ddceda93d93923849	line/carry-last `main` word 0 at byte 228 of 240	no
+l-w7-mid	225	0b36225e466329872c71c7957ac86f4995d8952dfed54106e765861d6aa98c65	line/carry-mid `main` word 7 at byte 109 of 225	no
+l-w255-mid	222	25364cb232378fcce0d0585bc0f0f434da6b2a0c3a13a86ac8033de742d2dce0	line/carry-mid `main` word 255 at byte 112 of 222	no
+l-w511-last	229	29d05dadd71de54bc7e063263c13c669f84e055b57e72027545959af78f09e87	line/carry-last `main` word 511 at byte 223 of 229	no
+l-w1023-early	232	baec9154fa58a9c68a14690ee3e32a23c58766b4bbc6c63ae69cf89ccb95cb36	line/carry-early `main` word 1023 at byte 6 of 232	no
+l-w2047-early	221	3f5e57a1966a607ad5ae81a81acc2f0a29f8267ef4ebbc0f3ae28b550989f3c7	line/carry-early `main` word 2047 at byte 6 of 221	no
+l-s4095-mid	235	303c74a78f5e4c009fc72d5ef0b47215e802163aeddbdca33d5741a8067c69a9	line/carry-mid `short` word 4095 at byte 112 of 235	no
+l-sh1-mid	227	0ea855cc95bb6963805fc90c769279642388421e930cfd629299c60e244f9880	line/carry-mid `sh1` word 3 at byte 98 of 227	no
+l-pfx3-mid	228	fed668e2552579f809a7bba2458f0b39717b0ff3f830ead87dc9d6b3401b174a	line/carry-mid `pfx3` word 3 at byte 114 of 228	no
+l-sfx-mid	226	5741e1be4e91de7089a55768718777a4399defa0129ade7a0bc5f7a88641d67e	line/carry-mid `sfx` word 3 at byte 110 of 226	no
+l-nar4-mid	234	5e8859d06b0889f6c7e6c32ed5e449c0f5b5eb87a4d07a019bf3efee694335e9	line/carry-mid `nar4` word 3 at byte 114 of 234	no
+l-upper	228	1bddadfd7299767c08f09bfb9d0d4abb458d644e1622ddf467556292f45d8ab1	line/carry-derived an upper-cased `main` word 0: a hit for ci-512 and for nothing else in the set	no
+l-glued	226	34c2a4deb5763530bf545584d9491e047a26a381e9e5aca9e5c251db4e505709	line/carry-derived `main` word 0 buried in a longer letter run: a hit for every plain rung, a MISS for wb-512	no
+l-cnt2	225	bc8ab6b8ed56c8e46566f0a4b2c975e7742b2ba01654e54efbe9dfba0bd02e09	line/carry-derived `main` words 0 + 1 adjacent: cnt-64 takes both in one match, every plain rung takes the first	no
+l-bg-0	235	343b2edc0137560fee0e6193953a84436c8a7bac3a340c5bd38cdf0e68e0e64f	line/background prose in no pool: the failing majority the search band is built from	no
+l-bg-1	226	e58ece2fd35714bb35a52e04f378ea45eb2400830b5a79a90b2391abdaa7d2a6	line/background prose in no pool: the failing majority the search band is built from	no
+l-bg-2	244	869c68087c819eabf5f42c5c66f9bb1b5fcb7b312eb1e34c8d56f9f5c3f6392a	line/background prose in no pool: the failing majority the search band is built from	no
+l-bg-3	219	6550ec4f472c36240deeaf52859f4c035c5b5953f881a343972ba9a5c494b515	line/background prose in no pool: the failing majority the search band is built from	no
+l-bg-4	241	34d215318014e21583246291bca0291bffd1de6c71adfa9deb8fbb79f66767e6	line/background prose in no pool: the failing majority the search band is built from	no
+l-bg-5	228	891b06779d89dc62b79c312b51534ae60178060808699670080b6cf8b3318f4f	line/background prose in no pool: the failing majority the search band is built from	no
