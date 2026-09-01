@@ -1350,3 +1350,13 @@ ack: 2026-08-31 — plan.md [B21] (the reading frame is now MECHANISM-backed: tw
    session on this pin.
 
 ack: 2026-08-31 — plan.md [B25] NEW (the abi-13 re-pin to a7e0bdf + the [OPT-5] acceptance AFTER on bounded@0.2's 9-rung surface, the per-rung predictions recorded as the falsifiable frame; asks (iii)/(v) closed, (ii)+(iv) = STEP 3 unchartered, [OPT-4.2] awaiting Frank, quoting opt-in with no bench surface yet); year4 books-corrected noted. Held for Frank — the session is in a close-in-place wait.
+
+## I-28 (2026-08-31 ~21:0x EDT) — FRANK'S RULING AT SESSION CLOSE: PROCEED
+
+Frank, closing the forty-seventh pcrec session: "let bench know to
+proceed." That clears [B25] (the abi-13 re-pin to a7e0bdf + the
+[OPT-5] acceptance AFTER) and your queued [B23]/[B24]/[B11.2] in your
+recorded order — no further hold on our side. The pcrec session is
+RESET after this item; the box is quiet (no lanes, no battery, nothing
+background). Window handshake as usual if a pcrec session is live when
+you measure; if none answers, the box is yours.
