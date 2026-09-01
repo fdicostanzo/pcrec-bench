@@ -47,7 +47,15 @@ OUT = os.path.join(HERE, "oracle_limits.tsv")
 # passed; `cap` = 65536 is one past PCRE2's count ceiling so the count
 # ceiling itself is always reached and named.
 SKELETONS = (
-    ("cls-upto",      r"[a-z]{0,N}",                    "64,128,256,512,1024,2048,4096,8192,16384,32768,65535", 16, 65536),
+    ("cls-upto",      r"[a-z]{0,N}",                    "4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65535", 16, 65536),
+    # 0.3's short-run digit family ([B27]): the same probe on the two
+    # skeletons `year4` is the k = 4 rung of, so the oracle's own ceiling on
+    # them is on the record beside the class ladder's rather than assumed
+    # from it. Both are single-unit repeats, so the COUNT ceiling is the one
+    # they should reach -- if either reports a compiled-SIZE refusal instead,
+    # PCRE2 is replicating something the set assumes it does not.
+    ("dig-exact",     r"\d{N}",                         "2,4,8,16,32",                   2, 65536),
+    ("dig-upto",      r"\d{1,N}",                       "2,4,8,16,32",                   2, 65536),
         ("cls-atleast",   r"[a-z]{N,}",                     "4096",                          256, 65536),
     ("cls-lazy",      r"[a-z]{0,N}?",                   "16384",                         256, 65536),
     ("grp-upto",      r"(?:a|[b-z]){0,N}",              "1024",                          16, 65536),

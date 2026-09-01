@@ -29,3 +29,22 @@ d-00017	17	a444af8f4dd978aa18fb5fa7f3bb77e91d1b90e1b82fdccaf2f2b87dcb27ddb2	run/
 d-00027	27	954a8a4b952b56b28654366da3fb76aafd16b7230c29de28a466cc515424a2fe	run/digits: 27 random digits	no
 d-00028	28	ef0f77b4bfae86de1da98c9ca02f5aa2fcf43ae1ad475c8e9c320c84fe098ffc	run/digits: 28 random digits	no
 d-00256	256	f6e3a3a644dbd7bbc4654dd12ece4dec697c988cd89488410309b8a6b73fc788	run/digits: 256 random digits	no
+r-00004	4	edeaedcebf65559dfe632087e6c506e021c3380e7d285edc2550ed2d4b573371	run/letters: 4 random lowercase letters	no
+r-00008	8	f0ea0cc67e32f4988e342db4c24936e7bf8b444798a77fd562a62a3f6fcdc4a2	run/letters: 8 random lowercase letters	no
+r-00016	16	0ec95642ad404cfbc9919df9c1341202607ad02b080c4a08cb4a84e8b19cacc1	run/letters: 16 random lowercase letters	no
+r-00032	32	1b26124fa7d63e29f4142c4569e74aafb0d07fc7e532c1eca3d09ac4e735fa98	run/letters: 32 random lowercase letters	no
+r-00064	64	d170320aeb1407b565e0f9c8a80c0961f60c752fbb4bcced9af9a24da9218af4	run/letters: 64 random lowercase letters	no
+r-00128	128	0b72eeab75b7f75d3009d213c65013a23777b109bcfcf078052feae04749a76c	run/letters: 128 random lowercase letters	no
+r-00512	512	57a673936e18462335a7e2f9fc7f3532f915ea4f9c331e480ce778e86b22a51a	run/letters: 512 random lowercase letters	no
+r-01024	1024	0a0d03c55ad09b1e8ea6f7a3d6cc7a485f188b15a84ef8549774af42ab4f0c37	run/letters: 1024 random lowercase letters	no
+d-00001	1	4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce	run/digits: 1 random digits	no
+d-00002	2	cd70bea023f752a0564abb6ed08d42c1440f2e33e29914e55e0be1595e24f45a	run/digits: 2 random digits	no
+d-00005	5	47523fab0880013d3031d8b2e73b4578a8120d8f472d32d2a13c942d1d0be76f	run/digits: 5 random digits	no
+d-00007	7	4c6570f55005fd4227aa65fdc292c0eef6f93afe2ac1a1d6365844dca336cea8	run/digits: 7 random digits	no
+d-00008	8	8d91d6a19fe1d10c33f1096489fa19ef8610dda6154eb747cff11b05820fb951	run/digits: 8 random digits	no
+d-00009	9	a79b181c29a9cd215c15495868aa3dcf5e345636bda4ded0b5bb9456cecbf1cd	run/digits: 9 random digits	no
+d-00015	15	468e5f7a20a088e15ce2f58c241904b7181e94871d74aafaa5e7d0c771903c92	run/digits: 15 random digits	no
+d-00031	31	5ba3eda2153cfaf0d0da1d338930d87282bfa4d3b26e3916b658bcb61d6468f7	run/digits: 31 random digits	no
+d-00032	32	f899bae0f2262ebc901de3535656389f887c2eabae3379909ce85246e24d3702	run/digits: 32 random digits	no
+d-00033	33	4f74bf1a2f44f00b3e2d4c5c6e12795cc22374f7e015e4954d1080bbfc2efd65	run/digits: 33 random digits	no
+d-01024	1024	a3763edac54281084e07e7bd710d675332190d30ff7ad25952993950cc310f23	run/digits: 1024 random digits	no

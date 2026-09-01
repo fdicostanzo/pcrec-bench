@@ -4,7 +4,7 @@
 # when it lands.
 
 id = "bounded"
-version = "0.2"
+version = "0.3"
 objective_kind = "hazard"
 objective = """\
 Bounded repeats on both axes: what an engine pays to COMPILE a counted \
@@ -17,14 +17,18 @@ gap before a word-boundary alternation; an ambiguous nested count) on \
 subjects that match, that fail at the last repetition, and that over-run \
 the count and fail only at the end anchor."""
 description = """\
-Thirty patterns in two families. TEN everyday bounded shapes: a 4-digit \
+Forty-three patterns in three families. TEN everyday bounded shapes: a 4-digit \
 year, a 32-hex id, a password length rule `.{8,64}`, a line-length rule \
 `.{80,}`, a dotted quad `(?:\\d{1,3}\\.){3}\\d{1,3}`, a five-field CSV \
 record, and a bounded-context shape `\\b(?:fail|abort|panic)\
 \\b.{0,N}?\\b(?:disk|memory|socket|quota)\\b` as a count ladder N = 64 / 256 \
-/ 1024 plus its greedy twin at 256. NINETEEN count-ladder rungs on a few \
-skeletons: `[a-z]{0,n}` for n = 64 .. 65535 (eleven geometric rungs, since \
-0.2, to PCRE2's own ceiling), the \
+/ 1024 plus its greedy twin at 256, and (since 0.3) the SHORT-RUN DIGIT \
+FAMILY that shapes `year4` into a ladder: `\\d{k}` at k = 2 / 8 / 16 / 32 \
+beside its `\\d{1,k}` twin at k = 2 / 4 / 8 / 16 / 32, the instrument the \
+per-run edge-selection boundary is read off. TWENTY-THREE count-ladder \
+rungs on a few \
+skeletons: `[a-z]{0,n}` for n = 4 .. 65535 (fifteen geometric rungs -- \
+eleven since 0.2 to PCRE2's own ceiling, four LOW rungs since 0.3), the \
 open `{n,}`, the lazy `{0,n}?`, a group body `(?:a|[b-z]){0,1024}` beside \
 the class rung at the same count (the 0.2 group-vs-class pair), two- \
 and three-deep nests `(?:\\d{1,k}){1,k}`, and one ambiguous nest over \
@@ -32,14 +36,18 @@ letters whose near-misses a backtracker pays for. Plus the floor. \
 Subjects: 13 whole-string FIELDS (each shape's exact match, its near-miss \
 at the last repetition, its over-run), 8 LINES of near-miss ops prose \
 (43-256 B) carrying the shapes in an allocated minority and the \
-trigger/context pairs at designed gaps, 9 RUNS of random letters or digits \
-sitting on the ladder's small rungs and one off them (16-257 B), and five \
+trigger/context pairs at designed gaps, 24 RUNS of random letters or digits \
+sitting on the ladder's rungs and one off them (1-1024 B; 15 of them added \
+by 0.3 -- letters at 64 / 128 / 512 / 1024 as the MATCH regime's per-rung \
+whole-subject matches, digits as a 1 .. 33 length ladder plus a 1024 B \
+control, the three longest MATCH-ONLY because they exceed \
+`short_search_max_bytes`), and five \
 LARGE runs (4 / 16 / 64 KB letters, 4 / 16 KB digits) in a `throughput` \
 regime that is the \
 ladder's top rungs driven to their full count, not a size sweep -- the \
 sweep here is the COUNT, in the patterns. The set is sized to the \
 harness's batched-loop protocol (NOTES.md, "Cell-time estimate"), which is \
-why the ladder is thirteen rungs and not twenty. See NOTES.md for the pattern \
+why the longest match-only run is 1024 B and not 16 KB. See NOTES.md for the pattern \
 table with m/n, the ladder and the predicted first-refusal counts, the \
 oracle's own limits, and the cell-time estimate."""
 
@@ -171,7 +179,168 @@ convention = "perl-leftmost-first"
 tags = ["everyday", "greedy-gap", "word-boundary", "control", "ctx", "tier-assertions"]
 role = "member"
 
+# ---- the short-run digit family (0.3) ----
+
+# 0.3 ([B27], inbox I-29 ask (ii), bundled with ask (v)): `year4` and
+# `dotted4` shaped as a LADDER. The acceptance ledger measured a per-call
+# entry cost of x1.07-1.11 on `year4` (a 4-count digit run) where pcrec's
+# own digits control stated x1.08, and the hybrid-gained-edge census
+# (docs/dev/measurements/2026-09-01-hybrid-gained-edge-census.md) resolved
+# that term into a FIXED +6..+12 ns paid per matching call -- so the number
+# that decides a skip-below-k knob is the COUNT at which the run is long
+# enough to pay for it, and no ladder existed to read it off. This family is
+# that ladder: `\d{k}` at k = 2 / 8 / 16 / 32 (k = 4 is `year4` itself,
+# byte for byte, and completes the rung set) beside its `\d{1,k}` twin at
+# k = 2 / 4 / 8 / 16 / 32. The pair at each rung separates a FIXED-width run
+# from a BOUNDED one: same class, same maximum, different certainty about
+# the length. Their subjects are 0.3's digit length ladder, where for each
+# rung one subject matches exactly, one is a near-miss one short, and one
+# over-runs (NOTES.md, "What 0.3 added").
+
+[[patterns]]
+name = "dig-exact-2"
+file = "patterns/dig-exact-2.rx"
+feature_tier = "base"
+hazard_class = "exact-minimum-boundary"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "fixed-width", "digits", "short-run", "ladder", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "dig-exact-8"
+file = "patterns/dig-exact-8.rx"
+feature_tier = "base"
+hazard_class = "exact-minimum-boundary"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "fixed-width", "digits", "short-run", "ladder", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "dig-exact-16"
+file = "patterns/dig-exact-16.rx"
+feature_tier = "base"
+hazard_class = "exact-minimum-boundary"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "fixed-width", "digits", "short-run", "ladder", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "dig-exact-32"
+file = "patterns/dig-exact-32.rx"
+feature_tier = "base"
+hazard_class = "exact-minimum-boundary"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "fixed-width", "digits", "short-run", "ladder", "tier-base"]
+role = "member"
+
+[[patterns]]
+# The `{1,k}` twins. `hazard_class` is `none`: an up-to repeat on a single
+# unit has no last-repetition boundary to miss (any shorter run still
+# matches), which is exactly the difference from the `dig-exact-*` row above
+# it and the reason both halves of each rung exist.
+name = "dig-upto-2"
+file = "patterns/dig-upto-2.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "digits", "short-run", "upto", "ladder", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "dig-upto-4"
+file = "patterns/dig-upto-4.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "digits", "short-run", "upto", "ladder", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "dig-upto-8"
+file = "patterns/dig-upto-8.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "digits", "short-run", "upto", "ladder", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "dig-upto-16"
+file = "patterns/dig-upto-16.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "digits", "short-run", "upto", "ladder", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "dig-upto-32"
+file = "patterns/dig-upto-32.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["everyday", "digits", "short-run", "upto", "ladder", "tier-base"]
+role = "member"
+
 # ---- the count ladder ----
+
+# 0.3 ([B27], inbox I-29 ask (ii)): the LOW RUNGS. Frank asked for the
+# per-run edge-selection boundary to be READ OFF an instrument rather than
+# argued from `year4` and `dotted4`, so the class ladder is extended DOWN
+# by four factor-of-2 rungs below its 0.2 floor of 64. Same skeleton, same
+# subjects, same `hazard_class` as the rest of the ladder -- the class names
+# the FAMILY, not the size of any one rung, and splitting it at some count
+# would make the ladder unreadable by that column. Their matching
+# match-regime subjects are 0.3's letters runs (NOTES.md, "What 0.3 added").
+
+[[patterns]]
+name = "cls-upto-4"
+file = "patterns/cls-upto-4.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "low-rung", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-upto-8"
+file = "patterns/cls-upto-8.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "low-rung", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-upto-16"
+file = "patterns/cls-upto-16.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "low-rung", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "cls-upto-32"
+file = "patterns/cls-upto-32.rx"
+feature_tier = "base"
+hazard_class = "large-count"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["ladder", "class-body", "upto", "low-rung", "tier-base"]
+role = "member"
 
 [[patterns]]
 # 0.2 ([B21]): the KNEE rungs. The 0.1 class ladder was geometric at
@@ -403,12 +572,16 @@ generator = "gen_subjects.py"
 manifest = "manifest.tsv"
 throughput_generator = "gen_throughput_subjects.py"
 throughput_manifest = "manifest_throughput.tsv"
-# 512: every field, line and small run (3-257 B) is in the search band, so
-# the two short regimes see the same 30 subjects. The lines themselves are
-# held to <= 256 B by the generator (requirements 3's "~256-byte subjects"
-# for this regime, bench/email's band); 512 rather than 256 only so the
-# 257-byte over-run of the 256 rung is not dropped from search by one byte.
-short_search_max_bytes = 512
+# 258 (was 512 through 0.2, with NO change of membership: every 0.2 subject
+# is <= 257 B, so the same 30 are in the search band either way). The cap
+# earns a SECOND job in 0.3: `subbench.subjects_for()` filters `search_short`
+# by it and does NOT filter `match` at all, so a subject longer than the cap
+# is MATCH-ONLY -- which is the whole mechanism behind 0.3's long letters and
+# digit runs (NOTES.md, "What 0.3 added": no new regime, no schema change).
+# 258 is still the 0.2 number's own rationale to the byte: one more than the
+# 257-byte over-run of the 256 rung, so that subject is not dropped from the
+# search band by one byte.
+short_search_max_bytes = 258
 
 [expectations]
 file = "expectations.tsv"

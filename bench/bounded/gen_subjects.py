@@ -9,11 +9,18 @@ end-anchor over-run), LINES (43-256 B ops prose, near-miss background, the
 everyday shapes injected into an exactly allocated minority, and the
 bounded-context lines with a trigger word and a context word at a DESIGNED
 gap), and RUNS (random letters / digits at the count ladder's SMALL rungs
-and one off them, 16-257 B). The ladder's LARGE rungs are exercised by the
+and one off them, 1-1024 B). The ladder's LARGE rungs are exercised by the
 `throughput/` runs (`gen_throughput_subjects.py`), not here: a 16 KB
 subject in the `match` regime beside 40 subjects of ~40 B would drive the
 harness's median-calibrated loop into its 20 s per-trial cap on every
 length-proportional pattern (NOTES.md, "Cell-time estimate").
+
+0.3 ([B27]) appends two instruments to the RUNS family, drawn LAST so every
+0.2 subject reproduces byte for byte: letters at 64 / 128 / 512 / 1024 (the
+MATCH regime's per-rung whole-subject matches, where pcrec's two-pass
+`_match` elision must show) and digits as a length ladder 1 .. 33 plus one
+1024 B run (the short-run family's exact / near-miss / over-run arms at
+every low rung, and the non-matching control). See `runs_0_3()`.
 
 Every subject is ONE line with NO trailing newline: `.` does not match `\\n`,
 so a trailing newline would make every `.{80,}`-class whole-subject match
@@ -47,10 +54,13 @@ OUT = os.path.join(HERE, "subjects")
 MANIFEST = os.path.join(HERE, "manifest.tsv")
 
 # Lines are capped at MAX_LINE bytes (requirements 3: the short-search
-# regime's "~256-byte subjects") and the sidecar's short_search_max_bytes is
-# 512, so every subject here is in BOTH short regimes. The cap is also what
-# keeps the search band's cost spread inside what the harness's median-
-# calibrated loop tolerates (NOTES.md, "Cell-time estimate").
+# regime's "~256-byte subjects"), under the sidecar's
+# short_search_max_bytes (258 since 0.3), so every LINE is in both short
+# regimes. The cap is also what keeps the search band's cost spread inside
+# what the harness's median-calibrated loop tolerates (NOTES.md,
+# "Cell-time estimate"). Since 0.3 not every subject in this tree is in
+# both regimes: `runs_0_3`'s three longest runs are over the sidecar's cap
+# and so are MATCH-ONLY, deliberately (see that function).
 MAX_LINE = 256
 
 # ---------------------------------------------------------------- fields
@@ -229,9 +239,63 @@ def runs(rng):
     return out
 
 
+# ------------------------------------------------------- 0.3's added runs
+
+# THE 0.3 RUNS ([B27]; NOTES.md, "What 0.3 added"), two instruments in one
+# family. They are DRAWN LAST -- after every 0.2 field, line and run -- so
+# each 0.2 subject sees the identical prefix of the rng stream and
+# reproduces byte for byte, the rule 0.2 itself followed for
+# `t-digits-004k`.
+#
+# (a) LETTERS at EVERY class-ladder rung from 4 to 1024. Their job is
+#     the MATCH regime: `[a-z]{0,n}` matches a letters run of length <= n
+#     WHOLE, so a run of L bytes gives every rung >= L a match cell whose
+#     work is L bytes forward -- and a reverse pass of L more, wherever the
+#     artifact's `_match` entry is the search-filter form. One run per rung
+#     is what gives EVERY rung at least one matching match cell (through
+#     0.2 the four low rungs had none: the shortest letters run was 36) and
+#     what turns any single rung's match row into a LENGTH SWEEP over
+#     4, 8, 16, 32, 36, 37, 64, 128, 256, 257, 512, 1024 B -- twelve points
+#     from which a per-byte slope and a per-call intercept separate. 1024 B is the
+#     top: at pcrec's measured 1.2-1.8 ns/B that is a 1.2-1.9 us call
+#     against a ~13-25 ns per-call floor, so a halving of the scan is ~50x
+#     the floor and cannot be confused with a per-call term (NOTES.md,
+#     "What 0.3 added", states the cost this length was chosen against).
+#     LENGTHS > `short_search_max_bytes` (258 since 0.3) are MATCH-ONLY:
+#     `subbench.subjects_for()` filters the search band by that cap and
+#     does not filter `match` at all, which is the whole mechanism -- no
+#     new regime, no schema change.
+# (b) DIGITS as a LENGTH LADDER, 1..33, plus one 1024 B run. The short ones
+#     are the year4/dotted4-shaped short-run family's subjects: for a rung
+#     k the run of length k is the exact match, k-1 the near-miss that
+#     fails at the last repetition, k+1 the over-run that satisfies the
+#     repeat and fails at `\\z`. One ladder serves every rung at once (the
+#     3, 4, 16 and 17 rungs of it are 0.2 subjects already), so the family
+#     costs ten subjects rather than three per rung. The 1024 B run is the
+#     letters run's control on the non-matching content axis.
+#
+# Every length here is BELOW the maximum of both large nests (4096), so
+# `nest2-64` and `nest3-16` MATCH the long digit run greedily on the first
+# try rather than decomposing it -- caveat 1 of bench/bounded/CLAUDE.md,
+# which is why 1024 and not 8192.
+LETTER_RUNS_0_3 = (4, 8, 16, 32, 64, 128, 512, 1024)
+DIGIT_RUNS_0_3 = (1, 2, 5, 7, 8, 9, 15, 31, 32, 33, 1024)
+
+
+def runs_0_3(rng):
+    out = []
+    for n in LETTER_RUNS_0_3:
+        out.append(("r-%05d" % n, "run/letters: %d random lowercase letters" % n,
+                    nonperiodic(rng, lambda r: r.letters(n))))
+    for n in DIGIT_RUNS_0_3:
+        out.append(("d-%05d" % n, "run/digits: %d random digits" % n,
+                    nonperiodic(rng, lambda r: r.digits(n))))
+    return out
+
+
 def build():
     rng = bt.Rng(SEED)
-    return fields(rng) + lines(rng) + runs(rng)
+    return fields(rng) + lines(rng) + runs(rng) + runs_0_3(rng)
 
 
 def main():
