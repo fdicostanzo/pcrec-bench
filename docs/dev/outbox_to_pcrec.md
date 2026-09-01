@@ -923,3 +923,79 @@ witnesses (0 of 74+ forms) — tested only by your resource pair.
 I-25's condition). Bench-side next: the reports/plan bookkeeping, then
 [B23] (the spread rule's positive control), [B24] (cc axis), [B11.2] —
 per Frank's ordering.
+
+## O-12 (2026-09-01 ~00:2x EDT) — pin a7e0bdf (abi 13) MEASURED, the [OPT-5] STEP 1 ACCEPTANCE: **ACCEPTED on both axes, all nine rungs** (letters 3.65-6.05 → 1.76-2.00 with the 64/128 rungs BETTER than predicted; digits held with the entry cost visible at ×1.04-1.06); the 8192 "inversion" flag is WITHDRAWN (a vs-best mis-reading, refuted from the records); a bonus SEARCH-band win ×1.69-2.24; the whole-form ladder did NOT collapse (edge=none) and owns both surviving warns; five asks
+
+Ledger: docs/dev/ledgers/2026-08-31-opt5-step1-acceptance-a7e0bdf.md.
+Report: reports/2026-08-31-bounded-0.2-*-after-a7e0bdf.* (cross-pin by
+design — the R8 Δ column vs 263b013 IS the acceptance table). Window
+2026-08-31 21:46-23:15 EDT, 4/4 pcrec cells attempt-1, no spread.
+Re-pin: [B25] merged a8a2d1f — RX_DFA_SCAN_EDGE absorbed with the
+-fno-scan-edge deny control, registries 69/23 / 50 / 45, shim floor
+stays 10 (rx_info byte-identical), 187/187 harness checks.
+
+1. **ACCEPTED, per rung** (ledger §3): letters auto÷vm at the nine
+   counted rungs = 1.76-2.00 (was 3.65-6.05) — inside your ~1.9-2.1
+   band at 512-16384, BELOW it at 64/128/256 (1.76-1.87: STEP 1
+   overshot your prediction on the small rungs); no rung at or below
+   1.0 on a selected DFA (parity remains the two-pass residual, as you
+   said); the 32768 ≈1.00 is the expected parity-via-decline, stamps
+   verified untouched. Your own find-all speedups reproduce on our
+   driver: 2.77-2.80× at {0,256} (you said 2.71), 3.01-3.04× at
+   {0,16384} (you said 3.03). DIGITS: 0.596-0.604 at every rung —
+   direction and ceiling confirmed; "within noise" refined: auto paid
+   a SYSTEMATIC ×1.04-1.06 on every digits cell (the vm control flat
+   ×0.998-0.999) — inside your 1.08× bound, but visible above trial
+   noise, not noise.
+2. **THE 8192 FLAG IS WITHDRAWN** (ledger §4) — our reports lane's
+   inversion claim was a mis-reading of the cross-pin rendering (the
+   `vs best` cell compares against 263b013-auto in the digits
+   sub-tables; the 0.13 paired letters-auto against digits-vm). The
+   rung's true ratios are 1.967-2.000 / 0.601-0.602, in line with its
+   neighbors; routes identical in kind at both pins. The correction
+   and a reader's caveat are committed (reports/CLAUDE.md); nothing to
+   ask.
+3. **BONUS: the SEARCH band moved too** (ledger §7.1, unpredicted):
+   auto search sets ×2.24 at 256-16384, pw-8-64 ×1.85, line-80 ×1.69,
+   hex32/csv5 ×1.17-1.22 — the edge shortens the table walk on the
+   search side as well.
+4. **The size half** (ledger §6): the PLAIN counted ladder is flat at
+   run time (emit 16,347-19,502 B, .so 22,552-22,704; code +1.4-2.1 KB
+   where tables were), byte-exact against the re-pin's compile-time
+   table; the three plain warns GONE. BUT the byte-class-bounded
+   WHOLE-subject forms stamp `edge=none`, keep their linear tables,
+   and now own both surviving warns (471,204 and 937,248 = still
+   93.7 % of the cap, still the corpus's largest artifact) — ask
+   (iii). Every artifact incl. byte-identical VM emits took a uniform
+   .so +40/+48 B = the abi-13 SHIM's reader, bench-side (year4's
+   lesson applied — our books, not yours).
+5. **A small regression family at the entry cost's face** (ledger
+   §7.2): year4 match ×1.07-1.11, dotted4 search ×1.11, lazy plain
+   throughput ×1.05-1.06 — short runs where the edge's fixed term
+   sits AT or ABOVE the stated ×1.08 — ask (ii). And the nest wholes'
+   hybrid prefilter DFAs gained the edge: throughput ×1.57-1.59
+   FASTER, match ×1.04-1.05 slower — ask (v), accepted trade or
+   tunable.
+6. Instrument (ledger §8): 4/4 attempt-1; the first agreement-pass
+   record with nonzero disagreeing rows (3 of 1,885, 0 groups — the
+   group rule doing its job); pre-flight 5.21 % on one cell = the
+   first reading outside the old 0.4-2.6 % band (limit 10 %, record
+   stands; the band is now 0.4-5.21 %, n=13); spread base rate 1 per
+   13 cells.
+
+ASKS (ledger §11, full wording there): (i) is this verdict + the
+withdrawal recorded on your side; (ii) the per-RUN edge-selection
+boundary — should runs as short as year4's 4-count take the edge, is
+the fixed term's size known, and is a skip-below-k knob cheaper?
+(iii) the whole-form ladder: is a bounded-prefilter scan edge STEP 2
+or STEP 3 territory, and does [ART-SIZE] expect its first real
+customer there? (iv) does Frank charter the TWO-PASS fix (parity's
+remaining term) — the same 9-rung surface stands ready as its
+acceptance instrument; (v) the hybrid trade (bundled with (ii) if one
+term explains both). KB-4 carried (fourth pin, refusal row still
+untimed on your clock's side of the ledger — ours to fix).
+
+Bench-side state: [B25] COMPLETE tonight (re-pin, window, report,
+ledger, this item); reporter gaps KB-5 (roster filter) and KB-6 (no
+scan-edge clause) queued for the next reporter wave; [B23]/[B24]/
+[B11.2] next in Frank's recorded order.
