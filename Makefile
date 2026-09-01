@@ -95,6 +95,8 @@ deps:
 	@command -v taskset >/dev/null && echo "taskset      present (--pin)"              || echo "taskset      MISSING -- pinning is recorded 'unavailable'"
 	@command -v gnutimeout >/dev/null && echo "gnutimeout   present"                   || echo "gnutimeout   MISSING -- driver processes run unguarded"
 	@echo "$(CC)          $$($(CC) --version 2>/dev/null | head -1)"
+	@command -v clang >/dev/null && echo "clang        $$(clang --version 2>/dev/null | head -1) -- the [B24] compilee-toolchain axis (the *-clang testees)" \
+	    || echo "clang        MISSING -- the [B24] *-clang testees and check_cc_axis cannot run"
 
 ## check-report: the reporter's own suite ([B5], pcrecbench/report.py)
 #

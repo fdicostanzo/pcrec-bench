@@ -27,6 +27,11 @@
 #   TRIALS     5                     -- trials per cell
 #   STORE      store                 -- the record store (real windows: `store`)
 #   TESTEES    "pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in"
+#              ([B24]) the compilee-toolchain axis adds pcrec-auto-clang /
+#              pcrec-nocaps-clang / pcrec-vm-clang -- run them as their OWN
+#              TESTEES list, beside the gcc six, so the pair is one variable
+#              apart. Do not export $CC for such a window: a $CC that
+#              contradicts a config's declared `cc` is refused by name.
 #   NOTE       "quiet window run, $(date -Is)"
 #   LOG        build/windows/window_${SUBBENCH}_$(date +%Y%m%dT%H%M%SZ).log
 #              (gitignored -- `build/` is in .gitignore already)
