@@ -2064,3 +2064,32 @@ cross-pin render, KB-5, the R8 Δ column's first firing); the 591-line
 ledger (ten points 10/10; NO KNEE — I-26 confirmed to two decimals;
 grp≡cls); O-11 with five asks and W1.2 unblocked. Three lanes, zero
 lost cells, two plan rows closed.
+
+## 2026-09-01 (EDT, ~00:3x), sixth session (part 6) — [B25] COMPLETE: the [OPT-5] STEP 1 acceptance, measured and ACCEPTED the same day the fix shipped
+
+The whole arc ran 20:45-00:30: I-27 (pin a7e0bdf, abi 13 — pcrec built
+our rank-1 candidate the same day O-11 named it) and I-28 (Frank's
+proceed) acked; lane b25repin (77 min: RX_DFA_SCAN_EDGE by value on
+every stamp case, the -fno-scan-edge deny row as the warn-capture
+positive witness, registries 69/23 / 50 / 45, shim floor stays 10 with
+the rx_info byte-identity proof, the counted ladder's emitted source
+FLAT at compile time, 187/187) — its landing taken over by the manager
+after the second lost-notification stall of the day; the acceptance
+window 21:46-23:15 (4/4 attempt-1, no spread); lane b25reports (the
+cross-pin acceptance report — and a flagged "8192 inversion");
+lane b25ledger, which ACCEPTED STEP 1 on both axes at all nine rungs
+(letters 3.65-6.05 → 1.76-2.00, the 64/128 rungs BETTER than
+predicted; digits 0.596-0.604 with the entry cost systematic at
+x1.04-1.06 inside I-27's 1.08 bound) and REFUTED the 8192 flag as a
+vs-best/cross-subject mis-reading — the correction and a reader's
+caveat are committed prose now (bca42b2). Unpredicted finds: the
+search band moved x1.69-2.24; the whole-form ladder did NOT collapse
+(edge=none — both surviving warns live there, ask iii); a small
+regression family at the entry cost's face (year4/dotted4 at/above
+the stated x1.08, ask ii); the first pre-flight reading outside the
+old quiet band (5.21%, limit 10%, record stands — band now 0.4-5.21%
+n=13). O-12 sent (4d7dc4f, five asks incl. the two-pass charter — the
+9-rung surface held stable and discriminated exactly as designed).
+KB-6 filed (no reporter clause for dfa_scan_edge). [B25] archived.
+NEXT in I-28's cleared order: [B23] (needs the box idle — pcrecdev1's
+validation lanes run tonight), [B24], [B11.2].
