@@ -1818,13 +1818,18 @@ def _stamp_ok(got, want):
 STAMP_CASES = (
     # (label, testee, pattern, expected {pair: value})
     ("pure DFA", "pcrec-auto", b"foo[0-9]+bar",
+     # [B25] (abi 13): `[0-9]+` is the unbounded ONE-STATE form of a
+     # counted class run (tuning.md 2.18), so even this small witness
+     # carries a scan edge -- `range` ([0-9] is contiguous).
      {"engine": "dfa", "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
       "dfa_table": "premultiplied", "dfa_prefilter_offsets": "none",
+      "dfa_scan_edge": "range",
       "dfa_match": "unwrapped", "engine_sel": "selected", **_CAPS_DFA}),
     ("VM hybrid", "pcrec-auto", b"a(b|c)+d",
      {"engine": "vm", "prefilter": "hybrid", "dfa_scan": "unanchored",
       "dfa_prefilter": "memchr", "dfa_table": "premultiplied",
-      "dfa_prefilter_offsets": "none", "engine_sel": "selected",
+      "dfa_prefilter_offsets": "none", "dfa_scan_edge": "none",
+      "engine_sel": "selected",
       "vm_prefilter_lang": "exact",
       "vm_prefilter_lang_why": "no counted repeat", **_CAPS_VM}),
     ("VM, no DFA scan", "pcrec-vm", b"a(b|c)+d",
@@ -1833,12 +1838,18 @@ STAMP_CASES = (
     ("provably-empty DFA", "pcrec-auto", b"[^\\x00-\\xff]",
      {"engine": "dfa", "dfa_scan": "empty", "dfa_prefilter": "none",
       "dfa_table": "none", "dfa_prefilter_offsets": "none",
+      "dfa_scan_edge": "none",
       "dfa_match": "search-filter", "engine_sel": "selected", **_CAPS_DFA}),
     # [B18]: the `attempt` scan (an anchored pattern) is the other
     # `search-filter` population I-16 names, and the other `dfa_table none`.
+    # [B25]: an `attempt` scan's states are code labels with a computed-
+    # goto step -- no loop-carried table load to shorten -- so the scan
+    # edge is `none` BY MECHANISM here (match_api.md 6.3's second cause),
+    # despite the same `[0-9]+` run that stamps `range` unanchored.
     ("anchored attempt DFA", "pcrec-auto", b"^foo[0-9]+bar",
      {"engine": "dfa", "dfa_scan": "attempt", "dfa_prefilter": "none",
       "dfa_table": "none", "dfa_prefilter_offsets": "none",
+      "dfa_scan_edge": "none",
       "dfa_match": "search-filter", "engine_sel": "selected", **_CAPS_DFA}),
     # [B19]: a VM hybrid with a counted repeat that nothing collapses --
     # the `exact` language's OTHER why value, and the pattern the force
@@ -1846,6 +1857,7 @@ STAMP_CASES = (
     ("VM hybrid, counted repeat, exact", "pcrec-auto", b"a(b|c){2,5}d",
      {"engine": "vm", "prefilter": "hybrid", "engine_sel": "selected",
       "vm_prefilter_lang": "exact", "vm_prefilter_lang_why": "exact",
+      "dfa_scan_edge": "range",
       **_CAPS_VM}),
     # [B19]: THE SIZE-CAP RUNG (limits.md 8, [OPT-4]): the exact artifact
     # is REFUSED by the code cap and the retry ships a count-collapsed
@@ -1855,8 +1867,12 @@ STAMP_CASES = (
     # OWN token, `size-cap-retry`, and Frank's ask (b) bucket sees it by
     # VALUE (the prefix bucketing is RETIRED -- inbox I-25).
     ("size-cap rung rescue (K41 witness 2)", "pcrec-auto", _K41W2,
+     # [B25]: this hybrid's prefilter scan is an `attempt` scan (anchored
+     # branch), so its scan edge is `none`; the `_why` byte count moved
+     # 671050 -> 671082 at a7e0bdf (the exact artifact gained the stamp
+     # line), which _SIZE_CAP_RETRY absorbs by design.
      {"engine": "vm", "prefilter": "hybrid", "engine_sel": "size-cap-retry",
-      "vm_prefilter_lang": "count-collapsed",
+      "vm_prefilter_lang": "count-collapsed", "dfa_scan_edge": "none",
       "vm_prefilter_lang_why": _SIZE_CAP_RETRY, **_CAPS_VM}),
 )
 
@@ -1878,43 +1894,56 @@ LEDGER_STAMP_CASES = (
     ("uuid: the k-set skip, scanned at 8", "pcrec-auto", "loglines", "uuid",
      {"engine": "dfa", "dfa_prefilter": "offset-set-bounded",
       "dfa_prefilter_offsets": "0,8*,13", "dfa_match": "unwrapped",
+      "dfa_scan_edge": "none",
       "engine_sel": "selected"}),
     ("iso-ts: the k-set skip, scanned at 4", "pcrec-auto", "loglines", "iso-ts",
      {"engine": "dfa", "dfa_prefilter": "offset-set",
       "dfa_prefilter_offsets": "0,4*", "dfa_match": "unwrapped",
+      "dfa_scan_edge": "range",
       "engine_sel": "selected"}),
     ("stack-frame: the k-set skip, scanned at 1", "pcrec-auto", "loglines",
      "stack-frame",
      {"engine": "dfa", "dfa_prefilter": "offset-set-bounded",
       "dfa_prefilter_offsets": "0,1*", "dfa_match": "unwrapped",
+      "dfa_scan_edge": "none",
       "engine_sel": "selected"}),
+    # [B25]: ipv6 is THE `bitmap` witness in reach -- its hex class is not
+    # contiguous, so the edge's test is a 256-byte membership read (the
+    # cursor still the only loop-carried register; the value no other
+    # corpus row produces, like `indexed` before -fno-premul-table).
     ("ipv6: declined", "pcrec-auto", "loglines", "ipv6",
      {"engine": "dfa", "dfa_prefilter": "byte-class",
-      "dfa_prefilter_offsets": "none", "engine_sel": "selected"}),
+      "dfa_prefilter_offsets": "none", "dfa_scan_edge": "bitmap",
+      "engine_sel": "selected"}),
     ("kv-quoted: declined", "pcrec-auto", "loglines", "kv-quoted",
      {"engine": "dfa", "dfa_prefilter": "byte-class-bounded",
-      "dfa_prefilter_offsets": "none", "engine_sel": "selected"}),
+      "dfa_prefilter_offsets": "none", "dfa_scan_edge": "none",
+      "engine_sel": "selected"}),
     ("bignum: declined", "pcrec-auto", "loglines", "bignum",
      {"engine": "dfa", "dfa_prefilter": "byte-class-bounded",
-      "dfa_prefilter_offsets": "none", "engine_sel": "selected"}),
+      "dfa_prefilter_offsets": "none", "dfa_scan_edge": "none",
+      "engine_sel": "selected"}),
     ("ipv4: control, declined", "pcrec-auto", "loglines", "ipv4",
      {"engine": "dfa", "dfa_prefilter_offsets": "none",
-      "engine_sel": "selected"}),
+      "dfa_scan_edge": "none", "engine_sel": "selected"}),
+    # (hex32-id's 32-count hex run stays `none` where ipv6's stamps
+    # `bitmap` -- the edge selection is per RUN, not per class; asserted
+    # as measured, the per-run boundary being pcrec's to explain.)
     ("hex32-id: control, declined", "pcrec-auto", "loglines", "hex32-id",
      {"engine": "dfa", "dfa_prefilter_offsets": "none",
-      "engine_sel": "selected"}),
+      "dfa_scan_edge": "none", "engine_sel": "selected"}),
     ("http-5xx: control, declined", "pcrec-auto", "loglines", "http-5xx",
      {"engine": "dfa", "dfa_prefilter_offsets": "none",
-      "engine_sel": "selected"}),
+      "dfa_scan_edge": "range", "engine_sel": "selected"}),
     ("email orig: declined (`@` at a variable offset)", "pcrec-auto", "email",
      "orig",
      {"engine": "dfa", "dfa_prefilter": "byte-class",
       "dfa_prefilter_offsets": "none", "dfa_match": "unwrapped",
-      "engine_sel": "selected"}),
+      "dfa_scan_edge": "none", "engine_sel": "selected"}),
     ("email factored: declined", "pcrec-auto", "email", "factored",
      {"engine": "dfa", "dfa_prefilter": "byte-class",
       "dfa_prefilter_offsets": "none", "dfa_match": "unwrapped",
-      "engine_sel": "selected"}),
+      "dfa_scan_edge": "none", "engine_sel": "selected"}),
     ("email orig under --engine=vm: K=8/default", "pcrec-vm", "email", "orig",
      {"engine": "vm", "prefilter": "none", "engine_sel": "forced",
       **_CAPS_VM}),
@@ -1928,6 +1957,7 @@ LEDGER_STAMP_CASES = (
     ("level-context under auto: the [SEL-1] VM fallback", "pcrec-auto",
      "loglines", "level-context",
      {"engine": "vm", "prefilter": "hybrid", "dfa_scan": "unanchored",
+      "dfa_scan_edge": "none",
       "engine_sel": "collapsed-prefilter",
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 462",
@@ -1947,19 +1977,29 @@ LEDGER_STAMP_CASES = (
       "engine_sel": "declined-nullable",
       "emit_bytes": 18291, "emit_code_bytes": 18291,
       **_CAPS_VM}),
-    # [B19] (e): the 16384 rung is a DFA that WARNS (limits.md 8,
-    # `--warn-emit-bytes` default 250,000) -- the warning is captured as a
-    # pair, the outcome stays `compiled`, and the two source-bytes pairs
-    # are the message's own numbers. I-18's table says 725,692 bytes for a
-    # file named `[a-z]{0,16384}`; the adapter's `artifact.c`/`.h` names
-    # make it 724,699 comment-excluded (the count includes the emitted
-    # #include line). Unchanged at 263b013 (RE-MEASURED: [OPT-4.1]/[LIM-1]
-    # touch no `selected` DFA artifact). ~8 s a compile under load.
-    ("bounded cls-upto-16384: the DFA that warns", "pcrec-auto",
+    # [B19] (e) -> [B25]: until a7e0bdf the 16384 rung was THE DFA THAT
+    # WARNS (724,699 B of source, over `--warn-emit-bytes` 250,000 --
+    # limits.md 8). [OPT-5] STEP 1 COLLAPSED it (inbox I-27 (2)/(5): the
+    # scan edge deleted the run's 16,384 interior states and their
+    # tables): 724,699/11,589 -> 16,352/13,012, `range`, and the warning
+    # CANNOT fire at the default -- `warned_emit_bytes` is asserted ABSENT
+    # (None), the warn-capture path's positive witness moving to the
+    # `-fno-scan-edge` deny-control row, where the denied build (the
+    # pre-[OPT-5] machine) warns again. The total fell ~44x while the
+    # CODE bytes ROSE +1,423 (the edge's in-loop block is code where the
+    # deleted states were table); prefilter `none` / match `search-filter`
+    # were already so at 263b013 (RE-MEASURED against the old pin binary
+    # -- only size, the warning and the new stamp moved). Still ~7 s a
+    # compile (MEASURED both arms at a7e0bdf): the caps and the cost are
+    # in CONSTRUCTION, which builds the run before scanedge.c deletes it
+    # -- I-27 (3)'s reason STEP 3, not this pin, is what moves them.
+    ("bounded cls-upto-16384: the DFA that warned, collapsed", "pcrec-auto",
      "bounded", "cls-upto-16384",
      {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "unanchored",
-      "warned_emit_bytes": 724699, "emit_bytes": 724699,
-      "emit_code_bytes": 11589, **_CAPS_DFA}),
+      "dfa_prefilter": "none", "dfa_scan_edge": "range",
+      "dfa_match": "search-filter",
+      "warned_emit_bytes": None, "emit_bytes": 16352,
+      "emit_code_bytes": 13012, **_CAPS_DFA}),
     # ------ [B22] THE DECLINE/KEEP SETS at 263b013 (the I-21 CORRECTION's
     # code-derived minw analysis, stamped 11/11 as predicted -- inbox
     # I-23/I-25; plan [B22]). DECLINE (`pcrec_minw(root) == 0` on the
@@ -1990,6 +2030,7 @@ LEDGER_STAMP_CASES = (
     ("bounded ctx-greedy-256: the rescue kept", "pcrec-auto",
      "bounded", "ctx-greedy-256",
      {"engine": "vm", "prefilter": "hybrid",
+      "dfa_scan_edge": "none",
       "engine_sel": "collapsed-prefilter",
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 558",
@@ -1997,6 +2038,7 @@ LEDGER_STAMP_CASES = (
     ("bounded ctx-lazy-64: the rescue kept", "pcrec-auto",
      "bounded", "ctx-lazy-64",
      {"engine": "vm", "prefilter": "hybrid",
+      "dfa_scan_edge": "none",
       "engine_sel": "collapsed-prefilter",
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 174",
@@ -2004,6 +2046,7 @@ LEDGER_STAMP_CASES = (
     ("bounded ctx-lazy-256: the rescue kept", "pcrec-auto",
      "bounded", "ctx-lazy-256",
      {"engine": "vm", "prefilter": "hybrid",
+      "dfa_scan_edge": "none",
       "engine_sel": "collapsed-prefilter",
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 558",
@@ -2011,6 +2054,7 @@ LEDGER_STAMP_CASES = (
     ("bounded ctx-lazy-1024: the rescue kept", "pcrec-auto",
      "bounded", "ctx-lazy-1024",
      {"engine": "vm", "prefilter": "hybrid",
+      "dfa_scan_edge": "none",
       "engine_sel": "collapsed-prefilter",
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 2094",
@@ -2018,6 +2062,7 @@ LEDGER_STAMP_CASES = (
     ("bounded nest2-64 whole: the rescue kept (non-nullable)", "pcrec-auto",
      "bounded", "nest2-64",
      {"engine": "vm", "prefilter": "hybrid",
+      "dfa_scan_edge": "range",
       "engine_sel": "collapsed-prefilter",
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 8258",
@@ -2028,6 +2073,7 @@ LEDGER_STAMP_CASES = (
     ("bounded nest3-16 whole: the rescue kept (non-nullable)", "pcrec-auto",
      "bounded", "nest3-16",
      {"engine": "vm", "prefilter": "hybrid",
+      "dfa_scan_edge": "range",
       "engine_sel": "collapsed-prefilter",
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 8466",
@@ -2038,7 +2084,8 @@ LEDGER_STAMP_CASES = (
     # forms are different machines at these counts -- I-20).
     ("bounded nest2-64 plain: an ordinary selected DFA", "pcrec-auto",
      "bounded", "nest2-64",
-     {"engine": "dfa", "engine_sel": "selected", **_CAPS_DFA}),
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan_edge": "range",
+      **_CAPS_DFA}),
 )
 
 
@@ -2090,8 +2137,18 @@ def check_mechanism_stamps():
     plain-vs-`\\z` overflow routes distinct in RX_ENGINE_WHY) against the
     six kept rescues (the ctx rungs, the nest wholes) -- with the bucket
     re-asserted as the VALUE-only rule (the `_why`-prefix special case
-    retired, inbox I-25)."""
-    print("-- the abi 4-12 mechanism stamps (pcrec I-5/I-6/I-11/I-13/I-15/I-16/I-17/I-18/I-21/I-25) --")
+    retired, inbox I-25). [B25] (pin a7e0bdf, abi 13, inbox I-27) added
+    the abi-13 pair (`dfa_scan_edge` on every artifact containing a DFA
+    scan, the scan family's iff joined unchanged -- asserted by VALUE on
+    every case: `range` on contiguous-class runs down to the unbounded
+    one-state form, `bitmap` on ipv6's non-contiguous hex class, `none`
+    on `attempt`/`empty` scans and runs the pass left alone), re-derived
+    the 16384 rung THE COLLAPSE changed (the DFA that warned:
+    724,699/11,589 warning -> 16,352/13,012 silent -- the acceptance
+    window's size half reads from this) and asserted the DECLINE/KEEP
+    sets, the overflow routes and the 65535/K7 walls UNCHANGED (I-27
+    (3): the caps fire during construction, before the edge can act)."""
+    print("-- the abi 4-13 mechanism stamps (pcrec I-5/I-6/I-11/I-13/I-15/I-16/I-17/I-18/I-21/I-25/I-27) --")
     try:
         adapter = _ad.discover()["pcrec"]
     except KeyError:
@@ -2166,14 +2223,37 @@ def check_mechanism_stamps():
                 bad("ledger: the plain form overflows by the STATE cap, the `\\z` form by the K7 subset-elements budget -- distinct RX_ENGINE_WHY values",
                     "plain %r, whole %r" % (p32[:120], w32[:120]))
 
+        # -- [B25] THE 65535 WALL IS UNCHANGED (I-27 (3), asserted as the
+        # plan row asks): [OPT-5] STEP 1 acts AFTER construction, and the
+        # NFA cap fires DURING it, so the ladder's top rung still refuses
+        # -- by the SAME limit, resolvable by name against list_limits.tsv
+        # (PCREC_NFA_MAX_STATES 131072; wording MEASURED identical at
+        # 263b013 and a7e0bdf). The rung that will compile it is [OPT-5]
+        # STEP 3 (construction-time synthesis, unchartered) -- the day
+        # this check fails with a compiled artifact IS that landing.
+        adapter.prepare("pcrec-auto", tmp)
+        cr65 = adapter.compile("pcrec-auto", "b25-wall-65535",
+                               _bench_pattern("bounded", "cls-upto-65535"),
+                               {}, 1, tmp).get(_ad.FORM_PLAIN)
+        if cr65.outcome == "did-not-compile" \
+                and "NFA exceeds 131072 states" in (cr65.diagnostic or ""):
+            ok("ledger: the 65535 rung still refuses by the NFA cap (I-27 (3): STEP 3 is not in this pin)",
+               (cr65.diagnostic or "")[:100])
+        else:
+            bad("ledger: the 65535 rung still refuses by the NFA cap (I-27 (3): STEP 3 is not in this pin)",
+                "outcome %s: %r -- if it COMPILED, [OPT-5] STEP 3 has "
+                "landed and the ladder's ceiling rows need re-deriving"
+                % (cr65.outcome, (cr65.diagnostic or "")[:140]))
+
         # -- the SCOPE rules, in both directions (match_api.md 6.3 (a)) --
-        dfa_keys = ("dfa_scan", "dfa_prefilter", "dfa_table")
+        dfa_keys = ("dfa_scan", "dfa_prefilter", "dfa_table",
+                    "dfa_scan_edge")   # [B25]: the scan family grew
         nonhybrid = metas.get("VM, no DFA scan", {})
         present = [k for k in dfa_keys if k in nonhybrid]
         if nonhybrid and not present:
             ok("scope: a non-hybrid VM artifact carries NO _DFA_* pair",
                "engine=vm, prefilter=none, and none of %s"
-               % ", ".join(dfa_keys))
+               % ", ".join(dfa_keys))   # dfa_scan_edge included ([B25])
         elif nonhybrid:
             bad("scope: a non-hybrid VM artifact carries NO _DFA_* pair",
                 "but it carries %s -- the iff in 6.3 (a) does not hold"
@@ -2181,12 +2261,13 @@ def check_mechanism_stamps():
         hybrid = metas.get("VM hybrid", {})
         missing = [k for k in dfa_keys if k not in hybrid]
         if hybrid and not missing:
-            ok("scope: a VM HYBRID carries all three _DFA_* pairs",
-               "the [DD-13c] direction: scan=%s, prefilter=%s, table=%s"
+            ok("scope: a VM HYBRID carries all four _DFA_* pairs",
+               "the [DD-13c] direction: scan=%s, prefilter=%s, table=%s, "
+               "scan_edge=%s"
                % (hybrid["dfa_scan"], hybrid["dfa_prefilter"],
-                  hybrid["dfa_table"]))
+                  hybrid["dfa_table"], hybrid["dfa_scan_edge"]))
         elif hybrid:
-            bad("scope: a VM HYBRID carries all three _DFA_* pairs",
+            bad("scope: a VM HYBRID carries all four _DFA_* pairs",
                 "missing %s" % ", ".join(missing))
 
         # -- the fast tier: every VM artifact, no DFA artifact ([OPT-1]) --
@@ -2371,16 +2452,25 @@ def check_mechanism_stamps():
             bad("emit_bytes / emit_code_bytes on every compiled artifact; warned_emit_bytes only where pcrec warned",
                 "unsized %r; code>total %r; warned!=total %r"
                 % (no_size, bad_order, warn_wrong))
-        lbl16 = "bounded cls-upto-16384: the DFA that warns"
+        # [B25]: no bench artifact warns at the default 250,000 any more
+        # -- [OPT-5] collapsed the one that did (I-27 (2)) -- so the
+        # NEGATIVE is what this pin can assert on the ledger row: no warn
+        # line in the diagnostic, no `warned_emit_bytes` pair (the None in
+        # its expected dict). The warn-CAPTURE path's positive witness is
+        # the `-fno-scan-edge` deny-control row, where the denied build is
+        # the pre-[OPT-5] 724,737 B machine and warns at the default.
+        lbl16 = "bounded cls-upto-16384: the DFA that warned, collapsed"
         if lbl16 in diags:
             d = diags[lbl16]
-            if "pcrec stderr: pcrec: warning: large artifact: 724699 bytes" in d \
-                    and "over --warn-emit-bytes=250000" in d:
-                ok("the --warn-emit-bytes line is captured in the compile row's diagnostic, and the outcome is `compiled`",
-                   d.split("pcrec stderr: ")[1][:100])
+            if "large artifact" not in d and \
+                    "warned_emit_bytes" not in metas.get(lbl16, {}):
+                ok("the [OPT-5] collapse: the 16384 rung no longer warns at the default threshold",
+                   "diagnostic %r; the deny row below is the warn-capture "
+                   "path's positive witness" % (d[:60] or "(empty)"))
             else:
-                bad("the --warn-emit-bytes line is captured in the compile row's diagnostic, and the outcome is `compiled`",
-                    "diagnostic %r" % d[:200])
+                bad("the [OPT-5] collapse: the 16384 rung no longer warns at the default threshold",
+                    "diagnostic %r, warned=%r"
+                    % (d[:200], metas.get(lbl16, {}).get("warned_emit_bytes")))
 
         # -- one abi, and it is at or above the shim's floor --
         abis = {label: em.get("abi") for label, em in metas.items()}
@@ -2435,6 +2525,27 @@ DID_NOT_COMPILE = object()
 DENY_CONTROLS = (
     ("dfa_table", "table", ("literal", b"(?:[a-z]+)@(?:[a-z]+)"), "",
      {"dfa_table": ("premultiplied", "indexed")}, "deny"),
+    # [B25] (abi 13, [OPT-5]): -fno-scan-edge (bit 21) denies the
+    # `scan-edge` AXIS (per state: emit an edge at all?); the STAMP lives
+    # on the companion `scan-body` axis, so the flag's registry row
+    # carries no stamp_value (the "no stamp_value" note path). It is the
+    # ONE DFA axis whose denial changes the MACHINE (tuning.md 2.18: the
+    # run's interior states are RESTORED -- the denied build is the
+    # pre-[OPT-5] compiler plus the stamp line), so the witness is the
+    # collapsed 16384 rung and THREE pairs move: the stamp to `none`, the
+    # emitted source back to 724,737 B (16,352 with the edge -- the ~44x
+    # [OPT-5] collapse seen from the flag's side), and the advisory
+    # warning RETURNS at the default threshold (`warned_emit_bytes`
+    # absent -> 724737) -- the warn-capture path's positive witness since
+    # the ledger row stopped warning. ~7 s per arm (MEASURED: the cost is
+    # DFA construction, which both arms pay -- the edge acts after it).
+    # pcrec-local passes no --warn-emit-bytes, so the default 250,000 is
+    # what fires.
+    ("dfa_scan_edge + the warning returns: the edge denied",
+     "scan-edge", ("bounded", "cls-upto-16384"), "",
+     {"dfa_scan_edge": ("range", "none"),
+      "emit_bytes": (16352, 724737),
+      "warned_emit_bytes": (None, 724737)}, "deny"),
     ("dfa_prefilter + offsets", "prefilter", ("loglines", "uuid"), "",
      {"dfa_prefilter": ("offset-set-bounded", "byte-class-bounded"),
       "dfa_prefilter_offsets": ("0,8*,13", "none")}, "deny"),
