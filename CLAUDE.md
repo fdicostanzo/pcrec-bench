@@ -264,7 +264,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 187 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 205 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -334,6 +334,20 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # (the warning returns -- the warn-capture positive
                         # witness), and the 65535 NFA-cap refusal asserted
                         # unchanged by name
+                        # and ([B24], the COMPILEE TOOLCHAIN axis) the six
+                        # pre-[B24] configs deriving an UNCHANGED testee_id
+                        # and build_flags against a frozen renderer, the
+                        # three `cc` precedence arms (a $CC that CONTRADICTS
+                        # a config's declared cc refused BY NAME), the
+                        # cc-clang token round-tripping into testee_id /
+                        # config_extra / build_flags and into a written
+                        # record, and every artifact KIND compiled by BOTH
+                        # gcc and clang agreeing on answer + span + captures
+                        # on every smoke row -- or, where clang refuses at
+                        # this pin (the frameless VM artifact's `&&label`
+                        # dispatch, pcrec [CC-CLANG], fixed at their abi
+                        # 14), a NAMED expected refusal carrying clang's own
+                        # diagnostic, any other refusal being a failure
                         # and ([B20], schema v1.4) the gate's shape: the
                         # target-core pre-flight on synthetic captures
                         # (busy / idle / row ABSENT, each refusal BY NAME,
