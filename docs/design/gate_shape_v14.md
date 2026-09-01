@@ -987,6 +987,17 @@ applied above:**
   2 predicts the rule MISSES it, and the §3.6 timeline should show it) —
   the first measured statement of what the instrument can and cannot do.
   §8's fixture proves the arithmetic; only this proves the instrument.
+  **MEASURED 2026-09-01 ([B23], both arms + a negative control,
+  `docs/dev/measurements/2026-09-01-spread-rule-positive-control.txt`):
+  (a) FLAGGED exactly as predicted — d=77 of n=77 against threshold 26,
+  `inconclusive-spread`, exit 4, the timeline locating the competitor
+  independently (sibling 55.69 % on the target item, <1 % on
+  neighbors); (b) MISSED exactly as band 2 predicts — d=4 of 77,
+  `measured`, exit 0, the ranked number ~1.77× wrong, the timeline the
+  only witness (sibling 99.62 % on the target item). Measured bonus:
+  a PURE SMT busy-loop slows this cell only ~1.45× — inside blind
+  band 1 — so the demonstration competitor must be memory-bandwidth
+  shaped; constants untouched.**
 
 **Residue — known and stated, no rule:**
 

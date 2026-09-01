@@ -2093,3 +2093,30 @@ n=13). O-12 sent (4d7dc4f, five asks incl. the two-pass charter — the
 KB-6 filed (no reporter clause for dfa_scan_edge). [B25] archived.
 NEXT in I-28's cleared order: [B23] (needs the box idle — pcrecdev1's
 validation lanes run tonight), [B24], [B11.2].
+
+## 2026-09-01 (EDT, ~04:2x), sixth session (part 7) — [B23] COMPLETE: the instrument proven, both directions
+
+Lane b23control (~50 min incl. the change-request arm): the v1.4 spread
+rule's positive control, D35-archived with every prediction written
+BEFORE its run. Arm (a): a 64 MiB-copy competitor on CPU 5 for two
+passes of the pre-named group (email x pcre2-interp, factored/
+short-subject-search, n=77) — FLAGGED, d=77/77 vs threshold 26,
+inconclusive-spread, exit 4; the §3.6 timeline located the competitor
+independently (sibling 55.69% on the target item). Negative control
+clean. Arm (b), the designed MISS: the same competitor over all five
+passes — d=4/77, measured, exit 0, the ranked number ~1.77x WRONG and
+stamped measured, only the timeline showing it (sibling 99.62%). Two
+findings: blind band 1 is REAL at SMT-execution magnitudes (a pure
+busy-loop sibling slows the cell ~1.45x < k=1.5 — unflagged; the
+demonstration needed the memory-bandwidth shape), and the fast clause
+caught 7 rows the slow-pair clause missed — the two clauses closing on
+one disturbance from both sides. gate_shape_v14.md §9 Q3 stamped
+MEASURED with the pointer. The lane's design deviation (event-scoped
+competitor window off the run's own stderr, PID-killed at the next
+group's line) was stated in the archive before running — the right
+call, avoiding both boundary artifacts. Fourth dropped background
+notification of the session (the lane's waiter) — nudged, recovered.
+[B23] archived. HELD BEFORE [B24]: cleared by I-28 and the box is
+free, but Frank signalled budget-consciousness at pcrecdev1's close —
+[B24] (a full clang-variant build + window) waits for his morning go;
+the wake queue says so.
