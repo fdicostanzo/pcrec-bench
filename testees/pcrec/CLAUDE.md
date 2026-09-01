@@ -1,6 +1,6 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides five testees at the commit pinned in `configs.toml`, and one —
+Provides eight testees at the commit pinned in `configs.toml`, and one —
 `pcrec-local` — at no pin at all:
 
 | config id | pcrec flags | what it is for |
@@ -10,15 +10,16 @@ Provides five testees at the commit pinned in `configs.toml`, and one —
 | `pcrec-vm` | `+ --engine=vm` | the VM forced, prefilter off, so the VM derives the whole span independently |
 | `pcrec-auto-in` | `--features all` + `buffer_frames = 32768`, `buffer_trail = 131072` | the defaults, matched through the `_in` entries with a caller-provided frame buffer. INERT wherever `auto` picks the DFA — which is still every artifact of `bench/email` (RE-VERIFIED at pin 36d5963, 2026-08-29: all six `auto`/`nocaps` artifacts stamp `RX_ENGINE "dfa"`, both forms), so it is DEFINED but NOT MEASURED there (the checks use it; it goes live on a sub-bench with VM-selected patterns under `auto` — and since 36d5963 `bench/loglines` HAS one: `level-context` is a VM artifact under `auto`, the [SEL-1] fallback) |
 | `pcrec-vm-in` | `+ --engine=vm` + the same two capacities | RULED 2026-08-25 (manager + pcrec manager; Frank's word pending via the inbox): the VM forced with the buffer, the one entry on `bench/email` where the depth path is reachable and the capacities were measured — the sixth cell of the [B8] window |
+| `pcrec-auto-clang`, `pcrec-nocaps-clang`, `pcrec-vm-clang` | the same flags as their gcc siblings, plus `cc = "clang"` | ([B24]) THE COMPILEE TOOLCHAIN AXIS: the same pcrec artifact, compiled by clang instead of gcc. See below |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
 | file | role |
 |---|---|
-| `adapter.py` | the six configs; the pin; `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
+| `adapter.py` | the nine configs; the pin; `effective_cc()` (the compilee-toolchain rule); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
 | `pin.sh` | `git archive <commit>` from pcrec into the build root, and `make` THERE |
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
-| `configs.toml` | the config ids, `pin = "<commit>"`, the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
+| `configs.toml` | the config ids, `pin = "<commit>"`, the optional per-config `cc` and its precedence ruling ([B24]), the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 | `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved |
 | `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
 | `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` joined), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing the adapter reads depends on it (every cap/capacity it needs is stamped per artifact); `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
@@ -73,6 +74,88 @@ the pinned testees: `binary_for()` is the only branch. `make
 check-harness`'s `pcrec-local` block proves the five claims above
 (missing variable; the pin's binary with no `+`; a scratch-built
 repository clean then dirty; a quick cell; the canonical refusal).
+
+## The compilee toolchain axis: `cc` ([B24]; pcrec [CC-CLANG])
+
+pcrec is an ahead-of-time compiler. It emits C and stops — it has no
+`--cc` flag and never invokes a compiler itself. Whoever runs a C
+compiler on that emitted C is the **compilee toolchain**, and on this
+bench that is us: `adapter.py`'s phase 2, the one command line that
+builds `shim.c` (which `#include`s the artifact's `.c`) into the `.so`
+we then `dlopen` and time. So the compiler is a property of the
+**testee**, exactly like `--engine=vm` or `--no-captures`, and it is
+spelled in `configs.toml`:
+
+    cc = "gcc" | "clang"        # optional, per config
+
+**Absent** it is today's behaviour, byte for byte: `$CC` if set, else
+`gcc`; no `config_extra`; the same derived `testee_id`; the same
+`build_flags` string (checked against a frozen copy of the pre-[B24]
+renderer, so the store's committed `a7e0bdf` records stay comparable
+with everything measured after).
+
+**Present** it is an IDENTITY claim, and three things follow:
+
+- `config_extra = "cc-<name>"` joins the derived `testee_id`
+  (`record_schema.md` §6.4's escape hatch for two testees differing only
+  in build flags). `pcrec-vm-clang` derives
+  `pcrec_a7e0bdf_vm-caps-simdna_cc-clang` — its gcc sibling's id plus the
+  token. Without it the pair would collide in the store.
+- `build_flags` names the compiler and its `--version` first line
+  (`env.compiler_raw()`, the same function `environment.compiler_raw`
+  uses).
+- the artifact and the shim are compiled by the SAME command, because
+  they are one translation unit; they can never drift apart.
+
+**Precedence, and why it is not pcrec's.** Under pcrec's `CLANGGEN=1`
+(their `docs/testing.md`) an explicit `CC=` on the command line always
+wins, because there `CLANGGEN` is a default. Here `cc` is part of the
+testee's identity, and a `pcrec-vm-clang` record built by gcc would
+carry a `testee_id` that lies. So a config with no `cc` still takes
+`$CC` (unchanged), a config with `cc` takes that compiler, and a `$CC`
+that CONTRADICTS a declared one is a clean `AdapterError` naming both,
+raised before anything is measured.
+
+**Exactly one variable moves.** `driver.c` is built by
+`build_driver()` from `$CC` on every config, so a clang testee's timing
+instrument is the same gcc-built driver as its sibling's. The record
+says both: `run.driver_compiler` (the driver's) beside
+`testee.build_flags` (the artifact's). The `gcc` compile PHASE keeps its
+name on a clang testee too — it names the phase, not the compiler, so
+the two siblings' phase times compare.
+
+`environment.compiler` stays the BOX's toolchain dimension (§6.7): on a
+clang testee it still reads gcc. That is the schema's own §11.4 open
+question ("is the box's C compiler still an environment dimension") now
+made concrete; it is FLAGGED for the panel, not worked around here.
+
+**The `-in` variants stay gcc-only** on purpose: the frame-buffer axis
+crossed with the compiler axis gives four cells whose differences no
+single comparison can attribute.
+
+### A clang refusal is a first-class outcome
+
+MEASURED at pin `a7e0bdf` (abi 13) with clang 21.1.8, 2026-09-01: a VM
+artifact that never pushes a resume frame emits
+
+    goto *run->resume_stack[frame_index].resume_label;
+
+into a function containing no `&&label` expression, and clang refuses:
+
+    error: indirect goto in function with no address-of-label expressions
+
+That is a `did-not-compile` compile row carrying clang's own diagnostic,
+which is exactly what the bench is for. The same artifacts also draw a
+cosmetic `unknown attribute 'noclone' ignored [-Wunknown-attributes]`
+(no `-Werror` on this path, so it is not a failure). pcrec's [CC-CLANG]
+step 1 fixed the `has_push` derivation at abi 14, so once this bench's
+pin crosses that, the refusals stop and the rows become numbers.
+
+`make check-harness`'s `check_cc_axis` holds this to a NAMED expected
+refusal: a clang refusal passes only when its diagnostic carries that
+cause verbatim, and any other refusal FAILS as a finding nobody has
+read. The set of refusing kinds is PRINTED, never frozen, so the check
+is green both before and after the pin crosses abi 14.
 
 ## `shim.c` includes the artifact's `.c`, and that is load-bearing
 

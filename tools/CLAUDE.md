@@ -242,6 +242,43 @@ miss:
   `RX_DFA_SCAN_EDGE` joins `registry_check` both ways (the `scan-body`
   axis carries `stamp_value` on all four rows, `none`/`mixed` as
   `predicate` outcome rows).
+- [B24] (2026-09-01, the COMPILEE TOOLCHAIN axis; pcrec [CC-CLANG])
+  adds `check_cc_axis`, eighteen PASS lines in five arms. pcrec emits C
+  and stops, so the compiler that builds the artifact is this bench's
+  own phase 2 and the axis is a testee property (`cc` in
+  `configs.toml`). The arms: (1) the six configs that predate the axis
+  derive an UNCHANGED `testee_id` and `build_flags`, compared against a
+  FROZEN copy of the pre-[B24] renderer kept in the check itself, so a
+  later edit to `describe()` that re-words an existing testee's
+  provenance is caught rather than shipped and the store's committed
+  a7e0bdf records stay comparable; (2) all three precedence arms — `$CC`
+  still decides for a config with no `cc`, an agreeing `$CC` is
+  accepted, a CONTRADICTING one is refused BY NAME rather than silently
+  winning, which is the only outcome that could put a compiler in a
+  `testee_id` that never ran; (3) the token round-trips into
+  `testee_id`, `config_extra` and `build_flags` (clang's `--version`
+  first line included, beside the driver's own compiler); (4) each
+  artifact KIND compiled by BOTH siblings and asked the same smoke
+  subjects, agreeing on answer, span AND captures — captures included
+  because a shim that dropped the vector would otherwise agree with one
+  that did not — with a per-kind `min_matches` floor, since two `.so`
+  that both answer "no" to everything agree perfectly and prove nothing
+  (the provably-empty artifact carries 0 and is held to the opposite
+  statement instead); (5) one whole cell per clang config into a scratch
+  store, validated by the run, with the token read back off the WRITTEN
+  record rather than off `describe()`.
+  A clang REFUSAL is a first-class outcome here, never a skip. At pin
+  a7e0bdf (abi 13) a VM artifact that never pushes a resume frame emits
+  `goto *run->resume_stack[...].resume_label` into a function with no
+  `&&label` expression, and clang refuses it — three of the eight kinds.
+  Such a refusal passes ONLY when its diagnostic carries that cause
+  verbatim; any OTHER refusal FAILS, as a finding nobody has read. The
+  refusing set is PRINTED, never frozen, so the check is green both at
+  this pin and after it crosses pcrec's abi 14, where [CC-CLANG] step 1
+  makes the set empty and those rows become agreements. One case
+  (`(a+)+b` under `--engine=vm`) exists solely so the agreement arm is
+  not DFA-only at abi 13: it pushes a frame, so it carries `&&label`
+  expressions and clang accepts it.
 - `check_abi_floor_refusal` is the SABOTAGE, and the path is unreachable
   without one: the pin's abi is at or above the floor by construction
   (13 at a7e0bdf vs a floor of 10 since [B18]; neither abi 12, the [B22]
