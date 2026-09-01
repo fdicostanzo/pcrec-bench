@@ -232,6 +232,10 @@ bindings) live here, vendored or system, pinned either way.
   is the bounded-repeat set ([B11.4]) -- the compile axis as a count
   ladder with the refusal as a first-class outcome, the match axis as
   everyday shapes with near-misses that fail at the last repetition.
+  `bench/altwide/` is the wide-alternation set ([B11.2], 2026-09-01) --
+  branch count as a ladder (8..4096) crossed with the first-byte / prefix /
+  suffix structure that decides PCRE2's start optimization and pcrec's
+  DFA/prefilter route; libpcre2's own compiled-size ceiling caps the ladder.
   `make check`'s generic gates enumerate `bench/*/` rather than naming a
   set. See their CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
