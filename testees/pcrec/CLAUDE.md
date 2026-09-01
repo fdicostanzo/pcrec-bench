@@ -21,7 +21,7 @@ Provides five testees at the commit pinned in `configs.toml`, and one —
 | `configs.toml` | the config ids, `pin = "<commit>"`, the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 | `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved |
 | `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
-| `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing the adapter reads depends on it (every cap/capacity it needs is stamped per artifact); `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
+| `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` joined), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing the adapter reads depends on it (every cap/capacity it needs is stamped per artifact); `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
 
 ## `pin.sh` never writes inside pcrec
 
@@ -387,6 +387,7 @@ than five). What arrived, and where each pair comes from:
 | 10 ([ENG-ABS], [B18]) | `RX_DFA_MATCH` (`unwrapped` / `search-filter`) on every DFA artifact and NO VM artifact, hybrids included; `rx_info.match_form` appended (NULL where the macro is absent); `-fno-anchored-dfa` (bit 17) | `dfa_match` (the field is its CONTROL, and it raised the shim's floor to 10) |
 | 11 ([ART-SIZE], [B18]) | `RX_UNROLL_K` / `RX_UNROLL_K_WHY` (seven values) / `RX_MAX_EMIT_CODE_BYTES` on every VM artifact; `RX_MAX_EMIT_BYTES` on every artifact; `-fno-size-term` (bit 18) denies the K selection, never the caps | `unroll_k`, `unroll_k_why`, `max_emit_code_bytes`, `max_emit_bytes` |
 | 12 ([OPT-4], [B19]) | `RX_ENGINE_SEL` on EVERY artifact (one `engine-route` token: `selected` / `forced` / `overflowed-dfa` / `overflowed-prefilter` / `collapsed-prefilter` — O-8 6(d) ruled as a stamp); `RX_VM_PREFILTER_LANG` (`exact` / `count-collapsed`) + `RX_VM_PREFILTER_LANG_WHY` on every VM HYBRID and no other artifact; `-fno-prefilter-collapse` (bit 19) denies both retry rungs, `-fprefilter-collapse` (bit 20) forces the collapse; `--warn-emit-bytes=N` (advisory stderr line, default 250,000) | `engine_sel`, `vm_prefilter_lang`, `vm_prefilter_lang_why` (a `string`: two of its values carry a number) — and the adapter's own `emit_bytes` / `emit_code_bytes` (pcrec's size definition, ported and controlled) + `warned_emit_bytes` (present only when the warning fired) |
+| 13 ([OPT-5] STEP 1, [B25]) | `RX_DFA_SCAN_EDGE` (`range` / `bitmap` / `mixed` / `none`) on every artifact that CONTAINS a DFA scan — the scan family's iff, joined unchanged (match_api.md §6.3); the SCAN EDGE is a maximal run of states differing only in how many bytes of ONE fixed class have been counted, replaced by a bounded cursor loop and DELETED from the transition table (the first abi bump to move a MACHINE, not only emitted text — tuning.md §2.18); TWO registry axes (`scan-edge` per state, `scan-body` per edge); `-fno-scan-edge` (bit 21) denies the per-state axis and restores the pre-[OPT-5] machine; `PCREC_MAX_SCAN_EDGES` (4) joins `--list-limits` | `dfa_scan_edge` (the `scan-body` axis's value; no rx_info mirror) |
 
 **Rule 1: never infer a fact from a stamp's ABSENCE. Read the VALUE.**
 This is pcrec's own inbox I-5 hazard, which broke four of pcrec's checks
@@ -414,6 +415,14 @@ The scope rules those absences obey, exactly (match_api.md §6.3 (a)):
 - `RX_DFA_PREFILTER_OFFSETS` — the scan family's scope (abi 9): with the
   three above, hybrids included. `"none"` IFF `RX_DFA_PREFILTER` is not an
   `offset-set` value; the adapter checks that iff from both sides.
+- `RX_DFA_SCAN_EDGE` — the scan family's scope again (abi 13, [B25]):
+  every artifact that contains a DFA scan, hybrids included — match_api.md
+  §6.3 says the iff "joins unchanged". `none` is FOUR causes, none a
+  failure: no collapsible run, an `attempt` scan (label dispatch — no
+  loop-carried table load to shorten), an `empty` scan, or
+  `-fno-scan-edge`. MEASURED: the same `[0-9]+` run stamps `range`
+  unanchored and `none` under `^` (the attempt cause, on the same
+  pattern text).
 - `RX_DFA_MATCH` — a DIFFERENT iff, and the difference is the fact (abi
   10, match_api.md §6.3): it describes the `_match` ENTRY, not a scan, so
   it is on every artifact whose `RX_ENGINE` is `"dfa"` and on NO VM
@@ -489,8 +498,10 @@ a macro read through `#ifdef` has a legitimate "not stamped" absence — and
 neither did abi 12's three ([B19]: `RX_ENGINE_SEL` and the language pair
 have no `rx_info` mirror; an abi-10/11 artifact still links and records
 them as "not stamped", the scope table saying at which abi that stops
-being legitimate). **`PB_SHIM_MIN_ABI` is 10 at pin 263b013** (unchanged
-through 96e44c2 — [B22] added VALUES, not stamps), by that
+being legitimate). **`PB_SHIM_MIN_ABI` is 10 at pin a7e0bdf** (unchanged
+through 96e44c2 and 263b013 — [B22] added VALUES, not stamps; and abi 13's
+`RX_DFA_SCAN_EDGE` is a macro with no rx_info mirror, `struct rx_info`
+MEASURED byte-identical between 263b013 and a7e0bdf), by that
 rule: a `pcrec-local` binary from 808740c on still loads. (Why
 that `#ifdef` is not an inference from absence: the scope table above.)
 `driver.c` compares `pb_abi()` against it before reading anything else and
@@ -717,7 +728,8 @@ deny, the flagged arm of a force). The four [B18] rows are unchanged.
 
 `overflowed-prefilter` (the VM already chosen, only its prefilter's DFA
 overflowed) is the one `engine_sel` value no witness in reach produces —
-noted, not asserted (still true at 263b013, now one of SEVEN values).
+noted, not asserted (still true at 263b013 and a7e0bdf, one of SEVEN
+values).
 
 ### MEASURED at pin 263b013, 2026-08-31 — the [OPT-4.1] + [LIM-1] VALUES ([B22])
 
@@ -771,6 +783,81 @@ reading). `year4`'s +4,096 B (I-22 (iii)) is CLOSED by derivation:
 docs/dev/measurements/2026-08-31-year4-elf-page-alignment.txt — ELF page
 alignment triggered by the [B19] SHIM's own +384 B, pcrec's source +33 B,
 and a one-shim control building both pins byte-identical.
+
+### MEASURED at pin a7e0bdf, 2026-08-31 — the abi-13 stamp ([B25], [OPT-5] STEP 1)
+
+The pin bumps the abi 12 → 13 for ONE new stamp, `RX_DFA_SCAN_EDGE`, and
+is the first bump that changed a MACHINE: on any DFA scan whose machine
+carries a counted class run, the run's interior states are deleted and
+one in-loop bounded scan block replaces them. Asserted by VALUE in
+`check_mechanism_stamps` on every stamp/ledger case (`abi` reads **13**
+on all of them; `PB_SHIM_MIN_ABI` stays 10):
+
+| witness | `dfa_scan_edge` | why that value |
+|---|---|---|
+| `foo[0-9]+bar`, `a(b|c){2,5}d` (hybrid), loglines `iso-ts`, `http-5xx`, bounded `nest2-64` plain + both nest wholes, bounded `grp-upto-1024` | **`range`** | a contiguous-class run collapsed — down to the unbounded ONE-STATE form (`[0-9]+`), tuning.md §2.18's own example |
+| loglines `ipv6` | **`bitmap`** | the ONLY `bitmap` witness in reach: its hex class is not contiguous, so the edge's test is a 256-byte membership read (VALUE-addressed — the cursor stays the only loop-carried register) |
+| `^foo[0-9]+bar` (attempt), `[^\x00-\xff]` (empty), K41 witness 2 (its prefilter scan is an `attempt` scan) | `none` | no loop-carried table load to shorten — the same `[0-9]+` run that stamps `range` unanchored |
+| loglines `uuid`, `stack-frame`, `kv-quoted`, `bignum`, `ipv4`, `hex32-id`, both email patterns, `level-context`'s collapsed prefilter, the four bounded ctx rungs, `a(b|c)+d` | `none` | no run the pass takes (`hex32-id`'s 32-count hex run stays `none` where `ipv6`'s stamps `bitmap` — the selection is per RUN, pcrec's boundary to explain) |
+| every `--engine=vm` artifact, every `declined-nullable` artifact | **absent** | no DFA scan, no stamp — the scope iff, both directions |
+
+`mixed` is the one value no witness in reach produces (like
+`overflowed-prefilter` among the route tokens) — noted, not asserted; the
+registry's `scan-body` axis enumerates it as a `predicate` row, so
+`registry_check` still covers the declared enum both ways.
+
+**THE HEADLINE, and the acceptance window's size half (I-27 (2)/(5),
+verified per rung):** the counted class ladder's emitted source is now
+FLAT where it was linear in the count. Same method as every table here
+(`artifact.c` naming; comment-excluded port bytes, `.c`+`.h` summed),
+263b013 → a7e0bdf, plain forms under `auto`:
+
+| rung | 263b013 emit/code | a7e0bdf emit/code | Δ total |
+|---|---|---|---|
+| `cls-upto-64` | 21,045 / 12,399 | 19,481 / 14,468 | −1,564 (−7.4 %) |
+| `cls-upto-256` | 32,566 / 12,400 | 19,488 / 14,475 | −13,078 (−40 %) |
+| `cls-upto-1024` | 80,228 / 12,401 | 19,495 / 14,482 | −60,733 (−76 %) |
+| `cls-upto-4096` | 185,828 / 11,588 | 16,347 / 13,007 | −169,481 (−91 %) |
+| `cls-upto-16384` | 724,699 / 11,589 | **16,352 / 13,012** | −708,347 (**−97.7 %, ×44**) |
+| `grp-upto-1024` | 80,235 / 12,408 | 19,502 / 14,489 | −60,733 (O-11's ≡ cls-upto-1024 holds at this pin too) |
+| `cls-atleast-4096` | 171,183 / 11,855 | 18,630 / 13,828 | −152,553 (−89 %) |
+
+CODE bytes RISE ~+1.4-2.1 KB per rung (the edge's in-loop block is code
+where the deleted states were table). Consequently **the DFA that WARNS
+is gone**: `cls-upto-16384` plain compiled 724,699 B with the advisory
+warning at every pin since [B19]; at a7e0bdf it is 16,352 B, silent, and
+the warn-capture path's positive witness moved to the `-fno-scan-edge`
+deny row (below). Its `dfa_prefilter none` / `dfa_match search-filter`
+were already so at 263b013 (RE-MEASURED against the old binary — only
+size, the warning and the new stamp moved). Compile TIME did not move
+(~7 s both arms, MEASURED): the cost is DFA construction, which still
+builds the run before `scanedge.c` deletes it.
+
+**What did NOT move, asserted (I-27 (3): the caps fire DURING
+construction, before the edge can act — [OPT-5] STEP 3, unchartered, is
+the rung that moves them):** the four `declined-nullable` rows
+byte-identical (18,291 / 18,496 / both 16384 wholes), the six
+`collapsed-prefilter` keeps at the same exact-nfa whys (174 / 558 / 558 /
+2094 / 8258 / 8466), the plain-vs-`\z` overflow ROUTES still distinct
+(state cap vs K7), `cls-upto-65535` still refused by
+`PCREC_NFA_MAX_STATES` 131072 with identical wording (now asserted BY
+NAME in `check_mechanism_stamps` — the day that check fails with a
+compiled artifact is the day STEP 3 lands), and every emit-size port
+comparison byte-exact (10/10 + probe; K41 witness 2's `_LANG_WHY` count
+moved 671,050 → 671,082, the stamp line's own bytes, absorbed by the
+regex). Every hybrid/DFA artifact grows ~+32-38 B (the stamp line);
+VM non-hybrids and declined artifacts do not move at all.
+
+### The deny-flag control at a7e0bdf ([B25])
+
+| axis / flag (bit) | witness | default | denied |
+|---|---|---|---|
+| `scan-edge` / `-fno-scan-edge` (21) | bounded `cls-upto-16384` plain | `dfa_scan_edge range`, 16,352 B, no warning | `none`, **724,737 B, the warning RETURNS** (`warned_emit_bytes 724737`) — the one DFA axis whose denial changes the MACHINE: the denied build is the pre-[OPT-5] compiler plus the stamp line |
+
+The flag's registry row (the `scan-edge` axis's order-1 candidate)
+carries NO `stamp_value` — the stamp lives on the companion `scan-body`
+axis — which is the deny-table's "no stamp_value" note path, exercised
+for the first time.
 
 **Emitted-C size, 36d5963 → 96e44c2.** I-18 (1): "nothing that compiled
 at 36d5963 changes language, size or speed by default" — true of every

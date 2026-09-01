@@ -215,11 +215,38 @@ miss:
   `check_emit_size_port` gains the fifth witness: the declined
   `{0,32768}` artifact, both forms -- I-22 (ii)'s same-pin re-comparison,
   the counting rule stated (comment-excluded, .c + .h summed).
+- [B25] (2026-08-31, the re-pin to a7e0bdf — abi 12 → 13; inbox I-27,
+  [OPT-5] STEP 1) extended the same checks for the pin that changed a
+  MACHINE: `check_mechanism_stamps` asserts the new `dfa_scan_edge` pair
+  BY VALUE on every case (`range` on contiguous-class runs down to the
+  unbounded one-state `[0-9]+` form; `bitmap` on ipv6's non-contiguous
+  hex class — the only bitmap witness in reach; `none` on
+  `attempt`/`empty` scans and on runs the pass leaves alone; absent
+  exactly where no DFA scan exists — the scope tuple grew to four
+  `_DFA_*` pairs, both directions), re-derives the 16384 rung as the
+  COLLAPSE I-27 (2) predicted (the DFA that warned: 724,699/11,589 with
+  the advisory line → 16,352/13,012 silent; `warned_emit_bytes` asserted
+  ABSENT — no bench artifact warns at the default any more), asserts the
+  DECLINE/KEEP sets, the K7-vs-state-cap routes AND the 65535 NFA-cap
+  refusal UNCHANGED by name (I-27 (3): the caps fire during
+  construction, before the edge can act — the day the 65535 assertion
+  fails with a compiled artifact is the day [OPT-5] STEP 3 lands).
+  `check_deny_flag_controls` gains the `-fno-scan-edge` (bit 21) row on
+  the same rung — `range` → `none`, 16,352 → 724,737 B, and the warning
+  RETURNS (the warn-capture path's positive witness since the ledger row
+  stopped warning); the flag's registry row carries no `stamp_value`
+  (the stamp lives on the companion `scan-body` axis), the note path's
+  first exercise. The three registry diffs re-point at the re-archived
+  copies (axes 69 rows / 23 axes: + the `scan-edge`/`scan-body` pair;
+  definitions byte-identical; limits 45: + `PCREC_MAX_SCAN_EDGES`), and
+  `RX_DFA_SCAN_EDGE` joins `registry_check` both ways (the `scan-body`
+  axis carries `stamp_value` on all four rows, `none`/`mixed` as
+  `predicate` outcome rows).
 - `check_abi_floor_refusal` is the SABOTAGE, and the path is unreachable
   without one: the pin's abi is at or above the floor by construction
-  (12 at 263b013 vs a floor of 10 since [B18]; neither abi 12 nor the
-  [B22] values added a field), so nothing in the corpus can be
-  below it. A real artifact's `.abi = N` is edited to `5` in a copy,
+  (13 at a7e0bdf vs a floor of 10 since [B18]; neither abi 12, the [B22]
+  values nor abi 13's macro added a field), so nothing in the corpus can
+  be below it. A real artifact's `.abi = N` is edited to `5` in a copy,
   built with the ordinary shim and run by the ordinary driver, and must
   be refused BY NAME carrying both numbers (the floor read out of
   `shim.c`, never retyped) — with the unmodified artifact loading in the
