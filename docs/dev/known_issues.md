@@ -103,3 +103,17 @@ within the flag's occurrences, AND'd with everything else), letting a
 committed query name its roster explicitly. Not urgent: full-set
 windows (the common case) never hit this. Fix travels with the next
 reporter wave; the flag's spelling should mirror `run --testee`.
+
+## KB-6 (2026-08-31) — the reporter renders NO clause for the abi-13 `dfa_scan_edge` stamp
+
+Found by the b25reports lane on the first a7e0bdf report: every
+pcrec_a7e0bdf record carries the `dfa_scan_edge` pair (range / bitmap
+/ mixed / none — [OPT-5] STEP 1's mechanism stamp, [B25]), but
+`pcrecbench/report.py` has no legend clause for it, so a reader of the
+committed report cannot see WHICH machine shape a counted-class cell
+ran without opening the record. Same shape as KB-3 (the abi-11
+[ART-SIZE] stamps, fixed in a reporter wave); fix travels with the
+next reporter wave alongside KB-5's `--testee` roster filter. The
+mechanism-bucketing rules ([B16] R1-R8) may also want the scan-edge
+value in the `sel=` line's company — design call for that wave, not a
+patch tonight.
