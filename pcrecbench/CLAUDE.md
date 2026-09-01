@@ -794,3 +794,34 @@ silently include invented data.
 Update this file when files are added/removed or change role. `make
 check-report` (root Makefile) is this lane's self-check; see
 `tests/CLAUDE.md` for what it runs.
+
+## The reporter, [B26] (2026-09-01) -- pcrec abi 14's EIGHTH route token (v11, unchanged)
+
+The re-pin to pcrec `1989c62` (abi 15) adds no pair. It adds ONE
+`engine_sel` value -- `declined-nullable-default` ([OPT-4.2]: the
+nullability decline with NO rung; nothing overflowed, and the ORDINARY
+hybrid's own EXACT prefilter language is nullable, so the prefilter is
+declined). The reporter change is one rendering rule and one conditional
+sentence:
+
+- THE BUCKET IS UNCHANGED. Frank's ask (b) is `sel not in (selected,
+  forced)` and the eighth value is outside that pair, so it IS bucketed
+  (`adapter.ENGINE_SEL_FALLBACK`, six values now). An artifact whose own
+  prefilter a policy declined did not get auto's ordinary answer, and a
+  reader comparing it with its `selected` siblings needs to see that.
+- THE SUFFIX IS NOT. ` (DFA fallback tripped)` would be a FALSE sentence
+  on this token -- no cap was hit and no fallback ran. `ENGINE_SEL_NO_CAP`
+  maps it to ` (prefilter declined, no cap hit)` instead, so the bucket
+  stays one predicate while the report's own sentence stays true. pcrec
+  draws the same line (match_api.md 6.3: the value is "deliberately NOT
+  among the five" fallback values); the adapter's
+  `ENGINE_SEL_OVERFLOW_FALLBACK` names pcrec's five so the two readings
+  are checked against each other rather than drifting.
+- `REPORTER_VERSION` STAYS `v11 (2026-09-01)` and NO committed report is
+  regenerated. Both the suffix and the legend sentence that explains it
+  are CONDITIONAL on a record carrying the token, on the same terms as
+  every clause since [B18]; no record in `store/` carries it (the value
+  did not exist before this pin, and the re-pin census found NO corpus
+  pattern that stamps it at all), so every committed report renders byte
+  for byte as it stands. The first reports to print either are the ones
+  the [B26] window writes.

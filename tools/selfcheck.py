@@ -125,8 +125,9 @@ must reject, in the same run that exercises it against one it must accept.
                 sets agree with the registry's stamp_value column
                 (`adapter.registry_check`).
   abi floor     ([B16], the SABOTAGE) an artifact whose `rx_info.abi` is
-                edited below `shim.c`'s `PB_SHIM_MIN_ABI` (10 since [B18]:
-                the shim reads `rx_info.match_form`) is REFUSED by name,
+                edited below `shim.c`'s `PB_SHIM_MIN_ABI` (15 since [B26]:
+                the shim reads `rx_info.name` / `.nentries`; 10 from [B18]
+                for `rx_info.match_form`) is REFUSED by name,
                 carrying both numbers -- the floor read out of shim.c, not
                 retyped -- with the unmodified artifact loading fine in the
                 same run as the control, and the token the adapter watches
@@ -1825,6 +1826,48 @@ STAMP_CASES = (
       "dfa_table": "premultiplied", "dfa_prefilter_offsets": "none",
       "dfa_scan_edge": "range",
       "dfa_match": "unwrapped", "engine_sel": "selected", **_CAPS_DFA}),
+    # [B26] / pcrec abi 14 ([OPT-4.2]) -- THE EIGHTH ROUTE TOKEN, BY VALUE,
+    # AND ITS CONTROL. `(?=...)` forces the VM and leaves the artifact
+    # HYBRID-ELIGIBLE, so the prefilter decision is actually reached; the
+    # only thing that moves between these two cases is whether the body is
+    # NULLABLE. `x*` is (it matches the empty string), so the ordinary
+    # hybrid's own EXACT prefilter language would admit a zero-length match
+    # at every position and could never dismiss one -- [OPT-4.2] declines
+    # it. MEASURED at both pins: at a7e0bdf this pattern is a hybrid with
+    # `RX_DFA_PREFILTER "none"` (the useless filter O-10 measured as a
+    # 1.2-9.9x LOSS on the analogous collapsed shape) at 25,897 emitted
+    # bytes; at 1989c62 it is a plain VM artifact at 18,682 -- the decline
+    # is a 27.8% SHRINK as well as a route change. Both directions of
+    # match_api.md 6.3's iff are asserted: prefilter `none`, and NO
+    # language pair (`vm_prefilter_lang` / `_why` expected ABSENT).
+    #
+    # WHY A HAND-CHOSEN SHAPE AND NOT A CORPUS PATTERN: MEASURED at the
+    # re-pin, NO pattern in any of the four sub-benches stamps this value
+    # at 1989c62 -- 77 patterns x 2 forms x 3 engine modes, the whole
+    # engine_sel census byte-identical to a7e0bdf's. The bench's own
+    # nullable shapes (`cls-upto-*`) are chosen as the DFA ENGINE under
+    # `auto`, so they never reach a VM prefilter decision to have one
+    # declined. That is a FINDING for the ledger, not a reason to leave the
+    # value unwitnessed.
+    ("VM hybrid, nullable language DECLINED ([OPT-4.2])", "pcrec-auto",
+     b"(?=abc)x*",
+     {"engine": "vm", "prefilter": "none",
+      "engine_sel": "declined-nullable-default",
+      "vm_prefilter_lang": None, "vm_prefilter_lang_why": None,
+      "dfa_scan": None, "dfa_prefilter": None,
+      **_CAPS_VM}),
+    # THE CONTROL, one character apart: `x+` is NOT nullable, so the same
+    # lookahead-forced artifact KEEPS its exact-language prefilter and
+    # stamps the ordinary `selected`. Without this row the case above would
+    # pass on a pcrec that declined every prefilter.
+    ("VM hybrid, non-nullable language KEPT: the [OPT-4.2] control",
+     "pcrec-auto", b"(?=abc)x+",
+     {"engine": "vm", "prefilter": "hybrid",
+      "engine_sel": "selected",
+      "vm_prefilter_lang": "exact",
+      "vm_prefilter_lang_why": "no counted repeat",
+      "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
+      **_CAPS_VM}),
     ("VM hybrid", "pcrec-auto", b"a(b|c)+d",
      {"engine": "vm", "prefilter": "hybrid", "dfa_scan": "unanchored",
       "dfa_prefilter": "memchr", "dfa_table": "premultiplied",
@@ -1969,19 +2012,27 @@ LEDGER_STAMP_CASES = (
     # collapsed language being NON-nullable, `[a-z]*` is nullable, so the
     # offer is DECLINED: a plain-VM artifact, `declined-nullable`, NO
     # prefilter, NO language pair -- and emit_bytes == emit_code_bytes
-    # (18,291: a declined plain-VM artifact has no table initializers at
-    # all). The BY-VALUE control [B22] (d) names.
+    # (17,889 at 1989c62: a declined plain-VM artifact has no table
+    # initializers at all). The BY-VALUE control [B22] (d) names.
+    # [B26] RE-DERIVED at the new pin: 18,291 -> 17,889 (-402). The ROUTE
+    # is unchanged -- this rung still reaches the decline through the
+    # [SEL-1] cap, so it still stamps `declined-nullable` and not abi 14's
+    # rungless `declined-nullable-default`, which is what keeps the two
+    # values distinguishable on a real artifact.
     ("bounded cls-upto-32768: the rescue declined (nullable)", "pcrec-auto",
      "bounded", "cls-upto-32768",
      {"engine": "vm", "prefilter": "none",
       "engine_sel": "declined-nullable",
-      "emit_bytes": 18291, "emit_code_bytes": 18291,
+      "emit_bytes": 17889, "emit_code_bytes": 17889,
       **_CAPS_VM}),
     # [B19] (e) -> [B25]: until a7e0bdf the 16384 rung was THE DFA THAT
     # WARNS (724,699 B of source, over `--warn-emit-bytes` 250,000 --
     # limits.md 8). [OPT-5] STEP 1 COLLAPSED it (inbox I-27 (2)/(5): the
     # scan edge deleted the run's 16,384 interior states and their
-    # tables): 724,699/11,589 -> 16,352/13,012, `range`, and the warning
+    # tables): 724,699/11,589 -> 16,352/13,012 at a7e0bdf, and
+    # 724,939/11,829 -> 16,554/13,214 at 1989c62 ([B26]: +202 B on BOTH
+    # arms, the two rx_info fields abi 15 appended -- the collapse itself
+    # is unmoved), `range`, and the warning
     # CANNOT fire at the default -- `warned_emit_bytes` is asserted ABSENT
     # (None), the warn-capture path's positive witness moving to the
     # `-fno-scan-edge` deny-control row, where the denied build (the
@@ -1998,8 +2049,8 @@ LEDGER_STAMP_CASES = (
      {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "unanchored",
       "dfa_prefilter": "none", "dfa_scan_edge": "range",
       "dfa_match": "search-filter",
-      "warned_emit_bytes": None, "emit_bytes": 16352,
-      "emit_code_bytes": 13012, **_CAPS_DFA}),
+      "warned_emit_bytes": None, "emit_bytes": 16554,
+      "emit_code_bytes": 13214, **_CAPS_DFA}),
     # ------ [B22] THE DECLINE/KEEP SETS at 263b013 (the I-21 CORRECTION's
     # code-derived minw analysis, stamped 11/11 as predicted -- inbox
     # I-23/I-25; plan [B22]). DECLINE (`pcrec_minw(root) == 0` on the
@@ -2012,7 +2063,7 @@ LEDGER_STAMP_CASES = (
      "bounded", "cls-upto-32768",
      {"engine": "vm", "prefilter": "none",
       "engine_sel": "declined-nullable",
-      "emit_bytes": 18496, "emit_code_bytes": 18496,
+      "emit_bytes": 18094, "emit_code_bytes": 18094,
       **_CAPS_VM}, "whole-subject"),
     ("bounded cls-upto-16384 whole: declined", "pcrec-auto",
      "bounded", "cls-upto-16384",
@@ -2144,7 +2195,7 @@ def check_mechanism_stamps():
     one-state form, `bitmap` on ipv6's non-contiguous hex class, `none`
     on `attempt`/`empty` scans and runs the pass left alone), re-derived
     the 16384 rung THE COLLAPSE changed (the DFA that warned:
-    724,699/11,589 warning -> 16,352/13,012 silent -- the acceptance
+    724,939/11,829 warning -> 16,554/13,214 silent at 1989c62 -- the acceptance
     window's size half reads from this) and asserted the DECLINE/KEEP
     sets, the overflow routes and the 65535/K7 walls UNCHANGED (I-27
     (3): the caps fire during construction, before the edge can act)."""
@@ -2470,9 +2521,10 @@ def check_mechanism_stamps():
             bad("scope: vm_prefilter_lang / _why on every VM HYBRID and on NO other artifact",
                 "has %r wanted %r" % (has_lang, want_lang))
 
-        # -- [B19]/[B22] Frank's ask (b), derived from the RECORD: the `DFA
-        # fallback tripped` bucket is engine_sel not in (selected, forced)
-        # (adapter.ENGINE_SEL_FALLBACK -- FIVE values since 263b013).
+        # -- [B19]/[B22]/[B26] Frank's ask (b), derived from the RECORD: the
+        # bucket is engine_sel not in (selected, forced)
+        # (adapter.ENGINE_SEL_FALLBACK -- SIX values since 1989c62, abi 14's
+        # `declined-nullable-default` joining the five).
         # Asserted to be EXACTLY the fallback witnesses above: the
         # state-cap rescues (collapsed-prefilter), the nullable DECLINES
         # (declined-nullable) and -- new at this pin -- the SIZE-CAP rescue
@@ -2493,7 +2545,17 @@ def check_mechanism_stamps():
                               or l.startswith("size-cap rung rescue")
                               or ": the rescue declined" in l
                               or ": the rescue kept" in l
-                              or "whole: declined" in l)
+                              or "whole: declined" in l
+                              # [B26]: abi 14's rungless decline is IN the
+                              # bucket (`not in (selected, forced)` is the
+                              # predicate Frank spelled) even though
+                              # match_api.md 6.3 keeps it out of pcrec's own
+                              # five `fell back` values -- the report says
+                              # WHICH reading a row is in rather than
+                              # folding them. The one-character CONTROL
+                              # ("non-nullable language KEPT") stays
+                              # OUTSIDE, and does not match this phrase.
+                              or "nullable language DECLINED" in l)
         size_rescue = sorted(l for l, em in metas.items()
                              if em.get("engine_sel") == "size-cap-retry")
         if metas and tripped == want_tripped and tripped and size_rescue:
@@ -2505,6 +2567,59 @@ def check_mechanism_stamps():
         elif metas:
             bad("bucket: `DFA fallback tripped` (engine_sel not in selected/forced) is exactly the fallback witnesses, size-cap rescue INCLUDED by value",
                 "tripped %r, wanted %r" % (tripped, want_tripped))
+
+        # -- [B26] THE abi-15 FIELDS, BY VALUE ON EVERY CASE
+        # ([DD-13b.W1.2], pin 1989c62). `rx_info.name` and `.nentries` are
+        # the first rx_info growth since abi 10 and the reason shim.c's
+        # floor moved 10 -> 15. Neither has a macro spelling, so there is no
+        # second stamp to check them against; what IS checked is each
+        # field's own contract plus the fact the spec states as TODAY'S
+        # (rather than as an invariant):
+        #
+        #   1. `artifact_name` is present and non-empty on EVERY artifact
+        #      of every kind -- the spec's "NEVER NULL" read as a value, on
+        #      both engines and on refusal-free artifacts of all five kinds.
+        #      Every one of these compiles is `-p rx` from pattern TEXT, so
+        #      the value is the `<prefix>` fallback `rx`: asserted by value,
+        #      because a name that came from somewhere else would mean the
+        #      adapter is reading a different field.
+        #   2. `nentries == nnames` on every artifact this pin emits -- the
+        #      spec's own "equal on every artifact pcrec emits today". The
+        #      ADAPTER deliberately asserts only the weaker `>=` (a prefix
+        #      can never exceed the whole), so that `.rxt` composition
+        #      ([DD-13b.W1.3]) separating the two does not make the adapter
+        #      refuse the first artifact that does it. THIS is where the
+        #      strong claim lives, so the day it stops being true a check
+        #      says so by name instead of a record quietly changing shape.
+        no_name = sorted(l for l, em in metas.items()
+                         if not em.get("artifact_name"))
+        odd_name = sorted((l, em.get("artifact_name")) for l, em in metas.items()
+                          if em.get("artifact_name") not in (None, "rx"))
+        if metas and not no_name and not odd_name:
+            ok("abi 15: rx_info.name is present and `rx` on every artifact "
+               "(the <prefix> fallback -- every compile here is -p rx from "
+               "pattern text, never a .rxt source)",
+               "%d artifacts, both engines, all five kinds" % len(metas))
+        else:
+            bad("abi 15: rx_info.name is present and `rx` on every artifact",
+                "missing on %r; unexpected values %r" % (no_name, odd_name))
+
+        no_ne = sorted(l for l, em in metas.items() if "nentries" not in em)
+        ne_ne = sorted((l, em.get("nentries"), em.get("nnames"))
+                       for l, em in metas.items()
+                       if "nentries" in em and em["nentries"] != em.get("nnames"))
+        if metas and not no_ne and not ne_ne:
+            ok("abi 15: rx_info.nentries == rx_info.nnames on every artifact "
+               "at this pin (match_api.md 6's own `equal on every artifact "
+               "pcrec emits today`; the adapter asserts only `>=`, so .rxt "
+               "composition separating them fails HERE by name)",
+               "%d artifacts, all nentries == nnames == %s"
+               % (len(metas),
+                  sorted({em.get("nentries") for em in metas.values()})))
+        else:
+            bad("abi 15: rx_info.nentries == rx_info.nnames on every artifact",
+                "pair absent on %r; (label, nentries, nnames) disagreements "
+                "%r" % (no_ne, ne_ne))
 
         # -- [B19] (d)/(e) the two source-bytes pairs on every compiled
         # artifact; the warning pair only where the message fired, and equal
@@ -2608,7 +2723,9 @@ DENY_CONTROLS = (
     # run's interior states are RESTORED -- the denied build is the
     # pre-[OPT-5] compiler plus the stamp line), so the witness is the
     # collapsed 16384 rung and THREE pairs move: the stamp to `none`, the
-    # emitted source back to 724,737 B (16,352 with the edge -- the ~44x
+    # emitted source back to 724,939 B at 1989c62 (16,554 with the edge --
+    # 724,737 / 16,352 at a7e0bdf, each +202 B for abi 15's two rx_info
+    # fields; the ~44x
     # [OPT-5] collapse seen from the flag's side), and the advisory
     # warning RETURNS at the default threshold (`warned_emit_bytes`
     # absent -> 724737) -- the warn-capture path's positive witness since
@@ -2619,8 +2736,8 @@ DENY_CONTROLS = (
     ("dfa_scan_edge + the warning returns: the edge denied",
      "scan-edge", ("bounded", "cls-upto-16384"), "",
      {"dfa_scan_edge": ("range", "none"),
-      "emit_bytes": (16352, 724737),
-      "warned_emit_bytes": (None, 724737)}, "deny"),
+      "emit_bytes": (16554, 724939),
+      "warned_emit_bytes": (None, 724939)}, "deny"),
     ("dfa_prefilter + offsets", "prefilter", ("loglines", "uuid"), "",
      {"dfa_prefilter": ("offset-set-bounded", "byte-class-bounded"),
       "dfa_prefilter_offsets": ("0,8*,13", "none")}, "deny"),
@@ -2662,22 +2779,110 @@ DENY_CONTROLS = (
      {"vm_prefilter_lang": ("exact", "count-collapsed"),
       "vm_prefilter_lang_why": ("exact", "forced"),
       "engine_sel": ("selected", "selected")}, "force"),
-    # [B22] ([OPT-4.1], pin 263b013): -fprefilter-collapse on a hybrid
-    # whose COLLAPSED language is nullable reaches the nullability POLICY,
-    # not the collapse -- the flag chooses a language, not whether a filter
-    # exists, and a nullable one can never dismiss a position, so the
-    # prefilter is KEPT and built from the EXACT language:
-    # `_LANG "exact"` / `_LANG_WHY "nullable collapsed language"` (pcrec
-    # tuning.md 2.17; the value I-21's correction named). The route token
-    # stays `selected` in both arms (nothing overflowed), and the registry
-    # row's stamp_value (`count-collapsed`, the collapse that was DECLINED)
-    # matches neither arm -- `reg_arm` "skip" says so rather than failing.
-    ("vm_prefilter_lang_why: -fprefilter-collapse declined as nullable",
-     "prefilter-lang", ("literal", b"(x){0,5}"), "",
-     {"vm_prefilter_lang": ("exact", "exact"),
-      "vm_prefilter_lang_why": ("exact", "nullable collapsed language"),
-      "engine_sel": ("selected", "selected")}, "force", "skip"),
+    # [B22]'s nullability-POLICY row ([OPT-4.1], `(x){0,5}`, `_LANG_WHY
+    # "nullable collapsed language"`) is RETIRED at [B26]/1989c62, and the
+    # reason is a FINDING rather than a tidy-up: [OPT-4.2] now declines the
+    # prefilter BEFORE the collapse policy can be reached, so the flag moves
+    # nothing on that witness and a control whose stamp cannot move is not a
+    # control. `check_opt42_preempts_collapse_policy` below records the new
+    # behaviour by value in its place, with the search that found no
+    # reachable witness for the retired value.
 )
+
+
+def check_opt42_preempts_collapse_policy():
+    """[OPT-4.2] PREEMPTS THE COLLAPSE POLICY ([B26], pin 1989c62, abi 14).
+
+    [B22] carried a force control for pcrec's nullability POLICY: on a
+    hybrid whose COLLAPSED language is nullable, `-fprefilter-collapse`
+    reached a policy rather than the collapse -- the prefilter was KEPT and
+    rebuilt from the EXACT language, stamping `vm_prefilter_lang "exact"` /
+    `_why "nullable collapsed language"` (pcrec tuning.md 2.17). Its
+    witness was `(x){0,5}`.
+
+    AT THIS PIN THAT VALUE IS UNREACHABLE, and the reason is structural
+    rather than accidental. The collapse lowers `X{m,n}` to
+    `X{min(m,1),}`, which can only make a language nullable when `m == 0`
+    -- and a pattern with `m == 0` has a nullable EXACT language too, which
+    is exactly what [OPT-4.2] now declines the prefilter for, one step
+    earlier. MEASURED over ten shapes chosen to separate the two
+    nullabilities (`(x){0,5}`, `a(x){0,5}`, `(x){0,5}a`, `(x){0,5}\\1`,
+    `(?=y)(x){0,5}`, `(x){0,5}?y`, `(?:x|){0,5}`, `(x{0,3}){0,5}`,
+    `a(b|c){0,5}d`, `(x){0,5}(?:)`): every one either declines under
+    [OPT-4.2] or collapses cleanly with `_why "forced"`. None reaches
+    `nullable collapsed language`.
+
+    So this check asserts what the pin DOES do, in both arms, rather than
+    leaving the retired row to fail:
+
+      1. `(x){0,5}` stamps `declined-nullable-default` with NO prefilter
+         and NO language pair -- the [OPT-4.2] route.
+      2. `-fprefilter-collapse` on the same pattern changes NOTHING. The
+         flag chooses a LANGUAGE for a prefilter that no longer exists, so
+         it cannot reach the policy. (This is the assertion that turns a
+         silently-inert flag into a stated fact.)
+      3. THE CONTROL, in the deny/force table above and re-stated here as
+         the reason this is a finding and not a broken flag:
+         `-fprefilter-collapse` still WORKS -- `a(b|c){2,5}d` moves
+         `exact` -> `count-collapsed (forced)`.
+
+    An ASK for pcrec rides on this: `nullable collapsed language` is a
+    documented `_LANG_WHY` value with no reachable witness at 1989c62. The
+    day one exists again -- or the day the value is retired on pcrec's side
+    -- this check is where it will be noticed."""
+    print("-- [OPT-4.2] preempts the nullable-collapse POLICY ([B26]) --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("opt42 preemption", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-opt42-")
+    saved_env = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    try:
+        got = {}
+        for arm, flags in (("default", ""), ("forced", "-fprefilter-collapse")):
+            os.environ["PCREC_BIN"] = adapter.pin_binary()
+            os.environ["PCREC_LOCAL_FLAGS"] = ("--features all " + flags).strip()
+            adapter.prepare("pcrec-local", tmp)
+            cr = adapter.compile("pcrec-local", "opt42-%s" % arm,
+                                 b"(x){0,5}", {}, 1, tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                bad("opt42 preemption: the %s arm compiles" % arm,
+                    "%s: %s" % (cr.outcome, cr.diagnostic))
+                return
+            em = cr.engine_metadata
+            got[arm] = (em.get("engine_sel"), em.get("prefilter"),
+                        em.get("vm_prefilter_lang"),
+                        em.get("vm_prefilter_lang_why"))
+        want = ("declined-nullable-default", "none", None, None)
+        if got.get("default") == want:
+            ok("opt42: `(x){0,5}` is declined by VALUE (no prefilter, no "
+               "language pair -- match_api.md 6.3's iff both ways)",
+               "sel=%s prefilter=%s, lang pair absent" % want[:2])
+        else:
+            bad("opt42: `(x){0,5}` is declined by VALUE (no prefilter, no "
+                "language pair)", "got %r, want %r" % (got.get("default"), want))
+        if got.get("forced") == got.get("default"):
+            ok("opt42: -fprefilter-collapse CANNOT reach the nullability "
+               "policy at this pin -- the flag chooses a language for a "
+               "prefilter [OPT-4.2] already declined, so both arms are "
+               "identical ([B22]'s `nullable collapsed language` witness is "
+               "RETIRED; the value has no reachable witness at 1989c62 -- an "
+               "ask for pcrec)",
+               "both arms %r" % (got.get("default"),))
+        else:
+            bad("opt42: -fprefilter-collapse CANNOT reach the nullability "
+                "policy at this pin",
+                "default %r, forced %r -- the policy IS reachable again; "
+                "restore [B22]'s force control row"
+                % (got.get("default"), got.get("forced")))
+    finally:
+        for k, v in saved_env.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def _pcrec_adapter_module():
@@ -3402,7 +3607,7 @@ EMIT_SIZE_WITNESSES = (
     # name-dependent (the emitted `#include "<basename>.h"` line -- the
     # [B16] finding), which is WHY the comparison is same-files, never a
     # constant: with the adapter's `artifact.c` naming it reads
-    # 18,291 plain / 18,496 whole, and emit_bytes == emit_code_bytes (a
+    # 17,889 plain / 18,094 whole at 1989c62, and emit_bytes == emit_code_bytes (a
     # declined plain-VM artifact carries no table initializers at all).
     ("declined plain-VM artifact (bounded cls-upto-32768)",
      ("bounded", "cls-upto-32768"), ""),
@@ -3524,12 +3729,19 @@ def check_abi_floor_refusal():
     refusal would ship unexercised, which is this project's own stated
     check-design lesson. The sabotage is the smallest one that reaches the
     real path: compile a real artifact, edit its `rx_info` initialiser's
-    `.abi = N` to `.abi = 5` (below the floor, 6 at [B16] and 10 since
-    [B18]) in a COPY, and run the ordinary shim + driver over it. It still
+    `.abi = N` to a value below the floor in a COPY, and run the ordinary
+    shim + driver over it. It still
     compiles (the fields are all still there -- the point is that the
     driver must not TRUST them on an artifact that claims to predate them),
     and the refusal must fire by name and carry both numbers -- the floor
     read out of shim.c (`_shim_min_abi`), never retyped here.
+
+    TWO sabotaged arms since [B26], because the floor MOVED at this pin
+    (10 -> 15, `rx_info.name` / `.nentries`) and one deep sabotage cannot
+    tell a floor of 15 from a floor of 6. `.abi = 5` is the historical
+    arm; `.abi = <floor - 1>`, read from shim.c, is the arm that fails the
+    day the floor is lowered or the driver compares against a stale
+    constant -- the smallest artifact the shim must still refuse.
 
     The POSITIVE CONTROL is in the same run: the unmodified artifact, built
     and loaded by the same code, must load fine. A refusal that fired on
@@ -3559,16 +3771,25 @@ def check_abi_floor_refusal():
                 "pcrec changed the initialiser's shape; re-derive this check")
             return
         real_abi = int(m.group(1))
+        floor = _shim_min_abi()
         sabotaged = os.path.join(tmp, "sabotaged.c")
         with open(sabotaged, "w", encoding="utf-8") as f:
             f.write(src.replace(m.group(0), ".abi = 5,", 1))
+        # [B26]: the JUST-BELOW arm. The floor rose 10 -> 15 at this pin, and
+        # `.abi = 5` alone would keep passing under any floor at all; this
+        # copy claims `floor - 1`, so it is refused iff the driver is really
+        # comparing against shim.c's current number.
+        justbelow = os.path.join(tmp, "justbelow.c")
+        with open(justbelow, "w", encoding="utf-8") as f:
+            f.write(src.replace(m.group(0), ".abi = %d," % ((floor or 6) - 1), 1))
         # The artifact's own .h sits beside the original; both .c files are
         # in `tmp`, so one -I serves both.
         drv = build_driver(os.path.join(ROOT, "testees", "pcrec", "driver.c"),
                            os.path.join(tmp, "pcrec_driver"), extra=["-ldl"])
         shim = os.path.join(ROOT, "testees", "pcrec", "shim.c")
         results = {}
-        for arm, csrc in (("real", art), ("sabotaged", sabotaged)):
+        for arm, csrc in (("real", art), ("sabotaged", sabotaged),
+                          ("justbelow", justbelow)):
             so = os.path.join(tmp, "%s.so" % arm)
             g = run([os.environ.get("CC", "gcc"), "-O0", "-std=gnu11", "-fPIC",
                      "-shared", "-o", so, shim,
@@ -3580,6 +3801,7 @@ def check_abi_floor_refusal():
             results[arm] = run_driver([drv, "--lib", so, "--trial", "1"],
                                       timeout=120, cwd=tmp)
         real, sab = results["real"], results["sabotaged"]
+        jb = results["justbelow"]
 
         if real.returncode == 0 and real.info.get("abi") == str(real_abi):
             ok("abi-floor CONTROL: the unmodified artifact loads",
@@ -3598,6 +3820,21 @@ def check_abi_floor_refusal():
             bad("abi-floor: a below-floor artifact is REFUSED by name",
                 "exit %d, diagnostic %r -- the floor is not wired"
                 % (sab.returncode, diag[:200]))
+
+        # [B26] the JUST-BELOW arm: abi == floor - 1 must be refused too, and
+        # the refusal must name shim.c's CURRENT floor rather than an older
+        # one. This is the arm that moves when PB_SHIM_MIN_ABI moves.
+        jdiag = jb.diagnostic() or ""
+        want = "the %d this shim was written for" % (floor or 0)
+        if jb.returncode != 0 and "abi-below-shim-floor" in jdiag \
+                and want in jdiag:
+            ok("abi-floor: abi == floor-1 (%d) is REFUSED, and the refusal "
+               "names shim.c's CURRENT floor %d" % ((floor or 6) - 1, floor),
+               jdiag.split("\n")[0][:150])
+        else:
+            bad("abi-floor: abi == floor-1 (%d) is REFUSED, and the refusal "
+                "names shim.c's CURRENT floor %d" % ((floor or 6) - 1, floor),
+                "exit %d, diagnostic %r" % (jb.returncode, jdiag[:220]))
         floor = _shim_min_abi()
         if floor is None:
             bad("abi-floor: the refusal carries BOTH numbers",
@@ -4614,6 +4851,7 @@ def main():
     check_kb1_runtime_options()
     check_mechanism_stamps()
     check_deny_flag_controls()
+    check_opt42_preempts_collapse_policy()
     check_cc_axis()
     check_list_axes_registry()
     check_list_definitions_registry()

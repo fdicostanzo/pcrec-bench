@@ -3,17 +3,19 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-a7e0bdf/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-1989c62/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit a7e0bdfc3abf60056abee10d0f4ca4c2010da533 (abi 13), archived
-# 2026-08-31 by lane b25repin ([B25]). 50 data rows / 7 columns: kind,
+# pcrec commit 1989c623bffb431c65c49262e7eb88eb029a21ef (abi 15), archived
+# 2026-09-01 by lane b26repin ([B26]). 50 data rows / 7 columns: kind,
 # selector, syntax, order, predicate, definition, applies -- one row per
 # construct DEFINED in terms of another (`\d` = `[0-9]`, the POSIX classes,
 # `\R`, the `\c`/`\x`/`\o` decoders as text functions), the predicate being
 # the option-scope tag's own name (a closed vocabulary). BYTE-IDENTICAL to
-# the 263b013 copy below the header: no definition moved between the pins
+# the a7e0bdf copy below the header, which was byte-identical to the
+# 263b013 one: no definition has moved across three pins
 # ([M4-QUOTING]'s `\Q...\E` is a MODULE, not a definition row -- quoting
-# suspends syntax rather than defining one construct in terms of another).
+# suspends syntax rather than defining one construct in terms of another;
+# [OPT-4.2] and [DD-13b.W1.2] define no construct at all).
 # The grep strips pcrec's own `#` comment/header lines, so the data rows
 # are the whole body; the column header is restated here for a reader:
 #

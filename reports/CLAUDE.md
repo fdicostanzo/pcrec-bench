@@ -17,7 +17,15 @@ non-empty diff after a bare rerun (no query change, no reporter change)
 means either the store changed or the reporter regressed determinism.
 
 **[B28] (2026-09-01) regenerated every report below against reporter
-`v11 (2026-09-01)` — KB-5's `--testee` roster filter, KB-6's `edge=`
+`v11 (2026-09-01)`. NOTE ([B26], the 1989c62 re-pin): the legend gains
+one CONDITIONAL sentence and one alternative bucket suffix — pcrec abi
+14's `declined-nullable-default` renders `sel=… (prefilter declined, no
+cap hit)` rather than `(DFA fallback tripped)`, because nothing
+overflowed on that path — and BOTH print only on a report whose records
+carry the token. No stored record does, so every committed file below
+still renders byte-identically and the version did NOT move; the first
+report to print either is the one the [B26] window writes. Before that:
+KB-5's `--testee` roster filter, KB-6's `edge=`
 clause** (docs/dev/known_issues.md KB-5, KB-6). Same queries as before,
 byte for byte (each file's own header query), with ONE deliberate
 exception explained below. The diff on every file is the version line
