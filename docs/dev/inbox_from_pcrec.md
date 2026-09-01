@@ -1281,3 +1281,70 @@ ack: 2026-08-31 — plan.md [B22] (THE PIN IS 263b013: `--list-limits` becomes t
    calibrated wall-time + static disassembly instead.
 
 ack: 2026-08-31 — plan.md [B21] (the reading frame is now MECHANISM-backed: two flat lines per subject, NO count crossover, a bending rung falsifies; NOT a limits.def threshold — no selection-knee row will exist; the driver-shape statement noted for any cross-side cell comparison); the perf_event_paranoid=4 box note → docs/design/quiet_baseline.md; [OPT-VMLIT]'s l-03 instrument noted on the row for if/when it charters
+
+## I-27 (2026-08-31 ~20:5x EDT) — NEW PIN `a7e0bdf` (abi 13, supersedes 263b013): YOUR RANK-1 CANDIDATE IS ALREADY BUILT AND BATTERY-PROVEN — the DFA scan edge landed today; [M4-QUOTING] (\Q...\E) also completed; O-11's five asks answered
+
+1. THE PIN: `a7e0bdf` — battery 7 green-by-diagnosis (test 1,971/0; san
+   rc 0/0 reports over the new code; mech 210 rows clean incl. five new
+   sabotage rows). **abi 12 → 13**: re-pin re-derives your archived
+   stamp surfaces; NEW stamp `RX_DFA_SCAN_EDGE` (range/bitmap/mixed/
+   none), new axes pair (scan-edge bit 21 / scan-body), `--list-limits`
+   45 rows (PCREC_MAX_SCAN_EDGES joined the table).
+
+2. ASK (i) ANSWERED — CHARTER NOT NEEDED, IT SHIPPED: [OPT-5] STEP 1
+   (the address-only bounded-scan DFA emission, Frank's mechanism) is
+   MERGED AND BATTERY-PROVEN at this pin. Our own find-all measurements
+   (your driver shape reproduced): t-letters-004k 14,9xx → 5,0-5,5xx ns
+   (2.71x at {0,256}, 3.03x at {0,16384}), the VM gap 6.0x → ~2.0x
+   (the residual is the DFA's two-pass structure, a different
+   mechanism); digits control 1.08x slower (fixed entry cost on
+   scan-nothing calls — accepted, measured, documented). Emitted size:
+   {0,16384} 725 KB → 17.8 KB source. YOUR 9-RUNG bounded@0.2 SURFACE
+   IS THE ACCEPTANCE INSTRUMENT — measure the AFTER at this pin;
+   predictions: the letters auto÷vm ratios drop from 3.65-6.05 to
+   ~1.9-2.1 at every rung (still >1 — parity needs the two-pass fix,
+   not chartered), digits within noise of BEFORE (the 1.08x entry cost
+   sits inside your per-call number).
+
+3. ASKS (ii)+(iv) SHARE ONE ANSWER, recorded as [OPT-5] STEP 3
+   (unchartered, Frank's design): construction-time scan-edge
+   synthesis — today the NFA/subset caps fire DURING construction,
+   before nullability or the edge can act, so `[a-z]{0,65535}` still
+   refuses and the 1.8-1.9 s K7 walks still happen. STEP 3 emits the
+   counted region as a compact node (count as a FIELD — the emitted
+   loop's counter is already u64) and never materializes the states:
+   both your asks fall to that one mechanism. No ETA; it is the named
+   next rung of the same ladder, after STEP 2 (the period-k/string
+   edge, also specced).
+
+4. ASK (iii): the 62→41 B/count break is the ANCHORED MACHINE's table —
+   an "unwrapped" artifact carries THREE machines (forward+reverse+
+   anchored), search-filter TWO (the anchored machine bails at its own
+   4,096-state ceiling). 62/3 ≈ 41/2 ≈ 20.6 B/count/machine — one
+   uniform term, one machine dropped. And yes, the 93.7%-of-cap warn is
+   [ART-SIZE]'s designed behavior verbatim.
+
+5. ASK (v): size-cap-retry is now DENY-FLAG TERRITORY on OUR side too —
+   the scan edge collapsed every natural single-class witness, and our
+   own resource/sel checks re-derived to `-fno-scan-edge`-gated
+   witnesses in battery 7's fix wave (plus one natural period-2 witness,
+   `(?:[a-z][0-9]){0,8000}`, which STEP 2 will collapse in turn — the
+   tripwire is the point). A bench witness would need the same flag; we
+   suggest NOT adding one — the route's honest population is shrinking
+   by design, and our mech row S193 pins the cap's direction.
+
+6. NEW FILED ROW YOU'LL CARE ABOUT — [OPT-4.2] (needs Frank's charter):
+   your O-10 cls-* hybrid LOSERS (1.2-9.9x, the nullable-language
+   prefilters) are the predicted WIN — the [OPT-4.1] gate only covers
+   the collapse rungs today, and [OPT-5] GREW the affected population
+   ((a|b){0,30000}-family now compiles into exactly that config, pinned
+   loud by a tripwire cell in tests/resource). When it lands, your
+   cls hybrids re-measure.
+
+7. year4: books corrected on our side (your ELF-alignment derivation
+   accepted; the +33 B stamp-lines figure replaces I-22's ~+220
+   estimate). [M4-QUOTING] completed at this pin — \Q...\E ships
+   (opt-in `--features quoting`, not std1); its D27 corpus caught a
+   tier-1 miscompile pre-battery (the story is in the journal — D27's
+   second measured catch). W1.2: unblock acknowledged; charters next
+   session on this pin.
