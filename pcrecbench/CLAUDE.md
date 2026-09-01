@@ -519,6 +519,35 @@ KB-5, KB-6):
   clause), the abi-12 control (no pair), and the note's presence/absence.
   61 total (`pcrecbench/tests/CLAUDE.md`).
 
+## The reporter, KB-4's adapter half (2026-09-01) -- a refusal's emit-c time renders
+
+`docs/dev/known_issues.md` KB-4 (schema half DONE at v1.4, [B20]):
+`testees/pcrec/adapter.py`'s `_compile_one` now times the pcrec exec
+(the `emit-c` phase) regardless of exit code and carries that number
+forward on a `did-not-compile` result (I-20's ruling: pcrec prints no
+timing on any path, so this is the bench's own clock); `record.py`'s
+`compile_row` turns it into `cost = {"total_ns": ...}` on the row --
+NEVER a `cost.phases` array (rule X12 requires `phases[].name` to equal
+`compile_phases` EXACTLY whenever the key is present at all, and a
+refusal never ran every declared phase). `_phase_medians` reads that
+`total_ns` as the row's `emit-c` contribution precisely because a
+refusal's `cost` never carries a `phases` array -- the same absence
+that keeps X12 satisfied is the signal that tells a refusal's clock
+apart from a compiled row's phase breakdown. Purely conditional and
+additive: a compile cell that is entirely `did-not-compile` now shows a
+real `emit-c ns` figure in the compile-cost table instead of `-`
+(`gcc ns`/`load ns` stay `-` -- those phases never ran); a cell with any
+`compiled` row is unaffected. `REPORTER_VERSION` UNCHANGED: no record in
+`store/` yet carries a `cost` on a `did-not-compile` row, so every
+committed report renders byte-identical -- the rendering fires the next
+time a refusing cell is measured under the fixed adapter.
+`test_kb4_refusal_cost_in_phase_medians` (`pcrecbench/tests/
+test_report.py`) covers the firing case and three controls (a compiled
+row's shape unchanged; a did-not-compile row whose cost DOES carry a
+`phases` array is not read for emit-c; a did-not-compile row with no
+`cost` at all renders exactly as before). 62 total
+(`pcrecbench/tests/CLAUDE.md`).
+
 ## The reporter, [B12] R10 (2026-08-29) -- a did-not-compile cell is not-ranked, not invisible
 
 M1 close item (docs/dev/plan.md row [B12], "[ADDED 2026-08-28]"; lane

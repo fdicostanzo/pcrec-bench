@@ -80,6 +80,50 @@ KB-4 is the ADAPTER half (time the pcrec exec on every outcome and
 record it on the refusal row) and the reporter half — their own plan
 row, which can now land without a schema change.**
 
+**FIXED 2026-09-01 (lane b28kb4, [B28], adapter + reporter halves).**
+`testees/pcrec/adapter.py`'s `_compile_one` already computed `t1 - t0`
+around the pcrec exec (phase 1, `emit-c`) BEFORE checking its exit
+code; the fix is carrying that number forward on both `did-not-compile`
+paths — pcrec's own refusal (the `-p rx` exit) and the gcc/clang
+refusal one level down (pcrec succeeded; only the compiler refused) —
+as `phase_seconds=[{"emit-c": t1 - t0}]`, the SAME one-dict-per-trial
+shape `phase_seconds` carries for a `compiled` result (harness.py's
+existing `phase_seconds[t-1]` read needed no change). `pcrecbench/
+record.py`'s `compile_row` gained the non-`compiled` branch that turns
+that into `cost = {"total_ns": ...}` — DELIBERATELY carrying no
+`cost.phases` array: rule X12 requires `phases[].name` to equal the
+testee's declared `compile_phases` EXACTLY whenever the key is present
+at all, and a refusal by construction never ran every declared phase,
+so `total_ns` alone (summed over whatever phases were actually timed —
+today always just `emit-c`) is the only schema-legal shape, matching
+`schema/examples/...20260830T120000Z.jsonl`'s own KB-4 row. The
+`compile_cost_definition` text gained one clause naming this (I-20's
+ruling: pcrec prints no timing on any path, so a refusal's cost is the
+BENCH's clock). Reporter: `_phase_medians` now also reads a
+`did-not-compile` row's `cost.total_ns` — recognised by the absence of
+a `phases` array — as its `emit-c` contribution, so the compile-cost
+table's `emit-c ns` column shows a real number on a testee whose ONLY
+rows for a pattern are refusals (`gcc ns`/`load ns` stay `-`, correctly
+— those phases never ran). `REPORTER_VERSION` UNCHANGED at `v11
+(2026-09-01)`: no record in `store/` carries a `cost` on a
+`did-not-compile` row yet (checked directly), so every committed report
+renders byte-identical; the rendering fires the next time a refusing
+cell is measured. `pcrecbench/tests/test_report.py` gained
+`test_kb4_refusal_cost_in_phase_medians` (62 total): the firing case,
+a compiled row's shape unchanged (control), a did-not-compile row whose
+`cost` DOES carry a `phases` array is NOT read for `emit-c` (control —
+that shape belongs to a compiled row), a did-not-compile row with no
+`cost` at all renders as before (control — the shape every stored
+record still has), and the rendered table row end to end.
+`tools/selfcheck.py`'s `check_mechanism_stamps` extends its existing
+bounded `cls-upto-65535` refusal-by-name block: the `CompileResult`
+itself carries the timed `emit-c` phase, the `record.compile_row` built
+from it carries a positive `cost.total_ns` with NO `phases` key and
+validates against the schema's own `compile_row` definition, and a
+compiled witness's row is checked to carry its cost UNCHANGED in shape
+(four new checks; 221/221 total, `make check` green: check-schema
+4/72/0, check-harness 221/221, 62 reporter tests).
+
 ## KB-5 (2026-08-31) — no testee-roster filter: a PARTIAL re-measure window cannot be scoped to "the fresh pin + the unpinned baselines" in one committed query
 
 Found by the b22reports lane rendering the loglines@0.1 AFTER at

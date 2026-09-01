@@ -268,7 +268,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 217 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 221 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -373,6 +373,13 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # block, exit code 4 with the per-status index
                         # line, and the /proc/stat timeline (absent when
                         # unreadable)
+                        # and (KB-4's adapter half, docs/dev/known_issues.md)
+                        # the bounded 65535 refusal's CompileResult carries
+                        # its timed emit-c phase, the record row built from
+                        # it carries a positive cost.total_ns with NO
+                        # cost.phases array and validates against the
+                        # schema's own compile_row definition, and a
+                        # compiled witness's cost is unchanged in shape
                         # (~5 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets

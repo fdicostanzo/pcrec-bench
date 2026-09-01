@@ -273,8 +273,11 @@ def compile_row(pattern_id, trial, outcome, cost_class, phases=None,
     # record_schema.md: `cost` is REQUIRED when outcome == compiled AND the
     # class is not lazy-jit (a lazy-jit row carries `derivation` instead --
     # neither adapter here is one, so that branch is stated and unbuilt).
-    # Since v1.4 (KB-4's schema half) a refusal MAY carry `cost` too; the
-    # adapter half that times a refusal is KB-4's own row, not this one.
+    # Since v1.4 (KB-4's schema half) a refusal MAY carry `cost` too, and
+    # KB-4's adapter half (docs/dev/known_issues.md, 2026-09-01) is what
+    # fills it below: the bench's own clock around whichever phase(s)
+    # actually ran before the refusal (I-20's ruling -- pcrec prints no
+    # timing on any path, so this is the bench's clock, never pcrec's).
     if outcome == "compiled" and cost_class != "lazy-jit" and phase_seconds:
         total = sum(phase_seconds.get(p, 0.0) for p in (phases or []))
         row["cost"] = {
@@ -285,6 +288,15 @@ def compile_row(pattern_id, trial, outcome, cost_class, phases=None,
         }
     elif outcome == "compiled" and cost_class == "lazy-jit":
         row["derivation"] = "trial-1-minus-steady-state"
+    elif phase_seconds:
+        # A refusal's cost NEVER carries a `phases` array: rule X12
+        # requires `cost.phases[].name` to equal the testee's declared
+        # `compile_phases` EXACTLY whenever the key is present at all, and
+        # a refusal by construction never ran every declared phase -- so
+        # `total_ns` alone (summed over whatever phases the caller DID
+        # time) is the only schema-legal shape, matching
+        # schema/examples/...20260830T120000Z.jsonl's KB-4 row.
+        row["cost"] = {"total_ns": int(round(sum(phase_seconds.values()) * 1e9))}
     if artifact_bytes is not None:
         row["artifact_bytes"] = int(artifact_bytes)
     if engine_metadata:

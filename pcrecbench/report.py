@@ -602,6 +602,37 @@ and KB-6 (the abi-13 `dfa_scan_edge` clause)
   `pcrec_a7e0bdf` reports' legend lines and adds the new note where they
   print a `sel=`/mechanism legend -- see `reports/CLAUDE.md`'s entry for
   the exact diff classification.
+
+## The reporter, KB-4's ADAPTER half (2026-09-01) -- a refusal's emit-c time
+
+`docs/dev/known_issues.md` KB-4 (schema half DONE at v1.4, [B20]): a
+`did-not-compile` compile row now carries `cost` when the adapter timed
+the refusal ([B28]'s adapter lane, `testees/pcrec/adapter.py`'s
+`_compile_one`) -- the bench's own clock around the pcrec exec (I-20's
+ruling), `total_ns` alone and deliberately NO `cost.phases` array (X12
+requires `phases[].name` to equal the testee's declared `compile_phases`
+EXACTLY when the key is present at all, and a refusal never ran every
+phase pcrec's `compile_phases` declares). `_phase_medians` reads that
+`total_ns` as the row's `emit-c` number precisely because a refusal's
+`cost` never carries a `phases` array -- the same test that tells a
+refusal's cost apart from a compiled row's is what makes the read safe.
+Purely CONDITIONAL and additive: a compile cell that is entirely
+`did-not-compile` now shows a real `emit-c ns` figure instead of `-` in
+the compile-cost table (`gcc ns`/`load ns` stay `-` -- those phases never
+ran), and a cell with any `compiled` row is unaffected (its `emit-c`
+median already came from `cost.phases`, never from `total_ns`).
+`REPORTER_VERSION` UNCHANGED: no record in `store/` at the time of this
+change carries a `cost` on a `did-not-compile` row (checked directly
+against the store, `store/CLAUDE.md`'s convention), so every committed
+report renders byte-identical -- the rendering only fires the day a
+cell is next measured under the fixed adapter. `test_kb4_refusal_cost_
+in_phase_medians` (`pcrecbench/tests/test_report.py`) covers the firing
+case (a `did-not-compile` row's `total_ns` becomes its `emit-c` median)
+and its control (a `compiled` row's phase medians are unchanged; a
+`did-not-compile` row whose `cost` carries a `phases` array -- which
+this adapter never emits, but the schema does not forbid it of some
+other future adapter -- is NOT read as an emit-c number, since that
+shape is not this row's own).
 """
 
 from __future__ import annotations
@@ -976,13 +1007,27 @@ def _phase_medians(rows):
     """[B9] R9: per-phase (emit-c/gcc/load) median ns across a compile
     cell's COSTED rows -- AOT rows only (`cost.phases`); an interpreter
     or eager-JIT compile row has no phase breakdown and contributes
-    nothing here."""
+    nothing here.
+
+    KB-4 (docs/dev/known_issues.md, fixed [B28] 2026-09-01): a
+    `did-not-compile` row's `cost` -- the bench's own clock around
+    whichever phase(s) actually ran before the refusal, I-20's ruling --
+    carries NO `phases` array (X12 forbids a partial one: `phases[].name`
+    must equal the testee's declared `compile_phases` EXACTLY when the
+    key is present at all, and a refusal never ran every phase), so its
+    single `cost.total_ns` IS the `emit-c` number and is read as one.
+    Without this a testee whose compile always refuses a pattern (the
+    ONLY rows this cell ever has) rendered `-` for every phase column
+    even after the adapter started timing the refusal."""
     by_phase = defaultdict(list)
     for r in rows:
-        if r.get("compile_outcome") != "compiled":
-            continue
-        for ph in ((r.get("cost") or {}).get("phases") or []):
-            by_phase[ph["name"]].append(ph["elapsed_ns"])
+        if r.get("compile_outcome") == "compiled":
+            for ph in ((r.get("cost") or {}).get("phases") or []):
+                by_phase[ph["name"]].append(ph["elapsed_ns"])
+        elif r.get("compile_outcome") == "did-not-compile":
+            cost = r.get("cost") or {}
+            if "total_ns" in cost and not cost.get("phases"):
+                by_phase["emit-c"].append(cost["total_ns"])
     return {name: statistics.median(vals) for name, vals in by_phase.items() if vals}
 
 

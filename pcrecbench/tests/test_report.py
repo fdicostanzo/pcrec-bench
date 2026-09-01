@@ -2254,6 +2254,72 @@ def test_dfa_scan_edge_legend_kb6():
            f"a forced-VM-only table has neither the clause nor the note:\n{md_n}")
 
 
+def test_kb4_refusal_cost_in_phase_medians():
+    """KB-4 (docs/dev/known_issues.md), fixed [B28]'s adapter lane
+    (2026-09-01): a `did-not-compile` compile row's `cost.total_ns` --
+    the bench's own clock around the pcrec exec that ran before the
+    refusal, I-20's ruling -- is read as the row's `emit-c` phase
+    number. Such a row never carries a `cost.phases` array (X12: a
+    partial one, naming fewer phases than the testee's declared
+    `compile_phases`, is schema-illegal), and that absence is exactly
+    the signal `_phase_medians` uses to tell a refusal's own clock apart
+    from a compiled row's phase breakdown."""
+    refused = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+               "compile_outcome": "did-not-compile", "cost_class": "compiled-aot",
+               "cost": {"total_ns": 4_000_000},
+               "diagnostic": "pattern too large (NFA exceeds 131072 states)"}
+    pm = report._phase_medians([refused])
+    _check(pm == {"emit-c": 4_000_000},
+           f"a refusal's total_ns becomes the emit-c median, got {pm!r}")
+
+    # CONTROL 1: a COMPILED row's phase medians are UNCHANGED in shape --
+    # they still come from cost.phases, never from total_ns.
+    compiled = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                "compile_outcome": "compiled", "cost_class": "compiled-aot",
+                "cost": {"total_ns": 1000,
+                         "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                                    {"name": "gcc", "elapsed_ns": 500},
+                                    {"name": "load", "elapsed_ns": 100}]}}
+    pm_c = report._phase_medians([compiled])
+    _check(pm_c == {"emit-c": 400, "gcc": 500, "load": 100},
+           f"a compiled row's phase medians are unchanged, got {pm_c!r}")
+
+    # CONTROL 2: a did-not-compile row whose cost carries a `phases`
+    # array (this adapter never emits one -- the schema does not forbid
+    # it of some other future adapter) is NOT read for emit-c: that
+    # shape belongs to a compiled row's cost, not a refusal's own clock.
+    refused_with_phases = dict(refused, cost={
+        "total_ns": 4_000_000,
+        "phases": [{"name": "emit-c", "elapsed_ns": 4_000_000}]})
+    pm_wp = report._phase_medians([refused_with_phases])
+    _check(pm_wp == {},
+           f"a refusal whose cost carries a phases array is not read "
+           f"for emit-c (that shape is a compiled row's), got {pm_wp!r}")
+
+    # CONTROL 3: a did-not-compile row with NO cost at all (the shape
+    # every record in `store/` still has -- this fix is forward-only)
+    # renders exactly as before: no phase number invented from nothing.
+    refused_no_cost = {k: v for k, v in refused.items() if k != "cost"}
+    pm_nc = report._phase_medians([refused_no_cost])
+    _check(pm_nc == {}, f"no cost, no phase number: got {pm_nc!r}")
+
+    # ... and end to end: the compile-cost table's `emit-c ns` column
+    # renders a real number where it used to render `-`, while `gcc ns`/
+    # `load ns` -- phases that never ran before the refusal -- stay `-`.
+    setup = _mini_setup("pcrec_263b013_auto-caps-simdna")
+    rd, err = report.build_report([_mk_loaded("r.jsonl", setup, [refused])],
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    row_line = next(l for l in md.splitlines() if l.startswith("| `p1` |"))
+    cells = [c.strip() for c in row_line.strip("|").split("|")]
+    # header: pattern | testee | median ns | min | max | stddev | n costed |
+    # artifact bytes | outcomes | emit-c ns | gcc ns | load ns
+    _check(cells[-3:] == ["4,000,000.0", "-", "-"],
+           f"emit-c ns carries the refusal's clock, gcc/load stay `-`: {row_line!r}")
+    _check("did-not-compile=1" in row_line, f"outcomes still names the refusal: {row_line!r}")
+
+
 def test_fast_tier_legend_b16_r2():
     """[B16] R2: [OPT-1]'s two-tier default entry in the legend, including
     pcrec's ONLY spelling of 'this artifact has one tier' (fast == stamped
@@ -2835,6 +2901,8 @@ TESTS = [
     test_after_clause_unconditional,
     # [B28] KB-5/KB-6
     test_dfa_scan_edge_legend_kb6,
+    # [B28] KB-4 adapter half
+    test_kb4_refusal_cost_in_phase_medians,
 ]
 
 

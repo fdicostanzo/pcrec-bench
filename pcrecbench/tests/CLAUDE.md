@@ -231,6 +231,22 @@ which is expected and not a bug in this suite.
   record carries no pair; the legend note's presence on a table that
   carries the clause and absence on one that does not).
   `test_reporter_version_pin` pins v11.
+  **[B28] KB-4 addition (2026-09-01, 1 new test, 62 total)**:
+  `test_kb4_refusal_cost_in_phase_medians` -- the adapter half of KB-4
+  (schema half DONE at [B20]): a `did-not-compile` row's `cost.total_ns`
+  is read as its `emit-c` phase median, recognised by the ABSENCE of a
+  `cost.phases` array (X12 forbids a partial one, so a refusal's cost
+  never carries one). Three controls: a `compiled` row's phase medians
+  are unchanged (still read from `cost.phases`, never `total_ns`); a
+  did-not-compile row whose `cost` DOES carry a `phases` array -- a
+  shape this adapter never emits, but the schema does not forbid of some
+  other future one -- is NOT read for `emit-c`; a did-not-compile row
+  with no `cost` at all (the shape every record in `store/` still has)
+  renders exactly as before. Plus the end-to-end rendering: the
+  compile-cost table's `emit-c ns` column carries the real number while
+  `gcc ns`/`load ns` stay `-` (those phases never ran). No `REPORTER_
+  VERSION` bump: no record in `store/` at the time carries a `cost` on a
+  `did-not-compile` row, so no committed report's rendering moves.
 - `fixtures/` -- the synthetic store this suite reads. See its own
   CLAUDE.md.
 - `__init__.py` -- makes this a package so
