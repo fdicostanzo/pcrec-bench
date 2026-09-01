@@ -530,3 +530,76 @@ an older measured one) restores it.
   unchanged from its own first-sample entry). `.subject-grain.md`
   (`--grain subject`) carries the 16 KB-1 MB sweep per flavour;
   `.tsv` the same query (no Δ column, as the `-repin-` `.tsv`s above).
+
+- `2026-08-31-bounded-0.2-budu-ryzen1600-after-a7e0bdf.md` — the [B25]
+  WINDOW's ACCEPTANCE AFTER for `bench/bounded@0.2` at pcrec **a7e0bdf**
+  (abi 13; inbox I-27, [OPT-5] STEP 1 shipped): the four pcrec arms
+  (`auto`/`auto-nocaps`/`vm`/`vm-in`) measured 21:46-23:15 EDT (Aug 31),
+  reporter v10 (unchanged — this lane made NO reporter code changes;
+  [B25]'s commits touch only the pcrec adapter/testees/docs). Query:
+  `report --subbench bounded --version 0.2 --until 2026-09-02T00:00:00Z
+  --format md` — **10 records included** (2 pcre2 + 4
+  `pcrec_263b013_*` + 4 `pcrec_a7e0bdf_*`), **1 superseded** listed under
+  the header (`pcrec_263b013_vm-in-caps-simdna`'s FIRST run, the
+  `inconclusive-spread` record from [B22]'s window — OD-B15 dedup keeps
+  its 17:04:25Z retry instead), **11 records total** named in the file.
+  DELIBERATELY CROSS-PIN, same shape as KB-5's finding
+  (docs/dev/known_issues.md) even though this window is a FULL re-measure
+  of all four pcrec arms rather than a partial one: the bare `--until`
+  admits the surviving `pcrec_263b013_*` rows beside the fresh
+  `pcrec_a7e0bdf_*` ones because dedup keys on the literal `testee_id`,
+  which embeds the pin — a newer pin's rows never supersede an older
+  pin's rows of the same engine config, by design (KB-5's "never
+  supersedes ACROSS pins"). That is the POINT here, not an accident: the
+  R8 `Δ vs previous version` column firing `pcrec_a7e0bdf_* vs
+  pcrec_263b013_*` (matched by testee-id root) IS the [OPT-5] acceptance
+  table I-27 (2) asked for, so no narrower `--testee`-style filter (KB-5's
+  candidate fix, still unbuilt) is wanted even though one would apply
+  cleanly this time (only two pins survive in this set, unlike loglines'
+  four).
+
+  R8 verdicts, `large-subject-throughput` set-grain rows: mixed —
+  `auto`/`auto-nocaps` read `faster ×3.62` on `cls-atleast-4096` and
+  `faster ×1.95`-`×1.97` on most `cls-upto-*` rungs, but `unchanged
+  (within spread)` or a small `faster ×1.0x`/`slower ×1.0x` on `vm`/
+  `vm-in` rows throughout (expected: [OPT-5] STEP 1 is a DFA-side
+  emission change, not a VM change, and `auto`/`auto-nocaps` select the
+  DFA on these rungs). Per-subject drill-down (the falsifiable frame,
+  I-27 (2): letters `auto÷vm` drops to ~1.9-2.1 at every rung, digits
+  within noise): computed directly from the `large-subject-throughput`
+  per-subject sub-tables (`auto-caps` / `vm-caps`, a7e0bdf) —
+  `t-letters-*` gives 1.76-1.79× at rungs 64/128, climbing to 1.97-2.00×
+  at rungs 1024-16384 (INSIDE the predicted band at the larger rungs,
+  below it at the two smallest), 2.11-2.72× on `cls-atleast-4096`
+  (ABOVE the band — flagged, not silently averaged in), and COLLAPSES to
+  ~1.00× at `cls-upto-32768` (OVERSHOOTS the prediction: `auto` and `vm`
+  converge because `cls-upto-32768` is the [B22] `declined-nullable`
+  rung — the DFA fallback declines and `auto` itself runs the VM, so
+  `auto÷vm` measures the ~1.08× entry-cost gap, not the STEP-1 win).
+  `t-digits-*` sits at `auto÷vm` ≈ 0.60 (auto ~1.67× FASTER than vm, not
+  "noise-flat" — digits was never the collapse target, so this ratio is
+  pin-INVARIANT: `pcrec_263b013`'s own digits ratios match to three
+  figures) except at `cls-upto-8192`, which prints `auto÷vm` ≈ 1.77 for
+  digits and ≈ 0.13 for letters — the INVERSE of every neighboring
+  rung's pattern; not yet explained, flagged for the ledger lane rather
+  than resolved here (a rendering artifact was ruled out: the raw
+  per-subject sub-table under `cls-upto-8192` / `large-subject-throughput`
+  in the committed file shows the same inverted numbers, i.e. the store's
+  own records disagree with the surrounding rungs, not the reporter).
+  Compile cost: `cls-upto-65535` is still `did-not-compile` under both
+  `auto` and `auto-nocaps` at a7e0bdf (`pattern too large (NFA exceeds
+  131072 states)`, byte-identical diagnostic to every prior pin — the NFA
+  cap is untouched by [OPT-5]). Mechanism legend: the `sel=` token set on
+  every `pcrec_a7e0bdf_*` row is exactly the four tokens already in the
+  legend at 263b013 (`selected`, `forced`, `collapsed-prefilter (DFA
+  fallback tripped)`, `declined-nullable (DFA fallback tripped)`) — no
+  new `sel=` value fires. The new abi-13 `dfa_scan_edge` stamp (pcrec
+  I-27's `RX_DFA_SCAN_EDGE`, [OPT-5] STEP 1's own field) is present in
+  every record's `engine_metadata_declaration` block but is NOT rendered
+  anywhere in this report — `report.py` has no legend clause for it yet
+  (no reporter code changes were made to add one; flagged as a gap, not
+  fixed). `.subject-grain.md` (`--grain subject`) carries the per-subject
+  drill-down the ratios above are read from; `.tsv` the same set-grain
+  query (10 `record` rows — the included set, the superseded record gets
+  no row of its own — no Δ column, matching the `-repin-` `.tsv` shape
+  above).
