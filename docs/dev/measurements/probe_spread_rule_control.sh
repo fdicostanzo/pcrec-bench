@@ -2,8 +2,8 @@
 # probe_spread_rule_control.sh -- [B23] the v1.4 spread rule's MEASURED
 # POSITIVE CONTROL (docs/design/gate_shape_v14.md 9 Q3 (a); plan row [B23]).
 #
-# Runs BOTH arms end to end from the repo root, each a real `pcrecbench
-# run` (the adapters' own compile and driver paths -- D35 rule 4), both
+# Runs the arms end to end from the repo root, each a real `pcrecbench
+# run` (the adapters' own compile and driver paths -- D35 rule 4), all
 # tier SCRATCH (this whole demonstration is deliberate load; nothing here
 # is a ranking input, and the canonical store would refuse the records):
 #
@@ -55,13 +55,32 @@
 # competitor the demonstration uses. taskset -c 5 only, bounded seconds,
 # killed by PID defensively at the end (never pkill).
 #
-# Usage: bash docs/dev/measurements/probe_spread_rule_control.sh [outdir]
-#        (default outdir: build/spread-rule-control -- gitignored; the
-#        stores under it are scratch by tier)
+# THE THIRD ARM (Q3 (b), added 2026-09-01 on the manager's change
+# request): `uniform` -- the same competitor covering ALL FIVE passes of
+# the target group, which band 2 of gate_shape_v14.md 3.2 predicts the
+# rule MISSES (a uniform slowdown leaves the trials agreeing with each
+# other and with the wrong number). Expected: verdict `agree`, status
+# `measured`, exit 0, with the 3.6 timeline the only instrument that
+# sees it. The window is EVENT-SCOPED at both ends rather than timed:
+# the competitor starts AT the target group's "measuring" line (so it
+# already runs during the ~2.5 s driver startup and pass 1) and is
+# killed by PID the moment the NEXT group's "calibrating ... floor"
+# line appears (the driver has exited; every factored pass is over),
+# with gnutimeout 90 s as the hard backstop. A timed ~60 s window was
+# rejected in design: if the slowdown drifts low it spills >= 2 slowed
+# passes into floor (flagging the WRONG group), and if it drifts high
+# it leaves pass 5 partially clean, whose rows the FAST clause then
+# flags -- either way a boundary artifact, not the band-2 miss.
+#
+# Usage: bash docs/dev/measurements/probe_spread_rule_control.sh [outdir] [arms]
+#        arms: any subset of "control loaded uniform" (default: all
+#        three); default outdir: build/spread-rule-control -- gitignored;
+#        the stores under it are scratch by tier
 
 set -u
 cd "$(dirname "$0")/../../.." || exit 1
 OUT_DIR=${1:-build/spread-rule-control}
+ARMS=${2:-"control loaded uniform"}
 mkdir -p "$OUT_DIR"
 
 START_DELAY_S=7.0
@@ -148,7 +167,7 @@ print("target group mean ns/iter by trial:",
 EOF
 }
 
-run_arm() {  # $1 = arm name, $2 = with_competitor (yes/no)
+run_arm() {  # $1 = arm name, $2 = competitor mode (no / yes / uniform)
     local arm=$1 comp=$2
     local store="$OUT_DIR/store-$arm" err="$OUT_DIR/$arm.err" out="$OUT_DIR/$arm.out"
     rm -rf "$store"; rm -f "$err" "$out"; : > "$err"
@@ -163,20 +182,37 @@ for l in sys.stdin:
     print("%8.2f %s"%(time.monotonic()-t0,l),end="",flush=True)' > "$err") \
         > "$out"; echo "exit=$?" >> "$out" ) &
     local runpid=$!
-    if [ "$comp" = yes ]; then
+    if [ "$comp" != no ]; then
         local n=0
         until grep -q 'measuring pcre2-interp / factored' "$err"; do
             sleep 0.2; n=$((n + 1))
             [ $n -gt 900 ] && { echo "TRIGGER LINE NEVER APPEARED"; break; }
         done
-        stamp "trigger line seen; sleeping $START_DELAY_S s"
-        sleep "$START_DELAY_S"
-        taskset -c 5 /usr/bin/gnutimeout "$COMPETITOR_S" python3 -c "$COMP_PY" &
-        local cpid=$!
-        stamp "competitor pid $cpid on cpu5, $COMPETITOR_S s hard timeout"
-        wait "$cpid" 2>/dev/null
-        stamp "competitor exited"
-        kill "$cpid" 2>/dev/null    # defensive; gnutimeout already ended it
+        local cpid
+        if [ "$comp" = uniform ]; then
+            # Q3 (b): cover the WHOLE group -- start at the line (before
+            # pass 1), kill when the next group's calibrating line says
+            # every factored pass is over; gnutimeout 90 is the backstop.
+            taskset -c 5 /usr/bin/gnutimeout 90 python3 -c "$COMP_PY" &
+            cpid=$!
+            stamp "trigger line seen; uniform competitor pid $cpid on cpu5 (kill at the floor calibrating line; 90 s backstop)"
+            n=0
+            until grep -q 'calibrating pcre2-interp / floor' "$err"; do
+                sleep 0.2; n=$((n + 1))
+                [ $n -gt 450 ] && { echo "FLOOR LINE NEVER APPEARED"; break; }
+            done
+            kill "$cpid" 2>/dev/null
+            stamp "floor calibrating line seen; competitor killed by PID"
+        else
+            stamp "trigger line seen; sleeping $START_DELAY_S s"
+            sleep "$START_DELAY_S"
+            taskset -c 5 /usr/bin/gnutimeout "$COMPETITOR_S" python3 -c "$COMP_PY" &
+            cpid=$!
+            stamp "competitor pid $cpid on cpu5, $COMPETITOR_S s hard timeout"
+            wait "$cpid" 2>/dev/null
+            stamp "competitor exited"
+        fi
+        kill "$cpid" 2>/dev/null    # defensive; already ended above
     fi
     wait "$runpid"
     stamp "arm $arm run finished; /proc/loadavg: $(cat /proc/loadavg)"
@@ -195,9 +231,21 @@ echo "cell: ${RUN_ARGS[*]}"
 echo "target group (named in advance): factored / short-subject-search / plain"
 echo
 
-run_arm control no
-run_arm loaded yes
+for arm in $ARMS; do
+    case $arm in
+        control) run_arm control no ;;
+        loaded)  run_arm loaded yes ;;
+        uniform) run_arm uniform uniform ;;
+        *) echo "unknown arm: $arm" ;;
+    esac
+done
 
 echo "== exit codes =="
-echo "control: $(grep '^exit=' "$OUT_DIR/control.out")   (predicted exit=0, measured)"
-echo "loaded:  $(grep '^exit=' "$OUT_DIR/loaded.out")   (predicted exit=4, inconclusive-spread)"
+for arm in $ARMS; do
+    case $arm in
+        control) want="exit=0, measured (agree)" ;;
+        loaded)  want="exit=4, inconclusive-spread (two-pass window: flagged)" ;;
+        uniform) want="exit=0, measured (all-five-passes window: MISSED, band 2)" ;;
+    esac
+    echo "$arm: $(grep '^exit=' "$OUT_DIR/$arm.out")   (predicted $want)"
+done

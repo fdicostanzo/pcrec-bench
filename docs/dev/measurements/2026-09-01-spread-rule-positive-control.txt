@@ -313,3 +313,171 @@ probe rc=0
 # so this file is the instrument's positive case, not a sensitivity
 # guarantee. Q3 (b) -- the all-five-passes competitor the rule should
 # MISS -- remains unmeasured.
+# ---------------------------------------------------------------------
+# Q3 (b) -- THE ALL-FIVE-PASSES ARM (`uniform`), added the same day on
+# the manager's change request, run AFTER the two arms above with the
+# same script (extended: `bash docs/dev/measurements/
+# probe_spread_rule_control.sh build/spread-rule-control uniform`; the
+# two-arm verbatim block above is the earlier invocation and stands).
+#
+# DESIGN: the same memory-bandwidth competitor covering ALL FIVE passes
+# of the same target group. The window is EVENT-SCOPED at both ends,
+# not timed: it starts AT the "measuring ... factored" line (so it
+# already runs under the ~2.5 s driver startup and pass 1) and is
+# killed by PID when the next group's "calibrating ... floor" line
+# appears (the driver has exited; every factored pass is over), with
+# gnutimeout 90 s as the hard backstop. A timed ~60 s window was
+# rejected: with the slowdown uncertain, drifting low spills >= 2
+# slowed passes into floor (flagging the WRONG group), drifting high
+# leaves pass 5 partially clean and the FAST clause flags its rows --
+# either way a boundary artifact, not band 2's miss.
+#
+# THE PREDICTION, stated before the arm ran: every trial of every
+# factored row is slowed ~uniformly (s ~= 1.86), so the trials agree
+# with each other AND with the wrong number -- gate_shape_v14.md 3.2
+# band 2: slow-trial counts ~0 across the group, d ~= 0, verdict =
+# agree, status = measured, exit 0, while the target group's mean
+# ns/iter by trial reads ~1.8x the control arm's ~1790 on ALL FIVE
+# trials (the ranked median itself moved and nothing objects). orig
+# and floor stay clean (the competitor starts after orig's passes and
+# dies before floor's; a ~one-pass spill into floor at worst, under
+# d_min = 2 either way). The 3.6 timeline is the ONLY instrument that
+# sees it: sibling_busy_pct high (~90-100 %) on the FACTORED item
+# alone, < 1 % on orig and floor -- note this diverges from the change
+# request's sketch ("elevated across all three items"), which assumed
+# a blanket 60 s window; the event-scoped window confines the
+# elevation to the one group it covers, which is the sharper statement
+# of the same limitation. If the rule unexpectedly FLAGS this arm,
+# that is a finding to report, not reconcile.
+#
+# Verbatim probe output follows (the uniform arm's invocation, unedited).
+# ---------------------------------------------------------------------
+2026-09-01T07:37:04Z  probe_spread_rule_control.sh; bench commit 79e53c1; box ubuntubudu
+cpu11 SMT siblings: 5,11
+cell: --subbench email --testee pcre2-interp --regimes search_short --trials 5 --tier scratch --pin 11
+target group (named in advance): factored / short-subject-search / plain
+
+== arm: uniform (competitor: uniform) ==
+2026-09-01T07:37:04Z  arm uniform starts; /proc/loadavg: 0.14 0.38 0.52 2/794 3939399
+2026-09-01T07:37:31Z  trigger line seen; uniform competitor pid 3940173 on cpu5 (kill at the floor calibrating line; 90 s backstop)
+2026-09-01T07:38:24Z  floor calibrating line seen; competitor killed by PID
+2026-09-01T07:38:39Z  arm uniform run finished; /proc/loadavg: 1.24 0.70 0.62 1/801 3941837
+-- timestamped progress (stderr) --
+    0.05 checking the box (mpstat takes ~5 s)...
+    5.16 preparing pcre2-interp ...
+    5.17 compiling pcre2-interp / orig (5 trial(s)) ...
+    5.18 compiling pcre2-interp / factored (5 trial(s)) ...
+    5.18 compiling pcre2-interp / floor (5 trial(s)) ...
+    5.19 calibrating pcre2-interp / orig / search_short ...
+    5.21 measuring pcre2-interp / orig [plain] / search_short: 77 subject(s) x 66868 iter(s) x 5 trial(s)
+   27.53 calibrating pcre2-interp / factored / search_short ...
+   27.56 measuring pcre2-interp / factored [plain] / search_short: 77 subject(s) x 43318 iter(s) x 5 trial(s)
+   80.25 calibrating pcre2-interp / floor / search_short ...
+   80.27 measuring pcre2-interp / floor [plain] / search_short: 77 subject(s) x 259404 iter(s) x 5 trial(s)
+   90.02 re-checking the box after the run (mpstat takes ~5 s)...
+-- run stdout --
+build/spread-rule-control/store-uniform/records/email-specimen@0.2/libpcre2_10.46_interp-caps-simdna/email-specimen@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260901T073709Z.jsonl
+record_id  email-specimen@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260901T073709Z
+tier       scratch
+status     measured
+agreement  agree (0 of 3 groups; 4 of 231 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+rows       1170 (15 compile, 1155 match)
+exit=0
+-- record extraction --
+record: email-specimen@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260901T073709Z.jsonl
+schema_version 1.4  tier scratch  status measured
+trial_agreement (verbatim):
+{
+  "d_min": 2,
+  "groups_disagreeing": 0,
+  "groups_judged": 3,
+  "k": 1.5,
+  "rows_disagreeing": 4,
+  "rows_judged": 231,
+  "rows_unjudged": 0,
+  "rows_unjudged_reasons": {
+    "all_timed_out": 0,
+    "few_timed_trials": 0,
+    "na_trials": 0
+  },
+  "rule": "v1.4-group",
+  "share_c": 3,
+  "trials": 5,
+  "verdict": "agree",
+  "worst_group": {
+    "d": 4,
+    "form": "plain",
+    "n": 77,
+    "pattern_id": "factored",
+    "regime": "short-subject-search"
+  }
+}
+before: load1=0.14  occupancy verdict=pass max_busy_pct=4.42 target_busy_pct=2.81
+after: load1=1.35  occupancy verdict=pass max_busy_pct=2.01 target_busy_pct=0.2
+occupancy.timeline (verbatim, /proc/stat):
+[
+  {
+    "elapsed_ms": 22309,
+    "form": "plain",
+    "max_other_busy_pct": 5.44,
+    "max_other_cpu": 2,
+    "pattern_id": "orig",
+    "regime": "short-subject-search",
+    "sibling_busy_pct": 0.85,
+    "target_busy_pct": 99.91
+  },
+  {
+    "elapsed_ms": 52683,
+    "form": "plain",
+    "max_other_busy_pct": 5.0,
+    "max_other_cpu": 8,
+    "pattern_id": "factored",
+    "regime": "short-subject-search",
+    "sibling_busy_pct": 99.62,
+    "target_busy_pct": 99.94
+  },
+  {
+    "elapsed_ms": 9749,
+    "form": "plain",
+    "max_other_busy_pct": 2.06,
+    "max_other_cpu": 0,
+    "pattern_id": "floor",
+    "regime": "short-subject-search",
+    "sibling_busy_pct": 0.51,
+    "target_busy_pct": 99.79
+  }
+]
+per-group rows at k=1.5 ({slow trials: rows}):
+  factored/short-subject-search/plain      n= 77 d=  4 {0: 77}
+  floor/short-subject-search/plain         n= 77 d=  0 {0: 77}
+  orig/short-subject-search/plain          n= 77 d=  0 {0: 77}
+target group mean ns/iter by trial: t1=3100.3  t2=3169.5  t3=3180.9  t4=3161.9  t5=3163.9
+
+== exit codes ==
+uniform: exit=0   (predicted exit=0, measured (all-five-passes window: MISSED, band 2))
+probe rc=0
+# ---------------------------------------------------------------------
+# Q3 (b) SUMMARY (derived from the verbatim block above):
+#
+#   arm      status    verdict  exit  target d/n  slow-hist       target group mean ns/iter by trial
+#   uniform  measured  agree    0     4 / 77      {0 slow: 77}    t1 3100.3  t2 3169.5  t3 3180.9  t4 3161.9  t5 3163.9
+#
+#   control arm's same group, for scale: 1786-1798 flat. Every trial of
+#   every factored row was slowed ~1.77x; the group's five passes took
+#   52.7 s against the control's 29.5 s; the record is stamped
+#   `measured`. The 4 disagreeing rows carry no slow pair ({0: 77}) --
+#   they disagreed via the FAST clause (a clean-ish loop in the
+#   competitor's first ~0.1-1 s of python startup + two 64 MiB
+#   allocations, before the copy loop saturated), and 4 < 26, so no
+#   group flags -- d_min/share_c absorbing the window's edge exactly as
+#   designed. The timeline: sibling_busy_pct 99.62 on the factored
+#   item, 0.85 / 0.51 on orig / floor, target ~100 % on all three.
+#
+# VERDICT: the rule MISSED the uniformly moved cell, as band 2 predicts
+# -- the same competitor that produced d = 77 and exit 4 when it covered
+# two passes produced d = 4, verdict `agree`, status `measured` and
+# exit 0 when it covered all five, with the ranked number itself ~1.77x
+# wrong; the 3.6 per-group timeline is the only instrument that shows
+# it (99.62 % sibling occupancy over the whole group). Both Q3 arms are
+# now measured: the instrument's positive case (a) and its stated
+# limitation (b), each with the prediction written first and held.
