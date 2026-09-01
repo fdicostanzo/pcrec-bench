@@ -268,7 +268,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 205 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 217 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -352,6 +352,10 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # dispatch, pcrec [CC-CLANG], fixed at their abi
                         # 14), a NAMED expected refusal carrying clang's own
                         # diagnostic, any other refusal being a failure
+                        # and ([B11.2], bench/altwide) the generic gates on a
+                        # fourth set by enumeration + the schema's free_text
+                        # cap on canonical_text checked both sides (a pattern
+                        # above it OMITS the field, never truncates)
                         # and ([B20], schema v1.4) the gate's shape: the
                         # target-core pre-flight on synthetic captures
                         # (busy / idle / row ABSENT, each refusal BY NAME,
