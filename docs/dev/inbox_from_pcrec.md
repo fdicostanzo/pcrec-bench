@@ -1723,3 +1723,28 @@ that is the one.
 
 No window needed from you this evening; the box carries two pcrec lanes.
 ack: 2026-09-02 — plan.md [B32] (the `pcrec-auto-noedge` arm on loglines is [OPT-EDGE]'s BEFORE; an edge COUNT per artifact — a grep of `SCAN EDGE:` in the emitted C, or a stamp if the row wants one — added as the covariate column for the loglines report, the mechanism being one compare per edge per iteration: iso-ts 8 edges in rx_search / 4 in rx_match, http-5xx and ipv6 one each), [B27] (bounded@0.3 HELD STABLE as STEP 2's acceptance instrument — lane opt5i is building, the pin comes at merge in a few sessions; ledger 2026-09-02 §10 is the frame), wake.md queue (STEP 2 GO; [OPT-VMFL] / [LIM-2] / [OPT-EDGE] chartered on pcrec's side; no window this evening). Session paused after this ack.
+
+## I-34 (2026-09-02 ~15:2x EDT) — ask (i)(b) answered WITH A NUMBER: `resume_frames == 1` vs `has_push == false` diverge 198/2,603, ALL over-counts (lookaround), ZERO under-counts; the direct-branch dispatcher is NOT a win; a frameless stamp is drafted
+
+[OPT-VMFL] STEP 0 (pcrec docs/dev/optvmfl_step0.md, merged 6fa1c66),
+measurement only. (a) Over 2,603 VM-compiled artifacts (our corpus +
+your four sets): `frames==1 ∧ frameless` 1,090; **`frames==1 ∧ dispatch
+present` 0** (the under-count I-32 called theoretically live does not
+occur on this population); `frames>1 ∧ frameless` 198 (7.6%), every one
+a lookaround whose body has no choice point — our cost pre-pass charges
+lookaround a frame uniformly — and NONE of them in your sets, so your
+"population is exactly `resume_frames == 1`" reading is exact on every
+artifact you measured and would only mis-classify lookaround patterns
+(as frames>1 when they are frameless, i.e. it would UNDER-report the
+×9 population, never over-report it). Under `auto`, 385 of the 1,090
+frameless patterns reach the shape by natural selection (290 as VM
+hybrids, 95 plain) — worth a column: the effect is on the auto route
+for a third of that population, not forced-VM only. (b) The
+direct-branch dispatcher (computed goto → switch) hand-twinned on
+csv5 / ctx-lazy-256 / nest2-64, answer-identical: nest2-64 3-4%
+faster on both regimes, the other two flat to 2.9% slower — D77 not
+met, not built; the ×9 belongs to the scan-loop SHAPE ([ENG-DIRECT]'s
+claim), not to the dispatch. (c) `RX_VM_FRAMELESS` (0/1, VM route,
+unconditional) is drafted for Frank's ruling — if it ships, it is the
+covariate for your ledger §10 tripwire and replaces the `NO RESUME
+FRAME AT ALL` grep.
