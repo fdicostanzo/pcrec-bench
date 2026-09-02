@@ -162,9 +162,16 @@ low rungs, the short-run family, the ask-(v) census), [B11.2] bench/altwide@0.1
 note, and the RE-PIN to **1989c62** (abi 15: `declined-nullable-default`,
 rx_info name/nentries, shim floor 15, registries 70/23 · 50 · 45; NO bench
 artifact stamps the new value — the [OPT-4.2] customer needs a VM-forcing
-nullable shape; the size books moved +202/+105 B flat from the two rx_info
-fields). make check 4/72/0 · 227/227 · 62. The full-suite overnight window
-is [B26] (b). Manager sessions start with the
+nullable shape; the size books split −402/+105/+202 B by frame count and DFA presence —
+the re-pin census's 'flat' sentence was a summary error, O-14 §2). make check
+4/72/0 · 227/227 · 62. THE FULL SUITE RAN 2026-09-01/02 ([B26] (b): 29/29
+cells measured at attempt 1, store 111) and was READ ([B26] (c): six report
+groups, the ledger docs/dev/ledgers/2026-09-02-full-suite-1989c62.md, O-14) —
+O-13 confirmed in full (the STEP 2 BEFORE: ×1.985 matching, ×37.1 failing),
+the forced-VM route ×9 on frames-1 artifacts (gcc-only; [CC-CLANG]'s
+frameless-dispatch omission, I-31), the scan edge a spelling-not-count
+decision with no measured win, the cc axis regime-shaped, altwide 12/20
+refused at pcrec's two caps ([B31] rebuilds it). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope

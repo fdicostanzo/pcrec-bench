@@ -281,3 +281,14 @@ line moves on every store growth, so a byte-identical re-render is
 only ever "identical modulo that line" — reports/CLAUDE.md rules that
 acceptable; a future reporter wave may print the FILTERED count (which
 a bounded query keeps stable) instead of the store's total.
+
+## KB-9 (2026-09-02) — the compile phase is named `gcc` on a `-clang` testee
+
+[B24] kept the phase NAME fixed (`emit-c` / `gcc` / `load`) so a clang
+testee's phase column compares against its gcc sibling's, and put the
+compiler in `build_flags` and the testee_id (`cc-clang`). A reader of the
+compile-cost table therefore sees a `gcc` column on `pcrec-vm-clang`. The
+ledger of the first cc window (2026-09-02 §5) reads it correctly but had
+to say so. Options for a reporter wave: rename the phase to `cc` with the
+compiler in the legend, or keep `gcc` and add a per-row `cc=` note where
+the testee's cc is not gcc. Plan row [B32] (b).

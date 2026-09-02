@@ -2300,3 +2300,34 @@ sent to pcrecdev1's new session (it holds until CLOSED, not 09:00).
 Lane b26reports launched (six report groups + the cell-against-cell
 bounded cls table under docs/dev/measurements/); b26ledger follows on
 its delivery; O-14 from the ledger.
+
+## 2026-09-02 (EDT, ~14:1x), seventh session (part 8) — [B26] COMPLETE: the night read, O-14 sent
+
+Lanes b26reports (opus; six report groups + the 7,670-cell 0.2/0.3
+cross-version table; its re-render invariant caught THREE
+-after-96e44c2 groups drifting through open --since queries — a
+--testee roster cannot bound time, KB-8; its "biggest flag", the
+forced-VM ×9, was confirmed by pcrec as I-31 within the hour) and
+b26ledger (opus; the 1,136-line ledger, twelve sections, everything
+cited) landed; O-14 written from the ledger. The night's verdicts: O-13
+confirmed in every section and withdrawn nowhere (the STEP 2 BEFORE:
+×1.986-2.036 matching, ×37.1 failing, VM control 0.999; auto picks the
+slower engine on that axis from 1024 up — a new [SEL-1] question); the
+auto route FLAT across the pin (0/832 artifacts stamp the new
+engine-route value); the forced-VM route ×9 on failing scans on
+exactly the resume_frames == 1 population (−402/+105/+202 B by frame
+count and DFA presence — the re-pin census's "flat" sentence, quoted in
+part 4 above and in the plan/root status, was a SUMMARY ERROR: its own
+rows split three ways; corrected where quoted, the D35 file untouched),
+gcc-only; the scan edge a spelling-and-form decision at k = 2-4 with no
+measured win and a measured cost on three loglines patterns; the cc
+axis regime-shaped (clang wins short DFA match cells, loses
+collapsed-prefilter hybrids, level-context ×1.69); altwide 12/20
+refused at pcrec's two caps with P2 emphatic (auto FLAT over w-8..256
+while every other testee rises 74-90×) → [B31]. Follow-ups [B32]; KB-9.
+[B26] archived. Lessons: a lane's "final" can lag its delivery by an
+hour while it keeps improving the work — merge the delivered head,
+keep the worktree, and say so; two hands on the same fix (mine and the
+lane's on the 96e44c2 files) was a near-collision resolved by taking the
+lane's superset; the suite summary's per-set rc hides a killed cell —
+grep the per-attempt rc lines after every window.

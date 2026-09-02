@@ -1127,3 +1127,168 @@ it is "unwrapped 11.6 ns, search-filter → within ×1.2 of it".
 note stands as "do nothing until W2/W3" and nothing is built.
 (iii) I-29 (iv)'s restated frame: please carry it in I-30 as you said,
 so the STEP 2 acceptance ledger reads against the durable wording.
+
+## O-14 (2026-09-02 ~14:1x EDT) — pin 1989c62 (abi 15) MEASURED, the FULL SUITE (29/29 cells at attempt 1): O-13 CONFIRMED in every section, withdrawn nowhere; the STEP 2 BEFORE is on record (×1.985 matching, ×37.1 failing, control 0.999); the night's one unpredicted finding — the forced-VM route ×9 on frames-1 artifacts, gcc-only ([CC-CLANG]'s frameless-dispatch omission, your I-31); the scan-edge boundary is a SPELLING, not a count, and has no measured win; the cc axis moves the numbers regime-wise; altwide cannot answer half its questions (12/20 refused at two caps); seven candidates, seven asks
+
+Ledger: docs/dev/ledgers/2026-09-02-full-suite-1989c62.md (1,136 lines,
+every number cited to a report line, a record id or the cross-version
+TSV). Reports: reports/2026-09-02-*-1989c62.* (six groups: bounded-0.3
+first-sample + cc, loglines-0.1 after + cc, email-specimen-0.2 after,
+altwide-0.1 first-sample; every query with --since AND --until plus its
+--testee roster) and docs/dev/measurements/2026-09-02-bounded-cls-rungs-
+0.2-a7e0bdf-vs-0.3-1989c62.tsv (7,670 shared cells, cell against cell).
+Window 2026-09-01 22:45 → 09:04 + the hand re-run of the two cap-killed
+clang cells to 10:48; store 111 records.
+
+### 1. The instrument (ledger §1)
+
+30 records, all `measured`, 28 at attempt 1 (the two exceptions were
+killed at 50:00 by OUR window script's 3000 s per-cell cap, rc 124 —
+raised to 5400 — and re-run by hand; they are the night's cells).
+Pre-flight 1.20-7.41 % (mean 2.59 %, n=30, limit 10 %; the quiet band's
+top is now 7.41 %, no refusal). Trial agreement `agree` on all 30: 8
+disagreeing rows / 0 disagreeing groups of 59,076 / 1,587; no
+`inconclusive-spread` (base rate now 1 in 43). 295,950 timed rows,
+0 wrong answers.
+
+### 2. [OPT-4.2] / abi-15 continuity, and the finding (ledger §2)
+
+`declined-nullable-default` is stamped by NOTHING (0 of 832 artifacts,
+four sets) — as the re-pin census predicted and I-30 recorded; the
+shared cls rungs are within ±2 % cell-against-cell 0.2@a7e0bdf vs
+0.3@1989c62 on every throughput subject: the auto route is FLAT across
+the pin. THE FINDING (your I-31, confirmed from the records): the
+forced-VM route is ×9.0 faster on failing scans — `floor` on
+t-letters-064k 174,404.8 → 19,382.5 ns (2.661 → 0.296 ns/B); email
+×8.91, loglines ×4.46, search ×2.29-2.80, match ×1.51-1.58 — with the
+interp / jit / auto controls flat to four figures through a 1.55×
+iteration-count change. THE POPULATION IS EXACTLY `resume_frames == 1`,
+not "simple bodies": −402 B on every pure-VM frames-1 artifact, +105 B
+on every pure-VM frames≥2 artifact, +202 B on every artifact carrying a
+DFA — no exception in 118 shared bounded artifacts, reproduced on
+email. Our re-pin census's "+202/+105 B flat" sentence was a SUMMARY
+ERROR (its own 22 rows split three ways); the D35 file stands, the
+documents that quoted it are corrected on our side (plan, root status).
+The trade on the frames-1 shape: failing scans ×9 and matching
+whole-subject calls ×1.25 faster; the empty-match-and-advance loop
+×1.07-1.09 slower. It is GCC-ONLY: clang is ×2.00 SLOWER on the same
+cell (§5).
+
+### 3. The STEP 2 BEFORE — O-13 §2 confirmed in full (ledger §3)
+
+`cls-upto-2048 ÷ cls-upto-1024` under `pcrec-auto`, match, on the five
+matching letters runs 64..1024 B: 1.986-2.036 (O-13's scratch-tier
+1.97-2.04), the 4096/8192 rungs joining to three figures; the `pcrec-vm`
+control 0.999; `d-01024` ×37.1 (10.6 → 393.7 ns). Per byte: the control
+1.861 ns/B, the search-filter customers 3.695 ns/B (×1.985 exactly),
+`cls-atleast-4096` 1.930 (it never matches — a third case and the
+natural control), the VM route 0.618. NEW: `auto` selects the SLOWER
+engine on this axis at every rung from 1024 up (DFA 1,906 / 3,785 ns vs
+the forced VM's 633 — ×3.01 unwrapped, ×5.98 search-filter). The
+12-point checklist the STEP 2 AFTER is read against is ledger §10
+(control bands, customer bands, failing-call cells, the VM control, the
+size ladder, the refusal, a tripwire for the frameless-VM shape).
+
+### 4. Ask (ii): the low rungs and the short-run family (ledger §4)
+
+The per-run edge-selection boundary, read off the instrument: pcrec
+DECLINES the edge below a boundary the ladder brackets at k = 2-4, and
+the boundary is a SPELLING-AND-FORM decision, not a count — `\d{2}` takes
+the edge while `\d{1,2}` declines it on plain; the whole-subject fixed
+family declines it at EVERY k. bounded 0.3's P3 is refuted in both
+directions; a "skip-below-k" knob does not describe the mechanism. The
+term costs +2,037 B total / +2,025 B code per shape and is worth ≤ 0.2 ns
+on the match axis at every k from 2 to 32; its only measured COST in the
+window is loglines' three edge-taking patterns (§7). Ask (v)'s hybrid
+population is unchanged at this pin. P1 (the no-edge arm) needs a
+`-fno-scan-edge` measured config — a bench follow-up.
+
+### 5. The cc axis (ledger §5)
+
+Refusal set EMPTY at 1989c62 (the a7e0bdf 50/264 are gone). The
+compiler moves the numbers REGIME-wise: medians clang/gcc 0.929 / 0.929 /
+0.840 (bounded auto / nocaps / vm) and 1.041 / 1.031 / 1.045 (loglines);
+compile phase +13-36 % under clang except loglines' vm arm (−5 %);
+`emit-c` untouched (0.96-1.005) — the axis moves exactly the one phase it
+should. 34 of 126 bounded auto cells fall outside 0.75-1.20 and 27 of
+those are clang WINS: clang wins short per-call DFA match cells (19 of
+27) and loses collapsed-prefilter VM hybrids (`ctx-*` search 1.31-1.40;
+loglines `level-context` 1.693 — the one corpus pattern clang builds
+1.4-1.7× slower, both auto arms, both regimes). Worst cell: `floor` on
+the forced VM ×2.00 slower under clang — the frameless win is gcc's alone.
+
+### 6. altwide's first sample (ledger §6)
+
+pcrec refuses BOTH forms of every pattern at width ≥ 512 on ALL FOUR
+configs: 26 auto refusals at the 1,000,000 B SOURCE cap, 24 VM refusals
+at the 500,000 B CODE cap (the stamped reasons are in the reports' R10
+rows). P5 refuted (the DFA route refuses MORE, and lower), P8 refuted
+(`edge=range` on every compiled DFA but `floor`), P3/P4's offset-set arm
+untestable. P2 is the headline: `pcrec-auto` FLAT 2.24 → 3.43 → 2.93 ms
+over w-8/64/256 while every other testee rises 74-90× — ×83.2 the JIT
+and ×797 the interpreter at w-256, ×143 on the search band. Neither pcrec
+nor pcre2-jit exploits a shared suffix. `srt-512` vs `w-512` (the ALTCLS
+order pair) is 1 byte apart on the DFA and 93,508 B (13.8 %) apart on
+the VM, read from the refusal diagnostics. KB-4's cost column: the auto
+refusals cost 8.7-36.0 s EACH against the VM route's 0.01-0.07 s.
+
+### 7. loglines and email AFTER (ledger §7)
+
+87 of 132 loglines rows and 18 of 30 email rows `unchanged (within
+spread)`. ONE regression family with an exact stamp: every loglines
+pattern that stamps a non-`none` scan edge is slower and every one that
+does not is flat — `iso-ts` (range, +5,059 B) ×1.06/×1.09, `http-5xx`
+(range, +629 B) ×1.03/×1.04, `ipv6` (bitmap, +2,361 B) ×1.03, against
++234 B and `unchanged` for the other eight. `level-context` FLAT across
+the pin (×1.01), still ×3.68 behind the JIT. Δ baselines: loglines
+`auto`/`vm` from 263b013, `nocaps`/`vm-in` from 96e44c2 (there are no
+a7e0bdf loglines records); email uniformly 96e44c2.
+
+### CANDIDATES, ranked (ledger §8)
+
+1. [OPT-5] STEP 2's two-pass elision — ×1.985 on matching calls, ×37.1
+   on failing ones; chartered; the instrument and bands are §10.
+2. NEW — the frameless-VM code shape, worth up to ×9 and UNOWNED: does
+   it extend to frames ≥ 2, and is a gcc-only win acceptable as a
+   permanent property?
+3. The scan-edge entry cost, re-scoped: a measured population (three
+   loglines patterns, ×1.03-1.09) and NO measured win anywhere in the
+   window, at +2,037 B a shape.
+4. NEW — `auto` selects the slower engine on the bounded match axis at
+   every rung from 1024 up (×3.01 / ×5.98 vs the forced VM) — a [SEL-1]
+   question.
+5. NEW — the DFA route's emitted-source cap is checked too late: 36.0 s
+   to learn a pattern is too big, vs 0.02 s on the VM route.
+6. The forced VM still has no prefilter — but the floor gap is ×158 →
+   ×17.6, one order of magnitude smaller.
+7. The nest/backtracking cliffs, unchanged in kind.
+Retired: the "+202/+105 B flat" size row (a summary error). Filed, not
+ranked: [OPT-ALTCLS]'s branch-order effect (the 13.8 % VM-size gap).
+
+### ASKS (ledger §9)
+
+(i) The frameless-VM effect: is the ×9 deliberate and will it stay; does
+`resume_frames == 1` match `has_push == false` exactly; is gcc-only
+expected? (ii) Carry the size-book correction both ways: −402 / +105 /
++202 B by frame count and DFA presence. (iii) Is `cls-atleast-4096`'s
+`search-filter` entry form deliberate? It is the STEP 2 AFTER's natural
+control. (iv) The scan-edge boundary keys on spelling and form, not
+count — what does the decision key on, and is there a cell you EXPECT
+the edge to win that we should be measuring? (v) `level-context` under
+clang, 1.4-1.7× slower. (vi) The DFA route's late size check (36 s vs
+0.02 s). (vii) `pfx3-512`: pcre2-jit is ×147 faster than the interpreter
+on it and pcrec refuses it at the source cap — want it measurable?
+
+### O-13, by section (ledger §11)
+
+§2 (a), (b), (c) reproduce at the pinned tier; §3's population is
+unchanged; §5's clang prediction is measured and holds. Nothing
+withdrawn.
+
+### Bench-side follow-ups (ours; ledger §12)
+
+altwide@0.2 rebuilt around pcrec's two caps; a `pcrec-auto-noedge`
+measured config (P1, candidate 3's size); the compile phase named `gcc`
+even when clang ran (KB-9); the census summary corrected where quoted;
+the reporter's `N candidate file(s)` header line (KB-8); cells estimated
+against the 5400 s cap before the next window.
