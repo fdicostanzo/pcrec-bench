@@ -27,20 +27,29 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # The schema version this harness emits. Bumping it is a deliberate act: the
 # fields below and `schema/record.schema.json` move together, and
 # `make check` is what proves they did.
-SCHEMA_VERSION = "1.4"
+SCHEMA_VERSION = "1.5"
 
 #: What the drivers actually call. Both use `clock_gettime(CLOCK_MONOTONIC)`
 #: around the batched loop -- never a wall clock, never a per-call timer.
 CLOCK_SOURCE = "clock_monotonic"
 
 #: The schema's `free_text` cap (`schema/record.schema.json` $defs.free_text,
-#: maxLength 8192). `note` and `status_detail` are both free_text, and the
-#: harness fills them from a per-cell LIST of sentences whose length grows
-#: with the set: bench/bounded@0.1's 24 patterns x 3 regimes made 72
-#: calibration sentences (~12 KB) and a 21-minute cell was measured and then
-#: REJECTED at validation (2026-08-29, the first bounded window). The join
-#: below is the only way those lists reach a record.
-FREE_TEXT_MAX = 8192
+#: maxLength 1048576 since schema v1.5, KB-7, record_schema.md 4.1). `note`
+#: and `status_detail` are both free_text, and the harness fills them from a
+#: per-cell LIST of sentences whose length grows with the set:
+#: bench/bounded@0.1's 24 patterns x 3 regimes made 72 calibration sentences
+#: (~12 KB) and a 21-minute cell was measured and then REJECTED at
+#: validation against the ORIGINAL 8192 cap (2026-08-29, the first bounded
+#: window). The join below is the only way those lists reach a record.
+#:
+#: The cap was raised from 8192 to 1048576 (1 MiB) at [B30] (2026-09-02,
+#: Frank's ruling on KB-7): it is HYGIENE against a stray blob landing in a
+#: text field, not a limit on legitimate content, and 8192 was never derived
+#: from anything -- no document justified it. `patterns[].canonical_text`
+#: (below) is the field the old bound bit first (bench/altwide's 8.7-24 KB
+#: alternation patterns, [B11.2]); the omission fallback for a pattern still
+#: over THIS cap is unchanged, just further away.
+FREE_TEXT_MAX = 1048576
 NOTE_SEP = "; "
 
 
@@ -189,8 +198,11 @@ def pattern_entry(sb, name):
     #
     #   * a pattern with non-UTF-8 bytes (bench/email's classes have them);
     #   * a pattern LONGER THAN THE SCHEMA'S `free_text` CAP -- four of
-    #     bench/altwide's wide-alternation rungs are 8.7-24 KB of pattern
-    #     text ([B11.2], 2026-09-01). Truncating would put a string in the
+    #     bench/altwide's wide-alternation rungs were 8.7-24 KB of pattern
+    #     text ([B11.2], 2026-09-01), which is what found this branch; the
+    #     cap moved to 1048576 at [B30] (2026-09-02, KB-7) so those rungs
+    #     now CARRY their text -- the branch stays, for the pattern that
+    #     someday is over a megabyte. Truncating would put a string in the
     #     record that is not the pattern, under a field name that says it
     #     is; the sha256 beside it and `subbench.content_hash` are the
     #     identity either way, which is why dropping it costs nothing.

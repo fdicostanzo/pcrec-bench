@@ -225,12 +225,14 @@ bindings) live here, vendored or system, pinned either way.
   (gitignored hand-off brief). See docs/dev/CLAUDE.md.
 - `docs/design/` — living design notes (requirements, the record schema,
   set format position, adapter notes, measurement dirs). See its CLAUDE.md.
-- `schema/` — the RECORD format at **v1.4**: `record.schema.json` (JSON
+- `schema/` — the RECORD format at **v1.5**: `record.schema.json` (JSON
   Schema draft 2020-12), `validate.py` (the validator the harness and the
   reporter share; rules X1..X33), `check_fields.py`, `check_rules.py`, and
   `examples/` + `examples/bad/` (records that must validate, and sabotaged
   ones that must not). Designed in `docs/design/record_schema.md`; the
-  record TIERS (`pinned` / `scratch`) are its §6.8. See its CLAUDE.md.
+  record TIERS (`pinned` / `scratch`) are its §6.8; free text fields
+  (`note`, `patterns[].canonical_text`, …) are capped at 1,048,576
+  characters, a hygiene bound ([B30], KB-7). See its CLAUDE.md.
 - `pcrecbench/` — the HARNESS package: `harness.py` (run a cell; the
   v1.4 pre-flight, `derive_status`, the trial-agreement block),
   `subbench.py`, `adapters.py` (the interface + **the driver protocol, in
