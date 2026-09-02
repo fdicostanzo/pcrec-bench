@@ -315,3 +315,50 @@ max_emit_bytes = 8388608
 max_emit_code_bytes = 8388608
 flags = ["--features", "all", "--engine=vm"]
 description = "pcrec --engine=vm with BOTH emitted-size caps raised to 8 MiB ([B31]): the VM forced on the wide rungs it refuses at the 500,000 B CODE cap by default, against pcrec-vm -- one variable moved"
+
+# ---------------------------------------------------------------------------
+# THE SCAN-EDGE DENY AXIS -- `-fno-scan-edge` ([B32]; pcrec [OPT-5] STEP 1
+# and the [OPT-EDGE] charter, docs/spec/tuning.md 2.18, --list-axes bit 21,
+# inbox I-33).
+#
+# WHAT THE FULL SUITE FOUND. At pin 1989c62 the 29-cell suite turned up ONE
+# regression family, and it has an exact stamp: every bench/loglines pattern
+# whose artifact stamps a non-`none` RX_DFA_SCAN_EDGE is SLOWER than its
+# pre-[OPT-5] self -- `iso-ts` x1.06 (search) / x1.09 (throughput),
+# `http-5xx` and `ipv6` x1.03-1.09 -- and every pattern that stamps `none`
+# is flat. pcrec's I-33 gives the mechanism: the emitted scan edge is ONE
+# COMPARE PER EDGE PER SCAN-LOOP ITERATION, so it is the edge COUNT, not
+# the edge's presence, that predicts the cost. `iso-ts` emits 8 edge blocks
+# into rx_search and 4 into rx_match; `http-5xx` and `ipv6` one apiece
+# (MEASURED 2026-09-02 at this pin; the count is on every compile row as
+# the `scan_edges` / `scan_edges_match` metadata pair).
+#
+# WHY A TESTEE AND NOT A FLAG ON AN EXISTING ONE. pcrec chartered [OPT-EDGE]
+# to make the edge pay for itself, and that work needs a BEFORE. Denying
+# the axis at the SAME COMMIT is the honest before: `-fno-scan-edge`
+# restores the pre-[OPT-5] machine (the counted run's interior states go
+# back into the transition table) with the same abi, the same shim, the
+# same emitted-text fixes -- where re-pinning to a7e0bdf's predecessor
+# would move a dozen other things at once. It is the ONE deny flag on any
+# DFA axis whose denial changes the MACHINE rather than only emitted text,
+# which is exactly why it can stand in for a pin.
+#
+# ONE VARIABLE (BD3). `pcrec-auto-noedge` is `pcrec-auto` plus the flag:
+# same pin, same `--features all`, same engine mode, same captures, gcc
+# like its sibling. The pair is the [OPT-EDGE] BEFORE/AFTER on
+# bench/loglines, and bounded@0.3's P1 wants the same arm.
+#
+# NO CONFIG KEY OF ITS OWN. The flag rides in `flags`, the one list that
+# feeds pcrec's argv, `build_flags` and `runtime_options` alike; the
+# adapter DERIVES the axis from the effective flags (`effective_denies`),
+# so `$PCREC_LOCAL_FLAGS="-fno-scan-edge"` reaches the derived testee_id
+# down the same code path. `config_extra` gains `noedge` LAST, after `cc`
+# and after the caps: `compose_config_extra` orders the parts by the order
+# the axes were chartered, so a slug only ever grows by appending and an id
+# already in `store/` never has a part inserted ahead of the one a reader
+# knows it by.
+[testees.pcrec-auto-noedge]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-fno-scan-edge"]
+description = "pcrec defaults with the [OPT-5] SCAN EDGE DENIED (-fno-scan-edge, --list-axes bit 21): the pre-[OPT-5] machine built at the SAME pin, so the pair against pcrec-auto is [OPT-EDGE]'s BEFORE/AFTER with the transform as the one variable ([B32], pcrec I-33)"

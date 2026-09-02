@@ -728,6 +728,44 @@ METADATA_DECL = {
                        "checked). ABSENT means no warning -- never a "
                        "failure either way",
     },
+    # -- [B32] THE SCAN-EDGE COUNT: the covariate the full-suite regression
+    # family needs. `dfa_scan_edge` is one token per artifact and cannot
+    # separate a pattern with eight edges from one with a single edge;
+    # pcrec's I-33 says the cost is one compare per edge per scan-loop
+    # iteration, so the COUNT is the regressor. Split by machine because
+    # the cost showed in the SEARCH band and a hybrid's edges are all on
+    # that side.
+    "scan_edges": {
+        "type": "integer", "scope": "pattern",
+        "source": "adapter.scan_edge_counts() -- pcrec's own `[OPT-5] SCAN "
+                  "EDGE:` marker (src/gen/emit_dfa.c `emit_scan_edge`, one "
+                  "block per edge per machine) counted in the emitted .c, "
+                  "attributed to the function it lands in: `rx_search` (a "
+                  "DFA artifact's search loop, both scan directions) and "
+                  "`rx_prefilter` (a VM hybrid's inlined candidate-start "
+                  "scan, called only from `rx_search_run`). A marker in any "
+                  "other function is an AdapterError, never a dropped edge",
+        "description": "how many [OPT-5] SCAN EDGES this artifact's "
+                       "SEARCH-side machines carry. 0 is a real value and "
+                       "is recorded on every artifact that emitted -- a "
+                       "forced-VM one, a `-fno-scan-edge` build, and a scan "
+                       "with no collapsible run all read 0 -- so the pair "
+                       "is a REGRESSOR (the per-iteration compare count) "
+                       "and not a filter. Beside `dfa_scan_edge`, which "
+                       "says what SHAPE the edges took",
+    },
+    "scan_edges_match": {
+        "type": "integer", "scope": "pattern",
+        "source": "adapter.scan_edge_counts() -- the same marker counted in "
+                  "`rx_match`, the ANCHORED machine",
+        "description": "how many [OPT-5] SCAN EDGES the anchored machine "
+                       "carries -- the `match` regime's half of the count, "
+                       "kept apart from `scan_edges` because the measured "
+                       "[OPT-EDGE] regression is in the SEARCH band and a "
+                       "hybrid puts every edge it has on that side (its "
+                       "`_match` entry is the VM's own body, so this reads "
+                       "0 there). 0 is a real value, as above",
+    },
     "dfa_table": {
         "type": "enum", "scope": "pattern",
         "values": ["premultiplied", "indexed", "mixed", "none"],
@@ -840,7 +878,8 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "trail_frame_size", "buffer_frames", "buffer_trail",
              "fast_frames", "fast_trail",
              "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
-             "emit_bytes", "emit_code_bytes", "warned_emit_bytes")
+             "emit_bytes", "emit_code_bytes", "warned_emit_bytes",
+             "scan_edges", "scan_edges_match")
 
 #: The `info` names carrying a STRING-valued pair, and the declared name each
 #: lands under. Kept beside INT_PAIRS so a pair can never be printed by the
@@ -1127,6 +1166,124 @@ def emit_size(paths):
     return tot, (tot - tables if tot > tables else 0)
 
 
+#: [B32] THE SCAN-EDGE MARKER. pcrec's emitter writes one comment block
+#: beside every scan edge it emits -- once per edge per MACHINE, which its
+#: own comment bounds at twelve per artifact (src/gen/emit_dfa.c,
+#: `emit_scan_edge`: "It is emitted once per edge per machine, i.e. up to
+#: twelve times per artifact") -- and both spellings of that block, the
+#: `span < 0` one and the other, open with this text.
+#:
+#: WHY THE MARKER AND NOT THE LOOP. The loop's shape is what
+#: `RX_DFA_SCAN_EDGE` already names (`range` subtracts and compares,
+#: `bitmap` reads a 256-byte table), so counting loop bodies would mean
+#: keeping a second copy of the body taxonomy here and re-deriving it at
+#: every pin. The marker is ONE line the emitter writes unconditionally
+#: beside each edge, whatever body it chose.
+SCAN_EDGE_MARKER = b"[OPT-5] SCAN EDGE:"
+
+#: The artifact's symbol prefix. `_compile_one` passes `-p rx` on every
+#: exec, and the scan-edge attribution below reads function names, so the
+#: two must not drift: this constant is the one place it is spelled.
+ARTIFACT_PREFIX = "rx"
+
+#: A top-level C function DEFINITION in an emitted artifact: a line whose
+#: first byte is neither blank nor a newline, and whose first
+#: identifier-followed-by-`(` is the function's name. A line ending in `;`
+#: is a DECLARATION and names nothing; a column-0 line that matches neither
+#: (`}`, `#define`, a table opener, a comment) ENDS the current function,
+#: which is what makes a marker outside every function detectable.
+_C_DEF_RE = re.compile(rb"^[A-Za-z_][^;]*?\b([A-Za-z_][A-Za-z0-9_]*)\s*\(")
+
+#: WHICH MACHINE a scan edge belongs to, read from the emitted function it
+#: lands in. MEASURED at pin 1989c62 (2026-09-02) over bench/loglines and
+#: bench/email, both forms, three engine modes, plus eleven hand-cut shapes
+#: (a pure DFA, an anchored `attempt` DFA, four VM hybrids, a forced VM, a
+#: denied build): every marker in that corpus lands in exactly one of these
+#: three functions and no marker ever lands anywhere else.
+#:
+#:   `<prefix>_search`     the DFA artifact's own search loop -- BOTH scan
+#:                         directions are emitted into it (`iso-ts` puts 4
+#:                         forward and 4 reverse edges there)
+#:   `<prefix>_prefilter`  a VM HYBRID's inlined candidate-start scan. It is
+#:                         called from `<prefix>_search_run` and from
+#:                         NOWHERE else (measured: the hybrid's `_match`
+#:                         path is the VM's own body), so a hybrid's edges
+#:                         are a cost of the SEARCH band, not the match one
+#:   `<prefix>_match`      the anchored machine, which `<prefix>_match`
+#:                         entries walk
+#:
+#: Anything else is an AdapterError rather than a silently dropped edge:
+#: pcrec moving the loop into a fourth function is exactly the event this
+#: covariate would otherwise mis-attribute, and a mis-attributed covariate
+#: is worse than none (the [B16] `engine_stamp` lesson -- a pair the driver
+#: printed and this file had no line for reached no record for five pins).
+SCAN_EDGE_SEARCH_FNS = ("search", "prefilter")
+SCAN_EDGE_MATCH_FNS = ("match",)
+
+
+def scan_edge_counts(paths, prefix=ARTIFACT_PREFIX):
+    """-> (scan_edges, scan_edges_match) over the emitted files ([B32]).
+
+    The number of [OPT-5] SCAN EDGES in this artifact's SEARCH-side
+    machines, and in its anchored one. This is a COVARIATE, not a stamp:
+    `RX_DFA_SCAN_EDGE` says what SHAPE the edges took and whether there are
+    any at all, and the full suite at 1989c62 found the regression family
+    it names (every loglines pattern stamping a non-`none` edge is slower,
+    every one stamping `none` is flat) -- but the stamp is one token per
+    artifact, so it cannot separate `iso-ts` from `ipv6`. pcrec's I-33 gives
+    the mechanism: one compare per edge PER SCAN-LOOP ITERATION, so it is
+    the COUNT that predicts the cost. This function is that count.
+
+    0 is a real value and is recorded as one, on every artifact that
+    emitted: a forced-VM artifact (no DFA scan at all), a `-fno-scan-edge`
+    build, and an artifact whose scans had no collapsible run all carry 0
+    -- which is what makes the covariate usable as a regressor rather than
+    a filter."""
+    search = match = 0
+    for path in paths:
+        fn = None
+        with open(path, "rb") as f:
+            for ln in f:
+                head = ln[:1]
+                if head == b"}":
+                    # a column-0 close brace ENDS the function; the opening
+                    # `{` is on its own line too and must NOT (it is the
+                    # line right after the signature this reader just read)
+                    fn = None
+                elif head.isalpha() or head == b"_":
+                    if ln.rstrip().endswith(b";"):
+                        fn = None                 # a declaration names none
+                    else:
+                        m = _C_DEF_RE.match(ln)
+                        fn = (m.group(1).decode("ascii", "replace")
+                              if m else None)
+                if SCAN_EDGE_MARKER not in ln:
+                    continue
+                base = None
+                if fn and fn.startswith(prefix + "_"):
+                    base = fn[len(prefix) + 1:]
+                if base in SCAN_EDGE_SEARCH_FNS:
+                    search += 1
+                elif base in SCAN_EDGE_MATCH_FNS:
+                    match += 1
+                else:
+                    raise _ad.AdapterError(
+                        "%s carries a %s marker inside %s, which is neither "
+                        "a SEARCH-side machine (%s) nor the anchored one "
+                        "(%s). pcrec has moved the [OPT-5] scan-edge loop; "
+                        "the `scan_edges` covariate would mis-attribute it, "
+                        "so it is refused here rather than recorded wrong "
+                        "(testees/pcrec/adapter.py SCAN_EDGE_SEARCH_FNS)."
+                        % (path, SCAN_EDGE_MARKER.decode(),
+                           ("`%s`" % fn) if fn else "no function this "
+                           "reader could name",
+                           "/".join("%s_%s" % (prefix, s)
+                                    for s in SCAN_EDGE_SEARCH_FNS),
+                           "/".join("%s_%s" % (prefix, s)
+                                    for s in SCAN_EDGE_MATCH_FNS)))
+    return search, match
+
+
 def parse_warn_line(stderr_text):
     """-> (warned_total, warned_code, threshold, line) for pcrec's advisory
     large-artifact warning on `stderr_text`, or None when it did not
@@ -1336,6 +1493,57 @@ def effective_caps(testee_id, cfg, flags):
     return extra, ("-".join(parts) if parts else None)
 
 
+# ---------------------------------------------------------------------------
+# THE SCAN-EDGE DENY AXIS -- `-fno-scan-edge` ([B32]; pcrec [OPT-5] /
+# [OPT-EDGE], docs/spec/tuning.md 2.18, --list-axes bit 21).
+#
+# The full suite at pin 1989c62 found ONE regression family with an exact
+# stamp: every bench/loglines pattern whose artifact stamps a non-`none`
+# `RX_DFA_SCAN_EDGE` is slower than its pre-[OPT-5] self (`iso-ts` x1.06 /
+# x1.09, `http-5xx`, `ipv6` x1.03-1.09) and every one that stamps `none` is
+# flat. pcrec's I-33 gives the mechanism -- one compare per edge per
+# scan-loop iteration -- and chartered [OPT-EDGE] on their side. A testee
+# that DENIES the axis is that work's BEFORE, measured here rather than
+# reconstructed from an older pin: `-fno-scan-edge` restores the
+# pre-[OPT-5] machine (the run's interior states go back into the table)
+# at the SAME commit, so the pair differs in the transform and in nothing
+# else -- no abi, no shim, no other pin's fixes riding along.
+#
+# THERE IS NO NEW CONFIG KEY. The flag is spelled in the config's own
+# `flags` list, which is already the ONE list that feeds pcrec's argv,
+# `build_flags` and `runtime_options`; the axis is DERIVED from those
+# effective flags, exactly as `engine_mode` and `captures` are for
+# `pcrec-local`. So a `$PCREC_LOCAL_FLAGS="-fno-scan-edge"` reaches the
+# derived testee_id down the same code path, with no second spelling of
+# the flag anywhere in this repo.
+#
+#: (pcrec flag, slug word, what the build_flags clause says it MEANS).
+DENY_FLAGS = (
+    ("-fno-scan-edge", "noedge",
+     "the [OPT-5] SCAN EDGE denied (--list-axes `scan-edge`, bit 21): the "
+     "pass leaves every state where it was and the counted run's interior "
+     "stays in the transition table, so this artifact is the pre-[OPT-5] "
+     "machine built by the SAME compiler -- [OPT-EDGE]'s BEFORE, and the "
+     "one denial on this axis that changes the MACHINE and not only "
+     "emitted text"),
+)
+
+
+def effective_denies(flags):
+    """-> (config_extra_or_None, [(flag, word)]) for the generation axes a
+    config's EFFECTIVE flag list DENIES ([B32]).
+
+    Read off `flags` rather than from a config key of its own: the flag is
+    a bare pcrec option with no value, so spelling it in `flags` already
+    puts it on the argv, in `build_flags` and in `runtime_options`, and a
+    key beside it would be a second truth to keep in step. A denial is an
+    IDENTITY claim all the same -- a denied artifact is a DIFFERENT machine
+    from its sibling, not the same machine measured twice -- so the word
+    joins `config_extra` and the derived testee_id says which."""
+    parts = [(f, word) for f, word, _why in DENY_FLAGS if f in flags]
+    return ("-".join(w for _f, w in parts) if parts else None), parts
+
+
 def cap_values(cfg):
     """-> [(flag, limit_name, value)] for the caps an EFFECTIVE config
     raises, in CAP_KEYS order; empty where it raises neither. Read back off
@@ -1353,7 +1561,8 @@ def cap_values(cfg):
 def compose_config_extra(*parts):
     """`testee.config_extra` from the axis tokens a config carries, in a
     FIXED order: the axes in the order they were chartered ([B24] `cc`,
-    then [B31] the emitted-size caps), joined by `-`.
+    then [B31] the emitted-size caps, then [B32] the denied generation
+    axes), joined by `-`.
 
     Chartering order is the rule because it makes the slug APPEND-ONLY: a
     testee that already had a token keeps it where it was when a later axis
@@ -1400,12 +1609,20 @@ def runtime_options(flags):
     urgent). `--engine=vm` is unchanged: an `=` flag's value is what
     follows the `=`, consumed alone. A trailing bare flag, or one
     immediately followed by another flag, has no following value and is
-    `true`, same as before."""
+    `true`, same as before.
+
+    [B32]: a flag is a token starting with `-`, not with `--`. pcrec's
+    generation-axis denials are single-dash (`-fno-scan-edge`), and under
+    the old test they were skipped as if they were somebody's VALUE -- so
+    a denied testee's `runtime_options` would not have said what it
+    denied. Nothing measured before [B32] moves: no config that predates
+    it carries a single-dash flag, which `check_noedge_axis` arm 1 proves
+    against the frozen renderer and against every committed record."""
     out = []
     i, n = 0, len(flags)
     while i < n:
         f = flags[i]
-        if not f.startswith("--"):
+        if not f.startswith("-"):
             i += 1
             continue
         if "=" in f:
@@ -1413,7 +1630,7 @@ def runtime_options(flags):
             out.append({"name": name, "value": value})
             i += 1
             continue
-        if i + 1 < n and not flags[i + 1].startswith("--"):
+        if i + 1 < n and not flags[i + 1].startswith("-"):
             out.append({"name": f, "value": flags[i + 1]})
             i += 2
             continue
@@ -1634,6 +1851,11 @@ class Adapter(_ad.Adapter):
         cap_flags, cfg["cap_extra"] = effective_caps(testee_id, cfg, flags)
         cfg["flags"] = flags + cap_flags
         cfg["cc"], cfg["cc_extra"] = effective_cc(testee_id, cfg)
+        # [B32]: the DENIED generation axes, derived from the effective
+        # flags (which by here carry the local extras and the cap raises),
+        # so `-fno-scan-edge` reaches the testee_id whether a config
+        # spelled it or `$PCREC_LOCAL_FLAGS` did.
+        cfg["deny_extra"], cfg["deny_flags"] = effective_denies(cfg["flags"])
         return cfg
 
     def local_binary(self, testee_id):
@@ -1764,6 +1986,20 @@ class Adapter(_ad.Adapter):
                         "ladder's own abort bound, so the two are different "
                         "artifacts and not one artifact with a gate removed"
                         % named)
+        # [B32] the denied generation axes. Same shape as the two notes
+        # above and for the same reason: absent -> the empty string, so a
+        # config that denies nothing renders the pre-[B32] build_flags byte
+        # for byte. The flag is already visible in `pcrec flags`; this
+        # clause states what denying it MEANS, because a reader comparing
+        # two rows needs to know that the denied one is a different MACHINE
+        # and not the same one with an accelerator turned off.
+        deny_note = ""
+        if cfg.get("deny_flags"):
+            deny_note = ("; GENERATION AXES DENIED ([B32]): "
+                         + "; ".join(
+                             "%s -- %s" % (flag, why)
+                             for flag, word, why in DENY_FLAGS
+                             if word in [w for _f, w in cfg["deny_flags"]]))
         buffer_note = ""
         runtime = runtime_options(cfg.get("flags", []))
         if caps:
@@ -1804,9 +2040,10 @@ class Adapter(_ad.Adapter):
             "engine_mode": cfg["engine_mode"],
             "simd": "n-a",
             "build_flags": "%s; pcrec flags %s; artifact built with "
-                           "%s -O2 -fPIC -shared%s%s%s"
+                           "%s -O2 -fPIC -shared%s%s%s%s"
                            % (provenance, " ".join(cfg.get("flags", [])),
-                              cc_text, cc_note, buffer_note, cap_note),
+                              cc_text, cc_note, buffer_note, cap_note,
+                              deny_note),
             "runtime_options": runtime,
             "compile_cost_definition": (
                 "AOT (requirements 3): every phase from pattern text to a "
@@ -1836,7 +2073,8 @@ class Adapter(_ad.Adapter):
         # each other in the store. `compose_config_extra` is the ONE place
         # the parts are ordered ([B31]); the schema only ever sees the
         # whole slug.
-        extra = compose_config_extra(cc_extra, cfg.get("cap_extra"))
+        extra = compose_config_extra(cc_extra, cfg.get("cap_extra"),
+                                     cfg.get("deny_extra"))
         if extra:
             block["config_extra"] = extra
         if local:
@@ -2028,7 +2266,14 @@ class Adapter(_ad.Adapter):
         that is not the one the caps enforce -- an AdapterError, never a
         number."""
         tot, code = emit_size(emit_files)
-        pairs = {"emit_bytes": tot, "emit_code_bytes": code}
+        # [B32] the scan-edge covariate, on EVERY compile row that reached
+        # emission: 0 is a real value (a forced-VM artifact, a
+        # `-fno-scan-edge` build, a scan with no collapsible run), which is
+        # what lets a reader regress time on the count instead of merely
+        # splitting rows on `dfa_scan_edge`.
+        edges, edges_match = scan_edge_counts(emit_files)
+        pairs = {"emit_bytes": tot, "emit_code_bytes": code,
+                 "scan_edges": edges, "scan_edges_match": edges_match}
         warn = parse_warn_line(stderr_text)
         if warn is None:
             return pairs, None

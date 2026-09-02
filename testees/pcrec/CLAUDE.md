@@ -1,6 +1,6 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides eight testees at the commit pinned in `configs.toml`, and one —
+Provides twelve testees at the commit pinned in `configs.toml`, and one —
 `pcrec-local` — at no pin at all:
 
 | config id | pcrec flags | what it is for |
@@ -12,11 +12,12 @@ Provides eight testees at the commit pinned in `configs.toml`, and one —
 | `pcrec-vm-in` | `+ --engine=vm` + the same two capacities | RULED 2026-08-25 (manager + pcrec manager; Frank's word pending via the inbox): the VM forced with the buffer, the one entry on `bench/email` where the depth path is reachable and the capacities were measured — the sixth cell of the [B8] window |
 | `pcrec-auto-clang`, `pcrec-nocaps-clang`, `pcrec-vm-clang` | the same flags as their gcc siblings, plus `cc = "clang"` | ([B24]) THE COMPILEE TOOLCHAIN AXIS: the same pcrec artifact, compiled by clang instead of gcc. See below |
 | `pcrec-auto-bigcap`, `pcrec-vm-bigcap` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `max_emit_bytes = 8388608` and `max_emit_code_bytes = 8388608` | ([B31]) THE EMITTED-SIZE CAP AXIS: pcrec's two raise-only per-compile overrides, at 8 MiB, so `bench/altwide`'s wide rungs emit an artifact instead of a refusal. See below |
+| `pcrec-auto-noedge` | the same flags as `pcrec-auto`, plus `-fno-scan-edge` | ([B32]) THE SCAN-EDGE DENY AXIS: the [OPT-5] scan edge denied, so the artifact is the pre-[OPT-5] machine built at the SAME pin — [OPT-EDGE]'s BEFORE. See below |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
 | file | role |
 |---|---|
-| `adapter.py` | the eleven configs; the pin; `effective_cc()` (the compilee-toolchain rule); `effective_caps()` + `compose_config_extra()` (the emitted-size cap rule and the ONE place `config_extra`'s parts are ordered); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
+| `adapter.py` | the twelve configs; the pin; `effective_cc()` (the compilee-toolchain rule); `effective_caps()` + `effective_denies()` + `compose_config_extra()` (the emitted-size cap rule, the deny-axis rule, and the ONE place `config_extra`'s parts are ordered); `scan_edge_counts()` (the [B32] covariate: pcrec's own `[OPT-5] SCAN EDGE:` marker counted in the emitted C and attributed to the machine it lands in); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
 | `pin.sh` | `git archive <commit>` from pcrec into the build root, and `make` THERE |
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
@@ -262,6 +263,115 @@ a trap for a reader. `scripts/run_window.sh` already takes the roster as
 `$TESTEES`, and `scripts/run_suite.sh` already takes a per-set
 `$TESTEES_altwide` (or a labelled second pass, `altwide:bigcap` with
 `$TESTEES_altwide_bigcap`), so no script change is needed.
+
+## The scan-edge deny axis: `-fno-scan-edge` ([B32]; pcrec [OPT-5] / [OPT-EDGE], I-33)
+
+**What the full suite found.** At pin `1989c62` the 29-cell suite turned up
+ONE regression family, and it has an exact stamp: every `bench/loglines`
+pattern whose artifact stamps a non-`none` `RX_DFA_SCAN_EDGE` is SLOWER
+than its pre-[OPT-5] self — `iso-ts` ×1.06 search / ×1.09 throughput,
+`http-5xx` and `ipv6` ×1.03-1.09 — and every pattern that stamps `none` is
+flat. pcrec's I-33 gives the mechanism: the emitted scan edge costs **one
+compare per edge per scan-loop iteration**, so it is the edge COUNT, not
+the edge's presence, that predicts the cost.
+
+**Why a testee and not a re-pin.** [OPT-EDGE] needs a BEFORE. Denying the
+axis at the SAME COMMIT is the honest one: `-fno-scan-edge` (bit 21)
+restores the pre-[OPT-5] machine — the counted run's interior states go
+back into the transition table — with the same abi, the same shim, the same
+emitted-text fixes, where re-pinning to a7e0bdf's predecessor would move a
+dozen things at once. It is the one deny flag on any DFA axis whose denial
+changes the MACHINE rather than only emitted text, which is exactly what
+lets it stand in for a pin.
+
+**One variable (BD3).** `pcrec-auto-noedge` is `pcrec-auto` plus the flag:
+same pin, same `--features all`, same engine mode, same captures, gcc like
+its sibling. It derives `pcrec_1989c62_auto-caps-simdna_noedge` — its
+sibling's id plus the token.
+
+**No config key of its own.** The flag is spelled in the config's `flags`
+list, which is already the ONE list feeding pcrec's argv, `build_flags` and
+`runtime_options`; the adapter DERIVES the axis from the effective flags
+(`effective_denies`), so a `$PCREC_LOCAL_FLAGS="-fno-scan-edge"` reaches
+the derived testee_id down the same code path. Absent, nothing moves: no
+flag on the argv, no deny clause in `build_flags`, no `config_extra`, the
+same derived id — checked against a FROZEN pre-[B32] renderer and against
+every committed record at this pin.
+
+`runtime_options` now treats a **single-dash** token as a flag. pcrec's
+generation-axis denials are spelled `-f...`, and under the old `--` test
+they were skipped as if they were somebody else's VALUE, so a denied
+testee's `runtime_options` would not have said what it denied. No config
+that predates [B32] carries a single-dash flag, which `check_noedge_axis`
+arm 1(c) proves against a frozen copy of the old renderer.
+
+**Composition.** `noedge` joins `config_extra` LAST, after `cc` and after
+the caps: `compose_config_extra` orders the parts by the order the axes
+were chartered, so a slug only ever grows by appending.
+
+**The control that matters.** The scan edge DELETES states from the
+transition table, so a denial that restored them wrong is the one damage
+this testee could do that a timing comparison would happily report as a
+speed-up. `check_noedge_axis` therefore runs the denied artifact against
+the libpcre2 oracle on both forms of `iso-ts` before it believes any
+number from it.
+
+## The scan-edge COUNT: `scan_edges` / `scan_edges_match` ([B32])
+
+Every pcrec compile row that reached emission carries two integer metadata
+pairs: how many [OPT-5] SCAN EDGES the artifact's **search-side** machines
+carry, and how many its **anchored** one does.
+
+`RX_DFA_SCAN_EDGE` is one token per artifact — it says what SHAPE the edges
+took and whether there are any — so it cannot separate `iso-ts` from
+`ipv6`, and I-33's mechanism says the difference between them is the whole
+effect. These pairs are the regressor.
+
+**How they are counted.** By pcrec's OWN marker: `emit_scan_edge`
+(`src/gen/emit_dfa.c`) writes a comment block beside every edge it emits,
+once per edge per machine, and both spellings of that block open with
+`[OPT-5] SCAN EDGE:`. `scan_edge_counts()` counts those lines in the
+emitted C and attributes each to the top-level function it lands in:
+
+| function | bucket | why |
+|---|---|---|
+| `rx_search` | `scan_edges` | a DFA artifact's own search loop — BOTH scan directions are emitted into it (`iso-ts` puts 4 forward and 4 reverse edges there) |
+| `rx_prefilter` | `scan_edges` | a VM HYBRID's inlined candidate-start scan. MEASURED: it is called from `rx_search_run` and from nowhere else, so a hybrid's edges are a cost of the SEARCH band and its `_match` entry (the VM's own body) has none |
+| `rx_match` | `scan_edges_match` | the anchored machine |
+
+A marker anywhere else is an `AdapterError`, never a dropped edge: pcrec
+moving the loop into a fourth function is precisely the event this
+covariate would otherwise mis-attribute, and a mis-attributed covariate is
+worse than none.
+
+**0 is a value, and is recorded as one** on every artifact that emitted — a
+forced-VM artifact (no DFA scan at all), a `-fno-scan-edge` build, and a
+scan with no collapsible run all read 0. A pair that were silently ABSENT
+where it reads 0 would turn every regression on it into a comparison of
+populations.
+
+**MEASURED at pin 1989c62, 2026-09-02**, and cross-checked against an
+independent census over 338 compiles (loglines, email and bounded × both
+forms × auto / forced-VM / denied) with zero mismatches — no marker in that
+corpus ever landed outside the three functions above. The census is
+archived row by row at
+`docs/dev/measurements/2026-09-02-scan-edge-attribution-census.txt`:
+
+| artifact | `dfa_scan_edge` | `scan_edges` | `scan_edges_match` |
+|---|---|---|---|
+| loglines `iso-ts`, `pcrec-auto` | `range` | **8** | **4** |
+| loglines `http-5xx`, `pcrec-auto` | `range` | 1 | 1 |
+| loglines `ipv6`, `pcrec-auto` | `bitmap` | 1 | 0 |
+| loglines `floor`, `pcrec-auto` | `none` | 0 | 0 |
+| loglines `iso-ts`, `pcrec-vm` | (absent) | 0 | 0 |
+| loglines `iso-ts`, `pcrec-auto-noedge` | `none` | 0 | 0 |
+| bounded `cls-upto-16384`, `pcrec-auto` | `range` | 2 | 0 |
+
+The 8 / 4 on `iso-ts` are I-33's own numbers to the letter, which is why it
+is the family's worst row.
+
+The REPORTER's column is lane b32rep's; the CONTRACT here is the two pair
+NAMES.
 
 ## `shim.c` includes the artifact's `.c`, and that is load-bearing
 

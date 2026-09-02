@@ -67,3 +67,15 @@ Maintenance: update this file when files are added/removed or change role.
   calibration pools (match gains subjects to 1024 B; `short_search_max_bytes`
   512 → 258), so a ratio whose two sides differ greatly in `iters` is a calibration
   candidate, not necessarily a pin effect.
+- `2026-09-02-scan-edge-attribution-census.txt` — ([B32]) where pcrec's
+  `// [OPT-5] SCAN EDGE:` marker LANDS, over 57 patterns of loglines, email and
+  bounded × both forms × three engine modes (342 attempted, 338 compiled, 4
+  refused at the NFA cap). The measurement that establishes the adapter's
+  three-function attribution table for `scan_edges` / `scan_edges_match`: a
+  marker never lands outside `rx_search`, `rx_prefilter` and `rx_match`, a VM
+  hybrid's edges are ALL on the search side (its `rx_prefilter` is called from
+  `rx_search_run` and nowhere else), and both scan directions go into
+  `rx_search` — which is why loglines `iso-ts` reads 8 search / 4 match, I-33's
+  own numbers. Every row was counted TWICE, by the adapter's counter and by an
+  independent reader sharing no source with it; the two agree on all 338.
+  Nothing here is a timing, so the box's load does not enter it.
