@@ -301,7 +301,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 221 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 243 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -439,7 +439,18 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # cost.phases array and validates against the
                         # schema's own compile_row definition, and a
                         # compiled witness's cost is unchanged in shape
-                        # (~5 min; needs libpcre2-8-0 and a C compiler)
+                        # and ([B31], 2026-09-02) the emitted-size cap axis:
+                        # absent keys byte-identical (frozen renderer + a
+                        # committed record), the raise in pcrec's REAL argv
+                        # and the artifact's stamps, a below-default value
+                        # refused BY NAME against the archived registry, the
+                        # w-512 forced-VM refusal→compile CONTROL against the
+                        # oracle, the cc×caps slug round-tripped through
+                        # store.write; and ([B30], schema v1.5) the free_text
+                        # guards grown to the LIVE cap, altwide's patterns
+                        # CARRYING canonical_text, the omission arm on a
+                        # synthetic cap+1 pattern
+                        # (~15 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets
 

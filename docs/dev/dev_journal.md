@@ -2366,3 +2366,52 @@ Footprint sent to pcrecdev1 (build lanes only, no window); stall
 watchdog cron up (10 min). Nothing measured today; altwide@0.2's
 window is a later session's, after [B31] merges and the cell-time
 estimate is checked against the 5400 s cap.
+
+## 2026-09-02 (EDT, ~16:1x), eighth session (part 2) — three lanes merged in ninety minutes; master GREEN 4/72/0 · 243/243 · 62; [B30] COMPLETE; [B31] built, unmeasured
+
+b31alt (opus, blinded; 103682e + one manager commit, merged 0149ac7):
+altwide@0.2 = 0.1 byte-identical (verified independently: every 0.1
+.rx untouched, the manifest a two-row append, all 1,600 expectation
+rows inside 2,772) + w-96/128/192/384, the seven structure arms at
+256 (srt-256 = the ALTCLS order pair as two compilable artifacts),
+s-256/s-512 (the byte-vs-count probe: s-512 predicted at 414-547 KB of
+VM code against the 500,000 B cap — P13, a knife edge), two carriers;
+P9-P18 before any run; check-harness 449 → 501 s. The manager's one
+correction on merge: the lane charged every refusal five trials per
+form, but the adapter returns on the first refusing trial (harness
+forces the trial count to 1 on a non-compiled outcome) — the plain
+auto budget now rests on 0.1's measured 30-min cell: ~35-40 min.
+b31cap (opus; ba3cf17, merged b5634f7): `max_emit_bytes` /
+`max_emit_code_bytes` per config → pcrec's raise-only flags riding in
+`flags`, the values in config_extra composed AFTER cc
+(`compose_config_extra`, append-only), a below-default value refused by
+name against the archived list_limits.tsv (no second copy of a pcrec
+constant); pcrec-auto-bigcap / pcrec-vm-bigcap at 8,388,608 B, the bound
+from an 80-compile census of altwide@0.1 under a 100 MB probe (80/80
+compiled; max s-4096 whole-subject VM 3,741,164 B; at the defaults 50/80
+refuse — 26 auto at the total cap costing 0.07-40.23 s each, 24 VM at
+the code cap costing <0.1 s; the size port byte-exact with pcrec on all
+61 advisory rows; docs/dev/measurements/2026-09-02-altwide-raised-cap-
+sizes.txt); the raise is an AXIS (it moves the size-term abort bound
+too); 13 checks; the bigcap pair belongs to altwide's window alone
+($TESTEES_altwide). Its tail found KB-10 (`quick --vs` errors on a
+refused arm) and the stale roster table ([B32] (h)/(i); the table
+refreshed by the manager, 3acf800). b30cap (sonnet; cf240b7, merged
+848a442): schema v1.5 — free_text 8192 → 1,048,576, a MINOR bump by the
+plain §4 rule (no version branching, nothing re-stamped, no new example
+per the 1.3 precedent), the omission fallback re-witnessed on a
+synthetic cap+1 pattern, altwide's patterns now carry canonical_text,
+the note/status guards grow to the live cap, one collateral fix (a
+hard-coded "1.4" in check_smoke_block_na_trials), KB-7 closed; the two
+standalone `diagnostic` bounds left at 8192 (Frank named free_text
+only). Merged tree: make check 4/72/0 · 243/243 · 62 in 15 min under
+the census's load (build/check-eighth-master.log). [B30] archived.
+STILL RUNNING: b31cap's gcc census on the four largest raised artifacts
+(w-512 vm-bigcap both forms = 12.2 s of gcc → ~24 min projected for the
+whole vm-bigcap compile term, the optimistic end of altwide's 12-91).
+Lessons: a blinded author cannot know the harness's refusal-trial rule
+— hand it over in the brief next time; a lane comparing one rung to a
+thirteen-rung total called a good estimate wrong by "two to three
+orders" — like with like; two lanes idled on monitors again despite the
+brief (b30cap, b31cap) — the nudge works within a minute, but the
+brief's wording still does not.
