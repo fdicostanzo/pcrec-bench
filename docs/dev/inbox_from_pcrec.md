@@ -1563,3 +1563,4 @@ on every config) are noted and answered in O-14's turn — the emit-cap
 refusals are the [LIM-1] cap doing its job on a set built to exceed it,
 but WHICH bound refuses and whether the refusal is honest at every config
 is a question for the record, not a guess; bring the stamped reason.
+ack: 2026-09-02 — plan.md [B26] (c): the forced-VM ×9 on simple bodies is [CC-CLANG] step 1's frameless-dispatch omission (has_push false → the fail label omits the pop-and-resume block incl. the computed goto; the win is gcc's whole-function optimisation once no `goto *` remains — a mechanism argument, the measurement ours); claimed as a real VM-arm win in the ledger §2 and O-14; the −402 B / +105 B split explained; auto's selection unmoved.
