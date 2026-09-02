@@ -4,6 +4,39 @@ Each file is the output of one `python3 -m pcrecbench report ...` query,
 committed beside the records it reduces so a reader can cite a number
 with its query. Names: `<date>-<subbench>-<version>-<machine>[-<label>][.<grain>].md|tsv`.
 
+**[B26] (c) (2026-09-02) ADDED six file groups — the full-suite night at
+pcrec pin 1989c62 (abi 15)** — and changed NOTHING else here: the reporter
+is unchanged at `v11 (2026-09-01)`, no committed report was regenerated,
+and the RE-RENDER INVARIANT was checked instead. Every one of the 49 files
+committed before this wave was re-rendered from its OWN committed query
+(parsed out of its own header) and diffed against its committed content:
+the only line that moves on any of them is `record source: store/index.tsv
+(N candidate file(s))`, 81 → 111, which is store growth and is explicitly
+NOT grounds to reject a diff (the [B19] wave's rule, below). Zero other
+lines moved — no number, ranking, verdict, legend fact or query header.
+`make check-report` is 62/62. The night's thirty records (28 from
+`scripts/run_window.sh`, 2 re-run by hand — the two bounded@0.3 clang cells
+the 3000 s per-cell cap killed) are all `measured`; every query below names
+its roster with KB-5's `--testee` and carries an explicit `--since`/`--until`
+pair, so none of them can drift when the store grows again.
+
+TWO THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS:
+
+- **`declined-nullable-default` does not appear.** abi 14's eighth
+  `RX_ENGINE_SEL` value — the one whose rendering `report.py` gained a
+  conditional legend sentence for at [B26] (a) — is stamped by NO artifact
+  in any of the four sets, exactly as the re-pin census predicted. So the
+  legend's alternative bucket suffix (`prefilter declined, no cap hit`)
+  still prints nowhere, and the note above about "the first report to print
+  either is the one the [B26] window writes" is answered: it does not.
+- **the `-cc-` files are PAIR reports, not rankings.** Each holds three
+  gcc/clang pairs of ONE pcrec config; the comparison a reader wants is
+  down each pair, not across the table. The `_cc-clang` suffix is part of
+  the testee's CONFIG, not its pin, so the reporter's R8 `Δ vs previous
+  version` column never fires between a gcc arm and its clang sibling (it
+  matches on engine + config across pins) — the pair ratio is the reader's
+  own division, and the delivery/ledger states it.
+
 **Reports are RE-RENDERED when the reporter changes** ([B9], 2026-08-25):
 the STORED RECORDS are the data; a report is a VIEW over them, and the
 view is versioned separately (`reporter: vN (date)`, a header line every
@@ -660,3 +693,129 @@ an older measured one) restores it.
   query (10 `record` rows — the included set, the superseded record gets
   no row of its own — no Δ column, matching the `-repin-` `.tsv` shape
   above).
+
+- `2026-09-02-bounded-0.3-budu-ryzen1600-first-sample-1989c62.md` — the
+  FIRST SAMPLE of `bench/bounded@0.3` ([B27]) at pcrec **1989c62** (abi 15),
+  and the **[OPT-5] STEP 2 BEFORE**: six cells `measured` 2026-09-02
+  02:45-06:13 EDT, `--trials 5`, the full-suite overnight window ([B26] (b)).
+  Query: `report --subbench bounded --version 0.3 --since
+  2026-09-02T02:40:00Z --until 2026-09-03T00:00:00Z --testee
+  libpcre2_10.46_interp-caps-simdna --testee libpcre2_10.46_jit-caps-simdna
+  --testee pcrec_1989c62_auto-caps-simdna --testee
+  pcrec_1989c62_auto-nocaps-simdna --testee pcrec_1989c62_vm-caps-simdna
+  --testee pcrec_1989c62_vm-in-caps-simdna --format md` — 6 records. The
+  roster is explicit rather than implied: bounded@0.3's three CLANG records
+  from later the same day satisfy the same `--subbench`/`--version`/`--since`
+  and would otherwise land in this file, which is the `-cc-` group's job.
+  READ IT WITH `bench/bounded/NOTES.md` §"What 0.3 added" — the match-regime
+  frame is a STAMP, not a rung list, and this sample re-reads it: under
+  `pcrec-auto` the whole-subject artifacts of `cls-upto-4` … `cls-upto-1024`
+  and `grp-upto-1024` carry `dfa_match=unwrapped`, `cls-upto-2048` /
+  `-4096` / `-8192` and `cls-atleast-4096` carry `search-filter`, and
+  `cls-upto-16384` / `-32768` / `cls-lazy-16384` are VM (no stamp — the
+  scope iff), UNCHANGED from the a7e0bdf census the predictions were
+  written against. P4 fires on the pinned tier here (the scratch-tier
+  smoke in NOTES.md is superseded as evidence, not contradicted).
+  Compile cost: `cls-upto-65535` is `did-not-compile` under both `auto` and
+  `auto-nocaps` (`pattern too large (NFA exceeds 131072 states)`,
+  byte-identical to every prior pin) and — KB-4's adapter half, first
+  visible in a committed report here — each of those four refusal rows now
+  carries a real `emit-c ns` figure (12.5-23.7 ms) instead of `-`, read
+  from the row's `cost.total_ns` because a refusal carries no `phases`
+  array. Mechanism legend: `sel=` is `forced` / `selected` /
+  `collapsed-prefilter` / `declined-nullable` only — the abi-14
+  `declined-nullable-default` token appears NOWHERE. `.subject-grain.md`
+  (`--grain subject`) carries the per-(rung, subject) match rows P1-P5 are
+  read from; `.tsv` the same set-grain query.
+
+- `2026-09-02-bounded-0.3-budu-ryzen1600-cc-1989c62.md` — the **cc AXIS**
+  ([B24]) on `bench/bounded@0.3`: the three gcc/clang PAIRS of one pcrec
+  config each (`auto` vs `auto_cc-clang`, `auto-nocaps` vs its clang
+  sibling, `vm` vs its clang sibling), six testees in one report, six cells
+  `measured` (the three gcc arms in the overnight window, the three clang
+  arms 2026-09-02 10:08-14:45 EDT — two of them RE-RUN BY HAND after
+  `scripts/run_window.sh`'s 3000 s per-cell cap killed them, which is why
+  the cap moved to 5400 s in d621079). Query: as the first-sample entry
+  above but with the six `--testee` values `pcrec_1989c62_{auto-caps-simdna,
+  auto-caps-simdna_cc-clang, auto-nocaps-simdna, auto-nocaps-simdna_cc-clang,
+  vm-caps-simdna, vm-caps-simdna_cc-clang}` and no pcre2 arm (the baseline
+  column is a pcrec arm here; a toolchain pair has no use for an engine
+  the toolchain did not build). READ DOWN EACH PAIR, never across the
+  table: the ranking's `vs best` and `vs baseline` columns mix all six
+  arms, and only the same-config gcc/clang division is a statement about
+  the toolchain. `pcrec-vm-in` has no clang sibling at this pin, so the
+  fourth config is absent by design. THE REFUSAL SET IS IDENTICAL ON BOTH
+  TOOLCHAINS: `cls-upto-65535` under `auto`/`auto-nocaps` and their clang
+  siblings, same diagnostic, and NOTHING else refuses — the [CC-CLANG]
+  frameless-VM refusal pcrec fixed at abi 14 does not return.
+  `.subject-grain.md` and `.tsv` the same query.
+
+- `2026-09-02-loglines-0.1-budu-ryzen1600-after-1989c62.md` — the AFTER
+  sample on `loglines@0.1` at pcrec **1989c62**: four fresh pcrec arms plus
+  two pcre2 baselines `measured` 2026-09-02 07:01-07:44 EDT, rendered
+  CROSS-PIN. Query: `report --subbench loglines --version 0.1 --until
+  2026-09-03T00:00:00Z` plus TWELVE `--testee` values — the six fresh ids
+  and, for the Δ column, each fresh arm's own IMMEDIATELY-PREVIOUS measured
+  pin on this set: `pcrec_263b013_{auto,vm}-caps-simdna` (2026-08-31) and
+  `pcrec_96e44c2_{auto,auto-nocaps,vm,vm-in}-caps-simdna` (2026-08-30).
+  **12 records included, 6 superseded.** THE Δ BASELINE IS NOT UNIFORM, and
+  this is deliberate: `report.py`'s `_cross_pin_info` pairs a row with the
+  NEWEST OLDER same-(engine, config) record in the report, so `auto` and
+  `vm` are read against 263b013 while `auto-nocaps` and `vm-in` are read
+  against 96e44c2 — because the 263b013 window only remeasured two of the
+  four arms. There is no a7e0bdf loglines record at all (that window
+  measured `bounded@0.2` alone), so "vs a7e0bdf" is not a query this store
+  can answer; per-arm previous-pin is the nearest true reading and the
+  ledger must name the pin beside each Δ. Read the READER'S CAVEAT on the
+  a7e0bdf bounded entry above before using any `vs best` cell here: with
+  four pins' rows in one table, `vs best` inverts visually wherever an
+  older pin's row ranks first. No `did-not-compile` anywhere (`level-context`
+  compiles under `auto` at every pin since [SEL-1]).
+  `.subject-grain.md` carries the 16 KB-1 MB sweep per flavour; `.tsv` the
+  set-grain query (no Δ column).
+
+- `2026-09-02-loglines-0.1-budu-ryzen1600-cc-1989c62.md` — the **cc AXIS**
+  on `loglines@0.1`: the same three gcc/clang pairs, six cells `measured`
+  (gcc 07:19-07:44, clang 12:38-13:04 EDT). Query: `report --subbench
+  loglines --version 0.1 --since 2026-09-02T02:40:00Z --until
+  2026-09-03T00:00:00Z` plus the same six `--testee` values as bounded's
+  `-cc-` file. Same reading rule: down each pair, never across. Nothing
+  refuses on either toolchain.
+
+- `2026-09-02-email-specimen-0.2-budu-ryzen1600-after-1989c62.md` — the
+  AFTER sample on `email-specimen@0.2` at pcrec **1989c62**: four fresh
+  pcrec arms plus the two pcre2 baselines `measured` 2026-09-02 07:53-08:30
+  EDT, rendered CROSS-PIN against the LAST email sample, pcrec **96e44c2**
+  (2026-08-30). Query: `report --subbench email-specimen --version 0.2
+  --until 2026-09-03T00:00:00Z` plus TEN `--testee` values (the six fresh
+  ids and the four `pcrec_96e44c2_*` ones). **10 records included, 7
+  superseded.** Unlike loglines above, the Δ baseline here IS uniform —
+  96e44c2 remeasured all four arms — so every pcrec row's Δ is one pin
+  step. The two intervening pcrec pins (263b013, a7e0bdf) never measured
+  this set, so a "one pin step" here spans three pcrec releases in wall
+  time; say so when citing it. `.subject-grain.md` and `.tsv` the same
+  query.
+
+- `2026-09-02-altwide-0.1-budu-ryzen1600-first-sample-1989c62.md` — the
+  FIRST SAMPLE of sub-bench #5, `bench/altwide@0.1` ([B11.2]), at pcrec
+  **1989c62**: six cells `measured` 2026-09-02 08:37-10:07 EDT. Query:
+  `report --subbench altwide --version 0.1 --since 2026-09-02T02:40:00Z
+  --until 2026-09-03T00:00:00Z` plus the same six-testee roster as
+  bounded's first-sample file — 6 records. READ IT WITH
+  `bench/altwide/NOTES.md`'s eight predictions, and read the REFUSAL TABLE
+  FIRST: pcrec refuses BOTH forms of every pattern at width 512 and above
+  on ALL FOUR configs, `auto` included. Only `w-8`, `w-64`, `w-256`
+  (`plain` only), `nar4-64`, `sfx-64`, `sh1-64`, `cnt-64` (`plain` only)
+  and the floor pattern compile. The two refusal diagnostics are
+  different mechanisms and the report prints both verbatim: `auto` /
+  `auto-nocaps` hit the TOTAL emitted-source cap (`1000000` B — the
+  premultiplied transition table is what fills it; `w-256 plain` emits
+  977,055 B of which only 18,829 is code), `vm` / `vm-in` hit the CODE cap
+  (`500000` B). That refutes P5's "no refusal at any rung for pcrec-auto"
+  and caps the readable ladder at three rungs, so P2/P3/P4 are answered
+  where they can be and are UNTESTABLE above `w-256` at this set version
+  (`pfx3-512`'s predicted offset-set prefilter and `srt-512`'s order lever
+  both live on refused patterns). P8 is refuted too: `dfa_scan_edge=range`
+  on every compiled DFA artifact but the floor's. What the three readable
+  rungs do show is P2's headline, cleanly. `.subject-grain.md` and `.tsv`
+  the same query.
