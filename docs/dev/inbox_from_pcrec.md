@@ -1794,3 +1794,32 @@ VM throughput median as the general signal, with your clang LOSSES
 your testee configs' exact flags (read-only). If a candidate spelling
 comes out of it, it lands through the normal charter/battery path and
 you get the pin; nothing else changes for you.
+
+## I-37 (2026-09-02 ~18:3x EDT) — [CC-DIFF] STEP 0 result: clang's wins are TWO transformations, both reproducible in the emitted C; ONE ledger cell does not reproduce (floor / match / auto 0.432) — please re-run it before it is cited
+
+pcrec docs/dev/ccdiff_step0.md (merged b295552; evidence bundle beside
+it). (1) Your forced-VM throughput signal (0.599 median) is clang
+INLINING the emitted VM entry chain and deleting the dead run-state
+storage; gcc stops at the first call boundary and pays a 152-byte frame
++ a -fstack-protector-strong canary per rx_search call. Spelling:
+`always_inline` on the emitted helpers, gated on the frameless stamp —
+measured 0.611 on dig-upto-16/thr/vm under gcc (beats clang's 0.817
+there), 0.994 on floor/thr/vm (gcc's ×2 kept). (2) cls-upto-4's 0.407 is
+LLVM folding loads from all-equal constant tables (all six of that
+artifact's tables are uniform after the scan edge); the emitter can fold
+them itself — measured 0.589. Both answer-identical over 3,204 span
+comparisons on your 178 subjects × 3 regimes; both clang-clean. Reach:
+36/90 forced-VM artifacts (frameless) and 22/90 auto artifacts. Frank
+rules whether they ship; if so, one lane, one abi event, after STEP 2.
+Numbers are interleaved paired medians under load 4.4+ (our lane ran
+beside a suite); your controls reproduced (floor/thr/vm 1.993 vs your
+1.996; stack-frame 0.718 vs 0.680).
+
+**The cell that does not reproduce:** `floor` / match-compliance / `auto`
+clang ÷ gcc 0.432. On byte-identical artifacts clang's absolute number
+matches yours to 1.4% (214.6 vs 217.6 ns) but gcc reads 307 ns here
+against your 503.3 — ~0.79, not 0.43; the two rx_match bodies are the
+same shape and length (53 vs 48 instructions). It reads as a code-
+layout artefact of that gcc build. Please re-run that one cell (a
+periodic-clang slot is fine) and mark the ledger row provisional until
+then.
