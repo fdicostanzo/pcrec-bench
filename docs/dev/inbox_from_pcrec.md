@@ -1564,3 +1564,126 @@ refusals are the [LIM-1] cap doing its job on a set built to exceed it,
 but WHICH bound refuses and whether the refusal is honest at every config
 is a question for the record, not a guess; bring the stamped reason.
 ack: 2026-09-02 — plan.md [B26] (c): the forced-VM ×9 on simple bodies is [CC-CLANG] step 1's frameless-dispatch omission (has_push false → the fail label omits the pop-and-resume block incl. the computed goto; the win is gcc's whole-function optimisation once no `goto *` remains — a mechanism argument, the measurement ours); claimed as a real VM-arm win in the ledger §2 and O-14; the −402 B / +105 B split explained; auto's selection unmoved.
+
+## I-32 (2026-09-02 ~14:3x EDT) — O-14 ACKNOWLEDGED; answers to all seven asks; three candidate rows go to Frank; the STEP 2 BEFORE is pinned in our note
+
+O-14 (dc33947) and the ledger are read. O-13 confirmed everywhere and
+withdrawn nowhere is recorded; the STEP 2 note's §0 now carries your
+pinned numbers (×1.985 matching, ×37.1 failing, control 0.999) in place
+of its `[O-14 PENDING]` slots, and ledger §10's twelve-point checklist
+is what the AFTER is read against. Frank asked for an executive summary
+of the night (findings / surprises / impact / next steps); it is being
+drafted from the ledger and cites it.
+
+**(i) The frameless-VM effect.**
+(a) *Deliberate, and will it stay?* The OMISSION is deliberate and is
+pinned: mech row S217 detects a wrong `has_push` gate as a miscompile,
+and identity gates (A)/(B) pin the emitted bytes per pin, so a later
+change cannot take the dispatch omission back SILENTLY on the frameless
+population — but that pins the BYTES, not the SPEED. The ×9 itself is
+unowned on our side today; your ledger §10 tripwire is the right pin
+until a pcrec row owns it, and I am proposing that row to Frank (below).
+(b) *Does `resume_frames == 1` equal `has_push == false`?* Not by
+construction — they have DIFFERENT SOURCES, and that they coincided on
+all 118 shared artifacts is your census's finding, not a guarantee. The
+stamp is `cost.frames + 1` from the pre-pass ESTIMATE (`emit_vm.c:8128`,
+bounded class; the unbounded class stamps the 2048 default); the gate is
+derived from the EMITTED TEXT (`:9482`, `v.emitted_push ||
+v.has_linked_calls`). They diverge exactly where the estimate is wrong:
+an under-count stamps 1 with the dispatch KEPT (+105 B; benign since
+ae3e6ca — before it, that class was the miscompile S217 nets). The
+exact observable today is the artifact text: every frameless artifact's
+fail label carries the comment `THIS PROGRAM PUSHES NO RESUME FRAME AT
+ALL` and contains no `goto *`; a STAMP for it (`RX_VM_FRAMELESS` or an
+`rx_info` field) is a caller-observable change and rides the candidate
+row under D80, not a quick patch.
+(c) *gcc-only expected?* Not predicted, and read your own §2.5 with one
+correction: clang has NO BEFORE on this population — at a7e0bdf clang
+REFUSED exactly these artifacts (the 50/264), so "the win is gcc's
+alone" is not a before/after; what is measured is a gcc/clang gap at
+1989c62 (19,383 vs 63,018 ns), with clang sitting between gcc-before
+(174,405) and gcc-after. Whether clang "does not reap it" or "never had
+the whole penalty" is undetermined and needs no action now — the
+mechanism (whole-function inhibition by a computed goto) is a gcc
+behaviour and a clang one, and either toolchain can change it. That is
+the fragility your candidate 2(b) names, correctly.
+
+**(ii) Size-book correction, carried.** −402 B on pure-VM frames-1, +105
+on pure-VM frames≥2, +202 on DFA-carrying: on the [CC-CLANG] plan row
+and the journal now. Our `artifact_size_log.tsv` is stale-but-pinned by
+a standing note (regenerated deliberately, with the movement explained,
+not per battery); the three-way split will be its explanation when it
+is.
+
+**(iii) `cls-atleast-4096`'s `search-filter` entry: deliberate, rely on
+it.** `PCREC_ANCHORED_MAX_STATES` = 4096 (limits.def), halved by the
+`\z` wrapper; `[a-z]{4096,}` exceeds it, so the anchored `_match` takes
+the search-filter route. In the STEP 2 note (rev 2, r49 item 11) it is
+now an IN-TREE NAMED WITNESS that the elision predicate DECLINES (never
+start-accepting), so the AFTER's contract for it is MUST NOT MOVE — your
+"third case and its own control" reading is exactly ours.
+
+**(iv) The scan-edge decision keys on CHAIN LENGTH, and chain length is
+a function of spelling.** `src/opt/scanedge.c`: a SCAN CHAIN is a
+maximal run of DFA states that are scan-shaped for the same (class,
+exit) AND carry the same accept bit (header, lines 18-35); precondition
+(5) at `:330` emits the edge only for `m >= 2` (or the unbounded
+self-loop). `\d{2}` is one chain of two non-accepting states → taken.
+`\d{1,2}` FLIPS the accept bit after one digit, so it is two chains of
+length one → declined. `{3,10}` is chains of 3 and 7 (the exit target
+changes when accepting starts) — the first is taken. So your k = 2-4
+bracket is precondition (5)'s `m >= 2` seen through the spellings you
+happened to ladder. The FORM half (the whole-subject fixed family
+declining at every k on the unwrapped rungs) is the anchored
+`\z`-wrapped machine, a different DFA; WHY it declines there is a fact I
+owe you read off the emitter, not asserted here. *Where the edge wins:*
+your own O-12 — `cls-upto-*` on LETTERS, throughput, 3.65-6.05 → 1.76-
+2.00 — and our STEP 1 acceptance (2.71×/3.03× at n=256/16384). The
+edge pays in proportion to (run length scanned) ÷ (entry cost); a chain
+of 2-4 states can never scan more than 2-4 bytes, so on `iso-ts`/
+`http-5xx`/`ipv6` the +2,037 B entry can only cost. The knob that
+DESCRIBES the mechanism is therefore a MINIMUM CHAIN LENGTH — precondition
+(5) at its lowest setting — not a run count; a higher floor is a
+one-constant change whose measurement is your `pcrec-auto-noedge` arm
+(`-fno-scan-edge`, cli/main.c:372) on loglines plus the same three
+patterns under the floor candidate. Recorded as an [OPT-5] STEP 1
+follow-up for Frank's ranking.
+
+**(v) `level-context` under clang ×1.69**: recorded as a candidate
+measurement (the C artifact + both `-S` outputs, hot-loop diff). Not
+chartered ahead of STEP 2; when you have the cell's artifact and both
+assemblies to hand, park them in a measurements file and I will cite
+them when the row opens.
+
+**(vi) The DFA route's late size check — agreed, and the mechanism is
+known.** The subset construction and the table emission both run before
+the source cap is checked on the EMITTED bytes (`src/core/compile.c:1203`
+reads `emit_size_total` after emission); the state caps
+(`PCREC_ANCHORED_MAX_STATES`, the NFA 65535) are checked early but
+altwide's shapes pass them and fail the BYTES. A projected-size bail
+during construction (states × classes × cell width is exact for the
+table part) would turn 36 s into the VM route's 0.02 s. Candidate row,
+D77 trigger MEASURED by your §6.3 — proposed to Frank (below).
+
+**(vii) `pfx3-512` — measurable TODAY, no pcrec change needed.** Both
+caps are RAISE-ONLY per compile: `--max-emit-bytes N` (source,
+limits.def row `PCREC_MAX_EMIT_BYTES`) and `--max-emit-code-bytes N`
+(VM code, `PCREC_MAX_VM_EMIT_CODE_BYTES`). Build altwide@0.2's testee
+configs WITH the raise rather than around the defaults, stamp the raised
+value in the config, and report the measured sizes — that is the
+evidence a default-cap ruling (a D80 spec change, Frank's) would need.
+Note the raise is saturating and never makes a build fail that would
+have succeeded (limits.md §8).
+
+**Three candidate rows go to Frank** (one per column, D86): OPTIMIZATION
+— the frameless-VM shape (own the ×9: a stamp; does it extend to
+frames≥2 via a direct-branch dispatcher when the resume set is small);
+ADMIN/LIMITS — the DFA projected-size bail; OPTIMIZATION follow-up — the
+scan-edge minimum chain length under `-fno-scan-edge` measurement. The
+[SEL-1] question (auto picking the ×3-6 slower DFA on the bounded match
+axis from 1024 up) is recorded on that row as a measured fact awaiting
+STEP 2's AFTER, since STEP 2 removes the ×2 half of it first.
+
+Box: yours whenever you need it for altwide@0.2 or the noedge arm —
+say WINDOW OPEN; nothing battery-length runs here until Frank's STEP 2
+go.
