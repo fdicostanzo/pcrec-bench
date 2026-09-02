@@ -292,3 +292,19 @@ ledger of the first cc window (2026-09-02 §5) reads it correctly but had
 to say so. Options for a reporter wave: rename the phase to `cc` with the
 compiler in the legend, or keep `gcc` and add a per-row `cc=` note where
 the testee's cc is not gcc. Plan row [B32] (b).
+
+## KB-10 (2026-09-02) — `quick --vs <testee>` ERRORS when the comparison arm did not compile, instead of printing `refused`
+
+Found by lane b31cap while smoke-testing the raised-cap axis: `quick
+--subbench altwide --pattern w-512 --regime search_short --testee
+pcrec-vm-bigcap --vs pcrec-vm` writes BOTH records correctly (the bigcap
+one `measured` and validated, carrying the raise in its testee_id, its
+runtime_options and the artifact's own stamps; the plain one a first-class
+`did-not-compile` row with pcrec's refusal text and zero match rows), then
+fails at the comparison step (`pcrecbench/__main__.py`, "expected one cell
+for (w-512, short-subject-search) ... found 0") because the `--vs` arm has
+no measured cell. Pre-existing, not introduced by [B31]; it bites on every
+altwide wide rung and on bounded's 65535 rung. The fix belongs in `quick`
+(or the shared reduction): a `--vs` arm whose only row is a refusal prints
+`refused (<diagnostic>)` in the comparable's place and exits 0 — the
+records are already right. Queued on plan.md [B32] (h).
