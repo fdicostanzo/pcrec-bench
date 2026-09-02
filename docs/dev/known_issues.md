@@ -211,3 +211,51 @@ rather than carrying a per-row legend fact (same footing as
 docstring, "[B28]" section, for the full reasoning — left for the
 manager to rule on if a future finding wants rows grouped by scan-edge
 shape.
+
+## KB-7 (2026-09-01) — the record schema's `free_text` cap (8192 characters) is UNJUSTIFIED and may limit the bench unnecessarily — Frank's ruling owed
+
+`schema/record.schema.json` defines `free_text` as `{"type": "string",
+"maxLength": 8192}` and eighteen record fields are declared with it —
+descriptions, notes, diagnostics, option strings, raw captured output,
+and `patterns[].canonical_text`, the reproducibility-only copy of the
+pattern bytes. NO document records why 8192: not `record_schema.md`,
+not the r2 schema review, not `decisions.md` (grep'd 2026-09-01). It
+is OUR limit, not an engine's: libpcre2 compiled every affected pattern.
+
+It bit for the first time today ([B11.2], bench/altwide): four
+wide-alternation rungs are 8.7-24 KB of pattern text, so every cell
+over them would have been measured and then REJECTED by the validator
+on write. The lane's fix (b5b0248) keeps the cap and OMITS
+`canonical_text` above it (never truncates; sha256 + content_hash
+remain the identity), with a gate reading the cap from the schema. That
+is correct under the cap as written, but Frank's reading (2026-09-01,
+~20:0x): "it seems arbitrary … I am unclear if we are limiting ourselves
+unnecessarily". The discussion this needs:
+
+1. WHAT the cap protects. Candidates: record size in the store (a 24 KB
+   pattern copied into every record that measures it — altwide's is
+   ~50 KB of pattern text per record, against records of ~2-4 MB of
+   rows, so <2 %); the reporter's and validator's memory (jsonschema
+   validates every record on load — length is not the cost, count is);
+   a stray binary blob landing in a text field. None of these is 8192-
+   shaped; a 64 KB or 1 MB bound would protect them equally.
+2. WHICH fields deserve a bound at all. `canonical_text` arguably
+   deserves NONE: it is a copy of a committed file whose size the
+   sub-bench already bounds, and a record that cannot carry its own
+   pattern is a record that is harder to read alone — the field's one
+   purpose. Diagnostics (a compiler's error text on a 24 KB pattern can
+   itself exceed 8 KB) and `raw` captures are the other two to consider.
+3. WHAT a change costs. `maxLength` is a validator rule: raising it is
+   a schema version bump under record_schema.md §4's rule-revision
+   clause (v1.4 → v1.5), every `schema/examples/` still validates, and
+   NO existing record changes (a looser bound rejects nothing it
+   accepted). The [B11.2] omission gate then becomes the check that
+   the field is present iff the pattern fits the NEW cap — or is
+   retired if `canonical_text` becomes unbounded.
+
+RECOMMENDATION for the ruling: raise `free_text` to a bound that is
+clearly about hygiene, not content (1 MiB), keep the omission fallback
+as the schema's documented behaviour for anything above it, and record
+the reason in record_schema.md this time. Until ruled: the cap stands,
+altwide's four rungs carry no `canonical_text`, and nothing measured
+depends on it. Plan row [B30].
