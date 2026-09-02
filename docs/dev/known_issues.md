@@ -259,3 +259,25 @@ as the schema's documented behaviour for anything above it, and record
 the reason in record_schema.md this time. Until ruled: the cap stands,
 altwide's four rungs carry no `canonical_text`, and nothing measured
 depends on it. Plan row [B30].
+
+## KB-8 (2026-09-02) — an OPEN `--since` query drifts on every store growth: unpinned pcre2 ids re-select the newest record, and a `--testee` roster cannot bound TIME (the correction to KB-5's fix)
+
+Found by the [B26] (c) re-render invariant (lane b26reports, f66f2cd)
+over the 48 report files committed before the wave: SIX drifted — all
+three `-after-96e44c2` groups (bounded-0.1, email-specimen-0.2,
+loglines-0.1) pulled the 2026-09-02 night's pcre2 records in through
+their open `--since 2026-08-30T11:00:00Z`. The loglines group had
+ALREADY been pinned to a six-id `--testee` roster by [B28] (KB-5's
+fix) and drifted anyway: the two libpcre2 testee_ids carry no pin, so
+newest-measured-wins picks whichever pcre2 record is newest at render
+time. A roster bounds WHICH ids; only `--until` bounds WHEN. Fixed for
+the three groups with `--until 2026-08-30T15:00:00Z` (their `-repin`
+siblings' own bound); no number, ranking, verdict or record list moved.
+RULE (reports/CLAUDE.md, the wave paragraph): every committed query
+carries BOTH a `--since` and an `--until`; a `--testee` roster is for
+scoping arms, never for freezing time. Beside it, the smaller nit: the
+report header's `record source: store/index.tsv (N candidate file(s))`
+line moves on every store growth, so a byte-identical re-render is
+only ever "identical modulo that line" — reports/CLAUDE.md rules that
+acceptable; a future reporter wave may print the FILTERED count (which
+a bounded query keeps stable) instead of the store's total.
