@@ -7,14 +7,38 @@ with its query. Names: `<date>-<subbench>-<version>-<machine>[-<label>][.<grain>
 **[B26] (c) (2026-09-02) ADDED six file groups — the full-suite night at
 pcrec pin 1989c62 (abi 15)** — and changed NOTHING else here: the reporter
 is unchanged at `v11 (2026-09-01)`, no committed report was regenerated,
-and the RE-RENDER INVARIANT was checked instead. Every one of the 49 files
-committed before this wave was re-rendered from its OWN committed query
-(parsed out of its own header) and diffed against its committed content:
-the only line that moves on any of them is `record source: store/index.tsv
-(N candidate file(s))`, 81 → 111, which is store growth and is explicitly
-NOT grounds to reject a diff (the [B19] wave's rule, below). Zero other
-lines moved — no number, ranking, verdict, legend fact or query header.
-`make check-report` is 62/62. The night's thirty records (28 from
+and the RE-RENDER INVARIANT was checked instead. All 48 report files
+committed before this wave were re-rendered from their OWN committed query
+(parsed out of each file's own header, grain and format from its own name)
+and diffed against the committed content. **42 of the 48 are clean**: the
+only line that moves is `record source: store/index.tsv (N candidate
+file(s))`, 81 → 111, which is store growth and is explicitly NOT grounds to
+reject a diff (the [B19] wave's rule, below). No number, ranking, verdict or
+legend fact moved on any of them. `make check-report` is 62/62.
+
+**THE OTHER SIX DRIFTED, and the fix is the 2026-08-30 RULE this directory
+already carries.** `2026-08-30-email-specimen-0.2-*-after-96e44c2.*` and
+`2026-08-30-loglines-0.1-*-after-96e44c2.*` were committed with a BARE
+`--since 2026-08-30T11:00:00Z` and no upper bound, so the night's own
+records (2026-09-02, the same sub-bench and version) satisfy their queries
+and a bare re-render silently turned each single-pin AFTER report into an
+undocumented cross-pin one: email picked up four `pcrec_1989c62_*` rows and
+both newer pcre2 records (6 records → 10), loglines the same shape. This is
+the THIRD sighting of the failure mode KB-5 names, and it shows the [B28]
+fix was INCOMPLETE: loglines' file already carried the six `--testee`
+values, and the roster did not save it, because the two pcre2 ids carry no
+pin and newest-measured-wins pulled their 2026-09-02 records in regardless.
+A ROSTER CANNOT BOUND TIME; only `--until` can. FIXED by giving all three
+`-after-96e44c2` groups the upper bound their own sibling `-repin-96e44c2`
+files have used since they were written, `--until 2026-08-30T15:00:00Z`
+(every 96e44c2 window record is ≤ 14:36:42Z, so the bound excludes nothing
+those files ever contained). `bounded-0.1-*-after-96e44c2.*` was NOT
+drifting — its `--version 0.1` filter happens to protect it — but it has the
+same open bound and is bounded here too rather than left as a landmine for
+the next window. After the fix each of the nine files diffs against its
+committed content on exactly two lines: its own `filters:`/header line
+gaining `until=2026-08-30T15:00:00Z`, and the candidate count. Verified file
+by file; no number, ranking, verdict or record list moved. The night's thirty records (28 from
 `scripts/run_window.sh`, 2 re-run by hand — the two bounded@0.3 clang cells
 the 3000 s per-cell cap killed) are all `measured`; every query below names
 its roster with KB-5's `--testee` and carries an explicit `--since`/`--until`
@@ -508,7 +532,10 @@ an older measured one) restores it.
   EDT 2026-08-30 (window: both managers idle, BD7's 5-s occupancy gate,
   18/18 cells across the three sets on attempt 1, zero retries), `--trials
   5`, reporter v8. Query: `report --subbench bounded --version 0.1
-  --since 2026-08-30T11:00:00Z --format md` — 6 records: the two
+  --since 2026-08-30T11:00:00Z --until 2026-08-30T15:00:00Z --format md`
+  (the `--until` ADDED at [B26] (c), 2026-09-02 — see that wave's paragraph
+  at the top: a bare `--since` let the 1989c62 night's records into this
+  file) — 6 records: the two
   libpcre2 baseline re-runs plus the four `pcrec_96e44c2_*` testees, none
   of the 36d5963 BEFORE records (the `--since` bound is the mirror of the
   first-sample entry's `--until` above — the two files share the
@@ -522,7 +549,10 @@ an older measured one) restores it.
   [OPT-4] AFTER sample on `email-specimen@0.2` at pcrec **96e44c2**,
   same window and protocol as the bounded entry above, reporter v8.
   Query: `report --subbench email-specimen --version 0.2 --since
-  2026-08-30T11:00:00Z --format md` — 6 records, same shape as bounded's
+  2026-08-30T11:00:00Z --until 2026-08-30T15:00:00Z --format md` (the
+  `--until` ADDED at [B26] (c), 2026-09-02 — a bare `--since` had let the
+  1989c62 night's four pcrec arms and both newer pcre2 records into this
+  file; see that wave's paragraph at the top) — 6 records, same shape as bounded's
   (two libpcre2 + four `pcrec_96e44c2_*`). Read against the
   2026-08-29 `-repin-36d5963` report above (the [ENG-ABS] ledger) for the
   pin-to-pin comparison: no `sel=collapsed-prefilter (DFA fallback
@@ -534,7 +564,8 @@ an older measured one) restores it.
 - `2026-08-30-loglines-0.1-budu-ryzen1600-after-96e44c2.md` — the
   [OPT-4] AFTER sample on `loglines@0.1` at pcrec **96e44c2**, same
   window and protocol, reporter v8. Query: `report --subbench loglines
-  --version 0.1 --since 2026-08-30T11:00:00Z --format md` — 6 records,
+  --version 0.1 --since 2026-08-30T11:00:00Z --until 2026-08-30T15:00:00Z
+  --format md` (the `--until` ADDED at [B26] (c)) — 6 records,
   same shape. Read against the 2026-08-29 `-repin-36d5963` report above
   (the [OPT-K] ledger and Frank's [SEL-1] row): `level-context` under
   both `pcrec-auto` and `pcrec-nocaps` still selects the VM and now shows
