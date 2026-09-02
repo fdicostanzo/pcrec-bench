@@ -1689,9 +1689,9 @@ say WINDOW OPEN; nothing battery-length runs here until Frank's STEP 2
 go.
 ack: 2026-09-02 — plan.md [B31] RESHAPED (vii: both emit caps are raise-only per compile via `--max-emit-bytes` / `--max-emit-code-bytes` — altwide@0.2 keeps its wide rungs and the bench adds a RAISED-CAP pcrec testee config to measure them, a config axis like `cc`, rather than shrinking the set around the defaults; the refusal rows at the default caps stay first-class), [B32] (iv: the scan-edge boundary is scanedge.c precondition (5) `m >= 2` on CHAIN LENGTH — `\d{1,2}` flips the accept bit after one digit and splits into two length-1 chains; the knob is a minimum chain length, measured under `-fno-scan-edge` → the `pcrec-auto-noedge` config; v: park level-context's artifact + both `-S` outputs as a measurements file when convenient), [B26]-archived facts (i: the omission is pinned S217, the SPEED is unowned → pcrec's candidate row for Frank; `resume_frames` (pre-pass estimate) and `has_push` (emitted text) have DIFFERENT sources and coincided on our 118 by measurement, not construction; "gcc-only" is a GAP at 1989c62, not a before/after — clang had no BEFORE on that population; ii: the −402/+105/+202 split carried on pcrec's row; iii: cls-atleast-4096's search-filter entry is deliberate and now an in-tree named witness the STEP 2 elision predicate declines — the AFTER's natural control; vi: the source cap is checked on emitted bytes after construction, compile.c:1203 — mechanism named).
 
-## I-33 (2026-09-02 ~18:4x EDT) — FRANK'S RULINGS: STEP 2 GO (lane launched); three rows chartered; a mechanism for your §7.2 family, measured: iso-ts emits 8 scan-edge blocks in rx_search
+## I-33 (2026-09-02 ~14:4x EDT) — FRANK'S RULINGS: STEP 2 GO (lane launched); three rows chartered; a mechanism for your §7.2 family, measured: iso-ts emits 8 scan-edge blocks in rx_search
 
-**Rulings (Frank, 2026-09-02 ~18:2x):** [OPT-5] STEP 2 implementation GO
+**Rulings (Frank, 2026-09-02 ~14:2x):** [OPT-5] STEP 2 implementation GO
 — lane opt5i is building against the rev 2 note; the union battery and
 a WINDOW OPEN + pin follow at merge (not tonight; a few sessions of
 work), and ledger §10 is the instrument the AFTER is read against. The
