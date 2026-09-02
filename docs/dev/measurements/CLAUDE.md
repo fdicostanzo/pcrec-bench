@@ -47,3 +47,23 @@ is the same as ~/pcrec's `docs/design/*_measurements/` and its D35:
 Maintenance: update this file when files are added/removed or change role.
 - `2026-09-01-engine-sel-census-a7e0bdf-vs-1989c62.tsv` — ([B26] (a), lane b26repin) every bench pattern × form × engine mode compiled at both pins, the RX_ENGINE_SEL / engine / prefilter / lang stamps per cell: identical totals at both pins; NO bench artifact stamps `declined-nullable-default`; 80 refusals per pin incl. altwide's ci-512 at the 1,000,000 B emit cap.
 - `2026-09-01-emit-sizes-a7e0bdf-vs-1989c62.tsv` — ([B26] (a)) the emit-size port on the ledger patterns at both pins: +202 B total / +105 B code flat (abi 15's two rx_info fields), o42's declines the only downward moves.
+- `probe_bounded_cross_version.py` — ([B26] (c)) the CELL-AGAINST-CELL read of one
+  `bench/bounded` set version against the next across a pcrec pin: a READ of pinned
+  records (no compile, no run, no timing) that emits one row per (pattern, subject,
+  regime, form, testee config) whose pattern id AND subject id exist in BOTH sets
+  with EQUAL pattern `canonical_sha256` and EQUAL subject `sha256`/`bytes_offered`
+  — the promise `bench/bounded/NOTES.md` makes about 0.3's no-drift redraw, checked
+  rather than trusted, with every rejected id named in the header. The comparable is
+  `pcrecbench.reduce.reduce_match_cell` imported (never re-derived); `ratio` is
+  after/before. Exists because 0.2 and 0.3 NEVER POOL, so no reporter query can
+  answer "did anything move on the surface both sets share". `--before`/`--after`
+  take `<subbench>@<version>:<pin>`; runs from the repo root.
+- `2026-09-02-bounded-cls-rungs-0.2-a7e0bdf-vs-0.3-1989c62.tsv` — its archive over
+  bounded@0.2 at a7e0bdf vs bounded@0.3 at 1989c62 (eight records, four testee
+  configs, source header naming each): 30 shared patterns and 35 shared subjects,
+  ALL byte-identical on both sides, 7,670 cells. This is the [OPT-4.2]/abi-15
+  CONTINUITY reading and the [OPT-5] STEP 2 BEFORE's anchor. The file carries the
+  per-cell `iterations` on both sides and states its own caveat: 0.3 changed both
+  calibration pools (match gains subjects to 1024 B; `short_search_max_bytes`
+  512 → 258), so a ratio whose two sides differ greatly in `iters` is a calibration
+  candidate, not necessarily a pin effect.
