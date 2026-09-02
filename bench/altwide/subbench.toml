@@ -4,7 +4,7 @@
 # when it lands.
 
 id = "altwide"
-version = "0.1"
+version = "0.2"
 objective_kind = "hazard"
 objective = """\
 Alternations of MANY literal branches, on both axes: what an engine pays to \
@@ -17,27 +17,35 @@ alphabet, drawn from four, or sharing a suffix instead of a prefix. Crossed \
 with the two things only a leftmost-first engine pays for -- which branch \
 INDEX carries the hit, and what ORDER the branches are written in."""
 description = """\
-Twenty patterns on four axes. WIDTH: eight rungs of nested slices of one \
-word pool -- `w-8`, `w-64`, `w-256`, `w-512`, `w-1024`, `w-2048` over \
-3-12 byte branches, and `s-2048`, `s-4096` over 3-6 byte branches, because \
-libpcre2 itself REFUSES a 4096-way alternation of 3-12 byte words \
-("regular expression is too large", its LINK_SIZE ceiling; \
-`oracle_limits.tsv` carries the probe) and an expectation the oracle cannot \
-state is a cell the harness cannot judge. STRUCTURE, at two widths where it \
-is affordable: `sh1-*` (every branch starts `k`), `pfx3-512` (every branch \
-starts `qux`), `nar4-*` (four first bytes), `sfx-*` (every branch ENDS \
-`ing` -- the only patterns here with a PCRE2 required code unit). ORDER: \
-`srt-512` is `w-512`'s own 512 branches sorted by first byte, which takes \
-the longest run of adjacent branches sharing a first byte from 2 to about \
-30 while leaving the language identical (the pools are substring-free, so \
-leftmost-first cannot return a different span). WRAPPERS: `ci-512` under \
-`(?i)`, `cnt-64` under a bounded count `{1,3}` (the bridge to \
-bench/bounded), `wb-512` inside `\\b...\\b`. Plus the floor. \
-Subjects: 17 whole-string FIELDS (one branch from every rung and every \
+Thirty-three patterns on four axes (twenty at 0.1; thirteen added at 0.2, \
+which changed nothing else -- every 0.1 pattern keeps its id and its exact \
+bytes, every 0.1 subject reproduces byte for byte, and every 0.1 \
+expectation row is unchanged). WIDTH: twelve rungs of nested slices of two \
+word pools -- `w-8`, `w-64`, `w-96`, `w-128`, `w-192`, `w-256`, `w-384`, \
+`w-512`, `w-1024`, `w-2048` over 3-12 byte branches, and `s-256`, `s-512`, \
+`s-2048`, `s-4096` over 3-6 byte ones, because libpcre2 itself REFUSES a \
+4096-way alternation of 3-12 byte words ("regular expression is too large", \
+its LINK_SIZE ceiling; `oracle_limits.tsv` carries the probe) and an \
+expectation the oracle cannot state is a cell the harness cannot judge. \
+0.2 densified 64..512 to a uniform factor of about 1.4, so a knee anywhere \
+in the band an AOT compiler is known to compile is bracketed within 1.5x \
+rather than within 4x, and `s-256` / `s-512` put the branch-LENGTH pair at \
+widths where it can be read (0.1 carried it only at 2048). STRUCTURE, at 64, \
+at the 256 ANCHOR and at 512: `sh1-*` (every branch starts `k`), `pfx3-*` \
+(every branch starts `qux`), `nar4-*` (four first bytes), `sfx-*` (every \
+branch ENDS `ing` -- the only patterns here with a PCRE2 required code \
+unit). ORDER: `srt-256` and `srt-512` are `w-256`'s and `w-512`'s own \
+branches sorted by first byte, which takes the longest run of adjacent \
+branches sharing a first byte from 2 to about 15 and 30 while leaving the \
+language identical (the pools are substring-free, so leftmost-first cannot \
+return a different span). WRAPPERS: `ci-256` / `ci-512` under `(?i)`, \
+`cnt-64` under a bounded count `{1,3}` (the bridge to bench/bounded), \
+`wb-256` / `wb-512` inside `\\b...\\b`. Plus the floor. \
+Subjects: 18 whole-string FIELDS (one branch from every rung and every \
 structure pool, plus four designed misses -- a one-byte substitution, a \
 proper prefix, a branch buried in a longer letter run, a word in no pool), \
-21 LINES of <= 256 B prose whose background is BRANCH-FREE BY CONSTRUCTION \
-and asserted per subject, twelve of them carrying one branch at a designed \
+22 LINES of <= 256 B prose whose background is BRANCH-FREE BY CONSTRUCTION \
+and asserted per subject, thirteen of them carrying one branch at a designed \
 POSITION (early / mid / last) and a designed branch INDEX, and four large \
 prose subjects crossing hit DENSITY (0, 1 per 8 KB, 1 per 128 B) with SIZE \
 (128 KB, 512 KB). See NOTES.md for the pattern table, what the ladder \
@@ -90,6 +98,41 @@ tags = ["ladder", "width", "spread-first-byte", "structure-anchor", "tier-base"]
 role = "member"
 
 [[patterns]]
+# 0.2's DENSE band. 0.1 had three ladder rungs (8, 64, 256) below the
+# width at which pcrec refuses, and three points cannot show a line to
+# be flat. 96/128/192/384 fill 64..512 to a uniform factor of ~1.4 so a
+# knee anywhere in that band is bracketed within 1.5x, and 384 brackets
+# the 512 REFUSAL boundary from below.
+name = "w-96"
+file = "patterns/w-96.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["ladder", "width", "spread-first-byte", "tier-base", "dense-0.2"]
+role = "member"
+
+[[patterns]]
+name = "w-128"
+file = "patterns/w-128.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["ladder", "width", "spread-first-byte", "tier-base", "dense-0.2"]
+role = "member"
+
+[[patterns]]
+name = "w-192"
+file = "patterns/w-192.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["ladder", "width", "spread-first-byte", "tier-base", "dense-0.2"]
+role = "member"
+
+[[patterns]]
 # 256 and 512 BRACKET, within 2x, the width at which a forward machine's
 # `states x classes` is predicted to cross an emitter's 16-bit
 # table-encoding bound (NOTES.md, "What the ladder brackets").
@@ -100,6 +143,19 @@ hazard_class = "wide-alternation"
 size_class = "medium"
 convention = "perl-leftmost-first"
 tags = ["ladder", "width", "spread-first-byte", "knee", "tier-base"]
+role = "member"
+
+[[patterns]]
+# The rung that brackets the 512 refusal boundary from BELOW: the
+# widest `main` rung under it, and the last point of the flat line if
+# the line is flat.
+name = "w-384"
+file = "patterns/w-384.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["ladder", "width", "spread-first-byte", "tier-base", "dense-0.2", "boundary-below"]
 role = "member"
 
 [[patterns]]
@@ -142,6 +198,35 @@ role = "member"
 # ---- branches, which is how the set reaches 4096 at all
 
 [[patterns]]
+# 0.2's branch-LENGTH pair at a width nothing is at the ceiling of:
+# `w-256`'s branch COUNT with 3-6 byte branches instead of 3-12
+# (1495 B of pattern against 2101). 0.1 could only make this
+# comparison at 2048, where both halves are refused.
+name = "s-256"
+file = "patterns/s-256.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["ladder", "width", "short-branches", "spread-first-byte", "length-pair", "dense-0.2", "tier-base"]
+role = "member"
+
+[[patterns]]
+# The byte-versus-count probe: the identical branch COUNT as `w-512`
+# at 71 % of its branch bytes. If a refusal at 512 tracks emitted
+# SIZE this rung compiles where `w-512` does not; if it tracks branch
+# count, both refuse. One rung, two outcomes, and they say different
+# things about the cap.
+name = "s-512"
+file = "patterns/s-512.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["ladder", "width", "short-branches", "spread-first-byte", "length-pair", "boundary-probe", "dense-0.2", "tier-base"]
+role = "member"
+
+[[patterns]]
 # The controlled pair for `w-2048`: same width, same first-byte spread,
 # branch LENGTH is the only thing that moved.
 name = "s-2048"
@@ -177,6 +262,18 @@ tags = ["structure", "shared-first-byte", "tier-base"]
 role = "member"
 
 [[patterns]]
+# The shared-first-byte arm at 0.2's ANCHOR width -- the widest rung
+# every engine in the bench is known to compile.
+name = "sh1-256"
+file = "patterns/sh1-256.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["structure", "shared-first-byte", "anchor-256", "tier-base"]
+role = "member"
+
+[[patterns]]
 # Every branch starts `k`: PCRE2 reports a first CODE UNIT rather than a
 # start bitmap, and a prefix-factoring pass sees ONE maximal run as wide as
 # the whole alternation.
@@ -187,6 +284,17 @@ hazard_class = "wide-alternation"
 size_class = "large"
 convention = "perl-leftmost-first"
 tags = ["structure", "shared-first-byte", "tier-base"]
+role = "member"
+
+[[patterns]]
+# The three-byte-prefix arm at the anchor width.
+name = "pfx3-256"
+file = "patterns/pfx3-256.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["structure", "shared-prefix-3", "anchor-256", "tier-base"]
 role = "member"
 
 [[patterns]]
@@ -208,6 +316,19 @@ hazard_class = "wide-alternation"
 size_class = "medium"
 convention = "perl-leftmost-first"
 tags = ["structure", "shared-suffix", "required-code-unit", "tier-base"]
+role = "member"
+
+[[patterns]]
+# The shared-SUFFIX arm at the anchor width: the required-code-unit
+# shape where it can be read against a compiled `w-256` rather than
+# against a refusal.
+name = "sfx-256"
+file = "patterns/sfx-256.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["structure", "shared-suffix", "required-code-unit", "anchor-256", "tier-base"]
 role = "member"
 
 [[patterns]]
@@ -234,6 +355,17 @@ tags = ["structure", "narrow-first-byte-set", "tier-base"]
 role = "member"
 
 [[patterns]]
+# The four-first-bytes arm at the anchor width.
+name = "nar4-256"
+file = "patterns/nar4-256.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["structure", "narrow-first-byte-set", "anchor-256", "tier-base"]
+role = "member"
+
+[[patterns]]
 # Four first bytes: a start bitmap with four bits set, between `sh1-512`'s
 # one byte and `w-512`'s twenty-six.
 name = "nar4-512"
@@ -246,6 +378,21 @@ tags = ["structure", "narrow-first-byte-set", "tier-base"]
 role = "member"
 
 # ---- order
+
+[[patterns]]
+# THE ORDER PAIR THAT COMPILES. `w-256`'s own 256 branches sorted by
+# first byte: same language, same bytes to within the reordering,
+# the longest run of adjacent branches sharing a first byte from 2
+# to ~15. At 512 both halves of this pair are refused, so 0.1's
+# order arm could only ever be read off two refusal diagnostics.
+name = "srt-256"
+file = "patterns/srt-256.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["order", "sorted", "control-pair", "anchor-256", "tier-base"]
+role = "member"
 
 [[patterns]]
 # `w-512`'s OWN 512 branches, sorted by first byte. Same language, same
@@ -262,6 +409,17 @@ tags = ["order", "sorted", "control-pair", "tier-base"]
 role = "member"
 
 # ---- wrappers
+
+[[patterns]]
+# `w-256` under `(?i)`: the caseless pair at the anchor width.
+name = "ci-256"
+file = "patterns/ci-256.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["wrapper", "caseless", "control-pair", "anchor-256", "tier-base"]
+role = "member"
 
 [[patterns]]
 # `w-512` under `(?i)`. `modifiers` is in pcrec's `std1`, so this is
@@ -285,6 +443,18 @@ hazard_class = "wide-alternation"
 size_class = "medium"
 convention = "perl-leftmost-first"
 tags = ["wrapper", "bounded-count", "bridge-bounded", "control-pair", "tier-base"]
+role = "member"
+
+[[patterns]]
+# `w-256` inside `\b...\b`: the word-boundary pair at the anchor
+# width.
+name = "wb-256"
+file = "patterns/wb-256.rx"
+feature_tier = "base+assertions"
+hazard_class = "wide-alternation"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["wrapper", "word-boundary", "control-pair", "anchor-256", "tier-assertions"]
 role = "member"
 
 [[patterns]]

@@ -34,6 +34,13 @@ of the hit). An automaton pays neither. Separating the two terms needs the
 same word early and late in one line (position) and different branch indices
 at one position (identity), which is why both arms exist rather than one.
 
+0.2 APPENDS TWO CARRIERS (`extras()`, drawn LAST so every 0.1 subject
+reproduces byte for byte): a field and a line carrying `short` word 255, the
+last branch of the new `s-256` rung. Through 0.1 the short pool's only hit
+inside 2048 was `f-s0`, so the branch-LENGTH pair (`s-256` against `w-256`)
+had nothing but a branch-1 field to read its cost-at-a-hit on. See
+`extras()` for why nothing else 0.2 added needs a carrier.
+
 Every subject is ONE line with NO trailing newline, and no subject contains a
 tab (the manifest is TSV).
 
@@ -255,11 +262,62 @@ def lines(rng, index, P):
     return out
 
 
+# --------------------------------------------------------------- 0.2
+
+# The `short` pool branch index the 0.2 carriers use: the LAST branch of
+# `s-256`, chosen so it reads arm-for-arm against `main` word 255 (the last
+# branch of `w-256`) -- the branch-length pair's two "last branch" points at
+# one width. It is inside every wider short rung too, so `s-512`, `s-2048`
+# and `s-4096` gain the same two hits.
+S_LAST_256 = 255
+
+
+def extras(rng, index, P):
+    """The 0.2 carriers, DRAWN LAST so every 0.1 subject above reproduces
+    byte for byte (bench/bounded's rule for `t-digits-004k` and for its own
+    0.3 runs: a new subject extends the rng stream, it never splits it).
+
+    WHY THESE TWO AND NO OTHERS. 0.2 adds `s-256` and `s-512`, and the
+    branch-LENGTH pair they make with `w-256` / `w-512` is read on the
+    search band -- but through 0.1 the ONLY subject carrying a `short`
+    branch inside 2048 was the field `f-s0` (branch 1). Every `s-*` pattern
+    therefore had exactly one hit in the whole set, at branch index 1, and
+    no prose LINE hit at all: no designed position, no designed index, and
+    nothing to read the length pair's cost-at-a-hit against `w-256`'s eleven
+    carriers. These two close that, at the one branch index that makes the
+    pair symmetric (`short` word 255 is to `s-256` what `main` word 255 is
+    to `w-256`).
+
+    Everything else 0.2 adds is carried by the 42 subjects already here:
+    the dense ladder rungs are nested slices, so `main` words 0 and 7 are
+    branches 1 and 8 of every one of them; the 256-wide structure arms take
+    the same pool-word-0 and pool-word-3 hits their 64- and 512-wide twins
+    do; and the ORDER pair's index swap is already at its extreme, because
+    `main` word 0 -- `f-w0`, `l-w0-early`, `l-w0-last` -- is branch 1 of
+    `w-256` and branch 240 of `srt-256`, the largest index move any word of
+    the 256-wide slice makes (`main` word 255, `f-w255`, is the other
+    direction: branch 256 of `w-256`, branch 111 of `srt-256`)."""
+    out = []
+    word = P["short"][S_LAST_256]
+    out.append(("f-s255", "field/hit `short` word %d: the LAST branch of "
+                "s-256 and a branch of every wider short rung -- the "
+                "branch-length pair's anchored index point against `main` "
+                "word 255" % S_LAST_256, word))
+    text, off = _line(rng, index, word, "mid", 234)
+    assert index.occurrences(text) == [(off, word)], "l-s255-mid"
+    out.append(("l-s255-mid", "line/carry-mid `short` word %d at byte %d of "
+                "%d: the short pool's only prose carrier inside 2048, and "
+                "the search band's half of the branch-length pair"
+                % (S_LAST_256, off, len(text)), text))
+    return out
+
+
 def build():
     rng = at.Rng(SEED)
     P = at.pools()
     index = at.BranchIndex()
-    return fields(rng, index, P) + lines(rng, index, P), index
+    return (fields(rng, index, P) + lines(rng, index, P)
+            + extras(rng, index, P)), index
 
 
 def main():
