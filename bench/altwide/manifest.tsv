@@ -37,3 +37,5 @@ l-bg-2	244	869c68087c819eabf5f42c5c66f9bb1b5fcb7b312eb1e34c8d56f9f5c3f6392a	line
 l-bg-3	219	6550ec4f472c36240deeaf52859f4c035c5b5953f881a343972ba9a5c494b515	line/background prose in no pool: the failing majority the search band is built from	no
 l-bg-4	241	34d215318014e21583246291bca0291bffd1de6c71adfa9deb8fbb79f66767e6	line/background prose in no pool: the failing majority the search band is built from	no
 l-bg-5	228	891b06779d89dc62b79c312b51534ae60178060808699670080b6cf8b3318f4f	line/background prose in no pool: the failing majority the search band is built from	no
+f-s255	4	15b47fb12dd18430c6536a7786e27bb273957fd516c18bb7f034e9ff48da826d	field/hit `short` word 255: the LAST branch of s-256 and a branch of every wider short rung -- the branch-length pair's anchored index point against `main` word 255	no
+l-s255-mid	234	09201f633c1e1f9ee10cc47e7e20b80b0f8d0c26d59ca64384206bc25d587c9e	line/carry-mid `short` word 255 at byte 122 of 234: the short pool's only prose carrier inside 2048, and the search band's half of the branch-length pair	no

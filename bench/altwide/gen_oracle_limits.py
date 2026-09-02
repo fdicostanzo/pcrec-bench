@@ -61,16 +61,16 @@ PROBE_CAP = 8192
 # `wrapper` is `gen_patterns.py`'s own, applied by the same function, so a
 # probe row is the identical construction the set's patterns get.
 SKELETONS = (
-    ("w",    "main",  None,        "8,64,256,512,1024,2048", 8),
-    ("s",    "short", None,        "2048,4096",              8),
-    ("sh1",  "sh1",   None,        "64,512",                 8),
-    ("pfx3", "pfx3",  None,        "512",                    8),
-    ("sfx",  "sfx",   None,        "64,512",                 8),
-    ("nar4", "nar4",  None,        "64,512",                 8),
-    ("srt",  "main",  "sorted",    "512",                    8),
-    ("ci",   "main",  "caseless",  "512",                    8),
+    ("w",    "main",  None,        "8,64,96,128,192,256,384,512,1024,2048", 8),
+    ("s",    "short", None,        "256,512,2048,4096",      8),
+    ("sh1",  "sh1",   None,        "64,256,512",             8),
+    ("pfx3", "pfx3",  None,        "256,512",                8),
+    ("sfx",  "sfx",   None,        "64,256,512",             8),
+    ("nar4", "nar4",  None,        "64,256,512",             8),
+    ("srt",  "main",  "sorted",    "256,512",                8),
+    ("ci",   "main",  "caseless",  "256,512",                8),
     ("cnt",  "main",  "count13",   "64",                     8),
-    ("wb",   "main",  "wordbound", "512",                    8),
+    ("wb",   "main",  "wordbound", "256,512",                8),
 )
 
 
