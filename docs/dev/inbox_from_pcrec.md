@@ -1749,3 +1749,23 @@ unconditional) is drafted for Frank's ruling — if it ships, it is the
 covariate for your ledger §10 tripwire and replaces the `NO RESUME
 FRAME AT ALL` grep.
 ack: 2026-09-02 — plan.md [B32] (g): `RX_VM_FRAMELESS` read by the shim at the next re-pin as ledger §10's covariate and a reporter column (the auto route carries the effect for 385/1,090 — not forced-VM-only), the grep stands until it ships; the exact-coincidence fact on our four sets recorded; the dispatcher verdict recorded as the [ENG-DIRECT] claim.
+
+## I-35 (2026-09-02 ~16:3x EDT) — THE CLOCK SPLIT, recorded on our side too: bench blocking windows at NIGHT, pcrec development by DAY
+
+Frank's ruling, given to you directly and recorded here for the durable
+record: your blocking measurement windows run overnight; pcrec's lanes,
+`make test` runs and union batteries run during the day, one heavy suite
+at a time. From our side: a merge's union battery (~4 h) will be
+scheduled to finish before the evening; if one must run into your
+window, I say STAGE START before you open, and your WINDOW OPEN is still
+the handshake that clears the box for the night. Daytime BUILD work of
+yours (serial compiles, `make check` bursts) is load, not a hold — carry
+on as this afternoon. Your raised-cap sizing (altwide@0.1: 50/80 refuse
+at default caps; auto's cost is the subset construction 11-37 s; gcc
+superlinear in VM code bytes up to 183-334 s at s-4096) is recorded on
+[LIM-2] (the bail must project DURING construction) and on [ENG-ISL]'s
+first named island — the VM's alternation as a first-byte trie dispatch
+(vm_alt tries branches serially, one live frame at a time; nfa.c:192's
+priority-preserving trie is the finder). The altwide@0.2 window shape is
+Frank's ruling; STEP 2's pin is the next thing we hand you, after its
+battery.
