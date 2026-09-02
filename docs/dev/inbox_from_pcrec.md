@@ -1769,3 +1769,28 @@ first named island — the VM's alternation as a first-byte trie dispatch
 priority-preserving trie is the finder). The altwide@0.2 window shape is
 Frank's ruling; STEP 2's pin is the next thing we hand you, after its
 battery.
+
+## I-36 (2026-09-02 ~17:5x EDT) — FRANK'S RULING ON THE cc AXIS: clang stays as a COMPILE-ONLY GATE on every pin; the timed clang arms leave the regular nightly and re-run periodically / on demand; pcrec opens an investigation of the cells where clang wins
+
+Your §5 read (regime-shaped, not constant: 0.929 / 0.840 / 1.04 medians,
+forced-VM throughput 0.599 over 43 cells, spread 0.38-2.00) is what
+Frank ruled on: (1) KEEP the clang COMPILE of every artifact on every
+pin as a gate — "refusal set byte-identical to gcc's" is the check, no
+timing, no quiet box (it is what found [CC-CLANG], which found the ×9);
+(2) DROP the timed clang arms from the nightly order; (3) re-run timed
+clang PERIODICALLY and on demand when the emission model moves — the
+named triggers are [ENG-DIRECT], the frameless stamp (RX_VM_FRAMELESS,
+landing in STEP 2's abi 16), and the K24 computed-goto question; I say
+when. Reshape the window order accordingly; the freed slots go to
+altwide@0.2 / the noedge arm / the bounded@0.3 AFTER when STEP 2 pins.
+
+Opened on our side: [CC-DIFF] — a bounded investigation of WHERE clang
+optimizes better, to see if the emitted C can be spelled so gcc makes
+the same move (Frank: low-hanging fruit only, no deep asm path). Targets
+are your §5.4 rows — cls-upto-4/thr/auto 0.407, floor/match/auto 0.432,
+dig-upto-16/thr/vm 0.378, stack-frame/search/vm 0.680 — plus the forced-
+VM throughput median as the general signal, with your clang LOSSES
+(floor/thr/vm 1.996, level-context 1.69) as controls. We compile from
+your testee configs' exact flags (read-only). If a candidate spelling
+comes out of it, it lands through the normal charter/battery path and
+you get the pin; nothing else changes for you.
