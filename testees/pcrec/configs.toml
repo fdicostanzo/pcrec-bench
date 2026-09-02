@@ -231,3 +231,87 @@ engine_mode = "auto"
 captures = "on"
 flags = ["--features", "all"]
 description = "a PROVIDED pcrec binary ($PCREC_BIN, + $PCREC_LOCAL_FLAGS): the edit-test loop's testee, scratch tier by construction, never pinned, never ranked"
+
+# ---------------------------------------------------------------------------
+# THE EMITTED-SIZE CAP AXIS -- `max_emit_bytes` / `max_emit_code_bytes`
+# ([B31]; pcrec [ART-SIZE], docs/spec/limits.md 8, inbox I-32 (vii)).
+#
+# pcrec refuses rather than emit past either of two caps -- 1,000,000
+# comment-excluded bytes TOTAL and 500,000 of them OUTSIDE table
+# initializers (CODE) -- and both are RAISE-ONLY per compile:
+# `--max-emit-bytes=N` / `--max-emit-code-bytes=N` let a caller accept a
+# larger artifact and can never manufacture a refusal that would not have
+# happened anyway (limits.md 8: "no caller can manufacture someone else's
+# refusal"). The archived defaults are `list_limits.tsv`'s
+# PCREC_MAX_EMIT_BYTES / PCREC_MAX_VM_EMIT_CODE_BYTES rows, and the adapter
+# reads its raise-only FLOOR from that file rather than keeping a second
+# copy of a pcrec constant.
+#
+#   max_emit_bytes = N          OPTIONAL, per config, BYTES
+#   max_emit_code_bytes = N     OPTIONAL, per config, BYTES
+#
+# ABSENT means today's behaviour byte for byte: no flag on pcrec's argv, no
+# clause in `build_flags`, no `config_extra`, the same derived `testee_id`
+# (frozen-renderer proof, `check_cap_axis` arm 1, against a COMMITTED
+# production record). PRESENT is an IDENTITY CLAIM -- the flag rides in
+# `flags`, so one list feeds the argv, `build_flags` and
+# `runtime_options` alike, and `config_extra` puts the VALUES in the
+# derived testee_id. A value BELOW the archived default is a clean
+# AdapterError naming both numbers before anything is measured.
+#
+# WHY IT IS AN AXIS AND NOT A GATE REMOVED. Raising `--max-emit-bytes` also
+# raises the [ART-SIZE] size-term ladder's own scratch abort bound (pcrec
+# src/core/compile.c: `3 * cap`, saturating), so a raised-cap compile may
+# explore -- and select -- an unroll K the default-cap compile aborted out
+# of. Two artifacts built under different caps are TWO ARTIFACTS. That is
+# why the plain configs stay, why their default-cap refusals remain
+# first-class `did-not-compile` rows, and why the raised value is in the
+# testee_id rather than hidden in a flag.
+#
+# WHY 8,388,608 FOR BOTH -- MEASURED 2026-09-02 at pin 1989c62 over the
+# WHOLE of bench/altwide@0.1: 20 patterns x both forms x {auto, vm} = 80
+# compiles under a 100,000,000 B probe raise, every one of which COMPILED
+# (no timeouts, nothing saturated), archived verbatim in
+# docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt. The
+# largest emitted artifact on either cap's quantity is `s-4096`'s
+# whole-subject VM form at 3,741,164 bytes (a forced-VM artifact carries no
+# table initializers, so its TOTAL and its CODE bytes are the same number
+# and one maximum settles both caps). The bound is the smallest power of
+# two at or above twice that: 2 x 3,741,164 = 7,482,328 -> 8,388,608 (8
+# MiB). Per mode the maxima are auto 2,586,958 total / 37,621 code
+# (`w-2048` and `s-4096`, both whole-subject) and vm 3,741,164 / 3,741,164;
+# the auto route's own code maximum is BELOW pcrec's 500,000 default, so a
+# per-mode code bound would have been an illegal LOWERING -- both configs
+# therefore carry the same pair, which also keeps `pcrec-auto-bigcap` and
+# `pcrec-vm-bigcap` one variable apart from each other exactly as
+# `pcrec-auto` and `pcrec-vm` are.
+#
+# WHAT THE RAISE BUYS, measured in the same census: at the DEFAULT caps 50
+# of those 80 compiles REFUSE (26 auto rows at the total cap, 24 vm rows at
+# the code cap) -- 14 of 20 patterns lose at least one auto form and 12 of
+# 20 at least one vm form. The refusals are not free, either: an auto-route
+# refusal is checked AFTER emission and costs 0.07-40.2 s, while a vm-route
+# refusal costs 0.01-0.07 s.
+#
+# NO `-bigcap-clang` CONFIG. BD3's one-variable rule: the cap axis crossed
+# with the compilee toolchain would give four cells no single comparison
+# can attribute. The COMPOSITION is nonetheless defined and checked (the
+# adapter's `compose_config_extra`: the axes in chartering order, `cc`
+# then the caps, joined by `-`, so a slug only ever grows by appending),
+# because `pcrec-local` can reach it through `$PCREC_LOCAL_FLAGS` and `$CC`
+# and a composition nobody has exercised is a composition that is wrong.
+[testees.pcrec-auto-bigcap]
+engine_mode = "auto"
+captures = "on"
+max_emit_bytes = 8388608
+max_emit_code_bytes = 8388608
+flags = ["--features", "all"]
+description = "pcrec defaults with BOTH emitted-size caps raised to 8 MiB ([B31], limits.md 8, raise-only): the configuration under which bench/altwide's wide rungs emit an artifact at all, against pcrec-auto -- same pin, same engine mode, same captures, the caps the one variable moved"
+
+[testees.pcrec-vm-bigcap]
+engine_mode = "vm"
+captures = "on"
+max_emit_bytes = 8388608
+max_emit_code_bytes = 8388608
+flags = ["--features", "all", "--engine=vm"]
+description = "pcrec --engine=vm with BOTH emitted-size caps raised to 8 MiB ([B31]): the VM forced on the wide rungs it refuses at the 500,000 B CODE cap by default, against pcrec-vm -- one variable moved"

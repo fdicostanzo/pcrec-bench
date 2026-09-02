@@ -1,10 +1,11 @@
 """testees/pcrec/adapter.py -- the pcrec adapter (harness contract 3).
 
 Provides `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm`, their clang siblings
-`pcrec-auto-clang` / `pcrec-nocaps-clang` / `pcrec-vm-clang`, and the
-caller-provided frame-buffer variants `pcrec-auto-in` / `pcrec-vm-in`, all at
-the pin in `configs.toml` -- and `pcrec-local`, a PROVIDED binary at no pin
-at all.
+`pcrec-auto-clang` / `pcrec-nocaps-clang` / `pcrec-vm-clang`, their
+raised-emitted-size-cap siblings `pcrec-auto-bigcap` / `pcrec-vm-bigcap`,
+and the caller-provided frame-buffer variants `pcrec-auto-in` /
+`pcrec-vm-in`, all at the pin in `configs.toml` -- and `pcrec-local`, a
+PROVIDED binary at no pin at all.
 
 THE COMPILEE TOOLCHAIN AXIS ([B24]; pcrec [CC-CLANG]). pcrec emits C and
 stops, so the compiler that turns that C into a .so is OURS -- phase 2 below
@@ -18,6 +19,20 @@ a conflicting `$CC` is refused rather than allowed to make the id lie. The
 timing driver is built by `build_driver()` from `$CC` on every config, so a
 clang testee differs from its gcc sibling in exactly one variable.
 
+THE EMITTED-SIZE CAP AXIS ([B31]; pcrec [ART-SIZE], limits.md 8). pcrec's
+two size caps are raise-only per compile, and a config may raise them:
+`max_emit_bytes = N` / `max_emit_code_bytes = N`, both optional, both
+BYTES. Absent, nothing changes -- no flag on the argv, no clause in
+build_flags, no `config_extra`, the same derived testee_id. Present, the
+flags ride in `flags` (one list feeds argv, build_flags and
+runtime_options), the VALUES join `config_extra`, and a value below
+pcrec's archived default is refused BY NAME before anything is measured.
+It is an AXIS and not a gate removed: a raise also moves the size-term
+ladder's own abort bound, so two artifacts built under different caps are
+two artifacts. `compose_config_extra` is the ONE place `config_extra`'s
+parts are ordered -- the axes in chartering order, so the slug only ever
+grows by appending.
+
 THE LOCAL TESTEE (Frank's I-4 (c), [B10]; record_schema.md 6.2 and 6.8).
 `$PCREC_BIN` names the binary, `$PCREC_LOCAL_FLAGS` adds flags; pin.sh is
 never called. `describe()` reports `engine_version = local:<first 12 hex of
@@ -30,7 +45,8 @@ HEAD when that tree is clean and null when it is dirty, `tier: scratch`, and
 `tier()` before it gates or measures, and the store refuses the record into
 the canonical tree. `engine_mode` and `captures` are DERIVED from the
 effective flags (`--engine=vm` -> `vm`, `--no-captures` -> `off`) so the
-testee_id says what ran. Everything after describe() -- emit-c / gcc / load,
+testee_id says what ran -- and so are the two emitted-size caps, from the
+same flag list. Everything after describe() -- emit-c / gcc / load,
 shim.c, driver.c, the metadata, the `_in` buffers -- is the same code path as
 the pinned testees: `binary_for()` is the one place the binary is chosen.
 
@@ -973,12 +989,20 @@ LIST_DEFINITIONS_TSV = os.path.join(HERE, "list_definitions.tsv")
 #: registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD
 #: archive target ([B22], inbox I-25): one row per numeric limit in pcrec's
 #: src/core/limits.def (44 at 263b013; 45 at a7e0bdf -- [OPT-5]'s
-#: PCREC_MAX_SCAN_EDGES joined), in the table's own order. Nothing
-#: this adapter reads depends on it (every cap and capacity it needs is
+#: PCREC_MAX_SCAN_EDGES joined), in the table's own order. Nothing a
+#: RECORD carries is read from it (every cap and capacity a record needs is
 #: STAMPED per artifact); archived under the same rule as the other two
 #: (re-archive at every re-pin, the diff is what moved) and diffed against
 #: the pin's live output by `make check-harness`
 #: (`check_list_limits_registry`).
+#:
+#: ONE thing does read it, and only to REFUSE ([B31]): the raise-only
+#: check on a config's `max_emit_bytes` / `max_emit_code_bytes` needs the
+#: pin's built-in defaults to say "below the default" in the bench's own
+#: words, and the archive is the pin's own printout of exactly those two
+#: numbers. Reading them here rather than typing them keeps this repo from
+#: holding a second copy of a pcrec constant that could fall out of step --
+#: the same rule the abi floor is written to (`_compile_one`'s comment).
 LIST_LIMITS_TSV = os.path.join(HERE, "list_limits.tsv")
 
 #: Declared values the registry's candidate lists do NOT enumerate because
@@ -1165,6 +1189,181 @@ def cc_version_line(cc):
     compiler and the driver's are comparable side by side."""
     from pcrecbench import env as _env
     return _env.compiler_raw(cc)
+
+
+# --------------------------------------------------- the emitted-size caps
+#
+# [B31] (pcrec [ART-SIZE] / limits.md 8, inbox I-32 (vii)). pcrec refuses
+# rather than emit past either of two caps -- 1,000,000 comment-excluded
+# bytes TOTAL, 500,000 of them outside table initializers (CODE) -- and both
+# are RAISE-ONLY per compile: `--max-emit-bytes=N` / `--max-emit-code-bytes=N`
+# accept a larger artifact and can never manufacture a refusal that would not
+# have happened anyway.
+#
+# On bench/altwide@0.1 those caps refuse 50 of 80 (pattern x form x mode)
+# compiles at this pin, so the wide rungs are unmeasurable without the
+# raise. The raise is therefore an AXIS of the testee, exactly like `cc`:
+# a raised-cap record is not the same record with a gate removed, because
+# raising `--max-emit-bytes` also moves the [ART-SIZE] size-term ladder's
+# own abort bound (pcrec src/core/compile.c: `3 * cap`, saturating) and can
+# change the K it selects. Two artifacts built under different caps are two
+# artifacts, and the testee_id says which.
+#
+#   max_emit_bytes = N          OPTIONAL, per config, BYTES
+#   max_emit_code_bytes = N     OPTIONAL, per config, BYTES
+#
+# ABSENT means today's behaviour byte for byte: no flag on the argv, no
+# clause in `build_flags`, no `config_extra`, the same derived `testee_id`.
+# PRESENT is an IDENTITY CLAIM, and the flag rides in `flags` so ONE list
+# feeds the argv, `build_flags` and `runtime_options` alike.
+#
+#: (config key, pcrec flag, the archived limit that is its FLOOR, slug word).
+#: The order is the order of the slug parts and of the build_flags clause.
+CAP_KEYS = (
+    ("max_emit_bytes", "--max-emit-bytes", "PCREC_MAX_EMIT_BYTES", "emitcap"),
+    ("max_emit_code_bytes", "--max-emit-code-bytes",
+     "PCREC_MAX_VM_EMIT_CODE_BYTES", "codecap"),
+)
+
+
+def limits_rows(path=LIST_LIMITS_TSV):
+    """The committed `--list-limits` TSV as a list of dicts (`#name\\t...`
+    is the header; every other `#` line -- pcrec's own comment block and
+    the bench's source header above it -- is skipped)."""
+    rows, cols = [], None
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.rstrip("\n")
+            if line.startswith("#name\t"):
+                cols = line[1:].split("\t")
+                continue
+            if not line or line.startswith("#"):
+                continue
+            if cols is None:
+                raise _ad.AdapterError(
+                    "%s: a data row before the `#name` header" % path)
+            vals = line.split("\t")
+            if len(vals) != len(cols):
+                raise _ad.AdapterError(
+                    "%s: row has %d columns, header %d: %r"
+                    % (path, len(vals), len(cols), line))
+            rows.append(dict(zip(cols, vals)))
+    return rows
+
+
+def archived_limit(name, path=LIST_LIMITS_TSV):
+    """The pin's own value for one numeric limit, read from the archive.
+
+    The archive is diffed against the pin's live `--list-limits` on every
+    `make check-harness` (`check_list_limits_registry`), so a stale number
+    here is a named failure there rather than a wrong refusal message."""
+    for r in limits_rows(path):
+        if r.get("name") == name:
+            try:
+                return int(r["value"])
+            except (KeyError, ValueError):
+                break
+    raise _ad.AdapterError(
+        "%s has no numeric row for %s -- the emitted-size cap axis reads "
+        "pcrec's own defaults from the archived --list-limits table rather "
+        "than keeping a second copy of them, so a renamed or reshaped limit "
+        "must be seen here, not silently defaulted"
+        % (os.path.basename(path), name))
+
+
+def effective_caps(testee_id, cfg, flags):
+    """-> (extra_flags, config_extra_or_None) for one testee's size caps.
+
+    `flags` is the config's EFFECTIVE flag list -- which for `pcrec-local`
+    already carries whatever `$PCREC_LOCAL_FLAGS` put there, so a locally
+    raised cap is derived from the flags exactly as `engine_mode` and
+    `captures` are and there is ONE code path.
+
+    A declared key and a flag already in `flags` may AGREE (the flag is not
+    added twice) but never DISAGREE: the value is part of the derived
+    testee_id, and an id that names a cap the compile did not run under is
+    worse than no record. A value BELOW pcrec's archived built-in default
+    is refused HERE, by name, before anything is measured -- pcrec would
+    refuse it too, but a caller who mistyped a bench config should be told
+    so by the bench, in the bench's words, at the moment the config is
+    read."""
+    extra, parts = [], []
+    for key, flag, limit_name, word in CAP_KEYS:
+        declared = cfg.get(key)
+        in_flags = None
+        for f in flags:
+            if f.startswith(flag + "="):
+                try:
+                    in_flags = int(f.split("=", 1)[1])
+                except ValueError:
+                    raise _ad.AdapterError(
+                        "%s: %r is not an integer byte count -- pcrec's %s "
+                        "takes bytes" % (testee_id, f, flag))
+        if declared is not None and not isinstance(declared, int):
+            raise _ad.AdapterError(
+                "%s: %s = %r must be an integer -- BYTES of emitted C "
+                "source (testees/pcrec/configs.toml)"
+                % (testee_id, key, declared))
+        if declared is not None and in_flags is not None and declared != in_flags:
+            raise _ad.AdapterError(
+                "%s declares %s = %d in testees/pcrec/configs.toml but its "
+                "effective flags already carry %s=%d. That value is an "
+                "IDENTITY -- it names the cap in the derived testee_id -- so "
+                "the two may agree but never disagree; drop one of them."
+                % (testee_id, key, declared, flag, in_flags))
+        value = declared if declared is not None else in_flags
+        if value is None:
+            continue
+        floor = archived_limit(limit_name)
+        if value < floor:
+            raise _ad.AdapterError(
+                "%s: %s = %d is BELOW pcrec's built-in %s of %d. Both "
+                "emitted-size caps are RAISE-ONLY (pcrec docs/spec/"
+                "limits.md 8: an override exists to accept a larger "
+                "artifact, never to make a build refuse one it would have "
+                "accepted), and this bench will not write a record whose "
+                "testee_id claims a cap pcrec cannot have been under. The "
+                "default is the pin's own, read from the archived "
+                "--list-limits table (testees/pcrec/list_limits.tsv)."
+                % (testee_id, key, value, limit_name, floor))
+        if value <= 0:
+            raise _ad.AdapterError(
+                "%s: %s must be a positive byte count, got %d"
+                % (testee_id, key, value))
+        if in_flags is None:
+            extra.append("%s=%d" % (flag, value))
+        parts.append("%s-%d" % (word, value))
+    return extra, ("-".join(parts) if parts else None)
+
+
+def cap_values(cfg):
+    """-> [(flag, limit_name, value)] for the caps an EFFECTIVE config
+    raises, in CAP_KEYS order; empty where it raises neither. Read back off
+    the effective `flags`, which is where `config()` put them, so a
+    declared key and a `$PCREC_LOCAL_FLAGS` raise read the same."""
+    out = []
+    for _key, flag, limit_name, _word in CAP_KEYS:
+        for f in cfg.get("flags", []):
+            if f.startswith(flag + "="):
+                out.append((flag, limit_name, int(f.split("=", 1)[1])))
+                break
+    return out
+
+
+def compose_config_extra(*parts):
+    """`testee.config_extra` from the axis tokens a config carries, in a
+    FIXED order: the axes in the order they were chartered ([B24] `cc`,
+    then [B31] the emitted-size caps), joined by `-`.
+
+    Chartering order is the rule because it makes the slug APPEND-ONLY: a
+    testee that already had a token keeps it where it was when a later axis
+    joins, so an id in the store never has a part inserted ahead of the one
+    a reader knows it by. The separator is `-` because `_` is what
+    record_schema.md 6.4 splits the whole id on and the slug charset
+    (`$defs/slug`) is `[a-z0-9-]`; the schema never learns the PARTS -- X5
+    derives the id from `config_extra` whole, so composition is entirely
+    this adapter's business."""
+    return "-".join(p for p in parts if p) or None
 
 
 def buffer_capacities(cfg):
@@ -1404,27 +1603,36 @@ class Adapter(_ad.Adapter):
         that will build the artifact, and the `config_extra` slug that puts
         it in the testee_id (None where the config declares no `cc`, which
         is every config that existed before the axis and is why their ids
-        and build_flags are unchanged)."""
+        and build_flags are unchanged).
+
+        [B31]: so are the two EMITTED-SIZE CAPS, and by the SAME rule the
+        local flags already follow -- `effective_caps` is handed the
+        effective flag list, so a config's declared `max_emit_bytes` and a
+        `$PCREC_LOCAL_FLAGS` that carries `--max-emit-bytes=` reach the
+        derived id down one path. The raise flags are APPENDED TO `flags`
+        rather than kept beside them, because `flags` is the single list
+        `_compile_one`'s argv, `build_flags` and `runtime_options` are all
+        built from: adding them anywhere else would need three edits and
+        would eventually drift into two."""
         cfg = dict(_ad.Adapter.config(self, testee_id))
-        if not cfg.get("local"):
-            cfg["cc"], cfg["cc_extra"] = effective_cc(testee_id, cfg)
-            return cfg
         flags = list(cfg.get("flags", []))
-        extra_var = cfg.get("extra_flags")
-        if extra_var:
-            flags += os.environ.get(extra_var, "").split()
-        cfg["flags"] = flags
-        mode = cfg.get("engine_mode", "auto")
-        for f in flags:
-            if f.startswith("--engine="):
-                mode = f.split("=", 1)[1].strip().lower()
-        if mode not in ENGINE_MODES:
-            raise _ad.AdapterError(
-                "%s: --engine=%s is not a pcrec engine mode this adapter "
-                "knows (%s; record_schema.md 6.3)"
-                % (testee_id, mode, ", ".join(ENGINE_MODES)))
-        cfg["engine_mode"] = mode
-        cfg["captures"] = "off" if "--no-captures" in flags else "on"
+        if cfg.get("local"):
+            extra_var = cfg.get("extra_flags")
+            if extra_var:
+                flags += os.environ.get(extra_var, "").split()
+            mode = cfg.get("engine_mode", "auto")
+            for f in flags:
+                if f.startswith("--engine="):
+                    mode = f.split("=", 1)[1].strip().lower()
+            if mode not in ENGINE_MODES:
+                raise _ad.AdapterError(
+                    "%s: --engine=%s is not a pcrec engine mode this adapter "
+                    "knows (%s; record_schema.md 6.3)"
+                    % (testee_id, mode, ", ".join(ENGINE_MODES)))
+            cfg["engine_mode"] = mode
+            cfg["captures"] = "off" if "--no-captures" in flags else "on"
+        cap_flags, cfg["cap_extra"] = effective_caps(testee_id, cfg, flags)
+        cfg["flags"] = flags + cap_flags
         cfg["cc"], cfg["cc_extra"] = effective_cc(testee_id, cfg)
         return cfg
 
@@ -1536,6 +1744,26 @@ class Adapter(_ad.Adapter):
                        "its gcc sibling in exactly one variable ([B24], "
                        "pcrec [CC-CLANG])"
                        % (cfg["cc"], cc_version_line(cfg["cc"])))
+        # [B31] the emitted-size caps. Same shape as the cc note and for
+        # the same reason: absent -> the empty string, so a config that
+        # declares neither key renders the pre-[B31] build_flags byte for
+        # byte. The VALUES are already visible in `pcrec flags` above (the
+        # raise rides in `flags`); this clause states what they MEAN, so a
+        # reader of a record does not have to know limits.md 8 to see that
+        # this artifact was allowed to be larger than pcrec ships for.
+        cap_note = ""
+        if cfg.get("cap_extra"):
+            named = ", ".join(
+                "%s raised to %d B (pcrec default %d)"
+                % (flag, value, archived_limit(limit_name))
+                for flag, limit_name, value in cap_values(cfg))
+            cap_note = ("; EMITTED-SIZE CAPS raised per compile ([B31], pcrec "
+                        "limits.md 8, raise-only): %s -- an artifact this "
+                        "testee accepts may be one its plain sibling REFUSES, "
+                        "and the raise also moves the [ART-SIZE] size-term "
+                        "ladder's own abort bound, so the two are different "
+                        "artifacts and not one artifact with a gate removed"
+                        % named)
         buffer_note = ""
         runtime = runtime_options(cfg.get("flags", []))
         if caps:
@@ -1576,9 +1804,9 @@ class Adapter(_ad.Adapter):
             "engine_mode": cfg["engine_mode"],
             "simd": "n-a",
             "build_flags": "%s; pcrec flags %s; artifact built with "
-                           "%s -O2 -fPIC -shared%s%s"
+                           "%s -O2 -fPIC -shared%s%s%s"
                            % (provenance, " ".join(cfg.get("flags", [])),
-                              cc_text, cc_note, buffer_note),
+                              cc_text, cc_note, buffer_note, cap_note),
             "runtime_options": runtime,
             "compile_cost_definition": (
                 "AOT (requirements 3): every phase from pattern text to a "
@@ -1599,14 +1827,18 @@ class Adapter(_ad.Adapter):
             "warmup_trials": 0,
             "engine_metadata_declaration": dict(METADATA_DECL),
         }
-        if cc_extra:
-            # record_schema.md 6.4's `config_extra`: "the escape hatch for
-            # two testees that differ ONLY in build_flags (which is never
-            # filtered)". The cc axis is exactly that case -- same engine,
-            # same version, same mode, same captures, same simd -- so
-            # without this the clang sibling and the gcc one would DERIVE
-            # THE SAME testee_id and land on top of each other in the store.
-            block["config_extra"] = cc_extra
+        # record_schema.md 6.4's `config_extra`: "the escape hatch for two
+        # testees that differ ONLY in build_flags (which is never
+        # filtered)". BOTH added axes are exactly that case -- same engine,
+        # same version, same mode, same captures, same simd -- so without
+        # this a clang sibling and its gcc one, or a bigcap sibling and its
+        # plain one, would DERIVE THE SAME testee_id and land on top of
+        # each other in the store. `compose_config_extra` is the ONE place
+        # the parts are ordered ([B31]); the schema only ever sees the
+        # whole slug.
+        extra = compose_config_extra(cc_extra, cfg.get("cap_extra"))
+        if extra:
+            block["config_extra"] = extra
         if local:
             # SCRATCH BY CONSTRUCTION (record_schema.md 6.8, X28/X29): the
             # harness lifts `tier` to the setup layer; `binary` stays here.

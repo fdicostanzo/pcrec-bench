@@ -11,18 +11,19 @@ Provides eight testees at the commit pinned in `configs.toml`, and one —
 | `pcrec-auto-in` | `--features all` + `buffer_frames = 32768`, `buffer_trail = 131072` | the defaults, matched through the `_in` entries with a caller-provided frame buffer. INERT wherever `auto` picks the DFA — which is still every artifact of `bench/email` (RE-VERIFIED at pin 36d5963, 2026-08-29: all six `auto`/`nocaps` artifacts stamp `RX_ENGINE "dfa"`, both forms), so it is DEFINED but NOT MEASURED there (the checks use it; it goes live on a sub-bench with VM-selected patterns under `auto` — and since 36d5963 `bench/loglines` HAS one: `level-context` is a VM artifact under `auto`, the [SEL-1] fallback) |
 | `pcrec-vm-in` | `+ --engine=vm` + the same two capacities | RULED 2026-08-25 (manager + pcrec manager; Frank's word pending via the inbox): the VM forced with the buffer, the one entry on `bench/email` where the depth path is reachable and the capacities were measured — the sixth cell of the [B8] window |
 | `pcrec-auto-clang`, `pcrec-nocaps-clang`, `pcrec-vm-clang` | the same flags as their gcc siblings, plus `cc = "clang"` | ([B24]) THE COMPILEE TOOLCHAIN AXIS: the same pcrec artifact, compiled by clang instead of gcc. See below |
+| `pcrec-auto-bigcap`, `pcrec-vm-bigcap` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `max_emit_bytes = 8388608` and `max_emit_code_bytes = 8388608` | ([B31]) THE EMITTED-SIZE CAP AXIS: pcrec's two raise-only per-compile overrides, at 8 MiB, so `bench/altwide`'s wide rungs emit an artifact instead of a refusal. See below |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
 | file | role |
 |---|---|
-| `adapter.py` | the nine configs; the pin; `effective_cc()` (the compilee-toolchain rule); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
+| `adapter.py` | the eleven configs; the pin; `effective_cc()` (the compilee-toolchain rule); `effective_caps()` + `compose_config_extra()` (the emitted-size cap rule and the ONE place `config_extra`'s parts are ordered); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
 | `pin.sh` | `git archive <commit>` from pcrec into the build root, and `make` THERE |
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
-| `configs.toml` | the config ids, `pin = "<commit>"`, the optional per-config `cc` and its precedence ruling ([B24]), the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
+| `configs.toml` | the config ids, `pin = "<commit>"`, the optional per-config `cc` and its precedence ruling ([B24]), the optional per-config `max_emit_bytes` / `max_emit_code_bytes` with the measured derivation of the 8 MiB bound ([B31]), the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 | `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved |
 | `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
-| `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` joined), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing the adapter reads depends on it (every cap/capacity it needs is stamped per artifact); `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
+| `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` joined), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing a RECORD carries is read from it (every cap/capacity a record needs is stamped per artifact); the ONE thing that reads it is the [B31] cap axis' raise-only FLOOR check, which refuses a below-default config value in the bench's own words and takes pcrec's two defaults from here rather than keeping a second copy of them. `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
 
 ## `pin.sh` never writes inside pcrec
 
@@ -156,6 +157,98 @@ refusal: a clang refusal passes only when its diagnostic carries that
 cause verbatim, and any other refusal FAILS as a finding nobody has
 read. The set of refusing kinds is PRINTED, never frozen, so the check
 is green both before and after the pin crosses abi 14.
+
+## The emitted-size cap axis: `max_emit_bytes` / `max_emit_code_bytes` ([B31]; pcrec [ART-SIZE])
+
+pcrec REFUSES rather than emit past either of two caps — 1,000,000
+comment-excluded bytes TOTAL and 500,000 of them OUTSIDE table
+initializers (CODE) — and both are RAISE-ONLY per compile
+(`docs/spec/limits.md` §8: "no caller can manufacture someone else's
+refusal"). Two optional keys per config carry the raise:
+
+    max_emit_bytes = N          # optional, per config, BYTES
+    max_emit_code_bytes = N     # optional, per config, BYTES
+
+**Why the bench needs them.** MEASURED 2026-09-02 at pin `1989c62` over
+all of `bench/altwide@0.1` — 20 patterns × both forms × both engine modes
+— **50 of 80 compiles REFUSE at the default caps** (26 auto rows at the
+total cap, 24 forced-VM rows at the code cap). Without the raise the
+set's whole point, the wide end of the branch-count ladder, has no
+numbers at all. The census is
+`docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt`.
+
+**Absent** the keys, it is today's behaviour byte for byte: no flag on
+pcrec's argv, no clause in `build_flags`, no `config_extra`, the same
+derived `testee_id`. That is checked two ways — the pre-[B31] configs
+directly, and every pcrec `testee_id` with a COMMITTED RECORD at this
+pin re-derived byte-identically, `build_flags` included, because a
+silent rename is the one damage this axis could do that no later reader
+could detect.
+
+**Present** they are an IDENTITY claim, and four things follow:
+
+- the flags ride in the config's `flags` list, so ONE list feeds pcrec's
+  argv, `build_flags` and `runtime_options` alike;
+- `config_extra` carries both VALUES —
+  `emitcap-8388608-codecap-8388608` — so two raises that differ cannot
+  collide in the store;
+- `build_flags` states what the raise MEANS, naming pcrec's default
+  beside each raised value;
+- and the ARTIFACT itself stamps the effective cap
+  (`RX_MAX_EMIT_BYTES` on every artifact, `RX_MAX_EMIT_CODE_BYTES` on VM
+  artifacts only), which is the witness nothing on this side can fake.
+
+**A value BELOW pcrec's default is refused BY NAME, before anything is
+measured** — an `AdapterError` naming the config, the key, both numbers
+and the limit's own registry name. pcrec would refuse it too; the point
+is that the bench refuses it first, at config-read time. The defaults
+come from `list_limits.tsv`, the pin's own `--list-limits` printout,
+rather than from a second copy of a pcrec constant in this repo.
+
+**It is an AXIS, not a gate removed.** Raising `--max-emit-bytes` also
+raises the [ART-SIZE] size-term ladder's own scratch abort bound (pcrec
+`src/core/compile.c`: `3 × cap`, saturating), so a raised-cap compile
+may explore — and select — an unroll K the default-cap compile aborted
+out of. Two artifacts built under different caps are TWO ARTIFACTS. The
+plain configs therefore stay, and their default-cap refusals stay
+first-class `did-not-compile` rows.
+
+**Why 8,388,608 for both.** The largest artifact in the whole census is
+`s-4096`'s whole-subject forced-VM form at 3,741,164 bytes; a forced-VM
+artifact has no table initializers, so its total and its code bytes are
+one number and one maximum settles both caps. The bound is the smallest
+power of two at or above twice that. The auto route's own code maximum
+(37,621 B) is *below* pcrec's 500,000 default, so a per-mode code bound
+would have been an illegal lowering — which is why both configs carry
+the same pair, and why `pcrec-auto-bigcap` and `pcrec-vm-bigcap` are one
+variable apart from each other exactly as their plain siblings are.
+
+**Composition with `cc`.** `compose_config_extra()` is the one place
+`config_extra`'s parts are ordered: the axes in the order they were
+chartered (`cc` first, then the caps), joined by `-`. Chartering order
+makes the slug APPEND-ONLY, so a testee that already had a token keeps
+it where a reader knows it. The schema never learns the parts — X5
+derives the id from `config_extra` whole. There is no `-bigcap-clang`
+config (BD3's one-variable rule), but the composition is exercised on a
+synthesised config and written through `store.write` in
+`check_cap_axis`, because a composition nobody has run is a composition
+that is wrong.
+
+**`pcrec-local` derives its caps from the EFFECTIVE flags**, the way
+`engine_mode` and `captures` already do, so a `$PCREC_LOCAL_FLAGS`
+carrying `--max-emit-bytes=` lands in the derived id down the same code
+path (`pcrec_local-<digest>_vm-caps-simdna_emitcap-8388608`). A declared
+key and a flag may AGREE but never DISAGREE: the value is part of the
+id, and an id naming a cap the compile did not run under is worse than
+no record.
+
+**Running them.** The bigcap cells belong to `bench/altwide`'s window and
+nowhere else — every other set compiles inside the default caps, where a
+bigcap testee would measure the same artifact as its plain sibling and be
+a trap for a reader. `scripts/run_window.sh` already takes the roster as
+`$TESTEES`, and `scripts/run_suite.sh` already takes a per-set
+`$TESTEES_altwide` (or a labelled second pass, `altwide:bigcap` with
+`$TESTEES_altwide_bigcap`), so no script change is needed.
 
 ## `shim.c` includes the artifact's `.c`, and that is load-bearing
 

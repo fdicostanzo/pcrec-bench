@@ -1,0 +1,337 @@
+# docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt
+#
+# [B31] (the config half), inbox I-32 (vii): THE SIZE CENSUS the raised-cap
+# testee axis' bound is derived from, and the evidence a default-cap ruling
+# on pcrec's side would need. Every bench/altwide@0.1 pattern x both forms
+# x both pcrec engine modes, compiled TWICE -- once at the pin's DEFAULT
+# caps (the 0.1 refusal, verbatim) and once under a probe RAISE far above
+# anything the set could need -- with pcrec's own emitted-size numbers
+# recorded either way. No timing regime, no measurement window: these are
+# compile-only wall clocks on a shared box, kept because the COST of a
+# refusal is itself one of the findings.
+#
+# Source: python3 census.py (the script is reproduced at the foot of this
+# file), run 2026-09-02 14:59-15:05 EDT on budu-ryzen1600 (12 cores) in
+# worktree b31cap, SERIALLY, one pcrec at a time, each exec under
+# `/usr/bin/gnutimeout 600`. Box load average at start 1.24, at end 6.43
+# (two other lanes of this session were active; every number here is a
+# single-threaded compile, and none of them is a benchmark).
+#
+#   pcrec pin  1989c62 (abi 15), built by testees/pcrec/pin.sh into
+#              /home/duxevents/pcrec-bench/build/pcrec-1989c62/build/pcrec
+#   defaults   PCREC_MAX_EMIT_BYTES 1,000,000 / PCREC_MAX_VM_EMIT_CODE_BYTES
+#              500,000 (testees/pcrec/list_limits.tsv, the pin's own
+#              --list-limits)
+#   probe      --max-emit-bytes=100000000 --max-emit-code-bytes=100000000
+#   base argv  pcrec -p rx --features all [--engine=vm] -o <dir>/artifact.c
+#              -- '<pattern>'
+#   forms      `plain` is the .rx text; `whole-subject` is
+#              `(?:<text>)\z` (pcrecbench/record.py's whole_subject_text)
+#   patterns   bench/altwide/patterns/*.rx at worktree b31cap, branch
+#              lane/b31cap off master 742c6bc (sha256 of the pattern
+#              directory listed at the foot)
+#
+# THE FOUR FINDINGS
+#
+#  1. 80 of 80 raised compiles SUCCEEDED. Nothing timed out, nothing hit
+#     another limit behind the caps, and the probe raise did not saturate:
+#     the largest artifact in the set is 3.7 MB against a 100 MB probe.
+#
+#  2. THE LARGEST ARTIFACT ON EITHER CAP'S QUANTITY is `s-4096`'s
+#     whole-subject FORCED-VM form, 3,741,164 bytes. A forced-VM artifact
+#     carries no table initializers, so its TOTAL and its CODE bytes are
+#     the same number and one maximum settles both caps. Per mode:
+#
+#         mode  max emit_bytes            max emit_code_bytes
+#         auto  2,586,958  (w-2048 \z)       37,621  (s-4096 \z)
+#         vm    3,741,164  (s-4096 \z)    3,741,164  (s-4096 \z)
+#
+#     The auto route's own code maximum (37,621 B) is an order of magnitude
+#     BELOW pcrec's 500,000 default, so a per-mode code bound would have
+#     been an illegal LOWERING -- which is why both bigcap configs carry
+#     the same pair. THE BOUND: the smallest power of two at or above twice
+#     the largest observed value, 2 x 3,741,164 = 7,482,328 -> 8,388,608
+#     (8 MiB), for both caps on both configs.
+#
+#  3. AT THE DEFAULT CAPS, 50 OF THE 80 COMPILES REFUSE -- 26 auto rows at
+#     the TOTAL cap and 24 vm rows at the CODE cap. 14 of 20 patterns lose
+#     at least one auto form and 12 of 20 at least one vm form. SIX
+#     patterns compile on all four (form x mode) cells at the default
+#     caps: `floor`, `w-8`, `w-64`, `sh1-64`, `sfx-64`, `nar4-64`. Two
+#     more lose exactly one cell -- `w-256` and `cnt-64` both keep three
+#     and lose the AUTO WHOLE-SUBJECT form, the `\z` anchoring being what
+#     pushes each over the total cap. The other twelve lose at least two.
+#
+#  4. A REFUSAL IS NOT FREE, AND THE TWO ROUTES DIFFER BY THREE ORDERS OF
+#     MAGNITUDE. Both caps are checked AFTER emission, so the emitter runs
+#     to completion and is then thrown away: an auto-route refusal costs
+#     0.07-40.23 s (the DFA subset construction dominates and grows with
+#     width), a forced-VM refusal 0.01-0.07 s. The most expensive single
+#     refusal in the set is `s-4096` whole-subject under auto at 40.23 s;
+#     the whole 20-pattern set costs about 116 s of auto-route refusals per
+#     form pair. `raised_s` and `default_s` below are the SAME compile
+#     either side of the cap check, and they agree to within the noise of a
+#     shared box -- which is the direct evidence for "checked after
+#     emission".
+#
+# COLUMNS. `emit_bytes` / `emit_code_bytes` are pcrec's own two size
+# quantities (comment-excluded C source summed over the emitted .c and .h;
+# total, and total minus table initializers), computed by
+# testees/pcrec/adapter.py's `emit_size` port. On all 61 rows where pcrec's
+# own advisory `--warn-emit-bytes` line fired (the default 250,000
+# threshold), THE PORT AGREED WITH PCREC BYTE-EXACTLY on both numbers; the
+# 19 rows below the threshold have no independent witness and carry the
+# port's numbers alone. `raw_bytes` is the .c + .h on disk, comments and
+# all. `default_cap` is which cap refused (`total` = --max-emit-bytes,
+# `code` = --max-emit-code-bytes) and `default_bytes` is the size PCREC
+# QUOTED in its own refusal, which is the same quantity as `emit_bytes` /
+# `emit_code_bytes` respectively and differs by the handful of bytes the
+# raise flags add to the emitted provenance comment.
+#
+#pattern	form	mode	emit_bytes	emit_code_bytes	raw_bytes	raised_s	default_outcome	default_cap	default_bytes	default_s
+floor	plain	auto	17967	12970	33618	0.01	compiled	-	-	0.01
+floor	plain	vm	17263	17263	31562	0.01	compiled	-	-	0.01
+floor	whole-subject	auto	20310	14987	36338	0.00	compiled	-	-	0.00
+floor	whole-subject	vm	17374	17374	31691	0.01	compiled	-	-	0.00
+w-8	plain	auto	42488	14854	62680	0.01	compiled	-	-	0.01
+w-8	plain	vm	25398	25398	40028	0.01	compiled	-	-	0.00
+w-8	whole-subject	auto	46355	16770	69534	0.01	compiled	-	-	0.01
+w-8	whole-subject	vm	25511	25511	40159	0.00	compiled	-	-	0.00
+w-64	plain	auto	287535	17304	308519	0.03	compiled	-	-	0.03
+w-64	plain	vm	97411	97411	115929	0.01	compiled	-	-	0.01
+w-64	whole-subject	auto	305057	19220	325828	0.04	compiled	-	-	0.04
+w-64	whole-subject	vm	97526	97526	116062	0.01	compiled	-	-	0.01
+w-256	plain	auto	977057	18831	1002775	0.28	compiled	-	-	0.28
+w-256	plain	vm	341116	341116	373263	0.01	compiled	-	-	0.02
+w-256	whole-subject	auto	1033157	20747	1058662	0.40	did-not-compile	total	1033155	0.41
+w-256	whole-subject	vm	341233	341233	373398	0.01	compiled	-	-	0.01
+w-512	plain	auto	1577582	20970	1609379	0.82	did-not-compile	total	1577580	0.83
+w-512	plain	vm	678315	678315	728681	0.01	did-not-compile	code	678310	0.01
+w-512	whole-subject	auto	1656187	22869	1687771	1.25	did-not-compile	total	1656185	1.23
+w-512	whole-subject	vm	678432	678432	728816	0.01	did-not-compile	code	678427	0.01
+w-1024	plain	auto	1242565	22756	1283261	2.83	did-not-compile	total	1242563	2.70
+w-1024	plain	vm	1371817	1371817	1458936	0.02	did-not-compile	code	1371812	0.02
+w-1024	whole-subject	auto	1358376	23983	1398936	4.19	did-not-compile	total	1358374	4.12
+w-1024	whole-subject	vm	1371934	1371934	1459071	0.02	did-not-compile	code	1371929	0.02
+w-2048	plain	auto	2378910	31551	2445978	10.89	did-not-compile	total	2378908	11.16
+w-2048	plain	vm	2757100	2757100	2920645	0.04	did-not-compile	code	2757095	0.04
+w-2048	whole-subject	auto	2586958	32778	2653892	16.87	did-not-compile	total	2586956	16.89
+w-2048	whole-subject	vm	2757219	2757219	2920782	0.04	did-not-compile	code	2757214	0.04
+s-2048	plain	auto	1260220	26218	1311790	5.18	did-not-compile	total	1260218	5.28
+s-2048	plain	vm	1862329	1862329	2009993	0.03	did-not-compile	code	1862324	0.04
+s-2048	whole-subject	auto	1427894	27463	1479328	8.49	did-not-compile	total	1427892	8.78
+s-2048	whole-subject	vm	1862448	1862448	2010130	0.03	did-not-compile	code	1862443	0.04
+s-4096	plain	auto	1621469	36394	1707978	21.30	did-not-compile	total	1621467	19.93
+s-4096	plain	vm	3741045	3741045	4023612	0.08	did-not-compile	code	3741040	0.07
+s-4096	whole-subject	auto	1896770	37621	1983143	33.63	did-not-compile	total	1896768	40.23
+s-4096	whole-subject	vm	3741164	3741164	4023749	0.06	did-not-compile	code	3741159	0.06
+sh1-64	plain	auto	236214	15432	255969	0.02	compiled	-	-	0.02
+sh1-64	plain	vm	91051	91051	109603	0.01	compiled	-	-	0.01
+sh1-64	whole-subject	auto	246682	17453	266224	0.02	compiled	-	-	0.02
+sh1-64	whole-subject	vm	91166	91166	109736	0.00	compiled	-	-	0.01
+sh1-512	plain	auto	1524589	21453	1557704	0.12	did-not-compile	total	1524587	0.12
+sh1-512	plain	vm	656438	656438	708051	0.01	did-not-compile	code	656433	0.01
+sh1-512	whole-subject	auto	1576381	23474	1609283	0.14	did-not-compile	total	1576379	0.14
+sh1-512	whole-subject	vm	656555	656555	708186	0.01	did-not-compile	code	656550	0.01
+pfx3-512	plain	auto	1088255	21899	1122720	0.07	did-not-compile	total	1088253	0.07
+pfx3-512	plain	vm	562902	562902	615901	0.01	did-not-compile	code	562897	0.01
+pfx3-512	whole-subject	auto	1122239	23920	1156491	0.07	did-not-compile	total	1122237	0.07
+pfx3-512	whole-subject	vm	563019	563019	616036	0.01	did-not-compile	code	563014	0.01
+sfx-64	plain	auto	244010	17361	265355	0.04	compiled	-	-	0.04
+sfx-64	plain	vm	117132	117132	136010	0.01	compiled	-	-	0.00
+sfx-64	whole-subject	auto	253045	19277	274177	0.05	compiled	-	-	0.05
+sfx-64	whole-subject	vm	117247	117247	136143	0.01	compiled	-	-	0.01
+sfx-512	plain	auto	1331598	21786	1366190	1.14	did-not-compile	total	1331596	1.14
+sfx-512	plain	vm	809270	809270	862014	0.01	did-not-compile	code	809265	0.01
+sfx-512	whole-subject	auto	1369673	23702	1404052	1.55	did-not-compile	total	1369671	1.52
+sfx-512	whole-subject	vm	809387	809387	862149	0.01	did-not-compile	code	809382	0.01
+nar4-64	plain	auto	279236	17288	300357	0.04	compiled	-	-	0.03
+nar4-64	plain	vm	103034	103034	122031	0.01	compiled	-	-	0.01
+nar4-64	whole-subject	auto	291401	19205	312309	0.04	compiled	-	-	0.04
+nar4-64	whole-subject	vm	103149	103149	122164	0.01	compiled	-	-	0.01
+nar4-512	plain	auto	1607793	21215	1640659	1.12	did-not-compile	total	1607791	1.06
+nar4-512	plain	vm	700062	700062	753153	0.01	did-not-compile	code	700057	0.01
+nar4-512	whole-subject	auto	1672778	23131	1705431	1.53	did-not-compile	total	1672776	1.61
+nar4-512	whole-subject	vm	700179	700179	753288	0.01	did-not-compile	code	700174	0.01
+srt-512	plain	auto	1577583	20971	1609380	0.19	did-not-compile	total	1577581	0.19
+srt-512	plain	vm	584807	584807	638023	0.01	did-not-compile	code	584802	0.01
+srt-512	whole-subject	auto	1656188	22870	1687772	0.26	did-not-compile	total	1656186	0.25
+srt-512	whole-subject	vm	584924	584924	638158	0.01	did-not-compile	code	584919	0.01
+ci-512	plain	auto	1589604	21195	1621803	0.18	did-not-compile	total	1589602	0.18
+ci-512	plain	vm	906885	900863	956732	0.01	did-not-compile	code	900858	0.01
+ci-512	whole-subject	auto	1668209	23094	1700195	0.24	did-not-compile	total	1668207	0.24
+ci-512	whole-subject	vm	907002	900980	956867	0.01	did-not-compile	code	900975	0.01
+cnt-64	plain	auto	838473	19069	860509	0.06	compiled	-	-	0.06
+cnt-64	plain	vm	258778	258778	283712	0.01	compiled	-	-	0.01
+cnt-64	whole-subject	auto	1107355	20987	1129182	0.14	did-not-compile	total	1107353	0.14
+cnt-64	whole-subject	vm	258895	258895	283847	0.01	compiled	-	-	0.01
+wb-512	plain	auto	2345183	22738	2377507	0.78	did-not-compile	total	2345181	0.80
+wb-512	plain	vm	679203	678972	729581	0.01	did-not-compile	code	678967	0.01
+wb-512	whole-subject	auto	2394398	24713	2426509	1.11	did-not-compile	total	2394396	1.10
+wb-512	whole-subject	vm	679320	679089	729716	0.01	did-not-compile	code	679084	0.01
+
+# ---------------------------------------------------------------------------
+# THE PATTERN FILES this census was taken over (sha256, the same bytes the
+# harness hands pcrec -- bench/altwide/patterns/*.rx at branch lane/b31cap):
+#
+#   b73a8c9472787453be312e72a16e09fac1806dff1cbc9010257f5314dbc031b2  bench/altwide/patterns/ci-512.rx
+#   f018773068ca4e375893444e5e02dfbe37e01e41cd075cdcaa88b84d4244216a  bench/altwide/patterns/cnt-64.rx
+#   334359b90efed75da5f0ada1d5e6b256f4a6bd0aee7eb39c0f90182a021ffc8b  bench/altwide/patterns/floor.rx
+#   ef5a9f1a54c48d061e0a46462bcb1d14937de8e5c73340b6f02d194c0c46ddbf  bench/altwide/patterns/nar4-512.rx
+#   cf9c729f20cb10b69af1401037f5e85af5f607ebefae8bfb0038b2a7bfc8cf4b  bench/altwide/patterns/nar4-64.rx
+#   12d5d13590699a224db54b93e496b96ae1859da32d975f9b48862f86756fcf6a  bench/altwide/patterns/pfx3-512.rx
+#   aa63f5ab35fd9ee1734a1fa6c35c95bc79e1623926f1b2f984effed8c5c3608b  bench/altwide/patterns/s-2048.rx
+#   020af02898c4f2407aaaf3fdedfca5c773a55bf7aa085db462f03d7b9edcb12a  bench/altwide/patterns/s-4096.rx
+#   e09c9c0dcb48ab28c7258a2901a883161104983c49b1bc7a56dc41249f8066c6  bench/altwide/patterns/sfx-512.rx
+#   63f4a5fbd4edbe5dcbb4fb6e54f530e64da7b9516befab16ebf00e807e05b8d9  bench/altwide/patterns/sfx-64.rx
+#   20cc1c82040271f019e51f12b949bef2ef7a818ce33a63cea6edb627eb5a0fcd  bench/altwide/patterns/sh1-512.rx
+#   336ca62fec35ddc3aa17e26d1c8630121c3591ff20059e6c52738747d6c63584  bench/altwide/patterns/sh1-64.rx
+#   693362a298dc4cc3c05d69ce20b8c5110d74a72728223fdf8e1056c301da6df1  bench/altwide/patterns/srt-512.rx
+#   18d5799f30d1d7e942521f9964b25eb0c6009ac2110f2b338bfa290c6de98867  bench/altwide/patterns/w-1024.rx
+#   71ad1088f45cc0a77033d7fff66765a9698ecd55d970f2dcb0ec1676f16d0c67  bench/altwide/patterns/w-2048.rx
+#   5975416f0c730638f2e5056da84b640649e09d418d5e8e301bd40850f5864712  bench/altwide/patterns/w-256.rx
+#   3f8b5a935ce91b6f4b12fb2e343af2b116ad0615fd6cb41e4afaf00e84369469  bench/altwide/patterns/w-512.rx
+#   94ea8d96e05ced6fd6374885682f88794bc59da80afb993a738a87cd7c0f57f9  bench/altwide/patterns/w-64.rx
+#   2b1d243794ac052f8e82aa7a75b16df4700fe48b681259bd23e381008ee85e61  bench/altwide/patterns/w-8.rx
+#   5f9d6808fb5454c7dfa9630f6e226af251422cb2b2688a859410d544625b130a  bench/altwide/patterns/wb-512.rx
+#
+# ---------------------------------------------------------------------------
+# THE SCRIPT, verbatim (it wrote census.jsonl; the rows above are that file
+# rendered, nothing recomputed):
+#
+# #!/usr/bin/env python3
+# """[B31] the raised-cap census over bench/altwide@0.1.
+# 
+# Every pattern x both forms x {auto, vm}, compiled TWICE at pin 1989c62:
+# once at the DEFAULT caps (the 0.1 refusal, verbatim) and once under a
+# probe RAISE, recording pcrec's own emitted-size numbers, the adapter's
+# port of them, and the wall clock of the pcrec exec.
+# 
+# Serial, one pcrec at a time, each under gnutimeout 600. A timeout is a
+# FINDING: the row says so and the run goes on.
+# """
+# import json
+# import os
+# import re
+# import subprocess
+# import sys
+# import time
+# 
+# ROOT = "/home/duxevents/pcrec-bench/worktrees/b31cap"
+# sys.path.insert(0, ROOT)
+# sys.path.insert(0, os.path.join(ROOT, "testees", "pcrec"))
+# 
+# import importlib.util
+# spec = importlib.util.spec_from_file_location(
+#     "pcrec_adapter_probe", os.path.join(ROOT, "testees", "pcrec", "adapter.py"))
+# mod = importlib.util.module_from_spec(spec)
+# sys.modules["pcrec_adapter_probe"] = mod
+# spec.loader.exec_module(mod)
+# 
+# from pcrecbench.record import whole_subject_text
+# 
+# PCREC = "/home/duxevents/pcrec-bench/build/pcrec-1989c62/build/pcrec"
+# PATDIR = os.path.join(ROOT, "bench", "altwide", "patterns")
+# OUT = sys.argv[1] if len(sys.argv) > 1 else "census.jsonl"
+# PROBE = int(os.environ.get("PROBE_RAISE", "100000000"))
+# TMP = os.path.join(os.path.dirname(os.path.abspath(OUT)), "cwork")
+# os.makedirs(TMP, exist_ok=True)
+# 
+# # the refusal lines, both caps
+# REF_TOTAL = re.compile(r"pattern too large: (\d+) bytes of emitted C source "
+#                        r"\(limit (\d+)")
+# REF_CODE = re.compile(r"pattern too large: (\d+) bytes of emitted code "
+#                       r"\(limit (\d+)\)")
+# 
+# ORDER = ["floor", "w-8", "w-64", "w-256", "w-512", "w-1024", "w-2048",
+#          "s-2048", "s-4096", "sh1-64", "sh1-512", "pfx3-512", "sfx-64",
+#          "sfx-512", "nar4-64", "nar4-512", "srt-512", "ci-512", "cnt-64",
+#          "wb-512"]
+# 
+# 
+# def run_one(name, form, mode, raised):
+#     with open(os.path.join(PATDIR, name + ".rx"), "rb") as f:
+#         pat = f.read()
+#     if form == "whole-subject":
+#         pat = whole_subject_text(pat)
+#     d = os.path.join(TMP, "%s-%s-%s-%s" % (name, form, mode,
+#                                            "raised" if raised else "default"))
+#     os.makedirs(d, exist_ok=True)
+#     art = os.path.join(d, "artifact.c")
+#     flags = ["--features", "all"]
+#     if mode == "vm":
+#         flags.append("--engine=vm")
+#     if raised:
+#         flags += ["--max-emit-bytes=%d" % PROBE,
+#                   "--max-emit-code-bytes=%d" % PROBE]
+#     argv = (["/usr/bin/gnutimeout", "600", PCREC, "-p", "rx"] + flags
+#             + ["-o", art, "--", pat.decode("latin-1")])
+#     t0 = time.monotonic()
+#     try:
+#         proc = subprocess.run(argv, capture_output=True, timeout=900)
+#         rc, err = proc.returncode, (proc.stderr or b"").decode("utf-8", "replace")
+#     except subprocess.TimeoutExpired:
+#         rc, err = -9, "HARNESS TIMEOUT (900 s wall around gnutimeout 600)"
+#     t1 = time.monotonic()
+#     row = {"pattern": name, "form": form, "mode": mode,
+#            "caps": "raised" if raised else "default",
+#            "rc": rc, "wall_s": round(t1 - t0, 3),
+#            "stderr": " ".join(err.split())[:600]}
+#     if rc == 124:
+#         row["outcome"] = "TIMED-OUT at gnutimeout 600 -- a FINDING"
+#         return row
+#     if rc != 0:
+#         row["outcome"] = "did-not-compile"
+#         m = REF_CODE.search(err)
+#         if m:
+#             row["refused_by"] = "code"
+#             row["refused_bytes"] = int(m.group(1))
+#             row["refused_limit"] = int(m.group(2))
+#         else:
+#             m = REF_TOTAL.search(err)
+#             if m:
+#                 row["refused_by"] = "total"
+#                 row["refused_bytes"] = int(m.group(1))
+#                 row["refused_limit"] = int(m.group(2))
+#             else:
+#                 row["refused_by"] = "other"
+#         return row
+#     row["outcome"] = "compiled"
+#     files = [art]
+#     h = art[:-2] + ".h"
+#     if os.path.exists(h):
+#         files.append(h)
+#     tot, code = mod.emit_size(files)
+#     row["emit_bytes"] = tot
+#     row["emit_code_bytes"] = code
+#     row["raw_bytes"] = sum(os.path.getsize(f) for f in files)
+#     w = mod.parse_warn_line(err)
+#     if w:
+#         row["pcrec_total"], row["pcrec_code"] = w[0], w[1]
+#         row["port_agrees"] = (w[0] == tot and w[1] == code)
+#     # keep the disk clean: the artifacts are large and we only wanted sizes
+#     for f in files:
+#         os.unlink(f)
+#     return row
+# 
+# 
+# def main():
+#     done = 0
+#     with open(OUT, "a", encoding="utf-8") as out:
+#         for name in ORDER:
+#             for form in ("plain", "whole-subject"):
+#                 for mode in ("auto", "vm"):
+#                     for raised in (False, True):
+#                         r = run_one(name, form, mode, raised)
+#                         out.write(json.dumps(r, sort_keys=True) + "\n")
+#                         out.flush()
+#                         done += 1
+#                         print("%3d %-9s %-13s %-4s %-7s rc=%-4s %8.2fs %s"
+#                               % (done, name, form, mode,
+#                                  r["caps"], r["rc"], r["wall_s"],
+#                                  r.get("emit_bytes",
+#                                        r.get("refused_bytes", "-"))),
+#                               flush=True)
+# 
+# 
+# main()

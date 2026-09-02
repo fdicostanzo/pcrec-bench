@@ -3411,6 +3411,473 @@ def check_cc_axis():
                 "not reach the store" % stamped)
 
 
+#: THE EMITTED-SIZE CAP AXIS ([B31]; pcrec [ART-SIZE], docs/spec/limits.md
+#: 8, inbox I-32 (vii)). At pin 1989c62 pcrec REFUSES 50 of the 80
+#: (pattern x form x engine mode) compiles of bench/altwide@0.1 -- the auto
+#: route at the 1,000,000 B TOTAL cap, the forced VM at the 500,000 B CODE
+#: cap -- so the set's wide rungs have no numbers at all without the
+#: raise-only overrides. `pcrec-auto-bigcap` / `pcrec-vm-bigcap` carry them,
+#: at 8 MiB apiece (the bound is derived from a measured census; see
+#: configs.toml and docs/dev/measurements/2026-09-02-altwide-raised-cap-
+#: sizes.txt). Six arms, and what each is built to catch:
+#:
+#:   1. THE PRE-[B31] CONFIGS ARE UNTOUCHED, twice over. (a) Every config
+#:      that predates the axis puts NO cap flag on pcrec's argv, renders NO
+#:      cap clause in `build_flags`, and derives the `config_extra` and the
+#:      id SHAPE it had before. (b) And -- the arm that would actually be
+#:      damaged -- every pcrec `testee_id` with a COMMITTED RECORD at this
+#:      pin re-derives byte-identically today, `build_flags` included. An
+#:      optional key that changed an absent-key rendering would silently
+#:      rename testees whose numbers are already in `store/`, and nothing
+#:      downstream could tell.
+#:   2. PRESENT MEANS PRESENT ALL THE WAY DOWN. A real compile under a
+#:      bigcap config is watched at the `subprocess` boundary: both flags
+#:      must be in pcrec's ACTUAL argv at the config's values. The same
+#:      numbers must reach `runtime_options`, `build_flags`, the derived
+#:      `testee_id` -- and the ARTIFACT's own `RX_MAX_EMIT_BYTES` /
+#:      `RX_MAX_EMIT_CODE_BYTES` stamps, which pcrec writes from the
+#:      EFFECTIVE caps and which nothing on this side can fake.
+#:   3. RAISE-ONLY IS REFUSED BY NAME, BEFORE ANYTHING RUNS. A value one
+#:      below pcrec's built-in default is an AdapterError naming the config,
+#:      the key, both numbers and the limit's own registry name. pcrec would
+#:      refuse it too; the point is that the bench refuses it FIRST, at
+#:      config-read time, so no clock ever starts on a cell that cannot be.
+#:   4. THE CONTROL, and it is the whole reason the axis exists. A pattern
+#:      the PLAIN sibling REFUSES at the default cap COMPILES under the
+#:      bigcap one, and that artifact then answers a hand-built smoke set
+#:      exactly as the libpcre2 oracle does. Without the refusal half a
+#:      raise proves nothing (the pattern might have fitted anyway); without
+#:      the oracle half a raise that produced a WRONG matcher would pass.
+#:   5. THE COMPOSITION WITH `cc`. No `-bigcap-clang` config exists (BD3's
+#:      one-variable rule: the two axes crossed give four cells no single
+#:      comparison can attribute), so the composed slug is exercised on a
+#:      config SYNTHESISED in memory -- it must be a legal `$defs/slug`,
+#:      lead with the earlier-chartered token, and survive `store.write`'s
+#:      own validation in a record (X5 derives the id from `config_extra`
+#:      WHOLE, so the parts are the adapter's business alone).
+#:   6. THE CLI SEES THEM. `pcrecbench testees` lists both new ids.
+_PRE_B31_CONFIGS = _PRE_B24_CONFIGS + ("pcrec-auto-clang", "pcrec-nocaps-clang",
+                                       "pcrec-vm-clang")
+
+#: (bigcap config, its plain sibling, the altwide pattern that separates
+#: them). Both controls are chosen from the [B31] census for COST: `w-512`
+#: under a forced VM refuses at the code cap in 0.01 s and compiles under
+#: the raise in 0.01 s + 5 s of gcc; `pfx3-512` is the CHEAPEST auto-route
+#: refusal in the whole set (0.07 s either way, 0.3 s of gcc), which is what
+#: keeps this arm affordable in a smoke suite -- the wide rungs the axis was
+#: built for cost 11-40 s per compile and belong in a window, not here.
+_CAP_PAIRS = (("pcrec-vm-bigcap", "pcrec-vm", "w-512"),
+              ("pcrec-auto-bigcap", "pcrec-auto", "pfx3-512"))
+
+
+class _ArgvSpy:
+    """A `subprocess` stand-in that records every argv and delegates. The
+    adapter calls `subprocess.run` by module attribute, so swapping the
+    attribute watches the REAL execs without touching the adapter."""
+
+    def __init__(self, real, sink):
+        self._real, self._sink = real, sink
+
+    def run(self, argv, *a, **kw):
+        try:
+            self._sink.append([str(x) for x in argv])
+        except TypeError:
+            self._sink.append([str(argv)])
+        return self._real.run(argv, *a, **kw)
+
+    def __getattr__(self, name):
+        return getattr(self._real, name)
+
+
+def _cap_subjects(pattern_bytes, tmp, tag):
+    """Hand-built smoke subjects for a wide alternation, taken from its OWN
+    branches: three hits at different branch INDEXES (first, middle, last),
+    one hit buried mid-line, and three designed misses (a real branch with
+    one byte changed, a word in no pool, the empty subject). Built from the
+    pattern text rather than from the sub-bench's generated subject tree, so
+    the arm does not depend on a generator having run."""
+    inner = pattern_bytes
+    if inner.startswith(b"(?:") and inner.endswith(b")"):
+        inner = inner[3:-1]
+    branches = [b for b in inner.split(b"|") if b and b.isalpha()]
+    if len(branches) < 8:
+        return None, None
+    first, mid, last = branches[0], branches[len(branches) // 2], branches[-1]
+    texts = [first, mid, last, b"the word " + mid + b" sits mid line",
+             bytes([first[0] ^ 0x01]) + first[1:], b"zzqqxx nothing here", b""]
+    subj = []
+    for i, s in enumerate(texts):
+        p = os.path.join(tmp, "%s-s%d.bin" % (tag, i))
+        with open(p, "wb") as f:
+            f.write(s)
+        subj.append(_CCSubject(i, p, len(s)))
+    return subj, texts
+
+
+def _cap_vs_oracle(adapter, tid, pattern, subj, texts, tmp, tag):
+    """-> (outcome, diagnostic, disagreements, n_rows, n_matches, metadata).
+
+    Compiles both forms under `tid` and compares EVERY measured row against
+    the libpcre2 oracle run on the same bytes -- the plain form against an
+    unanchored search, the whole-subject form against ANCHORED|ENDANCHORED,
+    which is what each of those two artifacts is built to answer."""
+    from pcrecbench import oracle_pcre2 as _o
+    adapter.prepare(tid, tmp)
+    cp = adapter.compile(tid, tag, pattern, {}, 1, tmp)
+    diffs, nrows, nmatch, meta = [], 0, 0, {}
+    for form, regime in ((_ad.FORM_PLAIN, "search_short"),
+                         (_ad.FORM_WHOLE_SUBJECT, "match")):
+        cr = cp.get(form)
+        if cr is None:
+            continue
+        if cr.outcome != "compiled":
+            return cr.outcome, (cr.diagnostic or ""), None, 0, 0, {}
+        if form == _ad.FORM_PLAIN:
+            meta = dict(cr.engine_metadata or {})
+        got, _i, _n = adapter.measure(dict(cr.handle), regime, subj, 1, 1,
+                                      timeout=300)
+        oc = _o.compile(pattern if form == _ad.FORM_PLAIN
+                        else _rec.whole_subject_text(pattern))
+        for r in (got[0] if got else []):
+            nrows += 1
+            text = texts[int(str(r.subject_id).split("-")[1])]
+            want = (oc.search(text) if form == _ad.FORM_PLAIN
+                    else oc.match(text))
+            matched = str(r.answer).startswith("match")
+            if want is None:
+                if matched:
+                    diffs.append("%s/%s: engine matched [%s,%s), oracle "
+                                 "no-match" % (form, r.subject_id, r.start, r.end))
+                continue
+            nmatch += 1
+            ws, we = want[0]
+            if not matched:
+                diffs.append("%s/%s: engine %s, oracle [%d,%d)"
+                             % (form, r.subject_id, r.answer, ws, we))
+            elif (r.start, r.end) != (ws, we):
+                diffs.append("%s/%s: engine [%s,%s), oracle [%d,%d)"
+                             % (form, r.subject_id, r.start, r.end, ws, we))
+    return "compiled", "", diffs, nrows, nmatch, meta
+
+
+def check_cap_axis():
+    """THE EMITTED-SIZE CAP AXIS ([B31]). The six arms and what each is
+    built to catch are documented above _PRE_B31_CONFIGS."""
+    print("-- the emitted-size cap axis: the raise-only --max-emit-* "
+          "overrides ([B31], pcrec [ART-SIZE]) --")
+    import glob as _glob
+    import json as _json
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("cap axis", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+
+    saved = dict(os.environ)
+    os.environ["PCREC_BIN"] = adapter.pin_binary()
+    os.environ.pop("PCREC_LOCAL_FLAGS", None)
+    os.environ.pop("CC", None)
+    try:
+        # ---- 1a. the configs that predate the axis, untouched ------------
+        raw = adapter.testees()
+        offenders, shapes = [], []
+        for tid in _PRE_B31_CONFIGS:
+            cfg = adapter.config(tid)
+            block = adapter.describe(tid)
+            want_extra = "cc-clang" if raw[tid].get("cc") else None
+            derived = _rec.derive_testee_id(block)
+            shapes.append(derived)
+            if cfg.get("flags") != list(raw[tid].get("flags", [])) \
+                    and not raw[tid].get("local"):
+                offenders.append("%s: the effective flags %r are no longer "
+                                 "the config's own %r"
+                                 % (tid, cfg.get("flags"), raw[tid].get("flags")))
+            if any("--max-emit" in f for f in cfg.get("flags", [])):
+                offenders.append("%s: a cap flag reached the argv of a config "
+                                 "that declares none" % tid)
+            if cfg.get("cap_extra") is not None:
+                offenders.append("%s: gained cap_extra %r"
+                                 % (tid, cfg["cap_extra"]))
+            if block.get("config_extra") != want_extra:
+                offenders.append("%s: config_extra is %r, was %r"
+                                 % (tid, block.get("config_extra"), want_extra))
+            if "EMITTED-SIZE CAPS" in block["build_flags"] \
+                    or "--max-emit" in block["build_flags"]:
+                offenders.append("%s: build_flags gained a cap clause" % tid)
+            if len(derived.split("_")) != (4 if want_extra else 3):
+                offenders.append("%s: derived id %r changed shape"
+                                 % (tid, derived))
+        if offenders:
+            bad("cap axis: the nine pre-[B31] configs are untouched by the "
+                "axis", "; ".join(offenders)[:700])
+        else:
+            ok("cap axis: the nine pre-[B31] configs are untouched by the "
+               "axis",
+               "no cap flag on any argv, no cap clause in any build_flags, "
+               "config_extra and id shape unchanged (%s, ...)" % shapes[0])
+
+        # ---- 1b. and every COMMITTED record still names its testee -------
+        committed = {}
+        for p in _glob.glob(os.path.join(ROOT, "store", "records", "*",
+                                         "pcrec_*", "*.jsonl")):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    t = _json.loads(f.readline())["testee"]
+            except (OSError, ValueError, KeyError):
+                continue
+            committed.setdefault(t["testee_id"], t)
+        matched, drift = [], []
+        for tid in _PRE_B31_CONFIGS:
+            if raw[tid].get("local"):
+                continue            # no pin, so no committed record, by design
+            block = adapter.describe(tid)
+            rec = committed.get(_rec.derive_testee_id(block))
+            if rec is None:
+                continue
+            if rec["build_flags"] != block["build_flags"]:
+                drift.append("%s: the committed record has %r, describe() "
+                             "now gives %r" % (tid, rec["build_flags"][:110],
+                                               block["build_flags"][:110]))
+            else:
+                matched.append(rec["testee_id"])
+        if drift:
+            bad("cap axis: every COMMITTED pcrec record at this pin still "
+                "names the testee that describes it", "; ".join(drift)[:600])
+        elif not matched:
+            bad("cap axis: every COMMITTED pcrec record at this pin still "
+                "names the testee that describes it",
+                "no committed record matched any pre-[B31] config's derived "
+                "id -- the arm is VACUOUS, which is a failure, not a pass")
+        else:
+            ok("cap axis: every COMMITTED pcrec record at this pin still "
+               "names the testee that describes it",
+               "%d ids in store/ re-derive byte-identically, build_flags "
+               "included" % len(matched))
+
+        # ---- 3. raise-only, refused BY NAME ------------------------------
+        floors = [(key, flag, limit, mod.archived_limit(limit))
+                  for key, flag, limit, _w in mod.CAP_KEYS]
+        problems = []
+        for key, _flag, limit, floor in floors:
+            cfg = dict(raw["pcrec-vm-bigcap"], **{key: floor - 1})
+            try:
+                mod.effective_caps("pcrec-vm-bigcap", cfg, cfg.get("flags", []))
+                problems.append("%s = %d (one below %s) was ACCEPTED"
+                                % (key, floor - 1, limit))
+            except _ad.AdapterError as e:
+                s = str(e)
+                for token in ("pcrec-vm-bigcap", key, str(floor - 1), limit,
+                              str(floor), "RAISE-ONLY"):
+                    if token not in s:
+                        problems.append("%s: the refusal does not name %r (%s)"
+                                        % (key, token, s[:160]))
+        if [f[3] for f in floors] != [1000000, 500000]:
+            problems.append("the archived defaults read %r, not the (1000000, "
+                            "500000) this pin's list_limits.tsv carries -- if "
+                            "pcrec MOVED a cap, configs.toml's derived bound "
+                            "needs reading before this line is edited"
+                            % ([f[3] for f in floors],))
+        if problems:
+            bad("cap axis: a value BELOW pcrec's archived default is refused "
+                "BY NAME, before anything runs", "; ".join(problems)[:600])
+        else:
+            ok("cap axis: a value BELOW pcrec's archived default is refused "
+               "BY NAME, before anything runs",
+               "both keys at default-1; the message names the config, the "
+               "key, both numbers and the limit (%s %d / %s %d), read from "
+               "testees/pcrec/list_limits.tsv rather than retyped"
+               % (floors[0][2], floors[0][3], floors[1][2], floors[1][3]))
+
+        # ---- 5. the cc x caps composition, on a SYNTHESISED config -------
+        probe = "pcrec-vm-bigcap-clang-probe"
+        adapter.cfg["testees"][probe] = dict(raw["pcrec-vm-bigcap"], cc="clang")
+        try:
+            block = adapter.describe(probe)
+            got_extra = block.get("config_extra")
+            want_extra = mod.compose_config_extra(
+                "cc-clang", adapter.config("pcrec-vm-bigcap")["cap_extra"])
+            derived = _rec.derive_testee_id(block)
+            probs = []
+            if got_extra != want_extra:
+                probs.append("config_extra %r, want %r" % (got_extra, want_extra))
+            if not re.match(r"^[a-z0-9]([a-z0-9-]*[a-z0-9])?$", got_extra or "") \
+                    or len(got_extra or "") > 64:
+                probs.append("%r is not a $defs/slug" % got_extra)
+            if not (got_extra or "").startswith("cc-"):
+                probs.append("the composed slug does not LEAD with the "
+                             "earlier-chartered cc token: %r" % got_extra)
+            if not derived.endswith("_" + (got_extra or "\0")):
+                probs.append("testee_id %r does not end in the composed slug"
+                             % derived)
+            from pcrecbench import reduce as _rd_cap
+            setup, rows = _assemble(
+                [_ta_row("pa", "s1", "short-subject-search", t, t, 100)
+                 for t in range(1, 6)])
+            setup["testee"] = dict(block, testee_id=derived)
+            setup["trial_agreement"] = _rd_cap.judge_trial_agreement(rows)
+            setup = _rec.stamp_content_hash(setup, rows)
+            setup["record_id"] = _rec.derive_record_id(setup)
+            try:
+                _path, written = _write_scratch(setup, rows, "capcompose")
+                if written["testee"]["testee_id"] != derived:
+                    probs.append("the written record carries %r"
+                                 % written["testee"]["testee_id"])
+            except Exception as e:                          # noqa: BLE001
+                probs.append("store.write refused the composed record: %s"
+                             % str(e)[-260:])
+            if probs:
+                bad("cap axis: cc x caps composes into ONE slug that "
+                    "round-trips through a written record",
+                    "; ".join(probs)[:600])
+            else:
+                ok("cap axis: cc x caps composes into ONE slug that "
+                   "round-trips through a written record",
+                   "%s -> %s, accepted by store.write's own validation "
+                   "(X5 derives the id from config_extra whole)"
+                   % (got_extra, derived))
+        finally:
+            adapter.cfg["testees"].pop(probe, None)
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+
+    # ---- 6. the CLI lists them ------------------------------------------
+    proc = run([sys.executable, "-m", "pcrecbench", "testees"], cwd=ROOT,
+               timeout=300)
+    listed = [t for t, _s, _p in _CAP_PAIRS
+              if re.search(r"(?m)^\s*%s\b" % re.escape(t), proc.stdout)]
+    if proc.returncode == 0 and len(listed) == len(_CAP_PAIRS):
+        ok("cap axis: `pcrecbench testees` lists both bigcap configs",
+           ", ".join(listed))
+    else:
+        bad("cap axis: `pcrecbench testees` lists both bigcap configs",
+            "listed %r (exit %d): %s"
+            % (listed, proc.returncode, (proc.stderr or "")[-200:]))
+
+    # ---- 2 + 4. the argv, the stamps, and THE CONTROL --------------------
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-cap-")
+    try:
+        for big, plain, name in _CAP_PAIRS:
+            path = os.path.join(ROOT, "bench", "altwide", "patterns",
+                                name + ".rx")
+            try:
+                with open(path, "rb") as f:
+                    pattern = f.read()
+            except OSError as e:
+                bad("cap axis: %s vs %s on altwide %s" % (big, plain, name),
+                    "the control pattern is unreadable: %s" % e)
+                continue
+            subj, texts = _cap_subjects(pattern, tmp, name)
+            if subj is None:
+                bad("cap axis: %s vs %s on altwide %s" % (big, plain, name),
+                    "could not take smoke branches out of the pattern text")
+                continue
+
+            # (i) the PLAIN sibling REFUSES -- the control's premise
+            out, diag, _d, _n, _m, _meta = _cap_vs_oracle(
+                adapter, plain, pattern, subj, texts, tmp, name + "-plain")
+            flat = " ".join((diag or "").split())
+            title = ("cap axis: %s REFUSES altwide %s at the DEFAULT cap "
+                     "(the control's premise)" % (plain, name))
+            if out == "compiled":
+                bad(title, "it compiled -- a raise proves nothing here; pick "
+                           "a wider rung from the [B31] size census")
+                continue
+            if "pattern too large" not in flat:
+                bad(title, "%s, but not at a size cap: %s" % (out, flat[:300]))
+                continue
+            ok(title, flat[flat.index("pattern too large"):][:140])
+
+            # (ii) the bigcap sibling COMPILES it, and is RIGHT
+            # the adapter module's own globals: the ONE dict its
+            # `subprocess.run` calls resolve through, whatever name the
+            # loader gave the module.
+            g = type(adapter)._compile_one.__globals__
+            argvs, real_sp = [], g["subprocess"]
+            g["subprocess"] = _ArgvSpy(real_sp, argvs)
+            try:
+                out, diag, diffs, nrows, nmatch, meta = _cap_vs_oracle(
+                    adapter, big, pattern, subj, texts, tmp, name + "-big")
+            finally:
+                g["subprocess"] = real_sp
+            title = ("cap axis: %s COMPILES what %s refuses, and answers by "
+                     "the ORACLE" % (big, plain))
+            if out != "compiled":
+                bad(title, "%s: %s" % (out, " ".join((diag or "").split())[:300]))
+                continue
+            if diffs:
+                bad(title, "the raise produced a WRONG matcher: %s"
+                           % "; ".join(diffs[:4])[:400])
+            elif nmatch < 4:
+                bad(title, "%d rows agreed but only %d matched -- an "
+                           "agreement in which nothing matched proves nothing"
+                           % (nrows, nmatch))
+            else:
+                ok(title, "altwide %s, %d rows (%d subjects x 2 forms), %d "
+                          "matching; answer + span identical to libpcre2"
+                          % (name, nrows, len(subj), nmatch))
+
+            # (iii) both raises were in pcrec's REAL argv, every exec
+            cfg = adapter.config(big)
+            want = {flag: value for flag, _limit, value in mod.cap_values(cfg)}
+            pcrec_argvs = [a for a in argvs
+                           if a and os.path.basename(a[0]) == "pcrec"]
+            missing = ["%s=%d absent from %s" % (flag, value,
+                                                 " ".join(a[:4]))
+                       for a in pcrec_argvs for flag, value in want.items()
+                       if "%s=%d" % (flag, value) not in a]
+            if not pcrec_argvs:
+                bad("cap axis: %s -- both raises are in pcrec's REAL argv" % big,
+                    "no pcrec exec was seen at the subprocess boundary")
+            elif missing:
+                bad("cap axis: %s -- both raises are in pcrec's REAL argv" % big,
+                    "; ".join(missing[:3])[:400])
+            else:
+                ok("cap axis: %s -- both raises are in pcrec's REAL argv" % big,
+                   "%d pcrec exec(s), each carrying %s"
+                   % (len(pcrec_argvs),
+                      " ".join("%s=%d" % kv for kv in sorted(want.items()))))
+
+            # (iv) and the ARTIFACT ITSELF says so -- pcrec's own stamp of
+            # the EFFECTIVE cap, which nothing on this side can fake
+            block = adapter.describe(big)
+            derived = _rec.derive_testee_id(block)
+            probs = []
+            for key, flag, _limit, _w in mod.CAP_KEYS:
+                if key not in meta:
+                    if key == "max_emit_code_bytes" and meta.get("engine") != "vm":
+                        continue    # VM artifacts only, by pcrec's own spec
+                    probs.append("the artifact stamps no %s (engine %r)"
+                                 % (key, meta.get("engine")))
+                elif meta[key] != cfg.get(key):
+                    probs.append("the artifact stamps %s = %r, the config says "
+                                 "%r" % (key, meta[key], cfg.get(key)))
+                if "%s=%d" % (flag, cfg[key]) not in block["build_flags"]:
+                    probs.append("build_flags does not carry %s=%d"
+                                 % (flag, cfg[key]))
+            ro = {o["name"]: str(o["value"]) for o in block["runtime_options"]}
+            for _key, flag, _limit, _w in mod.CAP_KEYS:
+                if ro.get(flag) != str(want[flag]):
+                    probs.append("runtime_options[%s] = %r, want %r"
+                                 % (flag, ro.get(flag), str(want[flag])))
+            if not derived.endswith("_" + (cfg.get("cap_extra") or "\0")):
+                probs.append("testee_id %r does not carry the cap slug" % derived)
+            title = ("cap axis: %s -- the raise reaches the ARTIFACT's own "
+                     "stamps, the id, build_flags and runtime_options" % big)
+            if probs:
+                bad(title, "; ".join(probs)[:500])
+            else:
+                ok(title, "%s stamps max_emit_bytes=%s%s; %s"
+                   % (meta.get("engine"), meta.get("max_emit_bytes"),
+                      ", max_emit_code_bytes=%s" % meta["max_emit_code_bytes"]
+                      if "max_emit_code_bytes" in meta
+                      else " (a DFA artifact carries no code stamp, by "
+                           "pcrec's spec)", derived))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_list_axes_registry():
     """THE FOURTH REGISTRY SURFACE, ARCHIVED AND CHECKED ([B18], pcrec I-15
     (5), registry.md 6). Two facts:
@@ -4853,6 +5320,7 @@ def main():
     check_deny_flag_controls()
     check_opt42_preempts_collapse_policy()
     check_cc_axis()
+    check_cap_axis()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()
