@@ -65,8 +65,9 @@ the slow one**: the expectation derivation is minutes, not the sub-second
 every other set here takes, because the oracle is an interpreter and the
 widest rungs enter thousands of branches per candidate start over 128 KB and
 512 KB subjects. Measured on this box at 0.2: `gen_expectations.py` alone is
-135 s, and `make check-harness` over EVERY sub-bench is 468 s against 449 s
-before 0.2 (+4 % for 13 more patterns and 2 more subjects). That cost IS the
+135 s, and `make check-harness` over EVERY sub-bench is 501 s against 449 s
+before 0.2 (+11.6 % for 13 more patterns and 2 more subjects; both taken on a
+box shared with another session, so same order, not to the second). That cost IS the
 measurement's subject matter (NOTES.md, "Cell-time estimate"); it is not a
 symptom, and the fix if it ever becomes intolerable is fewer throughput
 bytes, not fewer rungs.

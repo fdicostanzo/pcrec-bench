@@ -781,12 +781,14 @@ which is what separates the failing scan from the cost at a hit, is entirely
 at 128 KB. `--trials 3` is the second lever, worth about 40 %.
 
 **The expectation derivation** (`make check`'s slow half) went from 1,600
-rows to 2,772 and from a set of 20 patterns to 33. Measured on this box:
-`make check-harness` 449 s before 0.2 and 468 s after, over every sub-bench;
-`gen_expectations.py` alone is 135 s. That is +4 %, nowhere near the ~2×
+rows to 2,772 and from a set of 20 patterns to 33. Measured on this box, over
+EVERY sub-bench: `make check-harness` 449 s before 0.2 and 501 s after
+(+11.6 %); `gen_expectations.py` for this set alone is 135 s. Both numbers
+were taken on a box shared with another session's batteries, so read them as
+the same order rather than to the second. +11.6 % is nowhere near the ~2×
 `bench/altwide/CLAUDE.md` sets as the point at which the fix (fewer
-throughput bytes, never fewer rungs) has to be proposed. No cut is needed
-and none is proposed.
+throughput bytes, never fewer rungs) has to be PROPOSED. No cut is needed and
+none is proposed.
 
 **What was cut to get here.**
 
