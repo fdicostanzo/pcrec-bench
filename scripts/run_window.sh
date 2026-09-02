@@ -32,6 +32,13 @@
 #              TESTEES list, beside the gcc six, so the pair is one variable
 #              apart. Do not export $CC for such a window: a $CC that
 #              contradicts a config's declared `cc` is refused by name.
+#              ([B31]) the emitted-size cap axis adds pcrec-auto-bigcap /
+#              pcrec-vm-bigcap, and they belong to bench/altwide's window
+#              ALONE -- every other set compiles inside pcrec's default
+#              caps, where a bigcap testee would measure the same artifact
+#              as its plain sibling. Run them as their own TESTEES list
+#              (or, under run_suite.sh, as $TESTEES_altwide / a labelled
+#              second pass `altwide:bigcap` with $TESTEES_altwide_bigcap).
 #   NOTE       "quiet window run, $(date -Is)"
 #   LOG        build/windows/window_${SUBBENCH}_$(date +%Y%m%dT%H%M%SZ).log
 #              (gitignored -- `build/` is in .gitignore already)

@@ -30,12 +30,21 @@
 # 65535 rung meets -- O-9/I-20, UNCHANGED at this pin per I-27 (3): [OPT-5]
 # STEP 1 acts after construction, and the caps fire DURING it).
 #
-# WHAT THIS FILE IS FOR: nothing the adapter reads depends on it (every
+# WHAT THIS FILE IS FOR: nothing a RECORD carries is read from it (every
 # cap and capacity a record needs is STAMPED per artifact); it is the
 # table this bench's overflow readings resolve against BY NAME, archived
 # so the pin's limit surface is diffable across re-pins, and `make
 # check-harness` diffs it against the pin's live output
 # (check_list_limits_registry).
+#
+# ONE thing DOES read it, and only in order to REFUSE ([B31], 2026-09-02):
+# the emitted-size cap axis' raise-only check takes PCREC_MAX_EMIT_BYTES
+# and PCREC_MAX_VM_EMIT_CODE_BYTES from here, so a config declaring a
+# max_emit_bytes below pcrec's own default is an AdapterError naming both
+# numbers before anything is measured. Reading them rather than typing
+# them is what keeps this repo from holding a second copy of a pcrec
+# constant that could fall out of step; the diff above is what stops that
+# copy going stale silently.
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.
