@@ -663,6 +663,89 @@ is nullable, so the prefilter is declined and the artifact reads
   (the value did not exist before this pin), so every committed report
   renders byte for byte as it stands. The first reports to print either
   are the ones tonight's window writes.
+
+## The reporter, [B32] (b) (2026-09-02) -- REPORTER_VERSION v12, four small rulings
+
+Plan row [B32] (the reporter half; docs/dev/known_issues.md KB-8/KB-9/
+KB-10, the 2026-09-02 full-suite ledger §12 (d), and one new column for
+lane b32adp's `scan_edges`/`scan_edges_match` pair). Bundled as ONE
+version bump because every one of the five changes touches rendering
+that a committed report already carries:
+
+* **KB-8 -- the header's record count is QUERY-FILTERED, not the
+  store's total.** `- record source: store/index.tsv (N candidate
+  file(s))` used to print `len(paths)` -- every record `discover_records`
+  found in the WHOLE store, which moves on every unrelated store growth
+  (the [B26] (c) re-render invariant found this was the ONLY line
+  differing on 42/48 committed reports; ledger §12 (7) proposed the fix
+  by name). It now prints `len(selected)` -- every record THIS QUERY's
+  own filters admit (subbench/version/regime/machine/since/until/where/
+  testee/synthetic-inclusion), computed in `build_report` before
+  per-record validity or the newest-measured dedup narrow it further --
+  worded `(N record(s) matching this query)`. Stable under any store
+  growth OUTSIDE the query's own bounded range, which is exactly the
+  property `reports/CLAUDE.md`'s "every committed query carries both
+  `--since` and `--until`" rule needs to make a re-render byte-exact.
+  `args._source_desc` now carries the bare STORE LABEL (`main()`); the
+  count is appended once, in `build_report`, from `selected` -- not from
+  `main()`'s pre-filter `paths` list.
+* **KB-9 -- the compile phase named `gcc` on a `-clang` testee.** [B24]
+  kept the phase NAME fixed (`emit-c`/`gcc`/`load`) deliberately, so a
+  clang testee's phase column still compares against its gcc sibling's
+  -- the compiler lives in `testee_id`/`build_flags`, not the phase name,
+  and the RECORD is unchanged here. The reporter now appends a per-row
+  `(clang cc)` note to the `gcc ns` cell wherever THAT row's own testee
+  declares a non-gcc `cc` (`_cc_from_testee_id`, reading `config_extra`'s
+  `cc-<name>` token -- always the FIRST axis when present, testees/
+  pcrec/CLAUDE.md's chartering-order rule, so `startswith("cc-")` is
+  enough), plus one legend line under any table that fires, naming the
+  rule once rather than on every row.
+* **Ledger §12 (d) -- the worst OTHER-core occupancy, in the header.**
+  A 91.63 % other-core spike sat inside one record's `/proc/stat`
+  timeline (gate_shape_v14.md §3.6) and in no report -- the timeline was
+  only ever rendered under `--include-provenance`. A new UNCONDITIONAL
+  header line, `- worst other-core busy: N% (testee / pattern / regime)`
+  (or `n/a` when no included record carries a readable timeline), scans
+  every included record's timeline for its own `max_other_busy_pct`
+  regardless of the flag -- the interference fact a reader needs before
+  trusting a number, not a caveat gated behind an opt-in.
+* **A `scan_edges`/`scan_edges_match` column.** Lane b32adp adds this
+  `engine_metadata` pair (I-33: the [OPT-5] scan edge's per-iteration
+  compare-COUNT, kept apart from `dfa_scan_edge`'s single shape token,
+  which cannot tell eight edges from one). `_scan_edges_display` renders
+  `edges=N` (search-side count; `0` is a real, recorded value once the
+  pair exists, so PRESENCE gates the clause, not truthiness) or
+  `edges=N (match: M)` when `scan_edges_match` is also carried, printed
+  beside (not gated by) the existing `edge=` shape clause in the legend
+  line -- the two are independent facts on independent scopes (a
+  forced-VM artifact carries `scan_edges=0` with no `edge=` clause at
+  all), so `edges=` uses its own presence check. Absent on any record
+  from before this pair existed: no clause, same rule as every other one
+  here. TSV gets a `compile_stamp` row for each half, the same way as
+  every other conditional pair.
+* **KB-10 -- `quick --vs` on a refused arm prints `refused`, not an
+  error.** `pcrecbench/__main__.py`'s `cmd_quick` used to treat ANY
+  `--vs` arm with zero cells for (pattern, regime) as the same lookup
+  mistake as a typo -- but a `--vs` arm whose only row is a
+  `did-not-compile` compile row is not a mistake: the record is right
+  (pcrec refused and said so), only the "expected one cell" check did
+  not know that. The cell-lookup loop is now `_split_quick_cells`
+  (module-level, unit-tested on its own): a `--vs`-only refusal (never
+  the PRIMARY `--testee` arm, which is what the caller asked to measure)
+  becomes a `refused` entry, printed as `refused (<diagnostic, first
+  line>)` in the comparable's place with the record's path still shown,
+  and `quick` exits 0. An empty cell for any OTHER reason (a typo'd
+  pattern/regime, two forms both present, or the PRIMARY arm refusing)
+  is still the old error. This is `pcrecbench.__main__`, not
+  `report.py` -- no `REPORTER_VERSION` implication, listed here because
+  it is the same plan row and lane.
+* `REPORTER_VERSION` bumps to `v12 (2026-09-02)`; every committed report
+  under `reports/` regenerated from its own recorded query -- see
+  `reports/CLAUDE.md` for the diff classification (KB-8's count and the
+  version line move on every file; KB-9's `(clang cc)` note only on the
+  `cc-1989c62` cc-axis reports; the worst-other-core line is new on
+  every file; no committed record carries the `scan_edges` pair yet, so
+  that clause and its note print on none of them).
 """
 
 from __future__ import annotations
@@ -681,7 +764,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v11 (2026-09-01)"
+REPORTER_VERSION = "v12 (2026-09-02)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -1213,6 +1296,11 @@ def _mechanism_stamp_columns(engine_metadata):
         # byte-class shape, same `dfa-scan` scope as `dfa_prefilter_offsets`
         # above.
         "dfa_scan_edge": em.get("dfa_scan_edge", "-"),
+        # [B32] (5): the scan-edge COUNT, beside its shape token above --
+        # `0` is a real, recorded value (see `_scan_edges_display`), so
+        # `-` here means the record carries NEITHER key, not a zero.
+        "scan_edges": em.get("scan_edges", "-"),
+        "scan_edges_match": em.get("scan_edges_match", "-"),
         # [B19] (pcrec abi 12): the route token, the prefilter language
         # pair, and the adapter's two source-bytes facts + the warning.
         "engine_sel": em.get("engine_sel", "-"),
@@ -1459,6 +1547,34 @@ def _dfa_scan_edge_display(engine_metadata):
     return None if edge is None else str(edge)
 
 
+def _scan_edges_display(engine_metadata):
+    """[B32] (5): pcrec's `scan_edges`/`scan_edges_match` pair -- the
+    [OPT-5] SCAN EDGE COUNT (I-33's per-edge-per-iteration cost, the
+    covariate `dfa_scan_edge`'s single shape token cannot carry: eight
+    edges and one edge read the same `range`/`bitmap` token). `0` is a
+    real, recorded value on every artifact once this pair exists (a
+    forced-VM build, `-fno-scan-edge`, and a scan with no collapsible run
+    all read 0), so presence -- not truthiness -- is what gates the
+    clause; `scan_edges` alone (the search-side count, `rx_search`/
+    `rx_prefilter`) renders `edges=N`; `scan_edges_match` beside it (the
+    anchored `rx_match` machine's own count, kept apart because the
+    measured [OPT-EDGE] regression is search-band only) renders
+    `edges=N (match: M)`. Returns None when the record carries NEITHER
+    key (any record from before this pair existed) -- the legend then
+    prints no clause at all, same absence rule as every other clause
+    here. Deliberately NOT scoped to `edge`'s dfa-scan SCOPE
+    (`_dfa_scan_edge_display`): `scan_edges` is stamped on artifacts
+    `edge=` never fires on (a forced-VM build with no DFA scan reads
+    `scan_edges=0`), so the two clauses are independent facts that
+    happen to sit side by side, not one gated by the other."""
+    em = engine_metadata or {}
+    n = em.get("scan_edges")
+    if n is None:
+        return None
+    m = em.get("scan_edges_match")
+    return f"{n}" if m is None else f"{n} (match: {m})"
+
+
 def _fast_tier_display(engine_metadata):
     """[B16] R2: [OPT-1]'s two-tier default entry, as a legend clause.
 
@@ -1677,6 +1793,7 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
     size_term = _size_term_display(engine_metadata)
     caps = _caps_display(engine_metadata)
     edge = _dfa_scan_edge_display(engine_metadata)
+    edges = _scan_edges_display(engine_metadata)
     line = (f"- {label}: engine={display}, "
             + (f"sel={sel}, " if sel is not None else "")
             + f"entry={stamps['entry']}, "
@@ -1684,6 +1801,7 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
             + (f"lang={lang}, " if lang is not None else "")
             + f"dfa: {_dfa_scan_display(engine_metadata)}, "
             + (f"edge={edge}, " if edge is not None else "")
+            + (f"edges={edges}, " if edges is not None else "")
             + (f"match={match_form}, " if match_form is not None else "")
             + f"rungs={stamps['vm_rungs']}, "
             + (f"K={size_term}, " if size_term is not None else "")
@@ -1761,6 +1879,37 @@ def _parse_testee_config(testee_id):
     if len(parts) != 3:
         return None
     return tuple(parts)
+
+
+# KB-9 (2026-09-02, docs/dev/known_issues.md; plan row [B32] (b)): [B24]
+# kept the compile-row phase NAME fixed (`emit-c` / `gcc` / `load`) so a
+# `-clang` testee's phase column compares against its gcc sibling's --
+# the compiler lives in `testee_id`/`build_flags`, never in the phase
+# name (testees/pcrec/CLAUDE.md, "Present it is an IDENTITY claim"). That
+# is correct for the RECORD; it means a reader of the compile-cost table
+# sees a `gcc ns` column on `pcrec-vm-clang`. Chosen fix (of the two KB-9
+# named): keep the phase name `gcc` exactly as the record has it -- no
+# record touched -- and append a per-row `(clang cc)` note to that one
+# cell wherever the row's OWN testee declares a non-gcc `cc`, plus one
+# legend line (once per table) stating the rule. `_cc_from_testee_id`
+# reads `config_extra`'s `cc-<name>` token, which testees/pcrec/CLAUDE.md
+# ("Composition with cc") guarantees is the FIRST axis when present
+# (chartering order, append-only) -- so `startswith("cc-")` is enough,
+# with no case yet in the store where a second axis's own slug could be
+# mistaken for it (`-bigcap` testees carry no `cc-` token today).
+def _cc_from_testee_id(testee_id):
+    """The compiler name from a pcrec testee_id's `config_extra` (KB-9),
+    or None when it is absent, unparseable, or already `gcc` (the record's
+    phase name and the true compiler agree, so no note is needed)."""
+    parsed = _parse_testee_config(testee_id)
+    if not parsed:
+        return None
+    _engine, _version, config_slug = parsed
+    _config, sep, extra = config_slug.partition("_")
+    if not sep or not extra.startswith("cc-"):
+        return None
+    name = extra[len("cc-"):].split("-", 1)[0]
+    return name if name and name != "gcc" else None
 
 
 def _cross_pin_verdict(old_median, old_stddev, new_median, new_stddev):
@@ -2229,6 +2378,14 @@ class ReportData:
     provenance_by_record: dict = field(default_factory=dict)  # record_id -> {sentences, loaded_beside_measured, timeline}
     x13_rule_counts: dict = field(default_factory=dict)       # rule label -> n records
     include_provenance: bool = False
+    # ledger 2026-09-02-full-suite-1989c62.md 12(d): the worst OTHER-core
+    # busy % seen anywhere in this query's own records' occupancy
+    # timelines (gate_shape_v14.md 6 / record_schema.md's `timeline[]` --
+    # provenance on every v1.4+ record, read unconditionally here, NOT
+    # gated behind --include-provenance: a 91.63% interference spike sat
+    # inside one record and in no report until a reader opened it). None
+    # when no included record carries a readable timeline.
+    worst_other_core: tuple | None = None   # (pct, testee_id, pattern_id, regime) | None
 
     @property
     def mixed_x13(self):
@@ -2457,6 +2614,7 @@ def build_report(loaded, args):
     after_by_record = {}
     provenance_by_record = {}
     x13_rule_counts = Counter()
+    worst_other_core = None  # ledger 12(d): (pct, testee_id, pattern_id, regime) | None
     # `form` (schema v1.1, record_schema.md 5 ADDITIONS 3) is part of every
     # match- and compile-cell key: a testee with no end-anchored mode
     # compiles and times a SEPARATE `whole-subject` artifact for the
@@ -2490,7 +2648,16 @@ def build_report(loaded, args):
         schema_version_by_record[record_id] = str(s.get("schema_version", ""))
         schema_version_by_testee[(sb, testee_id)] = str(s.get("schema_version", ""))
         after_by_record[record_id] = _after_failures(s)
-        provenance_by_record[record_id] = _provenance_of(s)
+        prov = _provenance_of(s)
+        provenance_by_record[record_id] = prov
+        # ledger 12(d): track the worst `max_other_busy_pct` across every
+        # timeline item of every included record, unconditionally (the
+        # header line renders regardless of --include-provenance).
+        for it in prov["timeline"]:
+            pct = it.get("max_other_busy_pct")
+            if isinstance(pct, (int, float)) and (
+                    worst_other_core is None or pct > worst_other_core[0]):
+                worst_other_core = (pct, testee_id, it.get("pattern_id"), it.get("regime"))
         x13_rule_counts[_x13_rule_label(r.schema_minor)] += 1
         for subj in s.get("subjects", []) or []:
             subject_bytes[subj["subject_id"]] = subj.get("bytes_offered")
@@ -2585,9 +2752,25 @@ def build_report(loaded, args):
     if args.include_synthetic:
         query_desc.append("include-synthetic")
 
+    # KB-8 (2026-09-02, docs/dev/known_issues.md; ledger
+    # 2026-09-02-full-suite-1989c62.md 12): the header used to print the
+    # STORE's WHOLE candidate-file count (`len(paths)` in `main()`), which
+    # moves on every unrelated store growth -- the ledger's re-render
+    # invariant found this was the ONLY line differing on 42/48 committed
+    # reports, and the count is otherwise meaningless (it never bounds
+    # what the query actually selected). `len(selected)` -- every record
+    # this query's own filters admit (subbench/version/regime/machine/
+    # since/until/where/testee/synthetic-inclusion, `matches_filters`
+    # above), BEFORE per-record validity or the newest-measured dedup --
+    # is stable under any store growth OUTSIDE the query's own bounded
+    # range, which is exactly the property reports/CLAUDE.md's "every
+    # committed query carries both --since and --until" rule (KB-8's own
+    # fix) is meant to buy back.
+    source_desc = f"{args._source_desc} ({len(selected)} record(s) matching this query)"
+
     return ReportData(
         query_desc=query_desc,
-        source_desc=args._source_desc,
+        source_desc=source_desc,
         included=sorted(included),
         excluded_invalid=sorted(excluded_invalid),
         subbench_versions=subbench_versions,
@@ -2619,6 +2802,7 @@ def build_report(loaded, args):
         provenance_by_record=provenance_by_record,
         x13_rule_counts=dict(x13_rule_counts),
         include_provenance=bool(getattr(args, "include_provenance", False)),
+        worst_other_core=worst_other_core,
     ), None
 
 
@@ -2734,6 +2918,20 @@ def render_markdown(rd: ReportData):
     out.append(f"- filters: {', '.join(rd.query_desc) if rd.query_desc else '(none)'}")
     out.append(f"- record source: {rd.source_desc}")
     out.append(f"- records included: {len(rd.included)}")
+    # ledger 2026-09-02-full-suite-1989c62.md 12(d): the worst OTHER-core
+    # occupancy seen in ANY included record's timeline, unconditionally
+    # (not gated behind --include-provenance -- a reader should not have
+    # to open a record to learn a cell ran during a real interference
+    # spike). `n/a` when no included record carries a readable timeline
+    # (every record before schema v1.4, or a v1.4+ one with `/proc/stat`
+    # unreadable at measurement time).
+    if rd.worst_other_core is not None:
+        pct, testee_id, pattern_id, regime = rd.worst_other_core
+        out.append(f"- worst other-core busy: {pct}% (`{testee_id}` / "
+                    f"`{pattern_id}` / `{regime}`)")
+    else:
+        out.append("- worst other-core busy: n/a (no included record carries "
+                    "a readable occupancy timeline)")
     for rid, path in rd.included:
         # [B20] R4 / R5': the agreement FROM THE BLOCK, and the after-sample
         # failures whenever there were any.
@@ -3335,6 +3533,20 @@ def render_markdown(rd: ReportData):
                            "`mixed` = one artifact whose machines took both "
                            "forms; `none` = no collapsible run (an attempt/empty "
                            "scan, or -fno-scan-edge).")
+            # [B32] (5): the scan-edge COUNT clause, beside `edge=`'s SHAPE
+            # token -- named once under the lines that carry it.
+            if any(_scan_edges_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - edges = pcrec's `scan_edges` ([B32]): how many "
+                           "[OPT-5] SCAN EDGES this artifact's SEARCH-side "
+                           "machines carry (`rx_search`/`rx_prefilter`), the "
+                           "per-scan-iteration compare-count covariate `edge`'s "
+                           "single shape token cannot separate (I-33: the cost "
+                           "is one compare per edge per iteration); the "
+                           "`(match: M)` parenthetical, when carried, is the "
+                           "SAME count on the anchored `rx_match` machine, kept "
+                           "apart because the measured [OPT-EDGE] regression is "
+                           "search-band only. `0` is a real, recorded value.")
             out.append("")
 
         # [B19]: the two SOURCE-bytes columns, when any row of this table
@@ -3389,8 +3601,22 @@ def render_markdown(rd: ReportData):
             row.append(outcomes)
             if has_pcrec:
                 pm = r.phase_medians or {}
-                row += [_fmt_ns(pm.get("emit-c")), _fmt_ns(pm.get("gcc")), _fmt_ns(pm.get("load"))]
+                gcc_cell = _fmt_ns(pm.get("gcc"))
+                # KB-9: the phase is named `gcc` in the record on EVERY
+                # pcrec testee (by design, [B24]) -- note it here, per row,
+                # on the testee(s) whose OWN `cc` is not gcc.
+                cc = _cc_from_testee_id(testee_id)
+                if cc and gcc_cell != "-":
+                    gcc_cell += f" ({cc} cc)"
+                row += [_fmt_ns(pm.get("emit-c")), gcc_cell, _fmt_ns(pm.get("load"))]
             out.append("| " + " | ".join(row) + " |")
+        if has_pcrec and any(_cc_from_testee_id(t) for _sb, _p, t, _f, _r in rows_for_class):
+            out.append("    - KB-9: the compile phase is named `gcc` in every pcrec "
+                        "record regardless of the testee's own `cc` ([B24] kept the "
+                        "phase NAME fixed so a `-clang` testee's column compares "
+                        "against its gcc sibling's); `(clang cc)` on the `gcc ns` "
+                        "cell above names the testee's ACTUAL compiler where it is "
+                        "not gcc.")
         out.append("")
 
     return "\n".join(out) + "\n"
@@ -3418,7 +3644,11 @@ def render_tsv(rd: ReportData):
          "x13_rules: " + "; ".join(f"{label} on {n}" for label, n
                                    in sorted(rd.x13_rule_counts.items())),
          f"mixed_x13: {rd.mixed_x13}",
-         f"include_provenance: {rd.include_provenance}"]))
+         f"include_provenance: {rd.include_provenance}",
+         "worst_other_core_busy: "
+         + (f"{rd.worst_other_core[0]}% ({rd.worst_other_core[1]} / "
+            f"{rd.worst_other_core[2]} / {rd.worst_other_core[3]})"
+            if rd.worst_other_core is not None else "n/a")]))
     header = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
               "testee", "status", "tier", "rank_or_na", "metric", "value", "n", "pass_rate",
               "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
@@ -3544,6 +3774,9 @@ def render_tsv(rd: ReportData):
                 # KB-6, fixed [B28]: the abi-13 scan-edge pair, the same way.
                 *[(k, stamps[k]) for k in ("dfa_scan_edge",)
                   if stamps[k] != "-"],
+                # [B32] (5): the scan-edge COUNT pair, `0` a real value.
+                *[(k, stamps[k]) for k in ("scan_edges", "scan_edges_match")
+                  if stamps[k] != "-"],
                 # [B19]: the three abi-12 pairs, the same way.
                 *[(k, stamps[k]) for k in ("engine_sel", "vm_prefilter_lang",
                                            "vm_prefilter_lang_why")
@@ -3656,7 +3889,10 @@ def main(argv=None):
         args._subbench_alias_note = note
 
     paths, source_desc = discover_records(args.store)
-    args._source_desc = f"{source_desc} ({len(paths)} candidate file(s))"
+    # KB-8 (2026-09-02): `args._source_desc` carries the STORE LABEL only
+    # here -- `build_report` appends the QUERY-FILTERED count (the ledger's
+    # "worth stability under store growth" fix; see its own comment there).
+    args._source_desc = source_desc
     if not paths:
         print(f"pcrecbench report: no records found under {args.store!r} "
               f"({source_desc})", file=sys.stderr)

@@ -1,12 +1,13 @@
 # pcrec-bench report
 
-reporter: v11 (2026-09-01)
+reporter: v12 (2026-09-02)
 
 ## Query
 
 - filters: subbench=email-specimen, version=0.2, until=2026-09-03T00:00:00Z, testee=libpcre2_10.46_interp-caps-simdna, testee=libpcre2_10.46_jit-caps-simdna, testee=pcrec_1989c62_auto-caps-simdna, testee=pcrec_1989c62_auto-nocaps-simdna, testee=pcrec_1989c62_vm-caps-simdna, testee=pcrec_1989c62_vm-in-caps-simdna, testee=pcrec_96e44c2_auto-caps-simdna, testee=pcrec_96e44c2_auto-nocaps-simdna, testee=pcrec_96e44c2_vm-caps-simdna, testee=pcrec_96e44c2_vm-in-caps-simdna
-- record source: store/index.tsv (111 candidate file(s))
+- record source: store/index.tsv (17 record(s) matching this query)
 - records included: 10
+- worst other-core busy: 8.2% (`pcrec_1989c62_auto-caps-simdna` / `orig` / `large-subject-throughput`)
     - `email-specimen@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260902T075326Z` (store/records/email-specimen@0.2/libpcre2_10.46_interp-caps-simdna/email-specimen@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260902T075326Z.jsonl) — agreement: agree (0 of 9 groups; 0 of 501 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
     - `email-specimen@0.2__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260902T080213Z` (store/records/email-specimen@0.2/libpcre2_10.46_jit-caps-simdna/email-specimen@0.2__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260902T080213Z.jsonl) — agreement: agree (0 of 9 groups; 0 of 500 rows; 1 unjudged (1 all-timed-out); k=1.5, 2/3; 5 trials)
     - `email-specimen@0.2__pcrec_1989c62_auto-caps-simdna__budu-ryzen1600__20260902T081329Z` (store/records/email-specimen@0.2/pcrec_1989c62_auto-caps-simdna/email-specimen@0.2__pcrec_1989c62_auto-caps-simdna__budu-ryzen1600__20260902T081329Z.jsonl) — agreement: agree (0 of 9 groups; 0 of 501 rows; 0 unjudged; k=1.5, 2/3; 5 trials)

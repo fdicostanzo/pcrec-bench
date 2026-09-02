@@ -253,11 +253,61 @@ which is expected and not a bug in this suite.
   `python3 -m pcrecbench.tests.test_report` resolves its `from pcrecbench
   import report` regardless of the caller's cwd.
 
+**[B32] (b) additions (2026-09-02, 4 new tests, 66 total; reporter v12)**:
+one test per ruling of the reporter-half wave (docs/dev/known_issues.md
+KB-8/KB-9, ledger docs/dev/ledgers/2026-09-02-full-suite-1989c62.md
+§12 (d), and the `scan_edges` column) --
+`test_source_desc_query_filtered_kb8` (the header's record count tracks
+`--testee`-filtered selection, not `len(loaded)`; a record OUTSIDE the
+filter does not move it -- the CONTROL that makes the fix's own point:
+store growth elsewhere must not move a bounded query's count),
+`test_cc_clang_phase_note_kb9` (`_cc_from_testee_id` unit-tested
+directly, then the end-to-end `(clang cc)` suffix on a clang row's `gcc
+ns` cell beside its gcc sibling's UNSUFFIXED cell in the SAME table,
+plus the legend note; controls: an explicit `cc-gcc` token, a
+non-pcrec/unparseable testee_id, and a gcc-only table with neither),
+`test_worst_other_core_header_ledger12d` (a hand-built timeline with two
+items picks the WORST reading by value, not the first or last; control:
+no timeline anywhere renders `n/a` by name), `test_scan_edges_legend_column`
+(`_scan_edges_display` unit-tested for the `0`-is-real-and-not-absent
+rule and the both-keys-together case, then the `edges=` clause rendering
+beside -- and independently of -- `edge=`'s dfa-scan scope: a forced-VM
+artifact carries `edges=0` with no `edge=` clause at all; control: an
+older-pin record with neither key renders neither the clause nor the
+note). `_V9_ALLOWED_ADDED` (`test_v13_record_still_renders`'s classifier)
+gained the new unconditional `worst other-core busy:` header line
+(same footing as the two v1.4 legend lines it already allows);
+`test_reporter_version_pin` pins v12; the `fixtures/golden/store_v8.md`
+`record source` line's wording was updated in place to match KB-8's new
+phrasing (its record COUNT is unchanged -- the fixture's own query
+selects all 3 records either way).
+- `test_quick.py` (new file, 7 tests, KB-10, `pcrecbench/__main__.py`'s
+  `quick` command): `_split_quick_cells` (the cell-lookup helper pulled
+  out of `cmd_quick` so it needs no engine, bench directory or store) is
+  exercised against hand-built `RunResult`-shaped objects --
+  `test_both_arms_measured_unaffected` (control: unchanged behaviour),
+  `test_vs_arm_refused_kb10` (the firing case: a `--vs` arm's
+  `did-not-compile` compile row becomes a `refused` entry, the primary
+  arm still reduces), `test_vs_arm_refused_diagnostic_first_line_only`
+  (a multi-line diagnostic truncates), `test_primary_arm_refusal_still_
+  errors` (KB-10 does not cover the PRIMARY `--testee` arm),
+  `test_vs_arm_empty_for_other_reason_still_errors` (an empty cell with
+  no `did-not-compile` row for that pattern is still the old error --
+  KB-10 covers refusals only, not every empty cell),
+  `test_vs_arm_wrong_form_only_matches_two_cells_still_errors` (two
+  cells, not zero, is a different failure shape and must still error),
+  `test_diagnostic_first_line_helper`. The real, engine-running `quick`
+  path is `tools/selfcheck.py`'s `check_quick` (a sibling lane's
+  territory) -- this file covers only the pure helper `_split_quick_
+  cells`/`_diagnostic_first_line` KB-10 added. 73 reporter-side tests
+  total across both files.
+
 ## `make check-report`
 
-Runs `python3 -m pcrecbench.tests.test_report`, then a smoke invocation
-of the CLI itself over `fixtures/store` in both formats. See the root
-Makefile.
+Runs `python3 -m pcrecbench.tests.test_report`, then
+`python3 -m pcrecbench.tests.test_quick` ([B32] (b), KB-10), then a smoke
+invocation of the CLI itself over `fixtures/store` in both formats. See
+the root Makefile.
 
 Maintenance: update this file when files are added/removed or change
 role.

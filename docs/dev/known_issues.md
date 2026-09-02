@@ -310,6 +310,24 @@ only ever "identical modulo that line" — reports/CLAUDE.md rules that
 acceptable; a future reporter wave may print the FILTERED count (which
 a bounded query keeps stable) instead of the store's total.
 
+**REPORTER HALF FIXED 2026-09-02 (lane b32rep, [B32] (b), reporter v12).**
+The `record source` line's count is now `len(selected)` -- every record
+THIS QUERY's own filters admit (subbench/version/regime/machine/since/
+until/where/testee/synthetic-inclusion, `matches_filters`), computed in
+`build_report` -- instead of `len(paths)`, the WHOLE store's candidate
+count `main()` used to bake into `args._source_desc` before calling
+`build_report`. Worded `(N record(s) matching this query)`. Stable under
+any store growth OUTSIDE the query's own bounded range, same property
+the `--since`/`--until` rule above buys back for the query's CONTENT;
+this closes it for the header's own COUNT. `args._source_desc` now
+carries the bare store label (`main()`); `build_report` appends the
+count. `test_source_desc_query_filtered_kb8` (`pcrecbench/tests/
+test_report.py`) covers a narrower `--testee` filter changing the count
+and a record OUTSIDE that filter not moving it. `REPORTER_VERSION`
+bumped to `v12 (2026-09-02)`; every committed report regenerated (the
+count and the version line move on every file -- see `reports/
+CLAUDE.md`).
+
 ## KB-9 (2026-09-02) — the compile phase is named `gcc` on a `-clang` testee
 
 [B24] kept the phase NAME fixed (`emit-c` / `gcc` / `load`) so a clang
@@ -320,6 +338,26 @@ ledger of the first cc window (2026-09-02 §5) reads it correctly but had
 to say so. Options for a reporter wave: rename the phase to `cc` with the
 compiler in the legend, or keep `gcc` and add a per-row `cc=` note where
 the testee's cc is not gcc. Plan row [B32] (b).
+
+**FIXED 2026-09-02 (lane b32rep, [B32] (b), reporter v12).** Chosen fix:
+keep the phase name `gcc` exactly as the record has it (no record
+touched -- the RECORD is correct by [B24]'s own design, comparing a
+clang testee's phase against its gcc sibling's needs the shared name)
+and append a per-row `(clang cc)` note to that one `gcc ns` cell wherever
+the ROW's own testee declares a non-gcc `cc`, plus one legend line (once
+per table) stating the rule. `_cc_from_testee_id` reads `config_extra`'s
+`cc-<name>` token, which testees/pcrec/CLAUDE.md ("Composition with cc")
+guarantees is the FIRST axis when present (chartering order, cc first
+then the caps, append-only) -- so `startswith("cc-")` is enough, with no
+case yet in the store where a second axis's own slug could be mistaken
+for it. `test_cc_clang_phase_note_kb9` covers the firing case (the
+clang row's cell, distinct from its gcc sibling's in the SAME table) and
+controls (an explicit `cc-gcc` token, a non-pcrec testee_id, an
+unparseable one, and a gcc-only table carrying neither the suffix nor
+the note). `REPORTER_VERSION` bumped to `v12 (2026-09-02)`; only the
+`2026-09-02-*-cc-1989c62.*` reports' rendering actually moves beyond the
+version/count lines (the only committed reports with a `cc-clang`
+testee) -- see `reports/CLAUDE.md`.
 
 ## KB-10 (2026-09-02) — `quick --vs <testee>` ERRORS when the comparison arm did not compile, instead of printing `refused`
 
@@ -336,3 +374,21 @@ altwide wide rung and on bounded's 65535 rung. The fix belongs in `quick`
 (or the shared reduction): a `--vs` arm whose only row is a refusal prints
 `refused (<diagnostic>)` in the comparable's place and exits 0 — the
 records are already right. Queued on plan.md [B32] (h).
+
+**FIXED 2026-09-02 (lane b32rep, [B32] (b)/(h)).** `pcrecbench/
+__main__.py`'s cell-lookup loop is now `_split_quick_cells` (a
+module-level, unit-tested helper `cmd_quick` calls): a `--vs`-only arm
+(never the PRIMARY `--testee` arm, index 0, always the caller's own
+target) whose only row for (pattern, regime) is a `did-not-compile`
+compile row becomes a `refused` entry instead of an error, printed as
+`refused (<diagnostic, first line>)` in the comparable's table row (and
+its ratio line) with the record's path still shown, `quick` exiting 0.
+An empty cell for any OTHER reason -- a typo'd pattern/regime, two forms
+both present, or the primary arm itself refusing -- is still the old
+"expected one cell ... found N" error. `pcrecbench/tests/test_quick.py`
+(new file, 7 tests) covers the firing case, the diagnostic's
+first-line-only truncation, and three controls (a clean two-arm run
+unaffected, a primary-arm refusal still erroring, an unexplained empty
+`--vs` cell still erroring). Not `report.py` -- no `REPORTER_VERSION`
+implication, but bundled into the same [B32] (b) reporter-v12 commit
+since it is the same plan row and lane.

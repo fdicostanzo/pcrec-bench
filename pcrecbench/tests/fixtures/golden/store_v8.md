@@ -5,7 +5,7 @@ reporter: v8 (2026-08-30)
 ## Query
 
 - filters: include-synthetic
-- record source: store/index.tsv (3 candidate file(s))
+- record source: store/index.tsv (3 record(s) matching this query)
 - records included: 3
     - `fixture-mini@1.0__libpcre2_10.46_interp-caps-simdna__repfix-box__20260825T100500Z` (pcrecbench/tests/fixtures/store/records/fixture-mini@1.0/libpcre2_10.46_interp-caps-simdna/fixture-mini@1.0__libpcre2_10.46_interp-caps-simdna__repfix-box__20260825T100500Z.jsonl)
     - `fixture-mini@1.0__libpcre2_10.46_jit-caps-simdna__repfix-box__20260825T101000Z` (pcrecbench/tests/fixtures/store/records/fixture-mini@1.0/libpcre2_10.46_jit-caps-simdna/fixture-mini@1.0__libpcre2_10.46_jit-caps-simdna__repfix-box__20260825T101000Z.jsonl)

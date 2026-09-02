@@ -825,3 +825,65 @@ sentence:
   pattern that stamps it at all), so every committed report renders byte
   for byte as it stands. The first reports to print either are the ones
   the [B26] window writes.
+
+## The reporter, [B32] (b) (2026-09-02) -- four small rulings, v12
+
+Plan row [B32] (the reporter half; docs/dev/known_issues.md KB-8/KB-9/
+KB-10, ledger docs/dev/ledgers/2026-09-02-full-suite-1989c62.md §12 (d),
+and one new column for lane b32adp's `scan_edges`/`scan_edges_match`
+pair):
+
+- **KB-8's reporter half -- the header's record count is
+  QUERY-FILTERED.** `- record source: store/index.tsv (N candidate
+  file(s))` used to print `len(paths)` -- the WHOLE store's candidate
+  count, computed in `main()` before any filter ran, and the ONLY line
+  that moved on 42/48 of the [B26] (c) re-render invariant's reports. It
+  now prints `len(selected)` -- every record THIS QUERY's own filters
+  admit (`matches_filters`), computed inside `build_report` -- worded
+  `(N record(s) matching this query)`. `args._source_desc` now carries
+  the bare store LABEL only; `build_report` appends the count.
+- **KB-9 -- the compile phase named `gcc` on a `-clang` testee.** The
+  RECORD is unchanged (the phase name stays `gcc` on purpose, [B24] --
+  it is what makes a clang testee's column comparable to its gcc
+  sibling's). `_cc_from_testee_id` reads `config_extra`'s `cc-<name>`
+  token (always the FIRST axis when present, testees/pcrec/CLAUDE.md's
+  chartering-order rule); the compile-cost table appends `(clang cc)` to
+  the `gcc ns` cell of any row whose OWN testee declares a non-gcc `cc`,
+  plus one legend note per table that fires.
+- **Ledger §12 (d) -- the worst other-core occupancy, unconditionally in
+  the header.** A new `ReportData.worst_other_core` field
+  (`(pct, testee_id, pattern_id, regime) | None`), computed once over
+  every included record's `environment.occupancy.timeline` items while
+  `build_report` walks `valid` records -- NOT gated behind
+  `--include-provenance` (the ledger's own 91.63% spike sat inside one
+  record and in no report). Renders as `- worst other-core busy: N%
+  (testee / pattern / regime)` or `n/a` on both markdown and the TSV
+  header comment.
+- **A `scan_edges`/`scan_edges_match` column.** `_scan_edges_display`
+  renders `edges=N` (search-side count) or `edges=N (match: M)` beside
+  the existing `edge=` shape clause (KB-6) in `_testee_legend_line`,
+  gated on the PAIR's own presence -- independent of `edge=`'s dfa-scan
+  scope, since a forced-VM artifact can carry `scan_edges=0` with no DFA
+  scan at all. `0` is a real, recorded value (presence gates the clause,
+  not truthiness). `_mechanism_stamp_columns` and the TSV's
+  `compile_stamp` rows carry the pair too, same shape as every other
+  conditional pair since [B18].
+- **KB-10 -- `quick --vs` on a refused arm prints `refused`, not an
+  error.** `pcrecbench/__main__.py`'s cell-lookup loop is now
+  `_split_quick_cells` (module-level, unit-tested in the new
+  `pcrecbench/tests/test_quick.py`): a `--vs`-only arm (never the
+  primary `--testee` arm) whose only row is a `did-not-compile` compile
+  row becomes a `refused (<diagnostic, first line>)` entry instead of
+  the old "expected one cell ... found 0" error, `quick` exiting 0 with
+  the record's path still printed. An empty cell for any other reason
+  still errors, on either arm.
+- `REPORTER_VERSION` bumps to `v12 (2026-09-02)`; every committed report
+  under `reports/` regenerated from its own recorded query -- see
+  `reports/CLAUDE.md` for the diff classification (the count and version
+  line move on every file; KB-9's note only on the `cc-1989c62` reports;
+  the worst-other-core line is new everywhere; `scan_edges` prints on
+  none of them yet -- no committed record carries the pair).
+  `pcrecbench/tests/test_report.py` gained 4 tests (KB-8, KB-9, ledger
+  12(d), `scan_edges`); `pcrecbench/tests/test_quick.py` is a new file
+  (7 tests, KB-10). 73 reporter-side tests total
+  (`pcrecbench/tests/CLAUDE.md`).

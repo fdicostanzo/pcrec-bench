@@ -4,6 +4,61 @@ Each file is the output of one `python3 -m pcrecbench report ...` query,
 committed beside the records it reduces so a reader can cite a number
 with its query. Names: `<date>-<subbench>-<version>-<machine>[-<label>][.<grain>].md|tsv`.
 
+**[B32] (b) (2026-09-02) regenerated EVERY committed report against
+reporter `v12 (2026-09-02)`** (docs/dev/known_issues.md KB-8/KB-9,
+ledger docs/dev/ledgers/2026-09-02-full-suite-1989c62.md §12 (d)). All
+66 files re-rendered from their OWN recorded query (parsed out of each
+file's own header, grain and format from its own name) and diffed
+against the committed content; every diff was fully explained before
+being written back (a per-file classifier: the version line, KB-8's
+`record source` line moving from `(N candidate file(s))` — the whole
+store's total — to `(N record(s) matching this query)` — this query's
+own filtered count, KB-9's `(clang cc)` suffix + legend note, and the
+new unconditional `worst other-core busy: ...` header line, and
+NOTHING else). Per-file breakdown:
+
+- **Every one of the 66 files**: the version line (`v11` → `v12`), the
+  `record source`/`source:` line — its NUMBER moves too, from the
+  store's WHOLE candidate-file count (81 or 111, depending on when the
+  file was last rendered) to THIS QUERY's own filtered count (KB-8;
+  e.g. the loglines AFTER report's twelve-testee roster over a 111-record
+  store now reads `18` — every record any of those testee_ids ever
+  wrote, before the newest-measured dedup narrows it to the 12 the
+  ranking uses — not `111`) — and the new `worst other-core busy: N%
+  (testee / pattern / regime)` (or `n/a`) header line, unconditional on
+  every file regardless of `--include-provenance`. Neither moves any
+  ranking, verdict, or other number in the report: KB-8's count and the
+  provenance line are both header-only facts about the query and the
+  run, not about the rows.
+- **The two `cc-1989c62` groups only** (`2026-09-02-bounded-0.3-*-cc-
+  1989c62.{md,subject-grain.md,tsv}`, `2026-09-02-loglines-0.1-*-cc-
+  1989c62.{md,subject-grain.md,tsv}` — 6 files, the only committed
+  reports with a `_cc-clang` testee in their roster): KB-9's `(clang
+  cc)` suffix on every `pcrec_..._cc-clang` row's `gcc ns` cell, plus
+  the legend note stating the rule once per table that carries at least
+  one clang row. The `.tsv` files move on the version/count line only
+  (the phase columns are markdown-only, `pcrecbench/CLAUDE.md`'s [B32]
+  section).
+- **No file** carries a `scan_edges` clause: no record in `store/` yet
+  carries the pair (lane b32adp's own change), so that clause and its
+  note print on none of the 66.
+- **`make check-report` is 73/73** (66 `test_report.py` + 7 new
+  `test_quick.py`, KB-10 — `pcrecbench/__main__.py`, not `report.py`,
+  so it moves no committed report's rendering).
+
+Regenerated IN-PROCESS (load and validate `store/`'s 111 records ONCE,
+reuse for all 66 renders) rather than via 66 separate CLI invocations —
+measured: one CLI invocation against the current store's `index.tsv`
+takes minutes on its own (jsonschema validates the WHOLE store on every
+`load_all`, regardless of how narrow the query's own filters are; the
+[B12] test-suite note profiles this same cost at ~39 s for 26 records,
+which scales to minutes at 111), so 66 of them sequentially would have
+been impractical for one session. The in-process script paid the
+validation cost once and reused the loaded, validated records for every
+query — the SAME `report.build_report`/`render_markdown`/`render_tsv`
+calls a fresh CLI invocation would make, just without re-validating the
+store 66 times.
+
 **[B26] (c) (2026-09-02) ADDED six file groups — the full-suite night at
 pcrec pin 1989c62 (abi 15)** — and changed NOTHING else here: the reporter
 is unchanged at `v11 (2026-09-01)`, no committed report was regenerated,

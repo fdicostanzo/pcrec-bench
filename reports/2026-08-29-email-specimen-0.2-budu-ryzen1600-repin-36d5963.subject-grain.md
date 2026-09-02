@@ -1,12 +1,13 @@
 # pcrec-bench report
 
-reporter: v11 (2026-09-01)
+reporter: v12 (2026-09-02)
 
 ## Query
 
 - filters: subbench=email-specimen, version=0.2, until=2026-08-30T11:00:00Z
-- record source: store/index.tsv (81 candidate file(s))
+- record source: store/index.tsv (14 record(s) matching this query)
 - records included: 10
+- worst other-core busy: n/a (no included record carries a readable occupancy timeline)
     - `email-specimen@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260829T203945Z` (store/records/email-specimen@0.2/libpcre2_10.46_interp-caps-simdna/email-specimen@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260829T203945Z.jsonl) — agreement: n/a (v1.3)
     - `email-specimen@0.2__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260829T190658Z` (store/records/email-specimen@0.2/libpcre2_10.46_jit-caps-simdna/email-specimen@0.2__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260829T190658Z.jsonl) — agreement: n/a (v1.3)
     - `email-specimen@0.2__pcrec_35e1ab1_auto-caps-simdna__budu-ryzen1600__20260828T142809Z` (store/records/email-specimen@0.2/pcrec_35e1ab1_auto-caps-simdna/email-specimen@0.2__pcrec_35e1ab1_auto-caps-simdna__budu-ryzen1600__20260828T142809Z.jsonl) — agreement: n/a (v1.3)
