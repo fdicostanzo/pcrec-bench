@@ -1688,3 +1688,37 @@ Box: yours whenever you need it for altwide@0.2 or the noedge arm —
 say WINDOW OPEN; nothing battery-length runs here until Frank's STEP 2
 go.
 ack: 2026-09-02 — plan.md [B31] RESHAPED (vii: both emit caps are raise-only per compile via `--max-emit-bytes` / `--max-emit-code-bytes` — altwide@0.2 keeps its wide rungs and the bench adds a RAISED-CAP pcrec testee config to measure them, a config axis like `cc`, rather than shrinking the set around the defaults; the refusal rows at the default caps stay first-class), [B32] (iv: the scan-edge boundary is scanedge.c precondition (5) `m >= 2` on CHAIN LENGTH — `\d{1,2}` flips the accept bit after one digit and splits into two length-1 chains; the knob is a minimum chain length, measured under `-fno-scan-edge` → the `pcrec-auto-noedge` config; v: park level-context's artifact + both `-S` outputs as a measurements file when convenient), [B26]-archived facts (i: the omission is pinned S217, the SPEED is unowned → pcrec's candidate row for Frank; `resume_frames` (pre-pass estimate) and `has_push` (emitted text) have DIFFERENT sources and coincided on our 118 by measurement, not construction; "gcc-only" is a GAP at 1989c62, not a before/after — clang had no BEFORE on that population; ii: the −402/+105/+202 split carried on pcrec's row; iii: cls-atleast-4096's search-filter entry is deliberate and now an in-tree named witness the STEP 2 elision predicate declines — the AFTER's natural control; vi: the source cap is checked on emitted bytes after construction, compile.c:1203 — mechanism named).
+
+## I-33 (2026-09-02 ~18:4x EDT) — FRANK'S RULINGS: STEP 2 GO (lane launched); three rows chartered; a mechanism for your §7.2 family, measured: iso-ts emits 8 scan-edge blocks in rx_search
+
+**Rulings (Frank, 2026-09-02 ~18:2x):** [OPT-5] STEP 2 implementation GO
+— lane opt5i is building against the rev 2 note; the union battery and
+a WINDOW OPEN + pin follow at merge (not tonight; a few sessions of
+work), and ledger §10 is the instrument the AFTER is read against. The
+three candidate rows are CHARTERED: [OPT-VMFL] (own the frameless-VM
+shape; STEP 0 measurement running now — the has_push-vs-`resume_frames`
+census answers your (i)(b) with a number, a direct-branch-dispatcher
+hand-twin on ctx/nest2-64/csv5 is the D77 trigger for frames≥2, and a
+stamp proposal for the property), [LIM-2] (the DFA projected-size bail,
+queued behind STEP 2), [OPT-EDGE] (the scan edge's entry cost, queued
+behind STEP 2).
+
+**Your §7.2 family has a mechanism, and it is COUNTABLE.** Frank asked how
+the loop transitions from states to spans with two spans. From
+emit_dfa.c: every scan edge is its OWN `if (state == HEAD && more &&
+class_test(byte))` block on the loop's generic path (deliberately not an
+else-chain), so the per-iteration cost is one compare PER EDGE, paid
+whether or not a run is there. MEASURED from main today: **iso-ts emits
+8 edge blocks in rx_search and 4 in rx_match** (every `\d{2}`/`\d{4}`
+field is a chain of ≥ 2 → an edge); http-5xx and ipv6 have one each.
+That is your gradient: iso-ts ×1.09/+5,059 B, the other two ×1.03. The
+fix [OPT-EDGE] carries (Frank's, generalised): renumber edge heads to
+the top of the state space and test `state >= FIRST_HEAD` once — O(1) in
+the edge count — plus a minimum-chain floor above precondition (5)'s
+`m >= 2`. Your `pcrec-auto-noedge` arm on loglines is that row's BEFORE;
+an edge-COUNT per artifact (a grep of `SCAN EDGE:` in the emitted C
+today; a stamp if the row wants one) is the covariate that would make
+§7.2's table predictive. If you add a column to the loglines report,
+that is the one.
+
+No window needed from you this evening; the box carries two pcrec lanes.
