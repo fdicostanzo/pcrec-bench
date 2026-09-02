@@ -2733,9 +2733,15 @@ DENY_CONTROLS = (
     # DFA construction, which both arms pay -- the edge acts after it).
     # pcrec-local passes no --warn-emit-bytes, so the default 250,000 is
     # what fires.
+    # ([B32]) and the `scan_edges` COVARIATE moves with the stamp: this
+    # rung's search machine carries 2 edges with the axis on and 0 with it
+    # denied, which is the covariate seen from the flag's side (the stamp
+    # says `none` either way once denied; the count says how many were
+    # there to lose).
     ("dfa_scan_edge + the warning returns: the edge denied",
      "scan-edge", ("bounded", "cls-upto-16384"), "",
      {"dfa_scan_edge": ("range", "none"),
+      "scan_edges": (2, 0), "scan_edges_match": (0, 0),
       "emit_bytes": (16554, 724939),
       "warned_emit_bytes": (None, 724939)}, "deny"),
     ("dfa_prefilter + offsets", "prefilter", ("loglines", "uuid"), "",
@@ -3874,6 +3880,434 @@ def check_cap_axis():
                       if "max_emit_code_bytes" in meta
                       else " (a DFA artifact carries no code stamp, by "
                            "pcrec's spec)", derived))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+#: THE SCAN-EDGE DENY AXIS ([B32]; pcrec [OPT-5] / [OPT-EDGE], I-33). The
+#: full suite at 1989c62 found one regression family with an exact stamp:
+#: every bench/loglines pattern stamping a non-`none` `RX_DFA_SCAN_EDGE` is
+#: slower, every one stamping `none` is flat. `pcrec-auto-noedge` is that
+#: work's BEFORE at the SAME pin -- `-fno-scan-edge` restores the
+#: pre-[OPT-5] machine with no other variable moved -- and `scan_edges` is
+#: the covariate I-33's mechanism (one compare per edge per scan-loop
+#: iteration) says predicts the cost. Five arms:
+#:
+#:   1. ABSENT IS BYTE-IDENTICAL, three ways. Every config that predates
+#:      [B32] puts no `-fno-scan-edge` on pcrec's argv, renders no deny
+#:      clause in `build_flags`, gains no `deny_extra`, and derives the
+#:      `config_extra` and id it had. And -- the arm that could actually be
+#:      damaged -- (b) every pcrec `testee_id` with a COMMITTED RECORD at
+#:      this pin re-derives byte-identically, and (c) every pre-[B32]
+#:      config's `runtime_options` is what a FROZEN COPY of the pre-[B32]
+#:      renderer gives. (c) exists because [B32] widened that function's
+#:      idea of a flag from `--` to `-`: no config that predates it carries
+#:      a single-dash token, so nothing moves -- but "nothing moves" is a
+#:      claim, and this is the control on it.
+#:   2. PRESENT MEANS PRESENT ALL THE WAY DOWN. A real compile under
+#:      `pcrec-auto-noedge` is watched at the `subprocess` boundary: the
+#:      flag must be in pcrec's ACTUAL argv on every exec, and it must
+#:      reach `build_flags`, `runtime_options` and the derived `testee_id`.
+#:   3. THE STAMP AND THE COUNT BOTH MOVE, on a witness that stamps the
+#:      other value. `iso-ts` stamps `range` under `pcrec-auto` with 8
+#:      search edges and 4 match ones (I-33's own numbers, and the reason
+#:      it is the family's worst row); the denied build of the same pattern
+#:      at the same pin stamps `none` and counts 0/0. A denial that moved
+#:      the stamp but not the count would mean the covariate is reading
+#:      something else.
+#:   4. THE CONTROL, and without it the axis is a gate removed rather than
+#:      a measurement: the denied artifact must answer a hand-built smoke
+#:      set exactly as the libpcre2 oracle does, in both forms. The scan
+#:      edge deletes states from the transition table, so a denial that
+#:      restored them WRONG is the one damage this testee could do that a
+#:      timing comparison would happily report as a speed-up.
+#:   5. THE COVARIATE BY VALUE, ACROSS KINDS, and into a record. The I-33
+#:      witnesses are asserted at their measured counts -- `iso-ts` 8/4,
+#:      `http-5xx` 1/1, `ipv6` 1/0 (a hybrid puts every edge it has on the
+#:      search side), the `floor` pattern 0/0, a forced-VM artifact 0/0 --
+#:      and the pair round-trips through `store.write`'s own validation, so
+#:      a name the schema's X-rules would reject cannot reach a window.
+#:      0 is asserted as a VALUE on three of those kinds, because a
+#:      covariate that were silently absent where it reads 0 would turn
+#:      every regression on it into a comparison of populations.
+
+#: The configs that predate [B32] and must be untouched by it: the eleven
+#: pinned entries plus `pcrec-local`.
+_PRE_B32_CONFIGS = _PRE_B31_CONFIGS + ("pcrec-auto-bigcap", "pcrec-vm-bigcap")
+
+
+def _pre_b32_runtime_options(flags):
+    """A FROZEN COPY of `adapter.runtime_options` as it stood before [B32]
+    widened "is a flag" from `--` to `-`. Kept here, in a file that shares
+    no source with the adapter, so arm 1(c) compares two independent
+    renderings rather than the adapter with itself.
+
+    It renders the FLAGS only; `describe()` appends the two frame-buffer
+    capacities after calling it, and the caller reconstructs those the same
+    way `check_cc_axis` reconstructs the buffer NOTE."""
+    out = []
+    i, n = 0, len(flags)
+    while i < n:
+        f = flags[i]
+        if not f.startswith("--"):
+            i += 1
+            continue
+        if "=" in f:
+            name, _, value = f.partition("=")
+            out.append({"name": name, "value": value})
+            i += 1
+            continue
+        if i + 1 < n and not flags[i + 1].startswith("--"):
+            out.append({"name": f, "value": flags[i + 1]})
+            i += 2
+            continue
+        out.append({"name": f, "value": True})
+        i += 1
+    return out
+
+
+#: Hand-cut smoke subjects for bench/loglines' `iso-ts`, written here
+#: rather than taken from the generated subject tree so arm 4 does not
+#: depend on a generator having run: three real timestamps in the three
+#: shapes the pattern's optional groups reach (bare, fractional, zoned),
+#: one buried in a log line, and three designed misses (a month that is
+#: one digit, the date alone, the empty subject).
+_NOEDGE_SUBJECTS = (b"2026-09-02T14:33:07",
+                    b"2026-09-02 14:33:07.125",
+                    b"2026-09-02T14:33:07+02:00",
+                    b"level=warn ts=2026-09-02T14:33:07Z msg=hi",
+                    b"2026-9-02T14:33:07",
+                    b"2026-09-02",
+                    b"")
+
+#: (label, testee, sub-bench pattern, expected (scan_edges, scan_edges_match)
+#: on the PLAIN form). MEASURED at pin 1989c62, 2026-09-02, and cross-checked
+#: against an independent census over 338 compiles. The counts are I-33's:
+#: `iso-ts` emits 8 edge blocks into rx_search and 4 into rx_match, which is
+#: why it is the family's worst row, and `http-5xx` / `ipv6` one apiece.
+_SCAN_EDGE_CASES = (
+    ("iso-ts, the family's worst row (I-33)", "pcrec-auto",
+     ("loglines", "iso-ts"), (8, 4)),
+    ("http-5xx", "pcrec-auto", ("loglines", "http-5xx"), (1, 1)),
+    ("ipv6, a bitmap body", "pcrec-auto", ("loglines", "ipv6"), (1, 0)),
+    ("the loglines floor pattern: no edge at all", "pcrec-auto",
+     ("loglines", "floor"), (0, 0)),
+    ("iso-ts under a FORCED VM: no DFA scan, so no edge", "pcrec-vm",
+     ("loglines", "iso-ts"), (0, 0)),
+    ("iso-ts DENIED: the machine the edge replaced", "pcrec-auto-noedge",
+     ("loglines", "iso-ts"), (0, 0)),
+)
+
+
+def check_noedge_axis():
+    """THE SCAN-EDGE DENY AXIS ([B32]). The five arms and what each is
+    built to catch are documented above _PRE_B32_CONFIGS."""
+    print("-- the scan-edge deny axis: -fno-scan-edge and the scan_edges "
+          "covariate ([B32], pcrec [OPT-5]/[OPT-EDGE]) --")
+    import glob as _glob
+    import json as _json
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("noedge axis", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    NOEDGE, FLAG = "pcrec-auto-noedge", "-fno-scan-edge"
+
+    # THE FLAG'S SPELLING comes from the registry, never from this file:
+    # a renamed flag must fail here by name rather than be retyped.
+    try:
+        rows = mod.registry_rows()
+        spellings = [f.strip()
+                     for r in rows if r["axis"] == "scan-edge"
+                     for f in r.get("cli_flag", "").split(" / ") if f.strip()]
+    except Exception as e:                                   # noqa: BLE001
+        spellings = []
+        bad("noedge axis: the flag's spelling comes from the registry",
+            "cannot read testees/pcrec/list_axes.tsv: %s" % e)
+    if spellings:
+        if FLAG in spellings:
+            ok("noedge axis: the flag's spelling comes from the registry",
+               "`%s` is the `scan-edge` axis's own cli_flag in "
+               "testees/pcrec/list_axes.tsv (bit %s)"
+               % (FLAG, next((r.get("deny_bit", "?") for r in rows
+                              if r["axis"] == "scan-edge"
+                              and r.get("cli_flag", "").startswith("-f")), "?")))
+        else:
+            bad("noedge axis: the flag's spelling comes from the registry",
+                "the archived `scan-edge` rows spell %r, and this config "
+                "carries %r -- pcrec renamed the flag" % (spellings, FLAG))
+
+    saved = dict(os.environ)
+    os.environ["PCREC_BIN"] = adapter.pin_binary()
+    os.environ.pop("PCREC_LOCAL_FLAGS", None)
+    os.environ.pop("CC", None)
+    try:
+        raw = adapter.testees()
+        # ---- 1a. the configs that predate the axis, untouched ------------
+        offenders, shapes = [], []
+        for tid in _PRE_B32_CONFIGS:
+            cfg = adapter.config(tid)
+            block = adapter.describe(tid)
+            derived = _rec.derive_testee_id(block)
+            shapes.append(derived)
+            if any(f.startswith("-f") for f in cfg.get("flags", [])):
+                offenders.append("%s: a -f flag reached the argv of a config "
+                                 "that spells none" % tid)
+            if cfg.get("deny_extra") is not None:
+                offenders.append("%s: gained deny_extra %r"
+                                 % (tid, cfg["deny_extra"]))
+            if "GENERATION AXES DENIED" in block["build_flags"] \
+                    or FLAG in block["build_flags"]:
+                offenders.append("%s: build_flags gained a deny clause" % tid)
+            if derived.endswith("-noedge") or "noedge" in derived:
+                offenders.append("%s: derived id %r carries the token"
+                                 % (tid, derived))
+            # 1c. the FROZEN pre-[B32] runtime_options renderer, plus the
+            # two capacities `describe()` appends after it on an `_in`
+            # config -- reconstructed here rather than read from the block,
+            # so the comparison stays two independent renderings.
+            want_ro = _pre_b32_runtime_options(cfg.get("flags", []))
+            bcaps = mod.buffer_capacities(cfg)
+            if bcaps:
+                want_ro = want_ro + [{"name": "buffer_frames", "value": bcaps[0]},
+                                     {"name": "buffer_trail", "value": bcaps[1]}]
+            if block["runtime_options"] != want_ro:
+                offenders.append("%s: runtime_options is %r but the frozen "
+                                 "pre-[B32] renderer gives %r"
+                                 % (tid, block["runtime_options"], want_ro))
+        if offenders:
+            bad("noedge axis: the twelve pre-[B32] configs are untouched by "
+                "the axis (argv, build_flags, id, runtime_options)",
+                "; ".join(offenders)[:700])
+        else:
+            ok("noedge axis: the twelve pre-[B32] configs are untouched by "
+               "the axis (argv, build_flags, id, runtime_options)",
+               "no -f flag on any argv, no deny clause in any build_flags, "
+               "no token in any id, and every runtime_options equals a "
+               "FROZEN copy of the pre-[B32] renderer (%s, ...)" % shapes[0])
+
+        # ---- 1b. and every COMMITTED record still names its testee -------
+        committed = {}
+        for p in _glob.glob(os.path.join(ROOT, "store", "records", "*",
+                                         "pcrec_*", "*.jsonl")):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    t = _json.loads(f.readline())["testee"]
+            except (OSError, ValueError, KeyError):
+                continue
+            committed.setdefault(t["testee_id"], t)
+        matched, drift = [], []
+        for tid in _PRE_B32_CONFIGS:
+            if raw[tid].get("local"):
+                continue            # no pin, so no committed record, by design
+            block = adapter.describe(tid)
+            rec = committed.get(_rec.derive_testee_id(block))
+            if rec is None:
+                continue
+            if rec["build_flags"] != block["build_flags"]:
+                drift.append("%s: the committed record has %r, describe() "
+                             "now gives %r" % (tid, rec["build_flags"][:110],
+                                               block["build_flags"][:110]))
+            elif rec.get("runtime_options") != block["runtime_options"]:
+                drift.append("%s: the committed record's runtime_options is "
+                             "%r, describe() now gives %r"
+                             % (tid, rec.get("runtime_options"),
+                                block["runtime_options"]))
+            else:
+                matched.append(rec["testee_id"])
+        if drift:
+            bad("noedge axis: every COMMITTED pcrec record at this pin still "
+                "names the testee that describes it", "; ".join(drift)[:600])
+        elif not matched:
+            bad("noedge axis: every COMMITTED pcrec record at this pin still "
+                "names the testee that describes it",
+                "no committed record matched any pre-[B32] config's derived "
+                "id -- the arm is VACUOUS, which is a failure, not a pass")
+        else:
+            ok("noedge axis: every COMMITTED pcrec record at this pin still "
+               "names the testee that describes it",
+               "%d ids in store/ re-derive byte-identically, build_flags AND "
+               "runtime_options included" % len(matched))
+
+        # ---- 2. the token, the clause and the flag on the describe side --
+        block = adapter.describe(NOEDGE)
+        cfg = adapter.config(NOEDGE)
+        derived = _rec.derive_testee_id(block)
+        probs = []
+        if cfg.get("deny_extra") != "noedge":
+            probs.append("deny_extra is %r" % cfg.get("deny_extra"))
+        if not derived.endswith("_noedge"):
+            probs.append("testee_id %r does not end in the token" % derived)
+        if FLAG not in block["build_flags"] \
+                or "GENERATION AXES DENIED" not in block["build_flags"]:
+            probs.append("build_flags carries no deny clause")
+        ro = {o["name"]: o["value"] for o in block["runtime_options"]}
+        if ro.get(FLAG) is not True:
+            probs.append("runtime_options[%s] is %r, want True"
+                         % (FLAG, ro.get(FLAG)))
+        plain = _rec.derive_testee_id(adapter.describe("pcrec-auto"))
+        if derived != plain + "_noedge":
+            probs.append("%r is not %r plus the token -- the pair is meant "
+                         "to be ONE variable apart" % (derived, plain))
+        if probs:
+            bad("noedge axis: %s carries the token, the clause and the flag"
+                % NOEDGE, "; ".join(probs)[:500])
+        else:
+            ok("noedge axis: %s carries the token, the clause and the flag"
+               % NOEDGE,
+               "%s -> %s (its gcc sibling's id plus `noedge`), the flag in "
+               "build_flags and in runtime_options" % (plain, derived))
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+
+    # ---- 3 + 4 + 5. a real compile: the argv, the stamps, the oracle ----
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-noedge-")
+    try:
+        pattern = _bench_pattern("loglines", "iso-ts")
+        subj = []
+        for i, text in enumerate(_NOEDGE_SUBJECTS):
+            p = os.path.join(tmp, "noedge-s%d.bin" % i)
+            with open(p, "wb") as f:
+                f.write(text)
+            subj.append(_CCSubject(i, p, len(text)))
+
+        g = type(adapter)._compile_one.__globals__
+        argvs, real_sp = [], g["subprocess"]
+        g["subprocess"] = _ArgvSpy(real_sp, argvs)
+        try:
+            out, diag, diffs, nrows, nmatch, meta = _cap_vs_oracle(
+                adapter, NOEDGE, pattern, subj, list(_NOEDGE_SUBJECTS), tmp,
+                "noedge-iso-ts")
+        finally:
+            g["subprocess"] = real_sp
+
+        # (i) the flag was in pcrec's REAL argv, every exec
+        pcrec_argvs = [a for a in argvs
+                       if a and os.path.basename(a[0]) == "pcrec"]
+        missing = [" ".join(a[:4]) for a in pcrec_argvs if FLAG not in a]
+        if not pcrec_argvs:
+            bad("noedge axis: %s -- the denial is in pcrec's REAL argv" % NOEDGE,
+                "no pcrec exec was seen at the subprocess boundary")
+        elif missing:
+            bad("noedge axis: %s -- the denial is in pcrec's REAL argv" % NOEDGE,
+                "%d of %d execs carried no %s: %s"
+                % (len(missing), len(pcrec_argvs), FLAG, "; ".join(missing[:2])))
+        else:
+            ok("noedge axis: %s -- the denial is in pcrec's REAL argv" % NOEDGE,
+               "%d pcrec exec(s), each carrying %s" % (len(pcrec_argvs), FLAG))
+
+        # (ii) THE CONTROL: the restored machine is still RIGHT
+        title = ("noedge axis: the denied artifact answers loglines iso-ts "
+                 "by the libpcre2 ORACLE, both forms")
+        if out != "compiled":
+            bad(title, "%s: %s" % (out, " ".join((diag or "").split())[:300]))
+        elif diffs:
+            bad(title, "the denial produced a WRONG matcher -- the scan edge "
+                       "DELETES states from the table, so a denial that "
+                       "restored them wrong is exactly what a timing "
+                       "comparison would report as a speed-up: %s"
+                       % "; ".join(diffs[:4])[:400])
+        elif nmatch < 4:
+            bad(title, "%d rows agreed but only %d matched -- an agreement "
+                       "in which nothing matched proves nothing"
+                       % (nrows, nmatch))
+        else:
+            ok(title, "%d rows (%d subjects x 2 forms), %d matching; answer "
+                      "+ span identical to libpcre2" % (nrows, len(subj), nmatch))
+
+        # (iii) the stamp AND the count both move against the plain sibling
+        _out2, _d2, _diffs2, _n2, _m2, meta_auto = _cap_vs_oracle(
+            adapter, "pcrec-auto", pattern, subj, list(_NOEDGE_SUBJECTS), tmp,
+            "auto-iso-ts")
+        moved = []
+        for key, want_auto, want_deny in (("dfa_scan_edge", "range", "none"),
+                                          ("scan_edges", 8, 0),
+                                          ("scan_edges_match", 4, 0)):
+            if meta_auto.get(key) != want_auto:
+                moved.append("pcrec-auto stamps %s = %r, want %r"
+                             % (key, meta_auto.get(key), want_auto))
+            if meta.get(key) != want_deny:
+                moved.append("%s stamps %s = %r, want %r"
+                             % (NOEDGE, key, meta.get(key), want_deny))
+        title = ("noedge axis: on loglines iso-ts the STAMP and the COUNT "
+                 "both move -- range/8/4 -> none/0/0")
+        if moved:
+            bad(title, "; ".join(moved)[:500])
+        else:
+            ok(title, "pcrec-auto: dfa_scan_edge=range, scan_edges=8, "
+                      "scan_edges_match=4 (I-33's own numbers); %s: none, "
+                      "0, 0 -- one variable, the same pin" % NOEDGE)
+
+        # ---- 5. the covariate BY VALUE across artifact kinds -------------
+        probs, seen = [], []
+        for label, tid, (sb, name), want in _SCAN_EDGE_CASES:
+            pat = _bench_pattern(sb, name)
+            adapter.prepare(tid, tmp)
+            pid = re.sub(r"[^A-Za-z0-9]+", "-",
+                         "se-%s-%s" % (name, tid)).strip("-")[:44]
+            cr = adapter.compile(tid, pid, pat, {}, 1, tmp).get(_ad.FORM_PLAIN)
+            if cr is None or cr.outcome != "compiled":
+                probs.append("%s: %s" % (label, cr.outcome if cr else "no row"))
+                continue
+            m = cr.engine_metadata or {}
+            got = (m.get("scan_edges"), m.get("scan_edges_match"))
+            if got != want:
+                probs.append("%s (%s %s): scan_edges %r, want %r"
+                             % (label, sb, name, got, want))
+            else:
+                seen.append("%s %s" % (name, got))
+            if "scan_edges" not in m or "scan_edges_match" not in m:
+                probs.append("%s: the pair is ABSENT, not 0 -- a covariate "
+                             "missing where it reads 0 turns a regression on "
+                             "it into a comparison of populations" % label)
+        title = ("noedge axis: `scan_edges` BY VALUE on the I-33 witnesses, "
+                 "0 included, across five artifact kinds")
+        if probs:
+            bad(title, "; ".join(probs)[:600])
+        else:
+            ok(title, "%s -- a DFA with many edges, two with one, a DFA with "
+                      "none, a forced VM and a denied build; 0 asserted as a "
+                      "VALUE on three of them" % ", ".join(seen))
+
+        # ---- and the pair round-trips through store.write ----------------
+        # The record's compile row carries the REAL metadata of the denied
+        # artifact, `scan_edges` included, so this is the schema's own
+        # X-rules judging a declared name at a real value -- not a
+        # hand-typed pair that happens to look like one.
+        from pcrecbench import reduce as _rd_ne
+        block = adapter.describe(NOEDGE)
+        setup, trows = _assemble(
+            [_ta_row("iso-ts", "s-0", "short-subject-search", t, t, 100)
+             for t in range(1, 6)])
+        setup["testee"] = dict(block,
+                               testee_id=_rec.derive_testee_id(block))
+        for r in trows:
+            if r["kind"] == "compile":
+                r["engine_metadata"] = dict(meta)
+        setup["trial_agreement"] = _rd_ne.judge_trial_agreement(trows)
+        setup = _rec.stamp_content_hash(setup, trows)
+        setup["record_id"] = _rec.derive_record_id(setup)
+        try:
+            _p, written = _write_scratch(setup, trows, "noedge")
+            wid = written["testee"]["testee_id"]
+            if wid.endswith("_noedge"):
+                ok("noedge axis: the token and the `scan_edges` pair "
+                   "round-trip through a written, VALIDATED record",
+                   "%s, compile row carrying scan_edges=%r / "
+                   "scan_edges_match=%r against the declaration describe() "
+                   "put in the same record"
+                   % (wid, meta.get("scan_edges"),
+                      meta.get("scan_edges_match")))
+            else:
+                bad("noedge axis: the token and the `scan_edges` pair "
+                    "round-trip through a written, VALIDATED record",
+                    "the record carries %r" % wid)
+        except Exception as e:                               # noqa: BLE001
+            bad("noedge axis: the token and the `scan_edges` pair "
+                "round-trip through a written, VALIDATED record",
+                "store.write refused it: %s" % str(e)[-300:])
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -5425,6 +5859,7 @@ def main():
     check_opt42_preempts_collapse_policy()
     check_cc_axis()
     check_cap_axis()
+    check_noedge_axis()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()
