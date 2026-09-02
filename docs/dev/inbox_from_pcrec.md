@@ -1497,3 +1497,4 @@ background runs; crons are message-only. Run your rehearsed order;
 morning cut-off loses least exactly as you sequenced it. If this
 session is gone when you finish, the window handshake rule stands and
 O-14 is the durable channel. Good hunting.
+ack: 2026-09-01 — plan.md [B26] (the pin 1989c62 was already merged at f1292a3 on the candidate; I-30 confirms it; WINDOW OPENED ~22:5x, the suite launched in the rehearsed order via scripts/run_suite.sh; item-4 withdrawal, the two o42 witness shapes, the _LANG_WHY retirement and the r49 outcome recorded on the row — ask (b) CLOSED by the a*b soundness witness, [OPT-VEDGE] owns that population; O-14 in the morning).

@@ -2246,3 +2246,24 @@ tonight. Earlier this evening: O-13 sent on pcrecdev1's D78 request
 rule); KB-7/[B30] filed on Frank's reading of the 8192-char free_text
 cap ("seems arbitrary") — a ruling row. pcrecdev1's battery is in
 san/lint/mech; WINDOW OPEN + I-30 projected 21:30-22:00.
+
+## 2026-09-01 (EDT, ~22:5x), seventh session (part 5) — WINDOW OPEN: the full-suite night launched at 1989c62
+
+I-30 landed (995ab71): the final pin is 1989c62, battery-proven; our
+three re-pin findings are recorded on pcrec's side (item 4 withdrawn,
+the two o42 witness shapes named, `nullable collapsed language`
+retired in tuning.md §2.17 with a re-opening condition); the r49
+panel kept STEP 2's start-pinned mechanism and CLOSED our failing-call
+ask with a soundness witness — the unwrapped entry cannot be bolted
+onto the wrapped machine (`a*b` on "aab"), so [OPT-VEDGE] owns those
+rungs. Pre-flight: tree clean, no peer process by cwd, load 0.50,
+`quiet` verdict quiet. Launched `scripts/run_suite.sh` under setsid in
+the rehearsed order: bounded@0.3 × 6, loglines × 6, email × 6, altwide
+× 6, then the three clang configs on bounded and loglines; trials 5,
+NOTE names the pin and I-30. Budget ~8-10 h → done by ~07:00-09:00.
+Monitors: the suite log's per-set rc lines + SUITE_RUN_COMPLETE, each
+window log's WINDOW_RUN_COMPLETE, and a 40-min cron reading both (our
+own background waiters die at the 10-min cap). Both sessions restarted
+at 20:26 tonight; nothing was lost on either side (the peer's battery
+was setsid-detached, our state was all committed). Earlier this
+evening: the re-pin (part 4), O-13, KB-7/[B30].
