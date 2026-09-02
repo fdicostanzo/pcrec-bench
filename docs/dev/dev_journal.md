@@ -2415,3 +2415,25 @@ thirteen-rung total called a good estimate wrong by "two to three
 orders" — like with like; two lanes idled on monitors again despite the
 brief (b30cap, b31cap) — the nudge works within a minute, but the
 brief's wording still does not.
+
+## 2026-09-02 (EDT, ~16:3x), eighth session (part 3) — the gcc census lands; the vm-bigcap cell does not fit; session paused
+
+b31cap's section 2 (427ea4d, merged d37b906): five cells through the
+adapter's own compile path, both forms, one trial, all under gnutimeout
+600, none timed out. The two routes have OPPOSITE cost structures — a
+forced-VM artifact is straight-line C pcrec writes in 0.01-0.06 s and
+gcc pays for (w-512 5.1/7.0 s, w-2048 61.7/91.8, s-4096 183/334, per
+form), SUPERLINEAR in emitted CODE bytes (exponent ~1.8 to w-2048 and
+steeper beyond; both of the NOTES' linear-in-pattern-bytes models
+refuted 1.5-1.8× on the third cell, predicted before measured); an
+auto-route artifact is a table the subset construction pays for (11-37
+s) and gcc barely notices (<1 s). Per-rung projection at five trials:
+pcrec-vm-bigcap 4,499 s = 75 min of compile alone (OVER the 5400 s cap
+before matching; w-2048 + s-4096 are 75 % of it), pcrec-auto-bigcap
+705 s = 12 min. s-512 COMPILES at the default caps (474,312 code B /
+843,165 total) — P13's bracket confirmed, twelve rungs need the raise.
+Folded into NOTES.md (a measured-after paragraph) and plan.md [B31]
+with the window options (A: a per-cell cap variable, recommended; B:
+--trials 3; C: a run --patterns filter) — Frank's ruling owed; the
+window not run. wake.md rewritten; watchdog deleted; worktrees kept
+for the next session to remove. Master 9b45f31, clean.
