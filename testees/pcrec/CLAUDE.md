@@ -242,6 +242,19 @@ key and a flag may AGREE but never DISAGREE: the value is part of the
 id, and an id naming a cap the compile did not run under is worse than
 no record.
 
+**What a window will pay for them (MEASURED 2026-09-02; section 2 of the
+same measurements file).** The two routes have OPPOSITE cost structures
+under the raise, so they need separate budgets: a forced-VM artifact is
+straight-line code, emitted in 0.01-0.06 s and costing gcc 5.1-333.8 s;
+an auto-route artifact of the same pattern is a table, emitted in
+11.0-36.6 s and costing gcc 0.6-1.0 s. gcc is SUPERLINEAR in emitted code
+bytes and accelerates, so a rate times a total under-projects badly — a
+per-rung sum over altwide@0.2's thirteen wide rungs at five trials is
+4,499 s for `pcrec-vm-bigcap` (over the 5,400 s per-cell cap before match
+and throughput) and 705 s for `pcrec-auto-bigcap`. The lever that keeps
+the trial count is splitting `w-2048` and `s-4096` — 75 % of the VM bill —
+into a cell of their own, which leaves the other eleven at 1,143 s.
+
 **Running them.** The bigcap cells belong to `bench/altwide`'s window and
 nowhere else — every other set compiles inside the default caps, where a
 bigcap testee would measure the same artifact as its plain sibling and be

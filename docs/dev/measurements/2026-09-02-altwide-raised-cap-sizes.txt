@@ -335,3 +335,434 @@ wb-512	whole-subject	vm	679320	679089	729716	0.01	did-not-compile	code	679084	0.
 # 
 # 
 # main()
+
+# ===========================================================================
+# SECTION 2 -- THE FULL ADAPTER COMPILE COST (emit-c + gcc + load) OF THE
+# HEAVIEST RAISED-CAP CELLS, AND THE PER-RUNG WINDOW PROJECTION
+# ===========================================================================
+#
+# [B31] follow-up, asked for by the manager 2026-09-02: section 1 above timed
+# pcrec's EMIT only, and bench/altwide@0.2's NOTES ("What to measure before
+# committing the raised-cap VM cell") estimates `pcrec-vm-bigcap` at 12 to 91
+# minutes of compile ALONE, the spread being whether gcc's cost follows a
+# node per BRANCH or a node per branch BYTE, and asks for one measured rung
+# before the estimate is spent. This section is that measurement, plus a
+# fifth cell taken as a VALIDATION point, plus the per-rung projection the
+# window planner needs.
+#
+# WHAT WAS RUN: the ADAPTER's own compile path (testees/pcrec/adapter.py's
+# `Adapter.compile`), driven directly, so the pcrec argv, the shim command
+# line (`<cc> -O2 -std=gnu11 -fPIC -shared -o artifact-1.so shim.c
+# -DPB_ARTIFACT=... -I <dir>`) and the PHASE NAMES are the ones a cell
+# records, not a reconstruction of them. BOTH FORMS of each pattern, because
+# a cell builds both: `plain` and `whole-subject` (`(?:<text>)\z`).
+# `--trials 1`, one compile at a time.
+#
+# THE TIMEOUT IS REAL AND IT IS THE ADAPTER'S OWN FAILURE PATH: every exec
+# the adapter makes was wrapped in `/usr/bin/gnutimeout 600` (the adapter
+# module's `subprocess` attribute swapped for a wrapper), so a gcc over ten
+# minutes would return 124 and surface as the adapter's own
+# `did-not-compile` carrying that rc -- which is how a window would see it,
+# and would itself have been the finding. NOTHING TIMED OUT: all ten
+# (five cells x two forms) compiled, every exec rc=0, the worst single gcc
+# 333.8 s.
+#
+# Source: python3 gcccensus.py (reproduced at the foot of this section),
+# run 2026-09-02 15:53-16:08 EDT on budu-ryzen1600 (12 cores) in worktree
+# b31cap at branch lane/b31cap. pcrec pin 1989c62 (abi 15); compilee
+# toolchain gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0 -- neither bigcap config
+# declares `cc`, so the artifact and the shim were built by $CC-else-gcc,
+# the same compiler the timing driver uses. Per-row load averages are
+# recorded below: THIS BOX WAS NOT QUIET (load1 2.9-4.5; two other lanes of
+# the same session were working through it). Every gcc figure here is
+# therefore an UPPER BOUND under contention -- the right side to err on for
+# a "will the cell fit?" question and the wrong side for anything else.
+# Nothing in this section is a benchmark.
+#
+# `load_s` reads 0.000 on every row and that is real, not missing: the load
+# phase is one dlopen, about 98 us in the store's committed altwide records,
+# which is below this table's millisecond resolution.
+#
+# THE FIVE FINDINGS
+#
+#  1. THE TWO ROUTES HAVE OPPOSITE COST STRUCTURES, and the 0.2 NOTES'
+#     single "compile term" hides it. Under the raise:
+#
+#         route             emit-c            gcc
+#         forced VM         0.01 - 0.06 s     5.1 - 333.8 s
+#         auto (DFA)       11.0 - 36.6 s      0.6 - 1.0 s
+#
+#     A forced-VM artifact is straight-line CODE, so pcrec writes it almost
+#     instantly and gcc pays for all of it. An auto-route artifact of the
+#     same pattern is a table (31-38 KB of code against 1.6-2.6 MB total),
+#     so pcrec's subset construction pays and gcc barely notices -- exactly
+#     what limits.md 8's per-entry figures predict, and the reason the two
+#     configs need separate budgets rather than one "compile term".
+#
+#  2. THE 12-91 MINUTE ESTIMATE'S MODEL IS WRONG IN ITS INDEPENDENT
+#     VARIABLE, and the error is testable. Both the node-per-branch and the
+#     node-per-branch-BYTE readings are LINEAR in a property of the pattern
+#     text. Measured, gcc is neither: it is SUPERLINEAR IN EMITTED CODE
+#     BYTES. Fitting a power law to the first two VM cells and using it to
+#     PREDICT the third, before measuring it:
+#
+#         predicted w-2048 vm gcc   93.0 s plain / 160.5 s whole
+#         MEASURED                  61.7 s plain /  91.8 s whole
+#
+#     The pattern-byte model over-predicts by 1.5-1.8x, so it is refuted as
+#     a projection basis. On emitted CODE bytes the exponent is about 1.77
+#     (plain) / 1.83 (whole) between w-512 and w-2048 and steepens to about
+#     3.6 / 4.2 between w-2048 and s-4096 -- gcc ACCELERATES, so the largest
+#     rung dominates the bill and no single rate may be multiplied by a
+#     total. `s-4096`'s whole form alone is 333.8 s, 37 % of the whole
+#     five-trial VM compile term below.
+#
+#  3. THE ANSWER TO THE QUESTION AS ASKED. Scaling the w-512 pair (12.16 s
+#     for both forms) linearly by branch bytes over the thirteen wide rungs
+#     gives about 290 s per trial and about 24 min over five -- inside the
+#     estimate's 12-91 min range, near its optimistic end. That arithmetic
+#     is right and its model is not: because gcc accelerates, a per-rung sum
+#     is 4,499 s (75.0 min), three times the linear figure. THE LINEAR
+#     PROJECTION IS THE ONE THAT WOULD HAVE LOST THE NIGHT.
+#
+#  4. THE VM CELL DOES NOT FIT AT FIVE TRIALS, AND THE AUTO CELL FITS
+#     EASILY. Per-rung projection (the table below): `pcrec-vm-bigcap` 4,499
+#     s of compile alone against the 5,400 s per-cell cap, before match and
+#     throughput; `pcrec-auto-bigcap` 705 s, against the NOTES' own estimate
+#     of about 41 min. The NOTES over-estimated auto by 3.5x for the reason
+#     in finding 1 -- it budgeted gcc on "1-6 MB of mostly table
+#     initializer" at 1-2 s each, which is right, but budgeted 29 min of
+#     emission where 11 min is measured.
+#
+#     THE LEVERS, in the order that costs the set least: `--trials 3` takes
+#     the VM compile term to 2,699 s (45.0 min), which fits but leaves
+#     little room; splitting the two largest rungs (`w-2048`, `s-4096` --
+#     3,354 s of the 4,499, 75 %) into a cell of their own leaves the
+#     remaining eleven at 1,143 s (19.1 min) at full five trials. The second
+#     lever is the one that keeps the trial count, and the trial count is
+#     what the v1.4 spread rule needs.
+#
+#  5. `s-512` IS NOT A WIDE RUNG AND NEEDS NO RAISE -- a correction for
+#     bench/altwide@0.2, not for this lane. MEASURED at this pin: under the
+#     forced VM it emits 474,312 code bytes (plain) / 474,437 (whole),
+#     BELOW the 500,000 default code cap; under auto it emits 843,165 /
+#     928,042 total bytes, BELOW the 1,000,000 default. It compiles on both
+#     routes with no override at all, so the raise buys nothing for it and
+#     the set that actually needs `-bigcap` is TWELVE rungs, not thirteen.
+#     It is nonetheless carried in the projection below, because dropping it
+#     changes the VM total by 31.6 s out of 4,499 and the planner should be
+#     given the same thirteen the NOTES budgeted.
+#
+# COLUMNS. `emit_bytes` / `emit_code_bytes` are the two pcrec size
+# quantities as section 1 defines them, read here off the adapter's own
+# engine_metadata (its port, controlled against pcrec's advisory line on
+# every compile where that line fires). `so_bytes` is the linked artifact.
+# `emit_c_s` / `gcc_s` / `load_s` are the adapter's own phase seconds, the
+# same three a record's compile row carries. `load1_before` / `load1_after`
+# bracket each cell.
+#
+#testee	pattern	form	outcome	emit_bytes	emit_code_bytes	so_bytes	emit_c_s	gcc_s	load_s	phase_total_s	load1_before	load1_after
+pcrec-vm-bigcap	w-512	plain	compiled	678311	678311	149392	0.012	5.123	0.000	5.135	3.74	3.79
+pcrec-vm-bigcap	w-512	whole-subject	compiled	678428	678428	145296	0.017	7.012	0.000	7.029	3.74	3.79
+pcrec-vm-bigcap	s-4096	plain	compiled	3741041	3741041	759696	0.058	183.303	0.000	183.361	3.79	4.37
+pcrec-vm-bigcap	s-4096	whole-subject	compiled	3741160	3741160	759696	0.055	333.830	0.000	333.885	3.79	4.37
+pcrec-auto-bigcap	w-2048	plain	compiled	2378908	31549	960656	10.973	0.916	0.000	11.889	4.37	4.43
+pcrec-auto-bigcap	w-2048	whole-subject	compiled	2586956	32776	1042672	16.712	0.995	0.000	17.707	4.37	4.43
+pcrec-auto-bigcap	s-4096	plain	compiled	1621467	36392	641168	19.863	0.637	0.000	20.500	4.43	4.52
+pcrec-auto-bigcap	s-4096	whole-subject	compiled	1896768	37619	743664	36.602	0.719	0.000	37.321	4.43	4.52
+pcrec-vm-bigcap	w-2048	plain	compiled	2757096	2757096	526224	0.042	61.685	0.000	61.727	2.93	2.97
+pcrec-vm-bigcap	w-2048	whole-subject	compiled	2757215	2757215	526224	0.040	91.759	0.000	91.799	2.93	2.97
+
+# PER-CELL TOTALS (both forms, as a window's compile phase would pay them), and the rc of every exec the adapter made under gnutimeout 600:
+#   pcrec-vm-bigcap    w-512     both forms   12.16 s   execs: pin.sh rc=0 0.01s, pcrec rc=0 0.01s, gcc rc=0 5.12s, pin.sh rc=0 0.02s, pcrec rc=0 0.02s, gcc rc=0 7.01s
+#   pcrec-vm-bigcap    s-4096    both forms  517.25 s   execs: pin.sh rc=0 0.01s, pcrec rc=0 0.06s, gcc rc=0 183.30s, pin.sh rc=0 0.01s, pcrec rc=0 0.06s, gcc rc=0 333.83s
+#   pcrec-auto-bigcap  w-2048    both forms   29.60 s   execs: pin.sh rc=0 0.01s, pcrec rc=0 10.97s, gcc rc=0 0.92s, pin.sh rc=0 0.01s, pcrec rc=0 16.71s, gcc rc=0 0.99s
+#   pcrec-auto-bigcap  s-4096    both forms   57.82 s   execs: pin.sh rc=0 0.01s, pcrec rc=0 19.86s, gcc rc=0 0.64s, pin.sh rc=0 0.01s, pcrec rc=0 36.60s, gcc rc=0 0.72s
+#   pcrec-vm-bigcap    w-2048    both forms  153.53 s   execs: pin.sh rc=0 0.02s, pcrec rc=0 0.04s, gcc rc=0 61.69s, pin.sh rc=0 0.01s, pcrec rc=0 0.04s, gcc rc=0 91.76s
+
+# ---------------------------------------------------------------------------
+# THE PER-RUNG WINDOW PROJECTION over bench/altwide@0.2's thirteen wide
+# rungs (the set the 0.2 NOTES budgets: every 512-wide pattern plus s-512,
+# w-1024, w-2048, s-2048, s-4096 -- 102,045 pattern bytes, matching the
+# NOTES' own figure). Each rung is projected from ITS OWN emitted size,
+# never from a rate times a total, because gcc accelerates (finding 2).
+# The VM anchors are the five MEASURED gcc figures above, interpolated in
+# log-log; rows marked MEASURED are not projected at all. The auto route
+# needs no emission model: section 1 measured every rung's raised-cap emit
+# wall clock directly, and its gcc is held at a flat 1.0 s upper bound
+# (0.64-1.00 s measured across four artifacts of 1.6-2.6 MB).
+#
+# CAVEATS a reader must carry. (a) Three anchors per curve is an exponent,
+# not a fit. (b) w-512 and s-4096 differ in branch LENGTH as well as
+# width (3-12 vs 3-6 bytes), so the curve conflates the two; projecting on
+# emitted CODE bytes rather than on width is what keeps that confound out
+# of the projection, but it does not remove it from the anchors. (c) The
+# box was loaded, so these are upper bounds. (d) A window pays this ONCE
+# PER TRIAL: the adapter builds a fresh .so per trial on purpose (the
+# dynamic loader caches by path), so five trials are five full compiles.
+#
+#config	rung	form	emit_code_bytes	emit_c_s	gcc_s	source
+pcrec-vm-bigcap	s-512	plain	474312	0.01	2.7	projected
+pcrec-vm-bigcap	s-512	whole-subject	474437	0.01	3.6	projected
+pcrec-vm-bigcap	w-512	plain	678315	0.01	5.1	MEASURED
+pcrec-vm-bigcap	w-512	whole-subject	678432	0.01	7.0	MEASURED
+pcrec-vm-bigcap	srt-512	plain	584807	0.01	3.9	projected
+pcrec-vm-bigcap	srt-512	whole-subject	584924	0.01	5.3	projected
+pcrec-vm-bigcap	ci-512	plain	900863	0.01	8.5	projected
+pcrec-vm-bigcap	ci-512	whole-subject	900980	0.01	11.8	projected
+pcrec-vm-bigcap	wb-512	plain	678972	0.01	5.1	projected
+pcrec-vm-bigcap	wb-512	whole-subject	679089	0.01	7.0	projected
+pcrec-vm-bigcap	nar4-512	plain	700062	0.01	5.4	projected
+pcrec-vm-bigcap	nar4-512	whole-subject	700179	0.01	7.4	projected
+pcrec-vm-bigcap	sh1-512	plain	656438	0.01	4.8	projected
+pcrec-vm-bigcap	sh1-512	whole-subject	656555	0.01	6.6	projected
+pcrec-vm-bigcap	sfx-512	plain	809270	0.01	7.0	projected
+pcrec-vm-bigcap	sfx-512	whole-subject	809387	0.01	9.7	projected
+pcrec-vm-bigcap	pfx3-512	plain	562902	0.01	3.7	projected
+pcrec-vm-bigcap	pfx3-512	whole-subject	563019	0.01	5.0	projected
+pcrec-vm-bigcap	w-1024	plain	1371817	0.02	17.9	projected
+pcrec-vm-bigcap	w-1024	whole-subject	1371934	0.02	25.5	projected
+pcrec-vm-bigcap	s-2048	plain	1862329	0.03	30.7	projected
+pcrec-vm-bigcap	s-2048	whole-subject	1862448	0.03	44.7	projected
+pcrec-vm-bigcap	w-2048	plain	2757100	0.04	61.7	MEASURED
+pcrec-vm-bigcap	w-2048	whole-subject	2757219	0.04	91.8	MEASURED
+pcrec-vm-bigcap	s-4096	plain	3741045	0.08	183.3	MEASURED
+pcrec-vm-bigcap	s-4096	whole-subject	3741164	0.06	333.8	MEASURED
+pcrec-auto-bigcap	s-512	plain	19753	0.39	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	s-512	whole-subject	21677	0.61	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	w-512	plain	20970	0.82	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	w-512	whole-subject	22869	1.25	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	srt-512	plain	20971	0.19	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	srt-512	whole-subject	22870	0.26	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	ci-512	plain	21195	0.18	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	ci-512	whole-subject	23094	0.24	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	wb-512	plain	22738	0.78	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	wb-512	whole-subject	24713	1.11	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	nar4-512	plain	21215	1.12	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	nar4-512	whole-subject	23131	1.53	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	sh1-512	plain	21453	0.12	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	sh1-512	whole-subject	23474	0.14	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	sfx-512	plain	21786	1.14	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	sfx-512	whole-subject	23702	1.55	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	pfx3-512	plain	21899	0.07	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	pfx3-512	whole-subject	23920	0.07	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	w-1024	plain	22756	2.83	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	w-1024	whole-subject	23983	4.19	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	s-2048	plain	26218	5.18	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	s-2048	whole-subject	27463	8.49	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	w-2048	plain	31551	10.89	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	w-2048	whole-subject	32778	16.87	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	s-4096	plain	36394	21.30	1.0	flat 1.0 s bound (measured 0.64-1.00)
+pcrec-auto-bigcap	s-4096	whole-subject	37621	33.63	1.0	flat 1.0 s bound (measured 0.64-1.00)
+
+# pcrec-vm-bigcap    thirteen rungs x 2 forms x 5 trials =     4499 s =  75.0 min
+#                    at --trials 3                       =     2699 s =  45.0 min
+# pcrec-auto-bigcap  thirteen rungs x 2 forms x 5 trials =      705 s =  11.7 min
+#                    at --trials 3                       =      423 s =   7.0 min
+
+# ---------------------------------------------------------------------------
+# THE SCRIPT, verbatim (gcccensus.py; it wrote gcccensus.jsonl, which the
+# rows above render). CELLS was edited between the first four cells and
+# the fifth (w-2048 vm-bigcap, the validation point) and is shown here in
+# its final state:
+#
+# #!/usr/bin/env python3
+# """[B31] follow-up: the FULL adapter compile cost of the four heaviest
+# raised-cap cells -- emit-c AND the shim gcc, exactly as a cell builds them.
+# 
+# The adapter's own compile path is driven (`Adapter.compile`), so the argv,
+# the -O2 -std=gnu11 -fPIC -shared shim command and the phase names are the
+# cell's, not a reconstruction. Every exec the adapter makes is wrapped in
+# `/usr/bin/gnutimeout 600` by swapping the adapter module's `subprocess`
+# attribute -- a timeout therefore surfaces as the adapter's own
+# `did-not-compile` with rc 124, which IS the finding.
+# 
+# Serial, one compile at a time. Both FORMS of each pattern, because a cell
+# builds both.
+# """
+# import json
+# import os
+# import subprocess as _sp
+# import sys
+# import time
+# 
+# ROOT = "/home/duxevents/pcrec-bench/worktrees/b31cap"
+# sys.path.insert(0, ROOT)
+# 
+# from pcrecbench import adapters as _ad          # noqa: E402
+# 
+# OUT = sys.argv[1]
+# WORK = sys.argv[2]
+# CELLS = [("pcrec-vm-bigcap", "w-2048")]
+# 
+# 
+# class _Timeout:
+#     """Wrap every argv in gnutimeout 600, and record what ran."""
+# 
+#     def __init__(self, real, sink):
+#         self._real, self._sink = real, sink
+# 
+#     def run(self, argv, *a, **kw):
+#         wrapped = ["/usr/bin/gnutimeout", "600"] + [str(x) for x in argv]
+#         t0 = time.monotonic()
+#         proc = self._real.run(wrapped, *a, **kw)
+#         self._sink.append({"exe": os.path.basename(str(argv[0])),
+#                            "rc": proc.returncode,
+#                            "wall_s": round(time.monotonic() - t0, 3)})
+#         return proc
+# 
+#     def __getattr__(self, name):
+#         return getattr(self._real, name)
+# 
+# 
+# def loadavg():
+#     with open("/proc/loadavg") as f:
+#         return f.read().split()[0:3]
+# 
+# 
+# def main():
+#     adapter = _ad.discover()["pcrec"]
+#     g = type(adapter)._compile_one.__globals__
+#     with open(OUT, "a", encoding="utf-8") as out:
+#         for tid, name in CELLS:
+#             with open(os.path.join(ROOT, "bench", "altwide", "patterns",
+#                                    name + ".rx"), "rb") as f:
+#                 pattern = f.read()
+#             wd = os.path.join(WORK, "%s-%s" % (tid, name))
+#             os.makedirs(wd, exist_ok=True)
+#             adapter.prepare(tid, wd)
+#             execs, real = [], g["subprocess"]
+#             g["subprocess"] = _Timeout(real, execs)
+#             load0 = loadavg()
+#             t0 = time.monotonic()
+#             try:
+#                 cp = adapter.compile(tid, name, pattern, {}, 1, wd)
+#             finally:
+#                 g["subprocess"] = real
+#             wall = round(time.monotonic() - t0, 3)
+#             for form, cr in sorted(cp.forms.items()):
+#                 row = {"testee": tid, "pattern": name, "form": form,
+#                        "outcome": cr.outcome, "cell_wall_s": wall,
+#                        "load_before": load0, "load_after": loadavg()}
+#                 if cr.phase_seconds:
+#                     row["phases"] = {k: round(v, 3)
+#                                      for k, v in cr.phase_seconds[0].items()}
+#                 if cr.outcome == "compiled":
+#                     m = cr.engine_metadata or {}
+#                     row["emit_bytes"] = m.get("emit_bytes")
+#                     row["emit_code_bytes"] = m.get("emit_code_bytes")
+#                     row["engine"] = m.get("engine")
+#                     row["artifact_so_bytes"] = cr.artifact_bytes
+#                 else:
+#                     row["diagnostic"] = " ".join(
+#                         (cr.diagnostic or "").split())[:400]
+#                 out.write(json.dumps(row, sort_keys=True) + "\n")
+#                 out.flush()
+#                 print("%-18s %-8s %-13s %-16s %s"
+#                       % (tid, name, form, row["outcome"],
+#                          row.get("phases")), flush=True)
+#             print("   execs: %s" % json.dumps(execs), flush=True)
+#             out.write(json.dumps({"testee": tid, "pattern": name,
+#                                   "execs": execs}, sort_keys=True) + "\n")
+#             out.flush()
+# 
+# 
+# main()
+#
+# and the projection, project.py:
+#
+# #!/usr/bin/env python3
+# """Per-rung compile projection for the two bigcap configs over altwide@0.2's
+# thirteen wide rungs, from the section-2 anchors.
+# 
+# The VM route's cost is gcc and it is SUPERLINEAR in emitted CODE bytes, so a
+# rate-times-total-bytes projection is wrong twice over (it uses the wrong
+# independent variable, and it sums a superlinear law). Each rung is projected
+# from ITS OWN emitted size instead, by log-log interpolation between the three
+# measured anchors, and the thirteen are then summed.
+# 
+# The auto route needs no model for emission at all: section 1 measured the
+# raised-cap emit wall clock of every rung directly.
+# """
+# import json
+# import math
+# 
+# # ---- the thirteen wide rungs of altwide@0.2 (pattern bytes; they sum to the
+# # ---- 102,045 the 0.2 NOTES quotes)
+# RUNGS = {"w-512": 4264, "srt-512": 4264, "ci-512": 4268, "wb-512": 4268,
+#          "nar4-512": 4483, "sh1-512": 4641, "sfx-512": 5058, "pfx3-512": 5093,
+#          "s-512": 3023, "w-1024": 8705, "w-2048": 17495, "s-2048": 12140,
+#          "s-4096": 24343}
+# 
+# # ---- section 1's raised-cap emitted sizes and emit wall clocks, per rung,
+# # ---- form and mode; s-512 measured separately (0.2 added it).
+# S = "/tmp/claude-1001/-home-duxevents-pcrec-bench/9f0ad127-b912-4867-8662-75ad95c6fcba/scratchpad/b31cap"
+# census = [json.loads(l) for l in open(S + "/census.jsonl")]
+# size = {}
+# emit = {}
+# for r in census:
+#     if r["caps"] != "raised" or r["outcome"] != "compiled":
+#         continue
+#     size[(r["pattern"], r["form"], r["mode"])] = r["emit_code_bytes"]
+#     emit[(r["pattern"], r["form"], r["mode"])] = r["wall_s"]
+# size[("s-512", "plain", "vm")] = 474312
+# size[("s-512", "whole-subject", "vm")] = 474437
+# size[("s-512", "plain", "auto")] = 19753
+# size[("s-512", "whole-subject", "auto")] = 21677
+# # s-512 is 0.2's own addition, so its four emit wall clocks were MEASURED
+# # the same way section 1's were (2026-09-02, same box, same pin).
+# emit[("s-512", "plain", "vm")] = 0.008
+# emit[("s-512", "whole-subject", "vm")] = 0.011
+# emit[("s-512", "plain", "auto")] = 0.385
+# emit[("s-512", "whole-subject", "auto")] = 0.608
+# 
+# # ---- the VM gcc anchors: (emitted CODE bytes, gcc seconds), per form
+# ANCHORS = {
+#     "plain": [(678315, 5.123), (2757100, 61.685), (3741045, 183.303)],
+#     "whole-subject": [(678432, 7.012), (2757219, 91.759), (3741164, 333.830)],
+# }
+# 
+# 
+# def gcc_vm(form, b):
+#     """Log-log piecewise interpolation on the three anchors; the end segments
+#     are extended for anything outside them. Every rung but s-512 and the two
+#     largest sits inside or just below the first segment, so extrapolation is
+#     short and its error is small in absolute seconds."""
+#     a = ANCHORS[form]
+#     if b <= a[0][0]:
+#         (x0, y0), (x1, y1) = a[0], a[1]
+#     elif b >= a[-1][0]:
+#         (x0, y0), (x1, y1) = a[-2], a[-1]
+#     else:
+#         for i in range(len(a) - 1):
+#             if a[i][0] <= b <= a[i + 1][0]:
+#                 (x0, y0), (x1, y1) = a[i], a[i + 1]
+#                 break
+#     k = math.log(y1 / y0) / math.log(x1 / x0)
+#     return y0 * (b / x0) ** k
+# 
+# 
+# TRIALS = 5
+# print("#config\trung\tform\temit_code_bytes\temit_c_s\tgcc_s\tsource")
+# tot = {"pcrec-vm-bigcap": 0.0, "pcrec-auto-bigcap": 0.0}
+# for cfg, mode in (("pcrec-vm-bigcap", "vm"), ("pcrec-auto-bigcap", "auto")):
+#     for name in sorted(RUNGS, key=lambda n: RUNGS[n]):
+#         for form in ("plain", "whole-subject"):
+#             b = size[(name, form, mode)]
+#             e = emit[(name, form, mode)]
+#             if mode == "vm":
+#                 meas = [x for x in ANCHORS[form] if x[0] == b]
+#                 g, src = ((meas[0][1], "MEASURED") if meas
+#                           else (gcc_vm(form, b), "projected"))
+#             else:
+#                 g, src = 1.0, "flat 1.0 s bound (measured 0.64-1.00)"
+#             tot[cfg] += (e + g) * TRIALS
+#             print("%s\t%s\t%s\t%d\t%.2f\t%.1f\t%s"
+#                   % (cfg, name, form, b, e, g, src))
+# 
+# print()
+# for cfg in ("pcrec-vm-bigcap", "pcrec-auto-bigcap"):
+#     print("# %-18s thirteen rungs x 2 forms x %d trials = %8.0f s = %5.1f min"
+#           % (cfg, TRIALS, tot[cfg], tot[cfg] / 60))
+#     print("#   %-16s at --trials 3                       = %8.0f s = %5.1f min"
+#           % ("", tot[cfg] * 3 / 5, tot[cfg] * 3 / 5 / 60))
