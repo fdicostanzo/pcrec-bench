@@ -732,22 +732,30 @@ spread rung of the same width.
 |---|---|---|---|
 | `pcre2-interp` | ~18 min | **~22 min** | 13 more patterns, all ≤ 512 wide |
 | `pcre2-jit` | ~5-6 min | **~7 min** | same |
-| `pcrec-auto`, `pcrec-nocaps` | ~5 min + compile | **~8 min + ~30-40 min compile** | see below: the compile term is now the cell |
+| `pcrec-auto`, `pcrec-nocaps` | ~5 min + compile | **~8 min + ~25-30 min compile** | see below: the compile term is now the cell |
 | `pcrec-vm`, `pcrec-vm-in` | ~18-45 min + compile | **~25-80 min** | the open number, unchanged in kind |
 
 **The compile term on a plain pcrec config is now the dominant one, and 0.1's
 estimate did not know it.** Thirteen 0.2 patterns are at width ≥ 512, and on
 the auto/DFA route each refusal was MEASURED at 8.7-36.0 s -- the source cap
 is checked on the emitted bytes AFTER emission, so a refusal costs a full
-emit. At 2 forms × 5 trials that is 130 emits per cell. Modelling the
-measured range against width (8.7 s at the nine 512-wide rungs, ~14 s at
-`w-1024`, ~23 s at `w-2048` and `s-2048`, 36 s at `s-4096`) gives 174 s per
-emit-set and **≈ 29 minutes of refusal per `pcrec-auto` or `pcrec-nocaps`
-cell**, before the twenty compiling patterns' own emit and gcc (predicted
-small on the DFA route: `limits.md` §8's 0.905 µs per table entry makes even
-a 2,000,000-entry table 1.8 s). If P13 is confirmed and `s-512` compiles,
-twelve rungs refuse rather than thirteen and the term drops by about 2
-minutes. On the VM route the same thirteen refusals cost 0.01-0.07 s in
+emit. A refusal is measured ONCE per form, not once per trial: the adapter
+returns on the first refusing trial and the harness forces a non-`compiled`
+outcome's trial count to 1 (manager's correction on merge, 2026-09-02 --
+the author could not read the adapter). So the term is 2 forms × Σ over the
+refusing patterns of one emit each: modelling the measured range against
+width (8.7 s at the nine 512-wide rungs, ~14 s at `w-1024`, ~23 s at
+`w-2048` and `s-2048`, 36 s at `s-4096`) gives ~174 s per form, **≈ 6
+minutes of refusal per `pcrec-auto` or `pcrec-nocaps` cell from the
+thirteen wide rungs** -- but the MEASURED 0.1 auto cell was 30 min against
+the VM's 4.9 with 26 refusals (both forms of the twelve wide rungs plus
+two), so the per-refusal cost on a real cell runs above the isolated
+figures and the honest 0.2 budget for a plain auto config is 0.1's 30 min
+plus the thirteen new compiling patterns' own emit+gcc (small on the DFA
+route: `limits.md` §8's 0.905 µs per table entry makes even a
+2,000,000-entry table 1.8 s), **≈ 35-40 min**. If P13 is confirmed and
+`s-512` compiles, the refusal count is unchanged from 0.1 and the term does
+not move.
 total, and the compile term is instead the twenty COMPILING patterns: 3,433
 branches or 29,056 branch bytes, at 5.37 ms of gcc per VM node, is 18 s per
 emit-set if a branch lowers to a node and 156 s if a branch BYTE does --
@@ -759,7 +767,10 @@ built by raising `--max-emit-bytes` / `--max-emit-code-bytes` per compile).
 The raise does not make emission cheaper -- it makes emission be followed by
 gcc instead of by a refusal.
 
-- **`pcrec-auto-bigcap` ≈ 41 min**: the same 29 min of emission, plus gcc on
+- **`pcrec-auto-bigcap` ≈ 41 min**: ~29 min of emission (under the raise every
+  wide rung COMPILES, so it IS emitted 2 forms × 5 trials = 10 times, 130
+  emits over the thirteen -- the once-per-form rule above applies to refusals
+  only), plus gcc on
   1-6 MB of mostly table initializer per artifact (~1-2 s each by
   `limits.md` §8's per-entry figure, so 2-4 min over 130 emits), plus ~8 min
   of match and throughput. Comfortably inside the 5400 s per-cell cap.
