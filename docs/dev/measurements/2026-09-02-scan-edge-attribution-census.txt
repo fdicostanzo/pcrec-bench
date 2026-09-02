@@ -1,0 +1,418 @@
+# ===========================================================================
+# THE [OPT-5] SCAN-EDGE ATTRIBUTION CENSUS -- where the emitter's marker
+# lands, and what the `scan_edges` covariate counts
+# ===========================================================================
+#
+# WHAT THIS IS. [B32] (f) puts two integer metadata pairs on every pcrec
+# compile row: `scan_edges` (the SEARCH-side machines' [OPT-5] scan edges)
+# and `scan_edges_match` (the anchored machine's). pcrec's inbox I-33 gives
+# the mechanism the covariate exists for -- one compare per edge per
+# scan-loop iteration, so the COUNT and not the presence predicts the cost
+# the 2026-09-02 full suite measured on bench/loglines.
+#
+# The count is taken from pcrec's OWN marker: `emit_scan_edge`
+# (~/pcrec/src/gen/emit_dfa.c) writes a comment block beside every edge it
+# emits, once per edge per machine, and both spellings of that block open
+# `// [OPT-5] SCAN EDGE:`. The ATTRIBUTION -- which machine an edge belongs
+# to -- is read from the top-level function the marker lands in. This file
+# is the measurement that establishes the three-function table the adapter
+# hard-codes (testees/pcrec/adapter.py, SCAN_EDGE_SEARCH_FNS /
+# SCAN_EDGE_MATCH_FNS), and the CONTROL on the adapter's counter.
+#
+# THE CONTROL. Every row was counted twice: once by the adapter's own
+# `scan_edge_counts()` and once by an independent five-line reader written
+# for this census (a different function-definition regex, no shared source,
+# no brace tracking). The two agree on all 338 compiles -- `mismatches 0`
+# on the last line but one.
+#
+# THE THREE FINDINGS
+#
+#  1. A MARKER NEVER LANDS OUTSIDE THREE FUNCTIONS. Over 338 compiles the
+#     set of enclosing functions is exactly {rx_search, rx_prefilter,
+#     rx_match} (last line). The adapter therefore treats a marker anywhere
+#     else as an AdapterError rather than a dropped edge: pcrec moving the
+#     loop into a fourth function is the one event this covariate would
+#     otherwise mis-attribute, and a mis-attributed covariate is worse than
+#     none.
+#
+#  2. A VM HYBRID'S EDGES ARE ALL ON THE SEARCH SIDE. A hybrid emits its
+#     inlined candidate-start scan as `rx_prefilter`, which is called from
+#     `rx_search_run` and from NOWHERE else (read directly in the emitted C
+#     of `x*(?=abc)[0-9]{2,8}`: two call sites, both inside
+#     `rx_search_run`; the hybrid's `_match` entry is the VM's own body).
+#     So `rx_prefilter` counts into `scan_edges`, not into a third bucket,
+#     and a hybrid reads `scan_edges_match` 0. That is why the split is by
+#     MACHINE and not by function name.
+#
+#  3. BOTH SCAN DIRECTIONS ARE EMITTED INTO `rx_search`. loglines `iso-ts`
+#     puts 8 markers there -- 4 forward and 4 reverse -- and 4 into
+#     `rx_match`, which is I-33's "8 edge blocks in rx_search and 4 in
+#     rx_match" to the letter, and is why iso-ts is the regression family's
+#     worst row.
+#
+# HOW IT WAS RUN. pcrec pin 1989c62 (abi 15), the bench's own pinned build
+# (build/pcrec-1989c62/build/pcrec), 2026-09-02 on budu-ryzen1600 in
+# worktree b32adp at branch lane/b32adp. Every pattern of bench/loglines,
+# bench/email and bench/bounded x both forms (`plain`, and the
+# whole-subject `(?:<text>)\z` the match regime compiles) x three engine
+# modes (`auto`; `--engine=vm`; `-fno-scan-edge`) -- 57 patterns, 342
+# attempted, 338 compiled, 4 REFUSED. The four are `bounded`'s
+# `cls-upto-65535` rung under `auto` and under `-fno-scan-edge`, both
+# forms, at pcrec's NFA state cap; the SAME rung compiles under
+# `--engine=vm` (the VM builds what the NFA cap refuses to determinise),
+# which is the [B11.4] finding, unmoved. NOTHING HERE IS A TIMING: it is a
+# count over emitted
+# text, and the box's load does not enter it.
+#
+# COLUMNS. `engine` / `vm_prefilter` / `dfa_scan_edge` are the artifact's
+# own stamps (`-` where the artifact carries none, `(absent)` where
+# RX_DFA_SCAN_EDGE is not emitted -- a forced-VM artifact with no DFA
+# scan). `scan_edges` / `scan_edges_match` are the adapter's pairs.
+# `by_function` is the independent reader's raw per-function tally, which
+# is what makes the attribution auditable row by row.
+#
+#set	pattern	form	mode	engine	vm_prefilter	dfa_scan_edge	scan_edges	scan_edges_match	by_function
+loglines	bignum	plain	auto	dfa	-	none	0	0	-
+loglines	bignum	plain	vm	vm	none	(absent)	0	0	-
+loglines	bignum	plain	noedge	dfa	-	none	0	0	-
+loglines	bignum	whole-subject	auto	dfa	-	none	0	0	-
+loglines	bignum	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	bignum	whole-subject	noedge	dfa	-	none	0	0	-
+loglines	floor	plain	auto	dfa	-	none	0	0	-
+loglines	floor	plain	vm	vm	none	(absent)	0	0	-
+loglines	floor	plain	noedge	dfa	-	none	0	0	-
+loglines	floor	whole-subject	auto	dfa	-	none	0	0	-
+loglines	floor	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	floor	whole-subject	noedge	dfa	-	none	0	0	-
+loglines	hex32-id	plain	auto	dfa	-	none	0	0	-
+loglines	hex32-id	plain	vm	vm	none	(absent)	0	0	-
+loglines	hex32-id	plain	noedge	dfa	-	none	0	0	-
+loglines	hex32-id	whole-subject	auto	dfa	-	none	0	0	-
+loglines	hex32-id	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	hex32-id	whole-subject	noedge	dfa	-	none	0	0	-
+loglines	http-5xx	plain	auto	dfa	-	range	1	1	match=1 search=1
+loglines	http-5xx	plain	vm	vm	none	(absent)	0	0	-
+loglines	http-5xx	plain	noedge	dfa	-	none	0	0	-
+loglines	http-5xx	whole-subject	auto	dfa	-	range	1	1	match=1 search=1
+loglines	http-5xx	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	http-5xx	whole-subject	noedge	dfa	-	none	0	0	-
+loglines	ipv4	plain	auto	dfa	-	none	0	0	-
+loglines	ipv4	plain	vm	vm	none	(absent)	0	0	-
+loglines	ipv4	plain	noedge	dfa	-	none	0	0	-
+loglines	ipv4	whole-subject	auto	dfa	-	none	0	0	-
+loglines	ipv4	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	ipv4	whole-subject	noedge	dfa	-	none	0	0	-
+loglines	ipv6	plain	auto	dfa	-	bitmap	1	0	search=1
+loglines	ipv6	plain	vm	vm	none	(absent)	0	0	-
+loglines	ipv6	plain	noedge	dfa	-	none	0	0	-
+loglines	ipv6	whole-subject	auto	dfa	-	bitmap	1	0	search=1
+loglines	ipv6	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	ipv6	whole-subject	noedge	dfa	-	none	0	0	-
+loglines	iso-ts	plain	auto	dfa	-	range	8	4	match=4 search=8
+loglines	iso-ts	plain	vm	vm	none	(absent)	0	0	-
+loglines	iso-ts	plain	noedge	dfa	-	none	0	0	-
+loglines	iso-ts	whole-subject	auto	dfa	-	range	8	4	match=4 search=8
+loglines	iso-ts	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	iso-ts	whole-subject	noedge	dfa	-	none	0	0	-
+loglines	kv-quoted	plain	auto	dfa	-	none	0	0	-
+loglines	kv-quoted	plain	vm	vm	none	(absent)	0	0	-
+loglines	kv-quoted	plain	noedge	dfa	-	none	0	0	-
+loglines	kv-quoted	whole-subject	auto	dfa	-	none	0	0	-
+loglines	kv-quoted	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	kv-quoted	whole-subject	noedge	dfa	-	none	0	0	-
+loglines	level-context	plain	auto	vm	hybrid	none	0	0	-
+loglines	level-context	plain	vm	vm	none	(absent)	0	0	-
+loglines	level-context	plain	noedge	vm	hybrid	none	0	0	-
+loglines	level-context	whole-subject	auto	vm	hybrid	none	0	0	-
+loglines	level-context	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	level-context	whole-subject	noedge	vm	hybrid	none	0	0	-
+loglines	stack-frame	plain	auto	dfa	-	none	0	0	-
+loglines	stack-frame	plain	vm	vm	none	(absent)	0	0	-
+loglines	stack-frame	plain	noedge	dfa	-	none	0	0	-
+loglines	stack-frame	whole-subject	auto	dfa	-	none	0	0	-
+loglines	stack-frame	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	stack-frame	whole-subject	noedge	dfa	-	none	0	0	-
+loglines	uuid	plain	auto	dfa	-	none	0	0	-
+loglines	uuid	plain	vm	vm	none	(absent)	0	0	-
+loglines	uuid	plain	noedge	dfa	-	none	0	0	-
+loglines	uuid	whole-subject	auto	dfa	-	none	0	0	-
+loglines	uuid	whole-subject	vm	vm	none	(absent)	0	0	-
+loglines	uuid	whole-subject	noedge	dfa	-	none	0	0	-
+email	factored	plain	auto	dfa	-	none	0	0	-
+email	factored	plain	vm	vm	none	(absent)	0	0	-
+email	factored	plain	noedge	dfa	-	none	0	0	-
+email	factored	whole-subject	auto	dfa	-	none	0	0	-
+email	factored	whole-subject	vm	vm	none	(absent)	0	0	-
+email	factored	whole-subject	noedge	dfa	-	none	0	0	-
+email	floor	plain	auto	dfa	-	none	0	0	-
+email	floor	plain	vm	vm	none	(absent)	0	0	-
+email	floor	plain	noedge	dfa	-	none	0	0	-
+email	floor	whole-subject	auto	dfa	-	none	0	0	-
+email	floor	whole-subject	vm	vm	none	(absent)	0	0	-
+email	floor	whole-subject	noedge	dfa	-	none	0	0	-
+email	orig	plain	auto	dfa	-	none	0	0	-
+email	orig	plain	vm	vm	none	(absent)	0	0	-
+email	orig	plain	noedge	dfa	-	none	0	0	-
+email	orig	whole-subject	auto	dfa	-	none	0	0	-
+email	orig	whole-subject	vm	vm	none	(absent)	0	0	-
+email	orig	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-atleast-4096	plain	auto	dfa	-	range	4	0	search=4
+bounded	cls-atleast-4096	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-atleast-4096	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-atleast-4096	whole-subject	auto	dfa	-	range	1	0	search=1
+bounded	cls-atleast-4096	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-atleast-4096	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-lazy-16384	plain	auto	dfa	-	range	1	0	search=1
+bounded	cls-lazy-16384	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-lazy-16384	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-lazy-16384	whole-subject	auto	vm	none	(absent)	0	0	-
+bounded	cls-lazy-16384	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-lazy-16384	whole-subject	noedge	vm	none	(absent)	0	0	-
+bounded	cls-upto-1024	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	cls-upto-1024	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-1024	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-1024	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-1024	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-1024	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-128	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	cls-upto-128	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-128	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-128	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-128	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-128	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-16	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	cls-upto-16	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-16	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-16	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-16	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-16	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-16384	plain	auto	dfa	-	range	2	0	search=2
+bounded	cls-upto-16384	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-16384	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-16384	whole-subject	auto	vm	none	(absent)	0	0	-
+bounded	cls-upto-16384	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-16384	whole-subject	noedge	vm	none	(absent)	0	0	-
+bounded	cls-upto-2048	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	cls-upto-2048	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-2048	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-2048	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-2048	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-2048	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-256	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	cls-upto-256	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-256	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-256	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-256	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-256	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-32	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	cls-upto-32	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-32	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-32	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-32	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-32	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-32768	plain	auto	vm	none	(absent)	0	0	-
+bounded	cls-upto-32768	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-32768	plain	noedge	vm	none	(absent)	0	0	-
+bounded	cls-upto-32768	whole-subject	auto	vm	none	(absent)	0	0	-
+bounded	cls-upto-32768	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-32768	whole-subject	noedge	vm	none	(absent)	0	0	-
+bounded	cls-upto-4	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	cls-upto-4	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-4	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-4	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-4	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-4	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-4096	plain	auto	dfa	-	range	2	0	search=2
+bounded	cls-upto-4096	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-4096	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-4096	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-4096	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-4096	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-512	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	cls-upto-512	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-512	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-512	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-512	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-512	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-64	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	cls-upto-64	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-64	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-64	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-64	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-64	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-65535	plain	auto	REFUSED	-	-	-	-	-
+bounded	cls-upto-65535	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-65535	plain	noedge	REFUSED	-	-	-	-	-
+bounded	cls-upto-65535	whole-subject	auto	REFUSED	-	-	-	-	-
+bounded	cls-upto-65535	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-65535	whole-subject	noedge	REFUSED	-	-	-	-	-
+bounded	cls-upto-8	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	cls-upto-8	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-8	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-8	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-8	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-8	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-8192	plain	auto	dfa	-	range	2	0	search=2
+bounded	cls-upto-8192	plain	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-8192	plain	noedge	dfa	-	none	0	0	-
+bounded	cls-upto-8192	whole-subject	auto	dfa	-	none	0	0	-
+bounded	cls-upto-8192	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	cls-upto-8192	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	csv5	plain	auto	dfa	-	bitmap	2	1	match=1 search=2
+bounded	csv5	plain	vm	vm	none	(absent)	0	0	-
+bounded	csv5	plain	noedge	dfa	-	none	0	0	-
+bounded	csv5	whole-subject	auto	dfa	-	bitmap	1	0	search=1
+bounded	csv5	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	csv5	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	ctx-greedy-256	plain	auto	vm	hybrid	none	0	0	-
+bounded	ctx-greedy-256	plain	vm	vm	none	(absent)	0	0	-
+bounded	ctx-greedy-256	plain	noedge	vm	hybrid	none	0	0	-
+bounded	ctx-greedy-256	whole-subject	auto	vm	hybrid	none	0	0	-
+bounded	ctx-greedy-256	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	ctx-greedy-256	whole-subject	noedge	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-1024	plain	auto	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-1024	plain	vm	vm	none	(absent)	0	0	-
+bounded	ctx-lazy-1024	plain	noedge	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-1024	whole-subject	auto	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-1024	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	ctx-lazy-1024	whole-subject	noedge	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-256	plain	auto	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-256	plain	vm	vm	none	(absent)	0	0	-
+bounded	ctx-lazy-256	plain	noedge	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-256	whole-subject	auto	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-256	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	ctx-lazy-256	whole-subject	noedge	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-64	plain	auto	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-64	plain	vm	vm	none	(absent)	0	0	-
+bounded	ctx-lazy-64	plain	noedge	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-64	whole-subject	auto	vm	hybrid	none	0	0	-
+bounded	ctx-lazy-64	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	ctx-lazy-64	whole-subject	noedge	vm	hybrid	none	0	0	-
+bounded	dig-exact-16	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	dig-exact-16	plain	vm	vm	none	(absent)	0	0	-
+bounded	dig-exact-16	plain	noedge	dfa	-	none	0	0	-
+bounded	dig-exact-16	whole-subject	auto	dfa	-	none	0	0	-
+bounded	dig-exact-16	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	dig-exact-16	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	dig-exact-2	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	dig-exact-2	plain	vm	vm	none	(absent)	0	0	-
+bounded	dig-exact-2	plain	noedge	dfa	-	none	0	0	-
+bounded	dig-exact-2	whole-subject	auto	dfa	-	none	0	0	-
+bounded	dig-exact-2	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	dig-exact-2	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	dig-exact-32	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	dig-exact-32	plain	vm	vm	none	(absent)	0	0	-
+bounded	dig-exact-32	plain	noedge	dfa	-	none	0	0	-
+bounded	dig-exact-32	whole-subject	auto	dfa	-	none	0	0	-
+bounded	dig-exact-32	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	dig-exact-32	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	dig-exact-8	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	dig-exact-8	plain	vm	vm	none	(absent)	0	0	-
+bounded	dig-exact-8	plain	noedge	dfa	-	none	0	0	-
+bounded	dig-exact-8	whole-subject	auto	dfa	-	none	0	0	-
+bounded	dig-exact-8	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	dig-exact-8	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	dig-upto-16	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	dig-upto-16	plain	vm	vm	none	(absent)	0	0	-
+bounded	dig-upto-16	plain	noedge	dfa	-	none	0	0	-
+bounded	dig-upto-16	whole-subject	auto	dfa	-	range	1	0	search=1
+bounded	dig-upto-16	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	dig-upto-16	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	dig-upto-2	plain	auto	dfa	-	none	0	0	-
+bounded	dig-upto-2	plain	vm	vm	none	(absent)	0	0	-
+bounded	dig-upto-2	plain	noedge	dfa	-	none	0	0	-
+bounded	dig-upto-2	whole-subject	auto	dfa	-	none	0	0	-
+bounded	dig-upto-2	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	dig-upto-2	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	dig-upto-32	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	dig-upto-32	plain	vm	vm	none	(absent)	0	0	-
+bounded	dig-upto-32	plain	noedge	dfa	-	none	0	0	-
+bounded	dig-upto-32	whole-subject	auto	dfa	-	range	1	0	search=1
+bounded	dig-upto-32	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	dig-upto-32	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	dig-upto-4	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	dig-upto-4	plain	vm	vm	none	(absent)	0	0	-
+bounded	dig-upto-4	plain	noedge	dfa	-	none	0	0	-
+bounded	dig-upto-4	whole-subject	auto	dfa	-	range	1	0	search=1
+bounded	dig-upto-4	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	dig-upto-4	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	dig-upto-8	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	dig-upto-8	plain	vm	vm	none	(absent)	0	0	-
+bounded	dig-upto-8	plain	noedge	dfa	-	none	0	0	-
+bounded	dig-upto-8	whole-subject	auto	dfa	-	range	1	0	search=1
+bounded	dig-upto-8	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	dig-upto-8	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	dotted4	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	dotted4	plain	vm	vm	none	(absent)	0	0	-
+bounded	dotted4	plain	noedge	dfa	-	none	0	0	-
+bounded	dotted4	whole-subject	auto	dfa	-	range	1	0	search=1
+bounded	dotted4	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	dotted4	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	floor	plain	auto	dfa	-	none	0	0	-
+bounded	floor	plain	vm	vm	none	(absent)	0	0	-
+bounded	floor	plain	noedge	dfa	-	none	0	0	-
+bounded	floor	whole-subject	auto	dfa	-	none	0	0	-
+bounded	floor	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	floor	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	grp-upto-1024	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	grp-upto-1024	plain	vm	vm	none	(absent)	0	0	-
+bounded	grp-upto-1024	plain	noedge	dfa	-	none	0	0	-
+bounded	grp-upto-1024	whole-subject	auto	dfa	-	none	0	0	-
+bounded	grp-upto-1024	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	grp-upto-1024	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	hex32	plain	auto	dfa	-	bitmap	2	1	match=1 search=2
+bounded	hex32	plain	vm	vm	none	(absent)	0	0	-
+bounded	hex32	plain	noedge	dfa	-	none	0	0	-
+bounded	hex32	whole-subject	auto	dfa	-	none	0	0	-
+bounded	hex32	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	hex32	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	line-80	plain	auto	dfa	-	bitmap	4	2	match=2 search=4
+bounded	line-80	plain	vm	vm	none	(absent)	0	0	-
+bounded	line-80	plain	noedge	dfa	-	none	0	0	-
+bounded	line-80	whole-subject	auto	dfa	-	bitmap	1	0	search=1
+bounded	line-80	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	line-80	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	nest2-4	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	nest2-4	plain	vm	vm	none	(absent)	0	0	-
+bounded	nest2-4	plain	noedge	dfa	-	none	0	0	-
+bounded	nest2-4	whole-subject	auto	dfa	-	range	1	0	search=1
+bounded	nest2-4	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	nest2-4	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	nest2-64	plain	auto	dfa	-	range	2	0	search=2
+bounded	nest2-64	plain	vm	vm	none	(absent)	0	0	-
+bounded	nest2-64	plain	noedge	dfa	-	none	0	0	-
+bounded	nest2-64	whole-subject	auto	vm	hybrid	range	1	0	prefilter=1
+bounded	nest2-64	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	nest2-64	whole-subject	noedge	vm	hybrid	none	0	0	-
+bounded	nest2-letters-6	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	nest2-letters-6	plain	vm	vm	none	(absent)	0	0	-
+bounded	nest2-letters-6	plain	noedge	dfa	-	none	0	0	-
+bounded	nest2-letters-6	whole-subject	auto	dfa	-	range	1	0	search=1
+bounded	nest2-letters-6	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	nest2-letters-6	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	nest3-16	plain	auto	dfa	-	range	2	0	search=2
+bounded	nest3-16	plain	vm	vm	none	(absent)	0	0	-
+bounded	nest3-16	plain	noedge	dfa	-	none	0	0	-
+bounded	nest3-16	whole-subject	auto	vm	hybrid	range	1	0	prefilter=1
+bounded	nest3-16	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	nest3-16	whole-subject	noedge	vm	hybrid	none	0	0	-
+bounded	nest3-3	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	nest3-3	plain	vm	vm	none	(absent)	0	0	-
+bounded	nest3-3	plain	noedge	dfa	-	none	0	0	-
+bounded	nest3-3	whole-subject	auto	dfa	-	range	1	0	search=1
+bounded	nest3-3	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	nest3-3	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	pw-8-64	plain	auto	dfa	-	bitmap	4	2	match=2 search=4
+bounded	pw-8-64	plain	vm	vm	none	(absent)	0	0	-
+bounded	pw-8-64	plain	noedge	dfa	-	none	0	0	-
+bounded	pw-8-64	whole-subject	auto	dfa	-	bitmap	1	0	search=1
+bounded	pw-8-64	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	pw-8-64	whole-subject	noedge	dfa	-	none	0	0	-
+bounded	year4	plain	auto	dfa	-	range	2	1	match=1 search=2
+bounded	year4	plain	vm	vm	none	(absent)	0	0	-
+bounded	year4	plain	noedge	dfa	-	none	0	0	-
+bounded	year4	whole-subject	auto	dfa	-	none	0	0	-
+bounded	year4	whole-subject	vm	vm	none	(absent)	0	0	-
+bounded	year4	whole-subject	noedge	dfa	-	none	0	0	-
+# compiled 338, mismatches 0
+# functions any marker ever landed in: rx_match, rx_prefilter, rx_search

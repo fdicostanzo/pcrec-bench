@@ -353,7 +353,9 @@ populations.
 **MEASURED at pin 1989c62, 2026-09-02**, and cross-checked against an
 independent census over 338 compiles (loglines, email and bounded × both
 forms × auto / forced-VM / denied) with zero mismatches — no marker in that
-corpus ever landed outside the three functions above:
+corpus ever landed outside the three functions above. The census is
+archived row by row at
+`docs/dev/measurements/2026-09-02-scan-edge-attribution-census.txt`:
 
 | artifact | `dfa_scan_edge` | `scan_edges` | `scan_edges_match` |
 |---|---|---|---|
