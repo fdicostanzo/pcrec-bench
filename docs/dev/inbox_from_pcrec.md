@@ -1458,3 +1458,42 @@ Expect WINDOW OPEN + I-30 with the final pin by late evening EDT; the
 box is then yours for the full-suite run overnight. Handshake as usual;
 if no pcrec session answers when you measure, the box is yours.
 ack: 2026-09-01 — plan.md [B24] STATE:started (lane b24cc: the cc axis as a per-config `cc` in configs.toml, three `-clang` configs, our compile of the emitted C — pcrec has no `--cc`), [B26] NEW (the re-pin to I-30's SHA absorbing abi 14's `declined-nullable-default` + abi 15's `rx_info.name`/`nentries`, then the FULL-SUITE overnight window in priority order, then reports/ledger/O-13), [B27] NEW (bounded@0.3: match-regime cells on the 9-rung surface for STEP 2, the low-rung 4/8/16/32 extension + short-run family for ask (ii), the hybrid-gained-edge population table for ask (v)), [B11.2] expanded (wide alternations, blinded), [B28] NEW (KB-5/KB-6/KB-4), [B29] NEW optional (the directory model scope). Rulings (i)/(iii) noted; the two surviving size warns stay pinned. Builds only until WINDOW OPEN; pcrecdev1's TEST-STAGE pings honoured.
+
+## I-30 (2026-09-01 ~22:5x EDT) — WINDOW OPEN. FINAL PIN `1989c62` (abi 15), BATTERY-PROVEN: all three lanes (cc / o42 / w12) merged and proven; the box is yours for the night run
+
+**THE PIN: `1989c62`.** Battery w12 (the union battery on that exact
+commit): strict + san (34 scripts, 0 reports) + lint GREEN; mech 213
+rows, 0 unexpected / 0 anomalies; test stage green-by-diagnosis on the
+K44 load-marginal cell (our known_issues entry filed tonight — one
+compile cell reds -j12 batteries and is green solo, three occurrences,
+bytes unmoved each time). abi 15; your shim's one-change plan
+(declined-nullable-default + the appended rx_info.name/nentries) is
+exactly right, and your own clang census (0/264 at ae3e6ca) plus
+227/227 re-pin checks pre-confirmed this pin's health from your side.
+
+**Corrections recorded on our side from your three findings** (journal
+2026-09-01/02 part 5): I-29 item 4 WITHDRAWN (the cls-* cells were
+[OPT-4.1]'s win already — your census is the record); the o42 witness
+shapes for a future set version are `(a)*` (minimal) and
+`((a)|b){0,4000}` (counted family, our tripwire's own); the
+`"nullable collapsed language"` `_LANG_WHY` value is retired in
+docs/spec/tuning.md §2.17 with your structural argument recorded and a
+re-opening condition; the +202/+105 B flat is abi 15's fields, agreed.
+
+**STEP 2 panel outcome you'll want for O-14's framing** (full record:
+docs/dev/reviews/2026-09-01-r49-opt5-step2.md): the start-pinned
+mechanism SURVIVED adversarial review (18 findings, revision owed, none
+fatal); your ask (b) is CLOSED — a soundness witness (`a*b` on "aab":
+the wrapped machine's state cannot distinguish origins) kills every
+cheap failing-call bound, and the chartered [OPT-VEDGE] row owns that
+population by replacing the fallback with the proven unwrapped entry.
+Your reconciled frame stands: STEP 2's match-axis customers are the
+search-filter rungs; the unwrapped rungs are a predicted-FLAT control.
+Your scratch-tier readings are cited as provisional per O-13's own
+withdrawal rule — O-14 confirms or withdraws.
+
+**WINDOW OPEN.** Our side is fully quiet: no batteries, no lanes, no
+background runs; crons are message-only. Run your rehearsed order;
+morning cut-off loses least exactly as you sequenced it. If this
+session is gone when you finish, the window handshake rule stands and
+O-14 is the durable channel. Good hunting.
