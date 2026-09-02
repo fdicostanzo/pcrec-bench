@@ -3891,7 +3891,7 @@ def check_cap_axis():
 #: work's BEFORE at the SAME pin -- `-fno-scan-edge` restores the
 #: pre-[OPT-5] machine with no other variable moved -- and `scan_edges` is
 #: the covariate I-33's mechanism (one compare per edge per scan-loop
-#: iteration) says predicts the cost. Five arms:
+#: iteration) says predicts the cost. Six arms (ten checks):
 #:
 #:   1. ABSENT IS BYTE-IDENTICAL, three ways. Every config that predates
 #:      [B32] puts no `-fno-scan-edge` on pcrec's argv, renders no deny
@@ -3930,6 +3930,11 @@ def check_cap_axis():
 #:      0 is asserted as a VALUE on three of those kinds, because a
 #:      covariate that were silently absent where it reads 0 would turn
 #:      every regression on it into a comparison of populations.
+#:   6. AND THROUGH THE CLI. Everything above drives the adapter directly;
+#:      this runs one loglines cell through `pcrecbench run` -- the path a
+#:      window uses -- into a scratch store, and reads the covariate back
+#:      off the written record's compile rows. A testee that describes and
+#:      compiles but cannot be RUN would otherwise be found on the night.
 
 #: The configs that predate [B32] and must be untouched by it: the eleven
 #: pinned entries plus `pcrec-local`.
@@ -4000,7 +4005,7 @@ _SCAN_EDGE_CASES = (
 
 
 def check_noedge_axis():
-    """THE SCAN-EDGE DENY AXIS ([B32]). The five arms and what each is
+    """THE SCAN-EDGE DENY AXIS ([B32]). The six arms and what each is
     built to catch are documented above _PRE_B32_CONFIGS."""
     print("-- the scan-edge deny axis: -fno-scan-edge and the scan_edges "
           "covariate ([B32], pcrec [OPT-5]/[OPT-EDGE]) --")
@@ -4310,6 +4315,60 @@ def check_noedge_axis():
                 "store.write refused it: %s" % str(e)[-300:])
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+    # ---- 6. and a whole cell through the CLI, into a scratch store -------
+    # Everything above drives the adapter directly. This arm is the same
+    # claim through `pcrecbench run` -- the path a window uses -- so a
+    # testee that describes and compiles but cannot be RUN is caught here
+    # rather than on the night. loglines because it is the set the axis
+    # was chartered on, and it is where the covariate is non-zero.
+    scratch = os.path.join(ROOT, "build", "selfcheck-noedge-store")
+    shutil.rmtree(scratch, ignore_errors=True)
+    title = ("noedge axis: %s runs one loglines cell through the CLI into a "
+             "scratch store, and the record carries the covariate" % NOEDGE)
+    proc = run([sys.executable, "-m", "pcrecbench", "run",
+                "--subbench", "loglines", "--testee", NOEDGE,
+                "--trials", "1", "--iters", "1",
+                "--regimes", "search_short",
+                "--force-unquiet", "--store", scratch, "--tier", "scratch",
+                "--machine-id", "selfcheck-box", "--synthetic",
+                "--quiet-output",
+                "--note", "make check smoke -- NOT a measurement"],
+               cwd=ROOT, timeout=1800)
+    if proc.returncode != 0:
+        bad(title, (proc.stderr or proc.stdout).strip()[-400:])
+    else:
+        m = re.search(r"^(\S+\.jsonl)$", proc.stdout, re.M)
+        stamped, edges = "", None
+        if m:
+            path = m.group(1)
+            if not os.path.isabs(path):
+                path = os.path.join(ROOT, path)
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    stamped = _json.loads(f.readline())["testee"]["testee_id"]
+                    edges = set()
+                    for line in f:
+                        r = _json.loads(line)
+                        if r.get("kind") == "compile":
+                            md = r.get("engine_metadata") or {}
+                            edges.add((md.get("scan_edges"),
+                                       md.get("scan_edges_match")))
+            except (OSError, ValueError, KeyError) as e:     # noqa: BLE001
+                bad(title, "the written record could not be read: %s" % e)
+                edges = None
+        if edges is not None:
+            if not stamped.endswith("_noedge"):
+                bad(title, "the record's testee_id is %r -- the token did "
+                           "not reach the store" % stamped)
+            elif edges != {(0, 0)}:
+                bad(title, "a DENIED build's compile rows carry scan_edges "
+                           "%r; every one must be (0, 0), and the pair must "
+                           "be PRESENT rather than absent" % sorted(edges))
+            else:
+                ok(title, "%s, every compile row carrying scan_edges = 0 / "
+                          "scan_edges_match = 0 as a VALUE" % stamped)
+    shutil.rmtree(scratch, ignore_errors=True)
 
 
 def check_list_axes_registry():
