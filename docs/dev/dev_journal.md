@@ -2267,3 +2267,24 @@ own background waiters die at the 10-min cap). Both sessions restarted
 at 20:26 tonight; nothing was lost on either side (the peer's battery
 was setsid-detached, our state was all committed). Earlier this
 evening: the re-pin (part 4), O-13, KB-7/[B30].
+
+## 2026-09-02 (EDT, ~09:1x), seventh session (part 6) — the full-suite night RAN: 27 of 29 cells measured at attempt 1; two clang cells lost to the per-cell cap, re-running by hand
+
+SUITE_RUN_COMPLETE at 09:04 (launched 22:45, 10 h 19 min): bounded@0.3
+× 6 (256 min), loglines × 6 (51), email × 6 (43), altwide × 6 (91),
+bounded × 3 clang (150), loglines × 3 clang (25) — every cell that
+finished did so on attempt 1, no gate refusal, no spread (index: 109
+records, measured 99). TWO cells were LOST: bounded@0.3 ×
+pcrec-nocaps-clang and × pcrec-vm-clang, both killed at exactly 50:00
+by run_window.sh's 3000 s per-cell cap (rc 124, no record; the
+nocaps cell was on its second-to-last pattern). The suite summary
+could not show it (a set's rc is the index's) — the per-attempt rc
+line could. Cap raised to 5400 (d621079) with the reason in the
+script; both cells re-running by hand under setsid (cap 5400, the
+same NOTE + the reason), window still OPEN, expected done ~10:50; the
+peer holds until my explicit CLOSED (its new session, after the 20:26
+restart, confirmed). Cell-time facts for the books: bounded@0.3
+pcre2-interp 42 min, pcre2-jit 30, pcrec-auto 45, nocaps 42, vm 48,
+vm-in 48, auto-clang 49; altwide pcre2-interp 42 (est. 18), jit 30,
+auto 5, nocaps 5, vm 4 (most rungs refuse under the forced VM — a
+morning reading), vm-in 4; loglines ~8.5/cell; email ~7/cell.
