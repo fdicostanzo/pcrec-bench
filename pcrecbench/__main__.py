@@ -72,6 +72,60 @@ QUICK_REGIMES = {"search": "search_short", "search_short": "search_short",
                  "match": "match", "throughput": "throughput"}
 
 
+def _diagnostic_first_line(diagnostic):
+    """The diagnostic's first line only -- KB-10's own spelling ("refused
+    (<diagnostic, first line>)"), so a multi-line pcrec refusal does not
+    blow up `quick`'s one-line table row."""
+    return str(diagnostic).splitlines()[0] if diagnostic else "(no diagnostic)"
+
+
+def _split_quick_cells(results, pattern, enum, rd):
+    """[B10]'s cell lookup, pulled out of `cmd_quick` so it is unit-testable
+    without running an engine (KB-10, 2026-09-02): turns each `(tid,
+    RunResult)` pair into either a REDUCED cell or, for any arm but the
+    FIRST (`idx > 0` -- the `--vs` arm; the primary `--testee` is always
+    index 0 and is never covered by this), a `refused` entry when the
+    record's only trace of (pattern, enum) is a `did-not-compile` compile
+    row -- zero match rows, so `rd.cells_from_record` finds nothing. The
+    record itself is not wrong (pcrec refused the pattern and said so);
+    only the old "expected one cell" check treated a refusal like a
+    lookup mistake. An empty cell for any OTHER reason (a typo'd pattern
+    or regime, or the PRIMARY arm refusing) still returns an `error`
+    string -- the caller prints it and exits 1.
+
+    Returns `(reduced, refused, error)`:
+    * `reduced`: `[(tid, res, form, SetCellReduction)]`, in `results`
+      order, one per arm whose cell reduced cleanly.
+    * `refused`: `[(tid, res, diagnostic)]`, one per `--vs`-only arm
+      whose refusal explains its empty cell.
+    * `error`: `None`, or the message to print and exit 1 on -- `reduced`/
+      `refused` are then whatever was collected before the failing arm,
+      not meaningful to use."""
+    reduced = []
+    refused = []
+    for idx, (tid, res) in enumerate(results):
+        cells = rd.cells_from_record(res.rows)
+        # one pattern x one regime -> one cell; the FORM is whatever the
+        # adapter measured the regime on (pcrec's match = whole-subject).
+        mine = {k: v for k, v in cells.items()
+                if k[0] == pattern and k[1] == enum}
+        if len(mine) != 1:
+            if idx > 0 and len(mine) == 0:
+                diag_row = next(
+                    (r for r in res.rows if r.get("kind") == "compile"
+                     and r.get("pattern_id") == pattern
+                     and r.get("compile_outcome") == "did-not-compile"), None)
+                if diag_row is not None:
+                    refused.append((tid, res, _diagnostic_first_line(diag_row.get("diagnostic"))))
+                    continue
+            return reduced, refused, (
+                "pcrecbench quick: expected one cell for (%s, %s) in %s, "
+                "found %d" % (pattern, enum, res.path, len(mine)))
+        (form,), = [tuple(k[2:]) for k in mine]
+        reduced.append((tid, res, form, rd.reduce_set_cell(next(iter(mine.values())))))
+    return reduced, refused, None
+
+
 def cmd_quick(args):
     """I-4 (b): one cell, one or two testees, seconds not minutes. Every
     record is `tier: scratch` (the store refuses the canonical tree); the
@@ -118,20 +172,14 @@ def cmd_quick(args):
     wall = time.monotonic() - t0
 
     # -- the comparable ---------------------------------------------------
-    reduced = []
-    for tid, res in results:
-        cells = rd.cells_from_record(res.rows)
-        # one pattern x one regime -> one cell; the FORM is whatever the
-        # adapter measured the regime on (pcrec's match = whole-subject).
-        mine = {k: v for k, v in cells.items()
-                if k[0] == args.pattern and k[1] == enum}
-        if len(mine) != 1:
-            print("pcrecbench quick: expected one cell for (%s, %s) in %s, "
-                  "found %d" % (args.pattern, enum, res.path, len(mine)),
-                  file=sys.stderr)
-            return 1
-        (form,), = [tuple(k[2:]) for k in mine]
-        reduced.append((tid, res, form, rd.reduce_set_cell(next(iter(mine.values())))))
+    # KB-10 (2026-09-02): `_split_quick_cells` (module-level, unit-tested
+    # on its own) turns each result into a reduced cell or -- for any
+    # `--vs` arm whose only row is a `did-not-compile` refusal -- a
+    # `refused` entry; only an UNEXPLAINED empty cell is still an error.
+    reduced, refused, err = _split_quick_cells(results, args.pattern, enum, rd)
+    if err:
+        print(err, file=sys.stderr)
+        return 1
 
     n_subj = reduced[0][3].n_subjects
     print("quick  %s / %s / %s   %d subject(s), %d trial(s), tier scratch"
@@ -157,6 +205,10 @@ def cmd_quick(args):
                              if kv[0] != "matched-as-expected"))
                          for sid in r.failing_subjects[:8])
                      + (" ..." if len(r.failing_subjects) > 8 else "")))
+    for tid, res, diagnostic in refused:
+        print("%-14s %-14s %14s %14s %14s %6s  %-22s %s"
+              % (tid, "-", "-", "-", "-", "-", "-",
+                 "refused (%s)" % diagnostic))
     if len(reduced) == 2:
         a, b = reduced[0][3], reduced[1][3]
         if a.median_ns is not None and b.median_ns is not None and b.median_ns:
@@ -168,6 +220,10 @@ def cmd_quick(args):
         else:
             print("ratio  %s / %s = -  (a cell is excluded; no number to compare)"
                   % (reduced[0][0], reduced[1][0]))
+    elif refused:
+        for tid, _res, diagnostic in refused:
+            print("ratio  %s / %s = -  (refused (%s): no comparable)"
+                  % (reduced[0][0], tid, diagnostic))
     print("wall   %.1f s" % wall)
     # v1.4 (gate_shape_v14.md 5 H9): the verdict line FROM THE BLOCK, per
     # testee; at quick's default 3 trials the rule cannot judge and says so.
@@ -179,6 +235,8 @@ def cmd_quick(args):
         else:
             print("trial agreement: %-14s %s" % (tid, rd.agreement_line(block)))
     for tid, res, _f, _r in reduced:
+        print("record %s" % res.path)
+    for tid, res, _diag in refused:
         print("record %s" % res.path)
     if args.report:
         print("report: python3 -m pcrecbench report --store %s --subbench %s "
@@ -367,7 +425,11 @@ honest), written to the scratch store ($PCRECBENCH_SCRATCH_STORE or
 build/scratch-store/), never to store/, never ranked. The comparable
 printed is the reporter's own set-grain reduction (pcrecbench/reduce.py):
 median over trials of the per-trial SUM of per-subject ns/call, with
-min/max, pass-rate, give-ups by code, and the ratio testee/vs.
+min/max, pass-rate, give-ups by code, and the ratio testee/vs. KB-10:
+a `--vs` arm that did not compile this pattern (a `did-not-compile`
+row, zero match rows) writes its record as usual and prints `refused
+(<diagnostic>)` in the comparable's place, exit 0 -- not an error; the
+primary `--testee` arm is unaffected (a refusal there still errors).
 
     python3 -m pcrecbench quick --subbench email --pattern orig \\
         --regime search --testee pcrec-local --vs pcre2-jit --subjects 10

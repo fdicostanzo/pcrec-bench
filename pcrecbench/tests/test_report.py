@@ -1750,16 +1750,20 @@ def test_reporter_version_pin():
     twelve committed files) took it to v10; [B28] (KB-6's `edge=` clause
     and its note, rendering differently on the twelve `a7e0bdf` reports'
     mechanism legends -- KB-5's `--testee` filter is additive and moves
-    nothing by itself) took it to v11."""
-    _check(report.REPORTER_VERSION == "v11 (2026-09-01)",
-           f"expected REPORTER_VERSION == 'v11 (2026-09-01)', got {report.REPORTER_VERSION!r}")
+    nothing by itself) took it to v11; [B32] (b) (KB-8's query-filtered
+    header count, the new unconditional `worst other-core busy:` line,
+    and KB-9's `(clang cc)` note -- the `scan_edges` clause is additive
+    and KB-10 is out of `report.py`, so neither moves anything by
+    itself) took it to v12."""
+    _check(report.REPORTER_VERSION == "v12 (2026-09-02)",
+           f"expected REPORTER_VERSION == 'v12 (2026-09-02)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v11 (2026-09-01)" in md, f"expected the v11 header line:\n{md[:200]}")
+    _check("reporter: v12 (2026-09-02)" in md, f"expected the v12 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v11 (2026-09-01)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v12 (2026-09-02)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
 
 
 def test_did_not_compile_ranking_line_r10():
@@ -2726,6 +2730,11 @@ def test_rule_marker_on_mixed_x13_versions():
 _V9_ALLOWED_ADDED = (
     "- trial-agreement policy (schema v1.4, rule v1.4-group, X31-X33):",
     "- status rule: ",
+    # [B32] (b): the ledger 12(d) header line is now UNCONDITIONAL on
+    # every render (not gated by --include-provenance), so it is a
+    # permanent addition against the pre-[B32] golden, same footing as
+    # the two v1.4 legend lines above.
+    "- worst other-core busy: ",
 )
 
 
@@ -2774,9 +2783,9 @@ def test_v13_record_still_renders():
     same diff with ONE number changed in the v9 rendering is refused."""
     with open(GOLDEN_V8, encoding="utf-8") as fh:
         golden = fh.read()
-    loaded, paths, source = _load_store(STORE)
+    loaded, _paths, source = _load_store(STORE)
     args = _args(store=STORE, include_synthetic=True)
-    args._source_desc = f"{source} ({len(paths)} candidate file(s))"   # as the CLI says it
+    args._source_desc = source   # KB-8: the CLI now passes the raw label only
     rd, err = report.build_report(loaded, args)
     _check(err is None, err)
     md = report.render_markdown(rd)
@@ -2832,6 +2841,212 @@ def test_after_clause_unconditional():
     _check(f"record\t\t\t\t\t\t{SPREAD_RID}\t\t\t\tagreement\t" in tsv
            and "after: load1 11.40 / occ 41.41%" in tsv,
            "the TSV carries a `record` row per record with the agreement and the clause")
+
+
+def test_source_desc_query_filtered_kb8():
+    """KB-8 (docs/dev/known_issues.md): the header's `record source` count
+    is the QUERY-FILTERED selection (`matches_filters` over `loaded`,
+    before per-record validity or the newest-measured dedup narrow it
+    further) -- NOT the raw candidate-file count `main()` used to bake
+    into `args._source_desc` before calling `build_report`. That count
+    moved on every unrelated store growth (the [B26] (c) re-render
+    invariant, 42/48 committed reports); this one only moves when a
+    record actually enters or leaves THIS query's own filters.
+    `args._source_desc` now carries the bare store LABEL; `build_report`
+    appends the count itself, from `selected`, not from whatever
+    `main()` passed in."""
+    setup_a = _mini_setup("testee-a", timestamp="2026-08-25T10:00:00Z")
+    setup_b = _mini_setup("testee-b", timestamp="2026-08-25T11:00:00Z")
+    rows = [_mini_row("p1", "s1", "search_short", 1, 1, 100)]
+    loaded = [_mk_loaded("a.jsonl", setup_a, rows), _mk_loaded("b.jsonl", setup_b, rows)]
+
+    args_all = _args(store="x", include_synthetic=True)
+    args_all._source_desc = "store/index.tsv"
+    rd_all, err = report.build_report(loaded, args_all)
+    _check(err is None, err)
+    _check(rd_all.source_desc == "store/index.tsv (2 record(s) matching this query)",
+           f"unexpected source_desc: {rd_all.source_desc!r}")
+
+    # narrow to ONE testee via --testee: the printed count must reflect
+    # only what THIS query's own filters admit, not len(loaded).
+    args_one = _args(store="x", include_synthetic=True, testee=["testee-a"])
+    args_one._source_desc = "store/index.tsv"
+    rd_one, err1 = report.build_report(loaded, args_one)
+    _check(err1 is None, err1)
+    _check(rd_one.source_desc == "store/index.tsv (1 record(s) matching this query)",
+           f"unexpected source_desc: {rd_one.source_desc!r}")
+
+    md_all = report.render_markdown(rd_all)
+    _check("- record source: store/index.tsv (2 record(s) matching this query)" in md_all,
+           f"the markdown header must carry the filtered count:\n{md_all[:400]}")
+    tsv_all = report.render_tsv(rd_all)
+    _check("source: store/index.tsv (2 record(s) matching this query)" in tsv_all,
+           f"the TSV header must carry it too:\n{tsv_all[:400]}")
+
+    # CONTROL: a THIRD record outside the query's own filters must not
+    # move either count -- exactly the property KB-8 was fixed to buy
+    # back (a query's own count is stable under store growth elsewhere).
+    setup_c = _mini_setup("testee-c", timestamp="2026-08-25T12:00:00Z")
+    loaded_grown = loaded + [_mk_loaded("c.jsonl", setup_c, rows)]
+    rd_narrow, err2 = report.build_report(
+        loaded_grown, _args(store="x", include_synthetic=True, testee=["testee-a"],
+                            _source_desc="store/index.tsv"))
+    _check(err2 is None, err2)
+    _check(rd_narrow.source_desc == "store/index.tsv (1 record(s) matching this query)",
+           f"a record outside the --testee roster must not move the count: "
+           f"{rd_narrow.source_desc!r}")
+
+
+def test_cc_clang_phase_note_kb9():
+    """KB-9 (docs/dev/known_issues.md): the compile phase is named `gcc`
+    in the RECORD for every pcrec testee, clang ones included ([B24]
+    kept the phase name fixed on purpose so the column still compares
+    against a gcc sibling's). The reporter appends `(clang cc)` to the
+    `gcc ns` cell of a row whose OWN testee declares a non-gcc `cc`
+    (`_cc_from_testee_id`, reading `config_extra`'s `cc-<name>` token),
+    plus one legend note under a table that carries at least one such
+    row. CONTROL: the gcc sibling's own row, in the SAME table, carries
+    neither the note nor the suffix."""
+    _check(report._cc_from_testee_id("pcrec_1989c62_vm-caps-simdna_cc-clang") == "clang",
+           "reads the cc-<name> token from config_extra")
+    _check(report._cc_from_testee_id("pcrec_1989c62_vm-caps-simdna") is None,
+           "no config_extra -> no note (the gcc default)")
+    _check(report._cc_from_testee_id("pcrec_1989c62_vm-caps-simdna_cc-gcc") is None,
+           "an EXPLICIT cc-gcc token already agrees with the phase name")
+    _check(report._cc_from_testee_id("libpcre2_10.46_jit-caps-simdna") is None,
+           "a non-pcrec testee_id parses fine (3 segments) and carries no cc token")
+    _check(report._cc_from_testee_id("not-three-segments") is None,
+           "an unparseable testee_id is handled, not raised")
+
+    em = {"abi": 15, "engine": "vm", "prefilter": "hybrid"}
+
+    def compile_row(gcc_ns):
+        return {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                "compile_outcome": "compiled", "cost_class": "compiled-aot",
+                "cost": {"total_ns": 1000,
+                         "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                                    {"name": "gcc", "elapsed_ns": gcc_ns},
+                                    {"name": "load", "elapsed_ns": 100}]},
+                "artifact_bytes": 30000, "engine_metadata": em}
+
+    setup_gcc = _mini_setup("pcrec_1989c62_vm-caps-simdna")
+    setup_clang = _mini_setup(
+        "pcrec_1989c62_vm-caps-simdna_cc-clang",
+        record_id="rb-mini@1.0__pcrec_1989c62_vm-caps-simdna_cc-clang__m1")
+    loaded = [_mk_loaded("g.jsonl", setup_gcc, [compile_row(500)]),
+              _mk_loaded("c.jsonl", setup_clang, [compile_row(600)])]
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, err)
+    md = report.render_markdown(rd)
+    _check("600.0 (clang cc)" in md, f"the clang row's gcc-ns cell must carry the note:\n{md}")
+    _check("500.0 (clang cc)" not in md and "| 500.0 |" in md,
+           f"the gcc sibling's own cell must carry no note:\n{md}")
+    _check("KB-9: the compile phase is named `gcc`" in md,
+           f"the table-level legend note must print once:\n{md}")
+
+    # CONTROL: a table with no clang testee at all carries neither.
+    loaded_gcc_only = [_mk_loaded("g2.jsonl", setup_gcc, [compile_row(500)])]
+    rd_g, _e = report.build_report(loaded_gcc_only, _args(store="x", include_synthetic=True))
+    md_g = report.render_markdown(rd_g)
+    _check("(clang cc)" not in md_g and "KB-9:" not in md_g,
+           f"a gcc-only table carries neither the suffix nor the note:\n{md_g}")
+
+
+def test_worst_other_core_header_ledger12d():
+    """Ledger docs/dev/ledgers/2026-09-02-full-suite-1989c62.md 12(d): the
+    header carries `worst other-core busy: N% (testee / pattern /
+    regime)`, read from EVERY included record's occupancy timeline
+    (gate_shape_v14.md 3.6), UNCONDITIONALLY -- not gated behind
+    --include-provenance, since a real interference spike (the ledger's
+    own 91.63% witness) should not require opening a record to see.
+    `n/a` when nothing in the selection carries a readable timeline."""
+    setup = _mini_setup("testee-a")
+    setup["environment"]["occupancy"] = {"timeline": [
+        {"pattern_id": "p1", "regime": "search_short", "form": "plain",
+         "elapsed_ms": 120, "target_busy_pct": 5.0, "sibling_busy_pct": 3.0,
+         "max_other_cpu": 4, "max_other_busy_pct": 22.5},
+        {"pattern_id": "p2", "regime": "search_short", "form": "plain",
+         "elapsed_ms": 90, "target_busy_pct": 4.0, "sibling_busy_pct": 2.0,
+         "max_other_cpu": 7, "max_other_busy_pct": 91.63},
+    ]}
+    rows = [_mini_row("p1", "s1", "search_short", 1, 1, 100)]
+    loaded = [_mk_loaded("a.jsonl", setup, rows)]
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, err)
+    _check(rd.worst_other_core == (91.63, "testee-a", "p2", "search_short"),
+           f"the WORST reading across the whole timeline must win: {rd.worst_other_core!r}")
+    md = report.render_markdown(rd)
+    _check("- worst other-core busy: 91.63% (`testee-a` / `p2` / `search_short`)" in md,
+           f"the unconditional header line is missing:\n{md[:600]}")
+
+    # CONTROL: no timeline at all -> n/a, printed by name, not omitted.
+    setup_none = _mini_setup("testee-b")
+    loaded_none = [_mk_loaded("b.jsonl", setup_none, rows)]
+    rd_none, _e = report.build_report(loaded_none, _args(store="x", include_synthetic=True))
+    _check(rd_none.worst_other_core is None, "no timeline anywhere -> None")
+    md_none = report.render_markdown(rd_none)
+    _check("- worst other-core busy: n/a" in md_none, f"expected an n/a line:\n{md_none[:600]}")
+
+
+def test_scan_edges_legend_column():
+    """[B32] (5): lane b32adp's `scan_edges`/`scan_edges_match` pair
+    renders `edges=N` / `edges=N (match: M)` beside the EXISTING `edge=`
+    shape clause (KB-6), gated on its OWN presence -- not on `edge=`'s
+    dfa-scan scope, since `scan_edges` is stamped on artifacts `edge=`
+    never fires on (a forced-VM build reads `scan_edges=0` with no DFA
+    scan at all). `0` is a real, recorded value and must render as `0`,
+    never as absent."""
+    _check(report._scan_edges_display({"scan_edges": 3, "scan_edges_match": 0}) == "3 (match: 0)",
+           "both keys render together, the 0 included")
+    _check(report._scan_edges_display({"scan_edges": 0}) == "0",
+           "a bare 0 with no _match pair renders '0', not '-' or None")
+    _check(report._scan_edges_display({}) is None,
+           "neither key present -> None, no clause")
+
+    dfa13 = {"abi": 13, "engine": "dfa", "dfa_scan": "unanchored",
+             "dfa_prefilter": "byte-class", "dfa_prefilter_offsets": "none",
+             "dfa_table": "premultiplied", "dfa_match": "unwrapped",
+             "dfa_scan_edge": "range", "scan_edges": 5, "scan_edges_match": 0}
+    line = report._testee_legend_line("t", dfa13)
+    _check("edge=range, edges=5 (match: 0), match=unwrapped" in line,
+           f"edges= sits beside edge=, before match=: {line!r}")
+
+    # a forced-VM artifact: NO edge= (no DFA scan at all), but
+    # scan_edges=0 is still a real value and still renders its own
+    # clause -- the two are independent facts, not one gated by the other.
+    forced_vm = {"abi": 15, "engine": "vm", "prefilter": "none", "scan_edges": 0}
+    fline = report._testee_legend_line("t", forced_vm)
+    _check("edge=" not in fline and "edges=0" in fline,
+           f"edges= must be independent of edge='s scope: {fline!r}")
+
+    # CONTROL: neither key present (an older-pin record) -> no clause.
+    old = {"abi": 13, "engine": "dfa", "dfa_scan_edge": "range"}
+    oline = report._testee_legend_line("t", old)
+    _check("edges=" not in oline, f"no scan_edges pair -> no clause: {oline!r}")
+
+    # THE NOTE, printed once under a table whose legend carries edges=,
+    # ABSENT from a table whose legend never does.
+    setup = _mini_setup("pcrec_a7e0bdf_auto-caps-simdna")
+    row = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+           "compile_outcome": "compiled", "cost_class": "compiled-aot",
+           "cost": {"total_ns": 1000,
+                    "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                               {"name": "gcc", "elapsed_ns": 500},
+                               {"name": "load", "elapsed_ns": 100}]},
+           "artifact_bytes": 30000, "engine_metadata": dfa13}
+    rd, err = report.build_report([_mk_loaded("e.jsonl", setup, [row])],
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, err)
+    md = report.render_markdown(rd)
+    _check("edges=5 (match: 0)" in md and "edges = pcrec's `scan_edges`" in md,
+           f"the legend line and its note must render:\n{md}")
+
+    row_old = dict(row, engine_metadata=old)
+    rd_o, _e2 = report.build_report([_mk_loaded("o.jsonl", setup, [row_old])],
+                                    _args(store="x", include_synthetic=True))
+    md_o = report.render_markdown(rd_o)
+    _check("edges=" not in md_o and "edges = pcrec's" not in md_o,
+           f"a table with no scan_edges pair carries neither the clause nor the note:\n{md_o}")
 
 
 TESTS = [
@@ -2903,6 +3118,11 @@ TESTS = [
     test_dfa_scan_edge_legend_kb6,
     # [B28] KB-4 adapter half
     test_kb4_refusal_cost_in_phase_medians,
+    # [B32] (b): KB-8, KB-9, ledger 12(d), the scan_edges column
+    test_source_desc_query_filtered_kb8,
+    test_cc_clang_phase_note_kb9,
+    test_worst_other_core_header_ledger12d,
+    test_scan_edges_legend_column,
 ]
 
 

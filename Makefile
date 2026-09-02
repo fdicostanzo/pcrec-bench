@@ -120,10 +120,17 @@ deps:
 #   3. a smoke report over fixtures/store in both formats and both
 #      --grain values, so a CLI regression (a crash, an empty query the
 #      harness would otherwise swallow) fails the gate even if the unit
-#      tests import around it.
+#      tests import around it;
+#   4. [B32] (b), KB-10: pcrecbench/tests/test_quick.py -- the pure
+#      cell-lookup helper `pcrecbench.__main__._split_quick_cells` a
+#      `--vs` arm's refusal goes through, run with no engine, no bench
+#      directory and no store.
 check-report:
 	@echo "== check-report =="
 	@$(PYTHON) -m pcrecbench.tests.test_report
+	@echo
+	@echo "-- pcrecbench.tests.test_quick (KB-10, quick's cell-lookup helper) --"
+	@$(PYTHON) -m pcrecbench.tests.test_quick
 	@echo
 	@echo "-- fixtures independently accepted by schema/validate.py --"
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store/records/*/*/*.jsonl
