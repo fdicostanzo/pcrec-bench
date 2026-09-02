@@ -260,6 +260,34 @@ the reason in record_schema.md this time. Until ruled: the cap stands,
 altwide's four rungs carry no `canonical_text`, and nothing measured
 depends on it. Plan row [B30].
 
+**RULED 2026-09-02: Frank agrees with the recommendation** ("agree",
+inbox; also stated directly at the top of this lane's brief). **CLOSED
+2026-09-02 (lane b30cap, [B30], schema v1.5).** `schema/record.schema.json`
+`$defs.free_text.maxLength` raised 8192 → 1,048,576 (1 MiB);
+`x-record-schema-version` and `pcrecbench.record.SCHEMA_VERSION` both
+1.4 → 1.5; the omission fallback for `patterns[].canonical_text` above
+the cap is UNCHANGED (never truncates — record_schema.md §10.1, the
+sha256 + `subbench.content_hash` stay the identity), just further away.
+The reasoning this KB owed is now recorded in `record_schema.md` §4.1,
+under the new 1.4 → 1.5 paragraph: a MINOR bump by §4's plain first
+rule, not the rule-revision clause X13 needed, because `maxLength` is a
+single JSON Schema number applied with no version branching — a string
+valid under the old 8192 bound is valid under the new one, so no
+record's meaning or verdict moves for any earlier minor. The two
+`diagnostic` fields KB-7 point 2 flagged as candidates keep their own,
+separate 8192 bound — Frank's ruling addressed `free_text` by name,
+and they are not `$defs/free_text` fields. No new `schema/examples/`
+record was added, following the 1.3 precedent (an additive bump with no
+new field needs no new fixture); the accept-side witness for the wider
+bound is bench/altwide's real 8.7-24 KB patterns (`tools/selfcheck.py`
+`check_pattern_text_cap`, now asserting `canonical_text` PRESENT on
+them), and the omission arm now needs — and gets — a SYNTHETIC >1 MiB
+pattern built inside the check, since nothing in this bench's corpus
+reaches a megabyte of pattern text. The two other checks built on the
+OLD cap's shape (`check_note_length_guard`, `check_status_sentence_
+never_elided`, R-4) are scaled to actually exceed the new cap rather
+than asserting against a number that no longer overflows.
+
 ## KB-8 (2026-09-02) — an OPEN `--since` query drifts on every store growth: unpinned pcre2 ids re-select the newest record, and a `--testee` roster cannot bound TIME (the correction to KB-5's fix)
 
 Found by the [B26] (c) re-render invariant (lane b26reports, f66f2cd)

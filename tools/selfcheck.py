@@ -4342,15 +4342,19 @@ def _pcrec_adapter_token():
 # --------------------------------------------- 25 the free_text note guard
 
 def check_note_length_guard():
-    """[B12] (2026-08-29, bounded's first window): a record's `note` /
-    `status_detail` are schema `free_text` (maxLength 8192), and the harness
-    filled them from a per-cell LIST that grew with the set -- 24 patterns x 3
-    regimes = 72 calibration sentences (~12 KB) -- so a 21-minute cell was
-    measured and then REJECTED at validation. `record.join_notes` is now the
-    only path from that list to a record. The CONTROL reads the cap FROM THE
-    SCHEMA JSON, not from record.py, so the constant and the schema cannot
-    drift apart unnoticed; the sentences are the real ones (the rejected
-    record's own shape, 72 x ~165 bytes)."""
+    """[B12] (2026-08-29, bounded's first window) built this guard against
+    the ORIGINAL 8192-byte cap: bench/bounded@0.1's 24 patterns x 3 regimes
+    made 72 calibration sentences (~12 KB), and a 21-minute cell was
+    measured and then REJECTED at validation. [B30] (2026-09-02, KB-7,
+    Frank's ruling) raised the cap to 1,048,576 -- the 72-sentence shape is
+    this bench's own REAL worst case to date, and it now fits with room to
+    spare, so it becomes the POSITIVE (no-elision) arm below; the elision
+    arm needs a SYNTHETIC list built here, sized to whatever cap the schema
+    actually declares (a literal count would go stale the next time this
+    number moves) rather than to a corpus shape that no longer overflows
+    it. `record.join_notes` is the only path from either list to a record.
+    The CONTROL reads the cap FROM THE SCHEMA JSON, not from record.py, so
+    the constant and the schema cannot drift apart unnoticed."""
     import json as _json
     sys.path.insert(0, ROOT)
     from pcrecbench import record as rec
@@ -4369,19 +4373,45 @@ def check_note_length_guard():
                 "a 50 ms loop")
     seventy_two = [sentence % i for i in range(72)]
     raw = "quiet window run | " + "; ".join(seventy_two)
-    if len(raw) <= cap:
-        bad("note guard: the 72-sentence shape does not exceed the cap",
-            "%d bytes -- the control is not a control" % len(raw))
+    # The REAL 72-sentence shape (bench/bounded's own worst case, [B12]):
+    # under the [B30] cap it fits UNCHANGED -- the arm the old 8192 cap
+    # could never offer, since it always overflowed.
+    if len(raw) > cap:
+        bad("note guard: the real 72-sentence shape no longer fits under the cap",
+            "%d bytes > %d -- has the cap moved the wrong way?" % (len(raw), cap))
         return
-    joined = rec.join_notes(seventy_two, prefix="quiet window run")
-    elided = 72 - joined.count("iters for (")
+    joined_real = rec.join_notes(seventy_two, prefix="quiet window run")
+    if joined_real == raw and "note(s) elided" not in joined_real:
+        ok("note guard: the real 72-sentence shape joins verbatim under the wider cap",
+           "%d bytes, no elision (this shape was REJECTED at the old 8192 cap)"
+           % len(joined_real))
+    else:
+        bad("note guard: real 72-sentence shape", "len=%d joined=%r"
+            % (len(joined_real), joined_real[-160:]))
+
+    # The OVER-CAP / elision arm: SYNTHETIC, grown one sentence at a time
+    # until it exceeds whatever `cap` was actually read above.
+    many, total = [], len("quiet window run | ")
+    i = 0
+    while total <= cap:
+        s = sentence % (i % 1000)
+        total += len(s) + (2 if many else 0)  # "; " separator after the first
+        many.append(s)
+        i += 1
+    raw_many = "quiet window run | " + "; ".join(many)
+    if len(raw_many) <= cap:
+        bad("note guard: the synthetic over-cap shape does not exceed the cap",
+            "%d bytes -- the control is not a control" % len(raw_many))
+        return
+    joined = rec.join_notes(many, prefix="quiet window run")
+    elided = len(many) - joined.count("iters for (")
     if len(joined) <= cap and "note(s) elided" in joined and \
             ("[+%d calibration/adapter note(s) elided" % elided) in joined:
-        ok("note guard: 72 real sentences fit under the cap",
+        ok("note guard: %d synthetic sentences fit under the cap" % len(many),
            "%d -> %d bytes, %d elided, marker names the count and the class"
-           % (len(raw), len(joined), elided))
+           % (len(raw_many), len(joined), elided))
     else:
-        bad("note guard: 72 real sentences", "len=%d joined=%r"
+        bad("note guard: synthetic over-cap sentences", "len=%d joined=%r"
             % (len(joined), joined[-160:]))
     short = rec.join_notes(seventy_two[:3], prefix="x")
     if short == "x | " + "; ".join(seventy_two[:3]):
@@ -4393,9 +4423,10 @@ def check_note_length_guard():
         ok("note guard: an over-cap prefix is cut to the cap with a marker")
     else:
         bad("note guard: over-cap prefix", "len=%d" % len(huge))
-    # And the schema itself agrees: the joined string validates as free_text.
+    # And the schema itself agrees: the joined strings validate as free_text.
     try:
         import jsonschema
+        jsonschema.validate(joined_real, schema["$defs"]["free_text"])
         jsonschema.validate(joined, schema["$defs"]["free_text"])
         jsonschema.validate(huge, schema["$defs"]["free_text"])
         ok("note guard: the joined strings validate as schema free_text")
@@ -4405,55 +4436,78 @@ def check_note_length_guard():
 
 def check_pattern_text_cap():
     """[B11.2] (2026-09-01, bench/altwide): `patterns[].canonical_text` is
-    schema `free_text` (maxLength 8192) and the harness filled it from the
-    pattern bytes unconditionally -- fine while the largest pattern in the
-    tree was bench/email's 1.4 KB specimen, and fatal the day a set carries a
+    schema `free_text` and the harness filled it from the pattern bytes
+    unconditionally -- fine while the largest pattern in the tree was
+    bench/email's 1.4 KB specimen, and fatal the day a set carries a
     2048-way alternation. Four altwide rungs are 8.7-24 KB, so four of every
-    twenty pattern entries would have been REJECTED at validation.
+    twenty pattern entries would have been REJECTED at validation against
+    the cap of that day (8192).
+
+    [B30] (2026-09-02, KB-7, Frank's ruling) raised the cap to 1,048,576:
+    those same four altwide rungs now CARRY their text (the first real-
+    corpus arm below, previously the omission witness -- now the
+    "over the OLD cap, under the NEW one" positive control instead). The
+    OMISSION arm needs a pattern nothing in this bench's real corpus comes
+    within two orders of magnitude of, so it is built SYNTHETICALLY: a
+    hand-built stand-in for `pcrecbench.subbench.Subbench` (never a
+    committed file, never a real compile) carrying one pattern whose text
+    is exactly `cap + 1` bytes, read straight off the schema.
 
     The field is REPRODUCIBILITY-ONLY and optional (record_schema.md 8), so
     the fix OMITS it rather than truncating: a truncated string under a field
     name that claims to be the pattern is worse than no string, and
     `canonical_sha256` + `subbench.content_hash` are the identity either way.
-    This gate reads the cap FROM THE SCHEMA JSON, uses the REAL patterns on
-    both sides of it, and validates both entries against the schema's own
-    `pattern_entry` definition -- so it fails if the constant drifts, if the
-    omission stops happening, or if a short pattern ever loses its text."""
-    print("-- [B11.2]: an over-cap pattern omits canonical_text, and validates --")
+    This gate reads the cap FROM THE SCHEMA JSON, uses REAL patterns for the
+    below-cap arms and a SYNTHETIC one for the above-cap arm, and validates
+    every entry against the schema's own `pattern_entry` definition -- so it
+    fails if the constant drifts, if the omission stops happening, or if a
+    real or synthetic pattern ever loses text it should carry."""
+    print("-- [B11.2]/[B30]: canonical_text carries below the cap, omits above it --")
     import json as _json
     sys.path.insert(0, ROOT)
     from pcrecbench import record as rec
+    from pcrecbench.subbench import Pattern as _Pattern
     with open(os.path.join(ROOT, "schema", "record.schema.json")) as fh:
         schema = _json.load(fh)
     cap = schema["$defs"]["free_text"]["maxLength"]
+    # [B11.2]'s own cap, kept here ONLY to relocate the same real-world
+    # witness (bench/altwide's 8.7-24 KB rungs) -- not an assumption about
+    # the CURRENT cap, which is read from the schema above.
+    OLD_CAP_2026_08_29 = 8192
 
-    over = under = None
+    was_over_old_cap = under = None
     for name, bench in subbench_dirs():
         sb = Subbench(bench)
         for pat in sb.patterns:
             n = len(sb.pattern_bytes(pat.name))
-            if n > cap and over is None:
-                over = (sb, pat.name, n)
-            elif n <= cap and under is None:
+            if n > OLD_CAP_2026_08_29 and was_over_old_cap is None:
+                was_over_old_cap = (sb, pat.name, n)
+            elif n <= OLD_CAP_2026_08_29 and under is None:
                 under = (sb, pat.name, n)
     if under is None:
-        bad("[B11.2] pattern-text cap: a under-cap pattern exists", "none found")
+        bad("[B11.2] pattern-text cap: an under-cap pattern exists", "none found")
         return
-    if over is None:
-        ok("[B11.2] pattern-text cap: no set carries an over-cap pattern",
-           "nothing to exercise; the under-cap side is checked below")
+    if was_over_old_cap is None:
+        bad("[B30] pattern-text cap: bench/altwide's over-(old-)cap witness exists",
+            "none found -- has the corpus changed under this check?")
     else:
-        sb, name, n = over
-        entry = rec.pattern_entry(sb, name)
-        if "canonical_text" not in entry:
-            ok("[B11.2] an over-cap pattern OMITS canonical_text",
-               "%s/%s is %d B > the schema's %d B free_text cap"
-               % (sb.id, name, n, cap))
+        sb, name, n = was_over_old_cap
+        if n > cap:
+            bad("[B30] pattern-text cap: the altwide witness fits under the NEW cap",
+                "%s/%s is %d B > the schema's %d B free_text cap -- has the "
+                "cap moved the wrong way?" % (sb.id, name, n, cap))
         else:
-            bad("[B11.2] an over-cap pattern omits canonical_text",
-                "%s/%s (%d B) carried %d B of text"
-                % (sb.id, name, n, len(entry["canonical_text"])))
-        _validates(schema, entry, "%s/%s (over cap)" % (sb.id, name))
+            entry = rec.pattern_entry(sb, name)
+            if entry.get("canonical_text") == sb.pattern_bytes(name).decode("utf-8"):
+                ok("[B30] a pattern over the OLD (8192 B) cap now CARRIES canonical_text",
+                   "%s/%s, %d B <= the new %d B cap (OMITTED before [B30], [B11.2])"
+                   % (sb.id, name, n, cap))
+            else:
+                bad("[B30] a pattern over the old cap carries canonical_text",
+                    "%s/%s (%d B): %r"
+                    % (sb.id, name, n, entry.get("canonical_text", "")[:60]))
+            _validates(schema, entry,
+                       "%s/%s (over OLD cap, under NEW cap)" % (sb.id, name))
 
     sb, name, n = under
     entry = rec.pattern_entry(sb, name)
@@ -4464,6 +4518,39 @@ def check_pattern_text_cap():
         bad("[B11.2] an under-cap pattern carries its text verbatim",
             "%s/%s: %r" % (sb.id, name, entry.get("canonical_text", "")[:60]))
     _validates(schema, entry, "%s/%s (under cap)" % (sb.id, name))
+
+    # The OMISSION arm: nothing in this bench's real corpus is anywhere
+    # near the [B30] cap, so it is built by hand -- a duck-typed stand-in
+    # for `Subbench` carrying ONE pattern whose text is `cap + 1` bytes.
+    # `rec.pattern_entry(sb, name)` calls exactly two methods on `sb`:
+    # `.pattern(name)` and `.pattern_bytes(name)`.
+    class _SyntheticOverCapSubbench:
+        id = "synthetic-overcap"
+
+        def __init__(self, text):
+            self._text = text
+            self._pattern = _Pattern({
+                "name": "p-synthetic-overcap", "file": "n/a",
+                "hazard_class": "none", "size_class": "huge",
+            })
+
+        def pattern(self, _name):
+            return self._pattern
+
+        def pattern_bytes(self, _name):
+            return self._text
+
+    synthetic_text = b"a" * (cap + 1)
+    synthetic = _SyntheticOverCapSubbench(synthetic_text)
+    entry = rec.pattern_entry(synthetic, "p-synthetic-overcap")
+    if "canonical_text" not in entry:
+        ok("[B30] a SYNTHETIC over-(new-)cap pattern OMITS canonical_text",
+           "%d B > the schema's %d B free_text cap" % (len(synthetic_text), cap))
+    else:
+        bad("[B30] a synthetic over-cap pattern omits canonical_text",
+            "%d B carried %d B of text"
+            % (len(synthetic_text), len(entry["canonical_text"])))
+    _validates(schema, entry, "synthetic (%d B, over the new cap)" % len(synthetic_text))
 
 
 def _validates(schema, entry, label):
@@ -5026,23 +5113,40 @@ def check_spread_status_stamped():
 
 def check_status_sentence_never_elided():
     """Ruling R-4: a record whose calibration sentences exceed the free_text
-    cap (bench/bounded's 72-sentence shape) still has its status-deciding
-    sentence at offset 0 and the elision marker names the class dropped;
-    CONTROL: the same sentences joined WITHOUT `first=` -- the status
-    sentence appended last, as before v1.4 -- show it elided."""
+    cap still has its status-deciding sentence at offset 0 and the elision
+    marker names the class dropped; CONTROL: the same sentences joined
+    WITHOUT `first=` -- the status sentence appended last, as before v1.4
+    -- show it elided.
+
+    [B30] (2026-09-02, KB-7, Frank's ruling) raised the cap 8192 ->
+    1,048,576: the 72-sentence shape this check used to build
+    (bench/bounded's own, ~13 KB) no longer overflows it, so both the
+    firing arm and its control would pass VACUOUSLY -- everything would
+    fit, elided or not, and the elision path this ruling exists to prove
+    would go unexercised. The calibration list below is GROWN until it
+    exceeds `record.FREE_TEXT_MAX`, read live rather than assumed, so a
+    future cap change cannot silently turn this check into a no-op again."""
     print("-- the status sentence is never elided (v1.4) --")
     from pcrecbench import record as rec
     status = ("trial agreement (v1.4-group, k=1.5, d_min=2, share_c=3, trials=5): "
               "1 of 72 groups disagree; 23 of 1536 rows disagree, 0 unjudged; worst "
               "group cls-upto-32768 / match-compliance / plain: d=23 of n=30")
-    cal = [("calibration for (cls-upto-%d, plain, search_short) = 471032 iters: the "
-            "median subject would need iters=900000 for 50 ms, capped to 471032 by "
-            "the 20 s per-trial budget") % i for i in range(72)]
+    sentence = ("calibration for (cls-upto-%d, plain, search_short) = 471032 iters: the "
+                "median subject would need iters=900000 for 50 ms, capped to 471032 by "
+                "the 20 s per-trial budget")
+    cal, total = [], len(status)
+    i = 0
+    while total <= rec.FREE_TEXT_MAX:
+        s = sentence % (i % 1000)
+        total += len(s) + 2  # "; " separator
+        cal.append(s)
+        i += 1
     joined = rec.join_notes(cal, first=[status])
     if joined.startswith(status) and len(joined) <= rec.FREE_TEXT_MAX \
             and "calibration/adapter note(s) elided" in joined:
         ok("elision: the status sentence is at offset 0; the marker names the class",
-           "%d bytes, %d calibration sentence(s) kept" % (len(joined), joined.count("calibration for")))
+           "%d bytes, %d of %d calibration sentence(s) kept"
+           % (len(joined), joined.count("calibration for"), len(cal)))
     else:
         bad("elision: status sentence", joined[:120] + " ... " + joined[-120:])
     ctl = rec.join_notes(cal + [status])
@@ -5072,7 +5176,7 @@ def check_smoke_block_na_trials():
     ta = setup.get("trial_agreement") or {}
     keys = {(r["pattern_id"], r["regime"], r.get("form", "plain"), r["subject_id"])
             for r in rows if r["kind"] == "match"}
-    if (setup["schema_version"] == "1.4" and setup.get("tier") == "scratch"
+    if (setup["schema_version"] == _rec.SCHEMA_VERSION and setup.get("tier") == "scratch"
             and ta.get("verdict") == "n/a-trials" and ta.get("trials") == 1
             and ta.get("rows_unjudged") == len(keys)
             and ta["rows_unjudged_reasons"]["na_trials"] == len(keys)

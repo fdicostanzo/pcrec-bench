@@ -1,6 +1,6 @@
 # The record schema — [B2]
 
-STATUS: v1.4 (2026-08-30, [B20]; §4.1). DRAFT 1 2026-08-25, written against
+STATUS: v1.5 (2026-09-02, [B30]; §4.1). DRAFT 1 2026-08-25, written against
 `docs/design/requirements.md` ADOPTED v3 and the R1 panel's findings
 (`docs/dev/reviews/2026-08-24-r1-requirements.md`). Every field below
 cites the requirements section or the R1 finding that put it there; a
@@ -204,6 +204,7 @@ migration exists. Concretely, and enforced by `validate.py`:
 | 1.2 | 2026-08-25 | the RECORD TIERS ([B10], inbox I-4): optional `tier` (`pinned`/`scratch`, absent = `pinned`), optional `testee.binary` {path, sha256}, the `local:` shape of `engine_version`, rules X28/X29, X22 exempts `local:` (§6.2, §6.8) |
 | 1.3 | 2026-08-25 | the FLOOR PATTERN ([B15], pcrecdev1's feedback item 1(d)): optional `patterns[].role` (`member`/`floor`, absent = `member`), rule X30 (at most one `floor` pattern per record) |
 | 1.4 | 2026-08-30 | THE GATE'S SHAPE after BD7 ([B20], `docs/design/gate_shape_v14.md`, Frank's ruling I-19): `status` gains `inconclusive-spread`; `occupancy.<sample>.target_busy_pct` (tri-state, keyed on `pinning.cpu`); the `trial_agreement` setup block (rule `v1.4-group`, k = 1.5, d_min = 2, share_c = 3, N ≥ 5 and odd) REQUIRED at 1.4 and FORBIDDEN below (X33), its counts recomputed (X32) and its verdict required to follow (X31); the per-group `occupancy.timeline` (provenance); X13 VERSIONED (the pre-flight + trial agreement at ≥ 1.4; the v1.1 text below); KB-4's schema half (`cost` may sit beside a non-`compiled` outcome) |
+| 1.5 | 2026-09-02 | [B30], `docs/dev/known_issues.md` KB-7, Frank's ruling: `$defs.free_text.maxLength` raised 8192 → 1,048,576 (1 MiB) — a HYGIENE bound against a stray blob in a text field, not a content limit; no rule's applicability changes, and no record's verdict of any kind changes (see the paragraph below) |
 
 **1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
 the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
@@ -290,6 +291,49 @@ testee in the store — stay as they are, as history:
 The reporter renders a pre-1.4 record's agreement as `n/a (v1.3)` and,
 when one query mixes X13 versions, the rule version beside every ranked
 status (`measured@1.3` / `measured@1.4`).
+
+**1.4 → 1.5 is a MINOR bump by the plain first rule in §4 — no
+rule-revision clause is needed, and no record's verdict of any kind
+moves** ([B30], 2026-09-02; `docs/dev/known_issues.md` KB-7, Frank's
+ruling). The change is one number: `$defs.free_text.maxLength` 8192 →
+1,048,576 (1 MiB), the bound eighteen fields share (`note`,
+`status_detail`, `patterns[].canonical_text` and fifteen others — KB-7's
+count). KB-7's finding was that 8192 was never derived from anything —
+no document, including this one before now, said why that number and
+not another — and that it is OUR limit, not an engine's: every pattern
+it has ever rejected compiled cleanly under libpcre2. What the bound
+actually protects (a stray binary blob landing in a text field; the
+record's own readability) is not 8192-shaped, and a bound at that scale
+protects it exactly as well.
+
+This is UNLIKE the 1.3 → 1.4 revision of X13, which needed the
+rule-revision clause because judging a record's `measured` status by a
+NEWER rule text could change what an OLDER record's status verdict
+means — the clause exists to keep that judgement keyed on each record's
+own `schema_version`. Loosening `maxLength` has no such hazard: JSON
+Schema applies one number to a string's length, monotonically, with no
+version-conditional branching in `validate.py` at all (contrast X13's
+`v14 = f_minor is not None and f_minor >= X13_V14_MINOR` test). A string
+that validated under the OLD 8192 bound still validates under the NEW
+1,048,576 one — the set of records this schema accepts only grows, and
+every field's MEANING is unchanged for every record of every earlier
+minor. `make check-schema` proves this the same way 1.1 → 1.2 and
+1.2 → 1.3 did: nothing here is re-stamped, and no new example is added
+for 1.5 (following the 1.3 precedent, which added none either) — the
+existing 1.1/1.2/1.4 examples still validate unmodified, and
+`tools/selfcheck.py`'s `check_pattern_text_cap` / `check_note_length_guard`
+/ `check_status_sentence_never_elided` gates (`make check-harness`) now
+assert BOTH the field's new reach (bench/altwide's 8.7-24 KB patterns,
+which used to omit `canonical_text`, now carry it) and that the
+omission fallback for `patterns[].canonical_text` still fires — on a
+SYNTHETIC pattern built past the new cap, since nothing in this bench's
+corpus is anywhere near a megabyte of pattern text.
+
+The two `diagnostic` fields (`match_row`/`compile_row`) keep their own,
+separately-declared 8192 bound, UNCHANGED: KB-7 named them as a
+candidate worth discussing (point 2), but Frank's ruling addressed
+`free_text` by name, and they are not `$defs/free_text` fields — a
+distinct decision this change does not make.
 
 ## 5. The fixed enums (OD-B4 (a))
 
@@ -795,9 +839,11 @@ row here that is not in the schema (or the reverse) is a build failure,
 not a review miss.
 
 FILTERABLE means the reporter (§8 of the requirements) may filter or
-group on it. DIAGNOSTIC / REPRODUCIBILITY-ONLY fields are free text and
-the reporter must NOT offer them as filters — the R1 A4 finding in
-reverse: what is filtered must be enumerated or normalized.
+group on it. DIAGNOSTIC / REPRODUCIBILITY-ONLY fields are free text
+(`schema/record.schema.json` `$defs.free_text`, `maxLength` 1,048,576
+since v1.5 — §4.1's KB-7 paragraph) and the reporter must NOT offer them
+as filters — the R1 A4 finding in reverse: what is filtered must be
+enumerated or normalized.
 
 ### FIELD TABLE: setup
 

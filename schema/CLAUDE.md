@@ -20,7 +20,7 @@ they and the note disagree.
   per line kind (`setup`, `match_row`, `compile_row`); the root is their
   `oneOf`, so a generic tool can validate a line without knowing which
   it is. `x-record-schema-version` at the root is the version this
-  schema IMPLEMENTS (1.4), which is what `validate.py` compares a file's
+  schema IMPLEMENTS (1.5), which is what `validate.py` compares a file's
   `schema_version` against. v1.2 added the two optional TIER fields
   (`tier`, `testee.binary`) and the `local:` shape of `engine_version`
   ([B10]); v1.3 added optional `patterns[].role` (`member`/`floor`,
@@ -30,9 +30,13 @@ they and the note disagree.
   (`$defs.trial_agreement`, not in `setup.required` — the schema is
   version-blind; X33 owns the requirement), the per-group occupancy
   `timeline` (provenance), and dropped the compile row's "no cost beside
-  a refusal" branch (KB-4); every 1.1, 1.2 and 1.3 record still
-  validates, and the older examples are left stamped at their own
-  versions to prove it.
+  a refusal" branch (KB-4); v1.5 ([B30], 2026-09-02, KB-7, Frank's
+  ruling) raised `$defs.free_text.maxLength` 8192 → 1,048,576 (1 MiB) —
+  a hygiene bound, not a content limit, and the ONLY thing that moved:
+  no field, no enum value, no rule. Every 1.1, 1.2, 1.3 and 1.4 record
+  still validates, and the older examples are left stamped at their own
+  versions to prove it — a string that fit under 8192 fits under
+  1,048,576 too, so nothing needed re-checking to know this.
 - `validate.py` — the validator the harness and the reporter share
   (requirements §6). Per-line schema validation PLUS the cross-line
   rules a schema cannot express, PLUS the three normalization rules of
@@ -84,14 +88,19 @@ anything, and the second is what makes the last one complete.
 
 - Adding an OPTIONAL field or an ENUM VALUE is a MINOR bump
   (`x-record-schema-version`, the note §4) and needs a line in the note
-  saying why. Revising a cross-line RULE is MINOR only under §4's
-  rule-revision clause (v1.4, X13): keyed on `schema_version` in the
-  validator, older records never re-judged, the rule's version rendered
-  by the reporter beside every ranked status. Anything else is a MAJOR
-  bump and needs a declared migration. 1.0 → 1.1 was a documented
-  ONE-TIME exception to that rule (note §4.1) and it expires the moment
-  the first record is stored; read §4.1 before assuming the next change
-  of that shape can do the same.
+  saying why. LOOSENING a constraint on an existing field (v1.5, KB-7:
+  `free_text.maxLength`) is MINOR by the same plain rule and needs
+  NEITHER a new field nor the rule-revision clause below, PROVIDED the
+  loosening is monotonic and version-blind — nothing a tighter bound
+  accepted is rejected by a looser one, so no record's validity or
+  meaning depends on which minor wrote it. Revising a cross-line RULE
+  is MINOR only under §4's rule-revision clause (v1.4, X13): keyed on
+  `schema_version` in the validator, older records never re-judged, the
+  rule's version rendered by the reporter beside every ranked status.
+  Anything else is a MAJOR bump and needs a declared migration. 1.0 →
+  1.1 was a documented ONE-TIME exception to that rule (note §4.1) and
+  it expires the moment the first record is stored; read §4.1 before
+  assuming the next change of that shape can do the same.
 - A new field needs a row in the note's `### FIELD TABLE:` block for its
   kind, or `check_fields.py` fails. That is deliberate: a field with no
   stated reason is a field nobody can filter on with confidence.
