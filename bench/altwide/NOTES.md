@@ -785,6 +785,28 @@ gcc instead of by a refusal.
   branch byte, which is 16 MB of straight-line C per emit-set across the
   thirteen -- nearer the pessimistic end than the optimistic one.
 
+**MEASURED AFTER THIS ESTIMATE WAS WRITTEN (manager's note on merge,
+2026-09-02 ~16:2x; the author was blinded to it).** The companion lane ran
+the adapter's own compile path at pin 1989c62 on the largest raised
+artifacts, both forms, one trial each, under load 2.9-4.5
+(`docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt`, section
+2). The two routes have OPPOSITE cost structures: a forced-VM artifact is
+straight-line C that pcrec writes in 0.01-0.06 s and gcc pays for
+(`w-512` 5.1/7.0 s, `w-2048` 61.7/91.8 s, `s-4096` 183/334 s — SUPERLINEAR
+in emitted CODE bytes, exponent ~1.8 to `w-2048` and steeper beyond, so no
+single rate times a total is right; both of this estimate's linear models
+were refuted by 1.5-1.8× on the third cell); an auto-route artifact of the
+same pattern is a table pcrec's subset construction pays for (11-37 s) and
+gcc barely notices (0.6-1.0 s). Per-rung projection at five trials:
+`pcrec-vm-bigcap` 4,499 s = 75 min of compile ALONE (over the 5400 s
+per-cell cap before any matching; `--trials 3` = 45 min; `w-2048` +
+`s-4096` are 75 % of it), `pcrec-auto-bigcap` 705 s = 12 min (this
+estimate's 29 min of emission was 2.5× high; its gcc figure was right).
+And `s-512` is NOT a wide rung at this pin: 474,312 code bytes under the
+forced VM and 843,165 total under auto, both under the defaults — P13's
+bracket (414-547 KB) CONFIRMED and the outcome is `compiles`, so the set
+that needs a raised cap is twelve rungs.
+
 **What to measure before committing the raised-cap VM cell.** One rung, one
 trial: `pcrec-vm-bigcap` on `w-512` at `--trials 1`, and read the per-emit
 cost off it. If it exceeds ~40 s, the full five-trial cell will not fit and
