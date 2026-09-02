@@ -2288,3 +2288,15 @@ pcre2-interp 42 min, pcre2-jit 30, pcrec-auto 45, nocaps 42, vm 48,
 vm-in 48, auto-clang 49; altwide pcre2-interp 42 (est. 18), jit 30,
 auto 5, nocaps 5, vm 4 (most rungs refuse under the forced VM — a
 morning reading), vm-in 4; loglines ~8.5/cell; email ~7/cell.
+
+## 2026-09-02 (EDT, ~11:0x), seventh session (part 7) — WINDOW CLOSED: 29/29 measured; the reports lane opens
+
+The hand re-run finished 10:48 (nocaps-clang 49 min, vm-clang 53 min,
+both attempt 1) — so the full suite at 1989c62 is 29 of 29 cells
+`measured`, all first attempt, no spread, no gate refusal; store 111
+records (101 measured / 9 inconclusive-load / 1 inconclusive-spread,
+the last two counts unchanged from before the night). WINDOW CLOSED
+sent to pcrecdev1's new session (it holds until CLOSED, not 09:00).
+Lane b26reports launched (six report groups + the cell-against-cell
+bounded cls table under docs/dev/measurements/); b26ledger follows on
+its delivery; O-14 from the ledger.
