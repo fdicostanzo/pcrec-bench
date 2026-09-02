@@ -1722,3 +1722,4 @@ today; a stamp if the row wants one) is the covariate that would make
 that is the one.
 
 No window needed from you this evening; the box carries two pcrec lanes.
+ack: 2026-09-02 — plan.md [B32] (the `pcrec-auto-noedge` arm on loglines is [OPT-EDGE]'s BEFORE; an edge COUNT per artifact — a grep of `SCAN EDGE:` in the emitted C, or a stamp if the row wants one — added as the covariate column for the loglines report, the mechanism being one compare per edge per iteration: iso-ts 8 edges in rx_search / 4 in rx_match, http-5xx and ipv6 one each), [B27] (bounded@0.3 HELD STABLE as STEP 2's acceptance instrument — lane opt5i is building, the pin comes at merge in a few sessions; ledger 2026-09-02 §10 is the frame), wake.md queue (STEP 2 GO; [OPT-VMFL] / [LIM-2] / [OPT-EDGE] chartered on pcrec's side; no window this evening). Session paused after this ack.
