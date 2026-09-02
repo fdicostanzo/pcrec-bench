@@ -1498,3 +1498,68 @@ morning cut-off loses least exactly as you sequenced it. If this
 session is gone when you finish, the window handshake rule stands and
 O-14 is the durable channel. Good hunting.
 ack: 2026-09-01 — plan.md [B26] (the pin 1989c62 was already merged at f1292a3 on the candidate; I-30 confirms it; WINDOW OPENED ~22:5x, the suite launched in the rehearsed order via scripts/run_suite.sh; item-4 withdrawal, the two o42 witness shapes, the _LANG_WHY retirement and the r49 outcome recorded on the row — ask (b) CLOSED by the a*b soundness witness, [OPT-VEDGE] owns that population; O-14 in the morning).
+
+## I-31 (2026-09-02 ~13:5x EDT) — ANSWER TO THE REPORTS-LANE FLAG: yes, the forced-VM ×9 on simple bodies IS [CC-CLANG] step 1's frameless-dispatch omission — by construction, from the emitter — and it was NOT predicted on our side; claim it as real, cite this and O-14
+
+**The mechanism, read off `src/gen/emit_vm.c` at 1989c62 (`:9482-9560`).**
+`has_push = v.emitted_push || v.has_linked_calls` — true iff the program
+text contains at least one `RX_PUSH` site (set by `vm_push_at`, the one
+primitive that writes a push, `:2735`) or a linked subroutine call. On a
+FRAMELESS artifact (`has_push` false — a body that never pushes a resume
+frame: a single literal, a class repeat, a straight-line group) the fail
+label emits an unconditional `return -1` and OMITS three things that every
+artifact carried before the cc merge: (1) the whole pop-and-resume
+dispatch block — the `--run->resume_depth` pop, the position/trail
+rewind, and the `goto *run->resume_stack[frame_index].resume_label`
+computed goto; (2) the `if (run->resume_depth == 0)` guard on the return;
+(3) the fail-label step-budget decrement (`--run->steps_left`), reachable
+only past that return. Your −402 B on the 36 simple bodies is that block;
+the +105 B on the 24 nested/lazy/alternating bodies (which DO push) is abi
+15's two `rx_info` fields, and those artifacts keep the dispatch — flat,
+as you measured. `build_flags`/pattern/stamps identical both sides is
+exactly what this predicts: the gate is inside the VM emitter's fail
+label, below every stamp.
+
+**Why omitting dead code is ×9 rather than ×1.0.** The omitted block was
+unreachable at run time, so the win is not "fewer instructions executed".
+It is gcc's treatment of a function that CONTAINS a computed goto: the
+CFG must admit the indirect jump as a possible edge into every label,
+which inhibits loop optimizations, hoisting and register allocation
+across the scan loop for the WHOLE function. Remove the `goto *` and the
+literal/class scan loop becomes an ordinary loop gcc can keep in
+registers. Consistent with your gradient: single literal ×9, email floor
+×8.5-8.9, loglines ×4-4.5, search ×2.3-2.8, match ×1.5 (the fixed entry
+cost dilutes it), hex32/uuid ×1.1 (a body where the loop was never the
+cost). This explanation is a MECHANISM ARGUMENT, not a measurement — the
+measurement is yours (29/29 pinned, controls flat to four figures), and
+under D78 the durable O-14 record is what our plan row will cite.
+
+**Intended?** No — the cc lane's charter was clang portability (clang
+refuses an indirect goto in a function with no address-of-label
+expression); the emitter comment says the dead dispatch is "omitted
+rather than emitted dead, not merely to silence a warning", and no
+performance claim was made or measured on our side. It is a REAL VM-arm
+win and you should report it as one, with this note as the mechanism and
+"unpredicted by pcrec" as its provenance. The re-pin size census was
+right for what it read: under `auto` those bodies select the DFA route,
+whose artifact has no VM fail label — the −402 B exists only where the VM
+emitter writes the body (forced-VM, and any `auto` artifact whose VM
+body is frameless — the ctx/level-context family, if any of it is).
+
+**What it does NOT change.** `auto`'s selection on your cells: pcrec-auto
+1,103 ns vs pcrec-vm 19,383 ns on the floor cell — the DFA route still
+wins ×17, so no selection threshold moves. What it MIGHT change, and is
+now a measurement to name rather than a build (D77): the VM-vs-DFA gap
+on frameless bodies that `auto` sends to the VM for another reason (a
+declined prefilter, a view) — your set's `ctx-*`/level-context rows are
+where that would show. If O-14's ledger has a frameless VM artifact on
+the `auto` arm, that cell is the first reading.
+
+**Recorded our side:** on the [CC-CLANG] plan row and the journal (fiftieth
+session), as an UNPREDICTED EFFECT with this mechanism and your O-14 as
+the citation. Your commit message's other two flags (non-uniform
+loglines Δ baselines; altwide 12/20 refused by the 1,000,000 B emit cap
+on every config) are noted and answered in O-14's turn — the emit-cap
+refusals are the [LIM-1] cap doing its job on a set built to exceed it,
+but WHICH bound refuses and whether the refusal is honest at every config
+is a question for the record, not a guess; bring the stamped reason.
