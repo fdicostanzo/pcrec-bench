@@ -1,0 +1,926 @@
+# engine_sel census at two pcrec pins -- SOURCE: lane b26repin, 2026-09-01 ~19:5x EDT, host budu-ryzen1600; every bench pattern (77) x 2 forms x 3 engine modes (auto / nocaps / vm) compiled ONCE by build/pcrec-<pin>/pcrec with --features all, stamps read from the emitted C by the shim; NOT a timing, nothing ran. Totals per pin: 220 selected / 130 forced / 24 collapsed-prefilter / 8 declined-nullable / 0 declined-nullable-default / 80 refusals -- IDENTICAL at a7e0bdf and 1989c62. Archived by the manager from the lane scratchpad (D35).
+pin	subbench	pattern	form	mode	engine_sel	engine	vm_prefilter	lang	lang_why
+a7e0bdf	altwide	ci-512	plain	auto	REFUSED				pcrec: pattern too large: 1589393 bytes of emitted C source (limit 1000000, ~263 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	ci-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1589393 bytes of emitted C source (limit 1000000, ~263 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	ci-512	plain	vm	REFUSED				pcrec: pattern too large: 900746 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	ci-512	whole	auto	REFUSED				pcrec: pattern too large: 1667998 bytes of emitted C source (limit 1000000, ~276 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	ci-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1667998 bytes of emitted C source (limit 1000000, ~276 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	ci-512	whole	vm	REFUSED				pcrec: pattern too large: 900863 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	cnt-64	plain	auto	selected	dfa			
+a7e0bdf	altwide	cnt-64	plain	nocaps	selected	dfa			
+a7e0bdf	altwide	cnt-64	plain	vm	forced	vm	none		
+a7e0bdf	altwide	cnt-64	whole	auto	REFUSED				pcrec: pattern too large: 1107144 bytes of emitted C source (limit 1000000, ~183 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	cnt-64	whole	nocaps	REFUSED				pcrec: pattern too large: 1107144 bytes of emitted C source (limit 1000000, ~183 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	cnt-64	whole	vm	forced	vm	none		
+a7e0bdf	altwide	floor	plain	auto	selected	dfa			
+a7e0bdf	altwide	floor	plain	nocaps	selected	dfa			
+a7e0bdf	altwide	floor	plain	vm	forced	vm	none		
+a7e0bdf	altwide	floor	whole	auto	selected	dfa			
+a7e0bdf	altwide	floor	whole	nocaps	selected	dfa			
+a7e0bdf	altwide	floor	whole	vm	forced	vm	none		
+a7e0bdf	altwide	nar4-512	plain	auto	REFUSED				pcrec: pattern too large: 1607582 bytes of emitted C source (limit 1000000, ~266 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	nar4-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1607582 bytes of emitted C source (limit 1000000, ~266 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	nar4-512	plain	vm	REFUSED				pcrec: pattern too large: 699945 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	nar4-512	whole	auto	REFUSED				pcrec: pattern too large: 1672567 bytes of emitted C source (limit 1000000, ~277 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	nar4-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1672567 bytes of emitted C source (limit 1000000, ~277 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	nar4-512	whole	vm	REFUSED				pcrec: pattern too large: 700062 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	nar4-64	plain	auto	selected	dfa			
+a7e0bdf	altwide	nar4-64	plain	nocaps	selected	dfa			
+a7e0bdf	altwide	nar4-64	plain	vm	forced	vm	none		
+a7e0bdf	altwide	nar4-64	whole	auto	selected	dfa			
+a7e0bdf	altwide	nar4-64	whole	nocaps	selected	dfa			
+a7e0bdf	altwide	nar4-64	whole	vm	forced	vm	none		
+a7e0bdf	altwide	pfx3-512	plain	auto	REFUSED				pcrec: pattern too large: 1088044 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	pfx3-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1088044 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	pfx3-512	plain	vm	REFUSED				pcrec: pattern too large: 562785 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	pfx3-512	whole	auto	REFUSED				pcrec: pattern too large: 1122028 bytes of emitted C source (limit 1000000, ~186 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	pfx3-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1122028 bytes of emitted C source (limit 1000000, ~186 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	pfx3-512	whole	vm	REFUSED				pcrec: pattern too large: 562902 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	s-2048	plain	auto	REFUSED				pcrec: pattern too large: 1260009 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	s-2048	plain	nocaps	REFUSED				pcrec: pattern too large: 1260009 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	s-2048	plain	vm	REFUSED				pcrec: pattern too large: 1862212 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+a7e0bdf	altwide	s-2048	whole	auto	REFUSED				pcrec: pattern too large: 1427683 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	s-2048	whole	nocaps	REFUSED				pcrec: pattern too large: 1427683 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	s-2048	whole	vm	REFUSED				pcrec: pattern too large: 1862331 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+a7e0bdf	altwide	s-4096	plain	auto	REFUSED				pcrec: pattern too large: 1621258 bytes of emitted C source (limit 1000000, ~269 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	s-4096	plain	nocaps	REFUSED				pcrec: pattern too large: 1621258 bytes of emitted C source (limit 1000000, ~269 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	s-4096	plain	vm	REFUSED				pcrec: pattern too large: 3740928 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+a7e0bdf	altwide	s-4096	whole	auto	REFUSED				pcrec: pattern too large: 1896559 bytes of emitted C source (limit 1000000, ~314 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	s-4096	whole	nocaps	REFUSED				pcrec: pattern too large: 1896559 bytes of emitted C source (limit 1000000, ~314 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	s-4096	whole	vm	REFUSED				pcrec: pattern too large: 3741047 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+a7e0bdf	altwide	sfx-512	plain	auto	REFUSED				pcrec: pattern too large: 1331387 bytes of emitted C source (limit 1000000, ~221 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	sfx-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1331387 bytes of emitted C source (limit 1000000, ~221 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	sfx-512	plain	vm	REFUSED				pcrec: pattern too large: 809153 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	sfx-512	whole	auto	REFUSED				pcrec: pattern too large: 1369462 bytes of emitted C source (limit 1000000, ~227 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	sfx-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1369462 bytes of emitted C source (limit 1000000, ~227 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	sfx-512	whole	vm	REFUSED				pcrec: pattern too large: 809270 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	sfx-64	plain	auto	selected	dfa			
+a7e0bdf	altwide	sfx-64	plain	nocaps	selected	dfa			
+a7e0bdf	altwide	sfx-64	plain	vm	forced	vm	none		
+a7e0bdf	altwide	sfx-64	whole	auto	selected	dfa			
+a7e0bdf	altwide	sfx-64	whole	nocaps	selected	dfa			
+a7e0bdf	altwide	sfx-64	whole	vm	forced	vm	none		
+a7e0bdf	altwide	sh1-512	plain	auto	REFUSED				pcrec: pattern too large: 1524378 bytes of emitted C source (limit 1000000, ~253 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	sh1-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1524378 bytes of emitted C source (limit 1000000, ~253 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	sh1-512	plain	vm	REFUSED				pcrec: pattern too large: 656321 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	sh1-512	whole	auto	REFUSED				pcrec: pattern too large: 1576170 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	sh1-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1576170 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	sh1-512	whole	vm	REFUSED				pcrec: pattern too large: 656438 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	sh1-64	plain	auto	selected	dfa			
+a7e0bdf	altwide	sh1-64	plain	nocaps	selected	dfa			
+a7e0bdf	altwide	sh1-64	plain	vm	forced	vm	none		
+a7e0bdf	altwide	sh1-64	whole	auto	selected	dfa			
+a7e0bdf	altwide	sh1-64	whole	nocaps	selected	dfa			
+a7e0bdf	altwide	sh1-64	whole	vm	forced	vm	none		
+a7e0bdf	altwide	srt-512	plain	auto	REFUSED				pcrec: pattern too large: 1577372 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	srt-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1577372 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	srt-512	plain	vm	REFUSED				pcrec: pattern too large: 584690 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	srt-512	whole	auto	REFUSED				pcrec: pattern too large: 1655977 bytes of emitted C source (limit 1000000, ~274 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	srt-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1655977 bytes of emitted C source (limit 1000000, ~274 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	srt-512	whole	vm	REFUSED				pcrec: pattern too large: 584807 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	w-1024	plain	auto	REFUSED				pcrec: pattern too large: 1242354 bytes of emitted C source (limit 1000000, ~206 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-1024	plain	nocaps	REFUSED				pcrec: pattern too large: 1242354 bytes of emitted C source (limit 1000000, ~206 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-1024	plain	vm	REFUSED				pcrec: pattern too large: 1371700 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+a7e0bdf	altwide	w-1024	whole	auto	REFUSED				pcrec: pattern too large: 1358165 bytes of emitted C source (limit 1000000, ~225 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-1024	whole	nocaps	REFUSED				pcrec: pattern too large: 1358165 bytes of emitted C source (limit 1000000, ~225 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-1024	whole	vm	REFUSED				pcrec: pattern too large: 1371817 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+a7e0bdf	altwide	w-2048	plain	auto	REFUSED				pcrec: pattern too large: 2378699 bytes of emitted C source (limit 1000000, ~394 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-2048	plain	nocaps	REFUSED				pcrec: pattern too large: 2378699 bytes of emitted C source (limit 1000000, ~394 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-2048	plain	vm	REFUSED				pcrec: pattern too large: 2756983 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+a7e0bdf	altwide	w-2048	whole	auto	REFUSED				pcrec: pattern too large: 2586747 bytes of emitted C source (limit 1000000, ~429 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-2048	whole	nocaps	REFUSED				pcrec: pattern too large: 2586747 bytes of emitted C source (limit 1000000, ~429 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-2048	whole	vm	REFUSED				pcrec: pattern too large: 2757102 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+a7e0bdf	altwide	w-256	plain	auto	selected	dfa			
+a7e0bdf	altwide	w-256	plain	nocaps	selected	dfa			
+a7e0bdf	altwide	w-256	plain	vm	forced	vm	none		
+a7e0bdf	altwide	w-256	whole	auto	REFUSED				pcrec: pattern too large: 1032946 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-256	whole	nocaps	REFUSED				pcrec: pattern too large: 1032946 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-256	whole	vm	forced	vm	none		
+a7e0bdf	altwide	w-512	plain	auto	REFUSED				pcrec: pattern too large: 1577371 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1577371 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-512	plain	vm	REFUSED				pcrec: pattern too large: 678198 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	w-512	whole	auto	REFUSED				pcrec: pattern too large: 1655976 bytes of emitted C source (limit 1000000, ~274 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1655976 bytes of emitted C source (limit 1000000, ~274 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	w-512	whole	vm	REFUSED				pcrec: pattern too large: 678315 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	w-64	plain	auto	selected	dfa			
+a7e0bdf	altwide	w-64	plain	nocaps	selected	dfa			
+a7e0bdf	altwide	w-64	plain	vm	forced	vm	none		
+a7e0bdf	altwide	w-64	whole	auto	selected	dfa			
+a7e0bdf	altwide	w-64	whole	nocaps	selected	dfa			
+a7e0bdf	altwide	w-64	whole	vm	forced	vm	none		
+a7e0bdf	altwide	w-8	plain	auto	selected	dfa			
+a7e0bdf	altwide	w-8	plain	nocaps	selected	dfa			
+a7e0bdf	altwide	w-8	plain	vm	forced	vm	none		
+a7e0bdf	altwide	w-8	whole	auto	selected	dfa			
+a7e0bdf	altwide	w-8	whole	nocaps	selected	dfa			
+a7e0bdf	altwide	w-8	whole	vm	forced	vm	none		
+a7e0bdf	altwide	wb-512	plain	auto	REFUSED				pcrec: pattern too large: 2344972 bytes of emitted C source (limit 1000000, ~389 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	wb-512	plain	nocaps	REFUSED				pcrec: pattern too large: 2344972 bytes of emitted C source (limit 1000000, ~389 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	wb-512	plain	vm	REFUSED				pcrec: pattern too large: 678855 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	altwide	wb-512	whole	auto	REFUSED				pcrec: pattern too large: 2394187 bytes of emitted C source (limit 1000000, ~397 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	wb-512	whole	nocaps	REFUSED				pcrec: pattern too large: 2394187 bytes of emitted C source (limit 1000000, ~397 KB .o). Lower a repeat count, try --unr
+a7e0bdf	altwide	wb-512	whole	vm	REFUSED				pcrec: pattern too large: 678972 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+a7e0bdf	bounded	cls-atleast-4096	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-atleast-4096	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-atleast-4096	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-atleast-4096	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-atleast-4096	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-atleast-4096	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-lazy-16384	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-lazy-16384	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-lazy-16384	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-lazy-16384	whole	auto	declined-nullable	vm	none		
+a7e0bdf	bounded	cls-lazy-16384	whole	nocaps	declined-nullable	vm	none		
+a7e0bdf	bounded	cls-lazy-16384	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-1024	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-1024	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-1024	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-1024	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-1024	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-1024	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-128	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-128	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-128	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-128	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-128	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-128	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-16	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-16	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-16	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-16	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-16	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-16	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-16384	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-16384	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-16384	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-16384	whole	auto	declined-nullable	vm	none		
+a7e0bdf	bounded	cls-upto-16384	whole	nocaps	declined-nullable	vm	none		
+a7e0bdf	bounded	cls-upto-16384	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-2048	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-2048	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-2048	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-2048	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-2048	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-2048	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-256	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-256	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-256	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-256	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-256	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-256	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-32	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-32	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-32	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-32	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-32	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-32	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-32768	plain	auto	declined-nullable	vm	none		
+a7e0bdf	bounded	cls-upto-32768	plain	nocaps	declined-nullable	vm	none		
+a7e0bdf	bounded	cls-upto-32768	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-32768	whole	auto	declined-nullable	vm	none		
+a7e0bdf	bounded	cls-upto-32768	whole	nocaps	declined-nullable	vm	none		
+a7e0bdf	bounded	cls-upto-32768	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-4	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-4	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-4	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-4	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-4	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-4	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-4096	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-4096	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-4096	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-4096	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-4096	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-4096	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-512	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-512	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-512	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-512	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-512	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-512	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-64	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-64	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-64	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-64	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-64	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-64	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-65535	plain	auto	REFUSED				pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)
+a7e0bdf	bounded	cls-upto-65535	plain	nocaps	REFUSED				pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)
+a7e0bdf	bounded	cls-upto-65535	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-65535	whole	auto	REFUSED				pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)
+a7e0bdf	bounded	cls-upto-65535	whole	nocaps	REFUSED				pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)
+a7e0bdf	bounded	cls-upto-65535	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-8	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-8	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-8	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-8	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-8	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-8	whole	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-8192	plain	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-8192	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-8192	plain	vm	forced	vm	none		
+a7e0bdf	bounded	cls-upto-8192	whole	auto	selected	dfa			
+a7e0bdf	bounded	cls-upto-8192	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	cls-upto-8192	whole	vm	forced	vm	none		
+a7e0bdf	bounded	csv5	plain	auto	selected	dfa			
+a7e0bdf	bounded	csv5	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	csv5	plain	vm	forced	vm	none		
+a7e0bdf	bounded	csv5	whole	auto	selected	dfa			
+a7e0bdf	bounded	csv5	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	csv5	whole	vm	forced	vm	none		
+a7e0bdf	bounded	ctx-greedy-256	plain	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 558
+a7e0bdf	bounded	ctx-greedy-256	plain	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 558
+a7e0bdf	bounded	ctx-greedy-256	plain	vm	forced	vm	none		
+a7e0bdf	bounded	ctx-greedy-256	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 559
+a7e0bdf	bounded	ctx-greedy-256	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 559
+a7e0bdf	bounded	ctx-greedy-256	whole	vm	forced	vm	none		
+a7e0bdf	bounded	ctx-lazy-1024	plain	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 2094
+a7e0bdf	bounded	ctx-lazy-1024	plain	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 2094
+a7e0bdf	bounded	ctx-lazy-1024	plain	vm	forced	vm	none		
+a7e0bdf	bounded	ctx-lazy-1024	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 2095
+a7e0bdf	bounded	ctx-lazy-1024	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 2095
+a7e0bdf	bounded	ctx-lazy-1024	whole	vm	forced	vm	none		
+a7e0bdf	bounded	ctx-lazy-256	plain	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 558
+a7e0bdf	bounded	ctx-lazy-256	plain	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 558
+a7e0bdf	bounded	ctx-lazy-256	plain	vm	forced	vm	none		
+a7e0bdf	bounded	ctx-lazy-256	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 559
+a7e0bdf	bounded	ctx-lazy-256	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 559
+a7e0bdf	bounded	ctx-lazy-256	whole	vm	forced	vm	none		
+a7e0bdf	bounded	ctx-lazy-64	plain	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 174
+a7e0bdf	bounded	ctx-lazy-64	plain	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 174
+a7e0bdf	bounded	ctx-lazy-64	plain	vm	forced	vm	none		
+a7e0bdf	bounded	ctx-lazy-64	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 175
+a7e0bdf	bounded	ctx-lazy-64	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 175
+a7e0bdf	bounded	ctx-lazy-64	whole	vm	forced	vm	none		
+a7e0bdf	bounded	dig-exact-16	plain	auto	selected	dfa			
+a7e0bdf	bounded	dig-exact-16	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-exact-16	plain	vm	forced	vm	none		
+a7e0bdf	bounded	dig-exact-16	whole	auto	selected	dfa			
+a7e0bdf	bounded	dig-exact-16	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-exact-16	whole	vm	forced	vm	none		
+a7e0bdf	bounded	dig-exact-2	plain	auto	selected	dfa			
+a7e0bdf	bounded	dig-exact-2	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-exact-2	plain	vm	forced	vm	none		
+a7e0bdf	bounded	dig-exact-2	whole	auto	selected	dfa			
+a7e0bdf	bounded	dig-exact-2	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-exact-2	whole	vm	forced	vm	none		
+a7e0bdf	bounded	dig-exact-32	plain	auto	selected	dfa			
+a7e0bdf	bounded	dig-exact-32	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-exact-32	plain	vm	forced	vm	none		
+a7e0bdf	bounded	dig-exact-32	whole	auto	selected	dfa			
+a7e0bdf	bounded	dig-exact-32	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-exact-32	whole	vm	forced	vm	none		
+a7e0bdf	bounded	dig-exact-8	plain	auto	selected	dfa			
+a7e0bdf	bounded	dig-exact-8	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-exact-8	plain	vm	forced	vm	none		
+a7e0bdf	bounded	dig-exact-8	whole	auto	selected	dfa			
+a7e0bdf	bounded	dig-exact-8	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-exact-8	whole	vm	forced	vm	none		
+a7e0bdf	bounded	dig-upto-16	plain	auto	selected	dfa			
+a7e0bdf	bounded	dig-upto-16	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-upto-16	plain	vm	forced	vm	none		
+a7e0bdf	bounded	dig-upto-16	whole	auto	selected	dfa			
+a7e0bdf	bounded	dig-upto-16	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-upto-16	whole	vm	forced	vm	none		
+a7e0bdf	bounded	dig-upto-2	plain	auto	selected	dfa			
+a7e0bdf	bounded	dig-upto-2	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-upto-2	plain	vm	forced	vm	none		
+a7e0bdf	bounded	dig-upto-2	whole	auto	selected	dfa			
+a7e0bdf	bounded	dig-upto-2	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-upto-2	whole	vm	forced	vm	none		
+a7e0bdf	bounded	dig-upto-32	plain	auto	selected	dfa			
+a7e0bdf	bounded	dig-upto-32	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-upto-32	plain	vm	forced	vm	none		
+a7e0bdf	bounded	dig-upto-32	whole	auto	selected	dfa			
+a7e0bdf	bounded	dig-upto-32	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-upto-32	whole	vm	forced	vm	none		
+a7e0bdf	bounded	dig-upto-4	plain	auto	selected	dfa			
+a7e0bdf	bounded	dig-upto-4	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-upto-4	plain	vm	forced	vm	none		
+a7e0bdf	bounded	dig-upto-4	whole	auto	selected	dfa			
+a7e0bdf	bounded	dig-upto-4	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-upto-4	whole	vm	forced	vm	none		
+a7e0bdf	bounded	dig-upto-8	plain	auto	selected	dfa			
+a7e0bdf	bounded	dig-upto-8	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-upto-8	plain	vm	forced	vm	none		
+a7e0bdf	bounded	dig-upto-8	whole	auto	selected	dfa			
+a7e0bdf	bounded	dig-upto-8	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	dig-upto-8	whole	vm	forced	vm	none		
+a7e0bdf	bounded	dotted4	plain	auto	selected	dfa			
+a7e0bdf	bounded	dotted4	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	dotted4	plain	vm	forced	vm	none		
+a7e0bdf	bounded	dotted4	whole	auto	selected	dfa			
+a7e0bdf	bounded	dotted4	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	dotted4	whole	vm	forced	vm	none		
+a7e0bdf	bounded	floor	plain	auto	selected	dfa			
+a7e0bdf	bounded	floor	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	floor	plain	vm	forced	vm	none		
+a7e0bdf	bounded	floor	whole	auto	selected	dfa			
+a7e0bdf	bounded	floor	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	floor	whole	vm	forced	vm	none		
+a7e0bdf	bounded	grp-upto-1024	plain	auto	selected	dfa			
+a7e0bdf	bounded	grp-upto-1024	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	grp-upto-1024	plain	vm	forced	vm	none		
+a7e0bdf	bounded	grp-upto-1024	whole	auto	selected	dfa			
+a7e0bdf	bounded	grp-upto-1024	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	grp-upto-1024	whole	vm	forced	vm	none		
+a7e0bdf	bounded	hex32	plain	auto	selected	dfa			
+a7e0bdf	bounded	hex32	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	hex32	plain	vm	forced	vm	none		
+a7e0bdf	bounded	hex32	whole	auto	selected	dfa			
+a7e0bdf	bounded	hex32	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	hex32	whole	vm	forced	vm	none		
+a7e0bdf	bounded	line-80	plain	auto	selected	dfa			
+a7e0bdf	bounded	line-80	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	line-80	plain	vm	forced	vm	none		
+a7e0bdf	bounded	line-80	whole	auto	selected	dfa			
+a7e0bdf	bounded	line-80	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	line-80	whole	vm	forced	vm	none		
+a7e0bdf	bounded	nest2-4	plain	auto	selected	dfa			
+a7e0bdf	bounded	nest2-4	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	nest2-4	plain	vm	forced	vm	none		
+a7e0bdf	bounded	nest2-4	whole	auto	selected	dfa			
+a7e0bdf	bounded	nest2-4	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	nest2-4	whole	vm	forced	vm	none		
+a7e0bdf	bounded	nest2-64	plain	auto	selected	dfa			
+a7e0bdf	bounded	nest2-64	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	nest2-64	plain	vm	forced	vm	none		
+a7e0bdf	bounded	nest2-64	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 8258
+a7e0bdf	bounded	nest2-64	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 8258
+a7e0bdf	bounded	nest2-64	whole	vm	forced	vm	none		
+a7e0bdf	bounded	nest2-letters-6	plain	auto	selected	dfa			
+a7e0bdf	bounded	nest2-letters-6	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	nest2-letters-6	plain	vm	forced	vm	none		
+a7e0bdf	bounded	nest2-letters-6	whole	auto	selected	dfa			
+a7e0bdf	bounded	nest2-letters-6	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	nest2-letters-6	whole	vm	forced	vm	none		
+a7e0bdf	bounded	nest3-16	plain	auto	selected	dfa			
+a7e0bdf	bounded	nest3-16	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	nest3-16	plain	vm	forced	vm	none		
+a7e0bdf	bounded	nest3-16	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 8466
+a7e0bdf	bounded	nest3-16	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 8466
+a7e0bdf	bounded	nest3-16	whole	vm	forced	vm	none		
+a7e0bdf	bounded	nest3-3	plain	auto	selected	dfa			
+a7e0bdf	bounded	nest3-3	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	nest3-3	plain	vm	forced	vm	none		
+a7e0bdf	bounded	nest3-3	whole	auto	selected	dfa			
+a7e0bdf	bounded	nest3-3	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	nest3-3	whole	vm	forced	vm	none		
+a7e0bdf	bounded	pw-8-64	plain	auto	selected	dfa			
+a7e0bdf	bounded	pw-8-64	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	pw-8-64	plain	vm	forced	vm	none		
+a7e0bdf	bounded	pw-8-64	whole	auto	selected	dfa			
+a7e0bdf	bounded	pw-8-64	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	pw-8-64	whole	vm	forced	vm	none		
+a7e0bdf	bounded	year4	plain	auto	selected	dfa			
+a7e0bdf	bounded	year4	plain	nocaps	selected	dfa			
+a7e0bdf	bounded	year4	plain	vm	forced	vm	none		
+a7e0bdf	bounded	year4	whole	auto	selected	dfa			
+a7e0bdf	bounded	year4	whole	nocaps	selected	dfa			
+a7e0bdf	bounded	year4	whole	vm	forced	vm	none		
+a7e0bdf	email	factored	plain	auto	selected	dfa			
+a7e0bdf	email	factored	plain	nocaps	selected	dfa			
+a7e0bdf	email	factored	plain	vm	forced	vm	none		
+a7e0bdf	email	factored	whole	auto	selected	dfa			
+a7e0bdf	email	factored	whole	nocaps	selected	dfa			
+a7e0bdf	email	factored	whole	vm	forced	vm	none		
+a7e0bdf	email	floor	plain	auto	selected	dfa			
+a7e0bdf	email	floor	plain	nocaps	selected	dfa			
+a7e0bdf	email	floor	plain	vm	forced	vm	none		
+a7e0bdf	email	floor	whole	auto	selected	dfa			
+a7e0bdf	email	floor	whole	nocaps	selected	dfa			
+a7e0bdf	email	floor	whole	vm	forced	vm	none		
+a7e0bdf	email	orig	plain	auto	selected	dfa			
+a7e0bdf	email	orig	plain	nocaps	selected	dfa			
+a7e0bdf	email	orig	plain	vm	forced	vm	none		
+a7e0bdf	email	orig	whole	auto	selected	dfa			
+a7e0bdf	email	orig	whole	nocaps	selected	dfa			
+a7e0bdf	email	orig	whole	vm	forced	vm	none		
+a7e0bdf	loglines	bignum	plain	auto	selected	dfa			
+a7e0bdf	loglines	bignum	plain	nocaps	selected	dfa			
+a7e0bdf	loglines	bignum	plain	vm	forced	vm	none		
+a7e0bdf	loglines	bignum	whole	auto	selected	dfa			
+a7e0bdf	loglines	bignum	whole	nocaps	selected	dfa			
+a7e0bdf	loglines	bignum	whole	vm	forced	vm	none		
+a7e0bdf	loglines	floor	plain	auto	selected	dfa			
+a7e0bdf	loglines	floor	plain	nocaps	selected	dfa			
+a7e0bdf	loglines	floor	plain	vm	forced	vm	none		
+a7e0bdf	loglines	floor	whole	auto	selected	dfa			
+a7e0bdf	loglines	floor	whole	nocaps	selected	dfa			
+a7e0bdf	loglines	floor	whole	vm	forced	vm	none		
+a7e0bdf	loglines	hex32-id	plain	auto	selected	dfa			
+a7e0bdf	loglines	hex32-id	plain	nocaps	selected	dfa			
+a7e0bdf	loglines	hex32-id	plain	vm	forced	vm	none		
+a7e0bdf	loglines	hex32-id	whole	auto	selected	dfa			
+a7e0bdf	loglines	hex32-id	whole	nocaps	selected	dfa			
+a7e0bdf	loglines	hex32-id	whole	vm	forced	vm	none		
+a7e0bdf	loglines	http-5xx	plain	auto	selected	dfa			
+a7e0bdf	loglines	http-5xx	plain	nocaps	selected	dfa			
+a7e0bdf	loglines	http-5xx	plain	vm	forced	vm	none		
+a7e0bdf	loglines	http-5xx	whole	auto	selected	dfa			
+a7e0bdf	loglines	http-5xx	whole	nocaps	selected	dfa			
+a7e0bdf	loglines	http-5xx	whole	vm	forced	vm	none		
+a7e0bdf	loglines	ipv4	plain	auto	selected	dfa			
+a7e0bdf	loglines	ipv4	plain	nocaps	selected	dfa			
+a7e0bdf	loglines	ipv4	plain	vm	forced	vm	none		
+a7e0bdf	loglines	ipv4	whole	auto	selected	dfa			
+a7e0bdf	loglines	ipv4	whole	nocaps	selected	dfa			
+a7e0bdf	loglines	ipv4	whole	vm	forced	vm	none		
+a7e0bdf	loglines	ipv6	plain	auto	selected	dfa			
+a7e0bdf	loglines	ipv6	plain	nocaps	selected	dfa			
+a7e0bdf	loglines	ipv6	plain	vm	forced	vm	none		
+a7e0bdf	loglines	ipv6	whole	auto	selected	dfa			
+a7e0bdf	loglines	ipv6	whole	nocaps	selected	dfa			
+a7e0bdf	loglines	ipv6	whole	vm	forced	vm	none		
+a7e0bdf	loglines	iso-ts	plain	auto	selected	dfa			
+a7e0bdf	loglines	iso-ts	plain	nocaps	selected	dfa			
+a7e0bdf	loglines	iso-ts	plain	vm	forced	vm	none		
+a7e0bdf	loglines	iso-ts	whole	auto	selected	dfa			
+a7e0bdf	loglines	iso-ts	whole	nocaps	selected	dfa			
+a7e0bdf	loglines	iso-ts	whole	vm	forced	vm	none		
+a7e0bdf	loglines	kv-quoted	plain	auto	selected	dfa			
+a7e0bdf	loglines	kv-quoted	plain	nocaps	selected	dfa			
+a7e0bdf	loglines	kv-quoted	plain	vm	forced	vm	none		
+a7e0bdf	loglines	kv-quoted	whole	auto	selected	dfa			
+a7e0bdf	loglines	kv-quoted	whole	nocaps	selected	dfa			
+a7e0bdf	loglines	kv-quoted	whole	vm	forced	vm	none		
+a7e0bdf	loglines	level-context	plain	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 462
+a7e0bdf	loglines	level-context	plain	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 462
+a7e0bdf	loglines	level-context	plain	vm	forced	vm	none		
+a7e0bdf	loglines	level-context	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 463
+a7e0bdf	loglines	level-context	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 463
+a7e0bdf	loglines	level-context	whole	vm	forced	vm	none		
+a7e0bdf	loglines	stack-frame	plain	auto	selected	dfa			
+a7e0bdf	loglines	stack-frame	plain	nocaps	selected	dfa			
+a7e0bdf	loglines	stack-frame	plain	vm	forced	vm	none		
+a7e0bdf	loglines	stack-frame	whole	auto	selected	dfa			
+a7e0bdf	loglines	stack-frame	whole	nocaps	selected	dfa			
+a7e0bdf	loglines	stack-frame	whole	vm	forced	vm	none		
+a7e0bdf	loglines	uuid	plain	auto	selected	dfa			
+a7e0bdf	loglines	uuid	plain	nocaps	selected	dfa			
+a7e0bdf	loglines	uuid	plain	vm	forced	vm	none		
+a7e0bdf	loglines	uuid	whole	auto	selected	dfa			
+a7e0bdf	loglines	uuid	whole	nocaps	selected	dfa			
+a7e0bdf	loglines	uuid	whole	vm	forced	vm	none		
+1989c62	altwide	ci-512	plain	auto	REFUSED				pcrec: pattern too large: 1589595 bytes of emitted C source (limit 1000000, ~263 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	ci-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1589595 bytes of emitted C source (limit 1000000, ~263 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	ci-512	plain	vm	REFUSED				pcrec: pattern too large: 900851 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	ci-512	whole	auto	REFUSED				pcrec: pattern too large: 1668200 bytes of emitted C source (limit 1000000, ~276 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	ci-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1668200 bytes of emitted C source (limit 1000000, ~276 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	ci-512	whole	vm	REFUSED				pcrec: pattern too large: 900968 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	cnt-64	plain	auto	selected	dfa			
+1989c62	altwide	cnt-64	plain	nocaps	selected	dfa			
+1989c62	altwide	cnt-64	plain	vm	forced	vm	none		
+1989c62	altwide	cnt-64	whole	auto	REFUSED				pcrec: pattern too large: 1107346 bytes of emitted C source (limit 1000000, ~183 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	cnt-64	whole	nocaps	REFUSED				pcrec: pattern too large: 1107346 bytes of emitted C source (limit 1000000, ~183 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	cnt-64	whole	vm	forced	vm	none		
+1989c62	altwide	floor	plain	auto	selected	dfa			
+1989c62	altwide	floor	plain	nocaps	selected	dfa			
+1989c62	altwide	floor	plain	vm	forced	vm	none		
+1989c62	altwide	floor	whole	auto	selected	dfa			
+1989c62	altwide	floor	whole	nocaps	selected	dfa			
+1989c62	altwide	floor	whole	vm	forced	vm	none		
+1989c62	altwide	nar4-512	plain	auto	REFUSED				pcrec: pattern too large: 1607784 bytes of emitted C source (limit 1000000, ~266 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	nar4-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1607784 bytes of emitted C source (limit 1000000, ~266 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	nar4-512	plain	vm	REFUSED				pcrec: pattern too large: 700050 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	nar4-512	whole	auto	REFUSED				pcrec: pattern too large: 1672769 bytes of emitted C source (limit 1000000, ~277 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	nar4-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1672769 bytes of emitted C source (limit 1000000, ~277 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	nar4-512	whole	vm	REFUSED				pcrec: pattern too large: 700167 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	nar4-64	plain	auto	selected	dfa			
+1989c62	altwide	nar4-64	plain	nocaps	selected	dfa			
+1989c62	altwide	nar4-64	plain	vm	forced	vm	none		
+1989c62	altwide	nar4-64	whole	auto	selected	dfa			
+1989c62	altwide	nar4-64	whole	nocaps	selected	dfa			
+1989c62	altwide	nar4-64	whole	vm	forced	vm	none		
+1989c62	altwide	pfx3-512	plain	auto	REFUSED				pcrec: pattern too large: 1088246 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	pfx3-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1088246 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	pfx3-512	plain	vm	REFUSED				pcrec: pattern too large: 562890 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	pfx3-512	whole	auto	REFUSED				pcrec: pattern too large: 1122230 bytes of emitted C source (limit 1000000, ~186 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	pfx3-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1122230 bytes of emitted C source (limit 1000000, ~186 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	pfx3-512	whole	vm	REFUSED				pcrec: pattern too large: 563007 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	s-2048	plain	auto	REFUSED				pcrec: pattern too large: 1260211 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	s-2048	plain	nocaps	REFUSED				pcrec: pattern too large: 1260211 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	s-2048	plain	vm	REFUSED				pcrec: pattern too large: 1862317 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+1989c62	altwide	s-2048	whole	auto	REFUSED				pcrec: pattern too large: 1427885 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	s-2048	whole	nocaps	REFUSED				pcrec: pattern too large: 1427885 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	s-2048	whole	vm	REFUSED				pcrec: pattern too large: 1862436 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+1989c62	altwide	s-4096	plain	auto	REFUSED				pcrec: pattern too large: 1621460 bytes of emitted C source (limit 1000000, ~269 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	s-4096	plain	nocaps	REFUSED				pcrec: pattern too large: 1621460 bytes of emitted C source (limit 1000000, ~269 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	s-4096	plain	vm	REFUSED				pcrec: pattern too large: 3741033 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+1989c62	altwide	s-4096	whole	auto	REFUSED				pcrec: pattern too large: 1896761 bytes of emitted C source (limit 1000000, ~314 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	s-4096	whole	nocaps	REFUSED				pcrec: pattern too large: 1896761 bytes of emitted C source (limit 1000000, ~314 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	s-4096	whole	vm	REFUSED				pcrec: pattern too large: 3741152 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+1989c62	altwide	sfx-512	plain	auto	REFUSED				pcrec: pattern too large: 1331589 bytes of emitted C source (limit 1000000, ~221 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	sfx-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1331589 bytes of emitted C source (limit 1000000, ~221 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	sfx-512	plain	vm	REFUSED				pcrec: pattern too large: 809258 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	sfx-512	whole	auto	REFUSED				pcrec: pattern too large: 1369664 bytes of emitted C source (limit 1000000, ~227 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	sfx-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1369664 bytes of emitted C source (limit 1000000, ~227 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	sfx-512	whole	vm	REFUSED				pcrec: pattern too large: 809375 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	sfx-64	plain	auto	selected	dfa			
+1989c62	altwide	sfx-64	plain	nocaps	selected	dfa			
+1989c62	altwide	sfx-64	plain	vm	forced	vm	none		
+1989c62	altwide	sfx-64	whole	auto	selected	dfa			
+1989c62	altwide	sfx-64	whole	nocaps	selected	dfa			
+1989c62	altwide	sfx-64	whole	vm	forced	vm	none		
+1989c62	altwide	sh1-512	plain	auto	REFUSED				pcrec: pattern too large: 1524580 bytes of emitted C source (limit 1000000, ~253 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	sh1-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1524580 bytes of emitted C source (limit 1000000, ~253 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	sh1-512	plain	vm	REFUSED				pcrec: pattern too large: 656426 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	sh1-512	whole	auto	REFUSED				pcrec: pattern too large: 1576372 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	sh1-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1576372 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	sh1-512	whole	vm	REFUSED				pcrec: pattern too large: 656543 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	sh1-64	plain	auto	selected	dfa			
+1989c62	altwide	sh1-64	plain	nocaps	selected	dfa			
+1989c62	altwide	sh1-64	plain	vm	forced	vm	none		
+1989c62	altwide	sh1-64	whole	auto	selected	dfa			
+1989c62	altwide	sh1-64	whole	nocaps	selected	dfa			
+1989c62	altwide	sh1-64	whole	vm	forced	vm	none		
+1989c62	altwide	srt-512	plain	auto	REFUSED				pcrec: pattern too large: 1577574 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	srt-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1577574 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	srt-512	plain	vm	REFUSED				pcrec: pattern too large: 584795 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	srt-512	whole	auto	REFUSED				pcrec: pattern too large: 1656179 bytes of emitted C source (limit 1000000, ~274 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	srt-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1656179 bytes of emitted C source (limit 1000000, ~274 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	srt-512	whole	vm	REFUSED				pcrec: pattern too large: 584912 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	w-1024	plain	auto	REFUSED				pcrec: pattern too large: 1242556 bytes of emitted C source (limit 1000000, ~206 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-1024	plain	nocaps	REFUSED				pcrec: pattern too large: 1242556 bytes of emitted C source (limit 1000000, ~206 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-1024	plain	vm	REFUSED				pcrec: pattern too large: 1371805 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+1989c62	altwide	w-1024	whole	auto	REFUSED				pcrec: pattern too large: 1358367 bytes of emitted C source (limit 1000000, ~225 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-1024	whole	nocaps	REFUSED				pcrec: pattern too large: 1358367 bytes of emitted C source (limit 1000000, ~225 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-1024	whole	vm	REFUSED				pcrec: pattern too large: 1371922 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+1989c62	altwide	w-2048	plain	auto	REFUSED				pcrec: pattern too large: 2378901 bytes of emitted C source (limit 1000000, ~394 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-2048	plain	nocaps	REFUSED				pcrec: pattern too large: 2378901 bytes of emitted C source (limit 1000000, ~394 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-2048	plain	vm	REFUSED				pcrec: pattern too large: 2757088 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+1989c62	altwide	w-2048	whole	auto	REFUSED				pcrec: pattern too large: 2586949 bytes of emitted C source (limit 1000000, ~429 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-2048	whole	nocaps	REFUSED				pcrec: pattern too large: 2586949 bytes of emitted C source (limit 1000000, ~429 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-2048	whole	vm	REFUSED				pcrec: pattern too large: 2757207 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+1989c62	altwide	w-256	plain	auto	selected	dfa			
+1989c62	altwide	w-256	plain	nocaps	selected	dfa			
+1989c62	altwide	w-256	plain	vm	forced	vm	none		
+1989c62	altwide	w-256	whole	auto	REFUSED				pcrec: pattern too large: 1033148 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-256	whole	nocaps	REFUSED				pcrec: pattern too large: 1033148 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-256	whole	vm	forced	vm	none		
+1989c62	altwide	w-512	plain	auto	REFUSED				pcrec: pattern too large: 1577573 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-512	plain	nocaps	REFUSED				pcrec: pattern too large: 1577573 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-512	plain	vm	REFUSED				pcrec: pattern too large: 678303 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	w-512	whole	auto	REFUSED				pcrec: pattern too large: 1656178 bytes of emitted C source (limit 1000000, ~274 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-512	whole	nocaps	REFUSED				pcrec: pattern too large: 1656178 bytes of emitted C source (limit 1000000, ~274 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	w-512	whole	vm	REFUSED				pcrec: pattern too large: 678420 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	w-64	plain	auto	selected	dfa			
+1989c62	altwide	w-64	plain	nocaps	selected	dfa			
+1989c62	altwide	w-64	plain	vm	forced	vm	none		
+1989c62	altwide	w-64	whole	auto	selected	dfa			
+1989c62	altwide	w-64	whole	nocaps	selected	dfa			
+1989c62	altwide	w-64	whole	vm	forced	vm	none		
+1989c62	altwide	w-8	plain	auto	selected	dfa			
+1989c62	altwide	w-8	plain	nocaps	selected	dfa			
+1989c62	altwide	w-8	plain	vm	forced	vm	none		
+1989c62	altwide	w-8	whole	auto	selected	dfa			
+1989c62	altwide	w-8	whole	nocaps	selected	dfa			
+1989c62	altwide	w-8	whole	vm	forced	vm	none		
+1989c62	altwide	wb-512	plain	auto	REFUSED				pcrec: pattern too large: 2345174 bytes of emitted C source (limit 1000000, ~389 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	wb-512	plain	nocaps	REFUSED				pcrec: pattern too large: 2345174 bytes of emitted C source (limit 1000000, ~389 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	wb-512	plain	vm	REFUSED				pcrec: pattern too large: 678960 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	altwide	wb-512	whole	auto	REFUSED				pcrec: pattern too large: 2394389 bytes of emitted C source (limit 1000000, ~397 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	wb-512	whole	nocaps	REFUSED				pcrec: pattern too large: 2394389 bytes of emitted C source (limit 1000000, ~397 KB .o). Lower a repeat count, try --unr
+1989c62	altwide	wb-512	whole	vm	REFUSED				pcrec: pattern too large: 679077 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+1989c62	bounded	cls-atleast-4096	plain	auto	selected	dfa			
+1989c62	bounded	cls-atleast-4096	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-atleast-4096	plain	vm	forced	vm	none		
+1989c62	bounded	cls-atleast-4096	whole	auto	selected	dfa			
+1989c62	bounded	cls-atleast-4096	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-atleast-4096	whole	vm	forced	vm	none		
+1989c62	bounded	cls-lazy-16384	plain	auto	selected	dfa			
+1989c62	bounded	cls-lazy-16384	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-lazy-16384	plain	vm	forced	vm	none		
+1989c62	bounded	cls-lazy-16384	whole	auto	declined-nullable	vm	none		
+1989c62	bounded	cls-lazy-16384	whole	nocaps	declined-nullable	vm	none		
+1989c62	bounded	cls-lazy-16384	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-1024	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-1024	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-1024	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-1024	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-1024	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-1024	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-128	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-128	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-128	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-128	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-128	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-128	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-16	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-16	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-16	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-16	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-16	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-16	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-16384	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-16384	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-16384	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-16384	whole	auto	declined-nullable	vm	none		
+1989c62	bounded	cls-upto-16384	whole	nocaps	declined-nullable	vm	none		
+1989c62	bounded	cls-upto-16384	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-2048	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-2048	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-2048	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-2048	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-2048	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-2048	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-256	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-256	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-256	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-256	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-256	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-256	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-32	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-32	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-32	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-32	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-32	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-32	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-32768	plain	auto	declined-nullable	vm	none		
+1989c62	bounded	cls-upto-32768	plain	nocaps	declined-nullable	vm	none		
+1989c62	bounded	cls-upto-32768	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-32768	whole	auto	declined-nullable	vm	none		
+1989c62	bounded	cls-upto-32768	whole	nocaps	declined-nullable	vm	none		
+1989c62	bounded	cls-upto-32768	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-4	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-4	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-4	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-4	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-4	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-4	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-4096	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-4096	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-4096	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-4096	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-4096	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-4096	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-512	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-512	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-512	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-512	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-512	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-512	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-64	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-64	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-64	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-64	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-64	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-64	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-65535	plain	auto	REFUSED				pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)
+1989c62	bounded	cls-upto-65535	plain	nocaps	REFUSED				pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)
+1989c62	bounded	cls-upto-65535	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-65535	whole	auto	REFUSED				pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)
+1989c62	bounded	cls-upto-65535	whole	nocaps	REFUSED				pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)
+1989c62	bounded	cls-upto-65535	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-8	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-8	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-8	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-8	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-8	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-8	whole	vm	forced	vm	none		
+1989c62	bounded	cls-upto-8192	plain	auto	selected	dfa			
+1989c62	bounded	cls-upto-8192	plain	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-8192	plain	vm	forced	vm	none		
+1989c62	bounded	cls-upto-8192	whole	auto	selected	dfa			
+1989c62	bounded	cls-upto-8192	whole	nocaps	selected	dfa			
+1989c62	bounded	cls-upto-8192	whole	vm	forced	vm	none		
+1989c62	bounded	csv5	plain	auto	selected	dfa			
+1989c62	bounded	csv5	plain	nocaps	selected	dfa			
+1989c62	bounded	csv5	plain	vm	forced	vm	none		
+1989c62	bounded	csv5	whole	auto	selected	dfa			
+1989c62	bounded	csv5	whole	nocaps	selected	dfa			
+1989c62	bounded	csv5	whole	vm	forced	vm	none		
+1989c62	bounded	ctx-greedy-256	plain	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 558
+1989c62	bounded	ctx-greedy-256	plain	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 558
+1989c62	bounded	ctx-greedy-256	plain	vm	forced	vm	none		
+1989c62	bounded	ctx-greedy-256	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 559
+1989c62	bounded	ctx-greedy-256	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 559
+1989c62	bounded	ctx-greedy-256	whole	vm	forced	vm	none		
+1989c62	bounded	ctx-lazy-1024	plain	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 2094
+1989c62	bounded	ctx-lazy-1024	plain	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 2094
+1989c62	bounded	ctx-lazy-1024	plain	vm	forced	vm	none		
+1989c62	bounded	ctx-lazy-1024	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 2095
+1989c62	bounded	ctx-lazy-1024	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 2095
+1989c62	bounded	ctx-lazy-1024	whole	vm	forced	vm	none		
+1989c62	bounded	ctx-lazy-256	plain	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 558
+1989c62	bounded	ctx-lazy-256	plain	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 558
+1989c62	bounded	ctx-lazy-256	plain	vm	forced	vm	none		
+1989c62	bounded	ctx-lazy-256	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 559
+1989c62	bounded	ctx-lazy-256	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 559
+1989c62	bounded	ctx-lazy-256	whole	vm	forced	vm	none		
+1989c62	bounded	ctx-lazy-64	plain	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 174
+1989c62	bounded	ctx-lazy-64	plain	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 174
+1989c62	bounded	ctx-lazy-64	plain	vm	forced	vm	none		
+1989c62	bounded	ctx-lazy-64	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 175
+1989c62	bounded	ctx-lazy-64	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 175
+1989c62	bounded	ctx-lazy-64	whole	vm	forced	vm	none		
+1989c62	bounded	dig-exact-16	plain	auto	selected	dfa			
+1989c62	bounded	dig-exact-16	plain	nocaps	selected	dfa			
+1989c62	bounded	dig-exact-16	plain	vm	forced	vm	none		
+1989c62	bounded	dig-exact-16	whole	auto	selected	dfa			
+1989c62	bounded	dig-exact-16	whole	nocaps	selected	dfa			
+1989c62	bounded	dig-exact-16	whole	vm	forced	vm	none		
+1989c62	bounded	dig-exact-2	plain	auto	selected	dfa			
+1989c62	bounded	dig-exact-2	plain	nocaps	selected	dfa			
+1989c62	bounded	dig-exact-2	plain	vm	forced	vm	none		
+1989c62	bounded	dig-exact-2	whole	auto	selected	dfa			
+1989c62	bounded	dig-exact-2	whole	nocaps	selected	dfa			
+1989c62	bounded	dig-exact-2	whole	vm	forced	vm	none		
+1989c62	bounded	dig-exact-32	plain	auto	selected	dfa			
+1989c62	bounded	dig-exact-32	plain	nocaps	selected	dfa			
+1989c62	bounded	dig-exact-32	plain	vm	forced	vm	none		
+1989c62	bounded	dig-exact-32	whole	auto	selected	dfa			
+1989c62	bounded	dig-exact-32	whole	nocaps	selected	dfa			
+1989c62	bounded	dig-exact-32	whole	vm	forced	vm	none		
+1989c62	bounded	dig-exact-8	plain	auto	selected	dfa			
+1989c62	bounded	dig-exact-8	plain	nocaps	selected	dfa			
+1989c62	bounded	dig-exact-8	plain	vm	forced	vm	none		
+1989c62	bounded	dig-exact-8	whole	auto	selected	dfa			
+1989c62	bounded	dig-exact-8	whole	nocaps	selected	dfa			
+1989c62	bounded	dig-exact-8	whole	vm	forced	vm	none		
+1989c62	bounded	dig-upto-16	plain	auto	selected	dfa			
+1989c62	bounded	dig-upto-16	plain	nocaps	selected	dfa			
+1989c62	bounded	dig-upto-16	plain	vm	forced	vm	none		
+1989c62	bounded	dig-upto-16	whole	auto	selected	dfa			
+1989c62	bounded	dig-upto-16	whole	nocaps	selected	dfa			
+1989c62	bounded	dig-upto-16	whole	vm	forced	vm	none		
+1989c62	bounded	dig-upto-2	plain	auto	selected	dfa			
+1989c62	bounded	dig-upto-2	plain	nocaps	selected	dfa			
+1989c62	bounded	dig-upto-2	plain	vm	forced	vm	none		
+1989c62	bounded	dig-upto-2	whole	auto	selected	dfa			
+1989c62	bounded	dig-upto-2	whole	nocaps	selected	dfa			
+1989c62	bounded	dig-upto-2	whole	vm	forced	vm	none		
+1989c62	bounded	dig-upto-32	plain	auto	selected	dfa			
+1989c62	bounded	dig-upto-32	plain	nocaps	selected	dfa			
+1989c62	bounded	dig-upto-32	plain	vm	forced	vm	none		
+1989c62	bounded	dig-upto-32	whole	auto	selected	dfa			
+1989c62	bounded	dig-upto-32	whole	nocaps	selected	dfa			
+1989c62	bounded	dig-upto-32	whole	vm	forced	vm	none		
+1989c62	bounded	dig-upto-4	plain	auto	selected	dfa			
+1989c62	bounded	dig-upto-4	plain	nocaps	selected	dfa			
+1989c62	bounded	dig-upto-4	plain	vm	forced	vm	none		
+1989c62	bounded	dig-upto-4	whole	auto	selected	dfa			
+1989c62	bounded	dig-upto-4	whole	nocaps	selected	dfa			
+1989c62	bounded	dig-upto-4	whole	vm	forced	vm	none		
+1989c62	bounded	dig-upto-8	plain	auto	selected	dfa			
+1989c62	bounded	dig-upto-8	plain	nocaps	selected	dfa			
+1989c62	bounded	dig-upto-8	plain	vm	forced	vm	none		
+1989c62	bounded	dig-upto-8	whole	auto	selected	dfa			
+1989c62	bounded	dig-upto-8	whole	nocaps	selected	dfa			
+1989c62	bounded	dig-upto-8	whole	vm	forced	vm	none		
+1989c62	bounded	dotted4	plain	auto	selected	dfa			
+1989c62	bounded	dotted4	plain	nocaps	selected	dfa			
+1989c62	bounded	dotted4	plain	vm	forced	vm	none		
+1989c62	bounded	dotted4	whole	auto	selected	dfa			
+1989c62	bounded	dotted4	whole	nocaps	selected	dfa			
+1989c62	bounded	dotted4	whole	vm	forced	vm	none		
+1989c62	bounded	floor	plain	auto	selected	dfa			
+1989c62	bounded	floor	plain	nocaps	selected	dfa			
+1989c62	bounded	floor	plain	vm	forced	vm	none		
+1989c62	bounded	floor	whole	auto	selected	dfa			
+1989c62	bounded	floor	whole	nocaps	selected	dfa			
+1989c62	bounded	floor	whole	vm	forced	vm	none		
+1989c62	bounded	grp-upto-1024	plain	auto	selected	dfa			
+1989c62	bounded	grp-upto-1024	plain	nocaps	selected	dfa			
+1989c62	bounded	grp-upto-1024	plain	vm	forced	vm	none		
+1989c62	bounded	grp-upto-1024	whole	auto	selected	dfa			
+1989c62	bounded	grp-upto-1024	whole	nocaps	selected	dfa			
+1989c62	bounded	grp-upto-1024	whole	vm	forced	vm	none		
+1989c62	bounded	hex32	plain	auto	selected	dfa			
+1989c62	bounded	hex32	plain	nocaps	selected	dfa			
+1989c62	bounded	hex32	plain	vm	forced	vm	none		
+1989c62	bounded	hex32	whole	auto	selected	dfa			
+1989c62	bounded	hex32	whole	nocaps	selected	dfa			
+1989c62	bounded	hex32	whole	vm	forced	vm	none		
+1989c62	bounded	line-80	plain	auto	selected	dfa			
+1989c62	bounded	line-80	plain	nocaps	selected	dfa			
+1989c62	bounded	line-80	plain	vm	forced	vm	none		
+1989c62	bounded	line-80	whole	auto	selected	dfa			
+1989c62	bounded	line-80	whole	nocaps	selected	dfa			
+1989c62	bounded	line-80	whole	vm	forced	vm	none		
+1989c62	bounded	nest2-4	plain	auto	selected	dfa			
+1989c62	bounded	nest2-4	plain	nocaps	selected	dfa			
+1989c62	bounded	nest2-4	plain	vm	forced	vm	none		
+1989c62	bounded	nest2-4	whole	auto	selected	dfa			
+1989c62	bounded	nest2-4	whole	nocaps	selected	dfa			
+1989c62	bounded	nest2-4	whole	vm	forced	vm	none		
+1989c62	bounded	nest2-64	plain	auto	selected	dfa			
+1989c62	bounded	nest2-64	plain	nocaps	selected	dfa			
+1989c62	bounded	nest2-64	plain	vm	forced	vm	none		
+1989c62	bounded	nest2-64	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 8258
+1989c62	bounded	nest2-64	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 8258
+1989c62	bounded	nest2-64	whole	vm	forced	vm	none		
+1989c62	bounded	nest2-letters-6	plain	auto	selected	dfa			
+1989c62	bounded	nest2-letters-6	plain	nocaps	selected	dfa			
+1989c62	bounded	nest2-letters-6	plain	vm	forced	vm	none		
+1989c62	bounded	nest2-letters-6	whole	auto	selected	dfa			
+1989c62	bounded	nest2-letters-6	whole	nocaps	selected	dfa			
+1989c62	bounded	nest2-letters-6	whole	vm	forced	vm	none		
+1989c62	bounded	nest3-16	plain	auto	selected	dfa			
+1989c62	bounded	nest3-16	plain	nocaps	selected	dfa			
+1989c62	bounded	nest3-16	plain	vm	forced	vm	none		
+1989c62	bounded	nest3-16	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 8466
+1989c62	bounded	nest3-16	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 8466
+1989c62	bounded	nest3-16	whole	vm	forced	vm	none		
+1989c62	bounded	nest3-3	plain	auto	selected	dfa			
+1989c62	bounded	nest3-3	plain	nocaps	selected	dfa			
+1989c62	bounded	nest3-3	plain	vm	forced	vm	none		
+1989c62	bounded	nest3-3	whole	auto	selected	dfa			
+1989c62	bounded	nest3-3	whole	nocaps	selected	dfa			
+1989c62	bounded	nest3-3	whole	vm	forced	vm	none		
+1989c62	bounded	pw-8-64	plain	auto	selected	dfa			
+1989c62	bounded	pw-8-64	plain	nocaps	selected	dfa			
+1989c62	bounded	pw-8-64	plain	vm	forced	vm	none		
+1989c62	bounded	pw-8-64	whole	auto	selected	dfa			
+1989c62	bounded	pw-8-64	whole	nocaps	selected	dfa			
+1989c62	bounded	pw-8-64	whole	vm	forced	vm	none		
+1989c62	bounded	year4	plain	auto	selected	dfa			
+1989c62	bounded	year4	plain	nocaps	selected	dfa			
+1989c62	bounded	year4	plain	vm	forced	vm	none		
+1989c62	bounded	year4	whole	auto	selected	dfa			
+1989c62	bounded	year4	whole	nocaps	selected	dfa			
+1989c62	bounded	year4	whole	vm	forced	vm	none		
+1989c62	email	factored	plain	auto	selected	dfa			
+1989c62	email	factored	plain	nocaps	selected	dfa			
+1989c62	email	factored	plain	vm	forced	vm	none		
+1989c62	email	factored	whole	auto	selected	dfa			
+1989c62	email	factored	whole	nocaps	selected	dfa			
+1989c62	email	factored	whole	vm	forced	vm	none		
+1989c62	email	floor	plain	auto	selected	dfa			
+1989c62	email	floor	plain	nocaps	selected	dfa			
+1989c62	email	floor	plain	vm	forced	vm	none		
+1989c62	email	floor	whole	auto	selected	dfa			
+1989c62	email	floor	whole	nocaps	selected	dfa			
+1989c62	email	floor	whole	vm	forced	vm	none		
+1989c62	email	orig	plain	auto	selected	dfa			
+1989c62	email	orig	plain	nocaps	selected	dfa			
+1989c62	email	orig	plain	vm	forced	vm	none		
+1989c62	email	orig	whole	auto	selected	dfa			
+1989c62	email	orig	whole	nocaps	selected	dfa			
+1989c62	email	orig	whole	vm	forced	vm	none		
+1989c62	loglines	bignum	plain	auto	selected	dfa			
+1989c62	loglines	bignum	plain	nocaps	selected	dfa			
+1989c62	loglines	bignum	plain	vm	forced	vm	none		
+1989c62	loglines	bignum	whole	auto	selected	dfa			
+1989c62	loglines	bignum	whole	nocaps	selected	dfa			
+1989c62	loglines	bignum	whole	vm	forced	vm	none		
+1989c62	loglines	floor	plain	auto	selected	dfa			
+1989c62	loglines	floor	plain	nocaps	selected	dfa			
+1989c62	loglines	floor	plain	vm	forced	vm	none		
+1989c62	loglines	floor	whole	auto	selected	dfa			
+1989c62	loglines	floor	whole	nocaps	selected	dfa			
+1989c62	loglines	floor	whole	vm	forced	vm	none		
+1989c62	loglines	hex32-id	plain	auto	selected	dfa			
+1989c62	loglines	hex32-id	plain	nocaps	selected	dfa			
+1989c62	loglines	hex32-id	plain	vm	forced	vm	none		
+1989c62	loglines	hex32-id	whole	auto	selected	dfa			
+1989c62	loglines	hex32-id	whole	nocaps	selected	dfa			
+1989c62	loglines	hex32-id	whole	vm	forced	vm	none		
+1989c62	loglines	http-5xx	plain	auto	selected	dfa			
+1989c62	loglines	http-5xx	plain	nocaps	selected	dfa			
+1989c62	loglines	http-5xx	plain	vm	forced	vm	none		
+1989c62	loglines	http-5xx	whole	auto	selected	dfa			
+1989c62	loglines	http-5xx	whole	nocaps	selected	dfa			
+1989c62	loglines	http-5xx	whole	vm	forced	vm	none		
+1989c62	loglines	ipv4	plain	auto	selected	dfa			
+1989c62	loglines	ipv4	plain	nocaps	selected	dfa			
+1989c62	loglines	ipv4	plain	vm	forced	vm	none		
+1989c62	loglines	ipv4	whole	auto	selected	dfa			
+1989c62	loglines	ipv4	whole	nocaps	selected	dfa			
+1989c62	loglines	ipv4	whole	vm	forced	vm	none		
+1989c62	loglines	ipv6	plain	auto	selected	dfa			
+1989c62	loglines	ipv6	plain	nocaps	selected	dfa			
+1989c62	loglines	ipv6	plain	vm	forced	vm	none		
+1989c62	loglines	ipv6	whole	auto	selected	dfa			
+1989c62	loglines	ipv6	whole	nocaps	selected	dfa			
+1989c62	loglines	ipv6	whole	vm	forced	vm	none		
+1989c62	loglines	iso-ts	plain	auto	selected	dfa			
+1989c62	loglines	iso-ts	plain	nocaps	selected	dfa			
+1989c62	loglines	iso-ts	plain	vm	forced	vm	none		
+1989c62	loglines	iso-ts	whole	auto	selected	dfa			
+1989c62	loglines	iso-ts	whole	nocaps	selected	dfa			
+1989c62	loglines	iso-ts	whole	vm	forced	vm	none		
+1989c62	loglines	kv-quoted	plain	auto	selected	dfa			
+1989c62	loglines	kv-quoted	plain	nocaps	selected	dfa			
+1989c62	loglines	kv-quoted	plain	vm	forced	vm	none		
+1989c62	loglines	kv-quoted	whole	auto	selected	dfa			
+1989c62	loglines	kv-quoted	whole	nocaps	selected	dfa			
+1989c62	loglines	kv-quoted	whole	vm	forced	vm	none		
+1989c62	loglines	level-context	plain	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 462
+1989c62	loglines	level-context	plain	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 462
+1989c62	loglines	level-context	plain	vm	forced	vm	none		
+1989c62	loglines	level-context	whole	auto	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 463
+1989c62	loglines	level-context	whole	nocaps	collapsed-prefilter	vm	hybrid	count-collapsed	dfa overflow retry, exact nfa 463
+1989c62	loglines	level-context	whole	vm	forced	vm	none		
+1989c62	loglines	stack-frame	plain	auto	selected	dfa			
+1989c62	loglines	stack-frame	plain	nocaps	selected	dfa			
+1989c62	loglines	stack-frame	plain	vm	forced	vm	none		
+1989c62	loglines	stack-frame	whole	auto	selected	dfa			
+1989c62	loglines	stack-frame	whole	nocaps	selected	dfa			
+1989c62	loglines	stack-frame	whole	vm	forced	vm	none		
+1989c62	loglines	uuid	plain	auto	selected	dfa			
+1989c62	loglines	uuid	plain	nocaps	selected	dfa			
+1989c62	loglines	uuid	plain	vm	forced	vm	none		
+1989c62	loglines	uuid	whole	auto	selected	dfa			
+1989c62	loglines	uuid	whole	nocaps	selected	dfa			
+1989c62	loglines	uuid	whole	vm	forced	vm	none		

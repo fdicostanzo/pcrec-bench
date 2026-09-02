@@ -1,0 +1,46 @@
+# emit-size books at two pcrec pins -- SOURCE: lane b26repin, 2026-09-01 ~19:5x EDT; the [B19] emit-size port (total / comment-excluded code bytes) on the ledger patterns x 2 forms, a7e0bdf vs 1989c62; the +202 B total / +105 B code movement is abi 15 rx_info name/nentries, flat across every artifact; downward moves are o42 declines. NOT a timing. Archived by the manager (D35).
+pin	pattern	form	total	code	warn_default	sel	engine	vmpf	scanedge	dfamatch	langwhy
+a7e0bdf	cls-upto-32768	plain	18291	18291	-	declined-nullable	vm	none			
+a7e0bdf	cls-upto-32768	whole	18496	18496	-	declined-nullable	vm	none			
+a7e0bdf	cls-upto-16384	plain	16352	13012	-	selected	dfa		range	search-filter	
+a7e0bdf	cls-upto-16384	whole	18496	18496	-	declined-nullable	vm	none			
+a7e0bdf	cls-lazy-16384	plain	18138	13165	-	selected	dfa		range	unwrapped	
+a7e0bdf	cls-lazy-16384	whole	18615	18615	-	declined-nullable	vm	none			
+a7e0bdf	nest2-64	plain	18120	13278	-	selected	dfa		range	search-filter	
+a7e0bdf	nest2-64	whole	45889	40862	-	collapsed-prefilter	vm	hybrid	range		dfa overflow retry, exact nfa 8258
+a7e0bdf	nest3-16	plain	18131	13289	-	selected	dfa		range	search-filter	
+a7e0bdf	nest3-16	whole	37477	32450	-	collapsed-prefilter	vm	hybrid	range		dfa overflow retry, exact nfa 8466
+a7e0bdf	ctx-greedy-256	plain	66723	31849	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 558
+a7e0bdf	ctx-greedy-256	whole	69834	33270	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 559
+a7e0bdf	ctx-lazy-64	plain	59304	31467	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 174
+a7e0bdf	ctx-lazy-64	whole	62016	32888	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 175
+a7e0bdf	ctx-lazy-256	plain	59306	31469	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 558
+a7e0bdf	ctx-lazy-256	whole	62018	32890	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 559
+a7e0bdf	ctx-lazy-1024	plain	59309	31472	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 2094
+a7e0bdf	ctx-lazy-1024	whole	62021	32893	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 2095
+a7e0bdf	level-context	plain	75844	34015	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 462
+a7e0bdf	level-context	whole	78867	35436	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 463
+a7e0bdf	year4	plain	20855	14372	-	selected	dfa		range	unwrapped	
+a7e0bdf	year4	whole	21608	14606	-	selected	dfa		none	unwrapped	
+1989c62	cls-upto-32768	plain	17889	17889	-	declined-nullable	vm	none			
+1989c62	cls-upto-32768	whole	18094	18094	-	declined-nullable	vm	none			
+1989c62	cls-upto-16384	plain	16554	13214	-	selected	dfa		range	search-filter	
+1989c62	cls-upto-16384	whole	18094	18094	-	declined-nullable	vm	none			
+1989c62	cls-lazy-16384	plain	18340	13367	-	selected	dfa		range	unwrapped	
+1989c62	cls-lazy-16384	whole	18720	18720	-	declined-nullable	vm	none			
+1989c62	nest2-64	plain	18322	13480	-	selected	dfa		range	search-filter	
+1989c62	nest2-64	whole	46091	41064	-	collapsed-prefilter	vm	hybrid	range		dfa overflow retry, exact nfa 8258
+1989c62	nest3-16	plain	18333	13491	-	selected	dfa		range	search-filter	
+1989c62	nest3-16	whole	37679	32652	-	collapsed-prefilter	vm	hybrid	range		dfa overflow retry, exact nfa 8466
+1989c62	ctx-greedy-256	plain	66925	32051	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 558
+1989c62	ctx-greedy-256	whole	70036	33472	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 559
+1989c62	ctx-lazy-64	plain	59506	31669	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 174
+1989c62	ctx-lazy-64	whole	62218	33090	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 175
+1989c62	ctx-lazy-256	plain	59508	31671	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 558
+1989c62	ctx-lazy-256	whole	62220	33092	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 559
+1989c62	ctx-lazy-1024	plain	59511	31674	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 2094
+1989c62	ctx-lazy-1024	whole	62223	33095	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 2095
+1989c62	level-context	plain	76046	34217	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 462
+1989c62	level-context	whole	79069	35638	-	collapsed-prefilter	vm	hybrid	none		dfa overflow retry, exact nfa 463
+1989c62	year4	plain	21057	14574	-	selected	dfa		range	unwrapped	
+1989c62	year4	whole	21810	14808	-	selected	dfa		none	unwrapped	

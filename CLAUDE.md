@@ -154,7 +154,17 @@ Next (I-28's cleared order): [B23] (spread-rule positive control),
 [B24] (cc axis), [B11.2] wide alternations; [B13] the
 interpreter is chartered. `make check`
 is green (4/72/0, 187/187, 59 reporter tests — re-verified at [B25]'s
-re-pin). Manager sessions start with the
+re-pin). 2026-09-01 (seventh session): inbox I-29 (Frank: build the full suite today,
+run it tonight) BUILT in one afternoon — [B24] the cc axis (per-config `cc`,
+three `-clang` configs), [B27] bounded@0.3 (the STEP 2 match instrument, the
+low rungs, the short-run family, the ask-(v) census), [B11.2] bench/altwide@0.1
+(wide alternations), [B28] KB-4/5/6 (reporter v11), [B29] the --source scoping
+note, and the RE-PIN to **1989c62** (abi 15: `declined-nullable-default`,
+rx_info name/nentries, shim floor 15, registries 70/23 · 50 · 45; NO bench
+artifact stamps the new value — the [OPT-4.2] customer needs a VM-forcing
+nullable shape; the size books moved +202/+105 B flat from the two rx_info
+fields). make check 4/72/0 · 227/227 · 62. The full-suite overnight window
+is [B26] (b). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope

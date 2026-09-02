@@ -2223,3 +2223,26 @@ loglines:clang via scripts/run_suite.sh (rehearsed dry), ~8-10 h;
 the cls-* AFTER reads cell-against-cell on 0.3's byte-identical cls
 rungs (the harness takes a set's version from its sidecar only). The
 re-pin brief is drafted; launched the minute I-30 lands.
+
+## 2026-09-01 (EDT, ~20:1x), seventh session (part 4) — re-pinned to 1989c62 (abi 15); three findings before the window
+
+Lane b26repin (opus, ~50 min, one commit 5862a0a): pin 1989c62, the
+eighth RX_ENGINE_SEL value with both directions of the §6.3 iff, rx_info
+name/nentries as provenance (floor 10 → 15, a floor-1 sabotage arm),
+registries 70/23 · 50 · 45, the clang refusal set EMPTY at the pin,
+227/227 · 62. Its census (462 cells per pin, archived) says NO bench
+artifact stamps `declined-nullable-default`: the cls-* hybrids I-29
+item 4 expected are DFA-engine under auto, so [OPT-4.2] has no bench
+customer tonight — the witness is hand-chosen `(?=abc)x*` (−27.8 % B)
+vs `(?=abc)x+`. The [B22] `nullable collapsed language` witness is now
+unreachable (o42 declines earlier; structural) — the force control is
+retired for an inert-flag check, an ask for pcrec. The size books
+moved UP +202/+105 B flat (abi 15's rx_info fields); the "519 B fix
+moves emit_bytes" line in I-29 was wrong by the measure's definition.
+altwide's ci-512 is refused by the 1,000,000 B emit cap at both pins —
+the set's first compile-axis refusal, a did-not-compile row with cost
+tonight. Earlier this evening: O-13 sent on pcrecdev1's D78 request
+(the durable copy of the scratch-tier readings, with the withdrawal
+rule); KB-7/[B30] filed on Frank's reading of the 8192-char free_text
+cap ("seems arbitrary") — a ruling row. pcrecdev1's battery is in
+san/lint/mech; WINDOW OPEN + I-30 projected 21:30-22:00.
