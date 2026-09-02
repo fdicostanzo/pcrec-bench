@@ -135,11 +135,18 @@ the set. Since 0.2 the order, caseless and word-boundary arms each exist at
 BOTH 256 and 512, which is what lets a reading at the anchor width be
 checked against the same lever one octave up.
 
-## What the ladder brackets: the predictions
+## What the ladder brackets: the 0.1 predictions (P1-P8)
 
 Every prediction below was written from pcrec's `docs/spec/` alone, before any
 testee ran, and is stated so a window can CONFIRM or REFUTE it rather than
 narrate around it. The blinding is stated in "Origin".
+
+**These eight are 0.1's and are left exactly as written**, including the two
+the 2026-09-02 full-suite reading REFUTED (P5, P8) and the two it left
+untestable (P3, P4, whose subjects were all at width 512 and above, where
+pcrec refuses). "The 0.2 predictions (P9-P18)" below says which of them 0.2
+carries forward, in what corrected form, and at what width they became
+readable.
 
 **P1 — this set is the [OPT-ALTCLS] pass's own measured surface, and
 `srt-512` is its lever.** `tuning.md` §2.6/§2.7: stage 1 merges a maximal run
