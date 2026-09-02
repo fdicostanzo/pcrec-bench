@@ -171,6 +171,49 @@ absorbed two new VALUES and one new surface -- no new stamp, no abi bump:
                      (struct rx_info byte-identical 12 -> 13), so the
                      shim floor stays 10.
 
+[B26] (pin 1989c62 = pcrec abi 15, inbox I-29/I-30) absorbs TWO pins in one
+adapter change -- cc/o42 (abi 14) and w12 (abi 15):
+
+  abi 14 ([OPT-4.2]) an EIGHTH `RX_ENGINE_SEL` value and nothing else a
+                     consumer sees: `declined-nullable-default` -- the same
+                     nullability policy as [OPT-4.1]'s `declined-nullable`
+                     with NO RUNG involved. Nothing overflowed; the ORDINARY
+                     hybrid's own EXACT prefilter language is nullable (it
+                     matches the empty string, so the forward+reverse pair
+                     could never dismiss a position), so the prefilter is
+                     declined: the artifact reads `RX_VM_PREFILTER "none"`
+                     and carries NO language pair -- match_api.md 6.3's iff
+                     both ways, asserted in both directions here. The
+                     `--list-axes` engine-route row joins at ORDER 2, right
+                     after `forced`, and every later row's order shifts by
+                     one (the only registry movement at this pin). pcrec's
+                     [CC-CLANG] `&&label` fix rides the same abi and adds no
+                     stamp: its bench-visible consequence is that every VM
+                     artifact now compiles under clang ([B24]'s refusal set
+                     goes EMPTY).
+  abi 15 ([DD-13b.W1.2]) `rx_info.name` and `rx_info.nentries` APPENDED
+                     after `match_form` -- read-only additions, no existing
+                     member's offset moved. The FIRST rx_info growth since
+                     abi 10, so the standing floor rule ("it rises iff a
+                     FIELD joins what the shim reads") fires for the second
+                     time in this file's life: shim.c reads both, and
+                     `PB_SHIM_MIN_ABI` goes 10 -> 15. They are PROVENANCE,
+                     not selection: `artifact_name` is what the artifact IS
+                     as against what its symbols are called (never NULL by
+                     contract -- asserted), `nentries` is the whole
+                     `groups[]` length of which `nnames` counts a prefix
+                     (`nentries >= nnames` asserted; equality is today's
+                     MEASURED fact, checked by value in selfcheck rather
+                     than assumed here). Neither has a macro spelling, so
+                     neither is a two-spellings pair.
+  (sizes)            NOT a stamp change, but the size books move at this pin
+                     in two predicted ways: w12's 519 B/artifact comment fix
+                     lowers `emit_bytes` tree-wide, and an artifact whose
+                     language o42 declines SHRINKS dramatically. Both are
+                     re-derived here against the pin's own
+                     `--warn-emit-bytes` numbers, so a movement that is NOT
+                     one of those two fails by name.
+
 Two rules govern how they are read, and both exist because they were paid
 for on the pcrec side first:
 
@@ -206,13 +249,26 @@ for on the pcrec side first:
    `RX_ENGINE_SEL` has no rx_info field, so its control is the CONFIG and
    the stamps beside it: `forced` IFF the testee named `--engine=`;
    `collapsed-prefilter` and ([B22]) `size-cap-retry` imply a VM hybrid
-   whose language is `count-collapsed`; the two `overflowed-*` values and
-   ([B22]) `declined-nullable` imply a VM artifact with no prefilter
-   (match_api.md 6.3's table, read as implications).
+   whose language is `count-collapsed`; the two `overflowed-*` values,
+   ([B22]) `declined-nullable` and ([B26]) `declined-nullable-default`
+   imply a VM artifact with no prefilter -- and the two DECLINE values
+   imply the absence of the language pair as well, the iff's other
+   direction (match_api.md 6.3's table, read as implications).
+5. A FIELD WITH NO STAMP IS CHECKED AGAINST ITS OWN CONTRACT ([B26]).
+   `rx_info.name` and `.nentries` (abi 15) are spelled nowhere else, so
+   there is no second spelling to check them against; what the spec DOES
+   give is a contract per field -- `name` is never NULL, and `nnames`
+   counts a PREFIX of `groups[]` so `nentries >= nnames`. Both are
+   asserted. The stronger fact (they are EQUAL on every artifact pcrec
+   emits today) is deliberately NOT asserted here: it is true of this
+   pin's corpus and is checked by value in tools/selfcheck.py, so `.rxt`
+   composition landing later separates the two without the adapter
+   refusing the first artifact that does it.
 
-The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 10 since [B18] -- the
-abi that appended `match_form`, the third field it reads; 6 before, for
-`scan` / `prefilter`) and is enforced in `driver.c`, which
+The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 15 since [B26] -- the
+abi that appended `name` and `nentries`, the fourth and fifth fields it
+reads; 10 from [B18] for `match_form`, 6 before that for `scan` /
+`prefilter`) and is enforced in `driver.c`, which
 refuses a lower artifact by name before printing anything else. This file
 does NOT keep a second copy of the number: it recognises the driver's
 refusal line and re-raises it as an AdapterError carrying pcrec's own two
@@ -267,6 +323,37 @@ METADATA_DECL = {
     "nnames": {"type": "integer", "scope": "pattern",
                "source": RXINFO_SRC % ("nnames", "nnames"),
                "description": "named groups in rx_info.groups[]"},
+    # -- the abi-15 PROVENANCE fields ([DD-13b.W1.2], pin 1989c62, [B26]).
+    # Neither has a macro spelling, so neither is a two-spellings pair: they
+    # are recorded, and their own contracts (`name` never NULL, `nentries >=
+    # nnames`) are what `_check_agreement` asserts instead of a stamp.
+    "artifact_name": {
+        "type": "string", "scope": "pattern",
+        "source": RXINFO_SRC % ("name", "info_name"),
+        "description": "what the ARTIFACT is, as against what its symbols "
+                       "are CALLED (`<prefix>`): a `.rxt` definition built "
+                       "under three configs is three prefixes and ONE name, "
+                       "which is what a consumer walking several "
+                       "`<prefix>_info` symbols in one binary needs. NEVER "
+                       "NULL by contract -- a compile that supplies no name "
+                       "stamps its own `<prefix>` -- so a NULL is a contract "
+                       "violation, not an `unnamed` artifact. On this bench "
+                       "every artifact is compiled `-p rx` from pattern "
+                       "TEXT, never from a `.rxt` source, so the value is "
+                       "`rx` on every record until a set charters one",
+    },
+    "nentries": {
+        "type": "integer", "scope": "pattern",
+        "source": RXINFO_SRC % ("nentries", "info_nentries"),
+        "description": "rows in rx_info.groups[], ALL of them. `nnames` "
+                       "counts the PRIMARY pattern's own named groups, which "
+                       "are a PREFIX of the array, so `nentries >= nnames` "
+                       "always (asserted) and the two are EQUAL on every "
+                       "artifact pcrec emits today (measured, not assumed -- "
+                       "what will separate them is `.rxt` composition "
+                       "injecting a definition's own named groups, "
+                       "[DD-13b.W1.3])",
+    },
     "step_budget": {"type": "integer", "scope": "pattern",
                     "source": RXINFO_SRC % ("step_budget", "step_budget"),
                     "description": "backtrack resumptions before "
@@ -477,10 +564,13 @@ METADATA_DECL = {
         "type": "enum", "scope": "pattern",
         "values": ["selected", "forced", "overflowed-dfa",
                    "overflowed-prefilter", "collapsed-prefilter",
-                   "declined-nullable", "size-cap-retry"],
+                   "declined-nullable", "size-cap-retry",
+                   "declined-nullable-default"],
         "source": "<PREFIX>_ENGINE_SEL ([OPT-4], pcrec abi 12+; two values "
                   "added at 263b013 -- [OPT-4.1]'s `declined-nullable` and "
-                  "[LIM-1]'s `size-cap-retry` -- with no abi bump), read "
+                  "[LIM-1]'s `size-cap-retry` -- with no abi bump, and an "
+                  "EIGHTH at abi 14 -- [OPT-4.2]'s "
+                  "`declined-nullable-default`), read "
                   "through pb_engine_sel(); EVERY artifact, both engines; no "
                   "rx_info mirror -- CHECKED against the config (`forced` iff "
                   "--engine= was named) and against the prefilter stamps it "
@@ -507,13 +597,28 @@ METADATA_DECL = {
                        "emitted-SIZE cap refused the exact artifact and the "
                        "[OPT-4] size rung's count-collapsed prefilter "
                        "SURVIVED -- [LIM-1], replacing the `selected` "
-                       "mislabel this bench's O-8/O-10 flagged). The last "
-                       "FIVE are all `fell back`; a consumer wanting only "
-                       "\"did this compile fall back?\" tests "
-                       "`not in (selected, forced)` (Frank's ask (b)) -- "
-                       "since 263b013 that bucket reads the VALUE and "
-                       "nothing else (never the `_why` prefix: the size-cap "
-                       "rescue has its own token now)",
+                       "mislabel this bench's O-8/O-10 flagged), and "
+                       "`declined-nullable-default` (abi 14, [OPT-4.2]: the "
+                       "SAME nullability policy with NO rung involved -- "
+                       "nothing overflowed, and the ORDINARY hybrid's own "
+                       "EXACT prefilter language is nullable, so the "
+                       "prefilter is declined; like `declined-nullable` the "
+                       "artifact reads prefilter `none` and carries no "
+                       "language pair). FIVE of the eight are `fell back` "
+                       "in pcrec's own reading (match_api.md 6.3 excludes "
+                       "`declined-nullable-default` from that five: nothing "
+                       "overflowed on that path). THIS BENCH'S ask-(b) "
+                       "bucket is the WIDER one Frank spelled -- `not in "
+                       "(selected, forced)`, so the eighth value IS in it: "
+                       "the question the bucket answers is `did auto end up "
+                       "somewhere other than its ordinary choice`, and a "
+                       "declined prefilter is such a place whether or not a "
+                       "cap was hit. The divergence from pcrec's five is "
+                       "DELIBERATE and stated here so a reader of the "
+                       "report is never left to guess which reading the "
+                       "column took. Since 263b013 the bucket reads the "
+                       "VALUE and nothing else (never the `_why` prefix: "
+                       "the size-cap rescue has its own token now)",
     },
     "vm_prefilter_lang": {
         "type": "enum", "scope": "pattern",
@@ -713,7 +818,7 @@ MASK_BITS = {
     "vm_prunes": [("PCREC_VM_PRUNE_CLAMPED", 0x1),
                   ("PCREC_VM_PRUNE_UNCLAMPED", 0x2)],
 }
-INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "step_budget",
+INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "work_budget", "frame_capacity", "subject_ceiling",
              "resume_frames", "trail_frames", "resume_frame_size",
              "trail_frame_size", "buffer_frames", "buffer_trail",
@@ -728,7 +833,7 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "step_budget",
 #: unconditional engine stamp reached no record for five pins).
 STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
              "dfa_prefilter_offsets", "dfa_scan_edge", "dfa_match",
-             "unroll_k_why",
+             "unroll_k_why", "artifact_name",
              "engine_sel", "vm_prefilter_lang", "vm_prefilter_lang_why")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
@@ -773,21 +878,43 @@ STAMP_SCOPE = {
 #: iff is checked directly against rx_info.scan in _check_agreement 3).
 EXCLUSIVE_SCOPES = ("dfa", "vm", "vm-hybrid")
 
-#: `engine_sel` values that mean "auto FELL BACK" (Frank's ask (b)). FIVE
-#: values since pin 263b013 (match_api.md 6.3: "the last five are all
-#: 'fell back'"): the three 96e44c2 values, [OPT-4.1]'s `declined-nullable`
-#: (the collapse offered and refused as useless -- a DIFFERENT outcome from
-#: `overflowed-dfa`, where no rescue was available), and [LIM-1]'s
-#: `size-cap-retry` (the size rung's SUCCESS, which stamped the `selected`
-#: mislabel until this pin -- O-8/O-10's finding, closed). The reporter
-#: derives its `DFA fallback tripped` bucket from this set, and since
-#: 263b013 the bucket reads the VALUE and nothing else -- the [B19]-era
-#: `vm_prefilter_lang_why` `size cap retry` prefix special-case is RETIRED
-#: (inbox I-25: "your bucket reads the value now, not the _LANG_WHY
+#: Frank's ask-(b) bucket: the `engine_sel` values that are NOT the ordinary
+#: outcome -- spelled by him as `not in (selected, forced)`, and kept as an
+#: explicit tuple so the set is greppable and a new pcrec value cannot join
+#: it by accident. SIX values since pin 1989c62 (abi 14): the three 96e44c2
+#: values, [OPT-4.1]'s `declined-nullable` (the collapse offered and refused
+#: as useless -- a DIFFERENT outcome from `overflowed-dfa`, where no rescue
+#: was available), [LIM-1]'s `size-cap-retry` (the size rung's SUCCESS,
+#: which stamped the `selected` mislabel until 263b013 -- O-8/O-10's
+#: finding, closed), and [OPT-4.2]'s `declined-nullable-default`.
+#:
+#: THE EIGHTH VALUE AND PCREC'S OWN FIVE: A DELIBERATE DIVERGENCE, [B26].
+#: match_api.md 6.3 says of `declined-nullable-default` that it is
+#: "deliberately NOT among the five" -- nothing overflowed on that path, so
+#: in pcrec's vocabulary it did not FALL BACK. This bench's bucket is the
+#: WIDER predicate Frank actually asked for, and the eighth value is in it:
+#: an artifact whose own prefilter a policy declined did not get auto's
+#: ordinary answer, and a reader comparing it against its `selected`
+#: siblings needs to see that. So the bucket's RENDERING carries the
+#: distinction rather than hiding it (report.py's legend names the two
+#: readings), and the value is never silently folded into "a cap was hit".
+#: The reporter derives its `DFA fallback tripped` bucket from this set, and
+#: since 263b013 the bucket reads the VALUE and nothing else -- the
+#: [B19]-era `vm_prefilter_lang_why` `size cap retry` prefix special-case is
+#: RETIRED (inbox I-25: "your bucket reads the value now, not the _LANG_WHY
 #: prefix").
 ENGINE_SEL_FALLBACK = ("overflowed-dfa", "overflowed-prefilter",
                        "collapsed-prefilter", "declined-nullable",
-                       "size-cap-retry")
+                       "size-cap-retry", "declined-nullable-default")
+
+#: The subset of ENGINE_SEL_FALLBACK that pcrec itself calls "fell back" --
+#: its five, the ones where a CAP was hit (match_api.md 6.3). The complement
+#: within the bucket is [OPT-4.2]'s rungless nullability decline. Kept
+#: separate so the reporter can name which reading a cell is in, and so the
+#: two sets are checked against each other rather than drifting.
+ENGINE_SEL_OVERFLOW_FALLBACK = ("overflowed-dfa", "overflowed-prefilter",
+                                "collapsed-prefilter", "declined-nullable",
+                                "size-cap-retry")
 
 #: `dfa_prefilter` values for which `dfa_prefilter_offsets` is NOT "none"
 #: (match_api.md 6.3's iff, checked from both sides).
@@ -1758,10 +1885,22 @@ class Adapter(_ad.Adapter):
         9. `engine_sel` implies its neighbours (match_api.md 6.3's table):
            `collapsed-prefilter` / `size-cap-retry` ([B22]) -> engine vm,
            prefilter hybrid, language `count-collapsed`; `overflowed-dfa` /
-           `overflowed-prefilter` / `declined-nullable` ([B22]) ->
+           `overflowed-prefilter` / `declined-nullable` ([B22]) /
+           `declined-nullable-default` ([B26], [OPT-4.2]) ->
            engine vm, prefilter `none` (no prefilter survived, or the
-           offered rescue was declined as nullable). And the
-           language pair's own iff is the scope table's `vm-hybrid` row.
+           offered rescue was declined as nullable, or -- the eighth value
+           -- the ORDINARY hybrid's own exact language was). Both DECLINE
+           values additionally imply NO language pair, asserted directly
+           here as well as by the scope table's `vm-hybrid` row.
+
+        [B26] added one more, for the abi-15 FIELDS, which have no macro
+        mirror at all:
+
+        10. `rx_info.name` is never NULL ([DD-13b.W1.2] makes that a
+            contract, not an observation) and `nentries >= nnames` (the
+            named rows are a PREFIX of the array). Their EQUALITY, true on
+            every artifact this pin emits, is checked by value in
+            tools/selfcheck.py rather than asserted here.
 
         A pcrec too old to stamp a given macro is not a disagreement: an
         absent macro is checked only against the field's own absence, never
@@ -1879,12 +2018,22 @@ class Adapter(_ad.Adapter):
                     "but this testee named no --engine= -- nothing forced "
                     "it; a compiler or shim bug, or a flag this adapter did "
                     "not pass on purpose.")
-            # 9. the implications of the five fallback tokens ([B22]: the
+            # 9. the implications of the non-ordinary tokens ([B22]: the
             #    263b013 pair joins them -- `size-cap-retry` is a surviving
             #    collapsed prefilter like `collapsed-prefilter`, and
             #    `declined-nullable` leaves no prefilter like the two
             #    `overflowed-*` values; the language pair's absence on a
             #    declined artifact is the scope table's vm-hybrid row).
+            #    [B26]: `declined-nullable-default` ([OPT-4.2], abi 14) is
+            #    the SAME implication as `declined-nullable` -- match_api.md
+            #    6.3 says the ordinary hybrid's own EXACT language was the
+            #    thing declined, so no prefilter survives -- and the check
+            #    asserts BOTH directions of that iff: vm / prefilter `none`
+            #    here, and NO language pair via the scope table's vm-hybrid
+            #    row (a `none` prefilter is not `hybrid`, so the pair must
+            #    be absent). The two decline values differ only in whether
+            #    a RUNG was involved, which is exactly why pcrec kept them
+            #    apart, and nothing in this check collapses them.
             lang = meta.get("vm_prefilter_lang")
             if sel in ("collapsed-prefilter", "size-cap-retry") and not (
                     engine == "vm" and macro_vm_pf == "hybrid"
@@ -1897,7 +2046,8 @@ class Adapter(_ad.Adapter):
                     "%r -- match_api.md 6.3's table says vm / hybrid / "
                     "count-collapsed." % (sel, engine, macro_vm_pf, lang))
             if sel in ("overflowed-dfa", "overflowed-prefilter",
-                       "declined-nullable") and not (
+                       "declined-nullable",
+                       "declined-nullable-default") and not (
                     engine == "vm" and macro_vm_pf == "none"):
                 raise _ad.AdapterError(
                     "pcrec artifact stamps <PREFIX>_ENGINE_SEL %r (no "
@@ -1905,6 +2055,41 @@ class Adapter(_ad.Adapter):
                     "was declined as nullable) but reads engine %r, "
                     "<PREFIX>_VM_PREFILTER %r -- match_api.md 6.3's table "
                     "says vm / none." % (sel, engine, macro_vm_pf))
+            if sel in ("declined-nullable",
+                       "declined-nullable-default") and lang is not None:
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_ENGINE_SEL %r (the "
+                    "prefilter was DECLINED, so none survives) but also "
+                    "carries <PREFIX>_VM_PREFILTER_LANG %r -- match_api.md "
+                    "6.3's iff runs both ways: no prefilter, no language "
+                    "pair." % (sel, lang))
+
+        # 10. ([B26], abi 15 / [DD-13b.W1.2]) the two new FIELDS carry
+        #     their own contracts instead of a macro control, and both
+        #     are asserted rather than assumed: `rx_info.name` is NEVER
+        #     NULL (a compile that names nothing stamps its own
+        #     `<prefix>`), and `groups[0 .. nnames)` is a PREFIX of the
+        #     whole array, so `nentries >= nnames`. Equality is the TODAY
+        #     fact and is asserted by value in tools/selfcheck.py, not
+        #     here: `.rxt` composition ([DD-13b.W1.3]) will separate the
+        #     two without breaking this invariant, and an adapter that
+        #     asserted equality would refuse the first such artifact as a
+        #     bug.
+        if info.get("rxinfo_name_present") == "0":
+            raise _ad.AdapterError(
+                "pcrec artifact has rx_info.name == NULL. match_api.md 6 "
+                "([DD-13b.W1.2]) makes it a CONTRACT that the field is "
+                "never NULL -- a compile that supplies no name stamps its "
+                "own <prefix> -- so this is a pcrec or shim bug, not an "
+                "unnamed artifact.")
+        n_entries, n_names = meta.get("nentries"), meta.get("nnames")
+        if n_entries is not None and n_names is not None \
+                and n_entries < n_names:
+            raise _ad.AdapterError(
+                "pcrec artifact has rx_info.nentries %d < rx_info.nnames "
+                "%d. match_api.md 6 says groups[0 .. nnames) is a PREFIX "
+                "of the whole array, so the whole can never be shorter "
+                "than its prefix." % (n_entries, n_names))
 
         # 7. ([B18]) THE SCOPE TABLE: every unconditional stamp is present
         #    within its scope at the artifact's own abi, and the exclusive

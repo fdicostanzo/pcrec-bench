@@ -633,6 +633,36 @@ and its control (a `compiled` row's phase medians are unchanged; a
 this adapter never emits, but the schema does not forbid it of some
 other future adapter -- is NOT read as an emit-c number, since that
 shape is not this row's own).
+
+## The reporter at pcrec abi 14 (2026-09-01, [B26], pin 1989c62)
+
+pcrec's `RX_ENGINE_SEL` gained an EIGHTH value, `declined-nullable-default`
+([OPT-4.2]): the nullability decline of [OPT-4.1] with NO RUNG involved --
+nothing overflowed, and the ORDINARY hybrid's own EXACT prefilter language
+is nullable, so the prefilter is declined and the artifact reads
+`vm_prefilter=none` with no `lang=` clause.
+
+* THE BUCKET IS UNCHANGED. Frank's ask (b) is `sel not in (selected,
+  forced)` and the eighth value is outside that pair, so it is IN the
+  bucket -- an artifact whose own prefilter a policy declined did not get
+  auto's ordinary answer, and a reader comparing it with its `selected`
+  siblings needs to see that.
+* THE SUFFIX IS NOT. ` (DFA fallback tripped)` would be a FALSE sentence
+  on this token: no cap was hit and no fallback ran. `_engine_sel_display`
+  renders ` (prefilter declined, no cap hit)` instead
+  (`ENGINE_SEL_NO_CAP`), which keeps the bucket one predicate while
+  keeping the report's own sentence true. pcrec draws the same line on its
+  side -- match_api.md 6.3 says the value is "deliberately NOT among the
+  five" fallback values -- and this is the divergence between that reading
+  and Frank's wider bucket, made visible in the rendering rather than
+  argued in a footnote.
+* `REPORTER_VERSION` UNCHANGED at `v11 (2026-09-01)`, and NO committed
+  report is regenerated. Both the new suffix and the legend sentence that
+  explains it are CONDITIONAL on a record actually carrying the token, on
+  the same terms as every clause since [B18]; no record in `store/` does
+  (the value did not exist before this pin), so every committed report
+  renders byte for byte as it stands. The first reports to print either
+  are the ones tonight's window writes.
 """
 
 from __future__ import annotations
@@ -1284,14 +1314,36 @@ def _match_form_display(engine_metadata):
     return None if mf is None else str(mf)
 
 
+#: [B26] / pcrec abi 14 ([OPT-4.2]): the ONE ask-(b) token for which
+#: `DFA fallback tripped` would be a false sentence -- nothing overflowed on
+#: that path, so no fallback tripped. It is still OUTSIDE `(selected,
+#: forced)`, which is the predicate Frank spelled, so it stays in the bucket;
+#: what changes is the SUFFIX, because a rendering that said `DFA fallback
+#: tripped` on it would put a claim in the report that the record does not
+#: support. match_api.md 6.3 makes the same distinction on pcrec's side
+#: ("deliberately NOT among the five").
+ENGINE_SEL_NO_CAP = {"declined-nullable-default": "prefilter declined, no cap hit"}
+
+
 def _engine_sel_display(engine_metadata):
     """[B19] / pcrec abi 12 ([OPT-4]): the engine-selection decision as a
     TOKEN -- `selected` / `forced` / `overflowed-dfa` /
     `overflowed-prefilter` / `collapsed-prefilter`, and since pin 263b013
-    ([B22]) `declined-nullable` ([OPT-4.1]) / `size-cap-retry` ([LIM-1])
+    ([B22]) `declined-nullable` ([OPT-4.1]) / `size-cap-retry` ([LIM-1]),
+    and since pin 1989c62 / abi 14 ([B26]) `declined-nullable-default`
+    ([OPT-4.2])
     -- with Frank's ask (b) bucket derived from it and from NOTHING else:
-    a token that is neither `selected` nor `forced` is `auto FELL BACK`,
-    rendered as ` (DFA fallback tripped)`. Returns None where the record
+    a token that is neither `selected` nor `forced` is outside auto's
+    ordinary answer, rendered as ` (DFA fallback tripped)` -- except for
+    `declined-nullable-default`, where NOTHING overflowed and that
+    sentence would be false, so the same bucket renders
+    ` (prefilter declined, no cap hit)` instead (ENGINE_SEL_NO_CAP). The
+    BUCKET is unchanged and still reads `not in (selected, forced)`; only
+    the suffix distinguishes the two readings, which is exactly the
+    distinction pcrec keeps on its own side (match_api.md 6.3:
+    `declined-nullable-default` is "deliberately NOT among the five"
+    fallback values, because it is an ordinary compile whose own
+    prefilter a policy declined). Returns None where the record
     has no pair (a pin before abi 12), and the legend prints nothing: the
     reader has the `abi` on the same line (pcrec I-5's rule, as for every
     clause here). The [B19]-era interim rule -- the SIZE-CAP retry rung
@@ -1309,7 +1361,8 @@ def _engine_sel_display(engine_metadata):
         return None
     if sel in ("selected", "forced"):
         return str(sel)
-    return f"{sel} (DFA fallback tripped)"
+    note = ENGINE_SEL_NO_CAP.get(str(sel), "DFA fallback tripped")
+    return f"{sel} ({note})"
 
 
 def _prefilter_lang_display(engine_metadata):
@@ -3235,6 +3288,27 @@ def render_markdown(rd: ReportData):
                            "`sel=selected` and only its "
                            "`lang=count-collapsed (size cap retry, ...)` "
                            "clause says so.")
+                # [B26] CONDITIONAL, on the same terms as every other clause
+                # in this reporter: the sentence naming pcrec abi 14's eighth
+                # token prints only on a report that actually carries one, so
+                # a report of records from an older pin renders byte for byte
+                # as before and REPORTER_VERSION does not move.
+                if any((em or {}).get("engine_sel") in ENGINE_SEL_NO_CAP
+                       for _sb, em, _pm in legend_by_key.values()):
+                    out.append("    - `prefilter declined, no cap hit` = "
+                               "pcrec abi 14's `declined-nullable-default` "
+                               "([OPT-4.2]): the SAME ask-(b) bucket (sel is "
+                               "neither `selected` nor `forced`) but NOTHING "
+                               "overflowed -- no rung was involved, and the "
+                               "ordinary hybrid's own EXACT prefilter "
+                               "language is nullable, so the prefilter was "
+                               "declined. pcrec's own reading keeps it out "
+                               "of the five `fell back` values for that "
+                               "reason (match_api.md 6.3); this column keeps "
+                               "it in the bucket and says which reading it "
+                               "is, so a row is never read as a cap that was "
+                               "hit. Such an artifact carries "
+                               "`vm_prefilter=none` and NO `lang=` clause.")
             # [B19] scope addition: the [ART-SIZE] clauses, named once
             # under the lines that carry them (VM artifacts at abi 11+).
             if any(_size_term_display(em) is not None

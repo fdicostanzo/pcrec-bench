@@ -239,8 +239,9 @@ bindings) live here, vendored or system, pinned either way.
   `make check`'s generic gates enumerate `bench/*/` rather than naming a
   set. See their CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
-  (auto, nocaps, vm, the `-in` variants, at a pinned commit — a7e0bdf,
-  abi 13 — with `list_axes.tsv`, `list_definitions.tsv` and
+  (auto, nocaps, vm, the `-in` variants and the three `-clang` siblings,
+  at a pinned commit — **1989c62, abi 15** — with `list_axes.tsv`,
+  `list_definitions.tsv` and
   `list_limits.tsv`, the pin's `--list-axes` / `--list-definitions` /
   `--list-limits` registry surfaces archived
   verbatim; and `pcrec-local`, a PROVIDED binary at no pin).
@@ -352,6 +353,32 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # dispatch, pcrec [CC-CLANG], fixed at their abi
                         # 14), a NAMED expected refusal carrying clang's own
                         # diagnostic, any other refusal being a failure
+                        # and ([B26], pin 1989c62, abi 15) the abi 14+15
+                        # pair in one change: RX_ENGINE_SEL's EIGHTH value
+                        # `declined-nullable-default` ([OPT-4.2]) asserted BY
+                        # VALUE on a hand-chosen witness with its
+                        # one-character control (`(?=abc)x*` vs `x+` --
+                        # MEASURED: NO corpus pattern stamps it, 462 census
+                        # cells byte-identical to a7e0bdf), both directions
+                        # of the §6.3 iff (prefilter `none`, NO language
+                        # pair), the four rung-scoped `declined-nullable`
+                        # artifacts still distinguishable, the ask-(b)
+                        # bucket widened to SIX values with the eighth
+                        # rendered `prefilter declined, no cap hit` (pcrec
+                        # keeps it out of its own five: nothing overflowed),
+                        # abi 15's rx_info.name / .nentries read as
+                        # PROVENANCE with their contracts asserted (name
+                        # never NULL; nentries >= nnames in the adapter,
+                        # == by value here) -- the FIELDS that raise the
+                        # shim floor 10 -> 15, with an abi == floor-1
+                        # sabotage arm added beside the abi-5 one -- the
+                        # size books re-derived (+202 B flat from abi 15's
+                        # two fields, NOT the predicted downward move; the
+                        # decline is where o42 shrinks, -27.8% on the
+                        # witness), and [B22]'s `nullable collapsed
+                        # language` force control RETIRED as UNREACHABLE
+                        # ([OPT-4.2] declines one step earlier -- measured
+                        # over ten separating shapes; an ask for pcrec)
                         # and ([B11.2], bench/altwide) the generic gates on a
                         # fourth set by enumeration + the schema's free_text
                         # cap on canonical_text checked both sides (a pattern

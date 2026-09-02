@@ -483,6 +483,8 @@ than five). What arrived, and where each pair comes from:
 | 10 ([ENG-ABS], [B18]) | `RX_DFA_MATCH` (`unwrapped` / `search-filter`) on every DFA artifact and NO VM artifact, hybrids included; `rx_info.match_form` appended (NULL where the macro is absent); `-fno-anchored-dfa` (bit 17) | `dfa_match` (the field is its CONTROL, and it raised the shim's floor to 10) |
 | 11 ([ART-SIZE], [B18]) | `RX_UNROLL_K` / `RX_UNROLL_K_WHY` (seven values) / `RX_MAX_EMIT_CODE_BYTES` on every VM artifact; `RX_MAX_EMIT_BYTES` on every artifact; `-fno-size-term` (bit 18) denies the K selection, never the caps | `unroll_k`, `unroll_k_why`, `max_emit_code_bytes`, `max_emit_bytes` |
 | 12 ([OPT-4], [B19]) | `RX_ENGINE_SEL` on EVERY artifact (one `engine-route` token: `selected` / `forced` / `overflowed-dfa` / `overflowed-prefilter` / `collapsed-prefilter` — O-8 6(d) ruled as a stamp); `RX_VM_PREFILTER_LANG` (`exact` / `count-collapsed`) + `RX_VM_PREFILTER_LANG_WHY` on every VM HYBRID and no other artifact; `-fno-prefilter-collapse` (bit 19) denies both retry rungs, `-fprefilter-collapse` (bit 20) forces the collapse; `--warn-emit-bytes=N` (advisory stderr line, default 250,000) | `engine_sel`, `vm_prefilter_lang`, `vm_prefilter_lang_why` (a `string`: two of its values carry a number) — and the adapter's own `emit_bytes` / `emit_code_bytes` (pcrec's size definition, ported and controlled) + `warned_emit_bytes` (present only when the warning fired) |
+| 14 ([OPT-4.2] + [CC-CLANG], [B26]) | `RX_ENGINE_SEL` gains an EIGHTH value, `declined-nullable-default` — the nullability decline with NO RUNG: nothing overflowed, and the ORDINARY hybrid's own EXACT prefilter language is nullable, so the prefilter is declined. Such an artifact reads `RX_VM_PREFILTER "none"` and carries NO language pair (match_api.md §6.3's iff both ways). NO new stamp and no new axis; the `--list-axes` `engine-route` row joins at ORDER 2 (right after `forced`), renumbering the six below it. [CC-CLANG] rides the same abi with no stamp at all: its `&&label` fix is why the clang refusal set goes EMPTY here | `engine_sel` (a new VALUE in an existing pair) |
+| 15 ([DD-13b.W1.2], [B26]) | `rx_info.name` and `rx_info.nentries` APPENDED after `match_form` — read-only additions, no member's offset moved. `name` is what the ARTIFACT is (as against `<prefix>`, what its symbols are CALLED); NEVER NULL by contract. `nentries` is the WHOLE `groups[]` length, of which `nnames` counts a PREFIX. NEITHER has a macro spelling | `artifact_name`, `nentries` — PROVENANCE pairs, and **the fields that raised the shim's floor to 15** |
 | 13 ([OPT-5] STEP 1, [B25]) | `RX_DFA_SCAN_EDGE` (`range` / `bitmap` / `mixed` / `none`) on every artifact that CONTAINS a DFA scan — the scan family's iff, joined unchanged (match_api.md §6.3); the SCAN EDGE is a maximal run of states differing only in how many bytes of ONE fixed class have been counted, replaced by a bounded cursor loop and DELETED from the transition table (the first abi bump to move a MACHINE, not only emitted text — tuning.md §2.18); TWO registry axes (`scan-edge` per state, `scan-body` per edge); `-fno-scan-edge` (bit 21) denies the per-state axis and restores the pre-[OPT-5] machine; `PCREC_MAX_SCAN_EDGES` (4) joins `--list-limits` | `dfa_scan_edge` (the `scan-body` axis's value; no rx_info mirror) |
 
 **Rule 1: never infer a fact from a stamp's ABSENCE. Read the VALUE.**
@@ -594,11 +596,15 @@ a macro read through `#ifdef` has a legitimate "not stamped" absence — and
 neither did abi 12's three ([B19]: `RX_ENGINE_SEL` and the language pair
 have no `rx_info` mirror; an abi-10/11 artifact still links and records
 them as "not stamped", the scope table saying at which abi that stops
-being legitimate). **`PB_SHIM_MIN_ABI` is 10 at pin a7e0bdf** (unchanged
-through 96e44c2 and 263b013 — [B22] added VALUES, not stamps; and abi 13's
-`RX_DFA_SCAN_EDGE` is a macro with no rx_info mirror, `struct rx_info`
-MEASURED byte-identical between 263b013 and a7e0bdf), by that
-rule: a `pcrec-local` binary from 808740c on still loads. (Why
+being legitimate). **`PB_SHIM_MIN_ABI` is 15 at pin 1989c62** ([B26]): the rule's OTHER
+direction fired for the second time in this file's life. It held at 10
+through 96e44c2, 263b013 and a7e0bdf — [B22] added VALUES not stamps,
+abi 13's `RX_DFA_SCAN_EDGE` is a macro with no rx_info mirror (`struct
+rx_info` MEASURED byte-identical between 263b013 and a7e0bdf), and abi 14's
+eighth `RX_ENGINE_SEL` value is a new string in an existing macro — and it
+MOVED at abi 15, where `rx_info.name` and `.nentries` were appended and
+this shim reads both. A `pcrec-local` binary older than abi 15 is now
+REFUSED by name rather than measured. (Why
 that `#ifdef` is not an inference from absence: the scope table above.)
 `driver.c` compares `pb_abi()` against it before reading anything else and
 refuses a lower artifact by name (`error abi-below-shim-floor: …`, carrying
@@ -1120,3 +1126,118 @@ build root (`pin.sh --build-root`), same command shape throughout:
   artifact, FLAT** — the design note's own estimate for the VM side
   (artifact_size_term.md §7: "≈ 130 B … +128 B on 1,689 artifacts") to
   the byte.
+
+### MEASURED at pin 1989c62, 2026-09-01 — abi 14 + 15 in one change ([B26])
+
+Two pcrec pins absorbed at once: cc/o42 (abi 14) and w12 (abi 15). Six
+findings, each measured at the re-pin against the a7e0bdf binary in the
+same run.
+
+**1. THE EIGHTH ROUTE TOKEN HAS NO CUSTOMER IN THIS CORPUS.** The whole
+`RX_ENGINE_SEL` census — 77 patterns × 2 forms (plain, `(?:…)\z`) × 3
+engine modes (auto, nocaps, vm) = 462 cells per pin, across all four
+sub-benches — is **byte-identical between a7e0bdf and 1989c62**:
+
+| value | cells (both pins) |
+|---|---|
+| `selected` | 220 |
+| `forced` | 130 |
+| `collapsed-prefilter` | 24 |
+| `declined-nullable` | 8 |
+| `declined-nullable-default` | **0** |
+| (pcrec refused) | 80 |
+
+The predicted population — the `cls-*` hybrids O-10 measured at 1.2-9.9×
+loss — does NOT stamp it, and the reason is structural: those patterns are
+chosen as the DFA **engine** under `auto`, so they never reach a VM
+prefilter decision to have one declined. [OPT-4.2] is real and works; this
+corpus simply contains no shape that exercises it. **Consequence for the
+window: there is no cls-* AFTER to read for [OPT-4.2].** A set that wants
+one needs a VM-forcing construct (lookaround or a backreference) wrapped
+around a nullable body.
+
+**2. THE BY-VALUE WITNESS, and its one-character control** (hand-chosen,
+in `STAMP_CASES` — the corpus has none):
+
+| pattern | a7e0bdf | 1989c62 | emit total/code |
+|---|---|---|---|
+| `(?=abc)x*` | `selected`, hybrid, `lang=exact`, `dfa_prefilter none` | **`declined-nullable-default`**, prefilter `none`, **no language pair** | 25,897/22,605 → **18,682/18,682** (−27.8 %) |
+| `(?=abc)x+` | `selected`, hybrid, `lang=exact`, `dfa_prefilter memchr` | unchanged | 26,272/22,952 → 25,967/22,647 |
+
+The lookahead forces the VM and leaves the artifact hybrid-eligible; the
+only thing that moves between the two rows is whether the body is
+NULLABLE. The a7e0bdf row is exactly the useless filter [OPT-4.2] exists to
+remove — a hybrid whose `dfa_prefilter` reads `none`. Both directions of
+match_api.md §6.3's iff are asserted (prefilter `none`, language pair
+ABSENT), and the `\z` form behaves identically (26,813 → 18,794).
+
+**3. THE OLD RUNG-SCOPED VALUE IS STILL DISTINGUISHABLE.** All four
+[B22] `declined-nullable` artifacts still stamp `declined-nullable` at this
+pin — `cls-upto-32768` plain and whole, `cls-upto-16384` whole,
+`cls-lazy-16384` whole — so the two values are told apart on real
+artifacts, not by construction. The plain-vs-`\z` overflow ROUTES are
+still distinct (state cap vs K7), and `cls-upto-65535` still refuses by
+`PCREC_NFA_MAX_STATES` 131072 with identical wording.
+
+**4. `nullable collapsed language` IS NOW UNREACHABLE — an ask for
+pcrec.** [B22]'s force control for the collapse POLICY (`(x){0,5}` under
+`-fprefilter-collapse` → `lang=exact` / `_why "nullable collapsed
+language"`) FAILS at this pin, because [OPT-4.2] declines the prefilter one
+step EARLIER: both arms now read `declined-nullable-default` with no
+language pair, so the flag moves nothing. The gap is structural, not
+accidental — the collapse lowers `X{m,n}` to `X{min(m,1),}`, which can only
+introduce nullability when `m == 0`, and such a pattern's EXACT language is
+nullable too. MEASURED over ten shapes chosen to separate the two
+nullabilities (`(x){0,5}`, `a(x){0,5}`, `(x){0,5}a`, `(x){0,5}\1`,
+`(?=y)(x){0,5}`, `(x){0,5}?y`, `(?:x|){0,5}`, `(x{0,3}){0,5}`,
+`a(b|c){0,5}d`, `(x){0,5}(?:)`): every one either declines under [OPT-4.2]
+or collapses cleanly with `_why "forced"`. None reaches the documented
+value. The force-control row is RETIRED and
+`check_opt42_preempts_collapse_policy` records the new behaviour in its
+place, including the assertion that the flag is INERT on the witness — so
+the day a reachable witness exists again (or pcrec retires the value) a
+check says so by name. `-fprefilter-collapse` still works where the
+language is non-nullable (`a(b|c){2,5}d` → `count-collapsed (forced)`),
+which is what makes this a finding and not a broken flag.
+
+**5. THE SIZE BOOKS MOVED UP, NOT DOWN — the brief's expectation was the
+wrong sign.** w12's 519 B/artifact comment fix cannot move `emit_bytes` at
+all: the measure EXCLUDES comment bytes by definition (`emit_size_measure`,
+what the caps enforce). What DOES move it is abi 15's two new `rx_info`
+members and their initialisers, and the movement is **+202 B, flat, on
+every artifact whose route did not change** — measured on eleven ledger
+patterns × two forms, on both engines, on hybrids and plain DFAs alike, and
+on both arms of the `-fno-scan-edge` control:
+
+| artifact | a7e0bdf | 1989c62 | Δ |
+|---|---|---|---|
+| `cls-upto-16384` plain (the collapsed DFA) | 16,352 / 13,012 | 16,554 / 13,214 | **+202** |
+| the same, `-fno-scan-edge` (the warning returns) | 724,737 | **724,939** | **+202** |
+| ctx rungs ×4, `level-context`, `nest2-64` / `nest3-16` wholes | — | — | **+202 each** |
+| `year4` plain / whole | 20,855 / 21,608 | 21,057 / 21,810 | **+202** |
+| `cls-upto-32768` plain / whole (declined) | 18,291 / 18,496 | **17,889 / 18,094** | **−402** |
+| `cls-lazy-16384` whole (declined) | 18,615 | 18,720 | **+105** |
+
+The DOWNWARD movement the brief predicted is real but is o42's, not w12's,
+and it lands only where a prefilter is declined — dramatically on the
+witness above (−27.8 %), modestly and unevenly on the already-declined
+`cls-*` rungs. **Every expected number in `check_mechanism_stamps` and the
+deny-flag table was re-derived at this pin**; the emit-size port agrees
+with pcrec's own `--warn-emit-bytes` numbers byte-exactly on all 10
+witness/form pairs plus the hand-counted probe.
+
+**6. THE CLANG REFUSAL SET IS EMPTY.** `check_cc_axis`'s named
+expected-refusal arm reports **0 refused / 8 agreed** at 1989c62 (clang
+21.1.8) — at a7e0bdf it was the frameless-VM `&&label` incompatibility on
+every artifact that never pushes a resume frame. [CC-CLANG] step 1 is in
+this pin, and the three `-clang` configs now compile every artifact KIND.
+The gcc and clang `.so` of each kind agree on every smoke row — answer,
+span AND captures — and the agreement arm is non-vacuous (four VM kinds
+among the eight).
+
+**Also re-verified at this pin:** the `--features all` refusal wording
+(`(?<...) requires module 'named-groups' (pattern offset 3)`; `\Q requires
+module 'quoting'`), and the three registry archives (axes 69 → **70** rows
+/ 23 axes, ONE new `engine-route` row at order 2 renumbering the six below
+it; limits **45 rows byte-identical**; definitions **50 rows
+byte-identical** — o42 and w12 added no numeric limit and no definition).

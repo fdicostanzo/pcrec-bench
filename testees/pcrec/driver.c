@@ -59,7 +59,11 @@
  * artifact is "not a hybrid" (match_api.md 6, consequence 2) and
  * `info rxinfo_match_form_present 0` is "this artifact's _match is not a
  * DFA form" ([ENG-ABS]); both are printed on EVERY artifact so that reading
- * is never made from silence either.
+ * is never made from silence either. [B26] adds two more FIELD lines on the
+ * same terms -- `info artifact_name` / `info nentries` (rx_info.name /
+ * .nentries, appended at abi 15) with `info rxinfo_name_present` beside the
+ * first -- which are PROVENANCE rather than selection facts: no macro
+ * spells either, so neither is cross-checked against a stamp.
  */
 
 #define _GNU_SOURCE
@@ -106,6 +110,8 @@ static const char *(*pb_dfa_prefilter_offsets)(void);
 static const char *(*pb_dfa_scan_edge)(void);
 static const char *(*pb_dfa_match)(void);
 static const char *(*pb_info_match_form)(void);
+static const char *(*pb_info_name)(void);
+static int       (*pb_info_nentries)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -315,6 +321,7 @@ int main(int argc, char **argv) {
     SYM(pb_dfa_table);
     SYM(pb_dfa_prefilter_offsets); SYM(pb_dfa_scan_edge);
     SYM(pb_dfa_match); SYM(pb_info_match_form);
+    SYM(pb_info_name); SYM(pb_info_nentries);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -336,15 +343,17 @@ int main(int argc, char **argv) {
      * classifies a negative return by RANGE against these, never by a list.
      * See shim.c. */
     /* THE ABI FLOOR, before anything else is read or printed. shim.c reads
-     * `rx_info.scan` / `.prefilter` (appended at pcrec's abi 6) and
-     * `rx_info.match_form` (appended at abi 10); an older artifact has no
+     * `rx_info.scan` / `.prefilter` (appended at pcrec's abi 6),
+     * `rx_info.match_form` (abi 10) and `rx_info.name` / `.nentries`
+     * (abi 15, [DD-13b.W1.2]); an older artifact has no
      * such fields and this shim would be reading past them. Refuse by NAME,
      * carrying both numbers, and stop. The number itself is shim.c's. */
     if (pb_abi() < pb_shim_min_abi()) {
         printf("error\tabi-below-shim-floor: artifact rx_info.abi %d is below "
                "the %d this shim was written for (testees/pcrec/shim.c reads "
-               "rx_info.scan/.prefilter, appended at pcrec abi 6, and "
-               "rx_info.match_form, appended at abi 10). Re-pin, or point "
+               "rx_info.scan/.prefilter, appended at pcrec abi 6, "
+               "rx_info.match_form, appended at abi 10, and "
+               "rx_info.name/.nentries, appended at abi 15). Re-pin, or point "
                "PCREC_BIN at a pcrec at or after that abi.\n",
                pb_abi(), pb_shim_min_abi());
         fflush(stdout);
@@ -423,6 +432,22 @@ int main(int argc, char **argv) {
         if (dm) printf("info\tdfa_match\t%s\n", dm);
         printf("info\trxinfo_match_form_present\t%d\n", mf ? 1 : 0);
         if (mf) printf("info\trxinfo_match_form\t%s\n", mf);
+    }
+
+    /* [DD-13b.W1.2], abi 15: the two fields appended after `match_form`.
+     * Both are FIELDS with no macro spelling, so neither is a
+     * two-spellings pair: they are PROVENANCE, printed on every artifact
+     * (the shim's floor is 15, so an artifact that reached this point has
+     * them). `name` is NEVER NULL by contract -- a compile that supplies
+     * no name stamps its own <prefix> -- so a `_present 0` here is a
+     * contract violation the adapter refuses by name, not an "unnamed"
+     * artifact. `nentries` is the WHOLE groups[] length, of which `nnames`
+     * (printed above) counts a PREFIX. */
+    {
+        const char *an = pb_info_name();
+        printf("info\trxinfo_name_present\t%d\n", an ? 1 : 0);
+        if (an) printf("info\tartifact_name\t%s\n", an);
+        printf("info\tnentries\t%d\n", pb_info_nentries());
     }
 
     /* [ART-SIZE], abi 11: the size term's four stamps. `unroll_k` /

@@ -34,14 +34,15 @@
  * `pb_has_vm_stamps()` returns 0, and the adapter forwards no VM pairs.
  *
  * THE ABI FLOOR (`PB_SHIM_MIN_ABI`, exported as `pb_shim_min_abi()`). This
- * shim reads three `struct rx_info` FIELDS that pcrec appended after abi 2:
- * `scan` and `prefilter` at abi 6 ([DD-13c], match_api.md 6) and
- * `match_form` at abi 10 ([ENG-ABS], the runtime mirror of `RX_DFA_MATCH`)
- * -- so 10 is the lowest artifact this file can read, and it says so in one
+ * shim reads five `struct rx_info` FIELDS that pcrec appended after abi 2:
+ * `scan` and `prefilter` at abi 6 ([DD-13c], match_api.md 6), `match_form`
+ * at abi 10 ([ENG-ABS], the runtime mirror of `RX_DFA_MATCH`) and -- since
+ * [B26], pin 1989c62 -- `name` and `nentries` at abi 15 ([DD-13b.W1.2])
+ * -- so 15 is the lowest artifact this file can read, and it says so in one
  * place instead of leaving the fact implicit in a field access. The driver
  * compares `pb_abi()` against it at load and REFUSES a lower artifact by
  * name; the adapter turns that into a clean AdapterError carrying both
- * numbers. An artifact older still (abi < 10) does not link this shim at all
+ * numbers. An artifact older still does not link this shim at all
  * -- the field access is a compile error, which is the loudest possible form
  * of the same refusal and cannot be mistaken for a measurement. [B18]
  * raised the floor from 6 to 10 for exactly the reason the rule below
@@ -53,7 +54,12 @@
  * absence stops being legitimate. Nor abi 13's ([B25]): `RX_DFA_SCAN_EDGE`
  * is a macro with no rx_info mirror (struct rx_info is byte-identical
  * between abi 12 and 13 -- MEASURED at the a7e0bdf re-pin), read through
- * #ifdef like the rest, so the floor stays 10.
+ * #ifdef like the rest. Nor abi 14's ([B26]): [OPT-4.2]'s EIGHTH
+ * `RX_ENGINE_SEL` value `"declined-nullable-default"` is a new string in an
+ * existing macro, not a new surface at all. Abi 15 IS the rule's other
+ * direction: two FIELDS appended after `match_form`, both read below, so
+ * the floor moves with them -- 10 -> 15, the second rise in this file's
+ * life and for the same stated reason as the first.
  *
  * THE THREE STAMP FAMILIES THIS FILE READS, and the rule for each
  * (match_api.md 6.3's (a)/(b) split, tuning.md 3):
@@ -89,13 +95,20 @@
  *       built under, so a raised cap is a recorded fact.
  *   (a) SELECTION, the engine ROUTE and the prefilter LANGUAGE ([OPT-4],
  *       abi 12, [B19]; two VALUES added at pin 263b013 with no abi bump,
- *       [B22]): `RX_ENGINE_SEL` -- ONE token from the registry's
+ *       [B22]; an EIGHTH at abi 14, [B26]): `RX_ENGINE_SEL` -- ONE token
+ *       from the registry's
  *       `engine-route` axis (`selected` / `forced` / `overflowed-dfa` /
  *       `overflowed-prefilter` / `collapsed-prefilter` / since 263b013
  *       `declined-nullable` ([OPT-4.1]: the offered count-collapsed
  *       prefilter declined as nullable, no prefilter survives) and
  *       `size-cap-retry` ([LIM-1]: the size rung's success, replacing a
- *       `selected` mislabel)) on EVERY artifact,
+ *       `selected` mislabel) / since abi 14
+ *       `declined-nullable-default` ([OPT-4.2]: the same nullability
+ *       policy with NO rung involved -- the ORDINARY hybrid's own EXACT
+ *       prefilter language is nullable, so the prefilter is declined and
+ *       the artifact reads `RX_VM_PREFILTER "none"` with no language
+ *       pair, the §6.3 iff both ways, exactly as `declined-nullable`
+ *       does)) on EVERY artifact,
  *       both engines (D81: `"selected"` is a fact, stamped whether or not
  *       anything fell back); it is the same decision `RX_ENGINE_WHY`
  *       narrates, as a closed set a consumer can bucket on. And
@@ -186,11 +199,12 @@
 
 /* The lowest `rx_info.abi` this file can read: abi 6 appended `scan` and
  * `prefilter` to the struct ([DD-13c]); abi 10 appended `match_form`
- * ([ENG-ABS]), which pb_info_match_form() reads, so the floor is 10. Bump it
- * only when a field access below needs a newer one -- a macro this shim
- * reads through #ifdef does NOT raise the floor, because its absence is a
- * legitimate "not stamped". */
-#define PB_SHIM_MIN_ABI 10
+ * ([ENG-ABS]), which pb_info_match_form() reads; abi 15 appended `name` and
+ * `nentries` ([DD-13b.W1.2]), which pb_info_name() / pb_info_nentries()
+ * read -- so the floor is 15. Bump it only when a field access below needs
+ * a newer one -- a macro this shim reads through #ifdef does NOT raise the
+ * floor, because its absence is a legitimate "not stamped". */
+#define PB_SHIM_MIN_ABI 15
 
 int pb_shim_min_abi(void) { return PB_SHIM_MIN_ABI; }
 
@@ -224,6 +238,22 @@ const char *pb_info_prefilter(void) { return PB_INFO.prefilter; }
  * this axis does not describe). The field is printed on every artifact so
  * "no anchored form here" is read from a VALUE, never from silence. */
 const char *pb_info_match_form(void) { return PB_INFO.match_form; }
+
+/* The abi-15 fields ([DD-13b.W1.2], match_api.md 6, appended after
+ * `match_form` with no existing member's offset moved). `name` is what the
+ * artifact IS, as against `<prefix>` (what its symbols are CALLED): a `.rxt`
+ * definition built under three configs is three prefixes and ONE name. It is
+ * NEVER NULL by contract -- a compile that supplies no name stamps its own
+ * `<prefix>` -- so the adapter reads it as a value and treats a NULL as a
+ * contract violation rather than as "unnamed". `nentries` is the length of
+ * the WHOLE groups[] array; `nnames` counts the primary pattern's own named
+ * groups, which are a PREFIX of it, so `nentries >= nnames` always and the
+ * two are equal on every artifact pcrec emits today (what will separate
+ * them is .rxt composition, [DD-13b.W1.3]). Neither has a macro spelling,
+ * so neither is a two-spellings pair: they are recorded, not cross-checked
+ * against a stamp. */
+const char *pb_info_name(void)  { return PB_INFO.name; }
+int         pb_info_nentries(void) { return PB_INFO.nentries; }
 
 /* --------------------------------------------- the give-up code SPACE */
 
