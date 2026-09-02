@@ -271,7 +271,9 @@ bindings) live here, vendored or system, pinned either way.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
   (auto, nocaps, vm, the `-in` variants, the three `-clang` siblings and
   the two `-bigcap` siblings — both emitted-size caps raised to 8 MiB via
-  pcrec's raise-only flags, an identity in the testee_id ([B31]) —
+  pcrec's raise-only flags, an identity in the testee_id ([B31]) — and
+  `pcrec-auto-noedge` (`-fno-scan-edge`, [B32]; every pcrec compile row
+  also carries the `scan_edges` / `scan_edges_match` covariate pairs) —
   at a pinned commit — **1989c62, abi 15** — with `list_axes.tsv`,
   `list_definitions.tsv` and
   `list_limits.tsv`, the pin's `--list-axes` / `--list-definitions` /
