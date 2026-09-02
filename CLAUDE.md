@@ -171,7 +171,18 @@ O-13 confirmed in full (the STEP 2 BEFORE: ×1.985 matching, ×37.1 failing),
 the forced-VM route ×9 on frames-1 artifacts (gcc-only; [CC-CLANG]'s
 frameless-dispatch omission, I-31), the scan edge a spelling-not-count
 decision with no measured win, the cc axis regime-shaped, altwide 12/20
-refused at pcrec's two caps ([B31] rebuilds it). Manager sessions start with the
+refused at pcrec's two caps ([B31] rebuilds it). 2026-09-02 (eighth session):
+Frank ruled [B30] (schema **v1.5**: `free_text` 8192 → 1 MiB, a hygiene
+bound, the omission fallback kept, KB-7 closed) and cleared [B31] with NO
+pcrec-oracled limits file in the set (engine-neutral sets, R-BENCH-4);
+three lanes built and merged the same afternoon: bench/altwide@0.2, the
+emitted-size cap axis (`max_emit_bytes`/`max_emit_code_bytes` per config,
+`pcrec-auto-bigcap`/`pcrec-vm-bigcap` at 8 MiB from an 80-compile census —
+at the defaults 50/80 refuse, an auto refusal 0.07-40 s, a VM one <0.1 s;
+docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt) and schema
+v1.5. NOT YET MEASURED: altwide@0.2's window (six pinned testees + the
+bigcap pair) waits for the gcc-time census on the raised artifacts and a
+quiet box. Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -251,14 +262,16 @@ bindings) live here, vendored or system, pinned either way.
   is the bounded-repeat set ([B11.4]) -- the compile axis as a count
   ladder with the refusal as a first-class outcome, the match axis as
   everyday shapes with near-misses that fail at the last repetition.
-  `bench/altwide/` is the wide-alternation set ([B11.2], 2026-09-01) --
+  `bench/altwide/` is the wide-alternation set ([B11.2], 2026-09-01; **@0.2** since [B31], 2026-09-02: 0.1 byte-identical + the dense w-96/128/192/384 ladder, the seven structure arms twinned at 256 (incl. `srt-256`, the ALTCLS order pair as two COMPILED artifacts), `s-256`/`s-512`, 33 patterns / 44 subjects / 2,772 expectations, P9-P18) --
   branch count as a ladder (8..4096) crossed with the first-byte / prefix /
   suffix structure that decides PCRE2's start optimization and pcrec's
   DFA/prefilter route; libpcre2's own compiled-size ceiling caps the ladder.
   `make check`'s generic gates enumerate `bench/*/` rather than naming a
   set. See their CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
-  (auto, nocaps, vm, the `-in` variants and the three `-clang` siblings,
+  (auto, nocaps, vm, the `-in` variants, the three `-clang` siblings and
+  the two `-bigcap` siblings — both emitted-size caps raised to 8 MiB via
+  pcrec's raise-only flags, an identity in the testee_id ([B31]) —
   at a pinned commit — **1989c62, abi 15** — with `list_axes.tsv`,
   `list_definitions.tsv` and
   `list_limits.tsv`, the pin's `--list-axes` / `--list-definitions` /

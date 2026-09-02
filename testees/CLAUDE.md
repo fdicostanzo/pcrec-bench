@@ -7,7 +7,7 @@ triple each (requirements §2) — enumerated in its `configs.toml`.
 | directory | testees it provides |
 |---|---|
 | `pcre2/` | `pcre2-interp`, `pcre2-jit` |
-| `pcrec/` | `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm` |
+| `pcrec/` | `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm` (the plain three, gcc); `pcrec-auto-in`, `pcrec-vm-in` (the caller-provided frame-buffer variants, [B8]); `pcrec-auto-clang`, `pcrec-nocaps-clang`, `pcrec-vm-clang` (the compilee-toolchain axis, [B24]); `pcrec-auto-bigcap`, `pcrec-vm-bigcap` (the emitted-size cap axis at 8 MiB, [B31] — bench/altwide's window only); and `pcrec-local`, a PROVIDED binary at no pin (scratch tier by construction, [B10]). Eleven pinned configs + one local; `testees/pcrec/configs.toml` is the roster, `python3 -m pcrecbench testees` prints it |
 
 An adapter is `adapter.py` (a subclass of `pcrecbench.adapters.Adapter`),
 `configs.toml`, usually a `driver.c`, and a `CLAUDE.md` that states its
