@@ -2437,3 +2437,45 @@ with the window options (A: a per-cell cap variable, recommended; B:
 --trials 3; C: a run --patterns filter) — Frank's ruling owed; the
 window not run. wake.md rewritten; watchdog deleted; worktrees kept
 for the next session to remove. Master 9b45f31, clean.
+
+## 2026-09-02 (EDT, ~18:1x), eighth session (part 4) — Frank: build by day, windows at night; [B32] built as two lanes and merged; master GREEN 4/72/0 · 253/253 · 66+7; tonight's window plumbed
+
+Frank (~16:3x): "I don't want to block development on bench runs during
+the day … having everything stop for four hours isn't the best use of
+time" — windows at night, lanes by day, rulings inline (saved as a
+feedback memory). [B32] opened as two disjoint lanes off dc277df.
+b32adp (opus; six commits, bca4f42, merged b9cf668): (a)
+`pcrec-auto-noedge` — `-fno-scan-edge` riding in `flags`, the axis
+derived from effective flags, the `noedge` token LAST in config_extra
+(→ `pcrec_1989c62_auto-caps-simdna_noedge`), `runtime_options` now
+reads single-dash `-f...` tokens as flags (absent configs proven
+byte-identical against a frozen renderer); (f) `scan_edges` (rx_search
++ a hybrid's rx_prefilter) / `scan_edges_match` (rx_match) counted by
+the emitter's `[OPT-5] SCAN EDGE:` marker, a marker anywhere else
+RAISES; iso-ts 8/4 = I-33's numbers, http-5xx 1/1, ipv6 1/0, floor 0/0,
+forced-VM and denied 0; agreed with an independent reader over 338
+compiles (docs/dev/measurements/2026-09-02-scan-edge-attribution-
+census.txt); (j) `CELL_CAP` (default 5400 with its reason; printed on
+every attempt line; rc=124 named as the cap) + `CELL_CAP_<set>[_<label>]`
+through a subshell in run_suite.sh; (e) the cell-length table in
+scripts/CLAUDE.md; ten checks. A scratch `quick` on a loaded box put
+noedge ×1.70 FASTER than pcrec-auto on iso-ts search (inconclusive-load,
+a signal, not a number). b32rep (sonnet; 3b313c5, merged 9f4b5d4):
+reporter v12 — KB-8's filtered count, KB-9's `(clang cc)` suffix, the
+worst-other-core header line, the `edges=` clause, KB-10's `refused`
+arm (`_split_quick_cells`, test_quick.py); 66 reports regenerated in
+one process (header lines only; the two cc groups' suffix); tests 62 →
+66 + 7; KB-8/9/10 closed. Merged tree: 4/72/0 · 253/253 · 66+7 in ~15
+min. [B32] has only (g) left (the frameless column at abi 16).
+TONIGHT'S WINDOW is plumbed and on the plan row (option A): SUITE
+"altwide altwide:bigcap loglines:noedge", the six pinned on altwide@0.2,
+the bigcap pair under CELL_CAP_altwide_bigcap=14400, pcrec-auto +
+pcrec-auto-noedge on loglines in the same window (the lane's point: one
+window apart, iso-ts the row to read first); ~5-6 h; Frank's go owed.
+Lessons: "you will not be woken" in the brief did NOT stop b32rep
+idling on its make check — the nudge did, within a minute; the brief
+should give the exact foreground command (`gnutimeout N tail --pid=P -f
+/dev/null`) rather than a rule. A lane's report can name a stale
+number in the root CLAUDE.md (221 was long fixed) — verify before
+editing. A merged lane's worktree can hold an uncommitted edit; look
+before `remove --force`.

@@ -182,7 +182,14 @@ at the defaults 50/80 refuse, an auto refusal 0.07-40 s, a VM one <0.1 s;
 docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt) and schema
 v1.5. NOT YET MEASURED: altwide@0.2's window (six pinned testees + the
 bigcap pair) waits for the gcc-time census on the raised artifacts and a
-quiet box. Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. Manager sessions start with the
+quiet box. Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
+EVENING [B32] landed as two lanes: `pcrec-auto-noedge` + the `scan_edges` /
+`scan_edges_match` covariate pairs on every pcrec compile row (iso-ts 8/4 by
+value) + `CELL_CAP` in the window scripts + the cell-length table (b32adp),
+and reporter **v12** — the filtered record count in the header (KB-8), the
+`(clang cc)` suffix (KB-9), the worst other-core header line, the `edges=`
+clause, `quick --vs` on a refused arm (KB-10); 66 reports regenerated
+(b32rep). make check 4/72/0 · 253/253 · 66+7. Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -303,7 +310,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 243 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 253 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
