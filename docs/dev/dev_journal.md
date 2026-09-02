@@ -2331,3 +2331,38 @@ keep the worktree, and say so; two hands on the same fix (mine and the
 lane's on the 96e44c2 files) was a near-collision resolved by taking the
 lane's superset; the suite summary's per-set rc hides a killed cell —
 grep the per-attempt rc lines after every window.
+
+## 2026-09-02 (EDT, ~15:3x), eighth session (part 1) — wake; [B30] ruled, [B31] cleared (limits file OUT of the set); I-34 acked; three lanes opened
+
+Woke at 58c7cf7 (clean, green from the seventh session's last full
+run; the I-32/I-33 acks of 2026-09-02 ~14:4x went into plan.md at
+3389a3c/58c7cf7 without a journal line — this is it). No new inbox
+item at wake; pcrec main 39 commits past our pin (plan/journal
+traffic; STEP 2 lane opt5i and [OPT-VMFL] step 0 building; [OPT-NEG]
+and [FEAT-VAR] filed there from Frank's ideas). Frank's rulings this
+session: [B30] "agree" — schema v1.5 raises `free_text` to a 1 MiB
+hygiene bound, the omission fallback stays, the reason is written down
+(65e5a5d); [B31] CLEARED, and "I agree with your limits file proposal"
+— NO pcrec-oracled `pcrec_limits.tsv` in bench/altwide: the sets stay
+engine-neutral (R-BENCH-4) and pcrec's first refusing widths live in
+the reports and ledgers where they already are (6ca3024). I-34 landed
+on master from pcrecdev1 mid-session (742c6bc: the ×9 population
+reading exact on our four sets, 0 under-counts; the direct-branch
+dispatcher not a win, D77 unmet; `RX_VM_FRAMELESS` drafted) — acked on
+[B32] (g) as the future covariate/column that replaces the grep
+(3e88435). Three lanes, disjoint footprints, worktrees off 742c6bc:
+b31alt (opus, BLINDED as 0.1's — bench/altwide@0.2: the dense
+w-96/128/192/384 ladder, the structure arms twinned at 256 incl.
+srt-256 as the compilable ALTCLS pair, predictions before any run
+incl. the wide rungs under the raise, byte-identical 0.1); b31cap
+(opus — the raised-cap config axis in testees/pcrec: optional
+`max_emit_bytes` / `max_emit_code_bytes` keys → pcrec's raise-only
+flags, an identity in testee_id/build_flags composed with `cc`, the
+BOUND measured by compiling all 20 altwide@0.1 patterns under a probe
+raise at 1989c62 and archived under docs/dev/measurements/, the w-512
+VM control, `pcrec-auto-bigcap` / `pcrec-vm-bigcap`); b30cap (sonnet
+— schema v1.5, the synthetic >1 MiB "above" witness, KB-7 closed).
+Footprint sent to pcrecdev1 (build lanes only, no window); stall
+watchdog cron up (10 min). Nothing measured today; altwide@0.2's
+window is a later session's, after [B31] merges and the cell-time
+estimate is checked against the 5400 s cap.
