@@ -39,6 +39,18 @@
 #              as its plain sibling. Run them as their own TESTEES list
 #              (or, under run_suite.sh, as $TESTEES_altwide / a labelled
 #              second pass `altwide:bigcap` with $TESTEES_altwide_bigcap).
+#   CELL_CAP   5400                  -- the PER-CELL wall-clock cap, in
+#              SECONDS, around each `pcrecbench run` (see THE PER-CELL CAP
+#              below for where 5400 came from). A cell killed by it exits
+#              124 and leaves NO record, so a set that needs longer must
+#              raise this rather than lose the cell: bench/altwide@0.2's
+#              `pcrec-vm-bigcap` pass needs ~4,500 s of COMPILE alone at
+#              five trials (docs/dev/measurements/2026-09-02-altwide-
+#              raised-cap-sizes.txt section 2), which is over this default
+#              before a single match is measured. Under run_suite.sh it is
+#              settable per set as $CELL_CAP_<set> (and per labelled pass
+#              as $CELL_CAP_<set>_<label>). The cap and the rc are printed
+#              on EVERY attempt line, so a log says which cap killed a cell.
 #   NOTE       "quiet window run, $(date -Is)"
 #   LOG        build/windows/window_${SUBBENCH}_$(date +%Y%m%dT%H%M%SZ).log
 #              (gitignored -- `build/` is in .gitignore already)
@@ -70,8 +82,9 @@
 # that specific transient and is provably harmless: a truly quiet box
 # stays quiet across 15 idle seconds.
 #
-# THE PER-CELL CAP (2026-09-02, the [B26] full-suite night): `gnutimeout 5400`
-# around each `run`, up from 3000. bounded@0.3's clang cells ran 49-50 min
+# THE PER-CELL CAP (2026-09-02, the [B26] full-suite night): 5400 s around
+# each `run`, up from 3000 -- and, since [B32], the DEFAULT of a $CELL_CAP
+# variable rather than a number written into the loop. bounded@0.3's clang cells ran 49-50 min
 # (auto-clang 49:22 measured; nocaps-clang and vm-clang KILLED at 50:00 with
 # rc 124, both re-run by hand after the suite) against the old 3000 s cap --
 # a cap sized for 0.1/0.2's ~20-min cells. A cap firing is a lost cell with
@@ -79,6 +92,16 @@
 # set's rc is the index's), so the budget now sits ~2x above the longest
 # measured cell (bounded@0.3 x pcrec-vm-clang, ~50 min). rc 124 is logged
 # per attempt; grep the window logs for it after every window.
+#
+# WHY IT IS A VARIABLE ([B32], 2026-09-02). The 5400 s that is ~2x the
+# longest cell measured at 1989c62 is under HALF what one chartered cell
+# needs: bench/altwide@0.2's `pcrec-vm-bigcap` pass sums to ~4,500 s of
+# gcc alone over the thirteen wide rungs at five trials, before the match
+# and throughput regimes are measured at all (the [B31] size census,
+# section 2). A cap is a property of the CELL, not of the script, so it is
+# now $CELL_CAP with 5400 as the default -- the value and the reason above
+# both unchanged for every set that does not set it. scripts/CLAUDE.md
+# carries the measured cell-length table this is budgeted against.
 #
 # THE GATE BUDGET (2026-08-29, the 36d5963 window): 3 x 20 s LOST cells
 # that day -- a peer lane's breach and, after it, the two managers' own
@@ -103,6 +126,7 @@ TRIALS=${TRIALS:-5}
 STORE=${STORE:-store}
 EXTRA=${EXTRA:-}
 TESTEES=${TESTEES:-"pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in"}
+CELL_CAP=${CELL_CAP:-5400}
 NOTE=${NOTE:-"quiet window run, $(date -Is)"}
 DRY_RUN=0
 
@@ -112,6 +136,10 @@ for arg in "$@"; do
     *) echo "run_window.sh: unrecognized argument: $arg" >&2; exit 2 ;;
   esac
 done
+
+case "$CELL_CAP" in
+  ''|*[!0-9]*|0) echo "run_window.sh: CELL_CAP must be a positive whole number of SECONDS, got '$CELL_CAP'" >&2; exit 2 ;;
+esac
 
 REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd) || exit 9
 cd "$REPO" || exit 9
@@ -154,7 +182,7 @@ fi
 LOG=${LOG:-build/windows/window_${SUBBENCH}_$(date -u +%Y%m%dT%H%M%SZ).log}
 mkdir -p "$(dirname "$LOG")" || exit 9
 
-echo "== window run start $(date -Is) subbench=$SUBBENCH store=$STORE dry_run=$DRY_RUN load=$(cat /proc/loadavg)" | tee -a "$LOG"
+echo "== window run start $(date -Is) subbench=$SUBBENCH store=$STORE dry_run=$DRY_RUN cell_cap=${CELL_CAP}s testees='$TESTEES' load=$(cat /proc/loadavg)" | tee -a "$LOG"
 
 # The warm-up is ADVISORY: `quiet` now judges every sample through the same
 # `gate()` a run's pre-flight uses (v1.4, ruling R-7), but its exit code is
@@ -172,11 +200,18 @@ for t in $TESTEES; do
   echo "-- cell $SUBBENCH x $t $(date -Is) load=$(cut -d' ' -f1-3 /proc/loadavg)" | tee -a "$LOG"
   spread_retried=0
   for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
-    gnutimeout 5400 python3 -m pcrecbench run --subbench "$SUBBENCH" --testee "$t" \
+    gnutimeout "$CELL_CAP" python3 -m pcrecbench run --subbench "$SUBBENCH" --testee "$t" \
         --trials "$TRIALS" --pin "$PIN" --subject-timeout 60 --driver-timeout 900 \
         --store "$STORE" $EXTRA --note "$NOTE" >> "$LOG" 2>&1
     rc=$?
-    echo "   attempt $attempt rc=$rc $(date -Is)" | tee -a "$LOG"
+    echo "   attempt $attempt rc=$rc cell_cap=${CELL_CAP}s $(date -Is)" | tee -a "$LOG"
+    if [ "$rc" -eq 124 ]; then
+      # A cap firing is a LOST cell with no record, and the suite summary
+      # cannot tell one from a clean set (the set's rc is the index's).
+      # Say so in the log, in the cap's own words, where a morning read
+      # will find it.
+      echo "   KILLED by the per-cell cap of ${CELL_CAP}s -- no record was written for this cell; raise CELL_CAP (or CELL_CAP_$SUBBENCH under run_suite.sh) and re-run it" | tee -a "$LOG"
+    fi
     if [ "$rc" -eq 4 ]; then
       # inconclusive-spread: the record is written; re-measure ONCE (R-6).
       if [ "$spread_retried" -eq 0 ]; then
