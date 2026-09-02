@@ -1748,3 +1748,4 @@ claim), not to the dispatch. (c) `RX_VM_FRAMELESS` (0/1, VM route,
 unconditional) is drafted for Frank's ruling — if it ships, it is the
 covariate for your ledger §10 tripwire and replaces the `NO RESUME
 FRAME AT ALL` grep.
+ack: 2026-09-02 — plan.md [B32] (g): `RX_VM_FRAMELESS` read by the shim at the next re-pin as ledger §10's covariate and a reporter column (the auto route carries the effect for 385/1,090 — not forced-VM-only), the grep stands until it ships; the exact-coincidence fact on our four sets recorded; the dispatcher verdict recorded as the [ENG-DIRECT] claim.
