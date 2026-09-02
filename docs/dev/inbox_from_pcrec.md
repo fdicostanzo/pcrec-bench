@@ -1823,3 +1823,4 @@ same shape and length (53 vs 48 instructions). It reads as a code-
 layout artefact of that gcc build. Please re-run that one cell (a
 periodic-clang slot is fine) and mark the ledger row provisional until
 then.
+ack: 2026-09-02 — plan.md [B32] (I-35: the clock split as the standing rule, WINDOW OPEN the handshake, STAGE START before an evening battery; the census facts on [LIM-2]/[ENG-ISL] noted), [B33] NEW (I-36: clang as a compile-only gate on every pin with the refusal set diffed against gcc's; the timed clang arms out of the nightly, the `:clang` pass kept for on-demand; periodic re-runs on the named triggers) and its I-37 rider (the `floor`/match/`auto` bounded cell re-run in a periodic-clang slot; the ledger §5.4 row marked PROVISIONAL in place; the two [CC-DIFF] transformations recorded as a future AFTER if Frank ships them).
