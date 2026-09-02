@@ -63,6 +63,16 @@
 # that specific transient and is provably harmless: a truly quiet box
 # stays quiet across 15 idle seconds.
 #
+# THE PER-CELL CAP (2026-09-02, the [B26] full-suite night): `gnutimeout 5400`
+# around each `run`, up from 3000. bounded@0.3's clang cells ran 49-50 min
+# (auto-clang 49:22 measured; nocaps-clang and vm-clang KILLED at 50:00 with
+# rc 124, both re-run by hand after the suite) against the old 3000 s cap --
+# a cap sized for 0.1/0.2's ~20-min cells. A cap firing is a lost cell with
+# no record, indistinguishable in the suite summary from a clean set (the
+# set's rc is the index's), so the budget now sits ~2x above the longest
+# measured cell (bounded@0.3 x pcrec-vm-clang, ~50 min). rc 124 is logged
+# per attempt; grep the window logs for it after every window.
+#
 # THE GATE BUDGET (2026-08-29, the 36d5963 window): 3 x 20 s LOST cells
 # that day -- a peer lane's breach and, after it, the two managers' own
 # claude processes (~9 % + ~6 % CPU while streaming) left an 11 % residue
@@ -155,7 +165,7 @@ for t in $TESTEES; do
   echo "-- cell $SUBBENCH x $t $(date -Is) load=$(cut -d' ' -f1-3 /proc/loadavg)" | tee -a "$LOG"
   spread_retried=0
   for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
-    gnutimeout 3000 python3 -m pcrecbench run --subbench "$SUBBENCH" --testee "$t" \
+    gnutimeout 5400 python3 -m pcrecbench run --subbench "$SUBBENCH" --testee "$t" \
         --trials "$TRIALS" --pin "$PIN" --subject-timeout 60 --driver-timeout 900 \
         --store "$STORE" $EXTRA --note "$NOTE" >> "$LOG" 2>&1
     rc=$?
