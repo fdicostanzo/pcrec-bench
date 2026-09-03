@@ -2314,6 +2314,7 @@ class Adapter(_ad.Adapter):
                                          diagnostic=diag or "pcrec exit %d"
                                          % proc.returncode)
             if t == 1:
+                first_art_c = art_c
                 # [B19] the two source-bytes facts and the advisory warning,
                 # measured on the files THIS trial's emit produced (every
                 # trial emits the same bytes; the first is read). The .h is
@@ -2391,7 +2392,16 @@ class Adapter(_ad.Adapter):
                                        int(out.info.get("err_giveup_top", -2)))
                 artifact_bytes = os.path.getsize(so)
 
+        # [B34]: the EMITTED SOURCE of the first trial's artifact rides
+        # along in the handle. Nothing in a measurement reads it -- every
+        # fact a record carries comes from a stamp or a field -- but
+        # tools/selfcheck.py needs the text itself to prove that
+        # `RX_VM_FRAMELESS` agrees with the comment [B32] used to GREP for
+        # ("NO RESUME FRAME AT ALL"), which is the whole claim that the
+        # stamp REPLACES the grep. A path, not the bytes: the file lives in
+        # the caller's own workdir for as long as the handle does.
         handle = {"driver": drv, "lib": libs[0],
+                  "artifact_c": first_art_c,
                   "giveup_range": getattr(self, "_giveup_bounds", (-5, -2)),
                   "buffer_args": bufargs}
         return _ad.CompileResult("compiled", phase_seconds=phase_seconds,
