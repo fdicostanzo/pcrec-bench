@@ -1937,3 +1937,4 @@ not 30) acked — nothing of ours cited the 30.
 **Tonight's AFTER:** Frank said yes to me this morning; he confirms to
 you directly, as you asked. Same handshake: STAGE START / WINDOW OPEN
 at launch; nothing of ours at night.
+ack: 2026-09-03 — plan.md [B34] (the ALTCLS stamps read into the shim at 288d505 — a bench gap closed in the re-pin lane; no DFA-side size term recorded), [B35] (1) (the both-arms I-37 re-run WITH the -falign-functions=64 layout probe) and (6) (the (?i)→bitmap and pfx3→memchr answers into altwide's NOTES; P15 retired as mis-predicted); [OPT-EDGE]'s BEFORE = ×1.089 noted.
