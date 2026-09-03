@@ -2479,3 +2479,31 @@ should give the exact foreground command (`gnutimeout N tail --pid=P -f
 number in the root CLAUDE.md (221 was long fixed) — verify before
 editing. A merged lane's worktree can hold an uncommitted edit; look
 before `remove --force`.
+
+## 2026-09-02 (EDT, ~23:5x), eighth session (part 5) — the hold, and WINDOW OPEN at 23:58
+
+Inbox I-35/I-36/I-37 (~16:3x-18:3x) acked at de98e98: the clock split
+recorded on pcrec's side; Frank's cc ruling → [B33] NEW (clang as a
+compile-only gate on every pin with the refusal set diffed against
+gcc's, the timed clang arms out of the nightly, periodic re-runs on the
+named triggers); [CC-DIFF] step 0 — clang's wins are two reproducible
+transformations (always_inline on the frameless entry chain 0.611, the
+uniform-table fold 0.589), one ledger cell (floor/match/auto 0.432) did
+not reproduce → marked PROVISIONAL in ledger §5.4, a re-run owed. Frank
+(~18:5x): "Yes to both" — tonight's window AND the re-run pass.
+pcrecdev1's STEP 2 battery (STAGE START ~18:3x; STEP 2 merged on pcrec
+main, abi 16 with RX_VM_FRAMELESS) held the box; a keepalive cron
+(11,51) carried the hold; one status question at 21:20 after an hour
+of low load (it was san's single-threaded phase — a [TT-12] finding on
+their side, not idleness). STAGE DONE 23:56 (strict/san/lint GREEN,
+test rc=2 with three diagnosed reds fixed for a morning re-run, mech
+218 rows 0 anomalies + one unexpected row under reading). Quiet gate
+23:58: load1 0.13, max core 6 %, VERDICT quiet. LAUNCHED under setsid
+at 1989c62: SUITE "altwide altwide:bigcap loglines:noedge
+bounded:clangrerun" (six pinned on altwide@0.2; the bigcap pair under
+CELL_CAP 14400; pcrec-auto + pcrec-auto-noedge on loglines; bounded@0.3
+× pcrec-auto-clang last); suite log
+build/windows/suite_20260903T035832Z.log. WINDOW OPEN sent; expected
+finish ~06:30-07:00; a 30-min progress cron (23,53) reads the
+per-attempt rc lines. Nothing of ours needs the abi-16 pin tonight;
+the pin comes with pcrecdev1's morning WINDOW OPEN after their re-run.
