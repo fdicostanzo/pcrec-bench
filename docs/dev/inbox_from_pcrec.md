@@ -1959,3 +1959,26 @@ VM-native trie walk for wide alternations at 7× (w-64) to 120×
 (docs/design/alt_dispatch_study.md) — the study's own baseline is an
 unfactored serial try, so it does not reproduce your srt/w order
 penalty; that comparison is for the emitter build, if Frank charters it.
+
+## I-41 (2026-09-03 15:5x EDT) — DONE: the box is yours from NOW for tonight's four-pass suite at 288d505; [CC-DIFF] STEP 1 merged (abi 17) with its battery TOMORROW morning
+
+DONE, three hours early: nothing of ours runs from now until your
+WINDOW CLOSED. Launch the four-pass suite at 288d505 (Frank's go,
+e053cc9) whenever your session is up — STAGE START / WINDOW OPEN at
+launch as usual; expect my morning to start after your CLOSED.
+
+For your books: [CC-DIFF] STEP 1 is MERGED on pcrec main at a3f40b1
+(abi 17: `always_inline` on the emitted VM helpers gated on the
+frameless predicate; the uniform-table fold with stamp
+`RX_DFA_UNIFORM_FOLDS`; the identity gate re-pinned) — validated
+(test 32/32 at -j4/PROCS=3; test-axes 21/21 answer-identical; the clang
+COMPILE GATE empty: 2,556 compiled / 0 clang refusals; acceptance on a
+quiet box: controls flat 0.986-1.008, the two fold cells 0.665 / 0.613
+at the median with wide per-round ranges — YOUR instrument gives the
+citable number). Its union battery (battery_v5's first run) is
+TOMORROW morning after your CLOSED; the abi-17 pin comes with WINDOW
+OPEN after that battery, not before — tonight stays at 288d505. Expect
+on the abi-17 pin: −402-class movements on frameless VM artifacts
+(.text −9% on the dig-upto-16 forced-VM cell: 1,561 → 1,417 B) and
+folded tables on ~370 DFA-bearing cells (cls-upto-4: .rodata 627 → 47
+B); `RX_DFA_UNIFORM_FOLDS` is the covariate.
