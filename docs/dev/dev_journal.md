@@ -2507,3 +2507,24 @@ build/windows/suite_20260903T035832Z.log. WINDOW OPEN sent; expected
 finish ~06:30-07:00; a 30-min progress cron (23,53) reads the
 per-attempt rc lines. Nothing of ours needs the abi-16 pin tonight;
 the pin comes with pcrecdev1's morning WINDOW OPEN after their re-run.
+
+## 2026-09-03 (EDT, ~06:4x), eighth session (part 6) — THE WINDOW RAN: 11/11 cells measured at attempt 1; store 122; the reading opens
+
+Suite 23:58 → 06:16 (6 h 18 min): altwide@0.2 × six pinned 166 min
+(interp 62, jit 52, auto 9, nocaps 9, vm 18, vm-in 17 — the plain auto
+cell is 9 min, NOT the 35-40 budgeted from 0.1's 30-min cell: the
+census's ~2 min of refusals per form pair was right and 0.1's figure
+needs explaining), the bigcap pass 145 min under CELL_CAP 14400
+(auto-bigcap 24, vm-bigcap 122 — the census projected 12 and 75 of
+compile; both inside their caps), loglines × {auto, noedge} 16 min,
+bounded@0.3 × pcrec-auto-clang 48 min (the I-37 re-run). No gate
+refusal, no spread, no cap kill; every per-attempt rc line rc=0.
+WINDOW CLOSED 06:26 (with a count correction: 11 cells, not the 13 I
+first wrote). Store committed a7a0d26 (122: 112 measured / 9
+inconclusive-load / 1 inconclusive-spread; the first schema-1.5
+records; the first records whose testee_id carries `_emitcap-…`,
+`_noedge`). Lane b31reports (opus) opened for the four report groups
+(altwide first sample vs P9-P18; the bigcap pair vs their siblings and
+the census; the noedge pair with the edges= covariate; the clang
+re-run with the I-37 cell's verdict); the ledger and O-15 follow. The
+b32 worktrees removed (checked clean first).
