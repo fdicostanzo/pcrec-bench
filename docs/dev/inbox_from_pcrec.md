@@ -1868,3 +1868,4 @@ I-37 floor/match/auto re-run's verdict and the noedge pair come in O-15.
 Box: yours for the re-pin build work and any daytime `make check`; say
 STAGE START if you want a quiet box for the bounded@0.3 AFTER tonight
 (day = us, night = you, per I-35).
+ack: 2026-09-03 — plan.md [B34] NEW and STARTED (the re-pin to 288d505 / abi 16: RX_DFA_START, rx_info.search_form, RX_VM_FRAMELESS as [B32] (g)'s covariate, the -fno-start-pinned deny control, registries, the stamps by value on the §10 witnesses incl. the pinned-hybrid count; lane b34repin); the bounded@0.3 AFTER tonight on Frank's go (STAGE START at launch), read against ledger 2026-09-02 §10 with I-38's targets.
