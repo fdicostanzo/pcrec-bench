@@ -2,30 +2,31 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-1989c62/build/pcrec --list-axes
+#     build/pcrec-288d505/build/pcrec --list-axes
 #
-# pcrec commit 1989c623bffb431c65c49262e7eb88eb029a21ef (abi 15), archived by
-# testees/pcrec/pin.sh on 2026-09-01 (PIN.tsv); captured 2026-09-01 by lane
-# b26repin ([B26]). 70 data rows / 23 axes / 12 columns -- the FOURTH
+# pcrec commit 288d505b3bf6d78074334113bd9ac7d265ab148d (abi 16), archived by
+# testees/pcrec/pin.sh on 2026-09-03 (PIN.tsv); captured 2026-09-03 by lane
+# b34repin ([B34]). 72 data rows / 24 axes / 12 columns -- the FOURTH
 # registry surface (pcrec docs/spec/registry.md 6, [CHK-2]). The diff from
-# the a7e0bdf copy (69 / 23, [B25]) is ONE ROW IN AN EXISTING AXIS and
-# nothing else -- no new axis, no column change, no value moved:
+# the 1989c62 copy (70 / 23, [B26]) is ONE NEW AXIS of two rows and nothing
+# else -- no column change, no existing row's text moved, no renumbering:
 #
-#   - `engine-route` gains `declined-nullable-default` ([OPT-4.2], pcrec
-#     abi 14), INSERTED AT ORDER 2 -- immediately after `forced` -- so the
-#     six rows below it renumber 2-7 -> 3-8 and their text is otherwise
-#     byte-identical. It is the general, RUNGLESS form of
-#     `declined-nullable`: nothing overflowed, and the ordinary hybrid's
-#     own EXACT prefilter language is nullable, so the prefilter is
-#     declined. Such an artifact stamps RX_VM_PREFILTER "none" and carries
-#     NO RX_VM_PREFILTER_LANG pair -- match_api.md 6.3's iff, asserted both
-#     ways by the adapter and by value in tools/selfcheck.py.
+#   - `search-start` ([OPT-5] STEP 2, pcrec abi 16), inserted between
+#     `scan-body` and `possessify`, stamped through RX_DFA_START:
+#     order 1 `pinned` (kind `list`, deny PCREC_NO_START_PINNED / bit 22 /
+#     `-fno-start-pinned`) and order 2 `reverse-pass` (the fallback, no
+#     deny and no flag -- a candidate reached only by falling through).
+#     Its `applies` column is the PREDICATE this bench's witnesses are
+#     chosen against: ENG_UNANCH, a non-empty engine, and a forward start
+#     state that accepts under the plain view with an accept invariant in
+#     position and in class context. Where it holds the artifact carries
+#     NO reverse machine at all (match_api.md 6.3).
 #
-# The row order IS the preference order within an axis, so the renumbering
-# is data and not noise: pcrec tries the rungless decline before the
-# cap-driven rungs. `--list-limits` and `--list-definitions` are BYTE-
-# IDENTICAL to their a7e0bdf copies below their own headers (measured):
-# o42 and w12 added no numeric limit and no definition.
+# Unlike [B26]'s diff, this one renumbers nothing: the axis is new, so its
+# two rows insert whole and every other row keeps its order and its text.
+# `--list-limits` and `--list-definitions` are BYTE-IDENTICAL to their
+# 1989c62 copies below their own headers (MEASURED at this re-pin): [OPT-5]
+# STEP 2 adds no numeric limit and no definition.
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).
@@ -82,6 +83,8 @@ scan-body	1	range	list	RX_DFA_SCAN_EDGE	range						the edge's class is a CONTIGU
 scan-body	2	bitmap	list	RX_DFA_SCAN_EDGE	bitmap						always (fallback) -- any other byte set, tested by a 256-byte membership table. The load is VALUE-addressed, not result-addressed, so the cursor is still the only loop-carried register. A per-ISA SIMD run-extension form would sit ABOVE these two ([OPT-SIMD]; ISA-neutral by ruling, scalar forms always the fallback)
 scan-body	3	none	predicate	RX_DFA_SCAN_EDGE	none						the artifact carries no scan edge, so there is no body to name: no machine has a collapsible counted run, or the engine is ENG_ATTEMPT (label dispatch, no table walk to shorten) or provably empty -- and it is also what every artifact stamps under -fno-scan-edge, which denies the scan-edge axis above rather than this one
 scan-body	4	mixed	predicate	RX_DFA_SCAN_EDGE	mixed						the artifact's own edges took DIFFERENT bodies (dfa_scan_edge_name(): one machine's edge tests a contiguous range, another's reads a membership table) -- a per-artifact composition, never a single edge's own selection
+search-start	1	pinned	list	RX_DFA_START	pinned	PCREC_NO_START_PINNED	22			-fno-start-pinned	ENG_UNANCH, a non-empty engine, and the forward machine's start state accepts under the PLAIN view with an accept that is invariant in position and in class context -- and, where mechanism 4 seeds, every live seed state does too. The match then provably begins at search_from and no reverse machine is emitted ([OPT-5] STEP 2)
+search-start	2	reverse-pass	list	RX_DFA_START	reverse-pass						always (fallback) -- the backwards scan over the artifact's own reverse machine recovers the match start
 possessify	1	possessive	predicate	RX_VM_STRATS	PCREC_VM_STRAT_POSSESSIVE	PCREC_NO_POSSESSIFY	4			-fno-possessify	per A_REP: possessify.c proves the loop's body can never profitably re-enter
 possessify	2	backtracking	predicate	RX_VM_STRATS	PCREC_VM_STRAT_BACKTRACKING						always (fallback)
 revdet	1	revdet	predicate	RX_VM_RUNGS	PCREC_VM_RUNG_REVDET	PCREC_NO_REVDET	5			-fno-revdet	per A_REP: forward unique-iteration lets the body run backward with no choice points
