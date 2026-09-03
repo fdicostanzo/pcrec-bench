@@ -187,7 +187,17 @@ docs/dev/ledgers/2026-09-03-altwide-0.2-noedge-ccrerun-1989c62.md, O-15:
 the refusal boundary 256 < w ≤ 384 on both routes, the flat auto line to
 w-2048 under the raise (×627 the JIT), branch ORDER ×8.87 on the VM and
 free on the DFA (srt-256), the scan edge ×1.09 as a counterfactual (the
-scratch ×1.70 did not survive), the I-37 0.432 reproduced on the clang arm. Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
+scratch ×1.70 did not survive), the I-37 0.432 reproduced on the clang arm. THE SAME MORNING pcrec's
+[OPT-5] STEP 2 pinned (I-38, **288d505, abi 16**) and [B34] RE-PINNED to it
+(merged aca987f, by day): the shim reads `RX_DFA_START` (pinned /
+reverse-pass), `rx_info.search_form` (the floor 15 → 16), `RX_VM_FRAMELESS`
+(the [B32] (g) covariate; NOT the same as resume_frames == 1 on the
+lookaround witnesses) and — a bench gap closed, I-39 — the ALTCLS pair,
+which reads the ×8.87 order effect's mechanism: w-256 vs srt-256 FACTORED 11
+vs 57 with the DFA artifact byte-identical; `-fno-start-pinned` as a deny
+control; registries 72/24 · 50 · 45; reporter v13 (`start=`, `frameless=`);
+make check 4/72/0 · 270/270 · 68+7. NOT YET MEASURED at 288d505: the
+bounded@0.3 STEP 2 AFTER (tonight, read against ledger 2026-09-02 §10). Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
 EVENING [B32] landed as two lanes: `pcrec-auto-noedge` + the `scan_edges` /
 `scan_edges_match` covariate pairs on every pcrec compile row (iso-ts 8/4 by
 value) + `CELL_CAP` in the window scripts + the cell-length table (b32adp),
@@ -317,7 +327,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 253 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 270 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'

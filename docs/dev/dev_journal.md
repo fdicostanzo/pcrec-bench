@@ -2562,3 +2562,37 @@ pin 288d505 (abi 16: RX_DFA_START, rx_info.search_form,
 b34repin (opus) re-pinning by day; the bounded@0.3 AFTER tonight on
 Frank's word here (pcrecdev1 relayed his go; a relay is not the user's
 approval in this session).
+
+## 2026-09-03 (EDT, ~11:4x), eighth session (part 8) — [B34] re-pinned to 288d505 (abi 16) and merged; three lanes and two API overloads; the ALTCLS read
+
+I-38 (07:5x): STEP 2 battery-proven, pin 288d505. Lane b34repin (opus)
+made four WIP commits (pin + registries; shim/driver/adapter reading
+RX_DFA_START / search_form / RX_VM_FRAMELESS; the stamps by value with
+the size books; the reporter's start=/frameless= clauses) and then died
+three times on API 529 overloads; I committed its reporter work and the
+doc pin lines. I-39 (08:5x) said the ALTCLS stamps ALREADY EXIST and
+our shim never read them — added to the lane's scope, but b34altcls
+(opus) died on a 529 before starting; b34altcls2 (sonnet) delivered it
+(4ae00fe/335f421): both stamps common to both routes, merges 0 on all
+of altwide (P1 holds), factored 11 on w-256 vs 57 on srt-256 with the
+DFA artifacts byte-identical except that stamp line — the ×8.87 order
+effect's mechanism, read. pcrecdev1 asked for a make-check hold
+10:07-10:50, then to 11:30 (three load-comparable test-stage shapes;
+K44 retires by measurement, its test stage moves to -j4/PROCS=3); our
+lane's check was stopped by PID twice (once it had started a check
+"because the box quieted" — the hold is a CLOCK, not a load reading;
+`selfcheck.py --help` is NOT a help flag, it runs the whole suite), then
+CLOSED; I ran the check myself after DONE (11:10). The first run was
+red on two arms of my own [B31]/[B32] design: "every COMMITTED record at
+this pin re-derives" is VACUOUS at a fresh re-pin (no 288d505 records
+yet) — fixed to render against the previous pin's records with the pin
+printed (70efda2). Second run 4/72/0 · 270/270 · 68+7; merged aca987f.
+Findings: vm_frameless ≠ resume_frames == 1 (the lookaround witnesses
+stamp frameless with a two-frame capacity — I-34's over-count
+population, exactly); STEP 2 takes 3,392 B off cls-upto-16384's pinned
+artifact; a search-start axis (two rows) is the only registry change.
+Lessons: give lanes the exact command for a wait (they idle on
+monitors regardless of prose); a hold is a clock; a model pool can be
+overloaded while another is fine — switch models rather than retry;
+a check that proves a renderer against committed records must say what
+it does at a pin with no records.
