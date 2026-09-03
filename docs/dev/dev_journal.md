@@ -2528,3 +2528,37 @@ records; the first records whose testee_id carries `_emitcap-…`,
 the census; the noedge pair with the edges= covariate; the clang
 re-run with the I-37 cell's verdict); the ledger and O-15 follow. The
 b32 worktrees removed (checked clean first).
+
+## 2026-09-03 (EDT, ~08:5x), eighth session (part 7) — the window READ (lane b31reports: four report groups + the ledger), O-15 sent, [B31] COMPLETE; I-38: the STEP 2 pin 288d505 (abi 16), lane b34repin re-pinning
+
+b31reports (opus; reports 471ab02, ledger b7dfd1a; merged dffccd1 /
+230ab1e): the 969-line ledger 2026-09-03-altwide-0.2-noedge-ccrerun-
+1989c62.md. Verdicts: the refusal boundary is 256 < w ≤ 384 on BOTH
+routes (w-384: 1,431,536 B source, 43 % over; 508,517 B code, 1.7 %
+over); P9 confirmed to 256 (auto flat 2.2-3.5 ms; interp slope 1.0, JIT
+1.39), P11 confirmed (vm/jit 6.5-9.6, no crossing), P12 CONFIRMED —
+srt-256 byte-identical on the DFA and ×8.87 faster on the VM (11.5 %
+smaller; ×20.1 at 512 under the raise, the only cells where a pcrec VM
+beats the JIT), P13 half (s-512 compiles at 94.9 % of the code cap),
+P10 untestable at the defaults but READ under the raise (RX_DFA_TABLE
+premultiplied → mixed at 512 → indexed at 1024; match=search-filter at
+1024 — two stamps explain the two steps, neither is width; the flat
+line survives at ×627 the JIT at w-2048), P15 refuted (pfx3-256 →
+memchr), P17 half (ci-256 stamps edge=bitmap). The noedge pair: every
+edge-taking pattern faster without the edge, the zero-edge ones flat;
+the PINNED figure on iso-ts is ×1.089 — the scratch ×1.70 did not
+survive (a lesson: an inconclusive-load quick on a loaded box is not a
+number, as b32adp itself said). The I-37 cell: 0.432 reproduces to
+three decimals on the clang arm (217.6 → 217.5 ns); the gcc half stays
+measured once. One misread caught: "0.1's auto cell was 30 min" was the
+JIT's cell (auto was 4.8; 0.2's is 8.8) — corrected in NOTES.md and the
+2026-09-02 ledger with dated notes; the 6× planning rule withdrawn. O-15
+written from §1-§9 (six candidates: [OPT-EDGE] on ×1.09; the branch-
+order lever; the two caps; [LIM-2] priced ×190; the \b wrapper's ×1.26;
+pfx3-256; five asks, ALTCLS stamps first). [B31] COMPLETE and archived;
+[B35] the follow-ups. Meanwhile I-38 (07:5x): STEP 2 battery-proven at
+pin 288d505 (abi 16: RX_DFA_START, rx_info.search_form,
+-fno-start-pinned bit 22, RX_VM_FRAMELESS) → [B34] started, lane
+b34repin (opus) re-pinning by day; the bounded@0.3 AFTER tonight on
+Frank's word here (pcrecdev1 relayed his go; a relay is not the user's
+approval in this session).

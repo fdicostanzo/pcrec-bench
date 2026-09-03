@@ -1292,3 +1292,115 @@ measured config (P1, candidate 3's size); the compile phase named `gcc`
 even when clang ran (KB-9); the census summary corrected where quoted;
 the reporter's `N candidate file(s)` header line (KB-8); cells estimated
 against the 5400 s cap before the next window.
+
+## O-15 (2026-09-03 ~08:4x EDT) — the 2026-09-03 window at 1989c62 (11/11 cells, attempt 1): altwide@0.2's first sample — the refusal boundary is 256 < w ≤ 384 on BOTH routes; the flat auto line holds to 256 at the defaults and to w-2048 under the raise (×627 the JIT); branch ORDER is ×8.87 on the VM (×20.1 at 512) and free on the DFA; the scan-edge counterfactual is ×1.09 (not the scratch ×1.70); the I-37 cell's 0.432 REPRODUCES on the clang arm (gcc half still measured once); six candidates, five asks
+
+Ledger: docs/dev/ledgers/2026-09-03-altwide-0.2-noedge-ccrerun-1989c62.md
+(nine sections, every number cited); reports/2026-09-03-*; store 122
+(112 measured). Window 23:58-06:16 EDT after your STAGE DONE; pre-flight
+1.80-7.85 %, `agree` on all eleven, zero wrong answers, no retry, no cap
+kill (the bigcap pass under CELL_CAP 14400: pcrec-vm-bigcap 121.5 min).
+
+### 1. altwide@0.2 first sample (ledger §2-§3)
+
+- **The boundary.** `w-256 plain` compiles on all four pcrec configs with
+  2.3 % of source-cap headroom; **`w-384` refuses on all four, both
+  forms** — auto/nocaps at 1,431,536 B of source (43 % over 1,000,000),
+  vm/vm-in at 508,517 B of code (1.7 % over 500,000). Both routes cross
+  at the same rung by coincidence of the two cap values. Refusals over
+  66 (pattern × form) cells: auto 32, nocaps 32, vm 26, vm-in 26. A
+  DFA-route refusal costs ×190 a VM-route one (113.8 s vs 0.6 s per
+  pass) — [LIM-2]'s price (candidate 4).
+- **P9 CONFIRMED where readable:** pcrec-auto throughput 2.24 / 3.45 /
+  3.20 / 3.12 / 3.11 / 2.93 ms over w-8..256 (the only rise is 8→64;
+  64→256 declines), search flat to three figures from 96 on; interp
+  rises with slope ~1.0 in width, the JIT with slope 1.39 (irregular
+  steps: 128→192 ×1.98).
+- **P11 CONFIRMED:** vm ÷ jit 6.50-9.55 across the ladder — no crossing.
+- **P12 CONFIRMED on both routes — the night's biggest number.** `srt-256`
+  (w-256's 256 branches sorted by first byte): the DFA artifact
+  BYTE-IDENTICAL (977,055 / 18,829 / 305,448 B); the VM artifact 11.5 %
+  smaller (301,957 vs 341,111 code B) and **×8.87 faster** on
+  throughput (217.6 ms vs 1,931 ms; uniform 8.86-8.88 across the four
+  subjects), ×9.05 on search; auto ×1.006. Under the raise at 512 the
+  same lever is **×20.1**, and `srt-512` is the only shape where a pcrec
+  VM beats libpcre2's JIT (×2.18 / ×2.13). Candidate 2 — and ask (i).
+- **P13:** `s-512` COMPILES on both routes at the defaults (474,312 code
+  B = 94.9 % of the code cap; 843,165 source B) — the VM half confirmed,
+  the source half refuted; twelve rungs need the raise, not thirteen.
+- **P10 UNTESTABLE at the defaults** (`table=premultiplied` on all 68
+  compiled DFA artifacts, `ci-256` included — it tracks width, not class
+  count); P15 REFUTED (`pfx3-256` chooses `prefilter=memchr,
+  offsets=none`, not an offset set — ask (iv)); P17 half-refuted
+  (`ci-256` stamps `edge=bitmap` where 31 of 34 siblings stamp `range`
+  — ask (iii)); the ALTCLS stamps do not exist at abi 15 (ask (i)).
+
+### 2. The raised-cap pair (ledger §4; the I-32 (vii) evidence)
+
+- **The raise is an axis that changes nothing on shared rungs:** identical
+  stamps, identical K (`K=8/default` on all 106 VM legend lines), timings
+  within ±1 % against the plain siblings on every rung both compile.
+- **The flat line ends at 512, and a STAMP says why:** `RX_DFA_TABLE`
+  goes `premultiplied` (w-384) → `mixed` (w-512) → `indexed` (w-1024);
+  the throughput step (3.07 → 4.16 ms) lands on the first transition, the
+  ×16.2 MATCH step (935 → 15,135 ns) one rung later on `match=`
+  `unwrapped` → `search-filter`. Two stamps, two independent steps,
+  neither of them width. The headline survives: at w-2048 pcrec-auto is
+  ×627 the JIT, at s-4096 ×3,496.
+- **Compile cost under the raise, per route:** the forced VM emits in
+  0.01-0.06 s and gcc pays (183/334 s on s-4096); the auto route's cost
+  is the subset construction (11-37 s), gcc <1 s. The census's compile
+  projection came in at +3.6 % (vm) and +1.8 % (auto). No `size-cap-retry`
+  anywhere.
+
+### 3. The scan edge as a counterfactual (ledger §5; [OPT-EDGE]'s BEFORE)
+
+`pcrec-auto` vs `pcrec-auto-noedge` in ONE window, the `edges=` covariate
+on every row (iso-ts 8 search / 4 match; http-5xx 1/1; ipv6 1/0; the
+rest 0): every edge-taking pattern is FASTER without the edge and every
+zero-edge pattern is flat within the same-pin floor (1.32 %). **The
+pinned figure on iso-ts is ×1.089 search / ×1.067 throughput — the scratch
+tier's ×1.70 does not survive** (inconclusive-load, three trials, a
+loaded box: size [OPT-EDGE] on ×1.09). The recovery matches ledger
+2026-09-02 §7.2's regression to three figures and its size to exactly
+six bytes; the term is SUBLINEAR in the edge count, so an O(1)-in-count
+rewrite may recover less than the whole 8.2 %. Acceptance surface:
+loglines@0.1 × {pcrec-auto, pcrec-auto-noedge}.
+
+### 4. The I-37 cell (ledger §6)
+
+**0.432 reproduces to three decimals** (503.3 gcc / 217.6 clang on 09-02;
+217.5 clang on 09-03); clang's absolute number reproduces to 0.05 %, no
+cell of 126 moved more than 2.1 %, and §5.2's whole `auto` row
+reproduces (0.407, 0.484, 1.388, 1.197, 0.670, 1.164). WHAT IT DOES NOT
+SETTLE: only the clang arm was re-measured — the gcc half you dispute
+(your 307 ns vs our 503.3 on byte-identical artifacts) is still measured
+once. Follow-up 1: both arms in one window (~2 h). Ask (v).
+
+### CANDIDATES, ranked (ledger §7; D86, one per row)
+
+1. [OPT-EDGE] — sized on ×1.09, sublinear in count; the BEFORE and the
+   counterfactual are on record.
+2. The branch-ORDER lever on the VM lowering (×8.87 at 256, ×20.1 at 512,
+   grows with width; a sort-by-prefix before lowering if cheap).
+3. The two caps at 256 < w ≤ 384 — the refusals are the only thing
+   between pcrec and this bench's largest wins.
+4. [LIM-2] priced: 113.8 s of DFA-route refusals per pass vs 0.6 s.
+5. `\b…\b` costs ×1.26 of DFA source (wb-256 refuses; w-256 compiles).
+6. `pfx3-256` throughput is the last cell the JIT wins (×1.04 at 256,
+   gone by 512).
+
+### ASKS (ledger §8)
+
+(i) ALTCLS stamps (`RX_ALTCLS_MERGES` / `_FACTORED`) — candidate 2 cannot
+be accepted without them; (ii) does a raised cap ever move a DFA-side
+size term (the DFA route prints no `K=`); (iii) is `(?i)` what selects a
+bitmap edge on `ci-256`; (iv) is the offset-set prefilter reachable from
+a wide shared-prefix alternation at all (`pfx3-256` → memchr);
+(v) the gcc half of [CC-DIFF]'s disagreement — what differs in your
+environment, while we re-run both arms.
+
+Bench-side (ledger §9): the both-arms I-37 re-run; the NOTES cell-time
+anchor CORRECTED (the "30-min auto cell" was the JIT's — auto was 4.8
+min; 0.2's is 8.8); s-512 not a wide rung; a second noedge sample; an
+`srt-1024` under the raise for altwide@0.3; the cell-cap note.

@@ -180,9 +180,14 @@ emitted-size cap axis (`max_emit_bytes`/`max_emit_code_bytes` per config,
 `pcrec-auto-bigcap`/`pcrec-vm-bigcap` at 8 MiB from an 80-compile census —
 at the defaults 50/80 refuse, an auto refusal 0.07-40 s, a VM one <0.1 s;
 docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt) and schema
-v1.5. NOT YET MEASURED: altwide@0.2's window (six pinned testees + the
-bigcap pair) waits for the gcc-time census on the raised artifacts and a
-quiet box. Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
+v1.5. MEASURED 2026-09-03 (the window 23:58-06:16, 11/11 cells at attempt
+1; store 122): altwide@0.2 × six pinned + the bigcap pair, loglines ×
+{auto, noedge}, bounded@0.3 × auto-clang — ledger
+docs/dev/ledgers/2026-09-03-altwide-0.2-noedge-ccrerun-1989c62.md, O-15:
+the refusal boundary 256 < w ≤ 384 on both routes, the flat auto line to
+w-2048 under the raise (×627 the JIT), branch ORDER ×8.87 on the VM and
+free on the DFA (srt-256), the scan edge ×1.09 as a counterfactual (the
+scratch ×1.70 did not survive), the I-37 0.432 reproduced on the clang arm. Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
 EVENING [B32] landed as two lanes: `pcrec-auto-noedge` + the `scan_edges` /
 `scan_edges_match` covariate pairs on every pcrec compile row (iso-ts 8/4 by
 value) + `CELL_CAP` in the window scripts + the cell-length table (b32adp),
