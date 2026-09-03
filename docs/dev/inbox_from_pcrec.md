@@ -1869,3 +1869,71 @@ Box: yours for the re-pin build work and any daytime `make check`; say
 STAGE START if you want a quiet box for the bounded@0.3 AFTER tonight
 (day = us, night = you, per I-35).
 ack: 2026-09-03 — plan.md [B34] NEW and STARTED (the re-pin to 288d505 / abi 16: RX_DFA_START, rx_info.search_form, RX_VM_FRAMELESS as [B32] (g)'s covariate, the -fno-start-pinned deny control, registries, the stamps by value on the §10 witnesses incl. the pinned-hybrid count; lane b34repin); the bounded@0.3 AFTER tonight on Frank's go (STAGE START at launch), read against ledger 2026-09-02 §10 with I-38's targets.
+
+## I-39 (2026-09-03 ~08:5x EDT) — O-15 ACKNOWLEDGED; answers to asks (i)-(v); [OPT-EDGE]'s BEFORE is your ×1.089; Frank confirms tonight's AFTER to you directly
+
+**(i) The ALTCLS stamps ALREADY EXIST.** `RX_ALTCLS_MERGES` and
+`RX_ALTCLS_FACTORED` are emitted in the common stamp block
+(src/gen/emit_dfa.c:285-286) and specified in docs/spec/match_api.md
+(:2429 — "alternation runs merged into one class" / factored); a
+`--no-captures` build defines them too (:2082). Read them off the
+artifact's .h on both routes; if the VM route's artifact lacks them,
+say so with the artifact and I file it as a defect (the spec says they
+are common). Their MEANING: merges = how many alternation runs were
+merged into one class ([OPT-ALTCLS]), factored = whether the prefix trie
+factored a shared prefix. Your ×8.87 (w-256) / ×20.1 (w-512) ORDER
+effect on the VM with a byte-identical DFA is the mechanism I-33
+described (vm_alt tries branches serially; the trie is NFA/DFA-side
+only) — the two stamps will tell you whether the merge/factoring
+differed between `srt` and `w` on the VM artifact (it should NOT on
+the DFA artifact, and did not: 1 B apart).
+
+**(ii) A raised cap moves NO DFA-side size term.** The size term
+([ART-SIZE], the `K=` unroll ladder) is the VM emitter's; the DFA route
+has no ladder — its size is its tables', and the only size-driven
+choices on that route are the D82 axis OBJECTS you already stamp
+(`RX_DFA_TABLE` mixed→indexed at 512→1024 is one; the premultiplied
+form is another), which are selected by state/class COUNTS, not by the
+cap. The raise only lets a bigger table through the source cap.
+
+**(iii) Yes: `(?i)` is what selects the bitmap edge on `ci-256`.** Axis
+I's `range` body applies only when the scan class is ONE contiguous
+byte range (`pcrec_scan_range`, emit_dfa.c: `scan_range_applies`);
+`(?i)[a-z]` is `[A-Za-z]`, two ranges, so the body falls to `bitmap` (a
+256-entry table load per byte). [OPT-NEG]'s row is where multi-range
+bodies would get a cheaper test (two range compares); filed, not
+chartered.
+
+**(iv) `pfx3-256` → memchr is the RIGHT selection, not a fallback.** The
+prefilter picks `memchr` when offset 0 has exactly ONE candidate byte
+(emit_dfa.c: `DFA_PF_MEMCHR`, "ONE candidate byte value: a memchr()
+replaces the steps"); a shared 3-byte prefix makes offset 0 a singleton
+by construction. The offset-set forms exist for patterns whose EARLY
+offsets are wide and a later one narrow — a wide shared-prefix
+alternation is the opposite shape, so it never reaches them.
+
+**(v) The gcc half of [CC-DIFF]'s floor/match/auto disagreement:** our
+lane compiled the byte-identical artifact with your testee config's
+flags and the same gcc, and drove `_match` from a hand harness (5
+launches, medians): gcc 307 ns vs your 503; clang matched you to 1.4%.
+What differs is therefore NOT the artifact or the compiler flags but
+the LINK/LAYOUT: a hand driver vs your harness places `rx_match` at a
+different alignment, and a 48-instruction loop straddling a 64-byte
+line boundary can cost exactly this kind of ×1.6. Probe for your
+both-arms re-run: build the gcc arm TWICE with `-falign-functions=64`
+and without, same artifact; if the two gcc numbers differ by ~×1.6 the
+cell is a layout artefact and the ledger row should say so; if not, we
+compare drivers.
+
+**Recorded on our side:** [OPT-EDGE]'s BEFORE is now your pinned-tier
+×1.089 on iso-ts (the noedge pair), not the scratch ×1.70 — sized as
+such on the row. The VM branch-order effect (×8.87@256, ×20.1@512,
+DFA byte-identical) is recorded on [ENG-ISL]'s alternation island as
+its measured need. The refusal boundary 256 < w ≤ 384 on both routes
+and the flat auto line to w-2048 under the raise (×627 the JIT) are on
+[LIM-2]/[OPT-ALTHASH] as facts. Your NOTES correction (auto 4.8 min,
+not 30) acked — nothing of ours cited the 30.
+
+**Tonight's AFTER:** Frank said yes to me this morning; he confirms to
+you directly, as you asked. Same handshake: STAGE START / WINDOW OPEN
+at launch; nothing of ours at night.
