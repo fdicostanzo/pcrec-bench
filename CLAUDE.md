@@ -286,7 +286,9 @@ bindings) live here, vendored or system, pinned either way.
   pcrec's raise-only flags, an identity in the testee_id ([B31]) — and
   `pcrec-auto-noedge` (`-fno-scan-edge`, [B32]; every pcrec compile row
   also carries the `scan_edges` / `scan_edges_match` covariate pairs) —
-  at a pinned commit — **1989c62, abi 15** — with `list_axes.tsv`,
+  at a pinned commit — **288d505, abi 16** ([B34], 2026-09-03: [OPT-5] STEP 2;
+  the shim reads `RX_DFA_START`, `rx_info.search_form`, `RX_VM_FRAMELESS`
+  and the ALTCLS pair; floor 16) — with `list_axes.tsv`,
   `list_definitions.tsv` and
   `list_limits.tsv`, the pin's `--list-axes` / `--list-definitions` /
   `--list-limits` registry surfaces archived

@@ -34,11 +34,13 @@
  * `pb_has_vm_stamps()` returns 0, and the adapter forwards no VM pairs.
  *
  * THE ABI FLOOR (`PB_SHIM_MIN_ABI`, exported as `pb_shim_min_abi()`). This
- * shim reads five `struct rx_info` FIELDS that pcrec appended after abi 2:
+ * shim reads six `struct rx_info` FIELDS that pcrec appended after abi 2:
  * `scan` and `prefilter` at abi 6 ([DD-13c], match_api.md 6), `match_form`
- * at abi 10 ([ENG-ABS], the runtime mirror of `RX_DFA_MATCH`) and -- since
- * [B26], pin 1989c62 -- `name` and `nentries` at abi 15 ([DD-13b.W1.2])
- * -- so 15 is the lowest artifact this file can read, and it says so in one
+ * at abi 10 ([ENG-ABS], the runtime mirror of `RX_DFA_MATCH`), `name` and
+ * `nentries` at abi 15 ([DD-13b.W1.2], [B26]) and -- since [B34], pin
+ * 288d505 -- `search_form` at abi 16 ([OPT-5] STEP 2, the runtime mirror
+ * of `RX_DFA_START`)
+ * -- so 16 is the lowest artifact this file can read, and it says so in one
  * place instead of leaving the fact implicit in a field access. The driver
  * compares `pb_abi()` against it at load and REFUSES a lower artifact by
  * name; the adapter turns that into a clean AdapterError carrying both
@@ -59,7 +61,16 @@
  * existing macro, not a new surface at all. Abi 15 IS the rule's other
  * direction: two FIELDS appended after `match_form`, both read below, so
  * the floor moves with them -- 10 -> 15, the second rise in this file's
- * life and for the same stated reason as the first.
+ * life and for the same stated reason as the first. Abi 16's ([B34],
+ * [OPT-5] STEP 2) is the rule's THIRD firing and it is a SPLIT event: of
+ * the two surfaces the pin adds, `RX_VM_FRAMELESS` is a macro with no
+ * rx_info mirror (D77's "no consumer reads it at run time yet", stated in
+ * match_api.md 6.3's own entry) and moves nothing, while `RX_DFA_START`
+ * has one -- `search_form`, appended after `nentries` -- and this file
+ * reads THE FIELD as well as the macro, exactly as it does for
+ * `RX_DFA_MATCH` / `match_form`, because the pair is what lets the adapter
+ * cross-check a stamp against a field instead of trusting one spelling.
+ * So the floor moves again, 15 -> 16.
  *
  * THE THREE STAMP FAMILIES THIS FILE READS, and the rule for each
  * (match_api.md 6.3's (a)/(b) split, tuning.md 3):
@@ -76,10 +87,25 @@
  *       run of states differing only in how many bytes of one fixed
  *       class have been counted, replaced by a bounded cursor loop and
  *       DELETED from the transition table -- `"range"` /  `"bitmap"` /
- *       `"mixed"` / `"none"`, tuning.md 2.18). Present IFF the artifact
+ *       `"mixed"` / `"none"`, tuning.md 2.18) and `RX_DFA_START` (abi 16,
+ *       [OPT-5] STEP 2, [B34]: HOW the scan entry recovers the match
+ *       START -- `"pinned"` (the forward machine's start state accepts
+ *       unconditionally, so the match provably begins at `search_from`
+ *       and the artifact carries NO reverse machine at all: no reverse
+ *       transition, accept, byte-class, stay or scan-edge table, no
+ *       `<prefix>_reverse_*` block and no backwards scan loop) or
+ *       `"reverse-pass"` (that second, backwards scan), tuning.md 2.19).
+ *       Present IFF the artifact
  *       CONTAINS a DFA scan -- every DFA artifact and every VM HYBRID,
  *       and no other artifact. `rx_info.scan` / `.prefilter` are the
- *       runtime mirrors of the first two.
+ *       runtime mirrors of the first two and `.search_form` (abi 16) of
+ *       the last; `RX_DFA_TABLE` / `_PREFILTER_OFFSETS` / `_SCAN_EDGE`
+ *       have none. Note the CONSEQUENCE the pinned value carries for two
+ *       of its own family: with no reverse machine to describe,
+ *       `RX_DFA_TABLE` and `RX_DFA_SCAN_EDGE` fold over the forward
+ *       machine alone, so a value that read `"mixed"` at abi 15 because
+ *       the two machines differed can read the forward form's own value
+ *       at abi 16 with no machine having changed.
  *   (a) SELECTION, per-ENTRY: `RX_DFA_MATCH` (abi 10, [ENG-ABS]) --
  *       `"unwrapped"` (a third, anchored forward machine run from
  *       ctx->pos) or `"search-filter"` (the unanchored search with
@@ -131,6 +157,36 @@
  *       absent on a VM artifact -- `RX_FAST_FRAMES == RX_RESUME_FRAMES` IS
  *       the statement "this artifact has one tier", and it is the only
  *       spelling of it.
+ *   (b) ACTIVITY, VM-only: `RX_VM_FRAMELESS` (abi 16, [OPT-VMFL], [B34]) --
+ *       `1` iff the emitted VM program contains NO `RX_PUSH` site and no
+ *       linked call, so the fail label has no pop-and-resume `goto *`
+ *       dispatch; `0` otherwise. It is (b) for `_VM_CALL_SPLICED`'s
+ *       reason: nothing upstream CHOSE a frameless mode, it is what the
+ *       emitted program turned out to CONTAIN. UNCONDITIONAL on every VM
+ *       artifact, HYBRIDS INCLUDED, and never defined on a pure-DFA one --
+ *       both values are spelled, so the fact is never read from a macro's
+ *       absence. A SCALAR boolean and not a mask (the three masks beside
+ *       it are per-`A_REP`; "did any site emit a push" has no
+ *       per-quantifier axis to mix). No rx_info mirror, D77's reason.
+ *       For this bench it is the [B32] covariate: it REPLACES the
+ *       `NO RESUME FRAME AT ALL` grep over emitted C with a stamp.
+ *   (c) ACTIVITY, COMMON TO BOTH ENGINES: `RX_ALTCLS_MERGES` /
+ *       `RX_ALTCLS_FACTORED` (pcrec inbox I-39, [OPT-ALTCLS],
+ *       src/opt/altcls.c) -- COUNTS, not booleans, of how many alternation
+ *       runs of single-character branches were merged into one class
+ *       (stage 1) and how many were prefix-factored (stage 2, run on
+ *       stage 1's OUTPUT). Neither family (a)'s scan scope (they do not
+ *       need a DFA scan) nor family (b)'s VM-only one: `pcrec_emit_prologue`
+ *       emits both UNCONDITIONALLY, once per file, BEFORE either engine is
+ *       built -- so they are on every artifact this shim can see, DFA and
+ *       VM alike, a `--no-captures` build included (match_api.md 2082).
+ *       They have been in that COMMON block since [OPT-ALTCLS], well
+ *       before this file existed; what is new at abi 16 is only that this
+ *       shim reads them. No rx_info mirror. `0` is a value: a pattern with
+ *       no mergeable/factorable run stamps it honestly, and so does a
+ *       `-fno-altcls-merge` / `-fno-altcls-factor` build (the pass checks
+ *       the deny flag before touching the counter, never after, so a
+ *       denial leaves no trace to tell from "nothing to do here").
  *
  * WHY THE MACROS ARE STILL READ THROUGH #ifdef (D81 says the EMITTER stamps
  * them unconditionally): the #ifdef is on the CONSUMER side and exists so
@@ -201,10 +257,13 @@
  * `prefilter` to the struct ([DD-13c]); abi 10 appended `match_form`
  * ([ENG-ABS]), which pb_info_match_form() reads; abi 15 appended `name` and
  * `nentries` ([DD-13b.W1.2]), which pb_info_name() / pb_info_nentries()
- * read -- so the floor is 15. Bump it only when a field access below needs
- * a newer one -- a macro this shim reads through #ifdef does NOT raise the
- * floor, because its absence is a legitimate "not stamped". */
-#define PB_SHIM_MIN_ABI 15
+ * read; abi 16 appended `search_form` ([OPT-5] STEP 2), which
+ * pb_info_search_form() reads -- so the floor is 16. Bump it only when a
+ * field access below needs a newer one -- a macro this shim reads through
+ * #ifdef does NOT raise the floor, because its absence is a legitimate
+ * "not stamped", and abi 16's OTHER new surface, `RX_VM_FRAMELESS`, is
+ * exactly such a macro. */
+#define PB_SHIM_MIN_ABI 16
 
 int pb_shim_min_abi(void) { return PB_SHIM_MIN_ABI; }
 
@@ -254,6 +313,18 @@ const char *pb_info_match_form(void) { return PB_INFO.match_form; }
  * against a stamp. */
 const char *pb_info_name(void)  { return PB_INFO.name; }
 int         pb_info_nentries(void) { return PB_INFO.nentries; }
+
+/* The abi-16 runtime mirror of RX_DFA_START ([OPT-5] STEP 2, match_api.md
+ * 6, appended after `nentries` with no existing member's offset moved):
+ * "pinned" / "reverse-pass" on every artifact that CONTAINS a DFA scan,
+ * VM HYBRIDS INCLUDED, and NULL only on a plain VM artifact. Its NULL rule
+ * is `scan`'s and NOT `match_form`'s, and the difference is the fact: a
+ * hybrid inlines this emitter's SEARCH body, so it HAS a search form to
+ * report, while its `_match` entry is the VM's own body and has no match
+ * form. So on one hybrid artifact `match_form` is NULL while `search_form`
+ * is not, and reading either as the other's proxy is wrong in a way the
+ * adapter asserts against in both directions. */
+const char *pb_info_search_form(void) { return PB_INFO.search_form; }
 
 /* --------------------------------------------- the give-up code SPACE */
 
@@ -419,6 +490,32 @@ const char *pb_dfa_prefilter_offsets(void) {
 const char *pb_dfa_scan_edge(void) {
 #ifdef RX_DFA_SCAN_EDGE
     return RX_DFA_SCAN_EDGE;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* [OPT-5] STEP 2, abi 16 ([B34]). HOW the search entry recovers the match
+ * START (tuning.md 2.19): "pinned" -- the forward machine's start state
+ * accepts UNCONDITIONALLY (at every position, under every position view,
+ * in every class context), so every accept the forward loop records
+ * belongs to a thread that began at `search_from` and the post-loop block
+ * writes that offset directly; the artifact then carries NO REVERSE
+ * MACHINE at all -- or "reverse-pass", the second, backwards scan over
+ * that machine. Same scope as the scan family above (every artifact that
+ * CONTAINS a DFA scan, hybrids included; match_api.md 6.3 says the iff
+ * joins unchanged, and it is NOT RX_DFA_MATCH's narrower one).
+ * rx_info.search_form is the mirror and the adapter's control.
+ *
+ * THE TWO FORMS ARE ANSWER-IDENTICAL and differ only in cost and in size:
+ * caps[0][0]'s contract holds under both, absolute offsets and the
+ * zero-length-match-is-a-success convention included -- the pinned form
+ * DEPENDS on both rather than altering either. So a value moving between
+ * pins is a COST finding and never an answer one, and the bench's
+ * agreement checks are the proof of that rather than an assumption. */
+const char *pb_dfa_start(void) {
+#ifdef RX_DFA_START
+    return RX_DFA_START;
 #else
     return (const char *)0;
 #endif
@@ -590,6 +687,82 @@ long long pb_fast_frames(void) {
 long long pb_fast_trail(void) {
 #ifdef RX_FAST_TRAIL
     return (long long)RX_FAST_TRAIL;
+#else
+    return 0;
+#endif
+}
+
+/* [OPT-VMFL], abi 16 ([B34]). A (b) ACTIVITY fact, VM-only: what the
+ * emitted program turned out to CONTAIN, not a mode anything chose.
+ * `RX_VM_FRAMELESS` is 1 iff the artifact's VM program emits NO RX_PUSH
+ * site and no linked call -- so its fail label carries no pop-and-resume
+ * `goto *` dispatch -- and 0 otherwise, UNCONDITIONALLY on every VM
+ * artifact including every hybrid, and on no DFA artifact.
+ *
+ * TWO GETTERS, not one, and the reason is this shim's own standing rule.
+ * The stamp's VALUE 0 is a fact ("this program does push") and its
+ * ABSENCE is a different fact ("this is not a VM artifact"); a single
+ * getter returning 0 would collapse them, which is precisely the hazard
+ * pcrec I-5 cost four checks. `pb_has_vm_frameless()` is the presence
+ * question and `pb_vm_frameless()` answers only when it says 1.
+ *
+ * The guard is the macro's OWN #ifdef and not pb_has_vm_stamps(): the two
+ * populations are the same today (both are "every VM artifact"), but they
+ * are the same by coincidence of two independent spec sentences, and
+ * gating one stamp on another's macro would hide the day they diverge. */
+int pb_has_vm_frameless(void) {
+#ifdef RX_VM_FRAMELESS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+int pb_vm_frameless(void) {
+#ifdef RX_VM_FRAMELESS
+    return (int)RX_VM_FRAMELESS;
+#else
+    return 0;
+#endif
+}
+
+/* ---------------- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec I-39) */
+
+/* `RX_ALTCLS_MERGES` / `RX_ALTCLS_FACTORED` have been in pcrec's COMMON
+ * stamp block since [OPT-ALTCLS] -- emitted by `pcrec_emit_prologue` BEFORE
+ * either engine is built, so they land on EVERY artifact this file can
+ * ever see, DFA and VM alike, a `--no-captures` build included -- and this
+ * shim only started reading them at abi 16 ([B34]). No rx_info mirror
+ * exists for either, so the abi floor does NOT move for this addition,
+ * unlike `RX_DFA_START` beside it in the same pin (which added
+ * `search_form`).
+ *
+ * TWO GETTERS behind ONE presence question, the same shape as
+ * pb_vm_frameless() and for the identical reason: `0` is a value ("this
+ * pattern had nothing to merge/factor", or a denied build, which leaves
+ * the counter at 0 by construction) and ABSENCE is a different fact ("this
+ * pcrec predates [OPT-ALTCLS]"), so a single getter returning 0 would
+ * collapse them. Both stamps land together (one emitter call), so one
+ * presence question covers the pair. */
+int pb_has_altcls(void) {
+#ifdef RX_ALTCLS_MERGES
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_altcls_merges(void) {
+#ifdef RX_ALTCLS_MERGES
+    return (long long)RX_ALTCLS_MERGES;
+#else
+    return 0;
+#endif
+}
+
+long long pb_altcls_factored(void) {
+#ifdef RX_ALTCLS_FACTORED
+    return (long long)RX_ALTCLS_FACTORED;
 #else
     return 0;
 #endif

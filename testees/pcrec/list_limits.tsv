@@ -5,16 +5,18 @@
 # (inbox I-25: "ARCHIVE IT beside --list-axes at your re-pin"). Everything
 # below this header is the unmodified output of:
 #
-#     build/pcrec-1989c62/build/pcrec --list-limits
+#     build/pcrec-288d505/build/pcrec --list-limits
 #
-# pcrec commit 1989c623bffb431c65c49262e7eb88eb029a21ef (abi 15), archived
-# 2026-09-01 by lane b26repin ([B26]). 45 data rows / 7 columns (name,
+# pcrec commit 288d505b3bf6d78074334113bd9ac7d265ab148d (abi 16), archived
+# 2026-09-03 by lane b34repin ([B34]). 45 data rows / 7 columns (name,
 # value, unit, kind, override, anchor, desc) -- one row per numeric limit
 # in pcrec src/core/limits.def, in the table's own order. BYTE-IDENTICAL
-# to the a7e0bdf copy below the header (MEASURED at the re-pin): [OPT-4.2]
-# (o42) is a POLICY on an existing decision and [DD-13b.W1.2] (w12) is two
-# appended rx_info fields, so neither added, removed or moved a numeric
-# limit. The previous diff -- the a7e0bdf copy's own, from 263b013's 44
+# to the 1989c62 copy below the header (MEASURED at this re-pin): [OPT-5]
+# STEP 2 DELETES a machine from the artifacts whose start is pinned, which
+# moves emitted BYTES and no limit -- there is no cap on how many machines
+# an artifact carries. The two before it moved none either ([OPT-4.2] is a
+# POLICY on an existing decision, [DD-13b.W1.2] two appended rx_info
+# fields). The last diff this file saw -- the a7e0bdf copy's own, from 263b013's 44
 # rows -- was ONE row: PCREC_MAX_SCAN_EDGES (4, `selection knee`, no
 # override -- [OPT-5]: how many scan edges one DFA machine may carry;
 # src/opt/scanedge.c takes the longest chains first), inserted after

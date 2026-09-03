@@ -230,6 +230,71 @@ adapter change -- cc/o42 (abi 14) and w12 (abi 15):
                      `--warn-emit-bytes` numbers, so a movement that is NOT
                      one of those two fails by name.
 
+[B34] (pin 288d505 = pcrec abi 16, inbox I-38) absorbs ONE pin carrying
+TWO new surfaces, one per (a)/(b) family:
+
+  abi 16 ([OPT-5] STEP 2) `RX_DFA_START` on every artifact that CONTAINS a
+                     DFA scan -- the scan family's iff for the THIRD time
+                     (match_api.md 6.3), and NOT `RX_DFA_MATCH`'s narrower
+                     one, so a VM hybrid carries it. HOW the search entry
+                     recovers the match START: `pinned` (the forward
+                     machine's start state accepts UNCONDITIONALLY -- at
+                     every position, under every view, in every class
+                     context -- so every accept belongs to a thread that
+                     began at `search_from`, the post-loop block writes
+                     that offset directly, and THE ARTIFACT CARRIES NO
+                     REVERSE MACHINE AT ALL: no reverse transition, accept,
+                     byte-class, stay or scan-edge table, no
+                     `<prefix>_reverse_*` accessor block, no backwards scan
+                     loop) / `reverse-pass` (that backwards scan). Its
+                     rx_info MIRROR `search_form` is APPENDED after
+                     `nentries`, so the floor rule fires a THIRD time:
+                     `PB_SHIM_MIN_ABI` 15 -> 16. The registry gains a whole
+                     new axis, `search-start` (two rows, 70/23 -> 72/24),
+                     whose order-1 row carries the DENY flag
+                     `-fno-start-pinned` (PCREC_NO_START_PINNED, bit 22) --
+                     the control that keeps the stamp distinguishable from
+                     a constant.
+  abi 16 ([OPT-VMFL]) `RX_VM_FRAMELESS`, riding the same bump rather than
+                     taking one of its own. A (b) ACTIVITY fact and the
+                     only NON-string stamp in that family besides the
+                     capacities: `1` iff the emitted VM program contains no
+                     `RX_PUSH` site and no linked call, so the fail label
+                     has no pop-and-resume `goto *` dispatch; `0`
+                     otherwise. UNCONDITIONAL on every VM artifact, HYBRIDS
+                     INCLUDED, and never on a pure-DFA one -- both values
+                     spelled, so nothing is read from absence. No rx_info
+                     mirror (D77), so it does not touch the floor. For this
+                     bench it is [B32]'s covariate: it REPLACES the
+                     `NO RESUME FRAME AT ALL` grep over emitted C, which
+                     was reading a program's shape out of its text.
+  (sizes)            NOT a stamp change, but [OPT-5] STEP 2 DELETES a
+                     machine, so the size books move DOWN where the start
+                     pins and up by a constant elsewhere. Re-derived here
+                     against the pin's own `--warn-emit-bytes` numbers, so
+                     a movement that is neither is a failure by name.
+  (two folds)        A CONSEQUENCE with no new stamp: `RX_DFA_TABLE` and
+                     `RX_DFA_SCAN_EDGE` fold over the machines the artifact
+                     CONTAINS, and a pinned artifact contains one fewer, so
+                     a `mixed` that meant "the two machines differ" can
+                     read the forward machine's own value at this pin with
+                     no machine having changed. Read as a fold moving, not
+                     as a selection moving.
+  ([OPT-ALTCLS])     `RX_ALTCLS_MERGES` / `RX_ALTCLS_FACTORED` (pcrec inbox
+                     I-39) -- COUNTS, not booleans, of how many alternation
+                     runs src/opt/altcls.c merged into one class / prefix-
+                     factored. NOT NEW AT THIS PIN: they have been in
+                     pcrec's COMMON stamp block since [OPT-ALTCLS], emitted
+                     unconditionally in the shared prologue before either
+                     engine is built (so a `--no-captures` DFA artifact
+                     carries them too) -- what is new here is only that
+                     this shim reads them. No rx_info mirror, so the floor
+                     does not move for this addition (unlike `dfa_start`
+                     above, riding the SAME pin). Scope "every": both
+                     engines, no DFA-scan precondition -- the one pair in
+                     this pin's additions that is not scoped to the scan
+                     family or to the VM.
+
 Two rules govern how they are read, and both exist because they were paid
 for on the pcrec side first:
 
@@ -246,7 +311,11 @@ for on the pcrec side first:
    `engine` is `rx_info.engine`, checked against `RX_ENGINE`; `dfa_scan` /
    `dfa_prefilter` are the macros, checked against `rx_info.scan` /
    `.prefilter`; `dfa_match` is the macro, checked against
-   `rx_info.match_form`. A disagreement is an AdapterError naming both
+   `rx_info.match_form`; ([B34]) `dfa_start` is the macro, checked against
+   `rx_info.search_form`, whose NULL rule is `scan`'s and NOT
+   `match_form`'s -- so on one VM hybrid `match_form` is NULL while
+   `search_form` is not, and the two checks are deliberately separate.
+   A disagreement is an AdapterError naming both
    values -- pcrec asserts field == macro on every artifact of both engines
    (`tests/codegen/run_dfa_stamps.sh`), so a disagreement seen here is a
    pcrec bug or a shim bug and is worth stopping for, not averaging.
@@ -281,10 +350,10 @@ for on the pcrec side first:
    composition landing later separates the two without the adapter
    refusing the first artifact that does it.
 
-The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 15 since [B26] -- the
-abi that appended `name` and `nentries`, the fourth and fifth fields it
-reads; 10 from [B18] for `match_form`, 6 before that for `scan` /
-`prefilter`) and is enforced in `driver.c`, which
+The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 16 since [B34] -- the
+abi that appended `search_form`, the sixth field it reads; 15 from [B26]
+for `name` and `nentries`, 10 from [B18] for `match_form`, 6 before that
+for `scan` / `prefilter`) and is enforced in `driver.c`, which
 refuses a lower artifact by name before printing anything else. This file
 does NOT keep a second copy of the number: it recognises the driver's
 refusal line and re-raises it as an AdapterError carrying pcrec's own two
@@ -502,6 +571,39 @@ METADATA_DECL = {
                        "`scan-body` axis; the companion `scan-edge` axis "
                        "(per STATE: edge at all?) is the one the deny "
                        "flag removes",
+    },
+    "dfa_start": {
+        "type": "enum", "scope": "pattern",
+        "values": ["pinned", "reverse-pass"],
+        "source": "<PREFIX>_DFA_START ([OPT-5] STEP 2, pcrec abi 16+), read "
+                  "through pb_dfa_start(); CHECKED against "
+                  "rx_info.search_form (pb_info_search_form()), which is "
+                  "NON-NULL on exactly the artifacts the macro is defined "
+                  "on. Same scope as dfa_scan (every artifact that CONTAINS "
+                  "a DFA scan, VM hybrids included -- match_api.md 6.3: the "
+                  "iff joins unchanged), and deliberately NOT dfa_match's "
+                  "narrower one; the value set is CHECKED against `pcrec "
+                  "--list-axes` (axis `search-start`)",
+        "description": "HOW the SEARCH entry recovers the match START "
+                       "(tuning.md 2.19): `pinned` (the forward machine's "
+                       "start state accepts UNCONDITIONALLY -- at every "
+                       "position, under every position view, in every class "
+                       "context -- so a match exists wherever the search "
+                       "begins, every accept the forward loop records "
+                       "belongs to a thread that began at `search_from`, "
+                       "and the post-loop block writes that offset "
+                       "directly; THE ARTIFACT THEN CARRIES NO REVERSE "
+                       "MACHINE AT ALL -- no reverse transition, accept, "
+                       "byte-class, stay or scan-edge table, no "
+                       "`<prefix>_reverse_*` accessor block and no "
+                       "backwards scan loop) or `reverse-pass` (the second, "
+                       "backwards scan over that machine, from the match "
+                       "end to the furthest-back accepting position). The "
+                       "two forms are ANSWER-IDENTICAL -- caps[0][0]'s "
+                       "absolute-offset contract and the zero-length-match "
+                       "convention hold under both, the pinned form "
+                       "DEPENDING on them rather than altering them -- so "
+                       "this axis is a COST and SIZE fact only",
     },
     "dfa_match": {
         "type": "enum", "scope": "pattern",
@@ -803,6 +905,78 @@ METADATA_DECL = {
         "description": "the fast tier's trail capacity, in ENTRIES; the "
                        "companion of `fast_frames`",
     },
+    "vm_frameless": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_VM_FRAMELESS ([OPT-VMFL], pcrec abi 16+), read "
+                  "through pb_vm_frameless() behind pb_has_vm_frameless(); "
+                  "no rx_info mirror (D77: no run-time consumer yet), so "
+                  "there is no second spelling to check it against -- what "
+                  "IS checked is its scope (every VM artifact, hybrids "
+                  "included; no DFA artifact) and, in tools/selfcheck.py, "
+                  "its agreement with resume_frames by value",
+        "description": "1 iff the artifact's emitted VM program contains NO "
+                       "RX_PUSH site and no linked call -- so the fail "
+                       "label carries no pop-and-resume `goto *` dispatch "
+                       "and the program never pushes a resume frame -- and "
+                       "0 otherwise. A (b) ACTIVITY fact in match_api.md "
+                       "6.3's split: nothing upstream CHOSE a frameless "
+                       "mode, it is what the emitted program turned out to "
+                       "CONTAIN, discovered by emitting. A SCALAR boolean "
+                       "and not a mask (the rung/strategy/prune masks are "
+                       "per-quantifier; `did any site emit a push` is a "
+                       "whole-artifact fact with no axis to mix). It is the "
+                       "STAMPED form of what [B32] read by grepping the "
+                       "emitted C for `NO RESUME FRAME AT ALL`",
+    },
+    # -- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec
+    # inbox I-39; [B34], pin 288d505). COMMON scope: on EVERY artifact,
+    # BOTH engines, unconditionally -- a family of its own beside
+    # match_api.md 6.3's (a)/(b) split, neither the scan family (no DFA
+    # scan required) nor a VM-only activity fact. pcrec's own reason
+    # (lib/pcrec.h, src/gen/emit_dfa.c): the rewrite runs in
+    # `pcrec_emit_prologue`, BEFORE either engine is built, so the stamp
+    # lands once per file on the DFA-only path and the VM path alike --
+    # even a `--no-captures` build carries it (match_api.md 2082). COUNTS,
+    # not booleans (RX_VM_RUNGS's own reasoning, one level up): a pattern
+    # can carry more than one mergeable/factorable alternation RUN, and a
+    # scalar would lie on a multi-run pattern by picking one run's answer
+    # to speak for all of them. NO rx_info mirror -- these macros predate
+    # every abi this bench has ever pinned; the shim only started READING
+    # them at abi 16, which is why STAMP_SCOPE's "since" below is 16 even
+    # though pcrec has stamped them unconditionally since long before that.
+    "altcls_merges": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_ALTCLS_MERGES (in pcrec's COMMON stamp block "
+                  "since [OPT-ALTCLS]; this shim reads it since pcrec abi "
+                  "16 / [B34]), read through pb_altcls_merges() behind "
+                  "pb_has_altcls(); no rx_info mirror, so there is no "
+                  "second spelling to check it against -- what IS checked "
+                  "is its scope (STAMP_SCOPE: every artifact, both "
+                  "engines) and, in tools/selfcheck.py, its VALUE against "
+                  "real bench/altwide witnesses",
+        "description": "how many alternation runs of SINGLE-CHARACTER "
+                       "branches src/opt/altcls.c merged into one character "
+                       "class (stage 1) -- incremented at the exact point "
+                       "the rewrite acts (`job->altcls_merges`), so the "
+                       "stamp cannot disagree with what the rewrite did. 0 "
+                       "is a value, stamped honestly on a pattern with "
+                       "nothing to merge, and -- by construction, the pass "
+                       "checks the deny flag before touching the counter, "
+                       "never after -- on a `-fno-altcls-merge` build too",
+    },
+    "altcls_factored": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_ALTCLS_FACTORED (same COMMON block, same abi "
+                  "as altcls_merges), read through pb_altcls_factored() "
+                  "behind the same pb_has_altcls()",
+        "description": "how many alternation runs src/opt/altcls.c "
+                       "prefix-factored (stage 2, run on stage 1's OUTPUT, "
+                       "so denying stage 1 alone still lets stage 2 factor "
+                       "an all-single-char run's literal spelling), "
+                       "emitting no new capturing groups. 0 on a pattern "
+                       "with nothing to factor, or -- by construction -- "
+                       "on a `-fno-altcls-factor` build",
+    },
     # -- the caller-provided frame buffer's sizing surface (match_api.md
     # 10.4, abi 3). Stamped on EVERY artifact at abi 3, both engines; a DFA
     # artifact stamps 0 for all four ("this engine takes no buffers").
@@ -876,7 +1050,8 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "work_budget", "frame_capacity", "subject_ceiling",
              "resume_frames", "trail_frames", "resume_frame_size",
              "trail_frame_size", "buffer_frames", "buffer_trail",
-             "fast_frames", "fast_trail",
+             "fast_frames", "fast_trail", "vm_frameless",
+             "altcls_merges", "altcls_factored",
              "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
              "emit_bytes", "emit_code_bytes", "warned_emit_bytes",
              "scan_edges", "scan_edges_match")
@@ -887,8 +1062,8 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
 #: [B16]: the driver printed it and `_metadata` had no line for it, so the
 #: unconditional engine stamp reached no record for five pins).
 STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
-             "dfa_prefilter_offsets", "dfa_scan_edge", "dfa_match",
-             "unroll_k_why", "artifact_name",
+             "dfa_prefilter_offsets", "dfa_scan_edge", "dfa_start",
+             "dfa_match", "unroll_k_why", "artifact_name",
              "engine_sel", "vm_prefilter_lang", "vm_prefilter_lang_why")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
@@ -916,6 +1091,7 @@ STAMP_SCOPE = {
     "dfa_table":             ("dfa-scan", 7),
     "dfa_prefilter_offsets": ("dfa-scan", 9),
     "dfa_scan_edge":         ("dfa-scan", 13),
+    "dfa_start":             ("dfa-scan", 16),
     "dfa_match":             ("dfa",      10),
     "fast_frames":           ("vm",       5),
     "fast_trail":            ("vm",       5),
@@ -926,6 +1102,16 @@ STAMP_SCOPE = {
     "engine_sel":            ("every",    12),
     "vm_prefilter_lang":     ("vm-hybrid", 12),
     "vm_prefilter_lang_why": ("vm-hybrid", 12),
+    "vm_frameless":          ("vm",       16),
+    # [B34] ([OPT-ALTCLS], pcrec I-39): scope "every" like `engine` and
+    # `max_emit_bytes` above -- both engines, no DFA-scan precondition.
+    # The "since" here is 16 because that is when THIS SHIM started
+    # reading a macro pcrec has stamped unconditionally since long before
+    # this pin (see the METADATA_DECL comment above): it is the abi at
+    # which the bench can assert the scope, not the abi at which pcrec
+    # began emitting it.
+    "altcls_merges":         ("every",    16),
+    "altcls_factored":       ("every",    16),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -1010,6 +1196,11 @@ REGISTRY_STAMP_PAIRS = {
     # stamp_macro: it is the per-state selection `-fno-scan-edge` denies,
     # and the deny-control row reads its flag spelling from it.)
     "RX_DFA_SCAN_EDGE": "dfa_scan_edge",
+    # [B34] (abi 16, [OPT-5] STEP 2): the `search-start` axis's two rows
+    # are both `list` candidates carrying stamp_values, so the check runs
+    # in both directions over the whole declared set -- and the order-1
+    # row is also where DENY_FLAGS reads `-fno-start-pinned`'s spelling.
+    "RX_DFA_START": "dfa_start",
 }
 
 #: The committed copy of `pcrec --list-definitions | grep -v '^#'` at the
@@ -1494,8 +1685,16 @@ def effective_caps(testee_id, cfg, flags):
 
 
 # ---------------------------------------------------------------------------
-# THE SCAN-EDGE DENY AXIS -- `-fno-scan-edge` ([B32]; pcrec [OPT-5] /
-# [OPT-EDGE], docs/spec/tuning.md 2.18, --list-axes bit 21).
+# THE GENERATION-AXIS DENY FLAGS -- `-fno-scan-edge` ([B32]; pcrec [OPT-5]
+# STEP 1 / [OPT-EDGE], docs/spec/tuning.md 2.18, --list-axes bit 21) and
+# `-fno-start-pinned` ([B34]; [OPT-5] STEP 2, tuning.md 2.19, bit 22).
+#
+# Both denials share one shape, which is why they share this table: each
+# removes a CANDIDATE from a registry axis, so the artifact built under it
+# is the SAME compiler's pre-optimisation machine rather than an older
+# pin's, and the pair differs in the transform and in nothing else -- no
+# abi, no shim, no other pin's fixes riding along. The scan-edge one is
+# described first because it is the one a measured regression asked for.
 #
 # The full suite at pin 1989c62 found ONE regression family with an exact
 # stamp: every bench/loglines pattern whose artifact stamps a non-`none`
@@ -1526,6 +1725,22 @@ DENY_FLAGS = (
      "machine built by the SAME compiler -- [OPT-EDGE]'s BEFORE, and the "
      "one denial on this axis that changes the MACHINE and not only "
      "emitted text"),
+    # [B34] (pin 288d505, [OPT-5] STEP 2, --list-axes `search-start` bit 22).
+    # The SECOND denial that changes what the artifact CONTAINS rather than
+    # how it is written: denied, the start-pinned candidate is removed, the
+    # artifact keeps its REVERSE MACHINE and recovers the match start by
+    # scanning it backwards. So a `-fno-start-pinned` build at this pin is
+    # the pre-STEP-2 artifact from the SAME compiler -- STEP 2's own BEFORE
+    # on a search-band cell, and the CONTROL that keeps `dfa_start` from
+    # being a constant this bench could not tell apart from a stamp that
+    # never varies.
+    ("-fno-start-pinned", "nopin",
+     "the [OPT-5] STEP 2 START-PINNED SEARCH denied (--list-axes "
+     "`search-start`, bit 22): the pinned candidate is removed, so this "
+     "artifact carries its reverse machine and its tables and finds the "
+     "match start by the backwards scan -- STEP 2's BEFORE, built by the "
+     "SAME compiler, and ANSWER-IDENTICAL to its sibling by contract "
+     "(match_api.md 6.3: the two forms differ in cost and in size only)"),
 )
 
 
@@ -2172,6 +2387,7 @@ class Adapter(_ad.Adapter):
                                          diagnostic=diag or "pcrec exit %d"
                                          % proc.returncode)
             if t == 1:
+                first_art_c = art_c
                 # [B19] the two source-bytes facts and the advisory warning,
                 # measured on the files THIS trial's emit produced (every
                 # trial emits the same bytes; the first is read). The .h is
@@ -2249,7 +2465,16 @@ class Adapter(_ad.Adapter):
                                        int(out.info.get("err_giveup_top", -2)))
                 artifact_bytes = os.path.getsize(so)
 
+        # [B34]: the EMITTED SOURCE of the first trial's artifact rides
+        # along in the handle. Nothing in a measurement reads it -- every
+        # fact a record carries comes from a stamp or a field -- but
+        # tools/selfcheck.py needs the text itself to prove that
+        # `RX_VM_FRAMELESS` agrees with the comment [B32] used to GREP for
+        # ("NO RESUME FRAME AT ALL"), which is the whole claim that the
+        # stamp REPLACES the grep. A path, not the bytes: the file lives in
+        # the caller's own workdir for as long as the handle does.
         handle = {"driver": drv, "lib": libs[0],
+                  "artifact_c": first_art_c,
                   "giveup_range": getattr(self, "_giveup_bounds", (-5, -2)),
                   "buffer_args": bufargs}
         return _ad.CompileResult("compiled", phase_seconds=phase_seconds,
@@ -2379,6 +2604,26 @@ class Adapter(_ad.Adapter):
             every artifact this pin emits, is checked by value in
             tools/selfcheck.py rather than asserted here.
 
+        [B34] added two for abi 16's mirrored stamp, numbered 5b and 5c
+        because they are claim 5's shape on a DIFFERENT population:
+
+        5b. `<PREFIX>_DFA_START` is present IFF `rx_info.search_form` is
+            non-NULL, and equal to it ([OPT-5] STEP 2).
+        5c. `rx_info.search_form` is non-NULL IFF the artifact CONTAINS a
+            DFA scan -- `search_form`'s guard is `scan`'s and NOT
+            `match_form`'s, which is why 5 and 5b cannot be folded: on one
+            VM HYBRID `match_form` is NULL and `search_form` is a value,
+            and an adapter that read either as the other's proxy would be
+            wrong on exactly that artifact. The scan direction of this
+            claim is asserted only from abi 16, since below it the field
+            does not exist.
+
+        `RX_VM_FRAMELESS` (abi 16, [OPT-VMFL]) adds no claim here: it has
+        no mirror and no neighbour to imply, so its only check is the scope
+        table's `vm` row (present on every VM artifact, hybrids included;
+        absent on every DFA one) and, in tools/selfcheck.py, its agreement
+        with `resume_frames` by value.
+
         A pcrec too old to stamp a given macro is not a disagreement: an
         absent macro is checked only against the field's own absence, never
         against a value, and the scope table applies from each stamp's own
@@ -2453,6 +2698,47 @@ class Adapter(_ad.Adapter):
                 "pcrec artifact disagrees with itself about its _match "
                 "FORM: <PREFIX>_DFA_MATCH is %r, rx_info.match_form reads "
                 "%r." % (macro_mf, field_mf))
+
+        # 5b. ([B34], [OPT-5] STEP 2) `<PREFIX>_DFA_START` is present IFF
+        #     `rx_info.search_form` is non-NULL, and equal to it. The SAME
+        #     SHAPE as 5 and a DIFFERENT population: search_form's NULL
+        #     rule is `scan`'s, not `match_form`'s, so on a VM hybrid the
+        #     two fields disagree by design -- match_form NULL, search_form
+        #     a value. Checking them separately is what makes that visible
+        #     instead of letting one stand in for the other.
+        field_sf = info.get("rxinfo_search_form")
+        has_sf = info.get("rxinfo_search_form_present") == "1"
+        macro_sf = meta.get("dfa_start")
+        if macro_sf is not None and not has_sf:
+            raise _ad.AdapterError(
+                "pcrec artifact stamps <PREFIX>_DFA_START %r but "
+                "rx_info.search_form is NULL (match_api.md 6.3: the field "
+                "mirrors the macro)." % (macro_sf,))
+        if macro_sf is None and has_sf:
+            raise _ad.AdapterError(
+                "pcrec artifact has rx_info.search_form %r but no "
+                "<PREFIX>_DFA_START stamp." % (field_sf,))
+        if macro_sf is not None and field_sf != macro_sf:
+            raise _ad.AdapterError(
+                "pcrec artifact disagrees with itself about its SEARCH "
+                "START form: <PREFIX>_DFA_START is %r, rx_info.search_form "
+                "reads %r." % (macro_sf, field_sf))
+        # 5c. ([B34]) search_form's own iff against the DFA SCAN, the
+        #     direction that distinguishes it from match_form: an artifact
+        #     that CONTAINS a DFA scan has a search form, and one that does
+        #     not has none. `has_field` above is rx_info.scan's presence.
+        if has_sf and not has_field:
+            raise _ad.AdapterError(
+                "pcrec artifact has rx_info.search_form %r but rx_info.scan "
+                "is NULL -- a search-start form on an artifact that "
+                "contains no DFA scan (match_api.md 6.3: search_form's "
+                "guard is scan's)." % (field_sf,))
+        if has_field and not has_sf and int(info.get("abi", "0")) >= 16:
+            raise _ad.AdapterError(
+                "pcrec artifact contains a DFA scan (rx_info.scan %r) but "
+                "rx_info.search_form is NULL at abi %s, where the field is "
+                "non-NULL on every artifact that contains one."
+                % (field_scan, info.get("abi")))
 
         # 6. ([B18], [OPT-K]) `dfa_prefilter_offsets` is "none" IFF
         #    `dfa_prefilter` is not an offset-set value (6.3's iff, both

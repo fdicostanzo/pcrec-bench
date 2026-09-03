@@ -49,7 +49,9 @@
  * WHAT IS PRINTED FOR THE MECHANISM STAMPS, and the rule none of it breaks
  * (pcrec I-5): NOTHING IS EVER INFERRED FROM A STAMP'S ABSENCE. Each of
  * `info dfa_scan / dfa_prefilter / dfa_table / dfa_prefilter_offsets /
- * dfa_scan_edge / dfa_match / fast_frames / fast_trail / unroll_k /
+ * dfa_scan_edge / dfa_start / dfa_match / vm_frameless / altcls_merges /
+ * altcls_factored / fast_frames /
+ * fast_trail / unroll_k /
  * unroll_k_why / max_emit_code_bytes / max_emit_bytes / engine_sel /
  * vm_prefilter_lang / vm_prefilter_lang_why` is printed only when the artifact
  * stamps it, and a consumer of these lines reads a MISSING line as "not
@@ -63,7 +65,19 @@
  * same terms -- `info artifact_name` / `info nentries` (rx_info.name /
  * .nentries, appended at abi 15) with `info rxinfo_name_present` beside the
  * first -- which are PROVENANCE rather than selection facts: no macro
- * spells either, so neither is cross-checked against a stamp.
+ * spells either, so neither is cross-checked against a stamp. [B34] adds
+ * a third FIELD line, `info rxinfo_search_form` with its own
+ * `_present` (rx_info.search_form, abi 16), which IS a selection fact
+ * with a macro spelling (`info dfa_start`) and IS cross-checked -- the
+ * `match_form` pattern, and the two are deliberately printed side by side
+ * because their NULL rules differ: on a VM hybrid `match_form` is NULL
+ * and `search_form` is not. [B34] also adds `info altcls_merges` /
+ * `info altcls_factored` (pcrec I-39, [OPT-ALTCLS]) -- COUNTS with NO
+ * rx_info mirror at all, so neither is cross-checked against a field;
+ * they are printed together, behind one presence check, whenever the
+ * artifact stamps them -- in practice every artifact this driver will
+ * ever load, since the macros predate this pin by a long margin and only
+ * the READ is new here.
  */
 
 #define _GNU_SOURCE
@@ -112,6 +126,13 @@ static const char *(*pb_dfa_match)(void);
 static const char *(*pb_info_match_form)(void);
 static const char *(*pb_info_name)(void);
 static int       (*pb_info_nentries)(void);
+static const char *(*pb_dfa_start)(void);
+static const char *(*pb_info_search_form)(void);
+static int       (*pb_has_vm_frameless)(void);
+static int       (*pb_vm_frameless)(void);
+static int       (*pb_has_altcls)(void);
+static long long (*pb_altcls_merges)(void);
+static long long (*pb_altcls_factored)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -322,6 +343,9 @@ int main(int argc, char **argv) {
     SYM(pb_dfa_prefilter_offsets); SYM(pb_dfa_scan_edge);
     SYM(pb_dfa_match); SYM(pb_info_match_form);
     SYM(pb_info_name); SYM(pb_info_nentries);
+    SYM(pb_dfa_start); SYM(pb_info_search_form);
+    SYM(pb_has_vm_frameless); SYM(pb_vm_frameless);
+    SYM(pb_has_altcls); SYM(pb_altcls_merges); SYM(pb_altcls_factored);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -344,16 +368,18 @@ int main(int argc, char **argv) {
      * See shim.c. */
     /* THE ABI FLOOR, before anything else is read or printed. shim.c reads
      * `rx_info.scan` / `.prefilter` (appended at pcrec's abi 6),
-     * `rx_info.match_form` (abi 10) and `rx_info.name` / `.nentries`
-     * (abi 15, [DD-13b.W1.2]); an older artifact has no
+     * `rx_info.match_form` (abi 10), `rx_info.name` / `.nentries`
+     * (abi 15, [DD-13b.W1.2]) and `rx_info.search_form` (abi 16,
+     * [OPT-5] STEP 2); an older artifact has no
      * such fields and this shim would be reading past them. Refuse by NAME,
      * carrying both numbers, and stop. The number itself is shim.c's. */
     if (pb_abi() < pb_shim_min_abi()) {
         printf("error\tabi-below-shim-floor: artifact rx_info.abi %d is below "
                "the %d this shim was written for (testees/pcrec/shim.c reads "
                "rx_info.scan/.prefilter, appended at pcrec abi 6, "
-               "rx_info.match_form, appended at abi 10, and "
-               "rx_info.name/.nentries, appended at abi 15). Re-pin, or point "
+               "rx_info.match_form, appended at abi 10, "
+               "rx_info.name/.nentries, appended at abi 15, and "
+               "rx_info.search_form, appended at abi 16). Re-pin, or point "
                "PCREC_BIN at a pcrec at or after that abi.\n",
                pb_abi(), pb_shim_min_abi());
         fflush(stdout);
@@ -410,14 +436,20 @@ int main(int argc, char **argv) {
         const char *ds = pb_dfa_scan(), *dp = pb_dfa_prefilter();
         const char *dt = pb_dfa_table(), *dofs = pb_dfa_prefilter_offsets();
         const char *dse = pb_dfa_scan_edge();
+        const char *dst = pb_dfa_start();
         if (ds) printf("info\tdfa_scan\t%s\n", ds);
         if (dp) printf("info\tdfa_prefilter\t%s\n", dp);
         if (dt) printf("info\tdfa_table\t%s\n", dt);
         /* [OPT-K], abi 9: same scope as the three above. */
         if (dofs) printf("info\tdfa_prefilter_offsets\t%s\n", dofs);
-        /* [OPT-5], abi 13: same scope again (match_api.md 6.3: the scan
-         * edge "joins that iff unchanged"). */
+        /* [OPT-5] STEP 1, abi 13: same scope again (match_api.md 6.3: the
+         * scan edge "joins that iff unchanged"). */
         if (dse) printf("info\tdfa_scan_edge\t%s\n", dse);
+        /* [OPT-5] STEP 2, abi 16 ([B34]): the SEARCH entry's start form,
+         * the same iff a third time. Its rx_info mirror is printed with
+         * the other FIELD lines below, outside this guard, so its
+         * presence is read from a VALUE on every artifact. */
+        if (dst) printf("info\tdfa_start\t%s\n", dst);
     }
 
     /* [ENG-ABS], abi 10: the `_match` ENTRY's form. NOT gated on
@@ -448,6 +480,23 @@ int main(int argc, char **argv) {
         printf("info\trxinfo_name_present\t%d\n", an ? 1 : 0);
         if (an) printf("info\tartifact_name\t%s\n", an);
         printf("info\tnentries\t%d\n", pb_info_nentries());
+    }
+
+    /* [OPT-5] STEP 2, abi 16 ([B34]): the FIELD appended after `nentries`,
+     * printed on EVERY artifact exactly as `match_form` is and for the
+     * same reason -- so that "this artifact has no search form" is read
+     * from a value and never from a missing line. Its NULL rule is
+     * `scan`'s and NOT `match_form`'s: NON-NULL on every artifact that
+     * CONTAINS a DFA scan, VM hybrids included, NULL only on a plain VM
+     * artifact. On one hybrid, therefore, `rxinfo_match_form_present 0`
+     * and `rxinfo_search_form_present 1` are printed together, and that
+     * pair is the whole difference between the two iffs. The macro
+     * spelling (`dfa_start`) is printed above; the adapter checks the two
+     * against each other. */
+    {
+        const char *sf = pb_info_search_form();
+        printf("info\trxinfo_search_form_present\t%d\n", sf ? 1 : 0);
+        if (sf) printf("info\trxinfo_search_form\t%s\n", sf);
     }
 
     /* [ART-SIZE], abi 11: the size term's four stamps. `unroll_k` /
@@ -488,6 +537,27 @@ int main(int argc, char **argv) {
     if (pb_has_fast_tier()) {
         printf("info\tfast_frames\t%lld\n", pb_fast_frames());
         printf("info\tfast_trail\t%lld\n", pb_fast_trail());
+    }
+
+    /* [OPT-VMFL], abi 16 ([B34]): whether the emitted VM program contains
+     * any RX_PUSH site or linked call -- 1 = none, so no pop-and-resume
+     * dispatch at the fail label; 0 = it does. VM-only (hybrids included),
+     * unconditional there, absent on every DFA artifact. Printed only when
+     * the artifact stamps it, so the ABSENCE says "not a VM artifact" and
+     * the VALUE 0 says "this program does push": two different facts,
+     * which is why the shim exports the presence question separately. */
+    if (pb_has_vm_frameless())
+        printf("info\tvm_frameless\t%d\n", pb_vm_frameless());
+
+    /* [OPT-ALTCLS], pcrec I-39: COMMON to both engines, unconditional
+     * since long before this pin -- this shim only started reading it at
+     * abi 16. Printed together, behind one presence check, only when the
+     * artifact stamps them (the defensive #ifdef on the consumer side that
+     * every macro here gets), which in practice is every artifact this
+     * driver will ever load. */
+    if (pb_has_altcls()) {
+        printf("info\taltcls_merges\t%lld\n", pb_altcls_merges());
+        printf("info\taltcls_factored\t%lld\n", pb_altcls_factored());
     }
 
     /* The frame-buffer sizing surface (match_api.md 10.4), whenever the
