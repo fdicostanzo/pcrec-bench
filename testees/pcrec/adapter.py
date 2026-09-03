@@ -280,6 +280,20 @@ TWO new surfaces, one per (a)/(b) family:
                      read the forward machine's own value at this pin with
                      no machine having changed. Read as a fold moving, not
                      as a selection moving.
+  ([OPT-ALTCLS])     `RX_ALTCLS_MERGES` / `RX_ALTCLS_FACTORED` (pcrec inbox
+                     I-39) -- COUNTS, not booleans, of how many alternation
+                     runs src/opt/altcls.c merged into one class / prefix-
+                     factored. NOT NEW AT THIS PIN: they have been in
+                     pcrec's COMMON stamp block since [OPT-ALTCLS], emitted
+                     unconditionally in the shared prologue before either
+                     engine is built (so a `--no-captures` DFA artifact
+                     carries them too) -- what is new here is only that
+                     this shim reads them. No rx_info mirror, so the floor
+                     does not move for this addition (unlike `dfa_start`
+                     above, riding the SAME pin). Scope "every": both
+                     engines, no DFA-scan precondition -- the one pair in
+                     this pin's additions that is not scoped to the scan
+                     family or to the VM.
 
 Two rules govern how they are read, and both exist because they were paid
 for on the pcrec side first:
@@ -914,6 +928,55 @@ METADATA_DECL = {
                        "STAMPED form of what [B32] read by grepping the "
                        "emitted C for `NO RESUME FRAME AT ALL`",
     },
+    # -- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec
+    # inbox I-39; [B34], pin 288d505). COMMON scope: on EVERY artifact,
+    # BOTH engines, unconditionally -- a family of its own beside
+    # match_api.md 6.3's (a)/(b) split, neither the scan family (no DFA
+    # scan required) nor a VM-only activity fact. pcrec's own reason
+    # (lib/pcrec.h, src/gen/emit_dfa.c): the rewrite runs in
+    # `pcrec_emit_prologue`, BEFORE either engine is built, so the stamp
+    # lands once per file on the DFA-only path and the VM path alike --
+    # even a `--no-captures` build carries it (match_api.md 2082). COUNTS,
+    # not booleans (RX_VM_RUNGS's own reasoning, one level up): a pattern
+    # can carry more than one mergeable/factorable alternation RUN, and a
+    # scalar would lie on a multi-run pattern by picking one run's answer
+    # to speak for all of them. NO rx_info mirror -- these macros predate
+    # every abi this bench has ever pinned; the shim only started READING
+    # them at abi 16, which is why STAMP_SCOPE's "since" below is 16 even
+    # though pcrec has stamped them unconditionally since long before that.
+    "altcls_merges": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_ALTCLS_MERGES (in pcrec's COMMON stamp block "
+                  "since [OPT-ALTCLS]; this shim reads it since pcrec abi "
+                  "16 / [B34]), read through pb_altcls_merges() behind "
+                  "pb_has_altcls(); no rx_info mirror, so there is no "
+                  "second spelling to check it against -- what IS checked "
+                  "is its scope (STAMP_SCOPE: every artifact, both "
+                  "engines) and, in tools/selfcheck.py, its VALUE against "
+                  "real bench/altwide witnesses",
+        "description": "how many alternation runs of SINGLE-CHARACTER "
+                       "branches src/opt/altcls.c merged into one character "
+                       "class (stage 1) -- incremented at the exact point "
+                       "the rewrite acts (`job->altcls_merges`), so the "
+                       "stamp cannot disagree with what the rewrite did. 0 "
+                       "is a value, stamped honestly on a pattern with "
+                       "nothing to merge, and -- by construction, the pass "
+                       "checks the deny flag before touching the counter, "
+                       "never after -- on a `-fno-altcls-merge` build too",
+    },
+    "altcls_factored": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_ALTCLS_FACTORED (same COMMON block, same abi "
+                  "as altcls_merges), read through pb_altcls_factored() "
+                  "behind the same pb_has_altcls()",
+        "description": "how many alternation runs src/opt/altcls.c "
+                       "prefix-factored (stage 2, run on stage 1's OUTPUT, "
+                       "so denying stage 1 alone still lets stage 2 factor "
+                       "an all-single-char run's literal spelling), "
+                       "emitting no new capturing groups. 0 on a pattern "
+                       "with nothing to factor, or -- by construction -- "
+                       "on a `-fno-altcls-factor` build",
+    },
     # -- the caller-provided frame buffer's sizing surface (match_api.md
     # 10.4, abi 3). Stamped on EVERY artifact at abi 3, both engines; a DFA
     # artifact stamps 0 for all four ("this engine takes no buffers").
@@ -988,6 +1051,7 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "resume_frames", "trail_frames", "resume_frame_size",
              "trail_frame_size", "buffer_frames", "buffer_trail",
              "fast_frames", "fast_trail", "vm_frameless",
+             "altcls_merges", "altcls_factored",
              "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
              "emit_bytes", "emit_code_bytes", "warned_emit_bytes",
              "scan_edges", "scan_edges_match")
@@ -1039,6 +1103,15 @@ STAMP_SCOPE = {
     "vm_prefilter_lang":     ("vm-hybrid", 12),
     "vm_prefilter_lang_why": ("vm-hybrid", 12),
     "vm_frameless":          ("vm",       16),
+    # [B34] ([OPT-ALTCLS], pcrec I-39): scope "every" like `engine` and
+    # `max_emit_bytes` above -- both engines, no DFA-scan precondition.
+    # The "since" here is 16 because that is when THIS SHIM started
+    # reading a macro pcrec has stamped unconditionally since long before
+    # this pin (see the METADATA_DECL comment above): it is the abi at
+    # which the bench can assert the scope, not the abi at which pcrec
+    # began emitting it.
+    "altcls_merges":         ("every",    16),
+    "altcls_factored":       ("every",    16),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,

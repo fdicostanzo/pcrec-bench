@@ -170,6 +170,23 @@
  *       per-quantifier axis to mix). No rx_info mirror, D77's reason.
  *       For this bench it is the [B32] covariate: it REPLACES the
  *       `NO RESUME FRAME AT ALL` grep over emitted C with a stamp.
+ *   (c) ACTIVITY, COMMON TO BOTH ENGINES: `RX_ALTCLS_MERGES` /
+ *       `RX_ALTCLS_FACTORED` (pcrec inbox I-39, [OPT-ALTCLS],
+ *       src/opt/altcls.c) -- COUNTS, not booleans, of how many alternation
+ *       runs of single-character branches were merged into one class
+ *       (stage 1) and how many were prefix-factored (stage 2, run on
+ *       stage 1's OUTPUT). Neither family (a)'s scan scope (they do not
+ *       need a DFA scan) nor family (b)'s VM-only one: `pcrec_emit_prologue`
+ *       emits both UNCONDITIONALLY, once per file, BEFORE either engine is
+ *       built -- so they are on every artifact this shim can see, DFA and
+ *       VM alike, a `--no-captures` build included (match_api.md 2082).
+ *       They have been in that COMMON block since [OPT-ALTCLS], well
+ *       before this file existed; what is new at abi 16 is only that this
+ *       shim reads them. No rx_info mirror. `0` is a value: a pattern with
+ *       no mergeable/factorable run stamps it honestly, and so does a
+ *       `-fno-altcls-merge` / `-fno-altcls-factor` build (the pass checks
+ *       the deny flag before touching the counter, never after, so a
+ *       denial leaves no trace to tell from "nothing to do here").
  *
  * WHY THE MACROS ARE STILL READ THROUGH #ifdef (D81 says the EMITTER stamps
  * them unconditionally): the #ifdef is on the CONSUMER side and exists so
@@ -704,6 +721,48 @@ int pb_has_vm_frameless(void) {
 int pb_vm_frameless(void) {
 #ifdef RX_VM_FRAMELESS
     return (int)RX_VM_FRAMELESS;
+#else
+    return 0;
+#endif
+}
+
+/* ---------------- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec I-39) */
+
+/* `RX_ALTCLS_MERGES` / `RX_ALTCLS_FACTORED` have been in pcrec's COMMON
+ * stamp block since [OPT-ALTCLS] -- emitted by `pcrec_emit_prologue` BEFORE
+ * either engine is built, so they land on EVERY artifact this file can
+ * ever see, DFA and VM alike, a `--no-captures` build included -- and this
+ * shim only started reading them at abi 16 ([B34]). No rx_info mirror
+ * exists for either, so the abi floor does NOT move for this addition,
+ * unlike `RX_DFA_START` beside it in the same pin (which added
+ * `search_form`).
+ *
+ * TWO GETTERS behind ONE presence question, the same shape as
+ * pb_vm_frameless() and for the identical reason: `0` is a value ("this
+ * pattern had nothing to merge/factor", or a denied build, which leaves
+ * the counter at 0 by construction) and ABSENCE is a different fact ("this
+ * pcrec predates [OPT-ALTCLS]"), so a single getter returning 0 would
+ * collapse them. Both stamps land together (one emitter call), so one
+ * presence question covers the pair. */
+int pb_has_altcls(void) {
+#ifdef RX_ALTCLS_MERGES
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_altcls_merges(void) {
+#ifdef RX_ALTCLS_MERGES
+    return (long long)RX_ALTCLS_MERGES;
+#else
+    return 0;
+#endif
+}
+
+long long pb_altcls_factored(void) {
+#ifdef RX_ALTCLS_FACTORED
+    return (long long)RX_ALTCLS_FACTORED;
 #else
     return 0;
 #endif

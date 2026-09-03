@@ -49,7 +49,8 @@
  * WHAT IS PRINTED FOR THE MECHANISM STAMPS, and the rule none of it breaks
  * (pcrec I-5): NOTHING IS EVER INFERRED FROM A STAMP'S ABSENCE. Each of
  * `info dfa_scan / dfa_prefilter / dfa_table / dfa_prefilter_offsets /
- * dfa_scan_edge / dfa_start / dfa_match / vm_frameless / fast_frames /
+ * dfa_scan_edge / dfa_start / dfa_match / vm_frameless / altcls_merges /
+ * altcls_factored / fast_frames /
  * fast_trail / unroll_k /
  * unroll_k_why / max_emit_code_bytes / max_emit_bytes / engine_sel /
  * vm_prefilter_lang / vm_prefilter_lang_why` is printed only when the artifact
@@ -70,7 +71,13 @@
  * with a macro spelling (`info dfa_start`) and IS cross-checked -- the
  * `match_form` pattern, and the two are deliberately printed side by side
  * because their NULL rules differ: on a VM hybrid `match_form` is NULL
- * and `search_form` is not.
+ * and `search_form` is not. [B34] also adds `info altcls_merges` /
+ * `info altcls_factored` (pcrec I-39, [OPT-ALTCLS]) -- COUNTS with NO
+ * rx_info mirror at all, so neither is cross-checked against a field;
+ * they are printed together, behind one presence check, whenever the
+ * artifact stamps them -- in practice every artifact this driver will
+ * ever load, since the macros predate this pin by a long margin and only
+ * the READ is new here.
  */
 
 #define _GNU_SOURCE
@@ -123,6 +130,9 @@ static const char *(*pb_dfa_start)(void);
 static const char *(*pb_info_search_form)(void);
 static int       (*pb_has_vm_frameless)(void);
 static int       (*pb_vm_frameless)(void);
+static int       (*pb_has_altcls)(void);
+static long long (*pb_altcls_merges)(void);
+static long long (*pb_altcls_factored)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -335,6 +345,7 @@ int main(int argc, char **argv) {
     SYM(pb_info_name); SYM(pb_info_nentries);
     SYM(pb_dfa_start); SYM(pb_info_search_form);
     SYM(pb_has_vm_frameless); SYM(pb_vm_frameless);
+    SYM(pb_has_altcls); SYM(pb_altcls_merges); SYM(pb_altcls_factored);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -537,6 +548,17 @@ int main(int argc, char **argv) {
      * which is why the shim exports the presence question separately. */
     if (pb_has_vm_frameless())
         printf("info\tvm_frameless\t%d\n", pb_vm_frameless());
+
+    /* [OPT-ALTCLS], pcrec I-39: COMMON to both engines, unconditional
+     * since long before this pin -- this shim only started reading it at
+     * abi 16. Printed together, behind one presence check, only when the
+     * artifact stamps them (the defensive #ifdef on the consumer side that
+     * every macro here gets), which in practice is every artifact this
+     * driver will ever load. */
+    if (pb_has_altcls()) {
+        printf("info\taltcls_merges\t%lld\n", pb_altcls_merges());
+        printf("info\taltcls_factored\t%lld\n", pb_altcls_factored());
+    }
 
     /* The frame-buffer sizing surface (match_api.md 10.4), whenever the
      * artifact stamps it -- both engines at abi 3; a DFA artifact stamps
