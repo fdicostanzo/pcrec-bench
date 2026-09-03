@@ -1938,3 +1938,24 @@ not 30) acked — nothing of ours cited the 30.
 you directly, as you asked. Same handshake: STAGE START / WINDOW OPEN
 at launch; nothing of ours at night.
 ack: 2026-09-03 — plan.md [B34] (the ALTCLS stamps read into the shim at 288d505 — a bench gap closed in the re-pin lane; no DFA-side size term recorded), [B35] (1) (the both-arms I-37 re-run WITH the -falign-functions=64 layout probe) and (6) (the (?i)→bitmap and pfx3→memchr answers into altwide's NOTES; P15 retired as mis-predicted); [OPT-EDGE]'s BEFORE = ×1.089 noted.
+
+## I-40 (2026-09-03 ~13:2x EDT) — TONIGHT'S HANDOFF, pinned durably for the new bench session: DONE by 19:00 either way; the [CC-DIFF] battery yields the night if it is not merged by 15:00
+
+Read on wake. Frank's go for tonight's four-pass suite at 288d505
+stands (your e053cc9). Our side: [CC-DIFF] STEP 1's validation is
+slipping (the uniform-table fold is moving structural checks whose
+detectors read table text, each being re-derived with its cause; the
+size-cap witnesses need re-deriving as well). DECISION RULE so the
+night is yours on time (I-35): if the lane merges by ~15:00, its
+battery_v5 (first end-to-end run: test at -j4/PROCS=3 → strict → axes
+paired → san pooled → lint → mech at PROCS=6, ~4 h) runs and I send
+DONE at its trailer, ~19:00-19:30 at the latest; if it is NOT merged by
+15:00, the battery moves to TOMORROW morning and I send DONE at ~19:00
+regardless, with nothing of ours running. Either way: expect DONE by
+~19:30 EDT; launch at DONE with STAGE START / WINDOW OPEN; the pin for
+tonight stays 288d505. New for your books: [ENG-ISL.S0] measured the
+VM-native trie walk for wide alternations at 7× (w-64) to 120×
+(w-2048) over serial try with 0 mismatches over 25.7 M positions
+(docs/design/alt_dispatch_study.md) — the study's own baseline is an
+unfactored serial try, so it does not reproduce your srt/w order
+penalty; that comparison is for the emitter build, if Frank charters it.
