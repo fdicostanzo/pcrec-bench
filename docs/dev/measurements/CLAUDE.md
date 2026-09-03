@@ -79,3 +79,25 @@ Maintenance: update this file when files are added/removed or change role.
   own numbers. Every row was counted TWICE, by the adapter's counter and by an
   independent reader sharing no source with it; the two agree on all 338.
   Nothing here is a timing, so the box's load does not enter it.
+- `2026-09-03-window-cross-file-derivations.txt` — ([B31] reports lane) four
+  tables that no single committed report holds, because each is a division
+  ACROSS two files, or across a report and a window log. Nothing here was
+  measured by that lane and no engine was run: every number is read out of a
+  committed artifact named beside it. (1) The altwide@0.2 cell wall clocks
+  against `bench/altwide/NOTES.md`'s estimate, with a CORRECTION to the anchor
+  that estimate was built on — the NOTES' "the MEASURED 0.1 auto cell was 30
+  min" is pcre2-JIT's 0.1 cell; the real one was 4.8 minutes, and the 0.1
+  window log's own cell lines are quoted. (2) The raised-cap compile
+  projection from `2026-09-02-altwide-raised-cap-sizes.txt` section 2 against
+  what the bigcap cells actually cost (both inside 4 %), plus the cell-by-cell
+  evidence that the raise removes a gate and changes nothing else: auto
+  artifacts byte-identical, VM artifacts exactly +1 byte (derived: the code
+  cap's own extra digit in the emitted source), `K=8/default` on all 106 VM
+  legend lines across both arms. (3) The `-fno-scan-edge` arm against the
+  2026-09-02 ledger §7.2, where the recovered time matches the measured
+  regression to three figures on all five rows and the recovered SIZE matches
+  to exactly 6 bytes on all three edge-taking patterns — 6 B being the flag's
+  own constant, established by the eight zero-edge patterns. Includes the
+  same-pin repeatability floor (22/22 cells within 1.32 %) the small ratios
+  have to clear. (4) The I-37 clang re-run against the 2026-09-02 cell, and
+  the statement of which half of the disputed ratio was re-measured.
