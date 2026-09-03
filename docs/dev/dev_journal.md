@@ -2596,3 +2596,29 @@ monitors regardless of prose); a hold is a clock; a model pool can be
 overloaded while another is fine — switch models rather than retry;
 a check that proves a renderer against committed records must say what
 it does at a pin with no records.
+
+## 2026-09-03 (EDT, ~12:5x), eighth session (part 9) — Frank's ruling on bundling (one change per pin per night), the cflags axis merged, tonight's four-pass suite fixed
+
+Frank asked whether re-pinning for STEP 2 alone forecloses bundling
+other items into the night; the answer he agreed with: the acceptance
+stays single-variable (one pcrec change per pin and per night — the
+one-variable rule and D77's expectation), re-pins are cheap now (~3 h),
+so future pcrec items get their own pins and nights, and the REST of a
+night is filled with SAME-PIN cells that confound nothing (saved as a
+feedback memory). Tonight at 288d505: bounded × six pinned (the STEP 2
+AFTER against ledger 2026-09-02 §10 / I-38's targets), loglines ×
+{auto, noedge} (the search band's AFTER + the noedge pair's second
+sample), email × auto (continuity), bounded × {auto, auto-clang,
+auto-align64} (the both-arms re-run of the 0.432 cell with I-39 (v)'s
+layout probe); ~7.3 h, launch at pcrecdev1's end-of-day DONE
+(~18:30-19:00, their [CC-DIFF] STEP 1 battery). Lane b35align (sonnet,
+5ec667c, merged a111b64) built the COMPILEE-FLAGS axis in 45 min: a
+per-config `cflags` list appended to OUR phase-2 $CC argv after
+`-shared` (never pcrec's argv, never the driver), the token
+`cf-align-functions-64` composed LAST in config_extra, build_flags
+naming the flags verbatim, `pcrec-auto-align64`, seven checks (the
+twelve pre-[B35] configs untouched incl. every committed record's
+build_flags; the flag seen in the REAL gcc argv; the aligned artifact
+answered by the oracle; a scratch record carrying the token); make
+check 4/72/0 · 277/277 · 68+7. Thirteen pinned pcrec configs. No lanes,
+no worktrees; a keepalive cron carries the hold to DONE.
