@@ -1822,10 +1822,14 @@ STAMP_CASES = (
      # [B25] (abi 13): `[0-9]+` is the unbounded ONE-STATE form of a
      # counted class run (tuning.md 2.18), so even this small witness
      # carries a scan edge -- `range` ([0-9] is contiguous).
+     # [B34] ([OPT-ALTCLS]): no alternation at all, so both altcls counts
+     # read 0 honestly -- the "nothing to merge/factor" case, not a denied
+     # build.
      {"engine": "dfa", "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
       "dfa_table": "premultiplied", "dfa_prefilter_offsets": "none",
       "dfa_scan_edge": "range", "dfa_start": "reverse-pass",
-      "dfa_match": "unwrapped", "engine_sel": "selected", **_CAPS_DFA}),
+      "dfa_match": "unwrapped", "engine_sel": "selected",
+      "altcls_merges": 0, "altcls_factored": 0, **_CAPS_DFA}),
     # [B26] / pcrec abi 14 ([OPT-4.2]) -- THE EIGHTH ROUTE TOKEN, BY VALUE,
     # AND ITS CONTROL. `(?=...)` forces the VM and leaves the artifact
     # HYBRID-ELIGIBLE, so the prefilter decision is actually reached; the
@@ -1851,10 +1855,12 @@ STAMP_CASES = (
     # value unwitnessed.
     ("VM hybrid, nullable language DECLINED ([OPT-4.2])", "pcrec-auto",
      b"(?=abc)x*",
+     # [B34]: no alternation, so both altcls counts are the honest 0.
      {"engine": "vm", "prefilter": "none",
       "engine_sel": "declined-nullable-default",
       "vm_prefilter_lang": None, "vm_prefilter_lang_why": None,
       "dfa_scan": None, "dfa_prefilter": None,
+      "altcls_merges": 0, "altcls_factored": 0,
       **_CAPS_VM}),
     # THE CONTROL, one character apart: `x+` is NOT nullable, so the same
     # lookahead-forced artifact KEEPS its exact-language prefilter and
@@ -1868,31 +1874,46 @@ STAMP_CASES = (
       "vm_prefilter_lang_why": "no counted repeat",
       "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
       "dfa_start": "reverse-pass", "vm_frameless": 1,
+      "altcls_merges": 0, "altcls_factored": 0,
       **_CAPS_VM}),
     ("VM hybrid", "pcrec-auto", b"a(b|c)+d",
+     # [B34] ([OPT-ALTCLS]): `(b|c)` is a run of TWO single-character
+     # branches, so stage 1 merges it into one class -- MEASURED
+     # `altcls_merges 1`, and the ONLY thing this row's engine selection
+     # reads afterward is the merged AST, not the two-branch original
+     # (`dfa_prefilter memchr` above is a single-byte class, not two
+     # literal alternatives). `altcls_factored 0`: nothing left to
+     # prefix-factor after a two-branch run collapses to one class.
      {"engine": "vm", "prefilter": "hybrid", "dfa_scan": "unanchored",
       "dfa_prefilter": "memchr", "dfa_table": "premultiplied",
       "dfa_prefilter_offsets": "none", "dfa_scan_edge": "none",
       "dfa_start": "reverse-pass", "vm_frameless": 1,
       "engine_sel": "selected",
       "vm_prefilter_lang": "exact",
+      "altcls_merges": 1, "altcls_factored": 0,
       "vm_prefilter_lang_why": "no counted repeat", **_CAPS_VM}),
     ("VM, no DFA scan", "pcrec-vm", b"a(b|c)+d",
      # [B34]: NO `dfa_start` here (no DFA scan to have a search form) but
      # `vm_frameless` IS present -- the two abi-16 stamps have different
      # scopes, and this is the artifact kind that separates them. Their
      # ABSENCE on the other side is asserted by the scope block below.
+     # `altcls_merges 1` / `altcls_factored 0` MEASURED IDENTICAL to the
+     # `auto` row above on the SAME pattern text -- [OPT-ALTCLS] runs in
+     # the shared prologue before engine selection forks, so forcing
+     # `--engine=vm` cannot change what it did, only what reads the result.
      {"engine": "vm", "prefilter": "none", "engine_sel": "forced",
-      "vm_frameless": 1,
+      "vm_frameless": 1, "altcls_merges": 1, "altcls_factored": 0,
       **_CAPS_VM}),
     ("provably-empty DFA", "pcrec-auto", b"[^\\x00-\\xff]",
      # [B34]: an `empty` scan is one of the registry predicate's own
      # exclusions -- there is no start state that accepts -- so it takes
      # the fallback candidate even though nothing about it is expensive.
+     # No alternation, so both altcls counts are the honest 0.
      {"engine": "dfa", "dfa_scan": "empty", "dfa_prefilter": "none",
       "dfa_table": "none", "dfa_prefilter_offsets": "none",
       "dfa_scan_edge": "none", "dfa_start": "reverse-pass",
-      "dfa_match": "search-filter", "engine_sel": "selected", **_CAPS_DFA}),
+      "dfa_match": "search-filter", "engine_sel": "selected",
+      "altcls_merges": 0, "altcls_factored": 0, **_CAPS_DFA}),
     # [B18]: the `attempt` scan (an anchored pattern) is the other
     # `search-filter` population I-16 names, and the other `dfa_table none`.
     # [B25]: an `attempt` scan's states are code labels with a computed-
@@ -1901,18 +1922,23 @@ STAMP_CASES = (
     # despite the same `[0-9]+` run that stamps `range` unanchored.
     ("anchored attempt DFA", "pcrec-auto", b"^foo[0-9]+bar",
      # [B34]: `attempt` is the registry predicate's other named exclusion.
+     # No alternation, so both altcls counts are the honest 0.
      {"engine": "dfa", "dfa_scan": "attempt", "dfa_prefilter": "none",
       "dfa_table": "none", "dfa_prefilter_offsets": "none",
       "dfa_scan_edge": "none", "dfa_start": "reverse-pass",
-      "dfa_match": "search-filter", "engine_sel": "selected", **_CAPS_DFA}),
+      "dfa_match": "search-filter", "engine_sel": "selected",
+      "altcls_merges": 0, "altcls_factored": 0, **_CAPS_DFA}),
     # [B19]: a VM hybrid with a counted repeat that nothing collapses --
     # the `exact` language's OTHER why value, and the pattern the force
     # control below moves to `count-collapsed` / `forced`.
     ("VM hybrid, counted repeat, exact", "pcrec-auto", b"a(b|c){2,5}d",
+     # [B34]: the SAME `(b|c)` merge as the plain hybrid above --
+     # [OPT-ALTCLS] does not care that this branch is inside a counted
+     # repeat, only that the run is single-character.
      {"engine": "vm", "prefilter": "hybrid", "engine_sel": "selected",
       "vm_prefilter_lang": "exact", "vm_prefilter_lang_why": "exact",
       "dfa_scan_edge": "range", "dfa_start": "reverse-pass",
-      "vm_frameless": 1,
+      "vm_frameless": 1, "altcls_merges": 1, "altcls_factored": 0,
       **_CAPS_VM}),
     # [B19]: THE SIZE-CAP RUNG (limits.md 8, [OPT-4]): the exact artifact
     # is REFUSED by the code cap and the retry ships a count-collapsed
@@ -1931,9 +1957,12 @@ STAMP_CASES = (
      # the seven `1`s above it. Both values of the boolean are therefore
      # covered by value here, which is what stops the stamp being read as
      # a constant.
+     # [B34]: MEASURED altcls_merges 0 / altcls_factored 0 -- K41's witness
+     # has alternations, but none of single-character branches.
      {"engine": "vm", "prefilter": "hybrid", "engine_sel": "size-cap-retry",
       "vm_prefilter_lang": "count-collapsed", "dfa_scan_edge": "none",
       "dfa_start": "reverse-pass", "vm_frameless": 0,
+      "altcls_merges": 0, "altcls_factored": 0,
       "vm_prefilter_lang_why": _SIZE_CAP_RETRY, **_CAPS_VM}),
     # [B34] / pcrec abi 16 ([OPT-5] STEP 2) -- THE START-PINNED SEARCH, BY
     # VALUE, AND WHY THIS WITNESS. Every case above stamps `reverse-pass`,
@@ -1950,9 +1979,12 @@ STAMP_CASES = (
     # edge with it.
     ("start-PINNED DFA ([OPT-5] STEP 2's own population)",
      "pcrec-auto", b"[a-z]{0,64}",
+     # [B34] ([OPT-ALTCLS]): `[a-z]{0,64}` is one class repeated, no
+     # alternation at all -- both altcls counts read 0.
      {"engine": "dfa", "dfa_scan": "unanchored", "dfa_start": "pinned",
       "dfa_table": "premultiplied", "dfa_scan_edge": "range",
       "dfa_match": "unwrapped", "engine_sel": "selected",
+      "altcls_merges": 0, "altcls_factored": 0,
       "scan_edges": 1, "emit_bytes": 16297, **_CAPS_DFA}),
     # ... and its ONE-CHARACTER CONTROL. `{4096,}` is a LOWER bound, so
     # the start state does not accept and the predicate declines: the same
@@ -1961,7 +1993,8 @@ STAMP_CASES = (
     ("start-pinned DECLINED: the lower-bound control",
      "pcrec-auto", b"[a-z]{4096,}",
      {"engine": "dfa", "dfa_scan": "unanchored",
-      "dfa_start": "reverse-pass", "engine_sel": "selected", **_CAPS_DFA}),
+      "dfa_start": "reverse-pass", "engine_sel": "selected",
+      "altcls_merges": 0, "altcls_factored": 0, **_CAPS_DFA}),
 )
 
 
@@ -2199,6 +2232,46 @@ LEDGER_STAMP_CASES = (
      "bounded", "nest2-64",
      {"engine": "dfa", "engine_sel": "selected", "dfa_scan_edge": "range",
       **_CAPS_DFA}),
+    # [B34] ([OPT-ALTCLS], pcrec I-39, inbox item 2): the bench/altwide
+    # ORDER PAIR. `w-256` and `srt-256` are the SAME 256 single-word
+    # branches in a different order (the 2026-09-03 ledger's own
+    # `srt-256` x8.87-faster-on-the-VM finding). MEASURED here (diffing
+    # the two emitted DFA artifacts byte for byte): every table, state and
+    # accept bit is IDENTICAL between them -- subset construction
+    # canonicalises the DFA regardless of source order -- and the ONLY
+    # functional bytes that differ anywhere in the ~989 KB file are the
+    # embedded pattern-text comment/string (three copies) and ONE line:
+    # `RX_ALTCLS_FACTORED`. So the stamp is a genuine per-SOURCE-ORDER
+    # fact about the REWRITE, distinct from the machine that gets built
+    # from its output -- exactly the kind of fact a consumer reading only
+    # the compiled artifact's behaviour could never recover. `srt-256` is
+    # lexically sorted, so far more of its branches share a live adjacent
+    # prefix for stage 2 to find: 57 factored runs against `w-256`'s 11 in
+    # generation order, more than 5x. `altcls_merges` is 0 on both --
+    # bench/altwide/NOTES.md's P1 HOLDS on this pair (no single-character
+    # branches in either).
+    ("altwide w-256: the ORIGINAL branch order", "pcrec-auto",
+     "altwide", "w-256",
+     {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 11}),
+    ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)",
+     "pcrec-auto", "altwide", "srt-256",
+     {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 57}),
+    # `sh1-64`: every one of its 64 branches starts with the byte `k` --
+    # factoring IS expected (bench/altwide/NOTES.md), and MEASURED it
+    # factors into 3 runs, not 1: `altcls_factor_run`'s own recursion is
+    # depth-capped (`PCREC_MAX_ALTCLS_FACTOR_DEPTH`), so a single shared
+    # first byte does not collapse to one group when the branches diverge
+    # below it -- the count says HOW MANY groups the capped recursion
+    # found, not merely whether a shared prefix exists.
+    ("altwide sh1-64: every branch shares byte 0 ('k')", "pcrec-auto",
+     "altwide", "sh1-64",
+     {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 3}),
+    # `floor`: a single literal byte, no alternation at all -- both counts
+    # read the honest 0, the "nothing to merge/factor" case rather than a
+    # denied build.
+    ("altwide floor: no alternation at all", "pcrec-auto",
+     "altwide", "floor",
+     {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 0}),
 )
 
 
@@ -2276,8 +2349,29 @@ def check_mechanism_stamps():
     covariate [B32] used to GREP for, now agreeing with the stamp that
     replaces it. `rx_info.search_form` is read off the driver beside
     `match_form` and the two iffs are asserted to PART on the VM hybrid,
-    which is the artifact kind that separates them."""
-    print("-- the abi 4-16 mechanism stamps (pcrec I-5/I-6/I-11/I-13/I-15/I-16/I-17/I-18/I-21/I-25/I-27/I-38) --")
+    which is the artifact kind that separates them.
+
+    ONE MORE ADDITION LANDED IN THE SAME PIN'S BENCH WORK (pcrec inbox
+    I-39, [OPT-ALTCLS]): `altcls_merges` / `altcls_factored`, present in
+    pcrec's COMMON stamp block since long before this pin -- this shim only
+    started READING them here. THIRD scope shape beside dfa_start's
+    dfa-scan iff and vm_frameless's VM-only one: "every" artifact, both
+    engines, no precondition at all, because `pcrec_emit_prologue` stamps
+    both counts before either engine is built. Asserted BY VALUE on every
+    hand-chosen STAMP_CASES kind (0 except the `(b|c)` hybrid cases, which
+    read `altcls_merges 1` -- merging is not engine-scoped: the SAME
+    pattern reads the SAME count whether `auto` or `--engine=vm` compiles
+    it) and on bench/altwide's ORDER PAIR `w-256`/`srt-256` (identical 256
+    branches, sorted vs generation order): diffing the two emitted DFA
+    artifacts byte for byte finds the machines IDENTICAL (subset
+    construction canonicalises regardless of source order) except for the
+    embedded pattern-text comments and ONE line, `RX_ALTCLS_FACTORED`
+    (11 vs 57) -- a stamp about the REWRITE, not about the artifact it
+    feeds. `sh1-64` (every branch shares byte 0) factors into 3 runs, not
+    1 (the pass's own depth cap); `floor` (no alternation) reads 0/0.
+    bench/altwide/NOTES.md's P1 (0 merges on every altwide pattern) HOLDS,
+    asserted by name rather than left as prose."""
+    print("-- the abi 4-16 mechanism stamps (pcrec I-5/I-6/I-11/I-13/I-15/I-16/I-17/I-18/I-21/I-25/I-27/I-38/I-39) --")
     try:
         adapter = _ad.discover()["pcrec"]
     except KeyError:
@@ -2741,6 +2835,68 @@ def check_mechanism_stamps():
         elif metas:
             bad("scope: max_emit_bytes on EVERY artifact, both engines",
                 "missing on %s" % ", ".join(missing_cap))
+
+        # -- [B34] ([OPT-ALTCLS], pcrec inbox I-39): COMMON scope, "every"
+        # like `engine` and `max_emit_bytes` above -- neither dfa_start's
+        # DFA-scan precondition nor vm_frameless's VM one, because
+        # pcrec_emit_prologue stamps both counts BEFORE either engine is
+        # built. Present since long before this pin; new here is only
+        # that this shim reads them. --
+        missing_altcls = [l for l, em in metas.items()
+                          if "altcls_merges" not in em
+                          or "altcls_factored" not in em]
+        if metas and not missing_altcls:
+            ok("scope: altcls_merges / altcls_factored on EVERY artifact, both engines ([OPT-ALTCLS])",
+               "%d artifacts, DFA and VM alike" % len(metas))
+        elif metas:
+            bad("scope: altcls_merges / altcls_factored on EVERY artifact, both engines ([OPT-ALTCLS])",
+                "missing on %s" % ", ".join(sorted(missing_altcls)))
+        # `altcls_merges`: 0 on every hand-chosen kind with no single-
+        # character alternation AND on every bench/altwide witness below
+        # (P1), 1 on the `(b|c)` hybrid cases -- BOTH values reached, so
+        # the stamp is not a constant this bench could not tell apart
+        # from a frozen one.
+        am_all = sorted({em["altcls_merges"] for em in metas.values()
+                         if "altcls_merges" in em})
+        if len(am_all) > 1:
+            ok("altcls_merges is not a constant: more than one value on real artifacts",
+               "values %s; 1 on %s"
+               % (am_all, ", ".join(sorted(l for l, em in metas.items()
+                                           if em.get("altcls_merges") == 1))[:120]))
+        elif am_all:
+            bad("altcls_merges is not a constant: more than one value on real artifacts",
+                "only %r seen over %d artifacts" % (am_all, len(am_all)))
+        # `altcls_factored`: the OPPOSITE population shape -- 0 on every
+        # hand-chosen STAMP_CASES kind (none shares an adjacent literal
+        # prefix) and three distinct nonzero values on the bench/altwide
+        # witnesses (11 / 57 / 3), reached below.
+        af_all = sorted({em["altcls_factored"] for em in metas.values()
+                         if "altcls_factored" in em})
+        if len(af_all) > 1:
+            ok("altcls_factored is not a constant: more than one value on real artifacts",
+               "values seen: %s" % (af_all,))
+        elif af_all:
+            bad("altcls_factored is not a constant: more than one value on real artifacts",
+                "only %r seen over %d artifacts" % (af_all, len(af_all)))
+        # -- bench/altwide/NOTES.md's P1, asserted rather than left as
+        # prose: it predicted `altcls_merges == 0` on EVERY altwide
+        # pattern (no single-character branches anywhere in the set).
+        # MEASURED on the four witnesses above (w-256, srt-256, sh1-64,
+        # floor) -- if any of them stamped nonzero, P1 would be refuted
+        # and this assertion would say so by name rather than passing
+        # silently. --
+        altwide_labels = [l for l in metas
+                          if l.startswith("altwide ")]
+        if altwide_labels:
+            nonzero = [l for l in altwide_labels
+                      if metas[l].get("altcls_merges") != 0]
+            if not nonzero:
+                ok("FINDING: bench/altwide/NOTES.md's P1 HOLDS -- altcls_merges is 0 on every altwide witness",
+                   "%d witnesses, all 0: %s"
+                   % (len(altwide_labels), ", ".join(sorted(altwide_labels))))
+            else:
+                bad("FINDING: bench/altwide/NOTES.md's P1 HOLDS -- altcls_merges is 0 on every altwide witness",
+                    "P1 REFUTED: nonzero on %s" % ", ".join(sorted(nonzero)))
 
         # -- [B19] the abi-12 route token: on EVERY artifact, both engines,
         # and its value set is the registry's `engine-route` axis --
