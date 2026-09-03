@@ -2622,3 +2622,18 @@ build_flags; the flag seen in the REAL gcc argv; the aligned artifact
 answered by the oracle; a scratch record carrying the token); make
 check 4/72/0 · 277/277 · 68+7. Thirteen pinned pcrec configs. No lanes,
 no worktrees; a keepalive cron carries the hold to DONE.
+
+## 2026-09-03 (EDT, ~12:5x), eighth session (part 10) — CLOSE; Frank restarts the session before tonight's launch
+
+Frank: "If you're done, close your session and I'll restart it before
+tonight." Closed at master 7fe3649 + this entry: clean, green (4/72/0 ·
+277/277 · 68+7), pin 288d505 (abi 16), thirteen pinned pcrec configs,
+store 122, schema 1.5, reporter v13. No lanes, worktrees or crons. The
+next session's first job is tonight's four-pass suite at pcrecdev1's
+end-of-day DONE (~18:30-19:00; the peer has been told the session
+restarts before then) — the command is in wake.md verbatim. The
+session's arc, for the record: [B30] ruled and done; [B31] built,
+measured and read (O-15; I-39 answered it); [B32] built (the frameless
+column now real at abi 16); [B34] re-pinned; [B35] (1) built; two
+windows' worth of rulings from Frank (build by day / windows at night;
+one change per pin per night) saved as memories.
