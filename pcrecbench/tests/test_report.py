@@ -1754,16 +1754,37 @@ def test_reporter_version_pin():
     header count, the new unconditional `worst other-core busy:` line,
     and KB-9's `(clang cc)` note -- the `scan_edges` clause is additive
     and KB-10 is out of `report.py`, so neither moves anything by
-    itself) took it to v12."""
-    _check(report.REPORTER_VERSION == "v12 (2026-09-02)",
-           f"expected REPORTER_VERSION == 'v12 (2026-09-02)', got {report.REPORTER_VERSION!r}")
+    itself) took it to v12; [B34] (the abi-16 re-pin: the `start=` and
+    `frameless=` legend clauses with their notes) took it to v13.
+
+    [B34] IS THE CASE THIS TEST MUST NOT BE READ AS CONTRADICTING. Both
+    of its clauses are CONDITIONAL on a record carrying the pair, and no
+    record in `store/` does -- so no committed report's BODY changes and
+    none is regenerated here. The version still bumps, because the rule
+    is about the CODE that renders, not about whether today's store
+    happens to exercise it: two reports produced by different reporter
+    code must never carry the same version, and the first abi-16 window
+    will render differently under v13 than v12 would have."""
+    _check(report.REPORTER_VERSION == "v13 (2026-09-03)",
+           f"expected REPORTER_VERSION == 'v13 (2026-09-03)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v12 (2026-09-02)" in md, f"expected the v12 header line:\n{md[:200]}")
+    _check("reporter: v13 (2026-09-03)" in md, f"expected the v13 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v12 (2026-09-02)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v13 (2026-09-03)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    # ... and the CONTROL for the paragraph above: rendering the whole
+    # fixture store under v13 must print NEITHER new clause, because no
+    # record in it carries either pair. If this fires, a committed report
+    # DOES move and the regeneration this lane deliberately skipped is
+    # owed.
+    _check("start=" not in md and "frameless=" not in md,
+           "no fixture record carries dfa_start/vm_frameless, so v13 must "
+           "render the store exactly as v12 did apart from the version "
+           "line -- if a clause appears here, the committed reports need "
+           "regenerating and this lane's 'nothing to regenerate' claim is "
+           "wrong")
 
 
 def test_did_not_compile_ranking_line_r10():
@@ -3049,6 +3070,162 @@ def test_scan_edges_legend_column():
            f"a table with no scan_edges pair carries neither the clause nor the note:\n{md_o}")
 
 
+def test_dfa_start_legend_b34():
+    """[B34]: pcrec abi 16's `RX_DFA_START` ([OPT-5] STEP 2) renders as
+    `start=<pinned|reverse-pass>` beside `edge=`/`edges=` and on the SAME
+    `dfa-scan` scope -- every artifact that CONTAINS a DFA scan, VM
+    hybrids included -- and NOT on `dfa_match`'s narrower dfa-only one.
+    A pinned artifact carries no reverse machine, so this clause is what
+    explains a row's size against its `-fno-start-pinned` sibling."""
+    dfa16 = {"abi": 16, "engine": "dfa", "dfa_scan": "unanchored",
+             "dfa_prefilter": "none", "dfa_prefilter_offsets": "none",
+             "dfa_table": "premultiplied", "dfa_match": "search-filter",
+             "dfa_scan_edge": "range", "scan_edges": 1,
+             "dfa_start": "pinned"}
+    _check(report._dfa_start_display(dfa16) == "pinned",
+           f"start clause, got {report._dfa_start_display(dfa16)!r}")
+    line = report._testee_legend_line("pcrec_288d505_auto-caps-simdna", dfa16)
+    _check("edge=range, edges=1, start=pinned, match=search-filter" in line,
+           f"start sits after edges= and before match=, got {line!r}")
+
+    # a VM HYBRID carries it too (dfa-scan scope), and has NO match=
+    # clause -- the pair of clauses whose iffs part, which is the whole
+    # reason `search_form` is not read through `match_form`'s guard.
+    hybrid16 = {"abi": 16, "engine": "vm", "prefilter": "hybrid",
+                "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
+                "dfa_prefilter_offsets": "none", "dfa_table": "premultiplied",
+                "dfa_scan_edge": "none", "dfa_start": "reverse-pass",
+                "vm_frameless": 1}
+    hline = report._testee_legend_line("t", hybrid16)
+    _check("start=reverse-pass" in hline and "match=" not in hline,
+           f"a hybrid carries start= with no match= clause, got {hline!r}")
+
+    # CONTROL 1: a forced-VM artifact has no DFA scan and stamps none.
+    forced_vm = {"abi": 16, "engine": "vm", "prefilter": "none",
+                 "vm_frameless": 1}
+    _check(report._dfa_start_display(forced_vm) is None,
+           "a forced-VM artifact carries no DFA scan and stamps no start")
+    _check("start=" not in report._testee_legend_line("t", forced_vm),
+           "no start clause on a forced-VM artifact")
+
+    # CONTROL 2: an abi-15 record renders exactly as before.
+    old15 = {"abi": 15, "engine": "dfa", "dfa_scan": "unanchored",
+             "dfa_prefilter": "byte-class", "dfa_prefilter_offsets": "none",
+             "dfa_table": "premultiplied", "dfa_match": "unwrapped",
+             "dfa_scan_edge": "range"}
+    _check(report._dfa_start_display(old15) is None,
+           "an abi-15 record carries no dfa_start pair")
+    _check("start=" not in report._testee_legend_line("t", old15),
+           "an abi-15 legend line is unchanged")
+
+    # THE NOTE: under a table whose legend carries start=, and absent
+    # from one whose legend never does.
+    setup = _mini_setup("pcrec_288d505_auto-caps-simdna")
+    row = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+           "compile_outcome": "compiled", "cost_class": "compiled-aot",
+           "cost": {"total_ns": 1000,
+                    "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                               {"name": "gcc", "elapsed_ns": 500},
+                               {"name": "load", "elapsed_ns": 100}]},
+           "artifact_bytes": 30000, "engine_metadata": dfa16}
+    rd, err = report.build_report([_mk_loaded("s.jsonl", setup, [row])],
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, err)
+    md = report.render_markdown(rd)
+    _check("start=pinned" in md and "start = pcrec's `RX_DFA_START`" in md,
+           f"the legend line and its note must render:\n{md}")
+    _check("NO REVERSE MACHINE" in md,
+           "the note must say what `pinned` costs nothing for -- the "
+           "deleted machine is the whole size story")
+
+    row_old = dict(row, engine_metadata=old15)
+    rd_o, _e = report.build_report([_mk_loaded("t.jsonl", setup, [row_old])],
+                                   _args(store="x", include_synthetic=True))
+    md_o = report.render_markdown(rd_o)
+    _check("start=" not in md_o and "start = pcrec's" not in md_o,
+           f"an abi-15 table carries neither the clause nor the note:\n{md_o}")
+
+
+def test_vm_frameless_legend_b34():
+    """[B34], closing [B32] (g): pcrec abi 16's `RX_VM_FRAMELESS`
+    ([OPT-VMFL]) renders as `frameless=<0|1>` -- VM artifacts only,
+    HYBRIDS INCLUDED, and on no DFA artifact. A DIFFERENT scope from
+    `start=`'s even though both stamps landed at abi 16, which is the
+    thing this test exists to hold: a pure-DFA legend shows `start=` and
+    no `frameless=`, a forced-VM one the reverse, and a hybrid both.
+
+    `0` is a real value, so PRESENCE gates the clause and not
+    truthiness -- the failure a truthiness test would ship is a VM row
+    that pushes frames rendering identically to a record from a pin that
+    never stamped the fact at all."""
+    _check(report._vm_frameless_display({"vm_frameless": 0}) == "0",
+           "a 0 renders '0', never absent")
+    _check(report._vm_frameless_display({"vm_frameless": 1}) == "1",
+           "a 1 renders '1'")
+    _check(report._vm_frameless_display({}) is None,
+           "no pair -> None, no clause")
+
+    forced_vm = {"abi": 16, "engine": "vm", "prefilter": "none",
+                 "vm_frameless": 1, "scan_edges": 0}
+    fline = report._testee_legend_line("t", forced_vm)
+    _check("frameless=1" in fline and "start=" not in fline,
+           f"a forced-VM artifact: frameless= and no start=, got {fline!r}")
+
+    hybrid = {"abi": 16, "engine": "vm", "prefilter": "hybrid",
+              "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
+              "dfa_prefilter_offsets": "none", "dfa_table": "premultiplied",
+              "dfa_scan_edge": "none", "dfa_start": "reverse-pass",
+              "vm_frameless": 0}
+    hline = report._testee_legend_line("t", hybrid)
+    _check("start=reverse-pass" in hline and "frameless=0" in hline,
+           f"a HYBRID carries both clauses, got {hline!r}")
+
+    # CONTROL 1: a DFA artifact stamps no frameless (it has no VM
+    # program to have pushed anything), even at abi 16.
+    dfa16 = {"abi": 16, "engine": "dfa", "dfa_scan": "unanchored",
+             "dfa_prefilter": "none", "dfa_prefilter_offsets": "none",
+             "dfa_table": "premultiplied", "dfa_match": "unwrapped",
+             "dfa_scan_edge": "range", "dfa_start": "pinned"}
+    _check(report._vm_frameless_display(dfa16) is None,
+           "a DFA artifact carries no vm_frameless pair")
+    dline = report._testee_legend_line("t", dfa16)
+    _check("frameless=" not in dline and "start=pinned" in dline,
+           f"a DFA artifact: start= and no frameless=, got {dline!r}")
+
+    # CONTROL 2: an abi-15 VM record renders exactly as before.
+    old15 = {"abi": 15, "engine": "vm", "prefilter": "none"}
+    _check("frameless=" not in report._testee_legend_line("t", old15),
+           "an abi-15 VM legend line is unchanged")
+
+    # THE NOTE, and the sentence that keeps it from being read as the
+    # frame CAPACITY it sits beside.
+    setup = _mini_setup("pcrec_288d505_vm-caps-simdna")
+    row = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+           "compile_outcome": "compiled", "cost_class": "compiled-aot",
+           "cost": {"total_ns": 1000,
+                    "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                               {"name": "gcc", "elapsed_ns": 500},
+                               {"name": "load", "elapsed_ns": 100}]},
+           "artifact_bytes": 30000, "engine_metadata": forced_vm}
+    rd, err = report.build_report([_mk_loaded("f.jsonl", setup, [row])],
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, err)
+    md = report.render_markdown(rd)
+    _check("frameless=1" in md
+           and "frameless = pcrec's `RX_VM_FRAMELESS`" in md,
+           f"the legend line and its note must render:\n{md}")
+    _check("what its program" in md and "SIZED for" in md,
+           "the note must separate the stamp from the frame CAPACITY it "
+           "sits beside -- the two can disagree")
+
+    row_old = dict(row, engine_metadata=old15)
+    rd_o, _e = report.build_report([_mk_loaded("g.jsonl", setup, [row_old])],
+                                   _args(store="x", include_synthetic=True))
+    md_o = report.render_markdown(rd_o)
+    _check("frameless=" not in md_o and "frameless = pcrec's" not in md_o,
+           f"an abi-15 table carries neither the clause nor the note:\n{md_o}")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -3123,6 +3300,8 @@ TESTS = [
     test_cc_clang_phase_note_kb9,
     test_worst_other_core_header_ledger12d,
     test_scan_edges_legend_column,
+    test_dfa_start_legend_b34,
+    test_vm_frameless_legend_b34,
 ]
 
 

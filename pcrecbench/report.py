@@ -746,6 +746,50 @@ that a committed report already carries:
   `cc-1989c62` cc-axis reports; the worst-other-core line is new on
   every file; no committed record carries the `scan_edges` pair yet, so
   that clause and its note print on none of them).
+
+## The reporter, [B34] (2026-09-03) -- REPORTER_VERSION v13, two legend clauses
+
+Plan row [B34], the re-pin to pcrec 288d505 (abi 16). pcrec ships two new
+stamps at one abi with two DIFFERENT scopes, and the reporter takes one
+legend clause for each. Both are strictly additive and CONDITIONAL on a
+record carrying the pair, which no record in `store/` does yet -- the
+window that measures the AFTER is the manager's, and nothing committed
+under `reports/` changes until it has run.
+
+* **`start=<pinned|reverse-pass>`**, `RX_DFA_START` ([OPT-5] STEP 2) --
+  HOW the search entry recovers the match START. `pinned` means the
+  forward machine's start state accepts unconditionally, so the match
+  provably begins at `search_from` and the artifact carries NO REVERSE
+  MACHINE at all; `reverse-pass` is the backwards scan over one.
+  Rendered beside `edge=`/`edges=` and on the SAME scope as `edge=`
+  (`dfa-scan`: every artifact that contains a DFA scan, hybrids
+  included), so a hybrid legend can carry `start=` and no `match=`.
+  It is a legend clause and NOT a column for `edge=`'s own reason: the
+  two forms are ANSWER-IDENTICAL by contract, so nothing about a row's
+  correctness or ranking turns on the value -- what it explains is the
+  size and the pass count, which is what a reader comparing a row against
+  its `-fno-start-pinned` sibling or its pre-STEP-2 self needs.
+* **`frameless=<0|1>`**, `RX_VM_FRAMELESS` ([OPT-VMFL]) -- closing
+  [B32] (g). The bench used to read "this VM program pushes no resume
+  frame" by GREPPING the emitted C; this is the stamped form of the same
+  fact, verified against that grep one last time at the re-pin (18/18)
+  before the grep retired. VM-only, hybrids included -- a DIFFERENT scope
+  from `start=`, so a pure-DFA legend shows `start=` and no `frameless=`,
+  a forced-VM one the reverse, and a hybrid both. `0` is a real value, so
+  PRESENCE gates the clause rather than truthiness. It sits next to
+  `buffers=` deliberately and says something that CAN disagree with it:
+  the capacity is what the artifact was SIZED for, `frameless=` what its
+  program CONTAINS, and an artifact stamping `1` may still declare more
+  than one resume frame (MEASURED on the lookahead witnesses at this
+  re-pin). The reason a reader wants it is the full suite's own finding
+  -- the forced-VM route ran x9 on the frames-1 population and at
+  ordinary speed elsewhere -- so this is the covariate that splits a VM
+  row's neighbours into the two populations that finding is about.
+* `REPORTER_VERSION` bumps to `v13 (2026-09-03)`. NO committed report is
+  regenerated: no stored record carries `dfa_start` or `vm_frameless`, so
+  both clauses print on none of them, and the only line that would move
+  is the version stamp itself. The regeneration belongs with the window
+  that first writes an abi-16 record.
 """
 
 from __future__ import annotations
@@ -764,7 +808,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v12 (2026-09-02)"
+REPORTER_VERSION = "v13 (2026-09-03)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -1575,6 +1619,66 @@ def _scan_edges_display(engine_metadata):
     return f"{n}" if m is None else f"{n} (match: {m})"
 
 
+def _dfa_start_display(engine_metadata):
+    """[B34]: `start=<pinned|reverse-pass>`, pcrec's `RX_DFA_START`
+    ([OPT-5] STEP 2, abi 16+) -- HOW the SEARCH entry recovers the match
+    START. `pinned` means the forward machine's start state accepts
+    unconditionally, so the match provably begins at `search_from` and
+    THE ARTIFACT CARRIES NO REVERSE MACHINE at all; `reverse-pass` means
+    it carries one and walks it backwards from the match end.
+
+    Why a legend clause and not a column. The two forms are
+    ANSWER-IDENTICAL by contract (match_api.md 6.3: `caps[0][0]`'s
+    absolute-offset rule and the zero-length-match convention hold under
+    both, the pinned form DEPENDING on them rather than altering them), so
+    nothing about a row's correctness turns on it and it never belongs in
+    a ranking. What it explains is a SIZE and a COST: a pinned artifact is
+    thousands of bytes smaller than its own `-fno-start-pinned` sibling
+    and does one pass where the other does two. That is exactly the shape
+    of fact the legend carries -- `edge=`'s company, not `sel=`'s.
+
+    Same SCOPE as `edge=` (`STAMP_SCOPE`'s `dfa-scan`: every artifact that
+    CONTAINS a DFA scan, VM hybrids included, and no other) and
+    deliberately NOT `match=`'s narrower one, so a hybrid legend can carry
+    `start=` while showing no `match=`. Returns None where the record has
+    no pair -- every record written before abi 16, and every non-hybrid VM
+    artifact -- and the legend then prints no clause at all, told apart
+    from the other absences by `engine`/`abi` on the same line."""
+    em = engine_metadata or {}
+    start = em.get("dfa_start")
+    return None if start is None else str(start)
+
+
+def _vm_frameless_display(engine_metadata):
+    """[B32] (g), closed at [B34]: `frameless=<0|1>`, pcrec's
+    `RX_VM_FRAMELESS` ([OPT-VMFL], abi 16+) -- 1 iff the emitted VM
+    program contains NO push site and no linked call, so its fail label
+    carries no pop-and-resume dispatch.
+
+    It is the STAMPED form of a fact this project used to read by grepping
+    the emitted C, and the reason a reader wants it in the legend is the
+    full suite's own finding: the forced-VM route ran x9 on the frames-1
+    population and at ordinary speed elsewhere, so `frameless=` is the
+    covariate that splits a VM row's neighbours into the two populations
+    that finding is about.
+
+    `0` is a real value, so PRESENCE and not truthiness gates the clause.
+    VM-only (hybrids included), which is a DIFFERENT scope from `start=`'s
+    even though the two stamps arrived at one abi -- a pure-DFA artifact
+    shows `start=` and no `frameless=`, a forced-VM artifact the reverse,
+    and a hybrid both. Returns None where the record has no pair (every
+    DFA artifact, and every record from before abi 16).
+
+    NOT the same fact as `buffers=`'s resume-frame CAPACITY, and the
+    legend prints both because they can disagree: the capacity says what
+    the artifact was SIZED for, this says what its program CONTAINS, and
+    an artifact stamping `frameless=1` may still declare more than one
+    frame (MEASURED at the re-pin on the lookahead witnesses)."""
+    em = engine_metadata or {}
+    fl = em.get("vm_frameless")
+    return None if fl is None else str(fl)
+
+
 def _fast_tier_display(engine_metadata):
     """[B16] R2: [OPT-1]'s two-tier default entry, as a legend clause.
 
@@ -1794,6 +1898,8 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
     caps = _caps_display(engine_metadata)
     edge = _dfa_scan_edge_display(engine_metadata)
     edges = _scan_edges_display(engine_metadata)
+    start = _dfa_start_display(engine_metadata)
+    frameless = _vm_frameless_display(engine_metadata)
     line = (f"- {label}: engine={display}, "
             + (f"sel={sel}, " if sel is not None else "")
             + f"entry={stamps['entry']}, "
@@ -1802,7 +1908,9 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
             + f"dfa: {_dfa_scan_display(engine_metadata)}, "
             + (f"edge={edge}, " if edge is not None else "")
             + (f"edges={edges}, " if edges is not None else "")
+            + (f"start={start}, " if start is not None else "")
             + (f"match={match_form}, " if match_form is not None else "")
+            + (f"frameless={frameless}, " if frameless is not None else "")
             + f"rungs={stamps['vm_rungs']}, "
             + (f"K={size_term}, " if size_term is not None else "")
             + (f"caps={caps}, " if caps is not None else "")
@@ -3547,6 +3655,38 @@ def render_markdown(rd: ReportData):
                            "SAME count on the anchored `rx_match` machine, kept "
                            "apart because the measured [OPT-EDGE] regression is "
                            "search-band only. `0` is a real, recorded value.")
+            # [B34]: the abi-16 SEARCH-START clause, named once under the
+            # lines that carry it -- `edge=`'s own scope (every artifact
+            # that contains a DFA scan, hybrids included).
+            if any(_dfa_start_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - start = pcrec's `RX_DFA_START` ([OPT-5] STEP "
+                           "2, abi 16+), how the SEARCH entry recovers the "
+                           "match START: `pinned` = the forward machine's "
+                           "start state accepts unconditionally, so the match "
+                           "provably begins at `search_from` and THE ARTIFACT "
+                           "CARRIES NO REVERSE MACHINE at all (no reverse "
+                           "tables, accessor block or scan loop); "
+                           "`reverse-pass` = it carries one and walks it "
+                           "backwards from the match end. The two forms are "
+                           "ANSWER-IDENTICAL by contract -- `caps[0][0]`'s "
+                           "absolute offsets and the zero-length-match "
+                           "convention hold under both -- so this explains a "
+                           "row's SIZE and pass count, never its answer.")
+            # [B34] / [B32] (g): the VM-only frameless clause, named once.
+            if any(_vm_frameless_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - frameless = pcrec's `RX_VM_FRAMELESS` "
+                           "([OPT-VMFL], abi 16+): `1` iff this VM program "
+                           "emits NO push site and no linked call, so its "
+                           "fail label carries no pop-and-resume dispatch; "
+                           "`0` otherwise. VM artifacts only, hybrids "
+                           "included -- a DIFFERENT scope from `start=`, "
+                           "though the two stamps arrived at one abi. It is "
+                           "NOT `buffers=`'s resume-frame CAPACITY and the "
+                           "two can disagree: the capacity is what the "
+                           "artifact was SIZED for, this is what its program "
+                           "CONTAINS. `0` is a real, recorded value.")
             out.append("")
 
         # [B19]: the two SOURCE-bytes columns, when any row of this table
