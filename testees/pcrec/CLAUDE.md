@@ -1,6 +1,6 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides twelve testees at the commit pinned in `configs.toml`, and one —
+Provides thirteen testees at the commit pinned in `configs.toml`, and one —
 `pcrec-local` — at no pin at all:
 
 | config id | pcrec flags | what it is for |
@@ -13,11 +13,12 @@ Provides twelve testees at the commit pinned in `configs.toml`, and one —
 | `pcrec-auto-clang`, `pcrec-nocaps-clang`, `pcrec-vm-clang` | the same flags as their gcc siblings, plus `cc = "clang"` | ([B24]) THE COMPILEE TOOLCHAIN AXIS: the same pcrec artifact, compiled by clang instead of gcc. See below |
 | `pcrec-auto-bigcap`, `pcrec-vm-bigcap` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `max_emit_bytes = 8388608` and `max_emit_code_bytes = 8388608` | ([B31]) THE EMITTED-SIZE CAP AXIS: pcrec's two raise-only per-compile overrides, at 8 MiB, so `bench/altwide`'s wide rungs emit an artifact instead of a refusal. See below |
 | `pcrec-auto-noedge` | the same flags as `pcrec-auto`, plus `-fno-scan-edge` | ([B32]) THE SCAN-EDGE DENY AXIS: the [OPT-5] scan edge denied, so the artifact is the pre-[OPT-5] machine built at the SAME pin — [OPT-EDGE]'s BEFORE. See below |
+| `pcrec-auto-align64` | the same flags as `pcrec-auto`, plus `cflags = ["-falign-functions=64"]` | ([B35]) THE COMPILEE-FLAGS AXIS: OUR OWN phase-2 `$CC` compile of the artifact+shim gains one extra flag, never passed to pcrec — pcrec I-39 (v)'s layout probe for the disputed `floor` / match / `auto` cell. See below |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
 | file | role |
 |---|---|
-| `adapter.py` | the twelve configs; the pin; `effective_cc()` (the compilee-toolchain rule); `effective_caps()` + `effective_denies()` + `compose_config_extra()` (the emitted-size cap rule, the deny-axis rule, and the ONE place `config_extra`'s parts are ordered); `scan_edge_counts()` (the [B32] covariate: pcrec's own `[OPT-5] SCAN EDGE:` marker counted in the emitted C and attributed to the machine it lands in); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
+| `adapter.py` | the thirteen configs; the pin; `effective_cc()` (the compilee-toolchain rule); `effective_caps()` + `effective_denies()` + `effective_cflags()` + `compose_config_extra()` (the emitted-size cap rule, the deny-axis rule, the compilee-flags rule, and the ONE place `config_extra`'s parts are ordered); `scan_edge_counts()` (the [B32] covariate: pcrec's own `[OPT-5] SCAN EDGE:` marker counted in the emitted C and attributed to the machine it lands in); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
 | `pin.sh` | `git archive <commit>` from pcrec into the build root, and `make` THERE |
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
@@ -372,6 +373,85 @@ is the family's worst row.
 
 The REPORTER's column is lane b32rep's; the CONTRACT here is the two pair
 NAMES.
+
+## The compilee-flags axis: `cflags` ([B35]; pcrec inbox I-39 (v))
+
+pcrec is an ahead-of-time compiler: it emits C and stops. Whoever runs a C
+compiler on that emitted C decides how the compiled FUNCTION lands in
+memory — alignment, layout — and that is US, the adapter's phase 2, exactly
+as `cc` ([B24]) already says WHICH compiler runs. `cflags` says what EXTRA
+flags that compiler gets, for our own phase-2 compile only:
+
+    cflags = ["-falign-functions=64", ...]      # optional, per config, a LIST
+
+**Why.** pcrec's inbox I-39 (v) is a layout probe for a disputed cell —
+`floor` / match / `auto` — where gcc read 503.3 ns on this bench and
+307 ns in pcrec's own hand harness, on BYTE-IDENTICAL artifacts (clang
+matched to within 1.4 %). A 48-instruction loop straddling a 64-byte cache
+line can cost exactly that ratio depending on where the compiler happens
+to land it, and `-falign-functions=64` pins the landing so the before/
+after can be read without re-pinning pcrec or changing one byte of what
+it emits. `pcrec-auto-align64` is `pcrec-auto` plus the flag: same pin,
+same `--features all`, same engine mode, same captures, gcc like its
+sibling — one variable moved, and it is the COMPILER's, not pcrec's.
+
+**These flags are NEVER passed to pcrec.** pcrec's own `flags` (its argv —
+`--features all`, `--engine=`, the [B31] cap raises, the [B32] denials) is
+a wholly different list; `cflags` rides on `_compile_one`'s phase-2 argv
+only (`$CC -O2 -fPIC -shared <cflags> shim.c`, which `#include`s the
+artifact, so the artifact and the shim always get the same extra flags and
+can never drift apart). A config may carry `cflags` and any of the other
+axes independently.
+
+**The driver does not move.** `build_driver()` still builds `driver.c`
+from `$CC` with no extra flags on every config, so an aligned testee
+differs from its plain sibling in exactly ONE variable — the artifact+shim
+compile — the same one-variable shape `cc` already has for the compiler
+choice itself.
+
+**Absent** means today's behaviour byte for byte: no extra token on the
+REAL argv, no clause in `build_flags`, no `config_extra`, the same derived
+`testee_id` — checked against a FROZEN pre-[B35] shape and against every
+committed record at this pin (`check_cflags_axis` arm 1).
+
+**Present** is an identity claim, and three things follow:
+
+- the flags join `build_flags` NAMED (`adapter.py`'s `cflags_note`) rather
+  than silently folded into the fixed `-O2 -fPIC -shared` text, so a
+  reader does not have to diff two `build_flags` strings to see WHAT moved;
+- a deterministic slug token joins `config_extra` LAST — after `cc`, the
+  [B31] caps and the [B32] denials, `compose_config_extra`'s own
+  chartering-order rule — computed by `cflags_token`: strip leading
+  dashes, then a leading bare `f` immediately followed by a letter (GCC/
+  clang's `-f<name>` family — the same one the [B32] deny words already
+  strip: `-fno-scan-edge` → `noedge`), replace every run of characters
+  outside `[a-z0-9]` with `-`, trim, and prefix `cf-`.
+  `-falign-functions=64` → `cf-align-functions-64`;
+- and `runtime_options` is UNCHANGED — these are our own compile flags,
+  never one of pcrec's own option names, so they never appear there
+  (unlike the [B32] deny flags, which are pcrec's own argv and do).
+
+**`pcrec-local` derives this axis from a CONFIG KEY only, never from an
+environment variable.** `$PCREC_LOCAL_FLAGS` is pcrec's own argv (what
+`engine_mode` / `captures` / the caps / the denials all read from), not
+the compilee toolchain's, so there is no local equivalent to widen — a
+provided binary compiles under whatever `cflags` its OWN `configs.toml`
+entry (if any) declares, exactly like every other testee. `pcrec-local`'s
+entry declares none, so it is unaffected by this axis by construction,
+the same way it is unaffected by `cc`.
+
+`make check-harness`'s `check_cflags_axis` proves: the twelve pre-[B35]
+configs untouched (argv, `build_flags`, id, and every committed record's
+`build_flags` re-deriving byte-identically); `pcrec-auto-align64` carrying
+the token, the clause and the flag, one variable apart from `pcrec-auto`,
+with NO clause in `runtime_options`; a REAL compile watched at the
+`subprocess` boundary — the flag present in the actual `gcc`/`clang` argv,
+positioned between `-shared` and `-o`, and ABSENT from pcrec's own argv on
+the same compile; the aligned artifact answering a hand-built smoke set
+exactly as the libpcre2 oracle does (the control — an alignment flag that
+broke codegen would otherwise pass as a speed change); one whole cell into
+a scratch store with the token reaching the written record; and
+`python3 -m pcrecbench testees` listing the new config.
 
 ## `shim.c` includes the artifact's `.c`, and that is load-bearing
 
