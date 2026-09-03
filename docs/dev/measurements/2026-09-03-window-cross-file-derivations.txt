@@ -1,0 +1,204 @@
+# docs/dev/measurements/2026-09-03-window-cross-file-derivations.txt
+#
+# [B31] reports lane, 2026-09-03. THREE tables that no single committed
+# report holds, because each is a division across two files or across a
+# report and a window log. Every number below is read out of a committed
+# artifact named beside it -- nothing here was measured by this lane, and
+# nothing here required running an engine.
+#
+# Sources:
+#   R1  reports/2026-09-03-altwide-0.2-budu-ryzen1600-first-sample-1989c62.tsv
+#   R2  reports/2026-09-03-altwide-0.2-budu-ryzen1600-bigcap-1989c62.tsv
+#   R3  reports/2026-09-03-loglines-0.1-budu-ryzen1600-noedge-1989c62.tsv
+#   R4  reports/2026-09-03-bounded-0.3-budu-ryzen1600-cc-rerun-1989c62.tsv
+#   R5  reports/2026-09-02-altwide-0.1-budu-ryzen1600-first-sample-1989c62.md
+#   R6  reports/2026-09-02-loglines-0.1-budu-ryzen1600-after-1989c62.tsv
+#   L1  build/windows/window_altwide_20260902T083639Z.log  (the 0.1 window)
+#   L2  build/windows/window_altwide_20260903T035832Z.log  (0.2, six pinned)
+#   L3  build/windows/window_altwide_bigcap_20260903T064525Z.log
+#   L4  build/windows/window_loglines_noedge_20260903T091109Z.log
+#   L5  build/windows/window_bounded_clangrerun_20260903T092807Z.log
+#   N   bench/altwide/NOTES.md, "Cell-time estimate, and what was cut"
+#   C   docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt
+#   G   docs/dev/ledgers/2026-09-02-full-suite-1989c62.md section 7.2
+#
+# ===========================================================================
+# TABLE 1 -- CELL WALL CLOCK: THE ESTIMATE AGAINST THE MEASUREMENT, AND A
+#            CORRECTION TO THE ANCHOR THE ESTIMATE WAS BUILT ON
+# ===========================================================================
+#
+# Cell wall clocks are (attempt-1 finish minus cell start) from L2/L3/L4/L5
+# and L1. Estimates are N's own table.
+#
+#   testee              N's 0.2 estimate     MEASURED       ratio
+#   pcre2-interp        ~22 min              61.6 min       2.8x under
+#   pcre2-jit           ~7 min               51.3 min       7.3x under
+#   pcrec-auto          ~35-40 min            8.8 min       4.3x over
+#   pcrec-nocaps        ~35-40 min            9.1 min       4.1x over
+#   pcrec-vm            ~25-80 min           17.2 min       1.5x over (low end)
+#   pcrec-vm-in         ~25-80 min           17.2 min       1.5x over (low end)
+#   pcrec-auto-bigcap   ~41 min              23.5 min       1.7x over
+#   pcrec-vm-bigcap     (compile 12-91 min)  121.5 min      see table 2
+#
+# THE ANCHOR IS WRONG, AND IT IS CHECKABLE. N says: "the MEASURED 0.1 auto
+# cell was 30 min against the VM's 4.9". L1's own cell lines say otherwise:
+#
+#   0.1 cell        start (EDT)   end (EDT)    wall
+#   pcre2-interp    04:37:09      05:18:49     41.7 min
+#   pcre2-jit       05:19:04      05:49:02     30.0 min   <-- the 30 minutes
+#   pcrec-auto      05:49:17      05:54:04      4.8 min   <-- the real auto cell
+#   pcrec-nocaps    05:54:19      05:59:00      4.7 min
+#   pcrec-vm        05:59:15      06:03:30      4.3 min
+#   pcrec-vm-in     06:03:45      06:07:55      4.2 min
+#
+# The 30-minute figure is pcre2-JIT's 0.1 cell, not pcrec-auto's. 0.2's
+# measured auto cell (8.8 min) is 1.8x 0.1's real auto cell (4.8 min), which
+# is what 33/20 patterns plus a larger refusal bill gives. The 35-40 minute
+# budget, and the "compile term is now the cell" conclusion drawn from it,
+# both rest on the misread anchor.
+#
+# WHAT 0.1's AUTO CELL ACTUALLY SPENT ITS 4.8 MINUTES ON (R5, summed from
+# its own compile-cost table): 114.9 s of refusals (26 of them, once per
+# form, never per trial) plus 3.5 s per trial of compiles over 14 cells
+# (17.5 s at five trials) = about 2.2 min of compile, so roughly half the
+# cell. The other half is matching.
+#
+# THE SAME SUM ON 0.2 (R1), and the asymmetry it makes visible:
+#
+#   testee        refusals  refusal cost   compiled cells  compile x5   cell wall
+#   pcrec-auto      32       113.8 s        34              65.5 s       8.8 min
+#   pcrec-nocaps    32       114.9 s        34              66.0 s       9.1 min
+#   pcrec-vm        26         0.6 s        40             334.0 s      17.2 min
+#   pcrec-vm-in     26         0.6 s        40             334.0 s      17.2 min
+#
+# A DFA-route refusal costs 190x what a VM-route refusal costs (113.8 s over
+# 32 against 0.6 s over 26), because the source cap is checked after the
+# table is materialised and the code cap is reached earlier. But at 0.2's
+# widths that no longer makes auto the expensive cell: the VM's SUCCESSFUL
+# compiles cost 5x auto's, and the vm cell is twice the auto cell. That
+# inverts 0.1's picture, where the ledger recorded auto as the slow arm.
+#
+# ===========================================================================
+# TABLE 2 -- THE RAISED-CAP COMPILE PROJECTION AGAINST WHAT IT COST
+# ===========================================================================
+#
+# C's section-2 per-rung projection, against the sum of `median_total_ns`
+# over every compiled (pattern x form) cell in R2, times five trials.
+#
+#   config              C's projection    MEASURED (R2)      error
+#   pcrec-vm-bigcap     4,499 s = 75.0m   4,660 s = 77.7m    +3.6 %
+#   pcrec-auto-bigcap     705 s = 12.0m     718 s = 12.0m    +1.8 %
+#
+# Both inside 4 %. The projection's own warning held too: the vm-bigcap
+# compile term alone (77.7 min) exceeds the standing 5,400 s per-cell cap
+# before any matching, and the window ran that pass at cell_cap=14400s (L3).
+# The cell finished in 121.5 min, so compile was 64 % of it.
+#
+# THE RAISE IS INERT ON EVERY RUNG BOTH ARMS COMPILE. Comparing R1's plain
+# arms with R2's raised arms, cell by cell over the 34 auto and 40 vm cells
+# they share:
+#
+#   * auto route: emit_bytes, emit_code_bytes and artifact_bytes are
+#     BYTE-IDENTICAL on every shared cell (e.g. w-256 plain 977,055 /
+#     18,829 / 305,448 in both).
+#   * vm route: every shared cell is EXACTLY +1 byte of emit_bytes and
+#     emit_code_bytes under the raise (w-256 plain 341,111 -> 341,112;
+#     s-512 plain 474,309 -> 474,310; ci-256 plain 456,882 -> 456,883,
+#     code 450,860 -> 450,861). The derivation: the VM emitter writes the
+#     code cap into the emitted source, "500000" (6 chars) becomes
+#     "8388608" (7 chars); the DFA emitter writes no cap, and "1000000"
+#     and "8388608" are the same width anyway, so auto moves 0.
+#   * `K=` is `8/default` on all 106 VM legend lines across both arms --
+#     the raised cap selects the SAME size term as the default cap on every
+#     rung both compile. `caps=` reads `500,000/1,000,000` on the plain arm
+#     and `8,388,608/8,388,608` on the raised one, which is the config
+#     speaking, not a decision. The DFA route prints no `K=` clause at all,
+#     so this is a VM-route answer only.
+#   * timings: BIG/plain median ratios lie in 0.995-1.009 on 89 of 90
+#     comparable (pattern x regime) cells across all three regimes. The one
+#     exception is `w-256` / short-subject-search / vm at 1.087.
+#
+# ===========================================================================
+# TABLE 3 -- THE SCAN EDGE: THE noedge ARM AGAINST LEDGER SECTION 7.2
+# ===========================================================================
+#
+# R3, `pcrec-auto` against `pcrec-auto-noedge` (the same config plus
+# `-fno-scan-edge`), measured back to back in one window (L4). `edges` is
+# the search-side `scan_edges` count off the auto arm's own legend line.
+# `ratio` is noedge / auto: below 1.000 means the edge COSTS.
+#
+#   pattern         edges   search ratio   thr ratio
+#   iso-ts            8        0.918         0.937
+#   ipv6              1        0.978         0.976
+#   http-5xx          1        0.971         0.971
+#   bignum            0        1.013         0.992
+#   floor             0        1.001         0.999
+#   hex32-id          0        0.999         1.001
+#   ipv4              0        1.002         1.004
+#   kv-quoted         0        1.003         0.999
+#   level-context     0        1.001         0.997
+#   stack-frame       0        0.999         1.000
+#   uuid              0        0.996         0.997
+#
+# Every pattern with a non-zero edge count is faster without the edge;
+# every zero-edge pattern is flat. The gradient is NOT linear in the count:
+# 8 edges buys 2.8x what 1 edge buys, not 8x.
+#
+# THE RECOVERY MATCHES SECTION 7.2's REGRESSION, PATTERN BY PATTERN. G
+# measured, across 263b013 -> 1989c62:
+#
+#   pattern    G's slowdown        1 / (noedge ratio)   agreement
+#   iso-ts     search x1.09        x1.089               to 3 figures
+#   iso-ts     throughput x1.06    x1.067               to 3 figures
+#   http-5xx   search x1.04        x1.030               within 1 %
+#   http-5xx   throughput x1.03    x1.030               exact
+#   ipv6       throughput x1.03    x1.025               within 0.5 %
+#
+# AND SO DOES THE SIZE. G attributed a per-pattern emit/code delta to the
+# edge, over a +234 B pin constant. Subtracting that constant and comparing
+# with this window's direct auto-minus-noedge differential (R3, plain form):
+#
+#   pattern    G emit-234   measured   G code-234   measured   gap
+#   iso-ts        4,825      +4,819       6,125      +6,119     6 B both
+#   http-5xx        395        +389         949        +943     6 B both
+#   ipv6          2,127      +2,121         708        +702     6 B both
+#
+# Every one agrees to exactly 6 bytes, and 6 B is the flag's own constant:
+# the eight zero-edge patterns all read -6 B (noedge is 6 bytes LARGER),
+# on both emit_bytes and emit_code_bytes, with no exception.
+#
+# THE CONTROL THAT SIZES THE FLOOR. The same window re-measured
+# `pcrec-auto` on loglines at the same pin as the 2026-09-02 cell (R6),
+# which is a same-pin same-config repeatability check nobody asked for:
+# 22 of 22 (pattern x regime) medians agree within 1.32 %, worst
+# `hex32-id` throughput at 1.013 and `kv-quoted` throughput at 1.011.
+# So iso-ts's 6.3-8.2 % is 5-6x the reproducibility floor and real;
+# http-5xx's and ipv6's 2.2-2.9 % is about 2x it and holds, but with
+# less margin than the iso-ts row.
+#
+# ===========================================================================
+# TABLE 4 -- THE I-37 CELL, AND WHICH HALF OF IT WAS RE-MEASURED
+# ===========================================================================
+#
+# R4. The clang arm was re-measured 2026-09-03 (L5); the gcc arm is the
+# SAME 2026-09-02 record the provisional ledger row was computed from.
+#
+#   cell                                  gcc      clang 09-02   clang 09-03   09-03/gcc
+#   floor / match-compliance / auto      503.3        217.6         217.5        0.432
+#   cls-upto-4 / throughput / auto   478,471.7    194,819.2     194,878.3        0.407
+#   ctx-lazy-64 / search / auto        8,940.8     12,471.8      12,413.5        1.388
+#   nest3-16 / throughput / auto      63,053.6     75,335.1      75,497.8        1.197
+#
+# NOT ONE of the 126 (pattern x regime x form) cells moved more than 10 %
+# between the two clang runs. Set-grain clang / gcc medians:
+#
+#   grouping                    2026-09-02   2026-09-03   ledger 5.2
+#   all 126 cells                 0.929        0.930        0.929
+#   match-compliance (n=42)       0.824        0.824        0.824
+#   short-subject-search (n=42)   0.954        0.955        0.954
+#   large-subject-throughput      0.880        0.882        0.880
+#
+# So 0.432 reproduces exactly and the whole cc-axis picture with it. What
+# this does NOT do is re-measure gcc: pcrec's [CC-DIFF] disputes the gcc
+# half (307 ns against 503.3), and this window re-ran the clang testee
+# only. Settling that needs a fresh gcc cell beside a fresh clang one.
