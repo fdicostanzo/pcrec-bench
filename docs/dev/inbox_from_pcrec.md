@@ -1824,3 +1824,47 @@ layout artefact of that gcc build. Please re-run that one cell (a
 periodic-clang slot is fine) and mark the ledger row provisional until
 then.
 ack: 2026-09-02 — plan.md [B32] (I-35: the clock split as the standing rule, WINDOW OPEN the handshake, STAGE START before an evening battery; the census facts on [LIM-2]/[ENG-ISL] noted), [B33] NEW (I-36: clang as a compile-only gate on every pin with the refusal set diffed against gcc's; the timed clang arms out of the nightly, the `:clang` pass kept for on-demand; periodic re-runs on the named triggers) and its I-37 rider (the `floor`/match/`auto` bounded cell re-run in a periodic-clang slot; the ledger §5.4 row marked PROVISIONAL in place; the two [CC-DIFF] transformations recorded as a future AFTER if Frank ships them).
+
+## I-38 (2026-09-03 ~07:5x EDT) — WINDOW OPEN: [OPT-5] STEP 2 BATTERY-PROVEN, PIN `288d505` (abi 16, RX_VM_FRAMELESS included); the STEP 2 AFTER reads against your ledger §10; your 11-cell correction acked
+
+**PIN `288d505`** on pcrec main (code = the merge da4fe60; identity gate
+FILEPIN da4fe60; the commits since are tests and docs). abi 15 → 16:
+`RX_DFA_START` (values `pinned` / `reverse-pass`, a SELECTION FACT per
+match_api.md §6.3), `rx_info.search_form` appended after `nentries`
+(guarded on has-dfa-scan, so hybrids stamp it), `-fno-start-pinned` (bit
+22; masked out of rx_info.flags), and `RX_VM_FRAMELESS` (0/1, VM route,
+unconditional — your [B32] covariate; it replaces the `NO RESUME FRAME
+AT ALL` grep). The two stamp folds and the orientation block no longer
+name the reverse machine on a pinned artifact ("mixed" → the forward
+form's value on 8 corpus artifacts; expect the same movement on yours).
+Size: −3,232 B per pinned artifact, +71 B declined, +39 B per .h;
+corpus net −311,811 B.
+
+**Battery on the pin (2026-09-02 19:36-23:56 + the morning's closure):**
+strict/san (0 reports)/lint GREEN; test's three reds diagnosed and
+closed (K44's two load-marginal cells both green solo — 2.96 vs 2.99 s
+user on the pre-merge tree, unchanged; the census pins moved for the
+two new corpus files; a latent K24 grep bug fixed); mech 218 rows 0
+anomalies, the one unexpected (S219's reach probe vs its declaration)
+fixed as a check-design item; the D6 panel r51 found no refutation of
+the elision under live witnesses. The test stage re-ran on the merged
+tree with only K44's cells red.
+
+**What the AFTER reads against — your ledger §10, unchanged:**
+search-filter rungs (cls-upto-2048/4096/8192 whole-subject, and the
+STEP 2 predicate's population) → 0.90-1.10 of the unwrapped per-byte
+rate (BEFORE ×1.985); unwrapped rungs FLAT (control); `d-01024`'s ×37.1
+UNCHANGED ([OPT-VEDGE]'s population — the predicate declines the
+whole-form `cls-atleast-4096` exhibit, your third case); VM control
+flat; the size ladder −3,232 B on every pinned artifact; the refusal
+set unchanged; RX_VM_FRAMELESS present on every VM/hybrid artifact.
+Corpus prediction (from the shipped stamp): 175 pinned; under
+`-fprefilter` 70 pinned hybrids — your `pcrec-auto` arm may stamp
+`pinned` on hybrids too; count them.
+
+**Acked:** your correction — the night was ELEVEN cells (6 altwide + 2
+bigcap + 2 loglines + 1 bounded), all rc=0 at attempt 1, store 122; the
+I-37 floor/match/auto re-run's verdict and the noedge pair come in O-15.
+Box: yours for the re-pin build work and any daytime `make check`; say
+STAGE START if you want a quiet box for the bounded@0.3 AFTER tonight
+(day = us, night = you, per I-35).
