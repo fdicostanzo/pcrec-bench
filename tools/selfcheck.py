@@ -3913,6 +3913,36 @@ def check_cc_axis():
 _PRE_B31_CONFIGS = _PRE_B24_CONFIGS + ("pcrec-auto-clang", "pcrec-nocaps-clang",
                                        "pcrec-vm-clang")
 
+def _committed_at_any_pin(committed, block):
+    """-> (record, pin, block_as_rendered) for the COMMITTED record this
+    config derives to, or (None, None, None).
+
+    First at the CURRENT pin (block as describe() gave it). Failing that --
+    a FRESH RE-PIN, where the store holds no record at the new pin yet
+    ([B34], 2026-09-03: the first re-pin after these arms were written) --
+    the same block is re-rendered at each EARLIER pin present in the store
+    (the pin token substituted in `engine_version` and `build_flags`, the
+    two places the adapter writes it), so the arm proves the RENDERER
+    unchanged against the previous pin's records instead of passing
+    vacuously or failing for want of a record. The pin used is reported."""
+    cur = block["engine_version"]
+    rec = committed.get(_rec.derive_testee_id(block))
+    if rec is not None:
+        return rec, cur, block
+    pins = sorted({tid.split("_")[1] for tid in committed
+                   if tid.startswith("pcrec_") and tid.count("_") >= 2})
+    for pin in reversed(pins):
+        if pin == cur:
+            continue
+        b2 = dict(block)
+        b2["engine_version"] = cur.replace(cur, pin)
+        b2["build_flags"] = block["build_flags"].replace(cur, pin)
+        rec = committed.get(_rec.derive_testee_id(b2))
+        if rec is not None:
+            return rec, pin, b2
+    return None, None, None
+
+
 #: (bigcap config, its plain sibling, the altwide pattern that separates
 #: them). Both controls are chosen from the [B31] census for COST: `w-512`
 #: under a forced VM refuses at the code cap in 0.01 s and compiles under
@@ -4081,14 +4111,15 @@ def check_cap_axis():
             except (OSError, ValueError, KeyError):
                 continue
             committed.setdefault(t["testee_id"], t)
-        matched, drift = [], []
+        matched, drift, pins_used = [], [], set()
         for tid in _PRE_B31_CONFIGS:
             if raw[tid].get("local"):
                 continue            # no pin, so no committed record, by design
             block = adapter.describe(tid)
-            rec = committed.get(_rec.derive_testee_id(block))
+            rec, pin_used, block = _committed_at_any_pin(committed, block)
             if rec is None:
                 continue
+            pins_used.add(pin_used)
             if rec["build_flags"] != block["build_flags"]:
                 drift.append("%s: the committed record has %r, describe() "
                              "now gives %r" % (tid, rec["build_flags"][:110],
@@ -4102,12 +4133,17 @@ def check_cap_axis():
             bad("cap axis: every COMMITTED pcrec record at this pin still "
                 "names the testee that describes it",
                 "no committed record matched any pre-[B31] config's derived "
-                "id -- the arm is VACUOUS, which is a failure, not a pass")
+                "id at ANY pin in store/ -- the arm is VACUOUS, which is a "
+                "failure, not a pass")
         else:
             ok("cap axis: every COMMITTED pcrec record at this pin still "
                "names the testee that describes it",
                "%d ids in store/ re-derive byte-identically, build_flags "
-               "included" % len(matched))
+               "included (rendered at pin %s%s)"
+               % (len(matched), "/".join(sorted(pins_used)),
+                  "" if pins_used == {adapter.describe(_PRE_B31_CONFIGS[0])["engine_version"]}
+                  else " -- a fresh re-pin: no record at the current pin yet, "
+                       "the renderer proved against the previous pin's"))
 
         # ---- 3. raise-only, refused BY NAME ------------------------------
         floors = [(key, flag, limit, mod.archived_limit(limit))
@@ -4550,14 +4586,15 @@ def check_noedge_axis():
             except (OSError, ValueError, KeyError):
                 continue
             committed.setdefault(t["testee_id"], t)
-        matched, drift = [], []
+        matched, drift, pins_used = [], [], set()
         for tid in _PRE_B32_CONFIGS:
             if raw[tid].get("local"):
                 continue            # no pin, so no committed record, by design
             block = adapter.describe(tid)
-            rec = committed.get(_rec.derive_testee_id(block))
+            rec, pin_used, block = _committed_at_any_pin(committed, block)
             if rec is None:
                 continue
+            pins_used.add(pin_used)
             if rec["build_flags"] != block["build_flags"]:
                 drift.append("%s: the committed record has %r, describe() "
                              "now gives %r" % (tid, rec["build_flags"][:110],
@@ -4576,12 +4613,14 @@ def check_noedge_axis():
             bad("noedge axis: every COMMITTED pcrec record at this pin still "
                 "names the testee that describes it",
                 "no committed record matched any pre-[B32] config's derived "
-                "id -- the arm is VACUOUS, which is a failure, not a pass")
+                "id at ANY pin in store/ -- the arm is VACUOUS, which is a "
+                "failure, not a pass")
         else:
             ok("noedge axis: every COMMITTED pcrec record at this pin still "
                "names the testee that describes it",
                "%d ids in store/ re-derive byte-identically, build_flags AND "
-               "runtime_options included" % len(matched))
+               "runtime_options included (rendered at pin %s)"
+               % (len(matched), "/".join(sorted(pins_used))))
 
         # ---- 2. the token, the clause and the flag on the describe side --
         block = adapter.describe(NOEDGE)
