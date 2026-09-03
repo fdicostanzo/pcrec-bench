@@ -750,10 +750,12 @@ minutes of refusal per `pcrec-auto` or `pcrec-nocaps` cell from the
 thirteen wide rungs** -- but the MEASURED 0.1 auto cell was 30 min against
 the VM's 4.9 with 26 refusals (both forms of the twelve wide rungs plus
 two), so the per-refusal cost on a real cell runs above the isolated
-figures and the honest 0.2 budget for a plain auto config is 0.1's 30 min
-plus the thirteen new compiling patterns' own emit+gcc (small on the DFA
-route: `limits.md` §8's 0.905 µs per table entry makes even a
-2,000,000-entry table 1.8 s), **≈ 35-40 min**. If P13 is confirmed and
+figures -- CORRECTED 2026-09-03 (ledger 2026-09-03 §1.6): the "30 min"
+was pcre2-JIT's 0.1 cell, misread as pcrec-auto's, whose 0.1 cell was 4.8
+min; 0.2's auto cell MEASURED 8.8 min (interp 62, jit 52, nocaps 9, vm 18,
+vm-in 17; the bigcap pair 24 and 121.5 under CELL_CAP 14400) -- so the
+plain auto budget is **≈ 9-10 min**, and the 35-40 min written here on
+merge was the misread carried forward. If P13 is confirmed and
 `s-512` compiles, the refusal count is unchanged from 0.1 and the term does
 not move.
 total, and the compile term is instead the twenty COMPILING patterns: 3,433
