@@ -1982,3 +1982,52 @@ on the abi-17 pin: −402-class movements on frameless VM artifacts
 (.text −9% on the dig-upto-16 forced-VM cell: 1,561 → 1,417 B) and
 folded tables on ~370 DFA-bearing cells (cls-upto-4: .rodata 627 → 47
 B); `RX_DFA_UNIFORM_FOLDS` is the covariate.
+
+## I-42 (2026-09-03 ~16:5x EDT) — CHARTER (Frank): the SYNTAX CENSUS — a wide-net sub-bench across the supported PCRE syntax, registry-seeded, one night for the first sample, outliers become depth probes
+
+**Why (Frank, 2026-09-03):** the depth-first sets (bounded, loglines,
+email, altwide) answered the mechanism questions we thought to ask;
+the census finds the ones we did not — the constructs nobody has
+benchmarked (backreferences, lookaround, atomic and possessive
+groups, recursion, case-folding, multiline anchors, the verbs, the
+classes' escapes) are where a cliff, a wrong engine selection, or a
+refusal hides.
+
+**The charter (yours to build, under your sub-bench directory
+model):**
+1. SEED FROM THE REGISTRY, not from either side's head: `pcrec
+   --list-syntax` enumerates every construct with its `built` status
+   (docs/pcre2_compliance.md's generated index is the same table).
+   For each BUILT construct, one or two canonical patterns exercising
+   it in isolation plus one in a small realistic context, with a
+   standard subject family (matching / failing / long-run). Write the
+   patterns from the PCRE2 syntax reference, BLIND to pcrec's emitter
+   (our D27 lesson: tests derived from the code inherit the code
+   author's alphabet).
+2. FIRST SAMPLE in ONE NIGHT: ~60-90 patterns × your six pinned
+   testees × your three regimes, the same instrument (controls flat,
+   pre-flight, trial agreement). No new instrument.
+3. OUTLIER RULE, stated before the run: ratio vs pcre2-jit outside a
+   band you pick (say worse than ×2 or better than ×20 — both are
+   questions), any refusal on a construct the registry calls built,
+   compile-time or artifact-size cliffs, and ENGINE-SELECTION
+   surprises read off the stamps (a VM route where a DFA was
+   possible; a declined prefilter; a frameless artifact that pushes).
+4. OUTPUT: a ranked list of QUESTIONS, each with its cell and its
+   stamps — Frank ranks; each becomes a depth probe (the bounded-
+   rung shape) before any pcrec row is chartered. The census widens
+   the queue; it does not shorten it, and that is the point now.
+5. TIMING: build by day (two days, your estimate); the first sample's
+   night is the third from now at the earliest (tonight = the STEP 2
+   AFTER at 288d505; the next = [CC-DIFF]'s AFTER at the abi-17 pin
+   after tomorrow's battery).
+
+**pcrec owes you:** the registry seed on request (`--list-syntax`'s
+exact output at the pin, and the `built` column's semantics from
+docs/pcre2_compliance.md's "How to read the generated index"); answers
+to every ask the sample raises; and, for your ranking, this standing
+direction from Frank (same day): "get what we can ALGORITHMICALLY and
+GENERALLY first, then pull out SIMD at the end" — so an outlier whose
+fix is 'SIMD would help' is ranked BEHIND one whose fix is a general
+mechanism, and the census's questions should be phrased as mechanism
+questions where they can be.
