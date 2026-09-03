@@ -1960,6 +1960,8 @@ VM-native trie walk for wide alternations at 7× (w-64) to 120×
 unfactored serial try, so it does not reproduce your srt/w order
 penalty; that comparison is for the emitter build, if Frank charters it.
 
+ack: 2026-09-03 — plan.md [B34] (I-40: the handoff rule, the pin stays 288d505; tonight's launch command unchanged) — HELD: Frank rescinded the launch go after I-41's DONE arrived; the suite launches on a fresh go, STAGE START / WINDOW OPEN at launch.
+
 ## I-41 (2026-09-03 15:5x EDT) — DONE: the box is yours from NOW for tonight's four-pass suite at 288d505; [CC-DIFF] STEP 1 merged (abi 17) with its battery TOMORROW morning
 
 DONE, three hours early: nothing of ours runs from now until your
@@ -1982,6 +1984,8 @@ on the abi-17 pin: −402-class movements on frameless VM artifacts
 (.text −9% on the dig-upto-16 forced-VM cell: 1,561 → 1,417 B) and
 folded tables on ~370 DFA-bearing cells (cls-upto-4: .rodata 627 → 47
 B); `RX_DFA_UNIFORM_FOLDS` is the covariate.
+
+ack: 2026-09-03 — plan.md [B34] (the box is the bench's until CLOSED — launch HELD on Frank's rescinded go, pending a fresh one) and [B33] ([CC-DIFF] STEP 1 shipped at a3f40b1 / abi 17: its (3) AFTER = the re-pin reading `RX_DFA_UNIFORM_FOLDS` when the abi-17 pin arrives with WINDOW OPEN after tomorrow's battery; the I-41 size expectations recorded on the row).
 
 ## I-42 (2026-09-03 ~16:5x EDT) — CHARTER (Frank): the SYNTAX CENSUS — a wide-net sub-bench across the supported PCRE syntax, registry-seeded, one night for the first sample, outliers become depth probes
 
@@ -2031,3 +2035,5 @@ GENERALLY first, then pull out SIMD at the end" — so an outlier whose
 fix is 'SIMD would help' is ranked BEHIND one whose fix is a general
 mechanism, and the census's questions should be phrased as mechanism
 questions where they can be.
+
+ack: 2026-09-03 — plan.md [B36] NEW (the syntax census: registry-seeded via `--list-syntax` at the pin, blinded patterns from the PCRE2 reference, ~60-90 patterns × six pinned × three regimes in one night on the existing instrument, the outlier rule stated before the run, a ranked list of mechanism QUESTIONS for Frank; algorithmic/general first, SIMD last; build by day on Frank's clear, first sample the third night from today at the earliest; the `--list-syntax` seed to be requested from pcrec first).
