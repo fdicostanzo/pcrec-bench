@@ -4858,6 +4858,291 @@ def check_noedge_axis():
     shutil.rmtree(scratch, ignore_errors=True)
 
 
+#: THE COMPILEE-FLAGS AXIS ([B35]; pcrec inbox I-39 (v)). `cflags` is a
+#: per-config list of extra $CC flags for OUR OWN phase-2 compile (the
+#: artifact + shim into a `.so`), appended after `-O2 -fPIC -shared` and
+#: NEVER passed to pcrec's own argv. `pcrec-auto-align64` is `pcrec-auto`
+#: plus `-falign-functions=64` -- I-39 (v)'s layout probe for the disputed
+#: `floor` / match / `auto` cell (gcc read 503.3 ns here and 307 ns in
+#: pcrec's own hand harness on byte-identical artifacts; a 48-instruction
+#: loop straddling a 64-byte cache line can cost exactly that ratio). Five
+#: arms:
+#:
+#:   1. ABSENT IS BYTE-IDENTICAL, three ways -- the same shape as [B24] /
+#:      [B31] / [B32]: every config that predates the axis gains no
+#:      `cflags`/`cflags_extra`, renders no cflags clause in `build_flags`,
+#:      and derives the `config_extra`/id shape it had; and every pcrec
+#:      `testee_id` with a COMMITTED RECORD at this pin re-derives
+#:      byte-identically, `build_flags` included -- the arm that would
+#:      actually be damaged by a renderer change.
+#:   2. THE NEW CONFIG'S SHAPE. `pcrec-auto-align64` carries the flag,
+#:      the `cf-align-functions-64` token LAST in `config_extra` (after
+#:      `cc`, the caps and the [B32] denials), is exactly `pcrec-auto`'s
+#:      id plus that token (one variable apart), and carries NO clause in
+#:      `runtime_options` -- these are OUR flags, not pcrec's own options.
+#:   3. PRESENT MEANS PRESENT ALL THE WAY DOWN, on a REAL compile watched
+#:      at the `subprocess` boundary: the flag is in the gcc/clang argv,
+#:      positioned after `-shared` and before `-o` (as documented), and is
+#:      ABSENT from pcrec's OWN argv on the same compile -- the control
+#:      that this axis never reaches pcrec at all.
+#:   4. THE CONTROL: the aligned artifact answers a hand-built smoke set
+#:      exactly as the libpcre2 oracle does, in both forms -- an alignment
+#:      flag that broke codegen would otherwise pass as a speed change.
+#:   5. A whole cell into a SCRATCH store (the path a window uses), the
+#:      token reaching the written record; and `pcrecbench testees` lists
+#:      the new config.
+_PRE_B35_CONFIGS = _PRE_B32_CONFIGS + ("pcrec-auto-noedge",)
+
+#: I-39 (v)'s probe flag, and CC_KIND_CASES' own "pure DFA" pattern +
+#: subjects (reused rather than re-invented, so this check's control is the
+#: same shape [B24]'s already is).
+_ALIGN64_FLAG = "-falign-functions=64"
+_ALIGN64_PATTERN = b"foo[0-9]+bar"
+_ALIGN64_SUBJECTS = (b"xxfoo123barzz", b"foo0bar", b"foobar", b"",
+                    b"nothing here", b"foo9876543210bar")
+
+
+def check_cflags_axis():
+    """THE COMPILEE-FLAGS AXIS ([B35]). The five arms and what each is
+    built to catch are documented above _PRE_B35_CONFIGS."""
+    print("-- the compilee-flags axis: -falign-functions=64 / cflags "
+          "([B35], pcrec I-39 (v)) --")
+    import glob as _glob
+    import json as _json
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("cflags axis", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    ALIGN64 = "pcrec-auto-align64"
+
+    saved = dict(os.environ)
+    os.environ["PCREC_BIN"] = adapter.pin_binary()
+    os.environ.pop("PCREC_LOCAL_FLAGS", None)
+    os.environ.pop("CC", None)
+    try:
+        # ---- 1a. the twelve pre-[B35] configs, untouched ------------------
+        offenders, shapes = [], []
+        for tid in _PRE_B35_CONFIGS:
+            cfg = adapter.config(tid)
+            block = adapter.describe(tid)
+            derived = _rec.derive_testee_id(block)
+            shapes.append(derived)
+            if cfg.get("cflags"):
+                offenders.append("%s: gained cflags %r" % (tid, cfg["cflags"]))
+            if cfg.get("cflags_extra") is not None:
+                offenders.append("%s: gained cflags_extra %r"
+                                 % (tid, cfg["cflags_extra"]))
+            if "COMPILEE FLAGS" in block["build_flags"] \
+                    or _ALIGN64_FLAG in block["build_flags"]:
+                offenders.append("%s: build_flags gained a cflags clause" % tid)
+            if "cf-" in derived:
+                offenders.append("%s: derived id %r carries a cf- token"
+                                 % (tid, derived))
+        if offenders:
+            bad("cflags axis: the twelve pre-[B35] configs are untouched by "
+                "the axis (cflags, build_flags, id)", "; ".join(offenders)[:700])
+        else:
+            ok("cflags axis: the twelve pre-[B35] configs are untouched by "
+               "the axis (cflags, build_flags, id)",
+               "no cflags on any config, no cflags clause in any "
+               "build_flags, no cf- token in any id (%s, ...)" % shapes[0])
+
+        # ---- 1b. and every COMMITTED record still names its testee -------
+        committed = {}
+        for p in _glob.glob(os.path.join(ROOT, "store", "records", "*",
+                                         "pcrec_*", "*.jsonl")):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    t = _json.loads(f.readline())["testee"]
+            except (OSError, ValueError, KeyError):
+                continue
+            committed.setdefault(t["testee_id"], t)
+        matched, drift, pins_used = [], [], set()
+        for tid in _PRE_B35_CONFIGS:
+            if adapter.testees()[tid].get("local"):
+                continue            # no pin, so no committed record, by design
+            block = adapter.describe(tid)
+            rec, pin_used, block = _committed_at_any_pin(committed, block)
+            if rec is None:
+                continue
+            pins_used.add(pin_used)
+            if rec["build_flags"] != block["build_flags"]:
+                drift.append("%s: the committed record has %r, describe() "
+                             "now gives %r" % (tid, rec["build_flags"][:110],
+                                               block["build_flags"][:110]))
+            else:
+                matched.append(rec["testee_id"])
+        if drift:
+            bad("cflags axis: every COMMITTED pcrec record at this pin still "
+                "names the testee that describes it", "; ".join(drift)[:600])
+        elif not matched:
+            bad("cflags axis: every COMMITTED pcrec record at this pin still "
+                "names the testee that describes it",
+                "no committed record matched any pre-[B35] config's derived "
+                "id at ANY pin in store/ -- the arm is VACUOUS, which is a "
+                "failure, not a pass")
+        else:
+            ok("cflags axis: every COMMITTED pcrec record at this pin still "
+               "names the testee that describes it",
+               "%d ids in store/ re-derive byte-identically, build_flags "
+               "included (rendered at pin %s)"
+               % (len(matched), "/".join(sorted(pins_used))))
+
+        # ---- 2. the new config's shape -----------------------------------
+        block = adapter.describe(ALIGN64)
+        cfg = adapter.config(ALIGN64)
+        derived = _rec.derive_testee_id(block)
+        plain = _rec.derive_testee_id(adapter.describe("pcrec-auto"))
+        probs = []
+        if cfg.get("cflags") != [_ALIGN64_FLAG]:
+            probs.append("cflags is %r" % cfg.get("cflags"))
+        if cfg.get("cflags_extra") != "cf-align-functions-64":
+            probs.append("cflags_extra is %r" % cfg.get("cflags_extra"))
+        if block.get("config_extra") != "cf-align-functions-64":
+            probs.append("config_extra is %r" % block.get("config_extra"))
+        if derived != plain + "_cf-align-functions-64":
+            probs.append("%r is not %r plus the token -- the pair is meant "
+                         "to be ONE variable apart" % (derived, plain))
+        if _ALIGN64_FLAG not in block["build_flags"] \
+                or "COMPILEE FLAGS" not in block["build_flags"]:
+            probs.append("build_flags carries no cflags clause")
+        ro_names = {o["name"] for o in block["runtime_options"]}
+        if _ALIGN64_FLAG in ro_names:
+            probs.append("runtime_options carries the flag -- these are OUR "
+                         "OWN compile flags, never pcrec's own options")
+        if probs:
+            bad("cflags axis: %s carries the token, the clause and the flag"
+                % ALIGN64, "; ".join(probs)[:500])
+        else:
+            ok("cflags axis: %s carries the token, the clause and the flag"
+               % ALIGN64,
+               "%s -> %s (its gcc sibling's id plus `cf-align-functions-64`)"
+               ", the flag in build_flags, absent from runtime_options"
+               % (plain, derived))
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+
+    # ---- 6. the CLI lists it ---------------------------------------------
+    proc = run([sys.executable, "-m", "pcrecbench", "testees"], cwd=ROOT,
+               timeout=300)
+    if proc.returncode == 0 and re.search(r"(?m)^\s*%s\b" % re.escape(ALIGN64),
+                                          proc.stdout):
+        ok("cflags axis: `pcrecbench testees` lists %s" % ALIGN64, ALIGN64)
+    else:
+        bad("cflags axis: `pcrecbench testees` lists %s" % ALIGN64,
+            "not found (exit %d): %s"
+            % (proc.returncode, (proc.stderr or "")[-200:]))
+
+    # ---- 3 + 4. a real compile: the argv on BOTH sides, and THE CONTROL --
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-cflags-")
+    try:
+        subj = []
+        for i, text in enumerate(_ALIGN64_SUBJECTS):
+            p = os.path.join(tmp, "align64-s%d.bin" % i)
+            with open(p, "wb") as f:
+                f.write(text)
+            subj.append(_CCSubject(i, p, len(text)))
+
+        g = type(adapter)._compile_one.__globals__
+        argvs, real_sp = [], g["subprocess"]
+        g["subprocess"] = _ArgvSpy(real_sp, argvs)
+        try:
+            out, diag, diffs, nrows, nmatch, meta = _cap_vs_oracle(
+                adapter, ALIGN64, _ALIGN64_PATTERN, subj,
+                list(_ALIGN64_SUBJECTS), tmp, "align64-foo")
+        finally:
+            g["subprocess"] = real_sp
+
+        cc_argvs = [a for a in argvs
+                   if a and os.path.basename(a[0]) in ("gcc", "cc")]
+        pcrec_argvs = [a for a in argvs
+                      if a and os.path.basename(a[0]) == "pcrec"]
+        probs = []
+        if not cc_argvs:
+            probs.append("no gcc/clang exec was seen at the subprocess "
+                         "boundary")
+        for a in cc_argvs:
+            if _ALIGN64_FLAG not in a:
+                probs.append("%s missing from %s" % (_ALIGN64_FLAG,
+                                                      " ".join(a[:6])))
+                continue
+            i_flag, i_shared, i_o = (a.index(_ALIGN64_FLAG), a.index("-shared"),
+                                     a.index("-o"))
+            if not (i_shared < i_flag < i_o):
+                probs.append("%s is not between -shared and -o in %s"
+                             % (_ALIGN64_FLAG, " ".join(a[:8])))
+        if not pcrec_argvs:
+            probs.append("no pcrec exec was seen at the subprocess boundary")
+        for a in pcrec_argvs:
+            if _ALIGN64_FLAG in a:
+                probs.append("%s reached pcrec's OWN argv: %s"
+                             % (_ALIGN64_FLAG, " ".join(a[:6])))
+        if probs:
+            bad("cflags axis: %s -- the flag is in the REAL gcc argv "
+                "(between -shared and -o) and ABSENT from pcrec's own"
+                % ALIGN64, "; ".join(probs)[:600])
+        else:
+            ok("cflags axis: %s -- the flag is in the REAL gcc argv "
+               "(between -shared and -o) and ABSENT from pcrec's own"
+               % ALIGN64,
+               "%d gcc/clang exec(s) carrying it, %d pcrec exec(s) without it"
+               % (len(cc_argvs), len(pcrec_argvs)))
+
+        title = ("cflags axis: the aligned artifact answers the pure-DFA "
+                 "smoke pattern by the libpcre2 ORACLE, both forms")
+        if out != "compiled":
+            bad(title, "%s: %s" % (out, " ".join((diag or "").split())[:300]))
+        elif diffs:
+            bad(title, "an alignment flag that broke codegen would otherwise "
+                       "pass as a speed change: %s" % "; ".join(diffs[:4])[:400])
+        elif nmatch < 4:
+            bad(title, "%d rows agreed but only %d matched -- an agreement "
+                       "in which nothing matched proves nothing"
+                       % (nrows, nmatch))
+        else:
+            ok(title, "%d rows (%d subjects x 2 forms), %d matching; answer "
+                      "+ span identical to libpcre2" % (nrows, len(subj), nmatch))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # ---- 5. one whole cell into a scratch store --------------------------
+    scratch = os.path.join(ROOT, "build", "selfcheck-cflags-store")
+    shutil.rmtree(scratch, ignore_errors=True)
+    title = "cflags axis: %s runs one cell into a scratch store and validates" % ALIGN64
+    proc = run([sys.executable, "-m", "pcrecbench", "run",
+               "--subbench", "email", "--testee", ALIGN64,
+               "--trials", "1", "--iters", "1", "--regimes", "match",
+               "--force-unquiet", "--store", scratch, "--tier", "scratch",
+               "--machine-id", "selfcheck-box", "--synthetic",
+               "--quiet-output",
+               "--note", "make check smoke -- NOT a measurement"],
+              cwd=ROOT, timeout=1800)
+    if proc.returncode != 0:
+        bad(title, (proc.stderr or proc.stdout).strip()[-400:])
+    else:
+        m = re.search(r"^(\S+\.jsonl)$", proc.stdout, re.M)
+        stamped = ""
+        if m:
+            path = m.group(1)
+            if not os.path.isabs(path):
+                path = os.path.join(ROOT, path)
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    stamped = _json.loads(f.readline())["testee"]["testee_id"]
+            except (OSError, ValueError, KeyError):
+                stamped = ""
+        if stamped.endswith("_cf-align-functions-64"):
+            ok(title, "%s, %s" % (stamped, " ".join(proc.stdout.split()[-4:])))
+        else:
+            bad(title,
+                "the written record's testee_id is %r -- the cflags token "
+                "did not reach the store" % stamped)
+    shutil.rmtree(scratch, ignore_errors=True)
+
+
 def check_list_axes_registry():
     """THE FOURTH REGISTRY SURFACE, ARCHIVED AND CHECKED ([B18], pcrec I-15
     (5), registry.md 6). Two facts:
@@ -6408,6 +6693,7 @@ def main():
     check_cc_axis()
     check_cap_axis()
     check_noedge_axis()
+    check_cflags_axis()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()

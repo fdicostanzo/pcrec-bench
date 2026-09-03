@@ -3,9 +3,10 @@
 Provides `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm`, their clang siblings
 `pcrec-auto-clang` / `pcrec-nocaps-clang` / `pcrec-vm-clang`, their
 raised-emitted-size-cap siblings `pcrec-auto-bigcap` / `pcrec-vm-bigcap`,
-and the caller-provided frame-buffer variants `pcrec-auto-in` /
-`pcrec-vm-in`, all at the pin in `configs.toml` -- and `pcrec-local`, a
-PROVIDED binary at no pin at all.
+the scan-edge-denied `pcrec-auto-noedge`, the function-alignment sibling
+`pcrec-auto-align64`, and the caller-provided frame-buffer variants
+`pcrec-auto-in` / `pcrec-vm-in`, all at the pin in `configs.toml` -- and
+`pcrec-local`, a PROVIDED binary at no pin at all.
 
 THE COMPILEE TOOLCHAIN AXIS ([B24]; pcrec [CC-CLANG]). pcrec emits C and
 stops, so the compiler that turns that C into a .so is OURS -- phase 2 below
@@ -32,6 +33,17 @@ ladder's own abort bound, so two artifacts built under different caps are
 two artifacts. `compose_config_extra` is the ONE place `config_extra`'s
 parts are ordered -- the axes in chartering order, so the slug only ever
 grows by appending.
+
+THE COMPILEE-FLAGS AXIS ([B35]; pcrec inbox I-39 (v)). A config may carry
+`cflags = ["-falign-functions=64", ...]`, extra `$CC` flags for OUR OWN
+phase-2 compile (the artifact + shim into a .so) -- appended after the
+fixed `-O2 -fPIC -shared` set, never passed to pcrec's own argv. Absent,
+nothing changes -- byte-identical argv, build_flags and testee_id. Present,
+the flags join build_flags NAMED and a deterministic slug (`cflags_token`:
+strip leading dashes and a leading bare `f`, non-alnum runs to `-`,
+prefixed `cf-`) joins `config_extra` LAST, after `cc`, the caps and the
+[B32] denials. The timing driver never carries these flags, so a `cflags`
+testee differs from its plain sibling in exactly one variable.
 
 THE LOCAL TESTEE (Frank's I-4 (c), [B10]; record_schema.md 6.2 and 6.8).
 `$PCREC_BIN` names the binary, `$PCREC_LOCAL_FLAGS` adds flags; pin.sh is
@@ -1773,11 +1785,104 @@ def cap_values(cfg):
     return out
 
 
+# ---------------------------------------------------------------------------
+# THE COMPILEE-FLAGS AXIS -- `cflags` ([B35]; pcrec inbox I-39 (v)).
+#
+# I-39 (v)'s layout probe for the disputed `floor` / match / `auto` cell:
+# gcc read 503.3 ns on THIS bench and 307 ns in pcrec's own hand harness on
+# BYTE-IDENTICAL artifacts; clang matched to within 1.4 %. A 48-instruction
+# loop straddling a 64-byte cache line can cost exactly that ratio, and
+# `-falign-functions=64` is the probe: it moves nothing pcrec emits, only
+# where the COMPILER lands the function.
+#
+#   cflags = ["-falign-functions=64", ...]   OPTIONAL, per config, a LIST
+#
+# These are OUR OWN phase-2 flags -- the `$CC -O2 -fPIC -shared shim.c`
+# compile that turns the artifact + shim into a `.so` (`_compile_one`) --
+# appended AFTER the fixed `-O2 -fPIC -shared` set and BEFORE `-o`. They
+# are NEVER passed to pcrec: pcrec's own `flags` (its argv, `--features
+# all` and friends -- what `cc`, the emitted-size caps and the [B32] deny
+# axis all ride on) is a different list entirely, and a config may carry
+# this axis and any of those independently. THE DRIVER DOES NOT MOVE:
+# `build_driver()` still builds `driver.c` from `$CC` alone with no extra
+# flags, so a `cflags` testee differs from its plain sibling in exactly
+# ONE variable -- the artifact+shim compile -- the same one-variable shape
+# `cc` ([B24]) already has for the compiler choice itself.
+#
+# ABSENT means today's behaviour byte for byte: no extra token on the REAL
+# argv, no clause in `build_flags`, no `config_extra`, the same derived
+# `testee_id` (frozen-renderer proof, `check_cflags_axis` arm 1, against a
+# COMMITTED production record). PRESENT is an IDENTITY CLAIM: the flags
+# join `build_flags` verbatim (named, not just appended -- a reader must
+# not have to diff two build_flags strings to see WHAT changed) and a
+# deterministic slug token joins `config_extra` LAST -- after `cc`, the
+# emitted-size caps and the [B32] denials, `compose_config_extra`'s own
+# chartering-order rule -- so a `cflags` testee can never collide in the
+# store with its plain sibling.
+#
+# THE TOKEN RULE (`cflags_token`, one flag's slug BODY): strip leading
+# dashes, then a leading bare `f` immediately followed by a letter (GCC/
+# clang's `-f<name>` convention -- the same family the [B32] deny words
+# already strip: `-fno-scan-edge` -> `noedge`), replace every run of
+# characters outside `[a-z0-9]` with `-`, and trim. `-falign-functions=64`
+# -> `align-functions-64`. `effective_cflags` prefixes the JOINED bodies
+# with `cf-` once -- a COMPILEE-FLAGS token, distinct from `cc-` ([B24]'s
+# compiler choice) and the bare [B32] deny words -- so several flags in
+# one config still slug to one legal `$defs/slug` token
+# (`[a-z0-9]([a-z0-9-]*[a-z0-9])?`).
+#
+# `pcrec-local` derives this axis from a CONFIG KEY ONLY, never from an
+# environment variable: `$PCREC_LOCAL_FLAGS` is pcrec's OWN argv (what
+# `engine_mode`/`captures`/the caps/the denials all read), not the
+# compilee toolchain's, so there is no local equivalent to widen. A
+# provided binary compiles under whatever `cflags` its OWN config entry
+# (if any) declares, exactly like every other testee -- `pcrec-local`'s
+# entry in configs.toml declares none, so it is unaffected by this axis
+# by construction, the same way it is unaffected by `cc`.
+def cflags_token(flag):
+    """One flag's slug BODY (no `cf-` prefix): see the axis comment above.
+    Raises if the flag has no alphanumeric content left to slug (e.g. a
+    bare `-`), which would otherwise silently collapse two different
+    flags to the same empty body."""
+    s = flag.lstrip("-")
+    if len(s) > 1 and s[0] == "f" and s[1].isalpha():
+        s = s[1:]
+    s = re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+    if not s:
+        raise _ad.AdapterError(
+            "%r has no alphanumeric content to slug into config_extra "
+            "(testees/pcrec/configs.toml `cflags`)" % flag)
+    return s
+
+
+def effective_cflags(testee_id, cfg):
+    """-> (flags_list, config_extra_or_None) for one testee's COMPILEE
+    FLAGS axis ([B35]).
+
+    ABSENT/empty `cflags` -> ([], None): today's behaviour byte for byte.
+    PRESENT -> (the list VERBATIM -- these ride on OUR phase-2 argv
+    unchanged, never pcrec's -- its slug token), after checking every
+    entry is a non-empty flag string starting with `-`: a bare positional
+    argument on this argv would be silently taken by gcc/clang as another
+    SOURCE FILE, which is worse than a refusal at config-read time."""
+    declared = cfg.get("cflags")
+    if not declared:
+        return [], None
+    if not isinstance(declared, list) or not all(
+            isinstance(f, str) and f.startswith("-") for f in declared):
+        raise _ad.AdapterError(
+            "%s: cflags = %r must be a list of non-empty flag strings "
+            "starting with '-' (testees/pcrec/configs.toml) -- these are "
+            "OUR OWN phase-2 $CC flags, appended after -O2 -fPIC -shared, "
+            "and are never passed to pcrec's own argv" % (testee_id, declared))
+    return list(declared), "cf-" + "-".join(cflags_token(f) for f in declared)
+
+
 def compose_config_extra(*parts):
     """`testee.config_extra` from the axis tokens a config carries, in a
     FIXED order: the axes in the order they were chartered ([B24] `cc`,
     then [B31] the emitted-size caps, then [B32] the denied generation
-    axes), joined by `-`.
+    axes, then [B35] the compilee flags), joined by `-`.
 
     Chartering order is the rule because it makes the slug APPEND-ONLY: a
     testee that already had a token keeps it where it was when a later axis
@@ -2071,6 +2176,14 @@ class Adapter(_ad.Adapter):
         # so `-fno-scan-edge` reaches the testee_id whether a config
         # spelled it or `$PCREC_LOCAL_FLAGS` did.
         cfg["deny_extra"], cfg["deny_flags"] = effective_denies(cfg["flags"])
+        # [B35]: the COMPILEE-FLAGS axis. Read from the config's OWN
+        # `cflags` key only -- never from an environment variable, and
+        # never folded into `flags` (pcrec's own argv): these are OUR
+        # phase-2 $CC flags, a wholly separate list `_compile_one` appends
+        # after `-O2 -fPIC -shared`. `pcrec-local` therefore gets this axis
+        # exactly like every other testee, from its own configs.toml
+        # entry, with no `$PCREC_LOCAL_FLAGS` equivalent.
+        cfg["cflags"], cfg["cflags_extra"] = effective_cflags(testee_id, cfg)
         return cfg
 
     def local_binary(self, testee_id):
@@ -2215,6 +2328,22 @@ class Adapter(_ad.Adapter):
                              "%s -- %s" % (flag, why)
                              for flag, word, why in DENY_FLAGS
                              if word in [w for _f, w in cfg["deny_flags"]]))
+        # [B35] the COMPILEE FLAGS. Same shape as the three notes above and
+        # for the same reason: absent -> the empty string, so a config that
+        # carries none renders the pre-[B35] build_flags byte for byte.
+        # NAMED, not just appended -- a reader must not have to diff two
+        # build_flags strings to see WHICH flags moved -- and explicit that
+        # these never reach pcrec's own argv (pcrec [flags] is the clause
+        # right before "artifact built with", a separate list entirely).
+        cflags_note = ""
+        if cfg.get("cflags"):
+            cflags_note = ("; COMPILEE FLAGS ([B35], pcrec I-39 (v)): the "
+                           "artifact+shim compile also carries %s -- OUR OWN "
+                           "phase-2 flags, appended after -O2 -fPIC -shared, "
+                           "never passed to pcrec; the timing driver is "
+                           "unaffected (run.driver_compiler names the "
+                           "driver's own compiler, which never moves)"
+                           % " ".join(cfg["cflags"]))
         buffer_note = ""
         runtime = runtime_options(cfg.get("flags", []))
         if caps:
@@ -2255,10 +2384,10 @@ class Adapter(_ad.Adapter):
             "engine_mode": cfg["engine_mode"],
             "simd": "n-a",
             "build_flags": "%s; pcrec flags %s; artifact built with "
-                           "%s -O2 -fPIC -shared%s%s%s%s"
+                           "%s -O2 -fPIC -shared%s%s%s%s%s"
                            % (provenance, " ".join(cfg.get("flags", [])),
                               cc_text, cc_note, buffer_note, cap_note,
-                              deny_note),
+                              deny_note, cflags_note),
             "runtime_options": runtime,
             "compile_cost_definition": (
                 "AOT (requirements 3): every phase from pattern text to a "
@@ -2289,7 +2418,8 @@ class Adapter(_ad.Adapter):
         # the parts are ordered ([B31]); the schema only ever sees the
         # whole slug.
         extra = compose_config_extra(cc_extra, cfg.get("cap_extra"),
-                                     cfg.get("deny_extra"))
+                                     cfg.get("deny_extra"),
+                                     cfg.get("cflags_extra"))
         if extra:
             block["config_extra"] = extra
         if local:
@@ -2406,9 +2536,14 @@ class Adapter(_ad.Adapter):
             # ONE translation unit: shim.c #includes the artifact's .c, so
             # the D46 stamps (which pcrec emits into the .c only) are
             # preprocessor-visible. See shim.c's header comment.
-            gargv = [cc, "-O2", "-std=gnu11", "-fPIC", "-shared", "-o", so,
-                     os.path.join(HERE, "shim.c"),
-                     "-DPB_ARTIFACT=\"%s\"" % art_c, "-I", cdir]
+            # [B35]: the COMPILEE-FLAGS axis's extra $CC flags (e.g.
+            # `-falign-functions=64`), appended after the fixed -O2 -fPIC
+            # -shared set and before -o -- ABSENT they are [], so this argv
+            # is byte-identical to before the axis existed.
+            gargv = ([cc, "-O2", "-std=gnu11", "-fPIC", "-shared"]
+                    + cfg.get("cflags", [])
+                    + ["-o", so, os.path.join(HERE, "shim.c"),
+                       "-DPB_ARTIFACT=\"%s\"" % art_c, "-I", cdir])
             g0 = time.monotonic()
             gproc = subprocess.run(gargv, capture_output=True, text=True,
                                    env=C_ENV, timeout=900)
