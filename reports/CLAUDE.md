@@ -4,6 +4,143 @@ Each file is the output of one `python3 -m pcrecbench report ...` query,
 committed beside the records it reduces so a reader can cite a number
 with its query. Names: `<date>-<subbench>-<version>-<machine>[-<label>][.<grain>].md|tsv`.
 
+**[B31] reports (2026-09-03) ADDED four file groups — the 2026-09-03
+window at pcrec pin 1989c62** — and changed NOTHING else here: the reporter
+is unchanged at `v12 (2026-09-02)`, no committed report was regenerated, and
+no reporter code was touched by this lane. Every one of the twelve new files
+carries an explicit `--since`/`--until` PAIR *and* an explicit `--testee`
+roster, so each file's selection is exactly its own cells and no later store
+growth can drift it (the 2026-08-30 rule, and KB-5's roster on top of it).
+
+RE-RENDER INVARIANT, checked two ways rather than one, because the twelve
+files were rendered IN-PROCESS (the 122-record store loaded and validated
+ONCE, reused for all twelve — the same `build_report`/`render_markdown`/
+`render_tsv` calls a CLI invocation makes; `reports/CLAUDE.md`'s [B32] (b)
+paragraph explains why 66 CLI invocations were impractical and the same
+arithmetic applies to twelve over a 122-record store):
+
+1. **CLI equivalence**, proven on
+   `2026-09-03-loglines-0.1-budu-ryzen1600-noedge-1989c62.md`: a fresh
+   `python3 -m pcrecbench report …` invocation of that file's own committed
+   query diffs BYTE-IDENTICAL against the committed file.
+2. **Determinism over all twelve**: a second, independent in-process render
+   into a scratch directory diffs clean on all twelve files.
+
+Together those cover every file (the in-process path is proven equal to the
+CLI path once, and every file is proven reproducible from its own query).
+A per-file CLI re-render of the two altwide groups was ATTEMPTED and
+ABANDONED, and this is recorded rather than glossed: one CLI invocation of
+the altwide first-sample query exceeded a 570-second wall cap on a box the
+peer manager session (`pcrecdev1`) held that morning, so it was not repeated.
+The altwide `.md` files are large (33 patterns × 3 regimes × 6 testees), and
+the store validation is paid per invocation.
+
+TWO THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS:
+
+- **`scan_edges` prints for the first time.** Lane b32adp's
+  `engine_metadata` pair (I-33's per-iteration compare COUNT, distinct from
+  `dfa_scan_edge`'s single shape token) landed before this window ran, so
+  every 2026-09-03 pcrec record carries it and every legend line in these
+  four groups shows `edges=N` or `edges=N (match: M)`. `reports/CLAUDE.md`'s
+  [B32] (b) note that "no file carries a `scan_edges` clause" is superseded
+  FOR THESE FOUR GROUPS ONLY; the 66 older files still carry none.
+- **`table=` finally MOVES, and only under the raised caps.** Every
+  `RX_DFA_TABLE` stamp in every committed report before this wave reads
+  `premultiplied`. The bigcap group is the first to show `mixed` and
+  `indexed` — see its entry.
+
+- `2026-09-03-altwide-0.2-budu-ryzen1600-first-sample-1989c62.md` — the
+  FIRST SAMPLE of `bench/altwide@0.2` ([B31]) at pcrec **1989c62** (abi 15):
+  six cells `measured` 2026-09-02 23:59 – 2026-09-03 02:45 EDT, all at
+  attempt 1 under BD7, `--trials 5`, reporter v12. Query: `report --subbench
+  altwide --version 0.2 --since 2026-09-03T03:50:00Z --until
+  2026-09-03T10:20:00Z` plus the six `--testee` values
+  `libpcre2_10.46_{interp,jit}-caps-simdna` and
+  `pcrec_1989c62_{auto,auto-nocaps,vm,vm-in}-caps-simdna` — **6 records, 0
+  superseded.** The roster is explicit because the same window's two
+  raised-cap testees satisfy the same subbench/version/date filters and are
+  the NEXT file's job. READ THE REFUSAL TABLE FIRST, as with altwide@0.1:
+  `pcrec-auto`/`-nocaps` refuse 32 of 66 (pattern × form) compile cells at
+  the TOTAL emitted-source cap (1,000,000 B) and `pcrec-vm`/`-vm-in` refuse
+  26 of 66 at the CODE cap (500,000 B), both diagnostics printed verbatim by
+  R10. The 0.2 dense ladder BRACKETS the boundary 0.1 could only place at
+  "≥ 512": `w-256 plain` compiles on all four (977,055 B source / 341,111 B
+  code) and **`w-384` refuses on all four** — 1,431,536 B source (43 % over)
+  and 508,517 B code (**1.7 % over**). Read it with `bench/altwide/NOTES.md`'s
+  P9-P18 and `docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt`
+  (whose section-1 sizes this sample reproduces to the byte on every shared
+  cell). READER'S CAVEAT: `s-512` COMPILES here on every config — the census's
+  finding 5 was right and the NOTES' "thirteen wide rungs" is twelve.
+  `.subject-grain.md` (`--grain subject`) and `.tsv` the same query.
+
+- `2026-09-03-altwide-0.2-budu-ryzen1600-bigcap-1989c62.md` — the RAISED-CAP
+  PAIR against their plain siblings, a four-testee roster of TWO
+  gcc/gcc pairs differing only in `--max-emit-bytes` / `--max-emit-code-bytes`
+  (both raised to 8,388,608 = 8 MiB, the census's own bound): `pcrec-auto` vs
+  `pcrec-auto-bigcap` and `pcrec-vm` vs `pcrec-vm-bigcap`, four cells
+  `measured` (the plain pair inside the six-testee pass above; the bigcap
+  pair 2026-09-03 02:45-05:11 EDT under a raised `cell_cap=14400s`, which was
+  NEEDED — `pcrec-vm-bigcap`'s cell ran 121.5 minutes, over the standing
+  5,400 s cap). Query: as the first-sample entry but with the four
+  `--testee` values `pcrec_1989c62_{auto,vm}-caps-simdna` and their
+  `_emitcap-8388608-codecap-8388608` siblings — **4 records, 0 superseded.**
+  READ DOWN EACH PAIR, never across the table: the ranking's `vs best` and
+  `vs baseline` columns mix all four arms and only the same-engine
+  default-cap/raised-cap division is a statement about the cap. This is the
+  file the `RX_DFA_TABLE` transition is readable in, and the file P16 is
+  scored on. The R8 `Δ vs previous version` column never fires between a
+  plain arm and its bigcap sibling — the cap tokens live in `config_extra`,
+  not the pin, exactly as the `-cc-` groups' clang siblings do — so the
+  pair ratio is the reader's own division, and the delivery/ledger states it.
+  `.subject-grain.md` and `.tsv` the same query.
+
+- `2026-09-03-loglines-0.1-budu-ryzen1600-noedge-1989c62.md` — the
+  **[OPT-EDGE] BEFORE/AFTER PAIR** (inbox I-33): `pcrec-auto` against
+  `pcrec-auto-noedge` (the same config with `-fno-scan-edge`), two cells
+  `measured` 2026-09-03 05:11-05:28 EDT back to back in one window, reporter
+  v12. Query: `report --subbench loglines --version 0.1 --since
+  2026-09-03T03:50:00Z --until 2026-09-03T10:20:00Z --testee
+  pcrec_1989c62_auto-caps-simdna --testee
+  pcrec_1989c62_auto-caps-simdna_noedge` — **2 records, 0 superseded.** A
+  PAIR report, not a ranking, on the same terms as the `-cc-` groups: read
+  each pattern's two rows against each other. The deny flag is a CLEAN
+  one-variable control and the legend proves it — `edge=` and `edges=`
+  move to `none`/`0` on every pattern, and `prefilter=`, `table=`, `match=`,
+  `sel=` and `lang=` are unchanged on all eleven. loglines has TWO regimes
+  (search and throughput), not three; there is no `match-compliance` group
+  here. Read beside the 2026-09-02 full-suite ledger §7.2 (the regression
+  family this arm is the counterfactual for) and the same-pin
+  `pcrec-auto` numbers in
+  `2026-09-02-loglines-0.1-budu-ryzen1600-after-1989c62.*`, which this
+  window re-measured as an unasked-for stability control (22/22 cells
+  within 1.32 %).
+  `.subject-grain.md` carries the 16 KB-1 MB sweep per flavour; `.tsv` the
+  set-grain query.
+
+- `2026-09-03-bounded-0.3-budu-ryzen1600-cc-rerun-1989c62.md` — the **I-37
+  RE-RUN** of the one cc-axis cell pcrec's [CC-DIFF] STEP 0 could not
+  reproduce (`floor` / `match-compliance` / `auto`, clang ÷ gcc 0.432, marked
+  PROVISIONAL in the 2026-09-02 ledger §5.4): `pcrec-auto-clang` re-measured
+  2026-09-03 05:28-06:16 EDT against the UNCHANGED 2026-09-02 gcc arm.
+  Query: `report --subbench bounded --version 0.3 --since
+  2026-09-02T02:40:00Z --until 2026-09-03T10:20:00Z --testee
+  pcrec_1989c62_auto-caps-simdna --testee
+  pcrec_1989c62_auto-caps-simdna_cc-clang` — **2 records included, 1
+  superseded** (the 2026-09-02 clang record, which newest-measured-wins
+  replaces). The `--since` is DELIBERATELY wider than the other three groups'
+  and is the reason the roster is only two ids: the gcc arm of this pair was
+  measured in the 2026-09-02 overnight window and there is no 2026-09-03 gcc
+  record to pair with.
+  **THE CAVEAT THAT GOVERNS EVERY NUMBER IN THIS FILE: only the CLANG arm was
+  re-measured.** The gcc column is the same 2026-09-02 record the provisional
+  ledger row was computed from, so this file re-confirms clang's 217.5 ns and
+  does NOT independently re-confirm gcc's 503.3 ns — which is the half
+  pcrec's [CC-DIFF] disputes (it read 307 ns). A reading that says "0.432
+  reproduced" must say which half reproduced.
+  Same reading rule as the `-cc-` groups: down the pair, never across; KB-9's
+  `(clang cc)` note fires on every `gcc ns` cell of the clang arm.
+  `.subject-grain.md` and `.tsv` the same query.
+
 **[B32] (b) (2026-09-02) regenerated EVERY committed report against
 reporter `v12 (2026-09-02)`** (docs/dev/known_issues.md KB-8/KB-9,
 ledger docs/dev/ledgers/2026-09-02-full-suite-1989c62.md §12 (d)). All
