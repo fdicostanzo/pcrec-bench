@@ -165,3 +165,16 @@ bursts here contend with nothing of pcrec's. Why: the two sessions had
 been trading the box by handshake for two weeks and losing whole nights
 to the other's batteries (journal, ninth session). Revisit: if pcrec ever
 returns validation to this box, BD6's cwd-verified HOLD comes back with it.
+
+AMENDMENT (I-46, 2026-09-04 evening, commit 2e44f58): the GitHub remote
+(origin = github.com/fdicostanzo/pcrec-bench, Frank's) joins the channel as
+READ transport — pcrec reads the two files by PULLING its clone; pcrec's
+inbox WRITES stay ssh commits on this checkout (one committing checkout =
+linear history, no push races; local-commit-plus-push only as a fallback
+if ssh is down, and such a commit says so). The NEW HABIT: master is
+PUSHED after every channel commit (outbox entries, inbox acks, BD
+rulings). `git push` has been classifier-blocked from the manager session
+(ninth session's lesson): each push is Frank's `! git push`, requested in
+the session's closing line whenever channel commits are pending, or a
+session-level allow if Frank grants one. This checkout stays canonical on
+any disagreement until a push lands.
