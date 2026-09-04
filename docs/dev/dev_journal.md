@@ -2637,3 +2637,51 @@ measured and read (O-15; I-39 answered it); [B32] built (the frameless
 column now real at abi 16); [B34] re-pinned; [B35] (1) built; two
 windows' worth of rulings from Frank (build by day / windows at night;
 one change per pin per night) saved as memories.
+
+## 2026-09-04 (EDT, ~14:1x), ninth session — THE HOLD: pcrecdev1's DONE rescinded, an evening and a morning of its batteries, I-40..I-43 acked, [B36]/[B37]/[B38] opened, the repo pushed to GitHub; CLOSE without a run
+
+Frank opened the session (2026-09-03 ~17:xx) with "hold; I'll wake you",
+then the manager skill with "wait (cache keepalive) until pcrecdev1 gives
+the go-ahead, then run". pcrecdev1's I-41 DONE (15:5x, "three hours
+early") had arrived first — and Frank RESCINDED it ("wait for the next
+one"): the box was in fact busy (load1 12.6 at 18:38, pcrecdev1's isl1
+worktree validating). pcrecdev1 then reported Frank had handed pcrec the
+box for the evening: three lane branches validated SERIALLY (isl1, edge1,
+w13), merged in order, one battery — load1 swung 0.3-30 through the
+night; battery_v5 ran 09:25-13:28 (I-43: GREEN at the abi-20 pin
+251bb117 — [ENG-ISL] STEP 1 the alternation island abi 18, [OPT-EDGE]
+STEP 1 the scan-edge dispatch abi 19, [DD-13b.W1.3] .rxt composition abi
+20, on top of [CC-DIFF] STEP 1 abi 17). The box stays pcrecdev1's for four
+serial lane timings (lim2 → edge2 → ccd2 → form0) until ~18:00 EDT or
+later; its LIVE "box free" line is tonight's go. The 288d505 STEP 2
+AFTER never launched this session.
+
+Done, all doc-only: I-40/I-41/I-42 acked (5027bb5) — I-42 is Frank's
+charter for the SYNTAX CENSUS, [B36] (registry-seeded via
+`--list-syntax`, blinded patterns, ~60-90 × six × three in one night on
+the existing instrument, the outlier rule stated before the run, a
+ranked list of mechanism QUESTIONS; algorithmic/general first, SIMD
+last); I-43 acked (817362e) — O-15's asks (i)-(v) answered and the
+island's altwide facts on [B35] (w-256/srt-256 within 2 B: the ×8.87
+order effect gone at the source; w-384 compiles on the VM route; ci-*
+declined), [B37] NEW = the re-pin to 251bb117 (FOUR abi steps in one pin:
+one-change-per-pin cannot hold for the pin, so the AFTER splits by DENY
+FLAG inside it — -fno-alt-island / -fno-scan-edge / the [CC-DIFF]
+witnesses; Frank rules the shape; after the STEP 2 AFTER is read),
+[B38] NEW = the .rxt set exporter under I-43's seven rules (per set; no
+config lines; `floor` collides cross-set only). The repo gained its
+GitHub remote: origin = fdicostanzo/pcrec-bench, master pushed by Frank
+(the push is classifier-blocked from the session; the remote add was
+not); master is the default branch; the 20 old lane branches stay local.
+
+Lessons: a peer's DONE is not the go when Frank has said hold — the
+peer's own "nothing runs" was wrong within the hour (its next lane
+started). The keepalive cron (11,51) held the cache across 20 hours of
+ticks at one `uptime` each; the tick's one-line reply format worked.
+`git push` is blocked by the auto-mode classifier — ask Frank to run it
+with `!`; `git remote add` is fine.
+
+CLOSE ~14:1x: master 817362e + this entry, clean, pushed. No lanes, no
+worktrees; the keepalive cron deleted at close. pcrecdev1 told. Frank
+restarts before the next bench run; that session's first job is the
+288d505 STEP 2 AFTER on pcrecdev1's live line (wake.md).
