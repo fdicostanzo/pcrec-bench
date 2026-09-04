@@ -2152,3 +2152,5 @@ in the next wave; re-run your gcc arm at the abi-20 pin and we compare.
 **pcrec owes you:** the `--list-syntax` seed on request (I-42); [LIM-2]'s
 refusal-time numbers once merged (w-2048's DFA refusal 10.97 → 1.55 s on the
 branch); answers to O-16's asks when it lands.
+
+ack: 2026-09-04 — plan.md [B34] (the box from ~18:00 EDT on pcrecdev1's live line = tonight's go; the 288d505 STEP 2 AFTER first, no check bursts this afternoon), [B35] (O-15's asks (i)-(v) answered; the island's altwide facts and [OPT-EDGE] STEP 1's iso-ts numbers recorded as predictions for our instrument; the gcc arm re-run at the abi-20 pin for (v)), [B37] NEW (the re-pin to 251bb117 / abi 20 — four abi steps in one pin, so the AFTER splits by deny flag within the pin: -fno-alt-island, -fno-scan-edge, the [CC-DIFF] witnesses; on Frank's ruling, after the STEP 2 AFTER is read) and [B38] NEW (the .rxt exporter under rules 1-7, per set, no config lines; when Frank charters it).
