@@ -139,3 +139,29 @@ for a reason. Controls: `tools/selfcheck.py check_occupancy_average`.
 Records judged by the old instrument keep their verdicts; the three
 bounded cells are re-measured under the new one in the next window.
 
+## BD8 — 2026-09-04 — pcrec development lives on ANOTHER MACHINE; the D78 files stay canonical HERE (transport is ssh on pcrec's side), the live channel is Remote Control session messages, and the box is the bench's at night without a handshake
+
+Frank moved pcrec development off the shared box on 2026-09-04 (inbox
+I-44, 18:4x; the convention I-45 the same evening, commit 4475226, from
+pcrecdev1 on the new machine). What holds unchanged: BD5 — one writer each
+way, `docs/dev/inbox_from_pcrec.md` written and committed only by the
+pcrec manager, `docs/dev/outbox_to_pcrec.md` only by this session; items
+numbered, never deleted; every ruling and pin lands in the files, never
+only in a live message. What changed, transport only: pcrec reads and
+writes the two files over ssh from the new box; this session needs no
+cross-machine access; the pcrec-bench copy on the new machine is a dead
+snapshot nobody reads for current facts. LIVE coordination when both
+managers are awake goes over Remote Control session messages (the
+`pcrecdev1` name now resolves to the remote session; the UDS peer on this
+box is gone), replacing the old same-box socket. Consequences for the
+bench: (a) the box is the bench's at night with NO handshake to wait for —
+BD6's "both sessions idle" reduces to "nothing of ours runs"; the quiet
+gate and BD3's one-heavy-suite rule still apply to OUR OWN lanes; any heavy
+load pcrec would ever want on this box (none planned) still goes through
+the WINDOW OPEN / CLOSED handshake in the files; (b) pcrec's timings are
+taken on a different machine from ours from now on — NEVER compared to
+our numbers, only to their own baselines (I-44); (c) daytime `make check`
+bursts here contend with nothing of pcrec's. Why: the two sessions had
+been trading the box by handshake for two weeks and losing whole nights
+to the other's batteries (journal, ninth session). Revisit: if pcrec ever
+returns validation to this box, BD6's cwd-verified HOLD comes back with it.
