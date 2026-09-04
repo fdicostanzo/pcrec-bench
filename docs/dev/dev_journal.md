@@ -2685,3 +2685,46 @@ CLOSE ~14:1x: master 817362e + this entry, clean, pushed. No lanes, no
 worktrees; the keepalive cron deleted at close. pcrecdev1 told. Frank
 restarts before the next bench run; that session's first job is the
 288d505 STEP 2 AFTER on pcrecdev1's live line (wake.md).
+
+## 2026-09-04 (EDT, 19:2x-19:4x), tenth session part 1 — I-44 acked (the box is the bench's from NOW; pcrec moves to another machine), the 288d505 STEP 2 AFTER LAUNCHED 19:28
+
+Wake at 19:26: `git log` showed one commit after the ninth session's close —
+inbox I-44 (8cfa9c8, 18:4x): pcrecdev1 DONE at the abi-22 pin 334fd10e
+(the union chain answer-identical on 24 axes, 22,455/22,455 keys; three
+reds were test-infrastructure defects fixed at 8fc1580c), "the box is
+YOURS from NOW", and the machine move — pcrec development leaves this box,
+so from the next pcrec session the inbox/outbox files are the ONLY channel
+and there is no nightly handshake to wait for. Four pcrec rows merged
+2026-09-04: [LIM-2] STEP 1 WITHDRAWN on its own census (no src change —
+O-15's refusal-timing ask is answered: w-2048 refuses in ~10.8 s unchanged;
+11/12 census blocks are our altwide patterns, max shrink 1.5 %), [OPT-EDGE]
+STEP 1.1 (abi 21), [CC-DIFF] STEP 2 + [OPT-DIAL] STEP 0 (abi 22:
+`--vm-entry-shape`, the `RX_VM_ENTRY_SHAPE` / `RX_VM_PROGRAM_BYTES` stamps
+on every VM artifact), [FORM-CHAR]/[OPT-CLSPACK] STEP 0 (docs only). Acked
+(5036f39): [B34] carries the launch; [B37] retargeted 251bb117 → 334fd10e
+(six abi steps in one pin now; the shim will read the two entry-shape
+stamps; the gcc arm of I-37's cell to be run at that pin for (v)); [B35]
+notes that pcrec's timings from its new machine are never compared to
+ours. Frank's window-shape ruling for [B37] is still open; I-44 says run
+it as proposed otherwise.
+
+The launch: quiet gate VERDICT quiet (five samples, load1 0.17-0.24, max
+core 2.4-5.2 %), no pcrec process on the box (ListAgents showed the local
+pcrecdev1 idle and a Remote Control twin on the other machine; ps showed
+only editors and the two claude sessions). WINDOW OPEN sent live to the
+local pcrecdev1 (addressed by ref — two sessions carry the name now); it
+acknowledged, said nothing of pcrec's will start, and closed. The suite
+(wake.md's command verbatim, Frank's go of 2026-09-03 standing) went up
+under setsid at 19:27:55 EDT: SUITE = bounded (six pinned) + loglines:after
+{auto, noedge} + email:after {auto} + bounded:ccboth {auto, auto-clang,
+auto-align64}; PID 3170465; suite log build/windows/suite_20260904T232755Z.log;
+~7.3 h, done ~03:00 EDT. A 30-min progress cron (23,53; job 9407fce9) tails
+the suite log and greps the per-attempt rc lines; no keepalive is needed
+while it runs. Nothing else runs on the box tonight — no builds, no make
+check, no lanes.
+
+Morning (the reading, against ledger 2026-09-02 §10 and I-38's targets):
+every rc line (124 = a cap kill, named), `python3 -m pcrecbench index`,
+the reports with --since 2026-09-04T23:27:00Z, the ledger, O-16 (the
+[OPT-5] row closes on it), WINDOW CLOSED written to the outbox (the only
+channel from here), then push via Frank (`! git push`).
