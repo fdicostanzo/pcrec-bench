@@ -64,8 +64,8 @@ SEED = os.path.join(HERE, "list_syntax_334fd10e.tsv")
 # module: `anchors` holds `^` (a seed `bare` row), `\A` (module
 # `assertions`) and `(?m)^` (module `modifiers`) because a reader ranking
 # outliers wants "anchoring" in one place.
-FAMILIES = ("anchors", "assertions", "classes", "quantifiers", "groups",
-            "alternation", "backrefs", "lookaround", "conditionals",
+FAMILIES = ("literal", "anchors", "assertions", "classes", "quantifiers",
+            "groups", "alternation", "backrefs", "lookaround", "conditionals",
             "recursion", "modifiers", "escapes", "misc", "uniprop", "verbs",
             "extclass", "floor")
 
@@ -76,6 +76,13 @@ FAMILIES = ("anchors", "assertions", "classes", "quantifiers", "groups",
 #               trailing newline. Every pattern is printable ASCII (Latin-1
 #               bytes are spelled as escapes, never embedded).
 PATTERNS = (
+    # ---- the literal every `cat`-language spelling is read against
+    ("lit-cat", "literal", (), r"cat",
+     "base grammar: the three-byte literal. Fourteen patterns spell this "
+     "language or a superset of it with one construct added (`(cat)`, "
+     "`(?<w>cat)`, `\\x63at`, `(?x) c a t`, `ca(?#comment)t`, `(?n)(ca)t`, "
+     "`c\\Xt`, ...); their cost minus this one's is the construct's"),
+
     # ---- anchors: where a match may start or end
     ("anc-caret", "anchors", ("^",), r"^item",
      "start of subject (no (?m)): the `bare` `^` row"),

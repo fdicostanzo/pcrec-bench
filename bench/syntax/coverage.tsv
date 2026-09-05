@@ -1,4 +1,4 @@
-#coverage of the seed list_syntax_334fd10e.tsv by bench/syntax's 90 patterns: covered 77, covered-by-family 32, not-exercised 19, not-exercised-by-family 5, pcre2-rejects 5
+#coverage of the seed list_syntax_334fd10e.tsv by bench/syntax's 91 patterns: covered 77, covered-by-family 32, not-exercised 19, not-exercised-by-family 5, pcre2-rejects 5
 kind	syntax	key	seed_status	seed_module	seed_engines	seed_built	coverage	patterns	reason
 esc	\d	\d	module	classes	dfa|vm	built	covered	cls-d	
 esc	\D	\D	module	classes	dfa|vm	built	not-exercised	-	the complement of `\d`: the same class mechanism, set inverted
@@ -141,6 +141,7 @@ bare	(a)	(a)	base		dfa|vm	-	covered	grp-cap
 
 #base-grammar constructs with no seed row, exercised by these patterns (constructs = ())
 pattern	family	text	note
+lit-cat	literal	cat	base grammar: the three-byte literal. Fourteen patterns spell this language or a superset of it with one construct added (`(cat)`, `(?<w>cat)`, `\x63at`, `(?x) c a t`, `ca(?#comment)t`, `(?n)(ca)t`, `c\Xt`, ...); their cost minus this one's is the construct's
 cls-negset	classes	c[^aeiou]t	base grammar: a negated bracket class (`cat` misses, `cxt` hits)
 cls-range	classes	0x[0-9a-fA-F]+	base grammar: a bracket class of three ranges
 cls-dot	classes	c.t	base grammar: `.` (any byte but newline without (?s))

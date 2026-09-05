@@ -16,7 +16,8 @@ or an engine-selection surprise on a construct the registry calls built \
 looks like. The census widens the queue of depth probes; it does not \
 shorten it (inbox I-42, Frank's charter)."""
 description = """\
-Ninety patterns in seventeen families (89 members + the floor): anchors \
+Ninety-one patterns in eighteen families (90 members + the floor): the \
+bare literal `cat` every `cat`-language spelling is read against, anchors \
 (`^` `$` `\\A` `\\Z` `\\z` `\\G` and the two under `(?m)`), assertions \
 (`\\b` `\\B` `\\K`), classes (eight class escapes, the POSIX bracket, a \
 negated set, a three-range set, `.`), quantifiers (greedy, lazy, the four \
@@ -33,7 +34,7 @@ difference, and the floor `#`. Every pattern is typed in gen_patterns.py, \
 names the seed rows it exercises, and `coverage.tsv` is derived from the \
 table x the seed: every one of the seed's 138 rows is covered, covered by \
 its own family column, excused by a stated reason, or a PCRE2 reject. \
-Subjects: 27 whole-string FIELDS typed as one construct's hit or semantic \
+Subjects: 30 whole-string FIELDS typed as one construct's hit or semantic \
 edge (`item done` / `item done\\n` / `item\\ndone` / `item\\r\\ndone` \
 separate the end anchors and the newline escapes; `aaab` and `abc` the \
 possessive and atomic edges; `Cat` / `CAT` the option reset; `caf\\xe9` \
@@ -49,7 +50,7 @@ estimate."""
 # size sweep, not a density cross: NOTES.md, "Regimes").
 regimes = ["match", "search_short", "throughput"]
 
-# THE MEMBERS. The [[patterns]] block below is DERIVED from gen_patterns.py's
+# THE MEMBERS. The pattern block below is DERIVED from gen_patterns.py's
 # table (`--sidecar` prints it; `--check` compares it entry for entry), so
 # the ids, files, roles, size classes and tags here cannot drift from the
 # patterns. `feature_tier` is `base` on every entry: this set does not
@@ -59,8 +60,19 @@ regimes = ["match", "search_short", "throughput"]
 # already passes `--features all`. `hazard_class` is `none` on every entry:
 # nothing here is a backtracking hazard by design (NOTES.md). `size_class`
 # bands the pattern's bytes as bench/bounded does (tiny < 16 B, small < 256).
-# Tags: `fam-<family>` (the seventeen mechanism families), `encoding-bytes`
+# Tags: `fam-<family>` (the eighteen mechanism families), `encoding-bytes`
 # (the room for a utf sibling), `seed-row` or `base-grammar`.
+
+[[patterns]]
+# base grammar: the three-byte literal. Fourteen patterns spell this language or a superset of it with one construct added (`(cat)`, `(?<w>cat)`, `\x63at`, `(?x) c a t`, `ca(?#comment)t`, `(?n)(ca)t`, `c\Xt`, ...); their cost minus this one's is the construct's
+name = "lit-cat"
+file = "patterns/lit-cat.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-literal", "encoding-bytes", "base-grammar"]
+role = "member"
 
 [[patterns]]
 # start of subject (no (?m)): the `bare` `^` row
@@ -1059,7 +1071,7 @@ manifest = "manifest.tsv"
 throughput_generator = "gen_throughput_subjects.py"
 throughput_manifest = "manifest_throughput.tsv"
 # Every field (2-14 B) and every line (<= 86 B) is inside the band, so the
-# two short regimes see the same 39 subjects. 256 is requirements 3's
+# two short regimes see the same 42 subjects. 256 is requirements 3's
 # "~256-byte subjects" and bench/email's band.
 short_search_max_bytes = 256
 
@@ -1067,8 +1079,8 @@ short_search_max_bytes = 256
 file = "expectations.tsv"
 default_method = "libpcre2-differential"
 
-# Per-testee notes. No testee runs a VARIANT of any pattern: all ninety are
-# canonical PCRE2 spellings and every adapter runs the canonical text
+# Per-testee notes. No testee runs a VARIANT of any pattern: all ninety-one
+# are canonical PCRE2 spellings and every adapter runs the canonical text
 # (requirements 4.5 -- the record still STATES that, as
 # `patterns[].variant = null`). `options` is empty for both engines: the
 # patterns carry their own semantics inline (the option settings ARE
