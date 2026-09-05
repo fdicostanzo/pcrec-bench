@@ -98,9 +98,11 @@ manager's ask (below).
 
 **The five FOLD-PAIR WITNESSES** (tag `fold-pair-witness`; the manager's
 ask of 2026-09-05 from the [B39] prep lane's census: no set in the bench
-but altwide's `ci-*` carries `(?i)` or a two-letter ASCII fold-pair
-class, and pcrec's abi-23 [FORM-CHAR] STEP 1 turns exactly that shape
-into a masked compare, so the next pin's AFTER needs witnesses here).
+but altwide's `ci-256` / `ci-512` carries `(?i)` or a two-letter ASCII
+fold-pair class, and pcrec's abi-23 [FORM-CHAR] STEP 1 turns exactly
+that shape into a masked compare on the VM route, counted by the new
+`RX_VM_CLS_FOLDS` stamp, so the next pin's AFTER needs witnesses here
+with the `-fno-cls-fold` arm as their control).
 Plain PCRE, oracled like the rest, one body: `(?i)cat` (`mod-i`, the
 option over a literal), `(?i)c[aeiou]t` (`cls-i-class`, the option over a
 class), `c[aA]t` (`cls-fold-pair`, an explicit two-member class that IS
