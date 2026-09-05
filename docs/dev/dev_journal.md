@@ -2728,3 +2728,27 @@ every rc line (124 = a cap kill, named), `python3 -m pcrecbench index`,
 the reports with --since 2026-09-04T23:27:00Z, the ledger, O-16 (the
 [OPT-5] row closes on it), WINDOW CLOSED written to the outbox (the only
 channel from here), then push via Frank (`! git push`).
+
+## 2026-09-05 (EDT, 02:2x-02:5x), tenth session part 2 — THE SUITE COMPLETE: 12/12 measured at attempt 1; two lanes spawned (s2read: reports + ledger; b37repin: the abi-22 re-pin)
+
+The 288d505 STEP 2 AFTER suite ended 02:22:30 EDT: SUITE_RUN_COMPLETE,
+bounded rc=0 259 min (interp 46, jit 34, auto 42, nocaps 42, vm 47, vm-in
+48), loglines:after rc=0 17 min, email:after rc=0 5 min, bounded:ccboth
+rc=0 132 min (auto 40, clang 48, align64 44); every cell attempt 1, no
+rc=124/3/4 anywhere; load1 1.00 flat through the night (the twelve
+progress ticks at 23,53 saw nothing else on the box). `index`: store 122
+→ 134 (124 measured / 9 inconclusive-load / 1 inconclusive-spread — the
+old ones). The progress cron deleted. Evening channel traffic while it
+ran: I-45 (BD8), I-46 (BD8 amendment: push after every channel commit —
+Frank granted the push from the session), I-47 (Frank: [B37] APPROVED as
+proposed; the box the bench's, continuous benches at our discretion),
+I-48 (pcrec's batteries return by slot request, the handshake inverted —
+BD8's second amendment; a provisional 13:00-17:00 slot offered for the
+[MACPORT] battery, firm in O-16). Master pushed at each.
+
+02:4x: two lanes up in worktrees — `s2read` (reports for the four
+groups + the ledger docs/dev/ledgers/2026-09-05-opt5-step2-after-288d505.md
+scored against the 2026-09-02 ledger §10 and I-38; its §8 is O-16's
+source) and `b37repin` (the re-pin to 334fd10e / abi 22, Frank's go;
+make check is the one heavy job on the box). The manager writes O-16
+from the ledger, then WINDOW CLOSED in the outbox.
