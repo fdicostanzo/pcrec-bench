@@ -4,6 +4,145 @@ Each file is the output of one `python3 -m pcrecbench report ...` query,
 committed beside the records it reduces so a reader can cite a number
 with its query. Names: `<date>-<subbench>-<version>-<machine>[-<label>][.<grain>].md|tsv`.
 
+**[B34] reports (2026-09-05, lane s2read) ADDED five file groups — the
+2026-09-04/05 window at pcrec pin 288d505 (abi 16, [OPT-5] STEP 2)** — and
+changed NOTHING else here: the reporter is unchanged at `v13 (2026-09-03)`,
+no committed report was regenerated, no reporter code was touched. Every one
+of the fifteen new files carries an explicit `--since`/`--until` PAIR *and* an
+explicit `--testee` roster (the 2026-08-30 rule and KB-5's roster). The
+window: 12 cells, ALL `measured` at attempt 1 under BD7, 19:27:55 →
+02:22:30 EDT (suite log `build/windows/suite_20260904T232755Z.log`), store
+122 → 134. The records were UNCOMMITTED in master's tree when these were
+rendered (the manager commits the store first; this lane rendered from
+`--store ~/pcrec-bench/store` and commits no store file).
+
+RE-RENDER INVARIANT, checked the same two ways as the 2026-09-03 wave, because
+the fifteen files were rendered IN-PROCESS (the 134-record store loaded and
+validated ONCE — **535 s on this box** — and reused for all fifteen; the same
+`build_report`/`render_markdown`/`render_tsv` calls a CLI invocation makes):
+
+1. **CLI equivalence**, proven on
+   `2026-09-05-email-specimen-0.2-budu-ryzen1600-after-288d505.md`: a fresh
+   `python3 -m pcrecbench report …` invocation of that file's own committed
+   query diffs BYTE-IDENTICAL against the committed file (`cmp` clean; the
+   CLI invocation took the same ~9 minutes, all of it store validation).
+2. **Determinism over all fifteen**: a second, independent in-process render
+   into a scratch directory diffs clean on the twelve files rendered in the
+   first pass (`cmp` on each); the three bounded files are the second
+   pass's own output (the first pass refused their query on a mistyped
+   roster id — `--testee` REFUSES an unknown id BY NAME rather than
+   narrowing silently, which is KB-5's contract working as designed).
+
+THREE THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS:
+
+- **`start=` prints for the first time, and it does NOT read the way the
+  pin's own inbox item predicted.** `start=pinned` fires on exactly FIFTEEN
+  artifacts per auto-route bounded record — the PLAIN form of every
+  `cls-upto-4 … cls-upto-16384` rung, `grp-upto-1024` and `cls-lazy-16384`
+  — and `start=reverse-pass` on every whole-subject artifact (39/39),
+  every hybrid (the `sel=collapsed-prefilter` rows), and every loglines and
+  email artifact. The [OPT-5] STEP 2 customers named in ledger 2026-09-02
+  §10 (the whole-subject `cls-upto-2048/4096/8192` search-filter rungs)
+  stamp `reverse-pass`. `frameless=` prints on every VM artifact (0/1) and
+  agrees with `resume_frames == 1` on all 100 VM artifacts of the two
+  gcc arms.
+- **The cross-pin bounded file's `vs best` mixes pins.** Read the READER'S
+  CAVEAT on the 2026-08-31 a7e0bdf entry below: with ten testees from two
+  pins in one table, `vs best` inverts visually wherever an older pin's row
+  ranks first (it does, on many search-band cells, because the 288d505
+  plain artifacts got faster). Read the R8 `Δ vs previous version` column,
+  or same-pin rows, never `vs best` across pins.
+- **The ccboth file is a PAIRS report, not a ranking** — three gcc/clang/
+  gcc+`-falign-functions=64` arms of ONE config; read down each pair.
+
+- `2026-09-05-bounded-0.3-budu-ryzen1600-step2-after-288d505.md` — the
+  **[OPT-5] STEP 2 AFTER** on `bench/bounded@0.3` at pcrec **288d505** (abi
+  16): six cells `measured` 2026-09-04 19:28 – 23:47 EDT (the two libpcre2
+  baseline re-runs and `pcrec_288d505_{auto,auto-nocaps,vm,vm-in}`),
+  rendered CROSS-PIN against the 2026-09-02 BEFORE
+  (`2026-09-02-bounded-0.3-*-first-sample-1989c62.*`) so the R8 Δ column
+  fires on every pcrec row. Query: `report --subbench bounded --version 0.3
+  --since 2026-09-02T02:40:00Z --until 2026-09-05T03:50:00Z` plus TEN
+  `--testee` values — `libpcre2_10.46_{interp,jit}-caps-simdna`,
+  `pcrec_288d505_{auto,auto-nocaps,vm,vm-in}-caps-simdna` and
+  `pcrec_1989c62_{auto,auto-nocaps,vm,vm-in}-caps-simdna` — **12 records
+  matching, 10 included, 2 superseded** (the 2026-09-02 pcre2 pair,
+  newest-measured-wins; the header reads `record source: … (12 record(s)
+  matching this query)` / `records included: 10` / `superseded: 2`).
+  THE `--until 2026-09-05T03:50:00Z` IS LOAD-BEARING: the same night's ccboth
+  pass wrote a SECOND `pcrec_288d505_auto-caps-simdna` bounded record at
+  04:10:50Z (the stability control), and a looser bound would make THAT the
+  ranked auto record instead of the 00:47:59Z six-testee one. Read against
+  ledger 2026-09-02 §10 and I-38: the whole-subject match customers are
+  UNMOVED (`cls-upto-2048 ÷ cls-upto-1024` at r-01024 1.986 → 1.987; every
+  whole-subject artifact `start=reverse-pass`), while the PLAIN `cls-upto-*`
+  ladder (`start=pinned`) moved ×0.64 on `short-subject-search` and
+  ×0.67-0.73 on `large-subject-throughput` (letters ×0.50 per byte, digits
+  ×0.945) — the R8 column reads `faster ×1.36-1.57` on those rows. The
+  `did-not-compile` set is unchanged (`cls-upto-65535`, both forms, both
+  auto arms, `NFA exceeds 131072 states`). `.subject-grain.md` (`--grain
+  subject`) carries the per-(rung, subject) match rows the ledger's rung
+  table is read from; `.tsv` the same set-grain query (no Δ column).
+  Ledger: `docs/dev/ledgers/2026-09-05-opt5-step2-after-288d505.md`.
+
+- `2026-09-05-loglines-0.1-budu-ryzen1600-noedge-288d505.md` — the
+  **[OPT-EDGE] pair's SECOND SAMPLE** ([B35] (2)): `pcrec-auto` against
+  `pcrec-auto-noedge` at 288d505, two cells `measured` 23:48-00:04 EDT back
+  to back. Query: `report --subbench loglines --version 0.1 --since
+  2026-09-05T03:40:00Z --until 2026-09-05T04:00:00Z --testee
+  pcrec_288d505_auto-caps-simdna --testee
+  pcrec_288d505_auto-caps-simdna_noedge` — **2 records, 0 superseded.** A
+  PAIR report on the same terms as the 2026-09-03 one: read each pattern's
+  two rows against each other; the legend proves the arm is one-variable
+  (`edge=`/`edges=` to `none`/`0`, everything else identical, every
+  artifact +6 B on the noedge side). `iso-ts` reads noedge÷auto 0.916 search
+  / 0.939 throughput against 0.918 / 0.937 on 2026-09-03. Every loglines
+  artifact stamps `start=reverse-pass`. `.subject-grain.md` carries the
+  16 KB-1 MB sweep per flavour; `.tsv` the set-grain query.
+- `2026-09-05-loglines-0.1-budu-ryzen1600-noedge-vs-1989c62-288d505.md` —
+  the same pair rendered CROSS-PIN against the 2026-09-03 pair at 1989c62,
+  a roster of FOUR: the two ids above plus `pcrec_1989c62_auto-caps-simdna`
+  and `pcrec_1989c62_auto-caps-simdna_noedge`, with `--since
+  2026-09-03T03:50:00Z --until 2026-09-05T04:00:00Z` (the 2026-09-03 auto
+  record, 09:11:45Z, is the newest 1989c62 auto record in range; the
+  2026-09-02 one is excluded by the `--since`) — **4 records, 0
+  superseded.** The R8 Δ column fires auto-vs-auto and noedge-vs-noedge
+  (`unchanged (within spread)` on 20 of 22 rows; `faster ×1.01` on
+  `hex32-id` thr and `http-5xx` search; `slower ×1.01` on `bignum`
+  search). Same `vs best` caveat as every cross-pin file.
+
+- `2026-09-05-email-specimen-0.2-budu-ryzen1600-after-288d505.md` —
+  CONTINUITY on `email-specimen@0.2`: the one fresh cell
+  `pcrec_288d505_auto` (00:05-00:10 EDT) rendered CROSS-PIN against its
+  2026-09-02 predecessor and the two 2026-09-02 pcre2 baselines. Query:
+  `report --subbench email-specimen --version 0.2 --since
+  2026-09-02T02:40:00Z --until 2026-09-05T04:10:00Z --testee
+  libpcre2_10.46_interp-caps-simdna --testee libpcre2_10.46_jit-caps-simdna
+  --testee pcrec_288d505_auto-caps-simdna --testee
+  pcrec_1989c62_auto-caps-simdna` — **4 records, 0 superseded.** Every Δ
+  reads `unchanged (within spread)` or `faster ×1.00`; every artifact
+  `start=reverse-pass`, +110 B. This is the file the CLI-equivalence proof
+  above was run on.
+
+- `2026-09-05-bounded-0.3-budu-ryzen1600-ccboth-288d505.md` — the **I-37
+  CELL WITH BOTH ARMS IN ONE WINDOW plus the `-falign-functions=64` LAYOUT
+  PROBE** ([B35] (1), pcrec I-39 (v)): `pcrec-auto` (a SECOND auto record
+  the same night, 00:10-00:50 EDT — also the same-pin stability control
+  against the six-testee pass's 20:47 EDT record), `pcrec-auto-clang`
+  (00:50-01:38) and `pcrec-auto-align64` (01:38-02:22). Query: `report
+  --subbench bounded --version 0.3 --since 2026-09-05T04:05:00Z --until
+  2026-09-05T06:00:00Z --testee pcrec_288d505_auto-caps-simdna --testee
+  pcrec_288d505_auto-caps-simdna_cc-clang --testee
+  pcrec_288d505_auto-caps-simdna_cf-align-functions-64` — **3 records, 0
+  superseded.** A PAIRS report, NOT A RANKING: three arms of one config
+  differing only in the compilee toolchain (`cc-clang`) or OUR phase-2
+  flags (`cf-align-functions-64`); read down the pairs, never across; the
+  R8 Δ column never fires (the tokens live in `config_extra`, not the pin).
+  `floor` / `match-compliance` reads gcc 492.2 / clang 231.5 / align64
+  463.1 ns — clang÷gcc 0.470, align64÷gcc 0.941. KB-9's `(clang cc)` note
+  fires on every clang `gcc ns` cell. The refusal set is identical on all
+  three arms. `.subject-grain.md` and `.tsv` the same query.
+
 **[B31] reports (2026-09-03) ADDED four file groups — the 2026-09-03
 window at pcrec pin 1989c62** — and changed NOTHING else here: the reporter
 is unchanged at `v12 (2026-09-02)`, no committed report was regenerated, and
