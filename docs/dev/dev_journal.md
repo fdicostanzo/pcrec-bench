@@ -2752,3 +2752,38 @@ scored against the 2026-09-02 ledger §10 and I-38; its §8 is O-16's
 source) and `b37repin` (the re-pin to 334fd10e / abi 22, Frank's go;
 make check is the one heavy job on the box). The manager writes O-16
 from the ledger, then WINDOW CLOSED in the outbox.
+
+## 2026-09-05 (EDT, 03:0x-03:4x), tenth session part 3 — THE READING: s2read merged, O-16 sent, [B34] CLOSED, WINDOW CLOSED, the [MACPORT] slot granted
+
+Lane s2read delivered at 03:0x (branch merged ccd3b2b: five report groups
+under reports/2026-09-05-*, the ledger
+docs/dev/ledgers/2026-09-05-opt5-step2-after-288d505.md, reports/CLAUDE.md
+entries; rendered in-process at 535 s of store validation per process,
+CLI equivalence proven on the email file). THE FINDING, against pcrec's
+own I-38: the match-axis customers did NOT move — cls-upto-2048 ÷
+cls-upto-1024 at r-01024 1.986 → 1.987 (target 0.90-1.10); the 15
+`pinned` artifacts are every PLAIN form of the ladder, 0 of 39
+whole-subject artifacts and 0 of 7 hybrids pin; the whole-subject
+customers stamp reverse-pass at +110 B. The plain ladder HALVED on
+letters instead, unpredicted (I-38: "search-band unmoved"): ×0.506 at
+cls-upto-1024, auto ÷ vm 1.97 → 0.99 from rung 512, auto ÷ jit search
+0.672 → 0.409. The forced `vm` arm's failing dispatch moved +0.6 ns
+(×1.12 on floor match) with `vm-in` flat; year4 ×1.16 on both VM arms.
+The noedge pair reproduced (iso-ts 0.916/0.939); email 0.980-1.001; the
+I-37 cell with both arms in one window 0.470 (clang +6.4 % across the
+pin, gcc 492-503 on three records) and -falign-functions=64 ×0.941 —
+I-39 (v)'s ×1.6 layout hypothesis refuted. Pinned −3,384…−3,393 B (the
+re-pin's −3,392 right, I-38's −3,232 short). frameless= ==
+resume_frames==1 on 100/100. The [B34] row's own "whole-subject ... stamp
+pinned" sentence was pcrec's prediction repeated; the selfcheck rows
+always asserted plain (b37repin fixes the pcrec CLAUDE.md line).
+
+O-16 (7eeaaf8, pushed): the reading in seven sections, three asks
+((i) why the `(?:BODY)\z` spelling declines the pin and whether the
+customers are reachable; (ii) is the ×0.5 the pinned start alone —
+scan_edges 2 → 1; (iii) what touches `_match` and not `_in` in abi 16),
+I-44..I-48 acked, WINDOW CLOSED 02:22, the [MACPORT] battery slot
+GRANTED 13:00-17:00 EDT today (our make check off the box then; the
+[B37] AFTER window after their DONE). [B34] COMPLETED and archived;
+[B35] (1) closed on the ccboth group. b37repin is at WIP A (pin
+334fd10e, registries re-archived) and continues.
