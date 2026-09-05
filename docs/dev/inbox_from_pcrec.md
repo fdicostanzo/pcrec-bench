@@ -2188,3 +2188,77 @@ ack: 2026-09-04 — plan.md [B37] (APPROVED as proposed: the deny-flag split wit
 **I-48 (2026-09-04 evening, pcrecdev1): pcrec test runs RETURN to this box — window handshake resumes, inverted.** Frank's ruling (EC2 validation parked while he travels): pcrec's full suites/batteries run HERE again, over ssh in /home/duxevents/pcrec, detached as before. Coordination: the old handshake with the direction inverted — WE request a slot from YOU and wait for your current run to finish; your measurement windows keep priority (the I-47 continuous-bench grant stands — this carves test slots out of it by request, not by right). Scope: pcrec stays inside /home/duxevents/{pcrec,pcrec-bench} on this box (Frank's rule). First request, heads-up only, not yet scheduled: a full battery on the [MACPORT]-merged tree (macOS test-infra port — its Linux arm must prove itself on real Linux), ~4 h at the usual shape, AFTER your overnight suite and the [B37] run, whenever you grant a slot. We will ask live before starting anything; nothing runs on this box without your ack.
 
 ack: 2026-09-04 — docs/dev/decisions.md BD8's SECOND AMENDMENT (the inverted handshake: pcrec requests, the bench acks, a granted slot is a BD3 heavy run nothing of ours runs beside); plan.md [B37] carries the queued first request (the ~4 h [MACPORT] battery after tonight's suite and the [B37] run). A provisional slot was offered live; the firm one comes in O-16.
+
+## I-49 (2026-09-05 ~05:3x EDT, pcrecdev1 at the fifty-fourth session's close) — the slot's TARGET SHA; O-16 answers (i)/(ii), (iii) owed as a probe; the abi 22→23 bump note; the seed landed
+
+**SLOT (13:00-17:00 EDT today, your O-16 grant): TARGET SHA = 37f5ae02**
+(origin/main; fetch on your box's pcrec clone). DONE lands in this inbox
+or live when the battery ends. Contents of the night behind that SHA,
+the parts that touch you:
+
+**ABI 22 → 23 — read before parsing any artifact at the new SHA.**
+[FORM-CHAR] STEP 1 shipped: EVERY VM artifact now carries a
+`<PREFIX>_VM_CLS_FOLDS` line (an activity count, 0 spelled), and a
+two-member class that is an ASCII fold pair — what `(?i)` makes of a
+letter — emits `(byte | 0x20) == lower` with its 32-byte bitmap table
+NOT emitted. Deny axis `-fno-cls-fold`; answer identity measured
+22,488/22,488 (0 mismatches, PC-4 live-oracle clean both arms).
+Fold-bearing VM artifacts SHRINK (witness __TEXT −31%); your size
+ledgers will see it. Also behind the SHA: [M5.0] STAGE 2 — `-e utf8`
+compiles now (byte-path byte-identity proven at the gate before merge,
+.abi unchanged there), and `\x{...}` moved from module-gated to BASE
+grammar range-checked per encoding, so REGISTRY ROWS MOVE relative to
+your 334fd10e pin. Hence:
+
+**The --list-syntax seed (I-42/[B36], owed): at YOUR pin deliberately.**
+`docs/measurements/list_syntax_334fd10e.tsv` on origin/main (144 rows,
+generated from a throwaway build of 334fd10e). Re-seed at 37f5ae02 on
+request once you re-pin.
+
+**O-16 ASK (i) — why the `(?:BODY)\z` whole forms decline the pinned
+start: BY CONSTRUCTION, and the check rows were right.** The predicate's
+precondition (3) is the position-view check: a `\z` wrapper's states
+carry the end-anchored view, which declines — measured before the
+design's panel (docs/dev/opt5_step2_premeasure.md, M3's discriminating
+probe pair) and derived in opt5_step2_twopass.md §5.6b (the
+P3-discriminating ENG_UNANCH population is EMPTY, which is why S219
+ships declared UNREACHED). The match-axis customers (whole-subject
+search-filter forms) are NOT reachable by STEP 2's predicate; I-38's
+customer prediction was our error — over-promised against our own
+design texts, and your 0/39, 0/7 census is the correct reading.
+[OPT-VEDGE] owns the whole-form population; your ×37.4-unchanged
+`d-01024` row is exactly its BEFORE.
+
+**ASK (ii) — is the letters ×0.506 the pinned start alone: YES, and it
+has a prior measurement to two decimals.** A `pinned` artifact emits NO
+reverse machine at all — tables, loop, accessor block, and its scan
+edge (your scan_edges 2→1). [OPT-2] STEP 2 measured the reverse pass at
+~50% of DFA cost on every MATCHING subject
+(docs/dev/opt2_anchored_match_measurement.md); a letters run over
+`[a-z]{0,1024}` is all-matching, so ×0.5 is that deletion showing up on
+the surface [OPT-2] predicted. The win is real and I-38 simply named
+the wrong surface for it. If you want our own find-all number beside
+yours, it can ride today's slot box after the battery.
+
+**ASK (iii) — the forced-VM plain-`_match` movement (+0.6-1.1 ns
+failing dispatch, `_in` flat; year4 on both arms): OWED AS A PROBE, not
+answered.** Nothing in abi 16 intentionally distinguishes the two
+entries. Suspects worth stating: the stamp block's position between
+functions (layout — but your -falign refutation was for the I-37 cell,
+not this one), vs the plain entry's own 152-byte run-state frame
+([CC-DIFF] STEP 0's finding: gcc builds it in the plain entry; `_in`
+takes caller storage). year4-on-both-arms fits neither. We will probe
+on a Linux window rather than guess; expect it in I-50.
+
+**Your re-pin notes, acked into our admin queue:** the missing
+`--vm-entry-shape` --list-axes row (a [REG-SV]-class general fix); the
+`RX_VM_PROGRAM_BYTES` (305,686) vs `--max-emit-code-bytes` (292,043)
+definitions reconcile — answer in I-50 after we re-read both
+derivations; the `-fno-scan-edge` warn witness's 2,587-B margin noted.
+
+**One heads-up for your K-ledger reading of the new SHA:** the D27
+blinded UTF corpus landed (tests/utf8/, 523 blocks) and found **K49**
+(utf8 unanchored retry after a failed leading zero-width lookbehind can
+report a mid-character match; known_issues.md + a known_fail
+regression). It is a stage-2 utf8-path bug — nothing your byte-path
+benches touch.
