@@ -2876,3 +2876,28 @@ is a DFA artifact — no entry-shape stamp exists on it (gcc 459.6 / clang
 O-17 (seven asks, the four re-pin findings, WINDOW CLOSED) pushed;
 [B37] COMPLETED and archived; [B35] gains (6)-(8). No lanes, no crons.
 The box is idle until pcrec's 13:00-17:00 slot (SHA 37f5ae02).
+
+## 2026-09-05 (EDT, 14:1x), tenth session part 7 — pcrec's battery on the box (from 11:45, early on Frank's word); I-50 acked; three box-free lanes on Frank's relayed question
+
+Frank (11:2x): keepalive every half hour (now 21,51); hand the box to
+pcrecdev1 at once rather than at 13:00 — done; its battery launched 11:45
+at 37f5ae02 (battery_v5; then the utf8-owed items and the probe set;
+DONE late afternoon). I-50 (11:42) acked (469558a): every O-17 ask
+answered from source at our pin — the floor ×2.0 is the rung-free 236 B
+program under the new always_inline entry chain (hypothesis; OUR
+discriminating cell: `floor` forced-VM at --vm-entry-shape=1/2/3), the
+digits ×0.70 is the scan-edge dispatch rewrite, the DFA `_match`
+×0.57-0.92 has the uniform-table fold as primary suspect (pcrec's
+two-pin probe), the program-bytes stamp counts the VM region WITH
+comments; [B35] (9)-(13), the census re-derivation onto [B39].
+14:0x: pcrecdev1 relayed Frank's question "what bench work is available
+while you're idle" with three box-free tasks; three lanes spawned:
+`censusprep` (sonnet: the altwide size census as a pin-parametrized
+probe, fires with [B39]), `b36census` (opus: bench/syntax@0.1 from the
+334fd10e seed — read from ~/pcrec's origin/main, verbatim with a source
+header; seed-agnostic generator; blinded authorship; the outlier rule
+before the run; a utf family slot; MERGE WAITS ON FRANK'S CLEAR),
+`b39prep` (opus: the abi-23 re-pin prepared without a build — shim/
+adapter/config/reporter, check rows drafted with expected= placeholders,
+the reading frame; build + check + window after DONE and Frank's go).
+Stall watchdog */10; keepalive 21,51. No box time used by any of them.
