@@ -1,0 +1,154 @@
+#coverage of the seed list_syntax_334fd10e.tsv by bench/syntax's 90 patterns: covered 77, covered-by-family 32, not-exercised 19, not-exercised-by-family 5, pcre2-rejects 5
+kind	syntax	key	seed_status	seed_module	seed_engines	seed_built	coverage	patterns	reason
+esc	\d	\d	module	classes	dfa|vm	built	covered	cls-d	
+esc	\D	\D	module	classes	dfa|vm	built	not-exercised	-	the complement of `\d`: the same class mechanism, set inverted
+esc	\s	\s	module	classes	dfa|vm	built	covered	cls-s	
+esc	\S	\S	module	classes	dfa|vm	built	covered	cls-S	
+esc	\w	\w	module	classes	dfa|vm	built	covered	cls-w	
+esc	\W	\W	module	classes	dfa|vm	built	not-exercised	-	the complement of `\w`: the same class mechanism, set inverted
+esc	\h	\h	module	classes	dfa|vm	built	covered	cls-h	
+esc	\H	\H	module	classes	dfa|vm	built	not-exercised	-	the complement of `\h`: the same class mechanism, set inverted
+esc	\v	\v	module	classes	dfa|vm	built	covered	cls-v	
+esc	\V	\V	module	classes	dfa|vm	built	not-exercised	-	the complement of `\v`: the same class mechanism, set inverted
+esc	\N	\N	module	classes	dfa|vm	built	covered	cls-N	
+esc	\N{name}	\N{name}	rejected			-	pcre2-rejects	-	PCRE2 refuses this construct (the seed's `expect`: PCRE2 does not support \F, \L, \l, \N{name}, \U, or \u); the oracle can state no expectation
+esc	\N{U+0041}	\N{U+0041}	module	unicode-props	dfa|vm	unbuilt	not-exercised	-	UTF-only in PCRE2 (error 193 in byte mode): the utf family's, not this set's (NOTES.md, `Room for a utf family`)
+esc	\b	\b	module	assertions	dfa|vm	built	covered	asr-wb	
+esc	\B	\B	module	assertions	dfa|vm	built	covered	asr-nwb	
+esc	\A	\A	module	assertions	dfa|vm	built	covered	anc-A	
+esc	\Z	\Z	module	assertions	dfa|vm	built	covered	anc-Z	
+esc	\z	\z	module	assertions	dfa|vm	built	covered	anc-z	
+esc	\G	\G	module	assertions	dfa|vm	built	covered	anc-G	
+esc	\K	\K	module	assertions	vm	built	covered	asr-K	
+esc	\k<name>	\k<name>	module	backrefs	vm	built	covered	bak-k-named mod-J	
+esc	\g{-1}	\g{-1}	module	backrefs	vm	built	covered	bak-g-rel	
+esc	\g<1>	\g<1>	module	recursion	vm	built	covered	rec-g-angle	
+esc	\g'1'	\g'1'	module	recursion	vm	built	not-exercised	-	the quoted spelling of `\g<1>`: one pattern per call spelling family, and the angle spelling is the witness
+esc	\g<0>	\g<1>	module	recursion	vm	built	covered-by-family	rec-g-angle	a spelling of `\g<1>` (the seed's `family` column)
+esc	\g<01>	\g<1>	module	recursion	vm	built	covered-by-family	rec-g-angle	a spelling of `\g<1>` (the seed's `family` column)
+esc	\g'0'	\g'1'	module	recursion	vm	built	not-exercised-by-family	-	a spelling of `\g'1'`, which is not exercised: the quoted spelling of `\g<1>`: one pattern per call spelling family, and the angle spelling is the witness
+esc	\g'01'	\g'1'	module	recursion	vm	built	not-exercised-by-family	-	a spelling of `\g'1'`, which is not exercised: the quoted spelling of `\g<1>`: one pattern per call spelling family, and the angle spelling is the witness
+esc	\p{L}	\p{L}	module	unicode-props	dfa|vm	unbuilt	covered	unp-p	
+esc	\P{L}	\P{L}	module	unicode-props	dfa|vm	unbuilt	covered	unp-P	
+esc	\Q	\Q	module	quoting	dfa|vm	built	covered	esc-quote	
+esc	\E	\E	module	quoting	dfa|vm	built	covered	esc-quote	
+esc	\R	\R	module	misc	dfa|vm	unbuilt	covered	msc-R	
+esc	\X	\X	module	misc	dfa|vm	unbuilt	covered	msc-X	
+esc	\C	\C	module	misc	dfa|vm	unbuilt	covered	msc-C	
+esc	\cX	\cX	module	misc	dfa|vm	unbuilt	covered	esc-ctrl	
+esc	\o{101}	\o{101}	module	misc	dfa|vm	unbuilt	covered	esc-octal-o	
+esc	\0	\0	module	backrefs	dfa|vm	built	covered	esc-octal-0	
+esc	\1	\1	module	backrefs	vm	built	covered	bak-1 bak-2	
+esc	\2	\2	module	backrefs	vm	built	covered	bak-2	
+esc	\3	\3	module	backrefs	vm	built	not-exercised	-	a numbered backreference at a higher index: `\1` and `\2` witness that the index is read
+esc	\4	\4	module	backrefs	vm	built	not-exercised	-	as \3
+esc	\5	\5	module	backrefs	vm	built	not-exercised	-	as \3
+esc	\6	\6	module	backrefs	vm	built	not-exercised	-	as \3
+esc	\7	\7	module	backrefs	vm	built	not-exercised	-	as \3
+esc	\8	\8	module	backrefs	vm	built	not-exercised	-	as \3 (and never octal: a parse fact, not a matcher one)
+esc	\9	\9	module	backrefs	vm	built	not-exercised	-	as \8
+esc	\a	\a	base		dfa|vm	-	not-exercised	-	a fixed-byte escape: `\t`, `\n`, `\r` and `\cG` witness the mechanism
+esc	\e	\e	base		dfa|vm	-	not-exercised	-	as \a
+esc	\f	\f	base		dfa|vm	-	not-exercised	-	as \a
+esc	\n	\n	base		dfa|vm	-	covered	esc-nl esc-cr	
+esc	\r	\r	base		dfa|vm	-	covered	esc-cr	
+esc	\t	\t	base		dfa|vm	-	covered	esc-tab	
+esc	\x41	\x41	base		dfa|vm	-	covered	esc-hex esc-hex-braced	
+group	(?:...)	(?:...)	base		dfa|vm	-	covered	grp-noncap	
+group	(?=...)	(?=...)	module	lookaround	vm	built	covered	lka-pos	
+group	(?!...)	(?!...)	module	lookaround	vm	built	covered	lka-neg	
+group	(?<=...)	(?<=...)	module	lookaround	vm	built	covered	lkb-pos	
+group	(?<!...)	(?<!...)	module	lookaround	vm	built	covered	lkb-neg	
+group	(?<*a)	(?<*a)	module	lookaround	vm	built	not-exercised	-	non-atomic positive LOOKBEHIND: `(?*a)` witnesses the non-atomic mechanism on the lookahead side
+group	(?<name>a)	(?<name>a)	module	named-groups	dfa|vm	built	covered	grp-named bak-k-named rec-name mod-J	
+group	(?'name'...)	(?'name'...)	module	named-groups	dfa|vm	built	covered	grp-named-quote	
+group	(?P<name>a)	(?P<name>a)	module	named-groups	dfa|vm	built	covered	bak-py rec-py	
+group	(?P=n)	(?P=n)	module	backrefs	vm	built	covered	bak-py	
+group	(?P>n)	(?P>n)	module	recursion	vm	built	covered	rec-py	
+group	(?PX)	(?PX)	rejected			-	pcre2-rejects	-	PCRE2 refuses this construct (the seed's `expect`: unrecognized character after (?P); the oracle can state no expectation
+group	(?>...)	(?>...)	module	atomic-groups	vm	built	covered	grp-atomic-rep grp-atomic-alt	
+group	(?*a)	(?*a)	module	lookaround	vm	built	covered	lka-nonatomic	
+group	(?#...)	(?#...)	module	comments	dfa|vm	unbuilt	covered	grp-comment	
+group	(?C1)	(?C1)	module	callouts	vm	unbuilt	covered	grp-callout	
+group	(?|...)	(?|...)	module	branch-reset	vm	unbuilt	covered	grp-branch-reset	
+group	(?(1)a|b)	(?(1)a|b)	module	conditionals	vm	unbuilt	covered	cnd-group	
+group	(?(DEFINE)(?<w>a))	(?(DEFINE)(?<w>a))	module	recursion	dfa|vm	built	covered	rec-define	
+group	(?&name)	(?&name)	module	recursion	vm	built	covered	rec-name rec-define	
+group	(?R)	(?R)	module	recursion	vm	built	covered	rec-R	
+group	(?0)	(?0)	module	recursion	vm	built	not-exercised	-	the numbered spelling of `(?R)`: the same call target (the root); `(?1)` witnesses the numbered call
+group	(?00)	(?0)	module	recursion	vm	built	not-exercised-by-family	-	a spelling of `(?0)`, which is not exercised: the numbered spelling of `(?R)`: the same call target (the root); `(?1)` witnesses the numbered call
+group	(?1)	(?1)	module	recursion	vm	built	covered	rec-1	
+group	(?2)	(?1)	module	recursion	vm	built	covered-by-family	rec-1	a spelling of `(?1)` (the seed's `family` column)
+group	(?3)	(?1)	module	recursion	vm	built	covered-by-family	rec-1	a spelling of `(?1)` (the seed's `family` column)
+group	(?4)	(?1)	module	recursion	vm	built	covered-by-family	rec-1	a spelling of `(?1)` (the seed's `family` column)
+group	(?5)	(?1)	module	recursion	vm	built	covered-by-family	rec-1	a spelling of `(?1)` (the seed's `family` column)
+group	(?6)	(?1)	module	recursion	vm	built	covered-by-family	rec-1	a spelling of `(?1)` (the seed's `family` column)
+group	(?7)	(?1)	module	recursion	vm	built	covered-by-family	rec-1	a spelling of `(?1)` (the seed's `family` column)
+group	(?8)	(?1)	module	recursion	vm	built	covered-by-family	rec-1	a spelling of `(?1)` (the seed's `family` column)
+group	(?9)	(?1)	module	recursion	vm	built	covered-by-family	rec-1	a spelling of `(?1)` (the seed's `family` column)
+group	(?10)	(?1)	module	recursion	vm	built	covered-by-family	rec-1	a spelling of `(?1)` (the seed's `family` column)
+group	(?01)	(?1)	module	recursion	vm	built	covered-by-family	rec-1	a spelling of `(?1)` (the seed's `family` column)
+group	(?+1)(a)	(?+1)(a)	module	recursion	vm	built	covered	rec-fwd	
+group	(?+2)(a)(b)	(?+1)(a)	module	recursion	vm	built	covered-by-family	rec-fwd	a spelling of `(?+1)(a)` (the seed's `family` column)
+group	(a)(?-01)	(a)(?-1)	module	recursion	vm	built	covered-by-family	rec-back	a spelling of `(a)(?-1)` (the seed's `family` column)
+group	(a)(?-1)	(a)(?-1)	module	recursion	vm	built	covered	rec-back	
+group	(a)(a)(?-2)	(a)(?-1)	module	recursion	vm	built	covered-by-family	rec-back	a spelling of `(a)(?-1)` (the seed's `family` column)
+group	(a)(a)(a)(?-3)	(a)(?-1)	module	recursion	vm	built	covered-by-family	rec-back	a spelling of `(a)(?-1)` (the seed's `family` column)
+group	(a)(a)(a)(a)(?-4)	(a)(?-1)	module	recursion	vm	built	covered-by-family	rec-back	a spelling of `(a)(?-1)` (the seed's `family` column)
+group	(a)(a)(a)(a)(a)(?-5)	(a)(?-1)	module	recursion	vm	built	covered-by-family	rec-back	a spelling of `(a)(?-1)` (the seed's `family` column)
+group	(a)(a)(a)(a)(a)(a)(?-6)	(a)(?-1)	module	recursion	vm	built	covered-by-family	rec-back	a spelling of `(a)(?-1)` (the seed's `family` column)
+group	(a)(a)(a)(a)(a)(a)(a)(?-7)	(a)(?-1)	module	recursion	vm	built	covered-by-family	rec-back	a spelling of `(a)(?-1)` (the seed's `family` column)
+group	(a)(a)(a)(a)(a)(a)(a)(a)(?-8)	(a)(?-1)	module	recursion	vm	built	covered-by-family	rec-back	a spelling of `(a)(?-1)` (the seed's `family` column)
+group	(a)(a)(a)(a)(a)(a)(a)(a)(a)(?-9)	(a)(?-1)	module	recursion	vm	built	covered-by-family	rec-back	a spelling of `(a)(?-1)` (the seed's `family` column)
+group	(a)(a)(a)(a)(a)(a)(a)(a)(a)(a)(?-10)	(a)(?-1)	module	recursion	vm	built	covered-by-family	rec-back	a spelling of `(a)(?-1)` (the seed's `family` column)
+group	(?[[a]])	(?[[a]])	module	extended-classes	dfa|vm	unbuilt	covered	xcl-minus	
+group	(?)	(?)	module	modifiers	dfa|vm	built	not-exercised	-	the empty option setting: a no-op spelling; `(?^)` and `(?-i)` witness the option-setting mechanism
+group	(?-i)	(?-i)	module	modifiers	dfa|vm	built	covered	mod-unset	
+group	(?^)	(?^)	module	modifiers	dfa|vm	built	covered	mod-reset	
+group	(?J)	(?J)	module	modifiers	dfa|vm	built	covered	mod-J	
+group	(?U)	(?U)	module	modifiers	dfa|vm	built	covered	mod-U	
+group	(?a)	(?a)	module	modifiers	dfa|vm	built	covered	mod-a	
+group	(?i)	(?i)	module	modifiers	dfa|vm	built	covered	mod-i mod-r mod-reset mod-unset	
+group	(?m)	(?m)	module	modifiers	dfa|vm	built	covered	anc-m-caret anc-m-dollar	
+group	(?n)	(?n)	module	modifiers	dfa|vm	built	covered	mod-n	
+group	(?r)	(?r)	module	modifiers	dfa|vm	built	covered	mod-r	
+group	(?s)	(?s)	module	modifiers	dfa|vm	built	covered	mod-s	
+group	(?x)	(?x)	module	modifiers	dfa|vm	built	covered	mod-x	
+group	(?q)	(?q)	rejected			-	pcre2-rejects	-	PCRE2 refuses this construct (the seed's `expect`: unrecognized character after (? or (?-); the oracle can state no expectation
+verb	(*pla:a)	(?=...)	module	lookaround	vm	built	covered	lka-verb	
+verb	(*positive_lookahead:a)	(?=...)	module	lookaround	vm	built	covered-by-family	lka-pos lka-verb	a spelling of `(?=...)` (the seed's `family` column)
+verb	(*nla:a)	(?!...)	module	lookaround	vm	built	covered-by-family	lka-neg	a spelling of `(?!...)` (the seed's `family` column)
+verb	(*negative_lookahead:a)	(?!...)	module	lookaround	vm	built	covered-by-family	lka-neg	a spelling of `(?!...)` (the seed's `family` column)
+verb	(*plb:a)	(?<=...)	module	lookaround	vm	built	covered-by-family	lkb-pos	a spelling of `(?<=...)` (the seed's `family` column)
+verb	(*positive_lookbehind:a)	(?<=...)	module	lookaround	vm	built	covered-by-family	lkb-pos	a spelling of `(?<=...)` (the seed's `family` column)
+verb	(*nlb:a)	(?<!...)	module	lookaround	vm	built	covered-by-family	lkb-neg	a spelling of `(?<!...)` (the seed's `family` column)
+verb	(*negative_lookbehind:a)	(?<!...)	module	lookaround	vm	built	covered-by-family	lkb-neg	a spelling of `(?<!...)` (the seed's `family` column)
+verb	(*napla:a)	(?*a)	module	lookaround	vm	built	covered-by-family	lka-nonatomic	a spelling of `(?*a)` (the seed's `family` column)
+verb	(*non_atomic_positive_lookahead:a)	(?*a)	module	lookaround	vm	built	covered-by-family	lka-nonatomic	a spelling of `(?*a)` (the seed's `family` column)
+verb	(*naplb:a)	(?<*a)	module	lookaround	vm	built	not-exercised-by-family	-	a spelling of `(?<*a)`, which is not exercised: non-atomic positive LOOKBEHIND: `(?*a)` witnesses the non-atomic mechanism on the lookahead side
+verb	(*non_atomic_positive_lookbehind:a)	(?<*a)	module	lookaround	vm	built	not-exercised-by-family	-	a spelling of `(?<*a)`, which is not exercised: non-atomic positive LOOKBEHIND: `(?*a)` witnesses the non-atomic mechanism on the lookahead side
+verb	(*ACCEPT)	(*ACCEPT)	module	verbs	vm	unbuilt	covered	vrb-accept vrb-skip	
+class-bracket	[[:alpha:]]	[[:alpha:]]	module	classes	dfa|vm	built	covered	cls-posix	
+class-bracket	[[.a.]]	[[.a.]]	rejected			-	pcre2-rejects	-	PCRE2 refuses this construct (the seed's `expect`: POSIX collating elements are not supported); the oracle can state no expectation
+class-bracket	[[=a=]]	[[=a=]]	rejected			-	pcre2-rejects	-	PCRE2 refuses this construct (the seed's `expect`: POSIX collating elements are not supported); the oracle can state no expectation
+quant-suffix	a*+	a*+	module	atomic-groups	vm	built	covered	qnt-poss-star	
+quant-suffix	a++	a++	module	atomic-groups	vm	built	covered	qnt-poss-plus	
+quant-suffix	a?+	a?+	module	atomic-groups	vm	built	covered	qnt-poss-quest	
+quant-suffix	a{1,2}+	a{1,2}+	module	atomic-groups	vm	built	covered	qnt-poss-brace	
+bare	^	^	base		dfa|vm	-	covered	anc-caret anc-m-caret	
+bare	$	$	base		dfa|vm	-	covered	anc-dollar anc-m-dollar	
+bare	(a)	(a)	base		dfa|vm	-	covered	grp-cap	
+
+#base-grammar constructs with no seed row, exercised by these patterns (constructs = ())
+pattern	family	text	note
+cls-negset	classes	c[^aeiou]t	base grammar: a negated bracket class (`cat` misses, `cxt` hits)
+cls-range	classes	0x[0-9a-fA-F]+	base grammar: a bracket class of three ranges
+cls-dot	classes	c.t	base grammar: `.` (any byte but newline without (?s))
+qnt-star	quantifiers	ca*t	base grammar: greedy star (`ct`, `cat`, `caaat`)
+qnt-plus	quantifiers	a+b	base grammar: greedy plus, the body the possessive/atomic shapes are read against
+qnt-quest	quantifiers	colou?r	base grammar: optional
+qnt-lazy	quantifiers	".*?"	base grammar: lazy star inside quotes (bench/bounded carries the counted forms)
+qnt-plus-ctl	quantifiers	a+ab	the CONTROL for `a++ab`: the same text minus the possessive suffix, which matches `aaab`
+alt-two	alternation	cat|dog	base grammar: a two-branch literal alternation (bench/altwide carries the width ladder)
+alt-nested	alternation	(?:c|d)(?:at|og)	base grammar: two nested alternations, the same language as `cat|dog` plus `cog` and `dat`
+floor	floor	#	requirements 5's per-call control: one literal byte, in `#42` and the order line only, absent from every run

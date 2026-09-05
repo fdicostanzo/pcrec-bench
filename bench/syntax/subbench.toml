@@ -1,0 +1,1087 @@
+# The syntax census SIDECAR (harness contract 2, requirements 5). Fields
+# only, no grammar, no directives, no includes -- [DD-13]'s territory is
+# deliberately untouched.
+
+id = "syntax"
+version = "0.1"
+objective_kind = "feature"
+objective = """\
+A CENSUS across the PCRE syntax an engine may support, one construct per \
+pattern in an otherwise plain body, seeded from pcrec's `--list-syntax` \
+construct registry so nothing is enumerated from either side's head: what \
+each construct COSTS to compile and to run, on the same subjects and the \
+same instrument as every other set, so that a testee's outlier on one \
+family points at ONE mechanism -- and what a refusal, a compile-time cliff \
+or an engine-selection surprise on a construct the registry calls built \
+looks like. The census widens the queue of depth probes; it does not \
+shorten it (inbox I-42, Frank's charter)."""
+description = """\
+Ninety patterns in seventeen families (89 members + the floor): anchors \
+(`^` `$` `\\A` `\\Z` `\\z` `\\G` and the two under `(?m)`), assertions \
+(`\\b` `\\B` `\\K`), classes (eight class escapes, the POSIX bracket, a \
+negated set, a three-range set, `.`), quantifiers (greedy, lazy, the four \
+possessive suffixes and the `a++ab` / `a+ab` control pair), groups \
+(capturing, non-capturing, two named spellings, atomic over a repeat and \
+over an alternation, comment, branch-reset, callout), alternation, \
+backreferences (`\\1`, `\\2\\1`, `\\g{-1}`, `\\k<name>`, `(?P=name)`), \
+lookaround (the four, the non-atomic lookahead, one alpha spelling), a \
+conditional, recursion and subroutine calls (`(?R)` `(?1)` `(?&name)` \
+`(?(DEFINE)...)` `\\g<1>` `(?P>name)` `(?+1)` `(?-1)`), ten option \
+settings, nine single-byte and quoting escapes, `\\R` `\\X` `\\C`, \
+`\\p{L}` `\\P{L}` in byte mode, two backtracking verbs, an extended class \
+difference, and the floor `#`. Every pattern is typed in gen_patterns.py, \
+names the seed rows it exercises, and `coverage.tsv` is derived from the \
+table x the seed: every one of the seed's 138 rows is covered, covered by \
+its own family column, excused by a stated reason, or a PCRE2 reject. \
+Subjects: 27 whole-string FIELDS typed as one construct's hit or semantic \
+edge (`item done` / `item done\\n` / `item\\ndone` / `item\\r\\ndone` \
+separate the end anchors and the newline escapes; `aaab` and `abc` the \
+possessive and atomic edges; `Cat` / `CAT` the option reset; `caf\\xe9` \
+the Latin-1 letter), 12 LINES of the same vocabulary for search, and three \
+generated texts of the same grammar at 64 KB, 256 KB and 1 MB. See \
+NOTES.md for the pattern table, the outlier rule stated before any run, \
+the predictions, the room left for a utf family and the cell-time \
+estimate."""
+
+# All three. `match` is the whole-string regime the semantic edges are typed
+# for; `search_short` reads each construct's per-call cost on twelve lines;
+# `throughput` reads its per-byte cost on failing text at three sizes (a
+# size sweep, not a density cross: NOTES.md, "Regimes").
+regimes = ["match", "search_short", "throughput"]
+
+# THE MEMBERS. The [[patterns]] block below is DERIVED from gen_patterns.py's
+# table (`--sidecar` prints it; `--check` compares it entry for entry), so
+# the ids, files, roles, size classes and tags here cannot drift from the
+# patterns. `feature_tier` is `base` on every entry: this set does not
+# pre-sort constructs into engine tiers, because which module a construct
+# needs is an ENGINE's fact (coverage.tsv carries the seed's own `module`
+# column as `seed_module`, labelled as such), and every pcrec testee config
+# already passes `--features all`. `hazard_class` is `none` on every entry:
+# nothing here is a backtracking hazard by design (NOTES.md). `size_class`
+# bands the pattern's bytes as bench/bounded does (tiny < 16 B, small < 256).
+# Tags: `fam-<family>` (the seventeen mechanism families), `encoding-bytes`
+# (the room for a utf sibling), `seed-row` or `base-grammar`.
+
+[[patterns]]
+# start of subject (no (?m)): the `bare` `^` row
+name = "anc-caret"
+file = "patterns/anc-caret.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-anchors", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# end of subject OR before a final newline: `item done\n` is the edge
+name = "anc-dollar"
+file = "patterns/anc-dollar.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-anchors", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# start of subject, the escape spelling
+name = "anc-A"
+file = "patterns/anc-A.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-anchors", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# end of subject or before a final newline, like `$` outside (?m)
+name = "anc-Z"
+file = "patterns/anc-Z.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-anchors", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# end of subject ONLY: rejects `item done\n` where `\Z` and `$` take it
+name = "anc-z"
+file = "patterns/anc-z.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-anchors", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# the search start: find-all counts consecutive hits from the cursor
+name = "anc-G"
+file = "patterns/anc-G.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-anchors", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# `^` after an internal newline under multiline
+name = "anc-m-caret"
+file = "patterns/anc-m-caret.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-anchors", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# `$` before an internal newline under multiline
+name = "anc-m-dollar"
+file = "patterns/anc-m-dollar.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-anchors", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# word boundary both sides: `concatenate` is the designed miss
+name = "asr-wb"
+file = "patterns/asr-wb.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-assertions", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# NOT a word boundary both sides: `cat` alone is the designed miss
+name = "asr-nwb"
+file = "patterns/asr-nwb.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-assertions", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# reset the reported start: the span begins after `key=`
+name = "asr-K"
+file = "patterns/asr-K.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-assertions", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a digit run
+name = "cls-d"
+file = "patterns/cls-d.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# whitespace between two words
+name = "cls-s"
+file = "patterns/cls-s.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# non-space runs around `@`
+name = "cls-S"
+file = "patterns/cls-S.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a word run; C-locale tables, so a Latin-1 byte ends it
+name = "cls-w"
+file = "patterns/cls-w.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# horizontal whitespace (space, tab) around `=`
+name = "cls-h"
+file = "patterns/cls-h.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# vertical whitespace: `\n` one byte, `\r\n` two
+name = "cls-v"
+file = "patterns/cls-v.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# any byte but newline, unaffected by (?s): `item` and `itxm`, never across a line end
+name = "cls-N"
+file = "patterns/cls-N.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a POSIX class: ASCII letters only under the default tables
+name = "cls-posix"
+file = "patterns/cls-posix.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# base grammar: a negated bracket class (`cat` misses, `cxt` hits)
+name = "cls-negset"
+file = "patterns/cls-negset.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# base grammar: a bracket class of three ranges
+name = "cls-range"
+file = "patterns/cls-range.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# base grammar: `.` (any byte but newline without (?s))
+name = "cls-dot"
+file = "patterns/cls-dot.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# base grammar: greedy star (`ct`, `cat`, `caaat`)
+name = "qnt-star"
+file = "patterns/qnt-star.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-quantifiers", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# base grammar: greedy plus, the body the possessive/atomic shapes are read against
+name = "qnt-plus"
+file = "patterns/qnt-plus.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-quantifiers", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# base grammar: optional
+name = "qnt-quest"
+file = "patterns/qnt-quest.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-quantifiers", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# base grammar: lazy star inside quotes (bench/bounded carries the counted forms)
+name = "qnt-lazy"
+file = "patterns/qnt-lazy.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-quantifiers", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# possessive star
+name = "qnt-poss-star"
+file = "patterns/qnt-poss-star.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-quantifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# possessive plus with a body it can NEVER match (the plus keeps the last `a`): every subject is a miss, and `qnt-plus-ctl` is the control
+name = "qnt-poss-plus"
+file = "patterns/qnt-poss-plus.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-quantifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# the CONTROL for `a++ab`: the same text minus the possessive suffix, which matches `aaab`
+name = "qnt-plus-ctl"
+file = "patterns/qnt-plus-ctl.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-quantifiers", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# possessive optional: needs two `a`s (the first is kept)
+name = "qnt-poss-quest"
+file = "patterns/qnt-poss-quest.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-quantifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# possessive bounded repeat
+name = "qnt-poss-brace"
+file = "patterns/qnt-poss-brace.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-quantifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a capturing group around the plain word (the `bare` row)
+name = "grp-cap"
+file = "patterns/grp-cap.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-groups", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a non-capturing group under a repeat
+name = "grp-noncap"
+file = "patterns/grp-noncap.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-groups", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a named group, angle spelling; the other two spellings are exercised by the named backreference and the python-style call
+name = "grp-named"
+file = "patterns/grp-named.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-groups", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a named group, quote spelling
+name = "grp-named-quote"
+file = "patterns/grp-named-quote.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-groups", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# an atomic group over a repeat: same language as `a+b`
+name = "grp-atomic-rep"
+file = "patterns/grp-atomic-rep.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-groups", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# an atomic group over an alternation: FAILS on `abc` (the first branch is committed) where `(?:a|ab)c` would match
+name = "grp-atomic-alt"
+file = "patterns/grp-atomic-alt.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-groups", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a comment group: the language is `cat`
+name = "grp-comment"
+file = "patterns/grp-comment.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-groups", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a branch-reset group: both alternatives capture as group 1
+name = "grp-branch-reset"
+file = "patterns/grp-branch-reset.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-groups", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a numbered callout with no callout function installed: the language is `cat`
+name = "grp-callout"
+file = "patterns/grp-callout.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-groups", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# base grammar: a two-branch literal alternation (bench/altwide carries the width ladder)
+name = "alt-two"
+file = "patterns/alt-two.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-alternation", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# base grammar: two nested alternations, the same language as `cat|dog` plus `cog` and `dat`
+name = "alt-nested"
+file = "patterns/alt-nested.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-alternation", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# a numbered backreference: a doubled word
+name = "bak-1"
+file = "patterns/bak-1.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-backrefs", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# two backreferences in reverse order: a four-byte palindrome
+name = "bak-2"
+file = "patterns/bak-2.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-backrefs", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a relative backreference: the same language as `bak-1`
+name = "bak-g-rel"
+file = "patterns/bak-g-rel.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-backrefs", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a named backreference: a tag pair closed by its own name
+name = "bak-k-named"
+file = "patterns/bak-k-named.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-backrefs", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# the python-style named backreference: the same language as `bak-1`
+name = "bak-py"
+file = "patterns/bak-py.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-backrefs", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# positive lookahead: the span is `item`
+name = "lka-pos"
+file = "patterns/lka-pos.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-lookaround", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# negative lookahead
+name = "lka-neg"
+file = "patterns/lka-neg.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-lookaround", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# positive lookbehind: the span is `done`
+name = "lkb-pos"
+file = "patterns/lkb-pos.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-lookaround", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# negative lookbehind
+name = "lkb-neg"
+file = "patterns/lkb-neg.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-lookaround", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# non-atomic positive lookahead over a literal: the same language as `item`
+name = "lka-nonatomic"
+file = "patterns/lka-nonatomic.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-lookaround", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# the alpha spelling of `lka-pos`: the same language, a different spelling
+name = "lka-verb"
+file = "patterns/lka-verb.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-lookaround", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a group-number condition: `<item>` or `item`, never `<item`
+name = "cnd-group"
+file = "patterns/cnd-group.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-conditionals", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# whole-pattern recursion: balanced parentheses
+name = "rec-R"
+file = "patterns/rec-R.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-recursion", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# recursion into group 1: the same language as `rec-R`, the call target being the group and not the root
+name = "rec-1"
+file = "patterns/rec-1.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-recursion", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# recursion into a named group: the same language as `rec-R`
+name = "rec-name"
+file = "patterns/rec-name.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-recursion", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a DEFINE group called twice: `12:34`
+name = "rec-define"
+file = "patterns/rec-define.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-recursion", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a subroutine call by number, angle spelling: four digits
+name = "rec-g-angle"
+file = "patterns/rec-g-angle.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-recursion", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# the python-style subroutine call: the same language as `rec-g-angle`
+name = "rec-py"
+file = "patterns/rec-py.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-recursion", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a relative call FORWARD to the group to its right: four digits
+name = "rec-fwd"
+file = "patterns/rec-fwd.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-recursion", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a relative call BACK to the group to its left: four digits
+name = "rec-back"
+file = "patterns/rec-back.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-recursion", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# caseless
+name = "mod-i"
+file = "patterns/mod-i.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# dotall: the `.` spans the newline in `item\ndone`; NO unbounded repeat under (?s) anywhere in this set
+name = "mod-s"
+file = "patterns/mod-s.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# extended: the language is `cat`
+name = "mod-x"
+file = "patterns/mod-x.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# no auto-capture: the plain group stops capturing
+name = "mod-n"
+file = "patterns/mod-n.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# ungreedy: the same language as `qnt-lazy` by inverting `+`
+name = "mod-U"
+file = "patterns/mod-U.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# duplicate names allowed: the backreference resolves to whichever `w` set
+name = "mod-J"
+file = "patterns/mod-J.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# ASCII-restricted class escapes: under the default tables `\w` is already ASCII, so the same language as `cls-w`
+name = "mod-a"
+file = "patterns/mod-a.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# caseless restricted to one script: in byte mode the same language as `mod-i`
+name = "mod-r"
+file = "patterns/mod-r.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# reset all options mid-pattern: `Cat` yes, `CAT` no
+name = "mod-reset"
+file = "patterns/mod-reset.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# unset one option mid-pattern: the same language as `mod-reset`
+name = "mod-unset"
+file = "patterns/mod-unset.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# the tab escape
+name = "esc-tab"
+file = "patterns/esc-tab.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-escapes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# the newline escape
+name = "esc-nl"
+file = "patterns/esc-nl.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-escapes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# carriage return + newline as two escapes: `msc-R` is the one-token spelling of the same pair
+name = "esc-cr"
+file = "patterns/esc-cr.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-escapes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a bare two-digit hex escape: the language is `cat`
+name = "esc-hex"
+file = "patterns/esc-hex.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-escapes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# the braced hex spelling of a Latin-1 byte (the seed's `\x41` row names both spellings)
+name = "esc-hex-braced"
+file = "patterns/esc-hex-braced.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-escapes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a control escape: `\cG` is 0x07
+name = "esc-ctrl"
+file = "patterns/esc-ctrl.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-escapes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# the braced octal escape: the language is `cat`
+name = "esc-octal-o"
+file = "patterns/esc-octal-o.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-escapes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# the `\0dd` octal escape (never a backreference): a space
+name = "esc-octal-0"
+file = "patterns/esc-octal-0.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-escapes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# literal quoting: the parentheses are bytes
+name = "esc-quote"
+file = "patterns/esc-quote.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-escapes", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# any newline sequence: `\n` and `\r\n` both, as one token
+name = "msc-R"
+file = "patterns/msc-R.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-misc", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# an extended grapheme cluster: one byte in byte mode
+name = "msc-X"
+file = "patterns/msc-X.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-misc", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# one data unit
+name = "msc-C"
+file = "patterns/msc-C.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-misc", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# letters by Unicode property: Latin-1 letters included, unlike `\w`
+name = "unp-p"
+file = "patterns/unp-p.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-uniprop", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# non-letter runs
+name = "unp-P"
+file = "patterns/unp-P.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-uniprop", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# end the match early: the span is `item`, `done` never runs
+name = "vrb-accept"
+file = "patterns/vrb-accept.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-verbs", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# on failure after the verb, skip the search to the verb's position
+name = "vrb-skip"
+file = "patterns/vrb-skip.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-verbs", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# a set difference: consonant runs
+name = "xcl-minus"
+file = "patterns/xcl-minus.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["fam-extclass", "encoding-bytes", "seed-row"]
+role = "member"
+
+[[patterns]]
+# requirements 5's per-call control: one literal byte, in `#42` and the order line only, absent from every run
+name = "floor"
+file = "patterns/floor.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-floor", "encoding-bytes", "base-grammar"]
+role = "floor"
+
+
+[subjects]
+generator = "gen_subjects.py"
+manifest = "manifest.tsv"
+throughput_generator = "gen_throughput_subjects.py"
+throughput_manifest = "manifest_throughput.tsv"
+# Every field (2-14 B) and every line (<= 86 B) is inside the band, so the
+# two short regimes see the same 39 subjects. 256 is requirements 3's
+# "~256-byte subjects" and bench/email's band.
+short_search_max_bytes = 256
+
+[expectations]
+file = "expectations.tsv"
+default_method = "libpcre2-differential"
+
+# Per-testee notes. No testee runs a VARIANT of any pattern: all ninety are
+# canonical PCRE2 spellings and every adapter runs the canonical text
+# (requirements 4.5 -- the record still STATES that, as
+# `patterns[].variant = null`). `options` is empty for both engines: the
+# patterns carry their own semantics inline (the option settings ARE
+# constructs under census) and neither adapter passes a compile option.
+[testees.pcre2]
+options = {}
+
+[testees.pcrec]
+options = {}
+# Many patterns use constructs outside pcrec's frozen `std1` set;
+# `--features all` is already on every pcrec testee config -- a flag of
+# the TESTEE, not a variant of the pattern. A REFUSAL on any pattern is an
+# expected, first-class `did-not-compile` outcome of this set (NOTES.md,
+# "Give-ups and refusals are results"): on a construct the registry calls
+# `unbuilt` it is the census's `unsupported` reading, on one it calls
+# `built` it is an OUTLIER by the rule stated there.
