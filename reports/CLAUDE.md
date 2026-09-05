@@ -4,6 +4,168 @@ Each file is the output of one `python3 -m pcrecbench report ...` query,
 committed beside the records it reduces so a reader can cite a number
 with its query. Names: `<date>-<subbench>-<version>-<machine>[-<label>][.<grain>].md|tsv`.
 
+**[B37] reports (2026-09-05, lane b37read) ADDED five file groups — the
+2026-09-05 DAYTIME window at pcrec pin 334fd10e (abi 22), the [B37]
+DENY-FLAG-SPLIT AFTER** — and changed NOTHING else here: the reporter is
+`v14 (2026-09-05)` (lane b37repin's `folds=` / `islands=` / `shape=` clauses,
+merged before the window ran), no committed report was regenerated, no
+reporter code was touched. Every one of the fifteen new files carries an
+explicit `--since`/`--until` PAIR *and* an explicit `--testee` roster (the
+2026-08-30 rule and KB-5's roster). The window: 10 cells, ALL `measured` at
+attempt 1 under BD7, 03:48:36 → 07:22:14 EDT (suite log
+`build/windows/suite_20260905T074836Z.log`), store 134 → 144; the ten
+records were committed on master (344ebb6) before these were rendered; this
+lane rendered from `--store ~/pcrec-bench/store` and commits no store file.
+
+RE-RENDER INVARIANT, checked the same two ways as the 2026-09-03 and [B34]
+waves, because the fifteen files were rendered IN-PROCESS (the 144-record
+store loaded and validated ONCE — **582 s on this box** — and reused for
+all fifteen; the same `build_report`/`render_markdown`/`render_tsv` calls a
+CLI invocation makes; the five groups then rendered in 77 s total):
+
+1. **CLI equivalence**, proven on
+   `2026-09-05-altwide-0.2-budu-ryzen1600-island-334fd10e.md`: a fresh
+   `python3 -m pcrecbench report …` invocation of that file's own committed
+   query diffs BYTE-IDENTICAL against the committed file (`cmp` clean).
+2. **Determinism over all fifteen**: a second, independent in-process render
+   into a scratch directory diffs clean on all fifteen files (`cmp` on
+   each).
+
+FOUR THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS:
+
+- **The island PAIR is a NULL pair on altwide, by construction of the set,
+  not by a harness fault.** `pcrec-auto` selects the DFA on all 34 (pattern
+  × form) cells it compiles on `altwide@0.2` — there is no VM-selected form
+  on the auto route of this set — so `-fno-alt-island` has nothing to deny:
+  the island file's two records are byte-identical on every artifact
+  (emit / code / `.so` bytes, every stamp; `islands=` prints on NEITHER),
+  and the 53 shared set cells read 0.992–1.010. The island's EFFECT is
+  readable only on the forced-VM arms, and only CROSS-PIN (the AFTER file,
+  `pcrec_334fd10e_vm*` against `pcrec_1989c62_vm*`), where it travels with
+  abi 17's `always_inline` (frameless-gated — every island artifact is
+  `frameless=1`) and abi 22's `shape=shared` entry, so that reading is
+  three pcrec changes, not one. The one-variable island reading in THIS
+  wave is on bounded: the `ctx-*` hybrids stamp `islands=2` with
+  `shape=plain`, `frameless=0` (neither abi 17 nor abi 22 touches them),
+  and move ×0.65 on `match-compliance` across the pin.
+- **The altwide AFTER file is CROSS-PIN against 1989c62, not 288d505**:
+  altwide was never measured at 288d505, so the R8 `Δ vs previous version`
+  column fires 334fd10e ↔ 1989c62 (it reads `faster ×121.57` on `w-256` /
+  throughput / `vm`), and the pcre2 rows are the 2026-09-03 records (the
+  pcre2 arms were not re-run: unpinned baselines). `vs best` mixes pins —
+  read the Δ column or same-pin rows, never `vs best` across pins.
+- **The bounded fold file's BEFORE for `pcrec-auto` is the 04:10:50Z ccboth
+  record, not the 00:47:59Z six-testee one.** Both are `pcrec_288d505_auto`
+  and newest-measured-wins cannot be told to prefer the older; a `--since`
+  that admits the 00:47Z record also admits the 04:10Z one and the 04:10Z
+  one ranks. The two agree to median 0.9998 over 126 cells (ledger
+  2026-09-05 §4.3), and the ledger reads the plain ladder against BOTH and
+  says which. The clang BEFORE is the same night's 04:50:54Z record.
+- **`shape=` never prints `inline`** in any of these files, and prints
+  `shared` only on altwide's islands (all > 4,096 program bytes);
+  `forward` on every frameless bounded/altwide/loglines VM artifact,
+  `plain` on every framed one — pcrec's AUTO rule holds on 100 % of the
+  VM artifacts in the wave. The I-37 cell (`floor` / `match-compliance` /
+  `pcrec-auto`) is a DFA artifact and carries NO `shape=` stamp: I-44's
+  "read the stamp on your gcc arm" cannot be done on that cell.
+
+- `2026-09-05-altwide-0.2-budu-ryzen1600-island-334fd10e.md` — the
+  **ISLAND PAIR**: `pcrec-auto` against `pcrec-auto-noisland` (the same
+  config with `-fno-alt-island`, deny bit 23) at 334fd10e, two cells
+  `measured` 03:49–04:07 EDT back to back. Query: `report --subbench altwide
+  --version 0.2 --since 2026-09-05T07:48:00Z --until 2026-09-05T08:00:00Z
+  --testee pcrec_334fd10e_auto-caps-simdna --testee
+  pcrec_334fd10e_auto-caps-simdna_noisland` — **2 records, 0 superseded.**
+  A PAIR report, and a NULL one (the first bullet above): every legend line
+  is identical between the arms but for the testee id, the compile table's
+  sizes are byte-identical on all 34 compiled cells and the 32 refusals
+  quote the same integers, and no `Δ` fires (the deny word lives in
+  `config_extra`, not the pin). Read it as the CONTROL that the deny flag
+  is inert where nothing is VM-selected — the reason the island's numbers
+  are in the next file. `.subject-grain.md` and `.tsv` the same query.
+- `2026-09-05-altwide-0.2-budu-ryzen1600-after-334fd10e.md` — the
+  **altwide@0.2 AFTER at 334fd10e, CROSS-PIN against the 2026-09-03 first
+  sample at 1989c62**: the five 334fd10e arms (`auto`, `auto_noisland`,
+  `auto-nocaps`, `vm`, `vm-in`), the four `pcrec_1989c62_*` arms of
+  2026-09-03 and the two libpcre2 baselines of 2026-09-03. Query: `report
+  --subbench altwide --version 0.2 --since 2026-09-03T03:50:00Z --until
+  2026-09-05T08:40:00Z` plus ELEVEN `--testee` values
+  (`libpcre2_10.46_{interp,jit}-caps-simdna`,
+  `pcrec_334fd10e_{auto,auto_noisland,auto-nocaps,vm,vm-in}-caps-simdna`
+  — the noisland id is `pcrec_334fd10e_auto-caps-simdna_noisland` — and
+  `pcrec_1989c62_{auto,auto-nocaps,vm,vm-in}-caps-simdna`) — **11 records,
+  0 superseded** (the `--since` excludes nothing older on this set; the
+  `--until` excludes the loglines/bounded cells of the same morning, which
+  are other sub-benches anyway, and the two 2026-09-03 bigcap records are
+  kept out by the roster). READ THE ORDER PAIR FIRST: `w-256` and `srt-256`
+  on `pcrec_334fd10e_vm` are 15,886,650 vs 15,875,364 ns/set throughput
+  (×1.0007; 1989c62 read ×8.87), both `islands=1`, `shape=shared (prog:
+  305,686 B)`, 292,043 B of code — the 2026-09-03 ledger's ×8.87 branch-order
+  effect is gone at the source, as I-43 predicted. `w-384` COMPILES on both
+  VM arms (427,824 B, `faster` against a 1989c62 refusal has no Δ — the row
+  simply ranks, 1st, ×24.9 under the JIT), and so does `pfx3-512`
+  (440,187 B; not in [B37]'s build facts). The VM route's Δ column reads
+  `faster ×13.71 … ×701.55` on 54 island-bearing cells, `slower ×2.00` on
+  `floor` / throughput (both VM arms — the forced-VM floor tripwire of
+  ledger 2026-09-05 §7.5, fired), `unchanged` on `ci-256` (no island). The
+  DFA-route auto rows read `unchanged` / `faster ×1.03–1.04` on search and
+  `faster ×1.09–1.75` on `match-compliance`. `.subject-grain.md` (`--grain
+  subject`) carries the per-subject order pair (×0.9994–1.0014 on all four
+  throughput subjects); `.tsv` the same set-grain query (no Δ column).
+- `2026-09-05-loglines-0.1-budu-ryzen1600-noedge-334fd10e.md` — the
+  **[OPT-EDGE] pair's THIRD SAMPLE and the abi-19/21 dispatch's AFTER**:
+  `pcrec-auto` against `pcrec-auto-noedge` at 334fd10e, two cells
+  `measured` 04:46–05:02 EDT back to back. Query: `report --subbench
+  loglines --version 0.1 --since 2026-09-05T08:40:00Z --until
+  2026-09-05T09:00:00Z --testee pcrec_334fd10e_auto-caps-simdna --testee
+  pcrec_334fd10e_auto-caps-simdna_noedge` — **2 records, 0 superseded.** A
+  PAIR report on the same terms as the 2026-09-03 and [B34] ones. `iso-ts`
+  reads noedge ÷ auto **0.9846 search / 0.9945 throughput** against
+  0.9157 / 0.9388 at 288d505 (I-43 predicted ×0.9995 for its own
+  harness); `http-5xx` 0.981 / 0.999, `ipv6` 0.993 / 0.983; the eight
+  zero-edge patterns 0.998–1.011. The legend still proves the arm
+  one-variable (`edge=`/`edges=` to `none`/`0`, `folds=0` on all 22,
+  `islands=2` on `level-context` both arms); the noedge artifact is now
+  6,256 B SMALLER on `iso-ts` (34,185 vs 27,929 — the dispatch's +1,468 B
+  sits on the auto side) and +6 B on every zero-edge pattern as before.
+  `.subject-grain.md` carries the 16 KB–1 MB sweep per flavour; `.tsv` the
+  set-grain query.
+- `2026-09-05-loglines-0.1-budu-ryzen1600-noedge-3pins-334fd10e.md` — the
+  same pair rendered CROSS-PIN against the 288d505 pair (2026-09-05
+  03:48Z / 03:56Z) and the 1989c62 pair (2026-09-03), a roster of SIX
+  (`pcrec_{334fd10e,288d505,1989c62}_auto-caps-simdna` and their
+  `_noedge` siblings) with `--since 2026-09-03T03:50:00Z --until
+  2026-09-05T09:00:00Z` — **6 records, 0 superseded.** The R8 Δ column
+  fires per config against the NEXT-OLDER pin: `iso-ts` auto reads
+  `faster ×1.06` throughput / `faster ×1.07` search (334fd10e vs 288d505)
+  beside `unchanged` on the 288d505-vs-1989c62 row, and the three noedge
+  rows read `unchanged` twice over — the deny arm is the flat control
+  across all three pins (1,142,263 / 1,142,674 / 1,142,842 ns/set on
+  `iso-ts` throughput). 73 of 88 Δ cells `unchanged (within spread)`.
+- `2026-09-05-bounded-0.3-budu-ryzen1600-fold-334fd10e.md` — the
+  **[CC-DIFF] FOLD WITNESSES, the vm-arm dispatch question and the I-37
+  cell at 334fd10e**, CROSS-PIN against the 2026-09-05 288d505 records:
+  `pcrec_334fd10e_{auto,vm,auto_cc-clang}` (05:03–07:22 EDT, 44.8 / 45.7 /
+  48.2 min) against `pcrec_288d505_auto` (the **04:10:50Z ccboth record** —
+  third bullet above), `pcrec_288d505_vm` (02:12:49Z, the six-testee pass)
+  and `pcrec_288d505_auto_cc-clang` (04:50:54Z). Query: `report --subbench
+  bounded --version 0.3 --since 2026-09-05T02:00:00Z --until
+  2026-09-05T11:00:00Z` plus the six `--testee` values — **6 records, 0
+  superseded** (the `--since 02:00Z` is the cut that EXCLUDES the 00:47:59Z
+  auto record; a `--since` before it would admit it and the 04:10Z one
+  would still rank). Three gcc/clang pairs of ONE config plus a forced-VM
+  arm: the Δ column fires per config across the pin (`faster ×1.59` on
+  `cls-upto-4` / throughput / auto — the fold witness; `faster ×1.29` on
+  `dig-upto-16` / match / vm; `faster ×1.07` on BOTH arms of the I-37 cell,
+  gcc 492.2 → 459.6, clang 231.5 → 217.1, ratio 0.4725; `slower ×2.00` on
+  `floor` / throughput / vm — the tripwire); the gcc/clang division is the
+  reader's own, never the Δ column's. `.subject-grain.md` carries the
+  per-(rung, subject) rows the ledger's `d-01024` dispatch table is read
+  from (`cls-upto-1024` / `d-01024`: vm 10.2 → 7.0 ns); `.tsv` the same
+  set-grain query.
+  Ledger for all five groups:
+  `docs/dev/ledgers/2026-09-05-b37-denysplit-after-334fd10e.md`.
+
 **[B34] reports (2026-09-05, lane s2read) ADDED five file groups — the
 2026-09-04/05 window at pcrec pin 288d505 (abi 16, [OPT-5] STEP 2)** — and
 changed NOTHING else here: the reporter is unchanged at `v13 (2026-09-03)`,

@@ -1,0 +1,1122 @@
+# reporter: v14 (2026-09-05); filters: subbench=altwide, version=0.2, since=2026-09-05T07:48:00Z, until=2026-09-05T08:00:00Z, testee=pcrec_334fd10e_auto-caps-simdna, testee=pcrec_334fd10e_auto-caps-simdna_noisland; source: store/index.tsv (2 record(s) matching this query); records: 2; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: altwide@0.2; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 2; mixed_x13: False; include_provenance: False; worst_other_core_busy: 29.22% (pcrec_334fd10e_auto-caps-simdna / srt-256 / large-subject-throughput)
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						altwide@0.2__pcrec_334fd10e_auto-caps-simdna__budu-ryzen1600__20260905T074911Z				agreement	agree (0 of 53 groups; 0 of 1436 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						altwide@0.2__pcrec_334fd10e_auto-caps-simdna_noisland__budu-ryzen1600__20260905T075825Z				agreement	agree (0 of 53 groups; 0 of 1436 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	2895849.460177	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	2894461.663717	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	2902436.938053	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	3193.851769	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	2899236.678261	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	2894902.295652	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	2900707.721739	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	2201.335512	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.001170	4	1.0000	0	0		
+rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.001170	4	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	7390.483562	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	7384.817517	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	7410.389575	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	10.735411	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	7399.986630	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	7380.611719	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	7420.835587	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	13.068384	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001286	40	1.0000	0	0		
+rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001286	40	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	3487743.888889	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	3485663.979798	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	3493161.898990	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	2829.915481	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	3488638.626263	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	3486414.070707	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	3490226.727273	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	1284.416809	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000257	4	1.0000	0	0		
+rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000257	4	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	11719.018015	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	11683.301506	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	11733.520757	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	17.510986	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	11736.050089	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	11704.899032	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	11778.240657	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	27.298876	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001453	40	1.0000	0	0		
+rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001453	40	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	15360.368566	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	15345.974082	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	15382.013538	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	14.042635	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	15360.846689	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	15357.606516	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	15378.405050	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	7.698254	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000031	4	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000031	4	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	377.284266	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	374.733866	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	381.273542	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	2.149218	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	380.174071	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	376.447278	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	382.365529	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	2.572392	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.007659	40	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.007659	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	543.624890	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	543.333312	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	544.280123	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	0.386381	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	543.883138	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	542.582082	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	545.196728	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	0.910994	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.000475	40	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.000475	40	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	1796719.914773	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	1795495.363636	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	1798076.795455	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	935.170807	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	1798704.827381	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	1797097.315476	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	1799808.880952	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	1073.547173	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.001105	4	1.0000	0	0		
+rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.001105	4	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	474.434231	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	467.466797	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	691.047248	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	87.485860	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	474.865781	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	471.933128	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	476.287617	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	1.487276	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.000910	40	1.0000	0	0		
+rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.000910	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	4411.845446	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	4363.131817	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	4419.764991	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	21.998431	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	4413.020617	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	4385.388948	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	4426.514657	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	13.860667	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000266	40	1.0000	0	0		
+rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000266	40	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	1910262.142857	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	1905547.273292	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	1915349.937888	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	3262.961931	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	1910667.779762	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	1901758.029762	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	1910926.767857	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	3606.741653	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.000212	4	1.0000	0	0		
+rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.000212	4	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	446.545777	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	445.662935	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	450.676940	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	2.306214	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	449.927803	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	447.199150	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	452.489092	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	2.022079	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.007574	40	1.0000	0	0		
+rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.007574	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	4551.223753	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	4534.178199	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	4554.988112	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	7.711120	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	4574.077827	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	4559.913772	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	4581.675704	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	7.891993	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.005022	40	1.0000	0	0		
+rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.005022	40	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	365491.970407	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	364898.268804	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	365933.848335	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	330.869703	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	365639.699629	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	365110.238566	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	366080.913473	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	399.930421	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000404	4	1.0000	0	0		
+rank	pfx3-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000404	4	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	443.466417	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	440.330319	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	448.682790	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	3.081595	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	444.969029	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	442.666601	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	448.134241	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	2.025675	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.003388	40	1.0000	0	0		
+rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.003388	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	1219.927515	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	1219.629901	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	1222.972708	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	1.274300	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	1220.947611	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	1217.713530	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	1226.564664	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	3.031775	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000836	40	1.0000	0	0		
+rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000836	40	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	2884310.683761	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	2877977.829060	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	2894542.461538	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	5783.372870	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	2888995.348214	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	2882468.687500	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	2906513.035714	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	8969.085542	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001624	4	1.0000	0	0		
+rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001624	4	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	451.298044	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	444.242646	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	457.289975	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	4.616834	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	451.786103	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	446.537789	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	455.856270	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	3.045966	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001081	40	1.0000	0	0		
+rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001081	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	8246.188112	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	8243.804901	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	8254.131353	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	3.893396	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	8252.363744	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	8239.413523	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	8259.427748	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	7.380451	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000749	40	1.0000	0	0		
+rank	s-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000749	40	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	3182411.544554	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	3170219.089109	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	3184635.415842	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	5606.093161	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	3183730.030000	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	3180408.400000	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	3191854.570000	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	3899.838554	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.000414	4	1.0000	0	0		
+rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.000414	4	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	455.293941	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	454.439732	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	470.032412	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	6.020467	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	455.863054	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	449.563350	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	458.509705	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	3.065967	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.001250	40	1.0000	0	0		
+rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.001250	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	8265.266837	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	8253.059358	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	8275.607244	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	7.443615	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	8278.258489	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	8261.469673	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	8312.855891	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	18.572198	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001572	40	1.0000	0	0		
+rank	s-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001572	40	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	2898256.675439	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	2878978.754386	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	2926116.307018	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	17522.474263	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	2908890.307018	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	2888078.692982	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	2934569.307018	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	14908.871956	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.003669	4	1.0000	0	0		
+rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.003669	4	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	447.970660	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	447.388903	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	453.022883	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	2.569168	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	451.672251	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	450.376442	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	458.375771	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	2.987579	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.008263	40	1.0000	0	0		
+rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.008263	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	8221.996545	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	8214.371097	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	8254.992137	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	14.581054	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	8231.033310	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	8209.794824	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	8250.136544	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	13.186169	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.001099	40	1.0000	0	0		
+rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.001099	40	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	3124759.330275	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	3120031.504587	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	3128617.055046	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	2945.895216	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	3125769.532110	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	3125065.486239	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	3185167.027523	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	27521.839195	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.000323	4	1.0000	0	0		
+rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.000323	4	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	446.738791	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	445.800391	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	457.408509	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	4.287980	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	447.491680	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	443.977665	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	450.224494	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	2.388756	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.001685	40	1.0000	0	0		
+rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.001685	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	8091.802775	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	8085.244148	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	8109.866949	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	8.330589	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	8098.456171	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	8088.915017	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	8134.083292	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	15.528022	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.000822	40	1.0000	0	0		
+rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.000822	40	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	501133.994819	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	500757.119171	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	502135.193437	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	542.367748	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	501673.037367	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	500608.403915	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	502739.733096	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	785.854079	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001076	4	1.0000	0	0		
+rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001076	4	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	442.530951	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	439.053019	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	446.407285	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	2.934017	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	446.483975	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	441.815755	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	448.447800	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	2.210520	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.008933	40	1.0000	0	0		
+rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.008933	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	1501.141712	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	1495.425049	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	1694.495893	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	77.827059	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	1501.283835	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	1494.713650	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	1512.834367	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	6.028095	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000095	40	1.0000	0	0		
+rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000095	40	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	455687.247376	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	455341.728636	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	456483.743628	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	395.361346	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	456142.536622	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	455506.061286	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	457407.881913	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	655.244202	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.000999	4	1.0000	0	0		
+rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.000999	4	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	421.981621	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	421.932175	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	422.106471	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	0.069441	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	422.644510	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	421.763521	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	424.930675	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	1.137114	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.001571	40	1.0000	0	0		
+rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.001571	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	1467.770232	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	1465.130459	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	1472.305385	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	2.494683	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	1480.363358	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	1472.979316	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	1494.013764	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	7.416753	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.008580	40	1.0000	0	0		
+rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.008580	40	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	2905532.126126	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	2894567.927928	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	2912300.000000	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	6058.856879	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	2911947.961538	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	2909258.903846	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	2947082.201923	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	14236.122056	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.002208	4	1.0000	0	0		
+rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.002208	4	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	7616.281300	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	7609.184470	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	7697.317892	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	32.892171	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	7629.788639	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	7624.143843	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	7637.884111	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	4.680869	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.001773	40	1.0000	0	0		
+rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.001773	40	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	3115332.317308	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	3105315.903846	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	3143399.692308	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	13114.412014	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	3115796.803738	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	3104347.392523	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	3299155.878505	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	75280.194253	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.000149	4	1.0000	0	0		
+rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.000149	4	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	505.548185	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	501.699632	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	507.283008	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	1.923706	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	506.089130	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	501.218221	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	507.567632	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	2.200967	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.001070	40	1.0000	0	0		
+rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.001070	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	7583.028977	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	7580.897663	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	7588.275099	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	2.689356	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	7585.454584	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	7578.584246	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	7590.991424	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	4.736341	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.000320	40	1.0000	0	0		
+rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.000320	40	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	3114421.447619	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	3097604.590476	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	3184150.980952	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	33960.254958	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	3120569.257143	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	3102113.904762	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	3133882.085714	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	11135.254654	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001974	4	1.0000	0	0		
+rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001974	4	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	502.344584	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	500.206868	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	511.374806	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	3.953513	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	505.622200	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	499.917848	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	508.280202	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	3.077905	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.006525	40	1.0000	0	0		
+rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.006525	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	7594.387240	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	7586.694070	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	7601.603755	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	5.708040	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	7597.235645	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	7589.598737	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	7622.814349	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	13.158598	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000375	40	1.0000	0	0		
+rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000375	40	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	2899328.584071	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	2893690.513274	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	2911999.460177	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	6250.834237	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	2902386.792793	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	2899512.972973	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	2927562.162162	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	11067.719408	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.001055	4	1.0000	0	0		
+rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.001055	4	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	7617.821654	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	7615.491816	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	7691.296063	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	29.197247	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	7624.820807	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	7622.983497	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	7640.877426	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	6.566786	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000919	40	1.0000	0	0		
+rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000919	40	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	3411706.905263	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	3398659.778947	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	3421305.684211	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	7446.726300	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	3425522.267327	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	3391841.267327	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	3443139.396040	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	16743.477140	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.004049	4	1.0000	0	0		
+rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.004049	4	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	498.154718	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	497.490774	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	500.281239	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	0.945270	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	503.230963	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	498.184565	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	506.459254	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	2.747489	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.010190	40	1.0000	0	0		
+rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.010190	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	7420.350951	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	7416.960416	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	7426.255424	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	3.194353	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	7424.448713	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	7421.889123	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	7516.823333	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	36.948701	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000552	40	1.0000	0	0		
+rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000552	40	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	2256567.476510	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	2255562.167785	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	2295141.449664	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	15516.432504	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	2257727.555556	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	2256221.904762	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	2260016.531746	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	1386.119941	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000514	4	1.0000	0	0		
+rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000514	4	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	464.599035	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	463.295950	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	467.600399	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	1.431520	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	466.463851	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	465.850272	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	470.192016	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	1.584253	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.004014	40	1.0000	0	0		
+rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.004014	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	4647.955982	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	4630.357535	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	4661.246127	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	11.356861	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	4651.490225	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	4635.038317	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	4694.544320	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	21.102702	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000760	40	1.0000	0	0		
+rank	w-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000760	40	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	3132478.633663	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	3123074.316832	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	3133212.297030	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	3781.723882	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	3138478.302752	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	3128504.944954	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	3159810.816514	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	10430.330200	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001915	4	1.0000	0	0		
+rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001915	4	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	525.436604	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	524.468801	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	526.069070	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	stddev_ns	0.618926	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	median_ns	526.281529	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	min_ns	524.205793	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	max_ns	528.937705	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	stddev_ns	1.855630	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001608	40	1.0000	0	0		
+rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001608	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	7577.772985	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	7573.706359	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	7583.304998	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	stddev_ns	3.167490	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	median_ns	7580.095421	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	min_ns	7575.266323	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	max_ns	7581.685075	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	stddev_ns	2.256995	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_baseline	1.000306	40	1.0000	0	0		
+rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	2	ratio_vs_best	1.000306	40	1.0000	0	0		
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	431939037.000000	5					
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.010						
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	306432						
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	989963						
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	19933						
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	989963						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				engine	dfa						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				prefilter	-						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				vm_rungs	-						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				buffers	0 (DFA)						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				frame	0 (DFA)						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				dfa_match	unwrapped						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				dfa_scan_edge	bitmap						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				scan_edges	4						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				scan_edges_match	4						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna				engine_sel	selected						
+compile	ci-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	ci-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	ci-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	384146660.000000	5					
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.010						
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	256896						
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	839686						
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	20282						
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	839686						
+compile	cnt-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	floor			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	145777696.000000	5					
+compile	floor			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.033						
+compile	floor			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	27528						
+compile	floor			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	18106						
+compile	floor			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	13109						
+compile	floor			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	156893820.000000	5					
+compile	floor			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.013						
+compile	floor			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	27672						
+compile	floor			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	20449						
+compile	floor			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	15126						
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	633323336.000000	5					
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.007						
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	301952						
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	920330						
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	19878						
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	920330						
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	786922267.000000	5					
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.011						
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	310288						
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	957977						
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	21565						
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	957977						
+compile	nar4-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	nar4-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	255513533.000000	5					
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.023						
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	105344						
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	280095						
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	18147						
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	280095						
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	270591631.000000	5					
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.036						
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	109584						
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	292030						
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	19834						
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	292030						
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	314586707.000000	5					
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.019						
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	203656						
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	591961						
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	20199						
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	591961						
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	332504069.000000	5					
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.020						
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	207896						
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	611599						
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	21991						
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	611599						
+compile	pfx3-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	pfx3-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	s-2048			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	s-2048			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	335080895.000000	5					
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.024						
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	154496						
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	454515						
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	18578						
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	454515						
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	402990558.000000	5					
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.037						
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	162832						
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	489248						
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	20265						
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	489248						
+compile	s-4096			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	s-4096			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	692226528.000000	5					
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.014						
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	265088						
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	844028						
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	20616						
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	844028						
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	948560377.000000	5					
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.012						
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	293904						
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	928668						
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	22303						
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	928668						
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	613710813.000000	5					
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.021						
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	232320						
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	726735						
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	20128						
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	726735						
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	734824795.000000	5					
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.013						
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	240656						
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	748512						
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	21815						
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	748512						
+compile	sfx-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	sfx-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	sfx-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	252336645.000000	5					
+compile	sfx-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.014						
+compile	sfx-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	93056						
+compile	sfx-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	244868						
+compile	sfx-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	18219						
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	270001276.000000	5					
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.026						
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	93200						
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	253674						
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	19906						
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	253674						
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	367479533.000000	5					
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.026						
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	277384						
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	832844						
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	19983						
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	832844						
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	383504916.000000	5					
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.017						
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	285720						
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	862110						
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	21775						
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	862110						
+compile	sh1-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	sh1-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	sh1-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	214996507.000000	5					
+compile	sh1-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.035						
+compile	sh1-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	93064						
+compile	sh1-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	237070						
+compile	sh1-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	16288						
+compile	sh1-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	219015050.000000	5					
+compile	sh1-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.037						
+compile	sh1-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	97304						
+compile	sh1-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	247309						
+compile	sh1-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	18080						
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	430954811.000000	5					
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.017						
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	306048						
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	977922						
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	19696						
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	977922						
+compile	srt-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	srt-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	srt-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	w-1024			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	w-1024			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	369537165.000000	5					
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.012						
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	174976						
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	526620						
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	18644						
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	526620						
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	406314709.000000	5					
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.011						
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	183312						
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	555721						
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	20331						
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	555721						
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	478400716.000000	5					
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.016						
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	240512						
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	748074						
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	19168						
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	748074						
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	567377263.000000	5					
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.010						
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	248848						
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	789574						
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	20855						
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	789574						
+compile	w-2048			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	w-2048			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	613362580.000000	5					
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.027						
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	306048						
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	977922						
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	19696						
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	977922						
+compile	w-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	w-384			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	w-384			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	w-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	w-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	264709227.000000	5					
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.037						
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	105344						
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	288392						
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	18161						
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	288392						
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	277183040.000000	5					
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.028						
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	109584						
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	305685						
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	19848						
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	305685						
+compile	w-8			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	168272967.000000	5					
+compile	w-8			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.040						
+compile	w-8			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	31616						
+compile	w-8			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	43342						
+compile	w-8			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	15708						
+compile	w-8			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	178727197.000000	5					
+compile	w-8			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.022						
+compile	w-8			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	31760						
+compile	w-8			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	46980						
+compile	w-8			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	17395						
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns	307419454.000000	5					
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna				jitter	0.026						
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	142208						
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_bytes	418058						
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	18390						
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	418058						
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns	333456026.000000	5					
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				jitter	0.025						
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				artifact_bytes	150544						
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_bytes	441157						
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				emit_code_bytes	20077						
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				warned_emit_bytes	441157						
+compile	wb-256			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	wb-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	wb-512			plain	same program	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	wb-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna				median_total_ns		1					
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	430627458.000000	5					
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.009						
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	306432						
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	989963						
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	19933						
+compile	ci-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	989963						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				engine	dfa						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				entry	plain entry						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				prefilter	-						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				vm_rungs	-						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				buffers	0 (DFA)						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				frame	0 (DFA)						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				dfa_match	unwrapped						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				dfa_scan_edge	bitmap						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				scan_edges	4						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				scan_edges_match	4						
+compile_stamp						pcrec_334fd10e_auto-caps-simdna_noisland				engine_sel	selected						
+compile	ci-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	ci-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	ci-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	392722474.000000	5					
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.019						
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	256896						
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	839686						
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	20282						
+compile	cnt-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	839686						
+compile	cnt-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	floor			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	152213792.000000	5					
+compile	floor			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.031						
+compile	floor			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	27528						
+compile	floor			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	18106						
+compile	floor			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	13109						
+compile	floor			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	158161155.000000	5					
+compile	floor			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.013						
+compile	floor			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	27672						
+compile	floor			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	20449						
+compile	floor			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	15126						
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	640524097.000000	5					
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.010						
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	301952						
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	920330						
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	19878						
+compile	nar4-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	920330						
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	792860859.000000	5					
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.016						
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	310288						
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	957977						
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	21565						
+compile	nar4-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	957977						
+compile	nar4-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	nar4-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	253171104.000000	5					
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.022						
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	105344						
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	280095						
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	18147						
+compile	nar4-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	280095						
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	268658391.000000	5					
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.019						
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	109584						
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	292030						
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	19834						
+compile	nar4-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	292030						
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	313654017.000000	5					
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.049						
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	203656						
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	591961						
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	20199						
+compile	pfx3-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	591961						
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	328603701.000000	5					
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.016						
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	207896						
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	611599						
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	21991						
+compile	pfx3-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	611599						
+compile	pfx3-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	pfx3-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	s-2048			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	s-2048			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	343561545.000000	5					
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.018						
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	154496						
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	454515						
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	18578						
+compile	s-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	454515						
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	403154892.000000	5					
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.022						
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	162832						
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	489248						
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	20265						
+compile	s-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	489248						
+compile	s-4096			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	s-4096			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	693739098.000000	5					
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.037						
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	265088						
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	844028						
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	20616						
+compile	s-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	844028						
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	945957415.000000	5					
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.010						
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	293904						
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	928668						
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	22303						
+compile	s-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	928668						
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	608392025.000000	5					
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.007						
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	232320						
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	726735						
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	20128						
+compile	sfx-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	726735						
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	738270999.000000	5					
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.013						
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	240656						
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	748512						
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	21815						
+compile	sfx-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	748512						
+compile	sfx-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	sfx-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	sfx-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	251976235.000000	5					
+compile	sfx-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.011						
+compile	sfx-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	93056						
+compile	sfx-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	244868						
+compile	sfx-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	18219						
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	271200337.000000	5					
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.024						
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	93200						
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	253674						
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	19906						
+compile	sfx-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	253674						
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	366430644.000000	5					
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.010						
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	277384						
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	832844						
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	19983						
+compile	sh1-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	832844						
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	385904405.000000	5					
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.013						
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	285720						
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	862110						
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	21775						
+compile	sh1-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	862110						
+compile	sh1-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	sh1-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	sh1-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	218892249.000000	5					
+compile	sh1-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.026						
+compile	sh1-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	93064						
+compile	sh1-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	237070						
+compile	sh1-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	16288						
+compile	sh1-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	225210565.000000	5					
+compile	sh1-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.033						
+compile	sh1-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	97304						
+compile	sh1-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	247309						
+compile	sh1-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	18080						
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	431202871.000000	5					
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.014						
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	306048						
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	977922						
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	19696						
+compile	srt-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	977922						
+compile	srt-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	srt-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	srt-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	w-1024			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	w-1024			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	371644413.000000	5					
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.027						
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	174976						
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	526620						
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	18644						
+compile	w-128			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	526620						
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	408224891.000000	5					
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.022						
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	183312						
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	555721						
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	20331						
+compile	w-128			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	555721						
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	477656104.000000	5					
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.018						
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	240512						
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	748074						
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	19168						
+compile	w-192			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	748074						
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	570690781.000000	5					
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.006						
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	248848						
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	789574						
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	20855						
+compile	w-192			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	789574						
+compile	w-2048			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	w-2048			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	601875367.000000	5					
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.027						
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	306048						
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	977922						
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	19696						
+compile	w-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	977922						
+compile	w-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	w-384			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	w-384			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	w-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	w-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	257503719.000000	5					
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.020						
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	105344						
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	288392						
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	18161						
+compile	w-64			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	288392						
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	270741393.000000	5					
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.021						
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	109584						
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	305685						
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	19848						
+compile	w-64			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	305685						
+compile	w-8			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	172945839.000000	5					
+compile	w-8			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.015						
+compile	w-8			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	31616						
+compile	w-8			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	43342						
+compile	w-8			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	15708						
+compile	w-8			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	177866646.000000	5					
+compile	w-8			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.024						
+compile	w-8			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	31760						
+compile	w-8			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	46980						
+compile	w-8			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	17395						
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	302180980.000000	5					
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.020						
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	142208						
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	418058						
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	18390						
+compile	w-96			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	418058						
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns	333066286.000000	5					
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				jitter	0.018						
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				artifact_bytes	150544						
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_bytes	441157						
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				emit_code_bytes	20077						
+compile	w-96			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				warned_emit_bytes	441157						
+compile	wb-256			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	wb-256			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	wb-512			plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
+compile	wb-512			whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_noisland				median_total_ns		1					
