@@ -809,6 +809,28 @@ forced VM and 843,165 total under auto, both under the defaults — P13's
 bracket (414-547 KB) CONFIRMED and the outcome is `compiles`, so the set
 that needs a raised cap is twelve rungs.
 
+**The census is now a re-runnable probe, not a one-off ([B35] (7) /
+[B39]).** pcrec inbox I-50 found the 2026-09-02 numbers above STALE on the
+VM route by -18...-26 % per rung at pin 334fd10e ([ENG-ISL] STEP 1's
+alternation-island trie shrinks a VM artifact's emitted code; [CC-DIFF]
+STEP 2 moves it back up by +68.5 B mean the other way -- ledger
+`docs/dev/ledgers/2026-09-05-b37-denysplit-after-334fd10e.md` §1.4-§1.5,
+§5 item 5), which is exactly the kind of change a VM-code-shape re-pin
+will keep making. Re-derive the census at EVERY re-pin, as part of that
+re-pin's own work rather than a window of its own:
+
+    python3 docs/dev/measurements/probe_altwide_size_census.py \
+        --pin <sha> \
+        --out docs/dev/measurements/<date>-altwide-size-census-<sha>.txt \
+        --compare docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt
+
+~6 min serial on a quiet box, compile-only -- pcrec's own two emitted-size
+numbers at the pin's default caps and under a 100,000,000-byte probe raise,
+over every `bench/altwide` pattern x both forms x both engine modes, plus a
+per-route (`auto`/`vm`) delta table against whichever earlier census
+`--compare` is pointed at. Never a measurement: no timing regime, nothing
+goes to `store/`.
+
 **What to measure before committing the raised-cap VM cell.** One rung, one
 trial: `pcrec-vm-bigcap` on `w-512` at `--trials 1`, and read the per-emit
 cost off it. If it exceeds ~40 s, the full five-trial cell will not fit and
