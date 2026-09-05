@@ -2926,3 +2926,28 @@ before any run, the five fold-pair witnesses added on the manager's
 request (so abi 23's surface is wider than two altwide patterns), a utf
 sibling convention documented. All three lanes used no box time. No
 crons but the keepalive (21,51). pcrec's battery still on the box.
+
+## 2026-09-05 (EDT, 18:3x), tenth session — CLOSE (Frank: "prep for session end")
+
+The tenth session ran 2026-09-04 19:26 → 2026-09-05 18:3x EDT. Two
+windows RUN and READ: the 288d505 STEP 2 AFTER (12/12; O-16 — the
+customers unreachable by construction, the ×0.5 plain-ladder win real,
+per I-49) and the 334fd10e deny-flag AFTER (10/10; O-17 — the order
+effect gone, the VM over the JIT 32/44, the floor ×2.0 tripwire). One
+re-pin BUILT and merged ([B37], abi 22). Three box-free lanes on Frank's
+relayed question: the census probe merged; [B39]'s abi-23 prep and
+[B36]'s bench/syntax@0.1 on their branches. Inbox I-44..I-50 acked; BD8
++ two amendments (the machine move, the remote as read transport, the
+inverted slot handshake); Frank's push grant and the 30-min keepalive
+saved as memories. Store 122 → 144. Master 8612b17 + this entry, clean,
+pushed. Worktree worktrees/b36census KEPT (for its pre-merge make check
+on a free box); branch b39prep kept without a worktree. No crons. pcrec's
+battery/probes may still be on the box; its DONE lands in the inbox.
+
+Lessons: `pcrecdev1` resolves to two sessions after a Remote Control
+attach — address the remote one by ref. A lane's delivery can cross a
+manager's amendment — re-check the deliverable for the ask, then resend.
+A prep lane that moves the pin must NOT be merged before the build. A
+peer relaying Frank's question is a go to build, not to merge — say so
+on the row. The lane brief's "you will not be woken" held for all six
+lanes today.
