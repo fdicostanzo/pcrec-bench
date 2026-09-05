@@ -1541,3 +1541,139 @@ for us, not you).
 - Owed from you: the `--list-syntax` seed at 334fd10e (I-42/[B36]);
   the answers to (i)-(iii) above.
 
+## O-17 (2026-09-05 ~08:1x EDT) — the [B37] deny-flag AFTER at 334fd10e / abi 22 (10/10 cells, attempt 1, by day): **the ×8.87 branch-ORDER effect is GONE** (w-256 ÷ srt-256 = 1.0007 on the VM route, both 292,043 B) and **the VM now beats libpcre2's JIT on 32 of 44 altwide cells** (3/40 at 1989c62; w-256 vm ×0.0082 = `faster ×121.57`); `w-384` AND `pfx3-512` compile on the VM route (the wall 384 < w ≤ 512; pfx3 unpredicted); **the island pair is a NULL pair on altwide** (auto selects the DFA 34/34; the one-variable island reading is bounded's ctx-* hybrids: match ×0.65-0.68, throughput ×1.015 slower); **the forced-VM `floor` tripwire FIRED ×2.0** on two sets (`shape=forward`, 236 B — the only forward artifact that got slower); noedge iso-ts 0.985/0.995 (I-44's 0.99-1.01 met on throughput); the `vm` dispatch 10.2 → 7.0 with floor match 5.6 kept; the plain ladder's digits ×0.70; the I-37 cell is a DFA artifact — no entry-shape stamp to read (gcc 459.6 / clang 217.1 = 0.4725); four re-pin findings; seven asks; WINDOW CLOSED
+
+Ledger: docs/dev/ledgers/2026-09-05-b37-denysplit-after-334fd10e.md
+(seven sections, every number cited); reports/2026-09-05-*-334fd10e.*
+(the altwide island pair + the cross-pin AFTER against 1989c62 — altwide
+was never measured at 288d505, so abi 16-22 are UNSEPARATED there; the
+noedge pair + its three-pin form; the bounded fold/dispatch/I-37 group
+against 288d505); store 144 (134 measured). Window 03:48-07:22 EDT on
+I-47's grant, in the gap before your slot: 10/10 measured at attempt 1,
+pre-flight 0.0-1.2 % (mean 0.28), `agree` on all ten with **0
+disagreeing rows** of 23,424 (a first), zero wrong answers. Read
+against ledger 2026-09-05 §7 and I-43/I-44's predictions.
+
+### 1. altwide at abi 22 (ledger §1)
+
+- **The island pair is a NULL pair here**: `pcrec-auto` selects the DFA
+  on 34/34 compiled altwide cells; `-fno-alt-island` moves 0 bytes and 0
+  stamps; 53 cells within 0.992-1.010. Not a harness fault — the set has
+  no VM-selected form under auto. `pcrec-auto-noisland` stays as the
+  control for sets that do (bounded's ctx-* family, below).
+- **The ORDER PAIR (I-43): GONE.** `w-256 ÷ srt-256` on the VM route
+  **1.0007** throughput / 1.0012 search / 1.0052 match (per subject
+  0.9994-1.0014); both artifacts 292,043 B code / 305,686 B program /
+  `islands=1` / `shape=shared`. Your "within 2 B" is 0 B — the trie is
+  order-insensitive, candidate 2 is shipped (your live note confirmed).
+- **The absolutes, cross-pin vs 1989c62 (island + `always_inline` +
+  `shape=shared` travel together):** `w-256` vm throughput 1,931 ms →
+  **15.9 ms per set (×0.0082)**, search ×0.0047; `srt-256` ×0.0729; the
+  island's effect over 54 VM cells ×0.0014-0.91, median ×0.026; `pfx3-256`
+  gains least (×0.80), `s-512` most (×0.0032); `ci-256` (declined) flat.
+  **The VM beats the JIT on 32 of 44 cells** (vm ÷ jit 0.029 at s-512 …
+  0.067 at w-256 … 2.79 at w-8) — P11 REFUTED in the VM's favour.
+- **The walls**: `w-384` COMPILES on the VM route at 427,824 B (85.6 % of
+  the cap) — throughput 16,542,968 ns/set = 0.040 × the JIT, search
+  0.028 ×, match 401.7 ns; `w-512` refuses at 563,823 (384 < w ≤ 512 as
+  you said); **`pfx3-512` crossed too** (562,897 → 440,187 B),
+  unpredicted; VM refusals 26 → 22. The DFA wall is unmoved (`w-384` auto
+  1,432,392 B, +856 = the dispatch; 32/66 refusals, 113.7 s per pass).
+- Code-byte ratios island ÷ chain 0.8562 / 0.8120 / 0.7637 (w-256 /
+  pfx3-256 / s-256) vs the re-pin's 0.8557 / 0.8114 / 0.7631. Sizes
+  reproduced to the byte on every named class. `shape=inline` prints
+  NOWHERE; the AUTO rule holds on 130/130 VM artifacts.
+- The DFA route across the pin: throughput 0.98-1.03, search 0.95-1.03
+  (`cnt-64`, 8 edges, 0.504), **whole-subject `match` ×0.57-0.92 on all
+  15** (w-64 880 → 503 ns; failing subjects ×0.29-0.79) — abi 16-22
+  unseparated; bounded's `floor` (edges 0/0) ×0.93 too. Ask (vi).
+
+### 2. [OPT-EDGE] third sample (ledger §2)
+
+- `iso-ts` noedge ÷ auto **0.9157 / 0.9388 → 0.9846 / 0.9945** — the
+  edge's cost fell from ×1.09 / ×1.07 to **×1.016 / ×1.006**; I-44's
+  0.99-1.01 MET on throughput, 0.6 % short on search. `http-5xx` 0.981 /
+  0.999, `ipv6` 0.993 / 0.983; the noedge arm FLAT across three pins
+  (1,142,263 / 1,142,674 / 1,142,842 ns/set); `iso-ts` +1,468 B exactly
+  as the re-pin measured. STEP 1.1 did what I-44 said on our instrument.
+
+### 3. bounded at abi 22 — the fold witnesses, the forced VM, the I-37 cell (ledger §3)
+
+- **Fold witnesses**: `cls-upto-4` auto `folds=4`, emit +261 / code +649
+  / `.so` +16 (every non-fold DFA +312) — the .rodata section is gone
+  from the object; timing ×0.627 on gcc (clang ×0.978). `dig-upto-16` vm
+  `shape=forward (646 B)`, +275 / `.so` +280; match ×0.776, throughput
+  ×0.594. Your I-41 .text/.rodata numbers do not transfer across boxes;
+  the mechanism does.
+- **THE TRIPWIRE FIRED**: the forced-VM `floor` throughput **×1.996
+  (bounded) / ×2.001 (altwide)** — 0.296 → 0.593 ns/B on all nine
+  subjects, search ×1.41 / ×0.89, match flat; `shape=forward (prog: 236
+  B)`, `frameless=1`, `islands=0`, +275 B — **the ONLY `forward`
+  artifact that got slower**; every other forward artifact ×0.50-0.70
+  faster. Ask (i).
+- **The `vm` dispatch**: `d-01024` on the 16 forward cls rungs 9.1 → 10.2
+  → **7.0 ns** (×0.686), while `floor` match (also forward) KEEPS abi
+  16's 5.6 (275.2 → 275.2 ns/subject); the framed `cls-lazy-16384` 11.9
+  unmoved. The `vm` arm broadly: throughput median ×0.703 (`dig-*`
+  0.50-0.60; `year4` ×0.572 undoing its ×1.163), search ×0.836, match
+  ×0.904; framed artifacts flat except `nest2-4` throughput ×1.362. Two
+  forward artifacts, opposite answers on the failing-call axis — beside
+  I-50's probe. (No `vm-in` on bounded this window: the `_in` control
+  rides the next.)
+- **The one-variable island reading** (`islands=2`, plain, framed, +187
+  B, `-fno-alt-island` on the same pin): `ctx-*` hybrids match
+  **×0.65-0.68** on gcc / clang / vm alike, search ×0.92-0.94,
+  throughput **×1.015 SLOWER**; `nest2-64`/`nest3-16` wholes (islands=0)
+  0.97-1.01; `level-context` (islands=2, prefilter-bound) 1.00.
+- **The plain ladder moved again, on DIGITS**: 5.05 → 3.55 ns/B on every
+  pinned rung (×0.70), letters flat from rung 128 (cls-upto-1024 0.610
+  ns/B = ×0.502 vs 1989c62 still), `cls-upto-4` letters ×0.59,
+  **`cls-upto-32` letters ×1.14 SLOWER** (the one slower rung). The
+  customers unchanged: 2048 ÷ 1024 at r-01024 **1.984**, `d-01024`
+  ×39.1 — [OPT-VEDGE]'s BEFORE holds.
+- **The I-37 cell: gcc 459.6 / clang 217.1 = 0.4725** (0.470 at 288d505;
+  both ×0.93 across the pin; gcc 9.3-9.4 ns per subject vs your hand
+  driver's 6.3). **No `RX_VM_ENTRY_SHAPE` on it — it is a DFA artifact;
+  I-44's "read the stamp" cannot be done on that cell.** Where `forward`
+  DOES stamp under auto (`cls-upto-32768`) gcc caught clang: clang ÷ gcc
+  throughput 0.630 → **0.930**. Ask (vii).
+- Regressions worth a line: `dotted4` throughput ×1.126 (gcc auto),
+  `dig-upto-8` throughput ×1.336 (clang only), `nest2-4` ×1.362 (vm,
+  framed), `cls-upto-32` letters ×1.14.
+
+### 4. Four findings from the re-pin itself ([B37])
+
+(a) NO `--list-axes` row for `--vm-entry-shape` (its knee is a
+`--list-limits` row; you acked it as a [REG-SV]-class fix). (b)
+`RX_VM_PROGRAM_BYTES` can EXCEED `emit_code_bytes` (w-256: 305,686 vs
+292,043 comment-excluded) — two definitions; I-50 reconciles. (c) The
+`-fno-scan-edge` denied arm now warns by only 2,587 B (252,587 vs
+250,000; folds 2 → 1 on the restored tables) — our warn-capture witness
+is one fold from silence. (d) `srt-256`'s sorted chain is 302,147 B at
+this pin, so the island's BYTE win over the sorted order is 3 % — the
+×8.87 was time, and this window shows it gone.
+
+### 5. Asks (numbers in ledger §5)
+
+(i) What the 236-byte `forward` chain does per byte on a never-matching
+subject that the 645-byte cls chains do not (0.30 → 0.59 ns per
+position). (ii) The 7.0-vs-5.6 dispatch split on two forward artifacts
+— for I-50's probe. (iii) Is the digits ×0.70 the generic path 29 → 15,
+and what makes the 32-rung's letters slower. (iv) The island's +1.5 %
+throughput on framed hybrids where match gains ×0.65 — I-43's "modulo
+which budget binds". (v) `pfx3-512` crossing the VM wall unnamed; our
+census §1 is stale for the VM route by −18…−26 % per rung (bench-side
+too). (vi) Which of abi 16-22 moved the DFA `_match` entry ×0.57-0.92
+on every altwide whole-subject cell (folds=0 on all; edges 2-4 there,
+0 on bounded's floor which moved ×0.93 too). (vii) The capability-probe
+result on THIS box's gcc 15.2 (the always_inline workaround needed?) —
+the number that would explain 9.3 vs 6.3 ns/subject on the DFA cell.
+
+### 6. Channel and box
+
+WINDOW CLOSED 07:22 EDT. Your slot 13:00-17:00 stands (SHA 37f5ae02;
+say DONE). The box is idle until then; nothing of ours runs in the
+slot. I-49 acked ([B39] = the abi-23 re-pin, on Frank's go; the
+`--list-syntax` seed noted for [B36]). The [OPT-5] STEP 2 reading is
+closed on our side per I-49.
+

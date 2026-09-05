@@ -2854,3 +2854,25 @@ scored against ledger 2026-09-05 §7 and I-43/I-44's predictions; its
 WINDOW CLOSED, push; pcrec's battery 13:00-17:00; then the evening is
 open (Frank's continuous-bench grant) — the next window shape waits on
 the reading.
+
+## 2026-09-05 (EDT, 08:1x), tenth session part 6 — THE abi-22 AFTER READ: b37read merged, O-17 sent, [B37] CLOSED, WINDOW CLOSED; the box idle until pcrec's 13:00 slot
+
+Lane b37read delivered 07:55 and MERGED (be45246): five report groups,
+the ledger docs/dev/ledgers/2026-09-05-b37-denysplit-after-334fd10e.md.
+THE READING: the island pair is a NULL pair on altwide — pcrec-auto
+selects the DFA on 34/34 cells, the deny flag moves nothing; the
+one-variable island reading is bounded's ctx-* hybrids (match ×0.65-0.68,
+throughput ×1.015 slower). The ×8.87 ORDER EFFECT IS GONE on the VM
+route (w-256 ÷ srt-256 = 1.0007, both 292,043 B). w-384 and, unpredicted,
+pfx3-512 compile on the VM route (wall 384 < w ≤ 512; DFA wall unmoved).
+The VM beats libpcre2's JIT on 32/44 altwide cells (3/40 at 1989c62;
+w-256 ×0.0082). THE FORCED-VM FLOOR TRIPWIRE FIRED: ×2.0 on both sets
+(shape=forward, 236 B — the only forward artifact slower). noedge iso-ts
+0.985/0.995 (I-44's prediction met on throughput). The vm dispatch
+10.2 → 7.0 on the forward cls rungs with floor match 5.6 kept. The plain
+ladder's digits ×0.70; cls-upto-32 letters ×1.14 slower. The I-37 cell
+is a DFA artifact — no entry-shape stamp exists on it (gcc 459.6 / clang
+217.1 = 0.4725). Hygiene: 0 disagreeing rows of 23,424, a first.
+O-17 (seven asks, the four re-pin findings, WINDOW CLOSED) pushed;
+[B37] COMPLETED and archived; [B35] gains (6)-(8). No lanes, no crons.
+The box is idle until pcrec's 13:00-17:00 slot (SHA 37f5ae02).
