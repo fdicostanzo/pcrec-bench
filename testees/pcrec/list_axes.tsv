@@ -2,31 +2,42 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-288d505/build/pcrec --list-axes
+#     build/pcrec-334fd10e/build/pcrec --list-axes
 #
-# pcrec commit 288d505b3bf6d78074334113bd9ac7d265ab148d (abi 16), archived by
-# testees/pcrec/pin.sh on 2026-09-03 (PIN.tsv); captured 2026-09-03 by lane
-# b34repin ([B34]). 72 data rows / 24 axes / 12 columns -- the FOURTH
+# pcrec commit 334fd10e6c3e770fe9044355b77835e3ad28ad79 (abi 22), archived by
+# testees/pcrec/pin.sh on 2026-09-05 (PIN.tsv); captured 2026-09-05 by lane
+# b37repin ([B37]). 74 data rows / 25 axes / 12 columns -- the FOURTH
 # registry surface (pcrec docs/spec/registry.md 6, [CHK-2]). The diff from
-# the 1989c62 copy (70 / 23, [B26]) is ONE NEW AXIS of two rows and nothing
-# else -- no column change, no existing row's text moved, no renumbering:
+# the 288d505 copy (72 / 24, [B34]) is ONE NEW AXIS of two rows and nothing
+# else -- no column change, no existing row's text moved, no renumbering,
+# across SIX abi steps (17-22):
 #
-#   - `search-start` ([OPT-5] STEP 2, pcrec abi 16), inserted between
-#     `scan-body` and `possessify`, stamped through RX_DFA_START:
-#     order 1 `pinned` (kind `list`, deny PCREC_NO_START_PINNED / bit 22 /
-#     `-fno-start-pinned`) and order 2 `reverse-pass` (the fallback, no
-#     deny and no flag -- a candidate reached only by falling through).
-#     Its `applies` column is the PREDICATE this bench's witnesses are
-#     chosen against: ENG_UNANCH, a non-empty engine, and a forward start
-#     state that accepts under the plain view with an accept invariant in
-#     position and in class context. Where it holds the artifact carries
-#     NO reverse machine at all (match_api.md 6.3).
+#   - `alt-island` ([ENG-ISL] STEP 1, pcrec abi 18), appended after
+#     `prefilter-lang` as the registry's last axis, stamped through
+#     RX_VM_ALT_ISLANDS (a COUNT, so neither row carries a stamp_value):
+#     order 1 `island` (kind `predicate`, deny PCREC_NO_ALT_ISLAND / bit 23
+#     / `-fno-alt-island`: "per flat alternation on the VM route: the whole
+#     subtree's language is a finite set of literal byte strings within the
+#     emitter's enumeration budget (a caseless alternation is class-leading
+#     by D23 and declines)") and order 2 `denied` (the fallback -- vm_alt's
+#     serial resume chain, one frame per untried branch).
 #
-# Unlike [B26]'s diff, this one renumbers nothing: the axis is new, so its
-# two rows insert whole and every other row keeps its order and its text.
-# `--list-limits` and `--list-definitions` are BYTE-IDENTICAL to their
-# 1989c62 copies below their own headers (MEASURED at this re-pin): [OPT-5]
-# STEP 2 adds no numeric limit and no definition.
+# WHAT IS NOT HERE, and it is the registry's own statement rather than an
+# omission of this archive: abi 17's `RX_DFA_UNIFORM_FOLDS` ([CC-DIFF]
+# STEP 1, a fold COUNT the emitter discovers, not a selection), abi 19/21's
+# scan-edge dispatch ([OPT-EDGE] STEP 1/1.1 -- the SAME `scan-edge` /
+# `scan-body` axes, emitted differently; no new candidate), abi 20's .rxt
+# composition (no artifact stamp) and abi 22's `--vm-entry-shape`
+# ([CC-DIFF] STEP 2 / [OPT-DIAL] STEP 0: an ORDINAL option, tuning.md
+# 2.21 -- "not a bit in pcrec_options.flags", so no deny row; its two
+# stamps RX_VM_ENTRY_SHAPE / RX_VM_PROGRAM_BYTES are match_api.md 6.3
+# family (b), and its size term VM_INLINE_CHAIN_MAX_BYTES lives in
+# --list-limits, not here). The adapter declares `vm_entry_shape`'s four
+# tokens from match_api.md 6.3's closed enum for that reason, with no
+# registry row to check them against.
+# `--list-definitions` is BYTE-IDENTICAL to its 288d505 copy below its own
+# header (MEASURED at this re-pin); `--list-limits` gained TEN rows (its
+# header says which).
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).
@@ -108,6 +119,8 @@ altcls-merge	1	merged	predicate	RX_ALTCLS_MERGES		PCREC_NO_ALTCLS_MERGE	10			-fn
 altcls-merge	2	denied	predicate	RX_ALTCLS_MERGES							always (fallback)
 altcls-factor	1	factored	predicate	RX_ALTCLS_FACTORED		PCREC_NO_ALTCLS_FACTOR	11			-fno-altcls-factor	a maximal run sharing a literal first byte qualifies, on stage 1's own output
 altcls-factor	2	denied	predicate	RX_ALTCLS_FACTORED							always (fallback)
+alt-island	1	island	predicate	RX_VM_ALT_ISLANDS		PCREC_NO_ALT_ISLAND	23			-fno-alt-island	per flat alternation on the VM route: the whole subtree's language is a finite set of literal byte strings within the emitter's enumeration budget (a caseless alternation is class-leading by D23 and declines)
+alt-island	2	denied	predicate	RX_VM_ALT_ISLANDS							always (fallback) — vm_alt's serial resume chain, one frame per untried branch
 atomic-discharge	1	discharged	predicate			PCREC_NO_ATOMIC_DISCHARGE	12			-fno-atomic-discharge	possessify's own verdict proves the A_ATOMIC node's cut is a no-op (docs/design/atomic_groups_design.md §5.3)
 atomic-discharge	2	denied	predicate								always (fallback) — ENGINE-SELECTING: the A_ATOMIC node stays, which is DFA-excluding, so RX_ENGINE can move to "vm"
 splice-calls	1	spliced	predicate	RX_VM_CALL_SPLICED		PCREC_NO_SPLICE_CALLS	13			-fno-splice-calls	the callee is not in a call-graph cycle and its expansion fits the splice size budget (PCREC_MAX_SPLICE_NODES/_TOTAL)

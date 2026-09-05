@@ -14,16 +14,17 @@
 # `std1`, which excludes the named-groups and recursion modules, so
 # bench/email's `factored.rx` is refused with "requires module
 # 'named-groups'" (MEASURED 2026-08-25 against pin 8da6120, re-verified at
-# 692c2e8, at 35e1ab1, at 36d5963, at 96e44c2, at 263b013, at a7e0bdf and
-# RE-VERIFIED at 1989c62, 2026-09-01: same refusal, same wording --
-# "(?<...) requires module 'named-groups' (pattern offset 3)"). That is a
+# 692c2e8, at 35e1ab1, at 36d5963, at 96e44c2, at 263b013, at a7e0bdf, at
+# 1989c62 and RE-VERIFIED at 334fd10e, 2026-09-05: same refusal, same
+# wording -- "(?<...) requires module 'named-groups' (pattern offset 3)"). That is a
 # BUILD/RUN flag of the testee -- the pattern text handed to pcrec is
 # byte-identical either way -- not a pattern variant. bench/email/NOTES.md
 # says so where a reader of the numbers will find it. Since a7e0bdf
 # ([M4-QUOTING]) std1 also excludes the new `quoting` module (`\Q...\E`;
 # "\Q requires module 'quoting'", MEASURED) -- `--features all` includes
 # it, but no bench pattern uses \Q, so nothing measured changes until a set
-# charters it (RE-VERIFIED at 1989c62: same wording).
+# charters it (RE-VERIFIED at 334fd10e: same wording, "\Q requires module
+# 'quoting' (pattern offset 0)").
 
 # ---------------------------------------------------------------------------
 # THE COMPILEE TOOLCHAIN AXIS -- `cc` ([B24]; pcrec [CC-CLANG], its
@@ -70,7 +71,7 @@
 # still an environment dimension"): on a `-clang` testee it still reads gcc,
 # and the artifact's compiler is read off `testee.build_flags` /
 # `testee_id`. Flagged for the schema panel, not worked around here.
-pin = "288d505"
+pin = "334fd10e"
 
 [testees.pcrec-auto]
 engine_mode = "auto"
@@ -418,3 +419,58 @@ captures = "on"
 cflags = ["-falign-functions=64"]
 flags = ["--features", "all"]
 description = "pcrec defaults with the artifact+shim compiled under -falign-functions=64 ([B35], pcrec I-39 (v)'s layout probe for the disputed floor/match/auto cell): against pcrec-auto -- one variable moved, the COMPILEE's own function alignment, never pcrec's emitted C"
+
+# ---------------------------------------------------------------------------
+# THE ALTERNATION-ISLAND DENY AXIS -- `-fno-alt-island` ([B37]; pcrec
+# [ENG-ISL] STEP 1, docs/spec/tuning.md 2.20, --list-axes `alt-island`
+# bit 23, inbox I-43/I-44; pin 334fd10e = abi 22).
+#
+# WHAT THE ISLAND IS. A flat alternation whose whole subtree matches a
+# FINITE set of literal byte strings is lowered by the VM as a TRIE over
+# those strings' bytes -- a byte compare at a one-child node, a `switch`
+# at a many-child node, one try site per node where an alternative ends
+# -- instead of `vm_alt`'s CHAIN of one resume frame per untried branch
+# (matching the last of 512 branches cost 511 push/fail/pop round trips
+# on ONE subject byte). `RX_VM_ALT_ISLANDS` counts the islands an artifact
+# took; the island DECLINES class-leading alternations (a caseless one is
+# class-leading by D23), prefix-bearing ones under four words, and any
+# island over 2x the chain's estimated size or over the cap -- each a
+# selection outcome, never a refusal.
+#
+# WHY A TESTEE. [B37] absorbs SIX abi steps in ONE pin, so "one change per
+# pin per night" cannot hold for the pin itself; the AFTER is split by
+# DENY FLAG within it (Frank, I-47). `pcrec-auto-noisland` is
+# `pcrec-auto` plus this flag -- same pin, same `--features all`, same
+# engine mode, same captures, gcc like its sibling -- so the pair
+# ISOLATES the island's effect on bench/altwide: the ORDER pair
+# `w-256`/`srt-256` (the x8.87/x20.1 branch-order effect I-43 says is
+# gone at the source: MEASURED at this pin the two VM artifacts are
+# byte-identical in emit_bytes, 292,043 each, where 288d505 emitted
+# 341,201 vs 302,047), the VM refusal wall (moved from 256<w<=384 to
+# 384<w<=512: `w-384`'s forced-VM form compiles at 427,824 B where the
+# chain refused at 508,607 -- and STILL refuses under this flag, at
+# 508,715), and the island/chain code-byte ratios (w-256 0.856, pfx3-256
+# 0.812, s-256 0.764 -- I-43's three numbers reproduced).
+#
+# ONE VARIABLE (BD3), and the same shape as `pcrec-auto-noedge`: the flag
+# rides in `flags`, the ONE list that feeds pcrec's argv, `build_flags`
+# and `runtime_options`; the adapter DERIVES the axis (`effective_denies`,
+# DENY_FLAGS), and `config_extra` gains `noisland` in chartering order --
+# after `cc`, the caps, `noedge` and `nopin` -- so an id already in
+# `store/` never has a part inserted ahead of the one a reader knows it
+# by. `$PCREC_LOCAL_FLAGS="-fno-alt-island"` reaches the derived testee_id
+# down the same code path.
+#
+# WHAT THE DENIAL MEASURABLY CHANGES besides the island: at this pin a
+# denied `foo|bar` goes islands 1 -> 0, `RX_VM_FRAMELESS` 1 -> 0 (the
+# chain PUSHES) and `RX_VM_ENTRY_SHAPE` forward -> plain (a framed
+# artifact is `plain` by construction, tuning.md 2.21) -- so a noisland
+# row differs from its sibling in the program, the frame discipline and
+# the entry chain together, which is what the pre-[ENG-ISL] machine WAS.
+# The pair is answer-identical modulo which budget binds (I-43: a
+# budget-bound cell may differ in the island's favour only).
+[testees.pcrec-auto-noisland]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-fno-alt-island"]
+description = "pcrec defaults with the [ENG-ISL] ALTERNATION ISLAND DENIED (-fno-alt-island, --list-axes bit 23): vm_alt's serial resume chain built at the SAME pin, so the pair against pcrec-auto is the island's BEFORE/AFTER on bench/altwide with the lowering as the one variable ([B37], pcrec I-43)"
