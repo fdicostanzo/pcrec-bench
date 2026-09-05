@@ -292,3 +292,41 @@ miss:
   the token the adapter watches for checked against the diagnostic the
   driver actually produced, since that is two copies of one string in
   two languages with nothing else enforcing that they agree.
+- [B37] (2026-09-05, pin 334fd10e, abi 22 -- SIX abi steps in one
+  re-pin; pcrec inbox I-41/I-43/I-44) adds no check FUNCTION and grows
+  three: `check_mechanism_stamps` asserts the four new pairs BY VALUE on
+  every kind -- `dfa_uniform_folds` on the scan family's iff (0 on every
+  reverse-pass corpus DFA and the no-table scans, 4 on a pinned
+  `unwrapped` rung, 2 on the pinned `search-filter` 16384 rung, both
+  values reached with a one-character control), `vm_alt_islands` on the
+  VM scope with a witness at 0 / 1 / 2 (`foo|bar` islands, `fo|foo`
+  declined by the registry's own prefix-bearing knee, level-context and
+  ctx-greedy-256 islanding TWO alternations each on the [SEL-1] hybrid
+  under `auto`), and the `vm_entry_shape` / `vm_program_bytes` PAIR with
+  a witness at each of the four closed tokens (`forward` foo|bar,
+  `inline` (abc)(def), `plain` (a+)+b, `shared` w-256 at 305,686 B) and
+  the AUTO size rule asserted over every VM artifact against
+  VM_INLINE_CHAIN_MAX_BYTES read from `list_limits.tsv`; six new
+  STAMP_CASES kinds and eleven new ledger rows (the altwide ORDER PAIR on
+  the VM route asserted IDENTICAL to each other -- 292,043 B, 305,686
+  program bytes -- rather than each to a constant; I-43's island/chain
+  code-byte ratios 0.856 / 0.812 / 0.764 re-derived to three decimals
+  against the SAME pin's `-fno-alt-island` arm, pcrec-emitted and sized
+  without gcc; the refusal boundary BY ROUTE -- the DFA wall at w-384
+  UNMOVED at the total cap, the VM wall MOVED to 384<w<=512 with w-384
+  compiled as an island, w-512 refused at the code cap and w-384 refused
+  AGAIN under the denial; the [B33] (3) fold witnesses' `-O2` OBJECTS
+  sized with `size -A`, a folds-4 artifact carrying NO `.rodata` section
+  against the folds-0 control's; iso-ts 8/4 edges through the abi-19/21
+  dispatch). `check_deny_flag_controls` gains the `-fno-alt-island` (bit
+  23) row -- FOUR pairs move at once on `foo|bar` (islands 1->0, frameless
+  1->0, shape forward->plain, program bytes 1,532->1,233) -- and its two
+  DFA deny rows re-derived with the fold count riding along (the
+  scan-edge row 2->1 and its denied arm 367,390 -> 252,587 B, STILL
+  warning by 2,587 B; the start-pinned row 4->6, the count's ceiling,
+  reached on a real artifact only by that flag). The three registry
+  checks diff the re-archived copies (axes 74/25: + `alt-island`;
+  definitions byte-identical; limits 55: + nine `VM_ISL_*` /
+  `VM_INLINE_CHAIN_MAX_BYTES` rows + `PCREC_MIN_SCAN_CHAIN`, one desc
+  reworded). `check_abi_floor_refusal` is UNCHANGED: no rx_info field
+  across abi 17-22, the floor stays 16 and both sabotage arms stand.

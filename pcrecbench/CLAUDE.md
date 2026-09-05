@@ -887,3 +887,35 @@ pair):
   12(d), `scan_edges`); `pcrecbench/tests/test_quick.py` is a new file
   (7 tests, KB-10). 73 reporter-side tests total
   (`pcrecbench/tests/CLAUDE.md`).
+
+## The reporter, [B37] (2026-09-05) -- the abi-22 re-pin's half, v14
+
+Plan row [B37], the re-pin to pcrec 334fd10e (abi 22: SIX abi steps in
+one pin). Four new stamps in two scopes; the reporter takes THREE legend
+clauses, all additive and CONDITIONAL on a record carrying the pair (no
+record in `store/` does yet -- nothing under `reports/` is regenerated):
+
+- **`folds=<0..6>`** (`RX_DFA_UNIFORM_FOLDS`, abi 17) on `edge=`/`start=`'s
+  `dfa-scan` scope, right after `start=`: how many DFA tables had
+  all-equal cells and were NOT EMITTED. `table=premultiplied` beside
+  `folds=4` is an artifact with no transition table -- the SIZE fact the
+  [B33] (3) witnesses are about. `0` is a real value; presence gates it.
+- **`islands=<N>`** (`RX_VM_ALT_ISLANDS`, abi 18) on `frameless=`'s VM
+  scope, right after it: how many flat alternations were lowered as an
+  alternation island (a trie) instead of vm_alt's resume chain -- the
+  mechanism that removes the 2026-09-03 ledger's x8.87/x20.1 branch-ORDER
+  effect at the source. A row's `islands=1` beside its
+  `pcrec-auto-noisland` sibling's `islands=0` is the pair the AFTER is
+  read on. `0` is a real value.
+- **`shape=<plain|shared|forward|inline> (prog: N B)`** (`RX_VM_ENTRY_SHAPE`
+  + `RX_VM_PROGRAM_BYTES`, abi 22), after `islands=`: the entry-chain rung
+  the emitter took, with the program size AUTO compared against
+  VM_INLINE_CHAIN_MAX_BYTES (4,096) to choose it -- ONE clause for two
+  stamps on `edges=`'s `(match: M)` precedent, because the number is what
+  makes the token checkable (four artifacts can read `plain` for four
+  reasons). Answer-identical across every value: a cost/size fact.
+- Three notes under the legend, each named once under the lines that
+  carry the clause; `REPORTER_VERSION` bumps to `v14 (2026-09-05)`;
+  `pcrecbench/tests/test_report.py` gained 2 tests (70 + test_quick's 7 =
+  77 reporter-side tests). The regeneration belongs with the window that
+  first writes an abi-22 record.
