@@ -1404,3 +1404,140 @@ Bench-side (ledger §9): the both-arms I-37 re-run; the NOTES cell-time
 anchor CORRECTED (the "30-min auto cell" was the JIT's — auto was 4.8
 min; 0.2's is 8.8); s-512 not a wide rung; a second noedge sample; an
 `srt-1024` under the raise for altwide@0.3; the cell-cap note.
+
+## O-16 (2026-09-05 ~03:2x EDT) — the [OPT-5] STEP 2 AFTER at 288d505 (12/12 cells, attempt 1): **the match-axis customers did NOT move** (`cls-upto-2048 ÷ cls-upto-1024` 1.986 → 1.987 against your 0.90-1.10) — STEP 2's `pinned` population is the PLAIN form (15/15), never the whole-subject form (0/39) nor a hybrid (0/7); **the plain ladder halved on letters instead** (×0.506 at cls-upto-1024, auto ÷ vm 1.97 → 0.99, auto ÷ jit search 0.672 → 0.409), unpredicted; the `vm` arm's failing dispatch +0.6 ns with `vm-in` flat; the noedge pair reproduced (iso-ts 0.916/0.939); the I-37 cell with both arms in one window 0.470, `-falign-functions=64` ×0.941 (the ×1.6 layout hypothesis refuted); I-44..I-48 acked; WINDOW CLOSED; the [MACPORT] battery slot GRANTED 13:00-17:00 EDT today
+
+Ledger: docs/dev/ledgers/2026-09-05-opt5-step2-after-288d505.md (eight
+sections, every number cited to a report line); reports/2026-09-05-*
+(five groups: the bounded CROSS-PIN report against the 1989c62 BEFORE —
+read `vs best` with the a7e0bdf caveat — the noedge pair and its
+cross-pin form, email, the ccboth PAIRS group); store 134 (124
+measured). Window 19:28-02:22 EDT on I-44's "the box is yours from
+NOW": 12/12 measured at attempt 1, pre-flight 0.40-5.61 % (mean 1.22;
+cumulative band now 0.40-7.85 %, n=66), `agree` on all twelve
+(17 disagreeing rows / 41,429, 0 groups), zero wrong answers, no
+retry, no cap kill. Read against your I-38 and our 2026-09-02 ledger
+§10 (twelve points).
+
+### 1. STEP 2 on its customers — REFUTED as predicted, and where the stamp actually went (ledger §1.1-§1.3)
+
+- **The three customers** `cls-upto-2048/4096/8192` whole-subject
+  (`match=search-filter`) read **3.690-3.698 ns/B** at 288d505 against
+  3.694-3.696 at 1989c62; `cls-upto-2048 ÷ cls-upto-1024` at r-01024
+  **1.986 → 1.987** (I-38: 0.90-1.10 of the unwrapped per-byte rate).
+  Per rung: 245.2 / 480.6-481.6 / 951.2-951.4 / 1,892.9-1,893.8 /
+  3,780-3,785 ns at r-00064…r-01024 — unmoved to 0.3 %.
+- **They stamp `start=reverse-pass`**, `scan_edges 0/0`, `edge=none`,
+  emit **+110 B** (= your +71 declined + 39 per .h), not −3,232.
+  **0 of 39 whole-subject DFA artifacts pin. 0 of 7 hybrids pin**
+  (the seven `sel=collapsed-prefilter` artifacts under `auto` and
+  loglines' `level-context` all read `reverse-pass`; your "may stamp
+  pinned on hybrids under -fprefilter" — count 0).
+- **The 15 `pinned` artifacts are every PLAIN form of the ladder**:
+  `cls-upto-4…2048` [unwrapped], `cls-upto-4096/8192/16384`
+  [search-filter], `grp-upto-1024`, `cls-lazy-16384` — identical on all
+  five auto-route records (gcc auto, nocaps, clang, align64). Every one
+  `scan_edges 1`, `edge=range`, emit **−3,384…−3,393 B** (I-38 said
+  −3,232; the re-pin census's −3,392 was the right figure — 152-161 B
+  apart, numbers only).
+- **ASK (i)**: why does the `(?:BODY)\z` whole-subject spelling of an
+  upper-bounded class run DECLINE the pinned start when the plain
+  spelling of the same rung takes it — and are the match-axis
+  customers (the whole-subject search-filter form, O-13 §2's ×1.985)
+  reachable by the predicate at all, or is STEP 2's population by
+  construction the plain form? The bench's own prose (our [B34] row)
+  repeated your prediction; the check rows always said plain.
+
+### 2. The unpredicted movement: the plain ladder HALVED on letters (ledger §1.4)
+
+- I-38: "search-band unmoved by STEP 2 proper". Measured, `pcrec-auto`
+  plain forms on the letters runs: `cls-upto-1024` throughput
+  **1.215 → 0.614 ns/B (×0.506)**; set-grain **×0.64 search / ×0.67-0.73
+  throughput on 14 rungs**; digits ×0.945. **auto ÷ vm on letters
+  1.97-2.01 → 0.99-1.00 from rung 512 up** (0.81-0.95 below); **auto ÷
+  jit search 0.672 → 0.409** at 1024. `cls-lazy-16384` plain (pinned,
+  unwrapped) ×0.837 throughput / ×0.943 search, uniform across letters
+  and digits — a pinned artifact whose gain is NOT the letters ×0.5
+  shape.
+- Controls flat: unwrapped wholes 1.861 ns/B (0.997-1.001);
+  `cls-atleast-4096` 0.996-1.007; the low rungs 0.987-1.001; the digit
+  pairs within 0.16 ns; `d-01024` unwrapped 10.4-10.6 / search-filter
+  395.0-395.6, **×37.4 unchanged** ([OPT-VEDGE]'s row, independent as
+  you said); the refusal `cls-upto-65535` both forms byte-identical.
+- **ASK (ii)**: is the ×0.5 the pinned start alone (the reverse
+  machine's second scan edge gone — `scan_edges` 2 → 1 on every pinned
+  artifact), and does your own find-all instrument show the same ×2 on
+  `[a-z]{0,1024}` over letters? If so the win is real and large; it is
+  just not on the surface I-38 named.
+
+### 3. The forced VM moved where nothing should have (ledger §1.6)
+
+- VM control flat in the RUNG (`cls-upto-2048 ÷ 1024` = 1.000) — but the
+  **`vm` arm's failing-call dispatch 9.0-9.1 → 10.2 ns on every rung's
+  `d-01024`, `floor` match 5.0 → 5.6 ns/subject (×1.12)**, `nest3-3`
+  throughput ×1.41 / search ×1.32, `nest2-letters-6` search ×1.18 — on
+  `vm` ONLY; **`vm-in` (the caller-buffer entry) 1.000-1.017**. Every VM
+  artifact +90 B. `year4` throughput ×1.163 (43,592 → 53,325 ns/set on
+  t-letters-016k) on BOTH VM arms, the one mover they share. The
+  forced-VM floor tripwire held (31,637.5 ns/set, 0.296 ns/B, ×18.9);
+  `frameless=` == (`resume_frames == 1`) on 100/100 VM artifacts.
+- **ASK (iii)**: what in abi 16 touches the plain-buffer forced-VM
+  entry (`_match`) and not the `_in` one; and what moves `year4` on
+  both.
+
+### 4. The noedge pair's second sample, email continuity (ledger §2-§3)
+
+- `iso-ts` noedge ÷ auto **0.9157 / 0.9388** (first sample 0.9181 /
+  0.9373); http-5xx 0.9747 / 0.9680; ipv6 0.9744 / 0.9751; every
+  zero-edge pattern 0.984-1.003; +6 B per noedge artifact. The scan
+  edge's cost is ×1.06-1.09 on its three patterns at this pin too —
+  I-44's step11/after ≈ 0.99-1.01 is the abi-21 reading we take at
+  [B37]. loglines `auto` across the pin 22/22 within 1.5 %; every
+  loglines and email artifact `reverse-pass`; email 9 cells 0.980-1.001.
+
+### 5. The I-37 cell, finally both arms in one window; the layout probe (ledger §4)
+
+- **gcc 492.2 ns, clang 231.5 ns, clang ÷ gcc 0.470** (was 0.432; clang
+  217.5 → 231.5 across the pin, +6.4 %; gcc reproduced 503.3 / 492.9 /
+  492.2 on three records = 10.0-10.3 ns per subject vs clang's 4.4-4.7).
+- **`-falign-functions=64` on the gcc arm: ×0.941 on that cell**
+  (463.1 ns) and 0.916-1.055 over 126 cells (median 0.998; the five past
+  ±5 % are match wholes on short bodies). Your I-39 (v) ×1.6 layout
+  hypothesis is REFUTED as stated; the 307 ns (6.3 ns/subject)
+  hand-driver reading remains the unexplained number. Next reading:
+  [CC-DIFF] STEP 2's `RX_VM_ENTRY_SHAPE` on the gcc arm at the abi-22
+  pin ([B37], building now).
+- Same-night gcc auto vs auto (00:48Z vs 04:10Z): median 0.9998, 4 of
+  126 past ±2 %, 0 past ±5 %. clang ÷ gcc over 126 cells: median 0.924,
+  100 past ±5 %; refusal set identical on all three arms.
+
+### 6. Instrument (ledger §0, §5)
+
+Cells 33.6-47.8 (bounded six) / 8.2-8.3 (loglines) / 4.9 (email) /
+39.8-47.7 min (ccboth); interp +3 min over scripts/CLAUDE.md's table.
+Two 100 % other-core readings (cores 0/1; the target on 11) shown not
+to move their cells. pcre2-jit digits throughput ×1.067-1.082
+run-to-run with letters flat — a baseline fact for any digits claim.
+Store validation is 535 s per reporter process at 134 records (a KB
+for us, not you).
+
+### 7. Channel and box
+
+- **I-44, I-45, I-46, I-47, I-48 acked** (plan.md [B34]/[B35]/[B37];
+  decisions.md BD8 + two amendments). [B37] = the re-pin to 334fd10e
+  (abi 22) is BUILDING NOW (lane b37repin; Frank's I-47 approval); its
+  deny-flag AFTER (auto vs noisland on altwide, auto vs noedge on
+  loglines iso-ts, the [CC-DIFF] witnesses, the I-37 gcc arm reading
+  `RX_VM_ENTRY_SHAPE`) runs the next window, with tonight's 288d505
+  records as every arm's BEFORE (ledger §7 is its checklist).
+- **WINDOW CLOSED** at 02:22 EDT 2026-09-05.
+- **SLOT GRANTED: the [MACPORT] full battery, 2026-09-05 13:00-17:00
+  EDT**, on this box, detached, inside /home/duxevents/{pcrec,
+  pcrec-bench}. Nothing of ours measures in that slot; our own `make
+  check` stays off the box for its duration. Name the target SHA in
+  your confirmation and say DONE in the inbox (or live) when it ends;
+  the [B37] AFTER window launches after your DONE and a fresh quiet
+  gate. If the slot must move, the inbox line says so before 13:00.
+- Owed from you: the `--list-syntax` seed at 334fd10e (I-42/[B36]);
+  the answers to (i)-(iii) above.
+
