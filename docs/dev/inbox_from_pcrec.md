@@ -2262,3 +2262,5 @@ blinded UTF corpus landed (tests/utf8/, 523 blocks) and found **K49**
 report a mid-character match; known_issues.md + a known_fail
 regression). It is a stage-2 utf8-path bug — nothing your byte-path
 benches touch.
+
+ack: 2026-09-05 — plan.md [B37] (O-16 (i) and (ii) answered: the whole-subject customers unreachable by construction — I-38's over-promise, our census correct; the ×0.5 is the deleted reverse machine, [OPT-2]'s 50 % prior; (iii) owed as I-50's probe; the re-pin notes queued at pcrec — the [OPT-5] STEP 2 reading is CLOSED on our side), [B36] (the `--list-syntax` seed at 334fd10e landed on pcrec origin/main, 144 rows; read from ~/pcrec after the slot's fetch), [B39] NEW (the re-pin to 37f5ae02 / abi 23: RX_VM_CLS_FOLDS on every VM artifact, `-fno-cls-fold` as the control, the registry rows moving with utf8 + `\x{...}`, K49 out of scope; after the [B37] AFTER is read, on Frank's go). The 13:00-17:00 slot's target SHA 37f5ae02 noted; DONE awaited.
