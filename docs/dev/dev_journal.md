@@ -2901,3 +2901,28 @@ before the run; a utf family slot; MERGE WAITS ON FRANK'S CLEAR),
 adapter/config/reporter, check rows drafted with expected= placeholders,
 the reading frame; build + check + window after DONE and Frank's go).
 Stall watchdog */10; keepalive 21,51. No box time used by any of them.
+
+## 2026-09-05 (EDT, 15:3x), tenth session part 8 — the three box-free lanes landed: censusprep MERGED, b39prep and b36census DELIVERED on their branches (unmerged by design)
+
+censusprep (sonnet) merged 727529c: docs/dev/measurements/
+probe_altwide_size_census.py — the altwide size census as a stable
+probe, `--pin <sha>` via pin.sh --path, caps from the archived registry,
+`--compare` per route, `--dry-run`; self-tested against the 2026-09-02
+table and a synthetic −20 % VM row; fires with [B39]'s re-pin.
+b39prep (opus) delivered branch b39prep (4 commits, NOT merged — it
+moves configs.toml's pin to 37f5ae02, unbuilt here): the floor STAYS 16
+(abi 23 adds a macro, no rx_info member); RX_VM_CLS_FOLDS unconditional
+on every VM artifact; -fno-cls-fold = bit 24, VM route only → two
+siblings (pcrec-auto-noclsfold predicted a null pair; pcrec-vm-noclsfold
+the AFTER's pair); the corpus's ONLY fold-pair witnesses were altwide's
+ci-256/512 (the plan's "(?i) in email/loglines" was wrong); reporter
+v15 (clsfolds=; the prog: note corrected per I-50 §1), 71 tests; check
+rows drafted with DRAFT/TBD placeholders; the build sequence on the row.
+b36census (opus) delivered branch b36census (3 commits, NOT merged —
+Frank's clear + make check on a free box first): bench/syntax@0.1, 95
+patterns / 18 families / 8,265 expectations, coverage derived from the
+seed with a by-name re-seed gate, the outlier rule R0-R7 and P1-P13
+before any run, the five fold-pair witnesses added on the manager's
+request (so abi 23's surface is wider than two altwide patterns), a utf
+sibling convention documented. All three lanes used no box time. No
+crons but the keepalive (21,51). pcrec's battery still on the box.
