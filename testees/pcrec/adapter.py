@@ -3,7 +3,8 @@
 Provides `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm`, their clang siblings
 `pcrec-auto-clang` / `pcrec-nocaps-clang` / `pcrec-vm-clang`, their
 raised-emitted-size-cap siblings `pcrec-auto-bigcap` / `pcrec-vm-bigcap`,
-the scan-edge-denied `pcrec-auto-noedge`, the function-alignment sibling
+the scan-edge-denied `pcrec-auto-noedge`, the alternation-island-denied
+`pcrec-auto-noisland` ([B37]), the function-alignment sibling
 `pcrec-auto-align64`, and the caller-provided frame-buffer variants
 `pcrec-auto-in` / `pcrec-vm-in`, all at the pin in `configs.toml` -- and
 `pcrec-local`, a PROVIDED binary at no pin at all.
@@ -307,6 +308,96 @@ TWO new surfaces, one per (a)/(b) family:
                      this pin's additions that is not scoped to the scan
                      family or to the VM.
 
+[B37] (pin 334fd10e = pcrec abi 22, inbox I-43/I-44) absorbs SIX abi steps
+(17-22) in ONE adapter change. FOUR new macros, no new rx_info field (so the
+floor STAYS 16 -- struct rx_info is byte-identical between abi 16 and 22,
+MEASURED at the re-pin), one new deny bit, and two abi steps that stamp
+nothing at all:
+
+  abi 17 ([CC-DIFF] STEP 1) `RX_DFA_UNIFORM_FOLDS` -- an INTEGER 0..6 on
+                     every artifact that CONTAINS a DFA scan (RX_DFA_TABLE's
+                     own scope, the scan family's iff a FOURTH time): how
+                     many of the artifact's DFA tables had ALL-EQUAL cells
+                     and were NOT EMITTED, the accessor returning the
+                     constant. Family (b): not a mode chosen upstream but a
+                     thing the emitted machine turned out to CONTAIN. A
+                     COUNT, not a mask (a whole-artifact total with no
+                     per-A_REP axis). RX_DFA_TABLE keeps naming the encoding
+                     SELECTED even when every table folded, so
+                     `premultiplied` + folds 4 is an artifact with NO table
+                     -- the [B33] (3) size witnesses. The same step put
+                     `always_inline` on the frameless VM helpers (no stamp;
+                     `RX_VM_FRAMELESS 1` now means ELIGIBLE, the shape stamp
+                     below says what was emitted).
+  abi 18 ([ENG-ISL] STEP 1) `RX_VM_ALT_ISLANDS` -- a COUNT on every VM
+                     artifact, hybrids included, never on a DFA one: how
+                     many flat alternations the VM lowered as an
+                     ALTERNATION ISLAND (a trie dispatch over literal
+                     alternatives, tuning.md 2.20) rather than as vm_alt's
+                     serial resume chain. Selected PER ALTERNATION on the
+                     LANGUAGE (a finite literal set within the enumeration
+                     budget); declines class-leading, prefix-bearing-under-
+                     four-words and over-budget alternations as selection
+                     outcomes, never refusals. The registry gains ONE axis,
+                     `alt-island` (two `predicate` rows, no stamp_value --
+                     the macro is a count; 72/24 -> 74/25), whose order-1
+                     row carries the deny flag `-fno-alt-island`
+                     (PCREC_NO_ALT_ISLAND, bit 23): the control, and the
+                     `pcrec-auto-noisland` sibling's one variable. The first
+                     abi bump whose change reaches the VM PROGRAM region.
+  abi 19 / 21 ([OPT-EDGE] STEP 1 / 1.1) NO NEW STAMP: the scan-edge ENTRY
+                     DISPATCH (edge heads renumbered to the machine's top
+                     rows, one `_is_stop` accessor, the per-edge blocks
+                     moved off the generic path onto an edge path; 1.1
+                     narrowed precondition (8) and generalised the entry
+                     seed). An edge-bearing artifact's emitted state NUMBERS
+                     and loop shape move; an artifact with no edge is
+                     byte-identical. The `scan_edges` COVARIATE reader
+                     ([B32]) survives it (the `[OPT-5] SCAN EDGE:` marker
+                     still sits inside rx_search / rx_match -- iso-ts reads
+                     8/4 at this pin as at 288d505, MEASURED), and
+                     `PCREC_MIN_SCAN_CHAIN` 2 joins --list-limits.
+  abi 20 ([DD-13b.W1.3]) NO NEW STAMP: .rxt COMPOSITION -- `groups[]` gains
+                     rows on a `--source` compile, `nentries` counts the
+                     whole array, `nnames` the caller-scope prefix.
+                     Invisible on every non-composed compile, which is all
+                     this adapter does (`-p rx` from pattern text), so
+                     `nentries == nnames` still holds by value at this pin.
+  abi 22 ([CC-DIFF] STEP 2 + [OPT-DIAL] STEP 0) `RX_VM_ENTRY_SHAPE` (a
+                     CLOSED TOKEN: `plain` / `shared` / `forward` /
+                     `inline` -- the rung the emitter TOOK for the six
+                     entries, tuning.md 2.21) and `RX_VM_PROGRAM_BYTES`
+                     (the emitted VM program size in bytes, THE quantity
+                     AUTO compared against VM_INLINE_CHAIN_MAX_BYTES 4,096
+                     to choose the rung), both on every VM artifact,
+                     hybrids included, never on a DFA one. TWO stamps and
+                     not one because four artifacts can read `plain` for
+                     four reasons (framed, forward-illegal above the term,
+                     tiered, asked for); `vm_frameless` separates the first
+                     -- a framed artifact is `plain` by construction, the
+                     one implication the adapter asserts (claim 11) -- and
+                     the size against the term the rest (asserted by value
+                     in tools/selfcheck.py on the AUTO rule, which every
+                     pinned config runs under: nothing passes
+                     `--vm-entry-shape=N`). NOT a flags bit: an ordinal
+                     option with no deny row and no registry axis, so the
+                     four tokens are declared from match_api.md 6.3's own
+                     enum and there is no registry row to check them
+                     against. VM_INLINE_CHAIN_MAX_BYTES lands in
+                     --list-limits (45 -> 55 rows with the nine [ENG-ISL]
+                     knees and budgets and PCREC_MIN_SCAN_CHAIN).
+  (sizes)            Re-derived against the pin's own `--warn-emit-bytes`
+                     numbers as always. Every VM artifact moved (+275 B on
+                     a plain frameless one: the three new stamp lines and
+                     the entry chain), every DFA artifact by +31 B (the
+                     folds line) plus, on edge-bearing machines, the
+                     dispatch's own bytes (iso-ts +1,468 over 8+4 edges);
+                     the fold witnesses SHRINK in the OBJECT, not the
+                     source (cls-upto-4's .rodata gone whole, its four
+                     tables folded); the island witnesses shrink in both
+                     (w-256's VM form 341,201 -> 292,043, srt-256's
+                     302,047 -> 292,043 -- byte-identical to each other now).
+
 Two rules govern how they are read, and both exist because they were paid
 for on the pcrec side first:
 
@@ -363,7 +454,8 @@ for on the pcrec side first:
    refusing the first artifact that does it.
 
 The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 16 since [B34] -- the
-abi that appended `search_form`, the sixth field it reads; 15 from [B26]
+abi that appended `search_form`, the sixth field it reads, and UNCHANGED at
+[B37]'s abi 22: six abi steps, four new macros, no new field; 15 from [B26]
 for `name` and `nentries`, 10 from [B18] for `match_form`, 6 before that
 for `scan` / `prefilter`) and is enforced in `driver.c`, which
 refuses a lower artifact by name before printing anything else. This file
@@ -616,6 +708,48 @@ METADATA_DECL = {
                        "convention hold under both, the pinned form "
                        "DEPENDING on them rather than altering them -- so "
                        "this axis is a COST and SIZE fact only",
+    },
+    # [B37] (pin 334fd10e, abi 17, [CC-DIFF] STEP 1): a COUNT on
+    # RX_DFA_TABLE's own scope -- the scan family's iff a fourth time. A
+    # family-(b) activity fact under a family-(a) scope, which is why it
+    # sits here beside the DFA selection stamps rather than with the
+    # VM-only trio below.
+    "dfa_uniform_folds": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_DFA_UNIFORM_FOLDS ([CC-DIFF] STEP 1, pcrec abi "
+                  "17+), read through pb_dfa_uniform_folds() behind "
+                  "pb_has_dfa_uniform_folds(); same scope as dfa_table "
+                  "(every artifact that CONTAINS a DFA scan, VM hybrids "
+                  "included -- match_api.md 6.3: `on exactly the same "
+                  "footing and under exactly the same IFF as _DFA_TABLE`); "
+                  "no rx_info mirror (D77), so there is no second spelling "
+                  "to check it against -- what IS checked is its scope "
+                  "(STAMP_SCOPE) and, in tools/selfcheck.py, its VALUE on "
+                  "the [B33] (3) fold witnesses (4 on a pinned "
+                  "cls-upto-N rung with an anchored machine, 2 on a "
+                  "pinned search-filter one, 0 on every reverse-pass "
+                  "corpus DFA) and the OBJECT-size consequence (a folds-4 "
+                  "artifact's -O2 object has NO .rodata section)",
+        "description": "how many of this artifact's DFA tables "
+                       "(`<m>_next_state` / `<m>_is_accepting`, two per "
+                       "machine the artifact CONTAINS: the forward machine "
+                       "always, the reverse one unless the search is "
+                       "start-pinned, the anchored one under "
+                       "`dfa_match unwrapped` -- so 0..6) had ALL-EQUAL "
+                       "cells and were therefore NOT EMITTED, the accessor "
+                       "returning the constant instead (`65535` under "
+                       "`premultiplied`, `-1` under `indexed`) while "
+                       "keeping its state and class parameters so a call "
+                       "site's `subject[pos++]` is still evaluated. "
+                       "`dfa_table` keeps naming the encoding that was "
+                       "SELECTED -- the selection still happens and still "
+                       "fixes the folded constant's value -- so "
+                       "`premultiplied` beside folds 4 is an artifact that "
+                       "carries NO transition table at all. A COUNT and "
+                       "deliberately not a mask: a whole-artifact total "
+                       "with no per-quantifier axis to mix. 0 is a value "
+                       "(every table had a varying cell), and so is it on "
+                       "an `attempt`/`empty` scan (no table to fold)",
     },
     "dfa_match": {
         "type": "enum", "scope": "pattern",
@@ -940,6 +1074,114 @@ METADATA_DECL = {
                        "STAMPED form of what [B32] read by grepping the "
                        "emitted C for `NO RESUME FRAME AT ALL`",
     },
+    # -- [B37] (pin 334fd10e): the abi-18 and abi-22 VM-only stamps, on
+    # `vm_frameless`'s scope (every VM artifact, hybrids included; no DFA
+    # artifact) and for its reason -- family (b), what the emitted program
+    # turned out to CONTAIN, discovered by emitting. Three pairs: a COUNT
+    # (the islands), a CLOSED TOKEN (the entry-chain rung) and the
+    # INTEGER that rung was chosen from (the program size). The token is
+    # the one enum in this file with NO registry row to check its value
+    # set against: `--vm-entry-shape=N` is an ordinal option, not a flags
+    # bit (tuning.md 2.21), so the four values come from match_api.md 6.3's
+    # own enumeration and a fifth would fail X15 on the first record.
+    "vm_alt_islands": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_VM_ALT_ISLANDS ([ENG-ISL] STEP 1, pcrec abi "
+                  "18+), read through pb_vm_alt_islands() behind "
+                  "pb_has_vm_alt_islands(); no rx_info mirror; scope "
+                  "checked by STAMP_SCOPE (every VM artifact, hybrids "
+                  "included, no DFA artifact) and the VALUE in "
+                  "tools/selfcheck.py on bench/altwide's witnesses (1 on "
+                  "w-256/srt-256/pfx3-256/s-256/sh1-64 under --engine=vm, 0 "
+                  "on floor; 2 on loglines level-context's [SEL-1] hybrid "
+                  "under auto) with `-fno-alt-island` (--list-axes "
+                  "`alt-island`, bit 23) as the deny control that reaches 0",
+        "description": "how many of this artifact's flat alternations the "
+                       "VM lowered as an ALTERNATION ISLAND -- a trie over "
+                       "the alternatives' literal bytes (a byte compare at "
+                       "a one-child node, a `switch` at a many-child node, "
+                       "one try site per node where an alternative ends) "
+                       "-- rather than as vm_alt's serial resume chain of "
+                       "one frame per untried branch (tuning.md 2.20). "
+                       "Selected PER ALTERNATION on the alternation's "
+                       "LANGUAGE (a finite set of literal byte strings "
+                       "within the emitter's enumeration budget), so a "
+                       "COUNT rather than a boolean: a pattern with two "
+                       "alternations can take it for one and decline the "
+                       "other. Declined -- a selection outcome, never a "
+                       "refusal -- for a class-leading alternation (a "
+                       "caseless one is class-leading by D23), a "
+                       "prefix-bearing one under four words, or one over "
+                       "2x the chain's estimated size or over the cap. 0 "
+                       "is a value: no alternation qualified, or a "
+                       "`-fno-alt-island` build. The first abi bump whose "
+                       "change reaches the VM PROGRAM region itself: on an "
+                       "artifact stamping > 0 the emitted program changed "
+                       "shape, and a PREFIX-FREE island pushes nothing, so "
+                       "its artifact comes out `vm_frameless 1` where the "
+                       "chain's was 0 (MEASURED on `foo|bar`)",
+    },
+    "vm_entry_shape": {
+        "type": "enum", "scope": "pattern",
+        "values": ["plain", "shared", "forward", "inline"],
+        "source": "<PREFIX>_VM_ENTRY_SHAPE ([CC-DIFF] STEP 2 / [OPT-DIAL] "
+                  "STEP 0, pcrec abi 22+), read through "
+                  "pb_vm_entry_shape() behind pb_has_vm_entry_shape() "
+                  "(one presence question for it and vm_program_bytes: one "
+                  "emitter call lands both); no rx_info mirror; the value "
+                  "set is match_api.md 6.3's own closed enum (`fixed at "
+                  "four by the emitter's own enum`) -- NOT a --list-axes "
+                  "row, since --vm-entry-shape=N is an ordinal option and "
+                  "not a flags bit (tuning.md 2.21). Checked: the scope "
+                  "(STAMP_SCOPE), claim 11 (a framed artifact, "
+                  "vm_frameless 0, is `plain` by construction), and by "
+                  "value in tools/selfcheck.py on the AUTO rule with a "
+                  "witness at each of the four tokens",
+        "description": "the rung the emitter TOOK for this artifact's six "
+                       "entries (tuning.md 2.21): `plain` = one body, six "
+                       "framed entries, no attribute anywhere; `shared` = "
+                       "the body `noinline` (one copy, called) behind "
+                       "three un-suffixed entries that FORWARD to their "
+                       "`_in` siblings through a static empty descriptor "
+                       "(no frame, no canary); `forward` = the same "
+                       "forwards with the body inlined -- THREE copies, in "
+                       "the three `_in` entries, no canary anywhere; "
+                       "`inline` = six copies, what [CC-DIFF] STEP 1(a) "
+                       "shipped. AUTO (every pinned config: nothing passes "
+                       "--vm-entry-shape) takes `forward` at or below "
+                       "VM_INLINE_CHAIN_MAX_BYTES (4,096) program bytes and "
+                       "`shared` above it; where a forward rung is illegal "
+                       "(the artifact WRITES its working storage -- an "
+                       "RX_PUSH, a linked call or an RX_SET, so a "
+                       "capturing group is enough) it takes `inline` below "
+                       "the term and `plain` above; a FRAMED artifact "
+                       "(`vm_frameless 0`) is `plain` whatever is asked. "
+                       "ANSWER-IDENTICAL across every value -- the "
+                       "matcher program is byte-identical, only the entry "
+                       "scaffolding above `goto <prefix>_L0;` moves -- so "
+                       "a COST and SIZE fact, never a correctness one",
+    },
+    "vm_program_bytes": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_VM_PROGRAM_BYTES ([CC-DIFF] STEP 2, pcrec abi "
+                  "22+), read through pb_vm_program_bytes() behind the "
+                  "same pb_has_vm_entry_shape(); no rx_info mirror",
+        "description": "the artifact's emitted VM PROGRAM size in bytes -- "
+                       "THE exact quantity VM_INLINE_CHAIN_MAX_BYTES was "
+                       "compared against when AUTO chose `vm_entry_shape`. "
+                       "The second stamp of the pair and not decoration: "
+                       "four artifacts can read `plain` for four different "
+                       "reasons (framed, forward-illegal above the term, "
+                       "tiered, asked for), and the shape alone does not "
+                       "distinguish them -- `vm_frameless` separates the "
+                       "first, this number against the stamped term the "
+                       "rest. NOT the same quantity as `emit_code_bytes` "
+                       "(the emitter's own count of the program region; "
+                       "the caps' definition counts the whole file outside "
+                       "table initializers) and can exceed it (MEASURED: "
+                       "w-256's VM form stamps 305,686 against 292,043 "
+                       "comment-excluded emitted bytes)",
+    },
     # -- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec
     # inbox I-39; [B34], pin 288d505). COMMON scope: on EVERY artifact,
     # BOTH engines, unconditionally -- a family of its own beside
@@ -1064,6 +1306,7 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "trail_frame_size", "buffer_frames", "buffer_trail",
              "fast_frames", "fast_trail", "vm_frameless",
              "altcls_merges", "altcls_factored",
+             "dfa_uniform_folds", "vm_alt_islands", "vm_program_bytes",
              "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
              "emit_bytes", "emit_code_bytes", "warned_emit_bytes",
              "scan_edges", "scan_edges_match")
@@ -1076,7 +1319,8 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
 STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
              "dfa_prefilter_offsets", "dfa_scan_edge", "dfa_start",
              "dfa_match", "unroll_k_why", "artifact_name",
-             "engine_sel", "vm_prefilter_lang", "vm_prefilter_lang_why")
+             "engine_sel", "vm_prefilter_lang", "vm_prefilter_lang_why",
+             "vm_entry_shape")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
 #: (its D81 -- a selection fact is stamped whether or not it fired), the abi
@@ -1124,6 +1368,18 @@ STAMP_SCOPE = {
     # began emitting it.
     "altcls_merges":         ("every",    16),
     "altcls_factored":       ("every",    16),
+    # [B37] (pin 334fd10e, abi 17-22): four macros, three scopes' worth of
+    # rows and nothing new in the scope vocabulary -- the fold count on
+    # RX_DFA_TABLE's `dfa-scan` iff (match_api.md 6.3: "on exactly the
+    # same footing"), the island count and the entry-shape pair on
+    # `vm_frameless`'s VM-only one. Each "since" is the abi pcrec began
+    # stamping it, so an abi-16..21 artifact (a `pcrec-local` binary
+    # between the two pins) records the later ones as "not stamped"
+    # without tripping this table.
+    "dfa_uniform_folds":     ("dfa-scan", 17),
+    "vm_alt_islands":        ("vm",       18),
+    "vm_entry_shape":        ("vm",       22),
+    "vm_program_bytes":      ("vm",       22),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -1231,7 +1487,9 @@ LIST_DEFINITIONS_TSV = os.path.join(HERE, "list_definitions.tsv")
 #: registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD
 #: archive target ([B22], inbox I-25): one row per numeric limit in pcrec's
 #: src/core/limits.def (44 at 263b013; 45 at a7e0bdf -- [OPT-5]'s
-#: PCREC_MAX_SCAN_EDGES joined), in the table's own order. Nothing a
+#: PCREC_MAX_SCAN_EDGES joined; 55 at 334fd10e, [B37] -- the nine
+#: [ENG-ISL] / [CC-DIFF] STEP 2 knees and budgets and [OPT-EDGE] STEP
+#: 1.1's PCREC_MIN_SCAN_CHAIN), in the table's own order. Nothing a
 #: RECORD carries is read from it (every cap and capacity a record needs is
 #: STAMPED per artifact); archived under the same rule as the other two
 #: (re-archive at every re-pin, the diff is what moved) and diffed against
@@ -1753,6 +2011,29 @@ DENY_FLAGS = (
      "match start by the backwards scan -- STEP 2's BEFORE, built by the "
      "SAME compiler, and ANSWER-IDENTICAL to its sibling by contract "
      "(match_api.md 6.3: the two forms differ in cost and in size only)"),
+    # [B37] (pin 334fd10e, [ENG-ISL] STEP 1, --list-axes `alt-island` bit
+    # 23). The THIRD denial that changes what the artifact CONTAINS, and
+    # the first on the VM route: denied, every flat literal alternation is
+    # lowered as vm_alt's serial resume CHAIN (one frame per untried
+    # branch) instead of a TRIE, so the artifact is the pre-[ENG-ISL] VM
+    # program from the SAME compiler -- and, because the chain PUSHES
+    # where a prefix-free island does not, a denied artifact can also
+    # read `vm_frameless 0` and `vm_entry_shape plain` where its sibling
+    # reads 1 / `forward` (MEASURED on `foo|bar`): the frame discipline
+    # and the entry chain move WITH the lowering, which is what the
+    # pre-island machine was. [B37]'s AFTER is split by deny flag within
+    # one pin (six abi steps landed together), and this flag isolates the
+    # island's share: the altwide ORDER pair, the VM refusal wall and the
+    # island/chain code-byte ratios.
+    ("-fno-alt-island", "noisland",
+     "the [ENG-ISL] ALTERNATION ISLAND denied (--list-axes `alt-island`, "
+     "bit 23): every flat literal alternation is emitted as vm_alt's "
+     "serial resume chain (one frame per untried branch) instead of a "
+     "trie dispatch, so this artifact is the pre-[ENG-ISL] VM program "
+     "built by the SAME compiler -- the island's BEFORE, answer-identical "
+     "to its sibling modulo which budget binds (a budget-bound cell may "
+     "differ in the island's favour only, pcrec I-43), and carrying the "
+     "chain's frames and entry shape with it"),
 )
 
 
@@ -2759,6 +3040,24 @@ class Adapter(_ad.Adapter):
         absent on every DFA one) and, in tools/selfcheck.py, its agreement
         with `resume_frames` by value.
 
+        [B37] (pin 334fd10e, abi 17-22) added one more, for the abi-22
+        PAIR, which has no mirror but does have a neighbour to imply:
+
+        11. `vm_entry_shape` and `vm_program_bytes` are present TOGETHER or
+            not at all (one emitter call lands both, match_api.md 6.3), and
+            a FRAMED artifact -- `vm_frameless` 0 -- stamps `plain`
+            (tuning.md 2.21: gcc refuses `always_inline` on a function
+            containing a computed goto, and the storage is live, so a
+            framed artifact takes `plain` whatever is asked). The AUTO size
+            rule (`forward`/`inline` at or below VM_INLINE_CHAIN_MAX_BYTES,
+            `shared`/`plain` above) is deliberately NOT asserted here --
+            `pcrec-local` may pass `--vm-entry-shape=N` and override it --
+            and lives in tools/selfcheck.py by value over the pinned
+            configs, none of which passes the option. `dfa_uniform_folds`
+            (abi 17) and `vm_alt_islands` (abi 18) add no claim: counts
+            with no mirror and no neighbour, checked by scope here and by
+            value there.
+
         A pcrec too old to stamp a given macro is not a disagreement: an
         absent macro is checked only against the field's own absence, never
         against a value, and the scope table applies from each stamp's own
@@ -2874,6 +3173,27 @@ class Adapter(_ad.Adapter):
                 "rx_info.search_form is NULL at abi %s, where the field is "
                 "non-NULL on every artifact that contains one."
                 % (field_scan, info.get("abi")))
+
+        # 11. ([B37], abi 22, [CC-DIFF] STEP 2) the entry-shape PAIR
+        #     travels together, and a FRAMED artifact is `plain` by
+        #     construction. The pair's presence on a VM artifact at all is
+        #     the scope table's job (claim 7, `vm` since 22).
+        shape = meta.get("vm_entry_shape")
+        pbytes = meta.get("vm_program_bytes")
+        if (shape is None) != (pbytes is None):
+            raise _ad.AdapterError(
+                "pcrec artifact stamps <PREFIX>_VM_ENTRY_SHAPE %r but "
+                "<PREFIX>_VM_PROGRAM_BYTES %r -- match_api.md 6.3 lands the "
+                "two together on every VM artifact, so one without the "
+                "other is a shim or compiler bug." % (shape, pbytes))
+        fl = meta.get("vm_frameless")
+        if shape is not None and fl == 0 and shape != "plain":
+            raise _ad.AdapterError(
+                "pcrec artifact stamps <PREFIX>_VM_FRAMELESS 0 (a framed "
+                "program) but <PREFIX>_VM_ENTRY_SHAPE %r -- tuning.md 2.21: "
+                "a framed artifact takes `plain` whatever is asked (gcc "
+                "refuses always_inline on a function containing a computed "
+                "goto)." % (shape,))
 
         # 6. ([B18], [OPT-K]) `dfa_prefilter_offsets` is "none" IFF
         #    `dfa_prefilter` is not an offset-set value (6.3's iff, both

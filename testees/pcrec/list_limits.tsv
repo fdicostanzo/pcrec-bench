@@ -5,32 +5,60 @@
 # (inbox I-25: "ARCHIVE IT beside --list-axes at your re-pin"). Everything
 # below this header is the unmodified output of:
 #
-#     build/pcrec-288d505/build/pcrec --list-limits
+#     build/pcrec-334fd10e/build/pcrec --list-limits
 #
-# pcrec commit 288d505b3bf6d78074334113bd9ac7d265ab148d (abi 16), archived
-# 2026-09-03 by lane b34repin ([B34]). 45 data rows / 7 columns (name,
+# pcrec commit 334fd10e6c3e770fe9044355b77835e3ad28ad79 (abi 22), archived
+# 2026-09-05 by lane b37repin ([B37]). 55 data rows / 7 columns (name,
 # value, unit, kind, override, anchor, desc) -- one row per numeric limit
-# in pcrec src/core/limits.def, in the table's own order. BYTE-IDENTICAL
-# to the 1989c62 copy below the header (MEASURED at this re-pin): [OPT-5]
-# STEP 2 DELETES a machine from the artifacts whose start is pinned, which
-# moves emitted BYTES and no limit -- there is no cap on how many machines
-# an artifact carries. The two before it moved none either ([OPT-4.2] is a
-# POLICY on an existing decision, [DD-13b.W1.2] two appended rx_info
-# fields). The last diff this file saw -- the a7e0bdf copy's own, from 263b013's 44
-# rows -- was ONE row: PCREC_MAX_SCAN_EDGES (4, `selection knee`, no
-# override -- [OPT-5]: how many scan edges one DFA machine may carry;
-# src/opt/scanedge.c takes the longest chains first), inserted after
-# PCREC_MINW_MAX. The rows this bench has already met by
-# name:
+# in pcrec src/core/limits.def, in the table's own order. The diff from the
+# 288d505 copy (45 rows, [B34]) is TEN NEW ROWS and ONE DESCRIPTION EDIT,
+# the first movement this file has seen since a7e0bdf's PCREC_MAX_SCAN_EDGES:
+#
+#   - NINE rows inserted after VM_MAX_AUTO_TRAIL_FRAMES (before
+#     PCREC_PREFIX_K_MAX): the [ENG-ISL] alternation-island
+#     knees and budgets -- VM_ISL_MIN_BRANCHES 2 (fewest literal
+#     alternatives an island is built for), VM_ISL_MIN_BRANCHES_PREFIXED 4
+#     (fewest for an island that PUSHES, i.e. not prefix-free),
+#     VM_ISL_MAX_WORDS 8192 ("the bench's widest altwide rung is 4096" --
+#     pcrec's own words), VM_ISL_MAX_BYTES 262144, VM_ISL_MAX_DEPTH 64,
+#     VM_ISL_BYTES_PER_NODE 180 / VM_ISL_BYTES_PER_CHAIN_NODE 98 (the
+#     measured marginal bytes the island-vs-chain size estimate uses),
+#     VM_ISL_SIZE_FACTOR 2 (the island may reach 2x the chain's estimate
+#     before it declines; validated by pcrec's random census, 0 refused /
+#     max 1.03x) -- and [CC-DIFF] STEP 2's VM_INLINE_CHAIN_MAX_BYTES 4096
+#     (`selection knee`, override `flag`: emitted VM program bytes at or
+#     below which AUTO takes entry shape `forward`, above which `shared`;
+#     `--vm-entry-shape=N` overrides it outright). Every one is a
+#     `selection knee` or `compile budget` with no limits.md anchor: knees
+#     that steer a lowering promise a caller nothing (tuning.md 2.20).
+#   - ONE row inserted after PCREC_MAX_SCAN_EDGES: PCREC_MIN_SCAN_CHAIN 2
+#     (`states`, `selection knee`; [OPT-5] precondition (5) -- the
+#     SHORTEST bounded counted-class run scanedge.c collapses into an edge;
+#     MEASURED 2026-09-04 by pcrec against the STEP 1.1 loop, m=2/3/4
+#     not separated from -fno-scan-edge beyond the per-round range, kept
+#     at 2 by D77 no-gap-no-move; inbox I-44 calls the m=2 cell UNSTABLE
+#     and re-measurement owed).
+#   - PCREC_MAX_SCAN_EDGES 4: VALUE UNCHANGED, `desc` REWORDED -- "since
+#     [OPT-EDGE] STEP 1 an edge costs NO compare on the emitted loop's
+#     generic path (the shared sentinel), so this is an emitted-bytes
+#     budget awaiting a measured re-choice". The bench's `scan_edges`
+#     covariate ([B32]) was built on the per-edge-compare mechanism that
+#     sentence retires; the count is still recorded (it is what the edge
+#     dispatch's BEFORE/AFTER regresses on), and iso-ts still carries 8/4
+#     at this pin (MEASURED at the re-pin, the marker reader unchanged).
+#
+# The rows this bench has already met by name, all UNCHANGED:
 # PCREC_MAX_DFA_STATES_TABLE 32000 (the ">32000 states" [SEL-1] overflow),
 # PCREC_MAX_SUBSET_ELEMS 48000000 (the K7 subset-elements budget the `\z`
 # forms overflow by -- I-22/I-23's distinct `_WHY` route),
 # PCREC_ANCHORED_MAX_STATES 4096 (the [ENG-ABS] ceiling, I-20),
 # PCREC_MAX_EMIT_BYTES 1000000 / PCREC_MAX_VM_EMIT_CODE_BYTES 500000 (the
-# [ART-SIZE] caps every artifact stamps as its effective limits),
-# PCREC_NFA_MAX_STATES 131072 (the "NFA exceeds 131072 states" refusal the
-# 65535 rung meets -- O-9/I-20, UNCHANGED at this pin per I-27 (3): [OPT-5]
-# STEP 1 acts after construction, and the caps fire DURING it).
+# [ART-SIZE] caps every artifact stamps as its effective limits -- and the
+# code cap is the wall altwide's `w-512` VM form still meets at this pin,
+# where `w-384` now fits under it as an island), PCREC_NFA_MAX_STATES
+# 131072 (the "NFA exceeds 131072 states" refusal the 65535 rung meets --
+# O-9/I-20, UNCHANGED at this pin: [OPT-EDGE] STEP 1.1 acts after
+# construction like STEP 1 did).
 #
 # WHAT THIS FILE IS FOR: nothing a RECORD carries is read from it (every
 # cap and capacity a record needs is STAMPED per artifact); it is the
@@ -103,10 +131,20 @@ VM_DEFAULT_RESUME_FRAMES	2048	frames	runtime capacity	flag	3.2	D73: default resu
 VM_DEFAULT_TRAIL_FRAMES	3072	frames	runtime capacity	flag	3.2	D73: default trail capacity paired with VM_DEFAULT_RESUME_FRAMES
 VM_MAX_AUTO_RESUME_FRAMES	2048	frames	runtime capacity	flag	3.2	[M4.6a]: clamp ceiling for the BOUNDED-depth class's exact auto-sizing under --backtrack-frames
 VM_MAX_AUTO_TRAIL_FRAMES	3072	frames	runtime capacity	flag	3.2	[M4.6a]: trail's own clamp ceiling, paired with VM_MAX_AUTO_RESUME_FRAMES
+VM_ISL_MIN_BRANCHES	2	count	selection knee	none		[ENG-ISL]: fewest literal alternatives an alternation island is built for at all; below it vm_alt's chain emits the alternation
+VM_ISL_MIN_BRANCHES_PREFIXED	4	count	selection knee	none		[ENG-ISL]: fewest literal alternatives an island that PUSHES is built for -- one whose alternatives are not prefix-free, so its candidate chain has a second entry and the artifact stays framed
+VM_ISL_MAX_WORDS	8192	count	compile budget	none		[ENG-ISL]: most literal words an alternation's subtree may enumerate to before the island declines (the bench's widest altwide rung is 4096)
+VM_ISL_MAX_BYTES	262144	bytes	compile budget	none		[ENG-ISL]: total literal bytes across every enumerated word; bounds the cross product of concatenated alternations, which is exponential in principle
+VM_ISL_MAX_DEPTH	64	levels	compile budget	none		[ENG-ISL]: alternation NESTING the enumeration may recurse through; a pattern controls this depth, so it is a bound on pcrec's own C stack (D10/R-2)
+VM_ISL_BYTES_PER_NODE	180	bytes	selection knee	none		[ENG-ISL]: measured marginal emitted-code bytes per alternation-island trie node, for the island-vs-chain size comparison
+VM_ISL_BYTES_PER_CHAIN_NODE	98	bytes	selection knee	none		[ENG-ISL]: measured marginal emitted-code bytes per AST node of the subtree vm_alt's serial chain would emit instead
+VM_ISL_SIZE_FACTOR	2	count	selection knee	none		[ENG-ISL]: how many times the chain's estimated emitted size the island may reach before it declines; on the ESTIMATOR the two populations separate at 2.60 against 4.02, and 2 is validated by the random size census (0 refused, max artifact growth 1.03x) rather than argued
+VM_INLINE_CHAIN_MAX_BYTES	4096	bytes	selection knee	flag		[CC-DIFF] STEP 2: emitted VM program bytes at or below which the entry chain is inlined into the three _in entries (rung FORWARD); above it one shared out-of-line body (rung SHARED). --vm-entry-shape=N overrides the decision outright
 PCREC_PREFIX_K_MAX	24	count	compile budget	none		src/opt/prefix_k.c: how many literal-prefix candidates the offset-skip analysis may carry
 PCREC_OFSK_MAX_SET	4	count	compile budget	none		src/opt/prefix_k.c: how many offsets the selected offset-set prefilter candidate may carry
 PCREC_MINW_MAX	1099511627776		compile budget	none		src/opt/callgraph.c: the minimum-width analysis' saturation ceiling (== PCREC_W_UNBOUNDED)
-PCREC_MAX_SCAN_EDGES	4	count	selection knee	none		[OPT-5]: how many scan edges one DFA machine may carry — src/opt/scanedge.c takes the longest chains first, src/gen/emit_dfa.c sizes its array by it, and each edge costs one compare on the emitted loop's generic path
+PCREC_MAX_SCAN_EDGES	4	count	selection knee	none		[OPT-5]: how many scan edges one DFA machine may carry — src/opt/scanedge.c takes the longest chains first, src/gen/emit_dfa.c sizes its array by it; since [OPT-EDGE] STEP 1 an edge costs NO compare on the emitted loop's generic path (the shared sentinel), so this is an emitted-bytes budget awaiting a measured re-choice
+PCREC_MIN_SCAN_CHAIN	2	states	selection knee	none		[OPT-5] precondition (5): the SHORTEST bounded counted-class run src/opt/scanedge.c will collapse into a scan edge (the unbounded self-loop is admitted at any length). MEASURED 2026-09-04 against the STEP 1.1 loop -- studies/scan_edge_ladder/run_floor.sh, 3 runs x 15 rounds, edge vs -fno-scan-edge on the same pattern: at m=2, 3 and 4 the two arms are NOT separated by more than the per-round range on either family, so D77 no-gap-no-move keeps this at 2; the only resolvable separation is m=8 nullable, edge/noedge 0.9855 median [IQR 0.0243]. The edge SIZE win is unconditional and is the standing reason to admit m=2
 RC_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_recursion.c: saturation ceiling for a (?N)/(?+N)/(?-N) recursion-call number
 BR_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_backrefs.c: saturation ceiling for a \N/\g{N} backreference number
 LA_MSG_MAX	256	bytes	identifier cap	none		src/parse/mod_lookaround.c: fixed buffer size for the §2.5/§2.7 lookaround diagnostic text

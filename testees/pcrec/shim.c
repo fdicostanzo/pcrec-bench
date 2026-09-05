@@ -70,7 +70,21 @@
  * reads THE FIELD as well as the macro, exactly as it does for
  * `RX_DFA_MATCH` / `match_form`, because the pair is what lets the adapter
  * cross-check a stamp against a field instead of trusting one spelling.
- * So the floor moves again, 15 -> 16.
+ * So the floor moves again, 15 -> 16. Abi 17-22 ([B37], pin 334fd10e,
+ * SIX abi steps in one re-pin) are the rule's first direction six times
+ * over: `RX_DFA_UNIFORM_FOLDS` (abi 17, [CC-DIFF] STEP 1),
+ * `RX_VM_ALT_ISLANDS` (abi 18, [ENG-ISL] STEP 1) and `RX_VM_ENTRY_SHAPE`
+ * / `RX_VM_PROGRAM_BYTES` (abi 22, [CC-DIFF] STEP 2) are all MACROS with
+ * no rx_info mirror (match_api.md 6.3 says so of each, on RX_DFA_TABLE's
+ * precedent -- D77, no run-time consumer), abi 19/21 ([OPT-EDGE] STEP
+ * 1/1.1) moved the emitted scan loop and no stamp, and abi 20
+ * ([DD-13b.W1.3]) changed `groups[]`'s contents on COMPOSED artifacts
+ * only -- `struct rx_info` gained NO member between abi 16 and abi 22
+ * (MEASURED at the re-pin: the abi-16 struct block of match_api.md 6 is
+ * the abi-22 one, `search_form` still the last field). So the floor
+ * STAYS 16, and an abi-16..21 artifact still links this shim and records
+ * the newer macros as "not stamped", the adapter's scope table saying at
+ * which abi each absence stops being legitimate.
  *
  * THE THREE STAMP FAMILIES THIS FILE READS, and the rule for each
  * (match_api.md 6.3's (a)/(b) split, tuning.md 3):
@@ -187,6 +201,44 @@
  *       `-fno-altcls-merge` / `-fno-altcls-factor` build (the pass checks
  *       the deny flag before touching the counter, never after, so a
  *       denial leaves no trace to tell from "nothing to do here").
+ *   (b) ACTIVITY, the scan family's scope ([B37], abi 17, [CC-DIFF] STEP
+ *       1): `RX_DFA_UNIFORM_FOLDS` -- an INTEGER 0..6, how many of this
+ *       artifact's DFA tables (`<m>_next_state` / `<m>_is_accepting` per
+ *       machine the artifact CONTAINS) had ALL-EQUAL cells and were
+ *       therefore NOT EMITTED, the accessor returning the constant.
+ *       Family (b) for `_VM_FRAMELESS`'s reason (no fold MODE upstream;
+ *       discovered while emitting) but on the DFA-scan iff -- every DFA
+ *       artifact and every VM hybrid, and no other -- exactly
+ *       `RX_DFA_TABLE`'s footing, which keeps naming the encoding
+ *       SELECTED even when every table folded (`"premultiplied"` with
+ *       folds 4 carries no table at all). A COUNT, not a mask: a
+ *       whole-artifact total with no per-A_REP axis to mix.
+ *   (b) ACTIVITY, VM-only ([B37], abi 18, [ENG-ISL] STEP 1):
+ *       `RX_VM_ALT_ISLANDS` -- a COUNT of the flat alternations the VM
+ *       lowered as an ALTERNATION ISLAND (a trie dispatch over literal
+ *       alternatives, tuning.md 2.20) rather than as `vm_alt`'s serial
+ *       resume chain. UNCONDITIONAL on every VM artifact, hybrids
+ *       included, never on a pure-DFA one; `0` spelled as readily as any
+ *       other value. `-fno-alt-island` (bit 23) is its deny control. The
+ *       first abi bump whose change reaches the VM PROGRAM region itself.
+ *   (b) ACTIVITY, VM-only ([B37], abi 22, [CC-DIFF] STEP 2 / [OPT-DIAL]
+ *       STEP 0): `RX_VM_ENTRY_SHAPE` -- a CLOSED TOKEN (`RX_ENGINE_SEL`'s
+ *       shape, for its reason), the rung the emitter TOOK for the six
+ *       entries: `plain` (one body, six framed entries), `shared` (one
+ *       out-of-line body behind three forwarding entries), `forward`
+ *       (three bodies in the three `_in` entries, three forwards),
+ *       `inline` (six bodies, what STEP 1(a) shipped) -- and
+ *       `RX_VM_PROGRAM_BYTES`, the emitted VM program size in bytes, THE
+ *       quantity AUTO compared against VM_INLINE_CHAIN_MAX_BYTES (4,096,
+ *       --list-limits) to choose the rung. Both UNCONDITIONAL on every VM
+ *       artifact, hybrids included, never on a pure-DFA one. Two stamps
+ *       and not one because four artifacts can read `plain` for four
+ *       reasons (framed, forward-illegal above the term, tiered, asked
+ *       for) and the outcome alone does not say which; `_VM_FRAMELESS`
+ *       separates the first (a framed artifact is `plain` by
+ *       construction), the size against the term the rest. Not a flags
+ *       bit (`--vm-entry-shape=N` is an ordinal option, tuning.md 2.21),
+ *       so there is no deny control and no registry axis for it.
  *
  * WHY THE MACROS ARE STILL READ THROUGH #ifdef (D81 says the EMITTER stamps
  * them unconditionally): the #ifdef is on the CONSUMER side and exists so
@@ -763,6 +815,125 @@ long long pb_altcls_merges(void) {
 long long pb_altcls_factored(void) {
 #ifdef RX_ALTCLS_FACTORED
     return (long long)RX_ALTCLS_FACTORED;
+#else
+    return 0;
+#endif
+}
+
+/* ---------------- the abi 17-22 stamps ([B37], pin 334fd10e; six abi steps) */
+
+/* [CC-DIFF] STEP 1, abi 17. `RX_DFA_UNIFORM_FOLDS`: how many of this
+ * artifact's DFA tables had ALL-EQUAL cells and were therefore NOT emitted
+ * -- the accessor returns the constant (`65535` under "premultiplied",
+ * `-1` under "indexed" for `<m>_next_state`; the accept value for
+ * `<m>_is_accepting`), keeping its state and class parameters so a call
+ * site's `subject[pos++]` is still evaluated. Two tables per machine the
+ * artifact CONTAINS (forward always; reverse unless start-pinned; anchored
+ * under RX_DFA_MATCH "unwrapped"), so 0..6. SAME SCOPE AS RX_DFA_TABLE
+ * (the scan family's iff: every DFA artifact and every VM hybrid, no
+ * other) and deliberately NOT a fall of RX_DFA_TABLE to "none": the
+ * encoding was still SELECTED and still fixes the folded constant's
+ * value, so an artifact can read `"premultiplied"` with folds 4 and carry
+ * no table at all -- which is exactly the pair of facts this bench's
+ * [B33] (3) size witnesses are about. No rx_info mirror (D77). Family (b)
+ * for RX_VM_FRAMELESS's reason: not a mode chosen upstream, a thing the
+ * emitted machine turned out to CONTAIN.
+ *
+ * Two getters behind one presence question, the shim's standing rule:
+ * `0` is a value ("every table had a varying cell") and ABSENCE is a
+ * different fact ("no DFA scan here", or "a pcrec before abi 17"). */
+int pb_has_dfa_uniform_folds(void) {
+#ifdef RX_DFA_UNIFORM_FOLDS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_dfa_uniform_folds(void) {
+#ifdef RX_DFA_UNIFORM_FOLDS
+    return (long long)RX_DFA_UNIFORM_FOLDS;
+#else
+    return 0;
+#endif
+}
+
+/* [ENG-ISL] STEP 1, abi 18. `RX_VM_ALT_ISLANDS`: how many of this
+ * artifact's flat alternations the VM lowered as an ALTERNATION ISLAND --
+ * a trie over the alternatives' literal bytes (a byte compare at a
+ * one-child node, a `switch` at a many-child node, one try site per node
+ * where an alternative ends) -- rather than as `vm_alt`'s serial resume
+ * chain of one frame per untried branch (tuning.md 2.20). Selected PER
+ * ALTERNATION on the LANGUAGE (a finite set of literal byte strings within
+ * the emitter's enumeration budget), so a COUNT and not a boolean: a
+ * pattern with two alternations can take it for one and decline the
+ * other, and "did it" would lose which. UNCONDITIONAL on every VM
+ * artifact, hybrids included, never on a pure-DFA one (the DFA route
+ * determinizes the same trie whether or not anyone names it). No rx_info
+ * mirror. `-fno-alt-island` (PCREC_NO_ALT_ISLAND, bit 23) is the deny
+ * control that reaches 0 on a pattern that would otherwise take it. */
+int pb_has_vm_alt_islands(void) {
+#ifdef RX_VM_ALT_ISLANDS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_vm_alt_islands(void) {
+#ifdef RX_VM_ALT_ISLANDS
+    return (long long)RX_VM_ALT_ISLANDS;
+#else
+    return 0;
+#endif
+}
+
+/* [CC-DIFF] STEP 2 + [OPT-DIAL] STEP 0, abi 22. `RX_VM_ENTRY_SHAPE`: the
+ * rung the emitter TOOK for this artifact's six entries -- "plain" (one
+ * body, six framed entries), "shared" (one out-of-line `noinline` body
+ * behind three forwarding un-suffixed entries), "forward" (three bodies
+ * in the three `_in` entries, three forwards; no canary anywhere) or
+ * "inline" (six bodies, what STEP 1(a) shipped) -- a CLOSED TOKEN whose
+ * value set is fixed at four by the emitter's own enum (tuning.md 2.21).
+ * And `RX_VM_PROGRAM_BYTES`: the artifact's emitted VM program size in
+ * bytes, THE quantity AUTO compared against VM_INLINE_CHAIN_MAX_BYTES
+ * (4,096, --list-limits) when it chose the rung -- at or below it
+ * `forward` (or `inline` where a forward rung is illegal: the artifact
+ * must provably never WRITE its working storage -- no RX_PUSH, no linked
+ * call, no RX_SET), above it `shared` (or `plain`). A FRAMED artifact
+ * (RX_VM_FRAMELESS 0) is `plain` whatever is asked. Both UNCONDITIONAL on
+ * every VM artifact, hybrids included, never on a pure-DFA one; both
+ * SCALARS, no rx_info mirror, family (b). Answer-identical across every
+ * value: what moves is the entry scaffolding above `goto <prefix>_L0;`.
+ *
+ * WHY TWO MACROS AND NOT ONE (match_api.md 6.3): four artifacts can stamp
+ * "plain" for four different reasons -- framed, forward-illegal above
+ * the term, tiered, or asked for -- and the shape alone does not
+ * distinguish them; the program size against the stamped limit does. A
+ * stamp whose outcome is visible and whose input is not is a fact a
+ * reader can see and cannot CHECK.
+ *
+ * Read behind ONE presence question for the pair (one emitter call lands
+ * both) -- the same shape as pb_altcls_*. */
+int pb_has_vm_entry_shape(void) {
+#ifdef RX_VM_ENTRY_SHAPE
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_vm_entry_shape(void) {
+#ifdef RX_VM_ENTRY_SHAPE
+    return RX_VM_ENTRY_SHAPE;
+#else
+    return (const char *)0;
+#endif
+}
+
+long long pb_vm_program_bytes(void) {
+#ifdef RX_VM_PROGRAM_BYTES
+    return (long long)RX_VM_PROGRAM_BYTES;
 #else
     return 0;
 #endif

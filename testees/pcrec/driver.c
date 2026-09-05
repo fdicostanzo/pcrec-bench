@@ -49,7 +49,8 @@
  * WHAT IS PRINTED FOR THE MECHANISM STAMPS, and the rule none of it breaks
  * (pcrec I-5): NOTHING IS EVER INFERRED FROM A STAMP'S ABSENCE. Each of
  * `info dfa_scan / dfa_prefilter / dfa_table / dfa_prefilter_offsets /
- * dfa_scan_edge / dfa_start / dfa_match / vm_frameless / altcls_merges /
+ * dfa_scan_edge / dfa_start / dfa_match / dfa_uniform_folds / vm_frameless /
+ * vm_alt_islands / vm_entry_shape / vm_program_bytes / altcls_merges /
  * altcls_factored / fast_frames /
  * fast_trail / unroll_k /
  * unroll_k_why / max_emit_code_bytes / max_emit_bytes / engine_sel /
@@ -77,7 +78,17 @@
  * they are printed together, behind one presence check, whenever the
  * artifact stamps them -- in practice every artifact this driver will
  * ever load, since the macros predate this pin by a long margin and only
- * the READ is new here.
+ * the READ is new here. [B37] (pin 334fd10e, abi 22 -- six abi steps in
+ * one re-pin) adds FOUR more MACRO lines on the same terms, none with an
+ * rx_info mirror and so none cross-checked against a field: `info
+ * dfa_uniform_folds` (abi 17, inside the DFA-scan guard -- RX_DFA_TABLE's
+ * own scope), `info vm_alt_islands` (abi 18) and the PAIR `info
+ * vm_entry_shape` / `info vm_program_bytes` (abi 22), the last three
+ * VM-only beside `vm_frameless`. Each is printed behind its own presence
+ * check, so a `0`, an `"inline"` or a byte count is a VALUE the adapter
+ * read and an absent line is "not stamped" and nothing more. `struct
+ * rx_info` gained no member across those six steps, which is why the
+ * floor message below still ends at abi 16.
  */
 
 #define _GNU_SOURCE
@@ -133,6 +144,13 @@ static int       (*pb_vm_frameless)(void);
 static int       (*pb_has_altcls)(void);
 static long long (*pb_altcls_merges)(void);
 static long long (*pb_altcls_factored)(void);
+static int       (*pb_has_dfa_uniform_folds)(void);
+static long long (*pb_dfa_uniform_folds)(void);
+static int       (*pb_has_vm_alt_islands)(void);
+static long long (*pb_vm_alt_islands)(void);
+static int       (*pb_has_vm_entry_shape)(void);
+static const char *(*pb_vm_entry_shape)(void);
+static long long (*pb_vm_program_bytes)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -346,6 +364,10 @@ int main(int argc, char **argv) {
     SYM(pb_dfa_start); SYM(pb_info_search_form);
     SYM(pb_has_vm_frameless); SYM(pb_vm_frameless);
     SYM(pb_has_altcls); SYM(pb_altcls_merges); SYM(pb_altcls_factored);
+    SYM(pb_has_dfa_uniform_folds); SYM(pb_dfa_uniform_folds);
+    SYM(pb_has_vm_alt_islands); SYM(pb_vm_alt_islands);
+    SYM(pb_has_vm_entry_shape); SYM(pb_vm_entry_shape);
+    SYM(pb_vm_program_bytes);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -450,6 +472,13 @@ int main(int argc, char **argv) {
          * the other FIELD lines below, outside this guard, so its
          * presence is read from a VALUE on every artifact. */
         if (dst) printf("info\tdfa_start\t%s\n", dst);
+        /* [CC-DIFF] STEP 1, abi 17 ([B37]): the fold COUNT, on
+         * RX_DFA_TABLE's own scope (every artifact that CONTAINS a DFA
+         * scan) -- an INTEGER whose 0 is a value ("every table had a
+         * varying cell"), so it is printed behind its own presence
+         * question rather than tested for truth. */
+        if (pb_has_dfa_uniform_folds())
+            printf("info\tdfa_uniform_folds\t%lld\n", pb_dfa_uniform_folds());
     }
 
     /* [ENG-ABS], abi 10: the `_match` ENTRY's form. NOT gated on
@@ -548,6 +577,24 @@ int main(int argc, char **argv) {
      * which is why the shim exports the presence question separately. */
     if (pb_has_vm_frameless())
         printf("info\tvm_frameless\t%d\n", pb_vm_frameless());
+
+    /* [ENG-ISL] STEP 1, abi 18 ([B37]): how many flat alternations this
+     * VM program lowered as an alternation ISLAND (a trie) rather than
+     * as vm_alt's resume chain. VM-only (hybrids included), unconditional
+     * there, absent on every DFA artifact -- vm_frameless's scope, printed
+     * on its terms: the VALUE 0 is "no alternation qualified" (or
+     * -fno-alt-island), the ABSENCE "not a VM artifact". */
+    if (pb_has_vm_alt_islands())
+        printf("info\tvm_alt_islands\t%lld\n", pb_vm_alt_islands());
+
+    /* [CC-DIFF] STEP 2, abi 22 ([B37]): the entry-chain rung the emitter
+     * TOOK (a closed token) and the program size AUTO compared against
+     * VM_INLINE_CHAIN_MAX_BYTES to choose it. Printed together behind
+     * one presence check (one emitter call lands both), VM-only. */
+    if (pb_has_vm_entry_shape()) {
+        printf("info\tvm_entry_shape\t%s\n", pb_vm_entry_shape());
+        printf("info\tvm_program_bytes\t%lld\n", pb_vm_program_bytes());
+    }
 
     /* [OPT-ALTCLS], pcrec I-39: COMMON to both engines, unconditional
      * since long before this pin -- this shim only started reading it at

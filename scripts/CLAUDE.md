@@ -94,6 +94,14 @@ rule needs:
 Re-derive this table after any window that measures a new set or a new
 testee family; the derivation is eight lines over `store/index.tsv`.
 
+**`pcrec-auto-noisland` ([B37], 2026-09-05; not yet measured).** Estimate
+from its sibling `pcrec-auto`: the same route on every set (the island is
+a VM-program lowering, so the DFA-selected cells are the same artifact but
+for three stamp lines), and on altwide's VM-selected forms the chain
+program is 1.1-1.4x the island's in code bytes (w-256 341,301 vs 292,043 B
+at the same pin) with gcc superlinear in it -- budget the `auto` figure
+plus a third on altwide, the `auto` figure elsewhere.
+
 ## Maintenance
 
 Update this file when a script is added, removed, or changes role.

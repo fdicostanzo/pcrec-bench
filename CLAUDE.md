@@ -196,8 +196,32 @@ lookaround witnesses) and — a bench gap closed, I-39 — the ALTCLS pair,
 which reads the ×8.87 order effect's mechanism: w-256 vs srt-256 FACTORED 11
 vs 57 with the DFA artifact byte-identical; `-fno-start-pinned` as a deny
 control; registries 72/24 · 50 · 45; reporter v13 (`start=`, `frameless=`);
-make check 4/72/0 · 270/270 · 68+7. NOT YET MEASURED at 288d505: the
-bounded@0.3 STEP 2 AFTER (tonight, read against ledger 2026-09-02 §10). Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
+make check 4/72/0 · 270/270 · 68+7. The bounded@0.3 STEP 2 AFTER RAN
+2026-09-04/05 (12/12 at attempt 1, store 134; lane s2read reads it).
+2026-09-05: [B37] RE-PINNED to **334fd10e (abi 22)** — SIX abi steps
+(17-22) in one adapter change: the shim reads `RX_DFA_UNIFORM_FOLDS`
+([CC-DIFF] STEP 1, the scan family's iff: 4 on a pinned unwrapped rung, 2
+on the pinned search-filter 16384 rung, 6 under `-fno-start-pinned`; a
+folds-4 artifact's -O2 object has NO .rodata), `RX_VM_ALT_ISLANDS`
+([ENG-ISL] STEP 1: 1 on every altwide VM form, 2 on level-context's [SEL-1]
+hybrid under auto) and the abi-22 pair `RX_VM_ENTRY_SHAPE` /
+`RX_VM_PROGRAM_BYTES` (all four tokens witnessed; AUTO's 4,096 B term
+asserted by value); abi 19/21 (the edge dispatch) and 20 (.rxt
+composition) stamp nothing — iso-ts keeps 8/4 edges; NO rx_info field
+across the six steps, the floor STAYS 16; `pcrec-auto-noisland`
+(`-fno-alt-island`, bit 23) as the fourteenth pinned testee — the deny
+control moves FOUR stamps on `foo|bar` (islands 1→0, frameless 1→0, shape
+forward→plain); registries 72/24 → 74/25 (`alt-island`) · 50 · 45 → 55
+(nine VM_ISL_*/VM_INLINE_CHAIN_MAX_BYTES + PCREC_MIN_SCAN_CHAIN); the
+altwide ORDER PAIR w-256/srt-256 IDENTICAL on the VM route (292,043 B each;
+288d505: 341,201 vs 302,047), I-43's island/chain ratios 0.856/0.812/0.764
+reproduced to three decimals, the VM refusal wall moved to 384 < w ≤ 512
+(w-384 compiles as an island; refused again under the denial) while the
+DFA wall at w-384 is unmoved; reporter v14 (`folds=`, `islands=`,
+`shape=<token> (prog: N B)`); make check 4/72/0 · 305/305 · 70+7. NOT YET MEASURED
+at 334fd10e: the deny-flag-split AFTER (auto vs noisland on altwide, auto
+vs noedge on loglines, the [B33] (3) fold cells, I-37's gcc arm for
+O-15 (v)). Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
 EVENING [B32] landed as two lanes: `pcrec-auto-noedge` + the `scan_edges` /
 `scan_edges_match` covariate pairs on every pcrec compile row (iso-ts 8/4 by
 value) + `CELL_CAP` in the window scripts + the cell-length table (b32adp),
@@ -298,9 +322,13 @@ bindings) live here, vendored or system, pinned either way.
   also carries the `scan_edges` / `scan_edges_match` covariate pairs) —
   `pcrec-auto-align64` (`cflags = ["-falign-functions=64"]`, [B35]; pcrec
   I-39 (v)'s layout probe — OUR OWN phase-2 flags, never passed to pcrec) —
-  at a pinned commit — **288d505, abi 16** ([B34], 2026-09-03: [OPT-5] STEP 2;
-  the shim reads `RX_DFA_START`, `rx_info.search_form`, `RX_VM_FRAMELESS`
-  and the ALTCLS pair; floor 16) — with `list_axes.tsv`,
+  and `pcrec-auto-noisland` (`-fno-alt-island`, [B37]: the [ENG-ISL]
+  alternation island denied at the same pin, the island's BEFORE on
+  altwide) — at a pinned commit — **334fd10e, abi 22** ([B37], 2026-09-05:
+  SIX abi steps absorbed in one adapter change — the shim reads
+  `RX_DFA_UNIFORM_FOLDS` (abi 17), `RX_VM_ALT_ISLANDS` (abi 18),
+  `RX_VM_ENTRY_SHAPE` + `RX_VM_PROGRAM_BYTES` (abi 22); no rx_info field
+  moved, the floor STAYS 16; registries 74/25 · 50 · 55) — with `list_axes.tsv`,
   `list_definitions.tsv` and
   `list_limits.tsv`, the pin's `--list-axes` / `--list-definitions` /
   `--list-limits` registry surfaces archived
@@ -329,7 +357,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 270 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 305 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -478,7 +506,27 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # guards grown to the LIVE cap, altwide's patterns
                         # CARRYING canonical_text, the omission arm on a
                         # synthetic cap+1 pattern
-                        # (~15 min; needs libpcre2-8-0 and a C compiler)
+                        # and ([B37], pin 334fd10e, abi 22 -- six abi steps)
+                        # the four abi 17-22 pairs BY VALUE on every kind:
+                        # dfa_uniform_folds 0/2/4 (6 on the -fno-start-pinned
+                        # row) with a folds-4 artifact's -O2 object carrying
+                        # NO .rodata section against the folds-0 control's;
+                        # vm_alt_islands 0/1/2 (the island on foo|bar, the
+                        # prefix-bearing decline on fo|foo, TWO islands on
+                        # level-context's [SEL-1] hybrid under auto) with
+                        # -fno-alt-island as a FOUR-pair deny control
+                        # (islands, frameless, shape, program bytes);
+                        # vm_entry_shape at ALL FOUR tokens + vm_program_bytes
+                        # with the AUTO rule asserted against the archived
+                        # VM_INLINE_CHAIN_MAX_BYTES; the altwide ORDER PAIR
+                        # IDENTICAL on the VM route (292,043 B each), I-43's
+                        # island/chain ratios to three decimals against the
+                        # same pin's denied arm, the refusal boundary BY ROUTE
+                        # (DFA wall at w-384 unmoved; VM wall moved to
+                        # 384<w<=512: w-384 compiles as an island, w-512 and
+                        # the denied w-384 refuse), iso-ts 8/4 edges through
+                        # the abi-19/21 dispatch, registries 74/25 · 50 · 55
+                        # (~20 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets
 
