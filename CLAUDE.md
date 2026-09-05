@@ -218,7 +218,7 @@ altwide ORDER PAIR w-256/srt-256 IDENTICAL on the VM route (292,043 B each;
 reproduced to three decimals, the VM refusal wall moved to 384 < w ≤ 512
 (w-384 compiles as an island; refused again under the denial) while the
 DFA wall at w-384 is unmoved; reporter v14 (`folds=`, `islands=`,
-`shape=<token> (prog: N B)`); make check <<CHECKCOUNT>>. NOT YET MEASURED
+`shape=<token> (prog: N B)`); make check 4/72/0 · 305/305 · 70+7. NOT YET MEASURED
 at 334fd10e: the deny-flag-split AFTER (auto vs noisland on altwide, auto
 vs noedge on loglines, the [B33] (3) fold cells, I-37's gcc arm for
 O-15 (v)). Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
@@ -357,7 +357,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 270 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 305 checks: for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
@@ -506,7 +506,27 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # guards grown to the LIVE cap, altwide's patterns
                         # CARRYING canonical_text, the omission arm on a
                         # synthetic cap+1 pattern
-                        # (~15 min; needs libpcre2-8-0 and a C compiler)
+                        # and ([B37], pin 334fd10e, abi 22 -- six abi steps)
+                        # the four abi 17-22 pairs BY VALUE on every kind:
+                        # dfa_uniform_folds 0/2/4 (6 on the -fno-start-pinned
+                        # row) with a folds-4 artifact's -O2 object carrying
+                        # NO .rodata section against the folds-0 control's;
+                        # vm_alt_islands 0/1/2 (the island on foo|bar, the
+                        # prefix-bearing decline on fo|foo, TWO islands on
+                        # level-context's [SEL-1] hybrid under auto) with
+                        # -fno-alt-island as a FOUR-pair deny control
+                        # (islands, frameless, shape, program bytes);
+                        # vm_entry_shape at ALL FOUR tokens + vm_program_bytes
+                        # with the AUTO rule asserted against the archived
+                        # VM_INLINE_CHAIN_MAX_BYTES; the altwide ORDER PAIR
+                        # IDENTICAL on the VM route (292,043 B each), I-43's
+                        # island/chain ratios to three decimals against the
+                        # same pin's denied arm, the refusal boundary BY ROUTE
+                        # (DFA wall at w-384 unmoved; VM wall moved to
+                        # 384<w<=512: w-384 compiles as an island, w-512 and
+                        # the denied w-384 refuse), iso-ts 8/4 edges through
+                        # the abi-19/21 dispatch, registries 74/25 · 50 · 55
+                        # (~20 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
     make help           # list the targets
 
