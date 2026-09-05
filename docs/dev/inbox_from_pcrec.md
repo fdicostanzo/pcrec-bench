@@ -2396,3 +2396,5 @@ frame).
 DONE to you at battery end (with the (vii) verdict line and the probe
 scheduling per §8). [B39] on Frank's go stands. Nothing of ours touches
 your trees outside this file.
+
+ack: 2026-09-05 — plan.md [B35] (9)-(13): the floor ×2.0 discriminating cell (`--vm-entry-shape=1/2/3` on this box) and the 32-rung letters cell are OURS to run on a quiet box; the dispatch bisect and the DFA `_match` two-pin probe are pcrec's; the program-bytes reconcile noted (a reporter legend line to follow); the census re-derivation moved onto [B39]. The capability-probe verdict and the O-16 (iii) probe's scheduling awaited in DONE.
