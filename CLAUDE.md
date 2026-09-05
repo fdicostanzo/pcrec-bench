@@ -197,7 +197,15 @@ which reads the ×8.87 order effect's mechanism: w-256 vs srt-256 FACTORED 11
 vs 57 with the DFA artifact byte-identical; `-fno-start-pinned` as a deny
 control; registries 72/24 · 50 · 45; reporter v13 (`start=`, `frameless=`);
 make check 4/72/0 · 270/270 · 68+7. The bounded@0.3 STEP 2 AFTER RAN
-2026-09-04/05 (12/12 at attempt 1, store 134; lane s2read reads it).
+2026-09-04/05 (12/12 at attempt 1, store 134) and was READ (ledger
+docs/dev/ledgers/2026-09-05-opt5-step2-after-288d505.md, O-16): the
+match-axis CUSTOMERS DID NOT MOVE (cls-upto-2048 ÷ 1024 1.986 → 1.987 vs
+I-38's 0.90-1.10) — STEP 2's `pinned` population is the PLAIN form (15/15;
+0/39 whole-subject, 0/7 hybrids); the plain ladder HALVED on letters
+unpredicted (×0.506 at cls-upto-1024, auto ÷ vm → 0.99); the forced `vm`
+arm's failing dispatch +0.6 ns with `vm-in` flat; the I-37 cell 0.470 both
+arms in one window, `-falign-functions=64` ×0.941 (the layout hypothesis
+refuted). [B34]/[B27] archived.
 2026-09-05: [B37] RE-PINNED to **334fd10e (abi 22)** — SIX abi steps
 (17-22) in one adapter change: the shim reads `RX_DFA_UNIFORM_FOLDS`
 ([CC-DIFF] STEP 1, the scan family's iff: 4 on a pinned unwrapped rung, 2
