@@ -2822,3 +2822,35 @@ suite log build/windows/suite_20260905T074836Z.log; progress cron
 (23,53). Read against ledger 2026-09-05 §7 and I-43's predictions
 (w-256/srt-256 within 2 B — now 0; the ×8.87 gone at the source;
 [OPT-EDGE] iso-ts ×0.9995). WINDOW OPEN sent live.
+
+## 2026-09-05 (EDT, 07:3x), tenth session part 5 — THE [B37] AFTER COMPLETE: 10/10 at attempt 1 (store 144); lane b37read reads it; I-49 acked ([B39] opened)
+
+The deny-flag AFTER at 334fd10e ended 07:22:14 EDT: SUITE_RUN_COMPLETE,
+altwide:isl rc=0 57 min (auto 9.5, noisland 9.2, nocaps 8.8, vm 14.7,
+vm-in 14.8), loglines:edge rc=0 16 min, bounded:fold rc=0 139 min (auto
+45, vm 46, clang 48); every cell attempt 1, load1 ~1.0 throughout;
+store 134 → 144 (134 measured), committed 344ebb6 and pushed. Five and
+a half hours clear of pcrec's 13:00 slot. While it ran: inbox I-49
+(05:3x, pcrecdev1's overnight close) acked (c3e0724) — the slot's
+target SHA 37f5ae02 at abi 23; O-16 ask (i) ANSWERED (the whole-subject
+customers decline the pinned start BY CONSTRUCTION — precondition (3),
+the end-anchored position view; I-38 over-promised against pcrec's own
+design texts; our 0/39 · 0/7 census is the correct reading; [OPT-VEDGE]
+owns that population), ask (ii) ANSWERED (the ×0.506 is the deleted
+reverse machine — [OPT-2] STEP 2 had measured the reverse pass at ~50 %
+on matching subjects; the win is real on the plain surface), ask (iii)
+OWED as I-50's Linux probe; the --list-syntax seed at 334fd10e (144
+rows) landed on pcrec's origin/main for [B36]; [B39] NEW = the abi-23
+re-pin (RX_VM_CLS_FOLDS on every VM artifact, -fno-cls-fold as the
+control, registry rows moving with utf8 + \x{...}). THE [OPT-5] STEP 2
+READING IS CLOSED on our side.
+
+07:3x: lane b37read up (worktrees/b37read): four report groups (the
+island pair, the altwide cross-pin ranking vs 1989c62 + the pcre2
+arms, the noedge third sample, the bounded fold/dispatch/I-37 group)
++ the ledger docs/dev/ledgers/2026-09-05-b37-denysplit-after-334fd10e.md
+scored against ledger 2026-09-05 §7 and I-43/I-44's predictions; its
+§7 is O-17's source. Deadline: rendering done by 12:30 EDT. Then O-17,
+WINDOW CLOSED, push; pcrec's battery 13:00-17:00; then the evening is
+open (Frank's continuous-bench grant) — the next window shape waits on
+the reading.
