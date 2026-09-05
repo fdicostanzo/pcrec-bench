@@ -84,7 +84,15 @@
  * the abi-22 one, `search_form` still the last field). So the floor
  * STAYS 16, and an abi-16..21 artifact still links this shim and records
  * the newer macros as "not stamped", the adapter's scope table saying at
- * which abi each absence stops being legitimate.
+ * which abi each absence stops being legitimate. Abi 23 ([B39], pin
+ * 37f5ae02, [FORM-CHAR] STEP 1 -- PREPARED FROM SOURCE, the build
+ * pending) is the first direction a seventh time: `RX_VM_CLS_FOLDS` is a
+ * MACRO with no rx_info mirror ("It has no `rx_info` mirror, on the same
+ * precedent and for the same reason", match_api.md 6.3's own entry), and
+ * the emitter's abi-bump note at the `.abi = 23` write site
+ * (src/gen/emit_dfa.c, "[FORM-CHAR] STEP 1 abi 22 -> 23") says in so
+ * many words "No struct offset moves, no `rx_info` member is added".
+ * `search_form` is still the last field. The floor STAYS 16.
  *
  * THE THREE STAMP FAMILIES THIS FILE READS, and the rule for each
  * (match_api.md 6.3's (a)/(b) split, tuning.md 3):
@@ -239,6 +247,26 @@
  *       construction), the size against the term the rest. Not a flags
  *       bit (`--vm-entry-shape=N` is an ordinal option, tuning.md 2.21),
  *       so there is no deny control and no registry axis for it.
+ *   (b) ACTIVITY, VM-only ([B39], abi 23, [FORM-CHAR] STEP 1; PREPARED
+ *       FROM SOURCE at 37f5ae02, the build pending): `RX_VM_CLS_FOLDS` --
+ *       a COUNT of this artifact's VM class-pool entries whose membership
+ *       test takes the ASCII-FOLD shape: a two-member set {B, B|0x20}
+ *       with both members letters (what D23's parse-time caseless
+ *       folding makes of every `(?i)` letter), tested as `(byte | 0x20)
+ *       == lower` with NO 32-byte `<prefix>_class_bitmap<N>` table
+ *       emitted for it (tuning.md 2.22; `vm_cls_shape` in
+ *       src/gen/emit_vm.c is the one derivation the test emitter, the
+ *       table emitter and this stamp all read). UNCONDITIONAL on every
+ *       VM artifact, hybrids included, never on a pure-DFA one -- the
+ *       DFA route's class machinery never consults `vm_cls_shape` --
+ *       `0` spelled as readily as any other value. `-fno-cls-fold`
+ *       (PCREC_NO_CLS_FOLD, bit 24; --list-axes `cls-fold`) is its deny
+ *       control, and the flag joins emit_info_def's strategy_denials
+ *       MASK on pcrec's side (the bit is masked OUT of rx_info.flags by
+ *       the emitter, exactly as bit 23 is), so an artifact with no fold
+ *       pair is byte-identical under the flag and nothing in this file
+ *       has to mask anything. The second change ever to move the VM
+ *       PROGRAM region (the island was the first).
  *
  * WHY THE MACROS ARE STILL READ THROUGH #ifdef (D81 says the EMITTER stamps
  * them unconditionally): the #ifdef is on the CONSUMER side and exists so
@@ -934,6 +962,54 @@ const char *pb_vm_entry_shape(void) {
 long long pb_vm_program_bytes(void) {
 #ifdef RX_VM_PROGRAM_BYTES
     return (long long)RX_VM_PROGRAM_BYTES;
+#else
+    return 0;
+#endif
+}
+
+/* ---------------- the abi 23 stamp ([B39], pin 37f5ae02; [FORM-CHAR] STEP 1)
+ * PREPARED FROM SOURCE (lane b39prep, 2026-09-05): the macro name, its
+ * scope and its deny flag are read from pcrec's src/gen/emit_vm.c,
+ * docs/spec/match_api.md 6.3 and docs/spec/tuning.md 2.22 at the SHA; the
+ * build + `make check` are what prove the read on a real artifact. */
+
+/* [FORM-CHAR] STEP 1, abi 23. `RX_VM_CLS_FOLDS`: how many of this
+ * artifact's VM class-pool entries take the ASCII-FOLD membership-test
+ * shape -- a two-member set {B, B|0x20}, both letters (exactly what D23's
+ * parse-time caseless folding produces; `vm_cls_shape`'s recognizer is
+ * `count == 2 && (lo ^ hi) == 0x20 && lo >= 'A' && lo <= 'Z'`), tested as
+ * `(byte | 0x20) == lower` -- one or-mask and one compare, which gcc -O2
+ * compiles to mask + compare + sete with NO LOAD -- with the class's
+ * 32-byte `<prefix>_class_bitmap<N>` table NOT emitted at all. The count
+ * is `vm_cls_shape`'s own aggregation over the FINAL pool (the program
+ * was emitted before the stamp line runs), and distinct pool entries are
+ * distinct sets, so distinct fold classes carry distinct compare
+ * constants: a structural check can hold this number to the artifact's
+ * own text. UNCONDITIONAL on every VM artifact, hybrids included, never
+ * on a pure-DFA one (match_api.md 6.3: "the DFA route's class machinery
+ * ... never consults vm_cls_shape, so there is nothing there to
+ * report"); a COUNT and not a boolean on RX_VM_ALT_ISLANDS' precedent
+ * (the shape is selected PER POOL CLASS, so a pattern mixes fold-pair
+ * positions with bitmap classes). No rx_info mirror (D77). Family (b):
+ * not a mode chosen upstream, a thing the emitted program turned out to
+ * CONTAIN. `-fno-cls-fold` (bit 24) is the deny control that reaches 0
+ * on a pattern that would otherwise take it -- and restores the tables.
+ *
+ * Two getters behind one presence question, the shim's standing rule:
+ * `0` is a value ("no pool class was a fold pair", or a denied build) and
+ * ABSENCE is a different fact ("not a VM artifact", or a pcrec before
+ * abi 23). */
+int pb_has_vm_cls_folds(void) {
+#ifdef RX_VM_CLS_FOLDS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_vm_cls_folds(void) {
+#ifdef RX_VM_CLS_FOLDS
+    return (long long)RX_VM_CLS_FOLDS;
 #else
     return 0;
 #endif
