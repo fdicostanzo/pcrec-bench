@@ -838,6 +838,44 @@ so nothing under `reports/` changes until the [B37] window has run.
   three clauses print on none of them, and the only line that would move
   is the version stamp itself. The regeneration belongs with the window
   that first writes an abi-22 record.
+
+## The reporter, [B39] (2026-09-05) -- REPORTER_VERSION v15, one legend clause + the I-50 1 legend fix
+
+Plan row [B39], the re-pin to pcrec 37f5ae02 (abi 23, [FORM-CHAR] STEP 1)
+-- PREPARED by lane b39prep from pcrec's source at the SHA, the build and
+the window pending. One new stamp on the VM scope, one wording fix owed
+from pcrec's I-50 1, both additive and conditional; no record in `store/`
+carries the pair and no committed report is regenerated.
+
+* **`clsfolds=<N>`**, `RX_VM_CLS_FOLDS` ([FORM-CHAR] STEP 1, abi 23) -- how
+  many of the artifact's VM class-pool entries take the ASCII-FOLD
+  membership-test shape: a two-member set differing only in bit 0x20,
+  both letters (what `(?i)` makes of a letter at parse time, D23), tested
+  as `(byte | 0x20) == lower` with its 32-byte bitmap table NOT emitted.
+  VM-only, hybrids included (`islands=`/`shape=`'s scope), rendered right
+  after `shape=`. A legend clause and not a column for `folds=`'s reason:
+  it moves no answer, it explains a SIZE -- a fold-bearing VM artifact is
+  smaller by one 32-byte table per fold class and by the test text at
+  every site (pcrec's witness: __TEXT -31 %) -- and a row's `clsfolds=26`
+  beside its `-fno-cls-fold` sibling's `clsfolds=0` is the pair the
+  abi-23 AFTER is read on (altwide `ci-256` on the forced-VM route; under
+  `auto` the pattern is a DFA and the clause does not print). `0` is a
+  real value (no pool class was a fold pair, or the denial) and PRESENCE
+  gates the clause.
+* **The `prog: N B` note** (pcrec I-50 1, the program-bytes reconcile
+  VERIFIED TO THE BYTE at 334fd10e): `RX_VM_PROGRAM_BYTES` is the raw
+  length of the VM emitter's program scratch buffer -- the PROGRAM REGION
+  ONLY, with its COMMENTS INCLUDED (the island trie writes a per-node role
+  comment on every interior node) -- while the two `code bytes` columns
+  and `--max-emit-code-bytes` count the WHOLE .c+.h with every comment
+  EXCLUDED. Different population AND different comment policy, so the
+  stamp can exceed the code bytes (w-256: 305,686 vs 292,043) and neither
+  number is wrong; for cap reasoning use the code bytes. The `shape=`
+  legend note now says so where a reader of the two numbers will meet it.
+* `REPORTER_VERSION` bumps to `v15 (2026-09-05)`. NO committed report is
+  regenerated: no stored record carries `vm_cls_folds`, and the reworded
+  note prints only under a table whose rows carry `shape=`, which none of
+  today's store does either.
 """
 
 from __future__ import annotations
@@ -856,7 +894,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v14 (2026-09-05)"
+REPORTER_VERSION = "v15 (2026-09-05)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -1798,13 +1836,51 @@ def _vm_entry_shape_display(engine_metadata):
     both in one emitter call; the adapter refuses one without the other),
     so the parenthetical is not conditional the way `edges=`'s is.
     Returns None on every DFA artifact and every record from before
-    abi 22."""
+    abi 22.
+
+    WHAT THE NUMBER IS ([B39]; pcrec I-50 1, verified to the byte at
+    334fd10e): the raw length of the VM emitter's program scratch buffer
+    -- the PROGRAM REGION ONLY, COMMENTS INCLUDED (the island trie writes
+    a per-node role comment on every interior node, so a wide
+    alternation's program region carries most of the file's comment
+    mass). The `code bytes` columns and `--max-emit-code-bytes` are the
+    WHOLE .c+.h with every comment EXCLUDED: a different population and a
+    different comment policy, which is how w-256 stamps 305,686 against
+    292,043 code bytes with neither number wrong."""
     em = engine_metadata or {}
     shape = em.get("vm_entry_shape")
     if shape is None:
         return None
     n = em.get("vm_program_bytes")
     return f"{shape}" if n is None else f"{shape} (prog: {n:,} B)"
+
+
+def _vm_cls_folds_display(engine_metadata):
+    """[B39]: `clsfolds=<N>`, pcrec's `RX_VM_CLS_FOLDS` ([FORM-CHAR] STEP 1,
+    abi 23+) -- how many of the artifact's VM class-pool entries take the
+    ASCII-FOLD membership-test shape: a two-member set {B, B|0x20} with
+    both members letters -- exactly what D23's parse-time caseless folding
+    makes of every `(?i)` letter -- tested as `(byte | 0x20) == lower` (one
+    or-mask and one compare, no load) with the class's 32-byte bitmap
+    table NOT emitted (tuning.md 2.22).
+
+    The reason a reader wants it: the fold is a SIZE change on exactly the
+    `(?i)` population (one 32-byte table per fold class gone, plus the
+    test text at every site) and a row's `clsfolds=26` beside its
+    `-fno-cls-fold` sibling's `clsfolds=0` is the pair the abi-23 AFTER is
+    read on. VM-only, hybrids included (`islands=`/`shape=`'s scope): the
+    DFA route's class machinery never consults the fold, so an `auto` row
+    that selected the DFA prints nothing here even on a `(?i)` pattern --
+    which is the honest reading of "the fold did not reach this cell". A
+    COUNT, since the shape is chosen per pool class and a pattern mixes
+    fold pairs with bitmap classes. `0` is a real, recorded value (no pool
+    class was a fold pair, or the denial), so PRESENCE gates the clause.
+    Answer-identical either way: the fold compare and the bitmap read are
+    the same predicate over the pair's two bytes. Returns None on every
+    DFA artifact and every record from before abi 23."""
+    em = engine_metadata or {}
+    n = em.get("vm_cls_folds")
+    return None if n is None else str(n)
 
 
 def _fast_tier_display(engine_metadata):
@@ -2031,6 +2107,7 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
     folds = _dfa_uniform_folds_display(engine_metadata)
     islands = _vm_alt_islands_display(engine_metadata)
     shape = _vm_entry_shape_display(engine_metadata)
+    clsfolds = _vm_cls_folds_display(engine_metadata)
     line = (f"- {label}: engine={display}, "
             + (f"sel={sel}, " if sel is not None else "")
             + f"entry={stamps['entry']}, "
@@ -2045,6 +2122,7 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
             + (f"frameless={frameless}, " if frameless is not None else "")
             + (f"islands={islands}, " if islands is not None else "")
             + (f"shape={shape}, " if shape is not None else "")
+            + (f"clsfolds={clsfolds}, " if clsfolds is not None else "")
             + f"rungs={stamps['vm_rungs']}, "
             + (f"K={size_term}, " if size_term is not None else "")
             + (f"caps={caps}, " if caps is not None else "")
@@ -3875,7 +3953,41 @@ def render_markdown(rd: ReportData):
                            "across every value -- only the scaffolding "
                            "above the first label moves -- so a COST and "
                            "SIZE fact; the number is what makes the token "
-                           "checkable.")
+                           "checkable. `prog: N B` is the VM PROGRAM "
+                           "REGION with its COMMENTS INCLUDED (the raw "
+                           "length of the emitter's program buffer; the "
+                           "island trie writes a per-node comment), NOT "
+                           "the `code bytes` columns' quantity -- those "
+                           "and `--max-emit-code-bytes` count the whole "
+                           ".c+.h with every comment EXCLUDED -- so the "
+                           "program stamp can exceed the code bytes "
+                           "(w-256: 305,686 vs 292,043) and neither is "
+                           "wrong; for cap reasoning use the code bytes "
+                           "(pcrec I-50 1).")
+            # [B39]: the abi-23 ASCII-FOLD class-test count, on the same
+            # VM-only scope.
+            if any(_vm_cls_folds_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - clsfolds = pcrec's `RX_VM_CLS_FOLDS` "
+                           "([FORM-CHAR] STEP 1, abi 23+): how many of this "
+                           "VM program's class-pool entries take the "
+                           "ASCII-FOLD membership test -- a two-member set "
+                           "differing only in bit 0x20, both letters (what "
+                           "`(?i)` makes of a letter at parse time), tested "
+                           "as `(byte | 0x20) == lower` with NO 32-byte "
+                           "bitmap table emitted for it. Chosen per pool "
+                           "class, so a COUNT; a set that is not exactly "
+                           "two members, not a 0x20 pair, or a 0x20 pair "
+                           "of non-letters keeps its bitmap. A SIZE fact "
+                           "(one table per fold class gone, plus the test "
+                           "text), never an answer one: the fold compare "
+                           "and the bitmap read are the same predicate "
+                           "over the pair's two bytes. VM route only -- an "
+                           "`auto` row that selected the DFA prints no "
+                           "clause even on a `(?i)` pattern; "
+                           "`-fno-cls-fold` is the sibling that reads `0` "
+                           "at the same pin. `0` is a real, recorded "
+                           "value.")
             out.append("")
 
         # [B19]: the two SOURCE-bytes columns, when any row of this table

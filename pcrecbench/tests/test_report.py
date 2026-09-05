@@ -1757,9 +1757,11 @@ def test_reporter_version_pin():
     itself) took it to v12; [B34] (the abi-16 re-pin: the `start=` and
     `frameless=` legend clauses with their notes) took it to v13; [B37]
     (the abi-22 re-pin: the `folds=`, `islands=` and `shape=` legend
-    clauses with their notes) took it to v14.
+    clauses with their notes) took it to v14; [B39] (the abi-23 re-pin,
+    PREPARED before its build: the `clsfolds=` clause with its note, and
+    the `prog: N B` note's I-50 1 wording) took it to v15.
 
-    [B34] AND [B37] ARE THE CASES THIS TEST MUST NOT BE READ AS
+    [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
     carrying the pair, and no record in `store/` does -- so no committed
     report's BODY changes and none is regenerated here. The version still
@@ -1768,15 +1770,15 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v14 (2026-09-05)",
-           f"expected REPORTER_VERSION == 'v14 (2026-09-05)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v15 (2026-09-05)",
+           f"expected REPORTER_VERSION == 'v15 (2026-09-05)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v14 (2026-09-05)" in md, f"expected the v14 header line:\n{md[:200]}")
+    _check("reporter: v15 (2026-09-05)" in md, f"expected the v15 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v14 (2026-09-05)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v15 (2026-09-05)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # ... and the CONTROL for the paragraph above: rendering the whole
     # fixture store under v14 must print NONE of the conditional clauses,
     # because no record in it carries any of the pairs. If this fires, a
@@ -1784,9 +1786,10 @@ def test_reporter_version_pin():
     # deliberately skipped is owed.
     _check("start=" not in md and "frameless=" not in md
            and "folds=" not in md and "islands=" not in md
-           and "shape=" not in md,
+           and "shape=" not in md and "clsfolds=" not in md,
            "no fixture record carries dfa_start/vm_frameless/"
-           "dfa_uniform_folds/vm_alt_islands/vm_entry_shape, so v14 must "
+           "dfa_uniform_folds/vm_alt_islands/vm_entry_shape/vm_cls_folds, "
+           "so v15 must "
            "render the store exactly as v12 did apart from the version "
            "line -- if a clause appears here, the committed reports need "
            "regenerating and the 'nothing to regenerate' claim is wrong")
@@ -3413,6 +3416,98 @@ def test_vm_alt_islands_and_entry_shape_legend_b37():
            f"an abi-16 table carries none of the clauses or notes:\n{md_o}")
 
 
+def test_vm_cls_folds_legend_b39():
+    """[B39] (pin 37f5ae02, abi 23, [FORM-CHAR] STEP 1; PREPARED before the
+    build): `clsfolds=<N>` from `vm_cls_folds`, rendered after `shape=` on
+    the VM-only scope, with its legend note; the `prog: N B` note carries
+    pcrec I-50 1's reconcile (the program REGION, comments INCLUDED, vs
+    the caps' comment-excluded whole-file code bytes). Controls: a DFA
+    artifact prints no clause even with `(?i)` in its pattern (the fold is
+    VM-route only); an abi-22 VM record renders exactly as v14 did."""
+    _check(report._vm_cls_folds_display({"vm_cls_folds": 26}) == "26", "26")
+    _check(report._vm_cls_folds_display({"vm_cls_folds": 0}) == "0",
+           "0 is a real value and must render")
+    _check(report._vm_cls_folds_display({}) is None, "no pair -> None")
+
+    # the fold witness: altwide ci-256 on the forced-VM route -- framed
+    # (the chain pushes: a caseless alternation is class-leading and the
+    # island declines it), plain, 26 fold classes.
+    fw = {"abi": 23, "engine": "vm", "prefilter": "none",
+          "vm_frameless": 0, "vm_alt_islands": 0,
+          "vm_entry_shape": "plain", "vm_program_bytes": 300000,
+          "vm_cls_folds": 26, "scan_edges": 0, "scan_edges_match": 0}
+    line = report._testee_legend_line("pcrec_37f5ae02_vm-caps-simdna", fw)
+    _check("shape=plain (prog: 300,000 B), clsfolds=26, rungs=" in line,
+           f"clsfolds= sits after shape= and before rungs=, got {line!r}")
+    # its -fno-cls-fold sibling: 0, rendered (the pair the AFTER is read on).
+    den = dict(fw, vm_cls_folds=0)
+    dline = report._testee_legend_line("pcrec_37f5ae02_vm-caps-simdna-noclsfold", den)
+    _check("clsfolds=0, rungs=" in dline, f"the denied sibling renders 0, got {dline!r}")
+    # a hybrid carries all six VM/scan clauses in order.
+    hybrid = {"abi": 23, "engine": "vm", "prefilter": "hybrid",
+              "dfa_scan": "unanchored", "dfa_prefilter": "byte-class-bounded",
+              "dfa_prefilter_offsets": "none", "dfa_table": "premultiplied",
+              "dfa_scan_edge": "none", "dfa_start": "reverse-pass",
+              "dfa_uniform_folds": 0, "vm_frameless": 0,
+              "vm_alt_islands": 2, "vm_entry_shape": "plain",
+              "vm_program_bytes": 12026, "vm_cls_folds": 0}
+    hline = report._testee_legend_line("t", hybrid)
+    _check("start=reverse-pass, folds=0, frameless=0, islands=2, "
+           "shape=plain (prog: 12,026 B), clsfolds=0, rungs=" in hline,
+           f"a hybrid carries all six clauses in order, got {hline!r}")
+    # CONTROL 1: a DFA artifact -- the (?i) pattern under auto -- prints
+    # no clsfolds= (the DFA route never consults the fold).
+    dfa23 = {"abi": 23, "engine": "dfa", "dfa_scan": "unanchored",
+             "dfa_prefilter": "none", "dfa_prefilter_offsets": "none",
+             "dfa_table": "premultiplied", "dfa_match": "unwrapped",
+             "dfa_scan_edge": "bitmap", "dfa_start": "reverse-pass",
+             "dfa_uniform_folds": 0}
+    dl = report._testee_legend_line("t", dfa23)
+    _check("clsfolds=" not in dl and "edge=bitmap" in dl,
+           f"a DFA artifact: no clsfolds=, got {dl!r}")
+    # CONTROL 2: an abi-22 VM record renders exactly as v14 did.
+    old22 = {"abi": 22, "engine": "vm", "prefilter": "none",
+             "vm_frameless": 1, "vm_alt_islands": 1,
+             "vm_entry_shape": "shared", "vm_program_bytes": 305686}
+    ol = report._testee_legend_line("t", old22)
+    _check("clsfolds=" not in ol
+           and "islands=1, shape=shared (prog: 305,686 B), rungs=" in ol,
+           f"an abi-22 VM legend line is unchanged, got {ol!r}")
+
+    # THE NOTES, and the I-50 1 wording on the prog note.
+    setup = _mini_setup("pcrec_37f5ae02_vm-caps-simdna")
+    row = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+           "compile_outcome": "compiled", "cost_class": "compiled-aot",
+           "cost": {"total_ns": 1000,
+                    "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                               {"name": "gcc", "elapsed_ns": 500},
+                               {"name": "load", "elapsed_ns": 100}]},
+           "artifact_bytes": 300000, "engine_metadata": fw}
+    rd, err = report.build_report([_mk_loaded("i.jsonl", setup, [row])],
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, err)
+    md = report.render_markdown(rd)
+    _check("clsfolds=26" in md and "clsfolds = pcrec's `RX_VM_CLS_FOLDS`" in md,
+           f"the clsfolds legend line and its note must render:\n{md}")
+    _check("(byte | 0x20) == lower" in md and "-fno-cls-fold" in md,
+           "the note must name the test shape and the deny sibling")
+    _check("COMMENTS INCLUDED" in md and "comment EXCLUDED" in md
+           and "305,686 vs 292,043" in md,
+           "the prog: note must carry I-50 1's reconcile: the program "
+           "region with comments INCLUDED vs the caps' comment-EXCLUDED "
+           f"code bytes, with the w-256 pair as the example:\n{md}")
+    row_old = dict(row, engine_metadata=old22)
+    rd_o, _e = report.build_report([_mk_loaded("j.jsonl", setup, [row_old])],
+                                   _args(store="x", include_synthetic=True))
+    md_o = report.render_markdown(rd_o)
+    _check("clsfolds=" not in md_o and "clsfolds = pcrec's" not in md_o,
+           f"an abi-22 table carries neither the clause nor the note:\n{md_o}")
+    _check("COMMENTS INCLUDED" in md_o,
+           "the reworded prog: note prints under any table whose rows "
+           "carry shape=, abi 22 included -- it is a wording fix, not a "
+           f"new clause:\n{md_o}")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -3492,6 +3587,8 @@ TESTS = [
     # [B37]
     test_dfa_uniform_folds_legend_b37,
     test_vm_alt_islands_and_entry_shape_legend_b37,
+    # [B39]
+    test_vm_cls_folds_legend_b39,
 ]
 
 
