@@ -2787,3 +2787,38 @@ GRANTED 13:00-17:00 EDT today (our make check off the box then; the
 [B37] AFTER window after their DONE). [B34] COMPLETED and archived;
 [B35] (1) closed on the ccboth group. b37repin is at WIP A (pin
 334fd10e, registries re-archived) and continues.
+
+## 2026-09-05 (EDT, 03:5x), tenth session part 4 — [B37] MERGED (pin 334fd10e / abi 22, 305/305); its deny-flag AFTER LAUNCHED 03:48 in the gap before pcrec's 13:00 slot
+
+Lane b37repin delivered at 03:4x and MERGED (2199212) after review: the
+shim reads RX_DFA_UNIFORM_FOLDS (abi 17), RX_VM_ALT_ISLANDS (abi 18) and
+the abi-22 pair RX_VM_ENTRY_SHAPE / RX_VM_PROGRAM_BYTES; abi 19/20/21
+stamp nothing (iso-ts keeps 8/4 edges through the dispatch); NO rx_info
+field across the six steps so the floor STAYS 16; `pcrec-auto-noisland`
+(-fno-alt-island, bit 23) is the fourteenth pinned testee and a FOUR-pair
+deny control on foo|bar; registries 72/24 → 74/25 · 50 · 45 → 55; the
+altwide ORDER PAIR w-256 == srt-256 BYTE-IDENTICAL on the VM route
+(292,043 B each; 288d505: 341,201 vs 302,047); I-43's island/chain ratios
+reproduced to three decimals; the VM refusal wall moved to 384 < w ≤ 512
+(w-384 compiles as an island, refused again under the denial), the DFA
+wall unmoved; the fold witnesses' -O2 objects (cls-upto-4 loses its
+.rodata; the numbers are this box's, the mechanism transfers); reporter
+v14 (folds=, islands=, shape= (prog: N B)); make check 4/72/0 · 305/305 ·
+70+7. O-17 findings noted on the row (no --list-axes row for
+--vm-entry-shape; RX_VM_PROGRAM_BYTES can exceed emit_code_bytes; the
+-fno-scan-edge warn witness 2,587 B from silence; the island's BYTE win
+over the sorted chain is 3 %, so ×8.87's removal is a time claim).
+Pushed at d93fdbd. The 13:00-17:00 slot confirmed FIRM to pcrecdev1
+(its I-49 tonight names the SHA — at abi 23; our pin is a SHA, untouched).
+
+THE AFTER, launched 03:48 EDT under setsid on a quiet gate (load1 0.13,
+max core < 6 %): SUITE="altwide:isl loglines:edge bounded:fold" —
+altwide × {auto, noisland, nocaps, vm, vm-in} (the pcre2 arms omitted:
+unpinned, and the island question is pcrec-only; the reports use the
+2026-09-03 pcre2 records), loglines × {auto, noedge}, bounded × {auto,
+vm, auto-clang} (the fold witnesses, the vm-arm dispatch question, the
+I-37 gcc arm reading its entry shape); ~3.6 h, done ~07:30, PID 3358631,
+suite log build/windows/suite_20260905T074836Z.log; progress cron
+(23,53). Read against ledger 2026-09-05 §7 and I-43's predictions
+(w-256/srt-256 within 2 B — now 0; the ×8.87 gone at the source;
+[OPT-EDGE] iso-ts ×0.9995). WINDOW OPEN sent live.
