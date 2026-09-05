@@ -102,6 +102,16 @@ program is 1.1-1.4x the island's in code bytes (w-256 341,301 vs 292,043 B
 at the same pin) with gcc superlinear in it -- budget the `auto` figure
 plus a third on altwide, the `auto` figure elsewhere.
 
+**`pcrec-auto-noclsfold` / `pcrec-vm-noclsfold` ([B39], PREPARED for pin
+37f5ae02, NOT YET BUILT OR MEASURED).** Estimate from their siblings: the
+`auto` sibling is predicted the SAME artifact on every set (the fold is a
+VM-program lowering and `auto` took the DFA on the bench's only `(?i)`
+patterns), so budget the `auto` figure exactly; the `vm` sibling differs
+only on altwide's `ci-256`, whose denied form is LARGER (26 bitmap tables
+and the bitmap test text return) with gcc superlinear in it -- budget the
+`vm` figure plus a fifth on altwide (8.6-14.5 min measured for the VM arms
+at 334fd10e, ledger 2026-09-05-b37 6 (13)), the `vm` figure elsewhere.
+
 ## Maintenance
 
 Update this file when a script is added, removed, or changes role.

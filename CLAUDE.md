@@ -229,7 +229,16 @@ DFA wall at w-384 is unmoved; reporter v14 (`folds=`, `islands=`,
 `shape=<token> (prog: N B)`); make check 4/72/0 · 305/305 · 70+7. NOT YET MEASURED
 at 334fd10e: the deny-flag-split AFTER (auto vs noisland on altwide, auto
 vs noedge on loglines, the [B33] (3) fold cells, I-37's gcc arm for
-O-15 (v)). Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
+O-15 (v)). [B39] PREPARED, NOT BUILT (lane b39prep, 2026-09-05 afternoon,
+branch `b39prep`): the re-pin to **37f5ae02 (abi 23)** is drafted from
+pcrec's source — the shim reads `RX_VM_CLS_FOLDS` (VM scope; no rx_info
+field, the floor STAYS 16), `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
+(`-fno-cls-fold`, bit 24; the fold is VM-route only, so the `vm` pair is the
+AFTER and the `auto` pair a predicted null), selfcheck rows as DRAFT(v)/TBD
+(ci-256 forced-VM predicted folds 26; every VM emit size +26 B), reporter
+v15 (`clsfolds=`, the `prog:` note's I-50 1 wording); registries predicted
+76/26 · 50 · 56. THE CURRENT PIN IS STILL 334fd10e until pin.sh, the
+re-archive, `make check` and the window run (plan.md [B39] (i)). Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
 EVENING [B32] landed as two lanes: `pcrec-auto-noedge` + the `scan_edges` /
 `scan_edges_match` covariate pairs on every pcrec compile row (iso-ts 8/4 by
 value) + `CELL_CAP` in the window scripts + the cell-length table (b32adp),
@@ -336,7 +345,10 @@ bindings) live here, vendored or system, pinned either way.
   SIX abi steps absorbed in one adapter change — the shim reads
   `RX_DFA_UNIFORM_FOLDS` (abi 17), `RX_VM_ALT_ISLANDS` (abi 18),
   `RX_VM_ENTRY_SHAPE` + `RX_VM_PROGRAM_BYTES` (abi 22); no rx_info field
-  moved, the floor STAYS 16; registries 74/25 · 50 · 55) — with `list_axes.tsv`,
+  moved, the floor STAYS 16; registries 74/25 · 50 · 55; [B39] PREPARED,
+  NOT BUILT: the 37f5ae02 / abi 23 re-pin — `RX_VM_CLS_FOLDS`, the
+  `-noclsfold` pair — is drafted on branch `b39prep` and lands with its
+  build) — with `list_axes.tsv`,
   `list_definitions.tsv` and
   `list_limits.tsv`, the pin's `--list-axes` / `--list-definitions` /
   `--list-limits` registry surfaces archived
