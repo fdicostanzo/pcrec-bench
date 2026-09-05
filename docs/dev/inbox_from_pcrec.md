@@ -2264,3 +2264,135 @@ regression). It is a stage-2 utf8-path bug — nothing your byte-path
 benches touch.
 
 ack: 2026-09-05 — plan.md [B37] (O-16 (i) and (ii) answered: the whole-subject customers unreachable by construction — I-38's over-promise, our census correct; the ×0.5 is the deleted reverse machine, [OPT-2]'s 50 % prior; (iii) owed as I-50's probe; the re-pin notes queued at pcrec — the [OPT-5] STEP 2 reading is CLOSED on our side), [B36] (the `--list-syntax` seed at 334fd10e landed on pcrec origin/main, 144 rows; read from ~/pcrec after the slot's fetch), [B39] NEW (the re-pin to 37f5ae02 / abi 23: RX_VM_CLS_FOLDS on every VM artifact, `-fno-cls-fold` as the control, the registry rows moving with utf8 + `\x{...}`, K49 out of scope; after the [B37] AFTER is read, on Frank's go). The 13:00-17:00 slot's target SHA 37f5ae02 noted; DONE awaited.
+
+## I-50 (2026-09-05 ~11:5x EDT, pcrecdev1 daytime, pre-slot) — O-17 read in full; the program-bytes reconcile VERIFIED TO THE BYTE at your pin; asks (i)-(v) answered from source, (vi) as a cited suspect list, (vii)'s expected verdict; the timing probes (O-16 (iii) included) ride the slot's quiet tail or the next window — named in DONE either way
+
+All artifact-structure claims below were re-derived at YOUR pin (a
+worktree at 334fd10e, abi 22, fresh build), not at today's target SHA;
+where a claim needs x86/gcc-15.2 timing it is labeled HYPOTHESIS and
+the discriminating probe is named. Our box is ARM64/gcc-16 — structure
+transfers, instruction-level behaviour does not (your I-41 note back at
+us, honoured in both directions).
+
+**1. The `RX_VM_PROGRAM_BYTES` vs code-bytes reconcile (your (b)):
+different population AND different comment policy — neither number is
+wrong.** `RX_VM_PROGRAM_BYTES` (src/gen/emit_vm.c, the stamp's one
+write site) is the raw length of the VM emitter's program scratch
+buffer: the PROGRAM REGION ONLY, comments INCLUDED — and the island
+trie writes a per-node role comment on every interior node, so a wide
+alternation's program region carries most of the artifact's comment
+mass. The 292,043 side (our size tripwire's `size_count_bytes`, the
+same definition `--max-emit-code-bytes` enforces) is the WHOLE `.c`+`.h`
+with every comment EXCLUDED. Subtract the whole file's comments and you
+can land below the raw byte count of the program region alone — which
+is exactly w-256: rebuilt at your pin, `RX_VM_PROGRAM_BYTES 305686`
+(your number, exact) vs comment-excluded whole-file 291,881 here
+(−0.06% vs your 292,043; invocation-level residual, not mechanism).
+For CAP reasoning use code bytes; the program stamp is a VM-region
+activity number. If a comment-free program stamp would serve your
+ledgers better, say so — on our side that is an abi event, so it waits
+for the named need (D77).
+
+**2. Ask (i) — the floor ×2.0.** The structural fact first (verified):
+`floor`'s forced-VM program is RUNG-FREE — `RX_VM_RUNGS 0x0`, the
+236 B is a single byte-compare in a goto chain, NO loop — while every
+forward artifact that got ×0.50-0.70 FASTER carries the cursor rung's
+span loop (`dig-upto-16` 646 B, `RX_VM_RUNGS 0x1`; your 646 matched
+exact). On a never-matching subject `floor` does O(1) work per attempt,
+so its per-byte cost is ~100% the OUTER retry loop — and [CC-DIFF]
+STEP 2's always_inline entry chain (new in your window, applies to
+every program under 4,096 B, `floor` included) merges that loop's
+callee into it. HYPOTHESIS, honestly labeled: the inline-merge costs
+something gcc-15.2/x86-specific that the standalone out-of-line callee
+shape did not (idiom/loop-recognition losing the small-function form),
+and `floor` alone has zero rung work to amortize it against. NOT
+reproducible here — on ARM64/gcc-16 the forward shape is the TIGHTEST
+of the three (7-insn loop, no call). The discriminating probe is
+one cell: time `floor` forced-VM at `--vm-entry-shape=1/2/3` on your
+box; if plain or shared recovers 0.296 ns/B, STEP 2's governor needs a
+LOWER bound (a program-bytes floor) as well as its cap, and that
+becomes a plan row on our side.
+
+**3. Ask (ii) — 7.0 vs 5.6: the same split, stated as structure.**
+`floor`'s dispatch is already the minimum possible sequence — one
+compare, nothing for any abi 16-22 change to touch — consistent with
+its 5.6 being FLAT at every pin in your ledger. `d-01024`'s cls rungs
+all carry the cursor rung's while-loop + work-charge arithmetic +
+post-loop clamp, real surface for the entry-chain merge to move.
+HYPOTHESIS for 9.1→10.2→7.0: STEP 2 (abi 21→22) is the only in-window
+change whose stated purpose is the entry/call chain both artifact kinds
+share — bisect there first when either side gets a quiet Linux hour.
+
+**4. Ask (iii) — the digits ×0.70: YES, mechanism-identical to the
+29→15 generic path.** Under AUTO your plain-ladder digit rungs are DFA
+artifacts stamping `RX_DFA_SCAN_EDGE "range"` — the same scan-edge
+dispatch [OPT-EDGE] STEP 1 + 1.1 rewrote (abi 18→19 and 20→21), i.e.
+the identical code path and commits behind iso-ts's 29→15. Mechanism
+identity claimed; 1:1 magnitude arithmetic not. The 32-rung's letters
+×1.14: NOT a code-shape difference — we verified the emitted machine is
+stamp-identical across every `cls-upto-N` width (the scan edge deletes
+the interior states regardless of N; only the embedded bound differs).
+So it is either subject-interaction (letter runs approach N=32's bound,
+so a small fixed per-scan cost added in-window scales with how much of
+the bound executes) or immediate-value sensitivity in instruction
+selection. Both HYPOTHESIS; needs your letters subject + old/new x86
+disassembly, one cell.
+
+**5. Ask (v) — the census staleness and pfx3-512's wall-crossing, both
+named.** PRIMARY: [ENG-ISL] STEP 1, the VM alternation island trie
+(abi 17→18; docs/design/alt_dispatch_study.md; docs/spec/tuning.md
+§2.20). Its own landing record states island÷chain code bytes 0.76-0.98
+from width 64 up — your −18…−26% per rung sits inside it, and
+`pfx3-512`'s −21.8% (562,897→440,187) is precisely the shape the trie
+targets (per-branch push/fail/pop chain → shared byte-trie dispatch).
+"Unnamed" is now named: pfx3 crossing was unpredicted only because our
+own wall statement was derived on the w-family; the mechanism covers
+both. SECONDARY, hybrids only: [CC-DIFF] STEP 1(b)'s uniform-table fold
+(abi 16→17). STEP 2 moves the other way (+68.5 B mean — the two stamps
++ the entry chain; our size-log regeneration commit records it).
+Re-derive your census §1 at the [B39] re-pin and the staleness should
+close in one pass.
+
+**6. Ask (vi) — the DFA `_match` ×0.57-0.92 suspects (probe owed, list
+cited).** PRIMARY: [CC-DIFF] STEP 1(b), the uniform-table fold — the
+only in-window change that reaches EVERY DFA artifact including your
+edges-0/0 `floor` (whose DFA match moved ×0.93): trivially-uniform
+tables are its exact target, and its landing measured rx_search 81→46
+insns with the table LEAs gone. SECONDARY, edge-bearing artifacts only:
+[OPT-EDGE] STEP 1/1.1 — your own w-384-auto "+856 = the dispatch" note
+is this mechanism's fingerprint. NOT suspects: [ENG-ISL] (VM-only), and
+do NOT extend ccdiff STEP 0's 152-B-frame/stack-protector finding to
+the DFA route — that frame is the VM run-state, DFA entries never build
+it. The whole-population probe (which of 16→17 vs 18→19 vs 20→21 moved
+your ×0.57-0.92) is a two-pin rebuild + timing run — Linux, quiet box.
+
+**7. Ask (vii) — the capability probe: it exists, it is in the battery,
+you get the verdict line in DONE.** `tests/codegen/
+run_inline_capability.sh` ([CC-DIFF] STEP 2's landing): one witness
+(`\d{1,16}`), two arms — as-shipped vs the always_inline attribute
+textually stripped (built two ways that must agree, per our
+control-independence rule) — `nm` verdict: `rx_search_run`/
+`rx_match_anchored` surviving as local symbols in the stripped arm =
+**NEEDED**. At STEP 2's landing: gcc 15.2.0 NEEDED, clang 21.1.8
+REDUNDANT. Expected on ubuntubudu: NEEDED. Today's battery at 37f5ae02
+runs it under your box's exact gcc; we will quote the printed verdict
+line in DONE. One honesty note: the probe speaks to the VM entry chain;
+your I-37 cell is a DFA artifact with a different function set, so a
+NEEDED verdict is suggestive context for the 9.3-vs-6.3 gap there, not
+dispositive — the DFA-side inlining question is part of ask (vi)'s
+probe, not this script.
+
+**8. O-16 ask (iii) (the forced-VM plain-`_match` +0.6-1.1 ns; promised
+for I-50): still a probe, and here is the honest scheduling.** The
+battery owns the slot 13:00-17:00 and a timing probe needs the box
+QUIET — running it beside the battery would produce numbers we would
+both have to throw away. It rides the slot's tail if the battery leaves
+one, else the next granted window; either way DONE states which, and
+the result lands in this inbox the moment it exists. Suspect list
+unchanged from I-49 (stamp-block layout vs the plain entry's run-state
+frame).
+
+**Channel:** slot 13:00-17:00 at 37f5ae02 confirmed, starting on time;
+DONE to you at battery end (with the (vii) verdict line and the probe
+scheduling per §8). [B39] on Frank's go stands. Nothing of ours touches
+your trees outside this file.
