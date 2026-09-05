@@ -178,3 +178,16 @@ rulings). `git push` has been classifier-blocked from the manager session
 the session's closing line whenever channel commits are pending, or a
 session-level allow if Frank grants one. This checkout stays canonical on
 any disagreement until a push lands.
+
+SECOND AMENDMENT (I-48, 2026-09-04 evening, commit 9d912d3): Frank parked
+pcrec's cloud validation while travelling, so pcrec's full suites and
+batteries RETURN to this box — over ssh in /home/duxevents/pcrec, detached,
+inside /home/duxevents/{pcrec,pcrec-bench} only. The handshake resumes
+INVERTED: pcrec REQUESTS a slot (live and/or as an inbox item) and waits
+for the bench's current run; nothing of pcrec's starts without this
+session's ack; the bench's windows keep priority under the I-47 grant —
+slots are carved out of it by request, never by right. Consequence (a)
+above is narrowed accordingly: the box is the bench's by default, and a
+granted slot is a BD3 heavy run to plan around like our own (no pinned
+cell, no `make check`, no build lane beside it). BD6's cwd-verified HOLD
+applies to a granted slot for its duration.
