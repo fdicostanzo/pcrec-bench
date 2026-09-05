@@ -1,4 +1,4 @@
-#coverage of the seed list_syntax_334fd10e.tsv by bench/syntax's 91 patterns: covered 77, covered-by-family 32, not-exercised 19, not-exercised-by-family 5, pcre2-rejects 5
+#coverage of the seed list_syntax_334fd10e.tsv by bench/syntax's 95 patterns: covered 77, covered-by-family 32, not-exercised 19, not-exercised-by-family 5, pcre2-rejects 5
 kind	syntax	key	seed_status	seed_module	seed_engines	seed_built	coverage	patterns	reason
 esc	\d	\d	module	classes	dfa|vm	built	covered	cls-d	
 esc	\D	\D	module	classes	dfa|vm	built	not-exercised	-	the complement of `\d`: the same class mechanism, set inverted
@@ -108,7 +108,7 @@ group	(?^)	(?^)	module	modifiers	dfa|vm	built	covered	mod-reset
 group	(?J)	(?J)	module	modifiers	dfa|vm	built	covered	mod-J	
 group	(?U)	(?U)	module	modifiers	dfa|vm	built	covered	mod-U	
 group	(?a)	(?a)	module	modifiers	dfa|vm	built	covered	mod-a	
-group	(?i)	(?i)	module	modifiers	dfa|vm	built	covered	mod-i mod-r mod-reset mod-unset	
+group	(?i)	(?i)	module	modifiers	dfa|vm	built	covered	cls-i-class mod-i mod-r mod-reset mod-unset	
 group	(?m)	(?m)	module	modifiers	dfa|vm	built	covered	anc-m-caret anc-m-dollar	
 group	(?n)	(?n)	module	modifiers	dfa|vm	built	covered	mod-n	
 group	(?r)	(?r)	module	modifiers	dfa|vm	built	covered	mod-r	
@@ -145,6 +145,9 @@ lit-cat	literal	cat	base grammar: the three-byte literal. Fourteen patterns spel
 cls-negset	classes	c[^aeiou]t	base grammar: a negated bracket class (`cat` misses, `cxt` hits)
 cls-range	classes	0x[0-9a-fA-F]+	base grammar: a bracket class of three ranges
 cls-dot	classes	c.t	base grammar: `.` (any byte but newline without (?s))
+cls-fold-pair	classes	c[aA]t	FOLD-PAIR WITNESS: a two-member class that IS an ASCII fold pair; the same language as `(?i:a)` in the middle of `cat`
+cls-pair-ctl	classes	c[ac]t	FOLD-PAIR WITNESS (the control): a two-member class that is NOT a fold pair -- the same class SIZE as `c[aA]t`, a different set
+cls-mixed-case	classes	c[a-zA-Z]t	FOLD-PAIR WITNESS: a mixed-case ranged class (52 members, every letter's fold pair present)
 qnt-star	quantifiers	ca*t	base grammar: greedy star (`ct`, `cat`, `caaat`)
 qnt-plus	quantifiers	a+b	base grammar: greedy plus, the body the possessive/atomic shapes are read against
 qnt-quest	quantifiers	colou?r	base grammar: optional

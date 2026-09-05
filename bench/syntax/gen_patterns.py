@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """gen_patterns.py -- `patterns/*.rx` and `coverage.tsv` for the syntax
-census: the ninety patterns, TYPED here as a table, and the derivation of
+census: the ninety-five patterns, TYPED here as a table, and the derivation of
 which seed construct each one exercises.
 
     python3 bench/syntax/gen_patterns.py            # write both
@@ -130,6 +130,22 @@ PATTERNS = (
      "base grammar: a bracket class of three ranges"),
     ("cls-dot", "classes", (), r"c.t",
      "base grammar: `.` (any byte but newline without (?s))"),
+    # ---- the FOLD-PAIR WITNESSES (manager's ask, 2026-09-05, from the
+    # ---- [B39] prep lane: no other set carries a two-letter ASCII
+    # ---- fold-pair class or `(?i)` on a class). Five patterns with
+    # ---- `mod-i` (`(?i)cat`, the literal arm); the class arm here.
+    ("cls-fold-pair", "classes", (), r"c[aA]t",
+     "FOLD-PAIR WITNESS: a two-member class that IS an ASCII fold pair; "
+     "the same language as `(?i:a)` in the middle of `cat`"),
+    ("cls-pair-ctl", "classes", (), r"c[ac]t",
+     "FOLD-PAIR WITNESS (the control): a two-member class that is NOT a "
+     "fold pair -- the same class SIZE as `c[aA]t`, a different set"),
+    ("cls-mixed-case", "classes", (), r"c[a-zA-Z]t",
+     "FOLD-PAIR WITNESS: a mixed-case ranged class (52 members, every "
+     "letter's fold pair present)"),
+    ("cls-i-class", "classes", ("(?i)",), r"(?i)c[aeiou]t",
+     "FOLD-PAIR WITNESS: `(?i)` over a CLASS (the option folds the class "
+     "and the literals both); `mod-i` is the option over a literal"),
 
     # ---- quantifiers: greedy, lazy, possessive
     ("qnt-star", "quantifiers", (), r"ca*t",
@@ -342,6 +358,13 @@ NOT_EXERCISED = {
               "non-atomic mechanism on the lookahead side",
 }
 
+# The five FOLD-PAIR WITNESSES carry one more tag (`fold-pair-witness`):
+# the shapes pcrec's abi-23 [FORM-CHAR] STEP 1 turns into a masked compare,
+# absent from every other set (manager, 2026-09-05). Plain PCRE, oracled
+# like the rest; the tag is how a report finds the five.
+FOLD_WITNESSES = ("mod-i", "cls-i-class", "cls-fold-pair", "cls-pair-ctl",
+                  "cls-mixed-case")
+
 # The tags every pattern carries beside its family tag. `encoding-bytes` is
 # the ROOM for a utf family (NOTES.md): a sibling set's patterns would carry
 # `encoding-utf8`, and a report can bucket on the pair.
@@ -477,6 +500,8 @@ def sidecar_block():
             tags.append("seed-row")
         else:
             tags.append("base-grammar")
+        if pid in FOLD_WITNESSES:
+            tags.append("fold-pair-witness")
         out.append(
             "[[patterns]]\n"
             "# %s\n"
@@ -509,6 +534,8 @@ def check_sidecar():
         want_size = "tiny" if len(text) < 16 else "small"
         want_tags = {"fam-" + fam, *COMMON_TAGS,
                      "seed-row" if cs else "base-grammar"}
+        if pid in FOLD_WITNESSES:
+            want_tags.add("fold-pair-witness")
         if entry.get("file") != "patterns/%s.rx" % pid:
             problems.append("%s: file %r" % (pid, entry.get("file")))
         if entry.get("role", "member") != want_role:

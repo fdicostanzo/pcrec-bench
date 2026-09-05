@@ -45,7 +45,7 @@ Three things would defeat it, and the design is shaped against each:
 
 ## The patterns
 
-Ninety-one, in eighteen mechanism FAMILIES (the `fam-*` tag; the family is
+Ninety-five, in eighteen mechanism FAMILIES (the `fam-*` tag; the family is
 a mechanism class, not a seed module — `anchors` holds a `bare` row, an
 `assertions` row and a `modifiers` row). The authoritative table is
 `gen_patterns.py`'s `PATTERNS` (id, family, seed rows exercised, text,
@@ -58,7 +58,7 @@ regime). This is the reader's summary:
 | `literal` | `lit-cat` = `cat` | the three-byte literal fourteen other patterns spell with one construct added |
 | `anchors` | `^item` `done$` `\Aitem` `done\Z` `done\z` `\Gitem` `(?m)^item` `(?m)done$` | does an engine KNOW the pattern is anchored (P5), and the `$`/`\Z`/`\z` final-newline edge |
 | `assertions` | `\bcat\b` `\Bcat\B` `key=\K\w+` | the boundary tests, and a reported start that is not the match start |
-| `classes` | `\d+` `cat\s+sat` `\S+@\S+` `\w+` `key\h*=\h*value` `item\v+done` `it\Nm` `[[:alpha:]]+` `c[^aeiou]t` `0x[0-9a-fA-F]+` `c.t` | eight class escapes, the POSIX bracket, and the three base bracket shapes |
+| `classes` | `\d+` `cat\s+sat` `\S+@\S+` `\w+` `key\h*=\h*value` `item\v+done` `it\Nm` `[[:alpha:]]+` `c[^aeiou]t` `0x[0-9a-fA-F]+` `c.t` `c[aA]t` `c[ac]t` `c[a-zA-Z]t` `(?i)c[aeiou]t` | eight class escapes, the POSIX bracket, the three base bracket shapes, and four of the five FOLD-PAIR WITNESSES (below) |
 | `quantifiers` | `ca*t` `a+b` `colou?r` `".*?"` `a*+b` `a++ab` `a+ab` `a?+a` `a{1,2}+b` | greedy, lazy, the four possessive suffixes; `a++ab` can never match and `a+ab` is its control |
 | `groups` | `(cat)` `(?:ab)+` `(?<w>cat)` `(?'w'cat)` `(?>a+)b` `(?>a\|ab)c` `ca(?#comment)t` `(?\|(cat)\|(dog))` `ca(?C1)t` | capture and its spellings, atomic over a repeat and over an alternation (the latter FAILS on `abc`), comment, branch-reset, callout |
 | `alternation` | `cat\|dog` `(?:c\|d)(?:at\|og)` | two branches, and nested branches (bench/altwide carries the width) |
@@ -88,11 +88,27 @@ expectation exists, so no pattern. The fourteen unicode-only / unbuilt
 constructs are IN (P1): a refusal is a result here, and an engine that
 does compile them gets measured.
 
-**Why ninety-one.** Frank's charter said ~60-90 and the first table had
+**Why ninety-five.** Frank's charter said ~60-90 and the first table had
 102; what came out were duplicate spellings (one per family, the rest by
 the seed's `family` column), complements, and the inert `(?)`. What
 stayed in over the count: the control pairs (`a+ab`, `lit-cat`) — an
-outlier without its control is not a question, it is a number.
+outlier without its control is not a question, it is a number. The
+four fold-pair witnesses were added after the first build on the
+manager's ask (below).
+
+**The five FOLD-PAIR WITNESSES** (tag `fold-pair-witness`; the manager's
+ask of 2026-09-05 from the [B39] prep lane's census: no set in the bench
+but altwide's `ci-*` carries `(?i)` or a two-letter ASCII fold-pair
+class, and pcrec's abi-23 [FORM-CHAR] STEP 1 turns exactly that shape
+into a masked compare, so the next pin's AFTER needs witnesses here).
+Plain PCRE, oracled like the rest, one body: `(?i)cat` (`mod-i`, the
+option over a literal), `(?i)c[aeiou]t` (`cls-i-class`, the option over a
+class), `c[aA]t` (`cls-fold-pair`, an explicit two-member class that IS
+a fold pair), `c[ac]t` (`cls-pair-ctl`, the CONTROL: two members, not a
+fold pair — the same class size, a different set), and `c[a-zA-Z]t`
+(`cls-mixed-case`, 52 members with every letter's pair present). All
+five read against `lit-cat`; `cls-fold-pair` against `cls-pair-ctl` is
+the one-variable pair (R3 does not apply: their languages differ).
 
 ## Blinded authorship — what the author read (D27)
 
@@ -207,7 +223,7 @@ under the FIRST rule it trips:
   scan it did not do), never by tuning — both directions are questions.
 - **R3, the spelling rule.** Within a SPELLING GROUP — patterns whose
   answers are identical on every subject and regime, VERIFIED over
-  `expectations.tsv` on 2026-09-05 (all 7,917 rows): the four "four
+  `expectations.tsv` on 2026-09-05 (all 8,265 rows; re-verified after the four fold-pair witnesses were added): the four "four
   digits" calls `rec-g-angle`/`rec-py`/`rec-fwd`/`rec-back`; the three
   balanced-paren recursions `rec-R`/`rec-1`/`rec-name`;
   `bak-1`/`bak-g-rel`/`bak-py`/`mod-J`; `lka-pos`/`lka-verb`;
@@ -263,7 +279,7 @@ question with its cell id, its twin's cell and its stamps.
   `esc-hex-braced` (the braced `\x{...}` spelling requires
   `unicode-props` at this pin per the seed's note; at the abi-23 re-seed
   it moves to the base grammar and this one becomes an R1 candidate).
-  The other seventy-six compile on every pcrec testee. Any refusal
+  The other eighty compile on every pcrec testee. Any refusal
   outside the fifteen is an R1 outlier; any of the fifteen compiling is
   a re-seed request.
 - **P2 (the whole-subject wrapper changes two answers).** The harness
@@ -364,7 +380,7 @@ outside P1's list is R1. Nothing here should give up at match time —
 there is no backtracking hazard by design (the one shape held out on
 purpose is an unbounded `.` repeat under `(?s)`, quadratic on a 1 MB
 subject with no newline barrier) — and the oracle derivation reported no
-give-up on any of the 7,917 triples.
+give-up on any of the 8,265 triples.
 
 ## Per-engine notes
 
@@ -382,7 +398,7 @@ give-up on any of the 7,917 triples.
 
 ## Cell-time estimate, and its premise
 
-One cell = one testee × 91 patterns × three regimes at `--trials 5`. The
+One cell = one testee × 95 patterns × three regimes at `--trials 5`. The
 harness calibrates each (pattern, regime) loop so the MEDIAN subject's
 loop is 50 ms and caps a trial's predicted sweep at 20 s
 (`pcrecbench/harness.py`, `calibrate`); a trial-set is one probe pass and
@@ -395,11 +411,11 @@ and INDEPENDENT of the testee's speed (the loop count absorbs it). So:
 
 | term | arithmetic | per cell |
 |---|---|---|
-| the two short regimes | 91 × 2 × 6 × ~2.1 s | **~38 min** |
-| throughput, 6 passes × 91 patterns over 1.3 MB | 2-100 ms per pass for most patterns; the six dense-run patterns (P7) up to ~1 s per pass on an interpreter | ~2-10 min |
-| pcrec compile, two forms × 91 | ~1-3 s each (pcrec + gcc on a ≤ 33 B pattern) | ~3-9 min, compiled testees only |
+| the two short regimes | 95 × 2 × 6 × ~2.1 s | **~40 min** |
+| throughput, 6 passes × 95 patterns over 1.3 MB | 2-100 ms per pass for most patterns; the six dense-run patterns (P7) up to ~1 s per pass on an interpreter | ~2-10 min |
+| pcrec compile, two forms × 95 | ~1-3 s each (pcrec + gcc on a ≤ 33 B pattern) | ~3-9 min, compiled testees only |
 
-**Estimate: ~45 min per `pcre2-*` cell, ~50 min per pcrec cell; six pinned
+**Estimate: ~47 min per `pcre2-*` cell, ~52 min per pcrec cell; six pinned
 testees ≈ 5 h**, inside one night's window (the 2026-09-03 window ran
 11 cells in 6.3 h) and inside `CELL_CAP`'s 5,400 s default with ~1.8×
 headroom. Cross-check against scripts/CLAUDE.md's measured table: the

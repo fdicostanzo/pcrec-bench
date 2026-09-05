@@ -321,8 +321,9 @@ bindings) live here, vendored or system, pinned either way.
   suffix structure that decides PCRE2's start optimization and pcrec's
   DFA/prefilter route; libpcre2's own compiled-size ceiling caps the ladder.
   `bench/syntax/` is the SYNTAX CENSUS ([B36], I-42, 2026-09-05; branch
-  `b36census`, merge on Frank's confirmation): 91 patterns in 18 mechanism
-  families, one construct each in a plain body, enumerated from pcrec's
+  `b36census`, merge on Frank's confirmation): 95 patterns in 18 mechanism
+  families, one construct each in a plain body (incl. the five fold-pair
+  witnesses for the abi-23 [FORM-CHAR] AFTER), enumerated from pcrec's
   `--list-syntax` registry seed at 334fd10e (`coverage.tsv` derived from
   the table x the seed, every one of 138 rows accounted for by name), 42
   typed short subjects + a 64 KB-1 MB size sweep, the outlier rule R0-R7

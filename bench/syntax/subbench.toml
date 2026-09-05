@@ -16,11 +16,13 @@ or an engine-selection surprise on a construct the registry calls built \
 looks like. The census widens the queue of depth probes; it does not \
 shorten it (inbox I-42, Frank's charter)."""
 description = """\
-Ninety-one patterns in eighteen families (90 members + the floor): the \
+Ninety-five patterns in eighteen families (94 members + the floor): the \
 bare literal `cat` every `cat`-language spelling is read against, anchors \
 (`^` `$` `\\A` `\\Z` `\\z` `\\G` and the two under `(?m)`), assertions \
 (`\\b` `\\B` `\\K`), classes (eight class escapes, the POSIX bracket, a \
-negated set, a three-range set, `.`), quantifiers (greedy, lazy, the four \
+negated set, a three-range set, `.`, and four of the five FOLD-PAIR \
+WITNESSES -- `c[aA]t`, its non-pair control `c[ac]t`, `c[a-zA-Z]t`, \
+`(?i)c[aeiou]t`; `(?i)cat` is the fifth), quantifiers (greedy, lazy, the four \
 possessive suffixes and the `a++ab` / `a+ab` control pair), groups \
 (capturing, non-capturing, two named spellings, atomic over a repeat and \
 over an alternation, comment, branch-reset, callout), alternation, \
@@ -61,7 +63,7 @@ regimes = ["match", "search_short", "throughput"]
 # nothing here is a backtracking hazard by design (NOTES.md). `size_class`
 # bands the pattern's bytes as bench/bounded does (tiny < 16 B, small < 256).
 # Tags: `fam-<family>` (the eighteen mechanism families), `encoding-bytes`
-# (the room for a utf sibling), `seed-row` or `base-grammar`.
+# (the room for a utf sibling), `seed-row` or `base-grammar`, and `fold-pair-witness` on the five.
 
 [[patterns]]
 # base grammar: the three-byte literal. Fourteen patterns spell this language or a superset of it with one construct added (`(cat)`, `(?<w>cat)`, `\x63at`, `(?x) c a t`, `ca(?#comment)t`, `(?n)(ca)t`, `c\Xt`, ...); their cost minus this one's is the construct's
@@ -314,6 +316,50 @@ hazard_class = "none"
 size_class = "tiny"
 convention = "perl-leftmost-first"
 tags = ["fam-classes", "encoding-bytes", "base-grammar"]
+role = "member"
+
+[[patterns]]
+# FOLD-PAIR WITNESS: a two-member class that IS an ASCII fold pair; the same language as `(?i:a)` in the middle of `cat`
+name = "cls-fold-pair"
+file = "patterns/cls-fold-pair.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "base-grammar", "fold-pair-witness"]
+role = "member"
+
+[[patterns]]
+# FOLD-PAIR WITNESS (the control): a two-member class that is NOT a fold pair -- the same class SIZE as `c[aA]t`, a different set
+name = "cls-pair-ctl"
+file = "patterns/cls-pair-ctl.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "base-grammar", "fold-pair-witness"]
+role = "member"
+
+[[patterns]]
+# FOLD-PAIR WITNESS: a mixed-case ranged class (52 members, every letter's fold pair present)
+name = "cls-mixed-case"
+file = "patterns/cls-mixed-case.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "base-grammar", "fold-pair-witness"]
+role = "member"
+
+[[patterns]]
+# FOLD-PAIR WITNESS: `(?i)` over a CLASS (the option folds the class and the literals both); `mod-i` is the option over a literal
+name = "cls-i-class"
+file = "patterns/cls-i-class.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["fam-classes", "encoding-bytes", "seed-row", "fold-pair-witness"]
 role = "member"
 
 [[patterns]]
@@ -764,7 +810,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
 convention = "perl-leftmost-first"
-tags = ["fam-modifiers", "encoding-bytes", "seed-row"]
+tags = ["fam-modifiers", "encoding-bytes", "seed-row", "fold-pair-witness"]
 role = "member"
 
 [[patterns]]
@@ -1079,7 +1125,7 @@ short_search_max_bytes = 256
 file = "expectations.tsv"
 default_method = "libpcre2-differential"
 
-# Per-testee notes. No testee runs a VARIANT of any pattern: all ninety-one
+# Per-testee notes. No testee runs a VARIANT of any pattern: all ninety-five
 # are canonical PCRE2 spellings and every adapter runs the canonical text
 # (requirements 4.5 -- the record still STATES that, as
 # `patterns[].variant = null`). `options` is empty for both engines: the

@@ -1,7 +1,7 @@
 # bench/syntax/ — the syntax census sub-bench (`syntax@0.1`)
 
 WHAT IT IS FOR. A wide-net CENSUS across the PCRE syntax an engine may
-support (plan row [B36]; Frank's charter is inbox I-42): ninety-one
+support (plan row [B36]; Frank's charter is inbox I-42): ninety-five
 patterns, one construct each in an otherwise plain body, enumerated from
 pcrec's `--list-syntax` construct REGISTRY at our pin (the seed, copied
 verbatim) so that nothing is listed from either side's head — and the same
@@ -28,14 +28,14 @@ names the two pcrec documents that WERE read).
 | `list_syntax_334fd10e.tsv` | THE SEED: pcrec's `--list-syntax` registry at pin 334fd10e (abi 22), verbatim under a source header (origin path, commit, date, generator, and what the file is and is not used for). Only `kind`, `syntax`, `status`, `family` are read; `module`/`engines`/`built` are copied into coverage.tsv as `seed_*` provenance and shape nothing (R-BENCH-4) |
 | `subbench.toml` | the SIDECAR: fields only, no grammar ([DD-13] untouched). Declares all three regimes and `short_search_max_bytes = 256`. Its `[[patterns]]` block is DERIVED (`gen_patterns.py --sidecar` prints it; `--check` compares it entry for entry) |
 | `censustext.py` | the one randomness primitive (`Rng`, xorshift64*) and the shared VOCABULARY + line grammar (prose with doubled and Latin-1 words, order lines, tag pairs, balanced parens, key=value, quoted strings) the throughput texts are drawn from and the short subjects are typed from; re-exports `pcrecbench.periodic.periodic_field` |
-| `gen_patterns.py` | THE PATTERN TABLE (`PATTERNS`: id, family, seed rows exercised, text, note) and `NOT_EXERCISED` (every seed row left out, with its reason). Writes `patterns/*.rx` and derives `coverage.tsv` from the table × the seed; `--check` re-derives both and checks the sidecar; `--seed PATH` re-derives coverage from a re-seeded registry and FAILS BY NAME on any row no pattern covers and no reason excuses |
-| `patterns/*.rx` | the 90 members + `floor.rx`, printable ASCII, no trailing newline, committed |
+| `gen_patterns.py` | THE PATTERN TABLE (`PATTERNS`: id, family, seed rows exercised, text, note), `NOT_EXERCISED` (every seed row left out, with its reason) and `FOLD_WITNESSES` (the five fold-pair witnesses, tagged `fold-pair-witness`). Writes `patterns/*.rx` and derives `coverage.tsv` from the table × the seed; `--check` re-derives both and checks the sidecar; `--seed PATH` re-derives coverage from a re-seeded registry and FAILS BY NAME on any row no pattern covers and no reason excuses |
+| `patterns/*.rx` | the 94 members + `floor.rx`, printable ASCII, no trailing newline, committed |
 | `coverage.tsv` | derived: one row per seed row — `covered` (77), `covered-by-family` (32, the seed's own `family` column), `not-exercised` (19) / `not-exercised-by-family` (5) with reasons, `pcre2-rejects` (5) — then the base-grammar constructs (no seed row) the set exercises |
 | `gen_subjects.py` | writes `subjects/` (gitignored) + `manifest.tsv`: 30 typed FIELDS (2-14 B, one construct's whole-string hit or semantic edge each) + 12 typed LINES (≤ 86 B) of the same vocabulary. Typed, not drawn: deterministic by construction |
 | `gen_throughput_subjects.py` | writes `throughput/` (gitignored) + `manifest_throughput.tsv`: `t-64k`, `t-256k`, `t-1m` from `censustext.text()` at three seeds — a SIZE SWEEP at fixed hit density, no `#`, no `\r`, no control bytes, `periodic = no` (computed) |
 | `manifest.tsv`, `manifest_throughput.tsv` | committed: id, len, sha256, description (family/arm in a fixed spelling: `field/hit`, `field/edge`, `line/prose`, `line/structured`, `run/mixed`), periodic |
 | `gen_expectations.py` | the entry point; the derivation is shared (`pcrecbench/expectations.py`). `--check` re-derives and diffs. Prints one expected NOTE per pattern whose captures participate (the backreference, recursion, named-group and conditional patterns — the construct under census IS the capture) |
-| `expectations.tsv` | 7,917 rows: 91 patterns × (42 match + 42 search_short + 3 throughput), method `libpcre2-differential`, oracle 10.46 |
+| `expectations.tsv` | 8,265 rows: 95 patterns × (42 match + 42 search_short + 3 throughput), method `libpcre2-differential`, oracle 10.46 |
 | `gen_pattern_facts.py` | derives `pattern_facts.tsv`: family, seed rows and the seed's module per pattern, bytes, PCRE2's capture count / backref max / match-empty / max lookbehind (four PCRE2_INFO codes verified by construction on every run) and first / required code unit / min length, m/n per regime, oracle version |
 | `pattern_facts.tsv` | one row per pattern; the table NOTES.md's rules R4 and R6 read (which patterns are REGULAR, what PCRE2 knows about each start) |
 | `NOTES.md` | the objective, the tables, the outlier rule, the predictions, the utf room, the estimate |
@@ -48,7 +48,7 @@ and re-derives the other three in `--check` mode over every sub-bench under
 any drift. The expectation derivation is the one slow step here: about 3.3
 minutes wall on this box while another session's battery ran (the six
 dense class patterns — `\w+`, `\p{L}+`, … — find-all ~200 k matches per MB
-through one ctypes call each; the other 85 patterns are seconds). The
+through one ctypes call each; the other 89 patterns are seconds). The
 `--check` pass costs the same, so `make check-harness` grows by about
 3-4 minutes with this set.
 
