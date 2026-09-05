@@ -790,6 +790,54 @@ under `reports/` changes until it has run.
   both clauses print on none of them, and the only line that would move
   is the version stamp itself. The regeneration belongs with the window
   that first writes an abi-16 record.
+
+## The reporter, [B37] (2026-09-05) -- REPORTER_VERSION v14, three legend clauses
+
+Plan row [B37], the re-pin to pcrec 334fd10e (abi 22 -- SIX abi steps in
+one pin). pcrec ships FOUR new stamps across them, in two scopes, and the
+reporter takes three legend clauses (the abi-22 pair renders as one clause
+with a parenthetical, `edges=`'s own shape). All strictly additive and
+CONDITIONAL on a record carrying the pair; no record in `store/` does yet,
+so nothing under `reports/` changes until the [B37] window has run.
+
+* **`folds=<0..6>`**, `RX_DFA_UNIFORM_FOLDS` ([CC-DIFF] STEP 1, abi 17) --
+  how many of the artifact's DFA tables had ALL-EQUAL cells and were NOT
+  EMITTED (the accessor returns the constant). On `edge=`/`start=`'s scope
+  (`dfa-scan`: every artifact that contains a DFA scan, hybrids included),
+  rendered right after `start=`. A legend clause and not a column for
+  `start=`'s reason: it moves no answer, it explains a SIZE -- an artifact
+  reading `table=premultiplied` beside `folds=4` carries no transition
+  table at all, which is the [B33] (3) witnesses' whole story, and a
+  reader comparing an abi-17+ row against its 288d505 self needs to see
+  it. `0` is a real value (every table had a varying cell; an
+  `attempt`/`empty` scan has none to fold) and PRESENCE gates the clause.
+* **`islands=<N>`**, `RX_VM_ALT_ISLANDS` ([ENG-ISL] STEP 1, abi 18) -- how
+  many flat alternations the VM lowered as an ALTERNATION ISLAND (a trie
+  dispatch over literal alternatives) rather than as vm_alt's serial
+  resume chain. VM-only, hybrids included -- `frameless=`'s scope --
+  rendered right after it. The reason a reader wants it is the 2026-09-03
+  ledger's own x8.87/x20.1 branch-ORDER finding on altwide's VM route,
+  which the island removes at the source: a row's `islands=1` beside its
+  `-fno-alt-island` sibling's `islands=0` is the pair that finding's AFTER
+  is read on, and `0` is a real, recorded value (no alternation qualified,
+  or the denial).
+* **`shape=<plain|shared|forward|inline> (prog: N B)`**, `RX_VM_ENTRY_SHAPE`
+  + `RX_VM_PROGRAM_BYTES` ([CC-DIFF] STEP 2 / [OPT-DIAL] STEP 0, abi 22) --
+  the entry-chain rung the emitter TOOK for the six entries, with the
+  program size AUTO compared against VM_INLINE_CHAIN_MAX_BYTES (4,096) to
+  choose it. VM-only, hybrids included, rendered after `islands=`. One
+  clause and not two because the second stamp exists to make the first
+  CHECKABLE (four artifacts can read `plain` for four reasons), so the
+  number belongs beside the token the way `edges=`'s `(match: M)` sits
+  beside its count. Answer-identical across every value (the matcher
+  program is byte-identical; only the scaffolding above the first label
+  moves), so a COST and SIZE fact -- a `-clang` row's neighbour on the
+  I-37 cell reads its shape here, which is what O-15 ask (v) asked for.
+* `REPORTER_VERSION` bumps to `v14 (2026-09-05)`. NO committed report is
+  regenerated: no stored record carries any of the four pairs, so the
+  three clauses print on none of them, and the only line that would move
+  is the version stamp itself. The regeneration belongs with the window
+  that first writes an abi-22 record.
 """
 
 from __future__ import annotations
@@ -808,7 +856,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v13 (2026-09-03)"
+REPORTER_VERSION = "v14 (2026-09-05)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -1679,6 +1727,86 @@ def _vm_frameless_display(engine_metadata):
     return None if fl is None else str(fl)
 
 
+def _dfa_uniform_folds_display(engine_metadata):
+    """[B37]: `folds=<0..6>`, pcrec's `RX_DFA_UNIFORM_FOLDS` ([CC-DIFF]
+    STEP 1, abi 17+) -- how many of the artifact's DFA tables
+    (`<m>_next_state` / `<m>_is_accepting`, two per machine it CONTAINS)
+    had ALL-EQUAL cells and were therefore NOT EMITTED, the accessor
+    returning the constant instead.
+
+    Why a legend clause and not a column: it moves no answer and explains
+    a SIZE -- `table=premultiplied` beside `folds=4` is an artifact that
+    carries NO transition table at all (the encoding was still SELECTED
+    and still fixes the folded constant's value, which is why `table=`
+    does not fall to `none`), and that is what a reader comparing an
+    abi-17+ row against its 288d505 self needs to see. Same SCOPE as
+    `edge=` and `start=` (`dfa-scan`: every artifact that contains a DFA
+    scan, hybrids included), so a hybrid legend carries `folds=` and no
+    `match=`. `0` is a real value (every table had a varying cell; an
+    `attempt`/`empty` scan has no table to fold), so PRESENCE gates the
+    clause. Returns None where the record has no pair -- every record
+    written before abi 17, and every non-hybrid VM artifact."""
+    em = engine_metadata or {}
+    n = em.get("dfa_uniform_folds")
+    return None if n is None else str(n)
+
+
+def _vm_alt_islands_display(engine_metadata):
+    """[B37]: `islands=<N>`, pcrec's `RX_VM_ALT_ISLANDS` ([ENG-ISL] STEP 1,
+    abi 18+) -- how many of the artifact's flat alternations the VM
+    lowered as an ALTERNATION ISLAND (a trie over the alternatives'
+    literal bytes: a byte compare at a one-child node, a `switch` at a
+    many-child node) rather than as vm_alt's serial resume chain of one
+    frame per untried branch.
+
+    The reason a reader wants it: the 2026-09-03 ledger measured
+    altwide's `srt-256` x8.87 faster than `w-256` on the VM route (x20.1
+    at 512) -- the same 256 words in a different ORDER -- and the island
+    removes that at the source (the two artifacts are byte-identical in
+    emit_bytes at 334fd10e). A row's `islands=1` beside its
+    `-fno-alt-island` sibling's `islands=0` is the pair that AFTER is
+    read on. VM-only, hybrids included (`frameless=`'s scope); a COUNT,
+    since the island is selected per alternation and a pattern with two
+    can take one and decline the other. `0` is a real, recorded value
+    (nothing qualified, or the denial), so PRESENCE gates the clause.
+    Returns None on every DFA artifact and every record from before
+    abi 18."""
+    em = engine_metadata or {}
+    n = em.get("vm_alt_islands")
+    return None if n is None else str(n)
+
+
+def _vm_entry_shape_display(engine_metadata):
+    """[B37]: `shape=<plain|shared|forward|inline> (prog: N B)`, pcrec's
+    `RX_VM_ENTRY_SHAPE` and `RX_VM_PROGRAM_BYTES` ([CC-DIFF] STEP 2 /
+    [OPT-DIAL] STEP 0, abi 22+) -- the entry-chain rung the emitter TOOK
+    for the six entries (`plain` one body, six framed entries; `shared`
+    one out-of-line body behind three forwarding entries; `forward` three
+    bodies in the three `_in` entries; `inline` six bodies), and the
+    program size AUTO compared against VM_INLINE_CHAIN_MAX_BYTES (4,096)
+    to choose it.
+
+    ONE clause for two stamps, on `edges=`'s `(match: M)` precedent: the
+    second stamp exists to make the first CHECKABLE -- four artifacts can
+    read `plain` for four different reasons (framed, forward-illegal
+    above the term, tiered, asked for), and the number beside the token
+    is what tells them apart (with `frameless=`, printed just before it).
+    Answer-identical across every value (the matcher program is
+    byte-identical; only the scaffolding above the first label moves), so
+    a COST and SIZE fact, never a correctness one. VM-only, hybrids
+    included. The number is printed whenever the token is (pcrec lands
+    both in one emitter call; the adapter refuses one without the other),
+    so the parenthetical is not conditional the way `edges=`'s is.
+    Returns None on every DFA artifact and every record from before
+    abi 22."""
+    em = engine_metadata or {}
+    shape = em.get("vm_entry_shape")
+    if shape is None:
+        return None
+    n = em.get("vm_program_bytes")
+    return f"{shape}" if n is None else f"{shape} (prog: {n:,} B)"
+
+
 def _fast_tier_display(engine_metadata):
     """[B16] R2: [OPT-1]'s two-tier default entry, as a legend clause.
 
@@ -1900,6 +2028,9 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
     edges = _scan_edges_display(engine_metadata)
     start = _dfa_start_display(engine_metadata)
     frameless = _vm_frameless_display(engine_metadata)
+    folds = _dfa_uniform_folds_display(engine_metadata)
+    islands = _vm_alt_islands_display(engine_metadata)
+    shape = _vm_entry_shape_display(engine_metadata)
     line = (f"- {label}: engine={display}, "
             + (f"sel={sel}, " if sel is not None else "")
             + f"entry={stamps['entry']}, "
@@ -1909,8 +2040,11 @@ def _testee_legend_line(testee_id, engine_metadata, scope=None,
             + (f"edge={edge}, " if edge is not None else "")
             + (f"edges={edges}, " if edges is not None else "")
             + (f"start={start}, " if start is not None else "")
+            + (f"folds={folds}, " if folds is not None else "")
             + (f"match={match_form}, " if match_form is not None else "")
             + (f"frameless={frameless}, " if frameless is not None else "")
+            + (f"islands={islands}, " if islands is not None else "")
+            + (f"shape={shape}, " if shape is not None else "")
             + f"rungs={stamps['vm_rungs']}, "
             + (f"K={size_term}, " if size_term is not None else "")
             + (f"caps={caps}, " if caps is not None else "")
@@ -3687,6 +3821,61 @@ def render_markdown(rd: ReportData):
                            "two can disagree: the capacity is what the "
                            "artifact was SIZED for, this is what its program "
                            "CONTAINS. `0` is a real, recorded value.")
+            # [B37]: the abi-17 FOLD count, `edge=`/`start=`'s scope.
+            if any(_dfa_uniform_folds_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - folds = pcrec's `RX_DFA_UNIFORM_FOLDS` "
+                           "([CC-DIFF] STEP 1, abi 17+): how many of this "
+                           "artifact's DFA tables (two per machine it "
+                           "contains -- forward always, reverse unless "
+                           "`start=pinned`, anchored under "
+                           "`match=unwrapped`; so 0..6) had ALL-EQUAL cells "
+                           "and were NOT EMITTED, the accessor returning the "
+                           "constant. `table=` keeps naming the encoding "
+                           "that was SELECTED, so `premultiplied` beside "
+                           "`folds=4` is an artifact carrying NO transition "
+                           "table at all -- a SIZE fact, never an answer "
+                           "one. `0` is a real, recorded value.")
+            # [B37]: the abi-18 ISLAND count and the abi-22 ENTRY SHAPE,
+            # both on `frameless=`'s VM-only scope.
+            if any(_vm_alt_islands_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - islands = pcrec's `RX_VM_ALT_ISLANDS` "
+                           "([ENG-ISL] STEP 1, abi 18+): how many of this "
+                           "VM program's flat alternations were lowered as "
+                           "an ALTERNATION ISLAND -- a trie dispatch over "
+                           "the alternatives' literal bytes -- instead of "
+                           "vm_alt's serial resume chain (one frame per "
+                           "untried branch). Selected per alternation on "
+                           "its LANGUAGE (a finite literal set), so a "
+                           "COUNT; a caseless, prefix-bearing-under-four-"
+                           "words or over-budget alternation is declined "
+                           "as a selection outcome. This is what removes "
+                           "the branch-ORDER effect (altwide srt-256 vs "
+                           "w-256) at the source; `-fno-alt-island` is the "
+                           "sibling that reads `0` at the same pin. `0` is "
+                           "a real, recorded value.")
+            if any(_vm_entry_shape_display(em) is not None
+                   for _sb, em, _pm in legend_by_key.values()):
+                out.append("    - shape = pcrec's `RX_VM_ENTRY_SHAPE` with "
+                           "`RX_VM_PROGRAM_BYTES` in the parenthetical "
+                           "([CC-DIFF] STEP 2, abi 22+): the entry-chain "
+                           "rung the emitter TOOK for the six entries -- "
+                           "`plain` (one body, six framed entries), `shared` "
+                           "(one out-of-line body behind three forwarding "
+                           "entries), `forward` (three bodies in the three "
+                           "`_in` entries, no canary anywhere), `inline` "
+                           "(six bodies) -- and the program size AUTO "
+                           "compared against VM_INLINE_CHAIN_MAX_BYTES "
+                           "(4,096 B) to choose it: `forward` at or below, "
+                           "`shared` above; `inline`/`plain` where a "
+                           "forward rung is illegal (the program writes its "
+                           "storage); a FRAMED program (`frameless=0`) is "
+                           "`plain` whatever the size. ANSWER-IDENTICAL "
+                           "across every value -- only the scaffolding "
+                           "above the first label moves -- so a COST and "
+                           "SIZE fact; the number is what makes the token "
+                           "checkable.")
             out.append("")
 
         # [B19]: the two SOURCE-bytes columns, when any row of this table
