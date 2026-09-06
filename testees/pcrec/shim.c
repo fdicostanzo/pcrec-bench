@@ -85,7 +85,7 @@
  * STAYS 16, and an abi-16..21 artifact still links this shim and records
  * the newer macros as "not stamped", the adapter's scope table saying at
  * which abi each absence stops being legitimate. Abi 23 ([B39], pin
- * 37f5ae02, [FORM-CHAR] STEP 1 -- PREPARED FROM SOURCE, the build
+ * d34c9131, [FORM-CHAR] STEP 1 -- PREPARED FROM SOURCE, the build
  * pending) is the first direction a seventh time: `RX_VM_CLS_FOLDS` is a
  * MACRO with no rx_info mirror ("It has no `rx_info` mirror, on the same
  * precedent and for the same reason", match_api.md 6.3's own entry), and
@@ -248,7 +248,7 @@
  *       bit (`--vm-entry-shape=N` is an ordinal option, tuning.md 2.21),
  *       so there is no deny control and no registry axis for it.
  *   (b) ACTIVITY, VM-only ([B39], abi 23, [FORM-CHAR] STEP 1; PREPARED
- *       FROM SOURCE at 37f5ae02, the build pending): `RX_VM_CLS_FOLDS` --
+ *       FROM SOURCE at d34c9131, the build pending): `RX_VM_CLS_FOLDS` --
  *       a COUNT of this artifact's VM class-pool entries whose membership
  *       test takes the ASCII-FOLD shape: a two-member set {B, B|0x20}
  *       with both members letters (what D23's parse-time caseless
@@ -967,7 +967,7 @@ long long pb_vm_program_bytes(void) {
 #endif
 }
 
-/* ---------------- the abi 23 stamp ([B39], pin 37f5ae02; [FORM-CHAR] STEP 1)
+/* ---------------- the abi 23 stamp ([B39], pin d34c9131; [FORM-CHAR] STEP 1)
  * PREPARED FROM SOURCE (lane b39prep, 2026-09-05): the macro name, its
  * scope and its deny flag are read from pcrec's src/gen/emit_vm.c,
  * docs/spec/match_api.md 6.3 and docs/spec/tuning.md 2.22 at the SHA; the

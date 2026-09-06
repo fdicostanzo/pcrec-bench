@@ -3417,7 +3417,7 @@ def test_vm_alt_islands_and_entry_shape_legend_b37():
 
 
 def test_vm_cls_folds_legend_b39():
-    """[B39] (pin 37f5ae02, abi 23, [FORM-CHAR] STEP 1; PREPARED before the
+    """[B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1; PREPARED before the
     build): `clsfolds=<N>` from `vm_cls_folds`, rendered after `shape=` on
     the VM-only scope, with its legend note; the `prog: N B` note carries
     pcrec I-50 1's reconcile (the program REGION, comments INCLUDED, vs
@@ -3436,12 +3436,12 @@ def test_vm_cls_folds_legend_b39():
           "vm_frameless": 0, "vm_alt_islands": 0,
           "vm_entry_shape": "plain", "vm_program_bytes": 300000,
           "vm_cls_folds": 26, "scan_edges": 0, "scan_edges_match": 0}
-    line = report._testee_legend_line("pcrec_37f5ae02_vm-caps-simdna", fw)
+    line = report._testee_legend_line("pcrec_d34c9131_vm-caps-simdna", fw)
     _check("shape=plain (prog: 300,000 B), clsfolds=26, rungs=" in line,
            f"clsfolds= sits after shape= and before rungs=, got {line!r}")
     # its -fno-cls-fold sibling: 0, rendered (the pair the AFTER is read on).
     den = dict(fw, vm_cls_folds=0)
-    dline = report._testee_legend_line("pcrec_37f5ae02_vm-caps-simdna-noclsfold", den)
+    dline = report._testee_legend_line("pcrec_d34c9131_vm-caps-simdna-noclsfold", den)
     _check("clsfolds=0, rungs=" in dline, f"the denied sibling renders 0, got {dline!r}")
     # a hybrid carries all six VM/scan clauses in order.
     hybrid = {"abi": 23, "engine": "vm", "prefilter": "hybrid",
@@ -3475,7 +3475,7 @@ def test_vm_cls_folds_legend_b39():
            f"an abi-22 VM legend line is unchanged, got {ol!r}")
 
     # THE NOTES, and the I-50 1 wording on the prog note.
-    setup = _mini_setup("pcrec_37f5ae02_vm-caps-simdna")
+    setup = _mini_setup("pcrec_d34c9131_vm-caps-simdna")
     row = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
            "compile_outcome": "compiled", "cost_class": "compiled-aot",
            "cost": {"total_ns": 1000,

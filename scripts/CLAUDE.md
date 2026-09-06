@@ -103,7 +103,7 @@ at the same pin) with gcc superlinear in it -- budget the `auto` figure
 plus a third on altwide, the `auto` figure elsewhere.
 
 **`pcrec-auto-noclsfold` / `pcrec-vm-noclsfold` ([B39], PREPARED for pin
-37f5ae02, NOT YET BUILT OR MEASURED).** Estimate from their siblings: the
+d34c9131, NOT YET BUILT OR MEASURED).** Estimate from their siblings: the
 `auto` sibling is predicted the SAME artifact on every set (the fold is a
 VM-program lowering and `auto` took the DFA on the bench's only `(?i)`
 patterns), so budget the `auto` figure exactly; the `vm` sibling differs

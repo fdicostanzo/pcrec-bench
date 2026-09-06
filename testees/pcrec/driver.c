@@ -89,7 +89,7 @@
  * check, so a `0`, an `"inline"` or a byte count is a VALUE the adapter
  * read and an absent line is "not stamped" and nothing more. `struct
  * rx_info` gained no member across those six steps, which is why the
- * floor message below still ends at abi 16. [B39] (pin 37f5ae02, abi 23,
+ * floor message below still ends at abi 16. [B39] (pin d34c9131, abi 23,
  * [FORM-CHAR] STEP 1 -- PREPARED FROM SOURCE, the build pending) adds ONE
  * more on the same terms, `info vm_cls_folds`, VM-only beside
  * `vm_alt_islands`: no rx_info mirror, printed behind its own presence

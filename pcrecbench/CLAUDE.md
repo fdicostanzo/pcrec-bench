@@ -922,7 +922,7 @@ record in `store/` does yet -- nothing under `reports/` is regenerated):
 
 ## The reporter, [B39] (2026-09-05) -- the abi-23 re-pin's half, v15 (PREPARED, NOT BUILT)
 
-Plan row [B39], the re-pin to pcrec 37f5ae02 (abi 23, [FORM-CHAR] STEP 1),
+Plan row [B39], the re-pin to pcrec d34c9131 (abi 23, [FORM-CHAR] STEP 1),
 PREPARED by lane b39prep from pcrec's source before the build; the pin
 paragraphs elsewhere still say 334fd10e until it lands. One clause, one
 wording fix, both conditional; no committed report regenerated:

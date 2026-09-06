@@ -17,7 +17,7 @@
 # 692c2e8, at 35e1ab1, at 36d5963, at 96e44c2, at 263b013, at a7e0bdf, at
 # 1989c62 and RE-VERIFIED at 334fd10e, 2026-09-05: same refusal, same
 # wording -- "(?<...) requires module 'named-groups' (pattern offset 3)";
-# [B39] PREPARED, NOT BUILT: to be RE-VERIFIED at 37f5ae02 when the pin
+# [B39] PREPARED, NOT BUILT: to be RE-VERIFIED at d34c9131 when the pin
 # builds -- [M5.0] STAGE 2 moved `\x{...}` out of module gating, not
 # named-groups or quoting, so the same wording is predicted). That is a
 # BUILD/RUN flag of the testee -- the pattern text handed to pcrec is
@@ -74,7 +74,7 @@
 # still an environment dimension"): on a `-clang` testee it still reads gcc,
 # and the artifact's compiler is read off `testee.build_flags` /
 # `testee_id`. Flagged for the schema panel, not worked around here.
-pin = "37f5ae02"
+pin = "d34c9131"
 
 [testees.pcrec-auto]
 engine_mode = "auto"
@@ -481,7 +481,7 @@ description = "pcrec defaults with the [ENG-ISL] ALTERNATION ISLAND DENIED (-fno
 # ---------------------------------------------------------------------------
 # THE ASCII-FOLD CLASS-TEST DENY AXIS -- `-fno-cls-fold` ([B39]; pcrec
 # [FORM-CHAR] STEP 1, docs/spec/tuning.md 2.22, --list-axes `cls-fold`
-# bit 24, inbox I-49/I-50; pin 37f5ae02 = abi 23). [B39] PREPARED, NOT
+# bit 24, inbox I-49/I-50; pin d34c9131 = abi 23). [B39] PREPARED, NOT
 # BUILT (lane b39prep, 2026-09-05): every fact below is read from pcrec's
 # SOURCE at the SHA, none from a built artifact -- the build + `make
 # check` fill the numbers.

@@ -330,7 +330,7 @@ miss:
   `VM_INLINE_CHAIN_MAX_BYTES` rows + `PCREC_MIN_SCAN_CHAIN`, one desc
   reworded). `check_abi_floor_refusal` is UNCHANGED: no rx_info field
   across abi 17-22, the floor stays 16 and both sabotage arms stand.
-- [B39] (2026-09-05, pin 37f5ae02, abi 23 -- PREPARED FROM SOURCE by
+- [B39] (2026-09-05, pin d34c9131, abi 23 -- PREPARED FROM SOURCE by
   lane b39prep, NOT YET RUN AGAINST A BUILD; pcrec inbox I-49/I-50) adds
   no check FUNCTION and grows two, every new row tagged `[B39] DRAFT --
   values to be confirmed at the build`: `check_mechanism_stamps` gains

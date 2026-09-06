@@ -1811,7 +1811,7 @@ _K41W2 = (rb"(?:(0{28,30}|[\n\t]?(?:c{1}?c{28,30}?a|1{1,}a{0,30}0|c){5,10}?\n)"
 
 
 # [B39] DRAFT -- values to be confirmed at the build (lane b39prep,
-# 2026-09-05; pin 37f5ae02 / abi 23 PREPARED FROM SOURCE, NOT BUILT). Two
+# 2026-09-05; pin d34c9131 / abi 23 PREPARED FROM SOURCE, NOT BUILT). Two
 # placeholders the build fills in:
 #   DRAFT(v)  -- a value PREDICTED from pcrec's source at the SHA (asserted
 #                exactly, so a wrong prediction FAILS by name at the build
@@ -2132,7 +2132,7 @@ STAMP_CASES = (
     # be confirmed at the build. `(?i)abc` is three caseless letters: D23
     # folds each to a two-member class {A,a} / {B,b} / {C,c} at parse
     # time, three DISTINCT pool entries, and `vm_cls_shape` (emit_vm.c at
-    # 37f5ae02: `count == 2 && (lo ^ hi) == 0x20 && lo >= 'A' && lo <=
+    # d34c9131: `count == 2 && (lo ^ hi) == 0x20 && lo >= 'A' && lo <=
     # 'Z'`) gives each the FOLD shape -- folds 3, three `(b | 0x20) ==
     # <lower>` test sites, NO `<prefix>_class_bitmap<N>` table. No push
     # (a literal chain), no group, so frameless 1 and `forward`; the
@@ -2831,7 +2831,7 @@ def check_mechanism_stamps():
     and the 65535 NFA wall did not. iso-ts keeps 8/4 edges through the
     abi-19/21 dispatch (the covariate reader survives the renumbering).
 
-    [B39] (pin 37f5ae02, abi 23, inbox I-49/I-50) -- DRAFTED FROM SOURCE
+    [B39] (pin d34c9131, abi 23, inbox I-49/I-50) -- DRAFTED FROM SOURCE
     by lane b39prep on 2026-09-05, NOT YET RUN AGAINST A BUILD: every
     value tagged DRAFT(...) is predicted from pcrec's emit_vm.c /
     tuning.md 2.22 at the SHA, every TBD is the build's to fill. ONE new
@@ -3801,7 +3801,7 @@ def check_mechanism_stamps():
                    cr512.outcome, (cr512.diagnostic or "")[:100],
                    pr384.returncode, pr384.stderr[:100]))
 
-        # ================= [B39] (pin 37f5ae02, abi 23) =================
+        # ================= [B39] (pin d34c9131, abi 23) =================
         # [B39] DRAFT -- values to be confirmed at the build. Every row in
         # this block was written from pcrec's source at the SHA (lane
         # b39prep, 2026-09-05) before any artifact existed at the pin.

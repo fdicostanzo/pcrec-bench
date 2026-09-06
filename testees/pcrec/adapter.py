@@ -6,7 +6,7 @@ raised-emitted-size-cap siblings `pcrec-auto-bigcap` / `pcrec-vm-bigcap`,
 the scan-edge-denied `pcrec-auto-noedge`, the alternation-island-denied
 `pcrec-auto-noisland` ([B37]), the ASCII-fold-class-test-denied pair
 `pcrec-auto-noclsfold` / `pcrec-vm-noclsfold` ([B39], PREPARED for pin
-37f5ae02, the build pending), the function-alignment sibling
+d34c9131, the build pending), the function-alignment sibling
 `pcrec-auto-align64`, and the caller-provided frame-buffer variants
 `pcrec-auto-in` / `pcrec-vm-in`, all at the pin in `configs.toml` -- and
 `pcrec-local`, a PROVIDED binary at no pin at all.
@@ -400,7 +400,7 @@ nothing at all:
                      (w-256's VM form 341,201 -> 292,043, srt-256's
                      302,047 -> 292,043 -- byte-identical to each other now).
 
-[B39] (pin 37f5ae02 = pcrec abi 23, inbox I-49/I-50) -- PREPARED FROM
+[B39] (pin d34c9131 = pcrec abi 23, inbox I-49/I-50) -- PREPARED FROM
 SOURCE by lane b39prep on 2026-09-05, NOT YET BUILT: every claim in this
 paragraph is read from pcrec's src/gen/emit_vm.c, src/gen/emit_dfa.c,
 src/parse/axes_dump.c, src/core/limits.def, docs/spec/match_api.md 6.3 and
@@ -1268,7 +1268,7 @@ METADATA_DECL = {
                        "number is wrong. For CAP reasoning use the code "
                        "bytes; this is a VM-region activity number",
     },
-    # [B39] (pin 37f5ae02, abi 23, [FORM-CHAR] STEP 1) -- PREPARED FROM
+    # [B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1) -- PREPARED FROM
     # SOURCE, the build pending: the fourth VM-only activity count, on
     # `vm_alt_islands`' scope and for its reason.
     "vm_cls_folds": {
@@ -1514,7 +1514,7 @@ STAMP_SCOPE = {
     "vm_alt_islands":        ("vm",       18),
     "vm_entry_shape":        ("vm",       22),
     "vm_program_bytes":      ("vm",       22),
-    # [B39] (pin 37f5ae02, abi 23, [FORM-CHAR] STEP 1; PREPARED FROM
+    # [B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1; PREPARED FROM
     # SOURCE): the fold count on `vm_alt_islands`' VM-only scope
     # (match_api.md 6.3: "UNCONDITIONAL on every VM artifact, hybrids
     # included, and never defined on a pure-DFA artifact"). An abi-22
@@ -2175,7 +2175,7 @@ DENY_FLAGS = (
      "to its sibling modulo which budget binds (a budget-bound cell may "
      "differ in the island's favour only, pcrec I-43), and carrying the "
      "chain's frames and entry shape with it"),
-    # [B39] (pin 37f5ae02, [FORM-CHAR] STEP 1, --list-axes `cls-fold` bit
+    # [B39] (pin d34c9131, [FORM-CHAR] STEP 1, --list-axes `cls-fold` bit
     # 24; PREPARED FROM SOURCE, the build pending). The FOURTH denial that
     # changes what the artifact CONTAINS and the second on the VM route:
     # denied, `vm_cls_shape` re-classifies every ASCII fold pair to BITMAP,

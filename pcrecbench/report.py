@@ -841,7 +841,7 @@ so nothing under `reports/` changes until the [B37] window has run.
 
 ## The reporter, [B39] (2026-09-05) -- REPORTER_VERSION v15, one legend clause + the I-50 1 legend fix
 
-Plan row [B39], the re-pin to pcrec 37f5ae02 (abi 23, [FORM-CHAR] STEP 1)
+Plan row [B39], the re-pin to pcrec d34c9131 (abi 23, [FORM-CHAR] STEP 1)
 -- PREPARED by lane b39prep from pcrec's source at the SHA, the build and
 the window pending. One new stamp on the VM scope, one wording fix owed
 from pcrec's I-50 1, both additive and conditional; no record in `store/`
