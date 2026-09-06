@@ -2,25 +2,29 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-334fd10e/build/pcrec --list-axes
+#     build/pcrec-d34c9131/build/pcrec --list-axes
 #
-# pcrec commit 334fd10e6c3e770fe9044355b77835e3ad28ad79 (abi 22), archived by
-# testees/pcrec/pin.sh on 2026-09-05 (PIN.tsv); captured 2026-09-05 by lane
-# b37repin ([B37]). 74 data rows / 25 axes / 12 columns -- the FOURTH
-# registry surface (pcrec docs/spec/registry.md 6, [CHK-2]). The diff from
-# the 288d505 copy (72 / 24, [B34]) is ONE NEW AXIS of two rows and nothing
-# else -- no column change, no existing row's text moved, no renumbering,
-# across SIX abi steps (17-22):
+# pcrec commit d34c91311ba27968bf2ff5ebfd9d6bebe5639f2f (abi 23), archived by
+# testees/pcrec/pin.sh on 2026-09-06 (PIN.tsv); captured 2026-09-06 by the
+# manager ([B39], the eleventh session). 76 data rows / 26 axes / 12 columns
+# -- the FOURTH registry surface (pcrec docs/spec/registry.md 6, [CHK-2]).
+# The diff from the 334fd10e copy (74 / 25, [B37]) is ONE NEW AXIS of two
+# rows and nothing else -- no column change, no existing row's text moved,
+# no renumbering -- EXACTLY as the b39prep lane PREDICTED from the source
+# diff (axes_dump.c's only change), across ONE abi step (22 -> 23):
 #
-#   - `alt-island` ([ENG-ISL] STEP 1, pcrec abi 18), appended after
-#     `prefilter-lang` as the registry's last axis, stamped through
-#     RX_VM_ALT_ISLANDS (a COUNT, so neither row carries a stamp_value):
-#     order 1 `island` (kind `predicate`, deny PCREC_NO_ALT_ISLAND / bit 23
-#     / `-fno-alt-island`: "per flat alternation on the VM route: the whole
-#     subtree's language is a finite set of literal byte strings within the
-#     emitter's enumeration budget (a caseless alternation is class-leading
-#     by D23 and declines)") and order 2 `denied` (the fallback -- vm_alt's
-#     serial resume chain, one frame per untried branch).
+#   - `cls-fold` ([FORM-CHAR] STEP 1, pcrec abi 23), appended after
+#     `alt-island` as the registry's last axis, stamped through
+#     RX_VM_CLS_FOLDS (a COUNT, so neither row carries a stamp_value):
+#     order 1 `fold` (kind `predicate`, deny PCREC_NO_CLS_FOLD / bit 24 /
+#     `-fno-cls-fold`: "per VM pool class: the set is exactly an ASCII fold
+#     pair (two members differing only in bit 0x20, both letters ...)") and
+#     order 2 `denied` (the fallback -- "the class keeps its
+#     singleton/range/bitmap shape"). VM route only (tuning.md 2.22).
+#
+# The pin ADVANCED from the prep's 37f5ae02 to d34c9131 on Frank's ruling
+# (inbox I-52): the delta is test/doc/check repairs, the K51/K52 filings
+# and one `--list-syntax` description -- nothing here moved by it.
 #
 # WHAT IS NOT HERE, and it is the registry's own statement rather than an
 # omission of this archive: abi 17's `RX_DFA_UNIFORM_FOLDS` ([CC-DIFF]
@@ -35,9 +39,9 @@
 # --list-limits, not here). The adapter declares `vm_entry_shape`'s four
 # tokens from match_api.md 6.3's closed enum for that reason, with no
 # registry row to check them against.
-# `--list-definitions` is BYTE-IDENTICAL to its 288d505 copy below its own
-# header (MEASURED at this re-pin); `--list-limits` gained TEN rows (its
-# header says which).
+# `--list-definitions` is BYTE-IDENTICAL to its 334fd10e copy below its own
+# header (MEASURED at this re-pin, the sixth pin running); `--list-limits`
+# gained ONE row and four re-worded ones (its header says which).
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).
@@ -121,6 +125,8 @@ altcls-factor	1	factored	predicate	RX_ALTCLS_FACTORED		PCREC_NO_ALTCLS_FACTOR	11
 altcls-factor	2	denied	predicate	RX_ALTCLS_FACTORED							always (fallback)
 alt-island	1	island	predicate	RX_VM_ALT_ISLANDS		PCREC_NO_ALT_ISLAND	23			-fno-alt-island	per flat alternation on the VM route: the whole subtree's language is a finite set of literal byte strings within the emitter's enumeration budget (a caseless alternation is class-leading by D23 and declines)
 alt-island	2	denied	predicate	RX_VM_ALT_ISLANDS							always (fallback) — vm_alt's serial resume chain, one frame per untried branch
+cls-fold	1	fold	predicate	RX_VM_CLS_FOLDS		PCREC_NO_CLS_FOLD	24			-fno-cls-fold	per VM pool class: the set is exactly an ASCII fold pair (two members differing only in bit 0x20, both letters — what D23's parse-time caseless folding produces), so the test is one or-mask-and-compare and the 32-byte bitmap is not emitted
+cls-fold	2	denied	predicate	RX_VM_CLS_FOLDS							always (fallback) — the class keeps its singleton/range/bitmap shape
 atomic-discharge	1	discharged	predicate			PCREC_NO_ATOMIC_DISCHARGE	12			-fno-atomic-discharge	possessify's own verdict proves the A_ATOMIC node's cut is a no-op (docs/design/atomic_groups_design.md §5.3)
 atomic-discharge	2	denied	predicate								always (fallback) — ENGINE-SELECTING: the A_ATOMIC node stays, which is DFA-excluding, so RX_ENGINE can move to "vm"
 splice-calls	1	spliced	predicate	RX_VM_CALL_SPLICED		PCREC_NO_SPLICE_CALLS	13			-fno-splice-calls	the callee is not in a call-graph cycle and its expansion fits the splice size budget (PCREC_MAX_SPLICE_NODES/_TOTAL)

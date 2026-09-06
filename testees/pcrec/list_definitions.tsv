@@ -3,20 +3,21 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-334fd10e/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-d34c9131/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit 334fd10e6c3e770fe9044355b77835e3ad28ad79 (abi 22), archived
-# 2026-09-05 by lane b37repin ([B37]). 50 data rows / 7 columns: kind,
-# selector, syntax, order, predicate, definition, applies -- one row per
-# construct DEFINED in terms of another (`\d` = `[0-9]`, the POSIX classes,
-# `\R`, the `\c`/`\x`/`\o` decoders as text functions), the predicate being
-# the option-scope tag's own name (a closed vocabulary). BYTE-IDENTICAL to
-# the 288d505 copy below the header, which was byte-identical to the
-# 1989c62, a7e0bdf and 263b013 ones: no definition has moved across five
-# pins and, this time, across SIX abi steps at once -- [CC-DIFF] STEP 1/2,
-# [ENG-ISL] STEP 1, [OPT-EDGE] STEP 1/1.1 and [DD-13b.W1.3] are all
-# EMITTER changes (how a construct is lowered, inlined, dispatched or
-# composed), never a change to what a construct MEANS.
+# pcrec commit d34c91311ba27968bf2ff5ebfd9d6bebe5639f2f (abi 23), archived
+# 2026-09-06 by the manager ([B39], the eleventh session). 50 data rows / 7
+# columns: kind, selector, syntax, order, predicate, definition, applies --
+# one row per construct DEFINED in terms of another (`\d` = `[0-9]`, the
+# POSIX classes, `\R`, the `\c`/`\x`/`\o` decoders as text functions), the
+# predicate being the option-scope tag's own name (a closed vocabulary).
+# BYTE-IDENTICAL to the 334fd10e copy below the header, which was
+# byte-identical to the 288d505, 1989c62, a7e0bdf and 263b013 ones: no
+# definition has moved across SIX pins. As the b39prep lane predicted:
+# [FORM-CHAR] STEP 1 (the ASCII fold-pair class lowering) is an EMITTER
+# change, and the `\x{...}` move to the base grammar behind this pin
+# ([M5.0] stage 2) is parse.c's and `--list-syntax`'s -- definitions.c and
+# registry.c are untouched between 334fd10e and d34c9131.
 # The grep strips pcrec's own `#` comment/header lines, so the data rows
 # are the whole body; the column header is restated here for a reader:
 #

@@ -5,47 +5,35 @@
 # (inbox I-25: "ARCHIVE IT beside --list-axes at your re-pin"). Everything
 # below this header is the unmodified output of:
 #
-#     build/pcrec-334fd10e/build/pcrec --list-limits
+#     build/pcrec-d34c9131/build/pcrec --list-limits
 #
-# pcrec commit 334fd10e6c3e770fe9044355b77835e3ad28ad79 (abi 22), archived
-# 2026-09-05 by lane b37repin ([B37]). 55 data rows / 7 columns (name,
-# value, unit, kind, override, anchor, desc) -- one row per numeric limit
-# in pcrec src/core/limits.def, in the table's own order. The diff from the
-# 288d505 copy (45 rows, [B34]) is TEN NEW ROWS and ONE DESCRIPTION EDIT,
-# the first movement this file has seen since a7e0bdf's PCREC_MAX_SCAN_EDGES:
+# pcrec commit d34c91311ba27968bf2ff5ebfd9d6bebe5639f2f (abi 23), archived
+# 2026-09-06 by the manager ([B39], the eleventh session). 56 data rows / 7
+# columns (name, value, unit, kind, override, anchor, desc) -- one row per
+# numeric limit in pcrec src/core/limits.def, in the table's own order. The
+# diff from the 334fd10e copy (55 rows, [B37]) is ONE NEW ROW and FOUR
+# RE-WORDED ONES, exactly as the b39prep lane predicted from the source diff
+# (pcrec [LIM-2] N1, "work-budget fallback + generalized raise surface",
+# behind 37f5ae02):
 #
-#   - NINE rows inserted after VM_MAX_AUTO_TRAIL_FRAMES (before
-#     PCREC_PREFIX_K_MAX): the [ENG-ISL] alternation-island
-#     knees and budgets -- VM_ISL_MIN_BRANCHES 2 (fewest literal
-#     alternatives an island is built for), VM_ISL_MIN_BRANCHES_PREFIXED 4
-#     (fewest for an island that PUSHES, i.e. not prefix-free),
-#     VM_ISL_MAX_WORDS 8192 ("the bench's widest altwide rung is 4096" --
-#     pcrec's own words), VM_ISL_MAX_BYTES 262144, VM_ISL_MAX_DEPTH 64,
-#     VM_ISL_BYTES_PER_NODE 180 / VM_ISL_BYTES_PER_CHAIN_NODE 98 (the
-#     measured marginal bytes the island-vs-chain size estimate uses),
-#     VM_ISL_SIZE_FACTOR 2 (the island may reach 2x the chain's estimate
-#     before it declines; validated by pcrec's random census, 0 refused /
-#     max 1.03x) -- and [CC-DIFF] STEP 2's VM_INLINE_CHAIN_MAX_BYTES 4096
-#     (`selection knee`, override `flag`: emitted VM program bytes at or
-#     below which AUTO takes entry shape `forward`, above which `shared`;
-#     `--vm-entry-shape=N` overrides it outright). Every one is a
-#     `selection knee` or `compile budget` with no limits.md anchor: knees
-#     that steer a lowering promise a caller nothing (tuning.md 2.20).
-#   - ONE row inserted after PCREC_MAX_SCAN_EDGES: PCREC_MIN_SCAN_CHAIN 2
-#     (`states`, `selection knee`; [OPT-5] precondition (5) -- the
-#     SHORTEST bounded counted-class run scanedge.c collapses into an edge;
-#     MEASURED 2026-09-04 by pcrec against the STEP 1.1 loop, m=2/3/4
-#     not separated from -fno-scan-edge beyond the per-round range, kept
-#     at 2 by D77 no-gap-no-move; inbox I-44 calls the m=2 cell UNSTABLE
-#     and re-measurement owed).
-#   - PCREC_MAX_SCAN_EDGES 4: VALUE UNCHANGED, `desc` REWORDED -- "since
-#     [OPT-EDGE] STEP 1 an edge costs NO compare on the emitted loop's
-#     generic path (the shared sentinel), so this is an emitted-bytes
-#     budget awaiting a measured re-choice". The bench's `scan_edges`
-#     covariate ([B32]) was built on the per-edge-compare mechanism that
-#     sentence retires; the count is still recorded (it is what the edge
-#     dispatch's BEFORE/AFTER regresses on), and iso-ts still carries 8/4
-#     at this pin (MEASURED at the re-pin, the marker reader unchanged).
+#   - PCREC_MAX_AUTO_DFA_ELEMS 30000000 (`elements`, `compile budget`,
+#     override `-D`, anchor 3.3), inserted after PCREC_MAX_SUBSET_ELEMS: the
+#     AUTO route's own DFA-attempt WORK BUDGET in K7's already-counted
+#     subset-element unit -- over budget, AUTO falls back to the VM instead
+#     of spending the whole K7 budget on a DFA it may then refuse. A new
+#     engine-route input this bench's stamps may show as a VM selection
+#     where 334fd10e built a DFA: read RX_ENGINE_SEL / `_WHY` on any such
+#     cell before calling it movement.
+#   - THREE rows' `override` moved none -> flag, VALUE UNCHANGED, desc
+#     extended with the new raise-only per-compile flag: PCREC_MAX_NFA_STATES
+#     131072 (`--max-nfa-states`), PCREC_MAX_DFA_STATES_GOTO 10000
+#     (`--max-dfa-states-goto`), PCREC_MAX_SUBSET_ELEMS 48000000
+#     (`--max-subset-elems`). The bench passes none of them: every pinned
+#     config keeps pcrec's defaults, and the 65535 rung's "NFA exceeds
+#     131072 states" refusal is UNCHANGED at this pin.
+#   - PCREC_MAX_DFA_STATES_TABLE 32000: VALUE and override UNCHANGED, desc
+#     re-worded "NOT RAISABLE (N1 survey) -- the emitted table's cell type
+#     is a C short".
 #
 # The rows this bench has already met by name, all UNCHANGED:
 # PCREC_MAX_DFA_STATES_TABLE 32000 (the ">32000 states" [SEL-1] overflow),
@@ -100,11 +88,12 @@
 PCREC_MAX_PREFIX_LEN	60	bytes	identifier cap	none		generated-symbol prefix (-p): a C identifier bound
 PCREC_MAX_EMIT_NAME_LEN	156	bytes	identifier cap	none		K38: fixed buffer size for every emitted identifier/sub-expression built from the -p prefix
 PCREC_DFA_OVERFLOW_WHY_LEN	96	bytes	identifier cap	none		[SEL-1]: fixed size of the DFA-cap-overflow reason string (RX_ENGINE_WHY source)
-PCREC_MAX_NFA_STATES	131072	states	compile budget	none	3.3	M2.8: NFA state-count ceiling; a memory backstop, the DFA caps below usually bind first
-PCREC_MAX_DFA_STATES_GOTO	10000	states	compile budget	none	3.3	computed-goto DFA attempt engine's state ceiling
-PCREC_MAX_DFA_STATES_TABLE	32000	states	compile budget	none	3.3	table-engine DFA state ceiling; must fit in a C short
+PCREC_MAX_NFA_STATES	131072	states	compile budget	flag	3.3	M2.8: NFA state-count ceiling; a memory backstop, the DFA caps below usually bind first; --max-nfa-states ALSO raises it per compile (raise-only)
+PCREC_MAX_DFA_STATES_GOTO	10000	states	compile budget	flag	3.3	computed-goto DFA attempt engine's state ceiling; --max-dfa-states-goto ALSO raises it per compile (raise-only) -- raising it trades gcc's own superlinear computed-goto compile time (R1 A-3), the caller's cost to accept
+PCREC_MAX_DFA_STATES_TABLE	32000	states	compile budget	none	3.3	table-engine DFA state ceiling; NOT RAISABLE (N1 survey) -- the emitted table's cell type is a C `short`/`unsigned short` (PREMUL_DEAD=65535, indexed dead=-1; src/gen/emit_dfa.c), so a state number the artifact cannot represent would silently truncate; 32000 already sits just under that ceiling
 PCREC_MAX_TABLE_ENTRIES	2000000	entries	compile budget	none	3.3	states*classes bound on the DFA transition table (~12 MB source)
-PCREC_MAX_SUBSET_ELEMS	48000000	elements	compile budget	none	3.3	[M4.7b]/K7: total NFA-state-list elements the priority subset construction may intern, summed over both machines
+PCREC_MAX_SUBSET_ELEMS	48000000	elements	compile budget	flag	3.3	[M4.7b]/K7: total NFA-state-list elements the priority subset construction may intern, summed over both machines; --max-subset-elems ALSO raises it per compile (raise-only)
+PCREC_MAX_AUTO_DFA_ELEMS	30000000	elements	compile budget	-D	3.3	[LIM-2] N1: the AUTO route's own DFA-attempt work budget, in K7's already-counted subset-element unit (Ctx.subset_elems); over budget under --engine=auto abandons the attempt and falls back to VM through the SAME auto-fallback umbrella a PCREC_MAX_SUBSET_ELEMS refusal uses (SEL-1); --engine=dfa is unaffected and pays the full cap above; --max-auto-dfa-elems ALSO raises it per compile (raise-only); -D moves the built-in default (the N1 positive-control test's reference compiler is the one non-default consumer, matching PCREC_MAX_VM_EMIT_CODE_BYTES's own precedent)
 PCREC_MAX_VM_NODES	131072	nodes	compile budget	none	3.3	[M4.5b]: the VM emitter's own node-count size backstop
 PCREC_MAX_VM_REPEAT_COPIES	64	copies	compile budget	none		[M4.5c]: how many times a bounded repeat may replicate a body with a choice point
 PCREC_MAX_VM_REPLICATION_PRODUCT	131072	nodes	compile budget	none		[K22]: total replication product along a chain of nested bounded repeats — a literal alias of PCREC_MAX_VM_NODES, not tuned separately
