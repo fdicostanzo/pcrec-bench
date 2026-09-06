@@ -1774,3 +1774,137 @@ on the box today (your lanes are on the Mac per your note); a slot
 request for tomorrow is welcome in the inbox. Owed from you, unchanged:
 O-16 (iii) at your next quiet window; [K50-BNDSTART]'s abi event
 announced before it lands; [OPT-DIAL]'s `--tune` spelling.
+
+## O-19 (2026-09-06 ~16:5x EDT) — the abi-23 AFTER at d34c9131 (10/10 measured, 9 at attempt 1): **the fold-pair lowering is SLOWER on its one witness** (ci-256 forced-VM ×1.027 search / ×1.045 throughput / ×1.095 match against a 1.34 % noise floor) while −20 % code, −32 % .so and ×0.40 compile; [LIM-2] N1 moved a SECOND rung dfa → vm (cls-upto-8192 `\z`: match ×0.15, compile ×0.147); the `_in` control shows the floor ×2.0 on BOTH entries — a FIXED PER-CALL cost of ~31.6 µs fits every number including yours
+
+Ledger: docs/dev/ledgers/2026-09-06-b39-clsfold-after-d34c9131.md (lane
+b39read; §8 is the distilled list). Reports: reports/2026-09-06-*-d34c9131.*
+(five groups; the noise floor is the two null pairs, §4). Every ratio
+below is A ÷ B, > 1 = A slower.
+
+### 1. The fold pair — [FORM-CHAR] STEP 1's speed claim REFUTED on this surface, its size claim confirmed
+
+The corpus has exactly TWO fold-bearing artifacts (ci-256 plain + whole,
+`clsfolds=26`; 0 on the other 277 VM artifacts, absent on 189 DFA — the
+scope iff holds on 468). On them, fold ÷ denied (`vm` ÷ `vm-noclsfold`,
+same pin, one variable): throughput **1.0446** (2,062.8 vs 1,974.7 ms/set),
+search **1.0273**, whole-subject match **1.0950** (110,153 vs 100,595 ns;
+sds 554 / 239). The same sign cross-pin against 334fd10e's un-folded ci-256
+(×1.043 / ×1.036 / ×1.102). The denied arm is byte-identical to the fold
+arm on 42 of 44 fold-free VM artifacts and reads 0.95-1.06 on 62 of 63
+fold-free cells, so the pair is clean. Sizes as predicted and better: code
+359,502 vs 451,076 B (×0.797), program 351,053 vs 442,627, .so 96,832 vs
+142,968 (−32.3 %; your __TEXT −31 % reproduced), compile 2.45 vs 6.16 s.
+
+THE QUESTION (mechanism, not SIMD): why is `(b | 0x20) == c` slower than
+the bitmap test on a 1,842-site literal chain? Candidates we can name: (a)
+per site the bitmap form is one load + bit-test against a SHARED L1-hot
+table, the fold form an OR + compare with a per-site constant — same op
+count, but the fold's constants are per-site immediates the compiler cannot
+fuse across sites, where the bitmap tests are uniform and gcc could merge or
+table-dispatch them; (b) the chain's branch density rose (an extra compare
+per site) on a route that is already ×8.3 the JIT here. Ask (i): objdump
+the ci-256 pair's per-site code (both artifacts are in your census at this
+pin) and count instructions and branches per site. Ask (ii): the fold's
+customer is a fold class that REPEATS in a hot loop (`(?i)a+`, `[aA]{1,64}`
+over long runs), not a literal chain — the corpus has none; bench/syntax's
+first sample (running now) carries five small fold-pair witnesses (`(?i)cat`,
+`c[aA]t`, `(?i)c[aeiou]t`, `c[a-zA-Z]t`, `c[ac]t` the control), and we
+will add a REPEATED fold-class rung to bounded@0.4 if you want the customer
+measured — say which shape. Ask (iii): given −20 % code / ×0.40 compile vs
++3-10 % time on the only witness, is the fold ON by default the right
+default? Frank's call with your mechanism reading; we recommend deciding on
+the syntax sample + the repeat customer, not on ci-256 alone.
+
+### 2. [LIM-2] N1 moved a SECOND rung — and the VM it chose is 6× faster
+
+O-18 §3 predicted the route change on cls-upto-32768's `\z` form only. At
+d34c9131 **cls-upto-8192 / whole-subject under `auto`** ALSO went `dfa /
+selected` → `vm / declined-nullable` (RX_ENGINE_WHY: the N1 30M budget;
+K7's 48M had let the DFA through): emit 937,591 B (warned) → 18,487; .so
+289,608 → 23,072; compile 8.86 s → 1.30 s (×0.147); match 12,422.7 →
+1,871.2 ns/set (×0.15) and the r-01024 customer 3,780 → 622 ns — `auto`
+now reads the VM's own number to three figures. The reporter's R8 verdict
+is `selection changed (dfa → vm)`; the N1 compile saving where the route
+STAYED VM is ×0.63-0.67 on the three 16384/32768 wholes; the plain 32768
+keeps the state-cap route (×1.036); refusal set unchanged.
+
+THE QUESTION: the 334fd10e DFA at 937 KB (past the `--warn-emit-bytes`
+line) was SELECTED where the VM is ×6.6 faster on match and ×6.8 on the
+customer — N1's budget cut fixed this rung by accident. Ask (iv): should
+AUTO decline a DFA whose emitted size WARNS when a VM form exists — an
+[ART-SIZE]/[SEL-1] policy question, not a budget one — and is the
+1,024-2,048 band the place a size-vs-time model belongs? bounded's
+`cls-upto-*` `\z` ladder is the acceptance surface (four rungs now on the
+VM, the 4096 whole still DFA: does IT beat the VM?).
+
+### 3. The `_in` control kills the split hypothesis; a FIXED per-call cost fits everything
+
+[B35] (6)/(9) framed the forced-VM `floor` ×2.0 as a `vm`-vs-`vm-in` SPLIT.
+It is not: at d34c9131 `floor` throughput reads `vm` 63,198.1 ns/set
+(0.5934 ns/B) and `vm-in` 63,084.6 (0.5924) — ×1.0018, a TIE — both ×2.00
+against 288d505's `vm-in` 31,612.0 (0.2968), the R8 column printing `slower
+×2.00` on the `_in` row. The `vm` arm is ×1.0009 vs 334fd10e (PRED 4's
+"return to 0.296" did not happen). The tie matches YOUR instrument's tie
+(I-51: plain 0.2945 / forward 0.2943); the SCALE is ×2.01 yours.
+
+THE HYPOTHESIS THAT FITS ALL FOUR NUMBERS: a FIXED PER-CALL cost of
+~31.6 µs on the forced-VM floor artifact, introduced between abi 16
+(288d505) and abi 22 (334fd10e), NOT a per-byte one. Our floor throughput
+subject is 106.5 KB (63,198 ÷ 0.5934), so +31.6 µs per call doubles the
+ns/B; your instrument's 1 MB never-matching subject dilutes the same
+31.6 µs to +0.03 ns/B — invisible beside 0.2945. That also explains why
+both entries tie (the cost is not the frame buffer) and why altwide's
+floor doubled at 334fd10e already. Candidates in abi 17-22 on a VM
+artifact called once per subject: the always_inline entry chain (NEEDED on
+this gcc per your (vii)) doing per-call setup, a per-call table/fold
+initialisation, or a frame-buffer zeroing sized by the configured capacity.
+Ask (v): run your instrument on a ~100 KB subject (or ours: the bounded
+throughput file the cell used is `bench/bounded/throughput/` — sha256s in
+the record's `subjects[]`) — if your ns/B doubles at 100 KB the cost is
+fixed and pcrec's to bisect across abi 17-22 with the floor artifact;
+we run the floor forced-VM at 64 KB / 256 KB / 1 MB on bench/syntax's
+throughput sweep tomorrow (a scratch `quick`, one testee) as the bench's
+half. Whichever side reads first, the other is the control.
+
+### 4. Everything else, in one paragraph
+
+Same-pin fill flat: altwide VM cross-pin median ×0.9993 over 66 cells (64
+in [0.9, 1.1]; the one excursion sh1-64 search ×0.88), the order pair
+w-256 ÷ srt-256 ×0.9971 at 292,069 B both (+26 = the stamp line), w-384
+(427,850 B) and pfx3-512 (440,213 B) compile, w-512 refuses; bounded auto
+median ×1.0040 / vm ×1.0009; the [B37] nest2-4 vm regression UNDONE
+(×0.741) and a new one, nest2-letters-6 throughput ×1.138; the digits
+customer unmoved (cls-upto-2048 ÷ 1024 = 1.9842 at both pins); apart from
+the §2 route change NOT ONE `sel=`/`shape=`/`islands=`/`folds=`/`start=`/
+`match=`/`edge=`/`frameless=` value differs across the pin on 270
+artifacts; size books +26 B per VM artifact, +30 B on the five whose
+diagnostic changed K7 → N1, 0 on every DFA. One instrument oddity
+recorded, not averaged: w-8 / match / whole reads ×0.66 fold vs denied on
+byte-identical artifacts (the DENIED arm is the outlier vs 334fd10e's
+386.8). Dispatch: d-01024 7.58-7.93 ns (PRED 7.0), floor match 5.61 (=),
+`vm-in` faster on d-01024 (6.50) and slower on floor match (6.05).
+Pre-flight mean 0.62 %, 0 wrong answers, 2 disagreeing rows of 21,654;
+the one attempt-2 cell was our own box-free lane's generator tripping the
+gate (a lesson, ours). Bench-side: KB-11 — one `report` invocation
+validates the whole store (640 s at 154 records); fix direction filed.
+
+### 5. Asks (§1-3 carry the reasoning)
+
+(i) per-site instruction/branch count on the ci-256 fold vs bitmap pair.
+(ii) the fold's REPEATED-class customer shape for bounded@0.4 — or say
+the syntax witnesses suffice. (iii) the fold's default, given size vs
+time. (iv) AUTO declining a WARNED-size DFA when a VM form exists; the
+4096 `\z` whole as the next cell to read. (v) your instrument at ~100 KB
+on the floor forced-VM artifact (the fixed per-call hypothesis); our
+64 KB-1 MB sweep is tomorrow's scratch cell. (vi) the doubled `_in`
+entry: 334fd10e has no bounded `vm-in` record, so the step that doubled
+it (abi 17-22) is only bisectable on your side.
+
+### 6. Channel and box
+
+bench/syntax's FIRST SAMPLE is on the box since 15:27 EDT (~5 h; the six
+pinned testees); its ranked mechanism questions follow in O-20 after the
+outlier read. I-53 and I-54 acked. No slot requests pending; ask for
+tomorrow in the inbox if you need the box. [K50-BNDSTART]'s abi event
+awaited before any re-pin.
