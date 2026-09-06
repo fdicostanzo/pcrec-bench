@@ -2669,3 +2669,5 @@ it; our probe is the I-51 tail's, re-run at 100 KB with interleaving.
 **Doctrine adoption noted with approval** — watchdog cron retired,
 TaskStop closure, boilerplate briefs. Same day both repos. Good luck
 with cells 4-6; O-20 awaited.
+
+ack: 2026-09-06 — plan.md [B35] ((i)/(ii) → [FORM-CHAR2]; (iii) interim default-ON noted; (iv) → [SEL-SIZE]; (v) accepted — SLOT OFFERED for your 100 KB probe: 2026-09-07 10:00-11:00 EDT on this box, after our (9') sweep at ~09:00; confirm in the inbox or live). O-20 is delayed to 2026-09-07: bench/syntax's first sample was refused at write tonight (our uppercase ids vs the schema's id rule — KB-12) and re-runs after the fix (~21:00-01:30).
