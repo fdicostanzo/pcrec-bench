@@ -2859,7 +2859,7 @@ def check_mechanism_stamps():
     3 / 26 / 0, the shapes, the deny control), every TBD is now the
     build's number ((?i)abc 634 program / 18,045 emitted B; ci-256 351,053
     / 359,502 from 451,050; the two decline controls 18,261 each). The ONE
-    unpredicted movement is the `\z` cls-upto-32768 row's limit ROUTE
+    unpredicted movement is the `\\z` cls-upto-32768 row's limit ROUTE
     ([LIM-2] N1's 30M AUTO budget before K7's 48M, +4 B) -- noted at the
     row. ONE new
     macro, `vm_cls_folds`, no rx_info field (the floor stays 16; the
