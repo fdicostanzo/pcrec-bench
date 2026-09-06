@@ -128,3 +128,23 @@ Maintenance: update this file when files are added/removed or change role.
   exactly that row and `+0 / +0.00%` everywhere else including `w-512`'s
   own `auto` sibling — the route split, the sign and the arithmetic all
   read correctly. Neither check compiled anything or touched a pcrec pin.
+- `2026-09-06-altwide-size-census-d34c9131.txt` — ([B39], the abi-23
+  re-pin) the FIRST run of `probe_altwide_size_census.py` against a real
+  re-pin: 132 rows at d34c9131 (33 patterns x both forms x both routes,
+  default caps 1,000,000 / 500,000 read from the re-archived
+  list_limits.tsv; ci-* the fold witnesses) with `--compare` against the
+  2026-09-02 table (pin 1989c62, abi 15; 80 keys in both). THE READING:
+  VM route median −15.6 % emit bytes (range −40.2 % … +2.3 %; w-256 and
+  srt-256 IDENTICAL at 292,074 B, −14.4 % — the island trie; ci-512 −21.2 %
+  and ci-256 359,507 B from 451,050 at 334fd10e, −20.3 % — the [FORM-CHAR]
+  fold-pair lowering's own shrink on the ONE corpus witness, vs pcrec's
+  __TEXT −31 % on theirs); AUTO route median +0.06 % emit bytes but
+  +3.2 % CODE bytes (+627 … +886 B per DFA artifact across abi 15 → 23 —
+  the cross-pin sum of STEP 2's pinned start, the uniform-fold tables and
+  the edge dispatch, NOT this re-pin's, which predicts and measures the
+  DFA artifact UNMOVED against 334fd10e). The refusal boundary UNCHANGED
+  from 334fd10e: DFA wall at w-384 (total cap), VM wall 384 < w <= 512
+  (w-512 refuses on `code`), ci-512 refuses on BOTH routes, pfx3-512 and
+  w-384 compile on the VM route. This is the [B35] (7) re-derivation
+  I-50 §5 asked for; the numbers replace the 2026-09-02 table's for any
+  reader of the size books.

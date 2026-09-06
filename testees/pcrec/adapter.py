@@ -4,7 +4,9 @@ Provides `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm`, their clang siblings
 `pcrec-auto-clang` / `pcrec-nocaps-clang` / `pcrec-vm-clang`, their
 raised-emitted-size-cap siblings `pcrec-auto-bigcap` / `pcrec-vm-bigcap`,
 the scan-edge-denied `pcrec-auto-noedge`, the alternation-island-denied
-`pcrec-auto-noisland` ([B37]), the function-alignment sibling
+`pcrec-auto-noisland` ([B37]), the ASCII-fold-class-test-denied pair
+`pcrec-auto-noclsfold` / `pcrec-vm-noclsfold` ([B39], pin d34c9131), the
+function-alignment sibling
 `pcrec-auto-align64`, and the caller-provided frame-buffer variants
 `pcrec-auto-in` / `pcrec-vm-in`, all at the pin in `configs.toml` -- and
 `pcrec-local`, a PROVIDED binary at no pin at all.
@@ -398,6 +400,80 @@ nothing at all:
                      (w-256's VM form 341,201 -> 292,043, srt-256's
                      302,047 -> 292,043 -- byte-identical to each other now).
 
+[B39] (pin d34c9131 = pcrec abi 23, inbox I-49/I-50) -- drafted from
+pcrec's src/gen/emit_vm.c, src/gen/emit_dfa.c, src/parse/axes_dump.c,
+src/core/limits.def, docs/spec/match_api.md 6.3 and docs/spec/tuning.md
+2.22 by a prep lane (b39prep, 2026-09-05) before any build existed;
+BUILT 2026-09-06 (pin.sh d34c9131, inbox I-52), `make check` run, and
+every claim below confirmed on real artifacts. ONE new macro, no new
+rx_info field (the emitter's own abi-bump note at the `.abi = 23` write
+site: "No struct offset moves, no `rx_info` member is added" -- so the
+floor STAYS 16, confirmed by the abi-sabotage arms), one new deny bit:
+
+  abi 23 ([FORM-CHAR] STEP 1) `RX_VM_CLS_FOLDS` -- a COUNT on every VM
+                     artifact, hybrids included, never on a DFA one
+                     (`vm_alt_islands`' scope, the VM-only iff a fourth
+                     time): how many of the artifact's VM class-pool
+                     entries take the ASCII-FOLD membership-test shape -- a
+                     two-member set {B, B|0x20}, both letters, what D23's
+                     parse-time caseless folding makes of every `(?i)`
+                     letter -- tested as `(byte | 0x20) == lower` with NO
+                     32-byte `<prefix>_class_bitmap<N>` table emitted for
+                     it. `vm_cls_shape` (emit_vm.c) is the ONE derivation
+                     the test emitter, the table emitter and the stamp all
+                     read, so a test and its table cannot disagree. Family
+                     (b): what the emitted program turned out to CONTAIN.
+                     The registry gains ONE axis, `cls-fold` (two
+                     `predicate` rows `fold` / `denied`, no stamp_value --
+                     the macro is a count; measured 74/25 -> 76/26), whose
+                     order-1 row carries `-fno-cls-fold` (PCREC_NO_CLS_FOLD,
+                     bit 24): the control, and the `-noclsfold` siblings'
+                     one variable. The flag joins emit_info_def's
+                     strategy_denials mask on pcrec's side (bit 23's own
+                     precedent), so an artifact with NO fold pair is
+                     byte-identical under the flag, rx_info.flags included.
+                     VM ROUTE ONLY (tuning.md 2.22): the DFA scan edge's
+                     class bodies are deliberately untouched, so an `auto`
+                     cell only sees the fold where auto selects the VM --
+                     which is why the deny sibling comes in BOTH an `auto`
+                     and a `vm` form. The second abi bump whose change
+                     reaches the VM PROGRAM region (the island was the
+                     first).
+  (also behind the SHA, stamping nothing this adapter reads) [M5.0] STAGE
+                     2 -- `-e utf8` compiles; the byte path byte-identical
+                     at the gate; and `\\x{...}` moved from module-gated to
+                     BASE grammar, range-checked per encoding: the
+                     `--list-syntax` rows move ([B36]'s re-seed), while
+                     src/parse/definitions.c and registry.c are UNCHANGED
+                     between the pins, so `--list-definitions` is measured
+                     byte-identical (50) for the sixth pin running. [LIM-2]
+                     N1 landed too: limits.def gains PCREC_MAX_AUTO_DFA_ELEMS
+                     (30,000,000, the AUTO route's own DFA-attempt work
+                     budget) and re-words three rows as raise-able via the
+                     new `--max-nfa-states` / `--max-dfa-states-goto` /
+                     `--max-subset-elems` flags (measured 55 -> 56). K49
+                     (utf8 lookbehind mid-character match) is stage-2 utf8
+                     only -- nothing the byte-path sets touch.
+  (sizes, MEASURED) every VM artifact gains one stamp line, `#define
+                     RX_VM_CLS_FOLDS <n>` -- +26 B of comment-excluded source
+                     for a one-digit count -- and nothing else where no pool
+                     class is a fold pair; every DFA artifact is
+                     byte-identical but for the `.abi` digit (same length).
+                     Fold-bearing VM artifacts SHRINK: per fold class one
+                     32-byte bitmap declaration gone and every test site
+                     `(<prefix>_class_bitmap<N>[(b) >> 3] >> ((b) &
+                     7)) & 1` -> `(b | 0x20) == <lower>`; measured
+                     altwide ci-256 forced-VM 451,050 -> 359,502 B, -20.3 %
+                     (I-49's own witness reported __TEXT -31 % on pcrec's
+                     box). The bench's fold witnesses are altwide's ci-256 /
+                     ci-512 and NO other (the corpus census: no `(?i)` and no
+                     two-letter class anywhere in email, loglines or
+                     bounded), so under `auto` -- which took the DFA on
+                     ci-256 at 334fd10e -- no corpus artifact stamps
+                     folds > 0; under `--engine=vm` ci-256 stamps 26 (26
+                     distinct letters in its 256 words, one pool class per
+                     distinct fold pair); `(?i)abc` forced-VM stamps 3.
+
 Two rules govern how they are read, and both exist because they were paid
 for on the pcrec side first:
 
@@ -455,7 +531,8 @@ for on the pcrec side first:
 
 The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 16 since [B34] -- the
 abi that appended `search_form`, the sixth field it reads, and UNCHANGED at
-[B37]'s abi 22: six abi steps, four new macros, no new field; 15 from [B26]
+[B37]'s abi 22: six abi steps, four new macros, no new field -- and at
+[B39]'s abi 23, unchanged again: one macro, no field; 15 from [B26]
 for `name` and `nentries`, 10 from [B18] for `match_form`, 6 before that
 for `scan` / `prefilter`) and is enforced in `driver.c`, which
 refuses a lower artifact by name before printing anything else. This file
@@ -1180,7 +1257,66 @@ METADATA_DECL = {
                        "the caps' definition counts the whole file outside "
                        "table initializers) and can exceed it (MEASURED: "
                        "w-256's VM form stamps 305,686 against 292,043 "
-                       "comment-excluded emitted bytes)",
+                       "comment-excluded emitted bytes). pcrec I-50 1 "
+                       "reconciled the two TO THE BYTE: this stamp is the "
+                       "raw length of the VM emitter's program scratch "
+                       "buffer -- the PROGRAM REGION ONLY, with its "
+                       "COMMENTS INCLUDED (the island trie writes a "
+                       "per-node role comment on every interior node, so "
+                       "a wide alternation's program region carries most "
+                       "of the file's comment mass) -- while "
+                       "`emit_code_bytes` is the WHOLE .c+.h with every "
+                       "comment EXCLUDED, the definition "
+                       "`--max-emit-code-bytes` enforces. Different "
+                       "population AND different comment policy; neither "
+                       "number is wrong. For CAP reasoning use the code "
+                       "bytes; this is a VM-region activity number",
+    },
+    # [B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1): the fourth VM-only
+    # activity count, on `vm_alt_islands`' scope and for its reason.
+    "vm_cls_folds": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_VM_CLS_FOLDS ([FORM-CHAR] STEP 1, pcrec abi "
+                  "23+), read through pb_vm_cls_folds() behind "
+                  "pb_has_vm_cls_folds(); no rx_info mirror (match_api.md "
+                  "6.3: `on the same precedent and for the same reason` "
+                  "as _VM_ALT_ISLANDS, D77); scope checked by STAMP_SCOPE "
+                  "(every VM artifact, hybrids included, no DFA artifact) "
+                  "and the VALUE in tools/selfcheck.py on the bench's own "
+                  "witnesses (altwide ci-256 under --engine=vm, MEASURED "
+                  "26; 0 on every VM artifact with no fold pair) with "
+                  "`-fno-cls-fold` (--list-axes `cls-fold`, bit 24) as the "
+                  "deny control that reaches 0 and restores the tables",
+        "description": "how many of this artifact's VM class-pool entries "
+                       "take the ASCII-FOLD membership-test shape: a "
+                       "two-member set {B, B|0x20} with both members "
+                       "letters -- exactly what D23's parse-time caseless "
+                       "folding makes of every `(?i)` letter, and nothing "
+                       "else in the base grammar makes -- tested as "
+                       "`(byte | 0x20) == lower` (one or-mask and one "
+                       "compare; gcc -O2 emits mask + compare + sete with "
+                       "NO LOAD) with the class's 32-byte "
+                       "`<prefix>_class_bitmap<N>` table NOT EMITTED "
+                       "(tuning.md 2.22). Selected PER POOL CLASS by "
+                       "`vm_cls_shape`, the one derivation the test "
+                       "emitter, the table emitter and this stamp read, so "
+                       "a COUNT rather than a boolean: a pattern mixes "
+                       "fold-pair positions with bitmap classes, and "
+                       "distinct pool entries are distinct sets with "
+                       "distinct compare constants. Declined -- a selection "
+                       "outcome, never a refusal -- for any set that is not "
+                       "exactly two members, a two-member set not differing "
+                       "only in bit 0x20 (`[ac]`), and a 0x20-pair of "
+                       "NON-letters (the compare would be exact, but the "
+                       "pair is not a FOLD). 0 is a value: no pool class "
+                       "was a fold pair, or a `-fno-cls-fold` build. "
+                       "ANSWER-IDENTICAL either way (`(b | 0x20) == (lo | "
+                       "0x20)` holds for exactly the pair's two bytes; "
+                       "22,488/22,488 on pcrec's sweep) -- a SIZE and cost "
+                       "fact: fold-bearing VM artifacts shrink by the "
+                       "tables and the test text. VM route only: the DFA "
+                       "scan edge's class bodies never consult "
+                       "vm_cls_shape",
     },
     # -- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec
     # inbox I-39; [B34], pin 288d505). COMMON scope: on EVERY artifact,
@@ -1307,6 +1443,7 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "fast_frames", "fast_trail", "vm_frameless",
              "altcls_merges", "altcls_factored",
              "dfa_uniform_folds", "vm_alt_islands", "vm_program_bytes",
+             "vm_cls_folds",
              "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
              "emit_bytes", "emit_code_bytes", "warned_emit_bytes",
              "scan_edges", "scan_edges_match")
@@ -1380,6 +1517,13 @@ STAMP_SCOPE = {
     "vm_alt_islands":        ("vm",       18),
     "vm_entry_shape":        ("vm",       22),
     "vm_program_bytes":      ("vm",       22),
+    # [B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1): the fold count on
+    # `vm_alt_islands`' VM-only scope
+    # (match_api.md 6.3: "UNCONDITIONAL on every VM artifact, hybrids
+    # included, and never defined on a pure-DFA artifact"). An abi-22
+    # artifact (a `pcrec-local` binary at the previous pin) records it as
+    # "not stamped" without tripping this table.
+    "vm_cls_folds":          ("vm",       23),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -2034,6 +2178,30 @@ DENY_FLAGS = (
      "to its sibling modulo which budget binds (a budget-bound cell may "
      "differ in the island's favour only, pcrec I-43), and carrying the "
      "chain's frames and entry shape with it"),
+    # [B39] (pin d34c9131, [FORM-CHAR] STEP 1, --list-axes `cls-fold` bit
+    # 24). The FOURTH denial that
+    # changes what the artifact CONTAINS and the second on the VM route:
+    # denied, `vm_cls_shape` re-classifies every ASCII fold pair to BITMAP,
+    # so every `(?i)` letter position reads its 32-byte
+    # `<prefix>_class_bitmap<N>` again and the N tables RETURN -- the
+    # artifact is the pre-[FORM-CHAR] VM program from the SAME compiler,
+    # LARGER than its sibling by the tables and the test text. An artifact
+    # with no fold pair is byte-identical under the flag (the flag is in
+    # pcrec's strategy_denials mask: rx_info.flags identical too), which is
+    # what makes the denied population a usable reference. Answer identity
+    # is structural (tuning.md 2.22) and was swept 22,488/22,488 (I-49).
+    # Chartering order puts the word AFTER `noisland`: [B39] came after
+    # [B37], and an id in the store keeps its parts where they were.
+    ("-fno-cls-fold", "noclsfold",
+     "the [FORM-CHAR] ASCII-FOLD CLASS TEST denied (--list-axes `cls-fold`, "
+     "bit 24): every two-member fold-pair class -- what `(?i)` makes of a "
+     "letter -- reads its 32-byte bitmap again instead of `(byte | 0x20) == "
+     "lower`, and the tables are emitted again, so this artifact is the "
+     "pre-[FORM-CHAR] VM program built by the SAME compiler -- the fold's "
+     "BEFORE, answer-identical to its sibling by construction (the fold "
+     "compare and the bitmap read are the same predicate over the pair's "
+     "two bytes), and byte-identical to it wherever no pool class is a "
+     "fold pair"),
 )
 
 
@@ -3056,7 +3224,9 @@ class Adapter(_ad.Adapter):
             configs, none of which passes the option. `dfa_uniform_folds`
             (abi 17) and `vm_alt_islands` (abi 18) add no claim: counts
             with no mirror and no neighbour, checked by scope here and by
-            value there.
+            value there. So does `vm_cls_folds` (abi 23, [B39]): a count
+            with no mirror and no neighbour to imply, checked by scope
+            here (`vm` since 23) and by value there.
 
         A pcrec too old to stamp a given macro is not a disagreement: an
         absent macro is checked only against the field's own absence, never

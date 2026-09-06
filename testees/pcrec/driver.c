@@ -50,7 +50,8 @@
  * (pcrec I-5): NOTHING IS EVER INFERRED FROM A STAMP'S ABSENCE. Each of
  * `info dfa_scan / dfa_prefilter / dfa_table / dfa_prefilter_offsets /
  * dfa_scan_edge / dfa_start / dfa_match / dfa_uniform_folds / vm_frameless /
- * vm_alt_islands / vm_entry_shape / vm_program_bytes / altcls_merges /
+ * vm_alt_islands / vm_entry_shape / vm_program_bytes / vm_cls_folds /
+ * altcls_merges /
  * altcls_factored / fast_frames /
  * fast_trail / unroll_k /
  * unroll_k_why / max_emit_code_bytes / max_emit_bytes / engine_sel /
@@ -88,7 +89,11 @@
  * check, so a `0`, an `"inline"` or a byte count is a VALUE the adapter
  * read and an absent line is "not stamped" and nothing more. `struct
  * rx_info` gained no member across those six steps, which is why the
- * floor message below still ends at abi 16.
+ * floor message below still ends at abi 16. [B39] (pin d34c9131, abi 23,
+ * [FORM-CHAR] STEP 1, built 2026-09-06) adds ONE more on the same terms,
+ * `info vm_cls_folds`, VM-only beside
+ * `vm_alt_islands`: no rx_info mirror, printed behind its own presence
+ * check, `0` a value; no member added, the floor still 16.
  */
 
 #define _GNU_SOURCE
@@ -151,6 +156,8 @@ static long long (*pb_vm_alt_islands)(void);
 static int       (*pb_has_vm_entry_shape)(void);
 static const char *(*pb_vm_entry_shape)(void);
 static long long (*pb_vm_program_bytes)(void);
+static int       (*pb_has_vm_cls_folds)(void);
+static long long (*pb_vm_cls_folds)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -368,6 +375,7 @@ int main(int argc, char **argv) {
     SYM(pb_has_vm_alt_islands); SYM(pb_vm_alt_islands);
     SYM(pb_has_vm_entry_shape); SYM(pb_vm_entry_shape);
     SYM(pb_vm_program_bytes);
+    SYM(pb_has_vm_cls_folds); SYM(pb_vm_cls_folds);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -595,6 +603,16 @@ int main(int argc, char **argv) {
         printf("info\tvm_entry_shape\t%s\n", pb_vm_entry_shape());
         printf("info\tvm_program_bytes\t%lld\n", pb_vm_program_bytes());
     }
+
+    /* [FORM-CHAR] STEP 1, abi 23 ([B39], pin d34c9131, built 2026-09-06): how many
+     * of this VM program's pool classes take the ASCII-FOLD test shape
+     * (`(byte | 0x20) == lower`, no 32-byte bitmap). VM-only (hybrids
+     * included), unconditional there, absent on every DFA artifact --
+     * vm_alt_islands's scope, printed on its terms: the VALUE 0 is "no
+     * pool class was a fold pair" (or -fno-cls-fold), the ABSENCE "not a
+     * VM artifact" (or a pcrec before abi 23). */
+    if (pb_has_vm_cls_folds())
+        printf("info\tvm_cls_folds\t%lld\n", pb_vm_cls_folds());
 
     /* [OPT-ALTCLS], pcrec I-39: COMMON to both engines, unconditional
      * since long before this pin -- this shim only started reading it at

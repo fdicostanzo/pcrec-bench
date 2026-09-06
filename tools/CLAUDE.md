@@ -330,3 +330,32 @@ miss:
   `VM_INLINE_CHAIN_MAX_BYTES` rows + `PCREC_MIN_SCAN_CHAIN`, one desc
   reworded). `check_abi_floor_refusal` is UNCHANGED: no rx_info field
   across abi 17-22, the floor stays 16 and both sabotage arms stand.
+- [B39] (2026-09-06, pin d34c9131, abi 23; pcrec inbox I-49/I-50) adds no
+  check FUNCTION and grows two. The prep lane (b39prep, 2026-09-05)
+  drafted both rows before any build existed using the DRAFT(v)/TBD
+  placeholder protocol (`DRAFT(v)`, a predicted value asserted exactly so
+  a wrong prediction fails by name; `TBD`, presence asserted and the
+  value printed); the build (2026-09-06, inbox I-52) CONFIRMED every
+  prediction and RETIRED both placeholders back to plain values:
+  `check_mechanism_stamps` gains the `vm_cls_folds` pair by value -- 3 on
+  `(?i)abc` forced-VM, 26 on altwide ci-256 forced-VM (26 distinct
+  letters), 0 on five fold-free VM rows and on the two one-character
+  DECLINE controls (`[ac]`, not a 0x20 pair; `` [@`] ``, a 0x20 pair of
+  non-letters), ABSENT on ci-256 under auto (a DFA); the scope row (every
+  VM artifact, no DFA one), not-a-constant, the STRUCTURAL row (as many
+  distinct `(b | 0x20) == N` compare constants in the artifact's own text
+  as the stamp says, every N a lowercase letter), and the deny row on
+  pcrec's own emission (`-fno-cls-fold` moves the stamp to 0, restores a
+  `class_bitmap[32]` table per folded class, puts the SIZE BACK UP on both
+  witnesses, and leaves a fold-free artifact BYTE-IDENTICAL -- the
+  strategy_denials mask). Every VM `emit_bytes` in the tables is adjusted
+  by ONE constant, `B39_VM_STAMP_LINE` (26: the new stamp line), DFA
+  sizes untouched. `check_deny_flag_controls` gains the `-fno-cls-fold`
+  (bit 24) row on `(?i)abc` (folds 3->0; frameless and shape unmoved). The
+  three registry checks diff the re-archived copies exactly as predicted:
+  axes 74/25 -> 76/26 (`cls-fold`), definitions byte-identical, limits 55
+  -> 56 (`PCREC_MAX_AUTO_DFA_ELEMS` + FOUR rows re-worded: three gain a
+  raise-only flag, DFA_STATES_TABLE "NOT RAISABLE"). The floor stays 16 (no rx_info field at abi 23):
+  `check_abi_floor_refusal` UNCHANGED. The DRAFT(v)/TBD placeholder
+  machinery itself stays in selfcheck.py, unused until the next re-pin
+  is prepared ahead of its build.

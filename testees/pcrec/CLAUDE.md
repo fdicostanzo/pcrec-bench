@@ -1,7 +1,9 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides fourteen testees at the commit pinned in `configs.toml`, and one —
-`pcrec-local` — at no pin at all:
+Provides sixteen testees at the commit pinned in `configs.toml`, and one —
+`pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
+`pcrec-auto-noclsfold` / `pcrec-vm-noclsfold`, joined at the d34c9131
+re-pin, up from fourteen):
 
 | config id | pcrec flags | what it is for |
 |---|---|---|
@@ -14,6 +16,7 @@ Provides fourteen testees at the commit pinned in `configs.toml`, and one —
 | `pcrec-auto-bigcap`, `pcrec-vm-bigcap` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `max_emit_bytes = 8388608` and `max_emit_code_bytes = 8388608` | ([B31]) THE EMITTED-SIZE CAP AXIS: pcrec's two raise-only per-compile overrides, at 8 MiB, so `bench/altwide`'s wide rungs emit an artifact instead of a refusal. See below |
 | `pcrec-auto-noedge` | the same flags as `pcrec-auto`, plus `-fno-scan-edge` | ([B32]) THE SCAN-EDGE DENY AXIS: the [OPT-5] scan edge denied, so the artifact is the pre-[OPT-5] machine built at the SAME pin — [OPT-EDGE]'s BEFORE. See below |
 | `pcrec-auto-noisland` | the same flags as `pcrec-auto`, plus `-fno-alt-island` | ([B37]) THE ALTERNATION-ISLAND DENY AXIS: pcrec [ENG-ISL] STEP 1's VM alternation island (abi 18, a trie over a flat literal alternation's bytes instead of vm_alt's resume chain) DENIED, so the artifact is the pre-[ENG-ISL] VM program built at the SAME pin — the island's BEFORE on bench/altwide (the ORDER pair w-256/srt-256, the VM refusal wall, the island/chain code-byte ratios), with the lowering as the one variable. Derives `pcrec_334fd10e_auto-caps-simdna_noisland`. At this pin the denial also moves `vm_frameless` (a prefix-free island pushes nothing; the chain does) and `vm_entry_shape` (a framed artifact is `plain`) — the frame discipline and the entry chain travel with the lowering |
+| `pcrec-auto-noclsfold`, `pcrec-vm-noclsfold` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `-fno-cls-fold` | ([B39], pin d34c9131 / abi 23) THE ASCII-FOLD CLASS-TEST DENY AXIS: pcrec [FORM-CHAR] STEP 1's fold shape denied — every two-member fold-pair class (what `(?i)` makes of a letter, D23) reads its 32-byte bitmap again instead of `(byte | 0x20) == lower`, and the tables are emitted again — at the SAME pin, so the pair is the fold's BEFORE/AFTER with the class-test shape as the one variable. TWO siblings because the fold is VM ROUTE ONLY (tuning.md §2.22): `auto` took the DFA on the bench's only `(?i)` patterns (altwide ci-256/ci-512) at 334fd10e, so the `auto` pair is byte-identical (MEASURED — the same-pin noise-floor control) and the `vm` pair is the one the AFTER is read on. `config_extra` word `noclsfold`, after `noisland`. |
 | `pcrec-auto-align64` | the same flags as `pcrec-auto`, plus `cflags = ["-falign-functions=64"]` | ([B35]) THE COMPILEE-FLAGS AXIS: OUR OWN phase-2 `$CC` compile of the artifact+shim gains one extra flag, never passed to pcrec — pcrec I-39 (v)'s layout probe for the disputed `floor` / match / `auto` cell. See below |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
@@ -838,6 +841,7 @@ than five). What arrived, and where each pair comes from:
 | 18 ([ENG-ISL] STEP 1, [B37]) | `RX_VM_ALT_ISLANDS` — a COUNT on every VM artifact, hybrids included, never on a DFA one: how many flat alternations the VM lowered as an ALTERNATION ISLAND (a trie over the alternatives' literal bytes, tuning.md §2.20) rather than as vm_alt's serial resume chain; selected PER ALTERNATION on its LANGUAGE (a finite literal set within the enumeration budget), declining class-leading, prefix-bearing-under-four-words and over-budget alternations as selection outcomes. The FIRST abi bump whose change reaches the VM PROGRAM region. `-fno-alt-island` (bit 23) denies it; the registry gains the `alt-island` axis (two `predicate` rows, no stamp_value: 72/24 → 74/25) and `--list-limits` nine `VM_ISL_*` knees/budgets | `vm_alt_islands` (MEASURED: 1 on every altwide VM form incl. w-384, 0 on `floor`; 2 on level-context's and ctx-greedy-256's [SEL-1] hybrids under `auto`; the deny control on `foo\|bar` moves islands 1→0, frameless 1→0, shape forward→plain) |
 | 19 / 21 ([OPT-EDGE] STEP 1 / 1.1, [B37]) | NO NEW STAMP: the scan-edge ENTRY DISPATCH (edge heads renumbered to the machine's top rows, one `<m>_is_stop` accessor, the per-edge blocks moved off the generic path; 1.1 narrowed precondition (8) and generalised the entry seed to `is_stop && !is_dead`). An edge-bearing machine's state NUMBERS and loop shape move; an edge-free artifact is byte-identical. `PCREC_MIN_SCAN_CHAIN` 2 joins `--list-limits`; `PCREC_MAX_SCAN_EDGES`'s desc is reworded (an edge costs NO compare on the generic path now) | — (the `scan_edges` / `scan_edges_match` covariate reader survives: the `[OPT-5] SCAN EDGE:` marker still sits inside `rx_search` / `rx_match`, iso-ts reads 8/4 at this pin as at 288d505) |
 | 20 ([DD-13b.W1.3], [B37]) | NO NEW STAMP: .rxt COMPOSITION — on a `--source` compile `groups[]` gains rows the target did not declare, `nentries` counts the whole array, `nnames` the caller-scope prefix. Invisible on every non-composed compile, which is all this adapter does (`-p rx` from pattern text): `nentries == nnames` still holds by value | — |
+| 23 ([FORM-CHAR] STEP 1, [B39], pin d34c9131, built 2026-09-06) | `RX_VM_CLS_FOLDS` — a COUNT on every VM artifact, hybrids included, never on a DFA one (`RX_VM_ALT_ISLANDS`' scope): how many of the artifact's VM class-pool entries take the ASCII-FOLD membership-test shape — a two-member set {B, B\|0x20}, both letters (what D23's parse-time caseless folding makes of every `(?i)` letter; the recognizer in `vm_cls_shape`, src/gen/emit_vm.c: `count == 2 && (lo ^ hi) == 0x20 && lo >= 'A' && lo <= 'Z'`) — tested as `(byte \| 0x20) == lower` with the class's 32-byte `<prefix>_class_bitmap<N>` table NOT EMITTED (tuning.md §2.22). `vm_cls_shape` is the ONE derivation the test emitter, the table emitter and the stamp read. Declined (never a refusal): a set not exactly two members, a two-member set not differing only in 0x20 (`[ac]`), a 0x20 pair of NON-letters. VM ROUTE ONLY — the DFA scan edge's class bodies are untouched. `-fno-cls-fold` (`PCREC_NO_CLS_FOLD`, bit 24; `--list-axes` axis `cls-fold`, rows `fold`/`denied`, no stamp_value) denies it and is in the emitter's strategy_denials mask, so a fold-free artifact is byte-identical under the flag. NO rx_info field ("No struct offset moves, no `rx_info` member is added" — the `.abi = 23` write site's note in emit_dfa.c): the floor STAYS 16. Also behind the SHA, stamping nothing: [M5.0] STAGE 2 (`-e utf8` compiles, the byte path byte-identical), `\x{...}` moved to BASE grammar (the `--list-syntax` rows move; definitions.c/registry.c untouched), [LIM-2] N1 (`PCREC_MAX_AUTO_DFA_ELEMS` joins `--list-limits`), K49 (utf8-only). | `vm_cls_folds` (MEASURED by value: 26 on altwide ci-256 forced-VM — 26 distinct letters; 3 on `(?i)abc`; 0 on every fold-free VM artifact; ABSENT on ci-256 under auto, a DFA) |
 | 22 ([CC-DIFF] STEP 2 + [OPT-DIAL] STEP 0, [B37]) | `RX_VM_ENTRY_SHAPE` (a CLOSED TOKEN: `plain` / `shared` / `forward` / `inline` — the entry-chain rung the emitter TOOK, tuning.md §2.21) and `RX_VM_PROGRAM_BYTES` (the emitted VM program size, THE quantity AUTO compared against `VM_INLINE_CHAIN_MAX_BYTES` 4,096 to choose the rung: `forward` at or below, `shared` above; `inline`/`plain` where a forward rung is illegal because the program WRITES its storage — an RX_SET is enough; a FRAMED program is `plain` whatever is asked). Both on every VM artifact, hybrids included, never on a DFA one. NOT a flags bit (`--vm-entry-shape=N` is an ordinal option): no deny row, no registry axis — the four tokens are declared from match_api.md §6.3's own enum. No rx_info mirror; **the floor STAYS 16** (struct rx_info gained no member across abi 17-22) | `vm_entry_shape`, `vm_program_bytes` (MEASURED at each token: `forward` foo\|bar 1,532 B / floor 236 B; `inline` (abc)(def) 1,524 B; `plain` (a+)+b 3,079 B, K41 witness 2 144,137 B; `shared` w-256 305,686 B; claim 11: framed ⇒ plain) |
 
 **Rule 1: never infer a fact from a stamp's ABSENCE. Read the VALUE.**
@@ -1599,6 +1603,49 @@ module 'quoting'`), and the three registry archives (axes 69 → **70** rows
 / 23 axes, ONE new `engine-route` row at order 2 renumbering the six below
 it; limits **45 rows byte-identical**; definitions **50 rows
 byte-identical** — o42 and w12 added no numeric limit and no definition).
+
+**[B39] at d34c9131 (abi 23) — 2026-09-06, the eleventh session.** A prep
+lane (`b39prep`, 2026-09-05) drafted this re-pin from pcrec's source diff
+334fd10e..d34c9131 before any build existed; the pin then ADVANCED from
+the prep's 37f5ae02 to d34c9131 on Frank's ruling (inbox I-52; delta =
+test/doc/check repairs + one `--list-syntax` description, abi 23
+unchanged), was BUILT (`pin.sh d34c9131`, build/pcrec-d34c9131), and
+every prediction the prep made held at the build. Registries: axes
+74/25 → **76/26** (ONE new axis `cls-fold`, two `predicate` rows with no
+stamp_value — axes_dump.c's only change), definitions **50 byte-identical**
+for the sixth pin running (definitions.c / registry.c untouched; the
+`\x{...}` move is parse.c's and `--list-syntax`'s), limits 55 → **56**
+(`PCREC_MAX_AUTO_DFA_ELEMS` 30,000,000 inserted after
+`PCREC_MAX_SUBSET_ELEMS` — [LIM-2] N1 — and FOUR rows re-worded: three as
+raise-able via the new `--max-nfa-states` / `--max-dfa-states-goto` /
+`--max-subset-elems` flags, values unchanged; `PCREC_MAX_DFA_STATES_TABLE`
+desc "NOT RAISABLE"). Shim floor STAYS 16 (abi 23 adds one macro, no
+rx_info field): the abi-sabotage arms and every pre-existing stamp row
+passed unchanged. `RX_VM_CLS_FOLDS` measured on 35 VM artifacts incl.
+hybrids (values {0, 3, 26}), never on 26 DFA ones. Witness `(?i)abc`
+forced-VM: folds 3, three `(byte | 0x20) == lower` test sites, 0
+class_bitmap tables, emit 18,045 B; under `-fno-cls-fold`: folds 0, 3
+bitmap tables, emit 18,196 B (+151); controls `x[ac]y` / `` x[@`]y ``
+forced-VM: folds 0, emit 18,261 B each. The corpus census confirms
+`(?i)` appears in altwide's ci-256 / ci-512 ONLY (no other two-letter
+class anywhere else), so no other corpus artifact stamps folds > 0
+under `auto`. Corpus witness altwide ci-256 forced-VM: folds 26,
+program 351,053 B, emit 359,502 B (from 451,050 at 334fd10e: −20.3 %,
+the fold-pair lowering's own shrink — pcrec's I-49 witness reported
+__TEXT −31 % on its own box), 1,842 test sites over 26 constants, 0
+bitmap tables; under the denial folds 0 (size back up). Size books:
+every fold-free VM artifact +26 B exactly (the `RX_VM_CLS_FOLDS` stamp
+line), every DFA artifact UNMOVED (`.abi = 23` is the same length).
+The ONE finding the prep did not predict: bounded cls-upto-32768's
+`(?:...)\z` whole-subject form under auto now overflows on [LIM-2]
+N1's 30,000,000-element budget (`RX_ENGINE_WHY` names it) where
+334fd10e read a 48,000,000-element K7 budget — 30M < 48M so N1 fires
+first; same outcome (declined-nullable, VM built), a different limits
+row by name, artifact +4 B (18,485 → 18,489); the plain form's >32000
+STATE-cap route is unmoved — an ask for pcrec (outbox O-18). The
+`--features all` refusal wordings, ci-512's refusals, the DECLINE/KEEP
+sets and the 65535 wall are all unchanged from 334fd10e; every other
+334fd10e stamp value held.
 
 **[B37] at 334fd10e (2026-09-05), the abi 17-22 re-pin.** Registries:
 axes 72/24 → **74/25** (ONE new axis, `alt-island`, two `predicate` rows

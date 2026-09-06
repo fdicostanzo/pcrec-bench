@@ -229,7 +229,63 @@ DFA wall at w-384 is unmoved; reporter v14 (`folds=`, `islands=`,
 `shape=<token> (prog: N B)`); make check 4/72/0 · 305/305 · 70+7. NOT YET MEASURED
 at 334fd10e: the deny-flag-split AFTER (auto vs noisland on altwide, auto
 vs noedge on loglines, the [B33] (3) fold cells, I-37's gcc arm for
-O-15 (v)). Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
+O-15 (v)). A prep lane (`b39prep`, 2026-09-05 afternoon) drafted the
+d34c9131 re-pin from pcrec's source before any build existed; every
+prediction it made was confirmed at the build below.
+2026-09-06 (eleventh session): [B39] RE-PINNED to **d34c9131 (abi 23)**
+on Frank's ruling (inbox I-52; delta over the prep's 37f5ae02 = test/doc/
+check repairs + one `--list-syntax` description, abi 23 unchanged), BUILT
+(`pin.sh d34c9131`, build/pcrec-d34c9131), registries re-archived and
+`make check` run: `--list-axes` 76/26 — one new axis `cls-fold` appended
+after `alt-island` (order 1 `fold`: kind predicate, stamp
+`RX_VM_CLS_FOLDS`, no stamp_value, deny `PCREC_NO_CLS_FOLD` bit 24
+`-fno-cls-fold`; order 2 `denied`); `--list-definitions` 50 rows
+BYTE-IDENTICAL (the sixth pin running); `--list-limits` 56
+(`PCREC_MAX_AUTO_DFA_ELEMS` 30000000 inserted after
+`PCREC_MAX_SUBSET_ELEMS`, pcrec [LIM-2] N1, the AUTO route's own
+DFA-attempt work budget; three rows' override none → flag via the new
+raise-only flags `--max-nfa-states`/`--max-dfa-states-goto`/
+`--max-subset-elems`, values unchanged; `PCREC_MAX_DFA_STATES_TABLE`
+desc "NOT RAISABLE") — every registry delta exactly as the prep
+predicted. Shim floor STAYS 16 (abi 23 adds one macro, no rx_info
+field): the abi-sabotage arms and every pre-existing stamp row passed
+unchanged. `RX_VM_CLS_FOLDS` measured on 35 VM artifacts incl. hybrids
+(values {0, 3, 26}), never on 26 DFA ones. Witness `(?i)abc` forced-VM:
+folds 3, frameless 1, shape forward, program 634 B, emit 18,045 B,
+three `(b | 0x20) == <lower>` test sites, 0 class_bitmap tables; under
+`-fno-cls-fold`: folds 0, 0 or-mask sites, 3 bitmap tables, emit
+18,196 B (+151); controls `x[ac]y`/`` x[@`]y `` forced-VM: folds 0,
+emit 18,261 B each. Corpus witness altwide ci-256 forced-VM: folds 26,
+islands 0, frameless 0, shape plain, program 351,053 B, emit 359,502 B
+(from 451,050 at 334fd10e: −20.3%, the fold-pair lowering's own
+shrink; pcrec reported __TEXT −31% on its own witness), 1,842 test
+sites over 26 constants, 0 bitmap tables; under the denial folds 0
+(size back up). Size books: every fold-free VM artifact +26 B exactly
+(the stamp line; w-256 forced-VM 292,043 → 292,069 B, program bytes
+305,686 unchanged), every DFA artifact unmoved against 334fd10e;
+w-256/srt-256 still identical. The ONE finding the prep did not
+predict: bounded cls-upto-32768's `(?:...)\z` whole-subject form under
+auto now overflows on [LIM-2] N1's 30,000,000-element budget
+(`RX_ENGINE_WHY` names it: "subset construction exceeds 30000000
+elements (N1 auto budget)") where 334fd10e read a 48,000,000-element
+K7 budget — 30M<48M so N1 fires first; same outcome
+(declined-nullable, VM built), a different limits row by name,
+artifact +4 B (18,485 → 18,489); the plain form's >32000 STATE-cap
+route unmoved — an ask for pcrec (outbox O-18). The altwide size
+census re-derived at d34c9131
+(docs/dev/measurements/2026-09-06-altwide-size-census-d34c9131.txt):
+VM route median −15.6% vs the 2026-09-02 table, refusal boundary
+unchanged (DFA wall w-384, VM wall 384 < w ≤ 512, ci-512 refuses both
+routes). Testee ids by the composition rule:
+`pcrec_d34c9131_auto-caps-simdna-noclsfold` /
+`pcrec_d34c9131_vm-caps-simdna-noclsfold` — sixteen pinned pcrec
+configs now. Reporter v15 (`clsfolds=` clause; the `prog:` note
+carries I-50 §1's reconcile), 71 reporter tests (unchanged by the
+build); make check 4/72/0 · 324/324 (confirmed at the build
+— 322 + the two re-aimed N1 rows) · 71+7. The AFTER window is scheduled for 2026-09-06
+afternoon: bounded × {auto, vm, vm-in}, loglines × {auto,
+auto-noclsfold}, email × {auto, auto-noclsfold}, altwide × {vm,
+vm-noclsfold, auto}. Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
 EVENING [B32] landed as two lanes: `pcrec-auto-noedge` + the `scan_edges` /
 `scan_edges_match` covariate pairs on every pcrec compile row (iso-ts 8/4 by
 value) + `CELL_CAP` in the window scripts + the cell-length table (b32adp),
@@ -343,11 +399,17 @@ bindings) live here, vendored or system, pinned either way.
   I-39 (v)'s layout probe — OUR OWN phase-2 flags, never passed to pcrec) —
   and `pcrec-auto-noisland` (`-fno-alt-island`, [B37]: the [ENG-ISL]
   alternation island denied at the same pin, the island's BEFORE on
-  altwide) — at a pinned commit — **334fd10e, abi 22** ([B37], 2026-09-05:
-  SIX abi steps absorbed in one adapter change — the shim reads
-  `RX_DFA_UNIFORM_FOLDS` (abi 17), `RX_VM_ALT_ISLANDS` (abi 18),
-  `RX_VM_ENTRY_SHAPE` + `RX_VM_PROGRAM_BYTES` (abi 22); no rx_info field
-  moved, the floor STAYS 16; registries 74/25 · 50 · 55) — with `list_axes.tsv`,
+  altwide) — and `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
+  (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
+  denied at the same pin, the fold's BEFORE) — at a pinned commit —
+  **d34c9131, abi 23** ([B39], 2026-09-06: the pin ADVANCED from a
+  prep lane's 37f5ae02 on Frank's ruling (inbox I-52), one abi step
+  (23) absorbed in one adapter change — the shim reads
+  `RX_VM_CLS_FOLDS` (VM scope only, never on a DFA artifact; no
+  rx_info field, the floor STAYS 16); registries 76/26 · 50 · 56 (the
+  new `cls-fold` axis, `--list-definitions` byte-identical, the new
+  `PCREC_MAX_AUTO_DFA_ELEMS` limit); sixteen pinned pcrec configs now)
+  — with `list_axes.tsv`,
   `list_definitions.tsv` and
   `list_limits.tsv`, the pin's `--list-axes` / `--list-definitions` /
   `--list-limits` registry surfaces archived
@@ -376,7 +438,8 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 305 checks: for EVERY sub-bench under bench/ (by
+    make check-harness  # 324 checks (confirmed 2026-09-06 at
+                        # the d34c9131 build): for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'

@@ -919,3 +919,24 @@ record in `store/` does yet -- nothing under `reports/` is regenerated):
   `pcrecbench/tests/test_report.py` gained 2 tests (70 + test_quick's 7 =
   77 reporter-side tests). The regeneration belongs with the window that
   first writes an abi-22 record.
+
+## The reporter, [B39] (2026-09-06) -- the abi-23 re-pin's half, v15
+
+Plan row [B39], the re-pin to pcrec d34c9131 (abi 23, [FORM-CHAR] STEP 1),
+drafted by lane b39prep from pcrec's source before the build and BUILT
+2026-09-06 (inbox I-52; pin.sh d34c9131). One clause, one wording fix,
+both conditional; committed reports are regenerated with the AFTER window:
+
+- **`clsfolds=<N>`** (`RX_VM_CLS_FOLDS`, abi 23) on `islands=`/`shape=`'s
+  VM scope, right after `shape=`: how many VM class-pool entries take the
+  ASCII-FOLD test (`(byte | 0x20) == lower`, no 32-byte bitmap) -- the
+  SIZE fact the abi-23 AFTER is about, read on altwide `ci-256`'s
+  forced-VM pair (`clsfolds=26` MEASURED beside `pcrec-vm-noclsfold`'s
+  `0`). VM route only: an `auto` row that selected the DFA prints no
+  clause even on a `(?i)` pattern. `0` is a real value.
+- **The `prog: N B` note** carries pcrec I-50 1's reconcile: the VM
+  PROGRAM REGION with COMMENTS INCLUDED, against the `code bytes`
+  columns' whole-file comment-EXCLUDED count (w-256: 305,686 vs 292,043,
+  neither wrong). Prints under any table whose rows carry `shape=`.
+- `REPORTER_VERSION` bumps to `v15 (2026-09-06)`;
+  `pcrecbench/tests/test_report.py` gained 1 test (71 + test_quick's 7).
