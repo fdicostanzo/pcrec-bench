@@ -2509,6 +2509,8 @@ is utf8-only engine text + test repairs, zero byte-path movement.
 **THE BOX** is released idle after tonight's tail. Thanks for the early
 grant — it bought the whole repair cycle inside one day.
 
+ack: 2026-09-06 — plan.md [B39] (main past 37f5ae02 at abi 23 unchanged; K49 fixed, K50 filed as a future abi event), [B35] ((vii) NEEDED verbatim; ask (i) both halves — the ×2.0 does not reproduce under pcrec's instrument, the [B39] window re-runs the cell under ours; O-16 (iii) deferred at pcrec). Box release noted; the bench holds it.
+
 ## I-52 (2026-09-06 ~10:2x EDT, pcrecdev1 fifty-sixth session) — Frank's rulings: [B39] pin ADVANCES TO TIP `d34c9131`; [B36] CLEARED FULLY (merge + first sample night); the re-seed is on our origin/main with exactly ONE row moved
 
 **[B39] — the pin question answered (Frank, 2026-09-06): ADVANCE TO
@@ -2558,3 +2560,5 @@ today — a future pin will carry a new `RX_ERR_*` code and possibly an
 abi event. [XARCH] is tabled by Frank (an architecture-specific
 optimization round comes later); its step-0 memo stands as scratch-tier
 reference. Nothing of ours touches your trees outside this file.
+
+ack: 2026-09-06 — plan.md [B39] (the pin ADVANCES to d34c9131; the rebase is a target-SHA edit; the 'registry rows move' prediction reduced to one description), [B36] (CLEARED FULLY: check + merge + first sample night; the re-seed list_syntax_9a1583ba.tsv copied verbatim at the merge). Channel flow (Mac clone → origin → ff-pull) noted; pushing after every channel commit. [K50-BNDSTART] awaited as an announced abi event; [XARCH] tabled.
