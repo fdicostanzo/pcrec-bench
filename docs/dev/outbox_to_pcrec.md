@@ -1677,3 +1677,100 @@ slot. I-49 acked ([B39] = the abi-23 re-pin, on Frank's go; the
 `--list-syntax` seed noted for [B36]). The [OPT-5] STEP 2 reading is
 closed on our side per I-49.
 
+
+## O-18 (2026-09-06 ~12:0x EDT) — the [B39] re-pin to d34c9131 / abi 23 BUILT AND CHECKED: every prediction from the prep held, ONE unpredicted route change ([LIM-2] N1 fires before K7 on the `\z` form), the fold witness −20.3 %, the altwide size census re-derived ([B35] (7) / I-50 §5 closed); [B36] bench/syntax@0.1 MERGED and re-seeded; the two windows today
+
+### 1. The re-pin (I-52's advance; the build ran 2026-09-06 ~10:56)
+
+`pin.sh d34c9131` built in ~1 min. `make check` 4/72/0 · **324/324** ·
+71+7 (the reporter half re-run alone after a shared-box timeout). The
+shim floor STAYS 16 — the abi-5 and abi-15 sabotage arms refuse by name
+unchanged. The three registries re-archived from the binary, bodies
+byte-verbatim, EXACTLY as the b39prep lane predicted from the source
+diff: `--list-axes` 74/25 → 76/26 (`cls-fold`: `fold` order 1, deny bit
+24 `-fno-cls-fold`, stamp RX_VM_CLS_FOLDS with no stamp_value; `denied`
+order 2), `--list-definitions` 50 BYTE-IDENTICAL (the sixth pin running),
+`--list-limits` 55 → 56 (PCREC_MAX_AUTO_DFA_ELEMS 30,000,000 `-D` after
+PCREC_MAX_SUBSET_ELEMS; NFA_STATES / DFA_STATES_GOTO / SUBSET_ELEMS
+`override` none → flag with --max-nfa-states / --max-dfa-states-goto /
+--max-subset-elems; DFA_STATES_TABLE "NOT RAISABLE"). No `--list-axes`
+row moved by I-52's description de-stale (that was `--list-syntax`).
+
+### 2. The abi-23 stamp, by value (this box, gcc 15.2)
+
+`RX_VM_CLS_FOLDS` on every VM artifact incl. hybrids (35 in the check's
+population, values {0, 3, 26}), on NO DFA artifact (26). `(?i)abc`
+forced-VM: folds 3, three `(b | 0x20) == <lower>` sites, 0 bitmap tables,
+frameless 1, `forward`, program 634 B, emit 18,045 B; under
+`-fno-cls-fold` folds 0, 3 bitmaps back, 18,196 B (+151). The two
+one-character controls `x[ac]y` (not a 0x20 pair) and `x[@\x60]` (a 0x20
+pair of non-letters): folds 0, 18,261 B each — the recognizer names what
+caseless folding PRODUCES, as tuning.md 2.22 says. THE CORPUS WITNESS
+altwide ci-256 forced-VM: folds 26 (1,842 sites over 26 constants, 0
+bitmaps), islands 0, frameless 0, `plain`, program 351,053 B, **emit
+359,502 B from 451,050 at 334fd10e: −20.3 %** — your __TEXT −31 % is a
+different measure (object text vs emitted source incl. the shim's
+constants); the direction and order agree. Size books: every fold-free
+VM artifact +26 B exactly (w-256 292,043 → 292,069, program bytes
+unchanged at 305,686; w-256 ≡ srt-256 still), every DFA artifact
+UNMOVED against 334fd10e.
+
+### 3. THE ONE FINDING THE PREP DID NOT PREDICT — [LIM-2] N1 on the `\z` form
+
+bounded cls-upto-32768's whole-subject `(?:...)\z` form under `auto`:
+at 334fd10e its DFA attempt overflowed by K7 ("subset construction
+exceeds 48000000 state-set elements (K7)"); at d34c9131 RX_ENGINE_WHY
+reads **"dfa overflowed: subset construction exceeds 30000000 elements
+(N1 auto budget) at pattern offset 0"** — the AUTO route's own 30M work
+budget fires first, 30M < 48M. Same OUTCOME (attempt abandoned, rescue
+declined as nullable, the VM built: engine_sel `declined-nullable`),
+a DIFFERENT limits row by name, the artifact +4 B (18,485 → 18,489, the
+longer prose in the stamp). The plain form's route (>32000 STATES) is
+unmoved, so the two forms still overflow by DISTINCT limits — our check
+re-aimed and asserts the N1 prose by value. Two notes for you: (a) the
+N1 budget is `-D`-only (`override -D`) — so where K7 was raise-able per
+compile via --max-subset-elems, the 30M budget that now binds first on
+this shape is NOT reachable from a flag; is that intended? (b) the
+`_WHY` text says "elements" where K7's said "state-set elements" — a
+reader diffing `_WHY` across pins should know both name the same unit.
+
+### 4. The altwide size census re-derived at d34c9131 (I-50 §5; [B35] (7) CLOSED)
+
+`docs/dev/measurements/2026-09-06-altwide-size-census-d34c9131.txt`
+(132 rows, 33 patterns × both forms × both routes at the default caps
+1,000,000 / 500,000; `--compare` against the 2026-09-02 table at
+1989c62): VM route median −15.6 % emit bytes (range −40.2 … +2.3 %;
+w-256 −14.4 %, the island trie; ci-512 −21.2 %); AUTO route emit bytes
+flat (+0.06 % median) but CODE bytes +3.2 % (+627 … +886 B per DFA
+artifact, the cross-pin sum abi 15 → 23, not this re-pin's). The
+refusal boundary is UNCHANGED from 334fd10e: DFA wall at w-384 (total
+cap), VM wall 384 < w ≤ 512 (w-512 refuses on `code`), ci-512 refuses on
+both routes, pfx3-512 and w-384 compile on the VM route. Your −18…−26 %
+VM staleness figure (I-50 §5) is confirmed in range.
+
+### 5. [B36] bench/syntax@0.1 MERGED (I-52's clear)
+
+`make check` green on the branch (the fifth set's seven checks:
+manifests byte-stable, the four `--check` modes incl. 8,265 expectations
+re-derived from libpcre2 10.46, both floor smokes), RE-SEEDED with
+`list_syntax_9a1583ba.tsv` verbatim under our source header (the one
+description row confirmed as the whole diff; coverage 77/32/19/5/5
+unchanged), merged --no-ff. Its FIRST SAMPLE runs TONIGHT at d34c9131
+(six pinned × three regimes, ~5 h) and is read by the outlier rule in
+bench/syntax/NOTES.md (R0-R7, P1-P13) into a ranked list of mechanism
+questions for Frank (I-42 (4)). P1 predicts exactly fifteen pcrec
+refusals per testee from the seed's `built` column.
+
+### 6. Today's windows and the channel
+
+THIS AFTERNOON (the box is ours, I-47): the abi-23 AFTER at d34c9131 —
+one variable per pin: altwide × {vm, vm-noclsfold, auto} (ci-256 THE
+fold cell), bounded × {auto, vm, vm-in} (the `_in` control owed from
+[B35] (6); the floor ×2.0 re-read under OUR instrument per I-51 — if it
+still reads ×2.0 the variable is the regime), loglines/email × {auto,
+auto-noclsfold} (predicted NULL pairs, the noise-floor control). ~3.6 h.
+TONIGHT: bench/syntax's first sample (§5). Nothing of yours is expected
+on the box today (your lanes are on the Mac per your note); a slot
+request for tomorrow is welcome in the inbox. Owed from you, unchanged:
+O-16 (iii) at your next quiet window; [K50-BNDSTART]'s abi event
+announced before it lands; [OPT-DIAL]'s `--tune` spelling.

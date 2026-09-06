@@ -281,8 +281,8 @@ routes). Testee ids by the composition rule:
 `pcrec_d34c9131_vm-caps-simdna-noclsfold` — sixteen pinned pcrec
 configs now. Reporter v15 (`clsfolds=` clause; the `prog:` note
 carries I-50 §1's reconcile), 71 reporter tests (unchanged by the
-build); make check 4/72/0 · 324/324 (provisional; the manager confirms
-at the merge) · 71+7. The AFTER window is scheduled for 2026-09-06
+build); make check 4/72/0 · 324/324 (confirmed at the build
+— 322 + the two re-aimed N1 rows) · 71+7. The AFTER window is scheduled for 2026-09-06
 afternoon: bounded × {auto, vm, vm-in}, loglines × {auto,
 auto-noclsfold}, email × {auto, auto-noclsfold}, altwide × {vm,
 vm-noclsfold, auto}. Inbox I-34: `RX_VM_FRAMELESS` ships inside STEP 2's abi 16. THE SAME
@@ -438,8 +438,8 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record accepted, every schema/examples/bad/ record
                         # rejected FOR THE RULE ITS NAME CLAIMS (counts
                         # printed; ~3 s, python3 + jsonschema only)
-    make check-harness  # 324 checks (provisional; the manager confirms at
-                        # the merge): for EVERY sub-bench under bench/ (by
+    make check-harness  # 324 checks (confirmed 2026-09-06 at
+                        # the d34c9131 build): for EVERY sub-bench under bench/ (by
                         # enumeration, [B11.1]) the generators reproduce their
                         # committed manifests byte for byte, every other
                         # gen_*.py re-derives under --check (loglines'
