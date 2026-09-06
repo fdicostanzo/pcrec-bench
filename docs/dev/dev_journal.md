@@ -2998,3 +2998,51 @@ source diff; nothing unpredicted. The altwide size-census probe at
 d34c9131 is running (compile-only). Next: `make check` on b39 (the DRAFT
 rows fire by name, the TBD sizes print), fill and strip, merge; the
 abi-23 AFTER window this afternoon; bench/syntax's first sample tonight.
+
+## 2026-09-06 (EDT, 11:0x-11:5x), eleventh session part 2 — [B39] CHECKED (324/324), documented, MERGED (5582850); O-18 sent; the abi-23 AFTER window STARTED 11:55
+
+The build sequence's back half. The altwide size census ran at
+d34c9131 (compile-only, 132 rungs, ~10 min: the large auto refusals are
+the slow rungs) — VM route −15.6 % median vs 2026-09-02, ci-256 forced-VM
+359,507 B (the check's own count 359,502: −20.3 % from 334fd10e's
+451,050), auto emit flat / code +3.2 % as a cross-pin sum, the refusal
+boundary unchanged; documented in measurements/CLAUDE.md; [B35] (7)
+CLOSED. `make check` on the b39 worktree: the FIRST run was killed by
+the harness's background-task memory heuristic (the box had 12 GB
+available; the kernel logged no OOM) and, python's stdout being
+block-buffered into the log, lost its output — reruns go `setsid nohup`
+with PYTHONUNBUFFERED=1 and a poll loop as the waiter. The rerun:
+check-harness 322 passed / 2 FAILED — both the SAME finding: on bounded
+cls-upto-32768's `(?:...)\z` form under auto, the DFA attempt now
+overflows by [LIM-2] N1's PCREC_MAX_AUTO_DFA_ELEMS (30M, "-D" only)
+before K7's 48M — RX_ENGINE_WHY "subset construction exceeds 30000000
+elements (N1 auto budget)" — same outcome (declined-nullable, the VM
+built), a different limits row by name, +4 B (18,485 → 18,489). Every
+[B39] DRAFT(v) row PASSED by value: folds 3 on `(?i)abc` (634 program /
+18,045 B; denied 18,196, +151), 26 on ci-256 (351,053 / 359,502 B;
+plain, frameless 0, islands 0), 0 on every fold-free VM artifact (35 VM
+with, 26 DFA without), the structure rows (as many `(b | 0x20) == N`
+constants as the stamp says, 0 bitmaps), the four-pair deny control;
+w-256 292,043 → 292,069 (+26 exactly). The two red rows re-aimed at the
+N1 prose (asserted by value, distinct from the plain form's STATE cap);
+every DRAFT/TBD placeholder retired to its measured value (the machinery
+kept for the next prepared re-pin); the third run 324/324. check-report
+71+7 OK — run ALONE after a 600 s gnutimeout killed it beside the
+harness; its ~7-10 min is jsonschema's `referencing` pointer resolution
+validating the 144-record store (a standalone faulthandler dump caught
+it there at 60 s) — slow, not hung. Lane b39docs (sonnet, worktree
+b39docs) converted twelve files' PREPARED/NOT BUILT prose to the measured
+facts (prose only — AST-verified for report.py; adapter.py's diff is
+inside string constants); one correction of its correction: the limits
+delta is FOUR re-worded rows (three gain a raise-only flag +
+DFA_STATES_TABLE "NOT RAISABLE"). O-18 written (§1 the re-pin, §2 the
+stamps by value, §3 the N1 finding with two asks, §4 the census, §5
+[B36] merged, §6 today's windows). Merged --no-ff (5582850), pushed;
+worktree removed. Box quiet (load1 0.15); the AFTER window launched
+11:54:52 under setsid via run_suite.sh: altwide × {vm, vm-noclsfold,
+auto}, bounded × {auto, vm, vm-in}, loglines × {auto, auto-noclsfold},
+email × {auto, auto-noclsfold}; suite log
+build/windows/suite_b39_after_20260906T155452Z.log; ~3.6 h expected.
+pcrecdev1 told live (O-18 pushed, the box is ours until the night is
+closed). NEXT: read the AFTER (reports + ledger + O-19), launch
+bench/syntax's first sample tonight (SUITE=syntax, the six pinned).
