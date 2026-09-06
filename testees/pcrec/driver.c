@@ -90,8 +90,8 @@
  * read and an absent line is "not stamped" and nothing more. `struct
  * rx_info` gained no member across those six steps, which is why the
  * floor message below still ends at abi 16. [B39] (pin d34c9131, abi 23,
- * [FORM-CHAR] STEP 1 -- PREPARED FROM SOURCE, the build pending) adds ONE
- * more on the same terms, `info vm_cls_folds`, VM-only beside
+ * [FORM-CHAR] STEP 1, built 2026-09-06) adds ONE more on the same terms,
+ * `info vm_cls_folds`, VM-only beside
  * `vm_alt_islands`: no rx_info mirror, printed behind its own presence
  * check, `0` a value; no member added, the floor still 16.
  */
@@ -604,7 +604,7 @@ int main(int argc, char **argv) {
         printf("info\tvm_program_bytes\t%lld\n", pb_vm_program_bytes());
     }
 
-    /* [FORM-CHAR] STEP 1, abi 23 ([B39], PREPARED FROM SOURCE): how many
+    /* [FORM-CHAR] STEP 1, abi 23 ([B39], pin d34c9131, built 2026-09-06): how many
      * of this VM program's pool classes take the ASCII-FOLD test shape
      * (`(byte | 0x20) == lower`, no 32-byte bitmap). VM-only (hybrids
      * included), unconditional there, absent on every DFA artifact --

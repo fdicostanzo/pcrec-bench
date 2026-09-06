@@ -5,8 +5,8 @@ Provides `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm`, their clang siblings
 raised-emitted-size-cap siblings `pcrec-auto-bigcap` / `pcrec-vm-bigcap`,
 the scan-edge-denied `pcrec-auto-noedge`, the alternation-island-denied
 `pcrec-auto-noisland` ([B37]), the ASCII-fold-class-test-denied pair
-`pcrec-auto-noclsfold` / `pcrec-vm-noclsfold` ([B39], PREPARED for pin
-d34c9131, the build pending), the function-alignment sibling
+`pcrec-auto-noclsfold` / `pcrec-vm-noclsfold` ([B39], pin d34c9131), the
+function-alignment sibling
 `pcrec-auto-align64`, and the caller-provided frame-buffer variants
 `pcrec-auto-in` / `pcrec-vm-in`, all at the pin in `configs.toml` -- and
 `pcrec-local`, a PROVIDED binary at no pin at all.
@@ -400,14 +400,15 @@ nothing at all:
                      (w-256's VM form 341,201 -> 292,043, srt-256's
                      302,047 -> 292,043 -- byte-identical to each other now).
 
-[B39] (pin d34c9131 = pcrec abi 23, inbox I-49/I-50) -- PREPARED FROM
-SOURCE by lane b39prep on 2026-09-05, NOT YET BUILT: every claim in this
-paragraph is read from pcrec's src/gen/emit_vm.c, src/gen/emit_dfa.c,
-src/parse/axes_dump.c, src/core/limits.def, docs/spec/match_api.md 6.3 and
-docs/spec/tuning.md 2.22 at the SHA, and the build + `make check` are what
-prove it on artifacts. ONE new macro, no new rx_info field (the emitter's
-own abi-bump note at the `.abi = 23` write site: "No struct offset moves, no
-`rx_info` member is added" -- so the floor STAYS 16), one new deny bit:
+[B39] (pin d34c9131 = pcrec abi 23, inbox I-49/I-50) -- drafted from
+pcrec's src/gen/emit_vm.c, src/gen/emit_dfa.c, src/parse/axes_dump.c,
+src/core/limits.def, docs/spec/match_api.md 6.3 and docs/spec/tuning.md
+2.22 by a prep lane (b39prep, 2026-09-05) before any build existed;
+BUILT 2026-09-06 (pin.sh d34c9131, inbox I-52), `make check` run, and
+every claim below confirmed on real artifacts. ONE new macro, no new
+rx_info field (the emitter's own abi-bump note at the `.abi = 23` write
+site: "No struct offset moves, no `rx_info` member is added" -- so the
+floor STAYS 16, confirmed by the abi-sabotage arms), one new deny bit:
 
   abi 23 ([FORM-CHAR] STEP 1) `RX_VM_CLS_FOLDS` -- a COUNT on every VM
                      artifact, hybrids included, never on a DFA one
@@ -424,7 +425,7 @@ own abi-bump note at the `.abi = 23` write site: "No struct offset moves, no
                      (b): what the emitted program turned out to CONTAIN.
                      The registry gains ONE axis, `cls-fold` (two
                      `predicate` rows `fold` / `denied`, no stamp_value --
-                     the macro is a count; predicted 74/25 -> 76/26), whose
+                     the macro is a count; measured 74/25 -> 76/26), whose
                      order-1 row carries `-fno-cls-fold` (PCREC_NO_CLS_FOLD,
                      bit 24): the control, and the `-noclsfold` siblings'
                      one variable. The flag joins emit_info_def's
@@ -444,31 +445,34 @@ own abi-bump note at the `.abi = 23` write site: "No struct offset moves, no
                      BASE grammar, range-checked per encoding: the
                      `--list-syntax` rows move ([B36]'s re-seed), while
                      src/parse/definitions.c and registry.c are UNCHANGED
-                     between the pins, so `--list-definitions` is predicted
+                     between the pins, so `--list-definitions` is measured
                      byte-identical (50) for the sixth pin running. [LIM-2]
                      N1 landed too: limits.def gains PCREC_MAX_AUTO_DFA_ELEMS
                      (30,000,000, the AUTO route's own DFA-attempt work
-                     budget) and re-words four rows as raise-able (predicted
-                     55 -> 56). K49 (utf8 lookbehind mid-character match)
-                     is stage-2 utf8 only -- nothing the byte-path sets
-                     touch.
-  (sizes, PREDICTED) every VM artifact gains one stamp line, `#define
+                     budget) and re-words three rows as raise-able via the
+                     new `--max-nfa-states` / `--max-dfa-states-goto` /
+                     `--max-subset-elems` flags (measured 55 -> 56). K49
+                     (utf8 lookbehind mid-character match) is stage-2 utf8
+                     only -- nothing the byte-path sets touch.
+  (sizes, MEASURED) every VM artifact gains one stamp line, `#define
                      RX_VM_CLS_FOLDS <n>` -- +26 B of comment-excluded source
-                     for a one-digit count (+27 for 10..99) -- and nothing
-                     else where no pool class is a fold pair; every DFA
-                     artifact is byte-identical but for the `.abi` digit
-                     (same length). Fold-bearing VM artifacts SHRINK: per
-                     fold class one 32-byte bitmap declaration gone and every
-                     test site `(<prefix>_class_bitmap<N>[(b) >> 3] >> ((b) &
-                     7)) & 1` -> `(b | 0x20) == <lower>`; I-49's witness is
-                     __TEXT -31 % on pcrec's box. The bench's fold witnesses
-                     are altwide's ci-256 / ci-512 and NO other (the corpus
-                     census: no `(?i)` and no two-letter class anywhere in
-                     email, loglines or bounded), so under `auto` -- which
-                     took the DFA on ci-256 at 334fd10e -- no corpus artifact
-                     is predicted to stamp folds > 0; under `--engine=vm`
-                     ci-256 is predicted to stamp 26 (26 distinct letters in
-                     its 256 words, one pool class per distinct fold pair).
+                     for a one-digit count -- and nothing else where no pool
+                     class is a fold pair; every DFA artifact is
+                     byte-identical but for the `.abi` digit (same length).
+                     Fold-bearing VM artifacts SHRINK: per fold class one
+                     32-byte bitmap declaration gone and every test site
+                     `(<prefix>_class_bitmap<N>[(b) >> 3] >> ((b) &
+                     7)) & 1` -> `(b | 0x20) == <lower>`; measured
+                     altwide ci-256 forced-VM 451,050 -> 359,502 B, -20.3 %
+                     (I-49's own witness reported __TEXT -31 % on pcrec's
+                     box). The bench's fold witnesses are altwide's ci-256 /
+                     ci-512 and NO other (the corpus census: no `(?i)` and no
+                     two-letter class anywhere in email, loglines or
+                     bounded), so under `auto` -- which took the DFA on
+                     ci-256 at 334fd10e -- no corpus artifact stamps
+                     folds > 0; under `--engine=vm` ci-256 stamps 26 (26
+                     distinct letters in its 256 words, one pool class per
+                     distinct fold pair); `(?i)abc` forced-VM stamps 3.
 
 Two rules govern how they are read, and both exist because they were paid
 for on the pcrec side first:
@@ -527,8 +531,8 @@ for on the pcrec side first:
 
 The ABI FLOOR lives in `shim.c` (`PB_SHIM_MIN_ABI`, 16 since [B34] -- the
 abi that appended `search_form`, the sixth field it reads, and UNCHANGED at
-[B37]'s abi 22: six abi steps, four new macros, no new field -- and, PREPARED
-for [B39]'s abi 23, unchanged again: one macro, no field; 15 from [B26]
+[B37]'s abi 22: six abi steps, four new macros, no new field -- and at
+[B39]'s abi 23, unchanged again: one macro, no field; 15 from [B26]
 for `name` and `nentries`, 10 from [B18] for `match_form`, 6 before that
 for `scan` / `prefilter`) and is enforced in `driver.c`, which
 refuses a lower artifact by name before printing anything else. This file
@@ -1268,9 +1272,8 @@ METADATA_DECL = {
                        "number is wrong. For CAP reasoning use the code "
                        "bytes; this is a VM-region activity number",
     },
-    # [B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1) -- PREPARED FROM
-    # SOURCE, the build pending: the fourth VM-only activity count, on
-    # `vm_alt_islands`' scope and for its reason.
+    # [B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1): the fourth VM-only
+    # activity count, on `vm_alt_islands`' scope and for its reason.
     "vm_cls_folds": {
         "type": "integer", "scope": "pattern",
         "source": "<PREFIX>_VM_CLS_FOLDS ([FORM-CHAR] STEP 1, pcrec abi "
@@ -1280,7 +1283,7 @@ METADATA_DECL = {
                   "as _VM_ALT_ISLANDS, D77); scope checked by STAMP_SCOPE "
                   "(every VM artifact, hybrids included, no DFA artifact) "
                   "and the VALUE in tools/selfcheck.py on the bench's own "
-                  "witnesses (altwide ci-256 under --engine=vm, PREDICTED "
+                  "witnesses (altwide ci-256 under --engine=vm, MEASURED "
                   "26; 0 on every VM artifact with no fold pair) with "
                   "`-fno-cls-fold` (--list-axes `cls-fold`, bit 24) as the "
                   "deny control that reaches 0 and restores the tables",
@@ -1514,8 +1517,8 @@ STAMP_SCOPE = {
     "vm_alt_islands":        ("vm",       18),
     "vm_entry_shape":        ("vm",       22),
     "vm_program_bytes":      ("vm",       22),
-    # [B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1; PREPARED FROM
-    # SOURCE): the fold count on `vm_alt_islands`' VM-only scope
+    # [B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1): the fold count on
+    # `vm_alt_islands`' VM-only scope
     # (match_api.md 6.3: "UNCONDITIONAL on every VM artifact, hybrids
     # included, and never defined on a pure-DFA artifact"). An abi-22
     # artifact (a `pcrec-local` binary at the previous pin) records it as
@@ -2176,7 +2179,7 @@ DENY_FLAGS = (
      "differ in the island's favour only, pcrec I-43), and carrying the "
      "chain's frames and entry shape with it"),
     # [B39] (pin d34c9131, [FORM-CHAR] STEP 1, --list-axes `cls-fold` bit
-    # 24; PREPARED FROM SOURCE, the build pending). The FOURTH denial that
+    # 24). The FOURTH denial that
     # changes what the artifact CONTAINS and the second on the VM route:
     # denied, `vm_cls_shape` re-classifies every ASCII fold pair to BITMAP,
     # so every `(?i)` letter position reads its 32-byte

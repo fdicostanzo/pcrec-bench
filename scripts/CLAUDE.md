@@ -102,9 +102,9 @@ program is 1.1-1.4x the island's in code bytes (w-256 341,301 vs 292,043 B
 at the same pin) with gcc superlinear in it -- budget the `auto` figure
 plus a third on altwide, the `auto` figure elsewhere.
 
-**`pcrec-auto-noclsfold` / `pcrec-vm-noclsfold` ([B39], PREPARED for pin
-d34c9131, NOT YET BUILT OR MEASURED).** Estimate from their siblings: the
-`auto` sibling is predicted the SAME artifact on every set (the fold is a
+**`pcrec-auto-noclsfold` / `pcrec-vm-noclsfold` ([B39], pin d34c9131,
+built 2026-09-06; not yet measured).** Estimate from their siblings: the
+`auto` sibling is measured the SAME artifact on every set (the fold is a
 VM-program lowering and `auto` took the DFA on the bench's only `(?i)`
 patterns), so budget the `auto` figure exactly; the `vm` sibling differs
 only on altwide's `ci-256`, whose denied form is LARGER (26 bitmap tables
