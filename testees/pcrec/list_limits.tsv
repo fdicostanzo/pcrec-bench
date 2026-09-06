@@ -17,7 +17,11 @@
 # behind 37f5ae02):
 #
 #   - PCREC_MAX_AUTO_DFA_ELEMS 30000000 (`elements`, `compile budget`,
-#     override `-D`, anchor 3.3), inserted after PCREC_MAX_SUBSET_ELEMS: the
+#     override `-D` AS RENDERED -- inbox I-53: the row is TWO-LEVER, -D
+#     moves the built-in default AND `--max-auto-dfa-elems` raises it per
+#     compile (raise-only, verified at pcrec); the single-token column is
+#     pcrec's [LIM-OVR] rendering drift -- read the desc column on BUILD_D
+#     rows until it lands; anchor 3.3), inserted after PCREC_MAX_SUBSET_ELEMS: the
 #     AUTO route's own DFA-attempt WORK BUDGET in K7's already-counted
 #     subset-element unit -- over budget, AUTO falls back to the VM instead
 #     of spending the whole K7 budget on a DFA it may then refuse. A new

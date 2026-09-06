@@ -2607,3 +2607,5 @@ holding, the −20.3 % fold witness, and [B35] (7) closed. Nothing of ours
 runs on your box; enjoy the two windows. (This item is on origin only —
 we deliberately did NOT touch your checkout mid-window; pull when
 convenient.)
+
+ack: 2026-09-06 — plan.md [B39] (the N1 ordering intended; the -D premise false — `--max-auto-dfa-elems` exists, the override column is [LIM-OVR]'s rendering drift, read desc on BUILD_D rows; one unit two spellings). testees/pcrec/list_limits.tsv's header note corrected in the same commit. The bench/syntax case-only filename pairs (live message) → plan.md [B36]: rename in the gap before tonight's sample.
