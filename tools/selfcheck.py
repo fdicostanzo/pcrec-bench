@@ -2853,10 +2853,15 @@ def check_mechanism_stamps():
     and the 65535 NFA wall did not. iso-ts keeps 8/4 edges through the
     abi-19/21 dispatch (the covariate reader survives the renumbering).
 
-    [B39] (pin d34c9131, abi 23, inbox I-49/I-50) -- DRAFTED FROM SOURCE
-    by lane b39prep on 2026-09-05, NOT YET RUN AGAINST A BUILD: every
-    value tagged DRAFT(...) is predicted from pcrec's emit_vm.c /
-    tuning.md 2.22 at the SHA, every TBD is the build's to fill. ONE new
+    [B39] (pin d34c9131, abi 23, inbox I-49/I-50/I-52) -- DRAFTED FROM
+    SOURCE by lane b39prep on 2026-09-05 (at 37f5ae02), BUILT AND MEASURED
+    2026-09-06 at the advanced pin: every DRAFT(...) prediction HELD (folds
+    3 / 26 / 0, the shapes, the deny control), every TBD is now the
+    build's number ((?i)abc 634 program / 18,045 emitted B; ci-256 351,053
+    / 359,502 from 451,050; the two decline controls 18,261 each). The ONE
+    unpredicted movement is the `\z` cls-upto-32768 row's limit ROUTE
+    ([LIM-2] N1's 30M AUTO budget before K7's 48M, +4 B) -- noted at the
+    row. ONE new
     macro, `vm_cls_folds`, no rx_info field (the floor stays 16; the
     sabotage arms untouched). Asserted: the scope (every VM artifact,
     hybrids included, no DFA one); the VALUE by witness -- 3 on `(?i)abc`
@@ -2873,7 +2878,7 @@ def check_mechanism_stamps():
     strategy_denials mask); and the SIZE BOOKS -- every VM artifact +26 B
     (the stamp line, `B39_VM_STAMP_LINE`), every DFA artifact unmoved,
     every 334fd10e stamp value unchanged (the [B37] rows above stand as
-    they are). The registry deltas the build's re-archive must show:
+    they are). The registry deltas the build's re-archive SHOWED, exactly as predicted (MEASURED: w-256 292,043 -> 292,069, +26):
     axes 74/25 -> 76/26 (`cls-fold`, two predicate rows, no stamp_value,
     bit 24), definitions 50 byte-identical, limits 55 -> 56
     (PCREC_MAX_AUTO_DFA_ELEMS 30000000 after PCREC_MAX_SUBSET_ELEMS; four
@@ -2941,6 +2946,8 @@ def check_mechanism_stamps():
         # (PCREC_MAX_DFA_STATES_TABLE, ">32000 states"), the `(?:...)\z`
         # form the K7 SUBSET-ELEMENTS budget (PCREC_MAX_SUBSET_ELEMS,
         # "subset construction exceeds 48000000 state-set elements (K7)")
+        # until 334fd10e; at d34c9131 the [LIM-2] N1 AUTO budget
+        # (PCREC_MAX_AUTO_DFA_ELEMS 30M) fires first on the `\z` form
         # -- two different limits rows in list_limits.tsv, told apart ONLY
         # by RX_ENGINE_WHY's prose in the compile row's diagnostic. Both
         # values asserted, and asserted DISTINCT.
@@ -4128,9 +4135,9 @@ DENY_CONTROLS = (
     # here, where a number would have to be typed before it was read.
     ("vm_cls_folds: the ASCII-fold class test denied",
      "cls-fold", ("literal", b"(?i)abc"), "--engine=vm",
-     {"vm_cls_folds": (DRAFT(3), DRAFT(0)),
-      "vm_frameless": (DRAFT(1), DRAFT(1)),
-      "vm_entry_shape": (DRAFT("forward"), DRAFT("forward"))}, "deny"),
+     {"vm_cls_folds": (3, 0),            # [B39] MEASURED 2026-09-06
+      "vm_frameless": (1, 1),
+      "vm_entry_shape": ("forward", "forward")}, "deny"),
     ("dfa_prefilter + offsets", "prefilter", ("loglines", "uuid"), "",
      {"dfa_prefilter": ("offset-set-bounded", "byte-class-bounded"),
       "dfa_prefilter_offsets": ("0,8*,13", "none")}, "deny"),
