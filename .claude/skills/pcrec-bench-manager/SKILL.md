@@ -171,29 +171,51 @@ and judge the results).
   dead). Before finishing an "idle" lane's landing, check its worktree
   for fresh commits/mtimes AND send a status message; take over only on
   silence or an explicit handback.
-- **STALL WATCHDOG**: whenever lanes or background runs are in flight,
-  set a 10-minute cron (CronCreate) that checks liveness — WIP-commit
-  age (`git log -1 --format=%cr` in the worktree) + mtimes, log tails,
-  the process table (ListAgents does NOT show spawned lanes). Stale
-  >20 min with no process → ping; stale AND silent one tick later →
-  dead, take over the landing. Tear the cron down when nothing is in
-  flight. The watchdog must never touch the pcrec session's processes.
-- **CONTEXT KEEPALIVE during a long HOLD** (Frank, 2026-08-30): when
-  this session must wait for the box — a peer's battery, a window that
-  is someone else's, an overnight hand-off — its prompt cache expires
-  after an hour of silence and the next turn re-reads the whole
-  context. Set a recurring cron (CronCreate) with two off-minute marks
-  under an hour apart, e.g. `11,51 * * * *` (20/40-min gaps), whose
-  prompt does the MINIMUM: one `uptime`, one line reporting load1 and
-  whether the awaited signal (the peer's DONE) has arrived, and an
-  explicit "if not: do nothing else — no builds, no runs, no lanes". It
-  must never touch the peer's processes. The tick itself is a
-  sub-second command, so it is safe during the peer's timed runs — but
-  a tick during OUR OWN window is a short stream on a non-target core
-  (see the BD6 residue); accept it or delete the cron for the window's
-  duration. Delete it at session close. Not a substitute for the stall
-  watchdog above (different purpose: warmth, not liveness); both may
-  run at once.
+- **STALL WATCHING IS A SCRIPT, NEVER A MODEL TURN** (Frank's ruling
+  2026-09-06, from the pcrec tokenscan/delegaudit analysis — and the
+  IRONY is the lesson: the old 10-minute prompt-firing watchdog was set
+  up partly to stop tasks idling and wasting tokens, and became one of
+  the largest waste classes itself — each tick re-read the manager's
+  ENTIRE context (~650-800K cache tokens late-session) to say "no
+  change"; ~73M cache-read tokens across two pcrec sessions). Instead:
+  launch a plain BACKGROUND WATCHER SCRIPT (zero model calls) that
+  loops on commit age / fresh mtimes / completion markers and EXITS —
+  producing one notification — only on actionable state (lane quiet
+  >20-25 min, run-completion marker with a silent lane, worktree gone).
+  The manager then gets exactly one turn per event. The watcher must
+  never touch the peer session's processes.
+- **NO LANE SELF-KEEPALIVES, and CLOSE AGENTS AGGRESSIVELY** (same
+  ruling): subagent prompt caches are 5-MINUTE TTL (measured), so any
+  periodic lane tick pays a full-context cache rewrite for zero warmth
+  — the old 30-min lane-keepalive doctrine is DEAD. A lane works
+  continuously, hands back a COMPLETE report, and ENDS; follow-ups go
+  to FRESH agents resuming from the committed report. **Closure is the
+  MANAGER'S act**: an "idle" agent is still alive and billable —
+  `TaskStop(task_id: "<lane-name>")` it explicitly after accepting its
+  delivery, and sweep for live agents at every delivery acceptance and
+  at session pause (pcrec's manager preached the policy while two
+  delivered lanes sat alive; Frank caught it the same day).
+- **BRIEFS POINT AT `docs/dev/lanes/BOILERPLATE.md`** (this repo's copy
+  — created 2026-09-06): every lane brief STARTS "Read
+  docs/dev/lanes/BOILERPLATE.md FIRST and follow it" and then carries
+  only the task, tier, charter pointers and deliverable. The standing
+  rules (scope/BD2/BD3, worktree ritual, box facts, process, lifecycle,
+  delivery bar) live in that committed file — update IT when a rule
+  changes; never grow briefs back. This cuts the manager's per-brief
+  output and the transaction cost of spawning, to ENCOURAGE delegating
+  operations to lanes — which is the standing emphasis: the manager
+  keeps judgment, briefs, review, merges; operations (runs, sweeps,
+  transcription, triage, re-pins, doc maintenance) go to lanes.
+- **CONTEXT KEEPALIVE during a long HOLD — MAIN SESSION ONLY** (Frank,
+  2026-08-30; scope narrowed 2026-09-06): the MAIN session's cache is
+  1-hour TTL, so during a hold (a peer's battery, someone else's
+  window, an overnight hand-off) a recurring cron with two off-minute
+  marks under an hour apart (e.g. `11,51 * * * *`) whose prompt does
+  the MINIMUM (one `uptime`, one line on whether the awaited signal
+  arrived, "if not: do nothing else") is still legitimate. It must
+  never touch the peer's processes; delete it at session close. This
+  applies to the MANAGER SESSION ALONE — lanes never keepalive (5-min
+  TTL, above).
 
 ## 5. Review their work
 
