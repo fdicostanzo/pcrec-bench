@@ -320,12 +320,15 @@ bindings) live here, vendored or system, pinned either way.
   branch count as a ladder (8..4096) crossed with the first-byte / prefix /
   suffix structure that decides PCRE2's start optimization and pcrec's
   DFA/prefilter route; libpcre2's own compiled-size ceiling caps the ladder.
-  `bench/syntax/` is the SYNTAX CENSUS ([B36], I-42, 2026-09-05; branch
-  `b36census`, merge on Frank's confirmation): 95 patterns in 18 mechanism
+  `bench/syntax/` is the SYNTAX CENSUS ([B36], I-42; built 2026-09-05,
+  MERGED 2026-09-06 on Frank's clear, I-52): 95 patterns in 18 mechanism
   families, one construct each in a plain body (incl. the five fold-pair
   witnesses for the abi-23 [FORM-CHAR] AFTER), enumerated from pcrec's
-  `--list-syntax` registry seed at 334fd10e (`coverage.tsv` derived from
-  the table x the seed, every one of 138 rows accounted for by name), 42
+  `--list-syntax` registry seed — authored from the 334fd10e seed,
+  RE-SEEDED at 9a1583ba (= the [B39] pin d34c9131 minus the seed file;
+  one description row moved, no machine-read column) — (`coverage.tsv`
+  derived from the table x the seed, every one of 138 rows accounted for
+  by name), 42
   typed short subjects + a 64 KB-1 MB size sweep, the outlier rule R0-R7
   and P1-P13 stated in NOTES.md before any run, a utf sibling set left
   room for. `make check`'s generic gates enumerate `bench/*/` rather than naming a
