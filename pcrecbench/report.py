@@ -839,13 +839,13 @@ so nothing under `reports/` changes until the [B37] window has run.
   is the version stamp itself. The regeneration belongs with the window
   that first writes an abi-22 record.
 
-## The reporter, [B39] (2026-09-05) -- REPORTER_VERSION v15, one legend clause + the I-50 1 legend fix
+## The reporter, [B39] (2026-09-06) -- REPORTER_VERSION v15, one legend clause + the I-50 1 legend fix
 
 Plan row [B39], the re-pin to pcrec d34c9131 (abi 23, [FORM-CHAR] STEP 1)
--- PREPARED by lane b39prep from pcrec's source at the SHA, the build and
-the window pending. One new stamp on the VM scope, one wording fix owed
-from pcrec's I-50 1, both additive and conditional; no record in `store/`
-carries the pair and no committed report is regenerated.
+-- drafted by lane b39prep from pcrec's source at the SHA and BUILT
+2026-09-06 (inbox I-52). One new stamp on the VM scope, one wording fix
+owed from pcrec's I-50 1, both additive and conditional; committed
+reports carrying the pair regenerate with the AFTER window.
 
 * **`clsfolds=<N>`**, `RX_VM_CLS_FOLDS` ([FORM-CHAR] STEP 1, abi 23) -- how
   many of the artifact's VM class-pool entries take the ASCII-FOLD
@@ -872,10 +872,9 @@ carries the pair and no committed report is regenerated.
   stamp can exceed the code bytes (w-256: 305,686 vs 292,043) and neither
   number is wrong; for cap reasoning use the code bytes. The `shape=`
   legend note now says so where a reader of the two numbers will meet it.
-* `REPORTER_VERSION` bumps to `v15 (2026-09-05)`. NO committed report is
-  regenerated: no stored record carries `vm_cls_folds`, and the reworded
-  note prints only under a table whose rows carry `shape=`, which none of
-  today's store does either.
+* `REPORTER_VERSION` bumps to `v15 (2026-09-06)`. Committed reports
+  regenerate once a stored record carries `vm_cls_folds` (the AFTER
+  window, scheduled 2026-09-06 afternoon).
 """
 
 from __future__ import annotations

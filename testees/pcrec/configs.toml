@@ -15,11 +15,11 @@
 # bench/email's `factored.rx` is refused with "requires module
 # 'named-groups'" (MEASURED 2026-08-25 against pin 8da6120, re-verified at
 # 692c2e8, at 35e1ab1, at 36d5963, at 96e44c2, at 263b013, at a7e0bdf, at
-# 1989c62 and RE-VERIFIED at 334fd10e, 2026-09-05: same refusal, same
-# wording -- "(?<...) requires module 'named-groups' (pattern offset 3)";
-# [B39] PREPARED, NOT BUILT: to be RE-VERIFIED at d34c9131 when the pin
-# builds -- [M5.0] STAGE 2 moved `\x{...}` out of module gating, not
-# named-groups or quoting, so the same wording is predicted). That is a
+# 1989c62 and RE-VERIFIED at 334fd10e, 2026-09-05, and at d34c9131,
+# 2026-09-06 ([B39]): same refusal, same wording -- "(?<...) requires
+# module 'named-groups' (pattern offset 3)"; [M5.0] STAGE 2 moved
+# `\x{...}` out of module gating, not named-groups or quoting, so the
+# wording held as predicted). That is a
 # BUILD/RUN flag of the testee -- the pattern text handed to pcrec is
 # byte-identical either way -- not a pattern variant. bench/email/NOTES.md
 # says so where a reader of the numbers will find it. Since a7e0bdf
@@ -481,10 +481,10 @@ description = "pcrec defaults with the [ENG-ISL] ALTERNATION ISLAND DENIED (-fno
 # ---------------------------------------------------------------------------
 # THE ASCII-FOLD CLASS-TEST DENY AXIS -- `-fno-cls-fold` ([B39]; pcrec
 # [FORM-CHAR] STEP 1, docs/spec/tuning.md 2.22, --list-axes `cls-fold`
-# bit 24, inbox I-49/I-50; pin d34c9131 = abi 23). [B39] PREPARED, NOT
-# BUILT (lane b39prep, 2026-09-05): every fact below is read from pcrec's
-# SOURCE at the SHA, none from a built artifact -- the build + `make
-# check` fill the numbers.
+# bit 24, inbox I-49/I-50; pin d34c9131 = abi 23). A prep lane (b39prep,
+# 2026-09-05) drafted this axis from pcrec's SOURCE at the SHA before any
+# build existed; the pin was BUILT 2026-09-06 (inbox I-52) and every
+# prediction below confirmed by `make check` on real artifacts.
 #
 # WHAT THE FOLD IS. D23 folds a caseless letter into a two-member CLASS at
 # parse time (`(?i)a` becomes `{'A','a'}`). Before this axis every VM test
@@ -506,7 +506,7 @@ description = "pcrec defaults with the [ENG-ISL] ALTERNATION ISLAND DENIED (-fno
 # are altwide's `ci-256` / `ci-512`, and at 334fd10e auto compiled ci-256
 # to a DFA (989,963 B, edge=bitmap; the VM form is `plain`, frames 256,
 # 451,050 B -- ledger 2026-09-05-b37 6). So `pcrec-auto-noclsfold` against
-# `pcrec-auto` is PREDICTED a NULL PAIR on every set (the same shape
+# `pcrec-auto` is MEASURED a NULL PAIR on every set (the same shape
 # [B37]'s island pair had on altwide, ledger 1.1): its value is the
 # instrument control -- the strategy_denials mask means an artifact with
 # NO fold pair is byte-for-byte the same under the flag (tuning.md 2.22),
@@ -514,7 +514,7 @@ description = "pcrec defaults with the [ENG-ISL] ALTERNATION ISLAND DENIED (-fno
 # statement that no `(?i)` position reached the VM under auto.
 # `pcrec-vm-noclsfold` against `pcrec-vm` is the pair that MEASURES the
 # fold: the forced-VM route is where ci-256's 1,842 letter positions
-# (26 distinct letters -> 26 predicted fold classes) test by or-mask
+# (26 distinct letters -> 26 measured fold classes) test by or-mask
 # instead of bitmap. The AFTER is read on that pair.
 #
 # ONE VARIABLE (BD3), `pcrec-auto-noisland`'s shape exactly: the flag
@@ -526,20 +526,22 @@ description = "pcrec defaults with the [ENG-ISL] ALTERNATION ISLAND DENIED (-fno
 # knows it by. `$PCREC_LOCAL_FLAGS="-fno-cls-fold"` reaches the derived
 # testee_id down the same code path.
 #
-# WHAT THE DENIAL MEASURABLY CHANGES (predicted from source): on a
+# WHAT THE DENIAL MEASURABLY CHANGES (confirmed at the build): on a
 # fold-bearing VM artifact `RX_VM_CLS_FOLDS` N -> 0, every fold-pair test
 # site goes back to the bitmap read and the N 32-byte tables RETURN, so
-# emit_bytes and the -O2 object's .rodata go UP under the flag (I-49's
-# witness: __TEXT -31 % on a fold-bearing artifact, pcrec's box); on an
-# artifact with no fold pair NOTHING moves -- the flag is in
-# emit_info_def's strategy_denials mask, so rx_info.flags is identical
-# too. Answer identity is structural (`(b | 0x20) == (lo | 0x20)` holds
-# for exactly the pair's two bytes): 22,488/22,488 on pcrec's sweep.
+# emit_bytes and the -O2 object's .rodata go UP under the flag (MEASURED:
+# altwide ci-256 forced-VM 359,502 -> back up under denial, folds 26 -> 0;
+# I-49's own witness reported __TEXT -31 % on a fold-bearing artifact on
+# pcrec's box); on an artifact with no fold pair NOTHING moves -- the
+# flag is in emit_info_def's strategy_denials mask, so rx_info.flags is
+# identical too. Answer identity is structural (`(b | 0x20) == (lo |
+# 0x20)` holds for exactly the pair's two bytes): 22,488/22,488 on
+# pcrec's sweep.
 [testees.pcrec-auto-noclsfold]
 engine_mode = "auto"
 captures = "on"
 flags = ["--features", "all", "-fno-cls-fold"]
-description = "pcrec defaults with the [FORM-CHAR] ASCII-FOLD CLASS TEST DENIED (-fno-cls-fold, --list-axes bit 24): every two-member fold-pair class reads its 32-byte bitmap again, at the SAME pin -- against pcrec-auto the fold's BEFORE/AFTER with the class-test shape as the one variable; PREDICTED a null pair wherever auto selects the DFA ([B39], pcrec I-49)"
+description = "pcrec defaults with the [FORM-CHAR] ASCII-FOLD CLASS TEST DENIED (-fno-cls-fold, --list-axes bit 24): every two-member fold-pair class reads its 32-byte bitmap again, at the SAME pin -- against pcrec-auto the fold's BEFORE/AFTER with the class-test shape as the one variable; MEASURED a null pair, since auto selects the DFA on every corpus (?i) pattern ([B39], pcrec I-49)"
 
 [testees.pcrec-vm-noclsfold]
 engine_mode = "vm"
