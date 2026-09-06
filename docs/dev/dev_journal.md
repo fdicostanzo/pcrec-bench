@@ -3192,3 +3192,19 @@ a new set's gate must include ONE record through the validator — the
 cheapest check we did not have cost a night. suite rc=0 with every cell
 rc=1 is also a run_suite.sh reporting gap (the set rc is the window
 script's, not the cells') — noted for scripts/.
+
+(part 5 addendum, ~20:2x) THE ACCIDENTAL COMMIT: the store-commit chain
+run when the suite completed (`git add store/ && git commit ...`) was
+written assuming six new records; it committed the six `.staging-*/…
+.jsonl.rejected` files instead (d5c645b, ~90 MB, 227,042 lines) and the
+chain's fetch/merge/push carried them to origin before the index count
+was read. Removed from the tree at 02d7f7e (moved to
+/var/tmp/pcrecbench-rejected-2026-09-06/ for a week); `.staging-*/` and
+`*.rejected` are now .gitignore rules. The blobs stay in history — a
+`git filter-repo` rewrite is destructive and would re-base pcrec's clone,
+so it is FRANK'S CALL, flagged in wake.md and to pcrecdev1, not done.
+Lesson: never `git add` a store directory blind — add the index and the
+record paths the run log names, after `pcrecbench index` reports the
+count moved. I-55 arrived meanwhile (O-19 dispositioned: [FORM-CHAR2],
+[SEL-SIZE], fold default-ON interim, ask (v) accepted) and is acked with
+a slot offer for pcrec's 100 KB probe tomorrow 10:00-11:00 EDT.
