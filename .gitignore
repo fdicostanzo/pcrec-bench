@@ -27,3 +27,8 @@ venv/
 *.egg-info/
 dist/
 .pytest_cache/
+
+# a record the validator REFUSED at write stays out of the tree ([B36] incident 2026-09-06: six .rejected files
+# were committed by a blind `git add store/`); the harness stages under .staging-* and leaves .rejected behind
+.staging-*/
+*.rejected
