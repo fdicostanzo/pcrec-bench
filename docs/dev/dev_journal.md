@@ -2876,3 +2876,78 @@ is a DFA artifact — no entry-shape stamp exists on it (gcc 459.6 / clang
 O-17 (seven asks, the four re-pin findings, WINDOW CLOSED) pushed;
 [B37] COMPLETED and archived; [B35] gains (6)-(8). No lanes, no crons.
 The box is idle until pcrec's 13:00-17:00 slot (SHA 37f5ae02).
+
+## 2026-09-05 (EDT, 14:1x), tenth session part 7 — pcrec's battery on the box (from 11:45, early on Frank's word); I-50 acked; three box-free lanes on Frank's relayed question
+
+Frank (11:2x): keepalive every half hour (now 21,51); hand the box to
+pcrecdev1 at once rather than at 13:00 — done; its battery launched 11:45
+at 37f5ae02 (battery_v5; then the utf8-owed items and the probe set;
+DONE late afternoon). I-50 (11:42) acked (469558a): every O-17 ask
+answered from source at our pin — the floor ×2.0 is the rung-free 236 B
+program under the new always_inline entry chain (hypothesis; OUR
+discriminating cell: `floor` forced-VM at --vm-entry-shape=1/2/3), the
+digits ×0.70 is the scan-edge dispatch rewrite, the DFA `_match`
+×0.57-0.92 has the uniform-table fold as primary suspect (pcrec's
+two-pin probe), the program-bytes stamp counts the VM region WITH
+comments; [B35] (9)-(13), the census re-derivation onto [B39].
+14:0x: pcrecdev1 relayed Frank's question "what bench work is available
+while you're idle" with three box-free tasks; three lanes spawned:
+`censusprep` (sonnet: the altwide size census as a pin-parametrized
+probe, fires with [B39]), `b36census` (opus: bench/syntax@0.1 from the
+334fd10e seed — read from ~/pcrec's origin/main, verbatim with a source
+header; seed-agnostic generator; blinded authorship; the outlier rule
+before the run; a utf family slot; MERGE WAITS ON FRANK'S CLEAR),
+`b39prep` (opus: the abi-23 re-pin prepared without a build — shim/
+adapter/config/reporter, check rows drafted with expected= placeholders,
+the reading frame; build + check + window after DONE and Frank's go).
+Stall watchdog */10; keepalive 21,51. No box time used by any of them.
+
+## 2026-09-05 (EDT, 15:3x), tenth session part 8 — the three box-free lanes landed: censusprep MERGED, b39prep and b36census DELIVERED on their branches (unmerged by design)
+
+censusprep (sonnet) merged 727529c: docs/dev/measurements/
+probe_altwide_size_census.py — the altwide size census as a stable
+probe, `--pin <sha>` via pin.sh --path, caps from the archived registry,
+`--compare` per route, `--dry-run`; self-tested against the 2026-09-02
+table and a synthetic −20 % VM row; fires with [B39]'s re-pin.
+b39prep (opus) delivered branch b39prep (4 commits, NOT merged — it
+moves configs.toml's pin to 37f5ae02, unbuilt here): the floor STAYS 16
+(abi 23 adds a macro, no rx_info member); RX_VM_CLS_FOLDS unconditional
+on every VM artifact; -fno-cls-fold = bit 24, VM route only → two
+siblings (pcrec-auto-noclsfold predicted a null pair; pcrec-vm-noclsfold
+the AFTER's pair); the corpus's ONLY fold-pair witnesses were altwide's
+ci-256/512 (the plan's "(?i) in email/loglines" was wrong); reporter
+v15 (clsfolds=; the prog: note corrected per I-50 §1), 71 tests; check
+rows drafted with DRAFT/TBD placeholders; the build sequence on the row.
+b36census (opus) delivered branch b36census (3 commits, NOT merged —
+Frank's clear + make check on a free box first): bench/syntax@0.1, 95
+patterns / 18 families / 8,265 expectations, coverage derived from the
+seed with a by-name re-seed gate, the outlier rule R0-R7 and P1-P13
+before any run, the five fold-pair witnesses added on the manager's
+request (so abi 23's surface is wider than two altwide patterns), a utf
+sibling convention documented. All three lanes used no box time. No
+crons but the keepalive (21,51). pcrec's battery still on the box.
+
+## 2026-09-05 (EDT, 18:3x), tenth session — CLOSE (Frank: "prep for session end")
+
+The tenth session ran 2026-09-04 19:26 → 2026-09-05 18:3x EDT. Two
+windows RUN and READ: the 288d505 STEP 2 AFTER (12/12; O-16 — the
+customers unreachable by construction, the ×0.5 plain-ladder win real,
+per I-49) and the 334fd10e deny-flag AFTER (10/10; O-17 — the order
+effect gone, the VM over the JIT 32/44, the floor ×2.0 tripwire). One
+re-pin BUILT and merged ([B37], abi 22). Three box-free lanes on Frank's
+relayed question: the census probe merged; [B39]'s abi-23 prep and
+[B36]'s bench/syntax@0.1 on their branches. Inbox I-44..I-50 acked; BD8
++ two amendments (the machine move, the remote as read transport, the
+inverted slot handshake); Frank's push grant and the 30-min keepalive
+saved as memories. Store 122 → 144. Master 8612b17 + this entry, clean,
+pushed. Worktree worktrees/b36census KEPT (for its pre-merge make check
+on a free box); branch b39prep kept without a worktree. No crons. pcrec's
+battery/probes may still be on the box; its DONE lands in the inbox.
+
+Lessons: `pcrecdev1` resolves to two sessions after a Remote Control
+attach — address the remote one by ref. A lane's delivery can cross a
+manager's amendment — re-check the deliverable for the ask, then resend.
+A prep lane that moves the pin must NOT be merged before the build. A
+peer relaying Frank's question is a go to build, not to merge — say so
+on the row. The lane brief's "you will not be woken" held for all six
+lanes today.

@@ -101,3 +101,30 @@ Maintenance: update this file when files are added/removed or change role.
   same-pin repeatability floor (22/22 cells within 1.32 %) the small ratios
   have to clear. (4) The I-37 clang re-run against the 2026-09-02 cell, and
   the statement of which half of the disputed ratio was re-measured.
+- `probe_altwide_size_census.py` — ([B35] (7) / [B39]) the altwide RAISED-CAP
+  SIZE CENSUS, turned from the 2026-09-02 one-off (`census.py`, reproduced at
+  that file's own foot) into a stable, RE-RUNNABLE, PIN-PARAMETRIZED probe:
+  every `bench/altwide` pattern (read from `subbench.toml` via
+  `pcrecbench.subbench.Subbench`, never re-parsed) x both forms x both
+  engine modes, compiled at pcrec's DEFAULT emitted-size caps (read from
+  `testees/pcrec/list_limits.tsv`, never retyped) and again under a probe
+  raise, recording pcrec's own `emit_bytes` / `emit_code_bytes`
+  (`testees/pcrec/adapter.py`'s `emit_size` port). `--pin <sha>` resolves
+  through `testees/pcrec/pin.sh --path` (never asks it to BUILD);
+  `--compare <old-file>` prints per-route (`auto`/`vm`) byte and percent
+  deltas against a previous census's own table. Exists because pcrec inbox
+  I-50 found the 2026-09-02 numbers stale by -18...-26 % per rung on the VM
+  route at pin 334fd10e ([ENG-ISL] STEP 1's alternation-island trie) —
+  re-derive at every re-pin (`bench/altwide/NOTES.md`'s census section has
+  the command). `--dry-run` prints every argv without touching pcrec.
+  Self-tested 2026-09-05 with no pcrec binary at all: `--dry-run --compare`
+  against the real 2026-09-02 file parses its 80-row table and prints "0
+  patterns compared" against the empty new table `--dry-run` produces
+  (the parser's own end-to-end path); separately, `parse_census_table` /
+  `compare_tables` were imported directly and run against a SYNTHETIC new
+  table (the 2026-09-02 rows copied with `w-512`'s `vm` `emit_bytes` /
+  `emit_code_bytes` scaled by 0.80, an -20 % stand-in for I-50's finding):
+  the printed `vm` section read `678315 -> 542652  -135663  -20.00%` on
+  exactly that row and `+0 / +0.00%` everywhere else including `w-512`'s
+  own `auto` sibling — the route split, the sign and the arithmetic all
+  read correctly. Neither check compiled anything or touched a pcrec pin.
