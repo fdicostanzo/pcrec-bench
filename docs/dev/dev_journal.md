@@ -2951,3 +2951,50 @@ A prep lane that moves the pin must NOT be merged before the build. A
 peer relaying Frank's question is a go to build, not to merge — say so
 on the row. The lane brief's "you will not be woken" held for all six
 lanes today.
+
+## 2026-09-06 (EDT, 10:2x-11:3x), eleventh session part 1 — I-51/I-52 acked; [B36] bench/syntax@0.1 CHECKED GREEN, RE-SEEDED and MERGED; [B39] re-targeted to d34c9131, built, registries re-archived (every delta as predicted)
+
+Wake: master clean at 954fdd9 with two new inbox items. I-51 (pcrec's
+DONE): the battery at 37f5ae02 green after same-day repairs, K49 fixed
+(byte path byte-identical, abi 23 unchanged), K50 filed as a FUTURE abi
+event, ask (vii)'s verdict NEEDED on this box's gcc 15.2, ask (i) both
+halves — the floor forced-VM ×2.0 does NOT reproduce under pcrec's
+instrument here (plain 0.2945 / forward 0.2943 ns/B; `shared` ~5×) nor on
+ARM (a tie; `shared` ~3×), so the [B39] window re-runs the cell under OUR
+instrument and the variable, if it persists, is the regime. I-52 (Frank):
+[B39]'s pin ADVANCES to tip d34c9131 (the rebase = a target-SHA edit);
+[B36] CLEARED FULLY (check + merge + first sample night); the
+`--list-syntax` re-seed at 9a1583ba differs from the 334fd10e seed by ONE
+description row (no machine-read column). Both acked (d94c678, pushed).
+~/pcrec lacked d34c9131; pcrecdev1 fetched it there on a live ask (BD2:
+we never write ~/pcrec's refs) — GitHub's tip is already 1c4c91b4, one
+docs commit past the pin. Box quiet (load1 0.15, max busy 3.6 %).
+
+[B36]: `make check` on worktrees/b36census on the free box — 4/72/0 ·
+312/312 (the fifth set's seven checks) · 70+7, EXIT 0, ~19 min. Then the
+re-seed on the branch (f19026b): `list_syntax_9a1583ba.tsv` verbatim
+under the source header, the old seed retired, SEED repointed,
+coverage.tsv re-derived (77/32/19/5/5 unchanged; only its header line
+moved), pattern_facts unchanged, both `--check` modes green. Merged
+--no-ff (398d5bb; the plan.md [B36] row resolved as the lane's row + the
+acks + the merge note), worktree removed, root CLAUDE.md's paragraph
+updated (31fb624), pushed.
+
+[B39]: worktree worktrees/b39 on b39prep, master merged (the [B39] row
+conflict resolved as the lane's full row + the manager note + the acks),
+37f5ae02 → d34c9131 in the fourteen prep files (2438d61; plan.md keeps
+the historical "prepared from the 334fd10e..37f5ae02 diff" wording).
+`pin.sh d34c9131` built in ~1 min. The THREE REGISTRIES re-archived from
+the binary (522ad39), bodies verified byte-verbatim: axes 74/25 → 76/26
+(`cls-fold`: order 1 `fold`, deny bit 24 `-fno-cls-fold`, stamp
+RX_VM_CLS_FOLDS, no stamp_value; order 2 `denied`), definitions 50
+BYTE-IDENTICAL (the sixth pin running), limits 55 → 56
+(PCREC_MAX_AUTO_DFA_ELEMS 30,000,000 `-D` after PCREC_MAX_SUBSET_ELEMS —
+[LIM-2] N1, the AUTO route's DFA-attempt work budget — and three rows'
+`override` none → flag with new raise-only flags --max-nfa-states /
+--max-dfa-states-goto / --max-subset-elems, DFA_STATES_TABLE re-worded
+"NOT RAISABLE"). EVERY delta is what the b39prep lane predicted from the
+source diff; nothing unpredicted. The altwide size-census probe at
+d34c9131 is running (compile-only). Next: `make check` on b39 (the DRAFT
+rows fire by name, the TBD sizes print), fill and strip, merge; the
+abi-23 AFTER window this afternoon; bench/syntax's first sample tonight.
