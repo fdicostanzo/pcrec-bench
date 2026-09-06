@@ -231,7 +231,7 @@ under the FIRST rule it trips:
   `bak-1`/`bak-g-rel`/`bak-py`/`mod-J`; `lka-pos`/`lka-verb`;
   `mod-reset`/`mod-unset`; `mod-i`/`mod-r`; `qnt-lazy`/`mod-U`;
   `qnt-plus`/`grp-atomic-rep`; `anc-caret`/`anc-A`/`anc-G`;
-  `anc-dollar`/`anc-Z`; `mod-a`/`cls-w`; and the `cat` group
+  `anc-dollar`/`anc-z-uc`; `mod-a`/`cls-w`; and the `cat` group
   `lit-cat`/`grp-cap`/`grp-named`/`grp-named-quote`/`grp-comment`/
   `grp-callout`/`mod-x`/`mod-n`/`esc-hex`/`esc-octal-o`/`cls-dot` — any
   two members of one group on one testee that differ by more than
@@ -276,7 +276,7 @@ question with its cell id, its twin's cell and its stamps.
   are `did-not-compile`, each naming a module: `grp-comment` (comments),
   `grp-branch-reset` (branch-reset), `grp-callout` (callouts),
   `cnd-group` (conditionals), `msc-R` `msc-X` `msc-C` `esc-ctrl`
-  `esc-octal-o` (misc), `unp-p` `unp-P` (unicode-props), `vrb-accept`
+  `esc-octal-o` (misc), `unp-p-lc` `unp-p-uc` (unicode-props), `vrb-accept`
   `vrb-skip` (verbs), `xcl-minus` (extended-classes), and
   `esc-hex-braced` (the braced `\x{...}` spelling requires
   `unicode-props` at this pin per the seed's note; at the abi-23 re-seed

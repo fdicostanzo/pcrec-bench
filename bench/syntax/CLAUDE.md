@@ -71,6 +71,16 @@ THREE THINGS A FUTURE EDITOR SHOULD NOT UNDO WITHOUT READING WHY (all in
    set has no backtracking hazard by design; a `(?s).*` over a 1 MB
    subject with no newline barrier is quadratic and would bind the
    harness's 20 s per-trial budget on every backtracking testee.
+4. **Pattern ids are case-unambiguous by rule.** Two ids that differ only
+   in case name two different files on ext4 but ONE file on a
+   case-insensitive filesystem (macOS APFS default, Windows) — a clone
+   there cannot check the tree out faithfully. `anc-Z`/`anc-z`,
+   `cls-S`/`cls-s` and `unp-P`/`unp-p` were renamed to `anc-z-uc`/
+   `anc-z-lc`, `cls-s-uc`/`cls-s-lc` and `unp-p-uc`/`unp-p-lc` for exactly
+   this reason (2026-09-06, before the set's first sample: no record
+   carried the old ids); a new pattern must not reintroduce a
+   case-only collision (checked by lowercasing every `bench/*/patterns/`
+   filename and looking for a duplicate).
 
 RE-SEEDING (the next pcrec pin moves rows: at abi 23 `\x{...}` and utf8
 moved to the base grammar). Copy the new `--list-syntax` output under the

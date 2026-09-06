@@ -3,8 +3,8 @@ lit-cat	literal	base-grammar	-	3	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
 anc-caret	anchors	^	-	5	0	0	0	0	i	NONE	4	1/42	7/42	0/3	10.46 2025-08-27
 anc-dollar	anchors	$	-	5	0	0	0	0	d	e	4	1/42	6/42	0/3	10.46 2025-08-27
 anc-A	anchors	\A	assertions	6	0	0	0	1	i	NONE	4	1/42	7/42	0/3	10.46 2025-08-27
-anc-Z	anchors	\Z	assertions	6	0	0	0	0	d	e	4	1/42	6/42	0/3	10.46 2025-08-27
-anc-z	anchors	\z	assertions	6	0	0	0	0	d	e	4	1/42	4/42	0/3	10.46 2025-08-27
+anc-z-uc	anchors	\Z	assertions	6	0	0	0	0	d	e	4	1/42	6/42	0/3	10.46 2025-08-27
+anc-z-lc	anchors	\z	assertions	6	0	0	0	0	d	e	4	1/42	4/42	0/3	10.46 2025-08-27
 anc-G	anchors	\G	assertions	6	0	0	0	0	i	NONE	4	1/42	7/42	0/3	10.46 2025-08-27
 anc-m-caret	anchors	(?m) ^	-+modifiers	9	0	0	0	0	type-2	m	4	1/42	7/42	3/3	10.46 2025-08-27
 anc-m-dollar	anchors	(?m) $	-+modifiers	9	0	0	0	0	d	e	4	1/42	6/42	3/3	10.46 2025-08-27
@@ -12,8 +12,8 @@ asr-wb	assertions	\b	assertions	7	0	0	0	1	c	t	3	1/42	4/42	3/3	10.46 2025-08-27
 asr-nwb	assertions	\B	assertions	7	0	0	0	1	c	t	3	0/42	2/42	3/3	10.46 2025-08-27
 asr-K	assertions	\K	assertions	9	0	0	0	0	k	=	5	1/42	2/42	3/3	10.46 2025-08-27
 cls-d	classes	\d	classes	3	0	0	0	0	bitmap-or-none	NONE	1	2/42	7/42	3/3	10.46 2025-08-27
-cls-s	classes	\s	classes	9	0	0	0	0	c	t	7	0/42	1/42	2/3	10.46 2025-08-27
-cls-S	classes	\S	classes	7	0	0	0	0	bitmap-or-none	@	3	0/42	1/42	3/3	10.46 2025-08-27
+cls-s-lc	classes	\s	classes	9	0	0	0	0	c	t	7	0/42	1/42	2/3	10.46 2025-08-27
+cls-s-uc	classes	\S	classes	7	0	0	0	0	bitmap-or-none	@	3	0/42	1/42	3/3	10.46 2025-08-27
 cls-w	classes	\w	classes	3	0	0	0	0	bitmap-or-none	NONE	1	13/42	42/42	3/3	10.46 2025-08-27
 cls-h	classes	\h	classes	15	0	0	0	0	k	e	9	1/42	2/42	3/3	10.46 2025-08-27
 cls-v	classes	\v	classes	11	0	0	0	0	i	e	9	2/42	2/42	2/3	10.46 2025-08-27
@@ -88,8 +88,8 @@ esc-quote	escapes	\Q \E	quoting	8	0	0	0	0	f	)	4	1/42	2/42	3/3	10.46 2025-08-27
 msc-R	misc	\R	misc	10	0	0	0	0	i	e	9	2/42	2/42	2/3	10.46 2025-08-27
 msc-X	misc	\X	misc	4	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
 msc-C	misc	\C	misc	4	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
-unp-p	uniprop	\p{L}	unicode-props	6	0	0	0	0	bitmap-or-none	NONE	1	11/42	37/42	3/3	10.46 2025-08-27
-unp-P	uniprop	\P{L}	unicode-props	6	0	0	0	0	bitmap-or-none	NONE	1	5/42	31/42	3/3	10.46 2025-08-27
+unp-p-lc	uniprop	\p{L}	unicode-props	6	0	0	0	0	bitmap-or-none	NONE	1	11/42	37/42	3/3	10.46 2025-08-27
+unp-p-uc	uniprop	\P{L}	unicode-props	6	0	0	0	0	bitmap-or-none	NONE	1	5/42	31/42	3/3	10.46 2025-08-27
 vrb-accept	verbs	(*ACCEPT)	verbs	17	0	0	0	0	i	NONE	1	1/42	9/42	3/3	10.46 2025-08-27
 vrb-skip	verbs	(*ACCEPT)	verbs	10	0	0	0	0	a	b	2	1/42	6/42	3/3	10.46 2025-08-27
 xcl-minus	extclass	(?[[a]])	extended-classes	19	0	0	0	0	bitmap-or-none	NONE	1	0/42	36/42	3/3	10.46 2025-08-27

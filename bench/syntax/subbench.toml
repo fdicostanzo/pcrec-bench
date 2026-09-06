@@ -111,8 +111,8 @@ role = "member"
 
 [[patterns]]
 # end of subject or before a final newline, like `$` outside (?m)
-name = "anc-Z"
-file = "patterns/anc-Z.rx"
+name = "anc-z-uc"
+file = "patterns/anc-z-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -122,8 +122,8 @@ role = "member"
 
 [[patterns]]
 # end of subject ONLY: rejects `item done\n` where `\Z` and `$` take it
-name = "anc-z"
-file = "patterns/anc-z.rx"
+name = "anc-z-lc"
+file = "patterns/anc-z-lc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -210,8 +210,8 @@ role = "member"
 
 [[patterns]]
 # whitespace between two words
-name = "cls-s"
-file = "patterns/cls-s.rx"
+name = "cls-s-lc"
+file = "patterns/cls-s-lc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -221,8 +221,8 @@ role = "member"
 
 [[patterns]]
 # non-space runs around `@`
-name = "cls-S"
-file = "patterns/cls-S.rx"
+name = "cls-s-uc"
+file = "patterns/cls-s-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -1046,8 +1046,8 @@ role = "member"
 
 [[patterns]]
 # letters by Unicode property: Latin-1 letters included, unlike `\w`
-name = "unp-p"
-file = "patterns/unp-p.rx"
+name = "unp-p-lc"
+file = "patterns/unp-p-lc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -1057,8 +1057,8 @@ role = "member"
 
 [[patterns]]
 # non-letter runs
-name = "unp-P"
-file = "patterns/unp-P.rx"
+name = "unp-p-uc"
+file = "patterns/unp-p-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"

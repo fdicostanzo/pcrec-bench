@@ -2,8 +2,8 @@
 kind	syntax	key	seed_status	seed_module	seed_engines	seed_built	coverage	patterns	reason
 esc	\d	\d	module	classes	dfa|vm	built	covered	cls-d	
 esc	\D	\D	module	classes	dfa|vm	built	not-exercised	-	the complement of `\d`: the same class mechanism, set inverted
-esc	\s	\s	module	classes	dfa|vm	built	covered	cls-s	
-esc	\S	\S	module	classes	dfa|vm	built	covered	cls-S	
+esc	\s	\s	module	classes	dfa|vm	built	covered	cls-s-lc	
+esc	\S	\S	module	classes	dfa|vm	built	covered	cls-s-uc	
 esc	\w	\w	module	classes	dfa|vm	built	covered	cls-w	
 esc	\W	\W	module	classes	dfa|vm	built	not-exercised	-	the complement of `\w`: the same class mechanism, set inverted
 esc	\h	\h	module	classes	dfa|vm	built	covered	cls-h	
@@ -16,8 +16,8 @@ esc	\N{U+0041}	\N{U+0041}	module	unicode-props	dfa|vm	unbuilt	not-exercised	-	UT
 esc	\b	\b	module	assertions	dfa|vm	built	covered	asr-wb	
 esc	\B	\B	module	assertions	dfa|vm	built	covered	asr-nwb	
 esc	\A	\A	module	assertions	dfa|vm	built	covered	anc-A	
-esc	\Z	\Z	module	assertions	dfa|vm	built	covered	anc-Z	
-esc	\z	\z	module	assertions	dfa|vm	built	covered	anc-z	
+esc	\Z	\Z	module	assertions	dfa|vm	built	covered	anc-z-uc	
+esc	\z	\z	module	assertions	dfa|vm	built	covered	anc-z-lc	
 esc	\G	\G	module	assertions	dfa|vm	built	covered	anc-G	
 esc	\K	\K	module	assertions	vm	built	covered	asr-K	
 esc	\k<name>	\k<name>	module	backrefs	vm	built	covered	bak-k-named mod-J	
@@ -28,8 +28,8 @@ esc	\g<0>	\g<1>	module	recursion	vm	built	covered-by-family	rec-g-angle	a spelli
 esc	\g<01>	\g<1>	module	recursion	vm	built	covered-by-family	rec-g-angle	a spelling of `\g<1>` (the seed's `family` column)
 esc	\g'0'	\g'1'	module	recursion	vm	built	not-exercised-by-family	-	a spelling of `\g'1'`, which is not exercised: the quoted spelling of `\g<1>`: one pattern per call spelling family, and the angle spelling is the witness
 esc	\g'01'	\g'1'	module	recursion	vm	built	not-exercised-by-family	-	a spelling of `\g'1'`, which is not exercised: the quoted spelling of `\g<1>`: one pattern per call spelling family, and the angle spelling is the witness
-esc	\p{L}	\p{L}	module	unicode-props	dfa|vm	unbuilt	covered	unp-p	
-esc	\P{L}	\P{L}	module	unicode-props	dfa|vm	unbuilt	covered	unp-P	
+esc	\p{L}	\p{L}	module	unicode-props	dfa|vm	unbuilt	covered	unp-p-lc	
+esc	\P{L}	\P{L}	module	unicode-props	dfa|vm	unbuilt	covered	unp-p-uc	
 esc	\Q	\Q	module	quoting	dfa|vm	built	covered	esc-quote	
 esc	\E	\E	module	quoting	dfa|vm	built	covered	esc-quote	
 esc	\R	\R	module	misc	dfa|vm	unbuilt	covered	msc-R	
