@@ -354,8 +354,8 @@ miss:
   (bit 24) row on `(?i)abc` (folds 3->0; frameless and shape unmoved). The
   three registry checks diff the re-archived copies exactly as predicted:
   axes 74/25 -> 76/26 (`cls-fold`), definitions byte-identical, limits 55
-  -> 56 (`PCREC_MAX_AUTO_DFA_ELEMS` + FOUR rows re-worded: three gain a raise-only flag via the new
-  raise-only flags). The floor stays 16 (no rx_info field at abi 23):
+  -> 56 (`PCREC_MAX_AUTO_DFA_ELEMS` + FOUR rows re-worded: three gain a
+  raise-only flag, DFA_STATES_TABLE "NOT RAISABLE"). The floor stays 16 (no rx_info field at abi 23):
   `check_abi_floor_refusal` UNCHANGED. The DRAFT(v)/TBD placeholder
   machinery itself stays in selfcheck.py, unused until the next re-pin
   is prepared ahead of its build.

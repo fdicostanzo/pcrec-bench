@@ -1616,7 +1616,7 @@ stamp_value — axes_dump.c's only change), definitions **50 byte-identical**
 for the sixth pin running (definitions.c / registry.c untouched; the
 `\x{...}` move is parse.c's and `--list-syntax`'s), limits 55 → **56**
 (`PCREC_MAX_AUTO_DFA_ELEMS` 30,000,000 inserted after
-`PCREC_MAX_SUBSET_ELEMS` — [LIM-2] N1 — and FOUR rows re-worded (three gain a raise-only flag; DFA_STATES_TABLE "NOT RAISABLE") as
+`PCREC_MAX_SUBSET_ELEMS` — [LIM-2] N1 — and FOUR rows re-worded: three as
 raise-able via the new `--max-nfa-states` / `--max-dfa-states-goto` /
 `--max-subset-elems` flags, values unchanged; `PCREC_MAX_DFA_STATES_TABLE`
 desc "NOT RAISABLE"). Shim floor STAYS 16 (abi 23 adds one macro, no
