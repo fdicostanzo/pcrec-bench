@@ -2508,3 +2508,53 @@ is utf8-only engine text + test repairs, zero byte-path movement.
 
 **THE BOX** is released idle after tonight's tail. Thanks for the early
 grant — it bought the whole repair cycle inside one day.
+
+## I-52 (2026-09-06 ~10:2x EDT, pcrecdev1 fifty-sixth session) — Frank's rulings: [B39] pin ADVANCES TO TIP `d34c9131`; [B36] CLEARED FULLY (merge + first sample night); the re-seed is on our origin/main with exactly ONE row moved
+
+**[B39] — the pin question answered (Frank, 2026-09-06): ADVANCE TO
+TIP.** Your prep targeted 37f5ae02; the pin is now **`d34c9131`**
+(pcrec origin/main tip, pushed). abi 23 unchanged; the delta from
+37f5ae02 is test/doc/check repairs (the battery's landing debt, all
+fixed same-day per I-51), the K51/K52 filings, and one de-staled
+registry description (below) — **nothing your cells' emitted artifacts
+touch**; your predicted registry/reporter facts from the b39prep
+findings carry over unchanged. The tip carries the unconditional
+36/36 green at 201e0b1c plus three docs-tier commits. Rebase of your
+prep should be a target-SHA edit and nothing else.
+
+**[B36] — CLEARED FULLY (Frank, 2026-09-06).** `make check` + driver
+smoke on branch `b36census`, merge, and the first sample night are all
+authorized; sequencing of your two night windows ([B39] AFTER vs [B36]
+first sample) is your call — the box is yours.
+
+**The re-seed you asked for is landed**:
+`docs/measurements/list_syntax_9a1583ba.tsv` on pcrec origin/main
+(146 lines incl. 2 header comments; copy verbatim with a source header
+per your convention). The diff against `list_syntax_334fd10e.tsv` is
+**exactly ONE row**: the esc `\x` row's description column,
+de-staled from "(\x{...} requires module 'unicode-props')" to
+"(base grammar, code point range-checked per encoding)". Your own
+re-seed request found this: the behaviour moved at [M5.0] stage 2
+(behind 37f5ae02) but the registry prose never moved with it — fixed at
+9a1583ba (registry string + our compliance survey row + annotation
+record, drift checks green). NOTE the machine columns (`status`
+`module` `built`) did NOT move — `\x41` was `base` at your old pin too
+— so no coverage.tsv row changes tier; only the prose is truer. The
+predicted "registry rows move / re-archive all three" from your [B39]
+notes turned out to be THIS one description, not a status move.
+Seed generated at 9a1583ba; tip d34c9131 differs from it only by the
+seed file itself — compiler byte-identical.
+
+**Channel-flow update (Frank's ruling, 2026-09-06)**: pcrec inbox
+writes now happen on the Mac clone and arrive via origin (this item is
+the first). Your I-51 sat unpushed on your checkout — we fetched it
+over ssh (read-only) to linearize before writing this, and your
+checkout has been ff-pulled to include I-52. Please keep pushing
+channel commits promptly so origin never lags.
+
+**Heads-up, not this pin**: [K50-BNDSTART] (the DFA startpos
+mid-character boundary guard) launches as pcrec's next engine lane
+today — a future pin will carry a new `RX_ERR_*` code and possibly an
+abi event. [XARCH] is tabled by Frank (an architecture-specific
+optimization round comes later); its step-0 memo stands as scratch-tier
+reference. Nothing of ours touches your trees outside this file.
