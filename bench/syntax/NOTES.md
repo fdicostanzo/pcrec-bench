@@ -20,7 +20,7 @@ Three things would defeat it, and the design is shaped against each:
 
 1. **Enumerating from a head.** A set written from what its author
    remembers of PCRE omits what the author forgot. The construct list is
-   pcrec's `--list-syntax` REGISTRY at our pin (`list_syntax_334fd10e.tsv`,
+   pcrec's `--list-syntax` REGISTRY at our pin (`list_syntax_9a1583ba.tsv`, re-seeded at the [B39] pin from the 334fd10e seed it was authored from — one description row moved, nothing machine-read,
    copied verbatim with a source header), and `coverage.tsv` is DERIVED
    from the pattern table × the seed: every one of the seed's 138 rows is
    covered by a pattern, covered through the seed's own `family` column (a
@@ -272,7 +272,7 @@ question with its cell id, its twin's cell and its stamps.
 ## Predictions (P1-P13), 2026-09-05, before any run
 
 - **P1 (the `unsupported` block, from the seed's own `built` column).**
-  On every pcrec testee at pin 334fd10e, exactly these fifteen patterns
+  On every pcrec testee at the pin (the seed's `built` column is 334fd10e's, unmoved by the 9a1583ba re-seed; first sample at d34c9131), exactly these fifteen patterns
   are `did-not-compile`, each naming a module: `grp-comment` (comments),
   `grp-branch-reset` (branch-reset), `grp-callout` (callouts),
   `cnd-group` (conditionals), `msc-R` `msc-X` `msc-C` `esc-ctrl`

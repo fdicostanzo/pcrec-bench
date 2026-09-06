@@ -1,9 +1,9 @@
 # SOURCE (pcrec-bench, bench/syntax, [B36]): pcrec's `--list-syntax` construct REGISTRY, the SEED
 # this sub-bench enumerates constructs from. Copied VERBATIM below this block (every byte after
 # the line `# --- verbatim from here ---` is pcrec's file, unchanged) from
-#   ~/pcrec  origin/main : docs/measurements/list_syntax_334fd10e.tsv
-#   pcrec commit 334fd10e (abi 22), generated 2026-09-05 by `build/pcrec --list-syntax` at that
-#   commit on pcrec's Mac M1 box (gcc-16); landed for pcrec-bench per inbox I-49 (the I-42 charter's
+#   ~/pcrec  origin/main : docs/measurements/list_syntax_9a1583ba.tsv
+#   pcrec commit 9a1583ba (abi 23; the [B39] pin d34c9131 differs from it only by this seed file itself), generated 2026-09-06 by `build/pcrec --list-syntax` at that
+#   commit on pcrec's Mac M1 box (gcc-16); landed for pcrec-bench per inbox I-52 (the RE-SEED at the [B39] pin advance; the first seed was I-49's list_syntax_334fd10e.tsv at abi 22 -- exactly ONE row differs: the esc `\x` row's DESCRIPTION, de-staled; no status/module/built column moved; the I-42 charter's
 #   "registry seed on request"). Read here with `git -C ~/pcrec show origin/main:<path>`.
 # WHAT IT IS USED FOR, AND WHAT IT IS NOT. `gen_patterns.py` reads ONLY the `kind`, `syntax`,
 # `status` and `family` columns, to ENUMERATE the constructs a PCRE2 pattern can spell and to
@@ -18,8 +18,8 @@
 # generator takes any seed with these columns (`--seed PATH`), and a new row with no pattern and no
 # stated reason FAILS `gen_patterns.py --check` by name -- the census widens deliberately.
 # --- verbatim from here ---
-# --list-syntax seed for pcrec-bench (I-42/[B36]), generated at pin 334fd10e (abi 22)
-# date: 2026-09-05 | box: Mac M1 (gcc-16) | generator: build/pcrec --list-syntax at that commit
+# --list-syntax seed for pcrec-bench ([B36] re-seed at the [B39] pin advance), generated at pin 9a1583ba (abi 23)
+# date: 2026-09-06 | box: Mac M1 (gcc-16) | generator: build/pcrec --list-syntax at that commit
 # pcrec syntax construct registry (D24). Empty field = none.
 # `syntax` is a valid probe pattern for the construct.
 # `expect` is the text the diagnostic must contain, for the rows that reject.
@@ -79,7 +79,7 @@ esc	f	\f		0x0000	pcre2	dfa|vm	base	none			form feed, hex 0C	-	yes	char 0x0c	-
 esc	n	\n		0x0000	pcre2	dfa|vm	base	none			linefeed, hex 0A	-	yes	char 0x0a	-	
 esc	r	\r		0x0000	pcre2	dfa|vm	base	none			carriage return, hex 0D	-	yes	char 0x0d	-	
 esc	t	\t		0x0000	pcre2	dfa|vm	base	none			tab, hex 09	-	yes	char 0x09	-	
-esc	x	\x41		0x0000	pcre2	dfa|vm	base	none			hex: bare \xHH (exactly 2 digits) or braced \x{HHHH} (\x{...} requires module 'unicode-props')	-	yes	char 0x41	-	
+esc	x	\x41		0x0000	pcre2	dfa|vm	base	none			hex: bare \xHH (exactly 2 digits) or braced \x{HHHH} (base grammar, code point range-checked per encoding)	-	yes	char 0x41	-	
 group	:	(?:...)		0x0000	pcre2	dfa|vm	base	none			non-capturing group	-	yes		-	
 group	=	(?=...)	lookaround	0x0040	pcre2	vm	module	module		requires module 'lookaround'	positive lookahead	planned	yes		built	
 group	!	(?!...)	lookaround	0x0040	pcre2	vm	module	module		requires module 'lookaround'	negative lookahead	planned	yes		built	

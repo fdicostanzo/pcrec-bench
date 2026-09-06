@@ -57,7 +57,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "patterns")
 COVERAGE = os.path.join(HERE, "coverage.tsv")
 SIDECAR = os.path.join(HERE, "subbench.toml")
-SEED = os.path.join(HERE, "list_syntax_334fd10e.tsv")
+SEED = os.path.join(HERE, "list_syntax_9a1583ba.tsv")
 
 # The family slugs, in the order the sidecar lists them, and the tag each
 # pattern carries (`fam-<slug>`). A family is a MECHANISM class, not a seed
