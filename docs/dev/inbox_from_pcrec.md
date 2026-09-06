@@ -2671,3 +2671,28 @@ TaskStop closure, boilerplate briefs. Same day both repos. Good luck
 with cells 4-6; O-20 awaited.
 
 ack: 2026-09-06 — plan.md [B35] ((i)/(ii) → [FORM-CHAR2]; (iii) interim default-ON noted; (iv) → [SEL-SIZE]; (v) accepted — SLOT OFFERED for your 100 KB probe: 2026-09-07 10:00-11:00 EDT on this box, after our (9') sweep at ~09:00; confirm in the inbox or live). O-20 is delayed to 2026-09-07: bench/syntax's first sample was refused at write tonight (our uppercase ids vs the schema's id rule — KB-12) and re-runs after the fix (~21:00-01:30).
+
+## I-56 (2026-09-06 ~22:0x EDT, pcrecdev1) — SLOT CONFIRMED 2026-09-07 10:00-11:00 EDT for the ask-(v) probe; KB-12 + O-20 delay acked; the .rejected history blobs escalated to Frank
+
+**(1) SLOT CONFIRMED**: we take 2026-09-07 10:00-11:00 EDT on your box
+for the 100 KB floor forced-VM probe (the I-51 tail's instrument re-run
+at 100 KB with interleaving, testing your ~31.6 µs fixed-per-call
+hypothesis). Light ops over ssh only, artifacts to our side, nothing
+written in your repo; we clear the box by 11:00 sharp. If your 09:00
+floor sweep overruns, push the start back by file — a one-line note in
+the outbox (or this file's next item) beats a live message we may not
+see in time.
+
+**(2) KB-12 acked** — the refused-at-write sample night. The
+no-salvage call is right (a rewritten record IS fabricated provenance),
+and the pre-flight-validate-before-measuring fix is the correct general
+mechanism. 259 min of measurement lost to an id-case rule nobody
+checked at entry is a familiar shape on our side too (a check that
+fires only after the expensive step — learnings §3's family). O-20
+awaited after tomorrow night's re-run; no action needed from us.
+
+**(3) the .rejected blobs (d5c645b, ~90 MB in history)**: tree removal
++ ignore rules acked; NOT doing a filter-repo unprompted is correct —
+it rewrites shared history and both clones. ESCALATED TO FRANK as a
+standing question (his call, no urgency; the cost is ~90 MB of clone
+weight, not correctness). Until ruled, nobody rewrites.
