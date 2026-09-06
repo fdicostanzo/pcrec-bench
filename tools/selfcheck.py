@@ -1810,9 +1810,12 @@ _K41W2 = (rb"(?:(0{28,30}|[\n\t]?(?:c{1}?c{28,30}?a|1{1,}a{0,30}0|c){5,10}?\n)"
           rb"|a(\n{1,2}b{1,2}|0)??a{0,30}$")
 
 
-# [B39] DRAFT -- values to be confirmed at the build (lane b39prep,
-# 2026-09-05; pin d34c9131 / abi 23 PREPARED FROM SOURCE, NOT BUILT). Two
-# placeholders the build fills in:
+# [B39] DRAFT -- the prep-then-build protocol (lane b39prep, 2026-09-05,
+# from pcrec's source at 37f5ae02; BUILT and FILLED 2026-09-06 at the
+# advanced pin d34c9131 / abi 23 -- inbox I-52). Two placeholders a
+# re-pin prepared before its build carries, both RETIRED from the rows
+# below once the build printed them (every DRAFT(v) held, every TBD is now
+# a measured number; kept here for the NEXT prepared re-pin):
 #   DRAFT(v)  -- a value PREDICTED from pcrec's source at the SHA (asserted
 #                exactly, so a wrong prediction FAILS by name at the build
 #                and the manager corrects the number, never a silent pass);
@@ -2123,26 +2126,29 @@ STAMP_CASES = (
       "vm_frameless": 1, "vm_alt_islands": 1,
       "vm_entry_shape": "forward", "vm_program_bytes": 1532,
       "altcls_merges": 0, "altcls_factored": 0,
-      # [B39] DRAFT -- values to be confirmed at the build: no class at
-      # all in a literal alternation, so the fold count reads 0.
-      "vm_cls_folds": DRAFT(0),
+      # [B39] (MEASURED 2026-09-06): no class at all in a literal
+      # alternation, so the fold count reads 0.
+      "vm_cls_folds": 0,
       "emit_bytes": 18611 + B39_VM_STAMP_LINE, **_CAPS_VM}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE HAND-CHOSEN
-    # FOLD WITNESS AND ITS ONE-CHARACTER CONTROLS. [B39] DRAFT -- values to
-    # be confirmed at the build. `(?i)abc` is three caseless letters: D23
+    # FOLD WITNESS AND ITS ONE-CHARACTER CONTROLS (predicted from source
+    # 2026-09-05, MEASURED at the d34c9131 build 2026-09-06: every
+    # prediction held; the sizes are the build's). `(?i)abc` is three caseless letters: D23
     # folds each to a two-member class {A,a} / {B,b} / {C,c} at parse
     # time, three DISTINCT pool entries, and `vm_cls_shape` (emit_vm.c at
     # d34c9131: `count == 2 && (lo ^ hi) == 0x20 && lo >= 'A' && lo <=
     # 'Z'`) gives each the FOLD shape -- folds 3, three `(b | 0x20) ==
     # <lower>` test sites, NO `<prefix>_class_bitmap<N>` table. No push
-    # (a literal chain), no group, so frameless 1 and `forward`; the
-    # program size is the build's to read (TBD).
+    # (a literal chain), no group, so frameless 1 and `forward`; MEASURED
+    # 634 program bytes, 18,045 emitted bytes (the denied arm 18,196:
+    # +151 B = three 32-byte bitmaps + their references, minus the
+    # or-mask sites).
     ("ASCII-fold class test: (?i)abc under --engine=vm, folds 3",
      "pcrec-vm", b"(?i)abc",
      {"engine": "vm", "prefilter": "none", "engine_sel": "forced",
       "vm_frameless": 1, "vm_alt_islands": 0,
-      "vm_entry_shape": "forward", "vm_program_bytes": TBD,
-      "vm_cls_folds": DRAFT(3), "emit_bytes": TBD, **_CAPS_VM}),
+      "vm_entry_shape": "forward", "vm_program_bytes": 634,
+      "vm_cls_folds": 3, "emit_bytes": 18045, **_CAPS_VM}),
     # CONTROL 1 (tuning.md 2.22's own decline table, row 2): `[ac]` is a
     # two-member set NOT differing only in bit 0x20 -- the or-mask would
     # admit `b`/`B` -- so it stays a BITMAP class: folds 0 on a class-
@@ -2151,7 +2157,7 @@ STAMP_CASES = (
     ("ASCII-fold declined: [ac] under --engine=vm (not a 0x20 pair), folds 0",
      "pcrec-vm", b"x[ac]y",
      {"engine": "vm", "engine_sel": "forced",
-      "vm_cls_folds": DRAFT(0), "emit_bytes": TBD, **_CAPS_VM}),
+      "vm_cls_folds": 0, "emit_bytes": 18261, **_CAPS_VM}),
     # CONTROL 2 (row 3): `[@\x60]` IS a 0x20 pair (0x40 / 0x60) but of
     # NON-letters -- the compare would be exact, yet the recognizer names
     # what caseless folding PRODUCES and a wider two-member-compare form
@@ -2159,7 +2165,7 @@ STAMP_CASES = (
     ("ASCII-fold declined: [@`] under --engine=vm (a 0x20 pair of non-letters), folds 0",
      "pcrec-vm", b"x[@`]y",
      {"engine": "vm", "engine_sel": "forced",
-      "vm_cls_folds": DRAFT(0), "emit_bytes": TBD, **_CAPS_VM}),
+      "vm_cls_folds": 0, "emit_bytes": 18261, **_CAPS_VM}),  # MEASURED: the two controls are the same size (one bitmap each)
     # CONTROL 3 (the scope's other side): the same three caseless letters
     # under `auto` select the DFA, and the DFA route never consults
     # `vm_cls_shape` -- NO pair (asserted after the loop by the scope
@@ -2334,11 +2340,11 @@ LEDGER_STAMP_CASES = (
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 462",
       "vm_frameless": 0, "vm_alt_islands": 2,
       "vm_entry_shape": "plain", "vm_program_bytes": 12026,
-      # [B39] DRAFT -- values to be confirmed at the build: level-context
-      # carries no caseless letter and no two-letter class (the corpus
-      # census), so the [SEL-1] hybrid reads folds 0 -- the loglines
-      # `auto` vs `auto-noclsfold` cell is predicted a NULL pair.
-      "vm_cls_folds": DRAFT(0),
+      # [B39] (MEASURED 2026-09-06): level-context carries no caseless
+      # letter and no two-letter class (the corpus census), so the [SEL-1]
+      # hybrid reads folds 0 -- the loglines `auto` vs `auto-noclsfold`
+      # cell is a NULL pair by construction.
+      "vm_cls_folds": 0,
       **_CAPS_VM}),
     # [B22] bounded's 32768 rung at pin 263b013: the artifact CHANGED KIND
     # (I-22 (ii)'s reason the cross-pin byte comparison was invalid). At
@@ -2377,7 +2383,7 @@ LEDGER_STAMP_CASES = (
       "engine_sel": "declined-nullable", "vm_frameless": 1,
       "vm_alt_islands": 0, "vm_entry_shape": "forward",
       "vm_program_bytes": 653,
-      "vm_cls_folds": DRAFT(0),   # [B39] DRAFT: `[a-z]` is a RANGE, not a pair
+      "vm_cls_folds": 0,   # [B39] MEASURED: `[a-z]` is a RANGE, not a pair
       "emit_bytes": 18254 + B39_VM_STAMP_LINE, "emit_code_bytes": 18254 + B39_VM_STAMP_LINE,
       **_CAPS_VM}),
     # [B19] (e) -> [B25]: until a7e0bdf the 16384 rung was THE DFA THAT
@@ -2433,17 +2439,29 @@ LEDGER_STAMP_CASES = (
     # K7 SUBSET-ELEMENTS budget where the plain forms hit the state cap --
     # distinct RX_ENGINE_WHY prose, asserted after the loop. A sixth tuple
     # element names the FORM (default plain).
+    # [B39] (pin d34c9131, MEASURED 2026-09-06 -- a FINDING the prep did
+    # not predict): pcrec [LIM-2] N1 (behind 37f5ae02) gave the AUTO
+    # route its OWN DFA-attempt work budget, PCREC_MAX_AUTO_DFA_ELEMS
+    # 30,000,000 (list_limits.tsv, the new row), counted in K7's
+    # subset-element unit -- and 30M < K7's 48M, so on the `\z` form the
+    # N1 budget now fires FIRST: RX_ENGINE_WHY reads "subset construction
+    # exceeds 30000000 elements (N1 auto budget)" where 334fd10e read
+    # "... 48000000 state-set elements (K7)". Same OUTCOME (the DFA
+    # attempt abandoned, the rescue declined as nullable, the VM built),
+    # a different LIMIT ROW by name; the artifact is +4 B (the longer
+    # _WHY prose in the stamp: 18,485 -> 18,489). The plain form's route
+    # (the 32000 STATE cap) is UNMOVED.
     # [B34]: +90 B, the same plain-VM abi-16 constant as its plain sibling.
     # [B37]: +275 B, the same plain frameless-VM abi 17-22 constant again
     # (18,184 -> 18,459); `forward` at 756 program bytes (the `\z` form's
     # program is 103 bytes longer than the plain one's 653).
-    ("bounded cls-upto-32768 whole: declined, the K7 route", "pcrec-auto",
+    ("bounded cls-upto-32768 whole: declined, the N1 budget route (K7 until 334fd10e)", "pcrec-auto",
      "bounded", "cls-upto-32768",
      {"engine": "vm", "prefilter": "none",
       "engine_sel": "declined-nullable", "vm_frameless": 1,
       "vm_alt_islands": 0, "vm_entry_shape": "forward",
       "vm_program_bytes": 756,
-      "emit_bytes": 18459 + B39_VM_STAMP_LINE, "emit_code_bytes": 18459 + B39_VM_STAMP_LINE,
+      "emit_bytes": 18459 + B39_VM_STAMP_LINE + 4, "emit_code_bytes": 18459 + B39_VM_STAMP_LINE + 4,  # +4: the N1 _WHY prose
       **_CAPS_VM}, "whole-subject"),
     ("bounded cls-upto-16384 whole: declined", "pcrec-auto",
      "bounded", "cls-upto-16384",
@@ -2469,7 +2487,7 @@ LEDGER_STAMP_CASES = (
       "engine_sel": "collapsed-prefilter",
       "vm_prefilter_lang": "count-collapsed",
       "vm_prefilter_lang_why": "dfa overflow retry, exact nfa 558",
-      "vm_cls_folds": DRAFT(0),   # [B39] DRAFT: no fold pair on bounded
+      "vm_cls_folds": 0,   # [B39] MEASURED: no fold pair on bounded
       **_CAPS_VM}),
     ("bounded ctx-lazy-64: the rescue kept", "pcrec-auto",
      "bounded", "ctx-lazy-64",
@@ -2574,10 +2592,14 @@ LEDGER_STAMP_CASES = (
      {"engine": "vm", "engine_sel": "forced", "vm_frameless": 1,
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 305686, "emit_bytes": 292043 + B39_VM_STAMP_LINE,
-      "vm_cls_folds": DRAFT(0),   # [B39] DRAFT: lowercase words, no class
+      "vm_cls_folds": 0,   # [B39] MEASURED: lowercase words, no class
       "altcls_merges": 0, "altcls_factored": 11}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE CORPUS FOLD
-    # WITNESS. [B39] DRAFT -- values to be confirmed at the build. The
+    # WITNESS (predicted from source 2026-09-05; MEASURED at the d34c9131
+    # build 2026-09-06 -- folds 26, islands 0, frameless 0, `plain`,
+    # 351,053 program bytes, 359,502 emitted bytes from 334fd10e's 451,050:
+    # -20.3 %, the fold-pair lowering's own shrink on the one corpus
+    # witness; pcrec's __TEXT -31 % on theirs). The
     # bench's ONLY `(?i)` patterns are altwide's ci-256 / ci-512 (the
     # corpus census: no `(?i)` and no two-letter class in email, loglines
     # or bounded), and ci-512 refuses on both routes at the default caps,
@@ -2594,9 +2616,9 @@ LEDGER_STAMP_CASES = (
     ("altwide ci-256 under --engine=vm: THE FOLD WITNESS, 26 letters -> folds 26",
      "pcrec-vm", "altwide", "ci-256",
      {"engine": "vm", "engine_sel": "forced",
-      "vm_alt_islands": DRAFT(0), "vm_frameless": DRAFT(0),
-      "vm_entry_shape": DRAFT("plain"), "vm_program_bytes": TBD,
-      "vm_cls_folds": DRAFT(26), "emit_bytes": TBD}),
+      "vm_alt_islands": 0, "vm_frameless": 0,
+      "vm_entry_shape": "plain", "vm_program_bytes": 351053,
+      "vm_cls_folds": 26, "emit_bytes": 359502}),
     # ... and under `auto` the same pattern is a DFA (989,963 B at
     # 334fd10e, `edge=bitmap` -- the `(?i)` scan class is two ranges): no
     # `vm_cls_folds` pair at all (the scope check), which is why the
@@ -2923,15 +2945,18 @@ def check_mechanism_stamps():
         # by RX_ENGINE_WHY's prose in the compile row's diagnostic. Both
         # values asserted, and asserted DISTINCT.
         p32 = diags.get("bounded cls-upto-32768: the rescue declined (nullable)")
-        w32 = diags.get("bounded cls-upto-32768 whole: declined, the K7 route")
+        w32 = diags.get("bounded cls-upto-32768 whole: declined, the N1 budget route (K7 until 334fd10e)")
         if p32 is not None and w32 is not None:
             state_cap = "RX_ENGINE_WHY: dfa overflowed: >32000 states"
-            k7 = "subset construction exceeds 48000000 state-set elements (K7)"
+            # [B39] (d34c9131): the `\z` form's limit row moved from K7
+            # (PCREC_MAX_SUBSET_ELEMS 48M) to [LIM-2] N1's AUTO budget
+            # (PCREC_MAX_AUTO_DFA_ELEMS 30M) -- see the tuple's note.
+            k7 = "subset construction exceeds 30000000 elements (N1 auto budget)"
             if p32.startswith(state_cap) and k7 in w32 and k7 not in p32:
-                ok("ledger: the plain form overflows by the STATE cap, the `\\z` form by the K7 subset-elements budget -- distinct RX_ENGINE_WHY values",
+                ok("ledger: the plain form overflows by the STATE cap, the `\\z` form by the [LIM-2] N1 AUTO work budget (K7's until 334fd10e) -- distinct RX_ENGINE_WHY values",
                    "plain %r; whole %r" % (p32[:60], w32[:100]))
             else:
-                bad("ledger: the plain form overflows by the STATE cap, the `\\z` form by the K7 subset-elements budget -- distinct RX_ENGINE_WHY values",
+                bad("ledger: the plain form overflows by the STATE cap, the `\\z` form by the [LIM-2] N1 AUTO work budget (K7's until 334fd10e) -- distinct RX_ENGINE_WHY values",
                     "plain %r, whole %r" % (p32[:120], w32[:120]))
 
         # -- [B25] THE 65535 WALL IS UNCHANGED (I-27 (3), asserted as the
@@ -3811,23 +3836,23 @@ def check_mechanism_stamps():
         if metas and has_cf == want_vm:
             cf_all = sorted({em["vm_cls_folds"] for em in metas.values()
                              if "vm_cls_folds" in em})
-            ok("[B39] DRAFT scope: vm_cls_folds on every VM artifact (hybrids included) and NO DFA one ([FORM-CHAR] STEP 1, abi 23)",
+            ok("[B39] scope: vm_cls_folds on every VM artifact (hybrids included) and NO DFA one ([FORM-CHAR] STEP 1, abi 23)",
                "%d VM with (values %s), %d DFA without"
                % (sum(has_cf.values()), cf_all, len(has_cf) - sum(has_cf.values())))
         elif metas:
-            bad("[B39] DRAFT scope: vm_cls_folds on every VM artifact (hybrids included) and NO DFA one ([FORM-CHAR] STEP 1, abi 23)",
+            bad("[B39] scope: vm_cls_folds on every VM artifact (hybrids included) and NO DFA one ([FORM-CHAR] STEP 1, abi 23)",
                 "engine=vm %r vs has %r" % (want_vm, has_cf))
         # -- NOT A CONSTANT: 0 on the fold-free population, > 0 on the
         # witnesses (3 hand-chosen, 26 corpus) --
         cf_all = sorted({em["vm_cls_folds"] for em in metas.values()
                          if "vm_cls_folds" in em})
         if 0 in cf_all and any(v > 0 for v in cf_all):
-            ok("[B39] DRAFT vm_cls_folds is not a constant: 0 on the fold-free VM population, > 0 on the fold witnesses",
+            ok("[B39] vm_cls_folds is not a constant: 0 on the fold-free VM population, > 0 on the fold witnesses",
                "values %s; > 0 on %s" % (cf_all, ", ".join(
                    sorted(l for l, em in metas.items()
                           if em.get("vm_cls_folds", 0) > 0))[:120]))
         else:
-            bad("[B39] DRAFT vm_cls_folds is not a constant: 0 on the fold-free VM population, > 0 on the fold witnesses",
+            bad("[B39] vm_cls_folds is not a constant: 0 on the fold-free VM population, > 0 on the fold witnesses",
                 "only %r seen" % cf_all)
         # -- THE STRUCTURE, held to the artifact's own text (match_api.md
         # 6.3: "distinct fold classes carry distinct compare constants --
@@ -3853,11 +3878,11 @@ def check_mechanism_stamps():
             decls = bitmap_decl_re.findall(text)
             lowers = all(ord("a") <= c <= ord("z") for c in consts)
             if len(consts) == em.get("vm_cls_folds") == want_folds and lowers:
-                ok("[B39] DRAFT structure: %d distinct `(b | 0x20) == N` constants == RX_VM_CLS_FOLDS on %s" % (want_folds, lbl[:48]),
+                ok("[B39] structure: %d distinct `(b | 0x20) == N` constants == RX_VM_CLS_FOLDS on %s" % (want_folds, lbl[:48]),
                    "%d test sites over %d constants (all lowercase letters); %d class_bitmap tables still declared (the non-fold classes)"
                    % (sites, len(consts), len(decls)))
             else:
-                bad("[B39] DRAFT structure: %d distinct `(b | 0x20) == N` constants == RX_VM_CLS_FOLDS on %s" % (want_folds, lbl[:48]),
+                bad("[B39] structure: %d distinct `(b | 0x20) == N` constants == RX_VM_CLS_FOLDS on %s" % (want_folds, lbl[:48]),
                     "constants %r (%d sites), stamp %r, bitmap decls %r"
                     % (consts[:30], sites, em.get("vm_cls_folds"), decls[:10]))
         # -- THE DENY CONTROL AND THE SIZE BACK UP (pcrec's own emission,
@@ -3917,10 +3942,10 @@ def check_mechanism_stamps():
                                      % (name, {k: v for k, v in f_.items() if k != "text"},
                                         {k: v for k, v in d_.items() if k != "text"}))
         if deny_facts and not deny_problems:
-            ok("[B39] DRAFT deny control: -fno-cls-fold moves the stamp to 0, restores the class_bitmap tables and puts the SIZE BACK UP on both fold witnesses; a fold-free artifact is BYTE-IDENTICAL under the flag",
+            ok("[B39] deny control: -fno-cls-fold moves the stamp to 0, restores the class_bitmap tables and puts the SIZE BACK UP on both fold witnesses; a fold-free artifact is BYTE-IDENTICAL under the flag",
                "; ".join(deny_facts))
         else:
-            bad("[B39] DRAFT deny control: -fno-cls-fold moves the stamp to 0, restores the class_bitmap tables and puts the SIZE BACK UP on both fold witnesses; a fold-free artifact is BYTE-IDENTICAL under the flag",
+            bad("[B39] deny control: -fno-cls-fold moves the stamp to 0, restores the class_bitmap tables and puts the SIZE BACK UP on both fold witnesses; a fold-free artifact is BYTE-IDENTICAL under the flag",
                 "; ".join(deny_problems) or "no arm compiled")
 
         # -- one abi, and it is at or above the shim's floor --
