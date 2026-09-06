@@ -4,6 +4,168 @@ Each file is the output of one `python3 -m pcrecbench report ...` query,
 committed beside the records it reduces so a reader can cite a number
 with its query. Names: `<date>-<subbench>-<version>-<machine>[-<label>][.<grain>].md|tsv`.
 
+**[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
+2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
+CLS-FOLD AFTER** — and changed NOTHING else here: the reporter is
+`v15 (2026-09-05)` (lane b39prep's `clsfolds=` clause and the corrected
+`prog:` note, merged before the window ran), no committed report was
+regenerated, no reporter code was touched. Every one of the fifteen new
+files carries an explicit `--since`/`--until` PAIR *and* an explicit
+`--testee` roster (the 2026-08-30 rule and KB-5's roster). The window: 10
+cells, ALL `measured`, NINE at attempt 1 and ONE at attempt 2 — the altwide
+`pcrec-vm-noclsfold` cell's first pre-flight REFUSED (rc=3, nothing written:
+busiest non-target core 20.12 %, target core cpu11 19.64 %, both over the
+10 % limit) and its retry 15 minutes later passed; suite log
+`build/windows/suite_b39_after_20260906T155452Z.log`, 11:54:52 → 15:12:47
+EDT (3 h 18 min: altwide 38, bounded 132, loglines 17, email 10 min), store
+144 → 154. The ten records were committed on master (99a0b60) before these
+were rendered; this lane rendered from its own worktree's `store/` and
+commits no store file.
+
+RE-RENDER INVARIANT, checked the same two ways as the [B34] and [B37] waves,
+because the fifteen files were rendered IN-PROCESS (the 154-record store
+loaded and validated ONCE — **640 s on this box**, with another quiet-window
+benchmark running beside it — and reused for all fifteen; the same
+`build_report` / `render_markdown` / `render_tsv` calls a CLI invocation
+makes; the five groups then rendered in 91 s):
+
+1. **CLI equivalence**, proven on
+   `2026-09-06-loglines-0.1-budu-ryzen1600-clsfold-d34c9131.md`: that file
+   was FIRST produced by a full `python3 -m pcrecbench report …` invocation
+   of its own committed query (10 min 51 s, all but ~20 s of it store
+   validation) and the in-process render `cmp`s BYTE-IDENTICAL against it.
+2. **Determinism over all fifteen**: a second, independent in-process render
+   into a scratch directory diffs clean on all fifteen files (`cmp` on each).
+
+FIVE THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS:
+
+- **The fold's whole surface in this wave is TWO artifacts.** `clsfolds=26`
+  prints on exactly two legend lines — `ci-256` / `plain` and `ci-256` /
+  `whole-subject` on `pcrec_d34c9131_vm-caps-simdna` (altwide clsfold file,
+  lines 1013–1014) — and `clsfolds=0` on every one of the other 277 VM
+  artifacts in the wave; a DFA artifact carries no clause at all. That is
+  the corpus, not a harness gap: `bench/altwide`'s `ci-256` / `ci-512` are
+  the only `(?i)` or two-letter-class patterns in any set.
+- **The two `-clsfold-` pairs on loglines and email are NULL PAIRS BY
+  CONSTRUCTION, and that is their job.** `pcrec-auto` compiles 20 DFA + 2 VM
+  artifacts on loglines and 6 DFA + 0 VM on email; the deny arm's artifacts
+  are identical to the fold arm's on all thirteen size and stamp fields
+  (`emit_bytes`, `emit_code_bytes`, `artifact_bytes`, `vm_program_bytes`,
+  engine, `sel=`, `clsfolds=`, `islands=`, `shape=`, `folds=`, `edge=`,
+  `start=`, `match=`) on 22 of 22 and 6 of 6 (pattern × form) cells. Read
+  them as THE DAY'S NOISE FLOOR: 22 loglines cells 0.9951–1.0134 (worst
+  1.34 %, `kv-quoted` / search), 9 email cells 0.9970–1.0058 (worst 0.58 %).
+- **On the one witness the fold is SMALLER and SLOWER**, so read the altwide
+  clsfold file's size table and its ranking together: `ci-256` on the VM
+  route is 359,502 vs 451,076 code bytes (×0.797), 351,053 vs 442,627
+  program bytes, 96,832 vs 142,968 `.so` bytes (−32.3 %, pcrec's own
+  __TEXT −31 % reproduced) and compiles in 2.45 s vs 6.16 s — and it runs
+  ×1.0446 throughput / ×1.0273 search / ×1.0950 match SLOWER than the
+  denied arm, far outside the day's 1.34 % floor.
+- **The bounded AFTER file carries a SELECTION CHANGE, not only timings.**
+  `cls-upto-8192` / `whole-subject` under `pcrec-auto` moved `dfa`
+  (`sel=selected`, `start=reverse-pass`, `match=search-filter`, 937,591
+  emitted bytes) → `vm` (`sel=declined-nullable`, `shape=forward`, 18,487
+  bytes) across the pin, because [LIM-2] N1's 30,000,000-element auto budget
+  now overflows where K7's 48,000,000 did not. Its match-compliance row
+  reads `faster ×6.6` (12,422.7 → 1,871.2 ns) — that is a ROUTE, not a
+  speed-up of the same machine, and [B16] R2's rule applies: say
+  "selection changed (dfa → vm)" when citing it.
+- **The bounded `vm-in` row's Δ partner is 288d505, not 334fd10e** — that
+  arm was not measured on `bounded@0.3` at 334fd10e, so its cross-pin cell
+  spans THREE abi steps (16 → 22 → 23) while the `auto` and `vm` rows span
+  one. The READER'S CAVEAT on the a7e0bdf bounded entry below applies to
+  every `vs best` cell in the two cross-pin files here: with two or three
+  pins in one table, `vs best` inverts visually wherever an older pin's row
+  ranks first — read same-pin rows or the Δ column.
+
+- `2026-09-06-altwide-0.2-budu-ryzen1600-clsfold-d34c9131.md` — **THE FOLD
+  PAIR**: `pcrec-vm` against `pcrec-vm-noclsfold` (the same config with
+  `-fno-cls-fold`, deny bit 24) plus `pcrec-auto` as the DFA-route control,
+  all three at d34c9131, three cells `measured` 11:55–12:33 EDT. Query:
+  `report --subbench altwide --version 0.2 --since 2026-09-06T15:50:00Z
+  --until 2026-09-06T16:30:00Z --testee pcrec_d34c9131_vm-caps-simdna
+  --testee pcrec_d34c9131_vm-caps-simdna_noclsfold --testee
+  pcrec_d34c9131_auto-caps-simdna` — **3 records, 0 superseded.** A
+  ONE-VARIABLE pair (the deny word lives in `config_extra`; `build_flags`
+  reads `pcrec flags --features all --engine=vm -fno-cls-fold` with the
+  [B32] denied-axis sentence) whose ONLY moving cells are `ci-256`'s three:
+  everything else is byte-identical on both arms (42 of 44 compiled VM
+  artifacts equal to the byte, 22 refusals each including `ci-512` on both)
+  and 62 of the 63 fold-free set cells read 0.9534–1.0561. THE ONE EXCEPTION
+  worth a reader's
+  eye is `w-8` / `match-compliance`, 370.8 (fold) vs 559.5 (denied) ns —
+  ×0.66 on a pair of artifacts identical in every stamp and byte count,
+  stable over all five trials on both arms (sd 20.6 / 1.3), and NOT a
+  cls-fold effect; the ledger records it as unexplained. `.subject-grain.md`
+  and `.tsv` the same query.
+- `2026-09-06-altwide-0.2-budu-ryzen1600-after-d34c9131.md` — the
+  **altwide@0.2 AFTER at d34c9131, CROSS-PIN against the 2026-09-05 sample
+  at 334fd10e**: the three d34c9131 arms, the five 334fd10e arms (`auto`,
+  `auto_noisland`, `auto-nocaps`, `vm`, `vm-in`) and the two libpcre2
+  baselines of 2026-09-03. Query: `report --subbench altwide --version 0.2
+  --since 2026-09-03T03:50:00Z --until 2026-09-06T16:30:00Z` plus TEN
+  `--testee` values (`libpcre2_10.46_{interp,jit}-caps-simdna`,
+  `pcrec_334fd10e_{auto,auto-nocaps,vm,vm-in}-caps-simdna` +
+  `pcrec_334fd10e_auto-caps-simdna_noisland`, and
+  `pcrec_d34c9131_{auto,vm}-caps-simdna` +
+  `pcrec_d34c9131_vm-caps-simdna_noclsfold`) — **10 records, 0 superseded**
+  (the `--since` cuts the 2026-09-03 1989c62 arms and the two bigcap
+  records, which the roster would exclude anyway). The R8 Δ column reads
+  d34c9131 against 334fd10e per config: **66 VM cells, median ×0.9993, all
+  but two inside [0.9, 1.1]** — `sh1-64` search ×0.8798 and `ci-256` match
+  ×1.1018 — and 53 auto cells median ×1.0009. The order pair is unmoved
+  (`w-256` / `srt-256` on `vm` 15,902,716 / 15,949,646 ns throughput, both
+  292,069 B of code = 292,043 + the 26-byte stamp line), `w-384` and
+  `pfx3-512` still compile on the VM route (427,850 / 440,213 B) and
+  `w-512` still refuses. `.subject-grain.md` and `.tsv` the same query.
+- `2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.md` — the
+  **bounded@0.3 AFTER at d34c9131**: `pcrec-auto`, `pcrec-vm` and
+  `pcrec-vm-in` (the `_in` control owed from [B35] (6)/(9)) measured
+  12:33–14:45 EDT, cross-pin against `pcrec_334fd10e_{auto,vm}` of
+  2026-09-05 and — for the `_in` arm, which 334fd10e never measured on this
+  set — `pcrec_288d505_vm-in` of 2026-09-04/05, plus the two libpcre2
+  baselines of the same night. Query: `report --subbench bounded --version
+  0.3 --since 2026-09-04T23:00:00Z --until 2026-09-06T18:10:00Z` plus EIGHT
+  `--testee` values (`libpcre2_10.46_{interp,jit}-caps-simdna`,
+  `pcrec_288d505_vm-in-caps-simdna`,
+  `pcrec_334fd10e_{auto,vm}-caps-simdna`,
+  `pcrec_d34c9131_{auto,vm,vm-in}-caps-simdna`) — **8 records, 0
+  superseded** (the `--since 2026-09-04T23:00:00Z` admits the 288d505
+  `vm-in` record and the roster keeps the other five 288d505 arms and the
+  `cc-clang` / `align64` siblings out). Read the fourth and fifth bullets
+  above first: the `auto` route is flat across the pin (126 cells, median
+  ×1.0040) EXCEPT for the one route change, and the `vm-in` Δ spans three
+  abi steps. THE `_in` CONTROL'S OWN ANSWER is in the `floor` rows: `vm`
+  63,198.1 and `vm-in` 63,084.6 ns/set throughput at d34c9131 against
+  63,140.3 (`vm`, 334fd10e) and 31,612.0 (`vm-in`, 288d505) — the two
+  entries now TIE (×1.0018) and the ×2.0 tripwire is on BOTH.
+  `.subject-grain.md` carries the per-(rung, subject) rows the ledger's
+  `d-01024` / `r-01024` tables are read from; `.tsv` the set-grain query.
+- `2026-09-06-loglines-0.1-budu-ryzen1600-clsfold-d34c9131.md` — the
+  **PREDICTED-NULL pair on loglines@0.1**: `pcrec-auto` against
+  `pcrec-auto-noclsfold`, two cells `measured` 14:45–15:02 EDT. Query:
+  `report --subbench loglines --version 0.1 --since 2026-09-06T18:40:00Z
+  --until 2026-09-06T19:00:00Z --testee pcrec_d34c9131_auto-caps-simdna
+  --testee pcrec_d34c9131_auto-caps-simdna_noclsfold` — **2 records, 0
+  superseded.** The prediction HELD: 22 of 22 (pattern × form) artifacts
+  identical on every size and stamp field, `clsfolds=0` on the two VM ones
+  (`level-context`'s [SEL-1] hybrid, `islands=2`), no clause on the 20 DFA
+  ones, and the 22 set cells 0.9951–1.0134. This is the file to quote for
+  the day's noise floor. `.subject-grain.md` carries the 16 KB–1 MB sweep
+  per flavour; `.tsv` the same query.
+- `2026-09-06-email-specimen-0.2-budu-ryzen1600-clsfold-d34c9131.md` — the
+  **PREDICTED-NULL pair on email-specimen@0.2**, the same two arms, two
+  cells `measured` 15:02–15:12 EDT. Query: as above with `--subbench
+  email-specimen --version 0.2 --since 2026-09-06T19:00:00Z --until
+  2026-09-06T19:15:00Z` — **2 records, 0 superseded.** Null for a stronger
+  reason than loglines': all six artifacts are DFA, so `clsfolds=` prints
+  NOWHERE in this file and the deny flag cannot reach anything. Nine set
+  cells 0.9970–1.0058, the tightest pair of the wave. `.subject-grain.md`
+  and `.tsv` the same query.
+  Ledger for all five groups:
+  `docs/dev/ledgers/2026-09-06-b39-clsfold-after-d34c9131.md`.
+
 **[B37] reports (2026-09-05, lane b37read) ADDED five file groups — the
 2026-09-05 DAYTIME window at pcrec pin 334fd10e (abi 22), the [B37]
 DENY-FLAG-SPLIT AFTER** — and changed NOTHING else here: the reporter is

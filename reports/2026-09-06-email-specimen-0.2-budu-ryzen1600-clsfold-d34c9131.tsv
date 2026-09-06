@@ -1,0 +1,196 @@
+# reporter: v15 (2026-09-05); filters: subbench=email-specimen, version=0.2, since=2026-09-06T19:00:00Z, until=2026-09-06T19:15:00Z, testee=pcrec_d34c9131_auto-caps-simdna, testee=pcrec_d34c9131_auto-caps-simdna_noclsfold; source: store/index.tsv (2 record(s) matching this query); records: 2; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: email-specimen@0.2; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 2; mixed_x13: False; include_provenance: False; worst_other_core_busy: 2.0% (pcrec_d34c9131_auto-caps-simdna_noclsfold / factored / match-compliance)
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						email-specimen@0.2__pcrec_d34c9131_auto-caps-simdna__budu-ryzen1600__20260906T190251Z				agreement	agree (0 of 9 groups; 0 of 501 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						email-specimen@0.2__pcrec_d34c9131_auto-caps-simdna_noclsfold__budu-ryzen1600__20260906T190801Z				agreement	agree (0 of 9 groups; 0 of 501 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	median_ns	13676206.125000	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	min_ns	13658410.500000	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	max_ns	13740603.500000	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	stddev_ns	31218.986547	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	median_ns	13713507.062500	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	min_ns	13689266.875000	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	max_ns	13753200.437500	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	stddev_ns	23794.757217	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_baseline	1.002727	5	1.0000	0	0		
+rank	factored	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_best	1.002727	5	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	median_ns	73303.511452	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	min_ns	73290.571682	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	max_ns	73322.010796	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	stddev_ns	11.515084	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	median_ns	73309.134172	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	min_ns	73285.947789	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	max_ns	73399.501962	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	stddev_ns	49.033938	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_baseline	1.000077	85	1.0000	0	0		
+rank	factored	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_best	1.000077	85	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	median_ns	3662.375212	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	min_ns	3660.443353	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	max_ns	3669.187743	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	stddev_ns	3.079498	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	median_ns	3669.175432	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	min_ns	3667.164274	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	max_ns	3742.701114	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	stddev_ns	29.281544	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_baseline	1.001857	77	1.0000	0	0		
+rank	factored	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_best	1.001857	77	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	median_ns	711558.496011	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	min_ns	711178.998670	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	max_ns	712627.571809	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	stddev_ns	523.324328	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	ratio_vs_baseline	1.000000	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	ratio_vs_best	1.000000	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	median_ns	713690.556689	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	min_ns	711392.537415	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	max_ns	714486.253968	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	stddev_ns	1256.028194	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.002996	5	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.002996	5	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	median_ns	870.522051	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	min_ns	858.674114	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	max_ns	887.102041	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	stddev_ns	9.972639	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	median_ns	875.606574	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	min_ns	869.363072	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	max_ns	884.894031	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	stddev_ns	5.011290	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_baseline	1.005841	85	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_best	1.005841	85	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	median_ns	1338.127283	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	min_ns	1337.944849	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	max_ns	1348.673482	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	stddev_ns	4.265159	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	median_ns	1344.557430	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	min_ns	1341.059601	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	max_ns	1375.135544	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	stddev_ns	14.065686	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_baseline	1.004805	77	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_best	1.004805	77	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	median_ns	13596186.176471	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	min_ns	13552434.058824	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	max_ns	13627695.705882	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	stddev_ns	29055.066378	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	median_ns	13600760.882353	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	min_ns	13561534.764706	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	max_ns	13621913.411765	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	stddev_ns	22663.129674	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_baseline	1.000336	5	1.0000	0	0		
+rank	orig	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_best	1.000336	5	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	median_ns	73208.613736	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	min_ns	73199.273904	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	max_ns	73292.620941	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	stddev_ns	34.923685	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	median_ns	73222.408144	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	min_ns	73215.093858	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	max_ns	73334.909021	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	stddev_ns	45.457385	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_baseline	1.000188	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	2	ratio_vs_best	1.000188	85	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	median_ns	3524.645220	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	min_ns	3523.511026	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	max_ns	3526.977908	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	stddev_ns	1.188707	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	ratio_vs_baseline	1.000000	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold	measured	pinned	1	ratio_vs_best	1.000000	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	median_ns	3527.024732	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	min_ns	3524.384843	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	max_ns	3541.081673	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	stddev_ns	5.938007	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000675	77	1.0000	0	0		
+rank	orig	(set)	short-subject-search	plain	same program	pcrec_d34c9131_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000675	77	1.0000	0	0		
+compile	factored			plain	same program	pcrec_d34c9131_auto-caps-simdna				median_total_ns	164584146.000000	5					
+compile	factored			plain	same program	pcrec_d34c9131_auto-caps-simdna				jitter	0.021						
+compile	factored			plain	same program	pcrec_d34c9131_auto-caps-simdna				artifact_bytes	48128						
+compile	factored			plain	same program	pcrec_d34c9131_auto-caps-simdna				emit_bytes	82455						
+compile	factored			plain	same program	pcrec_d34c9131_auto-caps-simdna				emit_code_bytes	13761						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				engine	dfa						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				prefilter	-						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				vm_rungs	-						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				buffers	0 (DFA)						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				frame	0 (DFA)						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				dfa_match	unwrapped						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				dfa_scan_edge	none						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna				engine_sel	selected						
+compile	factored			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				median_total_ns	183590851.000000	5					
+compile	factored			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				jitter	0.033						
+compile	factored			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				artifact_bytes	48264						
+compile	factored			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				emit_bytes	94666						
+compile	factored			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				emit_code_bytes	15677						
+compile	floor			plain	same program	pcrec_d34c9131_auto-caps-simdna				median_total_ns	146925846.000000	5					
+compile	floor			plain	same program	pcrec_d34c9131_auto-caps-simdna				jitter	0.049						
+compile	floor			plain	same program	pcrec_d34c9131_auto-caps-simdna				artifact_bytes	27608						
+compile	floor			plain	same program	pcrec_d34c9131_auto-caps-simdna				emit_bytes	18106						
+compile	floor			plain	same program	pcrec_d34c9131_auto-caps-simdna				emit_code_bytes	13109						
+compile	floor			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				median_total_ns	158953769.000000	5					
+compile	floor			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				jitter	0.022						
+compile	floor			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				artifact_bytes	27752						
+compile	floor			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				emit_bytes	20449						
+compile	floor			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				emit_code_bytes	15126						
+compile	orig			plain	same program	pcrec_d34c9131_auto-caps-simdna				median_total_ns	166883659.000000	5					
+compile	orig			plain	same program	pcrec_d34c9131_auto-caps-simdna				jitter	0.026						
+compile	orig			plain	same program	pcrec_d34c9131_auto-caps-simdna				artifact_bytes	48088						
+compile	orig			plain	same program	pcrec_d34c9131_auto-caps-simdna				emit_bytes	82048						
+compile	orig			plain	same program	pcrec_d34c9131_auto-caps-simdna				emit_code_bytes	13521						
+compile	orig			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				median_total_ns	178790732.000000	5					
+compile	orig			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				jitter	0.034						
+compile	orig			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				artifact_bytes	48224						
+compile	orig			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				emit_bytes	94259						
+compile	orig			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna				emit_code_bytes	15437						
+compile	factored			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				median_total_ns	170074877.000000	5					
+compile	factored			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				jitter	0.017						
+compile	factored			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				artifact_bytes	48128						
+compile	factored			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_bytes	82455						
+compile	factored			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_code_bytes	13761						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				engine	dfa						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				entry	plain entry						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				prefilter	-						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				vm_rungs	-						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				buffers	0 (DFA)						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				frame	0 (DFA)						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				dfa_match	unwrapped						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				dfa_scan_edge	none						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				scan_edges	0						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				scan_edges_match	0						
+compile_stamp						pcrec_d34c9131_auto-caps-simdna_noclsfold				engine_sel	selected						
+compile	factored			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				median_total_ns	182524996.000000	5					
+compile	factored			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				jitter	0.047						
+compile	factored			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				artifact_bytes	48264						
+compile	factored			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_bytes	94666						
+compile	factored			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_code_bytes	15677						
+compile	floor			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				median_total_ns	148633036.000000	5					
+compile	floor			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				jitter	0.011						
+compile	floor			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				artifact_bytes	27608						
+compile	floor			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_bytes	18106						
+compile	floor			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_code_bytes	13109						
+compile	floor			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				median_total_ns	161162234.000000	5					
+compile	floor			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				jitter	0.052						
+compile	floor			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				artifact_bytes	27752						
+compile	floor			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_bytes	20449						
+compile	floor			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_code_bytes	15126						
+compile	orig			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				median_total_ns	165923203.000000	5					
+compile	orig			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				jitter	0.059						
+compile	orig			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				artifact_bytes	48088						
+compile	orig			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_bytes	82048						
+compile	orig			plain	same program	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_code_bytes	13521						
+compile	orig			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				median_total_ns	180745944.000000	5					
+compile	orig			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				jitter	0.033						
+compile	orig			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				artifact_bytes	48224						
+compile	orig			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_bytes	94259						
+compile	orig			whole-subject	separate artifact	pcrec_d34c9131_auto-caps-simdna_noclsfold				emit_code_bytes	15437						
