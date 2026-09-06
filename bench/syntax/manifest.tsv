@@ -1,0 +1,43 @@
+id	len	sha256	description	periodic
+f-cat	3	77af778b51abd4a3c51c5ddd97204a9c3ae614ebccb75a606c3b6865aed6744e	field/hit `cat`: the plain word every class, group, alternation and modifier body is built on	no
+f-CAT	3	15b89a569474240a616f9a94dd045b2711d445dde955b62bf4b8f2a2afaf0f6b	field/edge `CAT`: `(?i)cat`'s hit; `(?i)c(?^)at`'s and `(?i)c(?-i)at`'s designed MISS (the reset re-cases `at`)	no
+f-Cat	3	48735c4fae42d1501164976afec76730b9e5fe467f680bdd8daff4bb77674045	field/edge `Cat`: the option-reset shapes' hit -- caseless `c`, exact `at`	no
+f-concat	11	0afe756cd1e815034cfaf42660ea13c6eec402a3b9c4359838ed90dfb89ad2c3	field/edge `concatenate`: `\Bcat\B`'s hit and `\bcat\b`'s designed miss (the word is inside a longer one)	no
+f-abc	3	ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad	field/edge `abc`: `(?>a|ab)c` FAILS on it (the atomic group commits to `a`), `(?:ab)+` takes its first two bytes	no
+f-ac	2	f45de51cdef30991551e41e882dd7b5404799648a0a00753f44fc966e6153fc1	field/hit `ac`: `(?>a|ab)c`'s whole-string hit -- the atomic alternation's first branch, then `c`	no
+f-abba	4	e22115b5d76640e2389bcac25c46a2df03b2df657c5b3ff32cbaed141f8e8ef0	field/hit `abba`: `(\w)(\w)\2\1`'s whole-string hit	3
+f-aaab	4	85e90f7f0e71079806469831895acd620133bbe0937cc5403562968bbc7d8d1e	field/edge `aaab`: `a+b`, `a+ab`, `(?>a+)b`, `a*+b`, `a{1,2}+b`, `a+(*SKIP)b` hit it; `a++ab` cannot (the possessive plus keeps the last `a`)	no
+f-item	4	4a33eacd5fa65f2b2e2871cd131286b53c415b131666d71173bb6e3fe59361b3	field/hit `item`: `item(?! done)`'s and `item(*ACCEPT)done`'s whole-string hit	no
+f-done	4	a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211	field/hit `done`: `done$`, `done\Z`, `done\z` and `(?m)done$` whole-string hit (the lookbehind shapes cannot hit whole: nothing precedes offset 0)	no
+f-item-done	9	964588ee949d35bb04fe37412e09989cc5c9e3faf06036dc3e5b81cd40dd9f68	field/hit `item done`: the lookaround, `(?s)`, `\040` and `$`/`\Z`/`\z` bodies' hit with NO trailing newline	no
+f-item-done-nl	10	f0381e00be19ed4da976d5eac9155512d265bd1a654df9f8baad938489e9af8a	field/edge `item done\n`: `done$` and `done\Z` match before the final newline, `done\z` does not	no
+f-item-nl-done	9	adcf7e11a78d96adbda92ef598e9ee60bbe4488eae7f41f185f574952059589b	field/edge `item\ndone`: `item\ndone`, `\R`, `\v+`, `(?s)item.done` hit; `(?m)^` and `(?m)$` fire at the internal newline; `it\Nm`'s companion	no
+f-item-crlf-done	10	883e2ab20e1d34a1df1da0cbe95fa6ac3eb13730dfadaa9122b7385929349ae7	field/edge `item\r\ndone`: `\R` matches the pair as one newline, `\v+` as two bytes, `item\ndone` not at all	no
+f-num	2	73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049	field/hit `42`: `\d+`'s whole-string hit	no
+f-date	10	d4a3beeb32e4feac58120f3797b60b5dc445127a6c74048cbe8d8c310e1d8bd3	field/hit `2026-09-05`: the subroutine-call shapes (`(\d{2})\g<1>`, `(?+1)(\d{2})`, `(\d{2})(?-1)`, `(?P>d)`) hit its first four digits under search and none of it whole	no
+f-time	5	a5c8d54c25064f11498a937f38591eba85a3e67cccc102e6c4f76bbf5377cc37	field/hit `12:34`: the `(?(DEFINE)...)` shape's whole-string hit	no
+f-year	4	158a323a7ba44870f23d96f1516dd70aa48e9a72db4ebb026b0a89e212a208ab	field/hit `2026`: the four subroutine-call spellings' whole-string hit (two digits, then the group called again)	no
+f-ident	8	9179700c0a66f2fb31695d4f3f8d560d6d4c3f4952f578b3cfa011f59b605596	field/hit `foo_bar9`: `\w+` whole, `[[:alpha:]]+` and `\p{L}+` only a prefix	no
+f-kv	9	563f0357118d05ef145d6bddf2966cc23e86ca8f2f013f915e565afdf09f7a23	field/hit `key=value`: `key\h*=\h*value` and `key=\K\w+` (reported span 4-9)	no
+f-kv-tab	9	32c178e88d24d35cbb5c7bad32736c567c4844afa002cd6aad9f8b7ad697c96e	field/hit `key\tvalue`: the `\t` escape's whole-string hit	no
+f-dup	7	9324c764e9cd717efd7c30d439dc0ce9cf7ecff6b6b00a67eb24676ba3bc34ba	field/hit `the the`: the numbered, relative, python-style and `(?J)` backreference shapes' whole-string hit	4
+f-tag	11	38f3db304b86ad89f080eb9ac60d87ac38a51e83cb56b1d9f40f0c96f2bc80f7	field/hit `<b>bold</b>`: the named backreference's whole-string hit	no
+f-parens	7	b15f626a1eb193ed7af80f65fae3bdee2f4bd4e71c922fee384f308de43594b8	field/hit `(a(b)c)`: the four recursion shapes' whole-string hit at nesting depth 2	no
+f-parens-open	6	70391c72db94b95420682c04fe344261d7e96adcee3d42226cd83de05f7c8844	field/edge `(a(bc)`: unbalanced -- the recursion shapes take `(bc)` under search and nothing whole	no
+f-quoted	7	5aa762ae383fbb727af3c7a36d4940a5b8c40a989452d2304fc958ff3f354e7a	field/hit `"hello"`: `".*?"` and `(?U)".+"` whole-string hit	6
+f-fx	4	259072e6c653cc56ea0e6a6031c2bbb5dede2c4066d63855fd7690ee8bd61bbc	field/hit `f(x)`: `\Qf(x)\E`'s whole-string hit	no
+f-hash	3	2bccaf40951009e4203e2065b2a4bde0e4fd172dc126619b881078ff74754607	field/hit `#42`: the floor's ONLY hit among the fields	no
+f-cafe	4	dafd66c0b98965e688be1fc12942c09f0350e6be0685017c3f234e97d0adc92e	field/edge `caf\xe9`: `\p{L}+` and `caf\x{e9}` take it whole; `\w+` and `[[:alpha:]]+` stop at the Latin-1 byte	no
+f-bell	8	8298a7d3659d54433f548582fc4fc474bfde73b5031793c218938e4268121d65	field/hit `bell\x07end`: `bell\cGend`'s whole-string hit	no
+l-prose	77	55d377f371fb1fd5b405e241fd9e88baaf31de2480411a8d464d9b8f2f01a197	line/prose plain words with `cat`, `dog`, `item done`, no doubled word	no
+l-dup	52	8224a144aed33eeb029fa8c82eb8fff28c0896e7358b660708f468202d5b3b0c	line/prose two doubled words (`the the`, `was was`) and `abba`	no
+l-order	86	c8058d1243db218de97209dce93c9385bfa232735369cb1e3636491728d93ce1	line/structured an order line: integer, date, time, address, price, hex literal, `#42` (the floor's only line hit)	no
+l-tags	75	6a429585b2c36bf725522a77c5c8c8dbd81ee946e844343eb8f0a8d579b6138a	line/structured four tag pairs, one closed by the WRONG tag, then a bare `<item>` (the conditional's yes-branch)	no
+l-parens	41	f91461cd8138c40a2e43f1706a5fb5db36faad19ba4bf6eadb294bb38164d381	line/structured balanced expressions to depth 3 and one unbalanced open	no
+l-kv	52	12e0d0b1e15c74760332c8451ccb368411e608ec1cbc2c8689a3d42d50fed36a	line/structured key=value in four spellings (`=`, ` = `, `\t=\t`, `= `) and `colour=red`	no
+l-multi	23	3e4e94fe365bc2681677f720213b2ea8353177c294686d68a6449ff842cac2d0	line/structured three LF lines, the last `done`, with a final newline	no
+l-crlf	26	1885dcf4c604a16c0274d42b4587fd2483af30eed5a37fa6034372d11911dd8c	line/structured the same block with CRLF line ends	no
+l-case	36	9b308e3b48e24a68a728bd8fee3a1dfef4f02f9afd5d31a1ee9dc9ced41fdfe2	line/prose the word `cat` in five casings, then `concatenate` and `cats`	no
+l-quoted	54	915b5bd9cc0caeed223bbf046126a6ef8b9ccc4d5cae4278148d16856ebbdd6c	line/structured two quoted strings, a single-quoted one, one unterminated	no
+l-latin1	28	8170e64d4cb3a57f3ba1202ad371b844f1b3c58d78c1b8cd456b4e220d137fdd	line/prose four Latin-1 words	no
+l-run	58	5f7d458fa35997da936f086e523c90bf473a380c275a4b56f788aea6bd63083d	line/structured a 40-byte `a` run then `b`, then the possessive and atomic edge shapes	no
