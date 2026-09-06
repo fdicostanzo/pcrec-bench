@@ -90,9 +90,9 @@ PATTERNS = (
      "end of subject OR before a final newline: `item done\\n` is the edge"),
     ("anc-A", "anchors", (r"\A",), r"\Aitem",
      "start of subject, the escape spelling"),
-    ("anc-Z", "anchors", (r"\Z",), r"done\Z",
+    ("anc-z-uc", "anchors", (r"\Z",), r"done\Z",
      "end of subject or before a final newline, like `$` outside (?m)"),
-    ("anc-z", "anchors", (r"\z",), r"done\z",
+    ("anc-z-lc", "anchors", (r"\z",), r"done\z",
      "end of subject ONLY: rejects `item done\\n` where `\\Z` and `$` take it"),
     ("anc-G", "anchors", (r"\G",), r"\Gitem",
      "the search start: find-all counts consecutive hits from the cursor"),
@@ -111,8 +111,8 @@ PATTERNS = (
 
     # ---- classes: one-character sets
     ("cls-d", "classes", (r"\d",), r"\d+", "a digit run"),
-    ("cls-s", "classes", (r"\s",), r"cat\s+sat", "whitespace between two words"),
-    ("cls-S", "classes", (r"\S",), r"\S+@\S+", "non-space runs around `@`"),
+    ("cls-s-lc", "classes", (r"\s",), r"cat\s+sat", "whitespace between two words"),
+    ("cls-s-uc", "classes", (r"\S",), r"\S+@\S+", "non-space runs around `@`"),
     ("cls-w", "classes", (r"\w",), r"\w+",
      "a word run; C-locale tables, so a Latin-1 byte ends it"),
     ("cls-h", "classes", (r"\h",), r"key\h*=\h*value",
@@ -308,9 +308,9 @@ PATTERNS = (
     ("msc-C", "misc", (r"\C",), r"c\Ct", "one data unit"),
 
     # ---- unicode properties, in byte mode
-    ("unp-p", "uniprop", (r"\p{L}",), r"\p{L}+",
+    ("unp-p-lc", "uniprop", (r"\p{L}",), r"\p{L}+",
      "letters by Unicode property: Latin-1 letters included, unlike `\\w`"),
-    ("unp-P", "uniprop", (r"\P{L}",), r"\P{L}+", "non-letter runs"),
+    ("unp-p-uc", "uniprop", (r"\P{L}",), r"\P{L}+", "non-letter runs"),
 
     # ---- backtracking verbs
     ("vrb-accept", "verbs", ("(*ACCEPT)",), r"item(*ACCEPT)done",
