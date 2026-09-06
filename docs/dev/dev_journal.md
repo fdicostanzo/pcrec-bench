@@ -3103,3 +3103,59 @@ background-task memory heuristic kills long Bash tasks AND trivial
 waiter loops regardless of real memory (12 GB available, no kernel OOM)
 — every run longer than a few minutes goes `setsid nohup` with
 PYTHONUNBUFFERED=1 and is polled by the cron, not by a waiter.
+
+## 2026-09-06 (EDT, 15:4x-17:0x), eleventh session part 4 — the abi-23 AFTER READ (lane b39read) and O-19 sent; [B39] COMPLETE and archived; Frank's lifecycle/watchdog doctrine adopted mid-session
+
+Lane b39read (opus) delivered de865b2: five report groups (the fold pair,
+the altwide and bounded cross-pin AFTERs, the two null pairs) and ledger
+2026-09-06-b39-clsfold-after-d34c9131.md (622 lines, P-a..P-f scored, the
+2026-09-05-b37 §6 bands re-scored). Merged 17d0922. THE READING (O-19):
+(1) THE FOLD IS SLOWER on its one witness — ci-256 forced-VM fold ÷
+denied ×1.0446 throughput / ×1.0273 search / ×1.0950 match against a
+1.34 % noise floor (the two null pairs: loglines 22/22 artifacts
+identical, 0.995-1.013; email 6/6) — while code 359,502 vs 451,076 B
+(×0.797), .so −32.3 %, compile ×0.40: I-49's speed claim refuted on this
+surface, its size claim confirmed; the corpus has exactly TWO fold
+artifacts (clsfolds=26; 0 on 277 VM, absent on 189 DFA). Asks (i)-(iii):
+per-site instruction counts, a REPEATED fold-class customer, the default.
+(2) [LIM-2] N1 moved a SECOND rung — cls-upto-8192 `\z` under auto went
+dfa→vm (the 937 KB WARNED DFA had been selected where the VM is ×6.6
+faster on match; compile ×0.147; the r-01024 customer 3,780 → 622 ns) —
+ask (iv): AUTO declining a warned-size DFA when a VM form exists. (3) THE
+`_in` CONTROL: floor throughput vm 0.5934 / vm-in 0.5924 ns/B — a tie,
+both ×2.00 vs 288d505's 0.2968; pcrec's instrument ties at 0.2945 — OUR
+SCALE IS ×2.01 THEIRS. The hypothesis that fits all four numbers: a FIXED
+per-call cost of ~31.6 µs (our subject is 106.5 KB; theirs 1 MB dilutes it
+to +0.03 ns/B) introduced abi 16→22 — ask (v): their instrument at ~100 KB;
+ours: the floor at 64 KB/256 KB/1 MB on the syntax sweep tomorrow ([B35]
+(9')). (4) Flat elsewhere: altwide VM cross-pin median 0.9993 (66 cells),
+bounded auto 1.004 / vm 1.001, the order pair ×0.9971 at 292,069 B both,
+nest2-4's regression undone (×0.741), a new nest2-letters-6 throughput
+×1.138, stamps identical over 270 artifacts but the one route change; one
+instrument oddity (w-8 match whole ×0.66 on byte-identical artifacts, the
+denied arm the outlier) recorded. The lane also found the window was 9/10
+at attempt 1 (the vm-noclsfold pre-flight refusal at 12:09 — our own
+box-free lane's generator; the retry cleared) — the journal's part 3
+"10/10 measured" stands, "all attempt 1" did not (corrected here). KB-11
+filed: one `report` invocation validates the whole store (640 s at 154
+records, 10m51s per CLI run) — fix direction: filter by index first, one
+validator per process. [B39] STATE:completed, archived to plan_completed.md.
+
+DOCTRINE (pcrecdev1 pushed 58778c0 + 91a528a with Frank's direct
+authorization — the skill rewritten, docs/dev/lanes/BOILERPLATE.md +
+CLAUDE.md created): the prompt-firing stall-watchdog cron is DEAD (each
+tick re-read the manager's whole context; ~73M cache-read tokens across
+two pcrec sessions) → stall watching is a ZERO-MODEL background script
+that exits only on actionable state; lanes never keepalive (5-min TTL),
+work continuously to a committed report (docs/dev/lanes/<lane>_report.md)
+and END; CLOSURE IS THE MANAGER'S ACT (TaskStop after accepting a
+delivery; sweep at every acceptance and at pause; every lane STOPPED
+before a window); briefs start "Read docs/dev/lanes/BOILERPLATE.md FIRST"
+and carry only task/tier/pointers/deliverable; the main-session keepalive
+during a hold stays legitimate (1-h TTL), two off-minute marks under an
+hour apart. Applied at once: the 20-min watchdog cron deleted; a
+persistent Monitor (no timeout; a Bash background task is capped at 10
+min) emits one event on the syntax suite's completion / stale window /
+process gone; the keepalive cron at 17,47 with the minimal prompt;
+b39docs, b36rename and b39read TaskStop'd after acceptance. The syntax
+first sample is on cell 2-3 of 6 (~20:30 finish).
