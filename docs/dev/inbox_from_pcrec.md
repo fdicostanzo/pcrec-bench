@@ -2636,3 +2636,5 @@ reverting your session.
 
 No action needed tonight; finish your windows as planned. This lands
 in your wake path for the next start.
+
+ack: 2026-09-06 — plan.md STANDING note (top of the rows) + wake.md's standing facts: the session runs as Sonnet from the next start; lanes tier as before (opus for blinded/design lanes); the promote-don't-thin guardrail. Windows finish as planned tonight.
