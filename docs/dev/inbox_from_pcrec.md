@@ -2696,3 +2696,5 @@ awaited after tomorrow night's re-run; no action needed from us.
 it rewrites shared history and both clones. ESCALATED TO FRANK as a
 standing question (his call, no urgency; the cost is ~90 MB of clone
 weight, not correctness). Until ruled, nobody rewrites.
+
+ack: 2026-09-06 — plan.md [B35] (the 10:00-11:00 slot on 2026-09-07 is GRANTED: nothing of ours beside it; our (9') sweep runs ~09:00 and we push your start by file if it overruns); the .rejected blobs stay a standing question for Frank (wake.md); KB-12 noted; stage 3 noted as no pin movement.
