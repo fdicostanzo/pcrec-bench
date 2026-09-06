@@ -3046,3 +3046,60 @@ build/windows/suite_b39_after_20260906T155452Z.log; ~3.6 h expected.
 pcrecdev1 told live (O-18 pushed, the box is ours until the night is
 closed). NEXT: read the AFTER (reports + ledger + O-19), launch
 bench/syntax's first sample tonight (SUITE=syntax, the six pinned).
+
+## 2026-09-06 (EDT, 12:0x-15:3x), eleventh session part 3 — the abi-23 AFTER window RAN (10/10 measured); I-53/I-54 acked; bench/syntax's ids made case-unambiguous and its FIRST SAMPLE launched 15:27
+
+THE AFTER WINDOW (suite_b39_after_20260906T155452Z.log): 11:54:52 →
+15:13 EDT, 10/10 cells `measured` — altwide × {vm, vm-noclsfold, auto}
+(38 min; the vm-noclsfold cell's attempt 1 was refused by the pre-flight,
+cpu11 19.64 % busy at 12:09:26 — the box-free rename lane's generator
+run is the likely competitor: a "box-free" lane still trips the gate
+for a few seconds; attempt 2 clean), bounded × {auto, vm, vm-in} (132
+min, all attempt 1), loglines × {auto, auto-noclsfold} (17 min), email ×
+{auto, auto-noclsfold} (10 min). Store 154 (144 measured; the 9
+inconclusive-load + 1 spread are historical), records committed 99a0b60.
+Reading delegated to lane b39read (opus, worktree b39read): five report
+groups first (the same-pin fold pair, the altwide and bounded cross-pin
+AFTERs against 334fd10e, the two null pairs as the noise floor), then
+the ledger 2026-09-06-b39-clsfold-after-d34c9131.md scored against P-a..P-f
+(the fold pair on ci-256; ci-512 refusing on all arms; the null pairs
+≈1.00; the same-pin fill ≈1.00 within the 2026-09-05-b37 §6 bands; the
+`\z` cls-upto-32768 compile FASTER under N1; the `_in` control and the
+floor ×2.0 under our instrument). O-19 is the manager's after the ledger.
+
+I-53 (pcrecdev1, ~12:4x): the N1-before-K7 ordering is INTENDED
+(limits.md §3.3: a smaller auto-only budget reaching the same fallback
+before the full K7 spend; `--engine=dfa` unaffected); our "-D-only"
+premise was FALSE — `--max-auto-dfa-elems` exists (raise-only, verified
+live 40M/1000) and the `override` column's `-D` is pcrec's rendering
+drift on a two-lever row ([LIM-OVR] chartered; read desc on BUILD_D
+rows); one unit, two spellings, harmonized only at a future abi event.
+Acked (f9f6713); list_limits.tsv's header note corrected in place (body
+still byte-verbatim). Live from pcrecdev1 the same hour: a PORTABILITY
+finding — three bench/syntax pattern-file pairs differ only in case
+(anc-Z/z, cls-S/s, unp-P/p; one file each on APFS/NTFS; the only such
+pairs across the five sets). Lane b36rename (sonnet, box-free: no
+gen_expectations, no compiles) renamed them to `-uc`/`-lc` suffixes —
+six pure git renames, expectations id-only (522 of 8,265 rows, verified
+row-for-row), coverage/facts counts unchanged, the convention written
+into bench/syntax/CLAUDE.md; the manager ran gen_expectations --check
+(8,265 re-derive; the worktree needed its gitignored subject trees
+generated first) + the two other --check modes in the gap, merged
+--no-ff (before any record carried the old ids: no version bump).
+I-54 (Frank, via pcrecdev1 ~18:1x UTC): THE MANAGER SESSION RUNS AS SONNET
+from its next start; per-lane tiering unchanged (opus for blinded/design
+lanes); the watch-item is turning a red check into the right question —
+promote a deliverable to an opus lane and say so, never thin the
+analysis. Acked as a STANDING note atop plan.md's rows (1192416).
+A non-fast-forward push refusal (I-54 had landed on origin) was merged
+in (a4beee9) — the new channel flow means fetch before every push.
+
+bench/syntax@0.1 FIRST SAMPLE launched 15:26:55 under setsid
+(suite_b36_first_20260906T192655Z.log; SUITE=syntax, the default six
+pinned testees; the main tree's gitignored syntax subjects generated
+first; box quiet, load1 0.44): ~5 h, done ~20:30. The 20-min watchdog
+cron (7,27,47) watches it. Lesson of the day for the box: the harness's
+background-task memory heuristic kills long Bash tasks AND trivial
+waiter loops regardless of real memory (12 GB available, no kernel OOM)
+— every run longer than a few minutes goes `setsid nohup` with
+PYTHONUNBUFFERED=1 and is polled by the cron, not by a waiter.
