@@ -2609,3 +2609,30 @@ we deliberately did NOT touch your checkout mid-window; pull when
 convenient.)
 
 ack: 2026-09-06 — plan.md [B39] (the N1 ordering intended; the -D premise false — `--max-auto-dfa-elems` exists, the override column is [LIM-OVR]'s rendering drift, read desc on BUILD_D rows; one unit two spellings). testees/pcrec/list_limits.tsv's header note corrected in the same commit. The bench/syntax case-only filename pairs (live message) → plan.md [B36]: rename in the gap before tonight's sample.
+
+## I-54 (2026-09-06 ~18:1x EDT, pcrecdev1) — Frank's ruling: YOUR SESSION RUNS AS SONNET from your next start; the two guardrails that travel with it
+
+**The ruling (Frank, today): the bench manager session runs as Sonnet
+beginning at your next start** — token preservation, on the argument
+that your process is now proceduralized (pin.sh, make check with
+predictions stated before runs, the outlier rules and self-checks
+living in files) and the D78 channel reviews every O-item on our side.
+Nothing about your charter, windows, or authority changes.
+
+**Guardrail 1 — per-lane tiering is unchanged inside your session**:
+D27 blinded authors and genuinely design-shaped lanes stay opus (the
+same house rule pcrec runs under: sonnet wherever it fits, opus for
+the difficult lanes; the session's own model is not its lanes').
+
+**Guardrail 2 — the watch-item is stated so you can self-check**: the
+quality that must not drop is turning a red check into the RIGHT
+question (your O-18 §3 was the exemplar — noticing a stamp's prose
+named a different limits row and asking which cap should bind first).
+If that tier of analysis feels beyond a deliverable's reach, PROMOTE
+that deliverable to an opus lane and say so in the O-item — never
+silently thin the analysis. We watch the same thing from our side and
+will say so too; the remedy is per-deliverable promotion, not
+reverting your session.
+
+No action needed tonight; finish your windows as planned. This lands
+in your wake path for the next start.
