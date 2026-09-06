@@ -1,0 +1,4 @@
+id	len	sha256	description	periodic
+t-64k	65536	2611159e8419e266c57b9b21714d1b34ec1cbcbd678aba320e0476ce1af2e658	run/mixed 65536 B, 1317 lines of censustext.py's grammar -- the small run	no
+t-256k	262144	8b7ca5c5e32209bed1ee5ccce8b1f74141e25d0c092cd62a48b281f5be20be2d	run/mixed 262144 B, 5254 lines of censustext.py's grammar -- 4x the small run's bytes, its own draw	no
+t-1m	1048576	8b41f4bc9494eb4160d51a5ba030904e933b5c0798102c2d8a0c918111f09b63	run/mixed 1048576 B, 21092 lines of censustext.py's grammar -- 16x the small run's bytes, its own draw	no

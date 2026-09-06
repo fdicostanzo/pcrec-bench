@@ -320,7 +320,15 @@ bindings) live here, vendored or system, pinned either way.
   branch count as a ladder (8..4096) crossed with the first-byte / prefix /
   suffix structure that decides PCRE2's start optimization and pcrec's
   DFA/prefilter route; libpcre2's own compiled-size ceiling caps the ladder.
-  `make check`'s generic gates enumerate `bench/*/` rather than naming a
+  `bench/syntax/` is the SYNTAX CENSUS ([B36], I-42, 2026-09-05; branch
+  `b36census`, merge on Frank's confirmation): 95 patterns in 18 mechanism
+  families, one construct each in a plain body (incl. the five fold-pair
+  witnesses for the abi-23 [FORM-CHAR] AFTER), enumerated from pcrec's
+  `--list-syntax` registry seed at 334fd10e (`coverage.tsv` derived from
+  the table x the seed, every one of 138 rows accounted for by name), 42
+  typed short subjects + a 64 KB-1 MB size sweep, the outlier rule R0-R7
+  and P1-P13 stated in NOTES.md before any run, a utf sibling set left
+  room for. `make check`'s generic gates enumerate `bench/*/` rather than naming a
   set. See their CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
   (auto, nocaps, vm, the `-in` variants, the three `-clang` siblings and
@@ -476,7 +484,9 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # ([OPT-4.2] declines one step earlier -- measured
                         # over ten separating shapes; an ask for pcrec)
                         # and ([B11.2], bench/altwide) the generic gates on a
-                        # fourth set by enumeration + the schema's free_text
+                        # fourth set by enumeration (and, [B36], on a fifth:
+                        # bench/syntax's coverage table and sidecar block
+                        # re-derive from the registry seed) + the schema's free_text
                         # cap on canonical_text checked both sides (a pattern
                         # above it OMITS the field, never truncates)
                         # and ([B20], schema v1.4) the gate's shape: the
