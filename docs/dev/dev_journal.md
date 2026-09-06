@@ -3159,3 +3159,36 @@ min) emits one event on the syntax suite's completion / stale window /
 process gone; the keepalive cron at 17,47 with the minimal prompt;
 b39docs, b36rename and b39read TaskStop'd after acceptance. The syntax
 first sample is on cell 2-3 of 6 (~20:30 finish).
+
+## 2026-09-06 (EDT, 19:4x-20:0x), eleventh session part 5 — bench/syntax's FIRST SAMPLE REFUSED AT WRITE: six cells, 259 min, zero records — the set's UPPERCASE ids violate the record schema's id rule, and nothing checked ids before measuring
+
+The Monitor fired SUITE_RUN_COMPLETE at 19:46 with `set syntax rc=0` —
+but every cell's line reads `attempt 1 rc=1` and `pcrecbench index` still
+counts 154: the harness measured each cell to the end (40-57 min) and
+schema/validate.py refused the record at write (31,747 validator lines
+on the first cell: `pattern_id: 'anc-A' does not match
+'^[a-z0-9]([a-z0-9-]*[a-z0-9])?$'`, `subject_id: 'f-Cat' ...`). The set
+has TEN uppercase pattern ids (anc-A anc-G asr-K cls-N mod-J mod-U msc-C
+msc-R msc-X rec-R — the uppercase-escape spellings, the same family as
+today's case-collision rename, which caught only the PAIRS) and two
+subject ids (f-CAT, f-Cat); the other four sets have none. ROOT CAUSE of
+the loss: no pre-flight — `Subbench` loads ids without checking them
+against the schema, `make check`'s "full run of one cell into a scratch
+store is validator-accepted" is EMAIL-ONLY by name, and the generic
+per-set gates re-derive manifests/expectations but never write a record.
+The six 14-16 MB staged .jsonl files are intact under `.staging-*`
+(gitignored); they are NOT salvaged — rewriting ids inside a
+harness-written record would fabricate provenance (the store is written
+by the harness only). Lane b36ids (sonnet; boilerplate brief — the first
+under the new doctrine): the twelve ids lowercased by the `-uc` scheme
+(`f-Cat` → `f-cat-mixed`), ids only (bytes and answers unchanged, no
+version bump), PLUS the missing pre-flight: the Subbench loader validates
+every pattern/subject id against the schema's own regex (read from
+record.schema.json) and refuses BY NAME in under a second; a generic
+per-set gate and a negative control in selfcheck; KB-12; if cheap, the
+one-cell validator smoke generalized to every set. The sample RE-RUNS
+tonight after the merge (~4.3 h; the box is ours). Lesson for the file:
+a new set's gate must include ONE record through the validator — the
+cheapest check we did not have cost a night. suite rc=0 with every cell
+rc=1 is also a run_suite.sh reporting gap (the set rc is the window
+script's, not the cells') — noted for scripts/.
