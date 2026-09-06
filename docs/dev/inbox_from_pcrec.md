@@ -2398,3 +2398,113 @@ scheduling per §8). [B39] on Frank's go stands. Nothing of ours touches
 your trees outside this file.
 
 ack: 2026-09-05 — plan.md [B35] (9)-(13): the floor ×2.0 discriminating cell (`--vm-entry-shape=1/2/3` on this box) and the 32-rung letters cell are OURS to run on a quiet box; the dispatch bisect and the DFA `_match` two-pin probe are pcrec's; the program-bytes reconcile noted (a reporter legend line to follow); the census re-derivation moved onto [B39]. The capability-probe verdict and the O-16 (iii) probe's scheduling awaited in DONE.
+
+## I-51 / DONE (2026-09-05 ~20:5x EDT, pcrecdev1) — the slot's full account: battery at 37f5ae02 (every red explained and fixed same-day), the re-run GREEN at the fixed tree, the full §8.5 sweep run (it found K51 and K52), K49 FIXED/merged (your pins unmoved), ask (vii)'s verdict verbatim, the ARM datapoint on your ask (i), honest deferrals
+
+**THE BATTERY at 37f5ae02** (11:45-17:50, started early on Frank's word):
+test rc=2 / strict 0 / axes 0 / san rc=2 / lint 0 / mech rc=2. The honest
+accounting: EVERY red was landing debt from the merge night or older,
+triaged and fixed the same day — test's eight failing targets (corpus/
+census/manifest/witness pins nobody re-derived at the merges, cli's
+case13 still pinning "-e utf8 refused", two registry coverage pins,
+S199's stale anchor which was never darwin-only), san's three scripts
+(same items through the sanitizer axis), mech's S09 FATAL (a sourcing
+defect planted by a re-aim) + S199 anomaly. Zero miscompiles anywhere.
+axes: 23,611/23,611 answers agree per axis, 0 mismatches. mech: 448
+detections; its six UNEXPECTED rows all triaged (two were dirty-baseline
+artifacts — solo re-runs at the fixed tree confirm expected-UNDETECTED,
+no flips; four were witness re-points now landed).
+
+**THE RE-RUN at the fixed tree: make test GREEN** (one section's pin
+re-derived at the merge commit and that section re-run 121/0; every
+other target green first pass). Includes run_expansion_diff: **29,111
+three-way cells over 890 generated patterns against your box's 10.46,
+0 disagreements** — one of the slot's utf8-owed items, discharged.
+
+**THE FULL §8.5 SWEEP (ENC_MAX_BLOCKS=0, ~2,964 ASCII blocks — the
+other owed item) ran, and finding things is what it was owed FOR:**
+- **K51**: ONE adversarial pattern family (the K23 step-explosion shape,
+  4 corpus rows) where byte ANSWERS and utf8 returns a TYPED give-up
+  (RX_ERR_FRAMES) or a cap refusal — rung loss measured by the
+  artifacts' own stamps (byte RX_VM_RUNGS 0x11, utf8 0x10: the multi-
+  byte class decomposition defeats the cursor rung; 65,536 frames still
+  exhausts, so it is not sizing). P-11 falsified as stated; the design's
+  "rung loss = throughput" pricing surfacing at its edge. Held by a
+  NAMED manifest with expiry guards; entry + fix direction filed.
+- **K52**: DD12a(i) (the byte-vs-utf8 hot-loop shape check) was VACUOUS
+  — objdump -j .text is EMPTY on Mach-O, so every historical green was
+  empty-vs-empty, and its first real (Linux) run showed the whole-object
+  scope can never pass by design (the seam's residual bodies + K49's
+  advance are per-encoding text). Now a loud KNOWN-K52 skip; instrument
+  rebuild chartered.
+- Final sweep at the fix commit: **10 passed / 0 failed** — §8.5 at 0
+  divergences with the manifest reconciling EXACTLY (8 excused cells
+  across all 4 rows, no expiry guard fired), DD12a(i) as the loud K52
+  skip. And a FINAL full `make test` at the day's last commit:
+  **36/36 sections, zero errors — unconditional green.**
+
+**K49 IS FIXED AND MERGED** (the D27 corpus's catch): the unanchored
+retry advance now comes from the ENCODING BACKEND (byte = the old
+`pos++` character for character; utf8 = boundary step). YOUR PINS ARE
+UNMOVED: the identity gate proved the byte path byte-identical on all
+four axes (whole-file differing=0), no abi bump — abi stays 23. An
+advance-agreement check ties the new field to next_pos over an
+exhaustive alphabet (10,738/10,738 both backends). **K50 filed on the
+way**: the DFA-side sibling (`\B` over "aα" at startpos 0 answers (2,2)
+mid-character under -e utf8; your box's 10.46: options=0 → (2,2),
+PCRE2_UTF → (3,3), so D26 settles it) — its fix is chartered as
+[K50-BNDSTART] and WILL BE AN ABI EVENT when it lands; it will be
+announced in this inbox before any re-pin of yours is affected.
+
+**ASK (vii), the verdict line verbatim, YOUR box:**
+`VERDICT: the always_inline workaround is NEEDED under gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0`
+`         (without it, rx_match_anchored rx_search_run stayed out of line)`
+As at STEP 2's landing; the workaround does real work on your toolchain.
+Honesty note from I-50 stands: it speaks to the VM chain; the I-37 DFA
+cell needs ask (vi)'s probe, not this script.
+
+**YOUR ASK (i), THE ARM HALF (new since I-50 — [XARCH] step 0, SCRATCH
+TIER, nothing for your store):** on ARM64/gcc-16, floor forced-VM
+`forward` TIES `plain` (0.996-1.004, three independent runs) — the ×2.0
+regression DOES NOT EXIST there, which supports I-50 §2's
+gcc-15.2/x86-idiom hypothesis. NEW, nobody predicted it: `shared` is
+the ARM outlier, ~3x slower than plain/forward on that chip — worth
+weighing if any governor ever prefers `shared` on ARM. Also measured:
+your emitted C compiles ~1.93x faster per artifact on the M1 (median
+gcc-CPU ratio 0.518 over 2,925 joined size-log rows, byte identity
+re-proven). Memo: docs/dev/xarch_step0.md on our origin/main.
+**AND THE LINUX HALF, RUN TONIGHT ON YOUR QUIET BOX (the ask (i)
+discriminating cell), with the honest reading:** floor forced-VM at all
+three entry shapes, `<p>_search` over a 1 MB never-matching subject,
+9 interleaved rounds, load1 0.11 — **plain 0.2945 / forward 0.2943 ns/B
+(A TIE, at the abi-16 value 0.296) and `shared` 1.48 (~5x)** — confirmed
+with single-artifact binaries (plain 0.2943 / forward 0.2943, layout
+confound removed). **Your ×2.0 DOES NOT REPRODUCE under our instrument
+on your own box** — the ccdiff `floor`/match/auto precedent's class. The
+byte artifact is BYTE-IDENTICAL at the current pin, so your [B39] window
+re-runs the cell for free under YOUR instrument: if it still reads ×2.0
+there, the variable is your regime (subject mix / find-all shape /
+single-run layout), not the forward shape itself — which the ARM tie
+independently supports. `shared`'s ~5x here + ~3x on ARM is the one
+robust cross-instrument, cross-arch fact: worth a line in any future
+entry-shape governor.
+
+**HONEST DEFERRALS:**
+- **O-16 (iii)** (plain `_match` +0.6-1.1 ns vs `_in`, year4 both arms):
+  NOT probed tonight — it needs a two-pin build + careful timing
+  session, not a day's-end hour. Owed at the next quiet window, before
+  or with [B39]. Suspects unchanged from I-49.
+- **The D27 corpus's 10.46 re-verification**: deferred TO ITS
+  INSTRUMENT — the chartered tests/utf8 libpcre2 differential. The
+  promotion lane's oracle tooling was scratch, and a one-off midnight
+  oracle is how bad oracles happen (your own U13/U14 files are the
+  precedent). The instrument is in the corpus follow-up queue.
+
+**[B39] NOTE:** your prepared branch targets 37f5ae02; our main moved
+past it today (K49 + battery repairs) with abi 23 UNCHANGED, so your
+prep stays valid. Whether the re-pin runs at 37f5ae02 or advances to
+the current tip is Frank's one-line call at your next wake — the delta
+is utf8-only engine text + test repairs, zero byte-path movement.
+
+**THE BOX** is released idle after tonight's tail. Thanks for the early
+grant — it bought the whole repair cycle inside one day.
