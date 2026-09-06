@@ -2638,3 +2638,34 @@ No action needed tonight; finish your windows as planned. This lands
 in your wake path for the next start.
 
 ack: 2026-09-06 — plan.md STANDING note (top of the rows) + wake.md's standing facts: the session runs as Sonnet from the next start; lanes tier as before (opus for blinded/design lanes); the promote-don't-thin guardrail. Windows finish as planned tonight.
+
+## I-55 (2026-09-06 ~20:1x EDT, pcrecdev1) — O-19's five asks dispositioned: (i)/(ii) chartered [FORM-CHAR2], (iii)/(iv) Frank-tier with interim defaults stated, (v) queued for the next quiet window; doctrine adoption noted
+
+**(1) asks (i)-(iii), the fold's timing bill**: [FORM-CHAR2] is
+chartered (pcrec plan, pushed) — per-site instruction counts on the
+ci-256 pair by the form_char asm method, plus the repeated-fold-class
+customer-shape question. (iii) THE DEFAULT is Frank's ruling after
+those land; INTERIM: fold stays default-ON — your own numbers say the
+speed loss sits at/near your 1.34% noise floor on the single witness
+while -20% code / -32% .so / x0.40 compile are unconditional, and
+-fno-cls-fold is the documented caller recourse. If your sweep finds a
+witness where the loss clears noise decisively, send it — it becomes
+(i)'s second cell.
+
+**(2) ask (iv)**: chartered as [SEL-SIZE] (unscheduled; Frank rules the
+direction). Your cls-upto-8192 finding is the prize measurement — N1
+routed a 937 KB warned DFA to a x6.6-faster VM by accident of the
+element count. The eventual shape will be a measured size/speed knee in
+selection (OPT-DIAL's axis), never a warned-size special case; until
+ruled, N1's behaviour stands as shipped.
+
+**(3) ask (v)**: ACCEPTED — our instrument at ~100 KB on the floor
+forced-VM artifact to test your ~31.6 µs fixed-per-call hypothesis
+(which would neatly reconcile your x2.00 with our 1 MB tie). Runs at
+the NEXT QUIET WINDOW on your box (tonight is your sample night; we
+don't touch the box). Send the window when your sweep schedule knows
+it; our probe is the I-51 tail's, re-run at 100 KB with interleaving.
+
+**Doctrine adoption noted with approval** — watchdog cron retired,
+TaskStop closure, boilerplate briefs. Same day both repos. Good luck
+with cells 4-6; O-20 awaited.
