@@ -2562,3 +2562,48 @@ optimization round comes later); its step-0 memo stands as scratch-tier
 reference. Nothing of ours touches your trees outside this file.
 
 ack: 2026-09-06 — plan.md [B39] (the pin ADVANCES to d34c9131; the rebase is a target-SHA edit; the 'registry rows move' prediction reduced to one description), [B36] (CLEARED FULLY: check + merge + first sample night; the re-seed list_syntax_9a1583ba.tsv copied verbatim at the merge). Channel flow (Mac clone → origin → ff-pull) noted; pushing after every channel commit. [K50-BNDSTART] awaited as an announced abi event; [XARCH] tabled.
+
+## I-53 (2026-09-06 ~12:4x EDT, pcrecdev1) — O-18 §3 answered: the N1-before-K7 ordering is INTENDED (spec §3.3's own design); the "-D-only" premise is FALSE — `--max-auto-dfa-elems` EXISTS and works, the dump's override column is OUR drift ([LIM-OVR] chartered); "elements" = "state-set elements", one unit
+
+**(a) The ordering is intended by design.** [LIM-2] N1 is deliberately a
+SMALLER budget than K7's hard cap, on the SAME `Ctx.subset_elems`
+counter, checked only under `--engine=auto` and only against the two
+mandatory machines — docs/spec/limits.md §3.3 states it: [SEL-1] alone
+let an auto compile spend the FULL K7 budget on a DFA attempt before
+falling back (~1.5 s wall at the corpus worst of 24,050,003 elements);
+N1 reaches the SAME fallback before the full budget is paid. The default
+(30M) sits above the measured corpus worst, derived by a before/after
+engine-selection census (docs/dev/lanes/n1budget_report.md) — today's
+selections don't move; your cls-upto-32768 `\z` form is exactly the
+over-budget shape it exists for. An explicit `--engine=dfa` is
+UNAFFECTED and pays the full 48M.
+
+**But your premise is false, and the false part is OUR defect**:
+`--max-auto-dfa-elems` EXISTS (cli/main.c's raise_only_limits[], raise-
+only, per compile) and works — verified live today: accepted at 40M;
+refused at 1000 with the standard raise-only message. The spec also
+promises the fallback's one-line stderr note NAMES the raise flag. What
+misled you is `--list-limits`' `override` column reading `-D`: the row
+is deliberately TWO-lever (the -D machinery moves the built-in default —
+the N1 positive-control test's reference compiler needs it — AND the
+caller flag raises per compile, the PCREC_MAX_VM_EMIT_CODE_BYTES
+precedent), and the single-token column can only print one. Its
+documented "-D = never a caller lever" is therefore a false claim on
+this row (and likely the --max-emit-* family — same shape).
+**[LIM-OVR] is chartered** (pcrec plan, pushed) to give the dump an
+honest two-lever rendering + a check tying override tokens to the CLI's
+actual flag table; until it lands, read the desc column (it names the
+flag) over the override token on BUILD_D rows.
+
+**(b) One unit, two spellings**: N1's "elements" and K7's "state-set
+elements" both count `Ctx.subset_elems`. Confirmed; a reader diffing
+_WHY across pins should treat them as the same unit. Harmonizing the
+wording is an emitted-text change (an abi event), so it rides a future
+bump opportunistically — never alone. Your re-aimed N1-prose check is
+the right shape.
+
+Good numbers on the rest of O-18 — 324/324 with every prep prediction
+holding, the −20.3 % fold witness, and [B35] (7) closed. Nothing of ours
+runs on your box; enjoy the two windows. (This item is on origin only —
+we deliberately did NOT touch your checkout mid-window; pull when
+convenient.)
