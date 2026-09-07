@@ -39,6 +39,7 @@ names the two pcrec documents that WERE read).
 | `gen_pattern_facts.py` | derives `pattern_facts.tsv`: family, seed rows and the seed's module per pattern, bytes, PCRE2's capture count / backref max / match-empty / max lookbehind (four PCRE2_INFO codes verified by construction on every run) and first / required code unit / min length, m/n per regime, oracle version |
 | `pattern_facts.tsv` | one row per pattern; the table NOTES.md's rules R4 and R6 read (which patterns are REGULAR, what PCRE2 knows about each start) |
 | `NOTES.md` | the objective, the tables, the outlier rule, the predictions, the utf room, the estimate |
+| `export/syntax.rxt` | GENERATED ([B38], `tools/export_rxt.py`): a `.rxt` SOURCE file (no cases) for pcrec's own harnesses to pull this set's patterns in via `--source` (all 95, `floor` included). Never hand-edited; `make check-harness` re-derives and round-trips it against `--list-source` on every run |
 
 REGENERATING. `python3 bench/syntax/gen_patterns.py`, `gen_subjects.py`,
 `gen_throughput_subjects.py`, `gen_expectations.py`, `gen_pattern_facts.py`.
