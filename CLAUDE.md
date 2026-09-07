@@ -612,6 +612,14 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # the abi-19/21 dispatch, registries 74/25 · 50 · 55
                         # (~20 min; needs libpcre2-8-0 and a C compiler)
     make deps           # what the harness needs, and whether this box has it
+    make cc-gate-census # [B33] (1): every bench pattern x 3 pcrec engine
+                        # modes (auto/nocaps/vm) x 2 forms compiled under
+                        # gcc AND clang, refusal sets diffed byte for
+                        # byte, archived under docs/dev/measurements/.
+                        # Compile-only (no match run, no timing, no quiet
+                        # box); a re-pin-time sweep, NOT part of `make
+                        # check`'s smoke budget. Exits 0 on refusal-set
+                        # parity, 1 on a divergence.
     make help           # list the targets
 
 `make check` is a SMOKE SUITE, never a measurement: `--trials 1 --iters 1`,

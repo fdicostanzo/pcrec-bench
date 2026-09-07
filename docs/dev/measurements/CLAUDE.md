@@ -128,6 +128,38 @@ Maintenance: update this file when files are added/removed or change role.
   exactly that row and `+0 / +0.00%` everywhere else including `w-512`'s
   own `auto` sibling — the route split, the sign and the arithmetic all
   read correctly. Neither check compiled anything or touched a pcrec pin.
+- `probe_cc_gate_census.py` — ([B33] (1), `make cc-gate-census`) THE CLANG
+  COMPILE-ONLY GATE, made repeatable: every `bench/<name>/` pattern (by
+  `subbench_dirs()` enumeration, mirroring `tools/selfcheck.py`'s own rule)
+  x THREE pcrec ENGINE MODES (`auto`/`nocaps`/`vm` -- read from
+  `testees/pcrec/configs.toml`'s `pcrec-auto`/`pcrec-nocaps`/`pcrec-vm`
+  entries, never retyped; this is the SAME "mode" this project already
+  uses for a full-corpus 3x2 census -- `testees/pcrec/CLAUDE.md`'s [B26]
+  entry ("77 patterns x 2 forms x 3 engine modes (auto, nocaps, vm) = 462
+  cells") and `tools/selfcheck.py`'s `check_cc_axis`/`CC_KIND_CASES`, NOT
+  the harness's regime tokens (`match`/`search_short`/`throughput`), which
+  `pcrecbench.subbench.REGIME_MODE` maps onto only two match semantics and
+  would either duplicate compiles or need per-set regime filtering for no
+  reason -- the ORIGINAL a7e0bdf hand census this replaces found its one
+  divergence on FRAMELESS VM artifacts, which only appears by forcing or
+  auto-selecting the VM broadly, exactly what the engine-mode reading
+  predicts and the regime reading does not) x TWO forms (`plain`,
+  `whole-subject`). Per cell: emit-c ONCE (pcrec's C does not depend on
+  which compiler will consume it), then gcc and clang each once on the
+  SAME one-translation-unit shim+artifact command
+  `testees/pcrec/adapter.py`'s phase 2 uses -- IFF pcrec's own emit
+  succeeded (a pcrec-side refusal is recorded once, for both compilers,
+  since neither ran). Compile-only: no phase 3 (no dlopen, no driver, no
+  match run), no quiet-box gate. The GATE is refusal-set PARITY
+  (`gcc_refusals == clang_refusals` as a set of (subbench, pattern, mode,
+  form) keys) -- exit 0 on parity, 1 on a divergence (printed as a finding,
+  never edited away). `--pin` resolves through `testees/pcrec/pin.sh
+  --path` (never builds); `--subbench NAME` (repeatable) restricts the
+  sweep for a rehearsal; `--dry-run` prints every argv untouched.
+- `2026-09-07-cc-gate-census-d34c9131.txt` — its first archive at the
+  current pin: see the file's own header/footer for the exact cell count,
+  wall-clock and parity verdict (filled in by the real run this lane
+  performed; docs/dev/lanes/b33cc_report.md states the numbers inline).
 - `2026-09-06-altwide-size-census-d34c9131.txt` — ([B39], the abi-23
   re-pin) the FIRST run of `probe_altwide_size_census.py` against a real
   re-pin: 132 rows at d34c9131 (33 patterns x both forms x both routes,

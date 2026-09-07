@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check check-schema check-harness check-report deps help archive-inbox
+.PHONY: check check-schema check-harness check-report deps help archive-inbox cc-gate-census
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -147,6 +147,29 @@ check-report:
 	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
 	    --include-synthetic --grain subject --format md > /dev/null
 	@echo "check-report: OK"
+
+## cc-gate-census: [B33] (1) THE CLANG COMPILE-ONLY GATE -- every bench
+## pattern x 3 pcrec engine modes (auto/nocaps/vm) x 2 forms (plain,
+## whole-subject) compiled under gcc AND clang at the pin in
+## testees/pcrec/configs.toml, refusal sets diffed byte for byte,
+## archived under docs/dev/measurements/. Compile-only: no match run, no
+## timing regime, no quiet box -- a re-pin-time SWEEP (~5-15 min on a
+## quiet box at this pin's pattern count), STANDALONE from `make check`'s
+## smoke budget (never wired into check-harness -- see
+## docs/dev/lanes/b33cc_report.md for the measured wall-clock and why).
+## Run it at every re-pin, beside the list_axes.tsv / list_definitions.tsv
+## / list_limits.tsv re-archive (testees/pcrec/CLAUDE.md). Exits 0 on
+## refusal-set PARITY, 1 on a DIVERGENCE (a finding for the outbox, never
+## silently fixed here). OUT defaults to a dated file under
+## docs/dev/measurements/; ARGS passes extra flags through
+## (e.g. `make cc-gate-census ARGS="--subbench email"` for a quick
+## rehearsal).
+CC_GATE_PIN := $(shell $(PYTHON) -c "import tomllib; print(tomllib.load(open('testees/pcrec/configs.toml','rb'))['pin'])")
+CC_GATE_DATE := $(shell date -u +%Y-%m-%d)
+CC_GATE_OUT ?= docs/dev/measurements/$(CC_GATE_DATE)-cc-gate-census-$(CC_GATE_PIN).txt
+cc-gate-census:
+	$(PYTHON) docs/dev/measurements/probe_cc_gate_census.py \
+	    --pin $(CC_GATE_PIN) --out $(CC_GATE_OUT) $(ARGS)
 
 ## archive-inbox: move fully-acked, aged-out docs/dev/inbox_from_pcrec.md
 ## entries to docs/dev/inbox_from_pcrec_archive.md (BD11). Never part of

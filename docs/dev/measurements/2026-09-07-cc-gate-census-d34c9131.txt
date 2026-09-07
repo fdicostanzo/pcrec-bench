@@ -1,0 +1,1119 @@
+# docs/dev/measurements/probe_cc_gate_census.py -- the clang compile-only gate census
+# pin: d34c9131   sets: altwide,bounded,email,loglines,syntax   timeout: 300s
+# gcc: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+# clang: Ubuntu clang version 21.1.8 (6ubuntu1)
+# 185 pattern(s) x 3 mode(s) x 2 form(s) = 1110 cell(s)
+# subbench	pattern	mode	form	gcc_result	clang_result	diagnostic
+altwide	w-8	auto	plain	compiled	compiled	
+altwide	w-8	auto	whole-subject	compiled	compiled	
+altwide	w-8	nocaps	plain	compiled	compiled	
+altwide	w-8	nocaps	whole-subject	compiled	compiled	
+altwide	w-8	vm	plain	compiled	compiled	
+altwide	w-8	vm	whole-subject	compiled	compiled	
+altwide	w-64	auto	plain	compiled	compiled	
+altwide	w-64	auto	whole-subject	compiled	compiled	
+altwide	w-64	nocaps	plain	compiled	compiled	
+altwide	w-64	nocaps	whole-subject	compiled	compiled	
+altwide	w-64	vm	plain	compiled	compiled	
+altwide	w-64	vm	whole-subject	compiled	compiled	
+altwide	w-96	auto	plain	compiled	compiled	
+altwide	w-96	auto	whole-subject	compiled	compiled	
+altwide	w-96	nocaps	plain	compiled	compiled	
+altwide	w-96	nocaps	whole-subject	compiled	compiled	
+altwide	w-96	vm	plain	compiled	compiled	
+altwide	w-96	vm	whole-subject	compiled	compiled	
+altwide	w-128	auto	plain	compiled	compiled	
+altwide	w-128	auto	whole-subject	compiled	compiled	
+altwide	w-128	nocaps	plain	compiled	compiled	
+altwide	w-128	nocaps	whole-subject	compiled	compiled	
+altwide	w-128	vm	plain	compiled	compiled	
+altwide	w-128	vm	whole-subject	compiled	compiled	
+altwide	w-192	auto	plain	compiled	compiled	
+altwide	w-192	auto	whole-subject	compiled	compiled	
+altwide	w-192	nocaps	plain	compiled	compiled	
+altwide	w-192	nocaps	whole-subject	compiled	compiled	
+altwide	w-192	vm	plain	compiled	compiled	
+altwide	w-192	vm	whole-subject	compiled	compiled	
+altwide	w-256	auto	plain	compiled	compiled	
+altwide	w-256	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.40s): pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-256	nocaps	plain	compiled	compiled	
+altwide	w-256	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.40s): pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-256	vm	plain	compiled	compiled	
+altwide	w-256	vm	whole-subject	compiled	compiled	
+altwide	w-384	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.58s): pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-384	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.82s): pcrec: pattern too large: 1514859 bytes of emitted C source (limit 1000000, ~251 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-384	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.57s): pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-384	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.82s): pcrec: pattern too large: 1514859 bytes of emitted C source (limit 1000000, ~251 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-384	vm	plain	compiled	compiled	
+altwide	w-384	vm	whole-subject	compiled	compiled	
+altwide	w-512	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.82s): pcrec: pattern too large: 1578445 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-512	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.25s): pcrec: pattern too large: 1656821 bytes of emitted C source (limit 1000000, ~275 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-512	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.83s): pcrec: pattern too large: 1578445 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-512	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.25s): pcrec: pattern too large: 1656821 bytes of emitted C source (limit 1000000, ~275 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-512	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.02s): pcrec: pattern too large: 563849 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	w-512	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.02s): pcrec: pattern too large: 563966 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	w-1024	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 2.73s): pcrec: pattern too large: 1243069 bytes of emitted C source (limit 1000000, ~206 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-1024	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 4.20s): pcrec: pattern too large: 1358765 bytes of emitted C source (limit 1000000, ~225 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-1024	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 2.71s): pcrec: pattern too large: 1243069 bytes of emitted C source (limit 1000000, ~206 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-1024	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 4.17s): pcrec: pattern too large: 1358765 bytes of emitted C source (limit 1000000, ~225 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-1024	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.03s): pcrec: pattern too large: 1102565 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count,
+altwide	w-1024	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.04s): pcrec: pattern too large: 1102682 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count,
+altwide	w-2048	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 10.76s): pcrec: pattern too large: 2379413 bytes of emitted C source (limit 1000000, ~395 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-2048	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 16.80s): pcrec: pattern too large: 2587345 bytes of emitted C source (limit 1000000, ~429 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-2048	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 10.83s): pcrec: pattern too large: 2379413 bytes of emitted C source (limit 1000000, ~395 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-2048	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 16.84s): pcrec: pattern too large: 2587345 bytes of emitted C source (limit 1000000, ~429 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	w-2048	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.06s): pcrec: pattern too large: 2124763 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count,
+altwide	w-2048	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.06s): pcrec: pattern too large: 2124882 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count,
+altwide	s-256	auto	plain	compiled	compiled	
+altwide	s-256	auto	whole-subject	compiled	compiled	
+altwide	s-256	nocaps	plain	compiled	compiled	
+altwide	s-256	nocaps	whole-subject	compiled	compiled	
+altwide	s-256	vm	plain	compiled	compiled	
+altwide	s-256	vm	whole-subject	compiled	compiled	
+altwide	s-512	auto	plain	compiled	compiled	
+altwide	s-512	auto	whole-subject	compiled	compiled	
+altwide	s-512	nocaps	plain	compiled	compiled	
+altwide	s-512	nocaps	whole-subject	compiled	compiled	
+altwide	s-512	vm	plain	compiled	compiled	
+altwide	s-512	vm	whole-subject	compiled	compiled	
+altwide	s-2048	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 5.22s): pcrec: pattern too large: 1260724 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	s-2048	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 8.92s): pcrec: pattern too large: 1428282 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	s-2048	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 5.25s): pcrec: pattern too large: 1260724 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	s-2048	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 8.80s): pcrec: pattern too large: 1428282 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	s-2048	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.04s): pcrec: pattern too large: 1188253 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count,
+altwide	s-2048	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.03s): pcrec: pattern too large: 1188370 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count,
+altwide	s-4096	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 19.41s): pcrec: pattern too large: 1621608 bytes of emitted C source (limit 1000000, ~269 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	s-4096	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 32.63s): pcrec: pattern too large: 1896909 bytes of emitted C source (limit 1000000, ~314 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	s-4096	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 19.48s): pcrec: pattern too large: 1621608 bytes of emitted C source (limit 1000000, ~269 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	s-4096	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 32.59s): pcrec: pattern too large: 1896909 bytes of emitted C source (limit 1000000, ~314 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	s-4096	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.07s): pcrec: pattern too large: 2236575 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count,
+altwide	s-4096	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.06s): pcrec: pattern too large: 2236694 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count,
+altwide	sh1-64	auto	plain	compiled	compiled	
+altwide	sh1-64	auto	whole-subject	compiled	compiled	
+altwide	sh1-64	nocaps	plain	compiled	compiled	
+altwide	sh1-64	nocaps	whole-subject	compiled	compiled	
+altwide	sh1-64	vm	plain	compiled	compiled	
+altwide	sh1-64	vm	whole-subject	compiled	compiled	
+altwide	sh1-256	auto	plain	compiled	compiled	
+altwide	sh1-256	auto	whole-subject	compiled	compiled	
+altwide	sh1-256	nocaps	plain	compiled	compiled	
+altwide	sh1-256	nocaps	whole-subject	compiled	compiled	
+altwide	sh1-256	vm	plain	compiled	compiled	
+altwide	sh1-256	vm	whole-subject	compiled	compiled	
+altwide	sh1-512	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.12s): pcrec: pattern too large: 1525451 bytes of emitted C source (limit 1000000, ~253 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	sh1-512	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.14s): pcrec: pattern too large: 1577014 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	sh1-512	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.12s): pcrec: pattern too large: 1525451 bytes of emitted C source (limit 1000000, ~253 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	sh1-512	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.13s): pcrec: pattern too large: 1577014 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	sh1-512	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.02s): pcrec: pattern too large: 538109 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	sh1-512	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.03s): pcrec: pattern too large: 538226 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	pfx3-256	auto	plain	compiled	compiled	
+altwide	pfx3-256	auto	whole-subject	compiled	compiled	
+altwide	pfx3-256	nocaps	plain	compiled	compiled	
+altwide	pfx3-256	nocaps	whole-subject	compiled	compiled	
+altwide	pfx3-256	vm	plain	compiled	compiled	
+altwide	pfx3-256	vm	whole-subject	compiled	compiled	
+altwide	pfx3-512	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.07s): pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	pfx3-512	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.08s): pcrec: pattern too large: 1122863 bytes of emitted C source (limit 1000000, ~186 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	pfx3-512	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.07s): pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	pfx3-512	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.08s): pcrec: pattern too large: 1122863 bytes of emitted C source (limit 1000000, ~186 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	pfx3-512	vm	plain	compiled	compiled	
+altwide	pfx3-512	vm	whole-subject	compiled	compiled	
+altwide	sfx-64	auto	plain	compiled	compiled	
+altwide	sfx-64	auto	whole-subject	compiled	compiled	
+altwide	sfx-64	nocaps	plain	compiled	compiled	
+altwide	sfx-64	nocaps	whole-subject	compiled	compiled	
+altwide	sfx-64	vm	plain	compiled	compiled	
+altwide	sfx-64	vm	whole-subject	compiled	compiled	
+altwide	sfx-256	auto	plain	compiled	compiled	
+altwide	sfx-256	auto	whole-subject	compiled	compiled	
+altwide	sfx-256	nocaps	plain	compiled	compiled	
+altwide	sfx-256	nocaps	whole-subject	compiled	compiled	
+altwide	sfx-256	vm	plain	compiled	compiled	
+altwide	sfx-256	vm	whole-subject	compiled	compiled	
+altwide	sfx-512	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.10s): pcrec: pattern too large: 1332391 bytes of emitted C source (limit 1000000, ~221 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	sfx-512	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.54s): pcrec: pattern too large: 1370237 bytes of emitted C source (limit 1000000, ~227 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	sfx-512	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.11s): pcrec: pattern too large: 1332391 bytes of emitted C source (limit 1000000, ~221 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	sfx-512	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.54s): pcrec: pattern too large: 1370237 bytes of emitted C source (limit 1000000, ~227 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	sfx-512	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.02s): pcrec: pattern too large: 699741 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	sfx-512	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.02s): pcrec: pattern too large: 699858 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	nar4-64	auto	plain	compiled	compiled	
+altwide	nar4-64	auto	whole-subject	compiled	compiled	
+altwide	nar4-64	nocaps	plain	compiled	compiled	
+altwide	nar4-64	nocaps	whole-subject	compiled	compiled	
+altwide	nar4-64	vm	plain	compiled	compiled	
+altwide	nar4-64	vm	whole-subject	compiled	compiled	
+altwide	nar4-256	auto	plain	compiled	compiled	
+altwide	nar4-256	auto	whole-subject	compiled	compiled	
+altwide	nar4-256	nocaps	plain	compiled	compiled	
+altwide	nar4-256	nocaps	whole-subject	compiled	compiled	
+altwide	nar4-256	vm	plain	compiled	compiled	
+altwide	nar4-256	vm	whole-subject	compiled	compiled	
+altwide	nar4-512	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.09s): pcrec: pattern too large: 1608641 bytes of emitted C source (limit 1000000, ~267 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	nar4-512	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.59s): pcrec: pattern too large: 1673397 bytes of emitted C source (limit 1000000, ~277 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	nar4-512	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.16s): pcrec: pattern too large: 1608641 bytes of emitted C source (limit 1000000, ~267 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	nar4-512	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.57s): pcrec: pattern too large: 1673397 bytes of emitted C source (limit 1000000, ~277 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	nar4-512	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.03s): pcrec: pattern too large: 544951 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	nar4-512	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.02s): pcrec: pattern too large: 545068 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	srt-256	auto	plain	compiled	compiled	
+altwide	srt-256	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.12s): pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	srt-256	nocaps	plain	compiled	compiled	
+altwide	srt-256	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.12s): pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	srt-256	vm	plain	compiled	compiled	
+altwide	srt-256	vm	whole-subject	compiled	compiled	
+altwide	srt-512	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.19s): pcrec: pattern too large: 1578446 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	srt-512	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.26s): pcrec: pattern too large: 1656822 bytes of emitted C source (limit 1000000, ~275 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	srt-512	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.19s): pcrec: pattern too large: 1578446 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	srt-512	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.25s): pcrec: pattern too large: 1656822 bytes of emitted C source (limit 1000000, ~275 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	srt-512	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.03s): pcrec: pattern too large: 563850 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	srt-512	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.03s): pcrec: pattern too large: 563967 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	ci-256	auto	plain	compiled	compiled	
+altwide	ci-256	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.12s): pcrec: pattern too large: 1045834 bytes of emitted C source (limit 1000000, ~173 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	ci-256	nocaps	plain	compiled	compiled	
+altwide	ci-256	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.12s): pcrec: pattern too large: 1045834 bytes of emitted C source (limit 1000000, ~173 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	ci-256	vm	plain	compiled	compiled	
+altwide	ci-256	vm	whole-subject	compiled	compiled	
+altwide	ci-512	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.18s): pcrec: pattern too large: 1590488 bytes of emitted C source (limit 1000000, ~264 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	ci-512	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.24s): pcrec: pattern too large: 1668864 bytes of emitted C source (limit 1000000, ~277 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	ci-512	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.19s): pcrec: pattern too large: 1590488 bytes of emitted C source (limit 1000000, ~264 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	ci-512	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.26s): pcrec: pattern too large: 1668864 bytes of emitted C source (limit 1000000, ~277 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	ci-512	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: pattern too large: 714634 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	ci-512	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.02s): pcrec: pattern too large: 714751 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	cnt-64	auto	plain	compiled	compiled	
+altwide	cnt-64	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.13s): pcrec: pattern too large: 1108228 bytes of emitted C source (limit 1000000, ~183 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	cnt-64	nocaps	plain	compiled	compiled	
+altwide	cnt-64	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.14s): pcrec: pattern too large: 1108228 bytes of emitted C source (limit 1000000, ~183 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	cnt-64	vm	plain	compiled	compiled	
+altwide	cnt-64	vm	whole-subject	compiled	compiled	
+altwide	wb-256	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.27s): pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	wb-256	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.37s): pcrec: pattern too large: 1260385 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	wb-256	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.28s): pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	wb-256	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.37s): pcrec: pattern too large: 1260385 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	wb-256	vm	plain	compiled	compiled	
+altwide	wb-256	vm	whole-subject	compiled	compiled	
+altwide	wb-512	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.77s): pcrec: pattern too large: 2345817 bytes of emitted C source (limit 1000000, ~389 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	wb-512	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.10s): pcrec: pattern too large: 2395032 bytes of emitted C source (limit 1000000, ~397 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	wb-512	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.77s): pcrec: pattern too large: 2345817 bytes of emitted C source (limit 1000000, ~389 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	wb-512	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 1.09s): pcrec: pattern too large: 2395032 bytes of emitted C source (limit 1000000, ~397 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact"
+altwide	wb-512	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.03s): pcrec: pattern too large: 564506 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	wb-512	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.03s): pcrec: pattern too large: 564623 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, 
+altwide	floor	auto	plain	compiled	compiled	
+altwide	floor	auto	whole-subject	compiled	compiled	
+altwide	floor	nocaps	plain	compiled	compiled	
+altwide	floor	nocaps	whole-subject	compiled	compiled	
+altwide	floor	vm	plain	compiled	compiled	
+altwide	floor	vm	whole-subject	compiled	compiled	
+bounded	year4	auto	plain	compiled	compiled	
+bounded	year4	auto	whole-subject	compiled	compiled	
+bounded	year4	nocaps	plain	compiled	compiled	
+bounded	year4	nocaps	whole-subject	compiled	compiled	
+bounded	year4	vm	plain	compiled	compiled	
+bounded	year4	vm	whole-subject	compiled	compiled	
+bounded	hex32	auto	plain	compiled	compiled	
+bounded	hex32	auto	whole-subject	compiled	compiled	
+bounded	hex32	nocaps	plain	compiled	compiled	
+bounded	hex32	nocaps	whole-subject	compiled	compiled	
+bounded	hex32	vm	plain	compiled	compiled	
+bounded	hex32	vm	whole-subject	compiled	compiled	
+bounded	pw-8-64	auto	plain	compiled	compiled	
+bounded	pw-8-64	auto	whole-subject	compiled	compiled	
+bounded	pw-8-64	nocaps	plain	compiled	compiled	
+bounded	pw-8-64	nocaps	whole-subject	compiled	compiled	
+bounded	pw-8-64	vm	plain	compiled	compiled	
+bounded	pw-8-64	vm	whole-subject	compiled	compiled	
+bounded	line-80	auto	plain	compiled	compiled	
+bounded	line-80	auto	whole-subject	compiled	compiled	
+bounded	line-80	nocaps	plain	compiled	compiled	
+bounded	line-80	nocaps	whole-subject	compiled	compiled	
+bounded	line-80	vm	plain	compiled	compiled	
+bounded	line-80	vm	whole-subject	compiled	compiled	
+bounded	dotted4	auto	plain	compiled	compiled	
+bounded	dotted4	auto	whole-subject	compiled	compiled	
+bounded	dotted4	nocaps	plain	compiled	compiled	
+bounded	dotted4	nocaps	whole-subject	compiled	compiled	
+bounded	dotted4	vm	plain	compiled	compiled	
+bounded	dotted4	vm	whole-subject	compiled	compiled	
+bounded	csv5	auto	plain	compiled	compiled	
+bounded	csv5	auto	whole-subject	compiled	compiled	
+bounded	csv5	nocaps	plain	compiled	compiled	
+bounded	csv5	nocaps	whole-subject	compiled	compiled	
+bounded	csv5	vm	plain	compiled	compiled	
+bounded	csv5	vm	whole-subject	compiled	compiled	
+bounded	ctx-lazy-64	auto	plain	compiled	compiled	
+bounded	ctx-lazy-64	auto	whole-subject	compiled	compiled	
+bounded	ctx-lazy-64	nocaps	plain	compiled	compiled	
+bounded	ctx-lazy-64	nocaps	whole-subject	compiled	compiled	
+bounded	ctx-lazy-64	vm	plain	compiled	compiled	
+bounded	ctx-lazy-64	vm	whole-subject	compiled	compiled	
+bounded	ctx-lazy-256	auto	plain	compiled	compiled	
+bounded	ctx-lazy-256	auto	whole-subject	compiled	compiled	
+bounded	ctx-lazy-256	nocaps	plain	compiled	compiled	
+bounded	ctx-lazy-256	nocaps	whole-subject	compiled	compiled	
+bounded	ctx-lazy-256	vm	plain	compiled	compiled	
+bounded	ctx-lazy-256	vm	whole-subject	compiled	compiled	
+bounded	ctx-lazy-1024	auto	plain	compiled	compiled	
+bounded	ctx-lazy-1024	auto	whole-subject	compiled	compiled	
+bounded	ctx-lazy-1024	nocaps	plain	compiled	compiled	
+bounded	ctx-lazy-1024	nocaps	whole-subject	compiled	compiled	
+bounded	ctx-lazy-1024	vm	plain	compiled	compiled	
+bounded	ctx-lazy-1024	vm	whole-subject	compiled	compiled	
+bounded	ctx-greedy-256	auto	plain	compiled	compiled	
+bounded	ctx-greedy-256	auto	whole-subject	compiled	compiled	
+bounded	ctx-greedy-256	nocaps	plain	compiled	compiled	
+bounded	ctx-greedy-256	nocaps	whole-subject	compiled	compiled	
+bounded	ctx-greedy-256	vm	plain	compiled	compiled	
+bounded	ctx-greedy-256	vm	whole-subject	compiled	compiled	
+bounded	dig-exact-2	auto	plain	compiled	compiled	
+bounded	dig-exact-2	auto	whole-subject	compiled	compiled	
+bounded	dig-exact-2	nocaps	plain	compiled	compiled	
+bounded	dig-exact-2	nocaps	whole-subject	compiled	compiled	
+bounded	dig-exact-2	vm	plain	compiled	compiled	
+bounded	dig-exact-2	vm	whole-subject	compiled	compiled	
+bounded	dig-exact-8	auto	plain	compiled	compiled	
+bounded	dig-exact-8	auto	whole-subject	compiled	compiled	
+bounded	dig-exact-8	nocaps	plain	compiled	compiled	
+bounded	dig-exact-8	nocaps	whole-subject	compiled	compiled	
+bounded	dig-exact-8	vm	plain	compiled	compiled	
+bounded	dig-exact-8	vm	whole-subject	compiled	compiled	
+bounded	dig-exact-16	auto	plain	compiled	compiled	
+bounded	dig-exact-16	auto	whole-subject	compiled	compiled	
+bounded	dig-exact-16	nocaps	plain	compiled	compiled	
+bounded	dig-exact-16	nocaps	whole-subject	compiled	compiled	
+bounded	dig-exact-16	vm	plain	compiled	compiled	
+bounded	dig-exact-16	vm	whole-subject	compiled	compiled	
+bounded	dig-exact-32	auto	plain	compiled	compiled	
+bounded	dig-exact-32	auto	whole-subject	compiled	compiled	
+bounded	dig-exact-32	nocaps	plain	compiled	compiled	
+bounded	dig-exact-32	nocaps	whole-subject	compiled	compiled	
+bounded	dig-exact-32	vm	plain	compiled	compiled	
+bounded	dig-exact-32	vm	whole-subject	compiled	compiled	
+bounded	dig-upto-2	auto	plain	compiled	compiled	
+bounded	dig-upto-2	auto	whole-subject	compiled	compiled	
+bounded	dig-upto-2	nocaps	plain	compiled	compiled	
+bounded	dig-upto-2	nocaps	whole-subject	compiled	compiled	
+bounded	dig-upto-2	vm	plain	compiled	compiled	
+bounded	dig-upto-2	vm	whole-subject	compiled	compiled	
+bounded	dig-upto-4	auto	plain	compiled	compiled	
+bounded	dig-upto-4	auto	whole-subject	compiled	compiled	
+bounded	dig-upto-4	nocaps	plain	compiled	compiled	
+bounded	dig-upto-4	nocaps	whole-subject	compiled	compiled	
+bounded	dig-upto-4	vm	plain	compiled	compiled	
+bounded	dig-upto-4	vm	whole-subject	compiled	compiled	
+bounded	dig-upto-8	auto	plain	compiled	compiled	
+bounded	dig-upto-8	auto	whole-subject	compiled	compiled	
+bounded	dig-upto-8	nocaps	plain	compiled	compiled	
+bounded	dig-upto-8	nocaps	whole-subject	compiled	compiled	
+bounded	dig-upto-8	vm	plain	compiled	compiled	
+bounded	dig-upto-8	vm	whole-subject	compiled	compiled	
+bounded	dig-upto-16	auto	plain	compiled	compiled	
+bounded	dig-upto-16	auto	whole-subject	compiled	compiled	
+bounded	dig-upto-16	nocaps	plain	compiled	compiled	
+bounded	dig-upto-16	nocaps	whole-subject	compiled	compiled	
+bounded	dig-upto-16	vm	plain	compiled	compiled	
+bounded	dig-upto-16	vm	whole-subject	compiled	compiled	
+bounded	dig-upto-32	auto	plain	compiled	compiled	
+bounded	dig-upto-32	auto	whole-subject	compiled	compiled	
+bounded	dig-upto-32	nocaps	plain	compiled	compiled	
+bounded	dig-upto-32	nocaps	whole-subject	compiled	compiled	
+bounded	dig-upto-32	vm	plain	compiled	compiled	
+bounded	dig-upto-32	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-4	auto	plain	compiled	compiled	
+bounded	cls-upto-4	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-4	nocaps	plain	compiled	compiled	
+bounded	cls-upto-4	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-4	vm	plain	compiled	compiled	
+bounded	cls-upto-4	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-8	auto	plain	compiled	compiled	
+bounded	cls-upto-8	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-8	nocaps	plain	compiled	compiled	
+bounded	cls-upto-8	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-8	vm	plain	compiled	compiled	
+bounded	cls-upto-8	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-16	auto	plain	compiled	compiled	
+bounded	cls-upto-16	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-16	nocaps	plain	compiled	compiled	
+bounded	cls-upto-16	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-16	vm	plain	compiled	compiled	
+bounded	cls-upto-16	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-32	auto	plain	compiled	compiled	
+bounded	cls-upto-32	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-32	nocaps	plain	compiled	compiled	
+bounded	cls-upto-32	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-32	vm	plain	compiled	compiled	
+bounded	cls-upto-32	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-64	auto	plain	compiled	compiled	
+bounded	cls-upto-64	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-64	nocaps	plain	compiled	compiled	
+bounded	cls-upto-64	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-64	vm	plain	compiled	compiled	
+bounded	cls-upto-64	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-128	auto	plain	compiled	compiled	
+bounded	cls-upto-128	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-128	nocaps	plain	compiled	compiled	
+bounded	cls-upto-128	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-128	vm	plain	compiled	compiled	
+bounded	cls-upto-128	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-256	auto	plain	compiled	compiled	
+bounded	cls-upto-256	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-256	nocaps	plain	compiled	compiled	
+bounded	cls-upto-256	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-256	vm	plain	compiled	compiled	
+bounded	cls-upto-256	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-512	auto	plain	compiled	compiled	
+bounded	cls-upto-512	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-512	nocaps	plain	compiled	compiled	
+bounded	cls-upto-512	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-512	vm	plain	compiled	compiled	
+bounded	cls-upto-512	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-1024	auto	plain	compiled	compiled	
+bounded	cls-upto-1024	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-1024	nocaps	plain	compiled	compiled	
+bounded	cls-upto-1024	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-1024	vm	plain	compiled	compiled	
+bounded	cls-upto-1024	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-2048	auto	plain	compiled	compiled	
+bounded	cls-upto-2048	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-2048	nocaps	plain	compiled	compiled	
+bounded	cls-upto-2048	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-2048	vm	plain	compiled	compiled	
+bounded	cls-upto-2048	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-4096	auto	plain	compiled	compiled	
+bounded	cls-upto-4096	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-4096	nocaps	plain	compiled	compiled	
+bounded	cls-upto-4096	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-4096	vm	plain	compiled	compiled	
+bounded	cls-upto-4096	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-8192	auto	plain	compiled	compiled	
+bounded	cls-upto-8192	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-8192	nocaps	plain	compiled	compiled	
+bounded	cls-upto-8192	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-8192	vm	plain	compiled	compiled	
+bounded	cls-upto-8192	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-16384	auto	plain	compiled	compiled	
+bounded	cls-upto-16384	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-16384	nocaps	plain	compiled	compiled	
+bounded	cls-upto-16384	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-16384	vm	plain	compiled	compiled	
+bounded	cls-upto-16384	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-32768	auto	plain	compiled	compiled	
+bounded	cls-upto-32768	auto	whole-subject	compiled	compiled	
+bounded	cls-upto-32768	nocaps	plain	compiled	compiled	
+bounded	cls-upto-32768	nocaps	whole-subject	compiled	compiled	
+bounded	cls-upto-32768	vm	plain	compiled	compiled	
+bounded	cls-upto-32768	vm	whole-subject	compiled	compiled	
+bounded	cls-upto-65535	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: pattern too large (NFA exceeds 131072 states; raise with --max-nfa-states) (pattern offset 0)
+bounded	cls-upto-65535	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.02s): pcrec: pattern too large (NFA exceeds 131072 states; raise with --max-nfa-states) (pattern offset 0)
+bounded	cls-upto-65535	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: pattern too large (NFA exceeds 131072 states; raise with --max-nfa-states) (pattern offset 0)
+bounded	cls-upto-65535	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.02s): pcrec: pattern too large (NFA exceeds 131072 states; raise with --max-nfa-states) (pattern offset 0)
+bounded	cls-upto-65535	vm	plain	compiled	compiled	
+bounded	cls-upto-65535	vm	whole-subject	compiled	compiled	
+bounded	cls-atleast-4096	auto	plain	compiled	compiled	
+bounded	cls-atleast-4096	auto	whole-subject	compiled	compiled	
+bounded	cls-atleast-4096	nocaps	plain	compiled	compiled	
+bounded	cls-atleast-4096	nocaps	whole-subject	compiled	compiled	
+bounded	cls-atleast-4096	vm	plain	compiled	compiled	
+bounded	cls-atleast-4096	vm	whole-subject	compiled	compiled	
+bounded	cls-lazy-16384	auto	plain	compiled	compiled	
+bounded	cls-lazy-16384	auto	whole-subject	compiled	compiled	
+bounded	cls-lazy-16384	nocaps	plain	compiled	compiled	
+bounded	cls-lazy-16384	nocaps	whole-subject	compiled	compiled	
+bounded	cls-lazy-16384	vm	plain	compiled	compiled	
+bounded	cls-lazy-16384	vm	whole-subject	compiled	compiled	
+bounded	grp-upto-1024	auto	plain	compiled	compiled	
+bounded	grp-upto-1024	auto	whole-subject	compiled	compiled	
+bounded	grp-upto-1024	nocaps	plain	compiled	compiled	
+bounded	grp-upto-1024	nocaps	whole-subject	compiled	compiled	
+bounded	grp-upto-1024	vm	plain	compiled	compiled	
+bounded	grp-upto-1024	vm	whole-subject	compiled	compiled	
+bounded	nest2-4	auto	plain	compiled	compiled	
+bounded	nest2-4	auto	whole-subject	compiled	compiled	
+bounded	nest2-4	nocaps	plain	compiled	compiled	
+bounded	nest2-4	nocaps	whole-subject	compiled	compiled	
+bounded	nest2-4	vm	plain	compiled	compiled	
+bounded	nest2-4	vm	whole-subject	compiled	compiled	
+bounded	nest2-64	auto	plain	compiled	compiled	
+bounded	nest2-64	auto	whole-subject	compiled	compiled	
+bounded	nest2-64	nocaps	plain	compiled	compiled	
+bounded	nest2-64	nocaps	whole-subject	compiled	compiled	
+bounded	nest2-64	vm	plain	compiled	compiled	
+bounded	nest2-64	vm	whole-subject	compiled	compiled	
+bounded	nest3-3	auto	plain	compiled	compiled	
+bounded	nest3-3	auto	whole-subject	compiled	compiled	
+bounded	nest3-3	nocaps	plain	compiled	compiled	
+bounded	nest3-3	nocaps	whole-subject	compiled	compiled	
+bounded	nest3-3	vm	plain	compiled	compiled	
+bounded	nest3-3	vm	whole-subject	compiled	compiled	
+bounded	nest3-16	auto	plain	compiled	compiled	
+bounded	nest3-16	auto	whole-subject	compiled	compiled	
+bounded	nest3-16	nocaps	plain	compiled	compiled	
+bounded	nest3-16	nocaps	whole-subject	compiled	compiled	
+bounded	nest3-16	vm	plain	compiled	compiled	
+bounded	nest3-16	vm	whole-subject	compiled	compiled	
+bounded	nest2-letters-6	auto	plain	compiled	compiled	
+bounded	nest2-letters-6	auto	whole-subject	compiled	compiled	
+bounded	nest2-letters-6	nocaps	plain	compiled	compiled	
+bounded	nest2-letters-6	nocaps	whole-subject	compiled	compiled	
+bounded	nest2-letters-6	vm	plain	compiled	compiled	
+bounded	nest2-letters-6	vm	whole-subject	compiled	compiled	
+bounded	floor	auto	plain	compiled	compiled	
+bounded	floor	auto	whole-subject	compiled	compiled	
+bounded	floor	nocaps	plain	compiled	compiled	
+bounded	floor	nocaps	whole-subject	compiled	compiled	
+bounded	floor	vm	plain	compiled	compiled	
+bounded	floor	vm	whole-subject	compiled	compiled	
+email	orig	auto	plain	compiled	compiled	
+email	orig	auto	whole-subject	compiled	compiled	
+email	orig	nocaps	plain	compiled	compiled	
+email	orig	nocaps	whole-subject	compiled	compiled	
+email	orig	vm	plain	compiled	compiled	
+email	orig	vm	whole-subject	compiled	compiled	
+email	factored	auto	plain	compiled	compiled	
+email	factored	auto	whole-subject	compiled	compiled	
+email	factored	nocaps	plain	compiled	compiled	
+email	factored	nocaps	whole-subject	compiled	compiled	
+email	factored	vm	plain	compiled	compiled	
+email	factored	vm	whole-subject	compiled	compiled	
+email	floor	auto	plain	compiled	compiled	
+email	floor	auto	whole-subject	compiled	compiled	
+email	floor	nocaps	plain	compiled	compiled	
+email	floor	nocaps	whole-subject	compiled	compiled	
+email	floor	vm	plain	compiled	compiled	
+email	floor	vm	whole-subject	compiled	compiled	
+loglines	iso-ts	auto	plain	compiled	compiled	
+loglines	iso-ts	auto	whole-subject	compiled	compiled	
+loglines	iso-ts	nocaps	plain	compiled	compiled	
+loglines	iso-ts	nocaps	whole-subject	compiled	compiled	
+loglines	iso-ts	vm	plain	compiled	compiled	
+loglines	iso-ts	vm	whole-subject	compiled	compiled	
+loglines	ipv4	auto	plain	compiled	compiled	
+loglines	ipv4	auto	whole-subject	compiled	compiled	
+loglines	ipv4	nocaps	plain	compiled	compiled	
+loglines	ipv4	nocaps	whole-subject	compiled	compiled	
+loglines	ipv4	vm	plain	compiled	compiled	
+loglines	ipv4	vm	whole-subject	compiled	compiled	
+loglines	ipv6	auto	plain	compiled	compiled	
+loglines	ipv6	auto	whole-subject	compiled	compiled	
+loglines	ipv6	nocaps	plain	compiled	compiled	
+loglines	ipv6	nocaps	whole-subject	compiled	compiled	
+loglines	ipv6	vm	plain	compiled	compiled	
+loglines	ipv6	vm	whole-subject	compiled	compiled	
+loglines	kv-quoted	auto	plain	compiled	compiled	
+loglines	kv-quoted	auto	whole-subject	compiled	compiled	
+loglines	kv-quoted	nocaps	plain	compiled	compiled	
+loglines	kv-quoted	nocaps	whole-subject	compiled	compiled	
+loglines	kv-quoted	vm	plain	compiled	compiled	
+loglines	kv-quoted	vm	whole-subject	compiled	compiled	
+loglines	level-context	auto	plain	compiled	compiled	
+loglines	level-context	auto	whole-subject	compiled	compiled	
+loglines	level-context	nocaps	plain	compiled	compiled	
+loglines	level-context	nocaps	whole-subject	compiled	compiled	
+loglines	level-context	vm	plain	compiled	compiled	
+loglines	level-context	vm	whole-subject	compiled	compiled	
+loglines	http-5xx	auto	plain	compiled	compiled	
+loglines	http-5xx	auto	whole-subject	compiled	compiled	
+loglines	http-5xx	nocaps	plain	compiled	compiled	
+loglines	http-5xx	nocaps	whole-subject	compiled	compiled	
+loglines	http-5xx	vm	plain	compiled	compiled	
+loglines	http-5xx	vm	whole-subject	compiled	compiled	
+loglines	uuid	auto	plain	compiled	compiled	
+loglines	uuid	auto	whole-subject	compiled	compiled	
+loglines	uuid	nocaps	plain	compiled	compiled	
+loglines	uuid	nocaps	whole-subject	compiled	compiled	
+loglines	uuid	vm	plain	compiled	compiled	
+loglines	uuid	vm	whole-subject	compiled	compiled	
+loglines	stack-frame	auto	plain	compiled	compiled	
+loglines	stack-frame	auto	whole-subject	compiled	compiled	
+loglines	stack-frame	nocaps	plain	compiled	compiled	
+loglines	stack-frame	nocaps	whole-subject	compiled	compiled	
+loglines	stack-frame	vm	plain	compiled	compiled	
+loglines	stack-frame	vm	whole-subject	compiled	compiled	
+loglines	hex32-id	auto	plain	compiled	compiled	
+loglines	hex32-id	auto	whole-subject	compiled	compiled	
+loglines	hex32-id	nocaps	plain	compiled	compiled	
+loglines	hex32-id	nocaps	whole-subject	compiled	compiled	
+loglines	hex32-id	vm	plain	compiled	compiled	
+loglines	hex32-id	vm	whole-subject	compiled	compiled	
+loglines	bignum	auto	plain	compiled	compiled	
+loglines	bignum	auto	whole-subject	compiled	compiled	
+loglines	bignum	nocaps	plain	compiled	compiled	
+loglines	bignum	nocaps	whole-subject	compiled	compiled	
+loglines	bignum	vm	plain	compiled	compiled	
+loglines	bignum	vm	whole-subject	compiled	compiled	
+loglines	floor	auto	plain	compiled	compiled	
+loglines	floor	auto	whole-subject	compiled	compiled	
+loglines	floor	nocaps	plain	compiled	compiled	
+loglines	floor	nocaps	whole-subject	compiled	compiled	
+loglines	floor	vm	plain	compiled	compiled	
+loglines	floor	vm	whole-subject	compiled	compiled	
+syntax	lit-cat	auto	plain	compiled	compiled	
+syntax	lit-cat	auto	whole-subject	compiled	compiled	
+syntax	lit-cat	nocaps	plain	compiled	compiled	
+syntax	lit-cat	nocaps	whole-subject	compiled	compiled	
+syntax	lit-cat	vm	plain	compiled	compiled	
+syntax	lit-cat	vm	whole-subject	compiled	compiled	
+syntax	anc-caret	auto	plain	compiled	compiled	
+syntax	anc-caret	auto	whole-subject	compiled	compiled	
+syntax	anc-caret	nocaps	plain	compiled	compiled	
+syntax	anc-caret	nocaps	whole-subject	compiled	compiled	
+syntax	anc-caret	vm	plain	compiled	compiled	
+syntax	anc-caret	vm	whole-subject	compiled	compiled	
+syntax	anc-dollar	auto	plain	compiled	compiled	
+syntax	anc-dollar	auto	whole-subject	compiled	compiled	
+syntax	anc-dollar	nocaps	plain	compiled	compiled	
+syntax	anc-dollar	nocaps	whole-subject	compiled	compiled	
+syntax	anc-dollar	vm	plain	compiled	compiled	
+syntax	anc-dollar	vm	whole-subject	compiled	compiled	
+syntax	anc-a-uc	auto	plain	compiled	compiled	
+syntax	anc-a-uc	auto	whole-subject	compiled	compiled	
+syntax	anc-a-uc	nocaps	plain	compiled	compiled	
+syntax	anc-a-uc	nocaps	whole-subject	compiled	compiled	
+syntax	anc-a-uc	vm	plain	compiled	compiled	
+syntax	anc-a-uc	vm	whole-subject	compiled	compiled	
+syntax	anc-z-uc	auto	plain	compiled	compiled	
+syntax	anc-z-uc	auto	whole-subject	compiled	compiled	
+syntax	anc-z-uc	nocaps	plain	compiled	compiled	
+syntax	anc-z-uc	nocaps	whole-subject	compiled	compiled	
+syntax	anc-z-uc	vm	plain	compiled	compiled	
+syntax	anc-z-uc	vm	whole-subject	compiled	compiled	
+syntax	anc-z-lc	auto	plain	compiled	compiled	
+syntax	anc-z-lc	auto	whole-subject	compiled	compiled	
+syntax	anc-z-lc	nocaps	plain	compiled	compiled	
+syntax	anc-z-lc	nocaps	whole-subject	compiled	compiled	
+syntax	anc-z-lc	vm	plain	compiled	compiled	
+syntax	anc-z-lc	vm	whole-subject	compiled	compiled	
+syntax	anc-g-uc	auto	plain	compiled	compiled	
+syntax	anc-g-uc	auto	whole-subject	compiled	compiled	
+syntax	anc-g-uc	nocaps	plain	compiled	compiled	
+syntax	anc-g-uc	nocaps	whole-subject	compiled	compiled	
+syntax	anc-g-uc	vm	plain	compiled	compiled	
+syntax	anc-g-uc	vm	whole-subject	compiled	compiled	
+syntax	anc-m-caret	auto	plain	compiled	compiled	
+syntax	anc-m-caret	auto	whole-subject	compiled	compiled	
+syntax	anc-m-caret	nocaps	plain	compiled	compiled	
+syntax	anc-m-caret	nocaps	whole-subject	compiled	compiled	
+syntax	anc-m-caret	vm	plain	compiled	compiled	
+syntax	anc-m-caret	vm	whole-subject	compiled	compiled	
+syntax	anc-m-dollar	auto	plain	compiled	compiled	
+syntax	anc-m-dollar	auto	whole-subject	compiled	compiled	
+syntax	anc-m-dollar	nocaps	plain	compiled	compiled	
+syntax	anc-m-dollar	nocaps	whole-subject	compiled	compiled	
+syntax	anc-m-dollar	vm	plain	compiled	compiled	
+syntax	anc-m-dollar	vm	whole-subject	compiled	compiled	
+syntax	asr-wb	auto	plain	compiled	compiled	
+syntax	asr-wb	auto	whole-subject	compiled	compiled	
+syntax	asr-wb	nocaps	plain	compiled	compiled	
+syntax	asr-wb	nocaps	whole-subject	compiled	compiled	
+syntax	asr-wb	vm	plain	compiled	compiled	
+syntax	asr-wb	vm	whole-subject	compiled	compiled	
+syntax	asr-nwb	auto	plain	compiled	compiled	
+syntax	asr-nwb	auto	whole-subject	compiled	compiled	
+syntax	asr-nwb	nocaps	plain	compiled	compiled	
+syntax	asr-nwb	nocaps	whole-subject	compiled	compiled	
+syntax	asr-nwb	vm	plain	compiled	compiled	
+syntax	asr-nwb	vm	whole-subject	compiled	compiled	
+syntax	asr-k-uc	auto	plain	compiled	compiled	
+syntax	asr-k-uc	auto	whole-subject	compiled	compiled	
+syntax	asr-k-uc	nocaps	plain	compiled	compiled	
+syntax	asr-k-uc	nocaps	whole-subject	compiled	compiled	
+syntax	asr-k-uc	vm	plain	compiled	compiled	
+syntax	asr-k-uc	vm	whole-subject	compiled	compiled	
+syntax	cls-d	auto	plain	compiled	compiled	
+syntax	cls-d	auto	whole-subject	compiled	compiled	
+syntax	cls-d	nocaps	plain	compiled	compiled	
+syntax	cls-d	nocaps	whole-subject	compiled	compiled	
+syntax	cls-d	vm	plain	compiled	compiled	
+syntax	cls-d	vm	whole-subject	compiled	compiled	
+syntax	cls-s-lc	auto	plain	compiled	compiled	
+syntax	cls-s-lc	auto	whole-subject	compiled	compiled	
+syntax	cls-s-lc	nocaps	plain	compiled	compiled	
+syntax	cls-s-lc	nocaps	whole-subject	compiled	compiled	
+syntax	cls-s-lc	vm	plain	compiled	compiled	
+syntax	cls-s-lc	vm	whole-subject	compiled	compiled	
+syntax	cls-s-uc	auto	plain	compiled	compiled	
+syntax	cls-s-uc	auto	whole-subject	compiled	compiled	
+syntax	cls-s-uc	nocaps	plain	compiled	compiled	
+syntax	cls-s-uc	nocaps	whole-subject	compiled	compiled	
+syntax	cls-s-uc	vm	plain	compiled	compiled	
+syntax	cls-s-uc	vm	whole-subject	compiled	compiled	
+syntax	cls-w	auto	plain	compiled	compiled	
+syntax	cls-w	auto	whole-subject	compiled	compiled	
+syntax	cls-w	nocaps	plain	compiled	compiled	
+syntax	cls-w	nocaps	whole-subject	compiled	compiled	
+syntax	cls-w	vm	plain	compiled	compiled	
+syntax	cls-w	vm	whole-subject	compiled	compiled	
+syntax	cls-h	auto	plain	compiled	compiled	
+syntax	cls-h	auto	whole-subject	compiled	compiled	
+syntax	cls-h	nocaps	plain	compiled	compiled	
+syntax	cls-h	nocaps	whole-subject	compiled	compiled	
+syntax	cls-h	vm	plain	compiled	compiled	
+syntax	cls-h	vm	whole-subject	compiled	compiled	
+syntax	cls-v	auto	plain	compiled	compiled	
+syntax	cls-v	auto	whole-subject	compiled	compiled	
+syntax	cls-v	nocaps	plain	compiled	compiled	
+syntax	cls-v	nocaps	whole-subject	compiled	compiled	
+syntax	cls-v	vm	plain	compiled	compiled	
+syntax	cls-v	vm	whole-subject	compiled	compiled	
+syntax	cls-n-uc	auto	plain	compiled	compiled	
+syntax	cls-n-uc	auto	whole-subject	compiled	compiled	
+syntax	cls-n-uc	nocaps	plain	compiled	compiled	
+syntax	cls-n-uc	nocaps	whole-subject	compiled	compiled	
+syntax	cls-n-uc	vm	plain	compiled	compiled	
+syntax	cls-n-uc	vm	whole-subject	compiled	compiled	
+syntax	cls-posix	auto	plain	compiled	compiled	
+syntax	cls-posix	auto	whole-subject	compiled	compiled	
+syntax	cls-posix	nocaps	plain	compiled	compiled	
+syntax	cls-posix	nocaps	whole-subject	compiled	compiled	
+syntax	cls-posix	vm	plain	compiled	compiled	
+syntax	cls-posix	vm	whole-subject	compiled	compiled	
+syntax	cls-negset	auto	plain	compiled	compiled	
+syntax	cls-negset	auto	whole-subject	compiled	compiled	
+syntax	cls-negset	nocaps	plain	compiled	compiled	
+syntax	cls-negset	nocaps	whole-subject	compiled	compiled	
+syntax	cls-negset	vm	plain	compiled	compiled	
+syntax	cls-negset	vm	whole-subject	compiled	compiled	
+syntax	cls-range	auto	plain	compiled	compiled	
+syntax	cls-range	auto	whole-subject	compiled	compiled	
+syntax	cls-range	nocaps	plain	compiled	compiled	
+syntax	cls-range	nocaps	whole-subject	compiled	compiled	
+syntax	cls-range	vm	plain	compiled	compiled	
+syntax	cls-range	vm	whole-subject	compiled	compiled	
+syntax	cls-dot	auto	plain	compiled	compiled	
+syntax	cls-dot	auto	whole-subject	compiled	compiled	
+syntax	cls-dot	nocaps	plain	compiled	compiled	
+syntax	cls-dot	nocaps	whole-subject	compiled	compiled	
+syntax	cls-dot	vm	plain	compiled	compiled	
+syntax	cls-dot	vm	whole-subject	compiled	compiled	
+syntax	cls-fold-pair	auto	plain	compiled	compiled	
+syntax	cls-fold-pair	auto	whole-subject	compiled	compiled	
+syntax	cls-fold-pair	nocaps	plain	compiled	compiled	
+syntax	cls-fold-pair	nocaps	whole-subject	compiled	compiled	
+syntax	cls-fold-pair	vm	plain	compiled	compiled	
+syntax	cls-fold-pair	vm	whole-subject	compiled	compiled	
+syntax	cls-pair-ctl	auto	plain	compiled	compiled	
+syntax	cls-pair-ctl	auto	whole-subject	compiled	compiled	
+syntax	cls-pair-ctl	nocaps	plain	compiled	compiled	
+syntax	cls-pair-ctl	nocaps	whole-subject	compiled	compiled	
+syntax	cls-pair-ctl	vm	plain	compiled	compiled	
+syntax	cls-pair-ctl	vm	whole-subject	compiled	compiled	
+syntax	cls-mixed-case	auto	plain	compiled	compiled	
+syntax	cls-mixed-case	auto	whole-subject	compiled	compiled	
+syntax	cls-mixed-case	nocaps	plain	compiled	compiled	
+syntax	cls-mixed-case	nocaps	whole-subject	compiled	compiled	
+syntax	cls-mixed-case	vm	plain	compiled	compiled	
+syntax	cls-mixed-case	vm	whole-subject	compiled	compiled	
+syntax	cls-i-class	auto	plain	compiled	compiled	
+syntax	cls-i-class	auto	whole-subject	compiled	compiled	
+syntax	cls-i-class	nocaps	plain	compiled	compiled	
+syntax	cls-i-class	nocaps	whole-subject	compiled	compiled	
+syntax	cls-i-class	vm	plain	compiled	compiled	
+syntax	cls-i-class	vm	whole-subject	compiled	compiled	
+syntax	qnt-star	auto	plain	compiled	compiled	
+syntax	qnt-star	auto	whole-subject	compiled	compiled	
+syntax	qnt-star	nocaps	plain	compiled	compiled	
+syntax	qnt-star	nocaps	whole-subject	compiled	compiled	
+syntax	qnt-star	vm	plain	compiled	compiled	
+syntax	qnt-star	vm	whole-subject	compiled	compiled	
+syntax	qnt-plus	auto	plain	compiled	compiled	
+syntax	qnt-plus	auto	whole-subject	compiled	compiled	
+syntax	qnt-plus	nocaps	plain	compiled	compiled	
+syntax	qnt-plus	nocaps	whole-subject	compiled	compiled	
+syntax	qnt-plus	vm	plain	compiled	compiled	
+syntax	qnt-plus	vm	whole-subject	compiled	compiled	
+syntax	qnt-quest	auto	plain	compiled	compiled	
+syntax	qnt-quest	auto	whole-subject	compiled	compiled	
+syntax	qnt-quest	nocaps	plain	compiled	compiled	
+syntax	qnt-quest	nocaps	whole-subject	compiled	compiled	
+syntax	qnt-quest	vm	plain	compiled	compiled	
+syntax	qnt-quest	vm	whole-subject	compiled	compiled	
+syntax	qnt-lazy	auto	plain	compiled	compiled	
+syntax	qnt-lazy	auto	whole-subject	compiled	compiled	
+syntax	qnt-lazy	nocaps	plain	compiled	compiled	
+syntax	qnt-lazy	nocaps	whole-subject	compiled	compiled	
+syntax	qnt-lazy	vm	plain	compiled	compiled	
+syntax	qnt-lazy	vm	whole-subject	compiled	compiled	
+syntax	qnt-poss-star	auto	plain	compiled	compiled	
+syntax	qnt-poss-star	auto	whole-subject	compiled	compiled	
+syntax	qnt-poss-star	nocaps	plain	compiled	compiled	
+syntax	qnt-poss-star	nocaps	whole-subject	compiled	compiled	
+syntax	qnt-poss-star	vm	plain	compiled	compiled	
+syntax	qnt-poss-star	vm	whole-subject	compiled	compiled	
+syntax	qnt-poss-plus	auto	plain	compiled	compiled	
+syntax	qnt-poss-plus	auto	whole-subject	compiled	compiled	
+syntax	qnt-poss-plus	nocaps	plain	compiled	compiled	
+syntax	qnt-poss-plus	nocaps	whole-subject	compiled	compiled	
+syntax	qnt-poss-plus	vm	plain	compiled	compiled	
+syntax	qnt-poss-plus	vm	whole-subject	compiled	compiled	
+syntax	qnt-plus-ctl	auto	plain	compiled	compiled	
+syntax	qnt-plus-ctl	auto	whole-subject	compiled	compiled	
+syntax	qnt-plus-ctl	nocaps	plain	compiled	compiled	
+syntax	qnt-plus-ctl	nocaps	whole-subject	compiled	compiled	
+syntax	qnt-plus-ctl	vm	plain	compiled	compiled	
+syntax	qnt-plus-ctl	vm	whole-subject	compiled	compiled	
+syntax	qnt-poss-quest	auto	plain	compiled	compiled	
+syntax	qnt-poss-quest	auto	whole-subject	compiled	compiled	
+syntax	qnt-poss-quest	nocaps	plain	compiled	compiled	
+syntax	qnt-poss-quest	nocaps	whole-subject	compiled	compiled	
+syntax	qnt-poss-quest	vm	plain	compiled	compiled	
+syntax	qnt-poss-quest	vm	whole-subject	compiled	compiled	
+syntax	qnt-poss-brace	auto	plain	compiled	compiled	
+syntax	qnt-poss-brace	auto	whole-subject	compiled	compiled	
+syntax	qnt-poss-brace	nocaps	plain	compiled	compiled	
+syntax	qnt-poss-brace	nocaps	whole-subject	compiled	compiled	
+syntax	qnt-poss-brace	vm	plain	compiled	compiled	
+syntax	qnt-poss-brace	vm	whole-subject	compiled	compiled	
+syntax	grp-cap	auto	plain	compiled	compiled	
+syntax	grp-cap	auto	whole-subject	compiled	compiled	
+syntax	grp-cap	nocaps	plain	compiled	compiled	
+syntax	grp-cap	nocaps	whole-subject	compiled	compiled	
+syntax	grp-cap	vm	plain	compiled	compiled	
+syntax	grp-cap	vm	whole-subject	compiled	compiled	
+syntax	grp-noncap	auto	plain	compiled	compiled	
+syntax	grp-noncap	auto	whole-subject	compiled	compiled	
+syntax	grp-noncap	nocaps	plain	compiled	compiled	
+syntax	grp-noncap	nocaps	whole-subject	compiled	compiled	
+syntax	grp-noncap	vm	plain	compiled	compiled	
+syntax	grp-noncap	vm	whole-subject	compiled	compiled	
+syntax	grp-named	auto	plain	compiled	compiled	
+syntax	grp-named	auto	whole-subject	compiled	compiled	
+syntax	grp-named	nocaps	plain	compiled	compiled	
+syntax	grp-named	nocaps	whole-subject	compiled	compiled	
+syntax	grp-named	vm	plain	compiled	compiled	
+syntax	grp-named	vm	whole-subject	compiled	compiled	
+syntax	grp-named-quote	auto	plain	compiled	compiled	
+syntax	grp-named-quote	auto	whole-subject	compiled	compiled	
+syntax	grp-named-quote	nocaps	plain	compiled	compiled	
+syntax	grp-named-quote	nocaps	whole-subject	compiled	compiled	
+syntax	grp-named-quote	vm	plain	compiled	compiled	
+syntax	grp-named-quote	vm	whole-subject	compiled	compiled	
+syntax	grp-atomic-rep	auto	plain	compiled	compiled	
+syntax	grp-atomic-rep	auto	whole-subject	compiled	compiled	
+syntax	grp-atomic-rep	nocaps	plain	compiled	compiled	
+syntax	grp-atomic-rep	nocaps	whole-subject	compiled	compiled	
+syntax	grp-atomic-rep	vm	plain	compiled	compiled	
+syntax	grp-atomic-rep	vm	whole-subject	compiled	compiled	
+syntax	grp-atomic-alt	auto	plain	compiled	compiled	
+syntax	grp-atomic-alt	auto	whole-subject	compiled	compiled	
+syntax	grp-atomic-alt	nocaps	plain	compiled	compiled	
+syntax	grp-atomic-alt	nocaps	whole-subject	compiled	compiled	
+syntax	grp-atomic-alt	vm	plain	compiled	compiled	
+syntax	grp-atomic-alt	vm	whole-subject	compiled	compiled	
+syntax	grp-comment	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'comments' is enabled but (?#...) is not implemented yet (pattern offset 2)
+syntax	grp-comment	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'comments' is enabled but (?#...) is not implemented yet (pattern offset 5)
+syntax	grp-comment	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'comments' is enabled but (?#...) is not implemented yet (pattern offset 2)
+syntax	grp-comment	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'comments' is enabled but (?#...) is not implemented yet (pattern offset 5)
+syntax	grp-comment	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'comments' is enabled but (?#...) is not implemented yet (pattern offset 2)
+syntax	grp-comment	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'comments' is enabled but (?#...) is not implemented yet (pattern offset 5)
+syntax	grp-branch-reset	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 0)
+syntax	grp-branch-reset	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 3)
+syntax	grp-branch-reset	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 0)
+syntax	grp-branch-reset	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 3)
+syntax	grp-branch-reset	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 0)
+syntax	grp-branch-reset	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 3)
+syntax	grp-callout	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 2)
+syntax	grp-callout	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 5)
+syntax	grp-callout	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 2)
+syntax	grp-callout	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 5)
+syntax	grp-callout	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 2)
+syntax	grp-callout	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 5)
+syntax	alt-two	auto	plain	compiled	compiled	
+syntax	alt-two	auto	whole-subject	compiled	compiled	
+syntax	alt-two	nocaps	plain	compiled	compiled	
+syntax	alt-two	nocaps	whole-subject	compiled	compiled	
+syntax	alt-two	vm	plain	compiled	compiled	
+syntax	alt-two	vm	whole-subject	compiled	compiled	
+syntax	alt-nested	auto	plain	compiled	compiled	
+syntax	alt-nested	auto	whole-subject	compiled	compiled	
+syntax	alt-nested	nocaps	plain	compiled	compiled	
+syntax	alt-nested	nocaps	whole-subject	compiled	compiled	
+syntax	alt-nested	vm	plain	compiled	compiled	
+syntax	alt-nested	vm	whole-subject	compiled	compiled	
+syntax	bak-1	auto	plain	compiled	compiled	
+syntax	bak-1	auto	whole-subject	compiled	compiled	
+syntax	bak-1	nocaps	plain	compiled	compiled	
+syntax	bak-1	nocaps	whole-subject	compiled	compiled	
+syntax	bak-1	vm	plain	compiled	compiled	
+syntax	bak-1	vm	whole-subject	compiled	compiled	
+syntax	bak-2	auto	plain	compiled	compiled	
+syntax	bak-2	auto	whole-subject	compiled	compiled	
+syntax	bak-2	nocaps	plain	compiled	compiled	
+syntax	bak-2	nocaps	whole-subject	compiled	compiled	
+syntax	bak-2	vm	plain	compiled	compiled	
+syntax	bak-2	vm	whole-subject	compiled	compiled	
+syntax	bak-g-rel	auto	plain	compiled	compiled	
+syntax	bak-g-rel	auto	whole-subject	compiled	compiled	
+syntax	bak-g-rel	nocaps	plain	compiled	compiled	
+syntax	bak-g-rel	nocaps	whole-subject	compiled	compiled	
+syntax	bak-g-rel	vm	plain	compiled	compiled	
+syntax	bak-g-rel	vm	whole-subject	compiled	compiled	
+syntax	bak-k-named	auto	plain	compiled	compiled	
+syntax	bak-k-named	auto	whole-subject	compiled	compiled	
+syntax	bak-k-named	nocaps	plain	compiled	compiled	
+syntax	bak-k-named	nocaps	whole-subject	compiled	compiled	
+syntax	bak-k-named	vm	plain	compiled	compiled	
+syntax	bak-k-named	vm	whole-subject	compiled	compiled	
+syntax	bak-py	auto	plain	compiled	compiled	
+syntax	bak-py	auto	whole-subject	compiled	compiled	
+syntax	bak-py	nocaps	plain	compiled	compiled	
+syntax	bak-py	nocaps	whole-subject	compiled	compiled	
+syntax	bak-py	vm	plain	compiled	compiled	
+syntax	bak-py	vm	whole-subject	compiled	compiled	
+syntax	lka-pos	auto	plain	compiled	compiled	
+syntax	lka-pos	auto	whole-subject	compiled	compiled	
+syntax	lka-pos	nocaps	plain	compiled	compiled	
+syntax	lka-pos	nocaps	whole-subject	compiled	compiled	
+syntax	lka-pos	vm	plain	compiled	compiled	
+syntax	lka-pos	vm	whole-subject	compiled	compiled	
+syntax	lka-neg	auto	plain	compiled	compiled	
+syntax	lka-neg	auto	whole-subject	compiled	compiled	
+syntax	lka-neg	nocaps	plain	compiled	compiled	
+syntax	lka-neg	nocaps	whole-subject	compiled	compiled	
+syntax	lka-neg	vm	plain	compiled	compiled	
+syntax	lka-neg	vm	whole-subject	compiled	compiled	
+syntax	lkb-pos	auto	plain	compiled	compiled	
+syntax	lkb-pos	auto	whole-subject	compiled	compiled	
+syntax	lkb-pos	nocaps	plain	compiled	compiled	
+syntax	lkb-pos	nocaps	whole-subject	compiled	compiled	
+syntax	lkb-pos	vm	plain	compiled	compiled	
+syntax	lkb-pos	vm	whole-subject	compiled	compiled	
+syntax	lkb-neg	auto	plain	compiled	compiled	
+syntax	lkb-neg	auto	whole-subject	compiled	compiled	
+syntax	lkb-neg	nocaps	plain	compiled	compiled	
+syntax	lkb-neg	nocaps	whole-subject	compiled	compiled	
+syntax	lkb-neg	vm	plain	compiled	compiled	
+syntax	lkb-neg	vm	whole-subject	compiled	compiled	
+syntax	lka-nonatomic	auto	plain	compiled	compiled	
+syntax	lka-nonatomic	auto	whole-subject	compiled	compiled	
+syntax	lka-nonatomic	nocaps	plain	compiled	compiled	
+syntax	lka-nonatomic	nocaps	whole-subject	compiled	compiled	
+syntax	lka-nonatomic	vm	plain	compiled	compiled	
+syntax	lka-nonatomic	vm	whole-subject	compiled	compiled	
+syntax	lka-verb	auto	plain	compiled	compiled	
+syntax	lka-verb	auto	whole-subject	compiled	compiled	
+syntax	lka-verb	nocaps	plain	compiled	compiled	
+syntax	lka-verb	nocaps	whole-subject	compiled	compiled	
+syntax	lka-verb	vm	plain	compiled	compiled	
+syntax	lka-verb	vm	whole-subject	compiled	compiled	
+syntax	cnd-group	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 8)
+syntax	cnd-group	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 11)
+syntax	cnd-group	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 8)
+syntax	cnd-group	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 11)
+syntax	cnd-group	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 8)
+syntax	cnd-group	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 11)
+syntax	rec-r-uc	auto	plain	compiled	compiled	
+syntax	rec-r-uc	auto	whole-subject	compiled	compiled	
+syntax	rec-r-uc	nocaps	plain	compiled	compiled	
+syntax	rec-r-uc	nocaps	whole-subject	compiled	compiled	
+syntax	rec-r-uc	vm	plain	compiled	compiled	
+syntax	rec-r-uc	vm	whole-subject	compiled	compiled	
+syntax	rec-1	auto	plain	compiled	compiled	
+syntax	rec-1	auto	whole-subject	compiled	compiled	
+syntax	rec-1	nocaps	plain	compiled	compiled	
+syntax	rec-1	nocaps	whole-subject	compiled	compiled	
+syntax	rec-1	vm	plain	compiled	compiled	
+syntax	rec-1	vm	whole-subject	compiled	compiled	
+syntax	rec-name	auto	plain	compiled	compiled	
+syntax	rec-name	auto	whole-subject	compiled	compiled	
+syntax	rec-name	nocaps	plain	compiled	compiled	
+syntax	rec-name	nocaps	whole-subject	compiled	compiled	
+syntax	rec-name	vm	plain	compiled	compiled	
+syntax	rec-name	vm	whole-subject	compiled	compiled	
+syntax	rec-define	auto	plain	compiled	compiled	
+syntax	rec-define	auto	whole-subject	compiled	compiled	
+syntax	rec-define	nocaps	plain	compiled	compiled	
+syntax	rec-define	nocaps	whole-subject	compiled	compiled	
+syntax	rec-define	vm	plain	compiled	compiled	
+syntax	rec-define	vm	whole-subject	compiled	compiled	
+syntax	rec-g-angle	auto	plain	compiled	compiled	
+syntax	rec-g-angle	auto	whole-subject	compiled	compiled	
+syntax	rec-g-angle	nocaps	plain	compiled	compiled	
+syntax	rec-g-angle	nocaps	whole-subject	compiled	compiled	
+syntax	rec-g-angle	vm	plain	compiled	compiled	
+syntax	rec-g-angle	vm	whole-subject	compiled	compiled	
+syntax	rec-py	auto	plain	compiled	compiled	
+syntax	rec-py	auto	whole-subject	compiled	compiled	
+syntax	rec-py	nocaps	plain	compiled	compiled	
+syntax	rec-py	nocaps	whole-subject	compiled	compiled	
+syntax	rec-py	vm	plain	compiled	compiled	
+syntax	rec-py	vm	whole-subject	compiled	compiled	
+syntax	rec-fwd	auto	plain	compiled	compiled	
+syntax	rec-fwd	auto	whole-subject	compiled	compiled	
+syntax	rec-fwd	nocaps	plain	compiled	compiled	
+syntax	rec-fwd	nocaps	whole-subject	compiled	compiled	
+syntax	rec-fwd	vm	plain	compiled	compiled	
+syntax	rec-fwd	vm	whole-subject	compiled	compiled	
+syntax	rec-back	auto	plain	compiled	compiled	
+syntax	rec-back	auto	whole-subject	compiled	compiled	
+syntax	rec-back	nocaps	plain	compiled	compiled	
+syntax	rec-back	nocaps	whole-subject	compiled	compiled	
+syntax	rec-back	vm	plain	compiled	compiled	
+syntax	rec-back	vm	whole-subject	compiled	compiled	
+syntax	mod-i	auto	plain	compiled	compiled	
+syntax	mod-i	auto	whole-subject	compiled	compiled	
+syntax	mod-i	nocaps	plain	compiled	compiled	
+syntax	mod-i	nocaps	whole-subject	compiled	compiled	
+syntax	mod-i	vm	plain	compiled	compiled	
+syntax	mod-i	vm	whole-subject	compiled	compiled	
+syntax	mod-s	auto	plain	compiled	compiled	
+syntax	mod-s	auto	whole-subject	compiled	compiled	
+syntax	mod-s	nocaps	plain	compiled	compiled	
+syntax	mod-s	nocaps	whole-subject	compiled	compiled	
+syntax	mod-s	vm	plain	compiled	compiled	
+syntax	mod-s	vm	whole-subject	compiled	compiled	
+syntax	mod-x	auto	plain	compiled	compiled	
+syntax	mod-x	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: missing closing ) for group (pattern offset 0)
+syntax	mod-x	nocaps	plain	compiled	compiled	
+syntax	mod-x	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: missing closing ) for group (pattern offset 0)
+syntax	mod-x	vm	plain	compiled	compiled	
+syntax	mod-x	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: missing closing ) for group (pattern offset 0)
+syntax	mod-n	auto	plain	compiled	compiled	
+syntax	mod-n	auto	whole-subject	compiled	compiled	
+syntax	mod-n	nocaps	plain	compiled	compiled	
+syntax	mod-n	nocaps	whole-subject	compiled	compiled	
+syntax	mod-n	vm	plain	compiled	compiled	
+syntax	mod-n	vm	whole-subject	compiled	compiled	
+syntax	mod-u-uc	auto	plain	compiled	compiled	
+syntax	mod-u-uc	auto	whole-subject	compiled	compiled	
+syntax	mod-u-uc	nocaps	plain	compiled	compiled	
+syntax	mod-u-uc	nocaps	whole-subject	compiled	compiled	
+syntax	mod-u-uc	vm	plain	compiled	compiled	
+syntax	mod-u-uc	vm	whole-subject	compiled	compiled	
+syntax	mod-j-uc	auto	plain	compiled	compiled	
+syntax	mod-j-uc	auto	whole-subject	compiled	compiled	
+syntax	mod-j-uc	nocaps	plain	compiled	compiled	
+syntax	mod-j-uc	nocaps	whole-subject	compiled	compiled	
+syntax	mod-j-uc	vm	plain	compiled	compiled	
+syntax	mod-j-uc	vm	whole-subject	compiled	compiled	
+syntax	mod-a	auto	plain	compiled	compiled	
+syntax	mod-a	auto	whole-subject	compiled	compiled	
+syntax	mod-a	nocaps	plain	compiled	compiled	
+syntax	mod-a	nocaps	whole-subject	compiled	compiled	
+syntax	mod-a	vm	plain	compiled	compiled	
+syntax	mod-a	vm	whole-subject	compiled	compiled	
+syntax	mod-r	auto	plain	compiled	compiled	
+syntax	mod-r	auto	whole-subject	compiled	compiled	
+syntax	mod-r	nocaps	plain	compiled	compiled	
+syntax	mod-r	nocaps	whole-subject	compiled	compiled	
+syntax	mod-r	vm	plain	compiled	compiled	
+syntax	mod-r	vm	whole-subject	compiled	compiled	
+syntax	mod-reset	auto	plain	compiled	compiled	
+syntax	mod-reset	auto	whole-subject	compiled	compiled	
+syntax	mod-reset	nocaps	plain	compiled	compiled	
+syntax	mod-reset	nocaps	whole-subject	compiled	compiled	
+syntax	mod-reset	vm	plain	compiled	compiled	
+syntax	mod-reset	vm	whole-subject	compiled	compiled	
+syntax	mod-unset	auto	plain	compiled	compiled	
+syntax	mod-unset	auto	whole-subject	compiled	compiled	
+syntax	mod-unset	nocaps	plain	compiled	compiled	
+syntax	mod-unset	nocaps	whole-subject	compiled	compiled	
+syntax	mod-unset	vm	plain	compiled	compiled	
+syntax	mod-unset	vm	whole-subject	compiled	compiled	
+syntax	esc-tab	auto	plain	compiled	compiled	
+syntax	esc-tab	auto	whole-subject	compiled	compiled	
+syntax	esc-tab	nocaps	plain	compiled	compiled	
+syntax	esc-tab	nocaps	whole-subject	compiled	compiled	
+syntax	esc-tab	vm	plain	compiled	compiled	
+syntax	esc-tab	vm	whole-subject	compiled	compiled	
+syntax	esc-nl	auto	plain	compiled	compiled	
+syntax	esc-nl	auto	whole-subject	compiled	compiled	
+syntax	esc-nl	nocaps	plain	compiled	compiled	
+syntax	esc-nl	nocaps	whole-subject	compiled	compiled	
+syntax	esc-nl	vm	plain	compiled	compiled	
+syntax	esc-nl	vm	whole-subject	compiled	compiled	
+syntax	esc-cr	auto	plain	compiled	compiled	
+syntax	esc-cr	auto	whole-subject	compiled	compiled	
+syntax	esc-cr	nocaps	plain	compiled	compiled	
+syntax	esc-cr	nocaps	whole-subject	compiled	compiled	
+syntax	esc-cr	vm	plain	compiled	compiled	
+syntax	esc-cr	vm	whole-subject	compiled	compiled	
+syntax	esc-hex	auto	plain	compiled	compiled	
+syntax	esc-hex	auto	whole-subject	compiled	compiled	
+syntax	esc-hex	nocaps	plain	compiled	compiled	
+syntax	esc-hex	nocaps	whole-subject	compiled	compiled	
+syntax	esc-hex	vm	plain	compiled	compiled	
+syntax	esc-hex	vm	whole-subject	compiled	compiled	
+syntax	esc-hex-braced	auto	plain	compiled	compiled	
+syntax	esc-hex-braced	auto	whole-subject	compiled	compiled	
+syntax	esc-hex-braced	nocaps	plain	compiled	compiled	
+syntax	esc-hex-braced	nocaps	whole-subject	compiled	compiled	
+syntax	esc-hex-braced	vm	plain	compiled	compiled	
+syntax	esc-hex-braced	vm	whole-subject	compiled	compiled	
+syntax	esc-ctrl	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)
+syntax	esc-ctrl	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 7)
+syntax	esc-ctrl	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)
+syntax	esc-ctrl	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 7)
+syntax	esc-ctrl	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)
+syntax	esc-ctrl	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 7)
+syntax	esc-octal-o	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)
+syntax	esc-octal-o	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 3)
+syntax	esc-octal-o	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)
+syntax	esc-octal-o	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 3)
+syntax	esc-octal-o	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)
+syntax	esc-octal-o	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 3)
+syntax	esc-octal-0	auto	plain	compiled	compiled	
+syntax	esc-octal-0	auto	whole-subject	compiled	compiled	
+syntax	esc-octal-0	nocaps	plain	compiled	compiled	
+syntax	esc-octal-0	nocaps	whole-subject	compiled	compiled	
+syntax	esc-octal-0	vm	plain	compiled	compiled	
+syntax	esc-octal-0	vm	whole-subject	compiled	compiled	
+syntax	esc-quote	auto	plain	compiled	compiled	
+syntax	esc-quote	auto	whole-subject	compiled	compiled	
+syntax	esc-quote	nocaps	plain	compiled	compiled	
+syntax	esc-quote	nocaps	whole-subject	compiled	compiled	
+syntax	esc-quote	vm	plain	compiled	compiled	
+syntax	esc-quote	vm	whole-subject	compiled	compiled	
+syntax	msc-r-uc	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)
+syntax	msc-r-uc	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 7)
+syntax	msc-r-uc	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)
+syntax	msc-r-uc	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 7)
+syntax	msc-r-uc	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)
+syntax	msc-r-uc	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 7)
+syntax	msc-x-uc	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)
+syntax	msc-x-uc	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 4)
+syntax	msc-x-uc	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)
+syntax	msc-x-uc	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 4)
+syntax	msc-x-uc	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)
+syntax	msc-x-uc	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 4)
+syntax	msc-c-uc	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)
+syntax	msc-c-uc	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 4)
+syntax	msc-c-uc	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)
+syntax	msc-c-uc	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 4)
+syntax	msc-c-uc	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)
+syntax	msc-c-uc	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 4)
+syntax	unp-p-lc	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: \p requires module 'unicode-props' (pattern offset 5)
+syntax	unp-p-lc	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: \p requires module 'unicode-props' (pattern offset 8)
+syntax	unp-p-lc	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: \p requires module 'unicode-props' (pattern offset 5)
+syntax	unp-p-lc	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: \p requires module 'unicode-props' (pattern offset 8)
+syntax	unp-p-lc	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: \p requires module 'unicode-props' (pattern offset 5)
+syntax	unp-p-lc	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: \p requires module 'unicode-props' (pattern offset 8)
+syntax	unp-p-uc	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: \P requires module 'unicode-props' (pattern offset 5)
+syntax	unp-p-uc	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: \P requires module 'unicode-props' (pattern offset 8)
+syntax	unp-p-uc	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: \P requires module 'unicode-props' (pattern offset 5)
+syntax	unp-p-uc	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: \P requires module 'unicode-props' (pattern offset 8)
+syntax	unp-p-uc	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: \P requires module 'unicode-props' (pattern offset 5)
+syntax	unp-p-uc	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: \P requires module 'unicode-props' (pattern offset 8)
+syntax	vrb-accept	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*...) requires module 'verbs' (pattern offset 4)
+syntax	vrb-accept	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*...) requires module 'verbs' (pattern offset 7)
+syntax	vrb-accept	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*...) requires module 'verbs' (pattern offset 4)
+syntax	vrb-accept	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*...) requires module 'verbs' (pattern offset 7)
+syntax	vrb-accept	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*...) requires module 'verbs' (pattern offset 4)
+syntax	vrb-accept	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*...) requires module 'verbs' (pattern offset 7)
+syntax	vrb-skip	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*SKIP) is outside pcrec's scope and no module will implement it (see docs/pcre2_compliance.md) (pattern offset 2)
+syntax	vrb-skip	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*SKIP) is outside pcrec's scope and no module will implement it (see docs/pcre2_compliance.md) (pattern offset 5)
+syntax	vrb-skip	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*SKIP) is outside pcrec's scope and no module will implement it (see docs/pcre2_compliance.md) (pattern offset 2)
+syntax	vrb-skip	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*SKIP) is outside pcrec's scope and no module will implement it (see docs/pcre2_compliance.md) (pattern offset 5)
+syntax	vrb-skip	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*SKIP) is outside pcrec's scope and no module will implement it (see docs/pcre2_compliance.md) (pattern offset 2)
+syntax	vrb-skip	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: (*SKIP) is outside pcrec's scope and no module will implement it (see docs/pcre2_compliance.md) (pattern offset 5)
+syntax	xcl-minus	auto	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: module 'extended-classes' is enabled but (?[...) is not implemented yet (pattern offset 0)
+syntax	xcl-minus	auto	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: module 'extended-classes' is enabled but (?[...) is not implemented yet (pattern offset 3)
+syntax	xcl-minus	nocaps	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'extended-classes' is enabled but (?[...) is not implemented yet (pattern offset 0)
+syntax	xcl-minus	nocaps	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: module 'extended-classes' is enabled but (?[...) is not implemented yet (pattern offset 3)
+syntax	xcl-minus	vm	plain	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.01s): pcrec: module 'extended-classes' is enabled but (?[...) is not implemented yet (pattern offset 0)
+syntax	xcl-minus	vm	whole-subject	did-not-compile	did-not-compile	pcrec refused (emit-c, 0.00s): pcrec: module 'extended-classes' is enabled but (?[...) is not implemented yet (pattern offset 3)
+syntax	floor	auto	plain	compiled	compiled	
+syntax	floor	auto	whole-subject	compiled	compiled	
+syntax	floor	nocaps	plain	compiled	compiled	
+syntax	floor	nocaps	whole-subject	compiled	compiled	
+syntax	floor	vm	plain	compiled	compiled	
+syntax	floor	vm	whole-subject	compiled	compiled	
+
+# 1110 cell(s), 177 refused (pcrec emit-c), gcc refused 0, clang refused 0, wall 778.4s
+# PARITY: gcc and clang refusal sets are byte-identical (0 cell(s) each)
