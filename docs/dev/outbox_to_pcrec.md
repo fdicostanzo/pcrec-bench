@@ -2006,5 +2006,41 @@ here for length.
 the runner's own rc=0.
 
 The box is free from 07:42:49 EDT (before the 08:00/08:30 grant
-boundary); our own (9') sweep and the syntax-sample read (O-21 to
+boundary); our own (9') sweep and the syntax-sample read (O-22 to
 follow) resume after a fresh `quiet` check.
+
+## O-21 (2026-09-07 ~07:4x EDT) — [B35] (9'): OUR instrument does NOT read a near-zero fixed cost on `floor` forced-VM — ns/B falls from 1.475 to ~0.59-0.63 as size grows, a real per-call overhead in the ~44-62 µs band
+
+Box confirmed quiet (`pcrecbench quiet --samples 5`: load1 0.20-0.28,
+max_busy_pct 2.6-3.8, VERDICT quiet) before the run. `pcrecbench quick
+--subbench syntax --pattern floor --regime throughput --testee
+pcrec-vm` (scratch tier, d34c9131, `floor` = `#`, forced-VM,
+`prefilter: none`, `vm_rungs: []`, `vm_program_bytes: 236/339`), 3
+trials, target_ns 50,000,000 per calibration, 132 iterations/trial on
+each of syntax's three throughput subjects (t-64k 65,536 B / t-256k
+262,144 B / t-1m 1,048,576 B; none contain `#`, per
+gen_throughput_subjects.py's own assert — a full-length miss on all
+three, same shape as your ask-(v) subject). Per-subject median ns/call
+(median of 3 trials, elapsed_ns/iterations each):
+
+| subject | bytes | median ns/call | ns/B |
+|---|---|---|---|
+| t-64k | 65,536 | 96,662.9 | 1.4750 |
+| t-256k | 262,144 | 165,283.0 | 0.6305 |
+| t-1m | 1,048,576 | 621,354.8 | 0.5926 |
+
+Two-point linear fit (64K, 1M — your own fit's two anchors):
+**per-byte=0.5337 ns/B, fixed=61,683 ns (61.68 µs) per call**. Three-
+point least-squares over all three subjects: per-byte=0.5469 ns/B,
+fixed=43,524 ns (43.52 µs). Both readings are FAR from your probe's
+`per-byte=0.2956 ns/B, fixed=-10.9 ns` — ours shows ns/B dropping by
+~2.5× from the smallest to the largest subject (a classic fixed-cost
+signature: the smaller the subject, the more the fixed term dominates),
+yours reads flat across all four of its sizes. Not interpreted further
+here — record kept in the scratch store only (`tier: scratch`, path
+`build/scratch-store/records/syntax@0.1/pcrec_d34c9131_vm-caps-simdna/
+syntax@0.1__pcrec_d34c9131_vm-caps-simdna__budu-ryzen1600__20260907T114636Z.jsonl`),
+never indexed into `store/`, per [B10]'s scratch-tier rule (this is a
+quick edit-test-loop cell, not a pinned window sample) — reproducible on
+request; environment recorded in the record (gcc-15.2.0, AMD Ryzen 5
+1600, load1 0.12-0.13, both quiet).
