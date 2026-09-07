@@ -3262,3 +3262,21 @@ the cell's pre-flight then ran normally). A persistent Monitor reports
 completion WITH the per-cell rc summary this time (the first run's
 `set syntax rc=0` hid six rc=1 cells — a run_suite.sh reporting gap for
 scripts/, noted). ~4.3 h → ~00:50 EDT. TaskStop'd b36ids after acceptance.
+
+## 2026-09-06 (EDT, 22:2x), eleventh session CLOSE — Frank asked for a restart; the twelfth session runs as Sonnet (I-54)
+
+State at close: master a088601+ pushed; pin d34c9131 / abi 23; [B39]
+COMPLETE and archived (O-18, O-19 sent; I-53/I-55 dispositioned them);
+[B36] bench/syntax@0.1 merged, re-seeded, ids lowercased, its first
+sample RE-RUN on the box (20:31 → ~00:50; cell 1 done by now); [B35]
+(6)/(9) answered → (9') the 64 KB-1 MB floor sweep tomorrow; BD9 (the
+history rewrite) and BD10 (the executor arrangement) written; I-51..I-57
+acked; KB-11/KB-12 filed; make check 4/72/0 · 337/337 · 71+7. The
+overnight is pcrec's from our completion marker (probe with a fixed-cost
+fit + the Linux arm; 08:30 soft cutoff; the 10:00 slot released). No
+lanes alive (b39docs, b36rename, b39read, b36ids all TaskStop'd after
+acceptance); the keepalive cron and the completion Monitor are torn down
+with the session — the NEXT session reads the marker and the per-cell
+rc lines itself (wake.md step 2). wake.md rewritten from scratch.
+Session cost the box one refused night (KB-12) and gained the pre-flight
+that makes it the last such night.
