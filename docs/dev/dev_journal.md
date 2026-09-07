@@ -3370,5 +3370,30 @@ of the twelve questions.
 Nothing heavy is running; the box is free. Next: await Frank's ranking
 of Q1-Q12 (or the peer session's read of O-20/O-21/O-22), any executor
 requests, and [B35]'s remaining follow-ups ((2)/(3)/(4) etc.).
-Monitor on the runner pid exiting or the 08:30 boundary, whichever
-first, and stood down again pending it.
+
+## 2026-09-07 (EDT, ~09:5x), twelfth session CLOSE — Frank ordered next session's work queue; standing rule adopted (idle → close out unprompted)
+
+Asked "is there any unblocked work" and surveyed: a scope check of
+whether KB-13 (silent find-all give-up) or KB-14 (wrong `\K`/lookbehind
+match start) explain any of the 245 `wrong-span-or-captures` / 20
+`did-not-match-as-expected` / 360 `gave-up` match records already in
+`store/` across all sub-benches, plus four chartered-but-not-started
+plan rows ([B33] the cc axis clang-compile-only gate, [B38] the `.rxt`
+exporter with pcrec's I-43 rules already final, [B13] the interpreter,
+[B7] roster expansion) and KB-11's reporter-performance fix (queued,
+no design yet). Frank ordered them as proposed — scope check first,
+then the shovel-ready items in the listed order — and ruled a STANDING
+rule: when there is no unblocked work left and the session would
+otherwise idle, run the session-end routine unprompted rather than
+waiting to be told to close (saved as memory
+`feedback-idle-do-session-end-routine`). Baked the order into wake.md's
+WORK QUEUE below.
+
+State at close: master `27ac58b`+ pushed, tree clean. Pin d34c9131 /
+abi 23 unchanged. [B36] STATE stays `started` (the census is measured
+and read; Frank's ranking of the twelve mechanism questions is still
+owed, not blocking). KB-13/14/15 OPEN (our own driver bugs — the
+scope check below is their natural follow-up, not a fix). No lanes
+alive, no crons, no live Monitors, no worktrees. Nothing of ours is on
+the box; the box is free. wake.md rewritten from scratch with the
+ordered queue.

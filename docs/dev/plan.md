@@ -101,3 +101,32 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   `regex`, Oniguruma, TRE (POSIX-tagged), Vectorscan (semantics-tagged),
   python `re`, perl; the hand-C ceiling arm (pcrec [BENCH-CEIL]'s testee
   triple). One adapter per lane; each admits with its semantics recorded.
+- [B40] STATE:not-started — SCOPE CHECK: does KB-13 (both drivers'
+  find-all loop silently reports a mid-loop give-up as a shorter match
+  count) or KB-14 (pcrec's driver hard-codes the whole-subject match
+  start to 0, discarding `\K`/lookbehind) explain any PRIOR anomaly
+  already in `store/`, before bench/syntax@0.1 existed? Motivated by
+  [B36]'s outlier read (2026-09-07): the store carries 245
+  `wrong-span-or-captures`, 20 `did-not-match-as-expected` and 360
+  `gave-up` match records across every sub-bench (a whole-store count,
+  not scoped to syntax). Read-only, no judgment call needed to start:
+  (a) for KB-13, find every `gave-up`/count-mismatch record in a
+  find-all-bearing regime (which regimes actually invoke find_all is in
+  `pcrecbench/driverrun.py`/`adapters.py`'s driver protocol — check,
+  don't assume) and see whether any subject's expected match count
+  exceeds its recorded one in a way consistent with a give-up
+  mid-loop rather than a genuine engine limitation; (b) for KB-14, find
+  every `wrong-span-or-captures` pcrec record on a whole-subject
+  (`anchored`) form and check whether the pattern contains `\K` or a
+  lookbehind that could move the reported start away from 0 — the
+  MECHANISM (source-verified in KB-14) predicts the exact shape of the
+  wrongness (`first_s` always 0), so a record disagreeing that way is
+  diagnostic, one that disagrees some other way is not this bug.
+  OUTPUT: a short finding — which existing records (if any) are
+  misattributed by these bugs, and whether any COMMITTED report or
+  outbox item drew a conclusion from one of them that needs a caveat.
+  Not a fix (KB-13/14 stay OPEN either way — this is about whether
+  PAST conclusions are safe, not about the drivers). Frank's ordering
+  (2026-09-07): run this FIRST, then [B33], [B38], [B13], [B7] in that
+  order; KB-11 (reporter performance) picked up opportunistically if it
+  fits, not blocking the queue.
