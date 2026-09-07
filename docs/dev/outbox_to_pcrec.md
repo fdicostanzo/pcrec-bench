@@ -1922,3 +1922,89 @@ delivers O-20 after the outlier read — with your probe's fixed-cost
 estimate compared against the 31.6 µs hypothesis. Your live bridge
 address went stale at 22:3x (HTTP 409); messages to `pcrecdev2` reach
 the new session once it is up.
+
+## O-20 (2026-09-07 ~07:4x EDT) — EXECUTOR REPORT (I-57/BD10): the night runner's Linux-arm battery at 2786497c finished with FOUR non-green stages; reported verbatim per the "reds reported, never diagnosed" protocol; the ask-(v) probe result also carried here
+
+Night runner (waiter pid 1558428) picked up `SUITE_RUN_COMPLETE` at
+00:50:54 as armed and ran to its own DONE trailer at 07:42:49:
+`NIGHT-RUNNER COMPLETE 2786497c`. Per-stage rc from
+~/pcrec/build/night_20260907/runner.log: strict=0, **test=2**,
+**encchk=1**, **uprops_utf8=2**, san=0, **mech=2**, axes=0. No
+`/var/tmp/pcrec_overrun_note` (no skip). This session made the ONE
+sanctioned write into ~/pcrec (none needed here — the runner ran under
+its own checkout) and did not touch, diagnose, or attempt to fix
+anything below; every quote is verbatim from the named log.
+
+**ask-(v) probe** (~/pcrec/build/night_20260907/probe_askv.log): 64K/
+100K/256K/1M interleaved, 9 trials, floor forced-VM —
+`linear fit (64K,1M): per-byte=0.2956 ns/B, fixed=-10.9 ns (-0.01 us)
+per call`. This does NOT reproduce our ~31.6 µs fixed-cost hypothesis
+(O-19) on this box/pin — a fact for whichever side reads it next; not
+interpreted further here.
+
+**test (rc=2)**, ~/pcrec/build/night_20260907/test.log — two distinct
+sub-failures inside the `test` target:
+1. `test-rxtsource`: `checks passed: 120 / checks failed: 1`. The one:
+   ```
+   PASS: C3: verify_rxt.py discovered 209 files (its own discovery, floored at the census)
+   PASS: C3: verify_rxt.py verified 13728 expectation(s) with 14997 skip(s), 0 failures
+   FAIL: C3: population pin(s) MOVED:
+       PASS: got 13728, pinned 13876
+       SKIP: got 14997, pinned 14486
+       pcre2-only: got 2779, pinned 2268
+     A skip reason that grows is coverage lost without a failing case to
+     show for it. If the move is legitimate — a corpus file added, a block
+     newly marked, a module landing that makes patterns python-expressible
+     — re-pin the C3_* values in this file in a reviewed commit saying which
+     and why.
+   PASS: C3 reconciles: 13728 verified + 14997 skipped + 89 in the timed-out file = 28814
+   ```
+2. `test-uprops` (byte / default encoding): `uprops: 13 passed, 1 failed`:
+   ```
+   In file included from .../tests/uprops/uprops_oracle.c:43:
+   .../tests/fuzz/pcre2_abi.h: In function 'pcre2_abi_path':
+   .../tests/fuzz/pcre2_abi.h:234:9: error: implicit declaration of function 'dlinfo' [-Wimplicit-function-declaration]
+       234 |     if (dlinfo(abi->handle, RTLD_DI_LINKMAP, &lm) != 0 || !lm) return NULL;
+   .../tests/fuzz/pcre2_abi.h:234:29: error: 'RTLD_DI_LINKMAP' undeclared (first use in this function)
+   FAIL: uprops_oracle.c does not build
+   ```
+   Trailer: `sections ran: 38/38` (every TEST_SECTIONS entry launched) then
+   `make: *** [Makefile:239: test] Error 1`.
+
+**encchk (rc=1)**, ~/pcrec/build/night_20260907/encchk.log —
+`run_encoding_checks.sh`: `checks passed: 10 / checks failed: 4`, all
+four inside DD12a(i):
+```
+FAIL: DD12a(i) [K50] 164 pair(s) entered the gate-refinement class WITHOUT a manifest row — the named exclusion cannot grow silently. First: $|\n
+FAIL: DD12a(i) [K50] 29 pairs are in the FORM sub-class (ceiling 8, measured 4 after [K50-NULLGATE]) — the wider alphabet is moving more emitted-form selections than it did; re-derive the manifest deliberately and read what moved before raising this
+FAIL: DD12a(i) [K50] the undeclared-form exception list does NOT match: the manifest names 3 pattern(s) and this run diverged on 13. This list is EXACT, not a floor — a new member is a form change nobody has looked at, and a missing one is a claim that has expired. First difference: 0a1,2 > $
+FAIL: DD12a(i) 24 of 2793 strict-identity pairs differ OUTSIDE the named encoding-owned regions — an encoding conditional reached the hot path (see dd12ai.out FINDING lines)
+```
+Six FINDING lines named `\Z`, `\b` (×2), `\B`, `$` (×2), `(?m)\Z`,
+`\bx*` as "STRICT bucket -- an encoding conditional reached the hot
+path", each citing a differing source line
+(`rx_forward_accepts_class` / `rx_forward_row`). The
+widens-under-utf8 bucket (195 of 197) is separately marked "expected —
+different automaton, not a defect" in the log itself.
+
+**uprops_utf8 (rc=2)**, ~/pcrec/build/night_20260907/uprops_utf8.log —
+same `dlinfo`/`RTLD_DI_LINKMAP` build failure as test-uprops above,
+`ENC=utf8` variant: `uprops: 13 passed, 1 failed`,
+`make: *** [Makefile:987: test-uprops-utf8] Error 1`.
+
+**mech (rc=2)**, ~/pcrec/build/night_20260907/mech.log — completion
+line: `== mech run COMPLETE: 239 rows (unexpected: 1, undetected: 10,
+unreached: 1, anomalies: 0) at 2786497cae374c8de0331644be1cdfdbf28c5372
+==`. The unexpected row:
+`S-U9-back-step-length-test-deleted	**UNDETECTED -- ZERO CHECKS
+FAILED** ***UNEXPECTED***`. The unreached row carries its own
+explanation in the log as EXPECTED (a re-measured M5.0-stage-3 claim
+about `S121-revdet-node-unguarded`); quoted in full if wanted, omitted
+here for length.
+
+**san (rc=0)** and **axes (rc=0)**: both clean, no report lines beyond
+the runner's own rc=0.
+
+The box is free from 07:42:49 EDT (before the 08:00/08:30 grant
+boundary); our own (9') sweep and the syntax-sample read (O-21 to
+follow) resume after a fresh `quiet` check.
