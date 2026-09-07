@@ -1,7 +1,7 @@
 id	len	sha256	description	periodic
 f-cat	3	77af778b51abd4a3c51c5ddd97204a9c3ae614ebccb75a606c3b6865aed6744e	field/hit `cat`: the plain word every class, group, alternation and modifier body is built on	no
-f-CAT	3	15b89a569474240a616f9a94dd045b2711d445dde955b62bf4b8f2a2afaf0f6b	field/edge `CAT`: `(?i)cat`'s hit; `(?i)c(?^)at`'s and `(?i)c(?-i)at`'s designed MISS (the reset re-cases `at`)	no
-f-Cat	3	48735c4fae42d1501164976afec76730b9e5fe467f680bdd8daff4bb77674045	field/edge `Cat`: the option-reset shapes' hit -- caseless `c`, exact `at`	no
+f-cat-uc	3	15b89a569474240a616f9a94dd045b2711d445dde955b62bf4b8f2a2afaf0f6b	field/edge `CAT`: `(?i)cat`'s hit; `(?i)c(?^)at`'s and `(?i)c(?-i)at`'s designed MISS (the reset re-cases `at`)	no
+f-cat-mixed	3	48735c4fae42d1501164976afec76730b9e5fe467f680bdd8daff4bb77674045	field/edge `Cat`: the option-reset shapes' hit -- caseless `c`, exact `at`	no
 f-concat	11	0afe756cd1e815034cfaf42660ea13c6eec402a3b9c4359838ed90dfb89ad2c3	field/edge `concatenate`: `\Bcat\B`'s hit and `\bcat\b`'s designed miss (the word is inside a longer one)	no
 f-abc	3	ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad	field/edge `abc`: `(?>a|ab)c` FAILS on it (the atomic group commits to `a`), `(?:ab)+` takes its first two bytes	no
 f-ac	2	f45de51cdef30991551e41e882dd7b5404799648a0a00753f44fc966e6153fc1	field/hit `ac`: `(?>a|ab)c`'s whole-string hit -- the atomic alternation's first branch, then `c`	no

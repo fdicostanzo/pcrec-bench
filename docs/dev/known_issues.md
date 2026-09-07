@@ -427,3 +427,56 @@ instead of per record, if the validator is re-created per call in
 "wrong answers excluded" guarantee rides on validation. Measure before
 and after with the same 154-record store; the acceptance number is the
 loglines query above under 60 s.
+
+## KB-12 (2026-09-06) — bench/syntax@0.1's first-sample window ran six cells and wrote ZERO records: pattern/subject ids were never checked against the record schema before a measurement ran
+
+OBSERVED (plan [B36]'s first-sample window, 2026-09-06): all six cells
+(bench/syntax@0.1 × its six pinned testees) ran to completion -- 259
+minutes wall -- and every one was refused at `store.write()`'s
+validator, after the fact: the record schema's id rule
+(`schema/record.schema.json`'s `$defs/slug`,
+`^[a-z0-9]([a-z0-9-]*[a-z0-9])?$`) forbids uppercase, and the set had
+ten uppercase pattern ids (`anc-A anc-G asr-K cls-N mod-J mod-U msc-C
+msc-R msc-X rec-R`) and two uppercase subject ids (`f-CAT f-Cat`) that
+nobody had checked before the run. The first refused cell's validator
+output alone ran 31,747 lines (jsonschema's own per-record error
+detail, repeated across the whole record). Nothing else in the harness
+checks a sidecar's or a manifest's ids before a cell runs: `make
+check`'s one-cell validator smoke (`check_floor_pattern`'s scratch-tier
+`quick` cell) exercised bench/email's ids only, so it could not have
+caught this on any OTHER set either.
+
+WHY IT MATTERS: a set's ids are typed once at authoring time and never
+touched again until a record tries to carry them -- by which point
+every trial of every pattern × subject × regime has already run. A
+sub-bench with a bad id is not a slow failure, it is a WASTED one: the
+harness has no way to tell the author before the box time is spent.
+
+**FIXED 2026-09-06 (lane b36ids, plan [B36]).** Two changes, delivered
+together: (1) bench/syntax@0.1's twelve ids RENAMED to lowercase,
+case-unambiguous forms following the set's own `-uc`/`-lc` convention
+(bench/syntax/CLAUDE.md item 4) -- `anc-A`→`anc-a-uc`,
+`anc-G`→`anc-g-uc`, `asr-K`→`asr-k-uc`, `cls-N`→`cls-n-uc`,
+`mod-J`→`mod-j-uc`, `mod-U`→`mod-u-uc`, `msc-C`→`msc-c-uc`,
+`msc-R`→`msc-r-uc`, `msc-X`→`msc-x-uc`, `rec-R`→`rec-r-uc`,
+`f-CAT`→`f-cat-uc`, `f-Cat`→`f-cat-mixed`; pattern BYTES, subject BYTES
+and every expectation answer are UNCHANGED (ids only, git-tracked as
+pure renames for the `.rx` files), so NO version bump -- no record ever
+carried the old ids, the refused ones never entered the store; (2) THE
+PRE-FLIGHT, in the harness: `pcrecbench.subbench.Subbench.__init__` now
+checks every pattern and subject id against the schema's `$defs/slug`
+rule (`check_id`, `_slug_pattern` -- the regex is READ from
+`schema/record.schema.json`, never retyped) and raises `SubbenchError`
+naming the id, the set and the rule, so `run`/`quick` refuse in under a
+second. `tools/selfcheck.py` gained `check_id_preflight` (a GENERIC gate
+over every `bench/*/`, plus the negative control both directions for
+both id kinds, on a synthetic never-committed sidecar built fresh under
+`build/`) and `check_floor_pattern`'s one-cell validator smoke was
+WIDENED off bench/email alone to enumerate every set (one `quick` cell
+per set's own floor pattern) -- closing the second gap the incident
+found (KB-11's neighbour: `make check`'s validator smoke had never
+covered any set but the first one built). `make check-harness`: 324 → 337 (9 new `check_id_preflight` lines + 4
+from widening `check_floor_pattern`'s one-cell validator smoke from a
+single bench/email line into one line per set). See
+docs/dev/lanes/b36ids_report.md for the full validation and the actual
+printed total.

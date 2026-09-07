@@ -63,9 +63,9 @@ MAX_LINE = 256
 FIELDS = (
     ("f-cat", "field/hit `cat`: the plain word every class, group, "
      "alternation and modifier body is built on", b"cat"),
-    ("f-CAT", "field/edge `CAT`: `(?i)cat`'s hit; `(?i)c(?^)at`'s and "
+    ("f-cat-uc", "field/edge `CAT`: `(?i)cat`'s hit; `(?i)c(?^)at`'s and "
      "`(?i)c(?-i)at`'s designed MISS (the reset re-cases `at`)", b"CAT"),
-    ("f-Cat", "field/edge `Cat`: the option-reset shapes' hit -- caseless "
+    ("f-cat-mixed", "field/edge `Cat`: the option-reset shapes' hit -- caseless "
      "`c`, exact `at`", b"Cat"),
     ("f-concat", "field/edge `concatenate`: `\\Bcat\\B`'s hit and "
      "`\\bcat\\b`'s designed miss (the word is inside a longer one)",

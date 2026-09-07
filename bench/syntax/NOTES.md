@@ -227,10 +227,10 @@ under the FIRST rule it trips:
   answers are identical on every subject and regime, VERIFIED over
   `expectations.tsv` on 2026-09-05 (all 8,265 rows; re-verified after the four fold-pair witnesses were added): the four "four
   digits" calls `rec-g-angle`/`rec-py`/`rec-fwd`/`rec-back`; the three
-  balanced-paren recursions `rec-R`/`rec-1`/`rec-name`;
-  `bak-1`/`bak-g-rel`/`bak-py`/`mod-J`; `lka-pos`/`lka-verb`;
-  `mod-reset`/`mod-unset`; `mod-i`/`mod-r`; `qnt-lazy`/`mod-U`;
-  `qnt-plus`/`grp-atomic-rep`; `anc-caret`/`anc-A`/`anc-G`;
+  balanced-paren recursions `rec-r-uc`/`rec-1`/`rec-name`;
+  `bak-1`/`bak-g-rel`/`bak-py`/`mod-j-uc`; `lka-pos`/`lka-verb`;
+  `mod-reset`/`mod-unset`; `mod-i`/`mod-r`; `qnt-lazy`/`mod-u-uc`;
+  `qnt-plus`/`grp-atomic-rep`; `anc-caret`/`anc-a-uc`/`anc-g-uc`;
   `anc-dollar`/`anc-z-uc`; `mod-a`/`cls-w`; and the `cat` group
   `lit-cat`/`grp-cap`/`grp-named`/`grp-named-quote`/`grp-comment`/
   `grp-callout`/`mod-x`/`mod-n`/`esc-hex`/`esc-octal-o`/`cls-dot` — any
@@ -275,7 +275,7 @@ question with its cell id, its twin's cell and its stamps.
   On every pcrec testee at the pin (the seed's `built` column is 334fd10e's, unmoved by the 9a1583ba re-seed; first sample at d34c9131), exactly these fifteen patterns
   are `did-not-compile`, each naming a module: `grp-comment` (comments),
   `grp-branch-reset` (branch-reset), `grp-callout` (callouts),
-  `cnd-group` (conditionals), `msc-R` `msc-X` `msc-C` `esc-ctrl`
+  `cnd-group` (conditionals), `msc-r-uc` `msc-x-uc` `msc-c-uc` `esc-ctrl`
   `esc-octal-o` (misc), `unp-p-lc` `unp-p-uc` (unicode-props), `vrb-accept`
   `vrb-skip` (verbs), `xcl-minus` (extended-classes), and
   `esc-hex-braced` (the braced `\x{...}` spelling requires
@@ -286,7 +286,7 @@ question with its cell id, its twin's cell and its stamps.
   a re-seed request.
 - **P2 (the whole-subject wrapper changes two answers).** The harness
   contract builds a testee's whole-subject form as `(?:<pattern>)\z`.
-  Under that wrapper `(?R)` recurses into the WRAPPER, so `rec-R`'s
+  Under that wrapper `(?R)` recurses into the WRAPPER, so `rec-r-uc`'s
   match-regime answer on `(a(b)c)` differs from the oracle's
   (`(?:\((?:[^()]|(?R))*\))\z` cannot recurse past the `\z`); `rec-1`
   and `rec-name`, whose call targets are groups, are the controls and
@@ -324,7 +324,7 @@ question with its cell id, its twin's cell and its stamps.
   testee: under ×1.5 in the short regimes; on the runs, a caseless
   first-byte scan against an exact one — the JIT band is not predicted
   to trip.
-- **P9 (`\K`).** `asr-K`'s reported span begins at offset 4 on
+- **P9 (`\K`).** `asr-k-uc`'s reported span begins at offset 4 on
   `key=value` on every testee (R0 if not); its cost is `key`'s literal
   scan.
 - **P10 (the atomic alternation).** `(?>a|ab)c` is `nomatch` on `abc`
@@ -334,7 +334,7 @@ question with its cell id, its twin's cell and its stamps.
   cost the same (P3) and sit within ×3 of the backreference cells on
   `pcre2-*`: both start at one byte (`(` / a word byte) and do bounded
   work per start.
-- **P12 (`(?J)`).** `mod-J` agrees with `bak-1` on every subject and
+- **P12 (`(?J)`).** `mod-j-uc` agrees with `bak-1` on every subject and
   regime (a duplicate-name backreference resolves to the group that
   set), and costs within ×1.5 of it on `pcre2-*`.
 - **P13 (compile-time flatness).** On every compiled testee, no

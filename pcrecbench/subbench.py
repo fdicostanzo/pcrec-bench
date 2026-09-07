@@ -14,7 +14,9 @@ once, and `REGIME_TO_ENUM` is the only place either name is translated.
 """
 
 import hashlib
+import json
 import os
+import re
 import tomllib
 
 REGIME_TO_ENUM = {
@@ -40,6 +42,52 @@ GENERATED_DIRS = ("subjects", "throughput", "__pycache__")
 
 class SubbenchError(Exception):
     pass
+
+
+# THE ID RULE, READ FROM THE SCHEMA -- NEVER RETYPED (KB-12). The record
+# schema's `pattern_id`/`subject_id` properties both `$ref` `#/$defs/slug`
+# (schema/record.schema.json): `^[a-z0-9]([a-z0-9-]*[a-z0-9])?$`, lowercase
+# only. A set with an uppercase id (bench/syntax@0.1's incident: ten pattern
+# ids and two subject ids, [B36]) is refused by `schema/validate.py` at
+# WRITE time -- after every trial of every cell has already run. This module
+# checks every id the sidecar and manifests declare BEFORE any of that, so
+# `pcrecbench run`/`quick` refuse in under a second. The regex is fetched
+# from the schema file itself so the rule can never drift from what
+# `validate.py` actually enforces; an unreadable schema file is a loud
+# failure, not a silent skip.
+_SCHEMA_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "schema", "record.schema.json")
+_SLUG_DEF = "$defs/slug"
+_slug_re = None
+
+
+def _slug_pattern():
+    global _slug_re
+    if _slug_re is None:
+        try:
+            with open(_SCHEMA_PATH, "r", encoding="utf-8") as f:
+                schema = json.load(f)
+            pattern = schema["$defs"]["slug"]["pattern"]
+        except Exception as e:
+            raise SubbenchError(
+                "cannot read the record schema's id rule from %s (%s): %s"
+                % (_SCHEMA_PATH, _SLUG_DEF, e))
+        _slug_re = re.compile(pattern)
+    return _slug_re
+
+
+def check_id(kind, value, set_id):
+    """Refuse `value` (a pattern or subject id) unless it matches the record
+    schema's slug rule. Raises SubbenchError naming the id, the set and the
+    rule -- never silently accepts and never retypes the regex."""
+    rx = _slug_pattern()
+    if not rx.fullmatch(value):
+        raise SubbenchError(
+            "id %r violates the record schema's id rule %s "
+            "(schema/record.schema.json %s): lowercase letters, digits, "
+            "single hyphens (set %s, %s id)"
+            % (value, rx.pattern, _SLUG_DEF, set_id, kind))
 
 
 class Pattern:
@@ -110,6 +158,8 @@ class Subbench:
         self.patterns = [Pattern(p) for p in self.cfg.get("patterns", [])]
         if not self.patterns:
             raise SubbenchError("%s declares no patterns" % sidecar)
+        for p in self.patterns:
+            check_id("pattern", p.name, self.id)
         self.testee_notes = self.cfg.get("testees", {})
 
         subj = self.cfg.get("subjects", {})
@@ -119,6 +169,8 @@ class Subbench:
         tman = subj.get("throughput_manifest")
         self._throughput = (self._load_manifest(tman, "throughput", "throughput")
                             if tman else [])
+        for s in self._short + self._throughput:
+            check_id("subject", s.subject_id, self.id)
 
         exp = self.cfg.get("expectations", {})
         self.expectation_file = exp.get("file", "expectations.tsv")

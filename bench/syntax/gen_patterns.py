@@ -88,13 +88,13 @@ PATTERNS = (
      "start of subject (no (?m)): the `bare` `^` row"),
     ("anc-dollar", "anchors", ("$",), r"done$",
      "end of subject OR before a final newline: `item done\\n` is the edge"),
-    ("anc-A", "anchors", (r"\A",), r"\Aitem",
+    ("anc-a-uc", "anchors", (r"\A",), r"\Aitem",
      "start of subject, the escape spelling"),
     ("anc-z-uc", "anchors", (r"\Z",), r"done\Z",
      "end of subject or before a final newline, like `$` outside (?m)"),
     ("anc-z-lc", "anchors", (r"\z",), r"done\z",
      "end of subject ONLY: rejects `item done\\n` where `\\Z` and `$` take it"),
-    ("anc-G", "anchors", (r"\G",), r"\Gitem",
+    ("anc-g-uc", "anchors", (r"\G",), r"\Gitem",
      "the search start: find-all counts consecutive hits from the cursor"),
     ("anc-m-caret", "anchors", ("(?m)", "^"), r"(?m)^item",
      "`^` after an internal newline under multiline"),
@@ -106,7 +106,7 @@ PATTERNS = (
      "word boundary both sides: `concatenate` is the designed miss"),
     ("asr-nwb", "assertions", (r"\B",), r"\Bcat\B",
      "NOT a word boundary both sides: `cat` alone is the designed miss"),
-    ("asr-K", "assertions", (r"\K",), r"key=\K\w+",
+    ("asr-k-uc", "assertions", (r"\K",), r"key=\K\w+",
      "reset the reported start: the span begins after `key=`"),
 
     # ---- classes: one-character sets
@@ -119,7 +119,7 @@ PATTERNS = (
      "horizontal whitespace (space, tab) around `=`"),
     ("cls-v", "classes", (r"\v",), r"item\v+done",
      "vertical whitespace: `\\n` one byte, `\\r\\n` two"),
-    ("cls-N", "classes", (r"\N",), r"it\Nm",
+    ("cls-n-uc", "classes", (r"\N",), r"it\Nm",
      "any byte but newline, unaffected by (?s): `item` and `itxm`, never "
      "across a line end"),
     ("cls-posix", "classes", ("[[:alpha:]]",), r"[[:alpha:]]+",
@@ -234,14 +234,14 @@ PATTERNS = (
      "a group-number condition: `<item>` or `item`, never `<item`"),
 
     # ---- recursion and subroutine calls
-    ("rec-R", "recursion", ("(?R)",), r"\((?:[^()]|(?R))*\)",
+    ("rec-r-uc", "recursion", ("(?R)",), r"\((?:[^()]|(?R))*\)",
      "whole-pattern recursion: balanced parentheses"),
     ("rec-1", "recursion", ("(?1)",), r"(\((?:[^()]|(?1))*\))",
-     "recursion into group 1: the same language as `rec-R`, the call "
+     "recursion into group 1: the same language as `rec-r-uc`, the call "
      "target being the group and not the root"),
     ("rec-name", "recursion", ("(?&name)", "(?<name>a)"),
      r"(?<p>\((?:[^()]|(?&p))*\))",
-     "recursion into a named group: the same language as `rec-R`"),
+     "recursion into a named group: the same language as `rec-r-uc`"),
     ("rec-define", "recursion", ("(?(DEFINE)(?<w>a))", "(?&name)"),
      r"(?(DEFINE)(?<d>\d{2}))(?&d):(?&d)",
      "a DEFINE group called twice: `12:34`"),
@@ -263,9 +263,9 @@ PATTERNS = (
      "extended: the language is `cat`"),
     ("mod-n", "modifiers", ("(?n)",), r"(?n)(ca)t",
      "no auto-capture: the plain group stops capturing"),
-    ("mod-U", "modifiers", ("(?U)",), r'(?U)".+"',
+    ("mod-u-uc", "modifiers", ("(?U)",), r'(?U)".+"',
      "ungreedy: the same language as `qnt-lazy` by inverting `+`"),
-    ("mod-J", "modifiers", ("(?J)", "(?<name>a)", r"\k<name>"),
+    ("mod-j-uc", "modifiers", ("(?J)", "(?<name>a)", r"\k<name>"),
      r"(?J)(?:(?<w>the)|(?<w>\w+)) \k<w>",
      "duplicate names allowed: the backreference resolves to whichever "
      "`w` set"),
@@ -284,7 +284,7 @@ PATTERNS = (
     ("esc-tab", "escapes", (r"\t",), r"key\tvalue", "the tab escape"),
     ("esc-nl", "escapes", (r"\n",), r"item\ndone", "the newline escape"),
     ("esc-cr", "escapes", (r"\r", r"\n"), r"item\r\ndone",
-     "carriage return + newline as two escapes: `msc-R` is the one-token "
+     "carriage return + newline as two escapes: `msc-r-uc` is the one-token "
      "spelling of the same pair"),
     ("esc-hex", "escapes", (r"\x41",), r"\x63at",
      "a bare two-digit hex escape: the language is `cat`"),
@@ -301,11 +301,11 @@ PATTERNS = (
      "literal quoting: the parentheses are bytes"),
 
     # ---- misc escapes
-    ("msc-R", "misc", (r"\R",), r"item\Rdone",
+    ("msc-r-uc", "misc", (r"\R",), r"item\Rdone",
      "any newline sequence: `\\n` and `\\r\\n` both, as one token"),
-    ("msc-X", "misc", (r"\X",), r"c\Xt",
+    ("msc-x-uc", "misc", (r"\X",), r"c\Xt",
      "an extended grapheme cluster: one byte in byte mode"),
-    ("msc-C", "misc", (r"\C",), r"c\Ct", "one data unit"),
+    ("msc-c-uc", "misc", (r"\C",), r"c\Ct", "one data unit"),
 
     # ---- unicode properties, in byte mode
     ("unp-p-lc", "uniprop", (r"\p{L}",), r"\p{L}+",

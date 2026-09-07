@@ -2,7 +2,7 @@
 
 | file | role |
 |---|---|
-| `selfcheck.py` | `make check-harness`: the [B3] half of the self-check suite |
+| `selfcheck.py` | `make check-harness`: the [B3] half of the self-check suite (KB-12, [B36]: also the id-preflight gate, `check_id_preflight`) |
 
 THE GENERIC GATES ENUMERATE (`subbench_dirs()`, [B11.1]). Harness contract 6
 says "bench/*/ each", and the checks that belong to the sub-bench CONTRACT --
@@ -22,6 +22,16 @@ adapter compiles a real pattern of the set and answers real subjects of it,
 and it picks its two subjects BY THE EXPECTATION rather than by looking for a
 byte -- a set whose floor matches every subject (bench/loglines' is `:`) has
 no missing one, and the check says so rather than failing.
+
+Since KB-12 (2026-09-06, [B36]'s incident) `check_floor_pattern`'s
+scratch-tier `quick` cell -- the ONE-CELL VALIDATOR SMOKE that used to run
+only on bench/email's own floor pattern -- also ENUMERATES `bench/*/`: one
+`quick` cell per set, on that set's OWN floor pattern, into a fresh scratch
+store. `store.write()`'s never-write-invalid rule (pcrecbench/CLAUDE.md's
+own stated rule) is what makes this a real per-set schema-validator smoke
+and not just a driver smoke -- a set whose sidecar or manifest the
+validator would reject now fails here instead of on its own first
+`pcrecbench run`.
 
 The [B20] block (2026-08-30, schema v1.4 — the gate's shape) adds ten
 checks, every one carrying the control gate_shape_v14.md §8 names and
@@ -359,3 +369,22 @@ miss:
   `check_abi_floor_refusal` UNCHANGED. The DRAFT(v)/TBD placeholder
   machinery itself stays in selfcheck.py, unused until the next re-pin
   is prepared ahead of its build.
+
+- KB-12 (2026-09-06, [B36]'s incident: bench/syntax@0.1's first-sample
+  window ran six cells over 259 minutes and wrote ZERO records -- every
+  one refused at `store.write()`'s validator, after every trial had
+  already run, because ten uppercase pattern ids and two uppercase
+  subject ids had never been checked against the record schema's id
+  rule) adds ONE new check function, `check_id_preflight`, and grows
+  `check_floor_pattern` (above). `check_id_preflight` has two parts: (a)
+  a GENERIC per-set gate -- every `bench/*/` (by `subbench_dirs()`
+  enumeration) loads through `Subbench()` clean, i.e. every one of its
+  pattern and subject ids now passes `pcrecbench.subbench.check_id`
+  before construction finishes; (b) the NEGATIVE CONTROL, both
+  directions, for BOTH id kinds -- `_write_synthetic_subbench` builds a
+  minimal, never-committed `bench/<name>/`-shaped directory (one
+  pattern, one subject, nothing else) under `build/`, fresh on every
+  run: an uppercase PATTERN id is refused BY NAME with the schema's rule
+  quoted in the message, and the SAME sidecar with the id lowercased
+  loads; then the same pair for a SUBJECT id (with the pattern id kept
+  clean so construction reaches the subject loader). 9 PASS lines.
