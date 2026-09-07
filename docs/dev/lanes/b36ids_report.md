@@ -172,25 +172,29 @@ set would be a much larger, differently-scoped addition.
   the ~3.3 min step; ran to completion with no diff.
 - `git diff --stat -M` on `bench/syntax/patterns/`: ten pure renames,
   zero content lines changed.
-- `make check-report`: STARTED, running in the background at hand-off
-  (KB-11: this target alone takes ~7-10 min on this box); if this
-  section still says "STARTED" when you read it, the run had not
-  finished when this report was committed — check
-  `pcrecbench/tests/test_report.py`'s result directly. Nothing in this
-  lane touches `report.py` or its tests, and `report.py` does not
-  import `pcrecbench.subbench` at all ([B14] R3), so no interaction is
-  expected.
+- `make check-report`: GREEN — 71 + 7 = 78 tests passed, 0 failed
+  (`check-report: OK`), confirming no interaction with this lane's
+  changes (`report.py` does not import `pcrecbench.subbench` at all,
+  [B14] R3).
 
 ## Delivery
 
-Branch `lane/b36ids`, one commit (`3ff1ebc`) carrying the full change
-plus this report. `git diff --stat -M` confirms pure renames for the
-ten `.rx` files. Row counts: `expectations.tsv` verified row-for-row
-(870 + 380 id-column changes, zero other-column changes). KB-12 filed.
-`make check-harness` green at the new count.
+Branch `lane/b36ids`, two commits (`3ff1ebc` the change, `06cca97` this
+report) off master `6a0a764`. `git diff --stat -M` confirms pure
+renames for the ten `.rx` files. Row counts: `expectations.tsv`
+verified row-for-row (870 + 380 id-column changes, zero other-column
+changes). KB-12 filed. `make check-harness` green at the new count
+(337/337). `make check-report` green (78/78). `make check-schema`
+green (4/72/0, unchanged).
 
-STOPPING HERE per the boilerplate's lifecycle rule: work is committed
-and documented. The one open item is `make check-report`'s own
-completion, which is independent of this lane's changes (see above) —
-worth a final glance in a resumed session if a definitive PASS is
-wanted before merge, but nothing in this diff is expected to move it.
+Note for the merge: this lane's base (master `6a0a764`) is behind
+master's current tip — master has since gained at least commit
+`02d7f7e` (removing the six `.rejected` debris files bench/syntax's
+refused first-sample window left under `store/records/syntax@0.1/`,
+which this lane's tree still carries as tracked files inherited from
+its base). That cleanup is unrelated to this lane's scope and already
+done on master; a normal merge/rebase onto current master should
+resolve it without conflict since this lane never touches `store/`.
+
+COMPLETE. All work committed, `make check-harness`/`check-report`/
+`check-schema` all green, KB-12 filed, CLAUDE.md files updated.
