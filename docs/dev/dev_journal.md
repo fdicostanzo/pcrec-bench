@@ -3234,3 +3234,31 @@ Frank's call each time). The mirror and the rejected files stay under
 at handback its branch is rebased `--onto 517b6f8^..` before merge — the
 new SHA of its base is found by `git log --format=%h -1 --grep='<the
 base commit's subject>'`.
+
+## 2026-09-06 (EDT, 21:0x-21:3x), eleventh session part 7 — lane b36ids merged (rebased over the rewrite; 337/337), bench/syntax's first sample RELAUNCHED 20:31
+
+Lane b36ids handed back (three commits, base the OLD 6a0a764): the twelve
+ids lowercased by the -uc scheme (f-Cat → f-cat-mixed; pure git renames;
+expectations.tsv id-only: 870 pattern-column + 380 subject-column rows;
+every generator --check green, gen_expectations re-deriving 8,265), the
+Subbench id PRE-FLIGHT (the schema's `$defs/slug` regex read live from
+record.schema.json, SubbenchError by name in <1 s), selfcheck +13 (the
+generic per-set id gate, the negative control both ways for both id
+kinds, and the one-cell validator floor smoke widened from email to EVERY
+set — the check the incident lacked): check-harness 337/337, check-report
+78/78, KB-12 filed, its report at docs/dev/lanes/b36ids_report.md (the
+first under the boilerplate). BD9 rule 2 applied before merge: the old
+base's TREE matched no rewritten commit (it held the .rejected files), so
+the base was found by AUTHOR DATE (6a0a764 → 10eb643) — a first attempt
+with an empty --onto moved the worktree HEAD to the old base (recovered
+by `reset --hard` to the lane's tip SHA; nothing lost) — then `git rebase
+--onto 10eb643 6a0a764 lane/b36ids`, 0 .rejected objects reachable, merged
+--no-ff (02044fc), pushed, worktree and branch removed. The main tree's
+gitignored syntax subject trees regenerated from scratch under the new
+ids (0 uppercase files), the loader smoke-imported, box quiet → the
+re-run launched 20:31:36 under setsid (suite_b36_first2_…; the window
+script's own warm-up read NOT QUIET for a moment after the generators,
+the cell's pre-flight then ran normally). A persistent Monitor reports
+completion WITH the per-cell rc summary this time (the first run's
+`set syntax rc=0` hid six rc=1 cells — a run_suite.sh reporting gap for
+scripts/, noted). ~4.3 h → ~00:50 EDT. TaskStop'd b36ids after acceptance.
