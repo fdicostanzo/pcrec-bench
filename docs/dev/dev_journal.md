@@ -3456,3 +3456,57 @@ removed, lane TaskStop'd. [B40] moved to plan_completed.md.
 State: master pushed through 2d4614a. Pin d34c9131/abi 23 unchanged.
 Next in Frank's ordered queue: [B33] (the cc axis re-pin-time script).
 No lanes alive, box free.
+
+## 2026-09-07 (fourteenth session) — [B33] items (1)+(2) closed; a lane-tracking process gap found and fixed
+
+[B33] (lane b33cc, sonnet, merged 1679a79): the clang compile-only gate
+made permanent. `docs/dev/measurements/probe_cc_gate_census.py`
+(`make cc-gate-census`, a STANDALONE re-pin-time target — the sweep
+alone runs ~13 min, comparable to check-harness's own ~20-min budget,
+so it stays off check-harness's runtime, run at re-pin time like the
+list_axes.tsv-style registry re-archives) enumerates every bench
+pattern × 3 pcrec engine modes (auto/nocaps/vm) × 2 forms
+(plain/whole-subject), emits C once per cell via the pin's binary, and
+compiles under both gcc and clang when pcrec itself did not refuse,
+diffing the two refusal sets. Run for real at d34c9131: 1,110 cells
+(185 patterns: altwide 33, bounded 43, email 3, loglines 11, syntax
+95 — independently re-counted against `patterns/` directories before
+merge, matches exactly), 177 pcrec-side refusals (size/NFA caps,
+feature gates), gcc refused 0, clang refused 0, PARITY confirmed —
+[CC-CLANG]'s abi-14 fix holds across five more re-pins and 1,110 cells
+(vs 462 at [B26]), now covering altwide and syntax too. Archived to
+docs/dev/measurements/2026-09-07-cc-gate-census-d34c9131.txt. The lane
+caught and fixed a real error in its own brief: I had told it "3
+modes" meant the harness's regime tokens; it found and cited existing
+precedent ([B26]'s 77×2×3=462 census in testees/pcrec/CLAUDE.md,
+tools/selfcheck.py's check_cc_axis/CC_KIND_CASES) proving "mode" in
+this exact census shape has always meant pcrec's three engine configs
+— independently re-verified against both source citations before
+merge, confirmed correct. Item (2) (timed `:clang` stays off the
+nightly order) verified with no code change needed. Item (3) (periodic
+timed clang re-runs, I-37's bounded@0.3 ask) stays explicitly open for
+a later lane; [B33] row stays `started`, not archived.
+
+Along the way: TWICE this session I had to catch b33cc having lost
+track of its own background compile jobs — it said "I'll report back
+once it completes" and then simply didn't notice completion, both
+times leaving nothing committed and the report stale, discovered only
+by the manager running `ps`/log forensics from outside after Frank
+asked for status. Root cause: the lane's only evidence of "done" was a
+live-process snapshot taken from outside, decaying the instant nobody
+looked; nothing durable said "this job finished at T". Fixed in
+docs/dev/lanes/BOILERPLATE.md (commit 2a7a48c, pushed ahead of the
+merge): every background job must now end with a durable completion
+marker (an appended log line or a touch'd file) checked by a command,
+never inferred from `ps`; a marker's appearance is now a FINALIZE
+trigger (fold numbers into the report, commit, hand back in the same
+turn), not a status update to idle on again. Filed as SendFeedback too
+(model-behavior: stopping-short / context-tracking on background-task
+notifications).
+
+`make check-schema` 4/72/0 unchanged; `make check-harness` unaffected
+(no check function added). Merged, worktree removed, lane TaskStop'd.
+
+State: master pushed through 1679a79. Pin d34c9131/abi 23 unchanged.
+[B33] stays `started` (item 3 open). Next in Frank's ordered queue:
+[B38] (the `.rxt` set exporter). No lanes alive, box free.
