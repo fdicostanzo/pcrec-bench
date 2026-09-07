@@ -1631,31 +1631,52 @@ def check_floor_pattern():
         bad("sidecar role: exactly one floor, the rest member",
             "floor=%r orig=%r factored=%r" % (floor.role, orig.role, factored.role))
 
-    # role REACHES THE RECORD, through a real (scratch-tier) quick cell.
+    # role REACHES THE RECORD, through a real (scratch-tier) quick cell --
+    # store.write()'s own validator gate is what proves the record is
+    # SCHEMA-VALID (pcrecbench/CLAUDE.md, "a record that fails validation is
+    # never written"), so this doubles as the ONE-CELL VALIDATOR SMOKE
+    # KB-12 asked to widen off bench/email alone: it now runs on EVERY
+    # sub-bench's OWN floor pattern, by enumeration (`subbench_dirs()`,
+    # [B11.1]'s rule), never by name. Cheap by construction -- every set's
+    # floor pattern is a one-byte-or-so literal (requirements 5) and this
+    # asks for 5 subjects at 1 trial, the same shape [B15] always ran for
+    # bench/email.
     from pcrecbench import reduce as _rd
     import glob as _glob
-    scratch = os.path.join(ROOT, "build", "selfcheck-floor-store")
-    shutil.rmtree(scratch, ignore_errors=True)
-    proc = run(["gnutimeout", "300", sys.executable, "-m", "pcrecbench",
-                "quick", "--subbench", "email", "--pattern", "floor",
-                "--regime", "search", "--testee", "pcre2-jit",
-                "--subjects", "5", "--trials", "1",
-                "--store", scratch, "--synthetic", "--quiet-output"],
-               cwd=ROOT, timeout=330)
-    if proc.returncode != 0:
-        bad("a floor-pattern quick cell completes",
-            (proc.stderr or proc.stdout).strip()[-300:])
-    else:
+    for name, bench in subbench_dirs():
+        set_sb = Subbench(bench)
+        set_floors = [p for p in set_sb.patterns if p.role == "floor"]
+        if len(set_floors) != 1:
+            bad("%s: a floor-pattern quick cell validates" % name,
+                "expected exactly one floor pattern, found %d"
+                % len(set_floors))
+            continue
+        floor_name = set_floors[0].name
+        scratch = os.path.join(ROOT, "build", "selfcheck-floor-store-%s" % name)
+        shutil.rmtree(scratch, ignore_errors=True)
+        proc = run(["gnutimeout", "300", sys.executable, "-m", "pcrecbench",
+                    "quick", "--subbench", name, "--pattern", floor_name,
+                    "--regime", "search", "--testee", "pcre2-jit",
+                    "--subjects", "5", "--trials", "1",
+                    "--store", scratch, "--synthetic", "--quiet-output"],
+                   cwd=ROOT, timeout=330)
+        if proc.returncode != 0:
+            bad("%s: a floor-pattern quick cell completes" % name,
+                (proc.stderr or proc.stdout).strip()[-300:])
+            shutil.rmtree(scratch, ignore_errors=True)
+            continue
         files = sorted(_glob.glob(os.path.join(scratch, "records", "*", "*",
                                                 "*.jsonl")))
         setup, _rows = _rd.read_record(files[0]) if files else ({}, [])
         roles = {p.get("pattern_id"): p.get("role")
                  for p in setup.get("patterns", [])}
-        if roles.get("floor") == "floor":
-            ok("patterns[].role: 'floor' reaches a real record", "roles %s" % roles)
+        if roles.get(floor_name) == "floor":
+            ok("%s: patterns[].role: 'floor' reaches a real, validated record"
+               % name, "pattern %s, roles %s" % (floor_name, roles))
         else:
-            bad("patterns[].role: 'floor' reaches a real record", "roles %s" % roles)
-    shutil.rmtree(scratch, ignore_errors=True)
+            bad("%s: patterns[].role: 'floor' reaches a real, validated record"
+                % name, "pattern %s, roles %s" % (floor_name, roles))
+        shutil.rmtree(scratch, ignore_errors=True)
 
     # X30: a record declaring TWO floor-role patterns is rejected.
     f = os.path.join(ROOT, "schema", "examples", "bad",
@@ -1742,6 +1763,133 @@ def _floor_oracle_smoke(name, sb):
                                      for s, _e, o in got))
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _write_synthetic_subbench(root, pattern_name, subject_id):
+    """A minimal, NEVER-COMMITTED `bench/<name>/`-shaped directory for
+    KB-12's id-preflight negative control: one pattern, one subject,
+    nothing else -- just enough for `Subbench.__init__` to reach the id
+    under test (the pattern id is checked before subjects are even loaded,
+    so a bad-pattern-id case needs no manifest to exist; a bad-subject-id
+    case needs the pattern id to be clean so construction gets that far)."""
+    os.makedirs(os.path.join(root, "patterns"), exist_ok=True)
+    with open(os.path.join(root, "patterns", "%s.rx" % pattern_name), "w") as f:
+        f.write("x")
+    with open(os.path.join(root, "manifest.tsv"), "w") as f:
+        f.write("id\tlen\tsha256\tdescription\n")
+        f.write("%s\t1\t%s\tsynthetic\n" % (subject_id, "0" * 64))
+    with open(os.path.join(root, "subbench.toml"), "w") as f:
+        f.write(
+            'id = "selfcheck-idpreflight"\n'
+            'version = "0.1"\n'
+            'objective = "KB-12 negative control"\n'
+            'objective_kind = "coverage"\n'
+            'regimes = ["search_short"]\n'
+            '\n'
+            '[[patterns]]\n'
+            'name = "%s"\n'
+            'file = "patterns/%s.rx"\n'
+            'feature_tier = "base"\n'
+            'hazard_class = "none"\n'
+            'size_class = "tiny"\n'
+            '\n'
+            '[subjects]\n'
+            'manifest = "manifest.tsv"\n'
+            'short_search_max_bytes = 256\n'
+            % (pattern_name, pattern_name))
+
+
+def check_id_preflight():
+    """KB-12 (docs/dev/known_issues.md): the record schema's id rule
+    (`$defs/slug`, `^[a-z0-9]([a-z0-9-]*[a-z0-9])?$`) is now checked by
+    `pcrecbench.subbench.Subbench.__init__` for every pattern and subject
+    id, BEFORE any cell runs -- the gap bench/syntax@0.1's incident found
+    (six cells, 259 minutes, 0 records written: every one refused at
+    `store.write()`'s validator, after every trial had already run).
+
+    (a) THE GENERIC GATE: every set under `bench/` still loads clean,
+    enumerated via `subbench_dirs()` ([B11.1]'s rule) -- never named, so a
+    future set with one bad id fails this by discovery, not by an editor
+    remembering to add it here.
+
+    (b) THE NEGATIVE CONTROL, both directions, for BOTH id kinds: a
+    synthetic sidecar (`_write_synthetic_subbench`, never committed, built
+    fresh under `build/` on every run) with one uppercase PATTERN id is
+    refused BY NAME with the rule quoted; the same sidecar with the id
+    lowercased loads. Then the same pair for a SUBJECT id (with the
+    pattern id kept clean, so construction reaches the subject loader)."""
+    print("-- KB-12: every set's ids load clean; the pre-flight fires --")
+    from pcrecbench.subbench import SubbenchError
+
+    for name, bench in subbench_dirs():
+        try:
+            sb = Subbench(bench)
+            ok("%s: every pattern/subject id passes the schema's slug rule"
+               % name, "%d pattern(s), %d short subject(s), %d throughput "
+               "subject(s)" % (len(sb.patterns), len(sb._short),
+                              len(sb._throughput)))
+        except SubbenchError as e:
+            bad("%s: every pattern/subject id passes the schema's slug rule"
+                % name, str(e)[:300])
+
+    build_dir = os.path.join(ROOT, "build")
+    os.makedirs(build_dir, exist_ok=True)
+    tmp = tempfile.mkdtemp(prefix="selfcheck-idpreflight-", dir=build_dir)
+    try:
+        # (b)(i) PATTERN id, both directions.
+        bad_dir = os.path.join(tmp, "bad-pattern")
+        _write_synthetic_subbench(bad_dir, "Anc-A-Uc", "f-ok")
+        try:
+            Subbench(bad_dir)
+            bad("KB-12 control: an uppercase PATTERN id is refused",
+                "no exception raised")
+        except SubbenchError as e:
+            msg = str(e)
+            if "Anc-A-Uc" in msg and "$defs/slug" in msg and "lowercase" in msg:
+                ok("KB-12 control: an uppercase PATTERN id is refused BY NAME",
+                   msg[:200])
+            else:
+                bad("KB-12 control: an uppercase PATTERN id is refused BY NAME",
+                    "wrong message: %s" % msg[:200])
+
+        good_dir = os.path.join(tmp, "good-pattern")
+        _write_synthetic_subbench(good_dir, "anc-a-uc", "f-ok")
+        try:
+            Subbench(good_dir)
+            ok("KB-12 control: the SAME sidecar, pattern id lowercased, loads",
+               "anc-a-uc")
+        except SubbenchError as e:
+            bad("KB-12 control: the SAME sidecar, pattern id lowercased, loads",
+                str(e)[:300])
+
+        # (b)(ii) SUBJECT id, both directions -- the pattern id here is
+        # lowercase throughout, so the pre-flight reaches the subject loader.
+        bad_dir2 = os.path.join(tmp, "bad-subject")
+        _write_synthetic_subbench(bad_dir2, "f-lit", "F-BAD")
+        try:
+            Subbench(bad_dir2)
+            bad("KB-12 control: an uppercase SUBJECT id is refused",
+                "no exception raised")
+        except SubbenchError as e:
+            msg = str(e)
+            if "F-BAD" in msg and "$defs/slug" in msg and "lowercase" in msg:
+                ok("KB-12 control: an uppercase SUBJECT id is refused BY NAME",
+                   msg[:200])
+            else:
+                bad("KB-12 control: an uppercase SUBJECT id is refused BY NAME",
+                    "wrong message: %s" % msg[:200])
+
+        good_dir2 = os.path.join(tmp, "good-subject")
+        _write_synthetic_subbench(good_dir2, "f-lit", "f-bad")
+        try:
+            Subbench(good_dir2)
+            ok("KB-12 control: the SAME sidecar, subject id lowercased, loads",
+               "f-bad")
+        except SubbenchError as e:
+            bad("KB-12 control: the SAME sidecar, subject id lowercased, loads",
+                str(e)[:300])
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def check_kb1_runtime_options():
@@ -7632,6 +7780,7 @@ def main():
     check_quick()
     check_pcrec_local()
     check_floor_pattern()
+    check_id_preflight()
     check_kb1_runtime_options()
     check_mechanism_stamps()
     check_deny_flag_controls()

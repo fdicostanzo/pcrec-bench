@@ -10,17 +10,17 @@ esc	\h	\h	module	classes	dfa|vm	built	covered	cls-h
 esc	\H	\H	module	classes	dfa|vm	built	not-exercised	-	the complement of `\h`: the same class mechanism, set inverted
 esc	\v	\v	module	classes	dfa|vm	built	covered	cls-v	
 esc	\V	\V	module	classes	dfa|vm	built	not-exercised	-	the complement of `\v`: the same class mechanism, set inverted
-esc	\N	\N	module	classes	dfa|vm	built	covered	cls-N	
+esc	\N	\N	module	classes	dfa|vm	built	covered	cls-n-uc	
 esc	\N{name}	\N{name}	rejected			-	pcre2-rejects	-	PCRE2 refuses this construct (the seed's `expect`: PCRE2 does not support \F, \L, \l, \N{name}, \U, or \u); the oracle can state no expectation
 esc	\N{U+0041}	\N{U+0041}	module	unicode-props	dfa|vm	unbuilt	not-exercised	-	UTF-only in PCRE2 (error 193 in byte mode): the utf family's, not this set's (NOTES.md, `Room for a utf family`)
 esc	\b	\b	module	assertions	dfa|vm	built	covered	asr-wb	
 esc	\B	\B	module	assertions	dfa|vm	built	covered	asr-nwb	
-esc	\A	\A	module	assertions	dfa|vm	built	covered	anc-A	
+esc	\A	\A	module	assertions	dfa|vm	built	covered	anc-a-uc	
 esc	\Z	\Z	module	assertions	dfa|vm	built	covered	anc-z-uc	
 esc	\z	\z	module	assertions	dfa|vm	built	covered	anc-z-lc	
-esc	\G	\G	module	assertions	dfa|vm	built	covered	anc-G	
-esc	\K	\K	module	assertions	vm	built	covered	asr-K	
-esc	\k<name>	\k<name>	module	backrefs	vm	built	covered	bak-k-named mod-J	
+esc	\G	\G	module	assertions	dfa|vm	built	covered	anc-g-uc	
+esc	\K	\K	module	assertions	vm	built	covered	asr-k-uc	
+esc	\k<name>	\k<name>	module	backrefs	vm	built	covered	bak-k-named mod-j-uc	
 esc	\g{-1}	\g{-1}	module	backrefs	vm	built	covered	bak-g-rel	
 esc	\g<1>	\g<1>	module	recursion	vm	built	covered	rec-g-angle	
 esc	\g'1'	\g'1'	module	recursion	vm	built	not-exercised	-	the quoted spelling of `\g<1>`: one pattern per call spelling family, and the angle spelling is the witness
@@ -32,9 +32,9 @@ esc	\p{L}	\p{L}	module	unicode-props	dfa|vm	unbuilt	covered	unp-p-lc
 esc	\P{L}	\P{L}	module	unicode-props	dfa|vm	unbuilt	covered	unp-p-uc	
 esc	\Q	\Q	module	quoting	dfa|vm	built	covered	esc-quote	
 esc	\E	\E	module	quoting	dfa|vm	built	covered	esc-quote	
-esc	\R	\R	module	misc	dfa|vm	unbuilt	covered	msc-R	
-esc	\X	\X	module	misc	dfa|vm	unbuilt	covered	msc-X	
-esc	\C	\C	module	misc	dfa|vm	unbuilt	covered	msc-C	
+esc	\R	\R	module	misc	dfa|vm	unbuilt	covered	msc-r-uc	
+esc	\X	\X	module	misc	dfa|vm	unbuilt	covered	msc-x-uc	
+esc	\C	\C	module	misc	dfa|vm	unbuilt	covered	msc-c-uc	
 esc	\cX	\cX	module	misc	dfa|vm	unbuilt	covered	esc-ctrl	
 esc	\o{101}	\o{101}	module	misc	dfa|vm	unbuilt	covered	esc-octal-o	
 esc	\0	\0	module	backrefs	dfa|vm	built	covered	esc-octal-0	
@@ -60,7 +60,7 @@ group	(?!...)	(?!...)	module	lookaround	vm	built	covered	lka-neg
 group	(?<=...)	(?<=...)	module	lookaround	vm	built	covered	lkb-pos	
 group	(?<!...)	(?<!...)	module	lookaround	vm	built	covered	lkb-neg	
 group	(?<*a)	(?<*a)	module	lookaround	vm	built	not-exercised	-	non-atomic positive LOOKBEHIND: `(?*a)` witnesses the non-atomic mechanism on the lookahead side
-group	(?<name>a)	(?<name>a)	module	named-groups	dfa|vm	built	covered	grp-named bak-k-named rec-name mod-J	
+group	(?<name>a)	(?<name>a)	module	named-groups	dfa|vm	built	covered	grp-named bak-k-named rec-name mod-j-uc	
 group	(?'name'...)	(?'name'...)	module	named-groups	dfa|vm	built	covered	grp-named-quote	
 group	(?P<name>a)	(?P<name>a)	module	named-groups	dfa|vm	built	covered	bak-py rec-py	
 group	(?P=n)	(?P=n)	module	backrefs	vm	built	covered	bak-py	
@@ -74,7 +74,7 @@ group	(?|...)	(?|...)	module	branch-reset	vm	unbuilt	covered	grp-branch-reset
 group	(?(1)a|b)	(?(1)a|b)	module	conditionals	vm	unbuilt	covered	cnd-group	
 group	(?(DEFINE)(?<w>a))	(?(DEFINE)(?<w>a))	module	recursion	dfa|vm	built	covered	rec-define	
 group	(?&name)	(?&name)	module	recursion	vm	built	covered	rec-name rec-define	
-group	(?R)	(?R)	module	recursion	vm	built	covered	rec-R	
+group	(?R)	(?R)	module	recursion	vm	built	covered	rec-r-uc	
 group	(?0)	(?0)	module	recursion	vm	built	not-exercised	-	the numbered spelling of `(?R)`: the same call target (the root); `(?1)` witnesses the numbered call
 group	(?00)	(?0)	module	recursion	vm	built	not-exercised-by-family	-	a spelling of `(?0)`, which is not exercised: the numbered spelling of `(?R)`: the same call target (the root); `(?1)` witnesses the numbered call
 group	(?1)	(?1)	module	recursion	vm	built	covered	rec-1	
@@ -105,8 +105,8 @@ group	(?[[a]])	(?[[a]])	module	extended-classes	dfa|vm	unbuilt	covered	xcl-minus
 group	(?)	(?)	module	modifiers	dfa|vm	built	not-exercised	-	the empty option setting: a no-op spelling; `(?^)` and `(?-i)` witness the option-setting mechanism
 group	(?-i)	(?-i)	module	modifiers	dfa|vm	built	covered	mod-unset	
 group	(?^)	(?^)	module	modifiers	dfa|vm	built	covered	mod-reset	
-group	(?J)	(?J)	module	modifiers	dfa|vm	built	covered	mod-J	
-group	(?U)	(?U)	module	modifiers	dfa|vm	built	covered	mod-U	
+group	(?J)	(?J)	module	modifiers	dfa|vm	built	covered	mod-j-uc	
+group	(?U)	(?U)	module	modifiers	dfa|vm	built	covered	mod-u-uc	
 group	(?a)	(?a)	module	modifiers	dfa|vm	built	covered	mod-a	
 group	(?i)	(?i)	module	modifiers	dfa|vm	built	covered	cls-i-class mod-i mod-r mod-reset mod-unset	
 group	(?m)	(?m)	module	modifiers	dfa|vm	built	covered	anc-m-caret anc-m-dollar	

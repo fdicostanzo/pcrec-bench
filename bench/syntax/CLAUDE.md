@@ -80,7 +80,23 @@ THREE THINGS A FUTURE EDITOR SHOULD NOT UNDO WITHOUT READING WHY (all in
    this reason (2026-09-06, before the set's first sample: no record
    carried the old ids); a new pattern must not reintroduce a
    case-only collision (checked by lowercasing every `bench/*/patterns/`
-   filename and looking for a duplicate).
+   filename and looking for a duplicate). Separately: ids are LOWERCASE
+   ONLY by the record schema's own id rule (`$defs/slug`,
+   `^[a-z0-9]([a-z0-9-]*[a-z0-9])?$`) — not just case-unambiguous but
+   case-FORBIDDEN, collision or not. This set's first-sample window
+   (KB-12, docs/dev/known_issues.md) found ten uppercase pattern ids
+   (`anc-A anc-G asr-K cls-N mod-J mod-U msc-C msc-R msc-X rec-R`, none
+   of them a collision with an existing lowercase id) and two uppercase
+   subject ids (`f-CAT f-Cat`) that the harness never checked before
+   measuring, and wrote zero records over six cells before failing
+   validation. Renamed the same day to `anc-a-uc`/`anc-g-uc`/`asr-k-uc`/
+   `cls-n-uc`/`mod-j-uc`/`mod-u-uc`/`msc-c-uc`/`msc-r-uc`/`msc-x-uc`/
+   `rec-r-uc` and `f-cat-uc`/`f-cat-mixed` (no record carried the old
+   ids either; no version bump — bytes and answers unchanged). The rule
+   is now CHECKED AT SET LOAD, not just at record-write time:
+   `pcrecbench.subbench.Subbench.__init__` validates every pattern and
+   subject id against the schema's rule before a cell can run
+   (`pcrecbench/CLAUDE.md`, `tools/CLAUDE.md`'s KB-12 entry).
 
 RE-SEEDING (the next pcrec pin moves rows: at abi 23 `\x{...}` and utf8
 moved to the base grammar). Copy the new `--list-syntax` output under the

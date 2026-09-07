@@ -2,22 +2,22 @@ pattern	family	constructs	seed_module	bytes	captures	backref_max	match_empty	max
 lit-cat	literal	base-grammar	-	3	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
 anc-caret	anchors	^	-	5	0	0	0	0	i	NONE	4	1/42	7/42	0/3	10.46 2025-08-27
 anc-dollar	anchors	$	-	5	0	0	0	0	d	e	4	1/42	6/42	0/3	10.46 2025-08-27
-anc-A	anchors	\A	assertions	6	0	0	0	1	i	NONE	4	1/42	7/42	0/3	10.46 2025-08-27
+anc-a-uc	anchors	\A	assertions	6	0	0	0	1	i	NONE	4	1/42	7/42	0/3	10.46 2025-08-27
 anc-z-uc	anchors	\Z	assertions	6	0	0	0	0	d	e	4	1/42	6/42	0/3	10.46 2025-08-27
 anc-z-lc	anchors	\z	assertions	6	0	0	0	0	d	e	4	1/42	4/42	0/3	10.46 2025-08-27
-anc-G	anchors	\G	assertions	6	0	0	0	0	i	NONE	4	1/42	7/42	0/3	10.46 2025-08-27
+anc-g-uc	anchors	\G	assertions	6	0	0	0	0	i	NONE	4	1/42	7/42	0/3	10.46 2025-08-27
 anc-m-caret	anchors	(?m) ^	-+modifiers	9	0	0	0	0	type-2	m	4	1/42	7/42	3/3	10.46 2025-08-27
 anc-m-dollar	anchors	(?m) $	-+modifiers	9	0	0	0	0	d	e	4	1/42	6/42	3/3	10.46 2025-08-27
 asr-wb	assertions	\b	assertions	7	0	0	0	1	c	t	3	1/42	4/42	3/3	10.46 2025-08-27
 asr-nwb	assertions	\B	assertions	7	0	0	0	1	c	t	3	0/42	2/42	3/3	10.46 2025-08-27
-asr-K	assertions	\K	assertions	9	0	0	0	0	k	=	5	1/42	2/42	3/3	10.46 2025-08-27
+asr-k-uc	assertions	\K	assertions	9	0	0	0	0	k	=	5	1/42	2/42	3/3	10.46 2025-08-27
 cls-d	classes	\d	classes	3	0	0	0	0	bitmap-or-none	NONE	1	2/42	7/42	3/3	10.46 2025-08-27
 cls-s-lc	classes	\s	classes	9	0	0	0	0	c	t	7	0/42	1/42	2/3	10.46 2025-08-27
 cls-s-uc	classes	\S	classes	7	0	0	0	0	bitmap-or-none	@	3	0/42	1/42	3/3	10.46 2025-08-27
 cls-w	classes	\w	classes	3	0	0	0	0	bitmap-or-none	NONE	1	13/42	42/42	3/3	10.46 2025-08-27
 cls-h	classes	\h	classes	15	0	0	0	0	k	e	9	1/42	2/42	3/3	10.46 2025-08-27
 cls-v	classes	\v	classes	11	0	0	0	0	i	e	9	2/42	2/42	2/3	10.46 2025-08-27
-cls-N	classes	\N	classes	5	0	0	0	0	i	m	4	1/42	9/42	3/3	10.46 2025-08-27
+cls-n-uc	classes	\N	classes	5	0	0	0	0	i	m	4	1/42	9/42	3/3	10.46 2025-08-27
 cls-posix	classes	[[:alpha:]]	classes	12	0	0	0	0	bitmap-or-none	NONE	1	10/42	37/42	3/3	10.46 2025-08-27
 cls-negset	classes	base-grammar	-	10	0	0	0	0	c	t	3	0/42	1/42	0/3	10.46 2025-08-27
 cls-range	classes	base-grammar	-	14	0	0	0	0	0	x	3	0/42	1/42	3/3	10.46 2025-08-27
@@ -58,7 +58,7 @@ lkb-neg	lookaround	(?<!...)	lookaround	14	0	0	0	5	d	e	4	1/42	6/42	3/3	10.46 2025
 lka-nonatomic	lookaround	(?*a)	lookaround	12	0	0	0	0	i	m	4	1/42	9/42	3/3	10.46 2025-08-27
 lka-verb	lookaround	(*pla:a)	lookaround	16	0	0	0	0	i	e	4	0/42	2/42	3/3	10.46 2025-08-27
 cnd-group	conditionals	(?(1)a|b)	conditionals	15	1	1	0	0	bitmap-or-none	m	4	1/42	9/42	3/3	10.46 2025-08-27
-rec-R	recursion	(?R)	recursion	19	0	0	0	0	(	)	2	1/42	4/42	3/3	10.46 2025-08-27
+rec-r-uc	recursion	(?R)	recursion	19	0	0	0	0	(	)	2	1/42	4/42	3/3	10.46 2025-08-27
 rec-1	recursion	(?1)	recursion	21	1	0	0	0	(	)	2	1/42	4/42	3/3	10.46 2025-08-27
 rec-name	recursion	(?&name) (?<name>a)	named-groups+recursion	26	1	0	0	0	(	)	2	1/42	4/42	3/3	10.46 2025-08-27
 rec-define	recursion	(?(DEFINE)(?<w>a)) (?&name)	recursion	33	1	0	0	0	bitmap-or-none	:	5	1/42	2/42	3/3	10.46 2025-08-27
@@ -70,8 +70,8 @@ mod-i	modifiers	(?i)	modifiers	7	0	0	0	0	c	t	3	3/42	7/42	3/3	10.46 2025-08-27
 mod-s	modifiers	(?s)	modifiers	13	0	0	0	0	i	e	9	2/42	3/42	3/3	10.46 2025-08-27
 mod-x	modifiers	(?x)	modifiers	20	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
 mod-n	modifiers	(?n)	modifiers	9	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
-mod-U	modifiers	(?U)	modifiers	8	0	0	0	0	"	"	3	1/42	2/42	3/3	10.46 2025-08-27
-mod-J	modifiers	(?J) (?<name>a) \k<name>	backrefs+modifiers+named-groups	33	2	2	0	0	bitmap-or-none	\x20	3	1/42	4/42	3/3	10.46 2025-08-27
+mod-u-uc	modifiers	(?U)	modifiers	8	0	0	0	0	"	"	3	1/42	2/42	3/3	10.46 2025-08-27
+mod-j-uc	modifiers	(?J) (?<name>a) \k<name>	backrefs+modifiers+named-groups	33	2	2	0	0	bitmap-or-none	\x20	3	1/42	4/42	3/3	10.46 2025-08-27
 mod-a	modifiers	(?a)	modifiers	7	0	0	0	0	bitmap-or-none	NONE	1	13/42	42/42	3/3	10.46 2025-08-27
 mod-r	modifiers	(?r) (?i)	modifiers	8	0	0	0	0	c	t	3	3/42	7/42	3/3	10.46 2025-08-27
 mod-reset	modifiers	(?^) (?i)	modifiers	11	0	0	0	0	c	t	3	2/42	6/42	3/3	10.46 2025-08-27
@@ -85,9 +85,9 @@ esc-ctrl	escapes	\cX	misc	10	0	0	0	0	b	d	8	1/42	1/42	0/3	10.46 2025-08-27
 esc-octal-o	escapes	\o{101}	misc	9	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
 esc-octal-0	escapes	\0	backrefs	12	0	0	0	0	i	e	9	1/42	2/42	3/3	10.46 2025-08-27
 esc-quote	escapes	\Q \E	quoting	8	0	0	0	0	f	)	4	1/42	2/42	3/3	10.46 2025-08-27
-msc-R	misc	\R	misc	10	0	0	0	0	i	e	9	2/42	2/42	2/3	10.46 2025-08-27
-msc-X	misc	\X	misc	4	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
-msc-C	misc	\C	misc	4	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
+msc-r-uc	misc	\R	misc	10	0	0	0	0	i	e	9	2/42	2/42	2/3	10.46 2025-08-27
+msc-x-uc	misc	\X	misc	4	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
+msc-c-uc	misc	\C	misc	4	0	0	0	0	c	t	3	1/42	5/42	3/3	10.46 2025-08-27
 unp-p-lc	uniprop	\p{L}	unicode-props	6	0	0	0	0	bitmap-or-none	NONE	1	11/42	37/42	3/3	10.46 2025-08-27
 unp-p-uc	uniprop	\P{L}	unicode-props	6	0	0	0	0	bitmap-or-none	NONE	1	5/42	31/42	3/3	10.46 2025-08-27
 vrb-accept	verbs	(*ACCEPT)	verbs	17	0	0	0	0	i	NONE	1	1/42	9/42	3/3	10.46 2025-08-27

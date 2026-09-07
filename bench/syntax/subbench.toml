@@ -100,8 +100,8 @@ role = "member"
 
 [[patterns]]
 # start of subject, the escape spelling
-name = "anc-A"
-file = "patterns/anc-A.rx"
+name = "anc-a-uc"
+file = "patterns/anc-a-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -133,8 +133,8 @@ role = "member"
 
 [[patterns]]
 # the search start: find-all counts consecutive hits from the cursor
-name = "anc-G"
-file = "patterns/anc-G.rx"
+name = "anc-g-uc"
+file = "patterns/anc-g-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -188,8 +188,8 @@ role = "member"
 
 [[patterns]]
 # reset the reported start: the span begins after `key=`
-name = "asr-K"
-file = "patterns/asr-K.rx"
+name = "asr-k-uc"
+file = "patterns/asr-k-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -265,8 +265,8 @@ role = "member"
 
 [[patterns]]
 # any byte but newline, unaffected by (?s): `item` and `itxm`, never across a line end
-name = "cls-N"
-file = "patterns/cls-N.rx"
+name = "cls-n-uc"
+file = "patterns/cls-n-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -716,8 +716,8 @@ role = "member"
 
 [[patterns]]
 # whole-pattern recursion: balanced parentheses
-name = "rec-R"
-file = "patterns/rec-R.rx"
+name = "rec-r-uc"
+file = "patterns/rec-r-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
@@ -726,7 +726,7 @@ tags = ["fam-recursion", "encoding-bytes", "seed-row"]
 role = "member"
 
 [[patterns]]
-# recursion into group 1: the same language as `rec-R`, the call target being the group and not the root
+# recursion into group 1: the same language as `rec-r-uc`, the call target being the group and not the root
 name = "rec-1"
 file = "patterns/rec-1.rx"
 feature_tier = "base"
@@ -737,7 +737,7 @@ tags = ["fam-recursion", "encoding-bytes", "seed-row"]
 role = "member"
 
 [[patterns]]
-# recursion into a named group: the same language as `rec-R`
+# recursion into a named group: the same language as `rec-r-uc`
 name = "rec-name"
 file = "patterns/rec-name.rx"
 feature_tier = "base"
@@ -848,8 +848,8 @@ role = "member"
 
 [[patterns]]
 # ungreedy: the same language as `qnt-lazy` by inverting `+`
-name = "mod-U"
-file = "patterns/mod-U.rx"
+name = "mod-u-uc"
+file = "patterns/mod-u-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -859,8 +859,8 @@ role = "member"
 
 [[patterns]]
 # duplicate names allowed: the backreference resolves to whichever `w` set
-name = "mod-J"
-file = "patterns/mod-J.rx"
+name = "mod-j-uc"
+file = "patterns/mod-j-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
@@ -935,7 +935,7 @@ tags = ["fam-escapes", "encoding-bytes", "seed-row"]
 role = "member"
 
 [[patterns]]
-# carriage return + newline as two escapes: `msc-R` is the one-token spelling of the same pair
+# carriage return + newline as two escapes: `msc-r-uc` is the one-token spelling of the same pair
 name = "esc-cr"
 file = "patterns/esc-cr.rx"
 feature_tier = "base"
@@ -1013,8 +1013,8 @@ role = "member"
 
 [[patterns]]
 # any newline sequence: `\n` and `\r\n` both, as one token
-name = "msc-R"
-file = "patterns/msc-R.rx"
+name = "msc-r-uc"
+file = "patterns/msc-r-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -1024,8 +1024,8 @@ role = "member"
 
 [[patterns]]
 # an extended grapheme cluster: one byte in byte mode
-name = "msc-X"
-file = "patterns/msc-X.rx"
+name = "msc-x-uc"
+file = "patterns/msc-x-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
@@ -1035,8 +1035,8 @@ role = "member"
 
 [[patterns]]
 # one data unit
-name = "msc-C"
-file = "patterns/msc-C.rx"
+name = "msc-c-uc"
+file = "patterns/msc-c-uc.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "tiny"
