@@ -52,7 +52,7 @@ timestamps are all 2026-09-07 UTC.
 | **R0** wrong answers | 9 on `pcre2-jit`, 11 on each pcrec arm (11 distinct cells; the 9 are shared) | **3 mechanisms, all three the INSTRUMENT's** |
 | **R1** refusal on a built row | 1 pattern (`mod-x`, whole-subject form only) | 1 (the wrapper) |
 | — the `unsupported` block | 14 patterns × 2 forms × 4 testees | not ranked |
-| **R2** JIT band | 24 on the `auto` route (23 slow, 1 fast), 66 on forced VM, 298 over all five non-JIT testees | 5 ranked (Q4, Q6, Q7, Q8, and `rec-define`'s ×0.040 win) |
+| **R2** JIT band | 24 on the `auto` route (23 slow, 1 fast — `rec-define`, the only better-than-×20 pattern in the census), 66 on forced VM, 298 over all five non-JIT testees | 5 ranked (Q4, Q6, Q7, Q8, and `rec-define`'s ×0.040 win) |
 | **R3** spelling groups > ×1.5 | 32 group-cells | 3 (`\G`, `(?+1)`, the capture/`shape` pair) |
 | **R4** family > ×3 | 133 | folded into Q9 and the anchors (P5) |
 | **R5** compile / size cliffs ×10 | **0** | — (P13 confirmed; worst ×2.08 / ×1.90) |

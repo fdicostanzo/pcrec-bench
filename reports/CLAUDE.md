@@ -60,9 +60,10 @@ FIVE THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS:
   `none` **0.158** → `memchr` **0.728** → `byte-class` **0.997** →
   `offset-set` **1.286** → `offset-set-bounded` **2.441** (six cells,
   2.393-2.719 — the tightest band in the set: `done$`, `done\Z`, `done\z`,
-  `(?m)done$`, `\bcat\b`, `\Bcat\B`). The one "better than ×20" cell in the
-  whole census is `rec-define` at **×0.040** — pcrec ×25.1 FASTER than the
-  JIT on `(?(DEFINE)(?<d>\d{2}))(?&d):(?&d)`, compiled to a pure DFA.
+  `(?m)done$`, `\bcat\b`, `\Bcat\B`). The ONLY pattern anywhere in the
+  census on the "better than ×20" side is `rec-define` — **×0.0398** on
+  `auto` and ×0.0399 on `nocaps`, pcrec ×25.1 FASTER than the JIT on
+  `(?(DEFINE)(?<d>\d{2}))(?&d):(?&d)`, compiled to a pure DFA.
 - **`shape=inline` prints here for the first time in any committed report**,
   which supersedes the [B37] paragraph below ("`shape=` never prints
   `inline`") FOR THIS GROUP ONLY. It prints on 17 `auto` artifacts and on the
