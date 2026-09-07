@@ -3312,3 +3312,63 @@ pcrec_overrun_note` on a skip); nothing of ours runs in that span,
 including O-20's read of the syntax sample. Armed a second zero-model
 Monitor on the runner pid exiting or the 08:30 boundary, whichever
 first, and stood down again pending it.
+
+## 2026-09-07 (EDT, ~07:4x-08:4x), twelfth session part 2 — pcrec's night runner's four reds reported (O-20), [B35] (9') closed against pcrec's probe (O-21), bench/syntax's outlier read delivered and found our OWN driver bugs (KB-13/14/15, O-22, U5)
+
+The night-runner Monitor fired at 07:43: `NIGHT-RUNNER COMPLETE
+2786497c`, but four of its own stages were non-green (`test`=2,
+`encchk`=1, `uprops_utf8`=2, `mech`=2). Per BD3/the executor protocol,
+read every log verbatim and reported the exact failures to pcrec
+WITHOUT diagnosing them (O-20, commit 08294fa): `test-rxtsource`'s
+C3 population-pin drift, `test-uprops`/`uprops_utf8`'s shared
+`dlinfo`/`RTLD_DI_LINKMAP` build failure in a fuzz header, `encchk`'s
+four DD12a(i) K50-related findings, and `mech`'s 239-row run
+(unexpected:1, undetected:10, unreached:1). The same report carried
+pcrec's ask-(v) probe result (flat 0.2956 ns/B, essentially zero fixed
+cost).
+
+Confirmed the box quiet, then ran [B35] (9') as a scratch `quick` cell
+(`floor` forced-VM on syntax's t-64k/t-256k/t-1m): OUR instrument reads
+a REAL fixed cost pcrec's probe does not — ns/B falls 1.4750 → 0.6305 →
+0.5926 as size grows (the classic signature), two-point fit 61.68 µs
+fixed / three-point least-squares 43.52 µs, both far from pcrec's
+near-zero reading and from our own prior 31.6 µs hypothesis. Sent as
+O-21 (ec24856), (9') closed; the cross-instrument disagreement is now
+pcrec's to reconcile from source.
+
+Launched the b36read lane (opus, per doctrine for judgment work) to
+read bench/syntax@0.1's six-record first sample against NOTES.md's
+outlier rule. It delivered a report group + a 1,085-line ledger with
+TWELVE ranked mechanism questions in four tiers, re-render invariant
+PASSED both ways (CLI-equivalence + determinism). THE FINDING OF THE
+WAVE: the top three questions are OUR OWN test-driver bugs, not
+pcrec's — verified directly against source before writing them up
+(never trust a lane's claim about a bug without reading the cited
+lines): both `testees/pcre2/driver.c` and `testees/pcrec/driver.c`'s
+find-all loops discard a mid-loop give-up silently, reporting a
+shorter-but-plausible match count instead of a give-up outcome (KB-13
+— cross-cutting, scope against prior sub-benches UNCHECKED); pcrec's
+driver hard-codes the whole-subject match START to 0 rather than
+reading it from `caps[0]`, so `\K` and lookbehind starts are silently
+wrong on every whole-subject pcrec record (KB-14); the `(?:...)\z`
+wrapper is lexical and reaches `(?R)`, `\K`, and swallows `mod-x`'s own
+closing `)\z` under `(?x)` comments (KB-15). All three filed OPEN, not
+fixed — driver-semantics changes affect whether prior stored records
+are trustworthy, a call for the manager/Frank, not a lane's. Reviewed
+and merged the branch (e16fda2; clean, read-only diffs, no store/
+bench/syntax/~/pcrec touched); filed KB-13/14/15, upstream_findings.md
+U5 (libpcre2 10.46's quadratic interpreter recursion), outbox O-22
+(the five general-mechanism questions Q4-Q8 that ARE about pcrec's
+engine, plus the I-55 fold-pair answer — a two-member fold-pair class
+is FREE on the VM route, a 52-member fully-closed class does NOT fold
+— and R5's zero-cliffs result), and corrected bench/syntax/NOTES.md's
+and CLAUDE.md's "no backtracking hazard by design" claims (90426f8).
+TaskStop'd b36read after acceptance. plan.md [B36] row updated with
+the full summary; STATE stays `started` pending Frank's triage/ranking
+of the twelve questions.
+
+Nothing heavy is running; the box is free. Next: await Frank's ranking
+of Q1-Q12 (or the peer session's read of O-20/O-21/O-22), any executor
+requests, and [B35]'s remaining follow-ups ((2)/(3)/(4) etc.).
+Monitor on the runner pid exiting or the 08:30 boundary, whichever
+first, and stood down again pending it.
