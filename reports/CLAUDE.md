@@ -11,8 +11,8 @@ the reporter is unchanged at `v15 (2026-09-05)`, no committed report was
 regenerated, no reporter code was touched. All three files carry an explicit
 `--since`/`--until` PAIR *and* the six-id `--testee` roster (the 2026-08-30
 rule and KB-5). The window: 6 cells, ALL `measured` at attempt 1 under BD7,
-2026-09-07 00:32:11Z → 04:06:05Z (3 h 34 min; interp 54 min, jit 40, the
-four pcrec cells 40-44), store 155 → 161; the six records were committed on
+record timestamps 2026-09-07 00:32:11Z → 04:06:05Z (3 h 34 min end to
+end; successive cell STARTS 35-54 min apart), store 155 → 161; the six records were committed on
 master (`28cb034`) before these were rendered; this lane rendered from
 `--store ~/pcrec-bench/store` and commits no store file.
 
