@@ -379,10 +379,15 @@ A pattern a testee refuses is a `did-not-compile` row with that engine's
 own diagnostic (requirements §4.4). This set EXPECTS fifteen of them per
 pcrec testee (P1) and treats them as its `unsupported` reading; a refusal
 outside P1's list is R1. Nothing here should give up at match time —
-there is no backtracking hazard by design (the one shape held out on
-purpose is an unbounded `.` repeat under `(?s)`, quadratic on a 1 MB
-subject with no newline barrier) — and the oracle derivation reported no
-give-up on any of the 8,265 triples.
+the one shape held out on purpose is an unbounded `.` repeat under
+`(?s)`, quadratic on a 1 MB subject with no newline barrier — and the
+oracle derivation reported no give-up on any of the 8,265 triples.
+**REFUTED as a general claim 2026-09-07** (lane b36read's first-sample
+read, upstream_findings.md U5): the recursion family's balanced-paren
+patterns ARE a hazard on libpcre2's interpreter, quadratic in subject
+size (870.4 → 8,704.8 ns/B, 64 KB → 1 MB) though not the classic
+`.*`-backtracking shape this note excluded on purpose — the set was not
+free of hazards by design, only of the ONE shape named here.
 
 ## Per-engine notes
 

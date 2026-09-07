@@ -103,3 +103,26 @@ first refusal per skeleton. Documented PCRE2 behaviour (a repeated group
 is unrolled up to the pattern-size limit); recorded here because it is
 the comparison point for pcrec's [ART-SIZE] size term (pcrec-vm does not
 replicate: 22,120 B for the same pattern).
+
+## U5 — libpcre2 10.46's INTERPRETER is quadratic on balanced-paren recursion, against a match count that is linear in subject size (OBSERVED 2026-09-07, `syntax@0.1` first sample, d34c9131; lane b36read, ledger docs/dev/ledgers/2026-09-07-b36-syntax-first-d34c9131.md §9 Q9)
+
+`libpcre2_10.46_interp-caps-simdna` on the recursion family's throughput
+runs (64 KB / 256 KB / 1 MB): per-byte cost **870.4 → 2,061.6 → 8,704.8
+ns/B** (R7 ratio 10.0-10.4× across a 16× size range — the family that
+should scale linearly does not), set total 9.7 s for the 1.3 MB sweep,
+×109 the backref family's cost on the same subjects. pcrec's `auto`
+route does not show this shape (byte-bound, no recursion re-entry cost
+per byte). Also observed on the same family: `(?+1)` costs its three
+verified-answer-identical spelling twins ×13.88 on the search regime
+under the interpreter (×2.24 under the JIT), where pcrec's `auto` makes
+the four call spellings free to ×1.001 — i.e. the interpreter's
+recursion dispatch is spelling-sensitive where an AOT compiler's is not.
+Reading (unverified): each `(?R)`/`(?+1)`-style re-entry likely re-walks
+or re-allocates state proportional to the CURRENT match depth/position
+rather than O(1) per entry, giving the observed O(n²) on subjects that
+are mostly one long recursive run. Not chased further here — a read
+lane's job was to surface it, not attribute it. Verified from six store
+records (`store/records/syntax@0.1/*/*.jsonl`, commit 28cb034) via
+`pcrecbench.reduce`'s own reduction, cross-checked against the rendered
+report at the cited lines; not re-measured independently outside the
+store.

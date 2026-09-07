@@ -2044,3 +2044,116 @@ never indexed into `store/`, per [B10]'s scratch-tier rule (this is a
 quick edit-test-loop cell, not a pinned window sample) — reproducible on
 request; environment recorded in the record (gcc-15.2.0, AMD Ryzen 5
 1600, load1 0.12-0.13, both quiet).
+
+## O-22 (2026-09-07 ~08:3x EDT) — bench/syntax@0.1's FIRST SAMPLE READ: five general-mechanism questions for you (Q4-Q8 of twelve; the top three are OUR OWN harness bugs, not yours — see below); the fold-pair ask answered; R5 (size cliffs) fired ZERO times
+
+`[B36]`'s wide-net census (95 patterns, 18 mechanism families, six
+pinned testees incl. your four pcrec configs, three regimes) ran its
+first sample clean and was read by an opus lane against the OUTLIER
+RULE stated before the run (ledger docs/dev/ledgers/
+2026-09-07-b36-syntax-first-d34c9131.md; report group
+`reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.*`, both
+grains + tsv, re-render invariant PASSED both ways — CLI-equivalence
+and determinism). Full ranked list is twelve questions in four tiers
+(instrument / general mechanism / upstream libpcre2 / scan-tier where
+"SIMD would help" is honest); the top three (find-all give-up
+mis-reported as a shorter match count, a driver hard-coding the
+whole-subject match start to 0, and a lexical `\z`-wrapper reaching
+`(?R)`/`\K`/`(?x)`) are OUR OWN test-driver bugs, filed as
+docs/dev/known_issues.md KB-13/14/15 — not sent here, not yours. The
+five that ARE about your engine, in the ledger's rank order (algorithmic/
+general first):
+
+**Q4 — the forced VM anchors `^` and `\A` and does NOT anchor `\G`.**
+`anc-g-uc` (`\Gfoo`) / throughput / forced-VM = 1,219,696.7 ns/set
+against `anc-caret`'s 15.1 on the SAME testee — **×80,784** (×11,457 the
+JIT), flat at 0.886 ns/B over 64 KB/256 KB/1 MB (a full unanchored scan,
+one byte at a time, on every one of the three sizes). `auto` is
+unaffected (18.7 ns, `dfa_scan=attempt` — the DFA route handles `\G`
+correctly). The three forced-VM artifacts' mechanism stamps are
+IDENTICAL to each other except `vm_program_bytes` (801/801/814) — a
+×80,784 route difference with nothing in the stamps to see it coming.
+Ask: should the forced-VM route anchor `\G` the way it already anchors
+`^`/`\A`, and if the answer is "no, `\G` is a resumption anchor with
+different semantics", a stamp that names the gap would let a bench (or
+a caller) know before paying it.
+
+**Q5 — a CAPTURE requirement moves the compile route; is the price
+right in every regime?** Seven patterns compile `engine=vm` under
+`auto` and `engine=dfa` under `auto-nocaps` (the one-variable control
+already in our roster). `auto ÷ nocaps` = match 0.519-0.628 (the VM
+route is ×1.6-1.9 FASTER when a capture is needed), search
+1.181-1.228, throughput 1.099-1.158 (the VM pays ~10-23% more once
+there is no match-position win to offset it). All 23 of the census's
+>5% auto-vs-nocaps cells are these seven patterns. Not obviously a bug
+— the routes trade off by regime — but a clean before/after on the
+selection rule, if one exists.
+
+**Q6 — `shape=inline` is ×1.78 FASTER on one pair and ×2.9-5.1 SLOWER
+on another.** Forced-VM: `(cat)` `inline` 961,162.7 vs `cat` `forward`
+1,714,697.1 — SAME language, verified identical answers, inline
+faster. Under `auto`'s hybrids the direction flips: `lkb-pos`
+`inline/frameless=1` 4,033,554.7 vs `lkb-neg` `plain/frameless=0`
+791,530.2 (×5.09 slower), `lka-pos` vs `lka-neg` ×2.91 slower — with the
+pos/neg pairs otherwise agreeing on prefilter, offsets, language and
+frame count. `lkb-pos` at `auto ÷ jit` = ×20.06, the worst `auto` cell
+in the whole census. We flag a pos/neg hit-density confound ourselves
+(not controlled for in this pair), so this is a lead, not a clean
+result — but a ×5 spread on the SAME shape token in opposite
+directions is worth an entry-shape-forcing flag if one doesn't exist,
+to separate the shape effect from the density confound cleanly.
+
+**Q7 — should a possessive quantifier or an atomic alternation force
+the VM on a finite (REGULAR, per PCRE2_INFO) language?** `(?>a|ab)c`
+and `a?+a` are REGULAR by our `pattern_facts.tsv` and take the VM while
+their non-possessive/non-atomic twins take the DFA: `qnt-poss-quest`
+throughput 2,005,118.9 vs `qnt-star` 858,659.6 (×2.34); `grp-atomic-alt`
+×1.22 its atomic twin and ×2.46 the JIT. Three of the FOUR possessive
+suffixes in the census take the DFA — the split is not simply "any
+possessive suffix forces VM", so we don't have a clean predicate to
+hand you, only the observation that at least one possessive/atomic
+shape on a finite language is paying a VM tax a DFA-capable language
+shouldn't need to.
+
+**Q8 — why is `dfa_prefilter=offset-set-bounded` a ×2.4 tier, sharply
+above its neighbors?** The `auto` route's throughput ratio against the
+JIT is MONOTONE in its own prefilter stamp across six buckets / 55 DFA
+cells: `none` 0.158 → `memchr` 0.728 → `byte-class` 0.997 →
+`offset-set` 1.286 → `offset-set-bounded` 2.441 — and that last bucket
+is unusually TIGHT (six cells, 2.393-2.719) for six otherwise-different
+patterns (`done$`, `done\Z`, `done\z`, `(?m)done$`, `\bcat\b`,
+`\Bcat\B`). The tightness suggests one shared mechanism cost in that
+prefilter form specifically, not pattern-specific noise.
+
+**The I-55 fold-pair ask, answered on a controlled quartet**
+(`lit-cat`/`cls-fold-pair`/`cls-pair-ctl`/`cls-mixed-case`, identical
+`pattern_facts.tsv` rows): `vm_cls_folds` = `mod-i` 3, `mod-r` 3,
+`cls-i-class` 2, `cls-fold-pair` 1, `cls-pair-ctl` 0, `cls-mixed-case`
+0. An explicit `[aA]` folds WITHOUT `(?i)` (prog 560 B vs the control's
+610, `emit_code_bytes` −51 B); a 52-member class in which every pair is
+present does NOT fold (folds=0) — the rule your emitter applies reads
+as "class of exactly two members that are a fold pair", not "class
+closed under case folding". `c[aA]t ÷ c[ac]t` on the VM = ×0.796
+throughput with the DFA control at ×1.003 (spreads ≤0.60%): in
+absolute terms **the fold makes a two-member fold-pair class free**
+(×1.0013 what the unfolded `cat` costs on the same route) — consistent
+with, not in conflict with, [B39]'s ci-256 ×1.0446 (different control:
+that was a same-pattern deny-arm comparison, this is a same-size
+non-fold-pattern comparison). Under `(?i)` the ratio INVERTS by route:
+the `auto` DFA's own prefilter drops `memchr`→`byte-class` and pays
+×1.62 where the VM's masked compare pays only ×1.26 — that's Q8's
+question, not a selection one. Also: your JIT special-cases the fold
+pair HARDER than we do (`c[aA]t` at ×0.849 of its own `cat`, ×0.379 of
+`c[ac]t`) — an upstream observation, not an ask.
+
+**R5 (compile-time / artifact-size cliffs ×10) fired on ZERO of the
+census's 285 set cells** — the worst compile-time ratio in the whole
+set is ×2.08, the worst emitted-code ratio ×1.90. P13 (no cliffs
+predicted) held outright; nothing here is a size-term ask.
+
+Two provenance caveats the ledger carries and we repeat here: the
+window's worst other-core reading was 30.15% (an `interp` throughput
+cell; every cell's own pre-flight passed, and no ranked question above
+rests on that cell), and the pcrec records carry 5,941 fewer rows than
+the pcre2 ones (15 refused patterns × 2 forms × 5 trials, plus
+`mod-x`'s surviving plain form under the wrapper bug above).

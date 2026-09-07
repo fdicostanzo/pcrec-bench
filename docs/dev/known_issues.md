@@ -480,3 +480,129 @@ from widening `check_floor_pattern`'s one-cell validator smoke from a
 single bench/email line into one line per set). See
 docs/dev/lanes/b36ids_report.md for the full validation and the actual
 printed total.
+
+## KB-13 (2026-09-07) — BOTH drivers' find-all loop reports a MID-LOOP GIVE-UP as a shorter match count, with no indication a give-up happened: five of six testees can vanish silently from a ranking
+
+OBSERVED (lane b36read's [B36] syntax@0.1 outlier read, ledger
+docs/dev/ledgers/2026-09-07-b36-syntax-first-d34c9131.md §1.1, Q1): nine
+cells (`rec-r-uc`/`rec-1`/`rec-name` × the three regimes) read `expected
+116 non-overlapping match(es); observed 5` on `pcre2-jit` AND all four
+pcrec arms. A read-only ctypes probe reproducing the drivers' own
+advance rule against the same subject and `libpcre2-8` returns
+`PCRE2_ERROR_JIT_STACKLIMIT` (-46) at the sixth match start, after five
+spans identical to the interpreter's. Both drivers share the defect,
+independently written:
+
+    testees/pcre2/driver.c:321-340 (find_all loop):
+        int rc = p_match(code, s->buf, s->len, pos, opts, md, NULL);
+        if (rc < 0) { if (count == 0) rc_final = rc; break; }
+        ...
+        count++;
+
+    testees/pcrec/driver.c (find_all loop, same shape):
+        if (r == 0) break;
+        if (r < 0) { if (count == 0) giveup = r; break; }
+        ...
+        count++;
+    nmatch = count;   /* the record's reported match count */
+
+A negative return AFTER the first match (`count > 0`) is silently
+discarded: `giveup`/`rc_final` is only set when the give-up is the VERY
+FIRST call (`count == 0`). The loop `break`s either way, and `nmatch`
+(what the record reports as the answer) is just the count of matches
+found before the give-up struck — indistinguishable from a subject that
+genuinely has only that many matches. Verified against source directly
+(not inferred); confirmed present in both `testees/pcre2/driver.c` and
+`testees/pcrec/driver.c` on 2026-09-07.
+
+WHY IT MATTERS: this is not confined to bench/syntax. Any find-all
+regime, on any sub-bench, where a mid-subject give-up occurs (a
+recursion/backtrack limit, a step budget, a JIT stack limit) produces a
+record whose `match_outcome` and match count look like a normal,
+correct, SHORTER match count rather than a give-up — no `wrong-answer`
+flag, no `give-up` outcome, just quietly fewer matches than the oracle
+expects on later calls, while earlier calls in the same loop (the ones
+before the give-up) are correct. Whether this reached any PRIOR sample
+(bench/loglines, bench/bounded, bench/altwide all have find-all
+regimes) is UNKNOWN — not investigated here; a scope check across
+existing store records for `nmatch` values disagreeing with their
+oracle's expected count, specifically in find-all regimes, is owed
+before any prior sample is trusted where this could bite. The fix (per
+Q1) is to distinguish NOMATCH from any other negative code on every
+non-first iteration, not just the first, and stamp a give-up outcome
+accordingly.
+
+STATUS: OPEN. Not fixed here (a read lane's finding; fixing driver
+semantics changes what future records look like and needs the
+harness's own judgment on backward compatibility — a manager decision,
+not a lane's). Reported to pcrec's side is NOT needed (this is our own
+driver code, not pcrec's).
+
+## KB-14 (2026-09-07) — pcrec's driver hard-codes the reported match START to 0 on the whole-subject (`anchored`) form, discarding the real start `\K` or a lookbehind produces
+
+OBSERVED (lane b36read, same ledger §1.2, Q2): `asr-k-uc` (`key=\K\w+`)
+on subject `f-kv` reads `[0,9]` on all four pcrec arms where the oracle
+(and libpcre2, correctly) reads `[4,9]` — `\K` resets the reported match
+start past the `key=` prefix, and pcrec's driver never reads it:
+
+    testees/pcrec/driver.c (whole-subject/`anchored` branch):
+        long long r = do_match_caps(s->buf, s->len, 0, caps);
+        if (r < 0) {
+            if (r < -1) giveup = (int)r;
+        } else if ((size_t)r == s->len) {
+            first_s = 0;              /* <-- hard-coded, not caps[0][0] */
+            first_e = (long)r;
+            memcpy(firstcaps, caps, (size_t)ncaps * sizeof *caps);
+        }
+
+`caps` DOES carry the real span (it is memcpy'd into `firstcaps` for the
+capture-group check the same line), but `first_s`/`first_e` — the pair
+the record reports as the top-level match span — are set from the
+call's own end position and a hard-coded 0, never from `caps[0]`. This
+is pcrec's driver ONLY; libpcre2's whole-subject path is unaffected.
+
+WHY IT MATTERS: every whole-subject (`(?:...)\z`) pcrec record's
+reported match START is wrong whenever the pattern can start its
+reported match somewhere other than byte 0 of the attempt — `\K`,
+lookbehind-based start adjustment, or (per Q3 below) anything the `\z`
+wrapper itself perturbs. This is a CORRECTNESS bug in the driver, not a
+timing one — a wrong-answer flag should already have caught it wherever
+the schema's validator compares match spans against the oracle; whether
+it silently passed anyway on any PRIOR whole-subject sample (only
+bench/syntax exercises `\K` and lookbehind starts extensively; bench/
+email's and bench/bounded's whole-subject forms may not) is unchecked.
+
+STATUS: OPEN. Fix: read `first_s`/`first_e` from `caps[0]` in the
+anchored branch, same as the search branch already does.
+
+## KB-15 (2026-09-07) — the `(?:<pattern>)\z` whole-subject WRAPPER changes pattern semantics for three syntax families, not just the two the design anticipated
+
+OBSERVED (lane b36read, same ledger §1.3, Q3): the wrapper this bench
+uses to force a whole-subject match ([B15]'s floor-pattern design) is
+LEXICAL — it wraps the pattern text, not the match call — and that
+reaches inside the pattern for constructs whose meaning depends on
+where the pattern ends or what encloses them. Three confirmed failure
+modes across three mechanism families:
+1. `(?R)` recursing into the WRAPPER itself rather than the bare
+   pattern — a wrong answer, predicted by P2 before the run and
+   confirmed exactly, with clean controls.
+2. `\K` — KB-14 above (a driver bug compounding a wrapper design
+   question: even a correctly-read `caps[0]` reports the span the
+   WRAPPED pattern produced, and whether that is the semantics the
+   census wants is a separate, still-open question).
+3. `mod-x` (`(?x) c a t # comment`) becomes UNCOMPILABLE under the
+   wrapper — pcrec refuses with "missing closing ) for group" because
+   the `(?x)` free-spacing mode's `#`-comment silently swallows the
+   wrapper's own `)\z`, a refusal libpcre2 does not share (it must
+   handle the same text differently) — R1 in the ledger, the one
+   `built`-per-seed refusal that is not in the 14-row unsupported
+   block.
+
+WHY IT MATTERS: this is a DESIGN question for the wrapper mechanism
+itself (should it wrap textually, or should whole-subject matching be a
+call-time flag instead?), not a single bug to patch — patching Q1/KB-13
+and Q2/KB-14 does not resolve `(?R)`'s wrong answer or `mod-x`'s
+refusal, both of which are the wrapper reaching where it should not.
+
+STATUS: OPEN, unscoped — a design question for whoever owns the
+whole-subject wrapper mechanism next, not a landing-bar fix.

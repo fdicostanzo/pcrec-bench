@@ -67,10 +67,14 @@ THREE THINGS A FUTURE EDITOR SHOULD NOT UNDO WITHOUT READING WHY (all in
    "four digits" call spellings and the three balanced-paren recursions:
    an outlier without its same-language twin is a number, not a question
    (rule R3).
-3. **No unbounded `.` repeat under `(?s)`, and 1 MB is the top run.** The
-   set has no backtracking hazard by design; a `(?s).*` over a 1 MB
-   subject with no newline barrier is quadratic and would bind the
-   harness's 20 s per-trial budget on every backtracking testee.
+3. **No unbounded `.` repeat under `(?s)`, and 1 MB is the top run.** A
+   `(?s).*` over a 1 MB subject with no newline barrier is quadratic and
+   would bind the harness's 20 s per-trial budget on every backtracking
+   testee — this ONE shape was excluded on purpose. It is not true that
+   the set has no hazard of any kind: the recursion family's
+   balanced-paren patterns are quadratic on libpcre2's interpreter by a
+   different mechanism (NOTES.md's "Give-ups and refusals are results",
+   upstream_findings.md U5, found in [B36]'s first-sample read).
 4. **Pattern ids are case-unambiguous by rule.** Two ids that differ only
    in case name two different files on ext4 but ONE file on a
    case-insensitive filesystem (macOS APFS default, Windows) — a clone
