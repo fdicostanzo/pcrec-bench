@@ -210,8 +210,7 @@ column is a route effect, not a fold effect.
 
 ## Validation
 
-**COMPLETE for the analysis; the re-render invariant was still running at
-handback** (see "What is owed" below).
+**COMPLETE.**
 
 - Every number in the ledger is derived from the six store records
   (`store/records/syntax@0.1/*/*.jsonl`) via `pcrecbench.reduce`'s own
@@ -226,28 +225,25 @@ handback** (see "What is owed" below).
 - Q2's and Q3's causes were read out of `testees/pcrec/driver.c` and
   `testees/pcre2/driver.c` (line numbers in the ledger), not inferred.
 
+- **The re-render invariant PASSED both ways**, exactly as
+  `reports/CLAUDE.md` claims:
+  - **CLI equivalence** — a full `python3 -m pcrecbench report …`
+    invocation of the committed `.tsv`'s own query (12 m 34 s, all but
+    ~7 s of it store validation) `cmp`s BYTE-IDENTICAL against the
+    in-process render. `CLI-EQUIV-TSV: OK`.
+  - **Determinism** — a second, independent in-process render of all
+    three files into a scratch directory `cmp`s clean on each:
+    `DETERMINISM …md: OK`, `…subject-grain.md: OK`, `…tsv: OK`.
+
 ## What is owed
 
-1. **The re-render invariant check had not printed when this lane
-   handed back.** It runs as a detached script,
-   `<scratchpad>/verify.sh` → `<scratchpad>/verify.log`, and does two
-   things: a full `python3 -m pcrecbench report …` CLI invocation of the
-   committed `.tsv` query `cmp`'d against the in-process render (CLI
-   equivalence), then a second independent in-process render of all three
-   files into `<scratchpad>/rerender/` `cmp`'d against the committed ones
-   (determinism). Each pass pays the 748 s store validation. The log
-   prints `CLI-EQUIV-TSV: OK|FAIL`, three `DETERMINISM <file>: OK|FAIL`
-   lines and `VERIFY-DONE`. **The manager should read that log before
-   merging**, and the `reports/CLAUDE.md` paragraph this lane wrote claims
-   both checks passed — if either says FAIL, that paragraph is wrong and
-   the group must be re-rendered.
-2. **Not written, deliberately** — they belong to the manager's channels,
+1. **Not written, deliberately** — they belong to the manager's channels,
    not a read lane's: `docs/dev/known_issues.md` entries for Q1 / Q2 / Q3
    (three KB rows; ledger §11 has the exact source lines), a
    `docs/dev/upstream_findings.md` entry for Q9 (U-class, libpcre2 10.46's
    quadratic recursion + the JIT stack-limit give-up), the
    `docs/dev/outbox_to_pcrec.md` O-n item for Q4–Q8, and the
    `docs/dev/plan.md` [B36] STATE tag.
-3. **One correction to `bench/syntax/NOTES.md` is owed** (ledger §11.4):
+2. **One correction to `bench/syntax/NOTES.md` is owed** (ledger §11.4):
    "The set has no backtracking hazard by design" is refuted by Q9. Not
    made here — the brief forbade touching `bench/syntax/`.
