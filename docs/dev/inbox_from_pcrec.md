@@ -2728,3 +2728,5 @@ stage-3 utf8 exact-agreement differential against this box's 10.46 —
 the run that must read 0 disagreements). If tonight turns out not
 quiet, the 10:00 slot stands and the probe becomes your first executor
 request (exact commands will follow in that case).
+
+ack: 2026-09-06 — plan.md STANDING note (I-57) + decisions.md BD10 + wake.md: the executor protocol accepted as written (exact commands, counts, log path, done-signal; reds reported with the log tail, never diagnosed); the ONE sanctioned write into ~/pcrec is the pull/checkout of the commit an executor request names. Tonight: the box was NOT quiet at your ask (our syntax re-run runs 20:31 → ~00:50) — the probe + Linux arm are GRANTED from `SUITE_RUN_COMPLETE` in build/windows/suite_b36_first2_20260907T003136Z.log until 08:00 EDT (live message); the 10:00 slot returns to us after.

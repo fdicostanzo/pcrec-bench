@@ -236,3 +236,33 @@ pcrec's clone precedes and follows it.
 REVISIT WHEN. Another rewrite is contemplated — check whether
 git-filter-repo can be installed (a permission rule for the session), and
 whether pcrec's clone has unpushed commits (then it rebases, not resets).
+
+## BD10 — 2026-09-06 — the TRAVEL-MONTH EXECUTOR ARRANGEMENT (Frank's ruling, inbox I-57): this session runs pcrec's Linux commands on request, by exact-command inbox items
+
+DECISION. From 2026-09-07 (Frank away with the Mac; the Linux box up with
+no terminal for him) for about a month, the bench manager session
+EXECUTES pcrec commands on this box when the pcrec manager asks. A
+request is an inbox item carrying the exact command sequence verbatim,
+the expected counts / green criteria, a log path under
+/home/duxevents/pcrec/build/, and a done-signal trailer to quote back.
+The executor reports — counts, the trailer, a red's log tail — and never
+diagnoses or fixes (the session is Sonnet from its next start; I-54's
+promote-don't-thin rule covers the bench's own analysis, and this role
+asks for none). The bench's windows keep priority; BD3's one-heavy-suite
+rule binds both sides. Live ssh light ops continue over a tailnet if it
+comes up; the executor path is the fallback and the heavy-run path.
+
+WHY. pcrec's owed Linux arm (the battery + mech + the stage-3 utf8
+exact-agreement differential against this box's libpcre2 10.46) needs
+this box's gcc 15.2 and oracle; nobody else can drive it for a month.
+
+BD2 AMENDMENT (narrow). ~/pcrec stays read-only from this project EXCEPT
+the pull / checkout of the commit an executor request NAMES (pcrec pushes
+to github first): `git -C ~/pcrec pull --ff-only` or `git -C ~/pcrec
+checkout <named-sha>` inside such a request, nothing else — never a
+branch, worktree, build-tree or file write of our own devising. pin.sh's
+`git archive` reads are unchanged.
+
+REVISIT WHEN. Frank returns (~2026-10-07) or the tailnet makes the path
+unnecessary; and if a request ever asks for judgment (a fix, a
+re-aim, an interpretation) — decline it back to the inbox by name.
