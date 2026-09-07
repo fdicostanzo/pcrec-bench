@@ -29,6 +29,23 @@ poll the log TAIL and act the moment the completion line appears — never
 a blocking foreground call, never a Monitor on a progress log. Windows
 run under setsid (the background-task 10-min cap). python3 (BD4).
 
+**Every background job ends with a durable completion marker, checked
+by a command, never inferred from `ps`.** ([B33]'s b33cc lane, twice,
+2026-09-07: an idle notification said "I'll report back once it
+completes," the job finished minutes later with nobody — lane or
+manager — noticing until asked; the only evidence of "done" was `ps
+aux` forensics run from outside.) Chain every backgrounded command with
+`; echo "DONE rc=$?" >> <logfile>` (or a `touch <marker>` beside the
+worktree) and treat that line/file, not a live-process check, as the
+ONLY source of truth for "has this finished". Before sending ANY idle
+notification, status message, or handback while a background job is
+outstanding, run the check for its marker and quote the result inline
+— a claim of "still running" or "waiting for X" is not credible without
+it. On EVERY reinvocation (a background-task notification, a message
+from the manager, a fresh turn after any gap), check every marker you
+are tracking before doing anything else — the notification firing is
+not proof you acted on it last time.
+
 ## Process rules
 - COMMIT INCREMENTALLY (WIP commits) — commit age is your liveness signal.
 - Records: pinned tier (canonical store) vs scratch (`quick`, pcrec-local)
@@ -50,6 +67,10 @@ run under setsid (the background-task 10-min cap). python3 (BD4).
   complete on its own (numbers inline, log paths), and END — do not idle
   awaiting review. A plausible follow-up round resumes from your
   committed report in a FRESH agent; write the report so that works.
+- A background job finishing is a FINALIZE trigger, not a status update:
+  the moment its completion marker appears, immediately fold the real
+  numbers into the report, commit, and hand back in that same turn —
+  never re-idle "waiting" on a job that has already finished.
 - A handback names its validation COMPLETE or says exactly what is owed.
 
 ## Delivery bar
