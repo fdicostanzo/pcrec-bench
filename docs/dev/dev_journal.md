@@ -3280,3 +3280,35 @@ with the session — the NEXT session reads the marker and the per-cell
 rc lines itself (wake.md step 2). wake.md rewritten from scratch.
 Session cost the box one refused night (KB-12) and gained the pre-flight
 that makes it the last such night.
+
+## 2026-09-07 (EDT, ~00:0x-01:0x), twelfth session part 1 — bench/syntax@0.1's first sample landed clean; box handed to pcrec's night runner
+
+Woke as the twelfth session (Sonnet, per I-54); no new inbox items past
+I-57 (already acked), tree clean and synced with origin at 74b2402, no
+orphaned worktrees/crons/scratch-store. The re-run window launched at
+close of the eleventh session (20:31 EDT) was found already in flight
+and healthy (pcre2-interp progressing normally, ~19 min in); rather than
+poll it with model turns, armed a zero-model-call Monitor on the suite
+log's `SUITE_RUN_COMPLETE` marker (with a fallback alert if
+`run_window.sh` died without it) and stood the session down. It fired at
+00:50:54 EDT: `set syntax rc=0 259 min` in
+build/windows/suite_b36_first2_20260907T003136Z.log, all 6 per-cell
+`rc=0` in the paired window log — a clean pass, the first sample landed
+without KB-12's uppercase-id refusal recurring. `pcrecbench index`:
+154→160 records (+6), 144→150 measured (+6), matching wake.md's
+prediction exactly. Committed by named path only (`store/index.tsv` +
+the six `store/records/syntax@0.1/*/*.jsonl` files, never `store/`
+blind — BD9 rule 1) as 28cb034, fetched, pushed clean (74b2402→28cb034).
+
+Confirmed pcrec's detached night runner picked up the marker on schedule
+(waiter pid 1558428 alive; ~/pcrec/build/night_20260907/runner.log shows
+the marker seen at 00:50:54, the ask-(v) fixed-cost probe already run —
+linear fit 0.2956 ns/B, fixed **-10.9 ns/call**, essentially zero: pcrec's
+own instrument does NOT reproduce our ~31.6 µs fixed-cost hypothesis at
+this box/pin — a fact for O-20/O-21 — and their Linux-arm battery
+starting). Per plan.md [B35]'s standing note the grant runs to 08:00 EDT
+with the Linux arm's own soft cutoff at 08:30 (`/var/tmp/
+pcrec_overrun_note` on a skip); nothing of ours runs in that span,
+including O-20's read of the syntax sample. Armed a second zero-model
+Monitor on the runner pid exiting or the 08:30 boundary, whichever
+first, and stood down again pending it.
