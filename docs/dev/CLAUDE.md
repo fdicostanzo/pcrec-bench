@@ -55,6 +55,14 @@ decisions) so cross-references between the two repos are never ambiguous.
   commits); rulings, priorities, re-pin targets, requests. This session
   reads it at wake, moves each new item into plan.md and appends one
   `ack: <date> — <where>` line under it — the only thing it writes here.
+  ONE exception (BD11, 2026-09-07): `tools/archive_inbox.py` /
+  `make archive-inbox` may relocate a fully-acked, aged-out entry
+  verbatim to `inbox_from_pcrec_archive.md`, keeping the live file small
+  for wake-time reading; an unacked item is never touched.
+- `inbox_from_pcrec_archive.md` — where `tools/archive_inbox.py` (BD11)
+  moves fully-acked entries once they age out of the live inbox file's
+  recent window; byte-identical to how they stood live, never edited
+  after archiving. Consult it for anything not in the live file.
 - `outbox_to_pcrec.md` — the DURABLE CHANNEL OUT: written ONLY by this
   session (findings about pcrec, requests for pcrec changes, questions
   that must outlive the session); the pcrec manager reads it at wake.

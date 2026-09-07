@@ -266,3 +266,45 @@ branch, worktree, build-tree or file write of our own devising. pin.sh's
 REVISIT WHEN. Frank returns (~2026-10-07) or the tailnet makes the path
 unnecessary; and if a request ever asks for judgment (a fix, a
 re-aim, an interpretation) — decline it back to the inbox by name.
+
+## BD11 — 2026-09-07 — `inbox_from_pcrec.md` gains ONE exception to its "never deleted" rule: `tools/archive_inbox.py` may relocate a fully-acked, aged-out entry to a new archive file
+
+DECISION (Frank direct, in conversation, superseding no other ruling —
+narrows BD5/pcrec D78 by exactly one operation). The live inbox file had
+grown to 2,733 lines / 57 items and cost ~84K tokens to read in full at
+wake; `tools/archive_inbox.py` moves an item to
+`docs/dev/inbox_from_pcrec_archive.md`, byte-for-byte verbatim (header,
+body, ack line(s)), when BOTH hold: (a) it carries at least one `ack:`
+line — proof this session already acted on it and recorded where; (b)
+it is not among the `--keep-recent` (default 15) most recent entries by
+FILE POSITION — not by parsing item numbers or dates, since item
+numbers are not strictly chronological in this file (I-19/I-20 appear
+swapped) while file position always is. An item with no ack is never
+touched regardless of age (I-35/I-36 stayed live on the first run for
+exactly this reason). The script self-verifies before it writes: it
+refuses to run if splitting the source does not reconstruct it
+byte-for-byte, is idempotent by item id on re-run, and re-reads the
+archive after writing to confirm every archived entry landed verbatim
+before it touches the live file. `docs/dev/inbox_from_pcrec.md` itself
+carries the addendum inline (its own preamble, just below the original
+PROTOCOL paragraph) so a reader of the live file alone still sees the
+rule stated. Notified to the pcrec manager as outbox O-23, since the
+live file is their single-writer channel and this changes what "never
+deleted" means for it.
+
+WHY. The wake-time read cost was becoming the dominant cost of reading
+this channel at all (this session's own twelfth-session wake needed a
+paginated read of the full file); items already acked and folded into
+plan.md carry no live information the manager needs again except by
+deliberate lookup, for which the archive file suffices.
+
+FIRST RUN (2026-09-07): 53 entries at the time, 36 archived (I-1
+through I-38 except I-35/I-36, unacked), 17 remain live. Verified: the
+union of ids across both files is exactly the original 53, no
+duplicates, idempotent re-run reports "nothing to archive".
+
+REVISIT WHEN. The pcrec manager objects (their single-writer channel;
+they should say so if the archived form loses something they need
+live), or `--keep-recent`'s default (15) proves wrong in practice
+(too aggressive if a recently-acked item turns out to need revisiting
+often; too loose if the file still grows uncomfortably between runs).

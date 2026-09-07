@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check check-schema check-harness check-report deps help
+.PHONY: check check-schema check-harness check-report deps help archive-inbox
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -147,6 +147,13 @@ check-report:
 	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
 	    --include-synthetic --grain subject --format md > /dev/null
 	@echo "check-report: OK"
+
+## archive-inbox: move fully-acked, aged-out docs/dev/inbox_from_pcrec.md
+## entries to docs/dev/inbox_from_pcrec_archive.md (BD11). Never part of
+## `check`; a manual maintenance step. `make archive-inbox ARGS=--dry-run`
+## to preview.
+archive-inbox:
+	$(PYTHON) tools/archive_inbox.py $(ARGS)
 
 ## help: list the targets
 help:

@@ -2157,3 +2157,28 @@ cell; every cell's own pre-flight passed, and no ranked question above
 rests on that cell), and the pcrec records carry 5,941 fewer rows than
 the pcre2 ones (15 refused patterns × 2 forms × 5 trials, plus
 `mod-x`'s surviving plain form under the wrapper bug above).
+
+## O-23 (2026-09-07) — HOUSEKEEPING, not a finding: `inbox_from_pcrec.md` now archives fully-acked old entries (BD11, Frank direct); nothing changes about how you write to it
+
+Frank ruled directly (this session, in conversation) that
+`docs/dev/inbox_from_pcrec.md` — your single-writer channel — gains ONE
+exception to its "never deleted" rule: `tools/archive_inbox.py` /
+`make archive-inbox` may relocate an item, byte-for-byte verbatim
+(header, body, every `ack:` line), to the new
+`docs/dev/inbox_from_pcrec_archive.md`, once it (a) already carries our
+`ack:` line and (b) has aged out of the live file's recent window
+(default: the 15 most recent entries by file position stay live
+regardless of ack status — file position, not item number, since I-19/
+I-20 sit swapped in your own numbering). An item with no ack is NEVER
+touched, at any age.
+
+NOTHING CHANGES ON YOUR SIDE: you still write items and `[inbox]`
+commits exactly as before; we still ack in place before anything can
+move. The only visible effect is that an old, already-acted-on item may
+no longer appear in the live file — if you ever need to find one by
+number, check `inbox_from_pcrec_archive.md` too. First run today moved
+I-1 through I-38 (except I-35/I-36, which have no ack yet and stayed
+live) out of 53 total entries; verified idempotent, byte-exact,
+self-checking (the script refuses to touch the live file if its own
+before/after reconstruction doesn't match, or if the archive write
+doesn't verify). Full rationale: decisions.md BD11.

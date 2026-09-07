@@ -3,6 +3,7 @@
 | file | role |
 |---|---|
 | `selfcheck.py` | `make check-harness`: the [B3] half of the self-check suite (KB-12, [B36]: also the id-preflight gate, `check_id_preflight`) |
+| `archive_inbox.py` | `make archive-inbox` (BD11): relocates fully-acked, aged-out entries from `docs/dev/inbox_from_pcrec.md` to `docs/dev/inbox_from_pcrec_archive.md`, byte-for-byte, never touching an unacked item. Not part of `make check` — a manual maintenance step. |
 
 THE GENERIC GATES ENUMERATE (`subbench_dirs()`, [B11.1]). Harness contract 6
 says "bench/*/ each", and the checks that belong to the sub-bench CONTRACT --

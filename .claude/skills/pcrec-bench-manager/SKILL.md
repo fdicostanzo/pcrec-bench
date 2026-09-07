@@ -68,7 +68,11 @@ Frank (the user) sets milestone-level direction and answers rulings.
    rulings/priorities/pins (§0). Every item without an `ack:` line is
    NEW: move it into plan.md (a row, a queue position, or a note on the
    row it affects) and append `ack: <date> — <where>` under it in the
-   same commit. Re-pin targets arrive here.
+   same commit. Re-pin targets arrive here. Old fully-acked items may
+   have moved to `docs/dev/inbox_from_pcrec_archive.md` (BD11,
+   `tools/archive_inbox.py`/`make archive-inbox`) to keep this read
+   short; check there for anything not in the live file. Run
+   `make archive-inbox` occasionally as housekeeping, not every wake.
 2. Read the tail of `docs/dev/dev_journal.md` (append-only, newest at
    bottom) — the restart/status-recovery record.
 3. Check `docs/dev/plan.md` state: `grep -n "STATE:started" docs/dev/plan.md`
