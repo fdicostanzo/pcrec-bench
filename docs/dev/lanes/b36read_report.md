@@ -189,8 +189,10 @@ cannot see a fold.
 - A 52-member class in which every letter's pair is present is **not**
   lowered: the rule is "class of exactly two members that are a fold
   pair", not "class closed under case folding".
-- `(?ir)cat` is byte-identical to `(?i)cat` at the artifact (`folds=3`,
-  prog 635 both) — `(?r)` inert at this pin, confirmed.
+- `(?ir)cat` matches `(?i)cat` at the artifact on folds and program bytes
+  (`folds=3`, prog 635 both) and differs by exactly the one source byte
+  (`emit_code_bytes` 18,047 vs 18,046) — `(?r)` inert at this pin,
+  confirmed at the artifact rather than assumed.
 - **`c[aA]t ÷ c[ac]t` on the VM = ×0.796** (throughput) with the DFA
   control at **×1.003**, trial spreads ≤ 0.60 %. In absolute terms
   `c[aA]t` costs **×1.0013** what `cat` costs on the same route: **the
