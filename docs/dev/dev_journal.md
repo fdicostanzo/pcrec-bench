@@ -3397,3 +3397,62 @@ scope check below is their natural follow-up, not a fix). No lanes
 alive, no crons, no live Monitors, no worktrees. Nothing of ours is on
 the box; the box is free. wake.md rewritten from scratch with the
 ordered queue.
+
+## 2026-09-07 (EDT, ~10:0x-14:1x), thirteenth session — a side quest (BD11: `tools/archive_inbox.py`) and [B40] closed: the store's existing conclusions are SAFE
+
+Woke per the skill: no peer session up, wake.md/inbox/journal tail all
+agreed (nothing past I-57), plan.md confirmed Frank's queue order
+([B40] → [B33] → [B38] → [B13] → [B7]). Launched the b40scope lane
+(sonnet, read-only) on [B40] immediately — its method needed no
+judgment call to start.
+
+SIDE QUEST while it ran: Frank asked for a process to archive old acked
+`docs/dev/inbox_from_pcrec.md` entries. Flagged the conflict first — the
+file's own protocol says items are "never deleted", single-writer
+(pcrec manager) — and asked which he wanted; he ruled directly: archive
+for real (his authority, since he ruled the original protocol too).
+Built `tools/archive_inbox.py` (`make archive-inbox`): relocates a
+fully-acked item, byte-for-byte, to the new
+`docs/dev/inbox_from_pcrec_archive.md` once it has aged out of the
+live file's recent window (default keep-recent 15, by FILE POSITION —
+item numbers are not strictly chronological, I-19/I-20 sit swapped);
+an unacked item is never touched regardless of age. Self-verifying
+(refuses to run if it can't reconstruct the source byte-exact,
+idempotent by item id, checks the archive write before ever touching
+the source). First run: 53 → 17 live entries (36 archived, I-1..I-38
+minus I-35/I-36 which have no ack yet and correctly stayed live); live
+file 2,733 → 920 lines. Recorded as BD11, addendum written inline in
+the inbox file's own preamble, pcrec manager notified via outbox O-23,
+wake step 1a and tools/CLAUDE.md updated. Committed f4d4988, pushed.
+
+[B40] DELIVERED (lane b40scope, branch `lane/b40scope`, commit
+3809239): the store's existing conclusions are SAFE, nothing left
+over. Before merging, independently re-derived every material claim
+directly against `store/` and the source (not just reviewed the
+report — the session's own stated lesson: a lane's claim is a
+hypothesis until the cited lines/numbers are checked): fresh counts
+matched wake.md exactly (245/20/360, store unchanged since this
+morning); all 245 `wrong-span-or-captures` + 20
+`did-not-match-as-expected` confined to bench/syntax@0.1 (verified —
+zero in any other sub-bench); of the 245, 225 are KB-13-shaped
+(diagnostic "expected N non-overlapping match(es)") across EXACTLY 9
+unique (pattern,subject) cells × 5 testees × 5 trials (find-all's
+`regime == "throughput"` gate confirmed by reading both adapters —
+internal token, maps to schema's `large-subject-throughput` via
+`subbench.py`'s REGIME_MODE), 20 are KB-14-shaped (diagnostic "expected
+span"), all from the single known `asr-k-uc`/`f-kv` witness — 225+20 =
+245 exactly, zero other diagnostic shapes. The 20
+`did-not-match-as-expected` rows are KB-15, not this row's bug. All 360
+`gave-up` rows are structurally immune to KB-13 (both drivers only ever
+set `giveup` on the FIRST failed call per KB-13's cited source — a
+mid-loop give-up can only ever shorten `nmatch`, already counted in the
+225 above, never produce a `gave-up` outcome); split 225
+`match-compliance` (no find-all loop exists there at all) / 135
+`large-subject-throughput` (find-all applies, immune by the count==0
+argument). `docs/dev/outbox_to_pcrec.md` O-22 already states the
+correct attribution — nothing to caveat. Merged 2d4614a, worktree
+removed, lane TaskStop'd. [B40] moved to plan_completed.md.
+
+State: master pushed through 2d4614a. Pin d34c9131/abi 23 unchanged.
+Next in Frank's ordered queue: [B33] (the cc axis re-pin-time script).
+No lanes alive, box free.
