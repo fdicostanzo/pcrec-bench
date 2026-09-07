@@ -4,6 +4,99 @@ Each file is the output of one `python3 -m pcrecbench report ...` query,
 committed beside the records it reduces so a reader can cite a number
 with its query. Names: `<date>-<subbench>-<version>-<machine>[-<label>][.<grain>].md|tsv`.
 
+**[B36] reports (2026-09-07, lane b36read) ADDED ONE file group — the
+2026-09-06/07 OVERNIGHT window at pcrec pin d34c9131 (abi 23), the
+`bench/syntax@0.1` CENSUS's FIRST SAMPLE** — and changed NOTHING else here:
+the reporter is unchanged at `v15 (2026-09-05)`, no committed report was
+regenerated, no reporter code was touched. All three files carry an explicit
+`--since`/`--until` PAIR *and* the six-id `--testee` roster (the 2026-08-30
+rule and KB-5). The window: 6 cells, ALL `measured` at attempt 1 under BD7,
+record timestamps 2026-09-07 00:32:11Z → 04:06:05Z (3 h 34 min end to
+end; successive cell STARTS 35-54 min apart), store 155 → 161; the six records were committed on
+master (`28cb034`) before these were rendered; this lane rendered from
+`--store ~/pcrec-bench/store` and commits no store file.
+
+RE-RENDER INVARIANT, checked the same two ways as the [B37] and [B39] waves,
+because the three files were rendered IN-PROCESS (the 160-record store loaded
+and validated ONCE — **748 s on this box**, the longest yet: this set's six
+records carry 35,859-41,800 rows each — and reused for all three; the same
+`build_report` / `render_markdown` / `render_tsv` calls a CLI invocation
+makes; the three files then rendered in 118 s):
+
+1. **CLI equivalence**, proven on
+   `2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv`: that file was
+   re-produced by a full `python3 -m pcrecbench report …` invocation of its
+   own committed query and `cmp`s BYTE-IDENTICAL against the in-process
+   render.
+2. **Determinism over all three**: a second, independent in-process render
+   into a scratch directory diffs clean on all three files (`cmp` on each).
+
+FIVE THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS:
+
+- **THREE R0 CELLS ARE THE INSTRUMENT'S, NOT AN ENGINE'S**, and two of the
+  three were not predicted. (i) The nine `rec-r-uc`/`rec-1`/`rec-name` ×
+  throughput cells that read `expected 116 non-overlapping match(es);
+  observed 5` on `pcre2-jit` AND all four pcrec arms are a **give-up the
+  find-all loop cannot spell**: a read-only ctypes probe on the same subject
+  returns `PCRE2_ERROR_JIT_STACKLIMIT` (−46) at the sixth start, after five
+  spans identical to the interpreter's, and both drivers
+  (`testees/pcre2/driver.c:321-340`, `testees/pcrec/driver.c:714-731`)
+  discard a negative return that arrives after the first match. **Five of six
+  testees are therefore silently absent from three of the 285 rankings**
+  (report line 5229 ranks the interpreter alone, flagged `dominated`).
+  (ii) `asr-k-uc` / `match-compliance` / `whole-subject` / `f-kv` reads
+  `expected span [4,9]; observed [0,9]` on all four pcrec arms because the
+  pcrec driver's anchored branch hard-codes `first_s = 0` — the
+  whole-subject form cannot report a `\K`-reset start. (iii) `rec-r-uc` /
+  `f-parens` / whole is P2's predicted wrapper wrong answer, confirmed with
+  its two controls clean.
+- **`mod-x` is an R1 refusal on the WHOLE-SUBJECT FORM ONLY** (report line
+  4133, four `not ranked … missing closing ) for group` lines): wrapped,
+  `(?x) c a t # comment` becomes `(?:(?x) c a t # comment)\z` and the `/x`
+  comment swallows `)\z`. `esc-hex-braced` — P1's fifteenth predicted
+  refusal — COMPILES, which is the abi-23 re-seed working as NOTES foresaw.
+- **The `auto` route's throughput ratio against the JIT is a function of its
+  own prefilter stamp**, monotone over six buckets and 55 DFA cells:
+  `none` **0.158** → `memchr` **0.728** → `byte-class` **0.997** →
+  `offset-set` **1.286** → `offset-set-bounded` **2.441** (six cells,
+  2.393-2.719 — the tightest band in the set: `done$`, `done\Z`, `done\z`,
+  `(?m)done$`, `\bcat\b`, `\Bcat\B`). The ONLY pattern anywhere in the
+  census on the "better than ×20" side is `rec-define` — **×0.0398** on
+  `auto` and ×0.0399 on `nocaps`, pcrec ×25.1 FASTER than the JIT on
+  `(?(DEFINE)(?<d>\d{2}))(?&d):(?&d)`, compiled to a pure DFA.
+- **`shape=inline` prints here for the first time in any committed report**,
+  which supersedes the [B37] paragraph below ("`shape=` never prints
+  `inline`") FOR THIS GROUP ONLY. It prints on 17 `auto` artifacts and on the
+  three capturing `cat` spellings of the forced-VM arm — where it is ×1.78
+  FASTER than `forward` on the same language (`(cat)` 961,162.7 vs `cat`
+  1,714,697.1 ns/set) — while on the `auto` lookaround hybrids the same token
+  travels with the ×2.9-5.1 SLOWER side of the `lka`/`lkb` pairs.
+- **`anc-g-uc` (`\Gitem`) on the forced VM is the largest single ratio in the
+  bench's history**: 1,219,696.7 ns/set against `anc-caret`'s 15.1 on the
+  same testee (**×80,784**; report line 331), flat at 0.886 ns/B over all
+  three runs, with the three artifacts' mechanism stamps IDENTICAL but for
+  `vm_program_bytes` (801/801/814). The `auto` route is unaffected (18.7 ns).
+
+- `2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.md` — the FIRST SAMPLE
+  of `bench/syntax@0.1` ([B36], Frank's charter I-42) at pcrec **d34c9131**
+  (abi 23): six cells, `libpcre2_10.46_{interp,jit}` and
+  `pcrec_d34c9131_{auto,auto-nocaps,vm,vm-in}`, `--trials 5`, reporter v15.
+  Query: `report --subbench syntax --version 0.1 --since
+  2026-09-07T00:00:00Z --until 2026-09-07T05:00:00Z` plus the six `--testee`
+  values — **6 records, 0 superseded.** READ `bench/syntax/NOTES.md`'s outlier
+  rule R0-R7 and predictions P1-P13 FIRST; the census's output is a ranked
+  list of QUESTIONS, not a verdict, and it lives in the ledger. 95 patterns ×
+  3 regimes; the pcrec arms refuse 29 of 190 (pattern × form) compile cells
+  covering 15 patterns (14 of them P1's named module refusals, plus `mod-x`
+  whole-subject). Worst other-core reading of the window **30.15 %**
+  (`interp` / `grp-atomic-alt` / throughput, report line 10) — above the 10 %
+  pre-flight limit, which gates per CELL, not per row; no ledger question
+  rests on an interp throughput cell as its primary number.
+  `.subject-grain.md` (10.2 MB) carries the per-(pattern, subject, regime)
+  rows the ledger's per-byte tables are read from; `.tsv` the set-grain query
+  and the file the CLI-equivalence proof was run on. Ledger:
+  `docs/dev/ledgers/2026-09-07-b36-syntax-first-d34c9131.md`.
+
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
 CLS-FOLD AFTER** — and changed NOTHING else here: the reporter is
