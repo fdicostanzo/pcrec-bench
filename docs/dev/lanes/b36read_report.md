@@ -49,7 +49,7 @@ timestamps are all 2026-09-07 UTC.
 
 | rule | cells | of which questions |
 |---|---|---|
-| **R0** wrong answers | 9 on `pcre2-jit`, 11 on each pcrec arm (20 distinct) | **3 mechanisms, all three the INSTRUMENT's** |
+| **R0** wrong answers | 9 on `pcre2-jit`, 11 on each pcrec arm (11 distinct cells; the 9 are shared) | **3 mechanisms, all three the INSTRUMENT's** |
 | **R1** refusal on a built row | 1 pattern (`mod-x`, whole-subject form only) | 1 (the wrapper) |
 | — the `unsupported` block | 14 patterns × 2 forms × 4 testees | not ranked |
 | **R2** JIT band | 24 on the `auto` route (23 slow, 1 fast), 66 on forced VM, 298 over all five non-JIT testees | 5 ranked (Q4, Q6, Q7, Q8, and `rec-define`'s ×0.040 win) |
@@ -155,9 +155,12 @@ answered.
 12. **Q12 — `auto`'s per-byte cost rises 1.42–1.74× from 64 KB to 1 MB on
     five sparse-hit patterns; the JIT's does not.**
 
-## Predictions: 9 confirmed, 4 refuted, 1 half-untestable
+## Predictions: 3 confirmed outright, 5 refuted, 5 partial
 
-Full table in ledger §6. The two that reorder a reader's model:
+Full table in ledger §6. CONFIRMED: P6, P7, P13. REFUTED: P3, P4 (search
+regime), P9, P11, P12's cost clause. PARTIAL (confirmed in the clause that
+mattered, refuted in another): P1 13/15, P2, P5, P8, P10.
+The two that reorder a reader's model:
 
 - **P3 REFUTED on libpcre2 and HELD on pcrec-auto** — the clause the
   author was most confident in ("PCRE2 compiles spellings to one opcode
