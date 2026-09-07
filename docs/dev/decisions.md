@@ -191,3 +191,48 @@ above is narrowed accordingly: the box is the bench's by default, and a
 granted slot is a BD3 heavy run to plan around like our own (no pinned
 cell, no `make check`, no build lane beside it). BD6's cwd-verified HOLD
 applies to a granted slot for its duration.
+
+## BD9 — 2026-09-06 — a HISTORY REWRITE of master to drop six refused records committed by mistake (Frank's ruling, done the same evening)
+
+DECISION. bench/syntax's refused first sample left six `.staging-*/
+*.jsonl.rejected` files (~90 MB) in `store/records/syntax@0.1/`; a blind
+`git add store/` in a commit chain committed and pushed them (d5c645b).
+They were removed from the tree the same hour (02d7f7e) and `.staging-*/`
++ `*.rejected` made .gitignore rules; the BLOBS stayed in history. Frank
+ruled "proceed with filter repo to remove history blob" (typed into the
+bench session, 2026-09-06 ~20:4x EDT); pcrecdev1 was told to HOLD pushes
+first and confirmed its clone clean. Done in a fresh `--mirror` clone of
+origin with `git filter-branch --index-filter 'git rm -r --cached
+--ignore-unmatch -- store/records/syntax@0.1' --prune-empty -- --all`
+(git-filter-repo's download was blocked by the session's classifier;
+filter-branch on 589 commits took ~1 min): d5c645b pruned (it held
+nothing else), every descendant re-hashed (5eb4402 → 43fdf8d at the tip;
+pcrec's I-56 aad6242 → 517b6f8), every commit up to 26dad5d byte-identical
+with the same SHA. VERIFIED before pushing: the tip's TREE identical
+(`rev-parse ^{tree}` equal), 0 `.rejected` objects reachable, 588 vs 589
+commits. Force-pushed from the LOCAL repo via a temporary ref (a push
+FROM a mirror clone reports "up-to-date" because its branch refs double
+as remote-tracking refs, and a `git fetch origin` inside a mirror
+re-syncs every ref — both bit once); local master `reset --hard` onto
+origin; pcrecdev1 resets its clone on DONE. The pre-rewrite mirror stays
+at /var/tmp/pcrec-bench-mirror.git for a day as the fallback; the six
+rejected files at /var/tmp/pcrecbench-rejected-2026-09-06/.
+
+WHY. The store is the canonical measurement record; refused records
+never belong in it, and 90 MB of them in every clone (pcrec's Mac clone
+included) is weight paid on every fetch forever. Correctness was never
+at stake (the files were never indexed); the rewrite is cheap now and
+impossible later.
+
+RULES THAT FOLLOW. (1) Never `git add` a store directory blind: add
+`store/index.tsv` and the record paths the run log names, AFTER
+`pcrecbench index` reports the count moved. (2) Any lane branch based on
+a rewritten commit is REBASED (`git rebase --onto <new-base> <old-base>`)
+before merge — merging it would resurrect the pruned history (lane/b36ids,
+based on the old 6a0a764, is the live case at this writing). (3) A
+history rewrite is Frank's call each time; the hold/DONE handshake with
+pcrec's clone precedes and follows it.
+
+REVISIT WHEN. Another rewrite is contemplated — check whether
+git-filter-repo can be installed (a permission rule for the session), and
+whether pcrec's clone has unpushed commits (then it rebases, not resets).
