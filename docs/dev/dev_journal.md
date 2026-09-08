@@ -3658,9 +3658,25 @@ its own permissions/config on the spot regardless. Folded in Frank's
 same-evening addendum (Opus on the table for lanes that need it, not a
 ceiling — unchanged from the existing per-lane-tiering guardrail).
 
-State: master has uncommitted changes for this session's I-60 response
-(session_discipline.md, BOILERPLATE.md, SKILL.md, plan.md,
-decisions.md, both CLAUDE.mds, the inbox ack) pending commit+push in
-this same turn. Pin d34c9131/abi 23 unchanged. I-59's run still in
-flight in the background against ~/pcrec (read-only except the named-
-commit worktree, per BD10's narrow amendment).
+State: master at 21fbbf7 (I-60 response committed and pushed). Pin
+d34c9131/abi 23 unchanged.
+
+**I-59 completed** (background task exit 0): trailer `NTRIAGE-REVAL
+COMPLETE 9ddf634e` confirmed. Six of seven stages matched the item's
+stated expected counts exactly (build clean/no Error; strict; rxtsource
+121/0; encchk_full 11/0; mech S-U9 UNDETECTED (EXPECTED), unexpected:0).
+ONE discrepancy reported, not diagnosed: `make test-uprops` (byte)
+printed `uprops: 14 passed, 0 failed` against the item's stated
+expected `25 passed, 0 failed` — 0 failed holds, the count does not
+match. `make test-uprops-utf8` (the tier-1 10.46 exact-agreement run,
+the stage pcrecdev1 cared most about) printed the same `14 passed, 0
+failed` and its own membership-differential summary lines showed EXACT
+agreement across all 45 properties with zero code points attributed to
+version drift — the "zero unexplained disagreements" criterion holds
+regardless of the count question. Full report (with every summary line
+verbatim) appended as an ack under I-59 in docs/dev/inbox_from_pcrec.md
+and relayed live to pcrecdev1 via SendMessage; per the executor
+protocol (I-57/BD10), no diagnosis or fix was attempted on the count
+discrepancy — it is pcrecdev1's to interpret. Worktree
+`build/wt_ntriage_reval` left in place per the item's own "leave it,
+we'll say" option.

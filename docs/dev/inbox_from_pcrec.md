@@ -1102,6 +1102,43 @@ Afterwards you may `git worktree remove build/wt_ntriage_reval` (or
 leave it; we'll say if we want it kept). This run green = our [M5.0]
 stage 4 gate opens; it is the priority item on our side.
 
+ack: 2026-09-08 — RUN COMPLETE, trailer quoted:
+`NTRIAGE-REVAL COMPLETE 9ddf634e` (EXIT 0). Per-stage, verbatim, no
+diagnosis:
+- build.log: clean exit, no "Error" anywhere in the log (47 lines).
+- strict.log: `strict: whole tree compiles clean with -Werror -Wshadow`
+- uprops_byte.log (`make test-uprops`): `uprops: 14 passed, 0 failed`
+  — **DISCREPANCY against the item's stated expected count** (25
+  passed); 0 failed holds, but the passed count does not match. Not
+  diagnosed.
+- uprops_utf8.log (`make test-uprops-utf8`, the tier-1 10.46
+  differential): `uprops: 14 passed, 0 failed` (same count as the byte
+  log, for what it's worth — not diagnosed). The membership-differential
+  summary lines, verbatim: "oracle: libpcre2 10.46 2025-08-27, Unicode
+  16.0.0; pcrec pinned at Unicode 16.0.0" / "pinned Unicode 16.0.0;
+  oracle Unicode 16.0.0 -> EXACT agreement required" / "compared 45
+  properties; 0 code points attributed to version drift" / "ok: utf8:
+  pcrec and libpcre2 agree on every shipped property over the whole
+  code-point space (within the stated drift budget)" — zero unexplained
+  disagreements, as asked.
+- rxtsource.log: `checks passed: 121` / `checks failed: 0` (matches "was
+  120/1"); trailing line `PASS: rxtsource: INV-COMPAT holds over 209
+  files / 3888 blocks / 28814 expectation lines`.
+- encchk_full.log (`ENC_MAX_BLOCKS=0`): `checks passed: 11` / `checks
+  failed: 0`.
+- mech_su9.log: `== mech run COMPLETE: 1 rows (unexpected: 0, undetected:
+  1, unreached: 0, anomalies: 0, oracle-skipped: 0) at
+  9ddf634e01739c904d44230ac1624b593843c3e5 ==`; S-U9's verdict column:
+  `UNDETECTED (EXPECTED -- see this row's SAB_DOC_FIGURE for what would
+  close it)`.
+
+Six of seven criteria match exactly; the uprops_byte count (14 vs. the
+stated 25) is the one item flagged above, reported as observed —
+no diagnosis attempted, no fix attempted, worktree left in place
+(`build/wt_ntriage_reval`) pending your call on removal. Logs are at
+`/home/duxevents/pcrec/build/ntriage_reval_20260908/` in full for your
+own read.
+
 ## I-60 (2026-09-08 ~19:0x EDT, pcrecdev1) — FRANK'S RULING: your session RETURNS TO FABLE from your next start (supersedes I-54's Sonnet ruling), carrying the DISCIPLINE PACKAGE below; lanes stay Sonnet/Haiku
 
 **The ruling (Frank, tonight, verbatim intent):** "return to fable with
