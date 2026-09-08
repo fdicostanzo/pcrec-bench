@@ -104,34 +104,78 @@ docs/dev/'s append-only records.
   the adapter not before W3 — with six open questions and who rules
   each. Partially covers the `set_format.md` slot below; see its Q1.
 
-- `interpreter_v1.md` — **[B13] the interpreter design note, 2026-09-07
-  (DESIGN ONLY — no code, no catalogue file, no skill; awaiting the
-  adversarial critic panel before adoption)**: `pcrecbench interpret`,
+- `interpreter_v1.md` — **[B13] the interpreter design note, at **v1.1**
+  (2026-09-07, lane `b13rev`): v1 revised in place under every
+  disposition of the r4 critic panel
+  (`../dev/reviews/2026-09-07-r4-interpreter-v1.md`, 11 BLOCKING +
+  8 SHOULD-FIX + ~14 documentation corrections). Still DESIGN ONLY — no
+  code, no catalogue file, no skill — but the panel's blockers are
+  applied, so an implementation lane can open against it once the
+  revision is itself confirmed.** What v1.1 changed, in one list: the
+  record row's agreement string is in `value` not `gave_up_summary`
+  (B1); `delta_verdict` is a `; `-separated CLAUSE LIST, so R-DELTA-3
+  can fire at all (B3); R-STATUS-9 fires on `disagree` ONLY, with
+  `n/a (v<schema>)` folded into R-STATUS-6 as age provenance (B2);
+  every "group" re-derived from `_ranking_groups`'s real key
+  `(subbench, pattern, regime)` — `form` is deliberately NOT in it, and
+  v1's cut made R-BUCKET-FORM unsatisfiable (B5); a SEVENTH rule class
+  **R-ARM** (same pin, two arms one config token apart, beyond
+  `2 × max(stddev)`), which is what makes Frank's `vm-in` acceptance
+  item pass by rule instead of remaining "a risk" (B7); R-RANK-3 moved
+  to R-STATUS-13 and made R-RANK-1's guard (B6), R-RANK-2 dropped as
+  incoherent; an `aggregate` counted-collapse so a modern report renders
+  ~44 bullets instead of ~420 (S1); `firing_seq` + `prediction_id` in
+  the facts TSV (B9); `[[pin_order]]` as catalogue data (B10); the
+  opinion firewall extended to TEMPLATE PROSE with a human-reviewed
+  template-diff gate as §8's sixth section, and Q4 ruled (the renderer
+  phrases, templates are reviewed prose authored once; the "Reader's
+  note" fallback REJECTED) (B11); the golden check pinned to a FROZEN
+  index snapshot with a stated table of which commits may fail it and
+  who regenerates (B8); the predictions format redesigned and TESTED
+  against `bench/syntax/NOTES.md`'s P1-P13 (12 of 13 expressible; a
+  `partial` verdict, clause-suffixed ids, `set_of`/`rank_over`, and an
+  explicit statement that answers and spans are out of reach) (S2); the
+  fixture plan re-cast as generated-base-plus-one-declared-mutation
+  mirroring `gen_example_14.py --check`, plus a synthetic CLEAN null
+  control (S6, S3); two reporter PRECONDITIONS (a `floor_pattern:`
+  header key, killing v1's KB-2-shaped `subbench.toml` read; the
+  give-up smallest subject as its own metric rows, killing the one
+  string parse) (S8, S4); `grain` mandatory (S7); the `inputs` grammar
+  and view contract stated (S5); and R-BUCKET-KB downgraded to a class
+  that ships with NO registered signature, with §10 C.3 stated as a
+  plain known gap (B4). Underneath, unchanged: `pcrecbench interpret`,
   a deterministic fact-finder over a report TSV + `store/index.tsv`
   (never the markdown), and the `/pcrec-bench-interpret` skill that
   commits a `reports/<name>.interpretation.md` sidecar. Carries the
   versioned rule catalogue's file format (`catalogue/rules.toml`,
   MAJOR.MINOR, with the regeneration rule that keeps a sidecar from
-  going stale), the six rule classes Frank named with each rule's exact
-  TSV/index inputs, its threshold AND that threshold's source in
-  `report.py`/`reduce.py` (no rule introduces a constant of its own —
-  R-DELTA reads `_cross_pin_verdict`'s own verdict string, R-FLOOR-1
-  reads `_jitter_flag`'s `timer-floor` token, R-STATUS-9 reads
-  `agreement_line`'s v1.4 verdict), and a worked example per rule citing
-  a real committed report row; the OPINION FIREWALL as three structural
-  properties (one `str.format` template per rule id, slot values copied
-  or computed by a declared arithmetic, links validated against
-  committed files) rather than a discipline; the minimal
-  machine-readable PREDICTIONS format (`docs/dev/predictions/<slug>.tsv`
-  — none exists today, checked) with the three real prediction shapes it
-  must express; `make check-interpret`'s five sections incl. one
-  sabotage fixture + one minimal-diff control per rule, mirroring
-  `schema/examples/bad/`; and §10, the ACCEPTANCE TEST — three named
-  current reports and the numbered findings catalogue v1 must surface
-  unprompted on each (Frank's 2026-08-25 blinded test, updated), written
-  down before implementation so a later lane cannot weaken it. Eight
-  open questions for the panel, incl. Q4, a flagged charter deviation
-  (the renderer phrases, not the skill).
+  going stale), **thirty-one rules in seven classes** with each rule's
+  exact TSV/index inputs, grain, aggregate key, threshold AND that
+  threshold's source in `report.py`/`reduce.py` (no rule introduces a
+  constant of its own — R-DELTA reads `_cross_pin_verdict`'s own verdict
+  string, R-FLOOR-1 reads `_jitter_flag`'s `timer-floor` token,
+  R-STATUS-9 reads `agreement_line`'s `disagree` verdict, R-ARM copies
+  `_cross_pin_verdict`'s arithmetic rather than choosing a bound), and a
+  worked example per rule citing a real committed report row; the
+  OPINION FIREWALL as four structural properties (one `str.format`
+  template per rule id whose FIXED PROSE is itself audited, four
+  permitted slot-value kinds incl. declared decompositions, links
+  validated against committed files, and a human-reviewed template-diff
+  gate) plus §0's honest framing — the catalogue is where this
+  project's opinions are deliberately CONCENTRATED, not where they are
+  impossible; the machine-readable PREDICTIONS format
+  (`docs/dev/predictions/<slug>.tsv` — none exists today, checked),
+  transcription-tested against P1-P13; `make check-interpret`'s six
+  sections; and §10, the ACCEPTANCE TEST — three named committed
+  reports plus a synthetic clean null control, with the numbered
+  findings catalogue v1 must surface unprompted on each (Frank's
+  2026-08-25 blinded test, updated), written down before implementation
+  so a later lane cannot weaken it. **One open question remains, Q3
+  (should set-local `NOTES.md` bands become catalogue-readable data?) —
+  Frank's, pre-existing, untouched by the panel**; Q1/Q2/Q4-Q8 are ruled
+  in §11, and two new non-blocking ones (Q9 an exclusion-cause column,
+  Q10 where the `[[pin_order]]` append belongs in the re-pin checklist)
+  are recorded there.
 
 - `quiet_baseline.md` — **[B3]'s answer to OD-B8, MEASURED 2026-08-25**:
   what "quiet" means numerically on this box, the 12 samples behind it,
