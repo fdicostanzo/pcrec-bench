@@ -30,6 +30,7 @@ non-periodic throughput subjects.
 | `expectations.tsv` | 501 rows (three patterns × 167 (pattern, subject, regime) cells each — 85 match + 77 search_short + 5 throughput): pattern, subject, regime, expected, start, end, nmatches, method, oracle |
 | `selfcheck/` | the fixtures behind `make check`'s positive controls |
 | `NOTES.md` | engine notes, declared variants (none), the objective, the floor pattern, periodic vs non-periodic throughput subjects |
+| `export/email.rxt` | GENERATED ([B38], `tools/export_rxt.py`): a `.rxt` SOURCE file (no cases) for pcrec's own harnesses to pull this set's patterns in via `--source` — one `target =` per pattern, `pattern`/`name` blocks, sidecar order preserved. Never hand-edited; `make check-harness` re-derives and round-trips it against `--list-source` on every run |
 
 REGENERATING. `python3 bench/email/gen_subjects.py`,
 `python3 bench/email/gen_throughput_subjects.py`,

@@ -30,6 +30,7 @@ module roster and the `--features` gate. The subjects are generated here.
 | `gen_pattern_facts.py` | derives `pattern_facts.tsv` from PCRE2's own start-of-match analysis (`pcre2_pattern_info`) |
 | `pattern_facts.tsv` | per pattern: first code unit, **required code unit or NONE**, min length, how many subjects contain that byte, m/n, and which large subjects do NOT contain it |
 | `NOTES.md` | the objective, the tables, the engine notes, the cell-time estimate |
+| `export/loglines.rxt` | GENERATED ([B38], `tools/export_rxt.py`): a `.rxt` SOURCE file (no cases) for pcrec's own harnesses to pull this set's patterns in via `--source`. Never hand-edited; `make check-harness` re-derives and round-trips it against `--list-source` on every run |
 
 REGENERATING. `python3 bench/loglines/gen_subjects.py`,
 `gen_throughput_subjects.py`, `gen_expectations.py`, `gen_pattern_facts.py`.

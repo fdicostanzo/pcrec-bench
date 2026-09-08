@@ -2,7 +2,8 @@
 
 | file | role |
 |---|---|
-| `selfcheck.py` | `make check-harness`: the [B3] half of the self-check suite (KB-12, [B36]: also the id-preflight gate, `check_id_preflight`) |
+| `selfcheck.py` | `make check-harness`: the [B3] half of the self-check suite (KB-12, [B36]: also the id-preflight gate, `check_id_preflight`; [B38]: `check_rxt_export`) |
+| `export_rxt.py` | [B38] THE .rxt SET EXPORTER (pcrec [DD-13b.W1.3]): `python3 tools/export_rxt.py <bench-dir> [-o out.rxt] [--verify [PCREC_BIN]]` writes a `.rxt` SOURCE file (no `m`/`n`/`ms`/`ns` cases — pure `target =` / `pattern` / `name` blocks) from one `bench/<name>/`'s sidecar, in sidecar order, so pcrec's own harnesses can pull our patterns in via `--source`. `--verify` round-trips the freshly-built export against `PCREC_BIN --list-source` (default: the pinned binary, never built if missing) — `decode_rxt_escape` undoes `--list-source`'s own TSV-safety escaping (`\t \n \r \\ \xNN`) before comparing against `Subbench.pattern_bytes()`. `selfcheck.py` adds `tools/` (its own directory) to `sys.path` and imports it directly as `export_rxt` -- no package `__init__.py` needed, same as this directory's other scripts. Its own module docstring is the authority on inbox I-43's rules and on WHY the exporter never escapes a pattern line itself (rule 6: `docs/spec/rxt_format.md` — a `pattern` line is rest-of-line VERBATIM with no escaping at all; escaping only the DUMP needs decoding). Engine-neutral (R-BENCH-4): the sidecar stays the source of truth, this is a derived, regeneratable view; the five committed `.rxt` files live under `bench/<name>/export/` (each bench's own CLAUDE.md documents its own). |
 | `archive_inbox.py` | `make archive-inbox` (BD11): relocates fully-acked, aged-out entries from `docs/dev/inbox_from_pcrec.md` to `docs/dev/inbox_from_pcrec_archive.md`, byte-for-byte, never touching an unacked item. Not part of `make check` — a manual maintenance step. |
 
 THE GENERIC GATES ENUMERATE (`subbench_dirs()`, [B11.1]). Harness contract 6
@@ -389,3 +390,45 @@ miss:
   quoted in the message, and the SAME sidecar with the id lowercased
   loads; then the same pair for a SUBJECT id (with the pattern id kept
   clean so construction reaches the subject loader). 9 PASS lines.
+
+- [B38] (2026-09-07, THE .rxt SET EXPORTER, `tools/export_rxt.py`; pcrec
+  [DD-13b.W1.3], inbox I-43's FINAL rules) adds ONE new check function,
+  `check_rxt_export`, and re-verifies I-43's rules at the CURRENT
+  185-pattern corpus (I-43 measured 90, across four sets; bench/syntax
+  did not exist yet). It does NOT read the committed `bench/<name>/
+  export/*.rxt` files at all -- it RE-DERIVES an export for every set
+  under `bench/` into a fresh temp file (`export_rxt.build_rxt`, never
+  the committed copy) and round-trips it against the PINNED binary's own
+  `pcrec --list-source` (`export_rxt.verify_roundtrip`): for every
+  pattern the sidecar declares, `--list-source`'s `name` + (decoded)
+  `pattern` columns must equal `Pattern.name` + `Subbench.pattern_bytes()`
+  exactly. `--list-source` is PARSE-ONLY (no compile): ~2 ms for the
+  largest set (bench/syntax, 95 patterns) on this box, all five together
+  under 0.2 s including python startup -- measured, which is why this
+  lives INSIDE `check-harness` rather than as its own `make` target the
+  way `cc-gate-census` (a multi-minute compile sweep) deliberately does
+  not.
+
+  THE COLLISION-REFUSAL CONTROL (inbox I-43 rule 3) cannot be exercised
+  through any real `bench/<name>/` sidecar: every pattern id here is
+  schema-slug-constrained (`pcrecbench.subbench.check_id`, KB-12) to
+  `[a-z0-9-]`, an alphabet in which the target-prefix derivation (`-` ->
+  `_`) is PROVABLY INJECTIVE -- `_` is not itself a legal slug byte, so
+  no two distinct valid ids can ever collide on one derived prefix. A
+  within-set collision is unreachable today, not merely unseen. The
+  control therefore calls `export_rxt.build_rxt` directly on a hand-
+  built, duck-typed stand-in for `Subbench` (`name`/`root`/`version`/
+  `patterns`/`pattern_bytes()`, never a real `bench/` directory or
+  `check_id`'s gate) carrying `a-b` and `a.b` -- the exact pair pcrec's
+  own format spec names as the canonical collision ("`a-b` and `a.b`
+  both give `a_b`") -- refused BY NAME naming both ids, plus a no-
+  collision control on the same stub proving the refusal is not simply
+  firing on everything. Same technique this file already uses for a rule
+  untestable through a real fixture (`pcrecbench/CLAUDE.md`'s R3 tier
+  note). Also re-verified at 185 ids and reported in
+  `docs/dev/lanes/b38rxt_report.md`: rule 1 (grammar) holds for all 185;
+  rule 6 (verbatim, no escaping needed) holds for all 185 -- none
+  contains a tab, CR, newline or non-ASCII byte; `floor` is now a
+  CROSS-SET collision across all FIVE sets (bench/syntax's own `floor`
+  pattern makes it five, not four) -- still not a within-set one, so the
+  per-set export still avoids it entirely. 7 PASS lines.

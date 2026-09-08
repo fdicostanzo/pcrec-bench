@@ -148,12 +148,14 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, ROOT)
+sys.path.insert(0, HERE)
 
 from pcrecbench import adapters as _ad                    # noqa: E402
 from pcrecbench.driverrun import build_driver, run_driver  # noqa: E402
 from pcrecbench import record as _rec                      # noqa: E402
 from pcrecbench.harness import outcome_for                # noqa: E402
 from pcrecbench.subbench import Subbench, Expectation     # noqa: E402
+import export_rxt as _rxt                                 # noqa: E402
 
 C_ENV = dict(os.environ, LC_ALL="C", LANG="C")
 BENCH = os.path.join(ROOT, "bench", "email")
@@ -1890,6 +1892,107 @@ def check_id_preflight():
                 str(e)[:300])
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_rxt_export():
+    """[B38] THE .rxt SET EXPORTER (pcrec [DD-13b.W1.3], inbox I-43's FINAL
+    rules): `tools/export_rxt.py` builds a `.rxt` SOURCE file per
+    `bench/<name>/` from its sidecar, for pcrec's own harnesses to pull in
+    as an import source. This check RE-DERIVES an export for EVERY set
+    under `bench/` (`subbench_dirs()`, never named) into a fresh temp file
+    -- NEVER reading or trusting the committed copy under
+    `bench/<name>/export/` -- and round-trips it against the PINNED
+    binary's own `pcrec --list-source`: for every pattern the sidecar
+    declares, `--list-source`'s `name` + (decoded) `pattern` columns must
+    equal `Pattern.name` + `Subbench.pattern_bytes()` exactly
+    (`export_rxt.verify_roundtrip`).
+
+    `--list-source` is a PARSE-ONLY operation (no compile, no C, no gcc):
+    measured at ~2 ms for the largest set (bench/syntax, 95 patterns) on
+    this box, so all five sets together add nothing this smoke suite's
+    budget would notice -- unlike `make cc-gate-census`, which compiles
+    every pattern under two engine axes and is deliberately kept OUT of
+    `make check` for exactly that cost. This is why the round-trip lives
+    HERE, in `check-harness`, rather than as its own `make` target.
+
+    THE COLLISION-REFUSAL CONTROL (inbox I-43 rule 3): every real pattern
+    id in this corpus is schema-slug-constrained (`pcrecbench.subbench
+    .check_id`, KB-12) to `[a-z0-9-]`, an alphabet in which `derive_prefix`
+    (`-` -> `_`) is INJECTIVE -- no two distinct valid slugs can ever
+    collide on one derived prefix, since `_` is not itself a legal slug
+    byte. A within-set collision is therefore UNREACHABLE through any real
+    `bench/<name>/` sidecar today, proven rather than assumed: the control
+    below calls `export_rxt.build_rxt` directly on a hand-built, duck-typed
+    stand-in for `Subbench` (`name`/`root`/`version`/`patterns`/
+    `pattern_bytes()`, never a real `bench/` directory or `check_id`'s
+    gate) carrying `a-b` and `a.b` -- the classic pair pcrec's own spec
+    names ("`a-b` and `a.b` both give `a_b`") -- and a no-collision control
+    on the same stub proves the refusal is not simply firing on everything.
+    Same technique this file already uses for an untestable-through-a-
+    real-fixture rule (`pcrecbench/CLAUDE.md`'s R3 tier note)."""
+    print("-- [B38]: the .rxt export round-trips against --list-source; "
+          "the collision refusal names both ids --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("rxt-export: a pcrec adapter is discoverable", "none found")
+        return
+    pcrec_bin = adapter.pin_binary(build=False)
+    if not os.path.exists(pcrec_bin):
+        bad("rxt-export: the pinned pcrec is already built",
+            "%s does not exist -- this check never builds" % pcrec_bin)
+        return
+
+    for name, bench in subbench_dirs():
+        try:
+            sb = Subbench(bench)
+            rxt_bytes, witnesses = _rxt.build_rxt(sb)
+            n = _rxt.verify_roundtrip(sb, rxt_bytes, pcrec_bin)
+            ok("%s: the export round-trips against --list-source" % name,
+               "%d pattern(s)%s" % (n, " -- %d needed non-plain byte(s): %s"
+                                    % (len(witnesses), ", ".join(witnesses))
+                                    if witnesses else ", none needed escaping"))
+        except Exception as e:                     # noqa: BLE001
+            bad("%s: the export round-trips against --list-source" % name,
+                str(e)[:300])
+
+    class _StubPattern:
+        def __init__(self, name):
+            self.name = name
+
+    class _StubSubbench:
+        id = "rxt-export-collision-control"
+        root = "<synthetic, not a real bench/ directory>"
+        version = "0.0"
+
+        def __init__(self, names, bodies):
+            self.patterns = [_StubPattern(n) for n in names]
+            self._bodies = bodies
+
+        def pattern_bytes(self, name):
+            return self._bodies[name]
+
+    colliding = _StubSubbench(["a-b", "a.b"], {"a-b": b"abc", "a.b": b"xyz"})
+    try:
+        _rxt.build_rxt(colliding)
+        bad("rxt-export control: a-b/a.b collision is refused",
+            "no exception raised")
+    except _rxt.ExportError as e:
+        msg = str(e)
+        if "'a-b'" in msg and "'a.b'" in msg and "a_b" in msg:
+            ok("rxt-export control: a-b/a.b collision is refused BY NAME",
+               msg[:200])
+        else:
+            bad("rxt-export control: a-b/a.b collision is refused BY NAME",
+                "wrong message: %s" % msg[:200])
+
+    clean = _StubSubbench(["a-b", "c-d"], {"a-b": b"abc", "c-d": b"xyz"})
+    try:
+        data, _w = _rxt.build_rxt(clean)
+        ok("rxt-export control: two non-colliding ids build fine",
+           "%d byte(s)" % len(data))
+    except _rxt.ExportError as e:
+        bad("rxt-export control: two non-colliding ids build fine", str(e))
 
 
 def check_kb1_runtime_options():
@@ -7781,6 +7884,7 @@ def main():
     check_pcrec_local()
     check_floor_pattern()
     check_id_preflight()
+    check_rxt_export()
     check_kb1_runtime_options()
     check_mechanism_stamps()
     check_deny_flag_controls()

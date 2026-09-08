@@ -54,6 +54,7 @@ blinding but was handed five measured facts, which NOTES.md names one by one
 | `gen_oracle_limits.py` | probes each skeleton BEYOND the set's rungs on the oracle (compile only, doubling) and derives `oracle_limits.tsv` |
 | `oracle_limits.tsv` | per skeleton: the widths probed, the last the oracle accepted, the first it refused, its diagnostic verbatim — libpcre2's compiled-size ceiling at 4096 branches of 3-12 bytes, at 8192 of 3-6, and at 2048 under `{1,3}`. 0.2 moved its `set_rungs` column only; no probed width, refusal or diagnostic changed. There is NO `pcrec_limits.tsv` and there will not be one (Frank, 2026-09-02): the sets are oracled on libpcre2 alone and pcrec's refusal widths live in the reports |
 | `NOTES.md` | the objective, the tables, the predictions, the engine notes, the cell-time estimate |
+| `export/altwide.rxt` | GENERATED ([B38], `tools/export_rxt.py`): a `.rxt` SOURCE file (no cases) for pcrec's own harnesses to pull this set's patterns in via `--source`. Never hand-edited; `make check-harness` re-derives and round-trips it against `--list-source` on every run |
 
 REGENERATING. `python3 bench/altwide/gen_patterns.py`, `gen_subjects.py`,
 `gen_throughput_subjects.py`, `gen_expectations.py`, `gen_pattern_facts.py`,

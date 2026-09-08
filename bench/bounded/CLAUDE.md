@@ -69,6 +69,7 @@ census by name (NOTES.md, "Origin").
 | `gen_oracle_limits.py` | probes each ladder skeleton BEYOND the set's rungs on the oracle (compile only, doubling) and derives `oracle_limits.tsv` |
 | `oracle_limits.tsv` | 10 skeletons (0.3 added `dig-exact` and `dig-upto`): the rungs probed, the last the oracle accepted, the first it refused, its diagnostic verbatim — PCRE2's count ceiling (65535, which every single-unit repeat reaches, the two digit skeletons included) and its compiled-size ceiling on replicated groups (`grp-upto` 2048, `nest2` 4096, `nest3` 96) |
 | `NOTES.md` | the objective, the tables, the predictions, the engine notes, the cell-time estimate |
+| `export/bounded.rxt` | GENERATED ([B38], `tools/export_rxt.py`): a `.rxt` SOURCE file (no cases) for pcrec's own harnesses to pull this set's patterns in via `--source`. Never hand-edited; `make check-harness` re-derives and round-trips it against `--list-source` on every run |
 
 REGENERATING. `python3 bench/bounded/gen_subjects.py`,
 `gen_throughput_subjects.py`, `gen_expectations.py`, `gen_pattern_facts.py`,
