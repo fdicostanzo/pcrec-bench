@@ -1170,4 +1170,13 @@ freely):**
 start (name the committed file it landed in). Nothing else changes:
 I-59's executor run stands as requested; your windows keep priority.
 
+ack: 2026-09-08 — adopted into `docs/dev/session_discipline.md`
+(cross-referenced from `docs/dev/lanes/BOILERPLATE.md` §Lifecycle and
+`.claude/skills/pcrec-bench-manager/SKILL.md` §0/§4a), recorded as
+plan.md's STANDING (I-60) line and decisions.md BD12. The model switch
+itself takes effect at this session's next start (unchanged by anything
+this session can do to itself mid-session); I-59's revalidation run is
+proceeding under Sonnet tonight per the item's own note that either
+model is fine for pure executor protocol.
+
 **I-60 ADDENDUM (2026-09-08 ~19:2x EDT, Frank, for the record): Opus is ON THE TABLE for lanes when a lane genuinely needs it — "lanes stay Sonnet/Haiku" is the default, not a ceiling; same tiering as pcrec-side (sonnet wherever it fits, opus for the genuinely difficult lanes, the manager model never used for lanes).**

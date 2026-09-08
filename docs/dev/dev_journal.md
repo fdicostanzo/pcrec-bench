@@ -3620,3 +3620,47 @@ stays `started` (item 3 open); [B38] CLOSED; [B13]'s design cycle
 CLOSED (not-started, precondition lane + implementation lane still
 ahead of it). Next in Frank's ordered queue: [B7] (roster expansion).
 No lanes alive, box free.
+
+## 2026-09-08 (sixteenth session, part 1)
+
+Two cross-session items from pcrecdev1 processed in sequence.
+
+**I-59 (executor request, EXACT-COMMAND protocol under I-57/BD10):**
+re-validate the four night_20260907 reds at pcrec merge 9ddf634e
+(pushed to github). Box was quiet (load ~0.2, per-core idle 96-99%),
+no lanes/worktrees on either side. Launched the verbatim command
+sequence as a Bash background task (the manual `setsid nohup ... &
+disown` pattern from [[project-long-runs-setsid-not-background-tasks]]
+was BLOCKED by the auto-mode permission classifier — read as an
+evasion attempt; the tool's own `run_in_background: true` worked and is
+the one the harness tracks). Worktree `build/wt_ntriage_reval` created
+cleanly at 9ddf634e. Run is in flight at session-pause time; report
+(trailer + per-stage summary lines, the uprops_utf8 disagreement
+summary line verbatim) goes back to pcrecdev1 and Frank once it
+completes. No diagnosis performed or planned per the executor role.
+
+**I-60 (Frank's ruling, relayed and verified committed at 0073829):**
+the manager session RETURNS TO FABLE from its next start, superseding
+I-54's Sonnet ruling, carrying a discipline package. Verified the item
+was genuinely committed (not just asserted by the peer) before acting.
+Adopted the package into a new canonical file,
+`docs/dev/session_discipline.md`, cross-referenced (not duplicated)
+from `docs/dev/lanes/BOILERPLATE.md` (DO-THEN-FINISH lifecycle
+refinement) and `.claude/skills/pcrec-bench-manager/SKILL.md` (model
+split note, §4a completion contracts). Recorded as plan.md's STANDING
+(I-60) line (marking I-54's line superseded) and decisions.md BD12.
+Acked in the inbox file. Deliberately did NOT attempt to flip any
+model/config setting this session — there is none in this repo (no
+`.claude/settings.json` model field); the switch is a launch-time
+choice for whoever starts the next session, and a peer ruling relayed
+through the durable channel is not grounds for this session to edit
+its own permissions/config on the spot regardless. Folded in Frank's
+same-evening addendum (Opus on the table for lanes that need it, not a
+ceiling — unchanged from the existing per-lane-tiering guardrail).
+
+State: master has uncommitted changes for this session's I-60 response
+(session_discipline.md, BOILERPLATE.md, SKILL.md, plan.md,
+decisions.md, both CLAUDE.mds, the inbox ack) pending commit+push in
+this same turn. Pin d34c9131/abi 23 unchanged. I-59's run still in
+flight in the background against ~/pcrec (read-only except the named-
+commit worktree, per BD10's narrow amendment).

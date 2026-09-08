@@ -25,6 +25,16 @@ decisions) so cross-references between the two repos are never ambiguous.
   project builds on or must stay consistent with (rulings, plan rows,
   measurement harnesses, discipline docs), with paths and ids. Read-only
   pointers; the pcrec documents themselves are the truth.
+- `session_discipline.md` — the manager-session discipline package
+  adopted 2026-09-08 (inbox I-60, Frank's ruling): model split (manager
+  Fable, lanes Sonnet/Haiku), the DO-THEN-FINISH lane lifecycle, closure
+  as the manager's explicit act, the four-rung monitoring ladder,
+  the 30-min manager-only heartbeat, no forks/panels from giant
+  contexts, and the three completion contracts from [B13]'s post-mortem
+  (panel consolidation by-id completeness, step-2 passes run not
+  scheduled, charter-vs-committed delivery checklists). Cross-referenced
+  from `lanes/BOILERPLATE.md` and the pcrec-bench-manager skill rather
+  than duplicated into either.
 - `wake.md` — GITIGNORED hand-off brief for the next manager session,
   rewritten from scratch at every session end or significant pause. On any
   disagreement the committed docs win.

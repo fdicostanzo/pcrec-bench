@@ -56,22 +56,31 @@ not proof you acted on it last time.
 - Update the owning directory's CLAUDE.md for file adds/removes/role
   changes.
 
-## Lifecycle (Frank's ruling 2026-09-06 — no keepalive doctrine survives)
+## Lifecycle (Frank's ruling 2026-09-06 — no keepalive doctrine survives;
+refined 2026-09-08 by the DO-THEN-FINISH rule, `docs/dev/
+session_discipline.md` §2, inbox I-60)
 - NO self-keepalive crons: subagent caches are 5-minute TTL; periodic
   ticks pay a full context rewrite for zero warmth.
 - Work continuously to your deliverable. Blocked on a ruling: send the
   question and keep working on what does not depend on it, or say you
   are stopping and why.
+- **DO-THEN-FINISH**: a run longer than ~4 minutes is your LAST act.
+  Commit and write your report FIRST — mark any number the run will
+  produce as OWED, name the log path and the exact completion line the
+  run will emit — THEN launch the run in the background and END. Do not
+  stay alive polling it; a follow-up that folds in the OWED numbers goes
+  to a FRESH agent resuming from your committed report, never to you
+  kept warm (your cache is cold again in 5 minutes regardless). Runs
+  ≤4 minutes may be polled by you directly.
 - WHEN DONE: commit everything, write your report (docs/dev/lanes/
   <lane>_report.md, committed), send the manager a handback whose text is
-  complete on its own (numbers inline, log paths), and END — do not idle
-  awaiting review. A plausible follow-up round resumes from your
-  committed report in a FRESH agent; write the report so that works.
-- A background job finishing is a FINALIZE trigger, not a status update:
-  the moment its completion marker appears, immediately fold the real
-  numbers into the report, commit, and hand back in that same turn —
-  never re-idle "waiting" on a job that has already finished.
-- A handback names its validation COMPLETE or says exactly what is owed.
+  complete on its own (numbers inline, log paths, OWED items named), and
+  END — do not idle awaiting review or awaiting a background job's
+  completion (see DO-THEN-FINISH above).
+- A handback names its validation COMPLETE or says exactly what is owed,
+  per `docs/dev/session_discipline.md` §7(c)'s charter-vs-committed
+  checklist: every promise in your brief either points at its committed
+  artifact or is listed OWED with an owner and a trigger.
 
 ## Delivery bar
 Branch lane/<lane>, committed, report committed, targeted validation run

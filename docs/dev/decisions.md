@@ -308,3 +308,56 @@ they should say so if the archived form loses something they need
 live), or `--keep-recent`'s default (15) proves wrong in practice
 (too aggressive if a recently-acked item turns out to need revisiting
 often; too loose if the file still grows uncomfortably between runs).
+
+## BD12 — 2026-09-08 — the manager session RETURNS TO FABLE (supersedes I-54/Sonnet), carrying a discipline package that survives either model (Frank's ruling, inbox I-60)
+
+DECISION. From this session's next start, the manager session runs as
+Fable; lanes stay Sonnet (Haiku for mechanical sweeps) — unchanged from
+I-54. Frank's stated reasoning: three issues observed under Sonnet
+([B13] needed manager-tier intervention — a panel consolidation dropped
+two numbered critic findings and a step-2 verification pass was owed
+and never run; subagent tracking broke down specifically when subagents
+were themselves watching processes; follow-through stopped at
+intermediary steps) are judgment/persistence-shaped (the first and
+third) or process-shaped (the second) — not fixed by model choice. I-54's
+token concern is addressed by removing the waste (keepalive context
+re-reads, forks from giant contexts, managers doing mechanical work,
+lanes idling across busted caches) rather than by running a weaker
+model.
+
+THE PACKAGE, adopted into `docs/dev/session_discipline.md` (cross-
+referenced, not duplicated, from `docs/dev/lanes/BOILERPLATE.md` and
+`.claude/skills/pcrec-bench-manager/SKILL.md`): (1) model split as
+above; (2) DO-THEN-FINISH lane lifecycle — a run over ~4 minutes is a
+lane's last act: commit + report first with OWED numbers named, launch
+the run in the background, END; a fresh agent resumes for the mechanical
+follow-up, never the same lane kept warm; (3) closure as the manager's
+explicit act (`TaskStop` at every delivery acceptance and session
+pause); (4) a four-rung monitoring ladder matching who/what watches a
+long run to what kind of watching it needs (zero-model watcher script /
+fresh mechanical-follow-up agent / concise-brief watcher agent for
+mid-run judgment / the manager for merge-or-ruling); (5) a 30-minute
+manager-only heartbeat cron, never for lanes; (6) no forks or critic
+panels from a manager session's giant context — fresh agents with
+written briefs; (7) three completion contracts from [B13]'s post-mortem
+(panel consolidation by-id completeness; a design cycle's step-2 pass
+RUN not scheduled; every delivery ending with a charter-vs-committed
+checklist).
+
+Most of (2)-(4)/(6) were already partially present in
+`docs/dev/lanes/BOILERPLATE.md` and the skill from the 2026-09-06
+ruling (see plan.md's [B33]/journal entries); this decision's addition
+is the model switch, the explicit DO-THEN-FINISH ordering (report
+BEFORE launch, then end, rather than folding results in on completion),
+the four-rung ladder's naming, and the three completion contracts.
+
+WHY. [B13]'s post-mortem is the forcing case: two real defects (a
+dropped finding, an owed-not-run verification pass) reached a "done"
+report before being caught, and only because the manager independently
+re-verified rather than trusting the lane's claim. The package converts
+that verification habit into mechanical rituals that do not depend on
+the manager remembering to re-check every time.
+
+REVISIT WHEN. The Fable session shows the same follow-through gaps the
+package targets (meaning the package, not the model, was insufficient),
+or Frank rules otherwise.

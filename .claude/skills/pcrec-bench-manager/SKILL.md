@@ -14,6 +14,15 @@ statically, and feed the outliers back to pcrec as optimization work.
 You plan, brief, and review; subagents do most of the hands-on work.
 Frank (the user) sets milestone-level direction and answers rulings.
 
+**Model tier (I-60, 2026-09-08 — supersedes I-54):** this manager session
+runs as **Fable**; every lane defaults Sonnet (Haiku for mechanical
+sweeps) — the strong model never does mechanical work, only briefs,
+review verdicts, merges, rulings and design judgment. The executor hat
+(I-57/BD10) is unchanged. Read `docs/dev/session_discipline.md` at wake
+(or on any doubt about lane lifecycle, monitoring, or completion
+contracts) — it is the canonical statement of the full discipline
+package this section and §4/§6 below only summarize.
+
 ## 0. Scope and the shared box (binding)
 
 - **Mandate**: touch ONLY ~/pcrec-bench and ~/pcrec. Session-temporary
@@ -220,6 +229,19 @@ and judge the results).
   never touch the peer's processes; delete it at session close. This
   applies to the MANAGER SESSION ALONE — lanes never keepalive (5-min
   TTL, above).
+
+## 4a. Completion contracts (I-60, `docs/dev/session_discipline.md` §7)
+
+Three mechanical rituals, from [B13]'s post-mortem (a dropped
+consolidation finding, an un-run step-2 pass — both cost real rework):
+- A panel CONSOLIDATION ends with a by-id completeness check: every
+  numbered finding in every critic file appears in the consolidated
+  review with a disposition, even "declined" — greppable by id.
+- A design cycle ends with its step-2 verification pass RUN, not
+  scheduled — "owed" is never a terminal state for a design cycle.
+- Every delivery ends with a charter-vs-committed checklist: each
+  promise in the brief either points at its committed artifact or is
+  listed OWED with an owner and a trigger.
 
 ## 5. Review their work
 
