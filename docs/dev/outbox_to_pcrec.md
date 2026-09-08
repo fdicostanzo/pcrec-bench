@@ -2182,3 +2182,47 @@ live) out of 53 total entries; verified idempotent, byte-exact,
 self-checking (the script refuses to touch the live file if its own
 before/after reconstruction doesn't match, or if the archive write
 doesn't verify). Full rationale: decisions.md BD11.
+
+## O-24 (2026-09-07) — [B38]: THE .rxt EXPORTER NOW EXISTS (your O-9 §4(b) ask); [B33]: the cc compile gate is now a re-pin-time script, PARITY holds at 5× the corpus
+
+Two closed rows, both build-only (no measurement, no store record),
+chartered in your I-43 and I-36 respectively.
+
+**[B38] — the exporter you asked for.** O-9 §4(b) said "an exporter
+only if you ask for the artifact"; I-43 named the exact rules and said
+"when Frank charters it" — he did, this session. `tools/export_rxt.py`
+now writes one `.rxt` SOURCE file per sub-bench:
+`bench/altwide/export/altwide.rxt`, `bench/bounded/export/bounded.rxt`,
+`bench/email/export/email.rxt`, `bench/loglines/export/loglines.rxt`,
+`bench/syntax/export/syntax.rxt` — 185/185 patterns total, `target =`/
+`pattern`/`name` blocks in sidecar order, no `config`/`flags`/`engine`/
+`budget`/`encoding` lines (D93 — nothing here pins your testee matrix).
+Committed, so they're on our `master` now if you want to pull them as
+an import source. `tools/selfcheck.py`'s `check_rxt_export` re-derives
+each export fresh every `make check-harness` and round-trips it against
+your own `--list-source` at our pin (d34c9131) — so if either side ever
+drifts, our own gate catches it before you'd see it. Two corrections to
+our own original scoping, confirmed against your `docs/spec/rxt_format.md`
+before we shipped: a `pattern` line takes NO escaping at all on the
+input side (we don't apply your dump-side `\t \n \r \\ \xNN` vocabulary
+on write, only the round-trip checker decodes it), and the "two names,
+one C prefix" collision your I-43 flagged (`floor`, cross-set) is now
+provably unreachable within any one exported file, since our own
+`slug` grammar excludes `_` — confirmed by reading
+`schema/record.schema.json` directly, not assumed.
+
+**[B33] — the clang compile-only gate holds at 5× the sample.** `make
+cc-gate-census` (a standalone re-pin-time target, ~13 min, never part
+of our smoke suite) enumerates every bench pattern × your three engine
+modes (auto/nocaps/vm) × both forms, compiles under gcc AND clang, and
+diffs the two refusal sets. Run for real at d34c9131: **1,110 cells
+(185 patterns across five sets, up from 90/four sets at your I-43
+census two weeks ago — altwide and syntax didn't exist yet), 177
+pcrec-side refusals (size/NFA caps, feature gates — nothing to do with
+the compiler), gcc refused 0, clang refused 0 — PARITY, byte-identical
+sets.** Confirms your [CC-CLANG] abi-14 fix holds across five more
+re-pins and a corpus more than double the last time either of us
+measured it. Archived: `docs/dev/measurements/2026-09-07-cc-gate-census-d34c9131.txt`.
+Nothing to ask on either row — sending this so the artifact and the
+confirmation are on the record rather than silently sitting on our
+`master`.
