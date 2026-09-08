@@ -3510,3 +3510,54 @@ notifications).
 State: master pushed through 1679a79. Pin d34c9131/abi 23 unchanged.
 [B33] stays `started` (item 3 open). Next in Frank's ordered queue:
 [B38] (the `.rxt` set exporter). No lanes alive, box free.
+
+[B38] (lane b38rxt, sonnet, merged 7361764): the `.rxt` set exporter.
+`tools/export_rxt.py` writes `bench/<name>/export/<name>.rxt` from each
+sidecar via `pcrecbench.subbench` (never a second parser) — `target =`/
+`pattern`/`name` blocks in sidecar order, nothing else. Five sets
+exported: altwide 33, bounded 43, email 3, loglines 11, syntax 95 =
+185/185, matching the current corpus (I-43's own 2026-09-04 census was
+90 ids across four sets; syntax didn't exist yet — re-verified fresh
+rather than trusted). `tools/selfcheck.py`'s `check_rxt_export`
+re-derives each export and round-trips it against the pinned pcrec's
+`--list-source`, wired INSIDE `make check-harness` (~0.15s — unlike
+[B33]'s cc-gate-census, which stays standalone for its ~13 min cost).
+
+The lane caught and I independently re-verified two corrections to my
+own brief before merging: (a) the `.rxt` pattern line is verbatim with
+NO escaping AT ALL on the input side — read `~/pcrec/docs/spec/
+rxt_format.md` myself: "the pattern text is rest-of-line verbatim ...
+(no quoting, no escaping)"; the escape vocabulary (`\t \n \r \\ \xNN`)
+belongs only to `--list-source`'s own output-side TSV-safety dump, and
+the exporter must never apply it on write — I had told the lane to
+escape on export, which would have double-escaped every backslash.
+(b) The within-set collision refusal (I-43 rule 3) is PROVABLY
+UNREACHABLE through any real sidecar today: I read `schema/
+record.schema.json`'s `slug` definition myself
+(`^[a-z0-9]([a-z0-9-]*[a-z0-9])?$`, line 19) and confirmed it excludes
+`_` entirely, so the `-`/`.` -> `_` prefix derivation is injective by
+construction over every legal pattern id this project can produce.
+`floor` is now a cross-set collision across all FIVE sets (was four at
+I-43), still avoided by exporting per set rather than merged. A
+formatting bug (a `b'...'` bytes-repr leaking into a generated header
+comment) was caught and fixed before commit, all five files regenerated.
+
+Also today: TWICE more, b38rxt lost track of its own background jobs
+(once matching b33cc's earlier pattern exactly, before the marker rule
+landed; once AFTER the marker rule landed, where it correctly chained
+`echo DONE rc=$?` but then still sat idle for 3+ hours after the marker
+appeared without checking it) — nudged both times, caught by direct
+worktree/process inspection rather than trusting an idle notification.
+The marker convention helps verification but does not by itself cause
+a lane to check its own markers on reinvocation; this remains an open
+gap the BOILERPLATE.md wording did not fully close, worth watching on
+the next lane that backgrounds anything.
+
+`make check-schema` 4/72/0 unchanged; `make check-harness` 344/344
+(337 pre-lane + 7 new checks), independently re-confirmed green on
+master after merge. Merged, worktree removed, lane TaskStop'd.
+
+State: master at 7361764 pending push (check-harness re-confirmation
+in flight). Pin d34c9131/abi 23 unchanged. [B33] stays `started` (item
+3 open); [B38] CLOSED. Next in Frank's ordered queue: [B13] (the
+interpreter). No lanes alive, box free.
