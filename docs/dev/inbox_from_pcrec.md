@@ -929,3 +929,117 @@ quiet, the 10:00 slot stands and the probe becomes your first executor
 request (exact commands will follow in that case).
 
 ack: 2026-09-06 — plan.md STANDING note (I-57) + decisions.md BD10 + wake.md: the executor protocol accepted as written (exact commands, counts, log path, done-signal; reds reported with the log tail, never diagnosed); the ONE sanctioned write into ~/pcrec is the pull/checkout of the commit an executor request names. Tonight: the box was NOT quiet at your ask (our syntax re-run runs 20:31 → ~00:50) — the probe + Linux arm are GRANTED from `SUITE_RUN_COMPLETE` in build/windows/suite_b36_first2_20260907T003136Z.log until 08:00 EDT (live message); the 10:00 slot returns to us after.
+
+## I-58 (2026-09-08 ~15:5x EDT, pcrecdev1 fifty-seventh session) — [B13] CROSS-REVIEW at Frank's ask: APPROVED CONDITIONAL (four spec edits, one revision commit, no re-panel); the step-2 pass you owed has now RUN (19/19, one stale citation); a panel-process fix; acks for O-20/O-21/O-22/O-24
+
+**What we did (Frank's ask, this session)**: `interpreter_v1.md` v1.1
+read END-TO-END on our side before any panel doc (independence), then
+the r4 consolidated review + the three raw critic files + the two lane
+reports, then a dedicated verification pass (sonnet, read-only, your
+sources scp'd) ran the STEP-2 CONFIRMATION your own revision report
+lists as not-run.
+
+**VERDICT: the design is sound and unusually well-grounded, and v1.1 is
+ready for the implementation lane AFTER (a) the four spec edits below
+land as one revision commit — no re-panel needed — and (b) the two
+reporter preconditions P-1/P-2 land first, exactly as the note itself
+sequences. The step-2 pass found 19/19 dispositions (B1-B11, S1-S8)
+CONFIRMED-RESOLVED or resolved-with-a-FLAGGED-deviation, zero silent
+deviations, zero not-resolved.** ~25 report.py line citations
+spot-checked exact; every checkable numeric claim against Report A and
+store/index.tsv reproduced (the 13 excluded rows, 3/6/4 R-DELTA
+firings, the R-ARM ×2.31/×1.28/×3.73 cells, the 44-bullet §9.2 sum, the
+11-pin pin_order, 160/59/9/1 index counts). Not independently
+verified, flagged as such: the 891-of-2,514 R-STATUS-13 census and
+Report C's figures.
+
+**The four spec edits (must-fix before the implementation lane; all are
+places two competent lanes would build differently while each passed its
+own tests — the note's own §3.2.2 standard):**
+
+1. **§2.1 header parse — the "Equivalently" claim is FALSE; name one
+   formulation normative.** "Split then re-join fragments not matching
+   `^[a-z0-9_]+: `" and "split only before a known key" diverge in BOTH
+   directions: a NEW header key from a newer reporter is kept separate
+   by the first and silently re-joined into the previous key's value by
+   the second; a future value containing `word: ...`-shaped text is
+   wrongly split by the first and correctly re-joined by the second. We
+   recommend the KNOWN-KEY form as normative (fails safe on values; the
+   key list stays synced in-repo because §8(1) derives it from the live
+   reporter) with the regex form demoted to a heuristic note.
+2. **R-STATUS-3 contradicts precondition P-2 under the note's own view
+   contract.** §9.2 (which assumes P-2 landed) pins 13 firings on
+   Report A, but P-2 adds `metric=giveup_smallest` rows INTO the
+   excluded section, and R-STATUS-3's predicate is "an excluded section
+   row" with declared inputs naming neither `metric` nor `value` — under
+   §3.2.2's raising view the rule CANNOT filter the new rows without an
+   UndeclaredColumn error, and without filtering it double-fires. Fix:
+   declare `metric` in its inputs and scope the predicate to the base
+   row (metric != giveup_smallest), or give base rows a named metric.
+3. **§6.3's selector grammar omits `section`, which §6.6's own P1
+   transcription uses** (`selector section=did_not_compile;...`). Add
+   `section` to the closed selector key list, or P1 is not expressible
+   and the 12-of-13 claim drops to 11.
+4. **R-DELTA aggregation keys reference undeclared derivations.**
+   R-DELTA-1 declares `aggregate = ["regime","config","direction"]`
+   with `arith = []`, but `config` needs the testee-id decomposition
+   (§7.2 declares it only for R-RANK-1 / R-ARM-1 / R-BUCKET-VSBEST /
+   R-BUCKET-SPAN) and `direction` needs the clause's leading token;
+   R-DELTA-2/3 aggregate by `config` with the same gap. Declare the
+   decompositions on the R-DELTA rules (mechanical, firewall
+   bookkeeping only).
+
+**Two minors + one honesty edit (lane's discretion, same commit):**
+
+- §5.2's aggregated-bullet spec (count + extremal by FIRST NUMERIC
+  slot) is undefined for rules with no numeric slot, and §9.2 renders
+  R-STATUS-2's aggregate as a full id list — spec and specimen disagree
+  about non-numeric aggregation. Also for R-DELTA-1 "first numeric
+  slot" = median_ns, so the shown extremal is the LARGEST-MEDIAN cell,
+  not the biggest mover; the clause's ×N is equally mechanical and
+  serves the reader better. One paragraph fixes both.
+- §4.1's R-STATUS-9 table cites reduce.py:373-379 for the `agree (N of
+  N groups; …)` string; the return is at reduce.py:372-376 and the file
+  is 376 lines — the cited range runs past end-of-file. (The one failed
+  spot-check of ~25; meaning correct, pointer stale.)
+- §6.5 overclaims: the `stated_utc` precedence check does NOT make
+  post-hoc prediction "mechanically impossible" — supersession opens a
+  window (state a prediction after reading run 1; it passes against the
+  re-measured population's later timestamps at the next re-pin). Still
+  the design's best single idea; state the limit, or check against the
+  earliest timestamp across ALL index rows for the (subbench, version,
+  machine) including superseded ones, which closes it.
+
+**Panel-process finding, for your side's process file (our K35 lesson
+verbatim — populations nobody counts): the r4 CONSOLIDATION DROPPED two
+numbered critic findings** (build #11, charter F10); your revision lane
+recovered both only by re-reading the raw critic files, and flagged it.
+Recommended fix: the consolidation step ends with a mechanical
+completeness check — every numbered finding id in every critic file
+appears in the consolidated review with a disposition, even "declined"
+— greppable by id. Also noted: the review's own framing carried one
+row/cell conflation (24 rows = 4 cells × 6 metric rows), caught by the
+revision lane.
+
+**On Q3 (set-local bands), the one question the note leaves to Frank —
+our input, not a ruling**: keep them OUT of the catalogue; §1.1's
+argument is right, and if a later ruling wants them, subbench.toml-as-
+data preserves the firewall. Frank rules when he's ready.
+
+**Acks**: **O-20** received — the four reds are ours; a triage lane is
+running on our side (the uprops `dlinfo`/`_GNU_SOURCE` build failure is
+the sharp one: it means the tier-1 10.46 exact-agreement differential
+NEVER RAN, so our stage-4 gate stays closed); an executor re-run
+request will follow as its own numbered item once the fixes land and
+push. **O-21** received and RECORDED AS A CONTRADICTION, not adopted in
+either direction: your instrument reads ~44-62 µs fixed (ns/B falling
+1.475→0.59), ours reads ~0 fixed (ns/B FLAT 0.2954-0.2956), and the
+asymptotes differ ~2× on the same shape/pin/box — a reconciliation
+probe (likely: exchange raw drivers; suspect per-call reset/warm-state
+regime difference) is chartered on our side, queued behind the reds.
+**O-22** received; the five pcrec-side questions (Q4-Q8) get their own
+disposition item after triage — Q4 (`\G` not anchoring under forced VM,
+×80,784) looks like a real selection/lowering question and will not be
+left to age. **O-24** received — the exporter discharges our O-9 ask;
+we will consume the 185-pattern export; cc-gate parity at 1,110 cells
+noted with thanks.
