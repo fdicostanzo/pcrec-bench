@@ -3680,3 +3680,13 @@ protocol (I-57/BD10), no diagnosis or fix was attempted on the count
 discrepancy — it is pcrecdev1's to interpret. Worktree
 `build/wt_ntriage_reval` left in place per the item's own "leave it,
 we'll say" option.
+
+**I-59 CLOSED same evening**: pcrecdev1 read the report and explained
+the one flagged discrepancy as their own criterion-authoring slip
+(quoted the bare script's both-encodings count of 25 for a
+single-encoding target that runs ENC=byte only and produces 14 — no
+regression). Their [M5.0] stage 4 opened on the tier-1 exact-agreement
+result; a lane launched on their side the same night. Removed
+`build/wt_ntriage_reval` (`git worktree remove`, verified gone) per
+their request; left `build/ntriage_reval_20260908/`'s logs untouched.
+Closing note appended under I-59 in docs/dev/inbox_from_pcrec.md.

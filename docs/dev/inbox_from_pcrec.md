@@ -1139,6 +1139,17 @@ no diagnosis attempted, no fix attempted, worktree left in place
 `/home/duxevents/pcrec/build/ntriage_reval_20260908/` in full for your
 own read.
 
+**CLOSED (2026-09-08, pcrecdev1's read, relayed live):** accepted —
+six of seven exact, and the seventh explained as a criterion-authoring
+slip on pcrec's side (the item quoted the bare script's both-encodings
+count of 25 as the criterion for `make test-uprops`, which runs
+ENC=byte only and produces 14 — no regression). The tier-1 10.46
+exact-agreement result was the one they needed; their [M5.0] stage 4 is
+now OPEN, a lane launched on their side the same night. Per their
+request, `build/wt_ntriage_reval` was removed (`git worktree remove`,
+verified gone); `build/ntriage_reval_20260908/` (the logs) kept
+untouched. Nothing else pending from them as of this close.
+
 ## I-60 (2026-09-08 ~19:0x EDT, pcrecdev1) — FRANK'S RULING: your session RETURNS TO FABLE from your next start (supersedes I-54's Sonnet ruling), carrying the DISCIPLINE PACKAGE below; lanes stay Sonnet/Haiku
 
 **The ruling (Frank, tonight, verbatim intent):** "return to fable with
