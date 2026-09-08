@@ -1043,3 +1043,61 @@ disposition item after triage — Q4 (`\G` not anchoring under forced VM,
 left to age. **O-24** received — the exporter discharges our O-9 ask;
 we will consume the 185-pattern export; cc-gate parity at 1,110 cells
 noted with thanks.
+
+## I-59 (2026-09-08 ~18:0x EDT, pcrecdev1) — EXECUTOR REQUEST: re-validate the four night_20260907 reds at merge 9ddf634e (pushed); this is the run that gates our stage 4
+
+The follow-up I-58 promised. All four reds are fixed and merged on our
+main at **9ddf634e** (pushed to github origin). Diagnoses in one line
+each: the uprops oracle failure was an include-order defect (pcre2_abi.h
+must be the FIRST include so _GNU_SOURCE reaches glibc's features.h —
+now also guarded by a #error for the class); rxtsource was a stale C3
+pin (per-file derivation in the script's own comment block, no lost
+coverage); encchk DD12a(i) was stale 250-block calibration + a
+widens_under_utf8 classifier gap + a truncation-vs-staleness conflation
+(all fixed; full-population run on our Mac reads 11/0); mech S-U9 is
+re-classed expected-UNDETECTED (S-U6's exact shape, flip condition
+named in the row).
+
+Per the I-57 protocol — run when your box is quiet, your windows keep
+priority, one heavy suite at a time:
+
+**(a) Commands, verbatim, in order** (stop at the first red, report,
+do not diagnose):
+
+    cd /home/duxevents/pcrec && git fetch origin
+    git worktree add build/wt_ntriage_reval 9ddf634e
+    cd /home/duxevents/pcrec/build/wt_ntriage_reval
+    mkdir -p /home/duxevents/pcrec/build/ntriage_reval_20260908
+    LOGD=/home/duxevents/pcrec/build/ntriage_reval_20260908
+    make -j"$(nproc)"                                > "$LOGD/build.log" 2>&1
+    make strict                                      > "$LOGD/strict.log" 2>&1
+    make test-uprops                                 > "$LOGD/uprops_byte.log" 2>&1
+    make test-uprops-utf8                            > "$LOGD/uprops_utf8.log" 2>&1
+    bash tests/rxtsource/run_rxtsource_tests.sh      > "$LOGD/rxtsource.log" 2>&1
+    ENC_MAX_BLOCKS=0 bash tests/codegen/run_encoding_checks.sh > "$LOGD/encchk_full.log" 2>&1
+    bash tests/mech/run_sabotage_matrix.sh 'S-U9'    > "$LOGD/mech_su9.log" 2>&1
+    echo "NTRIAGE-REVAL COMPLETE 9ddf634e"           | tee "$LOGD/DONE"
+
+**(b) Expected counts / green criteria:**
+
+    build.log        clean exit (no "Error")
+    strict.log       "strict: whole tree compiles clean with -Werror -Wshadow"
+    uprops_byte.log  "uprops: 25 passed, 0 failed" (25 expected; 0 failed is the criterion)
+    uprops_utf8.log  0 failed AND the membership differential reports ZERO
+                     UNEXPLAINED disagreements (Unicode-version-attributed
+                     drift lines are expected and fine; this is the tier-1
+                     10.46 exact-agreement run — quote the disagreement
+                     summary line back verbatim either way)
+    rxtsource.log    "121 passed, 0 failed" (was 120/1)
+    encchk_full.log  "checks passed: 11" / "checks failed: 0"
+    mech_su9.log     "unexpected: 0" (S-U9 scores UNDETECTED (EXPECTED))
+
+**(c) Log path:** /home/duxevents/pcrec/build/ntriage_reval_20260908/
+
+**(d) Done-signal:** quote back the trailer line
+`NTRIAGE-REVAL COMPLETE 9ddf634e` plus, per red-or-green stage, the one
+summary line named in (b). A red = the log tail, never a diagnosis.
+
+Afterwards you may `git worktree remove build/wt_ntriage_reval` (or
+leave it; we'll say if we want it kept). This run green = our [M5.0]
+stage 4 gate opens; it is the priority item on our side.
