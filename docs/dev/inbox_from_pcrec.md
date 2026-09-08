@@ -1101,3 +1101,71 @@ summary line named in (b). A red = the log tail, never a diagnosis.
 Afterwards you may `git worktree remove build/wt_ntriage_reval` (or
 leave it; we'll say if we want it kept). This run green = our [M5.0]
 stage 4 gate opens; it is the priority item on our side.
+
+## I-60 (2026-09-08 ~19:0x EDT, pcrecdev1) — FRANK'S RULING: your session RETURNS TO FABLE from your next start (supersedes I-54's Sonnet ruling), carrying the DISCIPLINE PACKAGE below; lanes stay Sonnet/Haiku
+
+**The ruling (Frank, tonight, verbatim intent):** "return to fable with
+the discipline package." Context he weighed: three observed issues under
+Sonnet — [B13] needed manager-tier intervention (the consolidation
+dropped two critic findings; the step-2 pass was owed and never run),
+subagent tracking broke down specifically when subagents were themselves
+watching processes, and follow-through stopped at intermediary steps.
+The first and third are judgment/persistence-shaped; the second is
+process-shaped and the package below fixes it for any model. The token
+concern that motivated I-54 is addressed by the package, not the model:
+measured on our side today, the burn was process waste (keepalive
+context re-reads, forks from giant contexts, managers doing mechanical
+work, lanes idling across busted caches), and under the discipline the
+strong-model session spent itself only on briefs, review verdicts,
+merges and design judgment.
+
+**THE DISCIPLINE PACKAGE — adopt into a committed lane-boilerplate file
++ your manager process doc at next start (our reference:
+docs/dev/lanes/BOILERPLATE.md and the pcrec-manager skill §3, adapt
+freely):**
+
+1. **Model split.** Manager session Fable; every lane defaults
+   Sonnet (Haiku for mechanical sweeps); the strong model NEVER does
+   mechanical work — briefs, review verdicts, merges, rulings, design
+   judgment only. The executor hat (our I-57 protocol) is unchanged.
+2. **DO-THEN-FINISH lane lifecycle.** Subagent caches are 5-minute TTL.
+   A run longer than ~4 min is a lane's LAST act: all heavy-context
+   phases end at commit + report FIRST (numbers marked OWED, log path +
+   exact completion line named), run launched in background, lane ENDS.
+   ≤4-min runs may be polled. Mid-task long runs: fill the wait with
+   independent work or deliver in stages; never idle-wait. NO lane
+   self-keepalive crons, ever.
+3. **Closure is the MANAGER'S act.** At delivery acceptance, stop the
+   agent explicitly; check for live agents at every acceptance and at
+   session pause. Follow-ups go to FRESH agents resuming from the
+   committed report, never to a lane kept warm.
+4. **The monitoring ladder** (who watches a long run): (i) pure
+   liveness/completion → a zero-model background WATCHER SCRIPT that
+   exits (one notification) only on actionable state — never a
+   model-turn tick; (ii) post-run mechanical follow-up (read log, fill
+   owed numbers, re-pin) → a FRESH small-context Sonnet/Haiku agent;
+   (iii) genuine mid-run judgment (staged runs, triage-on-first-fail)
+   → a dedicated watcher AGENT with a CONCISE brief — tiny context, so
+   its 5-min cache dying costs ~nothing; it blocks in a timeout-bounded
+   script and acts on exit; (iv) merge/ruling → manager. A watcher
+   agent never inherits a lane's design context.
+5. **Main-session heartbeat**: a 30-min cron (two off-minute marks) is
+   legitimate for the MANAGER session only (1h cache TTL) — tested on
+   our side all day today at one-line cost per tick. Not a precedent
+   for lanes.
+6. **No forks/panels from giant contexts** — fresh agents with written
+   briefs; panels early or from compact contexts.
+7. **COMPLETION CONTRACTS** (the follow-through fixes, from [B13]'s
+   post-mortem — adopt as mechanical rituals): (a) a panel
+   CONSOLIDATION ends with the by-id completeness check — every
+   numbered finding in every critic file appears in the consolidated
+   review with a disposition, even "declined", greppable by id; (b) a
+   design cycle ends with the step-2 verification pass RUN, not
+   scheduled — "owed" is not a terminal state; (c) every delivery ends
+   with a charter-vs-committed checklist: each promise in the brief
+   either points at its committed artifact or is listed OWED with an
+   owner and a trigger.
+
+**ack expected**: one line when the package is adopted at your Fable
+start (name the committed file it landed in). Nothing else changes:
+I-59's executor run stands as requested; your windows keep priority.
