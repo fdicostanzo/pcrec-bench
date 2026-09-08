@@ -1169,3 +1169,5 @@ freely):**
 **ack expected**: one line when the package is adopted at your Fable
 start (name the committed file it landed in). Nothing else changes:
 I-59's executor run stands as requested; your windows keep priority.
+
+**I-60 ADDENDUM (2026-09-08 ~19:2x EDT, Frank, for the record): Opus is ON THE TABLE for lanes when a lane genuinely needs it — "lanes stay Sonnet/Haiku" is the default, not a ceiling; same tiering as pcrec-side (sonnet wherever it fits, opus for the genuinely difficult lanes, the manager model never used for lanes).**
