@@ -104,6 +104,35 @@ docs/dev/'s append-only records.
   the adapter not before W3 — with six open questions and who rules
   each. Partially covers the `set_format.md` slot below; see its Q1.
 
+- `interpreter_v1.md` — **[B13] the interpreter design note, 2026-09-07
+  (DESIGN ONLY — no code, no catalogue file, no skill; awaiting the
+  adversarial critic panel before adoption)**: `pcrecbench interpret`,
+  a deterministic fact-finder over a report TSV + `store/index.tsv`
+  (never the markdown), and the `/pcrec-bench-interpret` skill that
+  commits a `reports/<name>.interpretation.md` sidecar. Carries the
+  versioned rule catalogue's file format (`catalogue/rules.toml`,
+  MAJOR.MINOR, with the regeneration rule that keeps a sidecar from
+  going stale), the six rule classes Frank named with each rule's exact
+  TSV/index inputs, its threshold AND that threshold's source in
+  `report.py`/`reduce.py` (no rule introduces a constant of its own —
+  R-DELTA reads `_cross_pin_verdict`'s own verdict string, R-FLOOR-1
+  reads `_jitter_flag`'s `timer-floor` token, R-STATUS-9 reads
+  `agreement_line`'s v1.4 verdict), and a worked example per rule citing
+  a real committed report row; the OPINION FIREWALL as three structural
+  properties (one `str.format` template per rule id, slot values copied
+  or computed by a declared arithmetic, links validated against
+  committed files) rather than a discipline; the minimal
+  machine-readable PREDICTIONS format (`docs/dev/predictions/<slug>.tsv`
+  — none exists today, checked) with the three real prediction shapes it
+  must express; `make check-interpret`'s five sections incl. one
+  sabotage fixture + one minimal-diff control per rule, mirroring
+  `schema/examples/bad/`; and §10, the ACCEPTANCE TEST — three named
+  current reports and the numbered findings catalogue v1 must surface
+  unprompted on each (Frank's 2026-08-25 blinded test, updated), written
+  down before implementation so a later lane cannot weaken it. Eight
+  open questions for the panel, incl. Q4, a flagged charter deviation
+  (the renderer phrases, not the skill).
+
 - `quiet_baseline.md` — **[B3]'s answer to OD-B8, MEASURED 2026-08-25**:
   what "quiet" means numerically on this box, the 12 samples behind it,
   and the two thresholds `pcrecbench/quiet.py` defaults to. It carries a
