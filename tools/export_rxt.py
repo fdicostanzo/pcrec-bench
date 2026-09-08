@@ -56,8 +56,9 @@ sets, 2026-09-07) rather than trusted from I-43's own 90-id census:
    single `pattern <text>` line at all (the format is line-oriented; a
    newline ends the line) and is refused BY NAME rather than silently
    mangled. Re-verified at 185 ids: NONE contains a newline, a CR, a tab,
-   or a non-ASCII byte (`ESCAPE_WITNESSES` below is empty on the real
-   corpus; the code path exists for the day one is added).
+   or a non-ASCII byte (`build_rxt`'s returned `witnesses` list is empty
+   on every set in the real corpus; the code path exists for the day one
+   is added).
 7. A hyphenated `name` is buildable as a `target` but not callable from a
    `pattern` via `(?&some-id)` (PCRE2's group-name grammar refuses `-`).
    No pattern in any set here calls another by id, so this costs nothing
