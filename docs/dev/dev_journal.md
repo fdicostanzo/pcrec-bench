@@ -3561,3 +3561,62 @@ State: master at 7361764 pending push (check-harness re-confirmation
 in flight). Pin d34c9131/abi 23 unchanged. [B33] stays `started` (item
 3 open); [B38] CLOSED. Next in Frank's ordered queue: [B13] (the
 interpreter). No lanes alive, box free.
+
+[B13], the full arc, same session: DESIGN NOTE v1 (lane b13design,
+opus, merged 651a7ce) — `pcrecbench interpret`, a deterministic
+fact-finder over the report TSV + store/index.tsv, a versioned rule
+catalogue, and the opinion firewall. Independently spot-checked before
+merge (every citation and worked example matched source exactly).
+Immediately put through a THREE-LENS ADVERSARIAL CRITIC PANEL the same
+day (r4critic-source/charter/build, opus, parallel) — this repo's own
+doctrine for a design of this size. All three converged, from
+different angles, on the same core defects: a wrong record-row column
+(v1 copied report.py's own stale comment), a self-contradictory
+R-STATUS-9 predicate, an acceptance-test rule (R-DELTA-3) that cannot
+fire on ANY committed report because the verdict column is a
+`; `-joined list of clauses, not a token, and the design's own
+"strongest claim" (recognising KB-13/KB-14 by signature) not
+expressible from its declared inputs. Also found independently: a
+ranking-group key that contradicts report.py's own deliberate design
+(breaking a rule by construction), a missing seventh rule class
+without which the charter's OWN blinded-test item (`vm-in`) is
+unreachable, and a firewall gap where fixed template prose itself goes
+unaudited. 56 raw findings compiled into
+docs/dev/reviews/2026-09-07-r4-interpreter-v1.md (11 blocking + 8
+should-fix + ~14 documentation), every disposition made by the
+manager with zero new escalations to Frank (one pre-existing open
+question carried forward untouched) — this is mechanism, not value,
+throughout. A REVISION lane (b13rev, opus, merged dab2c9f) applied
+every disposition against source read fresh, not copied from the
+critics: v1.1 is 2,391 lines (from 1,228), adds a seventh rule class
+R-ARM (same-pin/cross-config comparisons, which makes the `vm-in` item
+an ordinary firing), an `aggregate` mechanism (a modern report's
+~420-bullet sidecar collapses to ~44 with no ranking by interest), a
+predictions format redesigned against the project's only fully-scored
+prediction set (bench/syntax's P1-P13, 12/13 clauses expressible), and
+closes the firewall gap (template prose is now links-only + a
+human-reviewed diff gate). Independently re-verified two of the
+revision's own new numeric claims before merging (R-ARM-1's two
+email-report ratios, a ledger quote) — both exact. Five flagged
+refinements ruled in the lane's favor, including one deliberate
+non-compliance with a disposition's literal wording (reproducing a
+human ledger's charitable "marginal" tally would itself be an opinion;
+the stricter per-clause arithmetic is correct). `make check-schema`
+4/72/0 throughout. [B13] stays STATE:not-started: two small reporter
+preconditions (a `floor_pattern:` header key, giveup-smallest metric
+rows) are the next concrete step, before an implementation lane opens.
+
+Also today, twice: a lane lost track of its own background compile
+jobs even after the completion-marker rule (docs/dev/lanes/
+BOILERPLATE.md, commit 2a7a48c) landed — caught both times by the
+manager checking the worktree directly rather than trusting an idle
+notification. Filed as SendFeedback; the marker convention helps
+verification but does not by itself make a lane check its own markers
+on reinvocation, which remains an open gap for the next lane that
+backgrounds anything.
+
+State: master at dab2c9f, pushed. Pin d34c9131/abi 23 unchanged. [B33]
+stays `started` (item 3 open); [B38] CLOSED; [B13]'s design cycle
+CLOSED (not-started, precondition lane + implementation lane still
+ahead of it). Next in Frank's ordered queue: [B7] (roster expansion).
+No lanes alive, box free.
