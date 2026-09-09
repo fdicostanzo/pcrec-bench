@@ -514,21 +514,13 @@ def _render_from_facts(cat, report_path, pred_path, facts):
     report = I.ReportTsv(report_path, known)
     index = I.IndexTsv(INDEX_SNAPSHOT)
     ctx = I.Context(cat, report, index, [] if pred_path else None,
-                    pred_path or "(none)")
+                    I.display_path(pred_path, ROOT) if pred_path else "(none)")
     results = I.results_from_facts(cat, facts)
-    stamp = [
-        ("report", report_path),
-        ("report_sha256", I.sha256_of(report_path)),
-        ("index", INDEX_SNAPSHOT),
-        ("index_sha256", I.sha256_of(INDEX_SNAPSHOT)),
-        ("predictions", pred_path or "(none)"),
-        ("predictions_sha256",
-         I.sha256_of(pred_path) if pred_path else "(none)"),
-        ("catalogue", cat["catalogue_version"]),
-        ("interpret", I.INTERPRET_VERSION),
-        ("reporter", report.header.get("reporter", "?")),
-        ("query", report.header.get("filters", "?")),
-    ]
+    # ONE stamp builder, shared with the CLI render (interpret.build_stamp):
+    # the check must not carry its own copy of the stamp -- it did, and
+    # the [B13.3] merge's path-rule change made the two disagree on line 2.
+    stamp = I.build_stamp(cat, report, report_path, INDEX_SNAPSHOT, pred_path,
+                          ROOT)
     return I.render_markdown(results, ctx, stamp)
 
 

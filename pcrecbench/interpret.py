@@ -2011,10 +2011,29 @@ def repo_root_for(catalogue_path):
     return os.path.dirname(os.path.dirname(os.path.abspath(catalogue_path)))
 
 
+def display_path(path, root):
+    """The form a path takes in the facts TSV and the sidecar stamp:
+    REPO-RELATIVE (relative to the catalogue's own repository root) when
+    the file lies inside the repository, else as given. Found at the
+    [B13.3] merge: a golden generated in a lane worktree carried that
+    worktree's ABSOLUTE path in every `predictions_file` slot and failed
+    section 2 on master. A fact must not depend on which checkout or cwd
+    produced it (the same rule reporter v16 applied to its provenance
+    paths, [B13.2])."""
+    if not path:
+        return path
+    ap = os.path.abspath(path)
+    root = os.path.abspath(root)
+    if ap == root or ap.startswith(root + os.sep):
+        return os.path.relpath(ap, root).replace(os.sep, "/")
+    return path
+
+
 def interpret(report_path, index_path, catalogue_path, predictions_path=None,
               subject_grain_path=None, fmt="tsv", check_utc=True):
     cat = load_catalogue(catalogue_path)
-    check_links(cat, repo_root_for(catalogue_path))
+    root = repo_root_for(catalogue_path)
+    check_links(cat, root)
     known = header_keys_from_source()
     report = ReportTsv(report_path, known)
     index = IndexTsv(index_path) if index_path else None
@@ -2026,18 +2045,31 @@ def interpret(report_path, index_path, catalogue_path, predictions_path=None,
         if check_utc:
             check_stated_utc(predictions, index)
     ctx = Context(cat, report, index, predictions,
-                  predictions_path or "(none)", subject_grain)
+                  display_path(predictions_path, root) if predictions_path
+                  else "(none)", subject_grain)
     if predictions is not None:
         evaluate_predictions(cat, report, index, predictions, ctx)
     results = run_rules(cat, report, index, ctx)
     if fmt == "tsv":
         return render_facts_tsv(results)
-    stamp = [
-        ("report", report_path),
+    stamp = build_stamp(cat, report, report_path, index_path,
+                        predictions_path, root)
+    return render_markdown(results, ctx, stamp)
+
+
+def build_stamp(cat, report, report_path, index_path, predictions_path, root):
+    """The sidecar's stamp block (§9.2), built in ONE place: the CLI render
+    and `check-interpret` section 5's re-render-from-facts both call this,
+    so the two cannot drift (they did, at the [B13.3] merge, when the check
+    carried its own copy and the path rule changed under it). Paths are
+    `display_path`'s repo-relative form."""
+    return [
+        ("report", display_path(report_path, root)),
         ("report_sha256", sha256_of(report_path)),
-        ("index", index_path or "(none)"),
+        ("index", display_path(index_path, root) if index_path else "(none)"),
         ("index_sha256", sha256_of(index_path) if index_path else "(none)"),
-        ("predictions", predictions_path or "(none)"),
+        ("predictions", display_path(predictions_path, root)
+         if predictions_path else "(none)"),
         ("predictions_sha256",
          sha256_of(predictions_path) if predictions_path else "(none)"),
         ("catalogue", cat["catalogue_version"]),
@@ -2045,7 +2077,6 @@ def interpret(report_path, index_path, catalogue_path, predictions_path=None,
         ("reporter", report.header.get("reporter", "?")),
         ("query", report.header.get("filters", "?")),
     ]
-    return render_markdown(results, ctx, stamp)
 
 
 def build_argparser():
