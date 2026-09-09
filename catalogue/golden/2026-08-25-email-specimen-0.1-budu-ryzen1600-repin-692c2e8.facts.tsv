@@ -1,0 +1,500 @@
+rule_id	fired	firing_seq	pattern	subject_or_na	regime	form	testee	record_id	prediction_id	slot	value
+R-STATUS-1	0	0									no-matching-rows
+R-STATUS-2	1	1					libpcre2_10.46_interp-caps-simdna	email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T173402Z		record_id	email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T173402Z
+R-STATUS-2	1	1					libpcre2_10.46_interp-caps-simdna	email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T173402Z		testee	libpcre2_10.46_interp-caps-simdna
+R-STATUS-2	1	1					libpcre2_10.46_interp-caps-simdna	email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T173402Z		timestamp	2026-08-25T17:34:02Z
+R-STATUS-2	1	1					libpcre2_10.46_interp-caps-simdna	email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T173402Z		subbench	email-specimen
+R-STATUS-2	1	1					libpcre2_10.46_interp-caps-simdna	email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T173402Z		version	0.1
+R-STATUS-2	1	1					libpcre2_10.46_interp-caps-simdna	email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T173402Z		machine	budu-ryzen1600
+R-STATUS-2	1	1					libpcre2_10.46_interp-caps-simdna	email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T173402Z		status	inconclusive-load
+R-STATUS-2	1	2					pcrec_692c2e8_auto-caps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T175131Z		record_id	email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T175131Z
+R-STATUS-2	1	2					pcrec_692c2e8_auto-caps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T175131Z		testee	pcrec_692c2e8_auto-caps-simdna
+R-STATUS-2	1	2					pcrec_692c2e8_auto-caps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T175131Z		timestamp	2026-08-25T17:51:31Z
+R-STATUS-2	1	2					pcrec_692c2e8_auto-caps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T175131Z		subbench	email-specimen
+R-STATUS-2	1	2					pcrec_692c2e8_auto-caps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T175131Z		version	0.1
+R-STATUS-2	1	2					pcrec_692c2e8_auto-caps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T175131Z		machine	budu-ryzen1600
+R-STATUS-2	1	2					pcrec_692c2e8_auto-caps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T175131Z		status	inconclusive-load
+R-STATUS-2	1	3					pcrec_692c2e8_auto-nocaps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T175534Z		record_id	email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T175534Z
+R-STATUS-2	1	3					pcrec_692c2e8_auto-nocaps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T175534Z		testee	pcrec_692c2e8_auto-nocaps-simdna
+R-STATUS-2	1	3					pcrec_692c2e8_auto-nocaps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T175534Z		timestamp	2026-08-25T17:55:34Z
+R-STATUS-2	1	3					pcrec_692c2e8_auto-nocaps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T175534Z		subbench	email-specimen
+R-STATUS-2	1	3					pcrec_692c2e8_auto-nocaps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T175534Z		version	0.1
+R-STATUS-2	1	3					pcrec_692c2e8_auto-nocaps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T175534Z		machine	budu-ryzen1600
+R-STATUS-2	1	3					pcrec_692c2e8_auto-nocaps-simdna	email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T175534Z		status	inconclusive-load
+R-STATUS-3	1	1	factored		large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna			pattern	factored
+R-STATUS-3	1	1	factored		large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna			regime	large-subject-throughput
+R-STATUS-3	1	1	factored		large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna			form	plain
+R-STATUS-3	1	1	factored		large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna			testee	libpcre2_10.46_jit-caps-simdna
+R-STATUS-3	1	1	factored		large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna			pass_rate	0.6667
+R-STATUS-3	1	1	factored		large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna			n_wrong	0
+R-STATUS-3	1	1	factored		large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna			n_gave_up	0
+R-STATUS-3	1	1	factored		large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna			gave_up_summary	`0`
+R-STATUS-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			pattern	factored
+R-STATUS-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			regime	large-subject-throughput
+R-STATUS-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			form	plain
+R-STATUS-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			testee	pcrec_692c2e8_vm-caps-simdna
+R-STATUS-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			pass_rate	0.6667
+R-STATUS-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			n_wrong	0
+R-STATUS-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			n_gave_up	5
+R-STATUS-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			gave_up_summary	`-2:PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)`
+R-STATUS-3	1	3	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			pattern	factored
+R-STATUS-3	1	3	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			regime	large-subject-throughput
+R-STATUS-3	1	3	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			form	plain
+R-STATUS-3	1	3	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			testee	pcrec_692c2e8_vm-in-caps-simdna
+R-STATUS-3	1	3	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			pass_rate	0.6667
+R-STATUS-3	1	3	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			n_wrong	0
+R-STATUS-3	1	3	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			n_gave_up	5
+R-STATUS-3	1	3	factored		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			gave_up_summary	`-2:PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)`
+R-STATUS-3	1	4	factored		large-subject-throughput	plain	pcrec_8da6120_auto-caps-simdna			pattern	factored
+R-STATUS-3	1	4	factored		large-subject-throughput	plain	pcrec_8da6120_auto-caps-simdna			regime	large-subject-throughput
+R-STATUS-3	1	4	factored		large-subject-throughput	plain	pcrec_8da6120_auto-caps-simdna			form	plain
+R-STATUS-3	1	4	factored		large-subject-throughput	plain	pcrec_8da6120_auto-caps-simdna			testee	pcrec_8da6120_auto-caps-simdna
+R-STATUS-3	1	4	factored		large-subject-throughput	plain	pcrec_8da6120_auto-caps-simdna			pass_rate	0.6667
+R-STATUS-3	1	4	factored		large-subject-throughput	plain	pcrec_8da6120_auto-caps-simdna			n_wrong	0
+R-STATUS-3	1	4	factored		large-subject-throughput	plain	pcrec_8da6120_auto-caps-simdna			n_gave_up	5
+R-STATUS-3	1	4	factored		large-subject-throughput	plain	pcrec_8da6120_auto-caps-simdna			gave_up_summary	`-2:PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)`
+R-STATUS-3	1	5	factored		large-subject-throughput	plain	pcrec_8da6120_auto-nocaps-simdna			pattern	factored
+R-STATUS-3	1	5	factored		large-subject-throughput	plain	pcrec_8da6120_auto-nocaps-simdna			regime	large-subject-throughput
+R-STATUS-3	1	5	factored		large-subject-throughput	plain	pcrec_8da6120_auto-nocaps-simdna			form	plain
+R-STATUS-3	1	5	factored		large-subject-throughput	plain	pcrec_8da6120_auto-nocaps-simdna			testee	pcrec_8da6120_auto-nocaps-simdna
+R-STATUS-3	1	5	factored		large-subject-throughput	plain	pcrec_8da6120_auto-nocaps-simdna			pass_rate	0.6667
+R-STATUS-3	1	5	factored		large-subject-throughput	plain	pcrec_8da6120_auto-nocaps-simdna			n_wrong	0
+R-STATUS-3	1	5	factored		large-subject-throughput	plain	pcrec_8da6120_auto-nocaps-simdna			n_gave_up	5
+R-STATUS-3	1	5	factored		large-subject-throughput	plain	pcrec_8da6120_auto-nocaps-simdna			gave_up_summary	`-2:PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)`
+R-STATUS-3	1	6	factored		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			pattern	factored
+R-STATUS-3	1	6	factored		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			regime	large-subject-throughput
+R-STATUS-3	1	6	factored		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			form	plain
+R-STATUS-3	1	6	factored		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			testee	pcrec_8da6120_vm-caps-simdna
+R-STATUS-3	1	6	factored		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			pass_rate	0.6667
+R-STATUS-3	1	6	factored		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			n_wrong	0
+R-STATUS-3	1	6	factored		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			n_gave_up	5
+R-STATUS-3	1	6	factored		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			gave_up_summary	`-2:PCREC_ERR_STEPS×1 (smallest: t-c-long-atom-run, 1,048,576 B)`
+R-STATUS-3	1	7	factored		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			pattern	factored
+R-STATUS-3	1	7	factored		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			regime	match-compliance
+R-STATUS-3	1	7	factored		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			form	whole-subject
+R-STATUS-3	1	7	factored		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			testee	pcrec_692c2e8_vm-caps-simdna
+R-STATUS-3	1	7	factored		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			pass_rate	0.9412
+R-STATUS-3	1	7	factored		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			n_wrong	0
+R-STATUS-3	1	7	factored		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			n_gave_up	25
+R-STATUS-3	1	7	factored		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			gave_up_summary	`-3:PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)`
+R-STATUS-3	1	8	factored		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			pattern	factored
+R-STATUS-3	1	8	factored		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			regime	match-compliance
+R-STATUS-3	1	8	factored		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			form	whole-subject
+R-STATUS-3	1	8	factored		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			testee	pcrec_8da6120_auto-caps-simdna
+R-STATUS-3	1	8	factored		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			pass_rate	0.9412
+R-STATUS-3	1	8	factored		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			n_wrong	0
+R-STATUS-3	1	8	factored		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			n_gave_up	25
+R-STATUS-3	1	8	factored		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			gave_up_summary	`-3:PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)`
+R-STATUS-3	1	9	factored		match-compliance	whole-subject	pcrec_8da6120_auto-nocaps-simdna			pattern	factored
+R-STATUS-3	1	9	factored		match-compliance	whole-subject	pcrec_8da6120_auto-nocaps-simdna			regime	match-compliance
+R-STATUS-3	1	9	factored		match-compliance	whole-subject	pcrec_8da6120_auto-nocaps-simdna			form	whole-subject
+R-STATUS-3	1	9	factored		match-compliance	whole-subject	pcrec_8da6120_auto-nocaps-simdna			testee	pcrec_8da6120_auto-nocaps-simdna
+R-STATUS-3	1	9	factored		match-compliance	whole-subject	pcrec_8da6120_auto-nocaps-simdna			pass_rate	0.9412
+R-STATUS-3	1	9	factored		match-compliance	whole-subject	pcrec_8da6120_auto-nocaps-simdna			n_wrong	0
+R-STATUS-3	1	9	factored		match-compliance	whole-subject	pcrec_8da6120_auto-nocaps-simdna			n_gave_up	25
+R-STATUS-3	1	9	factored		match-compliance	whole-subject	pcrec_8da6120_auto-nocaps-simdna			gave_up_summary	`-3:PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)`
+R-STATUS-3	1	10	factored		match-compliance	whole-subject	pcrec_8da6120_vm-caps-simdna			pattern	factored
+R-STATUS-3	1	10	factored		match-compliance	whole-subject	pcrec_8da6120_vm-caps-simdna			regime	match-compliance
+R-STATUS-3	1	10	factored		match-compliance	whole-subject	pcrec_8da6120_vm-caps-simdna			form	whole-subject
+R-STATUS-3	1	10	factored		match-compliance	whole-subject	pcrec_8da6120_vm-caps-simdna			testee	pcrec_8da6120_vm-caps-simdna
+R-STATUS-3	1	10	factored		match-compliance	whole-subject	pcrec_8da6120_vm-caps-simdna			pass_rate	0.9412
+R-STATUS-3	1	10	factored		match-compliance	whole-subject	pcrec_8da6120_vm-caps-simdna			n_wrong	0
+R-STATUS-3	1	10	factored		match-compliance	whole-subject	pcrec_8da6120_vm-caps-simdna			n_gave_up	25
+R-STATUS-3	1	10	factored		match-compliance	whole-subject	pcrec_8da6120_vm-caps-simdna			gave_up_summary	`-3:PCREC_ERR_FRAMES×5 (smallest: s-061, 2,008 B)`
+R-STATUS-3	1	11	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			pattern	orig
+R-STATUS-3	1	11	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			regime	large-subject-throughput
+R-STATUS-3	1	11	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			form	plain
+R-STATUS-3	1	11	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			testee	pcrec_692c2e8_vm-caps-simdna
+R-STATUS-3	1	11	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			pass_rate	0.6667
+R-STATUS-3	1	11	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			n_wrong	0
+R-STATUS-3	1	11	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			n_gave_up	5
+R-STATUS-3	1	11	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-caps-simdna			gave_up_summary	`-4:PCREC_ERR_WORK×1 (smallest: t-c-long-atom-run, 1,048,576 B)`
+R-STATUS-3	1	12	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			pattern	orig
+R-STATUS-3	1	12	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			regime	large-subject-throughput
+R-STATUS-3	1	12	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			form	plain
+R-STATUS-3	1	12	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			testee	pcrec_692c2e8_vm-in-caps-simdna
+R-STATUS-3	1	12	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			pass_rate	0.6667
+R-STATUS-3	1	12	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			n_wrong	0
+R-STATUS-3	1	12	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			n_gave_up	5
+R-STATUS-3	1	12	orig		large-subject-throughput	plain	pcrec_692c2e8_vm-in-caps-simdna			gave_up_summary	`-4:PCREC_ERR_WORK×1 (smallest: t-c-long-atom-run, 1,048,576 B)`
+R-STATUS-3	1	13	orig		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			pattern	orig
+R-STATUS-3	1	13	orig		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			regime	large-subject-throughput
+R-STATUS-3	1	13	orig		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			form	plain
+R-STATUS-3	1	13	orig		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			testee	pcrec_8da6120_vm-caps-simdna
+R-STATUS-3	1	13	orig		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			pass_rate	0.6667
+R-STATUS-3	1	13	orig		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			n_wrong	0
+R-STATUS-3	1	13	orig		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			n_gave_up	5
+R-STATUS-3	1	13	orig		large-subject-throughput	plain	pcrec_8da6120_vm-caps-simdna			gave_up_summary	`-4:PCREC_ERR_WORK×1 (smallest: t-c-long-atom-run, 1,048,576 B)`
+R-STATUS-4	0	0									no-matching-rows
+R-STATUS-5	1	1								candidates	14
+R-STATUS-5	1	1								included	9
+R-STATUS-5	1	1								superseded	5
+R-STATUS-5	1	1								newer_not_measured	0
+R-STATUS-5	1	1								excluded_invalid	0
+R-STATUS-6	1	1								schema_versions	1.1,1.2
+R-STATUS-6	1	1								n_pre_14	9
+R-STATUS-6	1	1								n_records	9
+R-STATUS-7	0	0									no-matching-rows
+R-STATUS-8	0	0									no-matching-rows
+R-STATUS-9	0	0									no-matching-rows
+R-STATUS-10	0	0									no-matching-rows
+R-STATUS-11	0	0									no-matching-rows
+R-STATUS-12	1	1		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-caps-simdna			subject	t-c-long-atom-run
+R-STATUS-12	1	1		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-caps-simdna			subject_bytes	1,048,576
+R-STATUS-12	1	1		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-caps-simdna			code_a	`-2:PCREC_ERR_STEPS`
+R-STATUS-12	1	1		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-caps-simdna			pattern_a	factored
+R-STATUS-12	1	1		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-caps-simdna			code_b	`-4:PCREC_ERR_WORK`
+R-STATUS-12	1	1		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-caps-simdna			pattern_b	orig
+R-STATUS-12	1	1		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-caps-simdna			testee	pcrec_692c2e8_vm-caps-simdna
+R-STATUS-12	1	1		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-caps-simdna			regime	large-subject-throughput
+R-STATUS-12	1	2		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-in-caps-simdna			subject	t-c-long-atom-run
+R-STATUS-12	1	2		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-in-caps-simdna			subject_bytes	1,048,576
+R-STATUS-12	1	2		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-in-caps-simdna			code_a	`-2:PCREC_ERR_STEPS`
+R-STATUS-12	1	2		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-in-caps-simdna			pattern_a	factored
+R-STATUS-12	1	2		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-in-caps-simdna			code_b	`-4:PCREC_ERR_WORK`
+R-STATUS-12	1	2		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-in-caps-simdna			pattern_b	orig
+R-STATUS-12	1	2		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-in-caps-simdna			testee	pcrec_692c2e8_vm-in-caps-simdna
+R-STATUS-12	1	2		t-c-long-atom-run	large-subject-throughput		pcrec_692c2e8_vm-in-caps-simdna			regime	large-subject-throughput
+R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-caps-simdna			subject	t-c-long-atom-run
+R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-caps-simdna			subject_bytes	1,048,576
+R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-caps-simdna			code_a	`-2:PCREC_ERR_STEPS`
+R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-caps-simdna			pattern_a	factored
+R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-caps-simdna			code_b	`-4:PCREC_ERR_WORK`
+R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-caps-simdna			pattern_b	orig
+R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-caps-simdna			testee	pcrec_8da6120_vm-caps-simdna
+R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-caps-simdna			regime	large-subject-throughput
+R-STATUS-13	0	0									no-matching-rows
+R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			pattern	factored
+R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			regime	short-subject-search
+R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			form	plain
+R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			testee	pcrec_692c2e8_vm-caps-simdna
+R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			verdict	faster ×1.19
+R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			median_ns	69,537.5
+R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			config	vm-caps-simdna
+R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			direction	faster
+R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			ratio	1.19
+R-DELTA-1	1	2	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			pattern	orig
+R-DELTA-1	1	2	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			regime	match-compliance
+R-DELTA-1	1	2	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			form	whole-subject
+R-DELTA-1	1	2	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			testee	pcrec_692c2e8_auto-nocaps-simdna
+R-DELTA-1	1	2	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			verdict	faster ×1.00
+R-DELTA-1	1	2	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			median_ns	233,982.1
+R-DELTA-1	1	2	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			config	auto-nocaps-simdna
+R-DELTA-1	1	2	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			direction	faster
+R-DELTA-1	1	2	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			ratio	1.00
+R-DELTA-1	1	3	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			pattern	orig
+R-DELTA-1	1	3	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			regime	match-compliance
+R-DELTA-1	1	3	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			form	whole-subject
+R-DELTA-1	1	3	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			testee	pcrec_692c2e8_vm-caps-simdna
+R-DELTA-1	1	3	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			verdict	faster ×1.26
+R-DELTA-1	1	3	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			median_ns	80,227.6
+R-DELTA-1	1	3	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			config	vm-caps-simdna
+R-DELTA-1	1	3	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			direction	faster
+R-DELTA-1	1	3	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			ratio	1.26
+R-DELTA-2	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			pattern	factored
+R-DELTA-2	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			regime	large-subject-throughput
+R-DELTA-2	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			form	plain
+R-DELTA-2	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			testee	pcrec_692c2e8_auto-caps-simdna
+R-DELTA-2	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			rank	1
+R-DELTA-2	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			verdict	selection changed (vm → dfa)
+R-DELTA-2	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			config	auto-caps-simdna
+R-DELTA-2	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			pattern	factored
+R-DELTA-2	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			regime	large-subject-throughput
+R-DELTA-2	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			form	plain
+R-DELTA-2	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			testee	pcrec_692c2e8_auto-nocaps-simdna
+R-DELTA-2	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			rank	2
+R-DELTA-2	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			verdict	selection changed (vm → dfa)
+R-DELTA-2	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			config	auto-nocaps-simdna
+R-DELTA-2	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pattern	factored
+R-DELTA-2	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			regime	match-compliance
+R-DELTA-2	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			form	whole-subject
+R-DELTA-2	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			testee	pcrec_692c2e8_auto-caps-simdna
+R-DELTA-2	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			rank	2
+R-DELTA-2	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			verdict	selection changed (vm → dfa)
+R-DELTA-2	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			config	auto-caps-simdna
+R-DELTA-2	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			pattern	factored
+R-DELTA-2	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			regime	match-compliance
+R-DELTA-2	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			form	whole-subject
+R-DELTA-2	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			testee	pcrec_692c2e8_auto-nocaps-simdna
+R-DELTA-2	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			rank	1
+R-DELTA-2	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			verdict	selection changed (vm → dfa)
+R-DELTA-2	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			config	auto-nocaps-simdna
+R-DELTA-2	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pattern	factored
+R-DELTA-2	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			regime	short-subject-search
+R-DELTA-2	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			form	plain
+R-DELTA-2	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			testee	pcrec_692c2e8_auto-caps-simdna
+R-DELTA-2	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			rank	2
+R-DELTA-2	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			verdict	selection changed (vm → dfa)
+R-DELTA-2	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config	auto-caps-simdna
+R-DELTA-2	1	6	factored		short-subject-search	plain	pcrec_692c2e8_auto-nocaps-simdna			pattern	factored
+R-DELTA-2	1	6	factored		short-subject-search	plain	pcrec_692c2e8_auto-nocaps-simdna			regime	short-subject-search
+R-DELTA-2	1	6	factored		short-subject-search	plain	pcrec_692c2e8_auto-nocaps-simdna			form	plain
+R-DELTA-2	1	6	factored		short-subject-search	plain	pcrec_692c2e8_auto-nocaps-simdna			testee	pcrec_692c2e8_auto-nocaps-simdna
+R-DELTA-2	1	6	factored		short-subject-search	plain	pcrec_692c2e8_auto-nocaps-simdna			rank	1
+R-DELTA-2	1	6	factored		short-subject-search	plain	pcrec_692c2e8_auto-nocaps-simdna			verdict	selection changed (vm → dfa)
+R-DELTA-2	1	6	factored		short-subject-search	plain	pcrec_692c2e8_auto-nocaps-simdna			config	auto-nocaps-simdna
+R-DELTA-3	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			pattern	factored
+R-DELTA-3	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			regime	large-subject-throughput
+R-DELTA-3	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			form	plain
+R-DELTA-3	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			testee	pcrec_692c2e8_auto-caps-simdna
+R-DELTA-3	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			rank	1
+R-DELTA-3	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			verdict	now measured (was: gave-up)
+R-DELTA-3	1	1	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-caps-simdna			config	auto-caps-simdna
+R-DELTA-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			pattern	factored
+R-DELTA-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			regime	large-subject-throughput
+R-DELTA-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			form	plain
+R-DELTA-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			testee	pcrec_692c2e8_auto-nocaps-simdna
+R-DELTA-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			rank	2
+R-DELTA-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			verdict	now measured (was: gave-up)
+R-DELTA-3	1	2	factored		large-subject-throughput	plain	pcrec_692c2e8_auto-nocaps-simdna			config	auto-nocaps-simdna
+R-DELTA-3	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pattern	factored
+R-DELTA-3	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			regime	match-compliance
+R-DELTA-3	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			form	whole-subject
+R-DELTA-3	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			testee	pcrec_692c2e8_auto-caps-simdna
+R-DELTA-3	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			rank	2
+R-DELTA-3	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			verdict	now measured (was: gave-up)
+R-DELTA-3	1	3	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			config	auto-caps-simdna
+R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			pattern	factored
+R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			regime	match-compliance
+R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			form	whole-subject
+R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			testee	pcrec_692c2e8_auto-nocaps-simdna
+R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			rank	1
+R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			verdict	now measured (was: gave-up)
+R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			config	auto-nocaps-simdna
+R-DELTA-4	0	0									input-absent
+R-RANK-1	0	0									no-matching-rows
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pattern	factored
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			regime	match-compliance
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			form	whole-subject
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pin	692c2e8
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			median_a	234,963.8
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			config_b	auto-nocaps-simdna
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			median_b	234,096.5
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			ratio	1.00
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			spread	367.3
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_name	caps
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_a	caps
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_b	nocaps
+R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			arm_pair	auto-caps-simdna vs auto-nocaps-simdna
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pattern	factored
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			regime	match-compliance
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			form	whole-subject
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pin	692c2e8
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			median_a	234,963.8
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			config_b	vm-in-caps-simdna
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			median_b	464,407.8
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			ratio	1.98
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			spread	9,012.9
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_name	mode
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_a	auto
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_b	vm-in
+R-ARM-1	1	2	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-in-caps-simdna
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pattern	factored
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			regime	short-subject-search
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			form	plain
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pin	692c2e8
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			median_a	6,291.5
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config_b	auto-nocaps-simdna
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			median_b	6,136.3
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			ratio	1.03
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			spread	39.2
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_name	caps
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_a	caps
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_b	nocaps
+R-ARM-1	1	3	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			arm_pair	auto-caps-simdna vs auto-nocaps-simdna
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pattern	factored
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			regime	short-subject-search
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			form	plain
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pin	692c2e8
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			median_a	6,291.5
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config_b	vm-caps-simdna
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			median_b	69,537.5
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			ratio	11.05
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			spread	826.9
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_name	mode
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_a	auto
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_b	vm
+R-ARM-1	1	4	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-caps-simdna
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pattern	factored
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			regime	short-subject-search
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			form	plain
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pin	692c2e8
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			median_a	6,291.5
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config_b	vm-in-caps-simdna
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			median_b	54,117.6
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			ratio	8.60
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			spread	695.9
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_name	mode
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_a	auto
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_b	vm-in
+R-ARM-1	1	5	factored		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-in-caps-simdna
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			pattern	factored
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			regime	short-subject-search
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			form	plain
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			pin	692c2e8
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			config_a	vm-caps-simdna
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			median_a	69,537.5
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			config_b	vm-in-caps-simdna
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			median_b	54,117.6
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			ratio	1.28
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			spread	826.9
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			token_name	mode
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			token_a	vm
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			token_b	vm-in
+R-ARM-1	1	6	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			arm_pair	vm-caps-simdna vs vm-in-caps-simdna
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pattern	orig
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			regime	match-compliance
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			form	whole-subject
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pin	692c2e8
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			median_a	234,082.1
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			config_b	vm-caps-simdna
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			median_b	80,227.6
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			ratio	2.92
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			spread	318.8
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_name	mode
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_a	auto
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_b	vm
+R-ARM-1	1	7	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-caps-simdna
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pattern	orig
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			regime	match-compliance
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			form	whole-subject
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pin	692c2e8
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			median_a	234,082.1
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			config_b	vm-in-caps-simdna
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			median_b	62,732.3
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			ratio	3.73
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			spread	304.7
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_name	mode
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_a	auto
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			token_b	vm-in
+R-ARM-1	1	8	orig		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-in-caps-simdna
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			pattern	orig
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			regime	match-compliance
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			form	whole-subject
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			pin	692c2e8
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			config_a	vm-caps-simdna
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			median_a	80,227.6
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			config_b	vm-in-caps-simdna
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			median_b	62,732.3
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			ratio	1.28
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			spread	318.8
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			token_name	mode
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			token_a	vm
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			token_b	vm-in
+R-ARM-1	1	9	orig		match-compliance	whole-subject	pcrec_692c2e8_vm-caps-simdna			arm_pair	vm-caps-simdna vs vm-in-caps-simdna
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			pattern	orig
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			regime	match-compliance
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			form	whole-subject
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			pin	8da6120
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			median_a	235,230.3
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			config_b	vm-caps-simdna
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			median_b	100,989.8
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			ratio	2.33
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			spread	1,172.9
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			token_name	mode
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			token_a	auto
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			token_b	vm
+R-ARM-1	1	10	orig		match-compliance	whole-subject	pcrec_8da6120_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-caps-simdna
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pattern	orig
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			regime	short-subject-search
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			form	plain
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pin	692c2e8
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			median_a	6,133.9
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config_b	vm-caps-simdna
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			median_b	28,996.9
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			ratio	4.73
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			spread	862.2
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_name	mode
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_a	auto
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_b	vm
+R-ARM-1	1	11	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-caps-simdna
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pattern	orig
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			regime	short-subject-search
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			form	plain
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			pin	692c2e8
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			median_a	6,133.9
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			config_b	vm-in-caps-simdna
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			median_b	12,546.2
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			ratio	2.05
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			spread	87.0
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_name	mode
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_a	auto
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			token_b	vm-in
+R-ARM-1	1	12	orig		short-subject-search	plain	pcrec_692c2e8_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-in-caps-simdna
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			pattern	orig
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			regime	short-subject-search
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			form	plain
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			pin	692c2e8
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			config_a	vm-caps-simdna
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			median_a	28,996.9
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			config_b	vm-in-caps-simdna
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			median_b	12,546.2
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			ratio	2.31
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			spread	862.2
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			token_name	mode
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			token_a	vm
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			token_b	vm-in
+R-ARM-1	1	13	orig		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			arm_pair	vm-caps-simdna vs vm-in-caps-simdna
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			pattern	orig
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			regime	short-subject-search
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			form	plain
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			pin	8da6120
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			config_a	auto-caps-simdna
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			median_a	6,131.1
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			config_b	vm-caps-simdna
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			median_b	30,090.3
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			ratio	4.91
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			spread	1,220.5
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			token_name	mode
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			token_a	auto
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			token_b	vm
+R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-caps-simdna
+R-FLOOR-1	1	1	factored			plain	libpcre2_10.46_interp-caps-simdna			pattern	factored
+R-FLOOR-1	1	1	factored			plain	libpcre2_10.46_interp-caps-simdna			form	plain
+R-FLOOR-1	1	1	factored			plain	libpcre2_10.46_interp-caps-simdna			testee	libpcre2_10.46_interp-caps-simdna
+R-FLOOR-1	1	2	orig			plain	libpcre2_10.46_interp-caps-simdna			pattern	orig
+R-FLOOR-1	1	2	orig			plain	libpcre2_10.46_interp-caps-simdna			form	plain
+R-FLOOR-1	1	2	orig			plain	libpcre2_10.46_interp-caps-simdna			testee	libpcre2_10.46_interp-caps-simdna
+R-FLOOR-2	0	0									no-matching-rows
+R-FLOOR-3	0	0									no-matching-rows
+R-PRED-1	0	0									input-absent
+R-PRED-2	0	0									input-absent
+R-PRED-3	0	0									input-absent
+R-PRED-4	0	0									input-absent
+R-BUCKET-FORM	1	1	factored		match-compliance					pattern	factored
+R-BUCKET-FORM	1	1	factored		match-compliance					regime	match-compliance
+R-BUCKET-FORM	1	1	factored		match-compliance					n_separate	3
+R-BUCKET-FORM	1	1	factored		match-compliance					n_same	2
+R-BUCKET-FORM	1	2	orig		match-compliance					pattern	orig
+R-BUCKET-FORM	1	2	orig		match-compliance					regime	match-compliance
+R-BUCKET-FORM	1	2	orig		match-compliance					n_separate	7
+R-BUCKET-FORM	1	2	orig		match-compliance					n_same	2
+R-BUCKET-VSBEST	1	1	factored		short-subject-search					pattern	factored
+R-BUCKET-VSBEST	1	1	factored		short-subject-search					regime	short-subject-search
+R-BUCKET-VSBEST	1	1	factored		short-subject-search					n_slugs	2
+R-BUCKET-VSBEST	1	1	factored		short-subject-search					pin_slugs	692c2e8, 8da6120
+R-BUCKET-VSBEST	1	2	orig		large-subject-throughput					pattern	orig
+R-BUCKET-VSBEST	1	2	orig		large-subject-throughput					regime	large-subject-throughput
+R-BUCKET-VSBEST	1	2	orig		large-subject-throughput					n_slugs	2
+R-BUCKET-VSBEST	1	2	orig		large-subject-throughput					pin_slugs	692c2e8, 8da6120
+R-BUCKET-VSBEST	1	3	orig		match-compliance					pattern	orig
+R-BUCKET-VSBEST	1	3	orig		match-compliance					regime	match-compliance
+R-BUCKET-VSBEST	1	3	orig		match-compliance					n_slugs	2
+R-BUCKET-VSBEST	1	3	orig		match-compliance					pin_slugs	692c2e8, 8da6120
+R-BUCKET-VSBEST	1	4	orig		short-subject-search					pattern	orig
+R-BUCKET-VSBEST	1	4	orig		short-subject-search					regime	short-subject-search
+R-BUCKET-VSBEST	1	4	orig		short-subject-search					n_slugs	2
+R-BUCKET-VSBEST	1	4	orig		short-subject-search					pin_slugs	692c2e8, 8da6120
+R-BUCKET-SPAN	0	0									no-matching-rows
+R-BUCKET-DOMINATED	0	0									input-absent
+R-BUCKET-KB	0	0									no-registered-signatures

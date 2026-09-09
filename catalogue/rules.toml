@@ -1155,7 +1155,11 @@ id            = "R-BUCKET-DOMINATED"
 title         = "a set cell dominated by one subject"
 class         = "bucket"
 since         = "1.0"
-grain         = ["subject"]
+# Declared at BOTH grains although the fact is subject-grain: the rule's
+# input is a subject-grain SIDECAR (`--subject-grain`), not the report
+# being interpreted, so on a set-grain report the honest answer is
+# `input-absent` (Q2, ruled (a)) rather than `grain`.
+grain         = ["set", "subject"]
 aggregate     = ["testee"]
 inputs        = [
   "report:rank?metric=median_ns.{pattern,subject_or_na,regime_or_na,form,testee,value}",

@@ -820,12 +820,17 @@ def r_rank_1(view, ctx):
         k = (r["pattern"], r["regime_or_na"], r["form"], r["testee"])
         ratio[k] = float(r["value"])
         groups[(r["pattern"], r["regime_or_na"])].add(k)
+    group_testees = defaultdict(set)
     for r in view.rows("rank", metric="median_ns"):
         median[(r["pattern"], r["regime_or_na"], r["form"],
                 r["testee"])] = float(r["value"])
+        group_testees[(r["pattern"], r["regime_or_na"])].add(r["testee"])
     out = []
     for (pattern, regime), cells in sorted(groups.items()):
-        testees = {k[3] for k in cells}
+        # The group's ARMS are read from the same `median_ns` rows
+        # R-STATUS-13 reads, so the guard engages on exactly the
+        # population that rule reports about.
+        testees = group_testees[(pattern, regime)]
         if not any(is_reference(t) for t in testees):
             continue          # the R-STATUS-13 guard
         reference = sorted(t for t in testees if is_reference(t))[0]
@@ -1070,8 +1075,16 @@ def r_bucket_span(view, ctx):
 
 
 def r_bucket_dominated(view, ctx):
+    # The rule is SUBJECT-grain by nature but is declared at both grains
+    # because its input is a subject-grain SIDECAR, not the report being
+    # interpreted: with none supplied it reports `input-absent` (Q2,
+    # ruled (a)), which is what a reader of a set-grain report needs to
+    # be told. When one IS supplied it is read through a view built on
+    # that file, under this same rule's declared inputs.
     if ctx.subject_grain is None:
         return "input-absent"
+    rule = next(r for r in ctx.catalogue["rule"] if r["id"] == "R-BUCKET-DOMINATED")
+    view = RuleView(rule, ctx.subject_grain, ctx.index)
     totals = defaultdict(list)
     for r in view.rows("rank", metric="median_ns"):
         totals[(r["pattern"], r["regime_or_na"], r["testee"])].append(
@@ -1391,6 +1404,8 @@ def check_extremal(rule, firings):
     The RENDER itself reads only the declared `extremal` name and parses
     the number back out of the rendered slot string, so the sidecar is a
     function of the facts TSV alone (§8(5))."""
+    if not firings:
+        return
     numeric = set()
     for f in firings:
         numeric |= set(f.nums)

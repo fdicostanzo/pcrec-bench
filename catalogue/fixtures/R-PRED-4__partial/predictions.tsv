@@ -1,0 +1,3 @@
+prediction_id	clause	source	source_ref	stated_utc	subbench	version	selector	quantity	reducer	op	lo	hi	unit	note
+P8	.a	bench/syntax/NOTES.md	P8	2026-09-05T00:00:00Z	syntax	0.1	pattern=mod-i;regime_or_na=short-subject-search|match-compliance;form=plain	median_ns	ratio_to(pattern=lit-cat;regime_or_na=short-subject-search|match-compliance;form=plain)	lte		1.5	x	mod-i against lit-cat is under x1.5 in the short regimes
+P8	.b	bench/syntax/NOTES.md	P8	2026-09-05T00:00:00Z	syntax	0.1	pattern=mod-i;regime_or_na=large-subject-throughput;form=plain	median_ns	ratio_to(pattern=lit-cat;regime_or_na=large-subject-throughput;form=plain)	lte		0.5	x	on the runs a caseless first-byte scan against an exact one: the JIT band is not predicted to trip

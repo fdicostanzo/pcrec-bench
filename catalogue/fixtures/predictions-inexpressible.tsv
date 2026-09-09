@@ -1,0 +1,3 @@
+prediction_id	clause	source	source_ref	stated_utc	subbench	version	selector	quantity	reducer	op	lo	hi	unit	note
+P9	.a	bench/syntax/NOTES.md	P9	2026-09-05T00:00:00Z	syntax	0.1	pattern=asr-k-uc;regime_or_na=match-compliance	span	identity	eq		4,9		asr-k-uc's reported span begins at offset 4 on key=value on every testee
+P12	.a	bench/syntax/NOTES.md	P12	2026-09-05T00:00:00Z	syntax	0.1	pattern=mod-j-uc;regime_or_na=match-compliance	answers_equal_to(bak-1)	identity	eq		1		mod-j-uc agrees with bak-1 on every subject and regime

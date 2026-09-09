@@ -1,0 +1,2 @@
+prediction_id	clause	source	source_ref	stated_utc	subbench	version	selector	quantity	reducer	op	lo	hi	unit	note
+P13		bench/syntax/NOTES.md	P13	2026-09-05T00:00:00Z	syntax	0.1	pattern=absent-pattern	compile:median_total_ns	ratio_to_median_over(pattern)	lte		10	x	on every compiled testee no pattern's compile time is beyond x10 the median

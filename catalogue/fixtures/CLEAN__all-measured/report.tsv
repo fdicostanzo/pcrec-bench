@@ -1,0 +1,11 @@
+# reporter: v16 (2026-09-08); filters: subbench=clean-null, version=1.0; source: catalogue/fixtures/CLEAN__all-measured/index.tsv (1 record(s) matching this query); records: 1; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: clean-null@1.0; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 1; mixed_x13: False; include_provenance: False; worst_other_core_busy: n/a; floor_pattern: none
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						clean-null@1.0__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260909T000000Z				agreement	agree (0 of 2 groups; 0 of 10 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+rank	lit	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	median_ns	1000.000000	4	1.0000	0	0		
+rank	lit	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	min_ns	990.000000	4	1.0000	0	0		
+rank	lit	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	max_ns	1010.000000	4	1.0000	0	0		
+rank	lit	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	stddev_ns	5.000000	4	1.0000	0	0		
+rank	lit	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	4	1.0000	0	0		
+rank	lit	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	4	1.0000	0	0		
+compile	lit			plain	same program	libpcre2_10.46_interp-caps-simdna				median_total_ns	4000000.000000	5					
+compile	lit			plain	same program	libpcre2_10.46_interp-caps-simdna				jitter	0.020						
