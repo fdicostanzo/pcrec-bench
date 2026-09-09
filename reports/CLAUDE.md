@@ -4,6 +4,33 @@ Each file is the output of one `python3 -m pcrecbench report ...` query,
 committed beside the records it reduces so a reader can cite a number
 with its query. Names: `<date>-<subbench>-<version>-<machine>[-<label>][.<grain>].md|tsv`.
 
+## `.interpretation.md` sidecars ([B13.4])
+
+Some report groups carry a fourth sibling,
+`<name>.interpretation.md`, beside the `.tsv`/`.md`/`.subject-grain.md`.
+It is the output of `pcrecbench interpret --render`
+(`docs/design/interpreter_v1.md`): a deterministic, catalogue-driven
+fact-finder over the report `.tsv` and `store/index.tsv` — never the
+`.md` rendering — that names every fired rule from `catalogue/rules.toml`
+with its rows and numbers, and every rule that did NOT fire with the
+reason. It is a **sidecar, never a section of the report itself**: the
+report stays a deterministic, diffable table and bumps its own
+`REPORTER_VERSION` for its own reasons; the sidecar bumps with the
+catalogue instead.
+
+A sidecar is **generated and never hand-edited**. Its opening HTML
+comment stamps the report path and its sha256, the index path and its
+sha256, the predictions file (if any) and its sha256, the catalogue
+version, and the `interpret`/`reporter` versions — `make check-interpret`
+section 3 re-renders every committed sidecar from that stamp and requires
+byte equality, so a stale one is a `make check` failure. Regenerate one
+with the skill, never by hand: `/pcrec-bench-interpret <report>`
+(`.claude/skills/pcrec-bench-interpret/SKILL.md`), whose own text states
+the full opinion-firewall rule — a wrong or missing finding is a
+catalogue change (`catalogue/rules.toml`), not an edit to the rendered
+file. Committed today: the three `docs/design/interpreter_v1.md` §10
+acceptance reports (A, B, C); the rest are generated on demand (§11 Q5).
+
 **[B13.2] (2026-09-08, lanes b13pre → b13regen → b13regen2 → b13fin)
 regenerated EVERY committed report against reporter `v16 (2026-09-08)`**
 (docs/design/interpreter_v1.md §2.5's two reporter preconditions,

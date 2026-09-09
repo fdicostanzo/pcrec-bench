@@ -9,8 +9,11 @@ test RAN: 25 of 25 items pass. The implementation's deviations from this
 note — none of them changes a rule's predicate or threshold — are listed
 in `docs/dev/lanes/b13impl_report.md`; this note is NOT rewritten to fit
 the build. Part 2 (the `/pcrec-bench-interpret` skill and the committed
-`.interpretation.md` sidecars) is [B13.4]. What follows is the design as
-v1.2 stated it. **v1.2, 2026-09-08** — v1.1
+`.interpretation.md` sidecars) is [B13.4], **IMPLEMENTED (lane
+`b13skill`, 2026-09-09)**: the skill at
+`.claude/skills/pcrec-bench-interpret/SKILL.md` and the three §10
+acceptance-report sidecars committed under `reports/`. What follows is
+the design as v1.2 stated it. **v1.2, 2026-09-08** — v1.1
 (lane `b13rev`, 2026-09-07) revised in place by lane `b13v12` under the
 pcrec manager session's cross-review of v1.1, inbox item I-58: **APPROVED
 CONDITIONAL**, four spec edits, one revision commit, no re-panel. v1.1
