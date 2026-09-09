@@ -40,9 +40,10 @@ worktree) and treat that line/file, not a live-process check, as the
 ONLY source of truth for "has this finished". **A job you launched
 with `setsid … & disown` (or any plain `&`) is NOT a harness task: NO
 completion notification will EVER reach you** — "I'll resume once the
-notification arrives" is waiting on nothing (lane b13pre, 2026-09-08:
-idle 20 min after its job had already exited rc=1; the manager's
-marker check found it). For a run under the Bash tool's cap, use
+notification arrives" is waiting on nothing (lane b13pre, 2026-09-08,
+announced exactly that for a disowned job; it had in fact polled the
+marker and relaunched, but the announced plan would have hung the
+lane). For a run under the Bash tool's cap, use
 `run_in_background: true` (harness-tracked, it DOES notify); for a
 longer one, DO-THEN-FINISH below — commit, report the marker as OWED,
 launch, END; a fresh agent checks the marker. Before sending ANY idle
