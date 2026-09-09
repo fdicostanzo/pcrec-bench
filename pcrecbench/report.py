@@ -875,6 +875,70 @@ reports carrying the pair regenerate with the AFTER window.
 * `REPORTER_VERSION` bumps to `v15 (2026-09-06)`. Committed reports
   regenerate once a stored record carries `vm_cls_folds` (the AFTER
   window, scheduled 2026-09-06 afternoon).
+
+## The reporter, [B13.2] (2026-09-08) -- REPORTER_VERSION v16, the two interpreter preconditions P-1/P-2
+
+Lane `b13pre`, landing `docs/design/interpreter_v1.md` §2.5's two
+PRECONDITIONS the [B13] interpreter design depends on -- R-FLOOR-2 and
+R-STATUS-12 (§4.1/§4.5) read these directly, and neither rule is
+implementable without them. Both ship in this one change, one
+`REPORTER_VERSION` bump, one full regeneration of `reports/`:
+
+* **P-1 -- `floor_pattern: <pattern_id|none>`**, the LAST key on
+  `render_tsv`'s header comment line (after `worst_other_core_busy`, so
+  no existing key's position moves). The value is derived from
+  `ReportData.floor_pattern_by_sb` ([B14] R9, `sb -> pattern_id` for
+  every subbench IN THIS REPORT'S OWN SELECTION that declares a
+  `role: floor` pattern) -- never from `bench/`, which is exactly the
+  KB-2 mistake §2.4's correction removed. Rule: the DISTINCT set of
+  `floor_pattern_by_sb.values()` has zero members -> the literal
+  `none`; exactly one -> that id; more than one -> the sorted ids
+  joined with `,` (no committed report hits the multi-subbench case --
+  every committed query is one sub-bench -- so `none`/single are the
+  only values in `reports/` today). `_floor_pattern_header_value(rd)` is
+  the one function both `render_tsv` and its test call, so the rule
+  lives in exactly one place.
+* **P-2 -- the give-up smallest subject as its own metric rows.** Beside
+  each `excluded`-section row whose cell has at least one give-up,
+  `render_tsv` now emits one EXTRA `excluded` row per DISTINCT give-up
+  CODE, immediately after the base row, in the same sorted-code order
+  `_gave_up_cell_summary` already renders them in (so the TSV and the
+  human `gave_up_summary` string can never disagree about which code
+  came first). Refactored `_gave_up_cell_summary` to build its grouping
+  through a new pure helper, `_gave_up_cell_detail(failing_detail,
+  subject_bytes)` -> `[(code, smallest_subject_id, smallest_bytes_or_None,
+  n_subjects), ...]` sorted by code -- the ONE derivation both the human
+  string and the new TSV rows read, so "the same source the human
+  render uses" is structural, not a repeated re-derivation. Each row is
+  the base row's `pattern`/`regime_or_na`/`form`/`fact`/`testee`/
+  `status`/`tier` copied verbatim, then `subject_or_na` = that code's
+  smallest subject id, `rank_or_na` = `""`, `metric` = `giveup_smallest`,
+  `value` = the code, `n` = the smallest subject's byte count (`""` when
+  unknown -- the human render's `?`), `pass_rate` = `""`, `n_gave_up` =
+  the SUBJECT count for this code (not `r.n_gave_up`'s trial count --
+  deliberately a different number in the same-named column, because the
+  column is now read per emitted row, not per cell), `n_wrong` = `""`,
+  `gave_up_summary` = `""`, `delta_verdict` = `""` -- 18 columns, the
+  base row's own layout untouched. **Set-grain only, and not by a new
+  guard**: `failing_detail` is a `SetCell`-only field (`reduce.py`'s
+  `MatchCell.__slots__` carries no such attribute), so at `--grain
+  subject` the existing `hasattr(r, "failing_detail")` gate that already
+  decides `gs` (the base row's `gave_up_summary`) is `False` and P-2's
+  new loop shares that exact gate -- it never needs its own subject/set
+  branch, and no committed report is at subject grain to exercise the
+  distinction either way. **`excluded` section only**: `not_ranked` and
+  `scratch` rows can also carry a non-empty `gave_up_summary` on their
+  base row today, but R-STATUS-12's own input is `report:excluded`
+  (interpreter_v1.md §4.1) and the design's row shape names
+  `section=excluded` explicitly, so P-2 does not fire there.
+* No deviation from §2.5 as written: both rows shapes and the header
+  key's position are implemented exactly as specified.
+* `REPORTER_VERSION` bumps to `v16 (2026-09-08)`; every committed report
+  under `reports/` regenerated from its own recorded query -- see
+  `reports/CLAUDE.md`. `pcrecbench/tests/test_report.py` gained 3 tests
+  (`test_floor_pattern_header_key_p1`, `test_giveup_smallest_rows_p2`,
+  `test_giveup_smallest_rows_two_codes_p2`); 74 + `test_quick`'s 7 = 81
+  reporter-side tests total (`pcrecbench/tests/CLAUDE.md`).
 """
 
 from __future__ import annotations
@@ -893,7 +957,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v15 (2026-09-05)"
+REPORTER_VERSION = "v16 (2026-09-08)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -1195,15 +1259,17 @@ def _failure_label(red: "MatchCellReduction"):
     return "other"
 
 
-def _gave_up_cell_summary(failing_detail, subject_bytes):
-    """[B9] R7: the excluded-cells table's give-up cell, by CODE (never a
-    bare trial count) -- 'gave-up: <CODE>x<n subjects> (smallest: <id>,
-    <bytes> B)', one clause per distinct code seen (reduce.py's
-    `giveup_code` spelling -- see the import block above), sorted for a
-    deterministic render. The count is SUBJECTS that gave up (each
-    counted once, by its DOMINANT code -- reduce.py's `MatchCell.
-    giveup_codes` is a plain dict, so the max-count code is picked by
-    hand rather than `Counter.most_common`), not trials."""
+def _gave_up_cell_detail(failing_detail, subject_bytes):
+    """[B13.2] P-2's shared derivation, factored out of `_gave_up_cell_summary`
+    below so the human string and `render_tsv`'s `giveup_smallest` rows
+    read the SAME grouping rather than two independent re-derivations of
+    it: one entry per DISTINCT give-up code seen across `failing_detail`
+    (a set cell's per-subject reductions), sorted by code --
+    `(code, smallest_subject_id, smallest_bytes_or_None, n_subjects)`.
+    The count is SUBJECTS that gave up (each counted once, by its
+    DOMINANT code -- reduce.py's `MatchCell.giveup_codes` is a plain
+    dict, so the max-count code is picked by hand rather than
+    `Counter.most_common`), not trials."""
     by_code = defaultdict(list)  # code -> [(subject_id, bytes_or_None)]
     for sid, red in failing_detail.items():
         if not red.n_gave_up:
@@ -1211,14 +1277,30 @@ def _gave_up_cell_summary(failing_detail, subject_bytes):
         codes = red.giveup_codes or {}
         code = max(codes.items(), key=lambda kv: kv[1])[0] if codes else "UNKNOWN"
         by_code[code or "UNKNOWN"].append((sid, subject_bytes.get(sid)))
-    if not by_code:
-        return "0"
-    clauses = []
+    detail = []
     for code in sorted(by_code):
         subs = by_code[code]
         smallest = min(subs, key=lambda sb: (sb[1] is None, sb[1] if sb[1] is not None else 0))
-        b_str = f"{smallest[1]:,}" if smallest[1] is not None else "?"
-        clauses.append(f"{code}×{len(subs)} (smallest: {smallest[0]}, {b_str} B)")
+        detail.append((code, smallest[0], smallest[1], len(subs)))
+    return detail
+
+
+def _gave_up_cell_summary(failing_detail, subject_bytes):
+    """[B9] R7: the excluded-cells table's give-up cell, by CODE (never a
+    bare trial count) -- 'gave-up: <CODE>x<n subjects> (smallest: <id>,
+    <bytes> B)', one clause per distinct code seen (reduce.py's
+    `giveup_code` spelling -- see the import block above), sorted for a
+    deterministic render. Built from `_gave_up_cell_detail` above ([B13.2])
+    so this string and `render_tsv`'s `giveup_smallest` rows can never
+    disagree about which subject is smallest or how many subjects share
+    a code."""
+    detail = _gave_up_cell_detail(failing_detail, subject_bytes)
+    if not detail:
+        return "0"
+    clauses = []
+    for code, sid, byts, n in detail:
+        b_str = f"{byts:,}" if byts is not None else "?"
+        clauses.append(f"{code}×{n} (smallest: {sid}, {b_str} B)")
     return "; ".join(clauses)
 
 
@@ -4062,6 +4144,25 @@ def render_markdown(rd: ReportData):
     return "\n".join(out) + "\n"
 
 
+def _floor_pattern_header_value(rd: ReportData):
+    """[B13.2] P-1: the `floor_pattern:` header value -- the DISTINCT set
+    of `floor_pattern_by_sb.values()` ([B14] R9, derived from the
+    records' own `patterns[].role`, never from `bench/`): zero members ->
+    the literal `none` (a pre-1.3 population, or one where no included
+    pattern declares `role: floor`); exactly one -> that pattern id;
+    more than one (a multi-subbench report whose subbenches declare
+    DIFFERENT floor patterns) -> the sorted ids joined with `,`. No
+    committed report hits the multi case -- every committed query is one
+    sub-bench -- so `none` and a single id are the only values seen in
+    `reports/` today."""
+    distinct = sorted(set(rd.floor_pattern_by_sb.values()))
+    if not distinct:
+        return "none"
+    if len(distinct) == 1:
+        return distinct[0]
+    return ",".join(distinct)
+
+
 def render_tsv(rd: ReportData):
     grain = rd.grain
     lines = []
@@ -4088,7 +4189,10 @@ def render_tsv(rd: ReportData):
          "worst_other_core_busy: "
          + (f"{rd.worst_other_core[0]}% ({rd.worst_other_core[1]} / "
             f"{rd.worst_other_core[2]} / {rd.worst_other_core[3]})"
-            if rd.worst_other_core is not None else "n/a")]))
+            if rd.worst_other_core is not None else "n/a"),
+         # [B13.2] P-1: MUST stay the LAST key -- no existing key's
+         # position moves.
+         f"floor_pattern: {_floor_pattern_header_value(rd)}"]))
     header = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
               "testee", "status", "tier", "rank_or_na", "metric", "value", "n", "pass_rate",
               "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
@@ -4154,12 +4258,28 @@ def render_tsv(rd: ReportData):
         for t, form, r, section, status, tier in others:
             n, pr = _n_and_pass_rate(r, grain)
             fact = _form_fact(form)
-            gs = _gave_up_cell_summary(r.failing_detail, rd.subject_bytes) \
-                if grain == "set" and hasattr(r, "failing_detail") else ""
+            has_detail = grain == "set" and hasattr(r, "failing_detail")
+            gs = _gave_up_cell_summary(r.failing_detail, rd.subject_bytes) if has_detail else ""
             lines.append("\t".join([section, pattern_id, subject_id, regime, form, fact, t,
                                      status, tier, "", "pass_rate", f"{r.pass_rate:.4f}",
                                      str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong),
                                      gs, ""]))
+            # [B13.2] P-2: one extra `excluded` row per DISTINCT give-up
+            # code, immediately after the base row, in the same
+            # sorted-code order `_gave_up_cell_summary` rendered `gs`
+            # in above -- so the TSV and the human string agree row for
+            # row. `excluded` only (R-STATUS-12's own input is
+            # `report:excluded`, interpreter_v1.md 2.5); set grain only,
+            # via the SAME `has_detail` gate the base row's `gs` already
+            # uses (`failing_detail` is a SetCell-only field -- at
+            # subject grain `has_detail` is False and this loop is a
+            # no-op, needing no separate branch).
+            if section == "excluded" and has_detail:
+                for code, sid, byts, n_code in _gave_up_cell_detail(r.failing_detail, rd.subject_bytes):
+                    n_str = str(byts) if byts is not None else ""
+                    lines.append("\t".join(["excluded", pattern_id, sid, regime, form, fact, t,
+                                             status, tier, "", "giveup_smallest", code, n_str,
+                                             "", str(n_code), "", "", ""]))
 
         # [B12] R10: a did-not-compile testee is absent from `entries`
         # entirely (see render_markdown's own comment) -- one row per

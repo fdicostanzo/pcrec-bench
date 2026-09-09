@@ -1759,7 +1759,11 @@ def test_reporter_version_pin():
     (the abi-22 re-pin: the `folds=`, `islands=` and `shape=` legend
     clauses with their notes) took it to v14; [B39] (the abi-23 re-pin,
     PREPARED before its build: the `clsfolds=` clause with its note, and
-    the `prog: N B` note's I-50 1 wording) took it to v15.
+    the `prog: N B` note's I-50 1 wording) took it to v15; [B13.2] (the
+    two interpreter preconditions, P-1's `floor_pattern:` header key and
+    P-2's `giveup_smallest` rows -- both additive, both change what
+    `render_tsv` prints on every report that carries an excluded give-up
+    cell or a header at all) took it to v16.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -1770,15 +1774,15 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v15 (2026-09-05)",
-           f"expected REPORTER_VERSION == 'v15 (2026-09-05)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v16 (2026-09-08)",
+           f"expected REPORTER_VERSION == 'v16 (2026-09-08)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v15 (2026-09-05)" in md, f"expected the v15 header line:\n{md[:200]}")
+    _check("reporter: v16 (2026-09-08)" in md, f"expected the v16 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v15 (2026-09-05)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v16 (2026-09-08)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # ... and the CONTROL for the paragraph above: rendering the whole
     # fixture store under v14 must print NONE of the conditional clauses,
     # because no record in it carries any of the pairs. If this fires, a
@@ -1789,10 +1793,195 @@ def test_reporter_version_pin():
            and "shape=" not in md and "clsfolds=" not in md,
            "no fixture record carries dfa_start/vm_frameless/"
            "dfa_uniform_folds/vm_alt_islands/vm_entry_shape/vm_cls_folds, "
-           "so v15 must "
+           "so v16 must "
            "render the store exactly as v12 did apart from the version "
            "line -- if a clause appears here, the committed reports need "
            "regenerating and the 'nothing to regenerate' claim is wrong")
+
+
+def _tsv_header_line(tsv):
+    return tsv.splitlines()[0]
+
+
+def test_floor_pattern_header_key_p1():
+    """[B13.2] P-1: `floor_pattern:` is the LAST key of `render_tsv`'s
+    header comment (docs/design/interpreter_v1.md 2.5), derived from
+    `ReportData.floor_pattern_by_sb` -- never from `bench/` (the KB-2
+    mistake 2.4's own correction removed). Three cases: no declared
+    floor pattern anywhere in the selection -> the literal `none`;
+    exactly one, on one sub-bench -> that pattern id; two DIFFERENT
+    sub-benches each declaring their own floor pattern -> the sorted
+    ids joined with `,` (the one case no committed report hits today --
+    every committed query is one sub-bench -- so this is the only place
+    that shape is exercised)."""
+    # No floor pattern declared anywhere.
+    setup_plain = _mini_setup("engine-n_1.0.0_cfg-caps-simdna")
+    rows_plain = [_mini_row("p1", "s1", "short-subject-search", t, t, 50) for t in (1, 2, 3)]
+    rd_plain, err = report.build_report(
+        [_mk_loaded("n.jsonl", setup_plain, rows_plain)], _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    header = _tsv_header_line(report.render_tsv(rd_plain))
+    _check(header.endswith("floor_pattern: none"),
+           f"no floor pattern declared -> the literal 'none', as the LAST key:\n{header}")
+
+    # Exactly one, on one sub-bench (reuses test_floor_pattern_r9's shape).
+    patterns = [{"pattern_id": "p-mem", "role": "member"},
+                {"pattern_id": "p-floor", "role": "floor"}]
+    setup_one = _mini_setup("engine-m_1.0.0_cfg-caps-simdna", patterns=patterns)
+    rows_one = (
+        [_mini_row("p-mem", "s1", "short-subject-search", 1, 1, 50)]
+        + [_mini_row("p-floor", "s1", "short-subject-search", 1, 2, 100)]
+    )
+    rd_one, err = report.build_report(
+        [_mk_loaded("m.jsonl", setup_one, rows_one)], _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    header_one = _tsv_header_line(report.render_tsv(rd_one))
+    _check(header_one.endswith("floor_pattern: p-floor"),
+           f"exactly one floor pattern -> that id, as the LAST key:\n{header_one}")
+
+    # Two DIFFERENT sub-benches, each declaring a DIFFERENT floor pattern
+    # id, in one report's own selection -> the sorted ids joined with ','.
+    setup_a = _mini_setup("engine-a_1.0.0_cfg-caps-simdna", sb_id="sb-a",
+                          patterns=[{"pattern_id": "p-floor-z", "role": "floor"}])
+    rows_a = [_mini_row("p-floor-z", "s1", "short-subject-search", 1, 1, 50)]
+    setup_b = _mini_setup("engine-b_1.0.0_cfg-caps-simdna", sb_id="sb-b",
+                          patterns=[{"pattern_id": "p-floor-a", "role": "floor"}])
+    rows_b = [_mini_row("p-floor-a", "s1", "short-subject-search", 1, 1, 50)]
+    rd_multi, err = report.build_report(
+        [_mk_loaded("a.jsonl", setup_a, rows_a), _mk_loaded("b.jsonl", setup_b, rows_b)],
+        _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    header_multi = _tsv_header_line(report.render_tsv(rd_multi))
+    _check(header_multi.endswith("floor_pattern: p-floor-a,p-floor-z"),
+           f"two sub-benches, two distinct floor patterns -> sorted, comma-joined, "
+           f"as the LAST key:\n{header_multi}")
+
+
+_GIVEUP_SUMMARY_CLAUSE_RE = re.compile(
+    r"([^;]+?)×(\d+) \(smallest: ([^,]+), (\?|[\d,]+) B\)")
+
+
+def test_giveup_smallest_rows_p2():
+    """[B13.2] P-2, the single-code case, against the REAL fixture cell
+    `test_gave_up_cell_summary_r7` already exercises end to end
+    (`p-word`/`match-compliance`, `libpcre2_10.46_interp-caps-simdna`,
+    one gave-up subject `s-give-up-1`). The base `excluded` row is
+    UNCHANGED (byte-identical `gave_up_summary`); ONE extra row follows
+    it immediately, `section=excluded, metric=giveup_smallest`, with the
+    same pattern/regime/form/fact/testee/status/tier as the base row,
+    `subject_or_na` = the smallest subject id, `value` = the code,
+    `n` = its byte count, `n_gave_up` = the subject count for that code,
+    every other free-text/ratio column empty -- read from the SAME
+    `gave_up_summary` string the base row carries (parsed here only as
+    an independent witness, per the design note's own caution about a
+    second re-derivation)."""
+    loaded, _paths, _source = _load_store(STORE)
+    rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    tsv = report.render_tsv(rd)
+    lines = tsv.splitlines()
+    cols = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
+            "testee", "status", "tier", "rank_or_na", "metric", "value", "n",
+            "pass_rate", "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
+    base_idx = next(i for i, ln in enumerate(lines)
+                     if ln.startswith("excluded\tp-word\t") and "\tpass_rate\t" in ln)
+    base = dict(zip(cols, lines[base_idx].split("\t")))
+    _check(base["gave_up_summary"] != "", f"expected a non-empty gave_up_summary:\n{base}")
+    clauses = _GIVEUP_SUMMARY_CLAUSE_RE.findall(base["gave_up_summary"])
+    _check(len(clauses) == 1, f"the fixture cell has exactly one give-up code:\n{clauses}")
+    code, count, smallest_id, bytes_str = clauses[0]
+    _check(count == "1" and smallest_id == "s-give-up-1" and bytes_str == "3",
+           f"unexpected parse of the base row's own gave_up_summary: {clauses[0]}")
+
+    p2 = dict(zip(cols, lines[base_idx + 1].split("\t")))
+    _check(len(lines[base_idx + 1].split("\t")) == 18,
+           f"a giveup_smallest row must carry exactly 18 columns:\n{p2}")
+    _check(p2["section"] == "excluded" and p2["metric"] == "giveup_smallest",
+           f"expected the P-2 row immediately after the base row:\n{p2}")
+    for key in ("pattern", "regime_or_na", "form", "fact", "testee", "status", "tier"):
+        _check(p2[key] == base[key], f"{key!r} must be copied from the base row: {p2} vs {base}")
+    _check(p2["subject_or_na"] == smallest_id, f"expected subject_or_na == {smallest_id!r}: {p2}")
+    _check(p2["value"] == code, f"expected value == the code {code!r}: {p2}")
+    _check(p2["n"] == bytes_str, f"expected n == the byte count {bytes_str!r}: {p2}")
+    _check(p2["n_gave_up"] == count, f"expected n_gave_up == the subject count {count!r}: {p2}")
+    for key in ("rank_or_na", "pass_rate", "n_wrong", "gave_up_summary", "delta_verdict"):
+        _check(p2[key] == "", f"{key!r} must be empty on a giveup_smallest row: {p2}")
+
+    # No row where a cell has no give-ups: every OTHER excluded/not_ranked/
+    # scratch row in this report has no code, so no giveup_smallest row
+    # anywhere else in the TSV.
+    other_giveup_rows = [ln for i, ln in enumerate(lines)
+                          if i != base_idx + 1 and "\tgiveup_smallest\t" in ln]
+    _check(not other_giveup_rows,
+           f"no other cell in this fixture store has a give-up: {other_giveup_rows}")
+
+
+def test_giveup_smallest_rows_two_codes_p2():
+    """[B13.2] P-2, the two-code case (no committed fixture has one): one
+    testee, one cell, three subjects giving up under TWO distinct codes
+    -- `PCREC_ERR_STEPS` on `big`/`small`, `PCREC_ERR_FRAMES` on
+    `mystery` (deliberately NOT declared in `subjects`, so its byte
+    count is unknown: the human summary shows `?`, the TSV `n` column
+    must be `""`, never the string `'?'` or `'None'`). Two giveup_smallest
+    rows follow the base row immediately, in the SAME sorted-code order
+    `_gave_up_cell_summary` renders (`PCREC_ERR_FRAMES` before
+    `PCREC_ERR_STEPS`, alphabetically)."""
+    def _giveup_row(pattern_id, subject_id, regime, trial, seq, diagnostic):
+        return {"kind": "match", "pattern_id": pattern_id, "subject_id": subject_id,
+                "regime": regime, "trial": trial, "seq": seq,
+                "match_outcome": "gave-up", "diagnostic": diagnostic}
+
+    setup = _mini_setup("eng-x_1.0.0_cfg-caps-simdna",
+                        subjects=[{"subject_id": "big", "bytes_offered": 1000},
+                                  {"subject_id": "small", "bytes_offered": 5}])
+    rows = [
+        _giveup_row("p1", "big", "short-subject-search", 1, 1, "giveup:-4:PCREC_ERR_STEPS"),
+        _giveup_row("p1", "small", "short-subject-search", 1, 2, "giveup:-4:PCREC_ERR_STEPS"),
+        _giveup_row("p1", "mystery", "short-subject-search", 1, 3, "giveup:-3:PCREC_ERR_FRAMES"),
+    ]
+    rd, err = report.build_report([_mk_loaded("two.jsonl", setup, rows)],
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    tsv = report.render_tsv(rd)
+    lines = tsv.splitlines()
+    cols = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
+            "testee", "status", "tier", "rank_or_na", "metric", "value", "n",
+            "pass_rate", "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
+    base_idx = next(i for i, ln in enumerate(lines)
+                     if ln.startswith("excluded\tp1\t") and "\tpass_rate\t" in ln)
+    base = dict(zip(cols, lines[base_idx].split("\t")))
+    clauses = _GIVEUP_SUMMARY_CLAUSE_RE.findall(base["gave_up_summary"])
+    _check(len(clauses) == 2, f"expected two give-up codes in the base row: {clauses}")
+    # sorted() puts "-3:PCREC_ERR_FRAMES" before "-4:PCREC_ERR_STEPS".
+    (code0, count0, id0, bytes0), (code1, count1, id1, bytes1) = clauses
+    _check("FRAMES" in code0 and "STEPS" in code1,
+           f"expected FRAMES before STEPS (sorted-code order): {clauses}")
+    _check(bytes0 == "?" and id0 == "mystery",
+           f"the FRAMES clause's only subject has no declared bytes -> '?': {clauses[0]}")
+    _check(bytes1 == "5" and id1 == "small",
+           f"the STEPS clause's smallest subject is 'small' at 5 B: {clauses[1]}")
+
+    rows2 = [ln.split("\t") for ln in lines[base_idx + 1: base_idx + 3]]
+    _check(all(len(r) == 18 for r in rows2), f"both giveup_smallest rows must carry 18 columns: {rows2}")
+    p2_frames, p2_steps = (dict(zip(cols, r)) for r in rows2)
+    _check(p2_frames["metric"] == "giveup_smallest" and p2_steps["metric"] == "giveup_smallest",
+           f"both extra rows must be giveup_smallest: {rows2}")
+    _check("FRAMES" in p2_frames["value"] and "STEPS" in p2_steps["value"],
+           f"expected the FRAMES row before the STEPS row (sorted-code order): {rows2}")
+    _check(p2_frames["subject_or_na"] == "mystery" and p2_frames["n"] == "",
+           f"the FRAMES row's subject is 'mystery' with n == '' (unknown bytes, never '?' or "
+           f"'None'): {p2_frames}")
+    _check(p2_frames["n_gave_up"] == "1", f"one subject gave up under FRAMES: {p2_frames}")
+    _check(p2_steps["subject_or_na"] == "small" and p2_steps["n"] == "5",
+           f"the STEPS row's smallest subject is 'small' at 5 B: {p2_steps}")
+    _check(p2_steps["n_gave_up"] == "2", f"two subjects gave up under STEPS: {p2_steps}")
+    for key in ("rank_or_na", "pass_rate", "n_wrong", "gave_up_summary", "delta_verdict"):
+        _check(p2_frames[key] == "" and p2_steps[key] == "",
+               f"{key!r} must be empty on both giveup_smallest rows: {p2_frames} / {p2_steps}")
+
+    # No third giveup_smallest row anywhere else in the TSV.
+    all_giveup_rows = [ln for ln in lines if "\tgiveup_smallest\t" in ln]
+    _check(len(all_giveup_rows) == 2, f"expected exactly two giveup_smallest rows total: {all_giveup_rows}")
 
 
 def test_did_not_compile_ranking_line_r10():
@@ -3553,6 +3742,10 @@ TESTS = [
     test_floor_pattern_r9,
     test_floor_pattern_fixture_r9,
     test_reporter_version_pin,
+    # [B13.2] P-1/P-2, the interpreter preconditions
+    test_floor_pattern_header_key_p1,
+    test_giveup_smallest_rows_p2,
+    test_giveup_smallest_rows_two_codes_p2,
     # [B16]
     test_dfa_scan_legend_b16_r1,
     test_b18_offsets_and_match_form_in_legend,

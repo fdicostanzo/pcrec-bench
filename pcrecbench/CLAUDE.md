@@ -940,3 +940,37 @@ both conditional; committed reports are regenerated with the AFTER window:
   neither wrong). Prints under any table whose rows carry `shape=`.
 - `REPORTER_VERSION` bumps to `v15 (2026-09-06)`;
   `pcrecbench/tests/test_report.py` gained 1 test (71 + test_quick's 7).
+
+## The reporter, [B13.2] (2026-09-08) -- the two interpreter preconditions, v16
+
+Lane `b13pre`. `docs/design/interpreter_v1.md` 2.5's two PRECONDITIONS
+the [B13] interpreter design depends on -- neither rule the interpreter
+carries (R-FLOOR-2, R-STATUS-12) is implementable without them. TSV-only:
+neither touches `render_markdown` at all.
+
+- **P-1 -- `floor_pattern: <pattern_id|none>`**, the LAST key of
+  `render_tsv`'s header comment (after `worst_other_core_busy`, so no
+  existing key's position moves). Derived from `ReportData.
+  floor_pattern_by_sb` ([B14] R9) -- the DISTINCT set of its values:
+  zero -> `none`; one -> that id; more than one (no committed report
+  hits this) -> the sorted ids joined with `,`. `_floor_pattern_header_
+  value(rd)` is the one function both `render_tsv` and its test call.
+- **P-2 -- the give-up smallest subject as its own metric rows.** Beside
+  each `excluded` row with at least one give-up, one extra `excluded`
+  row per DISTINCT give-up code, immediately after the base row, same
+  sorted-code order `_gave_up_cell_summary` already renders (both now
+  read a shared pure helper, `_gave_up_cell_detail`, so the human string
+  and the TSV rows can never disagree about which subject is smallest).
+  18 columns: `subject_or_na` = that code's smallest subject id,
+  `metric=giveup_smallest`, `value`=the code, `n`=its byte count (`""`
+  when unknown), `n_gave_up`=the SUBJECT count for that code (not
+  `r.n_gave_up`'s trial count -- a deliberately different number under
+  the same column name, read per emitted row), every other column
+  empty. `excluded` section only (R-STATUS-12's own input); set grain
+  only, via the SAME `hasattr(r, "failing_detail")` gate the base row's
+  `gave_up_summary` already uses (a `MatchCellReduction`, subject
+  grain's row type, carries no such field) -- no separate branch needed.
+- `REPORTER_VERSION` bumps to `v16 (2026-09-08)`; every committed report
+  under `reports/` regenerated -- see `reports/CLAUDE.md`.
+  `pcrecbench/tests/test_report.py` gained 3 tests (74 + test_quick's
+  7 = 81).
