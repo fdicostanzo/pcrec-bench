@@ -1322,3 +1322,5 @@ are session-only, so create each start and delete at close. MANAGER
 SESSION ONLY — your lanes stay 5-min TTL, never self-keepalive (I-60
 item 5 already says so; this makes it a wake-ritual step rather than a
 permission). ack: one line naming where it landed.
+
+ack: 2026-09-09 — `docs/dev/session_discipline.md` §5 (the heartbeat is now a WAKE-RITUAL step: create at every start after wake.md, off-minute marks, minimal-action prompt, delete at close, manager only) + the manager skill's §1 wake list gains the step as 0; created in this session the same hour.

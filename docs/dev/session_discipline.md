@@ -86,6 +86,20 @@ liveness check, one line on whether the awaited signal arrived, "if not:
 do nothing else." Delete it at session close. This is not a precedent
 for lanes (5-minute TTL — see §2's no-self-keepalive rule).
 
+**A WAKE-RITUAL STEP, not a hold-time option (inbox I-62, Frank's
+ruling 2026-09-09 after a full-day test on the pcrec manager session:
+~30 ticks, one line each, cache-hit throughout, his usage read
+confirming).** At EVERY manager-session start, right after reading
+wake.md, create ONE recurring 30-minute cron (`CronCreate`, session-only
+— it does not survive the session, so create it each start) at two
+off-minute marks, never :00/:30. Its prompt is MINIMAL-ACTION: act only
+on a delivered result, a notification or a completed run that has
+arrived since the last tick; otherwise reply in one line and do nothing
+else — never start new work from a tick. Delete it (`CronDelete`) as
+part of the session-close routine (skill §7). Manager session ONLY;
+lanes stay 5-minute TTL and never self-keepalive (§2). The pcrec manager
+skill carries the same step as its step 0.
+
 ## 6. No forks/panels from giant contexts
 
 Fresh agents get written briefs; critic panels convene early or from
