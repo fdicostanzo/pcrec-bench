@@ -329,9 +329,119 @@ removed header line per file rather than retyping this table by hand.
 | `pcrecbench/CLAUDE.md` report.py entry | **DONE**, committed `17a28cf` |
 | Deviations from §2.5 | **NONE** |
 
+## Regeneration, run 7 (lane `b13regen`, 2026-09-09)
+
+Fresh follow-up lane, same worktree/branch. Run 6 (above) loaded the
+store in 745.7 s and WROTE 26 of the 42 groups (every v12-stamped file,
+alphabetically first) before ABORTING on group 27
+(`2026-09-05-altwide-0.2-budu-ryzen1600-after-334fd10e.md`, `DONE rc=1`
+in `regen_run6.log`) on an "unexplained diff" confined to the `shape=`
+legend bullet's line. Cause confirmed: that file (and 15 more --
+5 stamped v13, 5 stamped v14, 6 stamped v15) predates one or more of
+the v13/v14/v15 reporter bumps, none of which regenerated any committed
+report (`pcrecbench/CLAUDE.md`'s per-version log says so explicitly for
+each), so jumping a v13/v14-stamped file straight to v16 legitimately
+picks up that backlog of LEGEND wording (v14: `folds=`/`islands=`/
+`shape=` clauses as brand-new bullets on a v13 file; v15: an appended
+paragraph on the `shape=` bullet, I-50 1's reconcile, as a same-line
+wording change on a v14 file) on top of P-1/P-2's own deltas -- not a
+bug in the regeneration script's classifier, which run 6 correctly did
+not yet know how to explain.
+
+**Two changes to `regen_b132.py`** (script only; `pcrecbench/report.py`
+untouched):
+
+1. **Skip already-v16 groups.** Before opening a group's `.md`
+   siblings or touching the store, its `.tsv`'s header is checked; a
+   header already reading `reporter: v16 (2026-09-08)` prints `SKIP
+   <base> (already v16)` and moves on. Verified against the real
+   `reports/` directory (no store load needed for this check): all 26
+   files run 6 wrote skip, all 16 remaining (5 v13 / 5 v14 / 6 v15)
+   fall through to processing.
+2. **`classify_md_diff` accepts LEGEND-BULLET deltas on a v13/v14-before
+   file.** A new `legend_reference` parameter (`{token: exact_line_text}`,
+   built once by `_legend_reference_map` from every CURRENTLY COMMITTED
+   v15-stamped `.md`/`.subject-grain.md` report, grouped by sub-bench,
+   read straight off disk before this run writes anything) is passed
+   only when the file's OWN before-stamp is v13 or v14
+   (`_version_number`/`OLD_VERSION_FOR` on its `.tsv` header). Per
+   difflib opcode: a same-line-count REPLACE or a pure INSERT is
+   accepted iff every line in `removed` is itself a legend-definition
+   line (`_legend_token`, the `    - <token> = ` shape report.py's
+   `out.append("    - ` call sites use -- confirmed by grep that the
+   two OTHER `    - ` bullets in report.py, the excluded-invalid-record
+   listing and `newer, not measured: ...`, do NOT match this shape and
+   so cannot be swept in by accident) and every line in `added` is a
+   legend line whose text is BYTE-IDENTICAL to
+   `legend_reference[token]` -- the proof the delta is the reporter's
+   own already-shipped v14/v15 wording, not something else. A removed
+   line that is not a legend line, an added line that is not a legend
+   line, or a legend line whose new text does not match the v15
+   reference still aborts the whole run, same as any other unexplained
+   diff. Counted as its own delta, `legend_v13_v15`, printed per file
+   and totalled, beside `giveup_smallest`/`floor_pattern`/`cwd_path_fix`.
+
+**Verified before launching** (no store load required for any of
+this): `python3 -m py_compile` clean; the classifier tested directly
+against the EXACT old/new `shape=` lines from run 6's own ABORT message
+(accepted, `n_legend=1`, WITH a matching reference; correctly rejected
+WITHOUT one and when the new text does not match a given reference); a
+synthetic pure-insertion case (two brand-new legend lines with no
+`removed` counterpart) accepted; `_legend_reference_map` run against
+the real `reports/` directory returns the five sub-benches needing a
+fix (`altwide`, `bounded`, `email-specimen`, `loglines`, `syntax` --
+`syntax` is not itself owed a legend fix but its v15 file is a valid
+reference source for the others) with plausible token sets per
+sub-bench (`email-specimen`'s is the narrowest: `edge`, `edges`,
+`folds`, `sel`, `start` only -- no VM-only tokens, consistent with that
+set's simpler patterns); the skip check against the real 42 `.tsv`
+files matches the predicted 26-skip / 16-process split exactly.
+
+**Launched, DETACHED, per BOILERPLATE** (the store load is the same
+~750 s / ~3.6 GB RSS operation that killed two earlier tracked
+attempts):
+
+```
+LOG=/tmp/claude-1001/-home-duxevents-pcrec-bench/01ae41ff-6171-48d8-8bc2-5ffd2cd96f47/scratchpad/regen_run7.log
+```
+
+**Completion marker**: the line `DONE rc=0` appended to that log (any
+other `rc` is a failure). On success the tail carries `REGEN_COMPLETE`,
+the per-file `OK`/`SKIP` lines (16 `OK`, 26 `SKIP`), and a
+`--- PER-FILE SUMMARY ---` block with `giveup_smallest`/
+`floor_pattern`/`cwd_path_fix`/`legend_v13_v15` per file plus the
+aggregate totals -- the store load time is repeated here as its own
+finding, same as run 6's.
+
+**On the marker landing (`DONE rc=0`), a fresh agent should**, in
+addition to run 6's own five resume steps (still accurate: the giveup/
+floor_pattern/cwd-path proof commands are unchanged) --
+
+6. Confirm exactly 16 `OK` lines and 26 `SKIP` lines in the log, no
+   `ABORT` anywhere.
+7. For the `legend_v13_v15` delta specifically: `git diff` on the 5
+   v13-before and 5 v14-before files' `.md`/`.subject-grain.md`, filtered
+   to drop the version-line change, should show ONLY lines matching
+   `    - <token> = ` (new or changed) -- e.g. spot-check
+   `2026-09-05-altwide-0.2-budu-ryzen1600-after-334fd10e.md`'s `shape=`
+   line against the log's own `legend_v13_v15` count for that file, and
+   confirm the new text is byte-for-byte what
+   `2026-09-06-altwide-0.2-budu-ryzen1600-after-d34c9131.md` (a v15 file,
+   same sub-bench) already carries for that token.
+8. `git status --short reports/` should now show all 126 files (42×3)
+   modified (78 from run 6 + 48 from run 7's 16 groups); `git add
+   reports/` the whole directory, then proceed with run 6's steps 5
+   (fill the per-file table, commit, update `reports/CLAUDE.md`'s
+   `[B13.2]` entry -- note the `legend_v13_v15` delta in that entry
+   too, since it is a real, if incidental, effect of this regeneration)
+   and send the manager the completion handback.
+
 ## Handback
 
 Sent to the manager alongside this report's commit: code/tests/docs
 complete and green on everything that does not need the real store;
-the `reports/` regeneration is the one OWED item, with a detached run
-already in flight and exact resume steps above.
+the `reports/` regeneration is the one OWED item. Run 7 is launched
+DETACHED with the classifier fix above; log path and exact resume
+steps (both run 6's and run 7's) are in this report. Not committing
+the regenerated `reports/` files themselves -- that, and the diff
+proof, is the next agent's job once `DONE rc=0` lands.
