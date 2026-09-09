@@ -26,8 +26,14 @@ Use `gnutimeout` on every command of uncertain length (bare `timeout` is
 uutils, ~105 ms/call); a firing timeout is a FINDING. Kill by PID only —
 NEVER pkill -f/pgrep -f. Long runs go in a BACKGROUND task writing a log;
 poll the log TAIL and act the moment the completion line appears — never
-a blocking foreground call, never a Monitor on a progress log. Windows
-run under setsid (the background-task 10-min cap). python3 (BD4).
+a blocking foreground call, never a Monitor on a progress log. The Bash
+tool's `run_in_background: true` is the DEFAULT launch: it is
+harness-tracked and notifies on exit, and its 600 s `timeout` maximum
+is NOT an execution deadline for a background task — tracked runs of
+~20 min (lane b13pre) and ~30 min (I-59's build+test) completed and
+notified on 2026-09-08 (the older "10-min cap" belief came from a
+memory-pressure kill, not a clock). Multi-hour windows still run under
+setsid with a marker (below). python3 (BD4).
 
 **Every background job ends with a durable completion marker, checked
 by a command, never inferred from `ps`.** ([B33]'s b33cc lane, twice,
