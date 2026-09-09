@@ -933,11 +933,29 @@ implementable without them. Both ship in this one change, one
   `section=excluded` explicitly, so P-2 does not fire there.
 * No deviation from §2.5 as written: both rows shapes and the header
   key's position are implemented exactly as specified.
+* **CWD-independent provenance paths** (manager ruling, found while
+  regenerating `reports/`: ten 2026-09-05 files rendered `../../store/
+  records/...` against every other file's `store/records/...` for the
+  SAME committed query, differing only in the CLI's cwd at render time
+  -- `fixtures/golden/store_v8.md`'s own note already flagged the
+  fragility: "same cwd, so the paths match"). `render_markdown`'s two
+  per-record-listing `os.path.relpath(path)` call sites (the included-
+  records bullet, the excluded-invalid-records bullet) now read
+  `os.path.relpath(path, rd.store_parent)` -- a new `ReportData.
+  store_parent = os.path.dirname(os.path.abspath(args.store))` set once
+  in `build_report`, i.e. the STORE directory's own PARENT, derived from
+  `args.store` and never from `os.getcwd()`. The same query now renders
+  the identical path from any cwd; `test_provenance_path_cwd_independent`
+  renders the same fixture record from two different cwds and asserts
+  byte-identical output. `fixtures/golden/store_v8.md`'s three record-
+  listing lines are corrected in place to the new form (its own CLAUDE.md
+  note explains why a full re-render was not needed).
 * `REPORTER_VERSION` bumps to `v16 (2026-09-08)`; every committed report
   under `reports/` regenerated from its own recorded query -- see
-  `reports/CLAUDE.md`. `pcrecbench/tests/test_report.py` gained 3 tests
+  `reports/CLAUDE.md`. `pcrecbench/tests/test_report.py` gained 4 tests
   (`test_floor_pattern_header_key_p1`, `test_giveup_smallest_rows_p2`,
-  `test_giveup_smallest_rows_two_codes_p2`); 74 + `test_quick`'s 7 = 81
+  `test_giveup_smallest_rows_two_codes_p2`,
+  `test_provenance_path_cwd_independent`); 75 + `test_quick`'s 7 = 82
   reporter-side tests total (`pcrecbench/tests/CLAUDE.md`).
 """
 
@@ -2787,6 +2805,17 @@ class ReportData:
     # inside one record and in no report until a reader opened it). None
     # when no included record carries a readable timeline.
     worst_other_core: tuple | None = None   # (pct, testee_id, pattern_id, regime) | None
+    # [B13.2] (2026-09-08): the directory a record-listing path in
+    # render_markdown is made relative TO -- `os.path.dirname(os.path.
+    # abspath(args.store))`, i.e. the STORE directory's own PARENT.
+    # Deliberately NOT the process's current working directory: the same
+    # query rendered from two different cwds (a lane's own worktree vs.
+    # the repo root -- exactly what happened across the 42 committed
+    # reports, `../../store/records/...` vs `store/records/...`) must
+    # print the identical path, and a query's own answer should not
+    # depend on where the caller happened to be standing when they typed
+    # the command.
+    store_parent: str | None = None
 
     @property
     def mixed_x13(self):
@@ -3204,6 +3233,7 @@ def build_report(loaded, args):
         x13_rule_counts=dict(x13_rule_counts),
         include_provenance=bool(getattr(args, "include_provenance", False)),
         worst_other_core=worst_other_core,
+        store_parent=os.path.dirname(os.path.abspath(args.store)),
     ), None
 
 
@@ -3336,7 +3366,10 @@ def render_markdown(rd: ReportData):
     for rid, path in rd.included:
         # [B20] R4 / R5': the agreement FROM THE BLOCK, and the after-sample
         # failures whenever there were any.
-        line = (f"    - `{rid}` ({os.path.relpath(path)}) — agreement: "
+        # [B13.2]: relative to the STORE's own parent (`rd.store_parent`),
+        # never the process's current working directory -- see the field's
+        # comment on ReportData.
+        line = (f"    - `{rid}` ({os.path.relpath(path, rd.store_parent)}) — agreement: "
                 f"{_agreement_display(rd.agreement_by_record.get(rid), rd.schema_version_by_record.get(rid, '?'))}")
         l_fail, o_fail = rd.after_by_record.get(rid, (None, None))
         if l_fail is not None or o_fail is not None:
@@ -3372,7 +3405,7 @@ def render_markdown(rd: ReportData):
     if rd.excluded_invalid:
         out.append(f"- records excluded (failed validation): {len(rd.excluded_invalid)}")
         for path, problems in rd.excluded_invalid:
-            out.append(f"    - `{os.path.relpath(path)}`: {problems[0]}"
+            out.append(f"    - `{os.path.relpath(path, rd.store_parent)}`: {problems[0]}"
                         + (f" (+{len(problems)-1} more)" if len(problems) > 1 else ""))
     if rd.superseded:
         # [B14] R8: was a bullet naming every superseded/kept id pair

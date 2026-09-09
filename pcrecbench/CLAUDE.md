@@ -970,7 +970,17 @@ neither touches `render_markdown` at all.
   only, via the SAME `hasattr(r, "failing_detail")` gate the base row's
   `gave_up_summary` already uses (a `MatchCellReduction`, subject
   grain's row type, carries no such field) -- no separate branch needed.
+- **CWD-independent provenance paths.** `render_markdown`'s two
+  per-record-listing `os.path.relpath(path)` sites now read
+  `os.path.relpath(path, rd.store_parent)` (a new `ReportData.
+  store_parent = os.path.dirname(os.path.abspath(args.store))`, the
+  STORE directory's own PARENT, never `os.getcwd()`) -- found
+  regenerating `reports/`: ten 2026-09-05 files rendered `../../store/
+  records/...` where every other file reads `store/records/...` for the
+  identical query, purely from a different CLI cwd. Ten committed files'
+  provenance lines normalize to `store/records/...` on regeneration;
+  `fixtures/golden/store_v8.md`'s three lines are corrected in place.
 - `REPORTER_VERSION` bumps to `v16 (2026-09-08)`; every committed report
   under `reports/` regenerated -- see `reports/CLAUDE.md`.
-  `pcrecbench/tests/test_report.py` gained 3 tests (74 + test_quick's
-  7 = 81).
+  `pcrecbench/tests/test_report.py` gained 4 tests (75 + test_quick's
+  7 = 82).

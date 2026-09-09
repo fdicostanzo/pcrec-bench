@@ -1984,6 +1984,53 @@ def test_giveup_smallest_rows_two_codes_p2():
     _check(len(all_giveup_rows) == 2, f"expected exactly two giveup_smallest rows total: {all_giveup_rows}")
 
 
+def test_provenance_path_cwd_independent():
+    """[B13.2] (manager ruling, found regenerating `reports/`): a
+    record-listing path in markdown (`- \\`<record_id>\\` (<path>) --
+    agreement: ...`) must render IDENTICALLY regardless of the process's
+    current working directory at render time -- ten committed 2026-09-05
+    reports read `../../store/records/...` where every sibling reads
+    `store/records/...` for the SAME query, purely because the original
+    CLI ran from a directory two levels below the repo root.
+    `os.path.relpath(path, rd.store_parent)` fixes this: render the same
+    fixture record from two different cwds and require byte-identical
+    output, then confirm the rendered path is anchored on the STORE's
+    own parent (`fixtures/`), never on either cwd."""
+    loaded, _paths, _source = _load_store(STORE)
+    args = _args(store=STORE, include_synthetic=True)
+
+    old_cwd = os.getcwd()
+    # Under build/ (gitignored, the project's own scratch convention) --
+    # never inside fixtures/, which real fixture-discovery globs walk.
+    two_deep = os.path.join(report.REPO_ROOT, "build", "_test_cwd_probe", "a", "b")
+    os.makedirs(two_deep, exist_ok=True)
+    try:
+        os.chdir(report.REPO_ROOT)
+        rd_root, err_root = report.build_report(loaded, args)
+        _check(err_root is None, f"unexpected refusal: {err_root}")
+        md_root = report.render_markdown(rd_root)
+
+        os.chdir(two_deep)
+        rd_deep, err_deep = report.build_report(loaded, args)
+        _check(err_deep is None, f"unexpected refusal: {err_deep}")
+        md_deep = report.render_markdown(rd_deep)
+    finally:
+        os.chdir(old_cwd)
+
+    _check(md_root == md_deep,
+           "the SAME query must render byte-identically from two different cwds:\n"
+           + "\n".join(a for a in md_root.splitlines() if a not in md_deep.splitlines()))
+    # And the path is anchored on the store's own parent (FIXDIR), not on
+    # either cwd: it must read 'store/records/...', never 'fixtures/
+    # store/records/...' (which os.path.relpath(path) from the repo root
+    # would have produced under the OLD, cwd-relative code) and never a
+    # '../'-laden path (what the two-levels-deep cwd would have produced).
+    _check("(store/records/fixture-mini@1.0/" in md_root,
+           f"expected a store-parent-relative path, got:\n{md_root[:2000]}")
+    _check("../" not in md_root.split("## Query")[1].split("## ")[0],
+           f"no '../' segment should appear in the Query section:\n{md_root[:2000]}")
+
+
 def test_did_not_compile_ranking_line_r10():
     """[B12] R10: a testee whose compile FAILED (`compile_outcome ==
     "did-not-compile"`) must appear under its ranking table as
@@ -3746,6 +3793,7 @@ TESTS = [
     test_floor_pattern_header_key_p1,
     test_giveup_smallest_rows_p2,
     test_giveup_smallest_rows_two_codes_p2,
+    test_provenance_path_cwd_independent,
     # [B16]
     test_dfa_scan_legend_b16_r1,
     test_b18_offsets_and_match_form_in_legend,
