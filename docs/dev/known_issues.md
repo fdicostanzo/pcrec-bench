@@ -606,3 +606,37 @@ refusal, both of which are the wrapper reaching where it should not.
 
 STATUS: OPEN, unscoped — a design question for whoever owns the
 whole-subject wrapper mechanism next, not a landing-bar fix.
+
+## KB-16 (2026-09-08) — the reporter validates the WHOLE store on every load: ~750 s and ~3.6 GB RSS at 160 records / 597 MB, and the harness's memory heuristic kills it as a tracked background task
+
+OBSERVED (lane b13pre, the [B13.2] regeneration, six attempts in one
+night): `report.load_all` runs the jsonschema validator over every
+record `store/index.tsv` names, regardless of the query's own filters
+(`reports/CLAUDE.md`'s [B32] (b) entry measured ~39 s for 26 records at
+[B12]; the syntax@0.1 records are ~15 MB each, six of them, and the
+store is now 160 records / 597 MB on disk). Measured 2026-09-08:
+`Loaded 160 records ... in 745.7s`, peak RSS ~3.6 GB. Under the Bash
+tool's tracked `run_in_background`, the harness "stopped [the task]
+because the system is running low on memory" TWICE during that load
+(free 5 GB, available 11 GB, no kernel OOM), each time with the kill
+notification arriving late or never; the same script survived every
+time under `setsid`. Any consumer that loads the store pays this:
+`make check-report` (7-10 min), every `report` CLI invocation, and the
+[B13] interpreter's `make check-interpret` if it were ever pointed at
+the live store (interpreter_v1.md §8(2) already pins it to a frozen
+fixture snapshot for this reason).
+
+WHY IT MATTERS: the cost scales with the store, which only grows; a
+one-report render already costs 12+ minutes of validation for records
+the query discards, and the memory footprint makes the operation
+un-runnable as a tracked task on this box's page-cache state.
+
+STATUS: OPEN. Candidate fixes, unranked: (a) filter by index row
+BEFORE loading/validating (the query's subbench/testee/date filters are
+all index columns — the same idea KB-8's row already names for the
+candidate count), (b) validate lazily or cache validation results keyed
+on the record file's sha256 (the index already carries one), (c) load
+the large `patterns[].canonical_text` / per-subject rows only when the
+grain needs them. Operational rule meanwhile: `docs/dev/lanes/
+BOILERPLATE.md` box facts — store-loading runs go DETACHED with a
+marker, DO-THEN-FINISH.

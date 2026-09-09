@@ -3725,3 +3725,36 @@ file) and `b13pre` (pcrecbench/report.py, test_report.py, reports/*,
 the two CLAUDE.mds). A zero-model watcher script (scratchpad
 watch_b13.sh, background) exits on DONE / QUIET>25 min / GONE.
 `make check-harness` runs once, by the manager, after both merge.
+
+## 2026-09-08/09 (seventeenth session, part 2) — [B13.1] merged; [B13.2]'s regeneration fight
+
+[B13.1] DELIVERED and MERGED (f7ed5c5; landing fixes 7aee037; row
+archived): interpreter_v1.md v1.2 — I-58's four edits, the two minors,
+the §6.5 honesty edit; the r4 review closed per session_discipline
+§7(a)/(b): pcrecdev1's step-2 pass recorded (19/19), by-id completeness
+56/56 with a THIRD dropped id found (charter F9, already applied).
+One label slip fixed at merge (B9 → B2).
+
+[B13.2]: code + tests DELIVERED (lane b13pre, 18d70ac / 17a28cf /
+423cb17): P-1 and P-2 exactly per §2.5, `_gave_up_cell_detail` as the
+one shared derivation, set-grain-only by the existing gate, and a
+manager-ruled addition — cwd-INDEPENDENT provenance paths
+(`os.path.relpath(path, rd.store_parent)`; ten 2026-09-05 report
+groups had been rendered from a lane worktree and read
+`../../store/records/`), reporter v16, 82 reporter tests. The
+regeneration of the 42 committed report groups took SIX attempts:
+(1) the lane's own classifier expected a `- reporter:` bullet the
+renderer never emits; (2) the cwd-dependent path (→ the fix above);
+(3) abandoned (a chdir workaround the ruling rejected); (4) and (5)
+KILLED by the harness memory heuristic during the ~750 s / 3.6 GB
+store load as tracked background tasks, notifications late/never;
+(6) DETACHED under setsid: load 745.7 s, 26/42 groups written
+(streaming writes, idempotent), abort on a pre-v15-stamped file's
+legend wording (v13/v14 files were never regenerated at v15). Lane
+b13regen (fresh) extends the classifier for that explained delta and
+launches run 7 detached. Filed KB-16 (the whole-store validation
+cost). BOILERPLATE corrected twice tonight (tracked launch by default;
+detached for memory-heavy runs; the marker as the only truth) and the
+long-runs memory note rewritten. Watchers: zero-model Monitor scripts
+on markers, ~1 h each; one false QUIET alarm, one stale-age instant
+fire — both cheap.
