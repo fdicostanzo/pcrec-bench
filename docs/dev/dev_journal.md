@@ -3758,3 +3758,29 @@ detached for memory-heavy runs; the marker as the only truth) and the
 long-runs memory note rewritten. Watchers: zero-model Monitor scripts
 on markers, ~1 h each; one false QUIET alarm, one stale-age instant
 fire — both cheap.
+
+## 2026-09-09 (seventeenth session, part 3) — [B13.2] MERGED, [B13.3] OPENED
+
+[B13.2] merged 29f02ab (~02:15 EDT) after the regeneration landed on the
+eighth attempt: lane b13fin ran Phase B from the render cache, hit
+difflib's worst case on the syntax report's 10 MB subject-grain file
+(the tracked attempt memory-killed after 15/16 groups; the detached
+retry pegged a core), added an equality fast path before difflib, and
+finished in seconds. Diff-proved by two methods over 126 files: zero
+unexplained deltas; 60 giveup_smallest rows in 8 files (7 email + 1
+altwide groups), floor_pattern floor 40 / none 2, ten groups'
+cwd-dependent `../../store` prefix normalized, eight files carrying the
+v13/v14 legend backlog. The manager re-ran the filtered TSV diff over
+all 42 files independently (empty) and checked a giveup row against
+its human summary field by field before merging. `make check-report`
+running detached in the b13pre worktree at merge (its marker watched);
+`make check-harness` on master owed after it (KB-16: never beside).
+
+[B13.3] OPENED: lane b13impl (OPUS — I-60's addendum, the milestone's
+design-heavy lane) briefed against interpreter_v1.md v1.2 + reporter
+v16: catalogue/rules.toml (31 rules, [[pin_order]]), interpret.py +
+the CLI subcommand, the predictions reader with §6.6's P1-P13
+transcription, fixtures/gen.py --check + golden/ with the frozen index
+snapshot, make check-interpret (six sections, never the live store),
+§10's acceptance test RUN on Reports A-D with every MUST tabled, docs;
+the skill + committed sidecars stay [B13.4]. Worktree b13v12 removed.
