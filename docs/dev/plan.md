@@ -154,6 +154,24 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
     [[pin_order]]), pcrecbench/interpret.py, catalogue/fixtures/gen.py
     --check, catalogue/golden/, make check-interpret (six sections),
     then §10's acceptance test on Reports A-D.
+    DELIVERED 2026-09-09 on branch `lane/b13impl` (awaiting the manager's
+    merge; report docs/dev/lanes/b13impl_report.md): all seven
+    deliverables committed — `catalogue/rules.toml` (31 rules, 7 classes,
+    the eleven-pin `[[pin_order]]`, every threshold citing its
+    report.py/reduce.py source), `pcrecbench/interpret.py` + the
+    `interpret` subcommand, the predictions reader with §6.6's P1-P13
+    transcription (`docs/dev/predictions/syntax-0.1-first.tsv`, 35 clause
+    rows over 13 parents; the two INEXPRESSIBLE clauses fail AT LOAD),
+    58 fixtures under `catalogue/fixtures/` (generated base + one
+    declared mutation, `gen.py --check`), the frozen index snapshot and
+    four golden facts files under `catalogue/golden/`, and
+    `make check-interpret` (129 checks in six sections, 28 s, wired into
+    `make check`). §10's ACCEPTANCE TEST RAN: **25 of 25 items PASS**
+    (`catalogue/acceptance_10.py`), including A.4's ×2.31 / ×1.28 and
+    B.1's 1.788241 → 0.269358; C.3 is the note's own stated known gap.
+    Report A reproduces §9.2's specimen exactly (twelve rules fire,
+    nineteen do not) and every aggregation count in §5.2's table
+    (202→17, 432→9, 635→12, 190→2, 81→2, 129→1, 60→4).
   - [B13.4] STATE:not-started — the skill `/pcrec-bench-interpret`
     and a committed `.interpretation.md` sidecar beside every report;
     Frank's blinded first test.

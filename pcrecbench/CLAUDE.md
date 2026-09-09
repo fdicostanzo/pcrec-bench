@@ -6,7 +6,8 @@ the record's shape is `docs/design/record_schema.md`.
 
 | file | role |
 |---|---|
-| `__main__.py` | the CLI: `run` (`--tier pinned\|scratch`), `quick` (the edit-test loop's one-cell surface, [B10]), `index`, `quiet`, `testees`, `report` |
+| `__main__.py` | the CLI: `run` (`--tier pinned\|scratch`), `quick` (the edit-test loop's one-cell surface, [B10]), `index`, `quiet`, `testees`, `report`, `interpret` |
+| `interpret.py` | THE INTERPRETER ([B13], `docs/design/interpreter_v1.md` v1.2): a deterministic fact-finder over a committed report **TSV** and `store/index.tsv` — never the markdown, never a record, never an engine. Emits the FIRED catalogue rules with their rows, numbers and record ids, and the rules that did NOT fire with the reason each did not. The rules live in `catalogue/rules.toml`, which this module is checked against by `make check-interpret`; this file holds the header's known-key split (§2.1, normative), the raising VIEW every rule function is handed (§3.2.2), the 31 rule functions, §5.2's counted collapse, the predictions reader and evaluator (§6), and the renderer whose only sentence-production surface is one `str.format` per rule template (§7.1) |
 | `harness.py` | contract §4's seven steps; `outcome_for()` is the ONE place an engine's answer becomes a `match_outcome`; `run_cell(tier=, patterns=, subject_limit=, budget=)` is what `quick` parameterises — no second code path |
 | `subbench.py` | loads `bench/<name>/`; owns the regime→subject mapping and `subbench.content_hash`; `_load_manifest` is GENERIC on a subject manifest's column count (4, the original shape, or 5 with `periodic` appended, [B17]) — no column position is hard-coded beyond "periodic, if present, is last". `bench/loglines`' manifests use the same column, in the same place ([B11.1]). Since KB-12 ([B36]'s incident): `Subbench.__init__` checks EVERY pattern and subject id (short and throughput) against the record schema's own `$defs/slug` rule (`check_id`, `_slug_pattern` — the regex is READ from `schema/record.schema.json`, never retyped) and raises `SubbenchError` naming the offending id, the set and the rule, so `run`/`quick` refuse in under a second instead of after every trial of a cell has already run (bench/syntax@0.1's incident: six cells, 259 minutes, 0 records written, all refused at `store.write()`'s validator) |
 | `adapters.py` | the `Adapter` interface, discovery, and **the DRIVER PROTOCOL** (in full, at the top of the file) |
@@ -984,3 +985,39 @@ neither touches `render_markdown` at all.
   under `reports/` regenerated -- see `reports/CLAUDE.md`.
   `pcrecbench/tests/test_report.py` gained 4 tests (75 + test_quick's
   7 = 82).
+
+
+## The interpreter, [B13.3] (2026-09-09) — `interpret.py`, catalogue 1.0
+
+Lane `b13impl`. Part 1 of `docs/design/interpreter_v1.md` v1.2: the
+deterministic fact-finder, the versioned rule catalogue, the facts TSV
+and the rendered sidecar, the predictions input, the opinion firewall as
+code, and `make check-interpret`. Four things a reader of this package
+must know:
+
+- **It reads the TSV and the index, and nothing else.** No markdown, no
+  `bench/*/subbench.toml` (that read was v1's KB-2 mistake; the floor
+  pattern now comes from reporter v16's own `floor_pattern:` header
+  key), no record JSONL, no engine. The reporter already made the
+  reduction; a second one here would be a second implementation of
+  arithmetic this project keeps in exactly one place.
+- **It can never disagree with the report about whether something
+  moved.** Every R-DELTA rule reads `_cross_pin_verdict`'s own verdict
+  STRING rather than re-deriving the comparison. `delta_verdict` is a
+  `; `-separated CLAUSE LIST, so R-DELTA-2 and R-DELTA-3 co-fire on the
+  compound `selection changed (vm → dfa); now measured (was: gave-up)`
+  and R-DELTA-1 and R-DELTA-2 never co-fire on one cell.
+- **A rule function cannot touch a column it did not declare.**
+  `RuleView` raises `UndeclaredColumn`, which is a check over the paths
+  the fixtures and goldens exercise — a good check, not a proof, and the
+  design note says so.
+- **The sidecar is a function of the facts TSV.** The render reads
+  numbers back out of the rendered slot STRINGS (`slot_number`), so
+  §8(5)'s no-prose check can re-render the whole document from the facts
+  alone and require byte equality — every line is a template, a link, a
+  heading, a did-not-fire row or the stamp.
+
+`REPORTER_VERSION` is untouched: the interpreter reads the reporter, it
+does not change it. The `interpret` subcommand is dispatched before
+argparse in `__main__.py`, the same way `report` is, so it owns its own
+flags.

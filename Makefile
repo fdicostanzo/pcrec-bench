@@ -94,7 +94,7 @@ check-harness:
 #       in its closed set, the two INEXPRESSIBLE clauses fail AT LOAD, and
 #       every rule has a fixture and a negative control;
 #   (2) determinism (two runs byte-identical in both formats) and the
-#       golden facts for the 10 acceptance reports -- against a FROZEN
+#       golden facts for section 10's acceptance reports -- against a FROZEN
 #       index snapshot, never store/index.tsv, so a records-only commit
 #       cannot fail this target;
 #   (3) sidecar freshness: every committed reports/*.interpretation.md

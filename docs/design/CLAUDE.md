@@ -104,7 +104,15 @@ docs/dev/'s append-only records.
   the adapter not before W3 — with six open questions and who rules
   each. Partially covers the `set_format.md` slot below; see its Q1.
 
-- `interpreter_v1.md` — **[B13] the interpreter design note, at **v1.2**
+- `interpreter_v1.md` — **[B13] the interpreter design note, at **v1.2**,
+  and since 2026-09-09 **IMPLEMENTED** (lane `b13impl`): part 1 is built
+  against it — `catalogue/rules.toml` (catalogue 1.0, 31 rules),
+  `pcrecbench/interpret.py`, `docs/dev/predictions/`,
+  `catalogue/fixtures/` + `catalogue/golden/`, `make check-interpret`
+  (six sections, 129 checks) — and §10's acceptance test RAN 25/25. The
+  build's deviations are listed in `docs/dev/lanes/b13impl_report.md`;
+  the note was NOT rewritten to fit the build. Part 2 (the skill and the
+  committed sidecars) is [B13.4]. The design as v1.2 stated it:**
   (2026-09-08, lane `b13v12`): v1.1 revised under the pcrec manager
   session's cross-review of it, inbox I-58 — APPROVED CONDITIONAL, four
   spec edits, no re-panel. In one paragraph each: (1) §2.1's header parse

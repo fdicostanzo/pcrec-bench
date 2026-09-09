@@ -1,6 +1,16 @@
 # The interpreter — design note v1.2 ([B13])
 
-STATUS: **DESIGN ONLY.** No code exists. **v1.2, 2026-09-08** — v1.1
+STATUS: **IMPLEMENTED (lane b13impl, 2026-09-09)** — part 1 is built
+against this note as it stands: `catalogue/rules.toml` (catalogue 1.0,
+31 rules), `pcrecbench/interpret.py` + the `interpret` subcommand,
+`docs/dev/predictions/`, `catalogue/fixtures/` + `catalogue/golden/`,
+and `make check-interpret` (six sections, 129 checks). §10's acceptance
+test RAN: 25 of 25 items pass. The implementation's deviations from this
+note — none of them changes a rule's predicate or threshold — are listed
+in `docs/dev/lanes/b13impl_report.md`; this note is NOT rewritten to fit
+the build. Part 2 (the `/pcrec-bench-interpret` skill and the committed
+`.interpretation.md` sidecars) is [B13.4]. What follows is the design as
+v1.2 stated it. **v1.2, 2026-09-08** — v1.1
 (lane `b13rev`, 2026-09-07) revised in place by lane `b13v12` under the
 pcrec manager session's cross-review of v1.1, inbox item I-58: **APPROVED
 CONDITIONAL**, four spec edits, one revision commit, no re-panel. v1.1
