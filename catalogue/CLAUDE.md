@@ -77,6 +77,12 @@ notice.
     make check-interpret
     python3 catalogue/acceptance_10.py
 
+The committed `reports/<name>.interpretation.md` sidecars ([B13.4]) are
+never produced by hand: run `/pcrec-bench-interpret <report>`
+(`.claude/skills/pcrec-bench-interpret/SKILL.md`), which locates a
+matching predictions file, runs `interpret --render`, checks its own
+determinism, and commits the result beside its report.
+
 At a RE-PIN, append the new pin to `[[pin_order]]` (a MINOR bump): a pin
 absent from the table makes R-BUCKET-SPAN exit 2 naming the missing slug
 (§11 Q10, ruled "both" — the checklist prevents it, the exit-2 message
