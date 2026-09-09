@@ -32,8 +32,14 @@ harness-tracked and notifies on exit, and its 600 s `timeout` maximum
 is NOT an execution deadline for a background task — tracked runs of
 ~20 min (lane b13pre) and ~30 min (I-59's build+test) completed and
 notified on 2026-09-08 (the older "10-min cap" belief came from a
-memory-pressure kill, not a clock). Multi-hour windows still run under
-setsid with a marker (below). python3 (BD4).
+memory-pressure kill, not a clock). BUT a tracked task the harness
+kills for memory pressure (a 3.6 GB store load + a 317 MB pickle dump,
+b13pre run 4, same night, with 11 GB `available`) dies WITHOUT a
+notification and without your marker — so the marker rule below is
+what saves you, and a lane waiting "for the notification" must ALSO
+check the marker at every reinvocation. Keep peak RSS low (stream,
+don't hold the store twice). Multi-hour windows still run under setsid
+with a marker (below). python3 (BD4).
 
 **Every background job ends with a durable completion marker, checked
 by a command, never inferred from `ps`.** ([B33]'s b33cc lane, twice,
