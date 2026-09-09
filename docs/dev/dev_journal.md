@@ -3857,3 +3857,13 @@ skill's §1 step 0 / §7 step 5; the cron created live this session
 
 Nothing else cleared; holding for pcrec's next item with the heartbeat
 live. [B41]/[B7] unchanged.
+
+## 2026-09-09 (eighteenth session) — close
+
+Frank: "reset the session". I-61 CLOSED by pcrec (stage 4 validation
+closed, stage 5 open; wt_stage4_arm removed on their say-so, logs
+kept), I-62 codified and its cron live for three one-line ticks, then
+deleted at close per the new §7 step 5. No lanes, no crons, no
+worktrees of ours; master pushed (fee944e + this entry); wake.md
+rewritten for the next start. Nothing pending from pcrec; [B41]/[B7]
+wait on Frank's go.
