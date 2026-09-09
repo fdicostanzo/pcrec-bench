@@ -1,15 +1,43 @@
-# The interpreter — design note v1.1 ([B13])
+# The interpreter — design note v1.2 ([B13])
 
-STATUS: **DESIGN ONLY.** No code exists. **v1.1, 2026-09-07** — this note
-is v1 (lane `b13design`, merged `651a7ce`) revised in place by lane
-`b13rev` under every disposition of the r4 adversarial critic panel
+STATUS: **DESIGN ONLY.** No code exists. **v1.2, 2026-09-08** — v1.1
+(lane `b13rev`, 2026-09-07) revised in place by lane `b13v12` under the
+pcrec manager session's cross-review of v1.1, inbox item I-58: **APPROVED
+CONDITIONAL**, four spec edits, one revision commit, no re-panel. v1.1
+was itself v1 (lane `b13design`, merged `651a7ce`) revised under every
+disposition of the r4 adversarial critic panel
 (`docs/dev/reviews/2026-09-07-r4-interpreter-v1.md`, three lenses:
 source verification, charter fidelity, implementability — 11 BLOCKING,
 8 SHOULD-FIX, ~14 documentation corrections, all accepted or
 accepted-amended by the manager). It is a single coherent design, not a
 diff: read it as the corrected design, and where a citation would
-otherwise confuse a reader who knows v1, a short "corrected from v1"
-note says what moved and why.
+otherwise confuse a reader who knows an earlier version, a short
+"corrected from v1" or "cross-review I-58" note says what moved and why.
+
+**What v1.2 changed, in one list (I-58's four must-fix edits plus two
+minors and one honesty edit, all in this one commit):** the header
+comment's known-key split is now NORMATIVE, not "equivalent" to the
+regex-rejoin form, which are shown to diverge in both directions (§2.1);
+R-STATUS-3's predicate is scoped to `metric = pass_rate` so precondition
+P-2's `giveup_smallest` rows (read only by R-STATUS-12) cannot make it
+double-fire (§2.5, §4.1); `section` is added to §6.3's closed selector
+key list, which §6.6's own P1 transcription already needed; the R-DELTA-1
+aggregate key's `config` and `direction` (and R-DELTA-2/3's `config`) are
+now declared decompositions in each rule's `arith` field, extending
+§7.2's decomposition table (§4.2, §7.2); an aggregated bullet's rendering
+is now defined for a rule with no numeric slot (the specimen's own
+full-sorted-id-list behaviour, now stated as the rule) and a rule may
+declare its own `extremal` slot, which R-DELTA-1 now does (`ratio`, the
+biggest mover, not the largest-median cell) (§5.2, §3.2); the
+`reduce.py:373-379` citation for the `agree (…)` string is corrected to
+`reduce.py:372-376` against the 376-line file (§4.1); and §6.5's
+`stated_utc` check now reads the earliest index timestamp for the
+population INCLUDING superseded records, closing the supersession window
+a report-scoped check leaves open, with the residual limit stated
+honestly rather than claimed away (§6.5, §13). The r4 review's own
+step-2 confirmation pass, run by the pcrec manager session at Frank's
+ask, is recorded in `docs/dev/reviews/2026-09-07-r4-interpreter-v1.md`'s
+new closing section.
 
 The panel's own summary of what survives unchanged is recorded in §13,
 so a later reader does not mistake the revision's size for a rewrite:
@@ -20,12 +48,13 @@ written before any code existed — which is why the panel could find
 these gaps at a cost of one design pass.
 
 Author: lane `b13design`, 2026-09-07; revised by lane `b13rev`,
-2026-09-07. Charter: docs/dev/plan.md row `[B13]`, agreed by Frank
-2026-08-25 (docs/dev/dev_journal.md, second session parts 5 and 7).
-Stated inputs: `docs/dev/feedback_pcrecdev1_2026-08-25-repin.md` and
-`-repin-v2.md` — the pcrec manager session's two readings of the same
-report, which are the only existing worked examples of a human doing by
-hand exactly what this tool must do by rule.
+2026-09-07; revised again by lane `b13v12`, 2026-09-08. Charter:
+docs/dev/plan.md row `[B13]`, agreed by Frank 2026-08-25
+(docs/dev/dev_journal.md, second session parts 5 and 7). Stated inputs:
+`docs/dev/feedback_pcrecdev1_2026-08-25-repin.md` and `-repin-v2.md` —
+the pcrec manager session's two readings of the same report, which are
+the only existing worked examples of a human doing by hand exactly what
+this tool must do by rule.
 
 ---
 
@@ -139,25 +168,65 @@ keys `interpret` reads, by name:
 | `grain` | rules declare which grain they apply to; a set-grain-only rule does not fire on a subject-grain TSV and says so |
 | `x13_rules`, `mixed_x13` | R-STATUS-7 |
 | `worst_other_core_busy` | R-STATUS-8 |
-| `floor_pattern` | R-FLOOR-2 — **a new key, precondition P-1 (§2.5)** |
+| `floor_pattern` | R-FLOOR-2 — **a new key, precondition P-1 (§2.5)**, appended at the END of the header line (after `worst_other_core_busy`), so the known-key list at reporter v16 gains exactly this one key in exactly this position |
 
-**The header's parse rule, stated (panel build #7).** `; ` is NOT a
-sufficient delimiter: `x13_rules`'s own value is built with
-`"; ".join(...)` (report.py:4084-4085) and three committed reports carry
-a two-clause value, e.g. `x13_rules: v1.1-1.3 X13 (both samples quiet)
-on 14; v1.4 X13 (pre-flight + trial agreement) on 2`. A naive
-`split("; ")` produces a key-less fragment and shifts every later key by
-one. `filters` contains `, ` and `=`; `worst_other_core_busy` contains
-`%`, ` / ` and parentheses. The rule `interpret` uses, declared here and
-checked by §8(1):
+**The header's parse rule (corrected from v1.1, panel/manager cross-review
+I-58 edit 1): the KNOWN-KEY split is NORMATIVE, not "equivalent" to a
+regex-rejoin.** `; ` is NOT a sufficient delimiter: `x13_rules`'s own
+value is built with `"; ".join(...)` (report.py:4084-4085) and three
+committed reports carry a two-clause value, e.g. `x13_rules: v1.1-1.3 X13
+(both samples quiet) on 14; v1.4 X13 (pre-flight + trial agreement) on
+2`. A naive `split("; ")` produces a key-less fragment and shifts every
+later key by one. `filters` contains `, ` and `=`; `worst_other_core_busy`
+contains `%`, ` / ` and parentheses.
 
-> Split on `; ` and then RE-JOIN, with `; `, any fragment that does not
-> match `^[a-z0-9_]+: `. Equivalently: split only before a known key.
+v1.1 offered two formulations and called them equivalent:
 
-The known-key list is not retyped from this note. §8(1) obtains it by
-running `report --format tsv` over the check's own fixture store and
-reading the emitted keys back out — the same motion `check-report`
-already makes — because the header keys are an f-string block at
+> (a) Split on `; ` and then RE-JOIN, with `; `, any fragment that does
+> not match `^[a-z0-9_]+: `.
+> (b) Split only before a known key.
+
+**They are not equivalent — they diverge in both directions, and each
+divergence is a real, reachable case, not a corner case:**
+
+1. **A newer reporter's header gains a key `interpret` does not know
+   about yet** (exactly the position `floor_pattern` is in at this
+   revision, before P-1 lands): form (a) keeps it as its own fragment,
+   because it does not match `^[a-z0-9_]+: `'s failure mode the way a
+   *value* does — it IS a `key: value` shaped fragment, so (a) leaves it
+   separate. Form (b), consulting a known-key list that has not yet been
+   updated, does not recognise the new key and silently RE-JOINS it into
+   the PREVIOUS key's value.
+2. **A future value contains `word: `-shaped text** (nothing in the
+   corpus today does, but nothing rules it out — a future `filters`
+   value quoting a selector like `pattern: foo`, say). Form (a) sees a
+   fragment matching `^[a-z0-9_]+: ` and wrongly treats it as a new key,
+   splitting a single value in two. Form (b), which only ever splits
+   before a name already on its list, correctly leaves it joined into
+   the value it belongs to.
+
+**Ruling: form (b), the known-key split, is normative.** It fails safe on
+an unrecognised VALUE shape (case 2, which is the more likely future
+defect — this project's own values already carry `,`, `=`, `%`, `/` and
+parentheses), and its remaining exposure (case 1, a brand-new key) is
+bounded by construction: the known-key list is obtained at CHECK time by
+running `report --format tsv` over `check-interpret`'s own fixture store
+and reading the emitted keys back out (the same motion `check-report`
+already makes), so a reporter bump that adds a header key and an
+`interpret`/`catalogue` bump that recognises it are the same commit's
+concern (§3.3, §8's regeneration rule) — the list cannot silently go
+stale the way a hand-maintained one could. Form (a)'s regex-rejoin is
+demoted to a HEURISTIC NOTE, useful only as a human's sanity check when
+reading a header by eye, never as `interpret`'s own algorithm:
+
+> Heuristic only, not what `interpret` runs: split on `; ` and then
+> re-join, with `; `, any fragment that does not match `^[a-z0-9_]+: `.
+> A human eyeballing a header this way will occasionally see it disagree
+> with `interpret`'s own known-key split — that disagreement is case 2
+> above, not a bug in either.
+
+The known-key list is not retyped from this note. §8(1) obtains it as
+described above — because the header keys are an f-string block at
 report.py:4068-4091 and are the one part of the input that cannot be
 read out of `render_tsv`'s `header` list.
 
@@ -416,8 +485,13 @@ of its own -- it reads the verdict clause the reporter already computed
 and printed, so the interpreter and the report can never disagree about
 what "beyond spread" means.
 """
-slots         = ["pattern", "regime", "form", "testee", "verdict", "median_ns"]
-arith         = []                   # §7.2's declared derivations, none here
+slots         = ["pattern", "regime", "form", "testee", "verdict", "median_ns", "config", "direction", "ratio"]
+arith         = [                    # §7.2's declared derivations (added, cross-review I-58 edit 4)
+  "config: testee_id with version_slug removed -- see §7.2's testee-id decomposition row, same split minus the version_slug field",
+  "direction: the matched clause's own leading token ('faster' or 'slower'), copied verbatim from the predicate's own match",
+  "ratio: the matched clause's own trailing '×N.NN', parsed as a float, copied verbatim from the predicate's own match",
+]
+extremal      = "ratio"              # §5.2; overrides the default (first numeric slot, median_ns) -- the biggest MOVER, not the largest-median cell
 template      = "{pattern} / {regime} / {form} / `{testee}`: the reporter's cross-pin Δ reads **{verdict}** (median {median_ns} ns)."
 no_fire       = "no rank row carries a faster/slower clause"
 links         = []                   # see §7.3
@@ -440,7 +514,10 @@ raises on an undeclared column (§3.3, §7.2).
 
 Fields every rule carries: `id`, `title`, `class`, `since`, `grain`,
 `aggregate`, `inputs`, `predicate`, `threshold`, `threshold_src`,
-`slots`, `arith`, `template`, `no_fire`, `links`, `example`.
+`slots`, `arith`, `template`, `no_fire`, `links`, `example`. One field is
+OPTIONAL and declared only to override its default: `extremal` — which
+slot §5.2's aggregation renders as the group's extremal firing; a rule
+that omits it gets the default, the rule's first numeric slot (§5.2).
 
 #### §3.2.1 `grain` is mandatory (panel S7)
 
@@ -590,7 +667,7 @@ re-verified against the corrected key.)*
 |---|---|---|---|
 | R-STATUS-1 | both | `["status"]` | an INCLUDED record whose `status` ≠ `measured` |
 | R-STATUS-2 | both | `["status"]` | a record in `store/index.tsv` for this report's (subbench, version, machine) that the query did NOT include, whose status ≠ `measured` |
-| R-STATUS-3 | both | `[]` | an `excluded` section row |
+| R-STATUS-3 | both | `[]` | an `excluded` section row **whose `metric` is `pass_rate`** (§4.1's cross-review note below) |
 | R-STATUS-4 | both | `["testee"]` | a `did_not_compile` section row (deduplicated to the distinct (pattern, testee) set) |
 | R-STATUS-5 | both | `[]` | header `superseded` / `newer_not_measured` / `excluded_invalid` > 0 |
 | R-STATUS-6 | both | `[]` | header `schema_versions` names more than one version |
@@ -612,7 +689,7 @@ strings, enumerated in `threshold_src` with their sources, are:
 
 | string | produced by | what it means | who reports it |
 |---|---|---|---|
-| `agree (N of N groups; …)` | `agreement_line`, reduce.py:373-379 | the v1.4 rule judged and agreed | nobody — the normal case |
+| `agree (N of N groups; …)` | `agreement_line`, reduce.py:372-376 | the v1.4 rule judged and agreed | nobody — the normal case |
 | `agree 0/0 groups -- nothing judged (N rows unjudged)` | reduce.py:371 | nothing was judgeable | R-STATUS-3's own give-up/wrong facts already say why |
 | `disagree (N of N groups; worst … d=N of n=N; …)` | reduce.py:365-369 | the trials did not agree | **R-STATUS-9** |
 | `n/a (N trials)` | reduce.py:359, verdict `n/a-trials` | fewer than 5 trials, or an even count — a short or scratch run | R-STATUS-11 (scratch) where it applies; otherwise provenance |
@@ -646,11 +723,52 @@ decomposition (§7.2). Population: **891 of the corpus's 2,514 ranking
 groups**, concentrated in altwide, where libpcre2 refuses at its own
 compiled-size ceiling.
 
+**R-STATUS-3 vs precondition P-2, resolved (cross-review I-58 edit 2).**
+§9.2's specimen pins 13 firings on Report A's excluded section, but P-2
+(§2.5) adds `metric=giveup_smallest` rows INTO the same `excluded`
+section, one extra row per give-up code beside each base row that has a
+give-up. R-STATUS-3's predicate as v1.1 stated it — "an excluded section
+row" — declared no `inputs` column named `metric` or `value`, so under
+§3.2.2's raising view it could not even *see* the new rows' `metric`
+column to filter them out without an `UndeclaredColumn` error, and left
+unfiltered it would double-fire once per code on any cell that has one.
+**Fact, verified against the committed corpus for this revision:** every
+base `excluded` row today carries `metric = pass_rate` —
+`awk -F'\t' '$1=="excluded"' reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv | head -1`
+reads `excluded  factored  (set)  large-subject-throughput  plain  same
+program  libpcre2_10.46_jit-caps-simdna  measured  pinned    pass_rate
+0.6667  3  0.6667  0  0  0` — column 11 (`metric`) is `pass_rate` on
+every one of the 13 rows
+(`awk -F'\t' '$1=="excluded"' … | wc -l` → 13, confirmed by re-running
+for this revision). **Fix: `metric` is now a declared input, and the
+predicate is scoped to the base row, `metric = pass_rate`.** P-2's
+`giveup_smallest` rows are declared as R-STATUS-12's inputs only (§2.5,
+already the case) and are never matched by R-STATUS-3. Report A's count
+is unaffected by this fix today (the corpus predates P-2, so every
+excluded row already reads `metric = pass_rate` and the scoped predicate
+still selects all 13); the fix matters the moment P-2 lands and the
+report is regenerated with the extra rows alongside them.
+
+**The same hazard, checked against every other reader of the `excluded`
+section, per I-58's ask.** R-STATUS-12 already declares
+`report:excluded?metric=giveup_smallest…` (below) — scoped correctly
+from v1.1, no change needed. No R-BUCKET rule (§4.7) reads the `excluded`
+section: R-BUCKET-FORM reads only *rankable* (`rank`) rows by its own
+predicate (§4.1 note above §4.7). R-PRED-3 (§4.6) tests only whether a
+predicted cell's `section` value is `excluded` (a presence check across
+whichever rows match its selector, never a read of `metric`, `pass_rate`
+or the give-up columns), so an extra `giveup_smallest` row beside a base
+row changes nothing it reads — no hazard there. §9.2's "13 firings" and
+§10 A.3's "all thirteen excluded cells" (Report A) and §10 C.2's
+"23 excluded cells" (Report C) all describe the scoped, `metric =
+pass_rate` count, and are unchanged by this fix, because the corpus they
+describe predates P-2.
+
 **Inputs.** R-STATUS-1: `report:record.testee` joined to `index.status`.
 R-STATUS-2: `index.{subbench,version,machine_id,status,testee_id,
 timestamp}` minus the report's `record` rows. R-STATUS-3:
-`report:excluded.{pattern,regime_or_na,form,testee,pass_rate,n_gave_up,
-n_wrong,gave_up_summary}`. R-STATUS-4:
+`report:excluded?metric=pass_rate.{pattern,regime_or_na,form,testee,
+pass_rate,n_gave_up,n_wrong,gave_up_summary}`. R-STATUS-4:
 `report:did_not_compile.{pattern,testee,gave_up_summary}` (the
 diagnostic lives in `gave_up_summary` — report.py:4172).
 R-STATUS-9/10: `report:record.{testee,metric,value,delta_verdict}`.
@@ -764,6 +882,22 @@ testee,rank_or_na,value,delta_verdict}` plus the same cell's
 `metric=stddev_ns.value`. Set grain only — `delta_verdict` is computed
 for `grain == "set"` alone (report.py:4143-4145) — so on a subject-grain
 TSV all four report `did-not-fire: grain`.
+
+**The `config` and `direction` aggregate keys are declared decompositions,
+not raw columns (cross-review I-58 edit 4).** R-DELTA-1's table above
+declares `aggregate = ["regime","config","direction"]`, and R-DELTA-2/3
+declare `aggregate = ["regime","config"]`, but neither `config` nor
+`direction` is a TSV column: `config` is `testee` with its `version_slug`
+decomposed OUT (the testee-id split §7.2 already declares for R-RANK-1 /
+R-ARM-1 / R-BUCKET-VSBEST / R-BUCKET-SPAN, minus the one field a
+cross-pin pair is guaranteed to differ on), and `direction` is the
+matched clause's own leading token (`faster` or `slower`). Both are now
+declared, per rule, in each R-DELTA rule's `arith` field (§3.2's R-DELTA-1
+example shows the exact wording) and in §7.2's decomposition table below
+— the same firewall bookkeeping §7.2 already requires for every other
+non-literal slot value, extended to cover these three rules' aggregation
+keys. This is mechanical: no rule's PREDICATE or THRESHOLD changes, only
+what is declared about how its aggregate key is computed.
 
 **The clause rule.** Each rule matches its anchor against each `; `
 -separated clause (§2.1). Consequences, all pinned by fixtures in §8(4):
@@ -1286,18 +1420,58 @@ the facts TSV) its firings are grouped by those slot values and each
 group renders as ONE bullet carrying:
 
 1. the count of firings in the group;
-2. the EXTREMAL firing by the rule's first numeric slot (max), and, when
-   the group has more than two members, the minimum as well;
+2. **if the rule has a numeric slot**, the EXTREMAL firing by that slot
+   (max), and, when the group has more than two members, the minimum as
+   well; **if the rule has none**, the full SORTED LIST of the group's
+   firing keys instead (see below — corrected from v1.1, panel/manager
+   cross-review I-58 edit 5(a));
 3. a pointer to the facts TSV for the rest.
 
 `aggregate = []` means one bullet per firing. Aggregate groups render in
-**sorted order of their key**, and the extremal firing inside a group is
-chosen by the rule's first numeric slot with ties broken by the sorted
-key columns (`pattern`, `subject_or_na`, `regime_or_na`, `form`,
-`testee`) — so the rendering is a total order with no free choice in it.
-There is no threshold and no cut-off: the collapse is a pure arithmetic
-reduction of a declared key, deterministic and diffable, and it is NOT a
-ranking by interest (§1.1). Nothing is dropped.
+**sorted order of their key**, and — for a rule WITH a numeric slot — the
+extremal firing inside a group is chosen by the rule's declared
+`extremal` slot, defaulting to the rule's first numeric slot when
+`extremal` is not declared (§3.2 lists it as an optional field), with
+ties broken by the sorted key columns (`pattern`, `subject_or_na`,
+`regime_or_na`, `form`, `testee`) — so the rendering is a total order
+with no free choice in it. There is no threshold and no cut-off: the
+collapse is a pure arithmetic reduction of a declared key, deterministic
+and diffable, and it is NOT a ranking by interest (§1.1). Nothing is
+dropped.
+
+**Rules with NO numeric slot, and the default this note left undefined
+(cross-review I-58 edit 5(a)).** v1.1 specified step 2 only for a rule
+with a numeric slot, and §9.2's own worked specimen contradicts it on two
+rules that have none: R-STATUS-2 (whose slots are record ids and
+timestamps) renders its three `inconclusive-load` firings as a full
+sorted list of record ids, not an extremal-plus-minimum pair, because
+"extremal by first numeric slot" has no first numeric slot to be extremal
+BY; R-BUCKET-VSBEST similarly renders all four ranking-group names in one
+firing rather than picking one. **Ruling: this is the specimen's
+behaviour, and the spec now says so as a rule, not an accident of the
+worked example** — a rule whose declared `slots` contain no numeric
+member (checked at load, §8(1)) renders its aggregated bullet as the
+count plus the group's FULL SORTED LIST of firing keys (sorted the same
+way as the group order itself, §5.2's own total order), never an
+extremal/minimum pair. A rule with a numeric slot never falls back to
+this form, even where its group has only one member.
+
+**The extremal slot is declared per rule, default the first numeric
+slot (cross-review I-58 edit 5(a), the R-DELTA-1 half).** Reading §5.2's
+"extremal by first numeric slot" literally, R-DELTA-1's extremal would be
+its first numeric slot, `median_ns` — which picks the LARGEST-MEDIAN
+CELL in a group, not the biggest MOVER, and a reader collapsing 202
+firings to 17 bullets wants the biggest ratio, not the slowest cell that
+happens to also carry a faster/slower clause. R-DELTA-1 now declares
+`extremal = "ratio"` (§3.2's TOML example; `ratio` is the clause's own
+parsed `×N.NN`, a declared decomposition per §7.2), and the general rule
+is stated once here rather than special-cased silently: **a rule may
+declare `extremal = <slot>` to name which of its numeric slots is
+"biggest" for aggregation purposes; a rule that omits it gets the
+default, the first numeric slot in its `slots` list.** Every other rule
+in §4 that declares a numeric slot keeps the default (`median_ns` is
+already the biggest-cell reading R-ARM-1's own worked example in §9.2
+uses, and it is what a reader comparing two config arms wants).
 
 A rule whose individual bullets carry evidence a reader must see keeps
 `aggregate = []` even where its count is largish: R-STATUS-3 renders all
@@ -1395,7 +1569,11 @@ note            "no compile time beyond x10 the median on any compiled testee"
   R-PRED-1/2/4's arithmetic roll-up over its clauses (§4.6).
 - **`selector`** is a `;`-joined list of `key=glob` over the TSV's own
   key columns (`pattern`, `subject_or_na`, `regime_or_na`, `form`,
-  `testee`). `*` is the only wildcard, and a `|`-joined alternation is
+  `testee`) **and `section`** (cross-review I-58 edit 3: v1.1's closed
+  key list omitted `section` while §6.6's own P1 transcription already
+  used it, `selector section=did_not_compile;testee=pcrec_*`, which was
+  otherwise inexpressible against a grammar that did not name the key it
+  matched on). `*` is the only wildcard, and a `|`-joined alternation is
   permitted in one field (`pattern=anc-caret|anc-A|anc-G`). A testee glob
   may name a config without a pin (`pcrec_*_auto-caps-simdna`) so a
   prediction survives a re-pin.
@@ -1471,10 +1649,50 @@ is the limit that keeps §2.4 honest.
 Written by hand, by the person who states it, **before the run**, and
 committed before the run — the boilerplate's own rule ("a prediction is
 stated BEFORE the run wherever the charter allows"). `stated_utc` is a
-column so `make check-interpret` can assert it precedes the earliest
-`timestamp` in the report's population, which makes post-hoc prediction
-mechanically impossible to commit unnoticed. (The panel singled this out
-as the design's best single idea; it is unchanged.)
+column so `make check-interpret` can assert it precedes a timestamp
+this section defines precisely (below).
+
+**The check, corrected (cross-review I-58's honesty edit).** v1.1 claimed
+checking `stated_utc` against the earliest `timestamp` IN THE REPORT'S
+OWN POPULATION makes post-hoc prediction "mechanically impossible to
+commit unnoticed." That overclaims: supersession opens a window. A
+person can read run 1's actual numbers, then state a prediction with
+`stated_utc` dated after run 1 but before a later re-measure, aimed at
+the re-measured population; if the check only looks at the REPORT's own
+population, the earliest timestamp it sees is the LATER re-measure's, so
+a `stated_utc` stated after reading run 1 (and therefore not a
+prediction at all) passes as if it predated everything.
+
+**The fix that closes the window is checking against the EARLIEST
+`timestamp`-comparable value across ALL rows of `store/index.tsv` for
+this (subbench, version, machine) — including SUPERSEDED ones — not just
+the rows the report's own query included.** Run 1's record, even
+superseded and absent from every later report, is still a row in the
+index (§2.2: `index.{subbench,version,machine_id,timestamp,status}`, all
+four columns already declared there — no new column is needed for this
+check). Anchoring on that earliest index timestamp instead of the
+report's own earliest one closes exactly the case above: a `stated_utc`
+after run 1 fails the check even when the report being interpreted is
+run 2's re-measure. This is a check `make check-interpret` runs against
+`index.*` directly (§2.2), not a declared `inputs` entry of any one rule
+— no R-PRED rule's `inputs` needs a column beyond what §2.2 already
+lists.
+
+**The residual limit, stated honestly rather than left implied.** Even
+this fix does not make post-hoc prediction impossible in the fullest
+sense: it can only prove a `stated_utc` precedes the FIRST time this
+project ever measured this (subbench, version, machine) population, by
+any pin, at any point in `store/index.tsv`'s history. It cannot see a
+prediction informed by reading pcrec's own source or commit history
+(someone could know an optimization already shipped and predict its
+effect without ever having read a bench run), and it has no anchor at
+all for a population that has never been measured before (the check is
+vacuous, not restrictive, on a first-ever sample). **A prediction stated
+before the first record of a population was ever measured is the only
+thing the check can prove — not that no other channel informed it.**
+Still the design's best single idea for the part it does close, which is
+the part that bites in practice (a person re-reading THIS project's own
+committed reports before writing a prediction down).
 
 Predictions stated in an inbox item are transcribed by the manager
 session at ack time — the same motion that already moves an inbox item
@@ -1515,7 +1733,11 @@ prediction, against the clause the ledger actually scored:
 **eight** are expressible in every clause; **two** (P9.a, P12's agreement
 clause) are inexpressible and now fail loudly at load rather than
 silently; **one** (P2.d) is expressible and correctly lands as
-`not-evaluable`.
+`not-evaluable`. *(Checked against §6.3's edit 3 fix: P1 is the one
+transcription in this table that names `section` in its selector, and it
+was already counted among the twelve — the fix makes its own selector
+syntactically legal against the closed key list rather than changing
+which predictions are expressible. The 12-of-13 count is unchanged.)*
 
 **Four things changed because of the exercise**, none of which v1's
 three-prediction survey would have surfaced: `set_of` + `set-eq` (P1),
@@ -1628,10 +1850,12 @@ declared decompositions in v1.0, each written out in `arith`:
 | rule | decomposition | of |
 |---|---|---|
 | R-RANK-1, R-ARM-1, R-BUCKET-VSBEST, R-BUCKET-SPAN | `testee_id` → `(engine, version_slug, mode, caps, simd, extra)`, splitting the config slug from the RIGHT (§4.4) | a column |
+| R-DELTA-1, R-DELTA-2, R-DELTA-3 (cross-review I-58 edit 4) | `testee_id` → `config` = `(engine, mode, caps, simd, extra)` with `version_slug` removed — the SAME split as the row above, minus the one field a cross-pin pair is guaranteed to differ on | a column |
+| R-DELTA-1 (cross-review I-58 edit 4) | `direction` = the matched clause's own leading token (`faster` or `slower`), copied verbatim from the predicate's own match; `ratio` = the same clause's trailing `×N.NN`, parsed as a float, also copied verbatim | a column |
 | R-STATUS-5 | `source` → the candidate count in `(N record(s) matching this query)` | a header value |
 | R-STATUS-13, R-RANK-1 | `_is_reference`: strip `@…`, then `startswith("libpcre2_") and "_interp-" in base` (report.py:3153-3159, copied) | a column |
 | all four R-DELTA | `delta_verdict` → the `; `-separated clause list (§2.1) | a column |
-| §2.1's header parse | the `; `-with-known-keys split | the header line |
+| §2.1's header parse | the `; `-with-known-keys split (§2.1, normative form) | the header line |
 
 R-STATUS-12's parse of `_gave_up_cell_summary`'s rendering — v1's Q8, and
 the fragile one — is GONE, replaced by precondition P-2's columns (§2.5).
@@ -2380,8 +2604,13 @@ insurance for pcrec D2's stranger's-`make` posture.
   about whether something moved"** (§4.2) — the correct architectural
   choice, correctly implemented by reading the verdict string.
 - **Reading the TSV and never the markdown** (§1), with the reason given.
-- **§6.5's `stated_utc` precedence check**, which makes post-hoc
-  prediction mechanically impossible to commit unnoticed.
+- **§6.5's `stated_utc` precedence check**, checked against the earliest
+  index timestamp for the population INCLUDING superseded records
+  (corrected in this revision, cross-review I-58) — closes the
+  supersession window a report-scoped check leaves open, though it
+  proves only that a prediction predates the population's first-ever
+  measurement, stated as the honest residual rather than "mechanically
+  impossible."
 - **§8(4)'s minimum-diff control requirement** — this project's
   controls-share-no-source discipline applied to a new surface; v1.1
   keeps the requirement and makes it computable ("exactly one declared

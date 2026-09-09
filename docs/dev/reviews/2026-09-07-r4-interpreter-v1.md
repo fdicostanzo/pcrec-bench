@@ -435,3 +435,177 @@ already his to answer and is untouched by anything found here.
 3. `docs/dev/plan.md`'s `[B13]` row stays `STATE:not-started` through
    both steps — it becomes `started` only when the implementation lane
    opens.
+
+---
+
+## Step-2 confirmation pass (2026-09-08)
+
+Run by the pcrec manager session (`pcrecdev1`), at Frank's ask, per this
+review's own "What happens next" step 2 above — the pass `b13rev_report.md`
+left OWED (its "What is NOT done" section named it as "the manager's call
+… precede opening the implementation lane"). Session discipline package
+§7(b) (`docs/dev/session_discipline.md`, adopted the same day, I-60):
+"a design cycle ends with the step-2 verification pass RUN, not
+scheduled" — this section is that pass's record, closing the cycle this
+review opened.
+
+**Method.** `interpreter_v1.md` v1.1 (lane `b13rev`, commit `0d9f62c`)
+read against the eleven B and eight S dispositions above, source
+re-verified independently rather than trusting either the revision
+lane's or this review's own citations — the same independence rule this
+panel applied to v1: `pcrecbench/report.py`, `pcrecbench/reduce.py`, and
+the committed `store/index.tsv` / `reports/*.tsv` corpus scp'd and
+checked directly.
+
+**Result: 19/19 dispositions (B1-B11, S1-S8) CONFIRMED-RESOLVED or
+RESOLVED-WITH-A-FLAGGED-DEVIATION. Zero silent deviations, zero
+not-resolved.** ~25 `report.py`/`reduce.py` line citations in v1.1
+spot-checked exact against source. Every checkable numeric claim
+reproduced against Report A and `store/index.tsv`: the 13 excluded rows,
+the 3/6/4 R-DELTA firing counts, the R-ARM-1 ×2.31/×1.28/×3.73 cells, the
+44-bullet §9.2 sum, the 11-pin `[[pin_order]]` list, and the 160/59/9/1
+`store/index.tsv` status counts (measured/inconclusive-load-superseded/
+inconclusive-load-not-in-any-report/inconclusive-spread — the split
+R-STATUS-2's worked example depends on). **Not independently verified,
+flagged as such rather than assumed:** the 891-of-2,514 R-STATUS-13
+population census (re-derivable but not re-run in this pass — v1.1's own
+census was already independently reproduced once, by this panel's source
+critic, before v1.1 existed) and Report C's figures (the syntax-first
+sample's counts were taken on trust from v1.1's own re-derivation,
+not independently re-run cell-by-cell in this pass).
+
+**The one flagged deviation, among the 19: B9 (`reduce.py:373-379` for
+the `agree (…)` string).** v1.1's §4.1 cites `reduce.py:373-379`; the
+function's actual `return` for that string spans **372-376**, and
+`reduce.py` is 376 lines total, so the cited range runs one line past
+end-of-file. Meaning correct, pointer stale — the one spot-check of ~25
+that did not check out exactly. **Now corrected in v1.2** (lane `b13v12`,
+this citation and the parallel one in §7.2's decomposition table both
+read `reduce.py:372-376`).
+
+This step-2 pass is what surfaced inbox item I-58's four spec edits
+(applied as v1.2, lane `b13v12`, same commit as this section) and the
+panel-process finding recorded below.
+
+### By-id completeness
+
+Session discipline §7(a) (I-60, same ruling as above): "Every numbered
+finding in every critic file must appear in the consolidated review with
+a disposition — even 'declined' — and that must be greppable by finding
+id." `b13rev_report.md`'s own "Flagged" item 3 found **two** findings
+this review dropped in consolidation (`build #11`, `charter F10`) by
+re-reading the raw critic files; this pass ran the check the standing
+rule now requires — mechanically, over every id in all three raw files —
+to find out whether there are others, per I-58's ask.
+
+**The script**, run over this repository (`docs/dev/reviews/`):
+
+```
+for id in $(grep -oE '\bD[0-9]+\b' 2026-09-07-r4-interpreter-v1-source.md | sort -u -V); do ...
+for id in $(grep -oE '^## [0-9]+\.' 2026-09-07-r4-interpreter-v1-build.md | grep -oE '[0-9]+'); do ...
+for id in $(grep -oE '^## F[0-9]+' 2026-09-07-r4-interpreter-v1-charter.md); do ...
+# then: grep each id against 2026-09-07-r4-interpreter-v1.md (this file);
+# for anything not found there, grep it against ../../design/interpreter_v1.md
+# ("panel <id>" / "corrected from v1, panel <id>") to see whether the
+# revision lane applied it anyway by re-reading source directly.
+```
+
+**Summary line: 56 finding ids found across the three raw critic files
+(22 in `-source.md` as `D1`-`D22`, 20 in `-build.md` as findings `1`-`20`,
+14 in `-charter.md` as `F1`-`F14`) — matching this directory's CLAUDE.md
+count exactly — 56 with a disposition.** 39 are cited by id directly in
+this consolidated review (under a `Bn`/`Sn` heading's `[from: …]` tag, or
+in the WORTH-NOTING paragraph). The other 17 are NOT cited by id
+anywhere in this file — but every one of the 17 is independently
+traceable to an applied fix: 15 are cited directly in `interpreter_v1.md`
+itself (`corrected from v1, panel <id>`, or `cross-review I-58` for the
+two items I-58 raised that this review could not have caught, having
+been written before v1.1 existed) at the line named below, and the
+remaining 2 (`build #19`, `build #20`) required no spec change — `#19`
+is the critic's own "no finding here" confirmation, and `#20`'s
+substance (the review-budget risk, not the runtime budget) is answered
+by §8's runtime-budget paragraph and by Q5's three-sidecars-at-landing
+ruling, without a literal citation.
+
+**This finds a THIRD dropped id beyond the two `b13rev_report.md`
+named: charter F9** (`§1.1 excludes "rankings of importance"; §9.2 then
+renders one … the design's real position … is never stated`). It is not
+cited anywhere in this file's BLOCKING/SHOULD-FIX/WORTH-NOTING sections,
+but it WAS applied — v1.1's §0 states F9's exact argument verbatim
+("the true and stronger claim is this: the catalogue is where this
+project's opinions are deliberately concentrated…") and cites it
+`corrected from v1, panel F9` at `interpreter_v1.md:80`. `b13rev_report.md`
+mentions F9 only once, in passing, folded into B11's disposition without
+being named as a THIRD drop — so the count "two panel findings were
+dropped in consolidation" in both that report and this review's own
+"Panel-process finding" paragraph (below the disposition summary table)
+undercounts by one. No further action needed — F9 is already correctly
+in v1.2 — but the count is corrected here for the record.
+
+| id | raw finding (one line) | cited by id in THIS review? | where handled |
+|---|---|---|---|
+| D1 | agreement string in `value`, not `gave_up_summary` | yes — B1 `[source D1, build #2]` | B1 |
+| D2 | R-STATUS-9's predicate stated two ways | yes — B2 `[source D2, build #3]` | B2 |
+| D3 | "26/23/23/23" is a value-frequency count, not a row count | WORTH-NOTING `[source D3]` | WORTH-NOTING |
+| D4 | R-DELTA-3's "the latter pair" is four cells, not two | no (WORTH-NOTING's `[source D4, D15]` tag is attached to a sentence that actually describes D17's claim, not D4's — a citation slip in this review, not a gap) | applied, `interpreter_v1.md:974` |
+| D5 | R-DELTA-3's anchor never matches any committed report | yes — B3 `[source D5, build #1]` | B3 |
+| D6 | R-FLOOR-2's stated non-firing reason is false about the tree | no | applied, `interpreter_v1.md:1210` (§4.5's R-FLOOR-2 worked example) |
+| D7 | R-BUCKET-KB's signature text occurs 0 times in the TSV | yes — B4 `[source D7, charter F2]` | B4 |
+| D8 | "the eighth row" is the seventh | no | applied, `interpreter_v1.md:1221` (§4.5, R-FLOOR-3) |
+| D9 | `schema/examples/bad/` is 72 sabotages + 1 CLAUDE.md, not 73 | WORTH-NOTING `[source D9]` | WORTH-NOTING |
+| D10 | "§10 Q2" should read "§11 Q2" | no | applied, `interpreter_v1.md:1281` |
+| D11 | `form` is deliberately excluded from the ranking-group key | yes — B5 `[from charter F4, source D11]` | B5 |
+| D12 | the testee-id split misses the `@<timestamp>` suffix (latent) | no | applied, `interpreter_v1.md:720` |
+| D13 | the cited grep omits `bench/` while listing a result from it | no | applied, `interpreter_v1.md:1515` |
+| D14 | §9.2's own output contains ≥6 non-template sentences | WORTH-NOTING `[source D14]` | WORTH-NOTING |
+| D15 | §9.2 omits eight non-firing rules | WORTH-NOTING `[source D4, D15]` | WORTH-NOTING |
+| D16 | R-PRED-4 and R-DELTA-4 declared identical, defined with different scopes | WORTH-NOTING `[source D16]` | WORTH-NOTING |
+| D17 | R-DELTA-1 undercounted to two firings where a third (`×1.00`) exists | no (see D4 above — the review's tag lands on D4 instead) | applied, `interpreter_v1.md:960` |
+| D18 | "TOML in three places" wrongly counts `pyproject.toml` | WORTH-NOTING `[source D18]` | WORTH-NOTING |
+| D19 | the `excluded` section's real predicate is not `pass_rate < 1` | no (co-cited with build #11 inside `interpreter_v1.md` itself, not in this review) | applied, `interpreter_v1.md:294` |
+| D20 | the bounded worked example's testee ids are abbreviated | no | applied — R-BUCKET-VSBEST's worked example now spells `pcrec_334fd10e_auto-caps-simdna` / `pcrec_d34c9131_auto-caps-simdna` in full |
+| D21 | "5 give-up(s)" vs the template's "give-up trial(s)" | no | applied — every occurrence in v1.1/v1.2 now reads `give-up trial(s)` |
+| D22 | the `reduce.py:246-250` citation's "and odd" is prose at 241-242, outside the range | no | applied, `interpreter_v1.md:701` |
+| F1 | the opinion firewall does not audit template PROSE | yes — B11 `[from charter F1]` | B11 |
+| F2 | R-BUCKET-KB's claim is unreachable from declared inputs | yes — B4 `[source D7, charter F2]` | B4 |
+| F3 | rules fire in proportion to report size; no compression mechanism | yes — S1 `[from charter F3, build #12]` | S1 |
+| F4 | the ranking-group key is `(subbench, pattern, regime)`, not `(pattern, regime, form)` | yes — B5 `[from charter F4, source D11]` | B5 |
+| F5 | R-RANK-1's template asserts "the reference arm" unconditionally | yes — B6 `[from charter F5, source finding 21 confirmed]` | B6 |
+| F6 | no rule/class reaches the `vm-in` result | yes — B7 `[from charter F6]` | B7 |
+| F7 | R-PRED's format cannot express most real predictions | yes — S2 `[from charter F7]` | S2 |
+| F8 | §10 is not falsifiable: self-cancelling MUSTs, no null control | yes — S3 `[from charter F8]` | S3 |
+| F9 | §1.1 excludes rankings of importance; §9.2 renders one; the real position is never stated | **no — the third drop this pass found** | applied, `interpreter_v1.md:80` (§0) — see paragraph above |
+| F10 | the did-not-fire reason is a closed token set, rendered as free text | no — the second of `b13rev_report.md`'s two named drops | applied, `interpreter_v1.md:1821`, under B11's authority, flagged in `b13rev_report.md` §"Flagged" item 3 |
+| F11 | R-RANK-2 is incoherent; R-RANK-3 is misfiled | yes — WORTH-NOTING `[charter F11]` (twice) | WORTH-NOTING |
+| F12 | Q4's framing overstates the deviation; the fallback is worse than either horn | yes — cited inside B11's own disposition text (`per the charter critic's own synthesis (F12)`) | B11 |
+| F13 | the design's value proposition is real but smaller than §0 implies | no | applied, `interpreter_v1.md:92` (§0, "an honest statement of the value") |
+| F14 | what the design gets right | yes — cited in the "What the design gets right" section | (preserved, §13) |
+| build #1 | R-DELTA-3's anchor never matches | yes — B3 `[source D5, build #1]` | B3 |
+| build #2 | the agreement string's real column | yes — B1 `[source D1, build #2]` | B1 |
+| build #3 | R-STATUS-9 fires 9 times on Report A under its own v1.1 definition | yes — B2 `[source D2, build #3]` | B2 |
+| build #4 | the golden/freshness checks churn on two live inputs | yes — B8 `[from build #4]` | B8 |
+| build #5 | the facts TSV has no firing ordinal | yes — B9 `[from build #5]` | B9 |
+| build #6 | R-BUCKET-SPAN needs an undeclared "pin history" | yes — B10 `[from build #6]` | B10 |
+| build #7 | the header's `; ` delimiter collides with `x13_rules`'s own value | WORTH-NOTING `[build #7]` | WORTH-NOTING |
+| build #8 | §7.2's three slot kinds don't cover the note's own templates | yes — S4 `[from build #8]` | S4 |
+| build #9 | the row-view mechanism doesn't fit ≥6 rules; the `inputs` grammar is unspecified | yes — S5 `[from build #9]` | S5 |
+| build #10 | the fixture plan mis-describes its own precedent | yes — S6 `[from build #10]` | S6 |
+| build #11 | R-STATUS-3's template is unsound on rows the TSV cannot explain | no — the first of `b13rev_report.md`'s two named drops | applied under B11's authority, `interpreter_v1.md:~825-836`, flagged in `b13rev_report.md` §"Flagged" item 3 |
+| build #12 | measured firing volume ~40/~420/~275 across the three acceptance reports | yes — S1 `[from charter F3, build #12]` | S1 |
+| build #13 | `grain` declared on one class only; `n` means two things by grain | yes — S7 `[from build #13]` | S7 |
+| build #14 | Q1's `subbench.toml` read re-creates KB-2 | yes — S8 `[from build #14]` | S8 |
+| build #15 | the predictions closed set omits the lazy-JIT compile metric | no | applied, `interpreter_v1.md:1600` |
+| build #16 | `subject_or_na` has two "absent" spellings | WORTH-NOTING `[build #16]` | WORTH-NOTING |
+| build #17 | every `open()`/`write()` should pass `encoding="utf-8"` | WORTH-NOTING `[build #17]` | WORTH-NOTING |
+| build #18 | §9.2's own R-STATUS-12 count (1) disagrees with the data (3) | no | applied — §9.2 now reads "(3 firings, not aggregated)" |
+| build #19 | the CLI accommodates `interpret` with no restructuring | no | none needed — critic's own "no finding here" |
+| build #20 | the runtime claim is credible; the review-budget risk is elsewhere | no | applied in substance — §8's runtime-budget paragraph names the review-budget risk; Q5's ruling bounds it |
+
+**Net finding of this pass, for the standing rule's own record:** the
+by-id completeness check this session's discipline package now requires
+(§7(a)) would have caught all three drops (`build #11`, `F10`, `F9`) at
+consolidation time had it been run then — none required a re-panel to
+fix, all three were correctly applied by the revision lane's independent
+source-reading method, and none is a live gap today. The rule earns its
+keep on the THIRD one, which nobody had counted until this pass ran it
+as a mechanical check rather than trusting the "two findings" headline.

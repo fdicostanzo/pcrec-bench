@@ -104,8 +104,33 @@ docs/dev/'s append-only records.
   the adapter not before W3 — with six open questions and who rules
   each. Partially covers the `set_format.md` slot below; see its Q1.
 
-- `interpreter_v1.md` — **[B13] the interpreter design note, at **v1.1**
-  (2026-09-07, lane `b13rev`): v1 revised in place under every
+- `interpreter_v1.md` — **[B13] the interpreter design note, at **v1.2**
+  (2026-09-08, lane `b13v12`): v1.1 revised under the pcrec manager
+  session's cross-review of it, inbox I-58 — APPROVED CONDITIONAL, four
+  spec edits, no re-panel. In one paragraph each: (1) §2.1's header parse
+  now makes the KNOWN-KEY split normative (not "equivalent" to the
+  regex-rejoin form, which are shown to diverge in both directions — a
+  new header key vs a value that happens to look like `word: `), with
+  the regex form demoted to a heuristic note; (2) R-STATUS-3's predicate
+  is scoped to `metric = pass_rate`, since precondition P-2's
+  `giveup_smallest` rows land in the SAME `excluded` section and would
+  otherwise double-fire it once P-2 ships (checked against every other
+  reader of that section — only R-STATUS-3 needed the fix); (3) `section`
+  is added to §6.3's closed selector key list, which §6.6's own P1
+  transcription already relied on without it being declared; (4) the
+  R-DELTA-1 aggregate key's `config`/`direction` and R-DELTA-2/3's
+  `config` are now declared decompositions in `arith`, extending §7.2's
+  table — mechanical firewall bookkeeping, no semantics change. Two
+  minors landed in the same commit: an aggregated bullet's rendering is
+  now defined for a rule with no numeric slot (a full sorted id list, per
+  the specimen's own behaviour) and a rule may declare its own
+  `extremal` slot (R-DELTA-1 now uses `ratio`, the biggest mover, instead
+  of the default `median_ns`, the largest-median cell); and one honesty
+  edit: §6.5's `stated_utc` check now reads the earliest INDEX timestamp
+  for the population including superseded records, closing the
+  supersession window a report-scoped check left open, with the
+  residual limit named plainly rather than claimed away. v1.1 was
+  revised in place under every
   disposition of the r4 critic panel
   (`../dev/reviews/2026-09-07-r4-interpreter-v1.md`, 11 BLOCKING +
   8 SHOULD-FIX + ~14 documentation corrections). Still DESIGN ONLY — no
@@ -175,7 +200,13 @@ docs/dev/'s append-only records.
   Frank's, pre-existing, untouched by the panel**; Q1/Q2/Q4-Q8 are ruled
   in §11, and two new non-blocking ones (Q9 an exclusion-cause column,
   Q10 where the `[[pin_order]]` append belongs in the re-pin checklist)
-  are recorded there.
+  are recorded there. **v1.2 is the design a step-2 confirmation pass has
+  now run against** (`../dev/reviews/2026-09-07-r4-interpreter-v1.md`'s
+  closing section, run by the pcrec manager session at Frank's ask: 19/19
+  dispositions confirmed-resolved or resolved-with-a-flagged-deviation,
+  zero silent) — still DESIGN ONLY, no code, no catalogue file, no
+  skill; an implementation lane may open against v1.2 once the two
+  reporter preconditions P-1/P-2 (§2.5) land.
 
 - `quiet_baseline.md` — **[B3]'s answer to OD-B8, MEASURED 2026-08-25**:
   what "quiet" means numerically on this box, the 12 samples behind it,
