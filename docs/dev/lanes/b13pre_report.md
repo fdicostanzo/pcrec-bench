@@ -436,12 +436,166 @@ floor_pattern/cwd-path proof commands are unchanged) --
    too, since it is a real, if incidental, effect of this regeneration)
    and send the manager the completion handback.
 
+## Regeneration, run 8 (lane `b13regen2`, 2026-09-09)
+
+Fresh follow-up lane, same worktree/branch. Run 7 (above) aborted again
+on the SAME v14 altwide file (group 27), for a DIFFERENT reason than
+run 6: `ABORT ...2026-09-05-altwide-0.2-budu-ryzen1600-after-334fd10e.md:
+unexplained diff` on the file's 11-line record-listing block (every
+`../../store/records/...` bullet, the cwd-path-fix target), full text in
+`regen_run7.log`.
+
+**Root cause: a COMPOSITION bug in `classify_md_diff`, not a new kind of
+delta.** difflib groups all 11 changed record-listing lines into ONE
+multi-line REPLACE opcode (they all shift together). Run 7's cwd-path
+check only ever fired inside a `len(removed) == 1 and len(added) == 1`
+opcode (the single-line special case carried over from run 6); an
+11-for-11 block never entered that branch, so it fell through to the
+legend-bullet check, which correctly rejected it (these lines are
+`` - `<testee_id>` (...) `` provenance bullets, not `    - <token> = `
+legend definitions -- confirmed no accidental match: these lines carry
+`k=1.5`/`2/3` with no space-equals-space anywhere). The three explained
+deltas (version stamp, cwd-path fix, legend wording) were being
+recognised only in narrow, mutually exclusive opcode SHAPES instead of
+via one shared normalization pass -- a file carrying more than one kind
+of delta, or a delta whose lines difflib happens to group together, was
+never going to classify clean under runs 6/7's structure.
+
+**Fix, in `classify_md_diff`** (`regen_b132.py` only; `pcrecbench/
+report.py` untouched, same as run 7): normalize BOTH old and new line
+lists for (1) the cwd-path delta (`_normalize_relpath` over every
+line), THEN (2) the reporter-stamp delta (`_normalize_reporter_line`,
+new -- collapses the file's one `^reporter: vN (...)` line to a fixed
+placeholder on both sides), applied uniformly regardless of opcode
+shape -- BEFORE any diffing happens. `difflib.SequenceMatcher` then runs
+on the doubly-normalized line lists; whatever opcodes remain are
+checked against the legend rule exactly as run 7 specified it (every
+`removed` line a legend bullet, every `added` line a legend bullet
+whose text matches the same-subbench v15 reference byte for byte) or
+the whole group aborts. Because normalization no longer depends on
+opcode boundaries, a file may now carry any COMBINATION of the three
+deltas, anywhere in the file, and each is still counted per file
+(`cwd_fix_fired` / `n_legend` returned exactly as before).
+
+**Unit-tested offline against REAL committed text**, no store load
+(`/tmp/.../scratchpad/test_composition.py`, ephemeral, not committed):
+`old_text` = the actual committed v14 altwide file (`git show HEAD:
+reports/2026-09-05-altwide-0.2-budu-ryzen1600-after-334fd10e.md` --
+identical to the worktree copy, since this file is one of the 16 run 7
+never wrote); `new_text` built from it by applying the SAME three
+transforms run 8's real render will apply (cwd-path substitution,
+reporter-line bump to v16, and the `shape=` line replaced + `clsfolds=`
+inserted right after it using the byte-identical text found in the
+real, already-committed v15 file
+`2026-09-06-altwide-0.2-budu-ryzen1600-after-d34c9131.md` -- confirmed
+by grep that this v14 file already carries every v14-introduced legend
+token (`edge`/`edges`/`folds`/`frameless`/`islands`/`K`/`sel`/`shape`/
+`start`) and is missing only `clsfolds`, i.e. exactly a `shape=`
+same-line replace plus one legend-line insertion, not a wholesale
+rewrite). Four assertions, all passed:
+
+1. The combined delta (11-line cwd block + reporter stamp + shape=
+   replace/clsfolds= insert) classifies clean: `ok=True, cwd_fixed=True,
+   n_legend=2`.
+2. The identical `new_text` WITHOUT a `legend_reference` still aborts
+   (`cwd_fixed` is still correctly `True` even though the overall
+   classification fails) -- proves the cwd-path fix and the legend
+   allowance are independent, not coupled.
+3. A `clsfolds=` line whose text does NOT match the v15 reference still
+   aborts even WITH a `legend_reference` given -- proves the
+   byte-identity check is real, not a rubber stamp on any legend-shaped
+   line.
+4. An unrelated content change (`agreement: agree` -> `agreement:
+   DISAGREE`) still aborts -- proves the normalization did not become so
+   permissive that a real, wrong delta would slip through.
+
+`python3 -m py_compile` on the restructured script: clean.
+
+**Two-phase restructuring** (the second half of this lane's brief --
+STOP PAYING THE LOAD PER ITERATION): `regen_b132.py` is now
+`--render` (Phase A) / `--classify-and-write` (Phase B) instead of one
+combined `main()`.
+
+- **Phase A (`--render`)**: loads the store ONCE (the same
+  `report.discover_records`/`load_all` calls as before), and for every
+  `.tsv` NOT already stamped `reporter: v16 (...)` (the same skip check
+  run 7 used, checked before touching the store further for that
+  group), renders `.tsv`/`.md`/`.subject-grain.md` and writes each
+  VERBATIM to `<scratchpad>/renders/<base>.{tsv,md,subject-grain.md}`.
+  No diffing, no classification, no writes into `reports/`. Ends with
+  `RENDER_COMPLETE`.
+- **Phase B (`--classify-and-write`)**: touches NO store. For each
+  cached render, reads the CURRENT `reports/<base>.*` content as "old"
+  (== committed, for any group Phase B has not yet written), classifies
+  against the cached "new", and on a clean classification writes the
+  cached render into `reports/`. A group already at v16 in `reports/`
+  (a prior Phase B run already wrote it) is skipped by the same
+  version-stamp check, so Phase B is safely re-runnable without
+  re-invoking Phase A. Ends with `CLASSIFY_COMPLETE`, or `ABORT
+  <group>: <reason>` + a non-zero exit on the first ungreen group
+  (nothing from that group is written; groups already written by
+  earlier iterations of Phase B stay written).
+
+This means the classifier can now be iterated to green in seconds:
+Phase A pays the ~750s/~3.6GB load once; every subsequent classifier
+fix only re-runs Phase B (no store, sub-second per group).
+
+**Launched, DETACHED, per BOILERPLATE** (Phase A is the same
+~750s/~3.6GB-RSS operation that killed two earlier tracked attempts and
+forced runs 6/7 to run detached):
+
+```
+LOG=/tmp/claude-1001/-home-duxevents-pcrec-bench/01ae41ff-6171-48d8-8bc2-5ffd2cd96f47/scratchpad/regen_run8.log
+```
+
+**Completion marker**: the line `DONE rc=0` appended to that log (any
+other `rc` is a failure). On success the tail carries `RENDER_COMPLETE`,
+one `RENDERED <base>` or `SKIP <base> (already v16)` line per group (26
+`SKIP`, 16 `RENDERED`, matching run 7's split), and the store load time
++ byte count as its own finding, same shape as runs 6/7's.
+
+**On the marker landing (`DONE rc=0`), a fresh agent should**:
+
+1. `tail -100` the log (or the whole thing -- short once past the load)
+   and confirm exactly 16 `RENDERED` lines, 26 `SKIP` lines, and
+   `RENDER_COMPLETE`, no `RENDER-ABORT` anywhere.
+2. `ls /tmp/claude-1001/-home-duxevents-pcrec-bench/01ae41ff-6171-48d8-8bc2-5ffd2cd96f47/scratchpad/renders/` --
+   expect 48 files (16 groups x 3).
+3. Run Phase B: `cd worktrees/b13pre && python3 -u
+   /tmp/.../scratchpad/regen_b132.py --classify-and-write` (no store
+   load, seconds; safe to run in the foreground, iterate on
+   `classify_md_diff` in the SAME script if any group still aborts --
+   no need to re-run Phase A). Confirm `CLASSIFY_COMPLETE`, exactly 16
+   `OK` lines, no `ABORT`.
+4. Follow run 6's original steps 2-5 for the final proof and commit:
+   `git status --short reports/` (expect all 126 files: 78 from run 6 +
+   48 from these 16 groups), the filtered `git diff` proof for `.tsv`
+   (giveup_smallest rows + the floor_pattern header key only) and for
+   `.md`/`.subject-grain.md` (version line + the ten cwd-path files +
+   the `legend_v13_v15` bullets on the 5 v13-before / 5 v14-before files,
+   each new bullet byte-identical to its same-subbench v15 reference),
+   fill this report's per-file table from Phase B's own
+   `--- PER-FILE SUMMARY ---` block, commit `reports/` citing this lane
+   and both phases' logs, add a `[B13.2]` entry to `reports/CLAUDE.md`
+   (who/when/why, the delta shape including `legend_v13_v15`, per-file
+   counts), then send the manager the completion handback.
+
+**Per-file table: OWED** -- to be filled from Phase B's own
+`--- PER-FILE SUMMARY ---` block once `CLASSIFY_COMPLETE` lands (same
+columns as run 6/7 planned: `file | reporter (before -> v16) |
+giveup_smallest rows added | floor_pattern | cwd_path_fix |
+legend_v13_v15`).
+
 ## Handback
 
 Sent to the manager alongside this report's commit: code/tests/docs
 complete and green on everything that does not need the real store;
-the `reports/` regeneration is the one OWED item. Run 7 is launched
-DETACHED with the classifier fix above; log path and exact resume
-steps (both run 6's and run 7's) are in this report. Not committing
-the regenerated `reports/` files themselves -- that, and the diff
-proof, is the next agent's job once `DONE rc=0` lands.
+the `reports/` regeneration is the one OWED item. Run 8 fixes the
+composition bug that aborted run 7 (proven offline against real
+committed text, four assertions incl. three negative controls -- see
+above), restructures the script into `--render`/`--classify-and-write`
+phases so the ~750s store load is paid once total rather than once per
+classifier iteration, and is launched DETACHED
+(`regen_run8.log`, marker `DONE rc=0`) for Phase A only. Phase B (no
+store load, seconds) and the final commit are the next agent's job once
+the marker lands -- resume steps above.
