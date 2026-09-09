@@ -37,7 +37,15 @@ manager — noticing until asked; the only evidence of "done" was `ps
 aux` forensics run from outside.) Chain every backgrounded command with
 `; echo "DONE rc=$?" >> <logfile>` (or a `touch <marker>` beside the
 worktree) and treat that line/file, not a live-process check, as the
-ONLY source of truth for "has this finished". Before sending ANY idle
+ONLY source of truth for "has this finished". **A job you launched
+with `setsid … & disown` (or any plain `&`) is NOT a harness task: NO
+completion notification will EVER reach you** — "I'll resume once the
+notification arrives" is waiting on nothing (lane b13pre, 2026-09-08:
+idle 20 min after its job had already exited rc=1; the manager's
+marker check found it). For a run under the Bash tool's cap, use
+`run_in_background: true` (harness-tracked, it DOES notify); for a
+longer one, DO-THEN-FINISH below — commit, report the marker as OWED,
+launch, END; a fresh agent checks the marker. Before sending ANY idle
 notification, status message, or handback while a background job is
 outstanding, run the check for its marker and quote the result inline
 — a claim of "still running" or "waiting for X" is not credible without
