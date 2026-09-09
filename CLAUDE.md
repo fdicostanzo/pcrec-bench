@@ -302,8 +302,15 @@ reporter **v16** — P-1 `floor_pattern:` header key, P-2 `giveup_smallest`
 rows, cwd-INDEPENDENT provenance paths, 82 reporter tests, every committed
 report regenerated and diff-proved (KB-16: the whole-store load is ~750 s /
 3.6 GB at 160 records and is memory-killed as a tracked task — detached
-runs only); [B13.3] the implementation lane (Opus) OPEN. `make check` at
-29f02ab: 4/72/0 · 344/344 · 75+7. Manager sessions start with the
+runs only); [B13.3] the interpreter's part 1 (Opus lane, ~35 min):
+`catalogue/rules.toml` (31 rules), `pcrecbench/interpret.py` + `pcrecbench
+interpret`, predictions (`docs/dev/predictions/`), 58 fixtures + goldens,
+`make check-interpret` (132 checks, ~30 s, in `make check`; never loads the
+store), §10's acceptance 25/25; [B13.4] the `/pcrec-bench-interpret` skill +
+three committed `reports/*.interpretation.md` sidecars. **[B13] COMPLETE**
+(follow-ups [B41]: regenerate the sidecars at every window's close — they
+are stamped against the LIVE index). `make check` at a1960a9: 4/72/0 ·
+344/344 · 75+7 · 132. Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope

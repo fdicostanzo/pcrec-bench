@@ -89,3 +89,112 @@
   (202→17, 432→9, 635→12, 190→2, 81→2, 129→1, 60→4).
   DONE 2026-09-09: see the parent row's [B13.3] DONE note in plan.md (merged 8c0dcfa, landing fix 7fe4c81; lane report docs/dev/lanes/b13impl_report.md).
 
+- [B13] STATE:completed — THE INTERPRETER (Frank, 2026-08-25: "reads
+  and provides interpretation to these reports as an add-on … no
+  opinions, all based on facts"; agreed design, journal part 5). Two
+  parts: (1) a DETERMINISTIC fact-finder, `pcrecbench interpret`, reading
+  the report TSV + store/index.tsv (never the markdown), emitting the
+  FIRED RULES with rows, numbers and record ids, plus the rules that did
+  NOT fire; a versioned RULE CATALOGUE (id, definition, threshold WITH
+  its source — spread-based, never a magic number — a worked example
+  from a real report): status caveats (inconclusive-load, excluded
+  cells, give-ups with code + subject), cross-pin deltas beyond spread,
+  rank flips vs the reference arm, ratios inside the timer floor,
+  PREDICTIONS vs OUTCOMES (the inbox's stated expectations as input:
+  confirmed / refuted / result no prediction covered), registered
+  buckets (known readings that are facts with a source, e.g. the `\z`
+  regime artifact per feedback 2a); `make check-interpret` (same input →
+  same facts; a sabotaged report fires the rule its name claims). (2) a
+  project skill `/pcrec-bench-interpret <report>` that phrases the fired
+  rules into a SIDECAR `reports/<name>.interpretation.md` stamped with
+  the report's sha256 and the catalogue version — never a section in the
+  report (the reporter stays deterministic and diffable); committed
+  beside every report. OPINION FIREWALL: every sentence cites a fired
+  rule; hypotheses appear only as LINKS to where they are already
+  recorded (outbox, known_issues), never generated. Sits after [B9]
+  (needs OD-B14 status per row and OD-B15 pooled-vs-newest). Frank:
+  "let it sit a bit before we do it." INPUT TO COLLECT FIRST: pcrecdev1's
+  feedback on the repin report as it reads — actionability and
+  interpretation (outbox O-5; answer → docs/dev/feedback_pcrecdev1_
+  <date>-repin.md, cited here). Blinded first test: catalogue v1 must
+  find, unprompted, the collapse, the three inconclusive records, the
+  give-ups and the vm-in result in the two existing reports.
+  2026-09-07: DESIGN NOTE v1 delivered (lane b13design, merged 651a7ce,
+  docs/design/interpreter_v1.md) and put through a three-lens adversarial
+  critic panel the same day (docs/dev/reviews/2026-09-07-r4-interpreter-v1.md,
+  every citation independently re-verified against source before
+  disposition): architecture SOUND (no rule invents a tuned constant;
+  every threshold is read as a string the reporter already computed) but
+  NOT YET BUILDABLE — 11 blocking + 8 should-fix findings, all accepted/
+  accepted-amended by the manager, incl. a wrong ranking-group key that
+  makes R-BUCKET-FORM unsatisfiable by construction, an acceptance-test
+  predicate (R-DELTA-3) that cannot fire on any committed report, the
+  design's own "strongest claim" (R-BUCKET-KB recognising KB-13/14) not
+  expressible from its declared inputs, a missing seventh rule class
+  (R-ARM) without which the charter's own `vm-in` blinded-test item is
+  unreachable, and an opinion-firewall gap (template prose itself is
+  unaudited). A REVISION lane (not implementation) applies the review's
+  dispositions to produce v1.1 next; only then does an implementation
+  lane open. STATE stays not-started through both steps.
+  2026-09-07: v1.1 DELIVERED (lane b13rev, merged dab2c9f) — every
+  BLOCKING/SHOULD-FIX disposition applied (1,228 → 2,391 lines), every
+  citation re-read from source by the lane itself, not copied from the
+  critics; the manager independently re-verified two of the new
+  substantive claims (R-ARM-1's two email-report numbers, the P6 ledger
+  "marginal" claim) exactly before merging. R-ARM (a seventh class,
+  same-pin/cross-config comparisons) makes the charter's own `vm-in`
+  blinded-test item an ordinary firing instead of a conceded gap; an
+  `aggregate` mechanism collapses a modern report's ~420-bullet sidecar
+  to ~44 without ranking by interest; the opinion-firewall gap (template
+  prose itself) is closed with a links-only rule + a human-reviewed
+  template-diff gate. Two reporter PRECONDITIONS are named and NOT yet
+  built — P-1 (`floor_pattern:` header key) and P-2 (giveup-smallest
+  metric rows) — one reporter change, one REPORTER_VERSION bump, one
+  regeneration; these must land before an implementation lane can open.
+  [B13] stays STATE:not-started. Next concrete step when this row is
+  picked up again: the small P-1+P-2 reporter-precondition lane, then
+  the implementation lane itself (catalogue/rules.toml,
+  pcrecbench/interpret.py, make check-interpret, the skill).
+  2026-09-08: inbox I-58 (pcrecdev1's cross-review at Frank's ask):
+  APPROVED CONDITIONAL — four must-fix spec edits, one revision commit,
+  NO re-panel; the owed step-2 pass RUN on their side (19/19 dispositions
+  confirmed-resolved, zero silent deviations, one stale reduce.py
+  citation); Q3 input: set-local bands stay OUT (Frank rules). STARTED
+  the same evening on Frank's "proceed with b13" (Fable session, I-60):
+  - [B13.1] DONE 2026-09-08 — spec v1.2 MERGED f7ed5c5 (lane b13v12: I-58's four
+    edits + minors + the §6.5 honesty edit; the r4 review's closing pass
+    appended — step-2 19/19, by-id completeness 56/56, charter F9 the third
+    dropped id, already applied); row archived in plan_completed.md.
+  - [B13.2] DONE 2026-09-09 — reporter v16 MERGED 29f02ab (lanes b13pre →
+    b13regen → b13regen2 → b13fin: P-1/P-2 exactly per §2.5, `_gave_up_cell_detail`
+    the one shared derivation, cwd-INDEPENDENT provenance paths as a ruled
+    addition, 82 reporter tests, all 42 report groups regenerated and
+    diff-proved — 60 giveup_smallest rows in 8 files, floor 40 / none 2, ten
+    groups' `../../store` prefix normalized, the v13/v14 legend backlog
+    explained; the regeneration took eight attempts — KB-16); `make
+    check-report` 75+7 passed and `make check-harness` 344/344 at 29f02ab
+    (both detached, 2026-09-09 02:24/02:38 EDT); row archived in plan_completed.md.
+  - [B13.3] DONE 2026-09-09 — the interpreter, part 1, MERGED 8c0dcfa + landing
+    fix 7fe4c81 (lane b13impl, Opus, ~35 min): catalogue/rules.toml (31 rules,
+    [[pin_order]]), pcrecbench/interpret.py + `interpret`, the predictions reader
+    + P1-P13 transcription, 58 fixtures, the frozen index snapshot, 4 goldens,
+    make check-interpret 129/129 in 28 s (in `make check`), §10 acceptance 25/25.
+    Two merge-time defects fixed by the manager: goldens carried the worktree's
+    ABSOLUTE path (now repo-relative via display_path; one build_stamp shared with
+    section 5) and the §8(6) template gate's first positive firing — the merge
+    commit carries the reviewer's line naming all 31 ids. 17 deviations recorded
+    in docs/dev/lanes/b13impl_report.md (R-ARM-1's extremal = ratio, the
+    known-key list parsed from source, P12 rolls up refuted); findings: R-RANK-1
+    fires 7× on Report B (note said ≥5), P1 refuted by rule at d34c9131.
+    Row archived in plan_completed.md.
+  - [B13.4] DONE 2026-09-09 — MERGED a1960a9 (lane b13skill, Sonnet): the
+    `/pcrec-bench-interpret` skill (§9.1: runs `interpret --render`, checks its
+    own determinism, commits the sidecar; the firewall stated; never hand-edit)
+    + three committed sidecars (Reports A, B, C — C with predictions); section 3
+    binding (132 checks); the fresh-reader opinion audit of Report A found
+    nothing untraceable. Frank's blinded reading is HIS (owed by Frank).
+  COMPLETED 2026-09-09 (seventeenth session, Fable): all four substeps merged —
+  v1.2 (f7ed5c5), reporter v16 (29f02ab), the interpreter part 1 (8c0dcfa +
+  7fe4c81), the skill + sidecars (a1960a9). §10's acceptance 25/25 on Reports
+  A-D; Frank's own blinded reading owed by Frank; follow-ups → [B41].
+
