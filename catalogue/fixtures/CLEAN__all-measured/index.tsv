@@ -1,0 +1,2 @@
+path	subbench	version	testee_id	machine_id	timestamp	status	rows
+records/clean-null@1.0/libpcre2_10.46_interp-caps-simdna/clean-null@1.0__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260909T000000Z.jsonl	clean-null	1.0	libpcre2_10.46_interp-caps-simdna	budu-ryzen1600	2026-09-09T00:00:00Z	measured	12

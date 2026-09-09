@@ -371,8 +371,10 @@ bindings) live here, vendored or system, pinned either way.
   full, at the top of the file**), `driverrun.py`, `record.py`, `store.py`
   (the two tiers, the `.canonical` marker), `reduce.py` (the set-grain
   reduction `quick` and the reporter share), `quiet.py`, `env.py`,
-  `oracle_pcre2.py`, `report.py` (the reporter, [B5]), `__main__.py` (the
-  CLI: `run`, `quick`, `index`, `quiet`, `testees`, `report`). Specified
+  `oracle_pcre2.py`, `report.py` (the reporter, [B5]), `interpret.py`
+  (THE INTERPRETER, [B13] — the deterministic fact-finder over a report
+  TSV + `store/index.tsv`), `__main__.py` (the CLI: `run`, `quick`,
+  `index`, `quiet`, `testees`, `report`, `interpret`). Specified
   by `docs/design/harness_contract.md`. See its CLAUDE.md.
 - `bench/<name>/` — the SUB-BENCHES: sidecar, patterns, deterministic
   generators + sha256 manifests, oracle-verified expectations, engine
@@ -431,6 +433,17 @@ bindings) live here, vendored or system, pinned either way.
   `index.tsv`, `machines.tsv`. Pinned records only; scratch records live
   in `build/scratch-store/` (or `$PCRECBENCH_SCRATCH_STORE`), never here.
   See its CLAUDE.md.
+- `catalogue/` — the INTERPRETER's rule catalogue at **1.0** ([B13.3],
+  2026-09-09): `rules.toml` (31 rules in 7 classes, the `[[pin_order]]`
+  table, every threshold citing the `report.py`/`reduce.py` line it
+  reads), `check_interpret.py` (`make check-interpret`'s six sections),
+  `acceptance_10.py` (interpreter_v1.md §10's acceptance test, 25/25),
+  `refresh_golden.py`, `fixtures/` (58 fixtures: a real reporter slice
+  plus at most one declared mutation, `gen.py --check`) and `golden/`
+  (the FROZEN index snapshot + the pinned facts). At the root beside
+  `schema/` deliberately: a format with a version, a validator and a
+  fixture corpus. **Append the new pin to `[[pin_order]]` at every
+  re-pin.** See its CLAUDE.md.
 - `tools/` — `selfcheck.py`, the harness half of `make check`.
 - `.claude/skills/pcrec-bench-manager/` — the manager-session skill.
 - Planned (not yet created): `pcrecbench/report.py` ([B5]).
@@ -444,6 +457,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
 
     make                # == make check-schema (the default target)
     make check          # EVERYTHING: check-schema + check-harness
+                        #             + check-report + check-interpret
     make check-schema   # the record schema: the design note's field tables
                         # against the JSON Schema, every schema/examples/
                         # record accepted, every schema/examples/bad/ record
@@ -622,6 +636,20 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # the denied w-384 refuse), iso-ts 8/4 edges through
                         # the abi-19/21 dispatch, registries 74/25 · 50 · 55
                         # (~20 min; needs libpcre2-8-0 and a C compiler)
+    make check-interpret # 129 checks in six sections (~28 s; [B13.3]): the
+                        # catalogue/code correspondence and every load-time
+                        # check, the header known-key list DERIVED from
+                        # report.py's own header block, determinism + the
+                        # golden facts for interpreter_v1.md 10's acceptance
+                        # reports against a FROZEN index snapshot (so a
+                        # records-only commit can never fail it), sidecar
+                        # freshness, the 58 fixtures (each rule fires on its
+                        # sabotage and not on its control, exactly one
+                        # DECLARED field apart; the synthetic CLEAN null
+                        # control fires nothing), the no-prose check (a
+                        # sidecar re-renders from its own facts TSV byte for
+                        # byte), and the template-diff gate. Never loads the
+                        # record store.
     make deps           # what the harness needs, and whether this box has it
     make cc-gate-census # [B33] (1): every bench pattern x 3 pcrec engine
                         # modes (auto/nocaps/vm) x 2 forms compiled under

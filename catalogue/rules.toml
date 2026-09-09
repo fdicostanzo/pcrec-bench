@@ -1,0 +1,1234 @@
+# The interpreter's RULE CATALOGUE — docs/design/interpreter_v1.md §3.
+#
+# This file is the CONTRACT `pcrecbench/interpret.py` is checked against
+# (§3.2): every `[[rule]]` here has a function named `r_<id lowercased,
+# hyphens to underscores>` there, every such function has a `[[rule]]`
+# here, and every rule function is handed a view that raises
+# `UndeclaredColumn` on any column outside that rule's own `inputs`.
+#
+# `predicate` is PROSE, for the reader; the executable predicate is the
+# python function. `threshold_src` cites the line in
+# `pcrecbench/report.py` / `pcrecbench/reduce.py` the threshold comes
+# from — no rule introduces a constant of its own (§4, §13).
+#
+# EVERY diff that touches a `template`, `no_fire` or `links` field, or
+# adds a `[[signature]]`, must carry a reviewer's approval line in the
+# commit message naming the rule ids reviewed (§8(6)).
+
+catalogue_version = "1.0"
+# Every bump regenerates every committed sidecar in the same commit
+# (§3.3). MINOR: a rule added, a template's wording, a link, an
+# `example`, a `[[pin_order]]` append. MAJOR: a predicate or threshold
+# changes, a rule is removed, `inputs` read a different column, or a
+# `[[signature]]` is registered.
+
+# ------------------------------------------------------------------ data
+
+# R-BUCKET-SPAN reads pin ADJACENCY from this table, never from an
+# inferred order (§4.7, panel B10): `store/index.tsv` has no pin-order
+# column, and ordering by earliest timestamp gives STORE-adjacency,
+# which is a different predicate. Appended by hand at every re-pin (Q10);
+# a pin absent from the table is exit 2, never a silent non-firing.
+[[pin_order]]
+engine = "pcrec"
+pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
+          "263b013", "a7e0bdf", "1989c62", "288d505", "334fd10e",
+          "d34c9131"]
+
+# ===================================================== class R-STATUS ==
+
+[[rule]]
+id            = "R-STATUS-1"
+title         = "an included record whose status is not `measured`"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = ["status"]
+inputs        = [
+  "report:record.{testee,metric}",
+  "index.{path,testee_id,status}",
+]
+predicate     = """
+An included `record` row whose record id joins to a `store/index.tsv`
+row with `status` other than `measured`.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+The status token is `store/index.tsv`'s own column, written by
+`pcrecbench/store.py` from the record's `run.status` (schema v1.4's
+decision table, docs/design/gate_shape_v14.md). The rule compares it
+against the literal `measured` and adds no threshold.
+"""
+slots         = ["record_id", "testee", "status"]
+arith         = [
+  "record_id: the `record` row's `testee` column, which carries the RECORD ID (report.py render_tsv's record block) -- joined to the index by `path`'s basename with `.jsonl` removed (interpreter_v1.md 2.2, the only join)",
+]
+template      = "`{record_id}` (testee `{testee}`) is included with status **{status}**."
+no_fire       = "every included record joins to an index row whose status is `measured`"
+links         = []
+example       = """
+No committed report exercises this rule: every committed query names its
+roster and its window, so `include_unmeasured` is False on all 42 and a
+non-`measured` record is never drawn. The fixture
+`catalogue/fixtures/R-STATUS-1__included-not-measured/` mutates one
+index row's `status` to `inconclusive-spread`.
+"""
+
+[[rule]]
+id            = "R-STATUS-2"
+title         = "a non-measured record outside this report's population"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = ["status"]
+inputs        = [
+  "report:header.{subbench_versions,machines}",
+  "report:record.{testee,metric}",
+  "index.{path,subbench,version,testee_id,machine_id,timestamp,status}",
+]
+predicate     = """
+A `store/index.tsv` row for one of this report's (subbench, version,
+machine) triples whose status is not `measured` and whose record id is
+not among the report's own `record` rows.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+As R-STATUS-1: the index's own `status` column against the literal
+`measured`. The population is the header's own `subbench_versions` and
+`machines` values (report.py render_tsv's header block).
+"""
+slots         = ["record_id", "testee", "timestamp", "subbench", "version", "machine", "status"]
+arith         = [
+  "subbench/version: each `subbench_versions` header member split at the last `@` -- the reporter joins them with `,` and spells each `<subbench>@<version>`",
+  "record_id: the index `path`'s basename with `.jsonl` removed",
+]
+template      = "`{record_id}` (testee `{testee}`, {timestamp}) is in store/index.tsv for {subbench}@{version} on {machine} with status **{status}** and is NOT in this report's population."
+no_fire       = "every index row for this report's (subbench, version, machine) population is either included or `measured`"
+links         = []
+example       = """
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv:
+store/index.tsv carries 14 rows for email-specimen@0.1 on
+budu-ryzen1600, of which three are `inconclusive-load` (interp @
+17:34:02Z, auto-caps @ 17:51:31Z, auto-nocaps @ 17:55:34Z) and appear
+nowhere in the report -- each superseded by a `measured` record of the
+same testee that evening.
+"""
+
+[[rule]]
+id            = "R-STATUS-3"
+title         = "a cell excluded from ranking"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = []
+inputs        = [
+  "report:excluded?metric=pass_rate.{pattern,regime_or_na,form,testee,pass_rate,n_gave_up,n_wrong,gave_up_summary}",
+]
+predicate     = """
+An `excluded` section row whose `metric` is `pass_rate` -- the BASE row.
+Precondition P-2's `giveup_smallest` rows land in the same section and
+are R-STATUS-12's input, never this rule's (§4.1, cross-review I-58).
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+The section is the reporter's own: `r.expectation_failing or not
+n_timed` (report.py render_tsv's rankable/others split), NOT
+`pass_rate < 1`. The rule reads the section and the columns beside it
+and computes nothing.
+"""
+slots         = ["pattern", "regime", "form", "testee", "pass_rate", "n_wrong", "n_gave_up", "gave_up_summary"]
+arith         = []
+template      = "{pattern} / {regime} / {form} / `{testee}` is EXCLUDED from ranking: pass-rate {pass_rate}; {n_wrong} wrong answer(s); {n_gave_up} give-up trial(s); give-up summary {gave_up_summary}. (`n_gave_up` counts TRIALS; a `×N` in the summary counts SUBJECTS.)"
+no_fire       = "no cell is excluded from ranking in this report"
+links         = []
+example       = """
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv:
+13 base rows, e.g. `factored / large-subject-throughput / plain /
+libpcre2_10.46_jit-caps-simdna`, pass-rate 0.6667, 0 wrong, 0 give-up
+trials, summary `0` -- a row whose exclusion cause the TSV does not
+carry, rendered without a fabricated cause.
+"""
+
+[[rule]]
+id            = "R-STATUS-4"
+title         = "a pattern that did not compile"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = ["testee"]
+inputs        = [
+  "report:did_not_compile.{pattern,testee,gave_up_summary}",
+]
+predicate     = """
+A `did_not_compile` section row, deduplicated to the distinct
+(pattern, testee) set -- the reporter emits one row per ranking GROUP
+([B12] R10), so one refusal appears once per regime.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+The section and the verbatim diagnostic are the reporter's own
+(report.py render_tsv's did_not_compile block, which carries the
+one-line diagnostic in `gave_up_summary` because no other column takes
+free text).
+"""
+slots         = ["pattern", "testee", "diagnostic"]
+arith         = []
+template      = "{pattern} / `{testee}`: did-not-compile — {diagnostic}"
+no_fire       = "every pattern compiled on every testee in this report"
+links         = []
+example       = """
+reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv: 172
+`did_not_compile` rows reducing to 60 distinct (pattern, testee) pairs,
+e.g. `cnd-group` on `pcrec_d34c9131_auto-caps-simdna`, "pcrec: module
+'conditionals' is enabled but (?(...) is not implemented yet (pattern
+offset 8)".
+"""
+
+[[rule]]
+id            = "R-STATUS-5"
+title         = "the query population"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = []
+inputs        = [
+  "report:header.{source,records,superseded,newer_not_measured,excluded_invalid}",
+]
+predicate     = """
+Any of the header's `superseded`, `newer_not_measured` or
+`excluded_invalid` counts is greater than zero.
+"""
+threshold     = "> 0 on three header integers, definitional"
+threshold_src = """
+The four numbers are the reporter's own header values (report.py
+render_tsv's header block; the candidate count is KB-8's
+`(N record(s) matching this query)` inside `source`). "Some candidate
+was not included" is exactly "one of the three counts is non-zero";
+there is no tuned bound.
+"""
+slots         = ["candidates", "included", "superseded", "newer_not_measured", "excluded_invalid"]
+arith         = [
+  "candidates: the integer N in the `source` header value's `(N record(s) matching this query)`; the whole value when that shape is absent",
+]
+template      = "The query drew {candidates} candidate record(s) and included {included}; {superseded} superseded, {newer_not_measured} newer-but-not-measured, {excluded_invalid} invalid."
+no_fire       = "the query included every candidate record it drew"
+links         = []
+example       = """
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv:
+`source: store/index.tsv (14 record(s) matching this query); records: 9;
+superseded: 5`.
+"""
+
+[[rule]]
+id            = "R-STATUS-6"
+title         = "a population spanning record schema versions"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = []
+inputs        = [
+  "report:header.{schema_versions,records}",
+  "report:record.{testee,metric,value}",
+]
+predicate     = """
+The header's `schema_versions` names more than one version.
+"""
+threshold     = "more than one member, definitional"
+threshold_src = """
+`schema_versions` is the reporter's own comma-joined sorted set
+(report.py render_tsv's header block). "Mixed" is "more than one
+member". The `n/a (v<schema>)` agreement strings counted beside it are
+`_agreement_display`'s own rendering for a record predating the v1.4
+trial-agreement block (report.py `_agreement_display`).
+"""
+slots         = ["schema_versions", "n_pre_14", "n_records"]
+arith         = [
+  "n_pre_14: the count of `record` rows whose agreement value starts with the literal `n/a (v` -- `_agreement_display`'s pre-1.4 rendering, distinct from `n/a (N trials)`",
+]
+template      = "This report's population spans record schema versions {schema_versions}; {n_pre_14} of {n_records} record(s) predate the v1.4 trial-agreement block and read `n/a (v<schema>)` for agreement."
+no_fire       = "every record in this report is at one schema version"
+links         = []
+example       = """
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv:
+`schema_versions: 1.1,1.2`, all nine records reading `n/a (v1.1)` or
+`n/a (v1.2)`.
+"""
+
+[[rule]]
+id            = "R-STATUS-7"
+title         = "a population mixing X13 rule revisions"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = []
+inputs        = [
+  "report:header.{mixed_x13,x13_rules}",
+]
+predicate     = """
+The header reads `mixed_x13: True`.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+`mixed_x13` is the reporter's own boolean over the population's X13
+rule labels (report.py render_tsv's header block; the labels themselves
+are the schema's versioned X13 clause, record_schema.md §4).
+"""
+slots         = ["x13_rules"]
+arith         = []
+template      = "The population mixes X13 rule revisions: {x13_rules}."
+no_fire       = "every record in this report was gated under one X13 rule revision"
+links         = []
+example       = """
+Three committed reports carry a two-clause `x13_rules` value, e.g.
+`v1.1-1.3 X13 (both samples quiet) on 14; v1.4 X13 (pre-flight + trial
+agreement) on 2` -- the header value whose own `; ` join is why §2.1's
+known-key split is normative.
+"""
+
+[[rule]]
+id            = "R-STATUS-8"
+title         = "the busiest other core during a measured window"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = []
+inputs        = [
+  "report:header.worst_other_core_busy",
+]
+predicate     = """
+The header's `worst_other_core_busy` is present and is not `n/a`.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+The value is the reporter's own worst per-core occupancy reading over
+the population's records ([B32], report.py render_tsv's header block),
+itself BD7's `mpstat -P ALL 1 5` Average as the pre-flight recorded it.
+The rule states the number and adds no bound of its own.
+"""
+slots         = ["worst_other_core_busy"]
+arith         = []
+template      = "The busiest other core during a measured window read {worst_other_core_busy}."
+no_fire       = "no record in this report carries an other-core occupancy reading"
+links         = []
+example       = """
+reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv:
+`worst_other_core_busy: 30.15% (libpcre2_10.46_interp-caps-simdna /
+grp-atomic-alt / large-subject-throughput)`.
+"""
+
+[[rule]]
+id            = "R-STATUS-9"
+title         = "trial agreement reads `disagree`"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = []
+inputs        = [
+  "report:record.{testee,metric,value}",
+]
+predicate     = """
+A `record` row whose agreement string (the `value` column, paired with
+`metric = agreement`) starts with `disagree`.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+`reduce.agreement_line` produces five strings and the rule reads the
+verdict token of one of them:
+  `agree (N of N groups; …)`                 reduce.py:372-376
+  `agree 0/0 groups -- nothing judged (…)`   reduce.py:371
+  `disagree (N of N groups; worst …)`        reduce.py:365-369   <- fires
+  `n/a (N trials)`                           reduce.py:359
+  `n/a (v<schema>)`                          report.py `_agreement_display`
+`n/a (v<schema>)` is provenance about a record's AGE and is reported by
+R-STATUS-6, not here (§4.1, panel B2). The v1.4 rule's own constants
+(k = 1.5, d_min = 2, share_c = 3, N >= 5 and odd) were MEASURED over
+the store's 68 records at [B20]; this rule re-derives nothing.
+"""
+slots         = ["record_id", "agreement"]
+arith         = []
+template      = "`{record_id}`: trial agreement reads {agreement}."
+no_fire       = "no record's trial agreement reads `disagree`"
+links         = []
+example       = """
+No committed report carries a `disagree` record: the one production
+firing of the v1.4 spread rule (2026-08-31) was re-measured clean per
+contract. The fixture
+`catalogue/fixtures/R-STATUS-9__disagree/` mutates one `record` row's
+agreement string to `reduce.agreement_line`'s own disagree rendering.
+"""
+
+[[rule]]
+id            = "R-STATUS-10"
+title         = "a record whose after-sample failed"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = []
+inputs        = [
+  "report:record.{testee,metric,delta_verdict}",
+]
+predicate     = """
+A `record` row carrying an `after: …` failure in the `delta_verdict`
+slot.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+The AFTER samples are PROVENANCE under schema v1.4 (a failed after-
+sample leaves the record `measured`); the reporter renders the failing
+numbers into the `record` row's last column (report.py render_tsv's
+record block, `after_by_record`). The rule copies the string.
+"""
+slots         = ["record_id", "after"]
+arith         = []
+template      = "`{record_id}`: the after-sample failed — {after}."
+no_fire       = "no record in this report carries a failed after-sample"
+links         = [
+  "docs/design/gate_shape_v14.md",
+  "docs/design/record_schema.md#6.9 Trial agreement (v1.4, [B20])",
+]
+example       = """
+No committed report carries one. The fixture
+`catalogue/fixtures/R-STATUS-10__after-failed/` mutates one `record`
+row's `delta_verdict` slot to `after: load1 1.42`.
+"""
+
+[[rule]]
+id            = "R-STATUS-11"
+title         = "a scratch-tier row"
+class         = "status"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = ["testee"]
+inputs        = [
+  "report:scratch.{pattern,regime_or_na,form,testee}",
+]
+predicate     = """
+A `scratch` section row.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+The section is the reporter's own (report.py render_tsv's
+rankable/others split: `tier == "scratch" and not include_scratch`).
+The tier itself is schema v1.2 §6.8's, written by the harness.
+"""
+slots         = ["pattern", "regime", "form", "testee"]
+arith         = []
+template      = "{pattern} / {regime} / {form} / `{testee}` is a SCRATCH-tier row and is not in the ranking."
+no_fire       = "no scratch-tier row is in this report"
+links         = []
+example       = """
+No committed report carries a scratch row: `store/` refuses a scratch
+record on write and on index (the `.canonical` marker). The fixture
+`catalogue/fixtures/R-STATUS-11__scratch-row/` re-sections one
+`not_ranked` row.
+"""
+
+[[rule]]
+id            = "R-STATUS-12"
+title         = "one subject, two give-up codes across two patterns"
+class         = "status"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = []
+inputs        = [
+  "report:excluded?metric=giveup_smallest.{pattern,subject_or_na,regime_or_na,form,testee,value,n}",
+]
+predicate     = """
+One subject id that gives up under two DIFFERENT codes on two different
+patterns, at one testee and one regime.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+Precondition P-2's columns (§2.5): the reporter emits one `excluded`
+row per distinct give-up code beside each base row, carrying the code
+in `value`, the smallest firing subject in `subject_or_na` and its byte
+count in `n` (report.py render_tsv's `giveup_smallest` block, from
+`_gave_up_cell_detail`). The rule compares two code STRINGS for
+inequality and parses nothing.
+"""
+slots         = ["subject", "subject_bytes", "code_a", "pattern_a", "code_b", "pattern_b", "testee", "regime"]
+arith         = [
+  "pattern_a/pattern_b: the two patterns in sorted order, so the rendering of a pair is independent of row order",
+]
+template      = "Subject `{subject}` ({subject_bytes} B) gives up as **{code_a}** on {pattern_a} and **{code_b}** on {pattern_b}, on `{testee}` in {regime}."
+no_fire       = "no subject gives up under two different codes on two patterns at one testee and regime"
+links         = [
+  "docs/dev/feedback_pcrecdev1_2026-08-25-repin-v2.md#(2) STILL INTERPRETED / WRONG / AMBIGUOUS",
+]
+example       = """
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv:
+subject `t-c-long-atom-run` (1,048,576 B) gives up as
+`-2:PCREC_ERR_STEPS` on `factored` and `-4:PCREC_ERR_WORK` on `orig`,
+in large-subject-throughput, on three testees.
+"""
+
+[[rule]]
+id            = "R-STATUS-13"
+title         = "a ranking group with no rankable reference arm"
+class         = "status"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = []
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,testee,rank_or_na,value}",
+]
+predicate     = """
+A ranking group -- (subbench, pattern, regime) at set grain -- with no
+`rank` row whose testee id satisfies the reporter's own `_is_reference`.
+`ratio_vs_baseline` is then a ratio to the group's BEST row, not to the
+reference arm.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+The reporter's fallback fires iff no RANKABLE reference row exists in
+the group: `ref_ns = ref.median_ns if ref else (rankable[0][2].median_ns
+…)` (report.py render_tsv's ranking block), where `ref` is the first
+rankable row satisfying `_is_reference` (report.py `_is_reference`). A
+rankable row is exactly a `rank` row, so the predicate is the
+reporter's own condition, not an approximation.
+"""
+slots         = ["pattern", "regime", "best_testee"]
+arith         = [
+  "_is_reference: strip a possible `@<timestamp>` suffix, then `base.startswith(\"libpcre2_\") and \"_interp-\" in base` (report.py `_is_reference`, copied verbatim)",
+  "best_testee: the group's rank-1 row's testee -- the row `ref_ns` falls back to",
+]
+template      = "{pattern} / {regime}: no reference arm is rankable in this group, so `ratio_vs_baseline` is a ratio to the group's fastest row (`{best_testee}`), not to the reference arm. R-RANK-1 does not fire in this group."
+no_fire       = "every ranking group in this report carries a rankable reference arm"
+links         = []
+example       = """
+reports/2026-09-05-altwide-0.2-budu-ryzen1600-after-334fd10e.tsv is
+where these concentrate: libpcre2 refuses the wide rungs at its own
+compiled-size ceiling, so a group above the wall ranks pcrec against
+pcrec.
+"""
+
+# ====================================================== class R-DELTA ==
+
+[[rule]]
+id            = "R-DELTA-1"
+title         = "cross-pin Δ outside spread"
+class         = "delta"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = ["regime", "config", "direction"]
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,rank_or_na,value,delta_verdict}",
+  "report:rank?metric=stddev_ns.{pattern,regime_or_na,form,testee,value}",
+]
+predicate     = """
+Any `; `-separated clause of `delta_verdict` matching `^(faster|slower) ×`.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+report.py `_cross_pin_verdict` ([B9] R8): `unchanged (within spread)`
+iff |median_new - median_old| <= 2 * max(stddev_old, stddev_new);
+otherwise faster/slower ×N.NN. This rule adds NO threshold of its own --
+it reads the verdict clause the reporter already computed and printed,
+so the interpreter and the report can never disagree about what "beyond
+spread" means.
+"""
+slots         = ["pattern", "regime", "form", "testee", "verdict", "median_ns", "config", "direction", "ratio"]
+arith         = [
+  "config: testee_id with version_slug removed -- the §7.2 testee-id decomposition, same split minus the version_slug field",
+  "direction: the matched clause's own leading token ('faster' or 'slower'), copied verbatim from the predicate's own match",
+  "ratio: the matched clause's own trailing '×N.NN', parsed as a float, copied verbatim from the predicate's own match",
+]
+extremal      = "ratio"
+template      = "{pattern} / {regime} / {form} / `{testee}`: the reporter's cross-pin Δ reads **{verdict}** (median {median_ns} ns)."
+no_fire       = "no rank row carries a faster/slower clause"
+links         = []
+example       = """
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv,
+factored / short-subject-search / plain /
+pcrec_692c2e8_vm-caps-simdna, rank 5: median 69,537.5 ns,
+delta_verdict `faster ×1.19`.
+"""
+
+[[rule]]
+id            = "R-DELTA-2"
+title         = "cross-pin selection change"
+class         = "delta"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = ["regime", "config"]
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,rank_or_na,value,delta_verdict}",
+]
+predicate     = """
+Any `; `-separated clause of `delta_verdict` matching
+`^selection changed \\(`.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+[B16] R4 (report.py `_cross_pin_info`, the engine-reading block): when
+the two pins compiled different ENGINES the reporter refuses a ratio
+and prints the selection change instead. The rule reads that clause.
+"""
+slots         = ["pattern", "regime", "form", "testee", "rank", "verdict", "config"]
+arith         = [
+  "config: testee_id with version_slug removed -- the §7.2 testee-id decomposition",
+]
+template      = "{pattern} / {regime} / {form} / `{testee}` (rank {rank}): **{verdict}**."
+no_fire       = "no rank row carries a selection-change clause"
+links         = []
+example       = """
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv:
+six cells carry `selection changed (vm → dfa)`, at ranks 1 and 2 in each
+of three regimes on `auto-caps-simdna` and `auto-nocaps-simdna`.
+"""
+
+[[rule]]
+id            = "R-DELTA-3"
+title         = "a cell that is now measured"
+class         = "delta"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = ["regime", "config"]
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,rank_or_na,value,delta_verdict}",
+]
+predicate     = """
+Any `; `-separated clause of `delta_verdict` matching
+`^now measured \\(was: `.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+report.py `_cross_pin_info`: where the PREVIOUS pin's cell was
+expectation-failing and this one is not, the verdict carries
+`now measured (was: <reason>)`, `<reason>` from
+`_set_cell_failure_reason` (gave-up | wrong | gave-up+wrong | no-data |
+other). A selection change EXPLAINS such a verdict rather than
+replacing it, which is why the two clauses co-occur.
+"""
+slots         = ["pattern", "regime", "form", "testee", "rank", "verdict", "config"]
+arith         = [
+  "config: testee_id with version_slug removed -- the §7.2 testee-id decomposition",
+]
+template      = "{pattern} / {regime} / {form} / `{testee}` (rank {rank}): **{verdict}**."
+no_fire       = "no rank row carries a now-measured clause"
+links         = []
+example       = """
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv:
+four cells carry `now measured (was: gave-up)` -- factored /
+large-subject-throughput ranks 1 and 2, and factored / match-compliance
+/ whole-subject ranks 1 and 2 -- each as the second clause of a compound
+with R-DELTA-2.
+"""
+
+[[rule]]
+id            = "R-DELTA-4"
+title         = "a finding no prediction covers"
+class         = "delta"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = ["rule_id", "regime"]
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,value,delta_verdict}",
+]
+predicate     = """
+An R-DELTA-1 / R-RANK-1 / R-ARM-1 / R-FLOOR-2 firing whose cell no
+prediction's selector covers. With no predictions file supplied the
+rule reports `input-absent`: "no prediction covers this cell" is then
+universally true, and flagging every Δ is flagging none (§4.2).
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+The firings are the four rules' own, each with its own cited
+threshold; the coverage test is a prediction selector's own glob match
+(§6.3). This rule computes no number.
+"""
+slots         = ["rule_id", "pattern", "regime", "form", "testee", "predictions_file"]
+arith         = []
+template      = "{rule_id} fired on {pattern} / {regime} / {form} / `{testee}` and no prediction in {predictions_file} selects that cell."
+no_fire       = "every finding of R-DELTA-1, R-RANK-1, R-ARM-1 and R-FLOOR-2 is covered by a prediction selector"
+links         = []
+example       = """
+No committed report is interpreted with a predictions file today, so
+this rule reports `input-absent` on all three acceptance reports. On
+reports/2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.tsv
+R-DELTA-1 alone fires 202 times, which is what firing this rule with no
+predictions file would degenerate to.
+"""
+
+# ======================================================= class R-RANK ==
+
+[[rule]]
+id            = "R-RANK-1"
+title         = "a cross-pin pair that crossed the reference arm"
+class         = "rank"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = ["regime", "config"]
+inputs        = [
+  "report:rank?metric=ratio_vs_baseline.{pattern,regime_or_na,form,testee,rank_or_na,value}",
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,rank_or_na,value}",
+]
+predicate     = """
+A cross-pin pair -- same engine and config, different version slug,
+same form, one ranking group -- whose two `ratio_vs_baseline` values lie
+on opposite sides of 1.0, in a group where R-STATUS-13 does not fire.
+"""
+threshold     = "1.0 on `ratio_vs_baseline`, DEFINITIONAL"
+threshold_src = """
+The reference arm IS 1.000x by construction ([B9] R5:
+`ratio_b = r.median_ns / ref_ns`, report.py render_tsv's ranking
+block), so "crossed the reference arm" is exactly "the ratio crossed
+1". Definitional, not tuned. The guard is R-STATUS-13's own predicate:
+where no rankable reference arm exists the reporter falls back to the
+group's fastest row (`ref_ns = … if ref else rankable[0]…`) and the
+template's `{reference}` would name a row that is not the reference.
+"""
+slots         = ["pattern", "regime", "form", "config", "reference", "old_pin", "old_ratio", "new_pin", "new_ratio"]
+arith         = [
+  "config: testee_id decomposed to (engine, mode, caps, simd, extra) with version_slug removed -- the §7.2 testee-id decomposition, splitting the config slug from the RIGHT",
+  "old_pin/new_pin: the pair's two version slugs, ordered by their position in [[pin_order]]",
+  "_is_reference: strip a possible `@<timestamp>` suffix, then `base.startswith(\"libpcre2_\") and \"_interp-\" in base` (report.py `_is_reference`, copied verbatim)",
+]
+extremal      = "new_ratio"
+template      = "{pattern} / {regime} / {form} / config `{config}`: vs the reference arm `{reference}`, {old_pin} reads {old_ratio}× and {new_pin} reads {new_ratio}× — the cell crossed the reference arm between the two pins."
+no_fire       = "no cross-pin pair's ratio_vs_baseline values lie on opposite sides of 1.0 in a group with a rankable reference arm"
+links         = []
+example       = """
+reports/2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.tsv,
+cls-upto-8192 / match-compliance / whole-subject, config
+`auto-caps-simdna`: pcrec_334fd10e reads 1.788241 and pcrec_d34c9131
+reads 0.269358.
+"""
+
+# ======================================================== class R-ARM ==
+
+[[rule]]
+id            = "R-ARM-1"
+title         = "two arms one config token apart"
+class         = "arm"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = ["arm_pair", "regime"]
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,rank_or_na,value}",
+  "report:rank?metric=stddev_ns.{pattern,regime_or_na,form,testee,value}",
+]
+predicate     = """
+Two testee ids in one ranking group, at the same engine and version
+slug, at the same form, whose config decomposes to four tokens
+differing in exactly ONE, neither of them the reference arm, whose
+medians differ by more than 2 × max(stddev_a, stddev_b).
+"""
+threshold     = "2 × max(stddev_a, stddev_b), COPIED from `_cross_pin_verdict`"
+threshold_src = """
+report.py `_cross_pin_verdict` ([B9] R8): `spread = max(old_stddev,
+new_stddev) * 2`, `unchanged` iff `abs(diff) <= spread`. This rule
+applies that identical arithmetic WITHIN a report instead of across
+pins, because the reporter computes no within-report spread comparison
+to read. It is the one place in the catalogue where a rule computes
+rather than reads, and the bound is the copied one, not a chosen one.
+"""
+slots         = ["pattern", "regime", "form", "pin", "config_a", "median_a", "config_b", "median_b", "ratio", "spread", "token_name", "token_a", "token_b", "arm_pair"]
+arith         = [
+  "testee_id -> (engine, version_slug, mode, caps, simd, extra): record_schema.md §6.4's composition rule, splitting the config slug from the RIGHT (simd is the last hyphen field, caps the one before it, mode is everything before that, so `vm-in` keeps its hyphen); `extra` is `(none)` when absent",
+  "ratio: max(median_a, median_b) / min(median_a, median_b), so it always reads >= 1",
+  "spread: 2 × max(stddev_a, stddev_b) -- `_cross_pin_verdict`'s own arithmetic",
+  "arm_pair: the two config slugs sorted and joined with ' vs ' -- an aggregation key, not a rendered slot",
+  "_is_reference: strip a possible `@<timestamp>` suffix, then `base.startswith(\"libpcre2_\") and \"_interp-\" in base` (report.py `_is_reference`, copied verbatim)",
+]
+extremal      = "ratio"
+template      = "{pattern} / {regime} / {form}, pin {pin}: `{config_a}` {median_a} ns vs `{config_b}` {median_b} ns — ×{ratio}, beyond 2 × max(stddev) = {spread} ns. The two arms differ in exactly one config token ({token_name}: {token_a} vs {token_b})."
+no_fire       = "no two arms one config token apart differ by more than twice the larger of their two standard deviations"
+links         = []
+example       = """
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv,
+pin 692c2e8: orig / short-subject-search / plain, `vm-in-caps-simdna`
+12,546.2 ns vs `vm-caps-simdna` 28,996.9 ns -- ×2.31, spread 862.2 ns.
+"""
+
+# ====================================================== class R-FLOOR ==
+
+[[rule]]
+id            = "R-FLOOR-1"
+title         = "a compile ratio inside the timer floor"
+class         = "floor"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = ["testee"]
+inputs        = [
+  "report:compile?metric=jitter.{pattern,form,testee,value}",
+]
+predicate     = """
+A `compile` section row with `metric = jitter` whose value is the token
+`timer-floor`.
+"""
+threshold     = "the `timer-floor` TOKEN, never the constant"
+threshold_src = """
+`_TIMER_FLOOR_NS = 20_000` ("20 microseconds, the clock's practical
+floor"), applied by report.py `_jitter_flag`: a compile cell whose
+`min_ns` is under it reports `timer-floor` instead of a ratio "that is
+mostly measuring the clock, not the compile". The interpreter reads the
+token and never the constant.
+"""
+slots         = ["pattern", "form", "testee"]
+arith         = []
+template      = "{pattern} / {form} / `{testee}`: the compile-cost jitter cell reads `timer-floor` — `min_ns` is below the reporter's own timer floor, so the ratio would measure the clock rather than the compile."
+no_fire       = "no compile row's jitter cell reads `timer-floor`"
+links         = []
+example       = """
+reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv: 190
+compile rows read `timer-floor`, 95 on each libpcre2 arm, against 644
+rows carrying a real ratio.
+"""
+
+[[rule]]
+id            = "R-FLOOR-2"
+title         = "a ranked cell at or below the set's own floor pattern"
+class         = "floor"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = ["regime", "testee"]
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,value,n}",
+  "report:header.floor_pattern",
+]
+predicate     = """
+A ranked cell whose per-subject mean is at or below the floor pattern's
+per-subject mean for the same (regime, testee).
+"""
+threshold     = "<= 1.0 on the ratio, DEFINITIONAL"
+threshold_src = """
+The arithmetic is report.py `_floor_mean_for`'s, copied: `median_ns /
+n_subjects` for the cell and for the pattern the header key
+`floor_pattern` names, at the same (regime, testee). The floor pattern
+comes from the header (precondition P-1), which carries the floor
+pattern OF THE RECORDS IN THIS REPORT (`floor_pattern_by_sb`, from
+`patterns[].role`, schema v1.3) -- never from a `bench/` checkout,
+which is KB-2's mistake. "At or below the set's own per-call overhead
+control" is exactly `ratio <= 1.0`; definitional, not tuned. Set grain
+only: at subject grain the `n` column is a trial count
+(report.py `_n_and_pass_rate`), so the same division is meaningless.
+"""
+slots         = ["pattern", "regime", "form", "testee", "cell_mean", "floor_pattern", "floor_mean", "ratio"]
+arith         = [
+  "cell_mean: the rank row's `value` (median_ns) divided by its `n` (n_subjects at set grain) -- `_floor_mean_for`'s own arithmetic",
+  "floor_mean: the same division on the floor pattern's rank row at the same (regime, testee)",
+  "ratio: cell_mean / floor_mean",
+]
+extremal      = "ratio"
+template      = "{pattern} / {regime} / {form} / `{testee}`: {cell_mean} ns per subject against the floor pattern `{floor_pattern}`'s {floor_mean} ns per subject on the same testee and regime — ×{ratio}, at or below the set's own per-call control."
+no_fire       = "no ranked cell is at or below its set's own floor pattern on the same testee and regime"
+links         = []
+example       = """
+reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv:
+anc-caret / short-subject-search / pcrec_d34c9131_vm-caps-simdna, rank
+1, median 246.457657 ns over n = 42 -> 5.868 ns/subject, against the
+`floor` pattern's 800.098671 / 42 = 19.050 -- 0.308x.
+"""
+
+[[rule]]
+id            = "R-FLOOR-3"
+title         = "a compile jitter ratio at or above 1.0"
+class         = "floor"
+since         = "1.0"
+grain         = ["set", "subject"]
+aggregate     = ["testee"]
+inputs        = [
+  "report:compile?metric=jitter.{pattern,form,testee,value}",
+]
+predicate     = """
+A `compile` section row whose `jitter` value is a RATIO (not the
+`timer-floor` token) that is at or above 1.0 -- stddev at or above the
+median.
+"""
+threshold     = ">= 1.0 on the printed ratio, DEFINITIONAL"
+threshold_src = """
+report.py `_jitter_flag` prints `stddev_ns / median_ns` to three
+decimals ([B14] R5, which supersedes [B9]'s boolean 'stddev > median'
+flag). "Stddev at or above the median" is exactly `ratio >= 1.0`; the
+rule reads the printed ratio and adds no bound.
+"""
+slots         = ["pattern", "form", "testee", "jitter"]
+arith         = []
+extremal      = "jitter"
+template      = "{pattern} / {form} / `{testee}`: the compile-cost jitter ratio is {jitter} — stddev at or above the median."
+no_fire       = "no compile row's jitter ratio is at or above 1.0"
+links         = []
+example       = """
+43 firings across 14 of the 42 committed report TSVs, concentrated in
+loglines (3-5 per file) and bounded (1-4) -- e.g.
+reports/2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.tsv.
+"""
+
+# ====================================================== class R-PRED ==
+
+[[rule]]
+id            = "R-PRED-1"
+title         = "a prediction that holds"
+class         = "pred"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = []
+inputs        = [
+  "report:rank.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:excluded.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:not_ranked.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:scratch.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:did_not_compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:compile_stamp.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:record.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+]
+predicate     = """
+A prediction clause whose claim HOLDS against this report. A COMPOUND
+prediction's parent verdict is `confirmed` only when every one of its
+clauses is confirmed (§4.6's roll-up).
+"""
+threshold     = "the prediction's own stated bounds"
+threshold_src = """
+None of this rule's own: a prediction states its bounds in its own
+`op`/`lo`/`hi` columns (§6.3) and this rule evaluates them against
+quantities the reporter already reduced and printed. The closed
+`quantity` set is validated at load, so a prediction cannot ask for a
+number the TSV does not carry.
+"""
+slots         = ["prediction_id", "source", "source_ref", "claim", "measured"]
+arith         = [
+  "measured: the selected rows' quantity after the prediction's own declared `reducer` (§6.3's closed reducer set), rendered by the one numeric formatter",
+]
+template      = "{prediction_id} ({source} {source_ref}) — **confirmed**: predicted {claim}; measured {measured}."
+no_fire       = "no prediction clause holds against this report"
+links         = []
+example       = """
+docs/dev/predictions/syntax-0.1-first.tsv, P13 (`no compile time beyond
+×10 the median on any compiled testee`), scored CONFIRMED at worst
+×2.08 in the [B36] syntax ledger.
+"""
+
+[[rule]]
+id            = "R-PRED-2"
+title         = "a prediction that fails"
+class         = "pred"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = []
+inputs        = [
+  "report:rank.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:excluded.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:not_ranked.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:scratch.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:did_not_compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:compile_stamp.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:record.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+]
+predicate     = """
+A prediction clause whose claim FAILS against this report. A COMPOUND
+prediction's parent verdict is `refuted` only when every one of its
+clauses is refuted (§4.6's roll-up).
+"""
+threshold     = "the prediction's own stated bounds"
+threshold_src = """
+As R-PRED-1: the bound is the prediction's, the quantity is the
+reporter's. A ledger's own tally is a human reading and this rule does
+not try to reproduce it (§6.6's ruling).
+"""
+slots         = ["prediction_id", "source", "source_ref", "claim", "measured"]
+arith         = [
+  "measured: the selected rows' quantity after the prediction's own declared `reducer` (§6.3's closed reducer set), rendered by the one numeric formatter",
+]
+template      = "{prediction_id} ({source} {source_ref}) — **refuted**: predicted {claim}; measured {measured}."
+no_fire       = "no prediction clause fails against this report"
+links         = []
+example       = """
+docs/dev/predictions/syntax-0.1-first.tsv, P6's interp clause: one
+measured ratio is 1.722 against a stated bound of ×1.5.
+"""
+
+[[rule]]
+id            = "R-PRED-3"
+title         = "a prediction that cannot be evaluated"
+class         = "pred"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = []
+inputs        = [
+  "report:rank.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:excluded.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:not_ranked.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:scratch.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:did_not_compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:compile_stamp.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:record.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+]
+predicate     = """
+A prediction clause whose cell is absent from the report, or present but
+excluded / not-ranked / did-not-compile. The rule exists so a prediction
+can never be silently dropped -- the failure mode a hand-kept ledger has.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+Presence, and the reporter's own section value for the selected rows
+(report.py render_tsv's section column). No number is compared.
+"""
+slots         = ["prediction_id", "source", "source_ref", "reason"]
+arith         = []
+template      = "{prediction_id} ({source} {source_ref}) — **not evaluable**: {reason}."
+no_fire       = "every prediction clause reaches a ranked cell in this report"
+links         = []
+example       = """
+docs/dev/predictions/syntax-0.1-first.tsv, P2.d (`vrb-accept`): the
+pattern is a refusal at this pin, so the cell is in the
+`did_not_compile` section and the clause is not evaluable.
+"""
+
+[[rule]]
+id            = "R-PRED-4"
+title         = "a compound prediction whose clauses disagree"
+class         = "pred"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = []
+inputs        = [
+  "report:rank.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:excluded.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:not_ranked.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:scratch.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:did_not_compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:compile_stamp.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:record.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+]
+predicate     = """
+A COMPOUND prediction (one with more than one clause) whose clause
+verdicts are not all the same: all-confirmed rolls up to R-PRED-1,
+all-refuted to R-PRED-2, any mix to this rule.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+Arithmetic over the clause verdicts, each of which carries its own
+prediction-stated bound. `partial` is the modal outcome in the one
+committed, fully-scored prediction set this project has (the [B36]
+syntax ledger's tally); the per-clause verdicts are authoritative and
+the parent verdict is this arithmetic (§6.6's ruling).
+"""
+slots         = ["prediction_id", "source", "source_ref", "n_confirmed", "n_refuted", "n_not_evaluable", "clause_verdicts"]
+arith         = [
+  "n_confirmed / n_refuted / n_not_evaluable: counts of this prediction's own clause verdicts",
+  "clause_verdicts: the clause ids with their verdicts, in clause-id sorted order",
+]
+template      = "{prediction_id} ({source} {source_ref}) — **partial**: {n_confirmed} clause(s) confirmed, {n_refuted} refuted, {n_not_evaluable} not evaluable: {clause_verdicts}."
+no_fire       = "no compound prediction's clauses disagree"
+links         = []
+example       = """
+docs/dev/predictions/syntax-0.1-first.tsv, P4 and P12: the [B36] ledger
+lists both under REFUTED while naming the refuted clause only;
+mechanically both are `partial`.
+"""
+
+# ==================================================== class R-BUCKET ==
+
+[[rule]]
+id            = "R-BUCKET-FORM"
+title         = "the regime artifact"
+class         = "bucket"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = []
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,fact,testee}",
+]
+predicate     = """
+A ranking group whose RANKABLE rows carry both `same program` and
+`separate artifact` in the `fact` column. Rankable deliberately: the
+`fact` column is emitted on excluded, not-ranked, scratch and
+did-not-compile rows alike, and a group whose only `separate artifact`
+row was excluded is not a group where two forms rank together.
+"""
+threshold     = "none of this rule's own"
+threshold_src = """
+`_form_fact` ([B9] R4, report.py): `whole-subject` is BY CONSTRUCTION a
+second compiled artifact (record_schema.md §5 ADDITIONS 3, enforced by
+X27); `plain` is the one ordinary artifact reached via a runtime flag.
+The rule counts the two values the reporter printed.
+"""
+slots         = ["pattern", "regime", "n_separate", "n_same"]
+arith         = [
+  "n_separate / n_same: counts of the group's rankable rows by the reporter's own `fact` value",
+]
+template      = "{pattern} / {regime} ranks rows of BOTH facts in one group: {n_separate} `separate artifact` (whole-subject) and {n_same} `same program` (plain)."
+no_fire       = "no ranking group ranks a `same program` row beside a `separate artifact` one"
+links         = [
+  "docs/design/record_schema.md#5. The fixed enums (OD-B4 (a))",
+  "docs/dev/pcrec_references.md",
+]
+example       = """
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv:
+orig / match-compliance ranks nine rows in ONE group (form is not in the
+group key), 7 `separate artifact` and 2 `same program`; factored /
+match-compliance is 3 + 2.
+"""
+
+[[rule]]
+id            = "R-BUCKET-VSBEST"
+title         = "two or more pins in one ranking group"
+class         = "bucket"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = ["pin_slugs"]
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,rank_or_na,value}",
+]
+predicate     = """
+A ranking group carrying two or more distinct pcrec pin slugs.
+"""
+threshold     = ">= 2 distinct pin slugs, definitional"
+threshold_src = """
+`ratio_vs_best` is `r.median_ns / best_ns` over the group's rankable
+rows (report.py render_tsv's ranking block), and the group key is
+`(subbench, pattern, regime)` (report.py `_ranking_groups`) -- so a
+group holding two pins ranks them against each other. "Two or more
+pins" is a count of the version slugs the testee-id decomposition
+yields; there is no tuned bound.
+"""
+slots         = ["pattern", "regime", "n_slugs", "pin_slugs"]
+arith         = [
+  "pin_slugs: the sorted distinct version slugs of the group's pcrec testee ids -- the §7.2 testee-id decomposition",
+]
+template      = "{pattern} / {regime}: this ranking group ranks {n_slugs} pcrec pin slug(s) ({pin_slugs}) together, so `ratio_vs_best` is a ratio to the fastest row in the group whichever pin carries it."
+no_fire       = "no ranking group carries rows from two different pcrec pins"
+links         = [
+  "reports/CLAUDE.md",
+]
+example       = """
+reports/2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.tsv,
+cls-upto-1024 / short-subject-search: pcrec_334fd10e ranks 1 at
+989.819865 ns and pcrec_d34c9131 ranks 2 at 998.441155 ns while the
+same row's Δ reads `slower ×1.01`.
+"""
+
+[[rule]]
+id            = "R-BUCKET-SPAN"
+title         = "a cross-pin Δ spanning more than one pin"
+class         = "bucket"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = ["config"]
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,value,delta_verdict}",
+  "report:record.{testee,metric}",
+  "index.{path,testee_id,timestamp}",
+]
+predicate     = """
+A cross-pin Δ whose two pins are not adjacent in `[[pin_order]]`. The Δ
+partner is the reporter's own: the same (engine, config) sibling
+present in this report with the latest record timestamp strictly older
+than this row's.
+"""
+threshold     = "adjacency in `[[pin_order]]`, catalogue DATA"
+threshold_src = """
+The partner is `_cross_pin_info`'s own choice (report.py: same engine
+and config, a different version slug, the newest record timestamp
+strictly older than this testee's). Adjacency is read from this
+catalogue's `[[pin_order]]` table, never inferred: `store/index.tsv`
+has no pin-order column and ordering by earliest timestamp gives
+STORE-adjacency, a different predicate (panel B10). A pin absent from
+the table is exit 2.
+"""
+slots         = ["pattern", "regime", "form", "testee", "config", "old_pin", "new_pin", "span", "verdict"]
+arith         = [
+  "config: testee_id with version_slug removed -- the §7.2 testee-id decomposition",
+  "record timestamps: the report's own `record` rows joined to `store/index.tsv` by the record id (the index's `path` basename with `.jsonl` removed), giving each testee id its record timestamp",
+  "span: the distance between the two pins' positions in [[pin_order]]; 1 is adjacent and does not fire",
+]
+extremal      = "span"
+template      = "{pattern} / {regime} / {form} / `{testee}`: the cross-pin Δ ({verdict}) pairs {old_pin} with {new_pin}, which are {span} steps apart in the catalogue's `[[pin_order]]`, so the Δ is not a one-variable comparison."
+no_fire       = "every cross-pin Δ in this report pairs two pins adjacent in `[[pin_order]]`"
+links         = [
+  "reports/CLAUDE.md",
+]
+example       = """
+reports/2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.tsv: the
+`vm-in` rows' Δ partner is 288d505, not 334fd10e -- e.g. cls-upto-1024 /
+large-subject-throughput / plain, `faster ×1.53`. The fact
+reports/CLAUDE.md records by hand today.
+"""
+
+[[rule]]
+id            = "R-BUCKET-DOMINATED"
+title         = "a set cell dominated by one subject"
+class         = "bucket"
+since         = "1.0"
+# Declared at BOTH grains although the fact is subject-grain: the rule's
+# input is a subject-grain SIDECAR (`--subject-grain`), not the report
+# being interpreted, so on a set-grain report the honest answer is
+# `input-absent` (Q2, ruled (a)) rather than `grain`.
+grain         = ["set", "subject"]
+aggregate     = ["testee"]
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,subject_or_na,regime_or_na,form,testee,value}",
+]
+predicate     = """
+A set cell more than 90 % of whose total is one subject. Needs a
+SUBJECT-GRAIN TSV, which the reporter does not commit today, so the
+rule reports `input-absent` (§11 Q2, ruled (a)).
+"""
+threshold     = "`_DOMINANCE_SHARE = 0.90`, the reporter's own"
+threshold_src = """
+report.py `_DOMINANCE_SHARE = 0.90` and `_dominant_subject`'s docstring
+([B16] R7): a ratio between two such sums is a real number about a real
+total AND a statement about ONE subject wearing the set's name. The
+rule reads the reporter's constant rather than choosing one.
+"""
+slots         = ["pattern", "regime", "testee", "subject", "share"]
+arith         = [
+  "share: the largest subject's median_ns divided by the sum of the group's subject medians, at one (pattern, regime, testee)",
+]
+extremal      = "share"
+template      = "{pattern} / {regime} / `{testee}`: subject `{subject}` is {share} of this cell's total."
+no_fire       = "no subject-grain TSV is supplied, so no set cell's subject shares can be summed"
+links         = [
+  "reports/CLAUDE.md",
+]
+example       = """
+No committed report group has a `.subject-grain.tsv`; the reporter
+commits `.subject-grain.md` only. The rule therefore reports
+`input-absent` on every committed report.
+"""
+
+[[rule]]
+id            = "R-BUCKET-KB"
+title         = "a cell matching a registered known-issue signature"
+class         = "bucket"
+since         = "1.0"
+grain         = ["set"]
+aggregate     = ["kb_id"]
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,n_wrong,n_gave_up}",
+]
+predicate     = """
+A cell matching a REGISTERED `[[signature]]`. **No signature is
+registered in catalogue 1.0**, so the rule always reports
+`no-registered-signatures`.
+"""
+threshold     = "each registered signature's own; none registered in 1.0"
+threshold_src = """
+The registration bar (§4.7, panel B4): a `[[signature]]` must name a
+COLUMN-LEVEL discriminator that no other registered signature matches,
+checked by `make check-interpret` against every golden report, and
+registration is a MAJOR catalogue bump (§3.3). The measured reason none
+is registered: the KB-13/KB-14 signature text (`expected N
+non-overlapping match(es); observed M`) occurs zero times in the report
+TSV and MD at any grain -- it lives in docs/dev/known_issues.md and in
+the record JSONL, which §2.4 excludes -- and what the TSV does support,
+`(regime, form, n_wrong > 0, n_gave_up == 0)`, cannot discriminate
+KB-13's rows from KB-14's.
+"""
+slots         = ["kb_id", "pattern", "regime", "form", "testee", "signature"]
+arith         = []
+template      = "{pattern} / {regime} / {form} / `{testee}` matches the registered signature for {kb_id}: {signature}."
+no_fire       = "catalogue 1.0 registers no signature"
+links         = [
+  "docs/dev/known_issues.md",
+]
+example       = """
+None. §10 C.3 is a stated known gap of catalogue 1.0, not a MUST: on
+reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv the
+rule reports `no-registered-signatures`.
+"""

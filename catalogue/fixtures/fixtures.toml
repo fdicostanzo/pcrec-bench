@@ -1,0 +1,459 @@
+# The FIXTURE DECLARATION — docs/design/interpreter_v1.md §8(4).
+#
+# The precedent is `schema/examples/bad/`'s (the Makefile's own
+# check-schema comment): a GENERATED BASE plus ONE DECLARED MUTATION,
+# pinned by `gen.py --check`, never ~190 hand-typed files that would
+# carry combinations `render_tsv` cannot emit.
+#
+# Each `[[fixture]]` becomes `catalogue/fixtures/<name>/` holding its own
+# `source.toml` (this entry, materialised) and the GENERATED
+# `report.tsv` / `index.tsv` (and `predictions.tsv` where declared).
+# A fixture naming `base` is its base's CONTROL: `gen.py --check`
+# asserts that EXACTLY ONE declared field differs between the two --
+# the computable replacement for "the minimum number of bytes" -- and
+# `check_interpret.py` asserts the rule fires on one and not the other.
+#
+# `select` filters DATA rows: a row is kept when every named column
+# either equals the value (or is one of a list) or is EMPTY on that row,
+# so a `pattern`-scoped slice still carries the population's `record`
+# rows. The index slice keeps the rows for the report's own
+# (subbench, version, machine).
+
+report_a = "reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv"
+report_b = "reports/2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.tsv"
+report_c = "reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv"
+index    = "catalogue/golden/index@2026-09-09.tsv"
+predictions = "docs/dev/predictions/syntax-0.1-first.tsv"
+
+# ---------------------------------------------------------- R-STATUS --
+
+[[fixture]]
+name   = "R-STATUS-1__included-not-measured"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+mutate_index = { column = "status", value = "inconclusive-spread", where = { testee_id = "pcrec_692c2e8_vm-caps-simdna", timestamp = "2026-08-25T17:59:33Z" } }
+expect = ["R-STATUS-1"]
+
+[[fixture]]
+name   = "R-STATUS-1__control-all-measured"
+base   = "R-STATUS-1__included-not-measured"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+expect_not = ["R-STATUS-1"]
+
+[[fixture]]
+name   = "R-STATUS-2__inconclusive-outside-population"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+expect = ["R-STATUS-2"]
+
+[[fixture]]
+name   = "R-STATUS-2__control-other-machine"
+base   = "R-STATUS-2__inconclusive-outside-population"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+mutate_header = { key = "machines", value = "budu-ryzen1600-other" }
+expect_not = ["R-STATUS-2"]
+
+[[fixture]]
+name   = "R-STATUS-3__excluded-cell"
+report = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput" }
+expect = ["R-STATUS-3"]
+
+[[fixture]]
+name   = "R-STATUS-3__control-not-ranked"
+base   = "R-STATUS-3__excluded-cell"
+report = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput" }
+mutate = { column = "section", value = "not_ranked", all = true, where = { section = "excluded", metric = "pass_rate" } }
+expect_not = ["R-STATUS-3"]
+
+[[fixture]]
+name   = "R-STATUS-4__did-not-compile"
+report = "c"
+select = { pattern = "cnd-group" }
+expect = ["R-STATUS-4"]
+
+[[fixture]]
+name   = "R-STATUS-4__control-section-renamed"
+base   = "R-STATUS-4__did-not-compile"
+report = "c"
+select = { pattern = "cnd-group" }
+mutate = { column = "section", value = "not_ranked", all = true, where = { section = "did_not_compile" } }
+expect_not = ["R-STATUS-4"]
+
+[[fixture]]
+name   = "R-STATUS-5__superseded-candidates"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+expect = ["R-STATUS-5"]
+
+[[fixture]]
+name   = "R-STATUS-5__control-none-dropped"
+base   = "R-STATUS-5__superseded-candidates"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+mutate_header = { key = "superseded", value = "0" }
+expect_not = ["R-STATUS-5"]
+
+[[fixture]]
+name   = "R-STATUS-6__mixed-schema"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+expect = ["R-STATUS-6"]
+
+[[fixture]]
+name   = "R-STATUS-6__control-one-version"
+base   = "R-STATUS-6__mixed-schema"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+mutate_header = { key = "schema_versions", value = "1.2" }
+expect_not = ["R-STATUS-6"]
+
+[[fixture]]
+name   = "R-STATUS-7__mixed-x13"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+mutate_header = { key = "mixed_x13", value = "True" }
+expect = ["R-STATUS-7"]
+
+[[fixture]]
+name   = "R-STATUS-7__control-one-rule"
+base   = "R-STATUS-7__mixed-x13"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+expect_not = ["R-STATUS-7"]
+
+[[fixture]]
+name   = "R-STATUS-8__other-core-busy"
+report = "c"
+select = { pattern = "floor" }
+expect = ["R-STATUS-8"]
+
+[[fixture]]
+name   = "R-STATUS-8__control-na"
+base   = "R-STATUS-8__other-core-busy"
+report = "c"
+select = { pattern = "floor" }
+mutate_header = { key = "worst_other_core_busy", value = "n/a" }
+expect_not = ["R-STATUS-8"]
+
+[[fixture]]
+name   = "R-STATUS-9__disagree"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+mutate = { column = "value", value = "disagree (1 of 6 groups; worst orig / short-subject-search / plain d=3 of n=5; 0 unjudged)", where = { section = "record", testee = "email-specimen@0.1__pcrec_692c2e8_vm-caps-simdna__budu-ryzen1600__20260825T175933Z" } }
+expect = ["R-STATUS-9"]
+
+[[fixture]]
+name   = "R-STATUS-9__control-agree"
+base   = "R-STATUS-9__disagree"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+expect_not = ["R-STATUS-9"]
+
+[[fixture]]
+name   = "R-STATUS-10__after-failed"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+mutate = { column = "delta_verdict", value = "after: load1 1.42", where = { section = "record", testee = "email-specimen@0.1__pcrec_692c2e8_vm-caps-simdna__budu-ryzen1600__20260825T175933Z" } }
+expect = ["R-STATUS-10"]
+
+[[fixture]]
+name   = "R-STATUS-10__control-after-clean"
+base   = "R-STATUS-10__after-failed"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+expect_not = ["R-STATUS-10"]
+
+[[fixture]]
+name   = "R-STATUS-11__scratch-row"
+report = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput" }
+mutate = { column = "section", value = "scratch", all = true, where = { section = "excluded", metric = "pass_rate" } }
+expect = ["R-STATUS-11"]
+
+[[fixture]]
+name   = "R-STATUS-11__control-no-scratch"
+base   = "R-STATUS-11__scratch-row"
+report = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput" }
+expect_not = ["R-STATUS-11"]
+
+[[fixture]]
+name   = "R-STATUS-12__two-codes-one-subject"
+report = "a"
+select = { regime_or_na = "large-subject-throughput" }
+expect = ["R-STATUS-12"]
+
+[[fixture]]
+name   = "R-STATUS-12__control-same-code"
+base   = "R-STATUS-12__two-codes-one-subject"
+report = "a"
+select = { regime_or_na = "large-subject-throughput" }
+mutate = { column = "value", value = "-2:PCREC_ERR_STEPS", all = true, where = { section = "excluded", metric = "giveup_smallest", pattern = "orig" } }
+expect_not = ["R-STATUS-12"]
+
+[[fixture]]
+name   = "R-STATUS-13__no-reference-arm"
+report = "b"
+select = { pattern = "cls-upto-8192", regime_or_na = "match-compliance" }
+mutate = { column = "testee", value = "libpcre2_10.46_noref-caps-simdna", all = true, where = { section = "rank", testee = "libpcre2_10.46_interp-caps-simdna" } }
+expect = ["R-STATUS-13"]
+expect_not = ["R-RANK-1"]
+
+[[fixture]]
+name   = "R-STATUS-13__control-reference-present"
+base   = "R-STATUS-13__no-reference-arm"
+report = "b"
+select = { pattern = "cls-upto-8192", regime_or_na = "match-compliance" }
+expect = ["R-RANK-1"]
+expect_not = ["R-STATUS-13"]
+
+# ----------------------------------------------------------- R-DELTA --
+
+[[fixture]]
+name   = "R-DELTA-1__faster-outside-spread"
+report = "a"
+select = { pattern = "factored", regime_or_na = "short-subject-search" }
+expect = ["R-DELTA-1"]
+
+[[fixture]]
+name   = "R-DELTA-1__control-unchanged-within-spread"
+base   = "R-DELTA-1__faster-outside-spread"
+report = "a"
+select = { pattern = "factored", regime_or_na = "short-subject-search" }
+mutate = { column = "delta_verdict", value = "unchanged (within spread)", where = { section = "rank", metric = "median_ns", testee = "pcrec_692c2e8_vm-caps-simdna" } }
+expect_not = ["R-DELTA-1"]
+
+[[fixture]]
+name   = "R-DELTA-2__selection-changed"
+report = "a"
+select = { pattern = "factored", regime_or_na = "large-subject-throughput" }
+expect = ["R-DELTA-2", "R-DELTA-3"]
+expect_not = ["R-DELTA-1"]
+
+[[fixture]]
+name   = "R-DELTA-3__control-selection-only"
+base   = "R-DELTA-2__selection-changed"
+report = "a"
+select = { pattern = "factored", regime_or_na = "large-subject-throughput" }
+mutate = { column = "delta_verdict", value = "selection changed (vm → dfa)", all = true, where = { section = "rank", metric = "median_ns" } }
+expect = ["R-DELTA-2"]
+expect_not = ["R-DELTA-3"]
+
+[[fixture]]
+name   = "R-DELTA-2__control-no-selection-clause"
+base   = "R-DELTA-2__selection-changed"
+report = "a"
+select = { pattern = "factored", regime_or_na = "large-subject-throughput" }
+mutate = { column = "delta_verdict", value = "now measured (was: gave-up)", all = true, where = { section = "rank", metric = "median_ns" } }
+expect = ["R-DELTA-3"]
+expect_not = ["R-DELTA-2"]
+
+[[fixture]]
+name   = "R-DELTA-4__uncovered-finding"
+report = "c"
+select = { pattern = "lit-cat", regime_or_na = "short-subject-search" }
+predictions_select = ["P13"]
+expect = ["R-DELTA-4"]
+
+[[fixture]]
+name   = "R-DELTA-4__control-no-predictions"
+base   = "R-DELTA-4__uncovered-finding"
+report = "c"
+select = { pattern = "lit-cat", regime_or_na = "short-subject-search" }
+expect_token = { "R-DELTA-4" = "input-absent" }
+
+# ------------------------------------------------------ R-RANK/R-ARM --
+
+[[fixture]]
+name   = "R-RANK-1__crossed-the-reference"
+report = "b"
+select = { pattern = "cls-upto-8192", regime_or_na = "match-compliance" }
+expect = ["R-RANK-1", "R-DELTA-2"]
+
+[[fixture]]
+name   = "R-RANK-1__control-same-side"
+base   = "R-RANK-1__crossed-the-reference"
+report = "b"
+select = { pattern = "cls-upto-8192", regime_or_na = "match-compliance" }
+mutate = { column = "value", value = "1.100000", where = { section = "rank", metric = "ratio_vs_baseline", testee = "pcrec_d34c9131_auto-caps-simdna", form = "whole-subject" } }
+expect_not = ["R-RANK-1"]
+
+[[fixture]]
+name   = "R-ARM-1__vm-in-vs-vm"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search", testee = ["pcrec_692c2e8_vm-caps-simdna", "pcrec_692c2e8_vm-in-caps-simdna"] }
+expect = ["R-ARM-1"]
+
+[[fixture]]
+name   = "R-ARM-1__control-within-spread"
+base   = "R-ARM-1__vm-in-vs-vm"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search", testee = ["pcrec_692c2e8_vm-caps-simdna", "pcrec_692c2e8_vm-in-caps-simdna"] }
+mutate = { column = "value", value = "28996.905722", where = { section = "rank", metric = "median_ns", testee = "pcrec_692c2e8_vm-in-caps-simdna" } }
+expect_not = ["R-ARM-1"]
+
+# ----------------------------------------------------------- R-FLOOR --
+
+[[fixture]]
+name   = "R-FLOOR-1__timer-floor"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+expect = ["R-FLOOR-1"]
+
+[[fixture]]
+name   = "R-FLOOR-1__control-real-ratio"
+base   = "R-FLOOR-1__timer-floor"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+mutate = { column = "value", value = "0.500", all = true, where = { section = "compile", metric = "jitter" } }
+expect_not = ["R-FLOOR-1"]
+
+[[fixture]]
+name   = "R-FLOOR-2__at-or-below-the-floor"
+report = "c"
+select = { pattern = ["anc-caret", "floor"], regime_or_na = "short-subject-search" }
+expect = ["R-FLOOR-2"]
+
+[[fixture]]
+name   = "R-FLOOR-2__control-no-floor-pattern"
+base   = "R-FLOOR-2__at-or-below-the-floor"
+report = "c"
+select = { pattern = ["anc-caret", "floor"], regime_or_na = "short-subject-search" }
+mutate_header = { key = "floor_pattern", value = "none" }
+expect_not = ["R-FLOOR-2"]
+
+[[fixture]]
+name   = "R-FLOOR-3__jitter-above-one"
+report = "b"
+select = { pattern = "grp-upto-1024" }
+expect = ["R-FLOOR-3"]
+
+[[fixture]]
+name   = "R-FLOOR-3__control-jitter-below-one"
+base   = "R-FLOOR-3__jitter-above-one"
+report = "b"
+select = { pattern = "grp-upto-1024" }
+mutate = { column = "value", value = "0.500", where = { section = "compile", metric = "jitter", testee = "libpcre2_10.46_jit-caps-simdna" } }
+expect_not = ["R-FLOOR-3"]
+
+# ------------------------------------------------------------ R-PRED --
+
+[[fixture]]
+name   = "R-PRED-1__confirmed"
+report = "c"
+select = { pattern = "lit-cat" }
+predictions_select = ["P13"]
+expect = ["R-PRED-1"]
+
+[[fixture]]
+name   = "R-PRED-2__refuted"
+base   = "R-PRED-1__confirmed"
+report = "c"
+select = { pattern = "lit-cat" }
+predictions_select = ["P13"]
+mutate_predictions = { column = "hi", value = "0.5", where = { prediction_id = "P13" } }
+expect = ["R-PRED-2"]
+expect_not = ["R-PRED-1"]
+
+[[fixture]]
+name   = "R-PRED-3__not-evaluable"
+report = "c"
+select = { pattern = "lit-cat" }
+predictions_select = ["P13"]
+mutate_predictions = { column = "selector", value = "pattern=absent-pattern", where = { prediction_id = "P13" } }
+expect = ["R-PRED-3"]
+expect_not = ["R-PRED-1", "R-PRED-2"]
+
+[[fixture]]
+name   = "R-PRED-3__control-evaluable"
+base   = "R-PRED-3__not-evaluable"
+report = "c"
+select = { pattern = "lit-cat" }
+predictions_select = ["P13"]
+expect = ["R-PRED-1"]
+expect_not = ["R-PRED-3"]
+
+[[fixture]]
+name   = "R-PRED-4__partial"
+report = "c"
+select = { pattern = ["mod-i", "lit-cat"] }
+predictions_select = ["P8"]
+mutate_predictions = { column = "hi", value = "0.5", where = { prediction_id = "P8", clause = ".b" } }
+expect = ["R-PRED-4"]
+expect_not = ["R-PRED-1", "R-PRED-2"]
+
+[[fixture]]
+name   = "R-PRED-4__control-all-confirmed"
+base   = "R-PRED-4__partial"
+report = "c"
+select = { pattern = ["mod-i", "lit-cat"] }
+predictions_select = ["P8"]
+expect = ["R-PRED-1"]
+expect_not = ["R-PRED-4"]
+
+# ---------------------------------------------------------- R-BUCKET --
+
+[[fixture]]
+name   = "R-BUCKET-FORM__two-facts-one-group"
+report = "a"
+select = { pattern = "orig", regime_or_na = "match-compliance", testee = ["libpcre2_10.46_interp-caps-simdna", "pcrec_692c2e8_vm-caps-simdna"] }
+expect = ["R-BUCKET-FORM"]
+
+[[fixture]]
+name   = "R-BUCKET-FORM__control-one-fact"
+base   = "R-BUCKET-FORM__two-facts-one-group"
+report = "a"
+select = { pattern = "orig", regime_or_na = "match-compliance", testee = ["libpcre2_10.46_interp-caps-simdna", "pcrec_692c2e8_vm-caps-simdna"] }
+mutate = { column = "fact", value = "same program", where = { section = "rank", metric = "median_ns", testee = "pcrec_692c2e8_vm-caps-simdna" } }
+expect_not = ["R-BUCKET-FORM"]
+
+[[fixture]]
+name   = "R-BUCKET-VSBEST__two-pins"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search", testee = ["pcrec_692c2e8_vm-caps-simdna", "pcrec_8da6120_vm-caps-simdna"] }
+expect = ["R-BUCKET-VSBEST"]
+
+[[fixture]]
+name   = "R-BUCKET-VSBEST__control-one-pin"
+base   = "R-BUCKET-VSBEST__two-pins"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search", testee = ["pcrec_692c2e8_vm-caps-simdna", "pcrec_8da6120_vm-caps-simdna"] }
+mutate = { column = "testee", value = "pcrec_692c2e8_vm-in-caps-simdna", where = { section = "rank", metric = "median_ns", testee = "pcrec_8da6120_vm-caps-simdna" } }
+expect_not = ["R-BUCKET-VSBEST"]
+
+[[fixture]]
+name   = "R-BUCKET-SPAN__non-adjacent-pins"
+report = "b"
+select = { pattern = "cls-upto-1024", regime_or_na = "large-subject-throughput", testee = ["pcrec_d34c9131_vm-in-caps-simdna", "pcrec_288d505_vm-in-caps-simdna"] }
+expect = ["R-BUCKET-SPAN"]
+
+[[fixture]]
+name   = "R-BUCKET-SPAN__control-no-delta"
+base   = "R-BUCKET-SPAN__non-adjacent-pins"
+report = "b"
+select = { pattern = "cls-upto-1024", regime_or_na = "large-subject-throughput", testee = ["pcrec_d34c9131_vm-in-caps-simdna", "pcrec_288d505_vm-in-caps-simdna"] }
+mutate = { column = "delta_verdict", value = "", where = { section = "rank", metric = "median_ns", testee = "pcrec_d34c9131_vm-in-caps-simdna" } }
+expect_not = ["R-BUCKET-SPAN"]
+
+[[fixture]]
+name   = "R-BUCKET-DOMINATED__input-absent"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+expect_token = { "R-BUCKET-DOMINATED" = "input-absent" }
+
+[[fixture]]
+name   = "R-BUCKET-KB__no-registered-signatures"
+report = "a"
+select = { pattern = "orig", regime_or_na = "short-subject-search" }
+expect_token = { "R-BUCKET-KB" = "no-registered-signatures" }
+
+# ------------------------------------- the NULL CONTROL (Report D) ----
+
+[[fixture]]
+name      = "CLEAN__all-measured"
+synthetic = true
+expect    = []

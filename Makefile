@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check check-schema check-harness check-report deps help archive-inbox cc-gate-census
+.PHONY: check check-schema check-harness check-report check-interpret deps help archive-inbox cc-gate-census
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -77,11 +77,43 @@ check-schema:
 # It is a SMOKE SUITE, not a measurement: --trials 1 --iters 1, one regime,
 # --force-unquiet, and every record it writes is marked `synthetic`. Nothing
 # here may be read as a number.
-check: check-schema check-harness check-report
+check: check-schema check-harness check-report check-interpret
 
 ## check-harness: the harness self-checks (tools/selfcheck.py)
 check-harness:
 	@LC_ALL=C $(PYTHON) tools/selfcheck.py
+
+## check-interpret: the interpreter's catalogue, goldens, fixtures and firewall
+# [B13] docs/design/interpreter_v1.md 8, six sections:
+#   (1) catalogue/code correspondence -- every [[rule]] has a function and
+#       every function a [[rule]], every declared `inputs` entry parses and
+#       names real columns, the known-key header split's list is DERIVED
+#       from report.py's own header block (never retyped), every links
+#       entry resolves, every pcrec pin in a golden report is in
+#       [[pin_order]], every committed prediction's quantity/op/reducer is
+#       in its closed set, the two INEXPRESSIBLE clauses fail AT LOAD, and
+#       every rule has a fixture and a negative control;
+#   (2) determinism (two runs byte-identical in both formats) and the
+#       golden facts for section 10's acceptance reports -- against a FROZEN
+#       index snapshot, never store/index.tsv, so a records-only commit
+#       cannot fail this target;
+#   (3) sidecar freshness: every committed reports/*.interpretation.md
+#       re-renders byte-identical from its own stamped inputs;
+#   (4) the fixtures: gen.py --check re-derives every one, each rule fires
+#       on its sabotage and not on its control, exactly one DECLARED field
+#       differs between the pair, R-DELTA-1/R-DELTA-2 never co-fire on one
+#       cell while R-DELTA-2/R-DELTA-3 do, the R-STATUS-13 guard suppresses
+#       R-RANK-1, and the synthetic CLEAN null control fires nothing;
+#   (5) the no-prose check: a rendered sidecar is re-rendered FROM ITS
+#       FACTS TSV alone (reassembled by (rule_id, firing_seq)) and must
+#       come back byte-identical, so no line can exist that is not a
+#       template, a link, a heading or the stamp;
+#   (6) the template-diff gate: a commit touching a `template`, `no_fire`
+#       or `links` field must carry a reviewer's approval line.
+# Seconds, not minutes: it never loads the record store.
+check-interpret:
+	@echo "== check-interpret =="
+	@LC_ALL=C $(PYTHON) catalogue/check_interpret.py
 
 ## deps: report what the harness needs and whether this box has it
 deps:

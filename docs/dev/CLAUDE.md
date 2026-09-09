@@ -39,6 +39,11 @@ decisions) so cross-references between the two repos are never ambiguous.
   rewritten from scratch at every session end or significant pause. On any
   disagreement the committed docs win.
 
+- `predictions/` — MACHINE-READABLE PREDICTIONS ([B13], interpreter_v1.md
+  §6): one TSV per prediction SET, stated and committed BEFORE the run,
+  scored by `pcrecbench interpret`'s R-PRED rules. First row 2026-09-09:
+  `syntax-0.1-first.tsv`, `bench/syntax/NOTES.md`'s P1-P13. See its
+  CLAUDE.md.
 - `measurements/` — ARCHIVED PROBES (pcrec D35 style: stable `YYYY-MM-DD-<topic>.txt` names, verbatim driver output under a source header, a reproducing script beside each, never a ranking input — the store is where ranked numbers live). First row 2026-08-29: the [ENG-ABS] long-subject failing-`_match` probe ([B18] (d)). See its CLAUDE.md.
 - `ledgers/` — the manager's READINGS of a report: the full derivation (report-line citations, predictions ledgered, ranked candidates, asks, the checklist the NEXT sample is read against) behind each outbox item; one file per (set, sample, pin), extracted by a read-only lane, never edited after its O-n is sent. See its CLAUDE.md.
 - `reviews/` — D6-style critic-panel records, `YYYY-MM-DD-rN-<topic>.md`,

@@ -1,0 +1,44 @@
+# reporter: v16 (2026-09-08); filters: subbench=email-specimen, version=0.1; source: store/index.tsv (14 record(s) matching this query); records: 9; excluded_invalid: 0; superseded: 5; newer_not_measured: 0; subbench_versions: email-specimen@0.1; machines: budu-ryzen1600; schema_versions: 1.1,1.2; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.1-1.3 X13 (both samples quiet) on 9; mixed_x13: False; include_provenance: False; worst_other_core_busy: n/a; floor_pattern: none
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T221651Z				agreement	n/a (v1.2)						
+record						email-specimen@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260825T174132Z				agreement	n/a (v1.1)						
+record						email-specimen@0.1__pcrec_692c2e8_auto-caps-simdna__budu-ryzen1600__20260825T222422Z				agreement	n/a (v1.2)						
+record						email-specimen@0.1__pcrec_692c2e8_auto-nocaps-simdna__budu-ryzen1600__20260825T222840Z				agreement	n/a (v1.2)						
+record						email-specimen@0.1__pcrec_692c2e8_vm-caps-simdna__budu-ryzen1600__20260825T175933Z				agreement	n/a (v1.1)						
+record						email-specimen@0.1__pcrec_692c2e8_vm-in-caps-simdna__budu-ryzen1600__20260825T180451Z				agreement	n/a (v1.1)						
+record						email-specimen@0.1__pcrec_8da6120_auto-caps-simdna__budu-ryzen1600__20260825T065046Z				agreement	n/a (v1.1)						
+record						email-specimen@0.1__pcrec_8da6120_auto-nocaps-simdna__budu-ryzen1600__20260825T063943Z				agreement	n/a (v1.1)						
+record						email-specimen@0.1__pcrec_8da6120_vm-caps-simdna__budu-ryzen1600__20260825T064436Z				agreement	n/a (v1.1)						
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna	measured	pinned	2	median_ns	80227.619276	85	1.0000	0	0		faster ×1.26
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna	measured	pinned	2	min_ns	80062.156795	85	1.0000	0	0		faster ×1.26
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna	measured	pinned	2	max_ns	80517.773720	85	1.0000	0	0		faster ×1.26
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna	measured	pinned	2	stddev_ns	159.414272	85	1.0000	0	0		faster ×1.26
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna	measured	pinned	2	ratio_vs_baseline	0.149254	85	1.0000	0	0		faster ×1.26
+rank	orig	(set)	match-compliance	whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna	measured	pinned	2	ratio_vs_best	1.278888	85	1.0000	0	0		faster ×1.26
+rank	orig	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	9	median_ns	537524.856179	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	9	min_ns	533900.371230	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	9	max_ns	537936.627062	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	9	stddev_ns	1500.969172	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	9	ratio_vs_baseline	1.000000	85	1.0000	0	0		
+rank	orig	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	9	ratio_vs_best	8.568550	85	1.0000	0	0		
+compile_stamp						libpcre2_10.46_interp-caps-simdna				engine	-						
+compile_stamp						libpcre2_10.46_interp-caps-simdna				entry	plain entry						
+compile_stamp						libpcre2_10.46_interp-caps-simdna				prefilter	-						
+compile_stamp						libpcre2_10.46_interp-caps-simdna				vm_rungs	-						
+compile_stamp						libpcre2_10.46_interp-caps-simdna				buffers	n/s						
+compile_stamp						libpcre2_10.46_interp-caps-simdna				frame	n/s						
+compile	orig			plain	same program	libpcre2_10.46_interp-caps-simdna				median_total_ns	13550.000000	5					
+compile	orig			plain	same program	libpcre2_10.46_interp-caps-simdna				jitter	timer-floor						
+compile	orig			plain	same program	libpcre2_10.46_interp-caps-simdna				artifact_bytes	1609						
+compile_stamp						pcrec_692c2e8_vm-caps-simdna				engine	vm						
+compile_stamp						pcrec_692c2e8_vm-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_692c2e8_vm-caps-simdna				prefilter	none						
+compile_stamp						pcrec_692c2e8_vm-caps-simdna				vm_rungs	PCREC_VM_RUNG_CURSOR|PCREC_VM_RUNG_FRAMES_BOUNDED|PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_692c2e8_vm-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_692c2e8_vm-caps-simdna				frame	24						
+compile	orig			plain	same program	pcrec_692c2e8_vm-caps-simdna				median_total_ns	406687295.000000	5					
+compile	orig			plain	same program	pcrec_692c2e8_vm-caps-simdna				jitter	0.014						
+compile	orig			plain	same program	pcrec_692c2e8_vm-caps-simdna				artifact_bytes	25592						
+compile	orig			whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna				median_total_ns	404607847.000000	5					
+compile	orig			whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna				jitter	0.021						
+compile	orig			whole-subject	separate artifact	pcrec_692c2e8_vm-caps-simdna				artifact_bytes	25592						
