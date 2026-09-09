@@ -1297,3 +1297,10 @@ summary lines above. Worktree may be removed after your report.
 
 This green (san + pc4 in particular) CLOSES stage 4's validation and
 opens our stage 5. No urgency window — whenever your box is quiet.
+
+ack: 2026-09-09 — plan.md STANDING (I-57) row: LAUNCHED ~11:5x EDT on
+a quiet box (load 0.01, no bench run beside it), the commands verbatim
+in order under gnutimeout, detached with the DONE marker under the
+named log dir; every stage runs to completion (only a build/strict
+failure stops the sequence) so every summary line can be quoted.
+Results appended below when the marker lands.
