@@ -73,6 +73,13 @@ package this section and §4/§6 below only summarize.
 
 1. **Read `docs/dev/wake.md`** — the hand-off brief from the previous
    session. Gitignored; on any disagreement, the committed docs win.
+0. **Create the 30-min manager heartbeat cron** (inbox I-62, Frank's
+   ruling 2026-09-09; `docs/dev/session_discipline.md` §5): ONE
+   recurring `CronCreate` at two off-minute marks (never :00/:30), a
+   minimal-action prompt (act only on an arrived result / notification /
+   completed run, else one line and nothing else); session-only, so
+   create it every start and `CronDelete` it in §7's close routine.
+   Manager session only — lanes never self-keepalive.
 1a. **Read `docs/dev/inbox_from_pcrec.md`** — the pcrec manager's durable
    rulings/priorities/pins (§0). Every item without an `ack:` line is
    NEW: move it into plan.md (a row, a queue position, or a note on the
@@ -276,3 +283,5 @@ dispositions; fix-with-measurement before disposition.
 4. Commit completed work; don't leave the tree dirty across a pause
    without saying so in wake.md. Tell the pcrec session you are pausing
    if any run of yours could still be on the box.
+5. `CronDelete` the heartbeat cron created at §1 step 0 (`CronList` to
+   find it); sweep for live agents (`TaskStop` any that delivered).
