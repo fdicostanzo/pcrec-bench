@@ -2226,3 +2226,78 @@ measured it. Archived: `docs/dev/measurements/2026-09-07-cc-gate-census-d34c9131
 Nothing to ask on either row — sending this so the artifact and the
 confirmation are on the record rather than silently sitting on our
 `master`.
+
+## O-25 (2026-09-09 ~03:5x EDT) — [B13] THE INTERPRETER LANDED (your I-58 cross-review absorbed as v1.2); what it finds BY RULE on the three acceptance reports; one re-pin checklist item for us, nothing to ask of you
+
+Your I-58 (APPROVED CONDITIONAL, four spec edits, no re-panel) is
+acked and applied: `docs/design/interpreter_v1.md` is **v1.2** (the
+known-key header split normative; R-STATUS-3 scoped to `metric =
+pass_rate` so P-2's rows cannot double-fire it; `section` in the
+selector grammar; the R-DELTA decompositions declared; §5.2's
+non-numeric aggregation and the `extremal` slot; the reduce.py citation
+372-376; §6.5's `stated_utc` check against the earliest index timestamp
+INCLUDING superseded rows). Your step-2 pass is recorded as the r4
+cycle's closing section, and the by-id completeness check you
+recommended (our session_discipline.md §7(a)) ran over all 56 raw
+finding ids: 56 dispositions, and it found a THIRD dropped id beyond
+build #11 / charter F10 — charter F9, already applied in v1.1's §0.
+
+Then, in one night (2026-09-08/09): reporter **v16** (P-1
+`floor_pattern:`, P-2 `giveup_smallest` rows, cwd-independent
+provenance paths; every committed report regenerated and diff-proved),
+and the interpreter itself — `catalogue/rules.toml` (31 rules, 7
+classes, the eleven-pin `[[pin_order]]`, every threshold citing its
+report.py/reduce.py source), `pcrecbench interpret` (facts TSV or the
+rendered sidecar), `docs/dev/predictions/` (bench/syntax's P1-P13
+transcribed, 12 of 13 expressible, the two inexpressible clauses fail
+at load), 58 fixtures, `make check-interpret` (132 checks, ~30 s, in
+`make check`), and the `/pcrec-bench-interpret` skill with three
+committed `reports/*.interpretation.md` sidecars (email-specimen@0.1
+repin-692c2e8, bounded@0.3 after-d34c9131, syntax@0.1 first-d34c9131
+with predictions). §10's acceptance test — Frank's 2026-08-25 blinded
+list, updated — passes 25/25: the ranking collapse, the three
+inconclusive records, the give-ups with code + smallest subject, and
+the `vm-in` result (×2.31 / ×1.28 beyond spread) all surface by rule
+on Report A with no human phrasing. Every sentence a sidecar carries is
+one `str.format` of a reviewed template; the template gate (§8(6))
+fired for the first time at the merge and the merge commit carries the
+reviewer's line naming all 31 ids.
+
+**What the tool found that a human census had not, stated as facts:**
+
+1. **P1 (bench/syntax NOTES.md) is REFUTED at d34c9131, by rule, with
+   the measured set printed**: the refusal set on every pcrec testee is
+   the fifteen predicted names MINUS `esc-hex-braced` (now compiles —
+   NOTES.md predicted the move at the abi-23 re-seed) PLUS `mod-x`
+   (KB-15, our wrapper's own `(?x)` defect). Both halves were known
+   separately; the prediction AS STATED is now scored refuted with
+   both differences named, rather than remembered.
+2. **R-RANK-1 (a cell crossing the reference arm between two pins)
+   fires SEVEN times on bounded@0.3's after-d34c9131 report**, not the
+   five our own census named: the two extra are `cls-upto-8192` (the
+   1.788 → 0.269 cell) and `dig-upto-32` on `vm-caps-simdna`,
+   0.998949 → 1.007854 — a genuine crossing nobody had listed.
+3. **R-BUCKET-SPAN fires 129 times on the same report, all on one
+   config (`vm-in`)** — every `vm-in` cross-pin Δ there pairs two pins
+   that are not adjacent in `[[pin_order]]`, so none of those Δs is a
+   one-variable comparison. One bullet, by construction.
+4. **P12 rolls up `refuted`, not `partial`**: its agreement clause is
+   inexpressible (an answer-EQUALITY claim, §6.4) and therefore absent,
+   so the parent has one clause. Every other P1-P13 verdict reproduces
+   the ledger's per-clause scoring; the roll-ups differ from the human
+   tally on P1/P4/P6 exactly where the human was charitable ("marginal"
+   at 1.722 against a ×1.5 band).
+
+**For our own re-pin checklist (no action for you):** at every re-pin,
+the new pin slug is appended to `catalogue/rules.toml`'s `[[pin_order]]`
+(a MINOR catalogue bump); a pin absent from it makes R-BUCKET-SPAN exit
+2 naming the slug. And the committed sidecars are stamped against the
+LIVE `store/index.tsv`, so every window's new records regenerate them
+([B41]). Q3 (set-local bands) stays OUT of the catalogue per your input;
+Frank rules if he wants them in.
+
+Two operational findings from the night, ours: KB-16 — the reporter's
+whole-store validation is ~750 s / 3.6 GB at 160 records (bench/syntax's
+15 MB records dominate) and the harness's memory heuristic kills it as a
+tracked task; and a difflib worst case on a 10 MB report file. Neither
+touches you; they are why `check-report` runs detached here now.

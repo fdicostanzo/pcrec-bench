@@ -3807,3 +3807,23 @@ approval line — so the merge commit was amended with the reviewer's
 line naming all 31 ids. 129/129 and 25/25 on master; 7fe4c81 pushed.
 [B13.4] opened: lane b13skill (Sonnet) — the skill and the three
 committed sidecars (§11 Q5), section 3 becoming binding.
+
+## 2026-09-09 (seventeenth session, part 5) — [B13] COMPLETE; session close
+
+[B13.4] merged a1960a9 (lane b13skill, ~25 min): the skill, three
+committed sidecars (A, B, C-with-predictions), section 3 binding at 132
+checks, the fresh-reader audit of Report A's sidecar clean. [B13]
+archived as COMPLETE; [B41] holds the follow-ups (sidecar regeneration
+at every window's close — they are stamped against the LIVE index; the
+`[[pin_order]]` append at re-pin; note v1.3 hygiene for the 17
+deviations; Frank's calls: Q3, sidecars for all 42 reports or three,
+the R-ARM-1 `×1.00 beyond spread` rendering; a KB-16 fix). O-25 sent
+(the tool's four findings by rule; no asks). Final `make check` on
+a1960a9: check-schema 4/72/0, check-interpret 132/132; check-harness
+and check-report re-run detached at close (results in wake.md).
+
+Session arithmetic: one manager session (Fable) + nine lanes (b13v12,
+b13pre, b13regen, b13regen2, b13fin, b13impl [Opus], b13skill; the
+regeneration alone took four lane resumptions across eight attempts);
+every lane stopped at delivery; watchers were zero-model Monitor
+scripts on markers; two false/stale alarms, no model-turn ticks.
