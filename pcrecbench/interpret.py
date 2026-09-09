@@ -1278,12 +1278,23 @@ class Context:
         return self._pin_pos[pin]
 
 
+# R-DELTA-4 is a CROSS-CLASS rule: its predicate reads other rules'
+# firings (§4.2), so it is evaluated after all of them and then put back
+# in its declaration position, which is what the output order is.
+DEFERRED_RULES = ("R-DELTA-4",)
+
+
 def run_rules(cat, report, index, ctx):
     """Run every rule in catalogue declaration order. Returns
     [(rule, firings_or_token)]."""
     results = []
+    deferred = []
     for rule in cat["rule"]:
         rid = rule["id"]
+        if rid in DEFERRED_RULES:
+            deferred.append((len(results), rule))
+            results.append((rule, "no-matching-rows"))
+            continue
         if rule.get("retired_in"):
             results.append((rule, "retired"))
             continue
@@ -1308,13 +1319,42 @@ def run_rules(cat, report, index, ctx):
                     f"{rid}: firing carries slots {sorted(f.slots)}, declared "
                     f"{sorted(rule['slots'])} (missing {sorted(missing)}, "
                     f"extra {sorted(extra)})")
+        check_extremal(rule, out)
         out.sort(key=lambda f: (f.key_tuple(),
                                 tuple(sorted(f.slots.items()))))
         for i, f in enumerate(out, start=1):
             f.seq = i
         ctx.firings[rid] = out
         results.append((rule, out if out else "no-matching-rows"))
+    for position, rule in deferred:
+        results[position] = (rule, _run_one(rule, report, index, ctx))
     return results
+
+
+def _run_one(rule, report, index, ctx):
+    rid = rule["id"]
+    if report.grain not in rule["grain"]:
+        ctx.firings[rid] = []
+        return "grain"
+    out = rule_function(rid)(RuleView(rule, report, index), ctx)
+    if isinstance(out, str):
+        if out not in DID_NOT_FIRE_TOKENS:
+            raise InterpretError(f"{rid}: unknown did-not-fire token {out!r}")
+        ctx.firings[rid] = []
+        return out
+    for f in out:
+        missing = set(rule["slots"]) - set(f.slots)
+        extra = set(f.slots) - set(rule["slots"])
+        if missing or extra:
+            raise InterpretError(
+                f"{rid}: firing carries slots {sorted(f.slots)}, declared "
+                f"{sorted(rule['slots'])}")
+    check_extremal(rule, out)
+    out.sort(key=lambda f: (f.key_tuple(), tuple(sorted(f.slots.items()))))
+    for i, f in enumerate(out, start=1):
+        f.seq = i
+    ctx.firings[rid] = out
+    return out if out else "no-matching-rows"
 
 
 def render_facts_tsv(results):
@@ -1343,7 +1383,14 @@ def _group_key(rule, firing):
     return tuple(firing.slots[s] for s in rule["aggregate"])
 
 
-def _extremal_slot(rule, firings):
+def check_extremal(rule, firings):
+    """§5.2's invariant, enforced where the firings are: a rule that
+    aggregates and carries a numeric slot MUST declare which slot is
+    "biggest"; a rule that declares one must actually produce it.
+
+    The RENDER itself reads only the declared `extremal` name and parses
+    the number back out of the rendered slot string, so the sidecar is a
+    function of the facts TSV alone (§8(5))."""
     numeric = set()
     for f in firings:
         numeric |= set(f.nums)
@@ -1352,13 +1399,22 @@ def _extremal_slot(rule, firings):
             raise InterpretError(f"{rule['id']}: declared extremal "
                                  f"{rule['extremal']!r} is not a numeric slot "
                                  f"of its firings")
-        return rule["extremal"]
-    if numeric:
+    elif numeric and rule["aggregate"]:
         raise InterpretError(
             f"{rule['id']}: aggregates on {rule['aggregate']} and carries "
             f"numeric slot(s) {sorted(numeric)} but declares no `extremal` "
             f"(§5.2)")
-    return None
+
+
+def slot_number(text):
+    """The number inside a rendered numeric slot -- the ONE formatter's
+    output read back (`6,291.5` -> 6291.5, `12.000` -> 12.0). Ordering
+    reads this, never the unrounded float, so a render built from the
+    facts TSV is byte-identical to the direct one."""
+    try:
+        return float(str(text).replace(",", "").replace("%", ""))
+    except ValueError:
+        return 0.0
 
 
 def render_bullets(rule, firings):
@@ -1375,7 +1431,7 @@ def render_bullets(rule, firings):
         for f in firings:
             bullets.append("- " + render_one(rule, f) + link_text)
         return bullets
-    extremal = _extremal_slot(rule, firings)
+    extremal = rule.get("extremal")
     groups = defaultdict(list)
     for f in firings:
         groups[_group_key(rule, f)].append(f)
@@ -1393,7 +1449,7 @@ def render_bullets(rule, firings):
             body += f"\n  All {n} in the facts TSV." + link_text
             bullets.append(body)
             continue
-        ordered = sorted(members, key=lambda f: (f.nums[extremal],
+        ordered = sorted(members, key=lambda f: (slot_number(f.slots[extremal]),
                                                  f.key_tuple()))
         body = (f"{head} Extremal by `{extremal}`: "
                 + render_one(rule, ordered[-1]))
@@ -1403,6 +1459,48 @@ def render_bullets(rule, firings):
         body += f"\n  All {n} in the facts TSV." + link_text
         bullets.append(body)
     return bullets
+
+
+def results_from_facts(cat, facts_text):
+    """Reassemble [(rule, firings_or_token)] from a facts TSV, by
+    `(rule_id, firing_seq)` -- §8(5)'s own reassembly, which is why
+    §5.1 carries the `firing_seq` column."""
+    by_rule = {}
+    tokens = {}
+    lines = facts_text.split("\n")
+    if lines[0].split("\t") != FACTS_COLUMNS:
+        raise InterpretError("facts TSV: unexpected column list")
+    for ln in lines[1:]:
+        if not ln:
+            continue
+        f = ln.split("\t")
+        if len(f) != len(FACTS_COLUMNS):
+            raise InterpretError(f"facts TSV: malformed row {ln[:80]!r}")
+        row = dict(zip(FACTS_COLUMNS, f))
+        rid = row["rule_id"]
+        if row["fired"] == "0":
+            tokens[rid] = row["value"]
+            continue
+        firing = by_rule.setdefault(rid, {}).get(row["firing_seq"])
+        if firing is None:
+            firing = Firing({}, {}, pattern=row["pattern"],
+                            subject_or_na=row["subject_or_na"],
+                            regime=row["regime"], form=row["form"],
+                            testee=row["testee"], record_id=row["record_id"],
+                            prediction_id=row["prediction_id"])
+            firing.seq = int(row["firing_seq"])
+            by_rule[rid][row["firing_seq"]] = firing
+        firing.slots[row["slot"]] = row["value"]
+    results = []
+    for rule in cat["rule"]:
+        rid = rule["id"]
+        if rid in tokens:
+            results.append((rule, tokens[rid]))
+            continue
+        firings = [by_rule[rid][k] for k in
+                   sorted(by_rule.get(rid, {}), key=int)]
+        results.append((rule, firings if firings else "no-matching-rows"))
+    return results
 
 
 def render_markdown(results, ctx, stamp):
@@ -1583,16 +1681,25 @@ _COMPILE_METRIC = {"compile:median_total_ns": ("median_total_ns",
                    "compile:emit_code_bytes": ("emit_code_bytes",)}
 
 
-def _select(view, pred):
+def _select(view, pred, sections=None):
+    """The prediction's own selector, applied to the sections it names.
+
+    A selector that names `section` reads exactly those sections. One
+    that does not reads `rank` (or `compile` for a `compile:` quantity)
+    -- and `_elsewhere` below is what finds the same cell in the
+    excluded / not-ranked / did-not-compile / scratch sections so
+    R-PRED-3 can say WHERE it went instead of "absent".
+    """
     sel = dict(pred["_selector"])
     section = sel.pop("section", None)
     quantity = pred["quantity"]
-    if quantity in _COMPILE_METRIC:
-        sections = ["compile"]
-    elif section:
-        sections = [s for s in SECTIONS if _glob_match(section, s)]
-    else:
-        sections = ["rank"]
+    if sections is None:
+        if quantity in _COMPILE_METRIC:
+            sections = ["compile"]
+        elif section:
+            sections = [s for s in SECTIONS if _glob_match(section, s)]
+        else:
+            sections = ["rank"]
     rows = []
     for s in sections:
         for r in view.rows(s):
@@ -1602,22 +1709,42 @@ def _select(view, pred):
     return rows
 
 
+_ELSEWHERE = ("excluded", "not_ranked", "did_not_compile", "scratch")
+
+
+def _elsewhere(view, pred):
+    """The non-ranked sections a prediction's cell landed in, if any."""
+    if "section" in pred["_selector"]:
+        return set()
+    rows = _select(view, pred, sections=list(_ELSEWHERE))
+    return {r["section"] for r in rows}
+
+
 def _value_of(row, quantity):
     if quantity in _QUANT_METRIC:
         if row["metric"] != _QUANT_METRIC[quantity]:
             return None
-        return float(row["value"])
+        return _float_or_none(row["value"])
     if quantity in _COMPILE_METRIC:
         if row["metric"] not in _COMPILE_METRIC[quantity]:
             return None
-        return float(row["value"])
+        return _float_or_none(row["value"])
     col = _QUANT_COLUMN[quantity]
     val = row[col]
     if quantity in ("pass_rate", "n_gave_up", "n_wrong", "rank_in_group"):
-        if val == "":
-            return None
-        return float(val)
+        return _float_or_none(val)
     return val
+
+
+def _float_or_none(text):
+    """An empty or non-finite cell is NOT a number: `render_tsv` writes
+    `""` where a value is None and `nan` where a ratio has no baseline,
+    and a prediction must not be scored against either."""
+    try:
+        v = float(text)
+    except (TypeError, ValueError):
+        return None
+    return None if math.isnan(v) or math.isinf(v) else v
 
 
 def _keyed_values(view, pred):
@@ -1634,6 +1761,12 @@ def _keyed_values(view, pred):
 
 _KEY_INDEX = {"pattern": 0, "subject_or_na": 1, "regime_or_na": 2,
               "form": 3, "testee": 4}
+
+
+def _drop(key_tuple, name):
+    """A key tuple with one named column removed -- the grouping key a
+    `<reducer>_over(<key>)` reduces within."""
+    return tuple(x for i, x in enumerate(key_tuple) if i != _KEY_INDEX[name])
 
 
 def _reduce(view, pred, values):
@@ -1665,22 +1798,40 @@ def _reduce(view, pred, values):
         base = _keyed_values(view, other)
         if not base:
             return [], "num"
-        denom = sorted(v for _k, v, _r in base)[len(base) // 2]
-        if not denom:
-            return [], "num"
-        return [("/".join(k), v / denom) for k, v, _r in values], "num"
+        # Join the two populations on every key column the two selectors
+        # agree about; the ratio is then per (regime, form, testee) and
+        # not one number over the whole report.
+        join = [k for k in sorted(_KEY_INDEX)
+                if pred["_selector"].get(k) == other["_selector"].get(k)]
+        by_join = defaultdict(list)
+        for k, v, _r in base:
+            by_join[tuple(k[_KEY_INDEX[j]] for j in join)].append(v)
+        out = []
+        for k, v, _r in values:
+            denom = by_join.get(tuple(k[_KEY_INDEX[j]] for j in join))
+            if not denom:
+                continue
+            med = sorted(denom)[len(denom) // 2]
+            if not med:
+                continue
+            out.append(("/".join(k), v / med))
+        return out, "num"
     if head == "ratio_to_median_over":
         if arg not in _KEY_INDEX:
             raise PredictionError(f"{pred['_where']}: "
                                   f"ratio_to_median_over({arg}) is not a key "
                                   f"column")
-        nums = sorted(v for _k, v, _r in values)
-        if not nums:
-            return [], "num"
-        med = nums[len(nums) // 2]
-        if not med:
-            return [], "num"
-        return [("/".join(k), v / med) for k, v, _r in values], "num"
+        groups = defaultdict(list)
+        for k, v, _r in values:
+            groups[_drop(k, arg)].append(v)
+        out = []
+        for k, v, _r in values:
+            vs = sorted(groups[_drop(k, arg)])
+            med = vs[len(vs) // 2]
+            if not med:
+                continue
+            out.append(("/".join(k), v / med))
+        return out, "num"
     if head == "ratio_max_min_over":
         if arg not in _KEY_INDEX:
             raise PredictionError(f"{pred['_where']}: "
@@ -1701,14 +1852,23 @@ def _reduce(view, pred, values):
         if arg not in _KEY_INDEX:
             raise PredictionError(f"{pred['_where']}: rank_over({arg}) is not "
                                   f"a key column")
+        # The POSITION of a selected row among every row that shares its
+        # other key columns -- the population is the selector with the
+        # ranked key wildcarded, so "the three cheapest cells IN THE SET"
+        # is a rank among all of them, not among the three named.
+        population = dict(pred)
+        population["_selector"] = dict(pred["_selector"], **{arg: "*"})
         groups = defaultdict(list)
-        for k, v, _r in values:
-            gk = tuple(x for i, x in enumerate(k) if i != _KEY_INDEX[arg])
-            groups[gk].append((v, k))
-        out = []
-        for gk, vs in sorted(groups.items()):
+        for k, v, _r in _keyed_values(view, population):
+            groups[_drop(k, arg)].append((v, k))
+        pos_of = {}
+        for gk, vs in groups.items():
             for pos, (_v, k) in enumerate(sorted(vs), start=1):
-                out.append(("/".join(k), float(pos)))
+                pos_of[k] = float(pos)
+        out = []
+        for k, _v, _r in values:
+            if k in pos_of:
+                out.append(("/".join(k), pos_of[k]))
         return out, "num"
     raise PredictionError(f"{pred['_where']}: unhandled reducer {reducer!r}")
 
@@ -1752,22 +1912,21 @@ def evaluate_predictions(cat, report, index, predictions, ctx):
         per = []
         for p in clauses:
             rows = _select(view, p)
-            sections = {r["section"] for r in rows}
             for r in rows:
                 coverage.add((r["pattern"], r["regime_or_na"], r["form"],
                               r["testee"]))
             if not rows:
-                per.append((p, "not-evaluable", "no row in this report "
-                                                "matches the selector", ""))
-                continue
-            if sections & {"excluded", "not_ranked", "did_not_compile",
-                           "scratch"} and p["quantity"] not in ("section",
-                                                                "status"):
-                per.append((p, "not-evaluable",
-                            "the selected cell is in the "
-                            + ", ".join(sorted(sections & {
-                                "excluded", "not_ranked", "did_not_compile",
-                                "scratch"})) + " section", ""))
+                other = _elsewhere(view, p)
+                if other:
+                    per.append((p, "not-evaluable",
+                                f"{p['prediction_id']}{p['clause'] or ''}: the "
+                                f"selected cell is in the "
+                                + ", ".join(sorted(other)) + " section", ""))
+                else:
+                    per.append((p, "not-evaluable",
+                                f"{p['prediction_id']}{p['clause'] or ''}: no "
+                                f"row in this report matches the selector",
+                                ""))
                 continue
             values = _keyed_values(view, p)
             if not values:
