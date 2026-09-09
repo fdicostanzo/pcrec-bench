@@ -3784,3 +3784,26 @@ transcription, fixtures/gen.py --check + golden/ with the frozen index
 snapshot, make check-interpret (six sections, never the live store),
 §10's acceptance test RUN on Reports A-D with every MUST tabled, docs;
 the skill + committed sidecars stay [B13.4]. Worktree b13v12 removed.
+
+## 2026-09-09 (seventeenth session, part 4) — [B13.3] MERGED; [B13.4] opened
+
+Lane b13impl (Opus) delivered the whole of part 1 in ~35 minutes:
+31 rules, interpret.py (2,090 lines), the predictions reader with the
+P1-P13 transcription, 58 fixtures, goldens, make check-interpret (129
+checks, 28 s), §10's acceptance run 25/25, 17 recorded deviations and
+citation corrections, no plan/design-note rewrite beyond the STATUS
+block. The manager reviewed all 31 templates/no_fire/links for the
+opinion firewall (every clause slot-bound, definitional or a link),
+rendered Report A's sidecar and checked determinism, then merged
+(8c0dcfa). Two defects surfaced ONLY at the merge: (1) the
+with-predictions golden embedded the lane worktree's ABSOLUTE path in
+every `predictions_file` slot (682 rows) — fixed with `display_path`
+(repo-relative, derived from the catalogue's root) and one
+`build_stamp` shared by the CLI and section 5's re-render, which had
+carried its own copy of the stamp; (2) the §8(6) template-diff gate
+fired for the first time — correctly: a merge commit's diff vs its
+first parent is the whole lane, and no WIP commit had carried an
+approval line — so the merge commit was amended with the reviewer's
+line naming all 31 ids. 129/129 and 25/25 on master; 7fe4c81 pushed.
+[B13.4] opened: lane b13skill (Sonnet) — the skill and the three
+committed sidecars (§11 Q5), section 3 becoming binding.
