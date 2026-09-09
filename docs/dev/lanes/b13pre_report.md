@@ -548,6 +548,208 @@ forced runs 6/7 to run detached):
 LOG=/tmp/claude-1001/-home-duxevents-pcrec-bench/01ae41ff-6171-48d8-8bc2-5ffd2cd96f47/scratchpad/regen_run8.log
 ```
 
+## Run 8 completion + Phase B (lane `b13fin`, 2026-09-09) — LANDED
+
+Phase A finished clean: `DONE rc=0` in `regen_run8.log`, store load
+751.0 s (160 records, 624,226,061 bytes), `RENDER_COMPLETE`, 16
+`RENDERED` / 26 `SKIP` of 42 (the split run 7 predicted exactly), no
+`RENDER-ABORT`.
+
+**Phase B ran in three attempts before landing clean.** Attempt 1
+(tracked, `run_in_background: true`) wrote 15 of the 16 remaining
+groups (all `OK`, no `ABORT`) before the harness's memory heuristic
+killed it mid-classification of the 16th group,
+`2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131` — the SAME
+tracked-task hazard BOILERPLATE already documents, not a classifier
+bug (confirmed: `grep -L "reporter: v16" reports/*.tsv` named only
+that one file; the 41 already-written groups' `.tsv` headers all read
+`v16`). Attempt 2, relaunched DETACHED per the standing rule, was
+killed BY HAND after confirming it was alive but pathologically slow —
+`ps` showed 100% CPU, steady ~125 MB RSS, still running after 49 s on
+one group: the cause was `difflib.SequenceMatcher` choking on that
+group's `.subject-grain.md` (10,179,810 bytes, ~108,528 lines), not a
+memory problem this time. **Fix**: an equality fast path in both
+`classify_tsv_diff` and `classify_md_diff` (`regen_b132.py`) — compare
+the normalized line lists directly (`==`) before ever constructing a
+`SequenceMatcher`; O(n) with early-exit on the first mismatch, and
+correct whenever the lists ARE equal (nothing is left for difflib to
+explain). Verified: the syntax group's cached render is byte-identical
+to the committed content for both `.md` files and +22 bytes on the
+`.tsv` (the `floor_pattern:` key only) — confirmed directly via `wc -c`
+and line-count comparison (the `cmp -l` byte-position diff over the
+`.tsv` shows ~96% of bytes "differing", which is the expected artifact
+of a mid-file insertion shifting every subsequent byte's position, NOT
+a real content difference — line counts on both sides are identical at
+13,253). Attempt 3 (foreground, `gnutimeout 300`, script patched) ran
+in seconds: `CLASSIFY_COMPLETE`, rc=0, the syntax group `OK` with
+`floor_pattern=floor, cwd_path_fix=False, legend_v13_v15=0`. All 42
+groups (126 files) confirmed at `v16` on disk
+(`grep -L "reporter: v16" reports/*.tsv` empty; `git status --short
+reports/` = 126).
+
+**Diff proof, quoted in full.**
+
+TSV (the brief's own command, over the FULL committed set now — empty
+output = clean):
+
+```
+git diff -- reports/*.tsv | grep -E '^[+-][^+-]' \
+  | grep -v '^[+-]# reporter:' \
+  | awk -F'\t' '{ f=substr($0,1,1); $0=substr($0,2) } NF<11 || $11!="giveup_smallest"'
+```
+→ **0 lines printed.**
+
+`.md`/`.subject-grain.md`: an independent per-hunk classifier (own
+script, not `regen_b132.py`'s in-process one — a second implementation
+sharing only the four helper functions `_normalize_relpath`,
+`_normalize_reporter_line`, `_legend_token`, `subbench_from_base`) over
+`git diff -U0 -- reports/*.md`, matching every changed line against the
+four allowed deltas (version stamp / cwd-path pair / legend-bullet pair
+matched against a reference built from `git show HEAD:` — the
+PRE-regeneration committed content, since by verification time every
+on-disk file was already v16 and a naive "scan disk for v15 files"
+reference map would be empty):
+
+```
+Total files with diffs: 84
+Files with unexplained deltas: 0
+Files with cwd-path lines changed: 20 (expect 20)
+Files with legend lines changed: 8 (expect 20 -- see note)
+Total legend lines added: 8
+```
+
+(The "8 not 20" is not a bug: only 4 of the 10 v13/v14-before groups
+carry a `shape=` bullet needing the fix — `email-specimen` patterns
+never reach VM entry-shape territory, so its v13-before files have no
+legend delta at all; 4 groups × 2 siblings = 8 files, 1 new line each.)
+
+**Per-file table** (all 42 groups; `reporter (before)` from `git show
+HEAD:reports/<base>.tsv`'s header line before this wave's commit):
+
+| file | reporter before | giveup_smallest added | floor_pattern | cwd_path_fix | legend_v13_v15 |
+|---|---|---|---|---|---|
+| 2026-08-25-email-specimen-0.1-budu-ryzen1600 | v12 | 7 | none | False | 0 |
+| 2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8 | v12 | 12 | none | False | 0 |
+| 2026-08-28-email-specimen-0.2-budu-ryzen1600-repin-35e1ab1 | v12 | 5 | floor | False | 0 |
+| 2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1 | v12 | 0 | floor | False | 0 |
+| 2026-08-29-email-specimen-0.2-budu-ryzen1600-repin-36d5963 | v12 | 10 | floor | False | 0 |
+| 2026-08-29-loglines-0.1-budu-ryzen1600-repin-36d5963 | v12 | 0 | floor | False | 0 |
+| 2026-08-30-bounded-0.1-budu-ryzen1600-after-96e44c2 | v12 | 0 | floor | False | 0 |
+| 2026-08-30-bounded-0.1-budu-ryzen1600-first-sample-36d5963 | v12 | 0 | floor | False | 0 |
+| 2026-08-30-bounded-0.1-budu-ryzen1600-repin-96e44c2 | v12 | 0 | floor | False | 0 |
+| 2026-08-30-email-specimen-0.2-budu-ryzen1600-after-96e44c2 | v12 | 5 | floor | False | 0 |
+| 2026-08-30-email-specimen-0.2-budu-ryzen1600-repin-96e44c2 | v12 | 10 | floor | False | 0 |
+| 2026-08-30-loglines-0.1-budu-ryzen1600-after-96e44c2 | v12 | 0 | floor | False | 0 |
+| 2026-08-30-loglines-0.1-budu-ryzen1600-repin-96e44c2 | v12 | 0 | floor | False | 0 |
+| 2026-08-31-bounded-0.2-budu-ryzen1600-after-a7e0bdf | v12 | 0 | floor | False | 0 |
+| 2026-08-31-bounded-0.2-budu-ryzen1600-first-sample-263b013 | v12 | 0 | floor | False | 0 |
+| 2026-08-31-loglines-0.1-budu-ryzen1600-after-263b013 | v12 | 0 | floor | False | 0 |
+| 2026-09-02-altwide-0.1-budu-ryzen1600-first-sample-1989c62 | v12 | 0 | floor | False | 0 |
+| 2026-09-02-bounded-0.3-budu-ryzen1600-cc-1989c62 | v12 | 0 | floor | False | 0 |
+| 2026-09-02-bounded-0.3-budu-ryzen1600-first-sample-1989c62 | v12 | 0 | floor | False | 0 |
+| 2026-09-02-email-specimen-0.2-budu-ryzen1600-after-1989c62 | v12 | 10 | floor | False | 0 |
+| 2026-09-02-loglines-0.1-budu-ryzen1600-after-1989c62 | v12 | 0 | floor | False | 0 |
+| 2026-09-02-loglines-0.1-budu-ryzen1600-cc-1989c62 | v12 | 0 | floor | False | 0 |
+| 2026-09-03-altwide-0.2-budu-ryzen1600-bigcap-1989c62 | v12 | 1 | floor | False | 0 |
+| 2026-09-03-altwide-0.2-budu-ryzen1600-first-sample-1989c62 | v12 | 0 | floor | False | 0 |
+| 2026-09-03-bounded-0.3-budu-ryzen1600-cc-rerun-1989c62 | v12 | 0 | floor | False | 0 |
+| 2026-09-03-loglines-0.1-budu-ryzen1600-noedge-1989c62 | v12 | 0 | floor | False | 0 |
+| 2026-09-05-altwide-0.2-budu-ryzen1600-after-334fd10e | v14 | 0 | floor | True | 2 |
+| 2026-09-05-altwide-0.2-budu-ryzen1600-island-334fd10e | v14 | 0 | floor | True | 0 |
+| 2026-09-05-bounded-0.3-budu-ryzen1600-ccboth-288d505 | v13 | 0 | floor | True | 0 |
+| 2026-09-05-bounded-0.3-budu-ryzen1600-fold-334fd10e | v14 | 0 | floor | True | 2 |
+| 2026-09-05-bounded-0.3-budu-ryzen1600-step2-after-288d505 | v13 | 0 | floor | True | 0 |
+| 2026-09-05-email-specimen-0.2-budu-ryzen1600-after-288d505 | v13 | 0 | floor | True | 0 |
+| 2026-09-05-loglines-0.1-budu-ryzen1600-noedge-288d505 | v13 | 0 | floor | True | 0 |
+| 2026-09-05-loglines-0.1-budu-ryzen1600-noedge-334fd10e | v14 | 0 | floor | True | 2 |
+| 2026-09-05-loglines-0.1-budu-ryzen1600-noedge-3pins-334fd10e | v14 | 0 | floor | True | 2 |
+| 2026-09-05-loglines-0.1-budu-ryzen1600-noedge-vs-1989c62-288d505 | v13 | 0 | floor | True | 0 |
+| 2026-09-06-altwide-0.2-budu-ryzen1600-after-d34c9131 | v15 | 0 | floor | False | 0 |
+| 2026-09-06-altwide-0.2-budu-ryzen1600-clsfold-d34c9131 | v15 | 0 | floor | False | 0 |
+| 2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131 | v15 | 0 | floor | False | 0 |
+| 2026-09-06-email-specimen-0.2-budu-ryzen1600-clsfold-d34c9131 | v15 | 0 | floor | False | 0 |
+| 2026-09-06-loglines-0.1-budu-ryzen1600-clsfold-d34c9131 | v15 | 0 | floor | False | 0 |
+| 2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131 | v15 | 0 | floor | False | 0 |
+
+Totals: **26 v12 → v16, 5 v13 → v16, 5 v14 → v16, 6 v15 → v16** (26+5+5+6
+= 42, matching the pre-regeneration census exactly); **60
+giveup_smallest rows** across 8 files (7 `email-specimen` groups + 1
+`altwide` group); **10 files with the cwd-path fix**; **8 files with a
+legend line** (4 groups × 2 siblings).
+
+**Committed**: `b50653f` (`reports/` regeneration, 126 files) and
+`2b463ee` (`reports/CLAUDE.md`'s `[B13.2]` entry, in the `[B32] (b)`
+entry's style).
+
+**`pcrecbench/CLAUDE.md`'s report.py entry**: already correctly said
+`v16` and pointed to `reports/CLAUDE.md` (written by lane `b13pre`
+before the regeneration landed) — confirmed accurate, no change
+needed.
+
+**`make check-report`: LAUNCHED DETACHED, OWED.**
+
+```
+LOG=/tmp/claude-1001/-home-duxevents-pcrec-bench/01ae41ff-6171-48d8-8bc2-5ffd2cd96f47/scratchpad/check_report_b13.log
+setsid gnutimeout 2400 bash -c 'make check-report > $LOG 2>&1; echo "DONE rc=$?" >> $LOG' < /dev/null & disown
+```
+
+Verified started (`== check-report ==` printed to the log; `ps` showed
+the `gnutimeout`/`bash -c`/`make check-report` process chain alive
+under the worktree's cwd). This pays the same ~750 s store-load cost
+as the regeneration; per DO-THEN-FINISH this is the trigger for the
+next agent: the line `DONE rc=0` appended to that log, plus the
+printed `check-report: OK` (or its failure output) above it. A
+non-zero `rc` or missing `check-report: OK` is a finding to report,
+not expected on the merits — nothing in this lane's changes touches
+the `REAL_STORE`-sourced tests (`_mechanism_stamp_columns`/jitter/
+buffer legends/artifact-bytes/superseded-shortening/engine-reading),
+per lane `b13pre`'s own reasoning, unchanged.
+
+`make check-harness`: **OWED to the manager after merge** — this
+lane's changes touch only `pcrecbench/report.py`, `reports/`, and this
+worktree's docs; `check-harness` re-derives sub-bench manifests and
+tests the harness/adapters, none of which this lane's diff moves, but
+it was not run this session (it is a separate, non-report-store
+concern and the manager's own post-merge step per BOILERPLATE's
+delivery bar).
+
+## Charter-vs-committed checklist — WHOLE [B13.2] delivery
+
+| brief item | status |
+|---|---|
+| P-1 `floor_pattern:` header key | **DONE**, committed `18d70ac` |
+| P-2 `giveup_smallest` rows | **DONE**, committed `18d70ac` |
+| cwd-independent provenance paths (manager ruling) | **DONE**, committed `17a28cf` |
+| `REPORTER_VERSION` → v16 | **DONE** |
+| History block (report.py + pcrecbench/CLAUDE.md) | **DONE** |
+| Tests (P-1/P-2/cwd-fix, 4 new) | **DONE**, all passing (68/68 non-REAL_STORE run directly) |
+| Grain decision stated | **DONE** — set-grain-only |
+| `make check-schema` | **DONE**, green (4/72/0) |
+| Regenerate all 42 committed reports (126 files) | **DONE**, committed `b50653f` — diff proof empty/explained on all 126 |
+| `reports/CLAUDE.md` `[B13.2]` entry | **DONE**, committed `2b463ee` |
+| Per-file diff proof (git diff filtered + independent classifier) | **DONE** — both quoted above, zero unexplained deltas |
+| `pcrecbench/CLAUDE.md` report.py entry | **DONE**, committed `17a28cf` (confirmed accurate this lane, no further change) |
+| `make check-report` (full 82 tests + CLI smoke) | **OWED** — launched DETACHED this lane, log/marker above; not expected to fail on its merits |
+| `make check-harness` | **OWED to the manager after merge** — untouched by this lane's diff, not run this session |
+| Deviations from §2.5 | **NONE** |
+
+## Handback (lane `b13fin`, 2026-09-09)
+
+[B13.2] is DONE and committed except one OWED item: `make check-report`
+(launched detached, log path and completion line above — not expected
+to fail on its merits, nothing in this lane's diff touches the
+`REAL_STORE`-sourced tests). Every other charter item is committed:
+P-1, P-2, the cwd-path fix, the reporter bump to v16, all 42 committed
+report groups (126 files) regenerated with a two-part diff proof
+showing zero unexplained deltas, and `reports/CLAUDE.md`'s
+documentation entry. The regeneration needed three Phase-B attempts to
+land (tracked-task memory kill, then a hand-diagnosed
+`difflib.SequenceMatcher` slowdown on the syntax group's 10 MB
+`.subject-grain.md`, fixed with an equality fast path in
+`regen_b132.py`) — both hazards and the fix are recorded above for any
+future large-report regeneration. `make check-harness` is owed to the
+manager as a post-merge step (untouched by this lane).
+
 **Completion marker**: the line `DONE rc=0` appended to that log (any
 other `rc` is a failure). On success the tail carries `RENDER_COMPLETE`,
 one `RENDERED <base>` or `SKIP <base> (already v16)` line per group (26
