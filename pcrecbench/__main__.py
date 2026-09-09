@@ -7,6 +7,8 @@
     quiet    sample the box and print the quiet-box verdict (OD-B8)
     testees  list the testees the adapters provide
     report   the query -> report reducer (pcrecbench/report.py, [B5])
+    interpret  the deterministic fact-finder over a report TSV +
+             store/index.tsv (pcrecbench/interpret.py, [B13])
 """
 
 import argparse
@@ -511,6 +513,10 @@ def main(argv=None):
     if argv and argv[0] == "report":
         from pcrecbench import report
         return report.main(argv[1:])
+    # [B13] the interpreter owns its own flags, like the reporter.
+    if argv and argv[0] == "interpret":
+        from pcrecbench import interpret
+        return interpret.main(argv[1:])
     args = build_parser().parse_args(argv)
     return args.func(args)
 
