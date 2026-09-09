@@ -474,8 +474,10 @@ critic, before v1.1 existed) and Report C's figures (the syntax-first
 sample's counts were taken on trust from v1.1's own re-derivation,
 not independently re-run cell-by-cell in this pass).
 
-**The one flagged deviation, among the 19: B9 (`reduce.py:373-379` for
-the `agree (…)` string).** v1.1's §4.1 cites `reduce.py:373-379`; the
+**The one flagged deviation, among the 19: B2's R-STATUS-9 string table
+(`reduce.py:373-379` for the `agree (…)` string; the manager corrected
+the lane's "B9" label at merge — B9 is `firing_seq`).** v1.1's §4.1
+cites `reduce.py:373-379`; the
 function's actual `return` for that string spans **372-376**, and
 `reduce.py` is 376 lines total, so the cited range runs one line past
 end-of-file. Meaning correct, pointer stale — the one spot-check of ~25

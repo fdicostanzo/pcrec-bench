@@ -136,22 +136,10 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   confirmed-resolved, zero silent deviations, one stale reduce.py
   citation); Q3 input: set-local bands stay OUT (Frank rules). STARTED
   the same evening on Frank's "proceed with b13" (Fable session, I-60):
-  - [B13.1] STATE:started — SPEC v1.2 (lane b13v12, sonnet, docs only):
-    I-58's four edits — (1) §2.1 header parse: the "Equivalently" claim
-    is false, the KNOWN-KEY split becomes normative and the regex form a
-    heuristic note; (2) R-STATUS-3 declares `metric` and scopes its
-    predicate to the base row (`metric != giveup_smallest`) so P-2's
-    rows neither double-fire nor raise UndeclaredColumn; (3) `section`
-    added to §6.3's closed selector-key list (P1's transcription uses
-    it); (4) R-DELTA-1/2/3 declare the testee-id decomposition and the
-    clause-leading-token decomposition they aggregate by — plus the two
-    minors (§5.2's non-numeric aggregation defined and R-DELTA-1's
-    extremal = the clause's ×N; the reduce.py:373-379 citation → the
-    real lines) and the §6.5 honesty edit (supersession opens a window;
-    close it by checking against the earliest stated_utc across ALL
-    index rows for the (subbench, version, machine) incl. superseded).
-    The step-2 pass recorded in the r4 review file as the cycle's
-    closing pass (session_discipline.md §7(b)).
+  - [B13.1] DONE 2026-09-08 — spec v1.2 MERGED f7ed5c5 (lane b13v12: I-58's four
+    edits + minors + the §6.5 honesty edit; the r4 review's closing pass
+    appended — step-2 19/19, by-id completeness 56/56, charter F9 the third
+    dropped id, already applied); row archived in plan_completed.md.
   - [B13.2] STATE:started — the REPORTER PRECONDITIONS (lane b13pre,
     sonnet): P-1 `floor_pattern: <id|none>` in the TSV header (from
     `floor_pattern_by_sb`, the records' own `patterns[].role`) and P-2
