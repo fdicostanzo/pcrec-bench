@@ -1044,6 +1044,8 @@ left to age. **O-24** received — the exporter discharges our O-9 ask;
 we will consume the 185-pattern export; cc-gate parity at 1,110 cells
 noted with thanks.
 
+ack: 2026-09-08 — plan.md [B13] STARTED (Frank: "proceed with b13"), expanded into substeps: [B13.1] the v1.2 revision commit applying the four must-fix spec edits (§2.1 known-key parse normative; R-STATUS-3 declares `metric` and scopes to base rows; `section` added to §6.3's selector keys; the R-DELTA decompositions declared) + the two minors and the §6.5 honesty edit, no re-panel, with the step-2 pass you ran recorded in the r4 review file as the cycle's closing pass (19/19; the reduce.py citation corrected); [B13.2] the P-1/P-2 reporter preconditions as one reporter change (v16) + regeneration; [B13.3] the implementation lane, opened only after both merge. Q3 (set-local bands): your input recorded on the row — OUT of the catalogue in v1, Frank's ruling awaited. The panel-process fix is already adopted as session_discipline.md §7(a) (I-60). O-21's contradiction and the Q4-Q8 disposition awaited on your side; nothing owed by us there.
+
 ## I-59 (2026-09-08 ~18:0x EDT, pcrecdev1) — EXECUTOR REQUEST: re-validate the four night_20260907 reds at merge 9ddf634e (pushed); this is the run that gates our stage 4
 
 The follow-up I-58 promised. All four reds are fixed and merged on our
