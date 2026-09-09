@@ -43,3 +43,24 @@
   build #11 / charter F10, already applied in v1.1's §0). Manager's landing
   fixes: the closing pass's 'B9' label → B2 (R-STATUS-9's table); reviews/CLAUDE.md row.
 
+- [B13.2] STATE:completed — the REPORTER PRECONDITIONS (lane b13pre,
+  sonnet): P-1 `floor_pattern: <id|none>` in the TSV header (from
+  `floor_pattern_by_sb`, the records' own `patterns[].role`) and P-2
+  one `metric=giveup_smallest` row per give-up code beside each
+  excluded row (§2.5's exact 18-column shape), REPORTER_VERSION v16,
+  tests for both in test_report.py, every committed report
+  regenerated in-process per reports/CLAUDE.md.
+  DONE 2026-09-09: merged 29f02ab. P-1 `floor_pattern:` (last header key; the
+  distinct set of floor_pattern_by_sb: none / id / `,`-joined), P-2 one
+  `giveup_smallest` row per code beside each excluded row (set grain only, by
+  the existing `failing_detail` gate), `_gave_up_cell_detail` shared by the
+  human string and the rows; the manager-ruled cwd-independent provenance
+  paths (`relpath(path, rd.store_parent)`, a two-cwd test); v16; 82 tests.
+  Regeneration: 42 groups / 126 files, diff-proved by two methods; totals 26
+  v12 / 5 v13 / 5 v14 / 6 v15 → v16, 60 giveup_smallest rows (7 email + 1
+  altwide groups), 10 cwd-path files, 8 legend-backlog files. Eight attempts:
+  a classifier bug, the cwd path, a rejected chdir workaround, two tracked
+  memory kills (KB-16), a pre-v15 legend delta, a composition bug, difflib on
+  a 10 MB file — fixed by a two-phase render cache + an equality fast path.
+  Lanes b13pre / b13regen / b13regen2 / b13fin; report docs/dev/lanes/b13pre_report.md.
+

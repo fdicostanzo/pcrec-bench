@@ -140,15 +140,17 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
     edits + minors + the §6.5 honesty edit; the r4 review's closing pass
     appended — step-2 19/19, by-id completeness 56/56, charter F9 the third
     dropped id, already applied); row archived in plan_completed.md.
-  - [B13.2] STATE:started — the REPORTER PRECONDITIONS (lane b13pre,
-    sonnet): P-1 `floor_pattern: <id|none>` in the TSV header (from
-    `floor_pattern_by_sb`, the records' own `patterns[].role`) and P-2
-    one `metric=giveup_smallest` row per give-up code beside each
-    excluded row (§2.5's exact 18-column shape), REPORTER_VERSION v16,
-    tests for both in test_report.py, every committed report
-    regenerated in-process per reports/CLAUDE.md.
-  - [B13.3] STATE:not-started — the IMPLEMENTATION lane (opens after
-    [B13.1]+[B13.2] merge): catalogue/rules.toml (31 rules, 7 classes,
+  - [B13.2] DONE 2026-09-09 — reporter v16 MERGED 29f02ab (lanes b13pre →
+    b13regen → b13regen2 → b13fin: P-1/P-2 exactly per §2.5, `_gave_up_cell_detail`
+    the one shared derivation, cwd-INDEPENDENT provenance paths as a ruled
+    addition, 82 reporter tests, all 42 report groups regenerated and
+    diff-proved — 60 giveup_smallest rows in 8 files, floor 40 / none 2, ten
+    groups' `../../store` prefix normalized, the v13/v14 legend backlog
+    explained; the regeneration took eight attempts — KB-16); `make
+    check-report` OWED (running detached at merge), `make check-harness`
+    OWED after it; row archived in plan_completed.md.
+  - [B13.3] STATE:started — the IMPLEMENTATION lane (lane b13impl, OPUS per
+    I-60's addendum, opened 2026-09-09 02:2x EDT against v1.2 + reporter v16): catalogue/rules.toml (31 rules, 7 classes,
     [[pin_order]]), pcrecbench/interpret.py, catalogue/fixtures/gen.py
     --check, catalogue/golden/, make check-interpret (six sections),
     then §10's acceptance test on Reports A-D.
