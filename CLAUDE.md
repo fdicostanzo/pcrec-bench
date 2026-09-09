@@ -292,7 +292,18 @@ value) + `CELL_CAP` in the window scripts + the cell-length table (b32adp),
 and reporter **v12** — the filtered record count in the header (KB-8), the
 `(clang cc)` suffix (KB-9), the worst other-core header line, the `edges=`
 clause, `quick --vs` on a refused arm (KB-10); 66 reports regenerated
-(b32rep). make check 4/72/0 · 253/253 · 66+7. Manager sessions start with the
+(b32rep). make check 4/72/0 · 253/253 · 66+7. 2026-09-08/09 (seventeenth session, the first as FABLE per I-60): [B13] THE
+INTERPRETER STARTED on Frank's go — inbox I-58 (pcrecdev1's cross-review,
+APPROVED CONDITIONAL) acked; [B13.1] docs/design/interpreter_v1.md **v1.2**
+(I-58's four edits + minors + the §6.5 honesty edit; the r4 cycle closed
+with its step-2 pass recorded and a 56/56 by-id completeness check that
+found a third dropped finding, charter F9, already applied); [B13.2]
+reporter **v16** — P-1 `floor_pattern:` header key, P-2 `giveup_smallest`
+rows, cwd-INDEPENDENT provenance paths, 82 reporter tests, every committed
+report regenerated and diff-proved (KB-16: the whole-store load is ~750 s /
+3.6 GB at 160 records and is memory-killed as a tracked task — detached
+runs only); [B13.3] the implementation lane (Opus) OPEN. `make check` at
+29f02ab: 4/72/0 · 344/344 · 75+7. Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope

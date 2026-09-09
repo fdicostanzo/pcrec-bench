@@ -147,8 +147,8 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
     diff-proved — 60 giveup_smallest rows in 8 files, floor 40 / none 2, ten
     groups' `../../store` prefix normalized, the v13/v14 legend backlog
     explained; the regeneration took eight attempts — KB-16); `make
-    check-report` OWED (running detached at merge), `make check-harness`
-    OWED after it; row archived in plan_completed.md.
+    check-report` 75+7 passed and `make check-harness` 344/344 at 29f02ab
+    (both detached, 2026-09-09 02:24/02:38 EDT); row archived in plan_completed.md.
   - [B13.3] STATE:started — the IMPLEMENTATION lane (lane b13impl, OPUS per
     I-60's addendum, opened 2026-09-09 02:2x EDT against v1.2 + reporter v16): catalogue/rules.toml (31 rules, 7 classes,
     [[pin_order]]), pcrecbench/interpret.py, catalogue/fixtures/gen.py
