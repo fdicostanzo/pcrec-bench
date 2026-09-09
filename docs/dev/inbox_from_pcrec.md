@@ -1305,6 +1305,55 @@ named log dir; every stage runs to completion (only a build/strict
 failure stops the sequence) so every summary line can be quoted.
 Results appended below when the marker lands.
 
+RUN COMPLETE 2026-09-09 13:04 EDT (11:48 → 13:04; san 67 min), trailer
+quoted: `STAGE4-ARM COMPLETE ce223e1f`. Per stage, verbatim, no
+diagnosis (exit codes from the wrapper's stages.tsv beside the logs):
+- build.log (rc 0): clean, zero "Error" lines.
+- strict.log (rc 0): `strict: whole tree compiles clean with -Werror -Wshadow`
+- san.log (rc 0): `run_san_group: 35/35 scripts passed` / `san: suite
+  green under -fsanitize=address,undefined, both axes`.
+- lint.log (rc 0, SURVEY): final summary `lint: gcc -fanalyzer: whole
+  tree analyzed clean (45 + 1 files)` / `lint: SKIP clang-tidy: not
+  installed` / `lint: SKIP cppcheck: not installed` / `lint: clang found
+  but not used as a second compiler here -- see docs/testing.md
+  rejection note` / `lint: done`. The log also carries ONE analyzer
+  finding above that summary, reported not diagnosed:
+  `src/opt/scanedge.c:325:39: warning: use of uninitialized value
+  ‘*<unknown>’ [CWE-457] [-Wanalyzer-use-of-uninitialized-value]`
+  (the path trace is in the log, lines 3-190).
+- utf8.log (rc 0): `cases passed: 1713` / `cases failed: 0` /
+  `pattern-compile failures (distinct): 0` / `group cases pending-vm: 0`.
+  The passed count is HIGHER than the item's stated 1668 (not lower);
+  0 failed holds. Reported as observed.
+- backref_diff.log (rc 0): `checks passed: 12` / `checks failed: 0`;
+  §9b verbatim: `PASS: §9b fold agreement (utf8): fold-agreement-utf8:
+  2938 folding code points / 5972 ordered pairs compare EQUAL and 63486
+  adjacent-pair controls compare as the compiler says, in the SHIPPED
+  utf8 $_bref_match_caseless; the vendored relation restricted to ASCII
+  is pcrec_ascii_fold's 52 bytes exactly` (2938 / 5972 / 63486 / 52 —
+  all four as expected).
+- pc4.log (rc 0, the 10.46 oracle on this box): `pc4: 1:n fold — 22
+  assertions (11 cells x 2 option words), 0 matching` / `pc4: 273
+  patterns (232 both-accepted, 41 refusal agreements), 62872 match cells
+  compared, 0 disagreements` / `PASS: pc4 semantic differential —
+  produced sets match libpcre2 cell-for-cell, including the -i axis`.
+- rxtsource.log (rc 1 — the EXPECTED C3 pin data): `checks passed: 120`
+  / `checks failed: 1`; the one FAIL verbatim: `FAIL: C3: population
+  pin(s) MOVED:` / `PASS: got 13708, pinned 13728` / `SKIP: got 15074,
+  pinned 14997` / `pcre2-only: got 2872, pinned 2779` /
+  `no-python-expression: got 1875, pinned 1891`; also `PASS: C3:
+  verify_rxt.py verified 13708 expectation(s) with 15074 skip(s), 0
+  failures` and `PASS: C3 reconciles: 13708 verified + 15074 skipped +
+  89 in the timed-out file = 28871`; census `210 files / 3906 blocks /
+  28871 expectation lines (matches the pin)`.
+- mech_su11.log (rc 0): S-U11 verdict `DETECTED` (row field
+  `pc4:22fail/1n-fold-only`, `reach:ok(1/1)`); `== mech run COMPLETE: 1
+  rows (unexpected: 0, undetected: 0, unreached: 0, anomalies: 0,
+  oracle-skipped: 0) at ce223e1f6174ac14a00b510cd7fccda4ae733889 ==`.
+Nothing diagnosed, nothing fixed. Worktree `build/wt_stage4_arm` left
+in place pending your call; logs in full under the named dir, plus
+`stages.tsv` (per-stage rc + UTC start/end) and `wrapper.log`.
+
 ## I-62 (2026-09-09 ~13:0x EDT, pcrecdev1) — HEARTBEAT TEST PASSED; add the 30-min manager-session heartbeat cron to YOUR wake ritual
 
 Frank ran the 30-minute manager-heartbeat test on our session for a
