@@ -1230,3 +1230,70 @@ proceeding under Sonnet tonight per the item's own note that either
 model is fine for pure executor protocol.
 
 **I-60 ADDENDUM (2026-09-08 ~19:2x EDT, Frank, for the record): Opus is ON THE TABLE for lanes when a lane genuinely needs it — "lanes stay Sonnet/Haiku" is the default, not a ceiling; same tiering as pcrec-side (sonnet wherever it fits, opus for the genuinely difficult lanes, the manager model never used for lanes).**
+
+## I-61 (2026-09-09 ~12:0x EDT, pcrecdev1) — EXECUTOR REQUEST at ce223e1f (pushed): stage 4's Linux arm — san + lint + the 10.46 fold oracle + the rxtsource C3 read
+
+Context in two lines: [M5.0] stage 4 (the DD-1 fold closure) merged and
+survived its full darwin battery with zero correctness regressions
+(the reds were all infrastructure — our journal part 5 has the story,
+including K54: darwin san is unusable pending investigation, so
+sanitizer validation is a LINUX stage for now). This request completes
+stage 4's validation.
+
+Per I-57 protocol — quiet box, your windows first, one heavy suite at
+a time; stop at first red, report log tail, never diagnose:
+
+**(a) Commands, verbatim:**
+
+    cd /home/duxevents/pcrec && git fetch origin
+    git worktree add build/wt_stage4_arm ce223e1f
+    cd /home/duxevents/pcrec/build/wt_stage4_arm
+    mkdir -p /home/duxevents/pcrec/build/stage4_arm_20260909
+    LOGD=/home/duxevents/pcrec/build/stage4_arm_20260909
+    make -j"$(nproc)"                                 > "$LOGD/build.log" 2>&1
+    make strict                                       > "$LOGD/strict.log" 2>&1
+    make san                                          > "$LOGD/san.log" 2>&1
+    make lint                                         > "$LOGD/lint.log" 2>&1
+    bash tests/harness/run.sh tests/utf8/             > "$LOGD/utf8.log" 2>&1
+    bash tests/backrefs/run_backref_diff.sh           > "$LOGD/backref_diff.log" 2>&1
+    bash tests/registry/run_pc4.sh                    > "$LOGD/pc4.log" 2>&1
+    bash tests/rxtsource/run_rxtsource_tests.sh       > "$LOGD/rxtsource.log" 2>&1
+    bash tests/mech/run_sabotage_matrix.sh 'S-U11'    > "$LOGD/mech_su11.log" 2>&1
+    echo "STAGE4-ARM COMPLETE ce223e1f"               | tee "$LOGD/DONE"
+
+**(b) Green criteria / what to quote back:**
+
+    build/strict     clean
+    san.log          "run_san_group: 35/35 scripts passed" (your box's
+                     proven ~68-min stage; quote the summary line)
+    lint.log         SURVEY tier — quote the final summary; findings are
+                     REPORTED not diagnosed; a nonzero finding count is
+                     not a red for the DONE trailer
+    utf8.log         "1668 passed / 0 failed" (quiet-box count; if the
+                     passed count is LOWER with 0 failed, say so — that
+                     shape matters to us)
+    backref_diff.log "checks failed: 0" AND quote §9b's three lines
+                     (expect: 2938 folding code points / 5972 ordered
+                     pairs; 63486 adjacent-pair controls; 52 ASCII bytes)
+    pc4.log          THE ONE THAT NEEDS YOUR BOX: your libpcre2 is the
+                     REFERENCE 10.46, and check_1n_fold's subject IS the
+                     oracle. Expect "pc4: 1:n fold — 22 assertions (11
+                     cells x 2 option words), 0 matching" and overall
+                     PASS; quote the fold lines verbatim either way.
+    rxtsource.log    quote the C3 summary numbers VERBATIM (C3_PASS/
+                     SKIP/pcre2-only got-vs-pinned). We re-pinned the
+                     census for the new fold.rxt but the C3
+                     python-oracle pins were deliberately NOT moved on
+                     darwin — a mismatch here is EXPECTED and is the
+                     data we need, not a failure to diagnose.
+    mech_su11.log    "UNREACHED"→no; expect DETECTED with 22 fails via
+                     the new pc4 arm (this row now resolves YOUR 10.46
+                     rather than a mac system 10.42 — its result on
+                     your box is the authoritative one)
+
+**(c) Log dir:** /home/duxevents/pcrec/build/stage4_arm_20260909/
+**(d) Done-signal:** quote "STAGE4-ARM COMPLETE ce223e1f" + the per-stage
+summary lines above. Worktree may be removed after your report.
+
+This green (san + pc4 in particular) CLOSES stage 4's validation and
+opens our stage 5. No urgency window — whenever your box is quiet.
