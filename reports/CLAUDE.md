@@ -4,6 +4,74 @@ Each file is the output of one `python3 -m pcrecbench report ...` query,
 committed beside the records it reduces so a reader can cite a number
 with its query. Names: `<date>-<subbench>-<version>-<machine>[-<label>][.<grain>].md|tsv`.
 
+**[B13.2] (2026-09-08, lanes b13pre → b13regen → b13regen2 → b13fin)
+regenerated EVERY committed report against reporter `v16 (2026-09-08)`**
+(docs/design/interpreter_v1.md §2.5's two reporter preconditions,
+`pcrecbench/CLAUDE.md`'s report.py entry). All 42 groups (126 files: 42
+`.tsv` + 42 `.md` + 42 `.subject-grain.md`) re-rendered from their OWN
+committed query (parsed out of each `.tsv`'s own header line, the
+interpreter design's §2.1 header-parsing rule) and diffed against the
+committed content before being written back; every diff was explained
+by one of four deltas, in ANY combination, before landing — never a
+partial or silently-wrong regeneration:
+
+- **The version-line stamp**, every file (126/126): `v12`/`v13`/`v14`/
+  `v15` → `v16` (26 files were at `v12 (2026-09-02)`, 5 at `v13
+  (2026-09-03)`, 5 at `v14 (2026-09-05)`, 6 at `v15 (2026-09-05)`).
+- **P-1's `floor_pattern:` header key**, every `.tsv` (42/42): `floor`
+  on 40 files (every set that has adopted [B15]'s floor pattern),
+  `none` on the two pre-1.3 `email-specimen@0.1` files.
+- **P-2's `giveup_smallest` rows**, `.tsv` only: 60 rows added across 8
+  files — seven `email-specimen` groups (both `@0.1` files, five of
+  six `@0.2` ones: 7+12+5+10+5+10+10 rows) and one `altwide` group
+  (`2026-09-03-altwide-0.2-*-bigcap-1989c62`, +1 row); every other
+  `.tsv` +0 — no other set's `excluded` section carries a give-up. Rows
+  are wholly NEW lines (`$11 == "giveup_smallest"`); no existing row
+  moved or changed.
+- **The manager-ruled cwd-independent provenance-path fix**: exactly
+  the ten 2026-09-05 groups named in `pcrecbench/CLAUDE.md`'s report.py
+  entry (20 files: `.md` + `.subject-grain.md` siblings), each an
+  11-line record-listing block (`../../store/records/...` →
+  `store/records/...`) that shifts together under diff — not 11
+  independent single-line replaces.
+- **The v13/v14 → v16 legend-bullet backlog**: 8 files (4 groups × 2
+  siblings — `2026-09-05-altwide-0.2-*-after-334fd10e`,
+  `2026-09-05-bounded-0.3-*-fold-334fd10e`, `2026-09-05-loglines-0.1-*
+  -noedge-334fd10e`, `2026-09-05-loglines-0.1-*-noedge-3pins-334fd10e`,
+  every one `334fd10e`-stamped), 1 new legend line each: the `shape=`
+  bullet gaining the `prog: N B` paragraph (I-50 §1's reconcile,
+  shipped as part of v15 but never before regenerated onto a
+  pre-v15-stamped file), byte-identical to the same-subbench v15
+  reference (`2026-09-06-altwide-0.2-*-after-d34c9131.md` etc., read
+  from `git show HEAD:` — the pre-regeneration committed content, never
+  from disk after this wave started overwriting v15 stamps with v16).
+
+**Proof**: the brief's own filtered `git diff` over `reports/*.tsv`
+(strip the `reporter:` header line and any added `giveup_smallest` row)
+prints nothing; an independent per-hunk classifier over `git diff -U0
+-- reports/*.md` (disjoint-category matching against the four deltas
+above) finds **zero unexplained deltas across all 84 `.md`/
+`.subject-grain.md` files** — 20 with the cwd-path fix, 8 with a legend
+line, every file with exactly one version-line change.
+
+**Regenerated IN-PROCESS** (load and validate `store/`'s 160 records
+ONCE — **751.0 s**, the store's current size, `[B36]`'s 748 s
+precedent holding — reused for all 42 renders, split into two phases
+by lane b13regen2 specifically so this cost is paid ONCE total across
+however many classifier-fix iterations it takes: Phase A renders every
+non-v16 group to a scratch cache; Phase B, no store load, classifies
+the cache against `reports/` and writes on a clean classification,
+safely re-runnable). The `2026-09-07-syntax-0.1-*-first-d34c9131`
+group's `.subject-grain.md` (10.2 MB, ~108k lines) made
+`difflib.SequenceMatcher` pathologically slow in the classifier itself
+(100% CPU, still running after 100+ CPU-seconds; killed once by the
+tracked-task memory heuristic, once by hand) — fixed with an equality
+fast path (compare the normalized line lists directly, O(n) with
+early-exit, before ever calling `difflib`) in both `classify_tsv_diff`
+and `classify_md_diff`, which let that group finish in seconds; almost
+every group's body is unchanged after normalization, so the fast path
+fires on nearly all 42.
+
 **[B36] reports (2026-09-07, lane b36read) ADDED ONE file group — the
 2026-09-06/07 OVERNIGHT window at pcrec pin d34c9131 (abi 23), the
 `bench/syntax@0.1` CENSUS's FIRST SAMPLE** — and changed NOTHING else here:

@@ -201,6 +201,25 @@ set, per trial, then reduce over trials) indistinguishable from
   classifier (the test's control). Regenerate it only when a LATER
   reporter version deliberately changes the rendering of these records,
   and say so here.
+  **[B13.2] correction (2026-09-08, cwd-independent provenance paths):**
+  the three per-record listing lines' `(pcrecbench/tests/fixtures/
+  store/records/...)` paths are edited in place to `(store/records/...)`
+  -- `render_markdown`'s two `os.path.relpath(path)` call sites now read
+  `os.path.relpath(path, rd.store_parent)` (`rd.store_parent =
+  os.path.dirname(os.path.abspath(args.store))`, i.e. the STORE
+  directory's own PARENT), so the rendered path no longer depends on the
+  process's cwd at render time -- exactly the fragility this golden's
+  OWN "same cwd, so the paths match" caveat named. This is the one
+  deliberate exception to "regenerate only the affected lines never
+  applies to a hand edit" elsewhere in this file: a full re-render was
+  not needed because ONLY the path prefix moves (the golden's `content_
+  hash`-bearing JSONL is untouched, and every OTHER line was already
+  diffed byte-identical against the pre-fix v15 rendering before this
+  edit). Across the 42 committed `reports/` files this same fix
+  normalizes ten 2026-09-05 files' `../../store/records/...` provenance
+  lines (rendered from a lane worktree two levels below the repo root)
+  to `store/records/...`, matching the other 32 -- see `reports/
+  CLAUDE.md`'s `[B13.2]` entry for the per-file list.
 
 ## Editing
 
