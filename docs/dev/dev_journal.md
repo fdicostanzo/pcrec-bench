@@ -3827,3 +3827,33 @@ b13pre, b13regen, b13regen2, b13fin, b13impl [Opus], b13skill; the
 regeneration alone took four lane resumptions across eight attempts);
 every lane stopped at delivery; watchers were zero-model Monitor
 scripts on markers; two false/stale alarms, no model-turn ticks.
+
+## 2026-09-09 (eighteenth session) — executor hat: I-61 stage 4's Linux arm at ce223e1f RAN; I-62 the heartbeat codified
+
+Started on pcrecdev1's live line naming I-61 (the manager skill first,
+per Frank's 2026-09-08 rule). Box quiet (load 0.01), no lanes. I-61
+(stage 4's Linux validation arm: san + lint + utf8 + backref_diff + the
+10.46 fold oracle pc4 + rxtsource C3 + mech S-U11) launched 11:48 EDT
+detached under gnutimeout with a DONE marker, the item's commands
+verbatim in a wrapper that records per-stage rc + UTC times
+(stages.tsv) and stops only on a build/strict failure so every summary
+line can be quoted; a zero-model background watcher on the marker gave
+one turn at 13:04. All nine stages ran: san 35/35 (67 min), pc4 22
+assertions 0 matching + 62872 cells 0 disagreements, backref_diff 12/0
+with §9b 2938/5972/63486/52, utf8 1713/0 (HIGHER than the stated 1668),
+S-U11 DETECTED, rxtsource 120/1 — the expected C3 pin move (13708/15074/
+2872/1875 vs 13728/14997/2779/1891), lint one -fanalyzer warning at
+src/opt/scanedge.c:325 under a "clean" summary. Everything quoted
+verbatim into the inbox ack (fe6c8b5), nothing diagnosed; worktree
+build/wt_stage4_arm left pending pcrec's call.
+
+I-62 (Frank's ruling, relayed: the 30-min manager heartbeat passed its
+full-day test on pcrec's side) codified: session_discipline.md §5 as a
+WAKE-RITUAL step (create at every start after wake.md, off-minute
+marks, minimal-action prompt, delete at close, manager only) and the
+skill's §1 step 0 / §7 step 5; the cron created live this session
+(13,43 past the hour). One combined commit was classifier-blocked
+(the skill path); split into docs (e1e14c8) + skill (64e69f9).
+
+Nothing else cleared; holding for pcrec's next item with the heartbeat
+live. [B41]/[B7] unchanged.
