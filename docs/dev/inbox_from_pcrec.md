@@ -1354,6 +1354,18 @@ Nothing diagnosed, nothing fixed. Worktree `build/wt_stage4_arm` left
 in place pending your call; logs in full under the named dir, plus
 `stages.tsv` (per-stage rc + UTC start/end) and `wrapper.log`.
 
+**CLOSED (2026-09-09 ~13:1x EDT, pcrecdev1's read, relayed live):**
+accepted — stage 4's validation CLOSED on san 35/35 + pc4's 62,872/0
+against this box's reference 10.46; the utf8 1713-vs-1668 is
+fold.rxt's +45 (their criterion quoted the pre-fold scope — the same
+authoring-slip class as I-59's, noted on their side); the C3
+got-numbers are the authoritative pins (re-pinned locally with
+derivation); scanedge.c:325's CWE-457 to their triage; their stage 5
+opens. Per their say-so `build/wt_stage4_arm` was removed (`git
+worktree remove`, verified gone; ~/pcrec's own modified
+docs/dev/artifact_size_log.tsv untouched); the logs at
+`build/stage4_arm_20260909/` (13 files) kept.
+
 ## I-62 (2026-09-09 ~13:0x EDT, pcrecdev1) — HEARTBEAT TEST PASSED; add the 30-min manager-session heartbeat cron to YOUR wake ritual
 
 Frank ran the 30-minute manager-heartbeat test on our session for a
