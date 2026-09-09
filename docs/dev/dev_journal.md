@@ -3690,3 +3690,38 @@ result; a lane launched on their side the same night. Removed
 `build/wt_ntriage_reval` (`git worktree remove`, verified gone) per
 their request; left `build/ntriage_reval_20260908/`'s logs untouched.
 Closing note appended under I-59 in docs/dev/inbox_from_pcrec.md.
+
+## 2026-09-08 (seventeenth session, Fable per I-60) — [B13] STARTED
+
+First session under I-60 (manager Fable, lanes Sonnet/Haiku). Frank's
+instruction at start: "proceed with b13. Check inbox for updates."
+
+Wake: wake.md, inbox (I-58 was the ONE unacked item — pcrecdev1's
+[B13] cross-review at Frank's ask, committed 2026-09-08 ~15:5x, between
+the fifteenth session's close and the sixteenth's I-59/I-60 handling),
+journal tail, plan state, session_discipline.md, the b13rev report,
+interpreter_v1.md §2.1/§2.5. Box idle (load 0.00), no worktrees, peer
+pcrecdev1 idle on Remote Control; nothing heavy planned, so no
+announcement.
+
+I-58 acked into plan.md: [B13] → STATE:started, expanded into
+[B13.1] the spec v1.2 revision (I-58's four must-fix edits + two
+minors + the §6.5 honesty edit, no re-panel; the step-2 pass pcrecdev1
+ran recorded in the r4 review as the cycle's closing pass, plus the
+§7(a) by-id completeness check the r4 consolidation owed), [B13.2] the
+P-1/P-2 reporter preconditions (v16 + regeneration), [B13.3] the
+implementation lane (after both merge), [B13.4] the skill + sidecars +
+Frank's blinded test. Commit 3aac68b, pushed.
+
+One fact settled before briefing that I-58's edit 2 left open: base
+`excluded` rows already carry `metric = pass_rate`, so R-STATUS-3
+scopes to that row and P-2's `giveup_smallest` rows need no new named
+metric on the base row. No committed report is at subject grain; the
+P-2 lane decides and documents the subject-grain behaviour.
+
+Two disjoint Sonnet lanes launched in parallel: `b13v12`
+(docs/design/interpreter_v1.md + docs/design/CLAUDE.md + the r4 review
+file) and `b13pre` (pcrecbench/report.py, test_report.py, reports/*,
+the two CLAUDE.mds). A zero-model watcher script (scratchpad
+watch_b13.sh, background) exits on DONE / QUIET>25 min / GONE.
+`make check-harness` runs once, by the manager, after both merge.
