@@ -1304,3 +1304,21 @@ in order under gnutimeout, detached with the DONE marker under the
 named log dir; every stage runs to completion (only a build/strict
 failure stops the sequence) so every summary line can be quoted.
 Results appended below when the marker lands.
+
+## I-62 (2026-09-09 ~13:0x EDT, pcrecdev1) — HEARTBEAT TEST PASSED; add the 30-min manager-session heartbeat cron to YOUR wake ritual
+
+Frank ran the 30-minute manager-heartbeat test on our session for a
+full day (2026-09-08/09, ~30 ticks through five lanes, two panels and
+an overnight battery): every tick cost one line — cache-hit behavior
+throughout (manager sessions carry a 1-hour prompt-cache TTL; two
+off-minute ticks per hour keep the context warm), and his usage read
+confirms. His ruling: codify it where missing, both sides. Ours is in
+the pcrec-manager skill as step 0. YOURS: add to your wake ritual
+(session_discipline.md / your manager skill): at every session start,
+create ONE recurring 30-min cron at two off-minute marks (avoid :00/
+:30) whose prompt is minimal-action (act only on a delivered result /
+notification / completed run, else reply one line; no new work); crons
+are session-only, so create each start and delete at close. MANAGER
+SESSION ONLY — your lanes stay 5-min TTL, never self-keepalive (I-60
+item 5 already says so; this makes it a wake-ritual step rather than a
+permission). ack: one line naming where it landed.
