@@ -1385,3 +1385,73 @@ item 5 already says so; this makes it a wake-ritual step rather than a
 permission). ack: one line naming where it landed.
 
 ack: 2026-09-09 — `docs/dev/session_discipline.md` §5 (the heartbeat is now a WAKE-RITUAL step: create at every start after wake.md, off-minute marks, minimal-action prompt, delete at close, manager only) + the manager skill's §1 wake list gains the step as 0; created in this session the same hour.
+
+## I-63 (2026-09-10 ~09:0x EDT, pcrecdev1) — EXECUTOR REQUEST at 013e5e03 (pushed): stage 5's Linux arm + the D98 linked-oracle confirmation + san over the week's merges
+
+Context, three lines: [M5.0] stage 5 (script properties, 171 values ×
+three namespaces) merged and survived its darwin battery (every red
+dispositioned to pre-existing/infrastructure; zero stage regressions).
+Separately, dlopen is RETIRED (D98) — every oracle check now links
+libpcre2 directly via pkg-config (your box pre-verified: 10.46
+resolves with headers). This run closes stage 5's validation, confirms
+the linked binding on the reference, and runs san over the week's
+merges.
+
+Per I-57 protocol — quiet box, your windows first, stop at first
+build/strict red, report log tails, never diagnose:
+
+**(a) Commands, verbatim:**
+
+    cd /home/duxevents/pcrec && git fetch origin
+    git worktree add build/wt_s5_arm 013e5e03
+    cd /home/duxevents/pcrec/build/wt_s5_arm
+    mkdir -p /home/duxevents/pcrec/build/s5_arm_20260910
+    LOGD=/home/duxevents/pcrec/build/s5_arm_20260910
+    make -j"$(nproc)"                                  > "$LOGD/build.log" 2>&1
+    make strict                                        > "$LOGD/strict.log" 2>&1
+    make san                                           > "$LOGD/san.log" 2>&1
+    bash tests/registry/run_registry_tests.sh          > "$LOGD/registry.log" 2>&1
+    bash tests/registry/run_pc4.sh                     > "$LOGD/pc4.log" 2>&1
+    make test-uprops                                   > "$LOGD/uprops_byte.log" 2>&1
+    make test-uprops-utf8                              > "$LOGD/uprops_utf8.log" 2>&1
+    bash tests/harness/run.sh tests/utf8/              > "$LOGD/utf8.log" 2>&1
+    bash tests/rxtsource/run_rxtsource_tests.sh        > "$LOGD/rxtsource.log" 2>&1
+    bash tests/mech/run_sabotage_matrix.sh 'S-U12'     > "$LOGD/mech_su12.log" 2>&1
+    bash tests/atomic_groups/run_atomic_diff.sh        > "$LOGD/atomicdiff.log" 2>&1
+    echo "S5-ARM COMPLETE 013e5e03"                    | tee "$LOGD/DONE"
+
+**(b) Green criteria / quote back:**
+
+    build/strict      clean
+    san.log           "run_san_group: 35/35 scripts passed" (~68 min)
+    registry.log      EXIT 0; PC-3's summary line — expect "209 passing"
+                      with the resolved-oracle line naming YOUR 10.46
+                      (the D98 linked binding's first reference run);
+                      the POSIX pool line should read 149804. Quote all
+                      three lines verbatim.
+    pc4.log           "62,872 match cells ... 0 disagreements" + the 1:n
+                      fold PASS lines
+    uprops_byte.log   0 failed (expect "26 passed")
+    uprops_utf8.log   THE STAGE-5 TIER-1 RUN: 0 failed AND the
+                      membership differential's drift summary — on your
+                      10.46 the "attributed to version drift" counts
+                      should read ZERO for every name (this zeroes the
+                      "51 names / 28,263 code points" our 14.0.0-oracle
+                      attributed). Quote the summary verbatim either way.
+    utf8.log          "1833 passed / 0 failed" (1,773 + axis12's 60;
+                      lower-with-0-failed = say so)
+    rxtsource.log     quote C3's got-vs-pinned numbers VERBATIM — a
+                      mismatch is EXPECTED DATA (axis12 moved the
+                      python-oracle populations; we re-pin from your
+                      numbers), not a failure.
+    mech_su12.log     S-U12 DETECTED, unexpected: 0
+    atomicdiff.log    "checks passed: 8 / checks failed: 0" (the D98
+                      build-site fix's reference-box confirmation)
+
+**(c) Log dir:** /home/duxevents/pcrec/build/s5_arm_20260910/
+**(d) Done-signal:** "S5-ARM COMPLETE 013e5e03" + the per-stage lines.
+Worktree removable after your report.
+
+Green here (san + uprops_utf8 + pc4 the load-bearing three) CLOSES
+[M5.0] stage 5's validation — the whole milestone's build phase — and
+our close-out ritual begins. No urgency window.
