@@ -440,10 +440,11 @@ bindings) live here, vendored or system, pinned either way.
   `index.tsv`, `machines.tsv`. Pinned records only; scratch records live
   in `build/scratch-store/` (or `$PCRECBENCH_SCRATCH_STORE`), never here.
   See its CLAUDE.md.
-- `catalogue/` — the INTERPRETER's rule catalogue at **1.0** ([B13.3],
-  2026-09-09): `rules.toml` (31 rules in 7 classes, the `[[pin_order]]`
-  table, every threshold citing the `report.py`/`reduce.py` line it
-  reads), `check_interpret.py` (`make check-interpret`'s six sections),
+- `catalogue/` — the INTERPRETER's rule catalogue at **1.1** ([B13.3],
+  2026-09-09; 1.1 on 2026-09-11, [B41]: R-ARM-1's optional `legend`
+  field, a MINOR bump): `rules.toml` (31 rules in 7 classes, the
+  `[[pin_order]]` table, every threshold citing the `report.py`/
+  `reduce.py` symbol it reads), `check_interpret.py` (`make check-interpret`'s six sections),
   `acceptance_10.py` (interpreter_v1.md §10's acceptance test, 25/25),
   `refresh_golden.py`, `fixtures/` (58 fixtures: a real reporter slice
   plus at most one declared mutation, `gen.py --check`) and `golden/`
@@ -643,7 +644,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # the denied w-384 refuse), iso-ts 8/4 edges through
                         # the abi-19/21 dispatch, registries 74/25 · 50 · 55
                         # (~20 min; needs libpcre2-8-0 and a C compiler)
-    make check-interpret # 129 checks in six sections (~28 s; [B13.3]): the
+    make check-interpret # 132 checks in six sections (~28 s; [B13.3]): the
                         # catalogue/code correspondence and every load-time
                         # check, the header known-key list DERIVED from
                         # report.py's own header block, determinism + the
