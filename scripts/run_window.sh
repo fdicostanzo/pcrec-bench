@@ -229,5 +229,33 @@ for t in $TESTEES; do
 done
 
 gnutimeout 120 python3 -m pcrecbench index --store "$STORE" 2>&1 | tail -3 | tee -a "$LOG"
+
+# [B41] (a) WINDOW CHECKLIST: the three (and counting) committed
+# reports/*.interpretation.md sidecars are stamped against the LIVE
+# store/index.tsv (interpreter_v1.md Q5), so any window that writes
+# records makes `make check-interpret` section 3 fail -- "re-renders
+# byte-identical" -- until they are regenerated. Only against the
+# CANONICAL store: a rehearsal (--dry-run) or a scratch-store run never
+# touches store/index.tsv, so there is nothing here for a sidecar to go
+# stale against. `scripts/regen_sidecars.py` runs the SAME invocation
+# `.claude/skills/pcrec-bench-interpret/SKILL.md` documents (step 3: the
+# CLI, not a library import) once per committed sidecar, plus that
+# skill's own determinism check (step 4) -- see its own module docstring.
+# FAILS LOUDLY: a non-zero exit here is NAMED in the log and becomes this
+# script's own exit code (never silently swallowed), which run_suite.sh
+# already surfaces in its per-set summary line (`set <name> rc=<rc> ...`).
+sidecar_rc=0
+if [ "$STORE" = "store" ] && [ "$DRY_RUN" -eq 0 ]; then
+  echo "-- regenerating interpretation sidecars $(date -Is)" | tee -a "$LOG"
+  gnutimeout 300 python3 scripts/regen_sidecars.py 2>&1 | tee -a "$LOG"
+  sidecar_rc=${PIPESTATUS[0]}
+  if [ "$sidecar_rc" -ne 0 ]; then
+    echo "   SIDECAR_REGEN_FAILED rc=$sidecar_rc -- make check-interpret section 3 will fail until this is fixed and re-run (see the OK/FAIL lines above)" | tee -a "$LOG"
+  fi
+else
+  echo "-- skipping sidecar regeneration (dry run or non-canonical store '$STORE')" | tee -a "$LOG"
+fi
+
 echo "== window run end $(date -Is) load=$(cat /proc/loadavg)" | tee -a "$LOG"
 echo "WINDOW_RUN_COMPLETE" >> "$LOG"
+exit "$sidecar_rc"

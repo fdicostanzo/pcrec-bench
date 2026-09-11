@@ -533,15 +533,23 @@ def _first_diff(a, b):
 
 # ------------------------------------------------------------ section 6
 
-PROSE_FIELDS = ("template", "no_fire", "links")
+PROSE_FIELDS = ("template", "no_fire", "legend", "links")
 
 
 def section_6():
     """The template-diff gate: a diff that touches a `template`,
-    `no_fire` or `links` field, or adds a `[[signature]]`, must carry a
-    reviewer's approval line in the commit message naming the rule ids
-    reviewed. The check cannot judge prose; what it can do is refuse to
-    let prose change invisibly."""
+    `no_fire`, `legend` or `links` field, or adds a `[[signature]]`, must
+    carry a reviewer's approval line in the commit message naming the
+    rule ids reviewed. The check cannot judge prose; what it can do is
+    refuse to let prose change invisibly.
+
+    Reads `HEAD~1..HEAD` of whatever commit is checked out -- so in a
+    lane's own worktree, mid-development, this section legitimately fails
+    on a WIP commit that touches one of these fields: a lane is not the
+    reviewer. The approval line belongs on the commit the manager writes
+    at merge (`docs/dev/lanes/b41_report.md` [B41] (c)) -- the commit
+    that becomes `HEAD` on the integrated history, which is what this
+    check actually reads once merged."""
     try:
         head = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"],
                               capture_output=True, text=True, timeout=30)
@@ -559,16 +567,16 @@ def section_6():
         ok(6, "no previous commit: the template-diff gate is inert")
         return
     touched = [ln for ln in diff.stdout.split("\n")
-               if re.match(r"^[+-]\s*(template|no_fire|links)\s*=", ln)
+               if re.match(r"^[+-]\s*(template|no_fire|legend|links)\s*=", ln)
                or re.match(r"^\+\s*\[\[signature\]\]", ln)]
     if not touched:
-        ok(6, "HEAD touches no template, no_fire or links field")
+        ok(6, "HEAD touches no template, no_fire, legend or links field")
         return
     msg = subprocess.run(["git", "-C", ROOT, "log", "-1", "--format=%B"],
                          capture_output=True, text=True, timeout=30).stdout
     if not re.search(r"[Tt]emplate/no_fire/links reviewed|"
                      r"[Tt]emplate.*reviewed:", msg):
-        bad(6, "a commit touching template/no_fire/links carries a "
+        bad(6, "a commit touching template/no_fire/legend/links carries a "
                "reviewer's approval line naming the rule ids",
             f"{len(touched)} prose line(s) changed; commit message has no "
             f"approval line")

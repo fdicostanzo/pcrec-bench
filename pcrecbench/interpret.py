@@ -1226,6 +1226,10 @@ def load_catalogue(path):
         if re.search(r"\{[a-z_0-9]+\}", rule["no_fire"]):
             raise InterpretError(f"{path}: {rid}'s no_fire sentence carries a "
                                  f"slot; it must be slot-free (§7.1)")
+        if rule.get("legend") and re.search(r"\{[a-z_0-9]+\}", rule["legend"]):
+            raise InterpretError(f"{path}: {rid}'s legend sentence carries a "
+                                 f"slot; it must be slot-free, same rule as "
+                                 f"no_fire (§7.1)")
     # ... and every rule FUNCTION has a [[rule]] (§8(1)'s other
     # direction): a rule function is exactly a module-level callable
     # whose name round-trips to a rule id shape.
@@ -1549,6 +1553,9 @@ def render_markdown(results, ctx, stamp):
                     f"not aggregated)")
         out.append(head)
         out.append("")
+        if rule.get("legend"):
+            out.append(f"*Legend: {rule['legend']}*")
+            out.append("")
         out.extend(bullets)
         out.append("")
     out.append("## Rules that did not fire")

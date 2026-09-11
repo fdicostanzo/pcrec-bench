@@ -86,10 +86,29 @@ of these caused it:
   other rule reading the live index) reports for this report's
   population.
 
+**The last cause is now automated ([B41] (a), 2026-09-11).**
+`scripts/run_window.sh` regenerates every committed sidecar at its close
+(`scripts/regen_sidecars.py`, run against the canonical store only, never
+a rehearsal) — the SAME invocation this skill documents above (step 3),
+plus this skill's own determinism check (step 4) — so a window that
+writes new records no longer leaves `make check-interpret` section 3
+failing until a human notices and runs this skill by hand. It fails
+loudly: a non-zero exit is named in the window log
+(`SIDECAR_REGEN_FAILED rc=...`) and becomes `run_window.sh`'s own exit
+code, which `run_suite.sh`'s per-set summary line already surfaces. This
+skill is still the tool for the other three causes above (a catalogue or
+reporter bump, a golden refresh) and for regenerating one sidecar by
+hand outside a window — `scripts/regen_sidecars.py` on its own
+regenerates every committed sidecar the same way `run_window.sh` does,
+if a manual all-sidecars refresh is ever wanted without invoking this
+skill once per report.
+
 ## See also
 
 - `docs/design/interpreter_v1.md` §9 — the design this skill implements.
 - `catalogue/CLAUDE.md` — the rule catalogue and `make check-interpret`'s
   six sections.
 - `docs/dev/predictions/CLAUDE.md` — the predictions file format.
+- `scripts/CLAUDE.md`, `scripts/regen_sidecars.py` — the window-close
+  automation of this skill's regeneration procedure ([B41] (a)).
 - `reports/CLAUDE.md` — what the sidecars are, once one exists.
