@@ -198,3 +198,36 @@
   7fe4c81), the skill + sidecars (a1960a9). §10's acceptance 25/25 on Reports
   A-D; Frank's own blinded reading owed by Frank; follow-ups → [B41].
 
+- [B41] STATE:completed — (2026-09-11: lane b41 (Sonnet, ~95 min) MERGED 03d071d — (a) `scripts/regen_sidecars.py` wired into run_window.sh's close (canonical store, non-dry-run only; the script's exit code is the failure count and becomes the window's rc), (b) the re-pin checklist paragraph in testees/pcrec/CLAUDE.md, (c) interpreter_v1.md **v1.3** (16 of the 17 deviations applied, #17 declined as a build-history fact; the R-ARM-1 `legend` field = catalogue **1.1**, MINOR; the three sidecars regenerated, the merge commit carries the §8(6) approval line), (e) KB-16 CLOSED — `report` prefilters by index row before load/validate: the syntax query 765.7 s / 3.84 GiB → 116.8 s / 745 MiB, output byte-identical, a test proves one sub-bench's query opens no other's files; check-schema 4/72/0, check-interpret 132/132, check-report OK (detached), check-harness 344/344 after I-65's box time.) [B13] FOLLOW-UPS (2026-09-09, from the delivery): (a)
+  WINDOW CHECKLIST: the committed sidecars are stamped against the LIVE
+  store/index.tsv, so every window's new records make `make check` fail at
+  check-interpret section 3 until `/pcrec-bench-interpret` regenerates the three
+  sidecars — add the regeneration to scripts/run_window.sh's close (or rule
+  snapshot-vs-live for sidecars; the note's B8 table ruled it for GOLDENS only);
+  (b) RE-PIN CHECKLIST: append the new pin to catalogue/rules.toml's
+  `[[pin_order]]` (MINOR bump, §11 Q10) — testees/pcrec/CLAUDE.md's re-pin list;
+  (c) NOTE v1.3 HYGIENE: fold docs/dev/lanes/b13impl_report.md's 17 deviations
+  into interpreter_v1.md (R-ARM-1 `extremal = ratio` vs §5.2's prose; the
+  known-key list parsed from source; P12 rolls up refuted; `check-interpret`
+  is 28 s not 'seconds'; the §8(6) gate reads the MERGE commit — lanes' WIP
+  commits need no approval line, the reviewer's line goes on the merge);
+  (d) Frank's calls: Q3 (set-local bands stay OUT, pcrecdev1's input recorded),
+  whether every committed report gets a sidecar (42) or only the acceptance
+  three, and the R-ARM-1 `×1.00 beyond spread` rendering (the copied absolute
+  spread rule fires on tiny stddevs — a fact, but a threshold change would be
+  a MAJOR bump and a tuned constant); (e) a `report`-side fix for KB-16's cost
+  (filter by index row before validating) so `check-report` stops needing a
+  detached run. RULED 2026-09-11 (Frank, live; inbox I-66 the ruling of record: OUT
+  until further ruled, not only v1 — subbench.toml-as-data the sanctioned
+  future home, a new numbered item if ever): Q3 stays OUT of the catalogue; the
+  R-ARM-1 `×1.00 beyond spread` rendering STAYS — add a legend line naming it,
+  NO threshold change (no tuned constant, no MAJOR bump) until a second window
+  shows it matters; sidecars as already decided (interpreter_v1.md Q5: the
+  three acceptance reports at landing, the rest on demand — (d)'s "42 or
+  three" is CLOSED under that ruling). (d) is now (c)-shaped work: the legend
+  line rides the v1.3 hygiene edit. The `.rejected` history blobs (I-56 (3),
+  ~90 MB at d5c645b): Frank 2026-09-11 — CLEAN UP, but LATER; a coordinated
+  filter-repo when both clones can re-clone, scheduled by Frank, never
+  unprompted. The executor-launch permission (the classifier blocked the
+  wrapper launch twice on 2026-09-11 and blocks the session editing its own
+  settings): Frank adds the rule by hand.

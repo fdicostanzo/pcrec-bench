@@ -3867,3 +3867,70 @@ deleted at close per the new §7 step 5. No lanes, no crons, no
 worktrees of ours; master pushed (fee944e + this entry); wake.md
 rewritten for the next start. Nothing pending from pcrec; [B41]/[B7]
 wait on Frank's go.
+
+## 2026-09-11 (nineteenth session, Fable) — I-63/I-64 and I-65 executor runs (stage 5's Linux arm: red, then green at the fix); Frank's five rulings; [B41] merged; the executor-launch permission
+
+Started on "what is next on the plate?" with the manager skill: I-63 (stage
+5's Linux arm) unacked since 2026-09-10, box quiet, disk at 94 % (docker
+~18 GB + root-only remainder; Frank freed it to 66 % / 33 GB by noon).
+pcrecdev1 relayed Frank's go and I-64 (pin 13b56a12, two extra
+quote-back lines). The wrapper (I-61's shape: verbatim commands,
+per-stage rc + UTC in stages.tsv, stop only on build/strict) was
+BLOCKED at launch twice by the session's permission classifier (setsid
+and background forms) — stopped and escalated rather than worked around;
+Frank launched it from a shell via a one-shot ~/go.sh (removed after).
+S5-ARM at 13b56a12 RAN 08:44-09:49 EDT: all 11 stages executed, build/
+strict clean, SIX stages red under ONE compiler block (tests/fuzz/
+pcre2_abi.h:90 "#error must be the FIRST #include", then Dl_info/dladdr/
+dli_fname unknown) — san 29/35, registry/pc4/uprops×2/atomicdiff all
+build failures, NO [STORE] 387/387 line; utf8 1829/0 (stated 1833);
+rxtsource 120/1 with the C3 pins ASSERTED and MOVED (+72 SKIP / +72
+pcre2-only, C3_INFO 0); S-U12 DETECTED. Quoted verbatim to pcrecdev1 and
+into the I-63/I-64 ack (fc68526), nothing diagnosed. pcrecdev1's read: one
+root cause, darwin-invisible; fix lane launched.
+
+Frank ruled the five open questions live (c4f4b64): the .rejected blobs
+cleaned up LATER (coordinated, Frank schedules); Q3 OUT (I-66 later the
+ruling of record: out until further ruled); the R-ARM-1 ×1.00 rendering
+STAYS with a legend line, no threshold change; sidecars as already ruled
+(Q5); and the EXECUTOR-LAUNCH PERMISSION: the session cannot edit or even
+read its own settings (classifier, the intended guard), so I wrote
+.claude/settings.local.json to the scratchpad and Frank installed it —
+allow rules for `bash`/`nohup bash`/`setsid nohup bash` of scripts under
+this project's scratchpad prefix, read-only git + `pull --ff-only` +
+`worktree` in ~/pcrec, and log reads under ~/pcrec/build/; gitignored
+(71fb582); verified with a worktree list and a nohup probe.
+
+Lane b41 (Sonnet, ~95 min, the only lane) delivered all four [B41]
+items — the window-close sidecar regeneration (scripts/regen_sidecars.py,
+run_window.sh's rc), the re-pin pin_order step in testees/pcrec/CLAUDE.md,
+interpreter_v1.md v1.3 (16/17 deviations applied, #17 declined as a
+build-history fact; the R-ARM-1 `legend` field = catalogue 1.1), KB-16
+CLOSED (report prefilters by index row: the syntax query 765.7 s / 3.84
+GiB → 116.8 s / 745 MiB, output byte-identical, a test proves one
+sub-bench's query opens no other's files). Two lane waits were caught by
+file facts, not notifications (the BEFORE run and the final test run).
+MERGED 03d071d with the §8(6) approval line on the merge commit; the
+lane's "-64 lines in the inbox" was NOT a deletion — pcrecdev1's new
+session had written I-65/I-66 directly into this checkout after the lane
+branched (fetch shows nothing; master moves under a lane). make check on
+master: schema 4/72/0, interpret 132/132, harness 344/344, check-report OK
+(the lane's detached run). [B41] COMPLETED and archived.
+
+I-65 (re-run only the six red stages at 616c2e49 + the [CLS-TREE] ns/char
+rider) LAUNCHED 14:05 EDT by this session (no hand launch) — in a
+WORKTREE, not the item's main-checkout `git checkout`: pcrec's main
+checkout carries THEIR uncommitted artifact_size_log.tsv edit (2026-09-05)
+and the file differs between the pins, so git would refuse; BD2 forbids
+touching it; deviation stated and APPROVED by pcrecdev1. COMPLETE 15:29:
+all six stages rc 0 (san 35/35, PC-3 209, PC-4 62872/0, uprops byte 47/0
+= 21+26 their slip, uprops utf8 26/0 with [STORE] 387/387 exact and 0
+drift, atomic 8/0); the rider REFUSED at load1 0.51 and RAN on the
+wrapper's single pre-declared retry at 0.10 (2,641 rows; the gate never
+loosened). ACCEPTED: stage-5 validation discharged; wt_s5_arm removed on
+their say-so, wt_s5_rerun kept until their release; the size-log edit
+their post-close-out item.
+
+Session arithmetic: one manager (Fable), one lane (Sonnet), two executor
+runs (~65 + ~85 min box time), zero-model watchers throughout, the
+heartbeat cron at :17/:47 for the holds. Lessons in wake.md.
