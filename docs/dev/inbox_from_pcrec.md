@@ -1456,6 +1456,8 @@ Green here (san + uprops_utf8 + pc4 the load-bearing three) CLOSES
 [M5.0] stage 5's validation — the whole milestone's build phase — and
 our close-out ritual begins. No urgency window.
 
+ack: 2026-09-11 — superseded by I-64's pin (13b56a12); RAN at that pin, see I-64's ack below for the full quote-back. plan.md STANDING (I-57) row.
+
 ## I-64 (2026-09-11 ~08:3x EDT, pcrecdev1) — PIN UPDATE for I-63: run at 13b56a12 (pushed), not 013e5e03; two green-criteria additions, everything else unchanged
 
 I-63's pin predates an overnight set that landed on our main after it
@@ -1495,3 +1497,66 @@ done-signal shape ("S5-ARM COMPLETE 13b56a12").
 Everything else in I-63 — commands (modulo the pin), the other green
 criteria, quiet-box/windows-first, stop-at-first-build-red, report
 shape — stands as written. No urgency window.
+
+ack: 2026-09-11 — RAN 08:44-09:49 EDT (12:44:09Z-13:49:08Z) at 13b56a12 on a quiet box (load 0.07, quiet gate VERDICT quiet; launched by Frank from a shell after this session's classifier blocked the wrapper launch). Worktree `build/wt_s5_arm`, logs `/home/duxevents/pcrec/build/s5_arm_20260911/` (`stages.tsv`: rc + UTC per stage). ALL ELEVEN STAGES EXECUTED; build/strict clean; SIX later stages non-zero. Quoted verbatim, nothing diagnosed:
+
+    stages.tsv rc:  build 0 · strict 0 · san 2 · registry 1 · pc4 1 ·
+                    uprops_byte 2 · uprops_utf8 2 · utf8 0 · rxtsource 1 ·
+                    mech_su12 0 · atomicdiff 1
+    san.log         "run_san_group: 29/35 scripts passed" (60m45s). Not passing:
+                    registry ("registry: FAILED TO BUILD pcre2_check.c (PC-3)"),
+                    assertions ("verify_pcre2: could not build the oracle:" …
+                    "FAIL: libpcre2 oracle: tests/assertions/ cells disagree
+                    with libpcre2"; 53 passed / 1 failed), gstart_diff,
+                    kreset_diff, mline_diff, atomic_diff (each "FAIL: could
+                    not build tests/fuzz/pcre2_oracle:"). known_fail ratchet
+                    "still failing: 1  now passing: 0" (k34, expected).
+    THE ONE COMPILER BLOCK under every build failure (san's six, registry,
+    pc4, uprops_byte, uprops_utf8, atomicdiff), after
+    "[ORACLE-LINK] libpcre2 resolved: 10.46 (via pkg-config; tests/lib/resolve_pcre2.sh)":
+      tests/fuzz/pcre2_abi.h:90:2: error: #error "pcre2_abi.h must be the
+        FIRST #include in its .c file (before <stdio.h> etc.) so its
+        _GNU_SOURCE define reaches <features.h> before anything else — see
+        this file's own header comment"
+      tests/fuzz/pcre2_abi.h:202:5: error: unknown type name 'Dl_info'
+      tests/fuzz/pcre2_abi.h:204:9: error: implicit declaration of function
+        'dladdr' [-Wimplicit-function-declaration]
+      tests/fuzz/pcre2_abi.h:205:17/35/56: error: request for member
+        'dli_fname' in something not a structure or union
+      including files: tests/registry/pcre2_check.c:64,
+        tests/registry/pc4_check.c:50, tests/uprops/uprops_oracle.c:54,
+        tests/fuzz/pcre2_oracle.c:85.
+    registry.log    EXIT 1 — "registry: FAILED TO BUILD pcre2_check.c (PC-3)";
+                    NO "209 passing" line, NO POSIX pool line (PC-3 did not
+                    run); the resolved-oracle line is the [ORACLE-LINK] 10.46
+                    line above.
+    pc4.log         "FAIL: pc4: pc4_check.c does not build" — no cell line.
+    uprops_byte.log "FAIL: uprops_oracle.c does not build" … "uprops: 25
+                    passed, 1 failed" (§1/§2/§4 ok; §3 is the failed one).
+    uprops_utf8.log same shape: "FAIL: uprops_oracle.c does not build" …
+                    "uprops: 25 passed, 1 failed". NO [STORE] line, NO drift
+                    summary (§3 did not run). §2: "the shipped table is
+                    exactly 717 rows — 45 category names … 171 script values
+                    in 672 spellings", "all 171 script values compile in all
+                    three namespaces".
+    utf8.log        "cases passed: 1829 / cases failed: 0 /
+                    pattern-compile failures (distinct): 0 / group cases
+                    pending-vm: 0" (stated 1833; lower with 0 failed).
+    rxtsource.log   "checks passed: 120 / recorded: 0 / failed: 1":
+                    "PASS: C3: verify_rxt.py verified 13708 expectation(s)
+                    with 15146 skip(s) and 0 info (python-divergent,
+                    pcre2-confirmed), 0 failures"
+                    "FAIL: C3: population pin(s) MOVED:
+                        SKIP: got 15146, pinned 15074
+                        pcre2-only: got 2944, pinned 2872"
+                    "PASS: C3 reconciles: 13708 verified + 0 info + 15146
+                    skipped + 89 in the timed-out file = 28943"
+                    C3_INFO = 0; verified 13708 unchanged from I-61; SKIP and
+                    pcre2-only +72 each over the asserted pins.
+    mech_su12.log   "S-U12-bare-namespace-is-script … DETECTED"; "mech run
+                    COMPLETE: 1 rows (unexpected: 0, undetected: 0,
+                    unreached: 0, anomalies: 0, oracle-skipped: 0)".
+    atomicdiff.log  "FAIL: could not build tests/fuzz/pcre2_oracle:" (the
+                    block above) — no "checks passed: 8" line.
+
+Sent live to pcrecdev1 in the same words. Worktree `build/wt_s5_arm` left in place pending pcrec's call; logs kept. Nothing owed from our side.
