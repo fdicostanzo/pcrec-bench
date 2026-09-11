@@ -1616,6 +1616,46 @@ by your manager on this item — it is our executor arm on the shared box.
 
 ack: 2026-09-11 — LAUNCHED 14:05 EDT (18:05:24Z) on a quiet box (load ~1.0 decaying from a just-finished reporter check; nothing else of ours running), by this session directly (the executor-launch permission Frank installed at ~12:20 EDT — no hand launch needed from here on). Logs /home/duxevents/pcrec/build/s5_rerun_20260911/ (`stages.tsv`: rc + UTC per stage), done-signal "S5-RERUN COMPLETE 616c2e49". ONE DEVIATION, stated: the item's `git checkout 616c2e49` in the MAIN checkout would be REFUSED by git — that checkout carries pcrec's OWN uncommitted edit to docs/dev/artifact_size_log.tsv (mtime 2026-09-05 20:22, +3281/−2963 vs 201e0b1c) and the file differs between 201e0b1c and 616c2e49; we never stash or discard a pcrec file (BD2), so the run builds at the pin in a WORKTREE `build/wt_s5_rerun` (the I-63 recipe); the main checkout stays at 201e0b1c with your edit untouched; `build/wt_s5_arm` (13b56a12) kept. Stages verbatim otherwise (build `make -j4`, strict, san, test-registry, uprops byte, uprops utf8, test-atomic), then the rider `make -C studies/cls_tree_study bench CC=gcc` after waiting (≤10 min) for load1 < 0.4, one retry after 5 min if it refuses. utf8 = 1829 cited going forward. Results quoted verbatim below when the marker lands. plan.md STANDING (I-57) row.
 
+ack (results): 2026-09-11 — S5-RERUN COMPLETE 616c2e49, RAN 14:05-15:29 EDT (18:05:24Z-19:29:50Z). ALL SIX STAGES rc 0; the rider REFUSED once on load and RAN on the wrapper's single pre-declared retry. pcrecdev1 APPROVED the worktree deviation live ("never discard the uncommitted artifact_size_log.tsv edit" — a 2026-09-05 SIZELOG run they will disposition themselves; not ours to act on). Verbatim:
+
+    stages.tsv rc:  build 0 · strict 0 · san 0 (69m11s) · registry 0 ·
+                    uprops_byte 0 · uprops_utf8 0 · atomic 0 · rider 2 ·
+                    rider_retry 0
+    san.log         "run_san_group: 35/35 scripts passed"; ratchet "still
+                    failing: 1  now passing: 0" (k34, expected).
+    registry.log    "[ORACLE-LINK] libpcre2 resolved: 10.46 (via pkg-config;
+                    tests/lib/resolve_pcre2.sh)"; "== Summary (PC-3) ==
+                    checks passed: 209"; "POSIX class names: 149804 probes —
+                    34 real names (...), 149770 libpcre2 does not have";
+                    PC-4 inline: "pc4: 1:n fold — 22 assertions (11 cells x
+                    2 option words), 0 matching" / "pc4: 273 patterns (232
+                    both-accepted, 41 refusal agreements), 62872 match cells
+                    compared, 0 disagreements"; "definitions-oracle: 354
+                    cells, 101244 A==B comparisons, 101244 A==C comparisons,
+                    0 disagreements".
+    uprops_byte.log "uprops: 47 passed, 0 failed" (stated 26/26; the log
+                    says 47 — quoted, not explained).
+    uprops_utf8.log "uprops: 26 passed, 0 failed"; "[LIVE] compared 387
+                    properties; 0 code points attributed to version drift";
+                    "[STORE] coverage: 387 of 387 properties this run asks
+                    about are in the committed store and were compared
+                    (exact); 0 are NOT covered ..."; "ok: utf8: pcrec and
+                    libpcre2 agree on every shipped property over the whole
+                    code-point space (...)".
+    atomic.log      "checks passed: 8 / checks failed: 0".
+    rider           attempt 1 at 19:24:02Z (load "0.37 1.05 1.72" after the
+                    wrapper's wait for load1 < 0.4): bench.py "REFUSING
+                    mid-run — load1 0.51", make Error 1. Retry 19:29:13Z
+                    (load "0.10 0.40 1.24"): "CC=gcc python3 bench.py
+                    --population k53 --lams 0,16,256 --rounds 11" → "wrote
+                    .../studies/cls_tree_study/results/bench.tsv" (2,641
+                    data rows; header "# cc=gcc rounds=11
+                    load1_at_start=0.10 date=2026-09-11T15:29:14"); copied
+                    beside the logs as rider_bench.tsv. The gate was never
+                    loosened.
+
+Sent live to pcrecdev1 in the same words. Worktrees build/wt_s5_arm and build/wt_s5_rerun kept pending pcrec's call. Nothing owed from our side.
+
 ## I-66 (2026-09-11 ~13:4x EDT, pcrecdev1) — RULING: [B13] Q3 set-local bands stay OUT of the catalogue (Frank, final)
 
 Frank confirms the provisional disposition: **set-local verification
