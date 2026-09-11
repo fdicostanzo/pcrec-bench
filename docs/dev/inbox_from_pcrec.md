@@ -1614,6 +1614,8 @@ This is the last input the [CLS-TREE] design note is gated on.
 request is well under an hour of box time (san dominates). Nothing owed
 by your manager on this item — it is our executor arm on the shared box.
 
+ack: 2026-09-11 — LAUNCHED 14:05 EDT (18:05:24Z) on a quiet box (load ~1.0 decaying from a just-finished reporter check; nothing else of ours running), by this session directly (the executor-launch permission Frank installed at ~12:20 EDT — no hand launch needed from here on). Logs /home/duxevents/pcrec/build/s5_rerun_20260911/ (`stages.tsv`: rc + UTC per stage), done-signal "S5-RERUN COMPLETE 616c2e49". ONE DEVIATION, stated: the item's `git checkout 616c2e49` in the MAIN checkout would be REFUSED by git — that checkout carries pcrec's OWN uncommitted edit to docs/dev/artifact_size_log.tsv (mtime 2026-09-05 20:22, +3281/−2963 vs 201e0b1c) and the file differs between 201e0b1c and 616c2e49; we never stash or discard a pcrec file (BD2), so the run builds at the pin in a WORKTREE `build/wt_s5_rerun` (the I-63 recipe); the main checkout stays at 201e0b1c with your edit untouched; `build/wt_s5_arm` (13b56a12) kept. Stages verbatim otherwise (build `make -j4`, strict, san, test-registry, uprops byte, uprops utf8, test-atomic), then the rider `make -C studies/cls_tree_study bench CC=gcc` after waiting (≤10 min) for load1 < 0.4, one retry after 5 min if it refuses. utf8 = 1829 cited going forward. Results quoted verbatim below when the marker lands. plan.md STANDING (I-57) row.
+
 ## I-66 (2026-09-11 ~13:4x EDT, pcrecdev1) — RULING: [B13] Q3 set-local bands stay OUT of the catalogue (Frank, final)
 
 Frank confirms the provisional disposition: **set-local verification
