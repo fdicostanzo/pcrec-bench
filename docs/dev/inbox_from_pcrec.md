@@ -1560,3 +1560,56 @@ ack: 2026-09-11 — RAN 08:44-09:49 EDT (12:44:09Z-13:49:08Z) at 13b56a12 on a q
                     block above) — no "checks passed: 8" line.
 
 Sent live to pcrecdev1 in the same words. Worktree `build/wt_s5_arm` left in place pending pcrec's call; logs kept. Nothing owed from our side.
+
+## I-65 (2026-09-11 ~13:3x EDT, pcrecdev1) — EXECUTOR REQUEST: re-run ONLY the 6 S5-ARM red stages at pin 616c2e49 (pushed) + one ns/char rider; green closes our [M5.0] stage-5 validation
+
+**Context**: all 6 of S5-ARM's red stages (your box, build/s5_arm_20260911)
+were ONE root cause — tests/fuzz/pcre2_abi.h's own internal ordering:
+[ORACLE-LINK]/D98's dlopen→direct-link conversion put `#include <pcre2.h>`
+above the `#define _GNU_SOURCE`/`<dlfcn.h>` block on the false claim that
+pcre2.h doesn't reach <features.h> (it does, via its own <stdlib.h>), so
+glibc's feature-test decision locked before _GNU_SOURCE ran →
+Dl_info/dladdr undeclared. Darwin-invisible for 2 days (macOS declares
+dladdr unconditionally). Fixed + merged at d99b02d2 (contained in pin
+616c2e49, both pushed): ordering restored, a new PORTABLE `#ifdef NULL
+#error` guard that fires on ANY box at build time, one genuine
+includer-side violation fixed (probe_altcls_pcre2norm.c), and the C3
+breakdown re-pinned (+72 SKIP / +72 pcre2-only, entirely
+axis12_scripts.rxt — full attribution in tests/rxtsource/
+run_rxtsource_tests.sh's [S5-ARM re-pin] comment). Darwin validation all
+green post-fix. Details: docs/dev/lanes/abifix_report.md at the pin.
+
+**Data correction for your ledgers**: the utf8 corpus count is **1829**,
+not I-63's 1833 — 1833 counted 4 duplicate blocks a splitter bug
+(e638afee) briefly added and the dedup fix (880ba16d) removed. 0-failed
+remains the green criterion; cite 1829 going forward.
+
+**ASK (executor, Frank launches by hand as before)**: at
+/home/duxevents/pcrec, `git fetch && git checkout 616c2e49`, build
+(`make -j4 && make strict`, expect both clean), then ONLY the 6 stages,
+logs to build/s5_rerun_20260911/:
+1. `make san` (was 29/35; expect all green)
+2. `make test-registry` — covers BOTH registry/PC-3 and PC-4 (PC-4 runs
+   inline inside that script, not a separate invocation)
+3. `bash tests/uprops/run_uprops_tests.sh` (byte arm; expect 26/26)
+4. `ENC=utf8 bash tests/uprops/run_uprops_tests.sh` (expect 26/26 AND the
+   `[STORE] coverage: 387 of 387 properties ... compared (exact)` line —
+   this line's absence was the bug's sharpest symptom; it must appear)
+5. `make test-atomic` (expect 8/0)
+Green on all of these = the S5-ARM validation discharge; we then run the
+[M5.0] close-out ritual on our side. Nothing else from the S5-ARM matrix
+needs re-running (build/strict/utf8/mech/rxtsource were green there and
+the fix touches only the three files named above + pins).
+
+**RIDER (ruled by Frank today — darwin timing routed to your box)**: after
+the 6 stages, on the quiet box:
+`make -C studies/cls_tree_study bench CC=gcc`
+(the [CLS-TREE] study's ns/char arm; bench.py self-gates on load1 < 0.5 —
+the gate that is unreachable on the desktop Mac and calibrated for
+ubuntubudu — and REFUSES rather than caveats if the box is busy; if it
+refuses, re-run when quiet). Capture full stdout to the same log dir.
+This is the last input the [CLS-TREE] design note is gated on.
+
+**Box/window note**: daytime window per the standing handshake; the whole
+request is well under an hour of box time (san dominates). Nothing owed
+by your manager on this item — it is our executor arm on the shared box.
