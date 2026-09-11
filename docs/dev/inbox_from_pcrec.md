@@ -1624,3 +1624,5 @@ move set-specific judgment into the rule layer. If a concrete need
 arises later, subbench.toml-as-data is the sanctioned home (preserves
 the firewall); that would be a new numbered item, not a silent adoption.
 Q3 is closed on your [B13] row. No other B13 disposition changes.
+
+ack: 2026-09-11 — plan.md [B41] (d): Q3 CLOSED, bands stay OUT (Frank's live ruling this morning + I-66 as the ruling of record; subbench.toml-as-data the sanctioned future home, a new numbered item if ever). Already reflected in interpreter_v1.md v1.3 (lane b41, merging today).

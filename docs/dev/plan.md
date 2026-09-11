@@ -83,8 +83,9 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   spread rule fires on tiny stddevs — a fact, but a threshold change would be
   a MAJOR bump and a tuned constant); (e) a `report`-side fix for KB-16's cost
   (filter by index row before validating) so `check-report` stops needing a
-  detached run. RULED 2026-09-11 (Frank, live): Q3 stays OUT of the catalogue
-  in v1 (revisit after the sidecars have been read across a few windows); the
+  detached run. RULED 2026-09-11 (Frank, live; inbox I-66 the ruling of record: OUT
+  until further ruled, not only v1 — subbench.toml-as-data the sanctioned
+  future home, a new numbered item if ever): Q3 stays OUT of the catalogue; the
   R-ARM-1 `×1.00 beyond spread` rendering STAYS — add a legend line naming it,
   NO threshold change (no tuned constant, no MAJOR bump) until a second window
   shows it matters; sidecars as already decided (interpreter_v1.md Q5: the
