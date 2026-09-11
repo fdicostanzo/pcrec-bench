@@ -31,7 +31,7 @@ detached at the end.
 | (a) WINDOW CHECKLIST | regenerate the 3 committed sidecars at every window's close, fail loudly, same invocation the skill documents | `scripts/regen_sidecars.py` (new); wired into `scripts/run_window.sh`'s close, gated on the canonical store and a real (non-dry-run) run; `run_window.sh`'s own exit code is the regen failure count, surfaced by `run_suite.sh`'s existing per-set `rc=` line; `.claude/skills/pcrec-bench-interpret/SKILL.md` and `scripts/CLAUDE.md` updated | DONE, commit `c4ff706` |
 | (b) RE-PIN CHECKLIST | append "append the new pin to `catalogue/rules.toml`'s `[[pin_order]]`" to `testees/pcrec/CLAUDE.md`'s re-pin list, per `catalogue/CLAUDE.md`'s exact wording; catalogue itself untouched (pin did not move) | `testees/pcrec/CLAUDE.md` gains a "RE-PIN CHECKLIST, in full" paragraph after the three registry rows, naming the append step and citing `catalogue/CLAUDE.md`'s own "At a RE-PIN" paragraph and interpreter_v1.md §11 Q10; `catalogue/rules.toml`'s `[[pin_order]]` DATA is unchanged (only its versioning comment moved, as part of (c)'s `legend` field work) | DONE, commit `c4ff706` |
 | (c) NOTE v1.3 HYGIENE | fold `b13impl_report.md`'s 17 deviations into `interpreter_v1.md`, applied or declined-with-reason; the R-ARM-1 legend line rides this edit, no threshold change, smallest version bump the legend forces, goldens refreshed if needed | `docs/design/interpreter_v1.md` bumped v1.2 → v1.3 with a full changelog paragraph; `catalogue/rules.toml` 1.0 → 1.1 (R-ARM-1's `legend` field); `pcrecbench/interpret.py` renders it and load-checks it slot-free; `catalogue/check_interpret.py` section 6 now also guards `legend`; all three committed sidecars regenerated (`scripts/regen_sidecars.py`); `catalogue/CLAUDE.md`, `docs/design/CLAUDE.md` updated | DONE, commit `c4ff706` — see §2/§3 below for the 17-by-id disposition |
-| (e) KB-16 | filter by index row before load/validate; preserve behaviour for records that ARE loaded incl. the filtered-count header (KB-8); a reporter test proving one subbench's query never opens another's files; before/after timing on ONE committed query, with `uptime`; the whole-store `make check-report` run detached, once, at the end; KB-16 entry closed with measured numbers; regenerate a committed report ONLY if its bytes change | `pcrecbench/report.py`: new `discover_index`/`index_row_could_match`, `build_report(..., known_testee_ids=)`, `main()` rewired; `pcrecbench/tests/test_report.py` gains `test_kb16_query_never_opens_other_subbench_files` (76 total); measured below; `docs/dev/known_issues.md` KB-16 → CLOSED | DONE, this section's own commit (below) |
+| (e) KB-16 | filter by index row before load/validate; preserve behaviour for records that ARE loaded incl. the filtered-count header (KB-8); a reporter test proving one subbench's query never opens another's files; before/after timing on ONE committed query, with `uptime`; the whole-store `make check-report` run detached, once, at the end; KB-16 entry closed with measured numbers; regenerate a committed report ONLY if its bytes change | `pcrecbench/report.py`: new `discover_index`/`index_row_could_match`, `build_report(..., known_testee_ids=)`, `main()` rewired; `pcrecbench/tests/test_report.py` gains `test_kb16_query_never_opens_other_subbench_files` (76 total); measured ×6.55 faster / ×5.28 less RSS; `docs/dev/known_issues.md` KB-16 → CLOSED; `make check-report` ran detached, clean (rc 0) | DONE, commit `0ac06ec` |
 
 Nothing is OWED except the two things only the manager can do (§4).
 
@@ -252,13 +252,13 @@ already committed — `setsid` + a completion marker
 9fce0cbe8f69/scratchpad/check_report.log`, line `CHECK_REPORT_RUN_
 COMPLETE`), never a tracked background task (KB-16's own history: this
 exact command was memory-killed twice as a tracked task at ~3.6 GB RSS
-with 11 GB available). Runs `test_report.py` (76 tests, whole real store
-loaded once) + `test_quick.py` (7 tests) + four independent
-`schema/validate.py --check-filename` fixture smoke lines. **Result:
-folded in below once the marker lands** — this lane's own standalone run
-of `test_report.py` moments earlier (76 passed, 0 failed, exit 0) is the
-same test module this target runs, so a clean `make check-report` is
-expected; any divergence would be named here rather than assumed away.
+with 11 GB available). Ran 2026-09-11 13:48:35 → 14:03:31 EDT (14 min
+56 s): `test_report.py` **76 passed, 0 failed** (whole real store loaded
+once), `test_quick.py` **7 passed, 0 failed**, four independent
+`schema/validate.py --check-filename` fixture lines all `OK` (3+1+1+1+3
+valid, 0 invalid), and the CLI smoke pass over `fixtures/store` (both
+formats, both grains) `OK`. Final line: **`check-report: OK`,
+`DONE rc=0`**.
 
 ### KB-16 entry
 
