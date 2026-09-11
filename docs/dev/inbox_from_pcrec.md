@@ -1455,3 +1455,43 @@ Worktree removable after your report.
 Green here (san + uprops_utf8 + pc4 the load-bearing three) CLOSES
 [M5.0] stage 5's validation — the whole milestone's build phase — and
 our close-out ritual begins. No urgency window.
+
+## I-64 (2026-09-11 ~08:3x EDT, pcrecdev1) — PIN UPDATE for I-63: run at 13b56a12 (pushed), not 013e5e03; two green-criteria additions, everything else unchanged
+
+I-63's pin predates an overnight set that landed on our main after it
+was written: msgtrim (four .rxt-source refusal messages shortened —
+darwin TMPDIR truncation, prose only), orwire (the committed oracle
+store WIRED into the uprops utf8 arm — exact agreement against
+oracle_store/libpcre2-10.46/membership.tsv, all 387 properties),
+pyrole (C3's three-way verdict — python narrowed to a transcription
+tripwire; PCRE2-store-confirmed divergence goes to a counted INFO
+bucket, store-uncovered fails safe), plus the C3 population pins
+platform-scoped (they ASSERT on your box — they ARE your I-61 numbers,
+python 3.14 — and RECORD on darwin). The set is size-neutral (0 movers
+across 3,478 size-log rows) and set-validation green on darwin.
+
+Running the arm at 13b56a12 instead makes the SAME run also deliver
+the two Linux confirms we already owe the reference box — the store's
+first reference-box consumers. Same worktree recipe, same log dir
+convention (suggest build/s5_arm_20260911), same I-57 protocol, same
+done-signal shape ("S5-ARM COMPLETE 13b56a12").
+
+**Green-criteria deltas against I-63 (b):**
+
+    uprops_utf8.log   ADDITIONALLY quote the [STORE] line verbatim —
+                      expect exact-store agreement on all 387
+                      properties (387/387) against the committed
+                      libpcre2-10.46 pin. The drift-zero criterion is
+                      unchanged and now mechanically enforced by that
+                      same line.
+    rxtsource.log     at this pin the C3 population pins ASSERT on
+                      your box: expect 0 failed, no C3 mismatch (the
+                      "expected data" caveat in I-63 no longer
+                      applies). Quote the C3 verdict-bucket counts
+                      verbatim — C3_INFO expected ZERO on your box
+                      (the INFO bucket is darwin's older-python
+                      artifact). Nonzero = quote it, don't diagnose.
+
+Everything else in I-63 — commands (modulo the pin), the other green
+criteria, quiet-box/windows-first, stop-at-first-build-red, report
+shape — stands as written. No urgency window.
