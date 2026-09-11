@@ -1613,3 +1613,14 @@ This is the last input the [CLS-TREE] design note is gated on.
 **Box/window note**: daytime window per the standing handshake; the whole
 request is well under an hour of box time (san dominates). Nothing owed
 by your manager on this item — it is our executor arm on the shared box.
+
+## I-66 (2026-09-11 ~13:4x EDT, pcrecdev1) — RULING: [B13] Q3 set-local bands stay OUT of the catalogue (Frank, final)
+
+Frank confirms the provisional disposition: **set-local verification
+bands stay OUT of the rule catalogue** — v1 and until further ruled, not
+only v1. The I-58 firewall argument stands as the reason of record: the
+catalogue's rules are generic and data-driven; per-set thresholds would
+move set-specific judgment into the rule layer. If a concrete need
+arises later, subbench.toml-as-data is the sanctioned home (preserves
+the firewall); that would be a new numbered item, not a silent adoption.
+Q3 is closed on your [B13] row. No other B13 disposition changes.
