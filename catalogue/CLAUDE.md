@@ -18,7 +18,7 @@ it is the place they are visible.
 
 | file | role |
 |---|---|
-| `rules.toml` | THE CATALOGUE: `catalogue_version`, the `[[pin_order]]` table, and 31 `[[rule]]` blocks in 7 classes (R-STATUS 13, R-DELTA 4, R-RANK 1, R-ARM 1, R-FLOOR 3, R-PRED 4, R-BUCKET 5). Every rule carries `id`, `title`, `class`, `since`, `grain`, `aggregate`, `inputs`, `predicate`, `threshold`, `threshold_src`, `slots`, `arith`, `template`, `no_fire`, `links`, `example`, and optionally `extremal`. |
+| `rules.toml` | THE CATALOGUE: `catalogue_version`, the `[[pin_order]]` table, and 31 `[[rule]]` blocks in 7 classes (R-STATUS 13, R-DELTA 4, R-RANK 1, R-ARM 1, R-FLOOR 3, R-PRED 4, R-BUCKET 5). Every rule carries `id`, `title`, `class`, `since`, `grain`, `aggregate`, `inputs`, `predicate`, `threshold`, `threshold_src`, `slots`, `arith`, `template`, `no_fire`, `links`, `example`, and optionally `extremal` and (catalogue 1.1) `legend` — one static, slot-free sentence rendered once under the rule's heading whenever it fires; a rule that aggregates and carries a numeric slot MUST declare `extremal` (checked at render time, `check_extremal` — there is no implicit "first numeric slot" default). |
 | `check_interpret.py` | `make check-interpret`'s six sections (interpreter_v1.md §8). Never loads the record store. |
 | `acceptance_10.py` | §10's ACCEPTANCE TEST, run: every numbered MUST / MUST-NOT on Reports A, B, C and D with its actual firing. Not part of `make check`; run at a catalogue change. |
 | `refresh_golden.py` | Regenerates `golden/*.facts.tsv`. Run ONLY in a commit entitled to move a golden fact (§8(2)'s table). |
@@ -48,20 +48,25 @@ report, or a boundary that is DEFINITIONAL and says so (`≥ 1.0`,
 "crosses 1.0"). The one rule that computes rather than reads, R-ARM-1,
 COPIES `_cross_pin_verdict`'s arithmetic and declares it in `arith`.
 
-**A diff that touches prose needs a human.** `template`, `no_fire` and
-`links` are the only unmechanised prose surface in the system, so
-`check-interpret` section 6 flags any diff that touches one and requires
-a reviewer's approval line in the commit message naming the rule ids
-reviewed (§8(6)). Registering a `[[signature]]` for R-BUCKET-KB is a
-MAJOR version bump; catalogue 1.0 registers none, and says so.
+**A diff that touches prose needs a human.** `template`, `no_fire`,
+`legend` (catalogue 1.1) and `links` are the only unmechanised prose
+surface in the system, so `check-interpret` section 6 flags any diff
+that touches one and requires a reviewer's approval line in the commit
+message naming the rule ids reviewed (§8(6)) — read against `HEAD~1
+.. HEAD` of whatever commit is checked out, so it is the MERGE commit
+the approval line belongs on: a lane's own WIP commits are not the
+review, and `make check-interpret` legitimately fails section 6 in a
+lane's own worktree until the manager's merge commit carries the line.
+Registering a `[[signature]]` for R-BUCKET-KB is a MAJOR version bump;
+catalogue 1.1 still registers none, and says so.
 
 ## Versioning
 
 `catalogue_version` is MAJOR.MINOR, the record schema's own discipline
-(§3.3). MINOR: a rule added, a template's wording, a link, an `example`,
-a `[[pin_order]]` append at a re-pin. MAJOR: a predicate or threshold
-changes, a rule is removed, `inputs` read a different column, or a
-signature is registered. A retired rule keeps its block with
+(§3.3). MINOR: a rule added, a template's wording, a link, a `legend`
+line, an `example`, a `[[pin_order]]` append at a re-pin. MAJOR: a
+predicate or threshold changes, a rule is removed, `inputs` read a
+different column, or a signature is registered. A retired rule keeps its block with
 `retired_in` and its id is never reused.
 
 **Every bump regenerates every committed sidecar in the same commit** —

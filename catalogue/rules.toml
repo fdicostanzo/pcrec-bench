@@ -11,16 +11,25 @@
 # `pcrecbench/report.py` / `pcrecbench/reduce.py` the threshold comes
 # from — no rule introduces a constant of its own (§4, §13).
 #
-# EVERY diff that touches a `template`, `no_fire` or `links` field, or
-# adds a `[[signature]]`, must carry a reviewer's approval line in the
-# commit message naming the rule ids reviewed (§8(6)).
+# EVERY diff that touches a `template`, `no_fire`, `legend` or `links`
+# field, or adds a `[[signature]]`, must carry a reviewer's approval line
+# in the commit message naming the rule ids reviewed (§8(6)).
 
-catalogue_version = "1.0"
+catalogue_version = "1.1"
 # Every bump regenerates every committed sidecar in the same commit
-# (§3.3). MINOR: a rule added, a template's wording, a link, an
-# `example`, a `[[pin_order]]` append. MAJOR: a predicate or threshold
-# changes, a rule is removed, `inputs` read a different column, or a
-# `[[signature]]` is registered.
+# (§3.3). MINOR: a rule added, a template's wording, a link, a `legend`
+# line, an `example`, a `[[pin_order]]` append. MAJOR: a predicate or
+# threshold changes, a rule is removed, `inputs` read a different
+# column, or a `[[signature]]` is registered.
+#
+# 1.1 (2026-09-11, [B41] (c), Frank's ruling): R-ARM-1 gains an optional
+# `legend` field -- one static, slot-free sentence, rendered once under
+# the rule's heading whenever it fires, naming the "beyond spread, not
+# beyond ratio" reading a `×1.00` firing needs (interpreter_v1.md §4.4's
+# own worked language, since 2026-09-11 also stated once as a rendered
+# fact rather than left to a reader of this file alone). NO predicate or
+# threshold changed; no rule's `inputs` moved. `legend` is guarded by
+# §8(6) exactly like `template`/`no_fire`/`links`.
 
 # ------------------------------------------------------------------ data
 
@@ -735,6 +744,7 @@ extremal      = "ratio"
 template      = "{pattern} / {regime} / {form}, pin {pin}: `{config_a}` {median_a} ns vs `{config_b}` {median_b} ns — ×{ratio}, beyond 2 × max(stddev) = {spread} ns. The two arms differ in exactly one config token ({token_name}: {token_a} vs {token_b})."
 no_fire       = "no two arms one config token apart differ by more than twice the larger of their two standard deviations"
 links         = []
+legend        = "a firing's ×N here can read close to (or exactly) ×1.00: the predicate is \"beyond 2 × max(stddev)\", i.e. the SPREAD is small, never a ratio-size threshold -- a Δ is \"beyond spread\" when the spread is small, not when the ratio is large."
 example       = """
 reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv,
 pin 692c2e8: orig / short-subject-search / plain, `vm-in-caps-simdna`

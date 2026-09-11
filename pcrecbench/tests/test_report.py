@@ -27,6 +27,8 @@ below and were reported to the manager verbatim.
 
 from __future__ import annotations
 
+import contextlib
+import io
 import os
 import re
 import statistics
@@ -3744,6 +3746,75 @@ def test_vm_cls_folds_legend_b39():
            f"new clause:\n{md_o}")
 
 
+def test_kb16_query_never_opens_other_subbench_files():
+    """KB-16 (docs/dev/known_issues.md): `report.main()` used to
+    `load_all` (and jsonschema-validate) EVERY record `store/index.tsv`
+    named, regardless of the query's own filters -- ~750 s / ~3.6 GB RSS
+    at 160 records for a query that used a handful. Fixed: `main()` now
+    reads `discover_index` (index.tsv ROWS, not just paths) and calls
+    `index_row_could_match` to admit only the rows the query's
+    index-derivable filters (subbench, version, machine, testee,
+    since/until) cannot already rule out, BEFORE calling `load_all` --
+    so a query naming one subbench never even OPENS another subbench's
+    record file. Proven here by monkeypatching `report._read_lines` (the
+    one function every record load reads a file's bytes through) to
+    record every path it is asked to open, then running `report.main()`
+    against the REAL store with a `--subbench` filter and asserting no
+    opened path belongs to a DIFFERENT subbench -- a query touching one
+    subbench must never open another's files, the KB-16 lane's own
+    charter for this test."""
+    rows, source = report.discover_index(REAL_STORE)
+    _check(source == "store/index.tsv",
+           f"this control needs the real store's real index, got {source!r}")
+    by_subbench = {}
+    for r in rows:
+        by_subbench.setdefault(r["subbench"], []).append(r["path"])
+    _check(len(by_subbench) >= 2,
+           "the real store must hold at least two distinct subbenches for "
+           "this control to mean anything -- a single-subbench store "
+           "would pass trivially even with no prefilter at all")
+    # The target is whichever subbench has the FEWEST records: opening
+    # only its files (and none of the far larger remainder) is the
+    # clearest demonstration that the other subbenches' files were never
+    # touched, and keeps this test's own I/O small.
+    target = min(by_subbench, key=lambda k: len(by_subbench[k]))
+    target_paths = set(by_subbench[target])
+    other_paths = set(p for sb, ps in by_subbench.items() if sb != target
+                      for p in ps)
+
+    opened = []
+    real_read_lines = report._read_lines
+
+    def _spy(path):
+        opened.append(path)
+        return real_read_lines(path)
+
+    report._read_lines = _spy
+    try:
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            rc = report.main(["--store", REAL_STORE, "--subbench", target,
+                              "--include-synthetic", "--include-unmeasured",
+                              "--format", "tsv"])
+    finally:
+        report._read_lines = real_read_lines
+
+    _check(rc == 0, f"the query must succeed: rc={rc}, stderr unavailable "
+                    f"(captured stdout only)")
+    _check(len(opened) > 0,
+           f"the query must open at least one file (subbench {target!r} "
+           f"has {len(target_paths)} record(s) in the real store)")
+    touched_other = set(opened) & other_paths
+    _check(not touched_other,
+           f"a --subbench={target!r} query opened {len(touched_other)} "
+           f"file(s) belonging to another subbench (KB-16's whole point): "
+           f"{sorted(touched_other)[:3]}")
+    touched_target = set(opened) & target_paths
+    _check(touched_target,
+           f"the query opened NOTHING from its own target subbench "
+           f"{target!r} -- opened={opened[:3]}")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -3830,6 +3901,8 @@ TESTS = [
     test_vm_alt_islands_and_entry_shape_legend_b37,
     # [B39]
     test_vm_cls_folds_legend_b39,
+    # KB-16 ([B41] (e))
+    test_kb16_query_never_opens_other_subbench_files,
 ]
 
 

@@ -31,6 +31,18 @@ re-pin, up from fourteen):
 | `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
 | `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` joined), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing a RECORD carries is read from it (every cap/capacity a record needs is stamped per artifact); the ONE thing that reads it is the [B31] cap axis' raise-only FLOOR check, which refuses a below-default config value in the bench's own words and takes pcrec's two defaults from here rather than keeping a second copy of them. `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
 
+**The RE-PIN CHECKLIST, in full** ([B41] (b), 2026-09-11): re-archive
+`list_axes.tsv`, `list_definitions.tsv` and `list_limits.tsv` against
+the new pin's live output (the three rows above), THEN append the new
+pin to `catalogue/rules.toml`'s `[[pin_order]]` table — a MINOR
+catalogue-version bump, interpreter_v1.md §11 Q10's ruling ("both": the
+checklist prevents the omission, and R-BUCKET-SPAN's exit-2 message
+naming the missing slug is the fallback if it happens anyway). See
+`catalogue/CLAUDE.md`'s own "At a RE-PIN" paragraph for the exact step
+and its version-bump rule; do it in the SAME commit as the re-pin, not a
+follow-up — a pin absent from `[[pin_order]]` is silent until
+`make check-interpret` (or a report spanning it) actually needs it.
+
 ## `pin.sh` never writes inside pcrec
 
 `/home/duxevents/pcrec` is read-only to this project. `pin.sh` extracts a

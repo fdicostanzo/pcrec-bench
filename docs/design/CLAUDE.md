@@ -104,14 +104,16 @@ docs/dev/'s append-only records.
   the adapter not before W3 — with six open questions and who rules
   each. Partially covers the `set_format.md` slot below; see its Q1.
 
-- `interpreter_v1.md` — **[B13] the interpreter design note, at **v1.2**,
-  and since 2026-09-09 **IMPLEMENTED** (lane `b13impl`): part 1 is built
-  against it — `catalogue/rules.toml` (catalogue 1.0, 31 rules),
-  `pcrecbench/interpret.py`, `docs/dev/predictions/`,
-  `catalogue/fixtures/` + `catalogue/golden/`, `make check-interpret`
-  (six sections, 129 checks) — and §10's acceptance test RAN 25/25. The
-  build's deviations are listed in `docs/dev/lanes/b13impl_report.md`;
-  the note was NOT rewritten to fit the build. Part 2 (the skill and the
+- `interpreter_v1.md` — **[B13] the interpreter design note, at **v1.3**
+  (2026-09-11, [B41] (c), a HYGIENE revision folding lane `b13impl`'s 17
+  build deviations back into the note plus Frank's ruling adding an
+  R-ARM-1 `legend` field, catalogue 1.1 — no rule's predicate, threshold
+  or `inputs` changed), and since 2026-09-09 **IMPLEMENTED** (lane
+  `b13impl`): part 1 is built against it — `catalogue/rules.toml`
+  (catalogue 1.1, 31 rules), `pcrecbench/interpret.py`,
+  `docs/dev/predictions/`, `catalogue/fixtures/` + `catalogue/golden/`,
+  `make check-interpret` (six sections, 129 checks) — and §10's
+  acceptance test RAN 25/25. Part 2 (the skill and the
   committed sidecars) is [B13.4]. The design as v1.2 stated it:**
   (2026-09-08, lane `b13v12`): v1.1 revised under the pcrec manager
   session's cross-review of it, inbox I-58 — APPROVED CONDITIONAL, four

@@ -631,12 +631,61 @@ one-report render already costs 12+ minutes of validation for records
 the query discards, and the memory footprint makes the operation
 un-runnable as a tracked task on this box's page-cache state.
 
-STATUS: OPEN. Candidate fixes, unranked: (a) filter by index row
-BEFORE loading/validating (the query's subbench/testee/date filters are
-all index columns — the same idea KB-8's row already names for the
-candidate count), (b) validate lazily or cache validation results keyed
-on the record file's sha256 (the index already carries one), (c) load
-the large `patterns[].canonical_text` / per-subject rows only when the
-grain needs them. Operational rule meanwhile: `docs/dev/lanes/
-BOILERPLATE.md` box facts — store-loading runs go DETACHED with a
-marker, DO-THEN-FINISH.
+STATUS: **CLOSED (2026-09-11, [B41] (e), lane `b41`)**. Candidate (a)
+taken: `report.py`'s `main()` now reads `store/index.tsv` as ROWS
+(`discover_index`, not just paths) and prefilters candidate records with
+`index_row_could_match` — every INDEX-DERIVABLE half of `matches_filters`
+(subbench, version, machine, testee, since/until, all six columns
+`store.index()` already writes from the same `setup` fields
+`matches_filters` reads) — BEFORE calling `load_all`, so a record the
+query's own filters could not possibly admit is never opened, never
+`_read_lines`'d, never jsonschema-validated. `synthetic` and `--where`
+stay decided on the loaded record exactly as before (not index columns);
+`matches_filters` still runs, unchanged, on every record the prefilter
+admits (defence in depth against a stale index). The KB-5 unknown-
+`--testee` refusal keeps reading the WHOLE store's known ids (not
+narrowed by the prefilter) via a new `build_report(..., known_testee_ids=)`
+override, so a typo'd id still lists every id actually in the store, not
+just the prefiltered slice's. KB-8's filtered-count header line is
+unaffected (still `len(selected)`, computed after `matches_filters`, and
+the prefilter can only ever admit a superset of what that function keeps).
+
+**MEASURED, before/after, on ONE committed query** — the exact filters
+from `reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv`'s
+own header (6 records selected out of a store of 160 — `store/
+index.tsv` unchanged in size since this KB's own finding; these six are,
+per `reports/CLAUDE.md`, the LARGEST records in the store,
+35,859-41,800 rows each, so this is a worst-case-record-size
+demonstration). "Before" = `report.py` reverted to the commit before
+this fix (`HEAD~1` at the fixing commit), same box, same store, same
+query, `/usr/bin/time -v`, nothing else running (a competing tracked
+`test_report` suite run was found mid-measurement and killed by PID
+before the numbers below were taken):
+
+| | wall clock | peak RSS | uptime/load at start |
+|---|---|---|---|
+| BEFORE | **765.67 s** (12:45.67; user 757.42 s) | **4,027,148 KB (~3.84 GiB)** | `13:02:36 up 29 days, 14:09, load average: 2.62, 1.83, 1.09` |
+| AFTER | **116.78 s** (1:56.78) | **762,940 KB (~745 MiB)** | `13:00:21 up 29 days, 14:07, load average: 2.03, 1.25, 0.81` |
+| ratio | **×6.55 faster** | **×5.28 less RSS** | — |
+
+Both runs' TSV output `cmp`s BYTE-IDENTICAL against the committed
+report (and against each other) — the fix changes what is opened, never
+what is rendered. `pcrecbench/tests/test_report.py` gains
+`test_kb16_query_never_opens_other_subbench_files` (76 reporter-side
+tests total): monkeypatches `report._read_lines` to record every path
+opened, runs `report.main()` against the real store with a `--subbench`
+filter naming the smallest-record-count subbench, and asserts no opened
+path belongs to any OTHER subbench (with a control that refuses to run
+if the store held fewer than two subbenches). `make check-report`'s own
+whole-store re-render-and-diff pass ran DETACHED once at the end
+(the boilerplate's rule for any store-loading run) and is the
+whole-corpus version of the same byte-identity proof.
+
+Candidates (b) (validate lazily / cache by sha256) and (c) (load large
+free-text fields only when the grain needs them) are NOT taken — (a)
+alone gets the worst case measured here to under two minutes, and both
+remaining candidates add real complexity (a cache invalidation story,
+a lazy-field reader) for a query shape ((b)/(c) would only help a query
+that still selects a great many records) this project's committed
+queries do not exhibit today. Revisit if a committed query ever needs
+to select most of a store larger than today's 160 records.

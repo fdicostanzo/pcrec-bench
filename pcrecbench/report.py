@@ -1125,13 +1125,43 @@ def load_all(paths, check_filename=True):
 
 # ------------------------------------------------------------ store lookup
 
-def discover_records(store_dir):
-    """Returns (paths, source) where source is 'index.tsv' or 'walk
-    store/records/', per harness_contract.md 5's "loads the index" and the
-    brief's "walk store/records/ if the index is absent -- say which"."""
+# KB-16 (docs/dev/known_issues.md): the six index.tsv columns beyond
+# `path` (store.py's `INDEX_HEADER`/`index()` write them in exactly this
+# order) that `index_row_could_match` below can filter on WITHOUT opening
+# a record file.
+_INDEX_EXTRA_KEYS = ("subbench", "version", "testee_id", "machine_id",
+                     "timestamp", "status")
+
+
+def discover_index(store_dir):
+    """KB-16: the index-ROW equivalent of `discover_records` below --
+    returns (rows, source) where each row is a dict with `path` (resolved,
+    same value `discover_records` would return for it) plus, when
+    `index.tsv` is present, the six other index.tsv columns as plain
+    strings (`_INDEX_EXTRA_KEYS`) -- enough to apply the INDEX-DERIVABLE
+    half of `matches_filters` (subbench, version, machine, testee,
+    since/until) via `index_row_could_match` BEFORE a record is loaded and
+    validated, which is the expensive step KB-16 is about (~750 s / ~3.6 GB
+    RSS to jsonschema-validate all 160 records in the store for a query
+    that used a handful of them). `synthetic` and `--where` are not index
+    columns and are never decided here -- `index_row_could_match` never
+    excludes on either, so `matches_filters` on the loaded record is still
+    the one and only place those two are decided, and it still runs,
+    unchanged, on every record this function admits (defence in depth
+    against a stale index, not merely an optimisation's correctness
+    argument -- see that function's own docstring).
+
+    On the walk-fallback path (no `index.tsv`) the extra columns are not
+    available and every row carries them as `None`;
+    `index_row_could_match` treats a `None` field as "matches" (there is
+    nothing here to disprove a filter with), so nothing is pre-filtered
+    there -- `store/index.tsv` is what a canonical store carries, and this
+    function optimises exactly the case KB-16 measured. A malformed or
+    short row (fewer than 8 tab-separated fields) degrades the same way,
+    for the same reason."""
     index_path = os.path.join(store_dir, "index.tsv")
     if os.path.isfile(index_path):
-        paths = []
+        rows = []
         with open(index_path, encoding="utf-8") as fh:
             for line in fh:
                 line = line.rstrip("\n")
@@ -1141,8 +1171,13 @@ def discover_records(store_dir):
                 rel = cols[0]
                 if rel == "path":  # tolerate an optional header row
                     continue
-                paths.append(os.path.normpath(os.path.join(store_dir, rel)))
-        return paths, "store/index.tsv"
+                row = {"path": os.path.normpath(os.path.join(store_dir, rel))}
+                if len(cols) >= 1 + len(_INDEX_EXTRA_KEYS):
+                    row.update(zip(_INDEX_EXTRA_KEYS, cols[1:1 + len(_INDEX_EXTRA_KEYS)]))
+                else:
+                    row.update((k, None) for k in _INDEX_EXTRA_KEYS)
+                rows.append(row)
+        return rows, "store/index.tsv"
 
     records_dir = os.path.join(store_dir, "records")
     paths = []
@@ -1150,7 +1185,49 @@ def discover_records(store_dir):
         for fname in files:
             if fname.endswith(".jsonl"):
                 paths.append(os.path.join(root, fname))
-    return sorted(paths), "walked store/records/ (no index.tsv)"
+    rows = [dict({"path": p}, **{k: None for k in _INDEX_EXTRA_KEYS})
+            for p in sorted(paths)]
+    return rows, "walked store/records/ (no index.tsv)"
+
+
+def discover_records(store_dir):
+    """Returns (paths, source) where source is 'index.tsv' or 'walk
+    store/records/', per harness_contract.md 5's "loads the index" and the
+    brief's "walk store/records/ if the index is absent -- say which".
+    Implemented on top of `discover_index` (KB-16) so the two functions
+    can never disagree about which files exist -- one parse, two views."""
+    rows, source = discover_index(store_dir)
+    return [r["path"] for r in rows], source
+
+
+def index_row_could_match(row, args):
+    """KB-16: True unless `row` (from `discover_index`) can be PROVEN not
+    to satisfy `matches_filters` using only its index.tsv columns -- the
+    INDEX-DERIVABLE subset of that function's predicates (subbench,
+    version, machine, testee, since/until), read the same way
+    `matches_filters` reads them from a loaded record's `setup`, because
+    `store.index()` writes these six columns from those exact fields.
+    Never excludes on `synthetic` or `--where` (not index columns) -- a
+    row this returns True for still needs `matches_filters` on the loaded
+    record to be sure; a row it returns False for could not possibly have
+    passed `matches_filters` either, so skipping its file entirely is
+    safe. A `None` field (the walk-fallback path) always compares as
+    "matches"."""
+    if args.subbench and row["subbench"] is not None and row["subbench"] != args.subbench:
+        return False
+    if args.version and row["version"] is not None and str(row["version"]) != args.version:
+        return False
+    if args.machine and row["machine_id"] is not None and row["machine_id"] != args.machine:
+        return False
+    if args.testee and row["testee_id"] is not None and row["testee_id"] not in args.testee:
+        return False
+    if (args.since or args.until) and row["timestamp"] is not None:
+        ts = ts_key(row["timestamp"])
+        if args.since and ts < ts_key(parse_bound(args.since, end=False)):
+            return False
+        if args.until and ts > ts_key(parse_bound(args.until, end=True)):
+            return False
+    return True
 
 
 def resolve_subbench_arg(value, repo_root=REPO_ROOT):
@@ -2904,10 +2981,20 @@ def _agreement_display(block, schema_version):
     return agreement_line(block)
 
 
-def build_report(loaded, args):
+def build_report(loaded, args, known_testee_ids=None):
     """Returns (ReportData | None, error_message | None). On a refusal
     (mixed major schema versions, or an unknown --testee id), returns
-    (None, message)."""
+    (None, message).
+
+    `known_testee_ids`, KB-16 (docs/dev/known_issues.md): an optional
+    override for the KB-5 unknown-`--testee` check's population, used by
+    `main()` once it pre-filters `loaded` by index row before this
+    function ever sees it -- see that check's own comment for why
+    deriving the set from a narrowed `loaded` would silently shrink the
+    "known ids" a typo'd id is checked (and reported) against. `None` (the
+    default, and every existing direct caller of this function, tests
+    included) keeps deriving it from `loaded` exactly as before -- this
+    parameter changes nothing for a caller that does not pass it."""
     # KB-5 (2026-08-31), fixed [B28]: an unknown --testee id is a clear
     # ERROR naming it, not an empty report -- unlike every other filter
     # (--subbench, --where, ...), which silently narrows to nothing on a
@@ -2919,7 +3006,7 @@ def build_report(loaded, args):
     # anyway. `args.testee` is repeatable (OR within its occurrences,
     # AND'd with every other filter via `matches_filters` above).
     if getattr(args, "testee", None):
-        known_ids = {
+        known_ids = known_testee_ids if known_testee_ids is not None else {
             r.setup["testee"]["testee_id"] for r in loaded
             if r.setup and "testee" in r.setup
             and "testee_id" in r.setup["testee"]
@@ -4481,18 +4568,35 @@ def main(argv=None):
         args.subbench = resolved
         args._subbench_alias_note = note
 
-    paths, source_desc = discover_records(args.store)
+    rows, source_desc = discover_index(args.store)
     # KB-8 (2026-09-02): `args._source_desc` carries the STORE LABEL only
     # here -- `build_report` appends the QUERY-FILTERED count (the ledger's
     # "worth stability under store growth" fix; see its own comment there).
     args._source_desc = source_desc
-    if not paths:
+    if not rows:
         print(f"pcrecbench report: no records found under {args.store!r} "
               f"({source_desc})", file=sys.stderr)
         return 1
 
+    # KB-16 (docs/dev/known_issues.md): load and jsonschema-validate only
+    # the records the query's index-derivable filters (subbench, version,
+    # machine, testee, since/until) cannot already rule out -- `report.
+    # load_all` used to validate every record `store/index.tsv` named
+    # regardless of the query, ~750 s / ~3.6 GB RSS at 160 records for a
+    # query that used a handful. `known_testee_ids` is read from the WHOLE
+    # index (never narrowed by the prefilter below) so an unknown --testee
+    # id still refuses naming every id actually in the store -- see
+    # `build_report`'s own comment on why a narrower set would be wrong
+    # here. `matches_filters` inside `build_report` still runs, unchanged,
+    # on every loaded record: this is a skip-the-file optimisation, not a
+    # second filter implementation -- `index_row_could_match`'s own
+    # docstring is the correctness argument for why it cannot exclude a
+    # record `matches_filters` would have kept.
+    known_testee_ids = {r["testee_id"] for r in rows if r["testee_id"]}
+    paths = [r["path"] for r in rows if index_row_could_match(r, args)]
+
     loaded = load_all(paths, check_filename=True)
-    rd, err = build_report(loaded, args)
+    rd, err = build_report(loaded, args, known_testee_ids=known_testee_ids or None)
     if err:
         print(f"pcrecbench report: {err}", file=sys.stderr)
         return 1

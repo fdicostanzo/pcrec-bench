@@ -1,19 +1,70 @@
-# The interpreter — design note v1.2 ([B13])
+# The interpreter — design note v1.3 ([B13])
 
 STATUS: **IMPLEMENTED (lane b13impl, 2026-09-09)** — part 1 is built
-against this note as it stands: `catalogue/rules.toml` (catalogue 1.0,
-31 rules), `pcrecbench/interpret.py` + the `interpret` subcommand,
-`docs/dev/predictions/`, `catalogue/fixtures/` + `catalogue/golden/`,
-and `make check-interpret` (six sections, 129 checks). §10's acceptance
-test RAN: 25 of 25 items pass. The implementation's deviations from this
-note — none of them changes a rule's predicate or threshold — are listed
-in `docs/dev/lanes/b13impl_report.md`; this note is NOT rewritten to fit
-the build. Part 2 (the `/pcrec-bench-interpret` skill and the committed
-`.interpretation.md` sidecars) is [B13.4], **IMPLEMENTED (lane
-`b13skill`, 2026-09-09)**: the skill at
-`.claude/skills/pcrec-bench-interpret/SKILL.md` and the three §10
-acceptance-report sidecars committed under `reports/`. What follows is
-the design as v1.2 stated it. **v1.2, 2026-09-08** — v1.1
+against v1.2 as it stood: `catalogue/rules.toml` (catalogue **1.1** as
+of this revision, 31 rules), `pcrecbench/interpret.py` + the `interpret`
+subcommand, `docs/dev/predictions/`, `catalogue/fixtures/` +
+`catalogue/golden/`, and `make check-interpret` (six sections, 129
+checks). §10's acceptance test RAN: 25 of 25 items pass. Part 2 (the
+`/pcrec-bench-interpret` skill and the committed `.interpretation.md`
+sidecars) is [B13.4], **IMPLEMENTED (lane `b13skill`, 2026-09-09)**: the
+skill at `.claude/skills/pcrec-bench-interpret/SKILL.md` and the three
+§10 acceptance-report sidecars committed under `reports/`.
+
+**v1.3, 2026-09-11 ([B41] (c), lane `b41`)** — a HYGIENE revision: no
+rule's predicate, threshold or `inputs` changed, and the catalogue's
+MINOR bump (1.0 → 1.1) is entirely the new `legend` field below. v1.2
+was written before any code existed; v1.2's own text says explicitly
+that build lane `b13impl`'s deviations from it — seventeen, none
+changing a rule's semantics — would live in `docs/dev/lanes/
+b13impl_report.md` rather than being rewritten into the note. This
+revision folds those seventeen in, so the note itself again says what
+the code does, and closes Frank's ruling on the R-ARM-1 `×1.00 beyond
+spread` question raised while reading it. **What v1.3 changed, in one
+list:** `threshold_src` is stated to cite SYMBOLS, never line numbers
+(§3.2); the header known-key list's own derivation is stated as reading
+`report.py`'s source, never a live `report --format tsv` run (§8(1),
+referenced where §2.1 describes the split); `extremal` is corrected from
+"optional, defaults to the first numeric slot" to MANDATORY whenever a
+rule aggregates and carries a numeric slot, with R-ARM-1 corrected to
+its real `ratio` extremal (not the `median_ns` v1.2 claimed) (§3.2,
+§5.2); an aggregated bullet for a rule with no `extremal` is corrected
+to "first firing's full template sentence plus the rest as keys", not a
+bare key list (§5.2); R-BUCKET-DOMINATED's `grain` is corrected to `set,
+subject`, not subject-only (§3.2.1, §4.7); R-DELTA-4's evaluation-order
+note is added (computed after the four rules it reads, rendered back in
+its declared position) (§4.2); R-RANK-1's guard population is stated
+precisely (the SAME `median_ns` rows R-STATUS-13 reads, by construction)
+(§4.3); §6.3 states which section a `section`-less prediction selector
+reads (`rank`, or `compile` for a `compile:` quantity) and states
+`ratio_to`/`ratio_to_median_over`/`rank_over`'s exact population
+semantics; §8(4) corrects "58 hand-authored `source.toml` files" to "one
+authored `fixtures.toml`, 58 MATERIALISED `source.toml`s", and "exactly
+one declared field differs" to "one declared mutation, at most one
+differing column" (a mutation may span several rows); §8(5) corrects the
+no-prose check to "re-renders the WHOLE sidecar from its facts TSV and
+requires byte equality", not a per-line reproducibility scan; §7.3 notes
+the real case of a link with no `#anchor` (`pcrec_references.md`
+[OS-4]); §6.6's P12 is corrected to roll up `refuted`, not `partial`
+(its inexpressible agreement clause is dropped from the committed file
+at authoring time, leaving one clause), moving the ledger-disagreement
+count from four cells to three and the measured tally to 4 confirmed / 4
+refuted / 5 partial; and the §9.2 specimen's "Rules that did not fire"
+table is corrected to every rule's REAL, static `no_fire` sentence
+verbatim (two rows had smuggled in report-specific numbers a static
+sentence cannot carry, and the render appends `no_fire` unconditionally
+so every row needed the same fix). **Frank's ruling, folded in the same
+commit:** the R-ARM-1 `×1.00 beyond spread` rendering STAYS — no
+threshold or tuned constant — and gains a `legend` field (catalogue
+1.1): one static, slot-free sentence rendered once under R-ARM-1's
+heading whenever it fires, naming the "beyond spread, not beyond ratio"
+reading by rule rather than leaving it to a reader of this note alone
+(§3.2, §7.1). Full disposition of every deviation, applied or declined
+with a reason, is `docs/dev/lanes/b41_report.md`.
+
+What follows (§0 onward) is folded directly into the running text —
+this is not a diff on top of v1.2, it is v1.2 corrected, on the same
+principle v1.2 itself used against v1.1. **v1.2, 2026-09-08** — v1.1
 (lane `b13rev`, 2026-09-07) revised in place by lane `b13v12` under the
 pcrec manager session's cross-review of v1.1, inbox item I-58: **APPROVED
 CONDITIONAL**, four spec edits, one revision commit, no re-panel. v1.1
@@ -61,7 +112,8 @@ written before any code existed — which is why the panel could find
 these gaps at a cost of one design pass.
 
 Author: lane `b13design`, 2026-09-07; revised by lane `b13rev`,
-2026-09-07; revised again by lane `b13v12`, 2026-09-08. Charter:
+2026-09-07; revised again by lane `b13v12`, 2026-09-08; revised again
+(hygiene, [B41] (c)) by lane `b41`, 2026-09-11. Charter:
 docs/dev/plan.md row `[B13]`, agreed by Frank 2026-08-25
 (docs/dev/dev_journal.md, second session parts 5 and 7). Stated inputs:
 `docs/dev/feedback_pcrecdev1_2026-08-25-repin.md` and `-repin-v2.md` —
@@ -491,7 +543,7 @@ Any `; `-separated clause of `delta_verdict` matching `^(faster|slower) ×`.
 """
 threshold     = "none of this rule's own"
 threshold_src = """
-report.py:2234 `_cross_pin_verdict` ([B9] R8): `unchanged (within
+report.py `_cross_pin_verdict` ([B9] R8): `unchanged (within
 spread)` iff |median_new - median_old| <= 2 * max(stddev_old,
 stddev_new); otherwise faster/slower ×N.NN. This rule adds NO threshold
 of its own -- it reads the verdict clause the reporter already computed
@@ -525,12 +577,37 @@ asserts that every `[[rule]]` has a function, every function has a
 columns it touches, enforced by handing each rule function a view that
 raises on an undeclared column (§3.3, §7.2).
 
+**`threshold_src` cites SYMBOLS, never line numbers** (corrected here,
+v1.3, from the TOML example above and every other citation in §4, which
+this note originally wrote with a line number attached, e.g.
+`report.py:2234`). A line number goes stale the moment the cited module
+is edited — measured: the note's own citations were already ~100 lines
+low against reporter v16 by the time `catalogue/rules.toml` was
+authored (`docs/dev/lanes/b13impl_report.md` §5's full correction
+table) — where a function or comment-block name does not move under an
+ordinary edit. The one exception `reduce.py`'s five agreement-string
+citations keep their line numbers, because that 376-line module is
+small and stable enough that the risk the rule exists to avoid does not
+apply there in practice; every other `threshold_src` in §4 below is
+read as citing symbols even where an example still shows a stray line
+number.
+
 Fields every rule carries: `id`, `title`, `class`, `since`, `grain`,
 `aggregate`, `inputs`, `predicate`, `threshold`, `threshold_src`,
 `slots`, `arith`, `template`, `no_fire`, `links`, `example`. One field is
-OPTIONAL and declared only to override its default: `extremal` — which
-slot §5.2's aggregation renders as the group's extremal firing; a rule
-that omits it gets the default, the rule's first numeric slot (§5.2).
+OPTIONAL, `extremal` — which slot §5.2's aggregation renders as the
+group's extremal firing — but it is optional only for a rule that does
+not aggregate (`aggregate = []`) or carries no numeric slot at all;
+**a rule that aggregates AND carries a numeric slot must declare
+`extremal`, checked whenever the rule fires** (`check_extremal`,
+§5.2 — corrected here from v1.2's stated fallback, which claimed an
+undeclared `extremal` defaults to the rule's first numeric slot: the
+build has no such default, and enforces the declaration instead;
+`docs/dev/lanes/b13impl_report.md`'s deviation 3). A second field is
+OPTIONAL by nature, not by fallback: `legend` (catalogue 1.1,
+2026-09-11) — one static, slot-free sentence, printed once under the
+rule's heading whenever it fires, reviewed under §8(6) exactly like
+`template`/`no_fire`/`links` (§7.1).
 
 #### §3.2.1 `grain` is mandatory (panel S7)
 
@@ -544,9 +621,17 @@ still computes. And `delta_verdict` is populated only at set grain
 
 `grain` is therefore required on every `[[rule]]`, checked at load by
 §8(1). Set-only in v1: all four R-DELTA, R-RANK-1, R-ARM-1, R-FLOOR-2,
-R-STATUS-13, R-BUCKET-FORM/VSBEST/SPAN, all four R-PRED. Subject-grain
-only: R-BUCKET-DOMINATED. Both grains: the remaining R-STATUS rules,
-R-FLOOR-1 and R-FLOOR-3 (compile rows are grain-independent).
+R-STATUS-13, R-BUCKET-FORM/VSBEST/SPAN, all four R-PRED. Both grains:
+the remaining R-STATUS rules, R-FLOOR-1 and R-FLOOR-3 (compile rows are
+grain-independent) — and, corrected here (v1.3,
+`docs/dev/lanes/b13impl_report.md`'s deviation 7), R-BUCKET-DOMINATED,
+which declares `grain = ["set", "subject"]` rather than subject-only:
+its one input is a subject-grain SIDECAR (§4.7), never the report being
+interpreted, so the rule can be handed either a set-grain or a
+subject-grain report and answer `input-absent` correctly on both — a
+subject-only declaration would make the honest "no sidecar was
+supplied" answer on a set-grain report look like a grain mismatch
+instead.
 
 #### §3.2.2 The `inputs` grammar and the view contract (panel S5)
 
@@ -944,6 +1029,19 @@ R-ARM-1, R-FLOOR-2), and R-PRED-4 is a different rule (the `partial`
 verdict, §4.6). R-DELTA-4 is a cross-class rule and keeps its R-DELTA id
 for continuity with the acceptance test and the sidecar heading.
 
+**Evaluation order, stated for a reader of the catalogue's own rule
+ordering (v1.3):** R-DELTA-4 reads the firings of four OTHER rules
+(R-DELTA-1, R-RANK-1, R-ARM-1, R-FLOOR-2), so it is evaluated AFTER all
+four — even though `rules.toml`'s declaration order sits it before
+R-RANK-1, R-ARM-1 and R-FLOOR-2, next to its R-DELTA siblings, which is
+where a reader looking for it by class expects it. The runner computes
+R-DELTA-4 out of its declared position and places its result back there
+for rendering; a reader of the catalogue file sees the declaration this
+paragraph describes, and a reader of a rendered sidecar sees R-DELTA-4's
+heading in that same declared position — the reordering is an
+implementation fact about WHEN a firing set is computed, not about where
+it appears (`docs/dev/lanes/b13impl_report.md`'s deviation 8).
+
 **And it does not fire with no predictions file.** With none supplied,
 "no prediction covers this cell" is universally true: on
 `2026-09-06-bounded-0.3-…-after-d34c9131.tsv` R-DELTA-1 fires 202 times,
@@ -1010,13 +1108,21 @@ lack one, concentrated in altwide, where 40 of the 69 firings live. It is
 one re-pin away.
 
 **Inputs.** `report:rank?metric=ratio_vs_baseline.{pattern,regime_or_na,
-form,testee,rank_or_na,value}`, plus `metric=median_ns.value` for the
-template, plus the group's testee list for the R-STATUS-13 guard. The
-cross-pin pair is formed by decomposing a pcrec testee id (§7.2's
-declared decomposition, and the composition rule is
-docs/design/record_schema.md §6.4) and grouping by `config` within a
-ranking group **at one form**. Non-pcrec testees are unpinned and never
-form a pair.
+form,testee,rank_or_na,value}`, plus `metric=median_ns.{pattern,
+regime_or_na,form,testee,rank_or_na,value}` — for the template's own
+number AND, precisely (v1.3, `docs/dev/lanes/b13impl_report.md`'s
+deviation 9), for the group's testee list the R-STATUS-13 guard reads.
+The `median_ns` rows are what §4.1's own R-STATUS-13 declares as ITS
+input, so reading the guard's population from that same metric — rather
+than from `ratio_vs_baseline`'s own rows, which is a superset/subset
+distinction a rewrite could get wrong — means the two rules can never
+disagree about what a ranking group contains; using the rule this rule
+is guarded BY as the source of the guard's own population is the point,
+not an accident of which metric happened to be handy. The cross-pin pair
+is formed by decomposing a pcrec testee id (§7.2's declared
+decomposition, and the composition rule is docs/design/record_schema.md
+§6.4) and grouping by `config` within a ranking group **at one form**.
+Non-pcrec testees are unpinned and never form a pair.
 
 **Threshold and source.** The boundary is **1.0 on `ratio_vs_baseline`,
 and it is DEFINITIONAL, not tuned**: the reference arm *is* 1.000× by
@@ -1291,7 +1397,7 @@ that must resolve to a committed file (§7.3).
 | R-BUCKET-FORM | set | `[]` | a ranking group whose *rankable* rows carry both `same program` and `separate artifact` in `fact` | pcrec has no end-anchored mode, so its whole-subject form is a SECOND ARTIFACT `(?:P)\z`; libpcre2 reaches the same regime with `PCRE2_ANCHORED\|PCRE2_ENDANCHORED` on its ordinary artifact. Source: docs/design/record_schema.md §5; report.py `_form_fact` ([B9] R4); pcrec [OS-4]. |
 | R-BUCKET-VSBEST | set | `[]` | a ranking group carrying ≥ 2 distinct pcrec pin slugs | `vs best` inverts visually wherever an OLDER pin's row ranks first; read same-pin rows or the Δ column. Source: reports/CLAUDE.md's reader's caveat (the a7e0bdf bounded entry), which records the "8192 inversion" REFUTED as a cross-pin `vs best` mis-reading ([B25]). |
 | R-BUCKET-SPAN | set | `["config"]` | a cross-pin pair whose two pins are not adjacent in `[[pin_order]]` | the Δ spans more than one pin and is not a one-variable comparison. Source: reports/CLAUDE.md ("the bounded `vm-in` row's Δ partner is 288d505, not 334fd10e … spans THREE abi steps (16 → 22 → 23)"). |
-| R-BUCKET-DOMINATED | subject | `["testee"]` | a set cell > 90 % one subject | a ratio between two such sums is a real number about a real total AND a statement about ONE subject wearing the set's name. Source: `_DOMINANCE_SHARE = 0.90` (report.py:2326) and `_dominant_subject`'s docstring ([B16] R7). **Needs a subject-grain TSV** (§11 Q2, ruled (a): `input-absent` until the reporter commits one). |
+| R-BUCKET-DOMINATED | set, subject | `["testee"]` | a set cell > 90 % one subject | a ratio between two such sums is a real number about a real total AND a statement about ONE subject wearing the set's name. Source: `_DOMINANCE_SHARE` (report.py `_dominant_subject`'s docstring, [B16] R7). **Needs a subject-grain TSV** (§11 Q2, ruled (a): `input-absent` until the reporter commits one) — `grain` names BOTH (corrected here, v1.3): its input is that subject-grain sidecar regardless of which grain the report under interpretation itself is, so `input-absent` is the honest answer on either. |
 | R-BUCKET-KB | set | `["kb_id"]` | a cell matching a REGISTERED signature | **No signature is registered in catalogue v1.0. See below.** |
 
 **R-BUCKET-FORM's predicate says *rankable* deliberately**: the `fact`
@@ -1441,16 +1547,14 @@ group renders as ONE bullet carrying:
 3. a pointer to the facts TSV for the rest.
 
 `aggregate = []` means one bullet per firing. Aggregate groups render in
-**sorted order of their key**, and — for a rule WITH a numeric slot — the
-extremal firing inside a group is chosen by the rule's declared
-`extremal` slot, defaulting to the rule's first numeric slot when
-`extremal` is not declared (§3.2 lists it as an optional field), with
-ties broken by the sorted key columns (`pattern`, `subject_or_na`,
-`regime_or_na`, `form`, `testee`) — so the rendering is a total order
-with no free choice in it. There is no threshold and no cut-off: the
-collapse is a pure arithmetic reduction of a declared key, deterministic
-and diffable, and it is NOT a ranking by interest (§1.1). Nothing is
-dropped.
+**sorted order of their key**, and — for a rule that DECLARES
+`extremal` — the extremal firing inside a group is chosen by that
+slot, with ties broken by the sorted key columns (`pattern`,
+`subject_or_na`, `regime_or_na`, `form`, `testee`) — so the rendering is
+a total order with no free choice in it. There is no threshold and no
+cut-off: the collapse is a pure arithmetic reduction of a declared key,
+deterministic and diffable, and it is NOT a ranking by interest (§1.1).
+Nothing is dropped.
 
 **Rules with NO numeric slot, and the default this note left undefined
 (cross-review I-58 edit 5(a)).** v1.1 specified step 2 only for a rule
@@ -1462,29 +1566,52 @@ sorted list of record ids, not an extremal-plus-minimum pair, because
 BY; R-BUCKET-VSBEST similarly renders all four ranking-group names in one
 firing rather than picking one. **Ruling: this is the specimen's
 behaviour, and the spec now says so as a rule, not an accident of the
-worked example** — a rule whose declared `slots` contain no numeric
-member (checked at load, §8(1)) renders its aggregated bullet as the
-count plus the group's FULL SORTED LIST of firing keys (sorted the same
-way as the group order itself, §5.2's own total order), never an
-extremal/minimum pair. A rule with a numeric slot never falls back to
-this form, even where its group has only one member.
+worked example** — a rule that does NOT declare `extremal` (which, by
+the mandatory-declaration rule two paragraphs below, means a rule with
+no numeric slot) renders its aggregated bullet as the count, the FIRST
+member's own full rendered TEMPLATE SENTENCE (ordered by the group's own
+total order — the sorted key columns), the remaining members' keys
+joined as one sentence, and the facts-TSV pointer — never a bare key
+list and never an extremal/minimum pair (corrected here, v1.3, from "the
+group's full sorted list of firing keys": a bare list of keys drops the
+one sentence §10 A.2 requires the collapse to still surface, e.g.
+R-DELTA-2's "selection changed" clause; `docs/dev/lanes/
+b13impl_report.md`'s deviation 4). A rule that DOES declare `extremal`
+never falls back to this form, even where its group has only one
+member.
 
-**The extremal slot is declared per rule, default the first numeric
-slot (cross-review I-58 edit 5(a), the R-DELTA-1 half).** Reading §5.2's
-"extremal by first numeric slot" literally, R-DELTA-1's extremal would be
-its first numeric slot, `median_ns` — which picks the LARGEST-MEDIAN
-CELL in a group, not the biggest MOVER, and a reader collapsing 202
-firings to 17 bullets wants the biggest ratio, not the slowest cell that
-happens to also carry a faster/slower clause. R-DELTA-1 now declares
-`extremal = "ratio"` (§3.2's TOML example; `ratio` is the clause's own
-parsed `×N.NN`, a declared decomposition per §7.2), and the general rule
-is stated once here rather than special-cased silently: **a rule may
-declare `extremal = <slot>` to name which of its numeric slots is
-"biggest" for aggregation purposes; a rule that omits it gets the
-default, the first numeric slot in its `slots` list.** Every other rule
-in §4 that declares a numeric slot keeps the default (`median_ns` is
-already the biggest-cell reading R-ARM-1's own worked example in §9.2
-uses, and it is what a reader comparing two config arms wants).
+**The extremal slot is declared per rule, and MUST be for a rule that
+aggregates and carries a numeric slot** (cross-review I-58 edit 5(a), the
+R-DELTA-1 half; the mandatory half corrected here, v1.3, against the
+build's own `check_extremal` — `docs/dev/lanes/b13impl_report.md`'s
+deviation 3). Reading v1.2's "defaulting to the rule's first numeric
+slot" literally, R-DELTA-1's extremal would default to its first numeric
+slot, `median_ns` — which picks the LARGEST-MEDIAN CELL in a group, not
+the biggest MOVER, and a reader collapsing 202 firings to 17 bullets
+wants the biggest ratio, not the slowest cell that happens to also carry
+a faster/slower clause. **The build has no such default at all**: a rule
+that aggregates and carries a numeric slot but declares no `extremal` is
+a LOAD-TIME-ADJACENT error the moment it fires (`check_extremal`,
+run wherever a rule's firings are computed — `make check-interpret`'s
+fixtures and the three committed reports' own goldens exercise every
+rule this way), and `render_bullets` reads ONLY the declared name — an
+undeclared `extremal` renders the key-list form above, never a silent
+first-numeric-slot guess. So the general rule is stated once here rather
+than special-cased silently: **a rule that aggregates and carries a
+numeric slot MUST declare `extremal = <slot>` naming which of its
+numeric slots is "biggest" for aggregation purposes.** Seven rules in §4
+declare one, each for its own reason, not a shared default: R-DELTA-1
+`ratio` (the biggest mover, this rule's own worked case above),
+**R-ARM-1 `ratio`** (the biggest mover between two arms — corrected
+here, v1.3, from v1.2's claim that R-ARM-1 "keeps the default `median_ns`"
+and that its own §9.2 worked example uses that default: §9.2's bullets
+pick the largest and smallest RATIO, `×2.31`/`×1.28`, which is what
+`extremal = "ratio"` produces and `median_ns` would not), R-RANK-1
+`new_ratio` (the CURRENT pin's ratio — the flip a reader is being told
+about), R-FLOOR-2 `ratio` and R-FLOOR-3 `jitter` (each rule's own named
+quantity), R-BUCKET-SPAN `span` (the widest pin gap) and
+R-BUCKET-DOMINATED `share` (the most lopsided set). No rule in the
+catalogue relies on an implicit default; there is none to rely on.
 
 A rule whose individual bullets carry evidence a reader must see keeps
 `aggregate = []` even where its count is largish: R-STATUS-3 renders all
@@ -1611,17 +1738,48 @@ note            "no compile time beyond x10 the median on any compiled testee"
     cost class (report.py:4177). No committed report exercises the
     second; the token covers both so a lazy-JIT prediction is not
     unloadable (panel build #15).
+- **A selector that does not name `section` reads the `rank` section**
+  (or the `compile` section for a `compile:` quantity), never every
+  section at once (v1.3, `docs/dev/lanes/b13impl_report.md`'s
+  deviation 10 — §6.3 did not previously say which section a
+  section-less selector reads). This is the reading §6.6's own P2
+  transcription depends on: P2.a is an `excluded` cell by construction
+  and P2.d lands in `did_not_compile`, and both are found by their
+  OWN mechanism, `_elsewhere` below, rather than by widening the default
+  section set. A selector that DOES name `section` reads exactly the
+  section(s) named, by glob.
 - **`reducer`** (optional) turns a population into one number or one
   set: `identity | ratio_to(<selector>) | ratio_to_median_over(<key>) |
   ratio_max_min_over(<key>) | rank_over(<key>) | count | set_of(<key>) |
   max | min | median`.
+  - `ratio_to(<selector>)` (v1.3, deviation 11) divides each of the
+    prediction's own selected values by the MEDIAN of a SECOND
+    population, named by `<selector>` (a full selector string, evaluated
+    the same way). The two populations are joined on every key column
+    (`pattern`/`subject_or_na`/`regime_or_na`/`form`/`testee`) the TWO
+    selectors AGREE about (i.e. both name the same literal, not a
+    wildcard) — so the ratio is computed per (regime, form, testee) when
+    only `pattern` differs between the two selectors (prediction (1)'s
+    shape above), not collapsed to one number over the whole report.
+  - `ratio_to_median_over(<key>)` (v1.3, deviation 11) divides each
+    selected value by the median of its OWN GROUP, where the group is
+    the selected population with `<key>` dropped from its row identity
+    — "this row against the typical row that agrees with it on
+    everything but `<key>`", the within-population sibling of
+    `ratio_to`'s across-population version.
   - `ratio_max_min_over(<key>)` is max ÷ min over the population grouped
     by `<key>` — the "every member of this group agrees within ×N" shape
     (P3, P11).
-  - `rank_over(<key>)` orders the selected rows by the quantity and
-    returns the 1-based position of each — a cross-pattern ordering
-    (P5, P7). It is an ordering of numbers the reporter already reduced
-    and printed, not a second reduction of records (§2.4).
+  - `rank_over(<key>)` ranks a row among the population ITS OWN
+    SELECTOR describes with `<key>` WILDCARDED, not among only the
+    rows the selector as written names (v1.3, deviation 11 — read
+    literally, "the three cheapest cells IN THE SET" would rank three
+    rows against each other and pass trivially; the ranked population is
+    every row sharing the selector's other key columns, `<key>` left
+    free, and the 1-based position is returned for each ORIGINALLY
+    selected row within it) — a cross-pattern ordering (P5, P7). It is
+    an ordering of numbers the reporter already reduced and printed, not
+    a second reduction of records (§2.4).
   - `set_of(<key>)` collects the distinct values of a key column over
     the selected rows (P1).
 - **`op`** ∈ `lt lte gt gte between eq neq eq-token neq-token set-eq
@@ -1760,8 +1918,9 @@ statement that answers and spans are out of reach (P9, P12).
 
 **On reproducing the ledger's 3/5/5 tally — it does not, and that is the
 right outcome.** Every CLAUSE verdict reproduces. The parent roll-up
-differs on four of thirteen (P1, P4, P6, P12), always in the direction of
-the arithmetic rule being stricter than the human tally:
+differs on THREE of thirteen (P1, P4, P6 — corrected here, v1.3, from
+"four…, P1, P4, P6, P12"; see P12's own correction below), always in the
+direction of the arithmetic rule being stricter than the human tally:
 
 - **P6** the ledger tallied CONFIRMED, describing interp as "marginal";
   one measured ratio is **1.722** against a stated bound of ×1.5, so the
@@ -1770,9 +1929,25 @@ the arithmetic rule being stricter than the human tally:
 - **P1** the ledger tallied PARTIAL ("13/15 as stated"); both clauses
   fail as stated (one named pattern compiled, one unnamed pattern
   refused), so the roll-up is `refuted`.
-- **P4** and **P12** the ledger listed under REFUTED while naming the
-  refuted clause only ("P4 in the search regime", "P12's cost clause");
-  mechanically both are `partial`.
+- **P4** the ledger listed under REFUTED while naming the refuted clause
+  only ("P4 in the search regime"); mechanically it is `partial` (its
+  other clause is confirmed).
+
+**P12 is NOT among the disagreements, corrected here (v1.3,
+`docs/dev/lanes/b13impl_report.md`'s deviation 16).** §6.4 already
+states P12's AGREEMENT clause is inexpressible (an answer-equality claim
+between two patterns, not a claim §2.4's report-only reading can carry)
+— and an inexpressible clause is dropped from the COMMITTED predictions
+file at authoring time, not loaded as a stand-in error row (its fixture
+lives separately, `catalogue/fixtures/predictions-inexpressible.tsv`,
+never a committed prediction, §6.4). So the committed P12 carries ONE
+clause, its cost clause, which is refuted — the PARENT roll-up is
+therefore `refuted` directly (a one-clause "roll-up" is just that
+clause's own verdict), matching the ledger's own REFUTED tally for P12
+exactly, not a mechanical `partial` a two-clause reading would produce.
+Measured against the committed file: **4 confirmed / 4 refuted / 5
+partial**, against the ledger's 3/5/5 — the disagreement is the three
+cells above, not four.
 
 The ruling this note takes: **the per-clause verdicts are `interpret`'s
 output and are authoritative; the parent verdict is the stated
@@ -1808,8 +1983,9 @@ def render(rule_id, slots) -> str:
 
 `str.format` on a template that declares its slots is the whole
 sentence-production surface. There is **no code path** by which
-`interpret` can emit a string that is not `stamp | heading | template
-output | link | did-not-fire row`.
+`interpret` can emit a string that is not `stamp | heading | legend line
+| template output | link | did-not-fire row` (the `legend line` category
+added at v1.1, below).
 
 **And the template's own fixed prose is audited (panel B11/F1).** v1's
 three properties covered the number of sentence shapes, the values
@@ -1839,6 +2015,26 @@ record reads agree or n/a (v1.x))`), which is a second unchecked prose
 channel. In v1.1 a rule carries a `no_fire` field — one sentence, no
 slots, reviewed under §8(6) exactly like `template` — and the render is
 `<token> (<no_fire>)`. Nothing else may appear there.
+
+**A rule may declare `legend` — one static, slot-free sentence, printed
+once under the rule's heading whenever it fires** (catalogue 1.1,
+2026-09-11, Frank's ruling: `docs/dev/plan.md` row [B41] (c)). Reviewed
+under §8(6) exactly like `template`/`no_fire`/`links`, subject to the
+same slot-free load-time check as `no_fire`, and — like `no_fire` —
+never conditioned on which firing triggered it: one sentence per rule,
+not per bullet. **The first (and, as of 1.1, only) rule to declare one is
+R-ARM-1**, naming the reading a `×1.00`-or-near firing needs: the
+predicate is "beyond `2 × max(stddev)`", i.e. the SPREAD is small — never
+a ratio-size threshold — so a firing whose `{ratio}` slot prints `×1.00`
+is not a contradiction, it is the rule doing exactly what it is
+supposed to (§4.4's own worked language, "a Δ is 'beyond spread' when
+the spread is small, not when the ratio is large", now ALSO stated once
+in the rendered sidecar rather than left to a reader of this design note
+alone). **No predicate or threshold changed** — Frank's ruling is
+explicit that this is prose, not a tuned constant, and that the
+rendering itself (a small-ratio firing is real and stays) is unchanged;
+a later window that finds the rendering genuinely confusing in practice
+is what would justify a threshold change, and none has yet.
 
 ### §7.2 Slot values are copied, counted, computed or decomposed
 
@@ -1895,6 +2091,17 @@ has already written it down and committed it —
 `docs/dev/feedback_*.md`. The interpreter cannot invent a cause because
 it has no way to say one, and after §7.1 it cannot smuggle one into a
 template either.
+
+**A link with no `#anchor` resolves to the FILE alone** (worked case,
+v1.3, `docs/dev/lanes/b13impl_report.md`'s deviation 15): R-BUCKET-FORM's
+own source citation, `docs/design/pcrec_references.md`, names pcrec's
+`[OS-4]` in PROSE beside the path rather than as a `#OS-4` anchor —
+the literal string `OS-4` does not occur in that file, so an anchor
+check against it would fail where "optionally" (above) already says
+none is required. This is the ordinary case for a source that is cited
+by a section number or an external label rather than by a heading this
+repository controls; only a link that DOES carry `#anchor` or `:line`
+is held to the stronger check.
 
 ### §7.4 Who phrases — RULED, not deviated from
 
@@ -1999,11 +2206,22 @@ minimum over what? *(Panel S6.)*
 
 v1.1 adopts `catalogue/fixtures/gen.py`, run with `--check` inside
 `check-interpret` exactly as `gen_example_14.py --check` runs inside
-`check-schema`. Each fixture directory carries:
+`check-schema`. **The fixture DECLARATION is one authored file, not 58**
+(corrected here, v1.3, `docs/dev/lanes/b13impl_report.md`'s deviation
+12): `catalogue/fixtures/fixtures.toml` is the single hand-authored
+table — 58 rows, one per fixture, naming its `source report`, `select`,
+optional `mutate` and `expect` — and `gen.py` MATERIALISES each fixture
+directory's own `source.toml` (plus `report.tsv`/`index.tsv`) from that
+one declaration. 58 hand-authored copies of the same table shape would
+be 58 chances for a declaration to drift from the corpus it declares; a
+directory's `source.toml` is generated evidence of what its row in
+`fixtures.toml` says, not a second place that row's content is typed.
+Each fixture directory carries:
 
 ```
 catalogue/fixtures/R-DELTA-1__faster-outside-spread/
-    source.toml     report = "reports/2026-08-25-email-...-repin-692c2e8.tsv"
+    source.toml     MATERIALISED from fixtures.toml's own row:
+                    report = "reports/2026-08-25-email-...-repin-692c2e8.tsv"
                     select = { pattern = "factored", regime = "short-subject-search" }
                     index  = "catalogue/golden/index@2026-09-07.tsv"
                     expect = ["R-DELTA-1"]
@@ -2018,9 +2236,15 @@ catalogue/fixtures/R-DELTA-1__control-unchanged-within-spread/
 ```
 
 The check asserts the named rule fires on the sabotage and does NOT fire
-on its control, and that **exactly one declared field differs** — the
-well-defined replacement for "the minimum number of bytes". The generator
-shares source with `report.py`'s OUTPUT, never with `interpret.py`'s rule
+on its control, and that **exactly one declared MUTATION differs by at
+most one COLUMN** — corrected here, v1.3 (deviation 13), from "exactly
+one declared field differs": a `mutate` may legitimately change one
+COLUMN across SEVERAL rows at once (R-FLOOR-1's control changes the
+`jitter` cell on sixteen rows, one mutation, one column — `mutate {…,
+all = true}`), and counting differing CELLS would call that mutation
+sixteen, not one. "One field" was always meant as one DECLARED change,
+never one byte or one row; the check now says so. The generator shares
+source with `report.py`'s OUTPUT, never with `interpret.py`'s rule
 functions, so the project's controls-share-no-source discipline (pcrec
 D35) holds where it matters.
 
@@ -2042,11 +2266,19 @@ Three fixture kinds beyond the pair:
   committed report), so the missing false-positive control is
   constructible only here, and it is required.
 
-**(5) The no-prose check.** A generated sidecar is re-parsed and every
-non-blank, non-heading, non-stamp line must be reproducible by
-`render(rule_id, slots)` for some rule and some slot set present in the
-facts TSV — reassembled by `(rule_id, firing_seq)`, which is why §5.1
-carries that column. A line that is not is a failure.
+**(5) The no-prose check.** Stronger than "every line is reproducible by
+some render call" (corrected here, v1.3, `docs/dev/lanes/
+b13impl_report.md`'s deviation 14): the check reassembles
+`[(rule, firings)]` from the fixture's OWN facts TSV by `(rule_id,
+firing_seq)` — which is why §5.1 carries that column — RE-RENDERS the
+WHOLE sidecar document from that reassembly, and requires BYTE EQUALITY
+against the generated sidecar. Re-rendering the whole document rather
+than checking each line in isolation is what lets the render read
+numbers back out of the rendered slot STRINGS (`slot_number`, §5.1) and
+still prove the sidecar is a pure function of the facts TSV: a line
+reproducible in isolation could still hide a rule whose OTHER lines
+drifted, or a heading/count that disagreed with its own bullets: byte
+equality over the whole document cannot.
 
 **(6) The template-diff gate (new in v1.1, panel B11/F1).** Every diff
 that touches a `template`, `no_fire` or `links` field, or adds a
@@ -2298,26 +2530,37 @@ sentence below is a rule template. No sentence is generated.
 
 | rule | reason |
 |---|---|
-| R-STATUS-1 | no-matching-rows (every included record is `measured`; `include_unmeasured: False`) |
-| R-STATUS-4 | no-matching-rows (no did_not_compile row) |
-| R-STATUS-7 | no-matching-rows (`mixed_x13: False`) |
-| R-STATUS-8 | no-matching-rows (`worst_other_core_busy: n/a`) |
-| R-STATUS-9 | no-matching-rows (no record reads `disagree`) |
-| R-STATUS-10 | no-matching-rows (no record carries an `after:` failure) |
-| R-STATUS-11 | no-matching-rows (no scratch row) |
-| R-STATUS-13 | no-matching-rows (all 6 ranking groups carry a rankable reference arm) |
-| R-DELTA-4 | input-absent (no predictions file for email-specimen@0.1) |
-| R-RANK-1 | no-matching-rows (no cross-pin pair crosses 1.0 on ratio_vs_baseline) |
-| R-FLOOR-2 | no-matching-rows (`floor_pattern: none`) |
-| R-FLOOR-3 | no-matching-rows (highest compile jitter ratio is 0.645) |
-| R-PRED-1 | input-absent (no predictions file) |
-| R-PRED-2 | input-absent (no predictions file) |
-| R-PRED-3 | input-absent (no predictions file) |
-| R-PRED-4 | input-absent (no predictions file) |
-| R-BUCKET-SPAN | no-matching-rows (8da6120 and 692c2e8 are adjacent in pin_order) |
-| R-BUCKET-DOMINATED | input-absent (no subject-grain TSV supplied) |
-| R-BUCKET-KB | no-registered-signatures (catalogue 1.0 registers none) |
+| R-STATUS-1 | no-matching-rows (every included record joins to an index row whose status is `measured`) |
+| R-STATUS-4 | no-matching-rows (every pattern compiled on every testee in this report) |
+| R-STATUS-7 | no-matching-rows (every record in this report was gated under one X13 rule revision) |
+| R-STATUS-8 | no-matching-rows (no record in this report carries an other-core occupancy reading) |
+| R-STATUS-9 | no-matching-rows (no record's trial agreement reads `disagree`) |
+| R-STATUS-10 | no-matching-rows (no record in this report carries a failed after-sample) |
+| R-STATUS-11 | no-matching-rows (no scratch-tier row is in this report) |
+| R-STATUS-13 | no-matching-rows (every ranking group in this report carries a rankable reference arm) |
+| R-DELTA-4 | input-absent (every finding of R-DELTA-1, R-RANK-1, R-ARM-1 and R-FLOOR-2 is covered by a prediction selector) |
+| R-RANK-1 | no-matching-rows (no cross-pin pair's ratio_vs_baseline values lie on opposite sides of 1.0 in a group with a rankable reference arm) |
+| R-FLOOR-2 | no-matching-rows (no ranked cell is at or below its set's own floor pattern on the same testee and regime) |
+| R-FLOOR-3 | no-matching-rows (no compile row's jitter ratio is at or above 1.0) |
+| R-PRED-1 | input-absent (no prediction clause holds against this report) |
+| R-PRED-2 | input-absent (no prediction clause fails against this report) |
+| R-PRED-3 | input-absent (every prediction clause reaches a ranked cell in this report) |
+| R-PRED-4 | input-absent (no compound prediction's clauses disagree) |
+| R-BUCKET-SPAN | no-matching-rows (every cross-pin Δ in this report pairs two pins adjacent in `[[pin_order]]`) |
+| R-BUCKET-DOMINATED | input-absent (no subject-grain TSV is supplied, so no set cell's subject shares can be summed) |
+| R-BUCKET-KB | no-registered-signatures (catalogue 1.0 registers no signature) |
 ```
+
+*(Corrected here, v1.3: every parenthetical above is now the rule's own
+declared `no_fire` sentence VERBATIM — §7.1's own rule, "one sentence,
+no slots" — rather than a hand-written, report-specific gloss. Two rows
+(R-STATUS-13, R-FLOOR-3) had smuggled in a number from the report this
+specimen was drawn from ("all 6 ranking groups", "0.645"), which a
+static `no_fire` sentence cannot carry; the render is `<token>
+(<rule's no_fire>)` unconditionally, for every token including
+`input-absent`, so every other row's parenthetical was drifted the same
+way and is corrected the same way here.
+`docs/dev/lanes/b13impl_report.md`'s deviation 6.)*
 
 Twelve rules fire, nineteen do not, thirty-one are named. Every
 non-template sentence v1's specimen carried — the six the source critic
