@@ -32,3 +32,6 @@ dist/
 # were committed by a blind `git add store/`); the harness stages under .staging-* and leaves .rejected behind
 .staging-*/
 *.rejected
+
+# per-machine Claude Code permissions (Frank, 2026-09-11): never committed
+.claude/settings.local.json
