@@ -566,3 +566,54 @@ where three ids were found dropped in the first pass — this consolidation
 was built with the by-id table checked against all three raw files
 directly during drafting, not after, per the standing rule
 `session_discipline.md` §7(a) now requires).
+
+---
+
+## Manager's ratification (pcrecdev2, 2026-09-12 ~15:2x EDT)
+
+Every PROPOSED disposition above (CB1-CB8, CS1-CS8, the eight
+WORTH-NOTING items) is **RATIFIED as proposed**, with three amendments
+that follow from rulings Frank gave live in this session AFTER the
+consolidation lane was briefed:
+
+1. **Q2 is RESOLVED, not BLOCK.** Frank (live, 2026-09-12): the "from
+   the wild" requirement is a framing — REALISM over contrivance (no
+   `ab+c`-class toys; every member, imported or authored, a shape someone
+   would plausibly deploy; provenance recorded where a real source
+   exists) — and "the actual percentage is not important". The revision
+   drops §4.3's ratio argument and its consequence table, replaces them
+   with the realism rule applied to EVERY family (the authored members
+   of families 7-12 are held to it too), and keeps the Davis corpus as a
+   0.2 candidate. CB4's noseyparker correction stands.
+2. **Q10, Q11 and Q12 are SUPERSEDED by a ruling that changes the
+   effort's shape.** Frank (live, same session): the capability set is
+   to be BUILT ON `.rxt` for real, not on the hybrid; "park effort when we
+   run into the roadblock of rxt capabilities; provide detailed feedback
+   on needed capabilities (considering the pcrec/docs/spec rxt design
+   document); then I'll have pcrecdev1 build out rxt and restart this
+   effort; be prepared on restart to review said work and make sure it
+   works. This is as much a driver of the rxt format as anything." So:
+   §9's Option B decision is WITHDRAWN as the design; the needs are
+   stated in `docs/design/rxt_needs_v1.md` (lane `b42rxtneeds`, in
+   flight) and distilled into an outbox item for pcrecdev1; the format
+   asks are filed NOW, all of them, as the effort's blocking dependency;
+   `--source` buildability becomes a question for the format's design
+   (the D93 interaction is one of the stated needs), not for this note.
+   CS8's row-kind correction and B6's loader note travel to the needs
+   note and the restart acceptance checklist rather than to a v0.2 §9.
+3. **Q3 (Vectorscan boolean grain) is BLOCK as CS3 argues**, but it is
+   asked at the RESTART, not now — nothing is built on it until the
+   [B7] Vectorscan lane, which sits behind the parked build.
+
+Consequences for the revision: v0.2 of `capability_set_v1.md` is
+produced with every ratified disposition applied AND the effort's new
+shape stated at the top — the set's DESIGN stands (families, capability
+model, provenance, metrics, roster, rulings Q1/Q2), the BUILD is PARKED
+pending pcrec's `.rxt` delivery, and §9 becomes a pointer to
+`rxt_needs_v1.md` plus the restart acceptance checklist. The revision
+lane opens once `rxt_needs_v1.md` is merged so the two agree.
+
+Remaining open for Frank at the restart (not before): Q3 (BLOCK), Q4,
+Q5 (reworded per CS1), Q6 (amended per CS4), Q7, Q8, Q9, Q13, Q14
+(amended per CS7), and the two new DEFAULT items (family 11's v1 scope;
+the tags→enum promotion) — all carried with the note's recommendations.
