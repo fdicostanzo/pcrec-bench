@@ -1098,16 +1098,29 @@ PROCESS, which measures the whole process (allocator overhead, harness
 buffers, interpreter startup) and not the engine's own allocation; pcrec's
 AOT artifacts barely allocate at compile time by design.
 
-**RECOMMENDATION: record `ru_maxrss` for NATIVE-driver testees only
-(pcre2, RE2, Rust, Oniguruma, TRE, Vectorscan, pcrec); never for python
-or perl; never rank on it, on any testee.** N2 §8 item 7 puts the scope
-question to Frank; **§12 Q6, defaultable.**
+**RECOMMENDATION (revised, CS4): record `ru_maxrss` for NATIVE-driver
+testees only (pcre2, RE2, Rust, Oniguruma, TRE, Vectorscan, pcrec);
+never for python or perl; RANK it within the native-driver population.**
+v0.1 recorded it native-only for exactly this reasoning — pooling it with
+python/perl would compare a process-level number dominated by
+interpreter startup against one that is not — and then declared it
+"never ranked, on any testee" anyway, with no argument for why
+native-vs-native comparison specifically remains unreasonable once the
+incomparable population is already excluded. That undermined §1.1's own
+traceability claim for requirement (3) ("apples-to-apples where
+reasonable... the non-comparable stated"): the native-only cut IS the
+apples-to-apples population requirement (3) asks for. **Revised: rank
+`ru_maxrss` within the native-driver population**, mirroring how compile
+time is ranked "within `cost_class` only" (§7.2). N2 §8 item 7 puts the
+scope question to Frank; **§12 Q6, amended (not a silent DEFAULT).**
 
 **Consequence of recording it for python/perl too:** a number dominated
 by interpreter startup, sitting in a column beside native numbers, which
-a later chart will eventually plot. **Consequence of never recording it:**
-the one metric that would show RE2's `max_mem` dial doing anything is
-absent. Native-only is the honest middle.
+a later chart will eventually plot. **Consequence of never recording OR
+ranking it:** the one metric that would show RE2's `max_mem` dial doing
+anything is present but permanently unranked, which is caveated-and-
+shown-only for a metric requirement (3) names as a first-class one.
+Native-only-but-ranked is the honest middle.
 
 ### 7.5 The summary table — recorded / scored / caveated
 
@@ -1118,7 +1131,7 @@ absent. Native-only is the honest middle.
 | compile time | every compile row, median of N with spread | yes, **within `cost_class` only** | §7.2's footnote when pooled `eager-jit` definitions differ |
 | compile PHASES | pcrec (3), pcre2-jit (2); one phase elsewhere | no — shown, not ranked | phase names differ per testee by construction |
 | artifact / program size | where the API gives it (§7.3) | **no** | four incompatible definitions; UNAVAILABLE for Rust, NONE for Oniguruma/TRE |
-| peak memory (`ru_maxrss`) | native-driver testees only | **never** | process-level, not engine-level |
+| peak memory (`ru_maxrss`) | native-driver testees only | yes, **within the native-driver population only** (CS4) | process-level, not engine-level |
 | refusal counts (`did-not-compile`, `unsupported-by-declaration`) | every compile row | **not a ranking, a CENSUS** | this set's headline output; §6.3's large `unsupported` shares are a finding, not missing data |
 | give-ups (`gave-up`) | every match row that hits an engine limit | no — counted apart | `requirements.md §4.4`: "a give-up is the result the bench most wants to see" |
 
