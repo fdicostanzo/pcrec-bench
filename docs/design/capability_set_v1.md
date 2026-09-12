@@ -759,6 +759,18 @@ compiled and the refusal asserted by name — the same "a check with no
 failing case proves nothing" discipline `record_schema.md §9` states for
 X1..X33 and `make check-harness` already applies to pcrec's deny flags.
 
+**Noted, not a defect (B7):** `compile_outcome = "unsupported-by-
+declaration"` is schema-legal today (`schema/record.schema.json:122,
+690-692`) but no adapter or the harness has ever produced it as a value
+— it is described in `report.py`'s prose only. `testee.conventions`
+(§5.6) is likewise required on every record today but never read by any
+validator rule or reducer. **This design is the first real producer of
+both.** Neither is a defect; both are exactly the kind of first-class
+capability this design elsewhere states it is exercising for the first
+time (§5.6, §9). It means the witness-check arm above carries extra
+weight: its POSITIVE case (a real `unsupported-by-declaration` compile
+row surviving `store.write()`) has never existed in the store before.
+
 ### 5.4 Outcome enums — adopt N2's finding, no new value
 
 N2 §7 argues the existing enums are wide enough. **ADOPTED**, with the
