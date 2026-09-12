@@ -114,11 +114,11 @@ SYNTACTIC ADJUSTMENT per engine is allowed when semantics are preserved
 
 | req | satisfied by | in one line |
 |---|---|---|
-| (1) wild patterns + per-pattern provenance | **§4** (+ §3's per-family source column) | a closed provenance record per pattern, a licensing floor, a `provenance.tsv` re-derived under `--check` |
+| (1) wild patterns + per-pattern provenance | **§4** (+ §3's per-family source column) | a closed provenance record per pattern, a licensing floor, real enumerated `provenance_source`/`fidelity` record fields (CB3), a `provenance.tsv` re-derived under `--check`. Requirement (1) is REALISM, not a ratio — §4.3 |
 | (2) edge cases beside common shapes | **§3** | six wild families and six capability/hazard families, each with designed members beside the imported ones |
-| (3) other metrics | **§7** | one table saying what is RECORDED, what is SCORED, what is CAVEATED, per metric and per engine class |
-| (4) built on `.rxt` | **§9** | N3's Option B adopted: `.rxt` is the source of pattern TEXT and IDENTITY; the sidecar is the source of everything else, migrating field by field as W2/W3 land |
-| (5) option sets per engine | **§8** | a named config roster per engine, v1 vs later, on the existing `testee_id` composition rule |
+| (3) other metrics | **§7** | one table saying what is RECORDED, what is SCORED, what is CAVEATED, per metric and per engine class — `ru_maxrss` now ranked within the native-driver population (CS4), not caveated-and-shown-only |
+| (4) built on `.rxt` | **§9** | SUPERSEDED by Frank's 2026-09-12 Q3 ruling: the set is built ON `.rxt` for real, not on a sidecar hybrid. §9 is now a pointer to `docs/design/rxt_needs_v1.md`; the build is PARKED until pcrecdev1's delivery |
+| (5) option sets per engine | **§8** | a named config roster per engine, v1 vs later, on the existing `testee_id` composition rule. `pcre2-dfa` is a fourth engine identity, not a dial (F5); pcrec's own roster is mapped explicitly onto genuine user-facing dials vs this project's own diagnostic denial flags (F6) |
 | (6) research + design review | this note + phase (c) | the three research notes are §0's citation base; the panel is the next step |
 | (7) public interface, later | **§10** | the data shapes a later UI consumes, what is already sufficient, what is missing; nothing built |
 | (8) approach + questions to Frank | **§12** | one consolidated, deduplicated question list, each with a recommendation, a consequence per answer, and a BLOCK/DEFAULT mark |
@@ -139,7 +139,7 @@ version `0.1`.**
 
 | option | what it means | why not |
 |---|---|---|
-| **A. Extend `bench/syntax@0.1` → `@0.2`** | add the wild + capability patterns to the existing census | rejected — four independent reasons below |
+| **A. Extend `bench/syntax@0.1` → `@0.2`** | add the wild + capability patterns to the existing census | rejected — three independent reasons below (a fourth, that a version bump strands the measured first sample, is dropped: `requirements.md §5` doesn't destroy old records on a bump, and this design's own §4.5/Q8 plans an identical bump for itself — CS2) |
 | **B. A new sub-bench** | a sixth directory under `bench/` | **CHOSEN** |
 | **C. Several new sub-benches** (one per family group) | e.g. `bench/wild/` + `bench/redos/` + `bench/semantics/` | rejected — the charter is one set; three sets triple the sidecar/generator/expectation surface for no analytic gain, and the families share one subject vocabulary and one instrument |
 
@@ -162,15 +162,7 @@ version `0.1`.**
    author's own body — the opposite property, deliberately. Rules R3 (the
    spelling rule) and R4 (the family rule) both read against that shared
    body and would be unusable on the new members.
-3. **A version bump throws away the first sample.** `syntax@0.1` has a
-   measured, read, ledgered first sample
-   (`docs/dev/ledgers/2026-09-07-b36-syntax-first-d34c9131.md`) and a
-   committed, scored prediction set
-   (`docs/dev/predictions/syntax-0.1-first.tsv`). Records compare only
-   within one `id@version` (`requirements.md §5`), so `@0.2` makes the
-   ledger's 285 rankings incomparable with anything measured after it.
-   That is a real cost with no offsetting benefit.
-4. **The blinding statements differ.** The census author was blinded per
+3. **The blinding statements differ.** The census author was blinded per
    pcrec D27 and read only `man pcre2pattern` and the seed
    (`NOTES.md`, "Blinded authorship"). The capability set's wild members
    REQUIRE their author to read external corpora — that is the point of
@@ -234,7 +226,7 @@ an expectation the first sample tests, not an assertion.
 | 1 | `wild-validator` | everyday validator shapes as actually pasted into code: class-heavy, anchored, alternation-of-ranges | OWASP Validation Regex Repository (**CC BY-SA 4.0**, page fetched, three patterns quoted verbatim, N1 §9); Elastic grok `UUID`/`BASE10NUM`/`WINPATH` (**Apache-2.0**, `LICENSE` fetched, four quoted verbatim, N1 §10) | one near-miss twin per imported validator (a subject-shaped edge the original gets wrong) | **none.** Every roster engine runs these; the point is the baseline everything else reads against | 8 |
 | 2 | `wild-logparse` | macro-expanded compositional alternation over sparse-hit log text; atomic groups the ORIGINAL author added to fight backtracking | grok base patterns (**Apache-2.0**, fetched; `QUOTEDSTRING`'s nested atomic groups and `BASE10NUM`'s `(?>...)` quoted verbatim, N1 §10) | the same pattern with the atomic groups REMOVED — the author's own fix as a control pair | atomic/possessive: **RE2, Rust `regex`, Vectorscan, TRE** refuse (N2 §3). This family is where the §6 hazard rule bites hardest: the atomic group is the objective | 6 |
 | 3 | `wild-waf` | large keyword alternations grown over years of community patches, over adversarial input | OWASP CRS `REQUEST-942-*` `@rx` rules (**Apache-2.0**, `LICENSE` fetched; five rules quoted verbatim with their CRS ids, N1 §8) | none — the imports ARE the edge cases | **none expected** to refuse (no exotic constructs in the five quoted); `(?i:...)` inline-scoped folding is the one thing to verify per engine | 5 |
-| 4 | `wild-secrets` | many short, first-byte-distinct token patterns; high-entropy literals with structure | rebar `regexes/wild/noseyparker.txt` (**Unlicense**, file located, contents fetched only as a categorical description — **literal text STILL OWED**, N1 §1) | 2-3 authored token shapes in the same idiom if the re-fetch fails | **none** | 4 |
+| 4 | `wild-secrets` | many short, first-byte-distinct token patterns; high-entropy literals with structure | rebar `regexes/wild/noseyparker.txt` (**Unlicense**, RE-FETCHED and CONFIRMED — CB4/F1: 30+ verbatim patterns for AWS/GitHub/GCP/Azure/Dynatrace/Figma tokens and generic `username=...password=...` pairs, quoted directly from the raw file. The "literal text STILL OWED" line and the authored fallback below are both retracted) | none — the wild source supplies verbatim members directly; no authored fallback needed | **none** | 4 |
 | 5 | `wild-datetime` | one enormous multi-language alternation with ambiguous decomposition; the COMPILE-time and SIZE axis, not the match axis | rebar `regexes/wild/date.txt` = `datefinder`'s production pattern (**Unlicense**, fetched, fragment quoted, N1 §1) | none | **none refuse to compile** expected; RE2's `max_mem` and Rust's `size_limit` are the ones to watch (N2 §4) | 2 |
 | 6 | `wild-codegrammar` | small patterns applied per line/token in a latency-sensitive editor loop; `(?x)` free-spacing | VS Code `JSON.tmLanguage.json` (**MIT**, five regexes fetched and quoted, N1 §18) | one flattened `(?x)` twin (see §9.5's newline limitation) | free-spacing `(?x)`: supported by pcre2/Oniguruma/RE2/Rust; **TRE** has no inline-flag syntax at all (N2 §3) | 5 |
 | 7 | `cap-backref` | backreference semantics — the cleanest capability line on the roster | grep's `tests/backref*` family located (**GPLv3** — import blocked pending §4.2's ruling, N1 §17); Oniguruma `test_syntax.c`'s `(?<=a\|(.))\1` (**BSD-2**, quoted, N1 §16) | doubled-word, tag-pair and palindrome shapes AUTHORED fresh (so no GPLv3 question arises) | **RE2, Rust `regex`, Vectorscan** all refuse (N2 §3, all three fetched from upstream docs). pcre2, Oniguruma, TRE, python, perl, pcrec run them | 5 |
@@ -246,6 +238,57 @@ an expectation the first sample tests, not an assertion.
 | — | `floor` | `requirements.md §5`'s per-call control | — | one literal byte (§3.3) | — | 1 |
 
 **Total: 60 patterns** (59 members + the floor).
+
+**Per-family `hazard_class` (CB7).** `hazard_class` is a required,
+closed-enum field per PATTERN (`record_schema.md §8`;
+`schema/record.schema.json:298`), and §6.3's hazard-rewrite rule is
+keyed on it — but no family above states one, which would leave an
+authoring lane's default read as `hazard_class: none` and route family
+2's atomic groups (and family 10's whole point) to the ordinary §6.2
+rewrite table instead of §6.3's protection. Assigned here, at minimum
+for the two families the design's own prose already treats as
+hazard-bearing (2, 10), plus one more whose own stress-mechanism text
+names the same enum value (5):
+
+| family | `hazard_class` | why |
+|---|---|---|
+| 2 `wild-logparse` | `exponential-backtracking` | the imported atomic groups exist to defend against it — §6.3's own worked example |
+| 5 `wild-datetime` | `ambiguous-decomposition` | the family's own stress mechanism, verbatim: "ambiguous decomposition" |
+| 10 `redos-nested` | `exponential-backtracking` | the family's entire objective |
+| every other family, and the floor | `none` | no member is authored or imported to exercise a specific hazard |
+
+**Family 11's v1 scope, narrowed (CB1).** §5.6 claims family 11
+"exercises [convention-based scoring] for the first time in this
+repo," but no code path scores a testee against its own declared
+convention: `outcome_for` (`pcrecbench/harness.py:106`) has no
+convention parameter, and `Subbench.expectation`
+(`pcrecbench/subbench.py:268`) is keyed on `(pattern, subject_id,
+regime)` only — every testee in a cell is graded against one
+canonical, `perl-leftmost-first` expectation row. **v1's family 11 is
+therefore scoped to the shared-convention population**: pcre2-interp,
+pcre2-jit and pcrec, all `perl-leftmost-first` (§5.6's own table), plus
+`pcre2-dfa` once its decreasing-length-order difference is confirmed
+not to change the leftmost-first answer on family 11's own cases. The
+cross-convention value family 11 is named for — scoring `re2-longest`
+or `tre-default` against their OWN correct answer — is DEFERRED to
+whichever lane lands the first divergent-convention testee (§8, both
+`later`), and building the missing per-testee/variant expectation
+override is that lane's own scope, not v1's. This is a design amendment
+this note makes on its own logic (CB1's disposition: "answerable inside
+the design's own logic... does not require a Frank-level ruling"), not
+a Frank ruling — see §12's new question, which states it for the record
+rather than deciding it silently.
+
+**Family 12's `canonical_text` (S10).** Family 12's designed members
+are byte-class and high-byte literal shapes whose canonical pattern
+text may not be valid UTF-8. `patterns[].canonical_text` is a JSON
+string (`schema/record.schema.json:92,302`) and cannot losslessly hold
+an arbitrary non-UTF-8 byte sequence. It is not in the pattern entry's
+required-field list, so the same omission escape hatch KB-7/[B30]
+already established for an oversized pattern applies here for a
+different reason (encoding validity, not size): **a family-12 pattern
+whose canonical text is not valid UTF-8 omits `canonical_text` in the
+record, citing `canonical_sha256` for identity instead.**
 
 ### 3.2 Why twelve families and sixty patterns
 
