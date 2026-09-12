@@ -4011,3 +4011,40 @@ Lesson: sweep and stop delivered lanes BEFORE any /clear.
 Next: merge b42engines2; an Opus design lane writes
 docs/design/capability_set_v1.md from the four notes; D6 panel;
 consolidation with the by-id check; approach + questions to Frank.
+
+## 2026-09-12 — twentieth session, part 2: [B42] designed, paneled, and PARKED as a driver of `.rxt`
+
+Frank answered the three blocking questions live, one at a time: Q1
+licensing floor = (c) with an `inspired` pattern validated as not a copy;
+Q2 not a ratio — REALISM over contrivance; Q3 — the set is a DRIVER of
+the `.rxt` format: build on it for real, PARK at the capability
+roadblock, feed pcrecdev1 detailed needs, restart and VERIFY their work.
+
+The cycle ran to the park in one afternoon: design v0.1 (Opus lane
+b42design, 1,360 lines, 08b1815) → the R5 panel (three Sonnet critics,
+26 findings: convention-based scoring and variant.kind rendering both
+claimed built and both unimplemented; patterns[].tags bucketing dead by
+the schema's own rule; the hazard-rewrite rule keyed on an unassigned
+field; the ReDoS family's calibration risk; the match-regime cut
+over-broad; the noseyparker source text not owed after all) →
+consolidation (r5consol, 24 dispositions, by-id 26/26, every claim
+re-verified) → the manager's ratification (all accepted; Q2 resolved,
+Q10-Q12 superseded by the driver ruling, Q3 BLOCK at restart) →
+docs/design/rxt_needs_v1.md (Opus lane b42rxtneeds: 50 needs / 12
+productions / 41 acceptance checks / 6 roadblocks / Tier 1-3 / 9
+questions for pcrecdev1 + 3 for Frank; TWENTY parse-only probes of the
+pinned binary archived D35-style — a NUL SILENTLY TRUNCATES a `pattern`
+line (exit 0), a second `description` silently wins, §4.5's regime
+mechanism is unusable for hyphenated ids, [B29] Q4's lossless-import
+claim is wrong) → outbox O-26 (b990b95) → design v0.2 (b42rev: every
+disposition applied with a step-2 table, §9 = the pointer + restart
+procedure, [B29] corrected). [B42] → STATE:blocked with the restart
+trigger and procedure in the row. Frank's F-Q1 (a W2-only first sample
+acceptable?) asked, unanswered at close; F-Q2 (flatten `(?x)` or wait?)
+not yet asked.
+
+Session arithmetic: one manager (Fable); eleven lanes (two Opus, nine
+Sonnet), every one TaskStop'ped at delivery; ~9 hours wall; the
+heartbeat cron at :23/:53; zero-model watchers throughout; 20 commits on
+master, all pushed. The stale pre-/clear lane b41 remains unreachable
+from this session (Frank remote; `/tasks` when he is at the terminal).
