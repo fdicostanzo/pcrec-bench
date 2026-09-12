@@ -1468,35 +1468,47 @@ built against it. If the set is wrong, one night finds it.
 
 ---
 
-## 12. Questions for Frank
+## 12. Questions for Frank — REVISED under R5, marked for the parked state
 
-One consolidated, deduplicated list. Sources: N1 §(v)1-5, N2 §8 items
-4-7, N3 §6 items 1-3, plus four this note raises. **BLOCK** = the build
-cannot start (or a lane will do the wrong work) without a ruling;
-**DEFAULT** = this note's recommendation stands unless Frank says
-otherwise, and the trigger for revisiting is named.
+**Three items are now RESOLVED** (Frank ruled them live, 2026-09-12, this
+session): Q1 (the licensing floor), Q2 (wild vs. designed is realism, not
+a ratio). **Three items are SUPERSEDED** by the same session's Q3 ruling
+(§9): Option B is withdrawn, so the questions that assumed it no longer
+apply. **Everything else is unresolved and asked at the RESTART**, not
+before — nothing is built until pcrecdev1's `.rxt` delivery lands and the
+acceptance checklist passes (§9), so no unresolved question here blocks
+anything today. **BLOCK** = a ruling required before the item's own
+trigger (an L-lane, or [B7]'s Vectorscan lane) opens; **DEFAULT** = this
+note's recommendation stands unless Frank says otherwise, and the
+trigger is named; **RESOLVED** = ruled this session; **SUPERSEDED** =
+moot under the Q3 ruling.
 
-| # | question | recommendation | if YES / as recommended | if NO / the alternative | gate |
-|---|---|---|---|---|---|
-| **Q1** | **The licensing floor** (N1 §(v)1). Verbatim import only from confirmed-permissive sources, with non-allowlisted sources usable as INSPIRATION for freshly-authored patterns? | **§4.2 option (c)** — permissive allowlist for verbatim, `fidelity: inspired` for everything else | GNU grep's GPLv3 suite and un-audited Suricata rules stay out of the import path; their value survives as authored patterns with cited inspiration | (a) alone loses the Turkish-ı fold case and leaves family 12 unmotivated; (b) puts the project in the position of asserting a legal judgment about someone else's copyleft | **BLOCK** — L1 cannot start without it |
-| **Q2** | **The wild-vs-designed ratio** (N1 §(v)2). | **~50 %, structured**: families 1-6 majority-verbatim, families 7-12 majority-authored (§4.3) | 30 wild / 29 designed; the licence-messy sources are never on the critical path | a higher share makes the set depend on Davis and on the Suricata/grep rulings; a lower one satisfies requirement (1) in name only | **BLOCK** — it sizes L1 and L2 |
-| **Q3** | **Hyperscan/Vectorscan's all-ends grain** (N2 §8 item 4). Span grain via a declared variant, or boolean grain for this engine only? | **boolean grain (§5.6 option B)**, decided before the Vectorscan adapter lane | cheap; visible in every report row; Vectorscan answers a weaker question than its row-mates and says so | span grain opens OD-B3 (a list-valued row shape) and a schema change; dropping Vectorscan loses the only `simd-multipattern` testee | **DEFAULT** — trigger: [B7]'s Vectorscan lane |
-| **Q4** | **The `cost_class` fifth token** (N2 §8 item 5). A new `eager-with-lazy-runtime` value, or adapter-note prose? | **prose + a reporter footnote** when pooled `eager-jit` definitions differ (§7.2) | no schema bump; `compile_cost_definition` (already required) carries the truth; the reader cannot silently compare two quantities | a fifth token gives cleaner filtering but makes `eager-jit` mean two things depending on record age | **DEFAULT** |
-| **Q5** | **Does the set declare the `match` regime in v1?** (this note, §3.5) | **No** — `search_short` + `throughput` only, until the syntax ledger's Tier A Q2/Q3 close the whole-subject wrapper | the set ships no pre-known wrong answers; cell time ~halves; `match` is one sidecar line in `capability@0.2` | declaring it now buys compliance-shaped validator readings at the price of known-wrong cells in four families | **DEFAULT** |
-| **Q6** | **Peak memory scope** (N2 §8 item 7). Record `ru_maxrss` for native-driver testees only, never for python/perl, never ranked? | **yes** (§7.4) | the one number that would show RE2's `max_mem` doing something is present, without an interpreter-startup artifact sitting beside it | recording it everywhere puts a startup-dominated number in a column a later chart will plot; recording it nowhere loses the dial | **DEFAULT** |
-| **Q7** | **The `regex-set-priority` shape** (N1 §(v)5). Many patterns matched against one input in priority order — TextMate grammars, Vectorscan's own regex-set workload. In scope? | **Out of v1**, named as future work | every cell stays one pattern × one testee, which is what the whole harness, record and reporter assume | in-scope means a multi-pattern-per-cell measurement — a new row shape, a new driver mode, and a second unruled schema question beside OD-B3 | **DEFAULT** |
-| **Q8** | **Davis et al.'s corpus in v1?** (N1 §(v)4, N3-adjacent) | **Out of v1**, first candidate for `@0.2`; the §4.5 protocol if ruled in | the set reaches 60 patterns without it and the largest unknown (an unopened 34 MB zip whose per-record provenance may not exist) is off the critical path | in v1, a download-and-inspect lane runs FIRST and may report that requirement (1) cannot be met for those rows | **DEFAULT** |
-| **Q9** | **Subject-data provenance** (N1 §(v)3). Synthetic typed subjects, or a licence-clear corpus per family? | **synthetic** (§4.4), with the limitation stated in `NOTES.md` | one discipline across all six sets; `make check` verifies every subject byte-for-byte; family 12's non-UTF-8 subjects are constructible | a real corpus per family inherits an unresolved licence question in the DATA, where the manifest and `content_hash` make it permanent (rebar's own OpenSubtitles README is the cautionary case) | **DEFAULT** |
-| **Q10** | **Is Option B an acceptable reading of "BUILT ON the .rxt format"?** (N3 §6 item 1) — `.rxt` is the source of pattern text and identity, a sidecar the source of everything else, migrating field by field as W2/W3 land | **yes** (§9.1) | the set is authored in `.rxt` from day one, with no second parser and no D93 hazard | Option A means writing a parser for keywords pcrec refuses by name today | **BLOCK** — it decides L3's and L4's shape |
-| **Q11** | **Do we file the W2/W3 format asks to pcrec now, or after the design settles?** (N3 §6 item 2) | **file ask 4 now** (confirm a `target`-less, `config`-less `.rxt` is a permanent legitimate shape — Option B rests on it); **file asks 1-3 after the panel**, so they are concrete | ask 4 is a one-sentence confirmation; asks 1-3 are pre-named triggers in pcrec's own `format_design.md` and are better made with a built set behind them | filing all four now makes three of them speculative | **DEFAULT** |
-| **Q12** | **Should the set ALSO be buildable by pcrec's own `--source` from day one?** (N3 §6 item 3) | **no** — that needs `target` lines, which re-opens D93 AND [B29] §4.1's compile-cost objection (one `--source` build cannot fill N per-pattern compile rows without an invented attribution) | the file stays engine-neutral and the compile-cost axis stays honest | yes means either a second file with targets, or the D93 hazard in the one we author | **DEFAULT** |
-| **Q13** | **`pcre2-dfa` as a fourth pcre2 testee in v1?** (this note, §8) | **yes** — no new dependency, a third execution model, a second automaton class, and two capability lines no current testee crosses | the capability axis has a real refusal set from day one, on a library already installed | without it, every v1 refusal comes from pcrec's own caps, and the capability model is untested against a second engine | **DEFAULT** |
-| **Q14** | **Python `re` and perl: compile + correctness only in v1?** (N2 §8 item 6) | **yes** (§8.1) — and this note finds it needs **no schema change**: a record with compile rows and no match rows is already legal and its `trial_agreement` is already defined | both engines answer the capability and correctness questions; neither enters a speed ranking | match timing needs an embedding driver (`Py_Initialize`/`libperl`), which is its own lane and its own set of caching gotchas | **DEFAULT** |
+| # | question | status | recommendation / ruling | note |
+|---|---|---|---|---|
+| **Q1** | The licensing floor | **RESOLVED** | Frank ruled §4.2 option (c) — permissive allowlist for verbatim, `fidelity: inspired` for everything else, PLUS an `inspired` pattern validated as not an actual copy (a mechanical similarity check in the provenance gate, plus review) | this also closes §13 R8 as a ruled mitigation, not an open risk |
+| **Q2** | Wild-vs-designed ratio | **RESOLVED** | NOT a ratio — REALISM over contrivance: every member, imported or authored, a shape someone would plausibly deploy; provenance recorded where a real source exists; the percentage unimportant (§4.3) | families 7-12's authored members are held to the same rule as 1-6's imports; Davis stays a `@0.2` candidate, unaffected |
+| **Q3** | Hyperscan/Vectorscan's all-ends grain (boolean grain vs. a declared span variant) | **BLOCK, asked at the RESTART** | boolean grain (§5.6 option B) | CS3: this narrows an existing, dated Frank ruling (`requirements.md §4.5` constraint 1) rather than answering an open question — DEFAULT's own definition didn't fit it, so it is marked BLOCK. Costs nothing now: Vectorscan is not in the v1 roster and the build itself is parked well before [B7]'s Vectorscan lane would open |
+| **Q4** | The `cost_class` fifth-token question | DEFAULT, asked at the restart | prose + a reporter footnote (§7.2) | unchanged by R5 |
+| **Q5** | Declare `match` in v1? | DEFAULT, reworded, asked at the restart | No — `search_short` + `throughput` only (§3.5) | CS1: the answer is unchanged, but the note now states the exclusion is deliberately SET-WIDE (not pcrec-specific) and corrects the family list (drops 7/8 absent a `\K`-bearing member) |
+| **Q6** | Peak memory (`ru_maxrss`) scope | DEFAULT, amended, asked at the restart | native-driver testees only, **ranked within that population** (§7.4) | CS4: v0.1 recorded it native-only (the apples-to-apples cut) then declared it never ranked with no argument why native-vs-native comparison remained unreasonable; revised to rank it, mirroring compile time's `cost_class`-scoped ranking |
+| **Q7** | The `regex-set-priority` shape in scope? | DEFAULT, asked at the restart | Out of v1 | unchanged by R5 |
+| **Q8** | Davis et al.'s corpus in v1? | DEFAULT, asked at the restart | Out of v1, first `@0.2` candidate | unchanged by R5; CS2 removes an argument (§2.2 reason 3) that would otherwise apply equally against this same future bump, strengthening rather than weakening "defer" |
+| **Q9** | Subject-data provenance | DEFAULT, asked at the restart | synthetic (§4.4) | unchanged by R5 |
+| **Q10** | Is Option B an acceptable reading of "BUILT ON the .rxt format"? | **SUPERSEDED** | — | Frank's Q3 ruling replaces the whole question: the set is built ON `.rxt` for real, not via Option B's hybrid. §9 is now a pointer to `docs/design/rxt_needs_v1.md` |
+| **Q11** | File the W2/W3 format asks now, or after the panel? | **SUPERSEDED** | — | the format asks are filed NOW, all of them, as the effort's blocking dependency — `rxt_needs_v1.md` §5 and outbox O-26 already did this |
+| **Q12** | Should the set also be buildable by pcrec's own `--source`? | **SUPERSEDED** | — | becomes a question for the format's OWN design at the restart (`rxt_needs_v1.md`'s own P-Q4/P-Q5 territory), not for this note |
+| **Q13** | `pcre2-dfa` as a fourth pcre2 testee in v1? | DEFAULT, asked at the restart | yes (§8) | F5's finding (it's not a "dial") is a wording correction to §8's table, not a reason to change this answer |
+| **Q14** | Python `re` and perl: compile + correctness only in v1? | DEFAULT, amended, asked at the restart | yes (§8.1) | CS7: the "no schema change" framing now carries the permanent-`inconclusive-spread` caveat (a pinned zero-match-row record can never reach `status: measured`) before this is treated as costless |
+| **new** | Is family 11's v1 scope the shared-convention population only, deferring cross-convention scoring machinery? | DEFAULT | yes — already applied in §3.1/§5.6 (CB1) | CB1: answerable by design amendment, not a Frank-level ruling; stated here so Frank sees it was narrowed, not silently assumed |
+| **new** | Promote `patterns[].tags` provenance bucketing to real enumerated schema fields (`provenance_source`, `fidelity`)? | DEFAULT | yes — already applied in §4.1 (CB3) | CB3: an implementation decision, not a ruling; stated here because it reverses v0.1's "no schema change" claim in the note Frank read |
 
-**The three BLOCKING items are Q1, Q2 and Q10.** Everything else has a
-recommendation that can stand until its named trigger.
-
----
+**Net change from v0.1: Q1 and Q2 move to RESOLVED (Frank ruled both live);
+Q10-Q12 move to SUPERSEDED (Frank's Q3 ruling replaces the question they
+were asking); Q3 moves from a silent DEFAULT to BLOCK; Q5, Q6, Q14 keep
+their DEFAULT status but each now carries a stated amendment; two new
+DEFAULT items record design amendments this revision made on its own
+authority. Every unresolved item is asked at the RESTART — none blocks
+`rxt_needs_v1.md`'s delivery or its acceptance checklist.**
 
 ## 13. Risks, and what would refute this design
 
