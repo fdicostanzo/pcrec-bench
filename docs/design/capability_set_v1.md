@@ -296,8 +296,10 @@ record, citing `canonical_sha256` for identity instead.**
   round. The census is 95 patterns at ~47-52 min/cell with three regimes;
   60 patterns at two regimes lands comfortably inside `CELL_CAP`.
 - The 6 / 5 / 1 split (six wild families, five capability/hazard families,
-  one floor) puts the wild share at 30 of 59 members — see §4.3 for the
-  ratio decision and its alternatives.
+  one floor) puts the wild share at 30 of 59 members. **This is no
+  longer a ratio decision** (Frank ruled it moot, 2026-09-12 — §4.3):
+  the split is what REALISM produced once each family's members were
+  chosen honestly, not a target hit by construction.
 - Every family has at least one CONTROL PAIR, following the census's own
   lesson that "an outlier without its control is not a question, it is a
   number" (`bench/syntax/CLAUDE.md`, thing 2). The pairs are named in
@@ -361,10 +363,35 @@ Why `match` is out of v1, with the alternative stated:
   `docs/dev/ledgers/2026-09-07-b36-syntax-first-d34c9131.md` §9, i.e. "the
   instrument; nothing below this is trustworthy until these are
   answered".
-- Families 6 (`(?x)`), 7-9 (`\K`-adjacent, recursion) and 11 (`$` vs
-  `\z` — the wrapper's own anchor!) would each inherit that defect. The
-  set would ship wrong answers whose cause is already known and already
-  filed.
+- Families 6 (`(?x)`) and 9 (recursion) would inherit that defect
+  directly — both failure modes are named in the cited ledger's Q3,
+  under the one lexical-wrapper cause. **Families 7 and 8 are corrected
+  out of this list (CS1):** the ledger's Q2 (`\K` unable to report a
+  non-zero start) is a SEPARATE finding from Q3, and its own "Source"
+  line attributes it to `testees/pcrec/driver.c`'s anchored branch
+  hard-coding `first_s = 0` — a pcrec-specific driver bug, not a lexical
+  consequence of the wrapper the way `(?x)`'s comment-eating and `(?R)`'s
+  recursion are. Neither family 7 (`cap-backref`) nor family 8
+  (`cap-lookaround`)'s designed-member roster names a `\K`-bearing
+  member, so their exclusion needs its own reason if one is ever
+  claimed. Family 11 (`$` vs `\z`, the wrapper's own anchor) is
+  unaffected by this correction and stays excluded on its own grounds.
+- **Scope, stated explicitly (CS1):** this exclusion is deliberately
+  SET-WIDE, not pcrec-specific, even though the two confirmed defects
+  (family 6, family 9) and the corrected-out one (family 7/8's `\K`
+  case) are all properties of pcrec's own lexical wrapper. The harness
+  declares regimes per SUB-BENCH, not per testee (`bench/CLAUDE.md`), so
+  scoping `match` to "every testee except pcrec" would need a harness
+  change this design does not propose. The tradeoff this accepts: most
+  [B7] roster engines (RE2's `FullMatch`, likely Oniguruma's/TRE's own
+  anchor options) have a native anchored-match call and would not need
+  pcrec's lexical wrapper at all, so this decision forecloses
+  `match`-regime compliance measurement (family 1's own stated purpose)
+  for every future non-pcrec engine too, on a defect only one testee
+  structurally has. That tradeoff is accepted for v1 rather than
+  building a per-testee regime carve-out; a future revision could name
+  the harness change as its own lane if the cost is judged worth
+  paying.
 - **The alternative** — declare `match` anyway and accept the R0 cells —
   buys compliance-shaped readings for family 1 (validators) at the price
   of pre-known wrong answers in four families and roughly doubled cell
@@ -402,6 +429,28 @@ predictable cells here.
 **Six pinned testees ≈ 1.7 h**, which fits a single window with room for
 a re-measure (the v1.4 spread rule's re-measure-once contract,
 `scripts/run_window.sh`).
+
+**Family 10's calibration risk, stated explicitly (CB8).** The
+arithmetic above assumes a (pattern, regime, trial) costs `50 ms ×
+n_subjects`, INDEPENDENT of the testee's speed, validated on
+`bench/syntax`'s deliberately homogeneous population (one construct, one
+plain body, no subject engineered to be asymptotically slower than its
+siblings). Family 10 (`redos-nested`) is the opposite by design: a
+subject engineered to be catastrophically slow on a backtracker and fast
+on everything else, and `pcre2-interp`/`pcre2-jit` — both backtrackers —
+are in the v1 first-sample roster (§11.4). `calibrate()`
+(`pcrecbench/harness.py:290-343`) picks `iters` ONCE from the MEDIAN
+subject's per-iteration cost and applies it uniformly across the whole
+(pattern, regime) loop; a ReDoS witness's own per-iteration cost, far
+above the median, then runs for `iters × its_own_per_iter_cost`, not the
+model's ~50 ms — that one subject's total, not the cell's assumed total,
+can dominate. **Mitigation adopted:** family 10's typed subjects use a
+fixed, small `--iters` override (`harness.py:296` already supports a
+non-calibrated `iters`) rather than `search_short`'s calibrated
+probe-then-scale loop, sized by L3 against the worst ReDoS witness on
+`pcre2-interp` specifically. This is stated here rather than left to be
+discovered as the most likely single cause of a `CELL_CAP` timeout in
+v1's first run (§13 R6 carries the risk forward).
 
 ---
 
