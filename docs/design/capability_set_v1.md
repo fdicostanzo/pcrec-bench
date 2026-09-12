@@ -1207,6 +1207,24 @@ nothing to any speed ranking. Given that perl is "the one engine on the
 roster whose question INVERTS" — what does it do DIFFERENTLY from pcre2,
 not what does it lack (N2 §3) — that is most of its value anyway.
 
+**The caveat "no schema change" left out (CS7): such a record can never
+reach `status: measured`, run pinned.** Schema-validity is true;
+usability is not. `judge_trial_agreement` correctly stamps `n/a-trials`
+on zero match rows, but `derive_status`
+(`pcrecbench/harness.py:400-426`) routes an `n/a-trials` verdict to
+`STATUS_MEASURED` only on a **scratch**-tier record — a **pinned**
+record (which is what a python/perl testee run in a normal window is,
+having no `local:` binary shape) is unconditionally
+`inconclusive-spread`, permanently: no re-measurement changes a record
+that structurally has zero match rows. **Stated plainly: python/perl
+testees, run pinned, are permanently `inconclusive-spread`** — excluded
+from ranking by default and requiring `--include-unmeasured` to query.
+`scripts/run_window.sh`'s one-retry contract should special-case a
+zero-match-row cell to skip the re-measure it can never resolve; this is
+a harness change beyond what this note otherwise proposes, named here
+rather than left to be discovered when L6b opens (§12 Q14 carries the
+amendment).
+
 ---
 
 ## 9. `.rxt` as the source
