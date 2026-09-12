@@ -1150,12 +1150,16 @@ already in use (`record_schema.md §6.4`):
 unfiltered build flags — the mechanism `pcrec-*-bigcap` ([B31]) and the
 `-clang` siblings ([B24]) already use.
 
+**Two rows in this table are corrected from v0.1's own "the dial" column
+(F5, F6): a column headed "the dial" should hold a genuine space-vs-speed
+tradeoff, and two rows in v0.1 held something else.**
+
 | engine | config | v1? | the dial | source |
 |---|---|---|---|---|
 | libpcre2 | `pcre2-interp` | **v1** (exists) | — | |
 | libpcre2 | `pcre2-jit` | **v1** (exists) | JIT vs none | |
-| libpcre2 | **`pcre2-dfa`** | **v1 (NEW)** | `pcre2_dfa_match` vs `pcre2_match` — a THIRD execution model on one library, `automaton_class = nfa-simulation` (man `pcre2matching`: "it is not implemented as a traditional finite state machine") | N2 §4 (3) |
-| pcrec | the sixteen pinned configs | **v1: the six used by every window** (`auto`, `nocaps`, `vm`, `vm-in`, + 2) | engine mode, captures, caps, cc, deny flags | `testees/pcrec/CLAUDE.md` |
+| libpcre2 | **`pcre2-dfa`** | **v1 (NEW)** | **NOT A DIAL (F5) — a fourth engine identity that costs nothing.** `pcre2_dfa_match` has no separate compile step (§7.1's own free control: statistically identical to `pcre2-interp`'s) and zero space cost; what it adds is a THIRD execution model and two capability lines (`captures`, `k-reset`) no current testee crosses, `automaton_class = nfa-simulation` (man `pcre2matching`: "it is not implemented as a traditional finite state machine") | N2 §4 (3) |
+| pcrec | the sixteen pinned configs | **v1: the six used by every window** (`auto`, `nocaps`, `vm`, `vm-in`, + 2) | **Mapped explicitly, not asserted (F6):** genuine user-facing dials are engine mode (`auto`/`vm`/`nocaps` — `nocaps` removes capture-reporting overhead, a real speed dial) and `cc` (gcc vs clang). The `-bigcap` pair is a capability/size trade in reverse — MORE space to admit compiles that would otherwise refuse, not less space for less speed. `-noedge`/`-noisland`/`-noclsfold` are this project's OWN optimization-denial diagnostic controls, built to isolate a pcrec mechanism for pcrec-bench's measurement purposes, not choices an end user of pcrec would pick between | `testees/pcrec/CLAUDE.md` |
 | RE2 | `re2-default` (`max_mem` 8 MiB) | v1 **if** the adapter lands | — | N2 §4 |
 | RE2 | `re2-longest` (`set_longest_match(true)`) | v1 **if** the adapter lands | POSIX leftmost-longest — the second convention reading family 11 needs | N2 §2.2 |
 | RE2 | `re2-bigmem` (64 MiB) | later | the space dial in reverse (more memory ⇒ fewer DFA cache flushes) | N2 §4 |
