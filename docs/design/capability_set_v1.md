@@ -1,11 +1,67 @@
-# The capability survey set — design, v0.1 (draft for panel)
+# The capability survey set — design, v0.2
 
-**[B42] phase (b). Plan row `[B42]`; Frank's charter, 2026-09-12.**
-STATUS: **0.1, draft for panel** — written to be refuted. It goes to a D6
-adversarial critic panel (phase (c)), then to Frank with the approach and
-the open questions (phase (d)). Nothing here is built; nothing under
-`bench/`, `schema/`, `pcrecbench/` or `testees/` is touched by the lane
-that wrote it.
+**[B42] phase (b), REVISED under R5. Plan row `[B42]`; Frank's charter,
+2026-09-12.** STATUS: **v0.2 — "revised under R5; BUILD PARKED on
+pcrec's `.rxt` delivery (O-26)"**. v0.1 went to a D6 adversarial critic
+panel (three lenses, 26 findings: 8 BLOCKING / 10 SHOULD-FIX / 8
+WORTH-NOTING) the same day it was drafted; the panel's consolidation
+(`docs/dev/reviews/2026-09-12-r5-capability-set-v1.md`) dispositioned
+every finding, and the manager ratified all of them with three
+amendments from Frank's same-day live rulings. This revision applies
+every ratified disposition and amendment. **The set's DESIGN stands**
+(families, capability model, provenance, metrics, roster, Q1/Q2 as
+Frank ruled them); **the BUILD is PARKED**: Frank's Q3 ruling (2026-09-12)
+makes this set a driver of the `.rxt` format itself — it is built ON
+`.rxt` for real, not on §9's old hybrid — and the effort parks at the
+format's own capability roadblocks. §9 is now a pointer to
+`docs/design/rxt_needs_v1.md` (the detailed capability feedback already
+sent to pcrecdev1, outbox O-26) rather than a design of its own. Nothing
+here is built; nothing under `bench/`, `schema/`, `pcrecbench/` or
+`testees/` is touched. **On restart:** run `rxt_needs_v1.md` §3's
+41-check acceptance checklist against pcrecdev1's delivery, review the
+deltas against this note (a second, lighter panel pass — does the
+delivery actually resolve the six roadblocks), then reopen §11's lanes.
+
+### Revision log, v0.1 → v0.2
+
+One line per applied disposition id (`docs/dev/reviews/2026-09-12-r5-capability-set-v1.md`).
+Ids not applied here are noted with where they actually land (several
+targeted the old §9, which this revision replaces wholesale per the Q3
+ruling, and so travel forward to `rxt_needs_v1.md`'s own restart
+material rather than being re-fixed in a section that no longer makes
+the design it was fixing).
+
+| id | disposition | where in v0.2 |
+|---|---|---|
+| CB1 | family 11 narrowed to v1's shared-convention population; cross-convention scoring machinery deferred | §3.1 row 11, §5.6, §11.1, new §12 question |
+| CB2 | §5.7's "Already built" corrected to UNBUILT; L5 reclassified from a check to a build task | §5.7, §11.1 |
+| CB3 | wild/designed bucketing promoted from `patterns[].tags` to real enumerated fields | §4.1, §1.1, §10(d) |
+| CB4 | `noseyparker.txt` re-fetch confirmed; family 4 target members raised; Appendix A's "three OWED" corrected to two | §3.1 family 4, Appendix A |
+| CB5 | `atomic-possessive` split into two tags; Oniguruma's atomic-group claim flagged for independent re-derivation | §5.1 |
+| CB6 | `k-reset`'s Oniguruma gap resolved before an `onig-*` config declares it | §5.1 |
+| CB7 | `hazard_class` assigned per family in §3.1 (families 2, 5, 10 at minimum) | §3.1 |
+| CB8 | family 10's calibration risk stated explicitly; a mitigation adopted | §3.5, §13 R6 |
+| CS1 | `match`-regime exclusion's family list corrected (drop 7/8 absent a `\K` member); scope stated | §3.5 |
+| CS2 | §2.2 reason 3 dropped | §2.2 |
+| CS3 | Q3 re-marked BLOCK, folded into Frank's ratification amendment 3 (asked at the restart, not before) | §12 |
+| CS4 | `ru_maxrss` ranked within the native-driver population | §7.4, §7.5, §12 Q6 |
+| CS5 | TRE `named-groups`/`free-spacing` rows cited or marked UNCONFIRMED | §5.1 |
+| CS6 | §13 R2's family list corrected, "2, 7-10" → "2, 7-9" | §13 |
+| CS7 | §8.1 states the permanent `inconclusive-spread` caveat | §8.1, §12 Q14 |
+| CS8 | superseded — the "no build directives" gate's mechanism lives in `rxt_needs_v1.md` now, not in a v0.2 §9 | §9 (pointer) |
+| F5 | `pcre2-dfa`'s §8 row corrected: not a dial, a fourth engine identity | §8 |
+| F6 | pcrec's §8 row maps dials vs diagnostic controls explicitly | §8, §1.1 |
+| F8 | L3/L4 sequencing gap — superseded with §9; the restart's lane plan re-derives sequencing against the actual delivery | §9 (pointer), §11.1 note |
+| S9 | `automaton_class` column added for TRE/Oniguruma | §7.1 |
+| S10 | family 12's non-UTF-8 `canonical_text` omission stated (relocated from the old §9.5) | §3.1 family 12 |
+| S11 | Vectorscan boolean-grain cost grounded directly in the driver protocol's degenerate `START`/`END` allowance | §5.6 |
+| B6 | superseded — the `subbench.py` loader surface is now the restart's to scope against the actual delivery | §9 (pointer) |
+| B7 | `unsupported-by-declaration` and `testee.conventions` noted as first production exercises | §5.3 |
+
+Three further changes follow directly from Frank's ratification (not
+individual review findings): **Q2** is answered (realism, not a ratio —
+§4.3 rewritten); **Q10-Q12** are superseded (§9 replaced); and **§12**
+carries a revised, restart-scoped question list.
 
 **How to read it.** Every decision states its alternatives and why this
 one. Every open choice carries a RECOMMENDATION and the consequence of
@@ -58,11 +114,11 @@ SYNTACTIC ADJUSTMENT per engine is allowed when semantics are preserved
 
 | req | satisfied by | in one line |
 |---|---|---|
-| (1) wild patterns + per-pattern provenance | **§4** (+ §3's per-family source column) | a closed provenance record per pattern, a licensing floor, a `provenance.tsv` re-derived under `--check` |
+| (1) wild patterns + per-pattern provenance | **§4** (+ §3's per-family source column) | a closed provenance record per pattern, a licensing floor, real enumerated `provenance_source`/`fidelity` record fields (CB3), a `provenance.tsv` re-derived under `--check`. Requirement (1) is REALISM, not a ratio — §4.3 |
 | (2) edge cases beside common shapes | **§3** | six wild families and six capability/hazard families, each with designed members beside the imported ones |
-| (3) other metrics | **§7** | one table saying what is RECORDED, what is SCORED, what is CAVEATED, per metric and per engine class |
-| (4) built on `.rxt` | **§9** | N3's Option B adopted: `.rxt` is the source of pattern TEXT and IDENTITY; the sidecar is the source of everything else, migrating field by field as W2/W3 land |
-| (5) option sets per engine | **§8** | a named config roster per engine, v1 vs later, on the existing `testee_id` composition rule |
+| (3) other metrics | **§7** | one table saying what is RECORDED, what is SCORED, what is CAVEATED, per metric and per engine class — `ru_maxrss` now ranked within the native-driver population (CS4), not caveated-and-shown-only |
+| (4) built on `.rxt` | **§9** | SUPERSEDED by Frank's 2026-09-12 Q3 ruling: the set is built ON `.rxt` for real, not on a sidecar hybrid. §9 is now a pointer to `docs/design/rxt_needs_v1.md`; the build is PARKED until pcrecdev1's delivery |
+| (5) option sets per engine | **§8** | a named config roster per engine, v1 vs later, on the existing `testee_id` composition rule. `pcre2-dfa` is a fourth engine identity, not a dial (F5); pcrec's own roster is mapped explicitly onto genuine user-facing dials vs this project's own diagnostic denial flags (F6) |
 | (6) research + design review | this note + phase (c) | the three research notes are §0's citation base; the panel is the next step |
 | (7) public interface, later | **§10** | the data shapes a later UI consumes, what is already sufficient, what is missing; nothing built |
 | (8) approach + questions to Frank | **§12** | one consolidated, deduplicated question list, each with a recommendation, a consequence per answer, and a BLOCK/DEFAULT mark |
@@ -83,7 +139,7 @@ version `0.1`.**
 
 | option | what it means | why not |
 |---|---|---|
-| **A. Extend `bench/syntax@0.1` → `@0.2`** | add the wild + capability patterns to the existing census | rejected — four independent reasons below |
+| **A. Extend `bench/syntax@0.1` → `@0.2`** | add the wild + capability patterns to the existing census | rejected — three independent reasons below (a fourth, that a version bump strands the measured first sample, is dropped: `requirements.md §5` doesn't destroy old records on a bump, and this design's own §4.5/Q8 plans an identical bump for itself — CS2) |
 | **B. A new sub-bench** | a sixth directory under `bench/` | **CHOSEN** |
 | **C. Several new sub-benches** (one per family group) | e.g. `bench/wild/` + `bench/redos/` + `bench/semantics/` | rejected — the charter is one set; three sets triple the sidecar/generator/expectation surface for no analytic gain, and the families share one subject vocabulary and one instrument |
 
@@ -106,15 +162,7 @@ version `0.1`.**
    author's own body — the opposite property, deliberately. Rules R3 (the
    spelling rule) and R4 (the family rule) both read against that shared
    body and would be unusable on the new members.
-3. **A version bump throws away the first sample.** `syntax@0.1` has a
-   measured, read, ledgered first sample
-   (`docs/dev/ledgers/2026-09-07-b36-syntax-first-d34c9131.md`) and a
-   committed, scored prediction set
-   (`docs/dev/predictions/syntax-0.1-first.tsv`). Records compare only
-   within one `id@version` (`requirements.md §5`), so `@0.2` makes the
-   ledger's 285 rankings incomparable with anything measured after it.
-   That is a real cost with no offsetting benefit.
-4. **The blinding statements differ.** The census author was blinded per
+3. **The blinding statements differ.** The census author was blinded per
    pcrec D27 and read only `man pcre2pattern` and the seed
    (`NOTES.md`, "Blinded authorship"). The capability set's wild members
    REQUIRE their author to read external corpora — that is the point of
@@ -178,9 +226,9 @@ an expectation the first sample tests, not an assertion.
 | 1 | `wild-validator` | everyday validator shapes as actually pasted into code: class-heavy, anchored, alternation-of-ranges | OWASP Validation Regex Repository (**CC BY-SA 4.0**, page fetched, three patterns quoted verbatim, N1 §9); Elastic grok `UUID`/`BASE10NUM`/`WINPATH` (**Apache-2.0**, `LICENSE` fetched, four quoted verbatim, N1 §10) | one near-miss twin per imported validator (a subject-shaped edge the original gets wrong) | **none.** Every roster engine runs these; the point is the baseline everything else reads against | 8 |
 | 2 | `wild-logparse` | macro-expanded compositional alternation over sparse-hit log text; atomic groups the ORIGINAL author added to fight backtracking | grok base patterns (**Apache-2.0**, fetched; `QUOTEDSTRING`'s nested atomic groups and `BASE10NUM`'s `(?>...)` quoted verbatim, N1 §10) | the same pattern with the atomic groups REMOVED — the author's own fix as a control pair | atomic/possessive: **RE2, Rust `regex`, Vectorscan, TRE** refuse (N2 §3). This family is where the §6 hazard rule bites hardest: the atomic group is the objective | 6 |
 | 3 | `wild-waf` | large keyword alternations grown over years of community patches, over adversarial input | OWASP CRS `REQUEST-942-*` `@rx` rules (**Apache-2.0**, `LICENSE` fetched; five rules quoted verbatim with their CRS ids, N1 §8) | none — the imports ARE the edge cases | **none expected** to refuse (no exotic constructs in the five quoted); `(?i:...)` inline-scoped folding is the one thing to verify per engine | 5 |
-| 4 | `wild-secrets` | many short, first-byte-distinct token patterns; high-entropy literals with structure | rebar `regexes/wild/noseyparker.txt` (**Unlicense**, file located, contents fetched only as a categorical description — **literal text STILL OWED**, N1 §1) | 2-3 authored token shapes in the same idiom if the re-fetch fails | **none** | 4 |
+| 4 | `wild-secrets` | many short, first-byte-distinct token patterns; high-entropy literals with structure | rebar `regexes/wild/noseyparker.txt` (**Unlicense**, RE-FETCHED and CONFIRMED — CB4/F1: 30+ verbatim patterns for AWS/GitHub/GCP/Azure/Dynatrace/Figma tokens and generic `username=...password=...` pairs, quoted directly from the raw file. The "literal text STILL OWED" line and the authored fallback below are both retracted) | none — the wild source supplies verbatim members directly; no authored fallback needed | **none** | 4 |
 | 5 | `wild-datetime` | one enormous multi-language alternation with ambiguous decomposition; the COMPILE-time and SIZE axis, not the match axis | rebar `regexes/wild/date.txt` = `datefinder`'s production pattern (**Unlicense**, fetched, fragment quoted, N1 §1) | none | **none refuse to compile** expected; RE2's `max_mem` and Rust's `size_limit` are the ones to watch (N2 §4) | 2 |
-| 6 | `wild-codegrammar` | small patterns applied per line/token in a latency-sensitive editor loop; `(?x)` free-spacing | VS Code `JSON.tmLanguage.json` (**MIT**, five regexes fetched and quoted, N1 §18) | one flattened `(?x)` twin (see §9.5's newline limitation) | free-spacing `(?x)`: supported by pcre2/Oniguruma/RE2/Rust; **TRE** has no inline-flag syntax at all (N2 §3) | 5 |
+| 6 | `wild-codegrammar` | small patterns applied per line/token in a latency-sensitive editor loop; `(?x)` free-spacing | VS Code `JSON.tmLanguage.json` (**MIT**, five regexes fetched and quoted, N1 §18) | one flattened `(?x)` twin (the multi-line-to-one-line question is now OPEN for Frank at the restart, `rxt_needs_v1.md` F-Q2 — §9) | free-spacing `(?x)`: supported by pcre2/Oniguruma/RE2/Rust; **TRE** has no inline-flag syntax at all (N2 §3) | 5 |
 | 7 | `cap-backref` | backreference semantics — the cleanest capability line on the roster | grep's `tests/backref*` family located (**GPLv3** — import blocked pending §4.2's ruling, N1 §17); Oniguruma `test_syntax.c`'s `(?<=a\|(.))\1` (**BSD-2**, quoted, N1 §16) | doubled-word, tag-pair and palindrome shapes AUTHORED fresh (so no GPLv3 question arises) | **RE2, Rust `regex`, Vectorscan** all refuse (N2 §3, all three fetched from upstream docs). pcre2, Oniguruma, TRE, python, perl, pcrec run them | 5 |
 | 8 | `cap-lookaround` | chained and nested lookahead/lookbehind, incl. VARIABLE-length lookbehind | Oniguruma `test_syntax.c` (**BSD-2**, quoted: variable-length lookbehind combined with a backref, N1 §16) | 3 chained-lookaround shapes authored; one fixed-width and one variable-width lookbehind pair | **RE2, Rust, Vectorscan** refuse all lookaround; **python `re`** refuses VARIABLE-length lookbehind specifically (CPython 3.14 docs, N2 §8 (8)); **TRE** has no lookaround (its parser's escape switch has only `\b\B\<\>`, N2 §5) | 5 |
 | 9 | `cap-recursion` | recursion/subroutine calls, and deep nesting | grok's compositional expansion is the nearest wild analogue (N1 §10) | balanced-paren and DEFINE shapes authored; a 3-level nested-group body | **RE2, Rust, Vectorscan, TRE, python `re`** all refuse (N2 §3). perl, pcre2, Oniguruma (`\g<name>`, flag-confirmed), pcrec run them | 4 |
@@ -191,14 +239,67 @@ an expectation the first sample tests, not an assertion.
 
 **Total: 60 patterns** (59 members + the floor).
 
+**Per-family `hazard_class` (CB7).** `hazard_class` is a required,
+closed-enum field per PATTERN (`record_schema.md §8`;
+`schema/record.schema.json:298`), and §6.3's hazard-rewrite rule is
+keyed on it — but no family above states one, which would leave an
+authoring lane's default read as `hazard_class: none` and route family
+2's atomic groups (and family 10's whole point) to the ordinary §6.2
+rewrite table instead of §6.3's protection. Assigned here, at minimum
+for the two families the design's own prose already treats as
+hazard-bearing (2, 10), plus one more whose own stress-mechanism text
+names the same enum value (5):
+
+| family | `hazard_class` | why |
+|---|---|---|
+| 2 `wild-logparse` | `exponential-backtracking` | the imported atomic groups exist to defend against it — §6.3's own worked example |
+| 5 `wild-datetime` | `ambiguous-decomposition` | the family's own stress mechanism, verbatim: "ambiguous decomposition" |
+| 10 `redos-nested` | `exponential-backtracking` | the family's entire objective |
+| every other family, and the floor | `none` | no member is authored or imported to exercise a specific hazard |
+
+**Family 11's v1 scope, narrowed (CB1).** §5.6 claims family 11
+"exercises [convention-based scoring] for the first time in this
+repo," but no code path scores a testee against its own declared
+convention: `outcome_for` (`pcrecbench/harness.py:106`) has no
+convention parameter, and `Subbench.expectation`
+(`pcrecbench/subbench.py:268`) is keyed on `(pattern, subject_id,
+regime)` only — every testee in a cell is graded against one
+canonical, `perl-leftmost-first` expectation row. **v1's family 11 is
+therefore scoped to the shared-convention population**: pcre2-interp,
+pcre2-jit and pcrec, all `perl-leftmost-first` (§5.6's own table), plus
+`pcre2-dfa` once its decreasing-length-order difference is confirmed
+not to change the leftmost-first answer on family 11's own cases. The
+cross-convention value family 11 is named for — scoring `re2-longest`
+or `tre-default` against their OWN correct answer — is DEFERRED to
+whichever lane lands the first divergent-convention testee (§8, both
+`later`), and building the missing per-testee/variant expectation
+override is that lane's own scope, not v1's. This is a design amendment
+this note makes on its own logic (CB1's disposition: "answerable inside
+the design's own logic... does not require a Frank-level ruling"), not
+a Frank ruling — see §12's new question, which states it for the record
+rather than deciding it silently.
+
+**Family 12's `canonical_text` (S10).** Family 12's designed members
+are byte-class and high-byte literal shapes whose canonical pattern
+text may not be valid UTF-8. `patterns[].canonical_text` is a JSON
+string (`schema/record.schema.json:92,302`) and cannot losslessly hold
+an arbitrary non-UTF-8 byte sequence. It is not in the pattern entry's
+required-field list, so the same omission escape hatch KB-7/[B30]
+already established for an oversized pattern applies here for a
+different reason (encoding validity, not size): **a family-12 pattern
+whose canonical text is not valid UTF-8 omits `canonical_text` in the
+record, citing `canonical_sha256` for identity instead.**
+
 ### 3.2 Why twelve families and sixty patterns
 
 - Sixty is chosen against the cell-time budget (§3.5), not the other way
   round. The census is 95 patterns at ~47-52 min/cell with three regimes;
   60 patterns at two regimes lands comfortably inside `CELL_CAP`.
 - The 6 / 5 / 1 split (six wild families, five capability/hazard families,
-  one floor) puts the wild share at 30 of 59 members — see §4.3 for the
-  ratio decision and its alternatives.
+  one floor) puts the wild share at 30 of 59 members. **This is no
+  longer a ratio decision** (Frank ruled it moot, 2026-09-12 — §4.3):
+  the split is what REALISM produced once each family's members were
+  chosen honestly, not a target hit by construction.
 - Every family has at least one CONTROL PAIR, following the census's own
   lesson that "an outlier without its control is not a question, it is a
   number" (`bench/syntax/CLAUDE.md`, thing 2). The pairs are named in
@@ -262,10 +363,35 @@ Why `match` is out of v1, with the alternative stated:
   `docs/dev/ledgers/2026-09-07-b36-syntax-first-d34c9131.md` §9, i.e. "the
   instrument; nothing below this is trustworthy until these are
   answered".
-- Families 6 (`(?x)`), 7-9 (`\K`-adjacent, recursion) and 11 (`$` vs
-  `\z` — the wrapper's own anchor!) would each inherit that defect. The
-  set would ship wrong answers whose cause is already known and already
-  filed.
+- Families 6 (`(?x)`) and 9 (recursion) would inherit that defect
+  directly — both failure modes are named in the cited ledger's Q3,
+  under the one lexical-wrapper cause. **Families 7 and 8 are corrected
+  out of this list (CS1):** the ledger's Q2 (`\K` unable to report a
+  non-zero start) is a SEPARATE finding from Q3, and its own "Source"
+  line attributes it to `testees/pcrec/driver.c`'s anchored branch
+  hard-coding `first_s = 0` — a pcrec-specific driver bug, not a lexical
+  consequence of the wrapper the way `(?x)`'s comment-eating and `(?R)`'s
+  recursion are. Neither family 7 (`cap-backref`) nor family 8
+  (`cap-lookaround`)'s designed-member roster names a `\K`-bearing
+  member, so their exclusion needs its own reason if one is ever
+  claimed. Family 11 (`$` vs `\z`, the wrapper's own anchor) is
+  unaffected by this correction and stays excluded on its own grounds.
+- **Scope, stated explicitly (CS1):** this exclusion is deliberately
+  SET-WIDE, not pcrec-specific, even though the two confirmed defects
+  (family 6, family 9) and the corrected-out one (family 7/8's `\K`
+  case) are all properties of pcrec's own lexical wrapper. The harness
+  declares regimes per SUB-BENCH, not per testee (`bench/CLAUDE.md`), so
+  scoping `match` to "every testee except pcrec" would need a harness
+  change this design does not propose. The tradeoff this accepts: most
+  [B7] roster engines (RE2's `FullMatch`, likely Oniguruma's/TRE's own
+  anchor options) have a native anchored-match call and would not need
+  pcrec's lexical wrapper at all, so this decision forecloses
+  `match`-regime compliance measurement (family 1's own stated purpose)
+  for every future non-pcrec engine too, on a defect only one testee
+  structurally has. That tradeoff is accepted for v1 rather than
+  building a per-testee regime carve-out; a future revision could name
+  the harness change as its own lane if the cost is judged worth
+  paying.
 - **The alternative** — declare `match` anyway and accept the R0 cells —
   buys compliance-shaped readings for family 1 (validators) at the price
   of pre-known wrong answers in four families and roughly doubled cell
@@ -304,6 +430,28 @@ predictable cells here.
 a re-measure (the v1.4 spread rule's re-measure-once contract,
 `scripts/run_window.sh`).
 
+**Family 10's calibration risk, stated explicitly (CB8).** The
+arithmetic above assumes a (pattern, regime, trial) costs `50 ms ×
+n_subjects`, INDEPENDENT of the testee's speed, validated on
+`bench/syntax`'s deliberately homogeneous population (one construct, one
+plain body, no subject engineered to be asymptotically slower than its
+siblings). Family 10 (`redos-nested`) is the opposite by design: a
+subject engineered to be catastrophically slow on a backtracker and fast
+on everything else, and `pcre2-interp`/`pcre2-jit` — both backtrackers —
+are in the v1 first-sample roster (§11.4). `calibrate()`
+(`pcrecbench/harness.py:290-343`) picks `iters` ONCE from the MEDIAN
+subject's per-iteration cost and applies it uniformly across the whole
+(pattern, regime) loop; a ReDoS witness's own per-iteration cost, far
+above the median, then runs for `iters × its_own_per_iter_cost`, not the
+model's ~50 ms — that one subject's total, not the cell's assumed total,
+can dominate. **Mitigation adopted:** family 10's typed subjects use a
+fixed, small `--iters` override (`harness.py:296` already supports a
+non-calibrated `iters`) rather than `search_short`'s calibrated
+probe-then-scale loop, sized by L3 against the worst ReDoS witness on
+`pcre2-interp` specifically. This is stated here rather than left to be
+discovered as the most likely single cause of a `CELL_CAP` timeout in
+v1's first run (§13 R6 carries the risk forward).
+
 ---
 
 ## 4. Provenance
@@ -330,7 +478,8 @@ A closed set of fields, one row per pattern, in the sidecar's
 - **`verbatim`** — the pattern text is byte-identical to the source's.
 - **`adapted`** — a mechanical, stated change to a verbatim original: a
   ModSecurity transformation chain dropped, a `%{NAME}` grok macro
-  expanded, a multi-line `(?x)` body flattened to one line (§9.5). The
+  expanded, a multi-line `(?x)` body flattened to one line (now an OPEN
+  question for Frank at the restart, `rxt_needs_v1.md` F-Q2 — §9). The
   `adaptation` sentence names which.
 - **`inspired`** — AUTHORED fresh from a description, never copied. This
   is the value that makes families 10 and 12 possible without a licence
@@ -349,18 +498,41 @@ makes for its seed.
 `provenance.tsv` from the sidecar and fails by name on: a pattern with no
 provenance row; a `fidelity ≠ verbatim` row with no `adaptation`; a
 licence outside the allowlist (§4.2); a CC BY-SA row with no
-`attribution`. This is the generic `gen_*.py --check` hook `make
-check-harness` already runs over every `bench/*/` directory by
-enumeration (`bench/CLAUDE.md`), so it costs no new harness machinery.
+`attribution`; **and, per Frank's 2026-09-12 Q1 ruling, an `inspired`
+pattern that fails a mechanical similarity check against its cited
+source** (a normalized-text similarity score above a stated threshold
+fails the gate by name, plus a human review pass — the ruling's own
+mitigation for R8, "`fidelity: inspired` becomes a laundering
+mechanism", folded in here rather than carried forward as an open risk).
+This is the generic `gen_*.py --check` hook `make check-harness` already
+runs over every `bench/*/` directory by enumeration
+(`bench/CLAUDE.md`), so it costs no new harness machinery beyond the one
+new check.
 
-**What the RECORD carries.** No schema change. `patterns[].tags` is an
-optional array of string, DIAGNOSTIC (`record_schema.md` §8, patterns
-table), and the capability set puts two tokens in it per pattern:
-`src:<source_name>` and `fid:<fidelity>`. A report can then bucket wild
-against designed without a schema MINOR. The full provenance row stays in
-the set directory, which is where the sub-bench's own truth lives; the
+**What the RECORD carries (CB3, revised).** §0.1's original claim — that
+`patterns[].tags` (`src:<source_name>` / `fid:<fidelity>`) buckets wild
+against designed "without a schema MINOR" — is WRONG. `patterns[].tags`
+is DIAGNOSTIC (`record_schema.md:841-846`, the field-table preamble
+governing the row at `record_schema.md:1025`): "DIAGNOSTIC /
+REPRODUCIBILITY-ONLY fields are free text... and the reporter must NOT
+offer them as filters." Bucketing wild-vs-designed IS filtering/grouping
+— the one operation the field's own rule forbids. Worse, the identical
+mechanism already exists and is already dead: `pcrecbench/record.py:
+215-221` writes `tier:<feature_tier>` and `convention:<convention>` into
+`patterns[].tags` on every record today, and the reporter has never once
+read a `patterns[].tags` value for either existing family. **Revised
+decision: promote provenance bucketing to real enumerated, FILTERABLE
+schema fields** — `patterns[].provenance_source` (a closed slug enum,
+the same vocabulary as `source_name` above) and `patterns[].fidelity`
+(the closed three-value enum §4.1 already defines in substance). This
+**IS a schema MINOR** (contradicting v0.1's "no schema change" claim and
+§1.1's traceability row for requirement (1), both corrected). The full
+provenance row (URL, licence, attribution, `adaptation`) stays in the
+set directory, which is where the sub-bench's own truth lives; the
 record's `subbench.content_hash` covers it because it covers every
 committed file in the directory (`subbench_directory_model.md §1.3`).
+The two promoted record fields exist so a REPORT can bucket wild against
+designed; the full row is never duplicated into the record.
 
 ### 4.2 The licensing floor — options and recommendation
 
@@ -374,9 +546,9 @@ Frank. The three options, each with its consequence:
 |---|---|---|
 | **(a) permissive-confirmed only** | verbatim import only from a source whose LICENSE/COPYING was fetched directly and is on an allowlist | grep's BRE/ERE + Turkish-I fold corpus is OUT as a verbatim source; Suricata is OUT until a per-sid audit; regexlib/regex101 are OUT. Six families are unaffected (their sources are all confirmed permissive) |
 | **(b) small-number individual attribution regardless of repo licence** | a handful of individually-attributed, individually-quoted patterns is fair research use whatever the repo says | brings grep's locale fold tests and Suricata rules into reach; puts this repo in the position of asserting a legal judgment it is not equipped to make, on someone else's copyleft |
-| **(c) hybrid — (a) for verbatim, `inspired` for everything else** | verbatim import per (a); a non-allowlisted source may be cited as INSPIRATION for a freshly-authored pattern (`fidelity: inspired`), never copied | **RECOMMENDED** |
+| **(c) hybrid — (a) for verbatim, `inspired` for everything else** | verbatim import per (a); a non-allowlisted source may be cited as INSPIRATION for a freshly-authored pattern (`fidelity: inspired`), never copied, AND validated as not an actual copy (a mechanical similarity check in the provenance gate, plus review) | **RULED (c) — Frank, live, 2026-09-12** |
 
-**RECOMMENDATION: (c).** It costs nothing the set actually needs: the
+**RULED: (c), with the similarity-check addition above.** It costs nothing the
 `fidelity: inspired` machinery already has to exist for families 10 and
 12 (CVE descriptions and the un-obtainable Suricata sample), and every
 family whose value is real-use EVIDENCE — the Turkish dotless-ı fold
@@ -402,33 +574,37 @@ case is simply lost. **Consequence of (b) instead:** faster import, a
 legal exposure nobody in this project is qualified to size, and a
 precedent that outlives the set.
 
-### 4.3 Wild vs designed — the ratio
+### 4.3 Wild vs designed — REALISM, not a ratio (RULED)
 
-N1 §(v)2 puts this to Frank as "a number or rough ratio would help size
-phase (e)". The options:
+N1 §(v)2 put a ratio question to Frank ("a number or rough ratio would
+help size phase (e)"). **Frank ruled, live, 2026-09-12: it is not a
+ratio.** The "from the wild" requirement is a FRAMING — realism over
+contrivance. No `ab+c`-class toy is a set member, whether imported or
+authored: **every member, wild or designed, must be a shape someone
+would plausibly deploy.** Provenance is recorded where a real source
+exists (§4.1); where none does — families 7-12's designed members, the
+control twins inside families 1-6 — the pattern must still be the kind
+of thing a real regex author would write for that purpose, not a
+constructed edge case whose only job is to be hard. **The actual
+percentage is not important**, and this note no longer sizes the set
+against one.
 
-| option | wild share | consequence |
-|---|---|---|
-| majority-wild (≥ 80 %) | ~48 of 59 | requires Davis's corpus (§4.5) to reach the count, which is the one source whose schema is unopened; the capability families (7-10) would have to import from the licence-messy sources |
-| **minority wild anchors + designed edge cases (~50 %)** | **30 of 59** | **RECOMMENDED** |
-| all-designed (0 %) | 0 | fails requirement (1) outright |
+**Consequence for §3.1's roster, stated plainly:** the 30-wild/29-designed
+split that fell out of building each family honestly (§3.2) is kept, but
+it is now a DESCRIPTION of what the set turned out to contain, not a
+target that was hit. Every authored member in families 7-12 — the
+doubled-word and palindrome backreference shapes, the chained-lookaround
+cases, the balanced-paren recursion shapes, the CVE-inspired ReDoS
+witnesses, the byte-class non-UTF-8 literals — is held to the SAME
+realism rule as the imported members of families 1-6: each is a
+plausible thing a working regex author would write to exercise that
+capability, not a toy built to be refused. L2 (§11.1) authors against
+this rule, and its blinding statement in `NOTES.md` should say so.
 
-**RECOMMENDATION: ~50 %, structured — every WILD family (1-6) is
-majority-verbatim; every CAPABILITY/HAZARD family (7-12) is
-majority-authored.** That is 30 wild members (families 1-6) and 29
-designed (7-12, plus the control twins inside 1-6).
-
-The structure is the point, not the number: the wild half answers "what
-do real patterns cost", the designed half answers "what can this engine
-do at all", and the second question's best sources (CVE indexes, grep's
-GPLv3 suite, un-obtainable Suricata rules) are exactly the ones the
-licensing floor keeps at arm's length. Putting the authored patterns
-where the licence problem is dissolves both problems at once.
-
-**Consequence of a higher wild share:** the set becomes dependent on
-Davis (§4.5) and on the Suricata/grep rulings, both of which can slip.
-**Consequence of a lower one:** requirement (1) is satisfied in name
-only, and the set is `bench/syntax` with longer patterns.
+**The Davis et al. corpus** stays a `capability@0.2` candidate (§4.5),
+unchanged by this ruling — the ruling settles the ratio question Davis's
+count was meant to help size, not whether Davis itself is worth
+importing.
 
 ### 4.4 Subject-data provenance
 
@@ -505,14 +681,15 @@ distinguishes them and its tag list did not:
 | `backrefs` | a backreference, numbered or named | RE2, Rust `regex`, Vectorscan |
 | `lookaround` | any lookahead or lookbehind | RE2, Rust, Vectorscan, TRE |
 | `lookbehind-variable` † | a lookbehind whose body is not fixed-width | + python `re` (CPython 3.14 docs, N2 §8 (8)) |
-| `atomic-possessive` | `(?>...)`, `x*+`, `x++`, `x?+`, `x{n,m}+` | RE2, Rust, Vectorscan, TRE (Oniguruma HAS possessive intervals — flag-confirmed in `regsyntax.c`, N2 §4 (4)) |
+| `possessive-quantifier` (CB5, split from `atomic-possessive`) | `x*+`, `x++`, `x?+`, `x{n,m}+` | RE2, Rust, Vectorscan, TRE. Oniguruma HAS these — flag-confirmed in `regsyntax.c` (`ONIG_SYN_OP2_PLUS_POSSESSIVE_REPEAT`/`_INTERVAL`, N2 §4 (4)) |
+| `atomic-group` (CB5, split from `atomic-possessive`) | `(?>...)` | RE2, Rust, Vectorscan, TRE. **Oniguruma's support is UNCONFIRMED at the evidence quality of the row above**: `(?>...)` is "not controlled by a distinct op2 flag... not independently re-derived from the group-parser source" (N2 §4 (4)) — a wrong-direction risk (a wrongly-CLAIMED capability, which §5.3's fail-closed default does nothing to protect against, unlike a wrongly-UNCLAIMED one). **Before an `onig-*` config declares `atomic-group`, its support must be independently re-derived from `regparse.c`** — Oniguruma is not in v1's roster (§8, `later`), so this does not block L1-L5 or the first sample |
 | `recursion` | `(?R)`, `(?1)`, `(?&name)`, `\g<n>`, `(?P>name)` | RE2, Rust, Vectorscan, TRE, python `re` |
 | `conditionals` | `(?(cond)yes\|no)` | RE2, Rust, Vectorscan, TRE, python `re` |
-| `k-reset` | `\K` | RE2, Rust, Vectorscan, TRE, python `re`, **and `pcre2_dfa_match`** (man `pcre2matching` item 4, N2 §4 (3)) |
+| `k-reset` | `\K` | RE2, Rust, Vectorscan, TRE, python `re`, **and `pcre2_dfa_match`** (man `pcre2matching` item 4, N2 §4 (3)). **Oniguruma is deliberately NOT listed here (CB6) and must not be read as satisfying it by omission**: N2 states Oniguruma has "not general PCRE-style `\K`; has its own reset-point extensions under some syntaxes" — neither a clean yes nor a clean no. **Before an `onig-*` config declares `k-reset`, this must be resolved**: either confirm behavioral equivalence to `\K` for this bench's own family 7-9 `\K`-tagged patterns, or declare `k-reset: false` for Oniguruma and route those patterns to `unsupported-by-declaration`. Not in v1's roster, so not before L6b |
 | `control-verbs` † | `(*ACCEPT)`, `(*SKIP)`, `(*PRUNE)`, … | RE2, Rust, Vectorscan, TRE, python `re`; `pcre2_dfa_match` supports `(*FAIL)` only (item 7) |
 | `unicode-properties` | `\p{...}` / `\P{...}` | TRE (locale classes, not properties); python `re` spells Unicode categories differently and has no `\p{Greek}` token |
-| `named-groups` † | any named-group spelling | TRE |
-| `free-spacing` † | `(?x)` / extended mode | TRE |
+| `named-groups` † | any named-group spelling | TRE — **UNCONFIRMED (CS5)**: N2 §3's table has no column for named-group spelling at all; neither research note states this for TRE. The natural primary source is POSIX ERE's own grammar (TRE's default mode), not yet cited. Route through §5.3's witness-refusal check either way before an `onig-*`/`tre-default` config declares it |
+| `free-spacing` † | `(?x)` / extended mode | TRE — **UNCONFIRMED (CS5)**, same gap and same remedy as `named-groups` above |
 | `callouts` | `(?C1)` and friends | everything but pcre2/perl |
 | `span-reporting` | the driver must report a match START, not just "matched" | **Vectorscan without `HS_FLAG_SOM_LEFTMOST`** (N2 §4) |
 | `non-utf8-subject` | the subject bytes are not valid UTF-8 | Rust `regex`'s default `str` API (N1 §ii) |
@@ -583,6 +760,18 @@ compiled and the refusal asserted by name — the same "a check with no
 failing case proves nothing" discipline `record_schema.md §9` states for
 X1..X33 and `make check-harness` already applies to pcrec's deny flags.
 
+**Noted, not a defect (B7):** `compile_outcome = "unsupported-by-
+declaration"` is schema-legal today (`schema/record.schema.json:122,
+690-692`) but no adapter or the harness has ever produced it as a value
+— it is described in `report.py`'s prose only. `testee.conventions`
+(§5.6) is likewise required on every record today but never read by any
+validator rule or reducer. **This design is the first real producer of
+both.** Neither is a defect; both are exactly the kind of first-class
+capability this design elsewhere states it is exercising for the first
+time (§5.6, §9). It means the witness-check arm above carries extra
+weight: its POSITIVE case (a real `unsupported-by-declaration` compile
+row surviving `store.write()`) has never existed in the store before.
+
 ### 5.4 Outcome enums — adopt N2's finding, no new value
 
 N2 §7 argues the existing enums are wide enough. **ADOPTED**, with the
@@ -632,8 +821,21 @@ mechanism stamp is honest, an invented one is not.
 `record_schema.md §5` already carries the three tokens as `conventions[]`
 (`perl-leftmost-first`, `posix-leftmost-longest`, `all-ends`), and
 `requirements.md §7` already says convention is a per-CASE expectation tag
-and testees are scored against their own. Family 11 is the family that
-exercises this for the first time in this repo.
+and testees are scored against their own. **Neither claim is a working
+mechanism today (CB1):** `outcome_for` (`pcrecbench/harness.py:106`) has
+no convention parameter and `Subbench.expectation`
+(`pcrecbench/subbench.py:268`) is keyed on `(pattern, subject_id,
+regime)` only, so every testee in a cell is graded against one
+canonical expectation row regardless of its declared convention. **v1's
+family 11 is therefore scoped to the shared-convention population**
+(§3.1's note on family 11) — pcre2-interp, pcre2-jit, pcrec, and
+`pcre2-dfa` once its decreasing-length-order difference below is
+confirmed not to change the answer on family 11's own cases, all
+`perl-leftmost-first`. The cross-convention scoring this section
+otherwise describes is what family 11 will exercise once a
+divergent-convention testee (`re2-longest`, `tre-default`) lands and the
+missing per-testee/variant expectation override is built — that lane's
+own scope, not v1's.
 
 How each roster engine is tagged (N2 §2):
 
@@ -656,38 +858,60 @@ the driver protocol's `--find-all` NON-OVERLAPPING count
 | option | what it means | consequence |
 |---|---|---|
 | **(A) span grain via a declared variant** restating the expectation as a SET of end-offsets | the honest reading of what the engine does | needs a THIRD driver invocation mode and a LIST-VALUED row shape — which is **OD-B3**, explicitly unruled (`requirements.md §12`), and a schema change. Large |
-| **(B) boolean grain for this engine only** — measure Vectorscan only where the canonical expectation is "does this match anywhere", plus compile/refusal comparisons | cheap, ships now | **narrows `requirements.md §4.5` constraint 1 ("results identical on EVERY subject") for one engine**. That is a real relaxation of a Frank ruling and must be visible in every report row, not a footnote |
+| **(B) boolean grain for this engine only** — measure Vectorscan only where the canonical expectation is "does this match anywhere", plus compile/refusal comparisons | cheap, ships now, **grounded directly in the driver protocol (S11)**: the protocol already tolerates a degenerate `subject` line — "START,END the FIRST match's span, **or `-`**" (`pcrecbench/adapters.py`) — so a Vectorscan driver reporting `ANSWER=match/nomatch` with `START=END=-` fits the EXISTING protocol with no new invocation mode. This strengthens, not merely asserts, "cheap, ships now" | **narrows `requirements.md §4.5` constraint 1 ("results identical on EVERY subject") for one engine**. That is a real relaxation of a Frank ruling and must be visible in every report row, not a footnote |
 | (C) Vectorscan out of v1 | no relaxation, no schema change | loses the roster's only `simd-multipattern` automaton class and the only engine whose REFUSAL SET is the interesting datum |
 
-**RECOMMENDATION: (B), decided before the Vectorscan adapter lane opens,
-not before the set is built.** Vectorscan is not in the v1 first-sample
-roster (§8, §11) so this question DEFAULTS — the set can be designed,
-built and first-sampled without it. **§12 Q3, defaultable, trigger =
-[B7]'s Vectorscan lane.**
+**RECOMMENDATION: (B), with a ruling required before the Vectorscan
+adapter lane opens — not before the set is built, and not a silent
+DEFAULT (CS3).** §5.6's own text above states this narrows an explicit,
+dated Frank ruling (`requirements.md §4.5` constraint 1, ADOPTED v3,
+2026-08-25: "no variation in results... no 'approximates with stated
+differences' grade"). A proposed exception to Frank's own prior word is
+not the shape a silent DEFAULT should carry, even though nothing is
+built on the answer today. **§12 Q3 is marked BLOCK, asked at the
+RESTART** — Vectorscan is not in the v1 first-sample roster (§8, §11)
+and the build itself is parked (§9) well before [B7]'s Vectorscan lane
+would open, so this costs nothing now.
 
-If (B) is ruled: the set declares a Vectorscan-scoped boolean-grain arm
-in the sidecar's `[testees.<id>]` section, the reporter shows the grain
-beside the number the way it already shows `variant.kind`, and
-`NOTES.md` states in one sentence that a Vectorscan cell answers a weaker
-question than every other cell in its row.
+**One throughput-regime gap this note now states rather than leaves
+implicit (S11):** if (B) is ruled, the throughput regime's `NMATCHES`
+for an all-ends engine needs an adapter-side reduction to the driver's
+own `pos = max(end, pos+1)` non-overlapping rule
+(`pcrecbench/adapters.py:20-22`) to produce a comparable count at all —
+Hyperscan's natural one-pass "all ends" callback does not produce that
+count on its own. If (B) is ruled: the set declares a Vectorscan-scoped
+boolean-grain arm in the sidecar's `[testees.<id>]` section, the
+reporter shows the grain beside the number the way it already shows
+`variant.kind`, and `NOTES.md` states in one sentence that a Vectorscan
+cell answers a weaker question than every other cell in its row.
 
 ### 5.7 How the scoreboard shows an engine that ran a rewritten spelling
 
-Already built and already ruled, needing only a check at this set's
-scale:
+**Corrected (CB2): the write side is built; the RENDER side is not.**
+v0.1 stated this section was "Already built and already ruled, needing
+only a check at this set's scale" — that is false for `variant.kind`'s
+rendering. An exhaustive grep of `pcrecbench/report.py` for `variant`
+returns exactly two hits, both unrelated prose; `pcrecbench/reduce.py`
+has zero. The only code that touches `variant` at all is
+`pcrecbench/record.py:177-187`, the WRITE side (`"variant": None`).
+Nothing in this project's five existing sub-benches has ever exercised a
+testee variant whose `variant.kind` needed showing, so the render path
+was never built to begin with.
 
 - `patterns[].variant` is REQUIRED on every pattern entry and is `null`
   when the testee ran the canonical text — "a variant is never a silent
-  fork; the record states one either way" (`record_schema.md §8`).
+  fork; the record states one either way" (`record_schema.md §8`). **This
+  half is built.**
 - `variant.kind` (`syntax-only` / `restructured`) is informational
-  (OD-B5) and the reporter shows it beside the number
-  (`requirements.md §4.5` closing).
-- **The gap N2 §7 item 4 names, restated as a build task:** every
-  existing sub-bench runs zero or a handful of variants; this one will
-  run many (§6). The reporter's variant-kind rendering has **never been
-  exercised at a dozen-plus variant rows in one table** and must be
-  checked against a synthetic many-variant report BEFORE the set ships.
-  That is lane L5 in §11.
+  (OD-B5) and `requirements.md §4.5`'s closing sentence describes an
+  intended rendering rule for it. **This half is UNBUILT.**
+- **The build task, restated and re-sized:** every existing sub-bench
+  runs zero or a handful of variants; this one will run many (§6). L5
+  (§11) must **design and build** the `variant.kind` rendering from
+  nothing — not merely check an existing path at scale — and validate it
+  against a synthetic many-variant report BEFORE the set ships. Its
+  absence would silently make every one of family 2, 6, 7, 8's designed
+  control-twin variants invisible in a rendered report table.
 
 ---
 
@@ -707,10 +931,13 @@ quoting `rxt_format.md:57-62`). The format's own wave table names
 "pcrec-bench sub-benches with a non-pcrec testee" as W3's waiting
 consumer (N3 §1.1) — i.e. this set is the named trigger.
 
-**DECISION: the sidecar, unchanged, under Option B (§9).** The migration
-when W3 lands is one field at a time, which is exactly what pcrec's own
-design note expects (`format_design.md:1903-1907`, quoted at N3 §2
-Option B).
+**Superseded by the Q3 ruling (§9):** where a variant lives at the
+restart is one of `rxt_needs_v1.md`'s own asks — its §2.8 proposes a
+`variant kind` production plus a quoted `tag` value, precisely to close
+the gap this subsection described. Until the restart, variants remain
+where they are today (the sidecar's `[testees.<id>]` section, above);
+this is a statement of the current shape, not a decision this note
+still owns.
 
 ### 6.2 The adopted rewrite table
 
@@ -801,21 +1028,24 @@ record encodes it as `cost_class` (MUST equal
 `setup.testee.execution_model`) and `cost.phases[]` (names and order must
 equal `setup.testee.compile_phases`).
 
-Per N2 §5, extended to the roster:
+Per N2 §5, extended to the roster, with `automaton_class` (a separate,
+required fixed enum, `requirements.md:124-128`) stated for every engine
+this note can source it for (S9 — v0.1 left it blank for the two new
+engines the cited research already answers):
 
-| testee | `execution_model` | `compile_phases` | what the timed call actually builds |
-|---|---|---|---|
-| `pcre2-interp` | `interpretive` | `compile` | the whole compiled pattern |
-| `pcre2-jit` | `eager-jit` | `compile`, `jit-compile` | as above + machine code |
-| **`pcre2-dfa`** (new) | `interpretive` | `compile` | the SAME compiled pattern `pcre2_match` uses — `pcre2_dfa_match` has no separate compile step (N2 §5). **A free control: its compile number should be statistically identical to `pcre2-interp`'s** |
-| `pcrec` (16 configs) | `compiled-aot` | `emit-c`, `gcc`/`clang`, `load` | a real compiler + linker |
-| RE2 | `eager-jit` † | `compile` | a forward/reverse `Prog`; the runtime DFA is built LAZILY at match time and can be flushed (N2 §5) |
-| Rust `regex` | `eager-jit` † | `compile` | parse + AST + HIR + literal/prefilter analysis; the lazy DFA is built at match time (N2 §5) |
-| Oniguruma | `interpretive` | `compile` | `onig_new` builds the FULL internal program eagerly — the closest fit to pcre2-interp's own definition (N2 §5) |
-| TRE | `interpretive` | `compile` | one eager `regcomp` |
-| Vectorscan | `eager-jit` † | `compile` | the database IS fully built at compile time — the cleanest `eager-jit` fit of the three † engines (N2 §5) |
-| python `re` | `interpretive` | `compile` | **the driver must bypass CPython's internal pattern cache explicitly**; CPython publishes no numeric cache-size guarantee (N2 §8 (8)) |
-| perl | `interpretive` | `compile` | same caching concern for `qr//` (N2 §5) |
+| testee | `execution_model` | `automaton_class` | `compile_phases` | what the timed call actually builds |
+|---|---|---|---|---|
+| `pcre2-interp` | `interpretive` | `backtracking` | `compile` | the whole compiled pattern |
+| `pcre2-jit` | `eager-jit` | `backtracking` | `compile`, `jit-compile` | as above + machine code |
+| **`pcre2-dfa`** (new) | `interpretive` | `nfa-simulation` (man `pcre2matching`: "not implemented as a traditional finite state machine") | `compile` | the SAME compiled pattern `pcre2_match` uses — `pcre2_dfa_match` has no separate compile step (N2 §5). **A free control: its compile number should be statistically identical to `pcre2-interp`'s** |
+| `pcrec` (16 configs) | `compiled-aot` | `hybrid` (already declared, `testees/pcrec/adapter.py:2828`) | `emit-c`, `gcc`/`clang`, `load` | a real compiler + linker |
+| RE2 | `eager-jit` † | `nfa-simulation` (a `Prog`, not backtracking) | `compile` | a forward/reverse `Prog`; the runtime DFA is built LAZILY at match time and can be flushed (N2 §5) |
+| Rust `regex` | `eager-jit` † | `nfa-simulation` | `compile` | parse + AST + HIR + literal/prefilter analysis; the lazy DFA is built at match time (N2 §5) |
+| Oniguruma | `interpretive` | `backtracking` (N2 §2.1's own match-strategy read) | `compile` | `onig_new` builds the FULL internal program eagerly — the closest fit to pcre2-interp's own definition (N2 §5) |
+| TRE | `interpretive` | `nfa-simulation` — "a tagged-NFA / bit-parallel simulation... not literal backtracking, so it shares RE2/Rust's 'no catastrophic backtracking' property" (`2026-09-12-b42-engine-landscape.md:168-176`) | `compile` | one eager `regcomp` |
+| Vectorscan | `eager-jit` † | `simd-multipattern` (the SIMD multi-pattern enum value, not a generic NFA simulation — §7.5's own "roster's only `simd-multipattern` automaton class" is this row) | `compile` | the database IS fully built at compile time — the cleanest `eager-jit` fit of the three † engines (N2 §5) |
+| python `re` | `interpretive` | `backtracking` | `compile` | **the driver must bypass CPython's internal pattern cache explicitly**; CPython publishes no numeric cache-size guarantee (N2 §8 (8)) |
+| perl | `interpretive` | `backtracking` | `compile` | same caching concern for `qr//` (N2 §5) |
 
 ### 7.2 The `cost_class` fifth-token question
 
@@ -872,16 +1102,29 @@ PROCESS, which measures the whole process (allocator overhead, harness
 buffers, interpreter startup) and not the engine's own allocation; pcrec's
 AOT artifacts barely allocate at compile time by design.
 
-**RECOMMENDATION: record `ru_maxrss` for NATIVE-driver testees only
-(pcre2, RE2, Rust, Oniguruma, TRE, Vectorscan, pcrec); never for python
-or perl; never rank on it, on any testee.** N2 §8 item 7 puts the scope
-question to Frank; **§12 Q6, defaultable.**
+**RECOMMENDATION (revised, CS4): record `ru_maxrss` for NATIVE-driver
+testees only (pcre2, RE2, Rust, Oniguruma, TRE, Vectorscan, pcrec);
+never for python or perl; RANK it within the native-driver population.**
+v0.1 recorded it native-only for exactly this reasoning — pooling it with
+python/perl would compare a process-level number dominated by
+interpreter startup against one that is not — and then declared it
+"never ranked, on any testee" anyway, with no argument for why
+native-vs-native comparison specifically remains unreasonable once the
+incomparable population is already excluded. That undermined §1.1's own
+traceability claim for requirement (3) ("apples-to-apples where
+reasonable... the non-comparable stated"): the native-only cut IS the
+apples-to-apples population requirement (3) asks for. **Revised: rank
+`ru_maxrss` within the native-driver population**, mirroring how compile
+time is ranked "within `cost_class` only" (§7.2). N2 §8 item 7 puts the
+scope question to Frank; **§12 Q6, amended (not a silent DEFAULT).**
 
 **Consequence of recording it for python/perl too:** a number dominated
 by interpreter startup, sitting in a column beside native numbers, which
-a later chart will eventually plot. **Consequence of never recording it:**
-the one metric that would show RE2's `max_mem` dial doing anything is
-absent. Native-only is the honest middle.
+a later chart will eventually plot. **Consequence of never recording OR
+ranking it:** the one metric that would show RE2's `max_mem` dial doing
+anything is present but permanently unranked, which is caveated-and-
+shown-only for a metric requirement (3) names as a first-class one.
+Native-only-but-ranked is the honest middle.
 
 ### 7.5 The summary table — recorded / scored / caveated
 
@@ -892,7 +1135,7 @@ absent. Native-only is the honest middle.
 | compile time | every compile row, median of N with spread | yes, **within `cost_class` only** | §7.2's footnote when pooled `eager-jit` definitions differ |
 | compile PHASES | pcrec (3), pcre2-jit (2); one phase elsewhere | no — shown, not ranked | phase names differ per testee by construction |
 | artifact / program size | where the API gives it (§7.3) | **no** | four incompatible definitions; UNAVAILABLE for Rust, NONE for Oniguruma/TRE |
-| peak memory (`ru_maxrss`) | native-driver testees only | **never** | process-level, not engine-level |
+| peak memory (`ru_maxrss`) | native-driver testees only | yes, **within the native-driver population only** (CS4) | process-level, not engine-level |
 | refusal counts (`did-not-compile`, `unsupported-by-declaration`) | every compile row | **not a ranking, a CENSUS** | this set's headline output; §6.3's large `unsupported` shares are a finding, not missing data |
 | give-ups (`gave-up`) | every match row that hits an engine limit | no — counted apart | `requirements.md §4.4`: "a give-up is the result the bench most wants to see" |
 
@@ -911,12 +1154,16 @@ already in use (`record_schema.md §6.4`):
 unfiltered build flags — the mechanism `pcrec-*-bigcap` ([B31]) and the
 `-clang` siblings ([B24]) already use.
 
+**Two rows in this table are corrected from v0.1's own "the dial" column
+(F5, F6): a column headed "the dial" should hold a genuine space-vs-speed
+tradeoff, and two rows in v0.1 held something else.**
+
 | engine | config | v1? | the dial | source |
 |---|---|---|---|---|
 | libpcre2 | `pcre2-interp` | **v1** (exists) | — | |
 | libpcre2 | `pcre2-jit` | **v1** (exists) | JIT vs none | |
-| libpcre2 | **`pcre2-dfa`** | **v1 (NEW)** | `pcre2_dfa_match` vs `pcre2_match` — a THIRD execution model on one library, `automaton_class = nfa-simulation` (man `pcre2matching`: "it is not implemented as a traditional finite state machine") | N2 §4 (3) |
-| pcrec | the sixteen pinned configs | **v1: the six used by every window** (`auto`, `nocaps`, `vm`, `vm-in`, + 2) | engine mode, captures, caps, cc, deny flags | `testees/pcrec/CLAUDE.md` |
+| libpcre2 | **`pcre2-dfa`** | **v1 (NEW)** | **NOT A DIAL (F5) — a fourth engine identity that costs nothing.** `pcre2_dfa_match` has no separate compile step (§7.1's own free control: statistically identical to `pcre2-interp`'s) and zero space cost; what it adds is a THIRD execution model and two capability lines (`captures`, `k-reset`) no current testee crosses, `automaton_class = nfa-simulation` (man `pcre2matching`: "it is not implemented as a traditional finite state machine") | N2 §4 (3) |
+| pcrec | the sixteen pinned configs | **v1: the six used by every window** (`auto`, `nocaps`, `vm`, `vm-in`, + 2) | **Mapped explicitly, not asserted (F6):** genuine user-facing dials are engine mode (`auto`/`vm`/`nocaps` — `nocaps` removes capture-reporting overhead, a real speed dial) and `cc` (gcc vs clang). The `-bigcap` pair is a capability/size trade in reverse — MORE space to admit compiles that would otherwise refuse, not less space for less speed. `-noedge`/`-noisland`/`-noclsfold` are this project's OWN optimization-denial diagnostic controls, built to isolate a pcrec mechanism for pcrec-bench's measurement purposes, not choices an end user of pcrec would pick between | `testees/pcrec/CLAUDE.md` |
 | RE2 | `re2-default` (`max_mem` 8 MiB) | v1 **if** the adapter lands | — | N2 §4 |
 | RE2 | `re2-longest` (`set_longest_match(true)`) | v1 **if** the adapter lands | POSIX leftmost-longest — the second convention reading family 11 needs | N2 §2.2 |
 | RE2 | `re2-bigmem` (64 MiB) | later | the space dial in reverse (more memory ⇒ fewer DFA cache flushes) | N2 §4 |
@@ -964,167 +1211,109 @@ nothing to any speed ranking. Given that perl is "the one engine on the
 roster whose question INVERTS" — what does it do DIFFERENTLY from pcre2,
 not what does it lack (N2 §3) — that is most of its value anyway.
 
+**The caveat "no schema change" left out (CS7): such a record can never
+reach `status: measured`, run pinned.** Schema-validity is true;
+usability is not. `judge_trial_agreement` correctly stamps `n/a-trials`
+on zero match rows, but `derive_status`
+(`pcrecbench/harness.py:400-426`) routes an `n/a-trials` verdict to
+`STATUS_MEASURED` only on a **scratch**-tier record — a **pinned**
+record (which is what a python/perl testee run in a normal window is,
+having no `local:` binary shape) is unconditionally
+`inconclusive-spread`, permanently: no re-measurement changes a record
+that structurally has zero match rows. **Stated plainly: python/perl
+testees, run pinned, are permanently `inconclusive-spread`** — excluded
+from ranking by default and requiring `--include-unmeasured` to query.
+`scripts/run_window.sh`'s one-retry contract should special-case a
+zero-match-row cell to skip the re-measure it can never resolve; this is
+a harness change beyond what this note otherwise proposes, named here
+rather than left to be discovered when L6b opens (§12 Q14 carries the
+amendment).
+
 ---
 
-## 9. `.rxt` as the source
+## 9. `.rxt` as the source — SUPERSEDED, now a pointer (Q3 ruling)
 
-### 9.1 The decision
+**v0.1's §9 adopted N3's Option B: `.rxt` as the source of pattern TEXT
+and IDENTITY, a sidecar for everything else. Frank's Q3 ruling
+(2026-09-12, live, this session) supersedes that decision outright: the
+capability survey set is a DRIVER of the `.rxt` format itself.** Verbatim:
+*"This is as much a driver of the rxt format as anything."* The set is
+built ON `.rxt` for real — not on the sidecar hybrid Option B proposed --
+and where the format cannot yet carry what the set needs, **the effort
+PARKS at that roadblock**, this project sends pcrecdev1 detailed
+capability feedback, pcrecdev1 builds the needed productions, and the
+effort RESTARTS with this project reviewing and VERIFYING the delivery.
 
-**ADOPTED: N3's Option B (hybrid).** `.rxt` is the canonical home of
-PATTERN TEXT and PATTERN IDENTITY; a sidecar is the source of everything
-`.rxt` cannot yet express (subjects, expectations, tags, hazard/size
-class, regime, oracle method, variants, provenance), keyed by the `.rxt`
-block's `name`, which doubles as the `pattern_id`.
+**This section is therefore not a design of its own any more.** The
+detailed feedback already exists and has already been sent:
+`docs/design/rxt_needs_v1.md` (lane `b42rxtneeds`, 2026-09-12) is the
+full form — fifty needs across eight blocks mapped onto pcrec's own
+R-BENCH-1..9, thirteen MEASURED facts from twenty parse-only probes
+(including two silent-data-loss defects in shipped `--list-source`
+behaviour), twelve proposed productions with EBNF sketches and worked
+examples, a 41-check ACCEPTANCE CHECKLIST for the restart, and a
+Tier 1/2/3 sequencing of what blocks a first sample versus what can land
+later. Outbox O-26 (`docs/dev/outbox_to_pcrec.md`) is the distilled form
+pcrecdev1 received. Both documents are BUILD ONLY — nothing under
+`bench/`, `schema/`, `pcrecbench/` or `testees/` is touched by either.
 
-The alternatives and why not:
+**What v0.1's Option B leaves behind, corrected rather than silently
+dropped:**
 
-- **Option A (`.rxt` is everything).** Rejected on two live hazards N3 §2
-  establishes. (i) The descriptive productions this set needs — `tag`,
-  `@file:` subjects, `oracle`, `variant` — are W2/W3 and are **recognised
-  and refused BY NAME as NOT IN THIS BUILD** at the current pin
-  (`rxt_format.md:57-62`, quoted at N3 §1.1). Building Option A today
-  means writing our own parser for keywords pcrec has not shipped — "a
-  private dialect indistinguishable, by construction, from guessing at
-  pcrec's own unshipped design". (ii) D93: a `.rxt` source's composed
-  config WINS over a command-line flag on the same axis. This repo's
-  entire testee matrix is command-line flags; an `engine` line in a file
-  we treat as the corpus would silently pin the matrix from inside the
-  set. Option A makes such a file more tempting to also build from;
-  Option B structurally never needs a `target`/`config` line.
-- **Option C (status quo, `.rxt` derived by `tools/export_rxt.py`).**
-  Foreclosed by the charter, which says "BUILT ON the .rxt FILE FORMAT",
-  not "with an `.rxt` export available" (N3 §2 Option C).
+- Its file-layout mechanics (§9.2's "no build directives" gate, in
+  particular) described `flags`/`engine`/`budget`/`encoding` as
+  distinct `--list-source` row *kinds*; they are `pattern`-kind row
+  *columns*, populated only under block-scoped directives
+  (`~/pcrec/docs/spec/rxt_format.md:425-442`; CS8). This mechanism
+  correction, and the loader-surface understatement B6 found
+  (`Pattern.__init__`'s required-field tuple and `pattern_bytes()` both
+  hard-require `file` today, not just a sidecar key drop), both travel
+  forward into `rxt_needs_v1.md`'s own acceptance checklist rather than
+  being re-fixed in a section this ruling replaces — the checklist
+  already reasons about the delivered format directly, which is the
+  right place for both corrections now.
+- The 185/0 block-name-legality re-measurement N3 §1.2 made for Option B
+  still stands as a fact about the format's `name` grammar; it is
+  reproduced and extended in `rxt_needs_v1.md` §1.9's own thirteen
+  MEASURED facts (M11 in particular corrects a related claim in
+  `subbench_directory_model.md` — see that file's own dated correction,
+  cited from `docs/design/CLAUDE.md`).
+- §9.5's two stated limitations (no literal newline in a `.rxt` pattern
+  line; an unverified literal NUL) are RESTATED as `rxt_needs_v1.md`'s
+  own roadblock #1 (`N-2`) and its NUL-refusal ask (§2.7, check B3) — the
+  multi-line `(?x)` flattening question v0.1 answered for itself is now
+  an OPEN question for Frank at the restart (`rxt_needs_v1.md` F-Q2),
+  not a decision this note carries forward, because Frank's Q3 ruling
+  changes what "acceptable accommodation" even means once the set's
+  truth is meant to live in `.rxt` rather than a sidecar.
 
-**Why Option B genuinely satisfies requirement (4)** rather than
-sidestepping it: the block `name` grammar was WIDENED by pcrec for
-exactly this project's shape — "a first byte that is a letter or `_`,
-then letters, digits, `_`, `-` or `.`", because "an exported set of
-patterns carries ids a person chose (`cls-upto-64`, `w-512`), and
-requiring an identifier would force every such export to carry a name map
-beside it" (`rxt_format.md:290-296`, quoted at N3 §1.2). N3 re-measured
-the whole corpus against the current grammar: **185 patterns, 0 illegal**.
-So under Option B the `.rxt` block name IS the pattern id, with no map,
-and the file is the single source of both text and identity. That is the
-substantive content of "built on the format"; everything else `.rxt`
-would carry is in a wave that is refused by name today.
+**The restart procedure**, stated here so a reader of this file alone
+knows what happens next:
 
-### 9.2 The file layout
+1. Run `rxt_needs_v1.md` §3's 41-check acceptance checklist against
+   pcrecdev1's actual delivery (seven groups: productions parse, raw
+   bytes round-trip, refusal by name, `--list-source` columns, the set
+   loads and measures, D93/engine neutrality, the format's own
+   regressions — §1.9's thirteen MEASURED facts re-run and diffed).
+2. Review the deltas against this note and against `rxt_needs_v1.md`
+   itself — a lighter panel pass than R5's, checking whether the
+   delivery actually resolves the six roadblocks (Appendix, below), not
+   re-litigating the design.
+3. Reopen §11's lanes, re-sequenced against what actually shipped rather
+   than against Tier 1/2/3's prediction (`rxt_needs_v1.md` §4.2 states
+   candidly that even "Tier 1" is most of W2 plus part of W3, and names
+   "W2 alone" as the honest smaller cut if pcrecdev1 prefers a smaller
+   first delivery — `rxt_needs_v1.md` P-Q6).
 
-`bench/capability/patterns.rxt`, hand-authored, committed, one block per
-pattern:
-
-```
-# capability@0.1 -- the capability survey set's pattern source.
-# NO target and NO config lines, deliberately: D93 (a source's composed
-# config wins over a command-line flag), so an engine/flags line here
-# would pin this repo's testee matrix from inside the set.
-
-name        waf-sqli-keywords
-description CRS 942140's database/schema keyword alternation (verbatim)
-pattern     (?i)\b(?:d(?:atabas|b_nam)e[^0-9A-Z_a-z]*\(|...)
-```
-
-Rules the file follows:
-
-1. **No `target`, no `config`, no block-level `flags`/`engine`/`budget`/
-   `encoding`** — D93 (N3 §2, and `tools/export_rxt.py`'s own rule 5,
-   which states the same hazard for the export direction).
-2. **No case lines** (`m`/`n`/`g`/`gp`/`gu`/`perr`). This bench's
-   expectations are per-testee, derived by our own oracle and checked by
-   our own adapters; `.rxt`'s case vocabulary asserts against a compiled
-   *pcrec* artifact (N3 §3) and is not what `expectations.tsv` means.
-3. **`description` is one line per block** (the W1.1 correction,
-   `format_design.md:434-448`, N3 §1.2) — so the prose home is short and
-   the real metadata is in the sidecar, which is where §4.1 puts it
-   anyway.
-
-### 9.3 The loader change in `subbench.py`
-
-Today `subbench.py` reads `patterns/<name>.rx` as RAW BYTES, never
-decoding (`pcrecbench/subbench.py:190-194`). The change:
-
-- The sidecar gains `source_format = "rxt"` and `patterns_file =
-  "patterns.rxt"`; absent, everything behaves exactly as today (the five
-  existing sets parse byte-identically — that is the compatibility
-  requirement).
-- For an `rxt` set, the pattern loader reads the file and, per block,
-  takes `name` as the `pattern_id` and the `pattern` line's rest-of-line
-  as RAW BYTES. `.rxt`'s `pattern` production is unquoted and unescaped
-  rest-of-line (N3 §1.2), so a raw non-ASCII pattern byte round-trips
-  losslessly — which family 12 needs.
-- The sidecar's `[[patterns]]` entries drop their `file` key and key on
-  `name` instead.
-
-**What is deliberately NOT done:** no `pcrec --list-source` shell-out in
-the hot path. N3 §2 establishes `--list-source` as the reusable SEAM for
-the HEAD grammar and warns that writing our own head parser is "exactly
-the second, uncontrolled implementation the SEAM design exists to
-prevent". But an Option-B file has essentially no head — no `target`, no
-`config`, no `lib`, no `include` — and the three productions the loader
-reads (`name`, `description`, `pattern`) are the block grammar, which
-pcrec's own harness parses itself in bash and always will (N3 §3). So the
-loader stays a small reader of three keywords, and the SEAM is preserved
-where it matters by the CHECK below, not by the loader.
-
-### 9.4 The `make check` gates
-
-| gate | what it asserts | shape it copies |
-|---|---|---|
-| **block ↔ sidecar** | the set of `.rxt` block names equals the set of sidecar `[[patterns]]` names, exactly, both directions | `bench/syntax`'s `gen_patterns.py --check` sidecar comparison |
-| **head-parser seam** | `pcrec --list-source bench/capability/patterns.rxt` at the pin parses the file, and the block list it prints equals the sidecar's | `tools/selfcheck.py`'s `check_rxt_export` ([B38]), turned around: it runs the SAME pinned binary against an AUTHORED file instead of a derived one |
-| **no build directives** | the file contains no `target`, `config`, `flags`, `engine`, `budget` or `encoding` line | D93; a positive control (a planted `engine` line) must make it fail by name, per `record_schema.md §9`'s "a check with no failing case proves nothing" |
-| **provenance completeness** | §4.1's `gen_provenance.py --check` | the generic `gen_*.py --check` hook |
-
-**The `[B38]` round-trip's fate.** `tools/export_rxt.py` today DERIVES an
-`.rxt` for each set and `make check-harness` round-trips it against
-`--list-source`. For a set whose `.rxt` is AUTHORED, deriving a second one
-would create two files claiming to be the source. **Decision:
-`export_rxt.py` SKIPS any set declaring `source_format = "rxt"`, and the
-round-trip check is replaced for that set by the head-parser seam gate
-above.** The five existing sets are untouched, and the skip is one
-condition with its own positive control.
-
-### 9.5 The two limitations, stated
-
-1. **Literal newlines cannot be expressed.** `.rxt`'s `pattern` is
-   exactly one line, rest-of-line, unquoted and unescaped — so there is
-   no way to put a literal newline inside a pattern line at all (N3 §5,
-   which notes [B38]'s exporter already found and documented this for
-   SUBJECTS and that the same gap applies to pattern text). **Consequence
-   for this set:** family 6's VS Code JSON `number` rule is a `(?x)`
-   free-spacing pattern authored ACROSS LINES in its source (N1 §18). It
-   must be FLATTENED to one line, which makes it `fidelity: adapted` with
-   the adaptation stated, and the §6.4 oracle check is what proves the
-   flattening did not change the language. This is the concrete case N3
-   §5 flagged as "a forward risk, not a current blocker" — it is now a
-   current one, and it is handled.
-2. **A literal NUL in a pattern line is unverified.** N3 §5 could not
-   confirm whether pcrec's `.rxt` line reader treats a NUL as a
-   terminator. **Consequence:** the set declares NO pattern containing a
-   literal NUL byte in v1, and the authoring lane states that as a
-   constraint rather than discovering it. Family 12's non-UTF-8 content
-   lives in SUBJECTS (which are not in the `.rxt` at all under Option B)
-   and in high-byte pattern literals, neither of which needs a NUL.
-
-### 9.6 The record's citation
-
-`subbench.source_ref` is an optional DIAGNOSTIC field, "where the
-sub-bench came from" (`record_schema.md §8`). Set it to
-`bench/capability/patterns.rxt`. No per-pattern citation is needed,
-because under Option B the block `name` IS the `pattern_id` — the
-citation is the id.
-
-### 9.7 The four format asks to pcrec
-
-N3 §4's four, as candidate outbox items, each with what we do without it.
-**None is blocking.**
-
-| ask | what pcrec would ship | what we do without it |
-|---|---|---|
-| **1. W2's `@file:` subjects and `tag`** | subjects and per-case metadata expressible in `.rxt` | the sidecar keeps them permanently instead of shrinking. `format_design.md:2482-2490` already RECOMMENDS shipping W2 "when the bench's expectation fragment needs it, and treat that set as the validating measurement" — [B42] is the trigger that document names |
-| **2. W3's `oracle`/`variant`/`use`/`testee`/`option`** | per-engine variants and the testee axis in `.rxt` | variants stay in `[testees.<id>]` (§6.1). The format's own wave table names "pcrec-bench sub-benches with a non-pcrec testee" as W3's consumer — again a pre-named trigger, not a cold ask |
-| **3. A documented head-only reader mode for the descriptive productions** once W2/W3 land | a `--list-source` extension a bench-side loader can shell to | the loader must parse `tag`/`variant`/`oracle` lines itself once they exist — a smaller but real re-implementation of the hazard `--list-source` was built to avoid |
-| **4. Confirmation that a `target`-less, `config`-less `.rxt` is a legitimate PERMANENT shape** | a sentence in the spec | we design around an assumption that might be wrong. **This is the one worth asking NOW**, because Option B's whole file layout rests on it, and it is a confirmation, not a feature |
+**The six roadblocks** (`rxt_needs_v1.md` Appendix, reproduced here so
+this file states what it is waiting on without requiring a second
+document open): (1) no representation for a multi-line `(?x)` pattern;
+(2) `tag` refused, so no per-pattern classification or closed vocabulary
+is expressible; (3) no pattern-level PROVENANCE production in any wave;
+(4) `@file:` gives a subject a path and no stable id; (5) a second
+correct answer under another convention has no carrier in the format --
+AND the harness could not score one either (CB1, above); (6) D93 vs. a
+set file carrying a testee roster.
 
 ---
 
@@ -1161,12 +1350,13 @@ consumes three data shapes that already exist:
   puts it in `testees/<engine>/configs.toml` — machine-readable, but
   scattered across adapter directories. A trivial later collector can
   union them; nothing here blocks it.
-- **(d) Provenance and licence are not in the record at all.** §4.1 puts
-  two tags (`src:`, `fid:`) in `patterns[].tags` deliberately so a REPORT
-  can bucket wild vs designed; the full provenance row (URL, licence,
-  attribution) stays in the set directory. A public interface that
-  displays a wild pattern MUST display its attribution — CC BY-SA 4.0
-  requires it (N1 §9). **Leave room, and flag:** the day a public page
+- **(d) Provenance and licence are not in the record at all.** §4.1
+  (revised, CB3) puts two real enumerated FILTERABLE fields
+  (`patterns[].provenance_source`, `patterns[].fidelity`) in the record
+  so a REPORT can bucket wild vs designed; the full provenance row (URL,
+  licence, attribution) stays in the set directory. A public interface
+  that displays a wild pattern MUST display its attribution — CC BY-SA
+  4.0 requires it (N1 §9). **Leave room, and flag:** the day a public page
   renders an OWASP-sourced pattern, the attribution must travel with it,
   and today nothing but the set directory carries it. That is a
   requirement on the later UI, recorded here so it is not discovered
@@ -1176,17 +1366,31 @@ consumes three data shapes that already exist:
 
 ## 11. The build plan
 
+**This whole section is PARKED and will be RE-SEQUENCED at the restart
+(F8, and the §9 supersession above).** The lane plan below still states
+what the set needs done — its shape is unaffected by the Q3 ruling — but
+its dependency edges assumed §9's old Option B (a sidecar-hybrid loader
+L4 would build against a file L3 authored by hand). Under the restart,
+L3's `patterns.rxt`-equivalent and L4's loader are built against whatever
+pcrecdev1 actually delivers, checked against `rxt_needs_v1.md`'s
+acceptance checklist rather than v0.1's §9.2-§9.4. F8's own finding —
+that L3 shipped its file with no automated proof its block names matched
+the sidecar until L4's gates landed — is superseded the same way: the
+restart's block↔sidecar gate is scoped and built once, against the
+delivered grammar, not staged across two lanes whose sequencing this
+note can no longer specify honestly.
+
 ### 11.1 Lanes and order
 
 | lane | what | tier | depends on | size |
 |---|---|---|---|---|
 | **L1 import/curation** | fetch the confirmed-permissive sources; extract the wild members verbatim; write `provenance.tsv`'s rows; record every fetch URL + licence + date. **NOT blinded** — reading the sources is the task | Sonnet | Frank's §4.2 ruling | 1 session |
-| **L2 designed members** | author families 7-12's designed members and every control twin, **blinded per D27**: `man pcre2pattern` and the engine docs only; no `testees/`, no `pcrecbench/adapters.py`, no `store/`, no `reports/`, no ledgers. May read L1's `provenance.tsv` for the `inspired` citations but NOT the wild pattern TEXT until its own patterns are committed | Sonnet | §4.3's ratio | 1 session, parallel with L1 |
-| **L3 the set** | `patterns.rxt`, `subbench.toml`, `captext.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, `gen_expectations.py`, `gen_provenance.py`, `gen_variants.py`, manifests, `NOTES.md` (objective, families, blinding statement, subjects, **the outlier rule and the predictions, both stated before any run**), `CLAUDE.md` | Sonnet | L1 + L2 | 1-2 sessions |
-| **L4 the `.rxt` loader** | `subbench.py`'s `source_format = "rxt"` path; the four §9.4 gates with their positive controls; `export_rxt.py`'s skip | Sonnet | L3's file shape | 1 session |
-| **L5 the capability machinery** | the closed tag vocabulary + load-time validation; `capabilities = [...]` per config; the pre-compile policy in `harness.py`; the §5.3 witness-refusal check arm; **the reporter's many-variant rendering check** (N2 §7 item 4) | Sonnet | L3, L4 | 1 session |
+| **L2 designed members** | author families 7-12's designed members and every control twin, **blinded per D27**: `man pcre2pattern` and the engine docs only; no `testees/`, no `pcrecbench/adapters.py`, no `store/`, no `reports/`, no ledgers. May read L1's `provenance.tsv` for the `inspired` citations but NOT the wild pattern TEXT until its own patterns are committed. Held to §4.3's REALISM rule, same as L1's imports | Sonnet | §4.3's realism rule (Q2 RESOLVED — not a ratio to size against) | 1 session, parallel with L1 |
+| **L3 the set** | pattern source (shape depends on the restart's delivery — §9), `subbench.toml`, `captext.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, `gen_expectations.py`, `gen_provenance.py`, `gen_variants.py`, manifests, `NOTES.md` (objective, families, blinding statement, subjects, **the outlier rule and the predictions, both stated before any run**), `CLAUDE.md` | Sonnet | L1 + L2 | 1-2 sessions |
+| **L4 the pattern-source loader** | `subbench.py`'s loader path for the delivered format; the block↔sidecar and no-build-directive gates, restated against the actual grammar (CS8) with their positive controls; `export_rxt.py`'s skip | Sonnet | L3's file shape; `rxt_needs_v1.md`'s delivered productions | 1 session |
+| **L5 the capability machinery** | the closed tag vocabulary + load-time validation; `capabilities = [...]` per config; the pre-compile policy in `harness.py`; the §5.3 witness-refusal check arm; **design and build the `variant.kind` rendering from nothing** (CB2 — not a check against existing code, a new one); family 11's shared-convention scoping (CB1) confirmed in the harness's expectation lookup | Sonnet | L3, L4 | 1 session, larger than v0.1 scoped (CB2) |
 | **L6a `pcre2-dfa`** | the fourth pcre2 testee — no new dependency, no new build machinery | Sonnet | L5 | 1 session |
-| **L6b.. one lane per new engine** ([B7]) | RE2 (direct C++ driver), Oniguruma, TRE, Vectorscan, Rust `regex` — each its own lane with its own adapter note | Sonnet each | Frank's install line; L5 | 1 session each |
+| **L6b.. one lane per new engine** ([B7]) | RE2 (direct C++ driver), Oniguruma, TRE, Vectorscan, Rust `regex` — each its own lane with its own adapter note. Oniguruma's lane independently re-derives `atomic-group` support from `regparse.c` (CB5) and resolves `k-reset` (CB6) and the TRE `named-groups`/`free-spacing` citations (CS5) before declaring them | Sonnet each | Frank's install line; L5 | 1 session each |
 
 **Order:** L1 ∥ L2 → L3 → L4 → L5 → **first sample** → L6a → L6b…, with
 each new engine measured as its adapter lands. The first sample does NOT
@@ -1268,68 +1472,98 @@ built against it. If the set is wrong, one night finds it.
 
 ---
 
-## 12. Questions for Frank
+## 12. Questions for Frank — REVISED under R5, marked for the parked state
 
-One consolidated, deduplicated list. Sources: N1 §(v)1-5, N2 §8 items
-4-7, N3 §6 items 1-3, plus four this note raises. **BLOCK** = the build
-cannot start (or a lane will do the wrong work) without a ruling;
-**DEFAULT** = this note's recommendation stands unless Frank says
-otherwise, and the trigger for revisiting is named.
+**Three items are now RESOLVED** (Frank ruled them live, 2026-09-12, this
+session): Q1 (the licensing floor), Q2 (wild vs. designed is realism, not
+a ratio). **Three items are SUPERSEDED** by the same session's Q3 ruling
+(§9): Option B is withdrawn, so the questions that assumed it no longer
+apply. **Everything else is unresolved and asked at the RESTART**, not
+before — nothing is built until pcrecdev1's `.rxt` delivery lands and the
+acceptance checklist passes (§9), so no unresolved question here blocks
+anything today. **BLOCK** = a ruling required before the item's own
+trigger (an L-lane, or [B7]'s Vectorscan lane) opens; **DEFAULT** = this
+note's recommendation stands unless Frank says otherwise, and the
+trigger is named; **RESOLVED** = ruled this session; **SUPERSEDED** =
+moot under the Q3 ruling.
 
-| # | question | recommendation | if YES / as recommended | if NO / the alternative | gate |
-|---|---|---|---|---|---|
-| **Q1** | **The licensing floor** (N1 §(v)1). Verbatim import only from confirmed-permissive sources, with non-allowlisted sources usable as INSPIRATION for freshly-authored patterns? | **§4.2 option (c)** — permissive allowlist for verbatim, `fidelity: inspired` for everything else | GNU grep's GPLv3 suite and un-audited Suricata rules stay out of the import path; their value survives as authored patterns with cited inspiration | (a) alone loses the Turkish-ı fold case and leaves family 12 unmotivated; (b) puts the project in the position of asserting a legal judgment about someone else's copyleft | **BLOCK** — L1 cannot start without it |
-| **Q2** | **The wild-vs-designed ratio** (N1 §(v)2). | **~50 %, structured**: families 1-6 majority-verbatim, families 7-12 majority-authored (§4.3) | 30 wild / 29 designed; the licence-messy sources are never on the critical path | a higher share makes the set depend on Davis and on the Suricata/grep rulings; a lower one satisfies requirement (1) in name only | **BLOCK** — it sizes L1 and L2 |
-| **Q3** | **Hyperscan/Vectorscan's all-ends grain** (N2 §8 item 4). Span grain via a declared variant, or boolean grain for this engine only? | **boolean grain (§5.6 option B)**, decided before the Vectorscan adapter lane | cheap; visible in every report row; Vectorscan answers a weaker question than its row-mates and says so | span grain opens OD-B3 (a list-valued row shape) and a schema change; dropping Vectorscan loses the only `simd-multipattern` testee | **DEFAULT** — trigger: [B7]'s Vectorscan lane |
-| **Q4** | **The `cost_class` fifth token** (N2 §8 item 5). A new `eager-with-lazy-runtime` value, or adapter-note prose? | **prose + a reporter footnote** when pooled `eager-jit` definitions differ (§7.2) | no schema bump; `compile_cost_definition` (already required) carries the truth; the reader cannot silently compare two quantities | a fifth token gives cleaner filtering but makes `eager-jit` mean two things depending on record age | **DEFAULT** |
-| **Q5** | **Does the set declare the `match` regime in v1?** (this note, §3.5) | **No** — `search_short` + `throughput` only, until the syntax ledger's Tier A Q2/Q3 close the whole-subject wrapper | the set ships no pre-known wrong answers; cell time ~halves; `match` is one sidecar line in `capability@0.2` | declaring it now buys compliance-shaped validator readings at the price of known-wrong cells in four families | **DEFAULT** |
-| **Q6** | **Peak memory scope** (N2 §8 item 7). Record `ru_maxrss` for native-driver testees only, never for python/perl, never ranked? | **yes** (§7.4) | the one number that would show RE2's `max_mem` doing something is present, without an interpreter-startup artifact sitting beside it | recording it everywhere puts a startup-dominated number in a column a later chart will plot; recording it nowhere loses the dial | **DEFAULT** |
-| **Q7** | **The `regex-set-priority` shape** (N1 §(v)5). Many patterns matched against one input in priority order — TextMate grammars, Vectorscan's own regex-set workload. In scope? | **Out of v1**, named as future work | every cell stays one pattern × one testee, which is what the whole harness, record and reporter assume | in-scope means a multi-pattern-per-cell measurement — a new row shape, a new driver mode, and a second unruled schema question beside OD-B3 | **DEFAULT** |
-| **Q8** | **Davis et al.'s corpus in v1?** (N1 §(v)4, N3-adjacent) | **Out of v1**, first candidate for `@0.2`; the §4.5 protocol if ruled in | the set reaches 60 patterns without it and the largest unknown (an unopened 34 MB zip whose per-record provenance may not exist) is off the critical path | in v1, a download-and-inspect lane runs FIRST and may report that requirement (1) cannot be met for those rows | **DEFAULT** |
-| **Q9** | **Subject-data provenance** (N1 §(v)3). Synthetic typed subjects, or a licence-clear corpus per family? | **synthetic** (§4.4), with the limitation stated in `NOTES.md` | one discipline across all six sets; `make check` verifies every subject byte-for-byte; family 12's non-UTF-8 subjects are constructible | a real corpus per family inherits an unresolved licence question in the DATA, where the manifest and `content_hash` make it permanent (rebar's own OpenSubtitles README is the cautionary case) | **DEFAULT** |
-| **Q10** | **Is Option B an acceptable reading of "BUILT ON the .rxt format"?** (N3 §6 item 1) — `.rxt` is the source of pattern text and identity, a sidecar the source of everything else, migrating field by field as W2/W3 land | **yes** (§9.1) | the set is authored in `.rxt` from day one, with no second parser and no D93 hazard | Option A means writing a parser for keywords pcrec refuses by name today | **BLOCK** — it decides L3's and L4's shape |
-| **Q11** | **Do we file the W2/W3 format asks to pcrec now, or after the design settles?** (N3 §6 item 2) | **file ask 4 now** (confirm a `target`-less, `config`-less `.rxt` is a permanent legitimate shape — Option B rests on it); **file asks 1-3 after the panel**, so they are concrete | ask 4 is a one-sentence confirmation; asks 1-3 are pre-named triggers in pcrec's own `format_design.md` and are better made with a built set behind them | filing all four now makes three of them speculative | **DEFAULT** |
-| **Q12** | **Should the set ALSO be buildable by pcrec's own `--source` from day one?** (N3 §6 item 3) | **no** — that needs `target` lines, which re-opens D93 AND [B29] §4.1's compile-cost objection (one `--source` build cannot fill N per-pattern compile rows without an invented attribution) | the file stays engine-neutral and the compile-cost axis stays honest | yes means either a second file with targets, or the D93 hazard in the one we author | **DEFAULT** |
-| **Q13** | **`pcre2-dfa` as a fourth pcre2 testee in v1?** (this note, §8) | **yes** — no new dependency, a third execution model, a second automaton class, and two capability lines no current testee crosses | the capability axis has a real refusal set from day one, on a library already installed | without it, every v1 refusal comes from pcrec's own caps, and the capability model is untested against a second engine | **DEFAULT** |
-| **Q14** | **Python `re` and perl: compile + correctness only in v1?** (N2 §8 item 6) | **yes** (§8.1) — and this note finds it needs **no schema change**: a record with compile rows and no match rows is already legal and its `trial_agreement` is already defined | both engines answer the capability and correctness questions; neither enters a speed ranking | match timing needs an embedding driver (`Py_Initialize`/`libperl`), which is its own lane and its own set of caching gotchas | **DEFAULT** |
+| # | question | status | recommendation / ruling | note |
+|---|---|---|---|---|
+| **Q1** | The licensing floor | **RESOLVED** | Frank ruled §4.2 option (c) — permissive allowlist for verbatim, `fidelity: inspired` for everything else, PLUS an `inspired` pattern validated as not an actual copy (a mechanical similarity check in the provenance gate, plus review) | this also closes §13 R8 as a ruled mitigation, not an open risk |
+| **Q2** | Wild-vs-designed ratio | **RESOLVED** | NOT a ratio — REALISM over contrivance: every member, imported or authored, a shape someone would plausibly deploy; provenance recorded where a real source exists; the percentage unimportant (§4.3) | families 7-12's authored members are held to the same rule as 1-6's imports; Davis stays a `@0.2` candidate, unaffected |
+| **Q3** | Hyperscan/Vectorscan's all-ends grain (boolean grain vs. a declared span variant) | **BLOCK, asked at the RESTART** | boolean grain (§5.6 option B) | CS3: this narrows an existing, dated Frank ruling (`requirements.md §4.5` constraint 1) rather than answering an open question — DEFAULT's own definition didn't fit it, so it is marked BLOCK. Costs nothing now: Vectorscan is not in the v1 roster and the build itself is parked well before [B7]'s Vectorscan lane would open |
+| **Q4** | The `cost_class` fifth-token question | DEFAULT, asked at the restart | prose + a reporter footnote (§7.2) | unchanged by R5 |
+| **Q5** | Declare `match` in v1? | DEFAULT, reworded, asked at the restart | No — `search_short` + `throughput` only (§3.5) | CS1: the answer is unchanged, but the note now states the exclusion is deliberately SET-WIDE (not pcrec-specific) and corrects the family list (drops 7/8 absent a `\K`-bearing member) |
+| **Q6** | Peak memory (`ru_maxrss`) scope | DEFAULT, amended, asked at the restart | native-driver testees only, **ranked within that population** (§7.4) | CS4: v0.1 recorded it native-only (the apples-to-apples cut) then declared it never ranked with no argument why native-vs-native comparison remained unreasonable; revised to rank it, mirroring compile time's `cost_class`-scoped ranking |
+| **Q7** | The `regex-set-priority` shape in scope? | DEFAULT, asked at the restart | Out of v1 | unchanged by R5 |
+| **Q8** | Davis et al.'s corpus in v1? | DEFAULT, asked at the restart | Out of v1, first `@0.2` candidate | unchanged by R5; CS2 removes an argument (§2.2 reason 3) that would otherwise apply equally against this same future bump, strengthening rather than weakening "defer" |
+| **Q9** | Subject-data provenance | DEFAULT, asked at the restart | synthetic (§4.4) | unchanged by R5 |
+| **Q10** | Is Option B an acceptable reading of "BUILT ON the .rxt format"? | **SUPERSEDED** | — | Frank's Q3 ruling replaces the whole question: the set is built ON `.rxt` for real, not via Option B's hybrid. §9 is now a pointer to `docs/design/rxt_needs_v1.md` |
+| **Q11** | File the W2/W3 format asks now, or after the panel? | **SUPERSEDED** | — | the format asks are filed NOW, all of them, as the effort's blocking dependency — `rxt_needs_v1.md` §5 and outbox O-26 already did this |
+| **Q12** | Should the set also be buildable by pcrec's own `--source`? | **SUPERSEDED** | — | becomes a question for the format's OWN design at the restart (`rxt_needs_v1.md`'s own P-Q4/P-Q5 territory), not for this note |
+| **Q13** | `pcre2-dfa` as a fourth pcre2 testee in v1? | DEFAULT, asked at the restart | yes (§8) | F5's finding (it's not a "dial") is a wording correction to §8's table, not a reason to change this answer |
+| **Q14** | Python `re` and perl: compile + correctness only in v1? | DEFAULT, amended, asked at the restart | yes (§8.1) | CS7: the "no schema change" framing now carries the permanent-`inconclusive-spread` caveat (a pinned zero-match-row record can never reach `status: measured`) before this is treated as costless |
+| **new** | Is family 11's v1 scope the shared-convention population only, deferring cross-convention scoring machinery? | DEFAULT | yes — already applied in §3.1/§5.6 (CB1) | CB1: answerable by design amendment, not a Frank-level ruling; stated here so Frank sees it was narrowed, not silently assumed |
+| **new** | Promote `patterns[].tags` provenance bucketing to real enumerated schema fields (`provenance_source`, `fidelity`)? | DEFAULT | yes — already applied in §4.1 (CB3) | CB3: an implementation decision, not a ruling; stated here because it reverses v0.1's "no schema change" claim in the note Frank read |
 
-**The three BLOCKING items are Q1, Q2 and Q10.** Everything else has a
-recommendation that can stand until its named trigger.
-
----
+**Net change from v0.1: Q1 and Q2 move to RESOLVED (Frank ruled both live);
+Q10-Q12 move to SUPERSEDED (Frank's Q3 ruling replaces the question they
+were asking); Q3 moves from a silent DEFAULT to BLOCK; Q5, Q6, Q14 keep
+their DEFAULT status but each now carries a stated amendment; two new
+DEFAULT items record design amendments this revision made on its own
+authority. Every unresolved item is asked at the RESTART — none blocks
+`rxt_needs_v1.md`'s delivery or its acceptance checklist.**
 
 ## 13. Risks, and what would refute this design
 
 | # | risk | what would refute / what it costs | mitigation in this design |
 |---|---|---|---|
 | R1 | **The wild patterns turn out to measure nothing new.** If every wild member's cost is explained by its length and its first byte, the set is `bench/loglines` with worse provenance | the first sample shows no family whose members diverge from each other or from the floor by more than the R2 band | the control twins (§3.2) are the instrument: a wild pattern beside its designed twin isolates structure from length. If they agree everywhere, that IS the finding, and it is a cheap one to reach |
-| R2 | **The `unsupported-by-declaration` share swamps the set.** Families 2, 7-10 are unsupported on RE2/Rust/Vectorscan/TRE; if that is most of the set, half the roster produces mostly empty records | count it before building: 20 of 59 members carry a REQUIRES tag those four engines fail | that is ~1/3, which is a census result, not an empty record. §6.3 is explicit that it is the honest outcome. But a panel should check the count against §3.1's targets |
+| R2 | **The `unsupported-by-declaration` share swamps the set.** Families 2, 7-9 (CS6: corrected from "2, 7-10" — family 10 is explicitly the OPPOSITE case, §3.1's own headline finding) are unsupported on RE2/Rust/Vectorscan/TRE; if that is most of the set, half the roster produces mostly empty records | count it before building: 20 of 59 members carry a REQUIRES tag those four engines fail | that is ~1/3, which is a census result, not an empty record. §6.3 is explicit that it is the honest outcome. But a panel should check the count against §3.1's targets |
 | R3 | **The pre-compile capability policy is WRONG somewhere** and silently converts measurable cells into `unsupported` rows | a declared-unsatisfied tag that the engine actually supports | §5.3's witness check: for every (config, tag) declared UNSATISFIED, one witness pattern is compiled and the refusal asserted BY NAME. A check with no failing case proves nothing |
-| R4 | **The `.rxt` format moves under the set mid-build.** W2/W3 landing would change the file shape | N3 §0 measured the format STATIC over the five days past the pin (the only commit touching the `.rxt` parser is a diagnostic-message shortening) | Option B is chosen partly for this: the sidecar survives W2/W3 landing unchanged; only the loader's SOURCE for pattern text would move |
+| R4 | **SUPERSEDED, restated.** v0.1 framed this as "the `.rxt` format moves under the set mid-build" and cited Option B's sidecar as its own mitigation. Under the Q3 ruling (§9) that framing is backwards: the format moving IS the plan, not a risk to it — the effort deliberately parks and restarts once pcrecdev1 delivers. The residual risk is narrower: **the delivered format does not actually satisfy what `rxt_needs_v1.md` asked for** | the restart's acceptance checklist (41 checks, `rxt_needs_v1.md` §3) fails on a delivered production | the checklist's own negative arms, and the manager's lighter panel pass (§9's restart procedure, step 2) before any lane reopens |
 | R5 | **A licence claim is wrong.** Six of N1's LICENSE confirmations came from direct fetches; several sources' terms are still genuinely unknown | any allowlisted licence that turns out not to govern the file we copied | §4.1 records the exact URL and date per pattern, so a wrong claim is traceable to one row and one fetch, not to "the set". §4.2's allowlist is confirmed-by-direct-fetch only |
-| R6 | **Cell time is underestimated.** §3.5's model is `bench/syntax`'s, and a wild pattern's throughput cell may not behave like a census pattern's | any cell exceeding ~45 min in the first sample | ~5× `CELL_CAP` headroom, the largest of any set here, chosen for exactly this. A cell killed by the cap exits 124 and writes NOTHING (`scripts/CLAUDE.md`), which is why the margin is deliberate |
-| R7 | **The reporter cannot render a dozen-plus variant rows in one table.** Never exercised (N2 §7 item 4) | a synthetic many-variant report that renders wrongly | L5 checks it BEFORE the set ships, against a synthetic report, not against the first sample |
-| R8 | **`fidelity: inspired` becomes a laundering mechanism** — "authored from a description" applied to something that is really a copy | a reviewer comparing an `inspired` pattern to its cited source and finding them substantially the same | `provenance.tsv`'s `adaptation`/`source_ref` fields are required and reviewed; the panel should treat this as a named attack surface rather than a formality |
+| R6 | **Cell time is underestimated.** §3.5's model is `bench/syntax`'s, and a wild pattern's throughput cell may not behave like a census pattern's — **family 10's calibration risk is the sharpest named instance (CB8)**: `calibrate()` picks `iters` once from the median subject and a ReDoS witness's own per-iteration cost, far above the median, is what actually dominates the cell's wall time, not the model's flat 50 ms | any cell exceeding ~45 min in the first sample | ~5× `CELL_CAP` headroom, the largest of any set here, chosen for exactly this. A cell killed by the cap exits 124 and writes NOTHING (`scripts/CLAUDE.md`), which is why the margin is deliberate. §3.5's fixed small `--iters` override for family 10's typed subjects is the targeted mitigation |
+| R7 | **The reporter cannot render a dozen-plus variant rows in one table.** Never exercised (N2 §7 item 4), and confirmed UNBUILT rather than merely unexercised (CB2 — §5.7) | a synthetic many-variant report that renders wrongly | L5 designs and builds the rendering BEFORE the set ships, against a synthetic report, not against the first sample |
+| R8 | **RESOLVED, not merely mitigated.** `fidelity: inspired` becoming a laundering mechanism — "authored from a description" applied to something that is really a copy — was an open risk in v0.1. **Frank's Q1 ruling (2026-09-12) closes it**: an `inspired` pattern is validated as not an actual copy, by a mechanical similarity check in the provenance gate PLUS review, folded into §4.1's `gen_provenance.py --check` | a reviewer or the similarity check finding an `inspired` pattern substantially the same as its cited source | `gen_provenance.py --check`'s new similarity-check arm (§4.1), plus the review Frank's ruling also requires |
 | R9 | **The set's objective is too broad to state.** `requirements.md §4.5` constraint 2 requires a declared OBJECTIVE against which every variant is judged; twelve families may not share one | L3 cannot write a single `objective` string a variant declaration can be checked against | the objective is the CAPABILITY CONTRAST itself — "what each roster engine can express, what it refuses, and what the expressible ones cost" — and §6.3's hazard rule is the one place where "objective preserved" needs a per-family reading. If the panel finds a second such place, the objective is too broad and the set should split (§2.1 option C) |
 
 ### What would refute the whole design
 
-Three things, named so a critic can aim at them:
+Two things still stand from v0.1; the third is retired by this revision
+and one new item takes its place:
 
-1. **Requirement (4) is not satisfied by Option B.** If "BUILT ON the
-   .rxt file format" means the set must be compilable by `pcrec
-   --source`, then §9's whole structure is wrong and Q12's answer flips —
-   which re-opens D93 and [B29]'s compile-cost objection together.
-2. **The capability contrast is already answered by documentation.** N2
+1. **The capability contrast is already answered by documentation.** N2
    §3's table IS the capability matrix, fetched from upstream docs. If
    the only thing a measurement adds is confirmation, the set's value is
    the PERFORMANCE half, and its family taxonomy should be rebuilt around
    cost rather than capability.
-3. **Sixty wild patterns cannot be provenance-recorded honestly.** If L1
-   finds that the verbatim-quotable text is much thinner than N1's
-   fetches suggest (rebar's `noseyparker.txt` literal text is still OWED;
-   no Suricata sample was obtainable in three attempts), the wild share
-   collapses and Q2's answer has to change before the set is built.
+2. **RETIRED (superseded by the Q3 ruling).** v0.1's item 1 ("Requirement
+   (4) is not satisfied by Option B... re-opens D93 and [B29]'s
+   compile-cost objection") no longer applies: there is no Option B to
+   fail to satisfy. Requirement (4) is now satisfied by construction — the
+   set is built on `.rxt` directly, and the only open question is whether
+   pcrecdev1's delivery actually carries what `rxt_needs_v1.md` asked
+   for, which is what the restart's acceptance checklist exists to
+   settle (R4, above), not a design-level refutation.
+3. **RETIRED (Q2 resolved).** v0.1's item 3 ("Sixty wild patterns cannot
+   be provenance-recorded honestly... the wild share collapses and Q2's
+   answer has to change") assumed Q2 was a ratio to hit. It is not
+   (§4.3): there is no target percentage to collapse below. The
+   underlying provenance-honesty concern survives in a narrower form —
+   **a family cannot produce enough REALISTIC members, imported or
+   authored, to reach its target count** — but that is a per-family
+   sizing risk L1/L2 report on, not a whole-design refutation.
+4. **The `.rxt` delivery restart never happens, or happens on a
+   timescale that makes this design stale.** If pcrecdev1's delivery
+   diverges materially from `rxt_needs_v1.md`'s twelve proposed
+   productions — a different grammar shape for the same needs, say — the
+   restart's step 2 (a lighter panel pass) may find this note's family
+   taxonomy, provenance model or capability model need a second revision
+   before L1 reopens. That is a normal restart outcome, not evidence the
+   design was wrong; it is named here so a reader of this note alone
+   knows the design's stability is conditioned on the delivery matching
+   its own request.
 
 ---
 
@@ -1344,7 +1578,7 @@ follow-up.
 | 1 | OWASP Validation Regex Repository | CC BY-SA 4.0 | yes (page footer) | **yes** — 3 quoted verbatim |
 | 1, 2 | Elastic `logstash-patterns-core` grok | Apache-2.0 | **yes** (direct fetch) | **yes** — 4 quoted verbatim |
 | 3 | OWASP CRS `REQUEST-942-*` | Apache-2.0 | **yes** (direct fetch) | **yes** — 5 rules quoted, one truncated by the fetcher (942360 — **re-fetch before use**) |
-| 4 | rebar `regexes/wild/noseyparker.txt` | Unlicense | yes | **NO** — categorical description only. **OWED** |
+| 4 | rebar `regexes/wild/noseyparker.txt` | Unlicense | yes | **yes (CB4/F1) — RE-FETCHED and CONFIRMED**: 30+ verbatim patterns for AWS/GitHub/GCP/Azure/Dynatrace/Figma tokens and `username=...password=...` pairs, quoted directly from the raw file on the first attempt. v0.1's "categorical description only, OWED" claim was stale |
 | 5 | rebar `regexes/wild/date.txt` | Unlicense | yes | **yes** — fragment quoted, full file located |
 | 6 | VS Code `JSON.tmLanguage.json` | MIT | not re-fetched (well-known) | **yes** — 5 quoted verbatim |
 | 7, 8 | Oniguruma `test/test_syntax.c` | BSD-2-Clause | **yes** (`COPYING` fetched) | **yes** — 5 `x2()` cases quoted |
@@ -1355,6 +1589,7 @@ follow-up.
 | 12 | Suricata/ET `pcre:` rules | mixed by sid range | no | **NO** — three attempts failed. Family 12 is authored |
 | — | GNU grep `tests/` (`Turkish-I`, `backref*`, `bre`/`ere`) | **GPLv3** | **yes** (`COPYING`) | tree located, contents characterized — **import blocked by Q1** |
 
-**Three OWED fetches gate L1**, none of them blocking this design:
-`noseyparker.txt`'s literal patterns, CRS 942360's full text, and the
-CVE index for family 10's inspirations.
+**Two OWED fetches gate L1** (corrected from three, CB4 —
+`noseyparker.txt`'s literal text is confirmed above, not owed), neither
+blocking this design: CRS 942360's full text, and the CVE index for
+family 10's inspirations.

@@ -559,6 +559,28 @@ direction is lossless where the export direction is not. Worth
 confirming before any import work. *Needs: no ruling; a check at the
 time.*
 
+**CORRECTION (2026-09-12, [B42], `docs/design/rxt_needs_v1.md` §1.9
+M11).** The claim above — that the import direction is lossless because
+"`foo_bar` is a legal slug" — is **WRONG**, MEASURED against this
+project's own slug rule. `schema/`'s pattern-id grammar is
+`^[a-z0-9]([a-z0-9-]*[a-z0-9])?$`, which has no `_` in its alphabet at
+all: `foo_bar` is not a legal bench `pattern_id`, and neither is a real
+pcrec block name like `iso_ts` (nor `crs.942` nor `Upper`, on the same
+grammar). Every pcrec block name that is a C identifier containing an
+underscore is therefore an ILLEGAL bench `pattern_id` today, and the
+import direction is lossy exactly where this Q4 claimed it was not. The
+correction is this project's own to make (`rxt_needs_v1.md` R-BENCH-8:
+"CORRECTED... this project's problem to solve, not pcrec's"), not a
+finding about the format. A related count above, §3.2's "63 of 77
+pattern names cannot be written as a `.rxt` block name," is separately
+SUPERSEDED: re-measured against the format's now-widened block-name
+grammar, 0 of 185 corpus pattern names are illegal
+(`docs/dev/research/2026-09-12-b42-rxt-as-source.md` §1.2, cited in
+turn by `docs/design/rxt_needs_v1.md` §1.9's own re-derivation) — the
+EXPORT direction this note worried about is resolved; the IMPORT
+direction Q4 asked about is the one that turned out to have the real
+gap.
+
 **Q5 — Which re-pin lane absorbs abi 14 AND 15?** The next pcrec re-pin
 crosses two bumps: [CC-CLANG] (14), which turns this bench's clang
 `did-not-compile` rows into numbers exactly as

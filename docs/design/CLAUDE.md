@@ -103,6 +103,15 @@ docs/dev/'s append-only records.
   an optional exporter only if pcrec wants the artifact, `--source` in
   the adapter not before W3 — with six open questions and who rules
   each. Partially covers the `set_format.md` slot below; see its Q1.
+  **CORRECTED 2026-09-12 ([B42], `rxt_needs_v1.md` §1.9 M11):** Q4's
+  claim that the pcrec→bench import direction is lossless because
+  "`foo_bar` is a legal slug" is WRONG — this project's own slug rule
+  (`^[a-z0-9]([a-z0-9-]*[a-z0-9])?$`) has no `_`, so a pcrec block name
+  like `iso_ts` is not a legal bench `pattern_id`, MEASURED. §3.2's
+  "63 of 77 illegal" count is separately SUPERSEDED: 0/185 at the
+  format's now-widened block-name grammar (research note
+  `2026-09-12-b42-rxt-as-source.md` §1.2). Neither correction rewrites
+  the note otherwise.
 
 - `interpreter_v1.md` — **[B13] the interpreter design note, at **v1.3**
   (2026-09-11, [B41] (c), a HYGIENE revision folding lane `b13impl`'s 17
@@ -229,58 +238,51 @@ docs/dev/'s append-only records.
   so load1 is the WEAKER instrument and occupancy is the detector.
 
 - `capability_set_v1.md` — **[B42] phase (b), the CAPABILITY SURVEY SET's
-  design, at v0.1 "draft for panel" (2026-09-12, lane `b42design`).
-  DESIGN ONLY: nothing built, no file under `bench/`, `schema/`,
-  `pcrecbench/` or `testees/` touched.** Written from the three
-  `../dev/research/2026-09-12-b42-*` notes and cited to them by section
-  throughout; written to be REFUTED (every decision states its
-  alternatives, every open choice a recommendation AND the consequence of
-  each answer). Thirteen sections against Frank's eight charter
-  requirements, with a traceability table (§1.1). What it DECIDES: a NEW
-  sub-bench `bench/capability@0.1` rather than an extension of
-  `bench/syntax` (§2 — the census is registry-ENUMERATED and its coverage
-  gate would go meaningless, the bodies are incompatible by construction,
-  a version bump strands the measured first sample and its scored
-  prediction set, and the two blinding disciplines cannot both hold in
-  one directory); TWELVE families / 60 patterns / 36 short subjects + a
-  three-rung size sweep, with four of N1's taxonomy rows dropped as depth-
-  set duplicates and every mechanism a depth set owns CITED not
-  re-measured (§3, incl. the cell-time arithmetic — ~15-18 min/cell
-  against `CELL_CAP`'s 5,400 s, calibrated on `loglines`' measured 9.1
-  and `bounded`'s 42-49); `search_short` + `throughput` ONLY in v1, NOT
-  `match`, because the `(?:…)\z` whole-subject wrapper is the syntax
-  ledger's own Tier A instrument defect and four of the twelve families
-  would inherit it (§3.5); a CLOSED per-pattern provenance record with a
-  permissive-allowlist licensing floor and `fidelity:
-  verbatim/adapted/inspired` — the `inspired` value is what lets a GPLv3
-  or unobtainable source contribute EVIDENCE without contributing TEXT
-  (§4); a CLOSED REQUIRES tag vocabulary, capability declared PER CONFIG
-  (not per engine — `pcre2-dfa` and `pcre2-interp` are one library at one
-  version with different tag sets), a fail-closed pre-compile
-  `unsupported-by-declaration` policy with a witness-refusal check arm,
-  and N2's finding ADOPTED that the outcome enums need NO new value (§5);
-  the adopted rewrite table plus the rule that a possessive/atomic
-  rewrite on a hazard-class pattern is NOT a variant but an
-  `unsupported-by-declaration` (§6); one table of what is RECORDED /
-  SCORED / CAVEATED per metric, with `ru_maxrss` native-drivers-only and
-  never ranked (§7); the per-engine config roster incl. `pcre2-dfa` as a
-  FOURTH pcre2 testee that costs nothing (§8); N3's **Option B** for
-  `.rxt` — the block `name` IS the `pattern_id` (pcrec widened that
-  grammar for this project's own ids; 185/185 legal, re-measured), no
-  `target`/`config` line ever (D93), four `make check` gates incl. the
-  `--list-source` head-parser SEAM turned around against an AUTHORED
-  file, and `export_rxt.py` skipping such a set (§9); what a later public
-  UI would consume and the four things missing (§10); the lane plan,
-  Frank's install line quoted, and the first sample's shape (§11).
-  **§12 is the consolidated question list — fourteen, deduplicated across
-  all three research notes, each with a recommendation, the consequence
-  of each answer, and a BLOCK/DEFAULT mark; three BLOCK (Q1 the licensing
-  floor, Q2 the wild-vs-designed ratio, Q10 whether Option B satisfies
-  "BUILT ON the .rxt format").** §13 is the risk table plus the three
-  things that would refute the whole design. Appendix A carries every
-  wild source's fetch status forward from N1, naming the three OWED
-  fetches that gate the import lane. Next: the D6 panel (phase (c)), then
-  Frank (phase (d)).
+  design, REVISED to v0.2 (2026-09-12, lane `b42rev`): "revised under R5;
+  BUILD PARKED on pcrec's `.rxt` delivery (O-26)". DESIGN ONLY: nothing
+  built, no file under `bench/`, `schema/`, `pcrecbench/` or `testees/`
+  touched.** v0.2 applies every disposition of the R5 D6 critic panel
+  (`../dev/reviews/2026-09-12-r5-capability-set-v1.md`: 8 BLOCKING + 8
+  SHOULD-FIX + 8 WORTH-NOTING, all ratified) plus three amendments from
+  Frank's same-day live rulings: family 11's v1 scope narrowed to the
+  shared-convention population pending a harness expectation-override
+  that doesn't exist yet (CB1); `variant.kind` rendering corrected from
+  "Already built" to UNBUILT, resized as an L5 build task (CB2);
+  wild/designed provenance bucketing promoted from a dead `patterns[].tags`
+  convention to real enumerated schema fields, `provenance_source` +
+  `fidelity` (CB3); `hazard_class` assigned per family, at minimum 2, 5
+  and 10 (CB7); family 10's ReDoS calibration risk stated with a fixed
+  `--iters` mitigation (CB8); the `match`-regime exclusion's family list
+  corrected and its set-wide scope stated explicitly (CS1); `ru_maxrss`
+  now RANKED within the native-driver population (CS4); §4.3's ratio
+  argument REPLACED wholesale by Frank's ruling that "from the wild" is a
+  REALISM framing, not a percentage to hit — every member, imported or
+  authored, must be a shape someone would plausibly deploy, families 7-12
+  included; and **§9 REPLACED WHOLESALE**: Frank's Q3 ruling
+  ("This is as much a driver of the rxt format as anything") withdraws
+  N3's Option B entirely — the set is built ON `.rxt` for real, not a
+  sidecar hybrid — so §9 is now a POINTER to `rxt_needs_v1.md` (the
+  detailed capability feedback already sent to pcrecdev1, outbox O-26)
+  and its 41-check restart acceptance checklist, with the six roadblocks
+  and the restart procedure stated inline. §12's question list is
+  REWRITTEN for the parked state: Q1/Q2 RESOLVED (Frank ruled both live),
+  Q10-Q12 SUPERSEDED (moot under Q3), Q3 moved from a silent DEFAULT to
+  BLOCK-at-the-restart, Q5/Q6/Q14 keep DEFAULT with stated amendments, two
+  new DEFAULT items record design amendments (CB1, CB3) made on this
+  revision's own authority rather than Frank's. A full disposition-by-id
+  table (24 ids) is in `../dev/lanes/b42rev_report.md`. **v0.1** (2026-09-12,
+  lane `b42design`) was the pre-panel draft: thirteen sections against
+  Frank's eight charter requirements with a traceability table (§1.1); a
+  NEW sub-bench `bench/capability@0.1` rather than an extension of
+  `bench/syntax` (§2); twelve families / 60 patterns / 36 short subjects +
+  a three-rung size sweep (§3); the provenance/licensing/capability model
+  (§4-§5); the rewrite table and hazard rule (§6); the metrics table
+  (§7); the config roster incl. `pcre2-dfa` (§8); N3's Option B for
+  `.rxt`, since withdrawn (§9, v0.1); what a later public UI would
+  consume (§10); the lane plan (§11); fourteen questions for Frank (§12,
+  since rewritten); the risk table (§13, since revised). Both documents
+  are cited from `../dev/plan.md`'s `[B42]` row. Next: the restart, on
+  pcrecdev1's `.rxt` delivery.
 
 - `rxt_needs_v1.md` — **[B42], the `.rxt` CAPABILITY FEEDBACK to pcrec
   (`pcrecdev1`), 2026-09-12, lane `b42rxtneeds`. FEEDBACK, not a design
