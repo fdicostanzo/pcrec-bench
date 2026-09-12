@@ -128,7 +128,7 @@ set's full claims.
 
 | # | need | today | production | fits? | wave / status | pri |
 |---|---|---|---|---|---|---|
-| **N-1** | one-line pattern text, raw bytes, no escaping | `patterns/<id>.rx`, read raw (`pcrecbench/subbench.py:242-246`) | `pattern` , ws , rest-of-line (`format_design.md:397`; `rxt_format.md:210-212`) | **yes** — MEASURED byte-exact for ASCII, tab, backslash, mid-line CR (§1.9 M4) | W1, **BUILT** | MUST |
+| **N-1** | one-line pattern text, raw bytes, no escaping | `patterns/<id>.rx`, read raw (`pcrecbench/subbench.py:242-246`) | `pattern` , ws , rest-of-line (`format_design.md:396`; `rxt_format.md:192-195`, `:210-212`) | **yes** — MEASURED byte-exact for ASCII, tab, backslash, mid-line CR (§1.9 M4) | W1, **BUILT** | MUST |
 | **N-2** | a pattern with a LITERAL NEWLINE — a `(?x)` free-spacing body authored across lines, which family 6's VS Code `number` rule is in its source (`capability_set_v1.md:183`, N1 §18) | not exercised: no `.rx` file contains a newline (`subbench_directory_model.md:69-70`) | **NEW** — `pattern` is one line with no continuation and no escaping, so a newline has NO representation at all | **no** | **ABSENT** | **MUST** |
 | **N-3** | raw high bytes (non-UTF-8) in pattern text — family 12 (`capability_set_v1.md:189`) | `.rx` files are raw bytes, never decoded (`subbench.py:242-246`) | `pattern` rest-of-line | **yes** — MEASURED byte-exact through `--list-source` (§1.9 M3) | W1, **BUILT** | MUST |
 | **N-4** | a literal NUL byte in pattern text | not exercised | `pattern` rest-of-line | **no — SILENTLY TRUNCATED.** MEASURED: `pattern ab<NUL>cd` dumps as `ab`, exit 0, no diagnostic (§1.9 M1). The parser slurps the file and splits it into NUL-TERMINATED C strings (`~/pcrec/src/parse/rxt_source.c:437-456`), so every rest-of-line value ends at the first NUL | W1, **BUILT AND LOSSY** | SHOULD |
@@ -153,8 +153,8 @@ indented", §1.9 M8), not silently swallowed.
 |---|---|---|---|---|---|---|
 | **N-7** | a pattern id that is the RECORD's `pattern_id` with no second naming | `[[patterns]].name`, checked against the record schema's slug rule at load (`subbench.py:80-90, 161-162`) | `name` , ws , ident, widened to "a first byte that is a letter or `_`, then letters, digits, `_`, `-` or `.`" (`rxt_format.md:278-282`), unique in the file namespace | **yes.** The grammar was widened FOR this project (`rxt_format.md:290-296`). MEASURED: `crs-942.160` and `Upper.Name-1` both accepted; a duplicate name is refused by name (§1.9 M6, M7). The bench's slug rule is STRICTER (no `_`, no `.`, no uppercase) so every legal bench id is a legal `.rxt` name — the containment runs one way only, which matters for import (§1.9 M11) | W1, **BUILT** | MUST |
 | **N-8** | a one-line human description per pattern | `[[patterns]]`'s TOML comment, not a field (`bench/syntax/subbench.toml:70`) | `description` , ws , rest-of-line, block-scoped, ONE-LINE ONLY (`rxt_format.md:297-298`; the W1.1 correction, `format_design.md:434-448`) | **partial.** One line is enough for a description. Two hazards: a SECOND `description` in one block SILENTLY OVERWRITES the first, last wins, no diagnostic (MEASURED, §1.9 M5); and the one-line rule means a provenance/adaptation sentence cannot live here (which is why §1.3 asks for fields, not prose) | W1, **BUILT** | MUST |
-| **N-9** | per-pattern classification: `family`, `role` (`member`/`floor`), `hazard_class`, `size_class`, `feature_tier` | `[[patterns]]` five fields (`bench/syntax/subbench.toml:72-79`); `role` is `record_schema.md` §5 v1.3 | `tag` , ws , tag-item , { ws , tag-item } — repeatable, accumulating, bare labels and `k=v` pairs on one line (`format_design.md:420`, the U1 ruling at `:1843`) | **yes.** `format_design.md:1825-1908` §4.5 already maps all five. The bench's own vocabularies stay the bench's (AR-6) | W2, **REFUSED BY NAME** (MEASURED, §1.9 M10) | **MUST** |
-| **N-10** | `hazard_class` is the field §6.3's whole rewrite rule keys on, and it must be a CLOSED set the format can refuse a typo in | closed enum in the record schema (`schema/record.schema.json:298`; `record_schema.md:381`) | `tag hazard=<label>` | **partial — no vocabulary declaration.** `tag-value` is free vocabulary by design (`format_design.md:341-343`; the AR-6 argument at `:1229`). A typo (`hazard=exponential-backtraking`) is a legal tag. R5 finding B3 makes the identical point about `patterns[].tags` on this side | W2, **REFUSED BY NAME** | **MUST** |
+| **N-9** | per-pattern classification: `family`, `role` (`member`/`floor`), `hazard_class`, `size_class`, `feature_tier` | `[[patterns]]` five fields (`bench/syntax/subbench.toml:72-79`); `role` is `record_schema.md` §5 v1.3 | `tag` , ws , tag-item , { ws , tag-item } — repeatable, accumulating, bare labels and `k=v` pairs on one line (`format_design.md:416`, the U1 ruling at `:1846`) | **yes.** `format_design.md:1825-1908` §4.5 already maps all five. The bench's own vocabularies stay the bench's (AR-6) | W2, **REFUSED BY NAME** (MEASURED, §1.9 M10) | **MUST** |
+| **N-10** | `hazard_class` is the field §6.3's whole rewrite rule keys on, and it must be a CLOSED set the format can refuse a typo in | closed enum in the record schema (`schema/record.schema.json:298`; `record_schema.md:381`) | `tag hazard=<label>` | **partial — no vocabulary declaration.** `tag-value` is free vocabulary by design (`format_design.md:337-339`; the AR-6 argument at `:1229`). A typo (`hazard=exponential-backtraking`) is a legal tag. R5 finding B3 makes the identical point about `patterns[].tags` on this side | W2, **REFUSED BY NAME** | **MUST** |
 
 **Roadblock #2 is N-9 plus N-10 together.** `tag` is the production that
 carries essentially every descriptive field the set has, and it is
@@ -170,7 +170,7 @@ Frank's Q1 ruling adds a tenth obligation (an `inspired` pattern is
 validated as not an actual copy of its source). N3 §1.3 establishes that
 **no pattern-level provenance production exists in any wave** — the
 `freq` data block has required provenance fields (`exemplar`, `bytes`,
-`sha256`, `analyzer`, `date`; `format_design.md:1276-1288`) but that
+`sha256`, `analyzer`, `date`; `format_design.md:1272-1278`) but that
 family exists for exemplar-analysis findings, not for a pattern's origin.
 
 | # | need | today | production | fits? | wave / status | pri |
@@ -196,7 +196,7 @@ fit in one line; a second `description` silently overwrites the first
 conditional REQUIREDNESS (`adaptation` iff `fidelity ≠ verbatim`) is the
 kind of rule the format already knows how to enforce structurally — the
 `freq` block's `question`/`reader` lines are required and a block without
-them is refused (`format_design.md:1251-1258`), which is the precedent
+them is refused (`format_design.md:1250-1258`), which is the precedent
 §2.1 builds on.
 
 **Roadblock #3.** Nine fields, no production, and requirement (1) is the
@@ -234,10 +234,10 @@ removed.
 | # | need | today | production | fits? | wave / status | pri |
 |---|---|---|---|---|---|---|
 | **N-24** | small typed subjects inline | generated `subjects/<id>.bin` + `manifest.tsv` (`subbench.py:184-213`) | `quoted-subject` with the seven-escape vocabulary (`rxt_format.md:374-385`) | **yes** for short ASCII-ish subjects | W1, **BUILT** | MUST |
-| **N-25** | LARGE subjects by reference — 64 KB to 1 MB throughput runs (`capability_set_v1.md:216-244`) | `throughput/` tree + `manifest_throughput.tsv` | `@file:"path"` (`format_design.md:325`, semantics at `:1183-1208`) | **yes** — local spelling only, relative to the naming file, the file's bytes ARE the subject, NUL-safe, no size limit | W2, **REFUSED BY NAME** | **MUST** |
-| **N-26** | an INTEGRITY HASH on a subject reference — every subject this project measures carries a committed sha256 and `make check` re-derives it byte for byte (`subbench.py:184-213`; the generic manifest gate, `tools/CLAUDE.md`) | `manifest.tsv` columns `id len sha256 description [periodic]` | `@file:` | **no — DECLINED BY DESIGN.** `format_design.md:1205-1208`: "No content hash on a subject reference. ARGUED... provenance is required exactly where the source is not committed." The reasoning is sound for pcrec's corpus and does not transfer: our subject trees are GITIGNORED and regenerated (`subbench.py:37-40`), so a `.rxt` reference points at a file that is NOT committed and NOT reviewed. §2.5 asks for an optional hash, not a mandatory one | W2, **REFUSED BY NAME**, and the extension is **ABSENT** | **MUST** |
+| **N-25** | LARGE subjects by reference — 64 KB to 1 MB throughput runs (`capability_set_v1.md:216-244`) | `throughput/` tree + `manifest_throughput.tsv` | `@file:"path"` (`format_design.md:333`, semantics at `:1183-1208`) | **yes** — local spelling only, relative to the naming file, the file's bytes ARE the subject, NUL-safe, no size limit | W2, **REFUSED BY NAME** | **MUST** |
+| **N-26** | an INTEGRITY HASH on a subject reference — every subject this project measures carries a committed sha256 and `make check` re-derives it byte for byte (`subbench.py:184-213`; the generic manifest gate, `tools/CLAUDE.md`) | `manifest.tsv` columns `id len sha256 description [periodic]` | `@file:` | **no — DECLINED BY DESIGN.** `format_design.md:1203-1208`: "No content hash on a subject reference. ARGUED... provenance is required exactly where the source is not committed." The reasoning is sound for pcrec's corpus and does not transfer: our subject trees are GITIGNORED and regenerated (`subbench.py:37-40`), so a `.rxt` reference points at a file that is NOT committed and NOT reviewed. §2.5 asks for an optional hash, not a mandatory one | W2, **REFUSED BY NAME**, and the extension is **ABSENT** | **MUST** |
 | **N-27** | subject METADATA — a stable subject id, byte length, a description, the `periodic` column ([B17]) | `manifest.tsv` | **NEW** — `@file:` carries a path and nothing else; there is no subject id at all, and a case's identity is `file:line` (`format_design.md:2279-2284`) | **no.** Every expectation key in this project is `(pattern, subject_id, regime)` (`subbench.py:268-271`); every report row and every interpreter fact names a subject by id. `file:line` is not a substitute — it moves when a line is inserted | **ABSENT** | **MUST** |
-| **N-28** | subjects that are not valid UTF-8, and subjects containing NUL — family 12 (`capability_set_v1.md:189`) | raw bytes throughout | `@file:` | **yes, as designed** — `format_design.md:1195-1199` states file-subject bytes are taken raw, NUL-safe, no decoding. **UNVERIFIED at the pin** (the production is refused, so nothing could be measured). An INLINE quoted subject carries `\xHH` and so can express a high byte but the driver protocol passes subjects as `argv` strings, which "can carry neither a NUL nor a megabyte" (`:1200-1204`) | W2, **REFUSED BY NAME** | MUST |
+| **N-28** | subjects that are not valid UTF-8, and subjects containing NUL — family 12 (`capability_set_v1.md:189`) | raw bytes throughout | `@file:` | **yes, as designed** — `format_design.md:1193-1199` states file-subject bytes are taken raw, NUL-safe, no decoding. **UNVERIFIED at the pin** (the production is refused, so nothing could be measured). An INLINE quoted subject carries `\xHH` and so can express a high byte but the driver protocol passes subjects as `argv` strings, which "can carry neither a NUL nor a megabyte" (`:1200-1202`) | W2, **REFUSED BY NAME** | MUST |
 | **N-29** | a SET-LOCAL generator beside its output, with the manifest re-derivable | `gen_subjects.py` + `gen_throughput_subjects.py` per set, gated by `make check-harness` | "the directory convention" (`format_design.md:1846`) — an explicit non-production | **yes, as a convention.** Nothing is asked of the format here; recorded so the list is complete | n/a | n/a |
 
 ### 1.6 Block F — expectations, conventions, and the oracle
@@ -250,13 +250,13 @@ on the harness side.
 |---|---|---|---|---|---|---|
 | **N-30** | match / no-match with a byte span, per (pattern, subject, regime) | `expectations.tsv`, 9 columns (`subbench.py:124-138`) | `m` , ws , subject , ws , int , ws , int / `n` , ws , subject (`rxt_format.md:230-233`) | **yes** | W1, **BUILT** | MUST |
 | **N-31** | a match from an explicit start position | not used by this project today | `ms` / `ns` (`rxt_format.md:234-237`) | yes | W1, **BUILT** | COULD |
-| **N-32** | a FIND-ALL count over a subject (the throughput regime's `nmatches`) | `expectations.tsv`'s `nmatches` column | `mc` , ws , subject , ws , int (`format_design.md:419`) | **partial — the non-overlap rule is unstated.** This project's driver protocol fixes `pos = max(end, pos+1)` (`pcrecbench/adapters.py:20-22`). `mc`'s designed semantics are one integer beside a subject; whether it counts non-overlapping matches under the same rule is not stated anywhere I could find. Two engines counting differently would both "pass" | W2, **REFUSED BY NAME** | **MUST** |
+| **N-32** | a FIND-ALL count over a subject (the throughput regime's `nmatches`) | `expectations.tsv`'s `nmatches` column | `mc` , ws , subject , ws , int (`format_design.md:417`) | **partial — the non-overlap rule is unstated.** This project's driver protocol fixes `pos = max(end, pos+1)` (`pcrecbench/adapters.py:19-23`). `mc`'s designed semantics are one integer beside a subject; whether it counts non-overlapping matches under the same rule is not stated anywhere I could find. Two engines counting differently would both "pass" | W2, **REFUSED BY NAME** | **MUST** |
 | **N-33** | CAPTURE spans per case | not carried — `expectations.tsv` has no capture columns at all (MEASURED by pcrec, `format_design.md:1979`, and still true) | `g` / `gp` , ws , slot , ws , span (`rxt_format.md:239-267`) | **partial and pcrec-shaped.** `g` is scored against the artifact's own `RX_NCAPS` and `gp` has a pcrec-specific `pending-vm` bucket. T-3 flags exactly this (`format_design.md:2033`); the engine-neutral resolution is `variant … groups <name>=<n>` (W3). Not needed for v1 (this project's OD-B9 is unopened) but it is where capture checking would land | W1 (`g`/`gp`), **BUILT**; the neutral half W3, **REFUSED** | COULD |
 | **N-34** | the MATCHING CONVENTION an expectation follows, per case — `perl-leftmost-first` / `posix-leftmost-longest` / `all-ends` | `[[patterns]].convention` (`bench/syntax/subbench.toml:76`), carried into the record's `testee.conventions` and never read by anything (R5 B1, B7) | `tag convention=<label>` (W2), as `format_design.md:1845` maps it | **yes as a TAG** | W2, **REFUSED BY NAME** | MUST |
 | **N-35** | an expectation under a NON-canonical convention — the SECOND correct answer a `posix-leftmost-longest` engine gives to `a\|ab` on `"ab"` | **nothing.** `Subbench.expectation()` is keyed `(pattern, subject_id, regime)` with no testee axis (`subbench.py:268-271`); `harness.outcome_for()` has no convention parameter (R5 B1) | **NEW.** `m`/`n` carry no qualifier; `variant` supplies different pattern TEXT for a testee, never a different expected ANSWER for the same text | **no** | **ABSENT** | **MUST** |
 | **N-36** | which ENGINE checked an expectation | `[expectations].default_method` conflates it with the method | `oracle` , ws , ( `python` \| `pcre2` \| `none` <reason> ), file-level or block-scoped, block wins (`format_design.md:1209-1241`) | **partial — a closed engine enum of two.** The set's roster is pcre2, RE2, Rust `regex`, Oniguruma, TRE, Vectorscan, python, perl (`capability_set_v1.md` §8). `oracle` admits `python` and `pcre2` and nothing else. A set whose family 11 needs a POSIX engine as ITS oracle cannot name one | W3, **REFUSED BY NAME** | **MUST** |
 | **N-37** | the verification METHOD, per case — R-BENCH-1's own ask, including non-oracle methods | `[expectations].default_method = "libpcre2-differential"` | `tag method=<name>` — pcrec's own ruling that method and engine are TWO fields (`format_design.md:1850`, r44-consumers U3) | **yes** | W2, **REFUSED BY NAME** | MUST |
-| **N-38** | the oracle's VERSION — "checked against libpcre2 **10.46**" | implicit: `pcrecbench/oracle_pcre2.py` binds whatever the box has; the record carries the engine version of the TESTEE, not of the oracle | **NEW.** `oracle pcre2` names an engine with no version slot; `engine-ref = ident , [ "/" , version-chars ]` exists but only for `testee` (`format_design.md:381`) | **no** | **ABSENT** | SHOULD |
+| **N-38** | the oracle's VERSION — "checked against libpcre2 **10.46**" | implicit: `pcrecbench/oracle_pcre2.py` binds whatever the box has; the record carries the engine version of the TESTEE, not of the oracle | **NEW.** `oracle pcre2` names an engine with no version slot; `engine-ref = ident , [ "/" , version-chars ]` exists but only for `testee` (`format_design.md:379`) | **no** | **ABSENT** | SHOULD |
 
 **Roadblock #4, and it is the deepest one: N-35.** The set's family 11
 (`semantics-divergence`, six members, v1) exists to measure engines that
@@ -273,10 +273,10 @@ to say "under `posix-leftmost-longest` the answer to this case is
 
 | # | need | today | production | fits? | wave / status | pri |
 |---|---|---|---|---|---|---|
-| **N-39** | a per-engine SPELLING variant of a pattern, declared beside it and impossible to miss | `[testees.<id>].variant` (`harness_contract.md:41-55`, quoted at `subbench_directory_model.md:85-86`) | `variant` , ws , ident , ws , rest-of-line (`format_design.md:422-424`) | **yes** for the text | W3, **REFUSED BY NAME** (MEASURED, §1.9 M10) | MUST |
-| **N-40** | a per-engine DECLARED REFUSAL with a reason | `[testees.<id>].unsupported` | `variant <testee> unsupported <reason>` (`format_design.md:423`) | **yes** — one line kind for both halves of the axis, which `format_design.md:1875-1878` explicitly designed | W3, **REFUSED BY NAME** | MUST |
-| **N-41** | `variant_kind` (`syntax-only` / `restructured`), `objective_preserved` (a reviewed statement), `capture_map` | three separate sidecar fields (`record_schema.md:1026-1038`) | `variant`'s body carries text and an optional `groups <name>=<n>` map (`format_design.md:423-424`); `objective_preserved` is `tag variant-note=…` (`format_design.md:1879-1883`) | **partial.** `capture_map` ↔ `groups` fits. `variant_kind` has NO carrier — it is a closed two-value enum this project's reporter is meant to show beside a number (`requirements.md §4.5`, and R5 B2 finds the reporter never implemented it). `tag variant-note=` carries prose but a `tag-value` may contain **no whitespace** (`format_design.md:342`), so a reviewer's sentence does not fit in one | W3 + W2, **REFUSED BY NAME**; `variant_kind` **ABSENT** | SHOULD |
-| **N-42** | a testee ROSTER for NON-pcrec engines, with per-engine options | `[testees.<id>].options` (empty on every set today) | `config <name>` with `testee engine-ref` + `option tag-pair` lines, enumerated by a head `use config-list` (`format_design.md:376-377`, `:359`) | **yes in shape**, with the D93 hazard below | W3, **REFUSED BY NAME** | SHOULD |
+| **N-39** | a per-engine SPELLING variant of a pattern, declared beside it and impossible to miss | `[testees.<id>].variant` (`harness_contract.md:41-55`, quoted at `subbench_directory_model.md:85-86`) | `variant` , ws , ident , ws , rest-of-line (`format_design.md:419`, `:421-423`) | **yes** for the text | W3, **REFUSED BY NAME** (MEASURED, §1.9 M10) | MUST |
+| **N-40** | a per-engine DECLARED REFUSAL with a reason | `[testees.<id>].unsupported` | `variant <testee> unsupported <reason>` (`format_design.md:421`) | **yes** — one line kind for both halves of the axis, which `format_design.md:1873-1874` explicitly designed | W3, **REFUSED BY NAME** | MUST |
+| **N-41** | `variant_kind` (`syntax-only` / `restructured`), `objective_preserved` (a reviewed statement), `capture_map` | three separate sidecar fields (`record_schema.md:1026-1038`) | `variant`'s body carries text and an optional `groups <name>=<n>` map (`format_design.md:423-424`); `objective_preserved` is `tag variant-note=…` (`format_design.md:1887`) | **partial.** `capture_map` ↔ `groups` fits. `variant_kind` has NO carrier — it is a closed two-value enum this project's reporter is meant to show beside a number (`requirements.md §4.5`, and R5 B2 finds the reporter never implemented it). `tag variant-note=` carries prose but a `tag-value` may contain **no whitespace** (`format_design.md:339`), so a reviewer's sentence does not fit in one | W3 + W2, **REFUSED BY NAME**; `variant_kind` **ABSENT** | SHOULD |
+| **N-42** | a testee ROSTER for NON-pcrec engines, with per-engine options | `[testees.<id>].options` (empty on every set today) | `config <name>` with `testee engine-ref` + `option tag-pair` lines, enumerated by a head `use config-list` (`format_design.md:376-377`, `:355`) | **yes in shape**, with the D93 hazard below | W3, **REFUSED BY NAME** | SHOULD |
 | **N-43** | **a set file that declares NO pcrec `target` and NO pcrec `config`, legally and PERMANENTLY** | n/a — the exporter already writes such files (`tools/export_rxt.py:34-37` rule 5) | the absence of `target`/`config`; "No `target` and anything else builds NOTHING… It is not an error" (`rxt_format.md:126-127`) | **yes today** — MEASURED: an authored head-plus-blocks file with no `target` and no `config` parses and dumps cleanly (§1.9 M12). What is missing is a CONTRACT that this stays true | W1, **BUILT**; the guarantee **ABSENT** | **MUST** |
 | **N-44** | a scoping rule so a set's own config can never pin this project's testee matrix | the exporter's rule 5 — never write `config`/`flags`/`engine`/`budget`/`encoding` (`tools/export_rxt.py:34-37`) | **NEW.** D93: "a `.rxt` source's composed config wins over a command-line flag on the same axis" (`subbench_directory_model.md:441-448`), and `engine` composes more-specific-wins (`rxt_format.md:133-136`) | **no.** The moment a set carries a `config … testee re2/2024-07-02` block (N-42) the file has configs, and a reader has no way to know that the `pcrec` half of those configs must never reach a build. §2.6 asks for the separation | **ABSENT** | **MUST if N-42 lands** |
 
@@ -293,12 +293,12 @@ file is a bench set. This is a DESIGN question for pcrecdev1, not a bug.
 
 | # | need | today | production | fits? | wave / status | pri |
 |---|---|---|---|---|---|---|
-| **N-45** | set `id` and `version` — the frozen snapshot records compare within (`docs/design/requirements.md §5`) | `subbench.toml`'s `id`/`version` (`bench/syntax/subbench.toml:5-6`) | `tag id=capability version=0.1` file-level (`format_design.md:1837`) | **yes**, with N-10's caveat (free vocabulary; a typo in `version` is a legal tag) | W2, **REFUSED BY NAME** | MUST |
+| **N-45** | set `id` and `version` — the frozen snapshot records compare within (`docs/design/requirements.md §5`) | `subbench.toml`'s `id`/`version` (`bench/syntax/subbench.toml:5-6`) | `tag id=capability version=0.1` file-level (`format_design.md:1838`) | **yes**, with N-10's caveat (free vocabulary; a typo in `version` is a legal tag) | W2, **REFUSED BY NAME** | MUST |
 | **N-46** | set `objective` + `objective_kind` + `description` — multi-paragraph prose | `subbench.toml` (`bench/syntax/subbench.toml:7-49`) | head `description` with the `|` BLOCK SCALAR (`rxt_format.md:196-203`), plus `tag objective=<kind>` | **yes** — MEASURED: a head block scalar parses and dumps with `\n` escapes preserved (§1.9 M12) | W1, **BUILT** (the `tag` half W2) | MUST |
 | **N-47** | the BLINDING / authorship statement — which discipline the author worked under (pcrec D27; `bench/syntax/NOTES.md`) | `NOTES.md` prose | head `description` block scalar, or `tag` | **yes as prose**; there is no structured carrier and this note does not ask for one | W1, **BUILT** | COULD |
-| **N-48** | which REGIMES the set exercises, and per-pattern regime membership | `regimes = [...]` (`bench/syntax/subbench.toml:54`); every pattern runs every declared regime (`subbench.py:154-157, 258-266`) | `tag regime=search_short throughput` file-level, refined per block; and for a per-regime SUBJECT SET, `format_design.md:1884-1897` §4.5 item 4's mechanism: name the canonical pattern once as a definition and write one block per regime whose pattern is `(?&<name>)` | **NO for the per-regime mechanism, on this project's ids.** A definition whose name carries `-` or `.` **cannot be called from a pattern** — `(?&cls-upto-1024)` goes through PCRE2's own group-name grammar and is refused there (`rxt_format.md:284-291`). EVERY pattern id in this repo's five sets is a hyphenated slug. §4.5's own regime mechanism is therefore unusable for this project unless ids are renamed to identifiers — which re-introduces exactly the name map the widened grammar was created to abolish (`rxt_format.md:290-296`) | `tag` W2, **REFUSED**; the wrapper mechanism **BROKEN for our ids** | **MUST** |
+| **N-48** | which REGIMES the set exercises, and per-pattern regime membership | `regimes = [...]` (`bench/syntax/subbench.toml:54`); every pattern runs every declared regime (`subbench.py:154-157, 258-266`) | `tag regime=search_short throughput` file-level, refined per block; and for a per-regime SUBJECT SET, `format_design.md:1888-1901` §4.5 item 4's mechanism: name the canonical pattern once as a definition and write one block per regime whose pattern is `(?&<name>)` | **NO for the per-regime mechanism, on this project's ids.** A definition whose name carries `-` or `.` **cannot be called from a pattern** — `(?&cls-upto-1024)` goes through PCRE2's own group-name grammar and is refused there (`rxt_format.md:284-291`). EVERY pattern id in this repo's five sets is a hyphenated slug. §4.5's own regime mechanism is therefore unusable for this project unless ids are renamed to identifiers — which re-introduces exactly the name map the widened grammar was created to abolish (`rxt_format.md:290-296`) | `tag` W2, **REFUSED**; the wrapper mechanism **BROKEN for our ids** | **MUST** |
 | **N-49** | the regime → subject-set mapping, and `short_search_max_bytes` | `subbench.py:258-266`; `[subjects].short_search_max_bytes` | `tag short-search-max-bytes=256` (`format_design.md:1848`) | **partial.** The tag carries the number. The MAPPING (which subjects a regime sees) is harness semantics that `format_design.md` §4.5 resolves by giving each regime block its own subject list — which is N-48's broken mechanism | W2, **REFUSED**; the mapping **ABSENT** | SHOULD |
-| **N-50** | a shared SUBJECT VOCABULARY across sets, or across a set's own fragments | not needed today; each set generates its own | `include` , ws , path-ref (`format_design.md:359`); fragments are blocks-only, no head (`format_design.md:2232`) | **yes in shape.** The capability set would want it for the generated-fragment split §6.2 models (one entry file, `include`d case fragments). Population accounting is designed (`format_design.md:1289-1300`) | W2, **REFUSED BY NAME** (MEASURED, §1.9 M10) | SHOULD |
+| **N-50** | a shared SUBJECT VOCABULARY across sets, or across a set's own fragments | not needed today; each set generates its own | `include` , ws , path-ref (`format_design.md:353`); fragments are blocks-only, no head (`format_design.md:2232`) | **yes in shape.** The capability set would want it for the generated-fragment split §6.2 models (one entry file, `include`d case fragments). Population accounting is designed (`format_design.md:1289-1300`) | W2, **REFUSED BY NAME** (MEASURED, §1.9 M10) | SHOULD |
 | **N-51** | a CONTENT HASH over the whole set, so a record names exactly what was measured | `Subbench.content_hash()` over every committed file in the directory (`subbench.py:287-311`); carried as `subbench.content_hash` in every record | **nothing is asked of the format** — a `.rxt` file is a committed file and hashes like any other. Recorded so the list is complete; note that `include`d fragments and `@file:` subjects must ALL be inside the hashed directory, which is a bench-side rule | n/a | n/a | n/a |
 | **N-52** | **a head-only READER that emits the descriptive productions as TSV**, so this project never writes a second parser | `pcrec --list-source` today, used in the export→verify direction (`tools/selfcheck.py`'s `check_rxt_export`, [B38]) | `--list-source`'s sixteen-column TSV (`rxt_format.md:425-442`) | **partial, and this is the tooling ask.** The dump has NO column for `tag`, `oracle`, `variant`, `mc`, `requires` or any provenance field, and none for a case line at all. `--list-source` is explicitly THE SEAM (`rxt_format.md:418-423`) and the reason the harness grows no head parser; the same argument applies to every descriptive production W2/W3 adds | W1 **BUILT**, the extension **ABSENT** | **MUST** |
 | **N-53** | comments stay operational; every machine-readable fact is a FIELD | `subbench.toml` comments are prose only | R-RXT-2 (`requirements.md:59`) and the `description`-is-a-field ruling (`format_design.md:450-457`) | **yes — and this note endorses it without qualification.** No need below is proposed as a `#` convention. `rxt_format.md:149-150`: whole-line `#` only, a `#` elsewhere is data — MEASURED: `pattern #` is a pattern, not a comment (§1.9 M13), which is what makes `bench/altwide`'s and `bench/syntax`'s floor patterns expressible | W1, **BUILT** | n/a |
@@ -353,7 +353,7 @@ is therefore not a validator for case-line content — which matters for
 Twelve proposals. Each gives a grammar sketch in `format_design.md`
 §1.3's own EBNF style, states scope and repeatability, and says what
 pcrec's OWN harness could do with it — because the format's stated stance
-is one format for both repos (`format_design.md:1902-1907`: "what the
+is one format for both repos (`format_design.md:1903-1908`: "what the
 bench must still own… this note's contribution is that when they do, the
 sidecar has somewhere to go"), and an ask that only serves one consumer
 is a worse ask.
@@ -371,7 +371,7 @@ production in any wave, and `description`'s one line cannot hold them
 **The precedent to copy, not invent.** The `freq` data block already does
 exactly this shape: a keyword, a name, an indented body of `<key> <value>`
 lines, with SOME LINES REQUIRED and a block missing them REFUSED
-(`format_design.md:1242-1288`; the membership rule at `:1251-1258`). Its
+(`format_design.md:1242-1288`; the membership rule at `:1250-1258`, the provenance half at `:1272-1278`). Its
 own provenance half — `exemplar`, `bytes`, `sha256`, `analyzer`, `date`
 — is required "because the exemplar is absent by design" (`:1279-1283`).
 A wild pattern's source is absent by exactly the same logic: a URL fetched
@@ -457,7 +457,7 @@ the natural home for the D27 blinded corpora's own authorship statement.
 
 **The gap.** `tag` is the carrier for family, role, hazard class, size
 class, convention, regime, method and REQUIRES — eight key families —
-and `tag-value` is free vocabulary by design (`format_design.md:341-343`).
+and `tag-value` is free vocabulary by design (`format_design.md:337-339`).
 A typo is a legal tag. `capability_set_v1.md:521-525` states the closed-set
 requirement for REQUIRES in the strongest terms and R5 finding B3 makes
 the identical point about this project's own `patterns[].tags`: "a typo
@@ -505,7 +505,7 @@ implementer should not have to guess.)
 **Why `requires` should be a `tag` key and not its own production.** It
 was tempting to ask for `requires <label> …` as a first-class block line.
 Against it: `tag` already accumulates across repeated lines and already
-mixes bare labels with pairs (`format_design.md:1843`, the U1 ruling), so
+mixes bare labels with pairs (`format_design.md:1846`, the U1 ruling), so
 `tag requires=backrefs requires=lookaround` costs nothing new; and a
 dedicated production would make the capability model a FORMAT concept,
 which is exactly the engine-neutrality line AR-6 draws. With
@@ -647,7 +647,7 @@ list becomes data.
 subject ID (every expectation key, report row and interpreter fact names
 one) and an integrity hash (its subject trees are gitignored and
 regenerated, so the referenced file is NOT committed and NOT reviewed —
-which is precisely the condition under which `format_design.md:1205-1208`
+which is precisely the condition under which `format_design.md:1203-1208`
 itself says provenance IS required).
 
 **Grammar sketch** (W2, extending `file-subject`):
@@ -664,7 +664,7 @@ and, when present, is CHECKED by whatever reads the subject: a mismatch
 is a refusal naming the path, the expected and the actual digest. Absent
 means today's behaviour, unchanged.
 
-**Why optional rather than required.** `format_design.md:1205-1208`'s
+**Why optional rather than required.** `format_design.md:1203-1208`'s
 argument against a hash is that a committed subject file "sits in the repo
 beside the `.rxt` and is covered by the same review and the same history".
 That argument is exactly right for pcrec's corpus and exactly wrong for a
@@ -780,13 +780,13 @@ same shape as family 6.
 
 **Two small gaps in one place.** `variant`'s designed body carries the
 replacement text and an optional `groups <name>=<n>` map
-(`format_design.md:422-424`). This project carries three more fields:
+(`format_design.md:419`, `:421-423`). This project carries three more fields:
 `variant_kind` (a closed two-value enum, `syntax-only` / `restructured`,
 which the reporter is meant to show beside the number), `objective_
 preserved` (a reviewed sentence) and `capture_map` (↔ `groups`, fits).
-`format_design.md:1879-1883` routes the reviewed sentence to
+`format_design.md:1887` routes the reviewed sentence to
 `tag variant-note=…` — but a `tag-value` may contain **no whitespace**
-(`format_design.md:342`), so a sentence does not fit in one.
+(`format_design.md:339`), so a sentence does not fit in one.
 
 **Grammar sketch** (W3, extending `variant-body`; and W2 for the second half):
 
@@ -814,7 +814,7 @@ descriptive key (`method=`, `question=`, an exclusion reason). The
 ### 2.9 An oracle that can name any engine, at a version — needs N-36, N-38
 
 **The gap.** `oracle-spec = "python" | "pcre2" | "none" , ws ,
-rest-of-line` (`format_design.md:365`) is a closed set of two engines. A
+rest-of-line` (`format_design.md:363`) is a closed set of two engines. A
 capability set's roster is eight, and family 11's POSIX cases want a
 POSIX engine as their own oracle. Separately, no production names the
 oracle's VERSION, and a cross-engine correctness claim that does not say
@@ -832,7 +832,7 @@ oracle-spec = "none" , ws , rest-of-line
 moves. `oracle pcre2/10.46` pins the version. `oracle tre/0.8.0` names an
 engine a consumer may not have — which is already handled: R-VG-3's rule
 is that "an absent oracle degrades to a labelled skip, never a silent
-pass and never a hard failure" (`format_design.md:1220-1223`), and that
+pass and never a hard failure" (`format_design.md:1221-1223`), and that
 rule is what makes widening the enum safe rather than a portability
 hazard.
 
@@ -845,10 +845,10 @@ oracle moves.
 ### 2.10 `mc`'s counting rule, stated — need N-32
 
 **Not a new production — a semantics statement the spec owes.** `mc ,
-ws , subject , ws , int` (`format_design.md:419`) is a match COUNT. Its
+ws , subject , ws , int` (`format_design.md:417`) is a match COUNT. Its
 overlap rule is not stated anywhere this note could find. This project's
 driver protocol fixes non-overlapping advancement as
-`pos = max(end, pos+1)` (`pcrecbench/adapters.py:20-22`) — the `+1` is
+`pos = max(end, pos+1)` (`pcrecbench/adapters.py:19-23`) — the `+1` is
 what makes an empty match terminate. Two engines counting under different
 rules would both satisfy the same `mc` line, which is R-BENCH-4's
 adjudication requirement failing quietly.
@@ -864,7 +864,7 @@ and Oniguruma's `onig_scan` do not all agree here).
 ### 2.11 Regime membership without the subroutine wrapper — need N-48
 
 **The gap, and it is a real defect in a shipped design.**
-`format_design.md:1884-1897` §4.5 item 4 resolves regimes by writing the
+`format_design.md:1888-1901` §4.5 item 4 resolves regimes by writing the
 canonical pattern once as a `name`d definition and one block per regime
 whose pattern is `(?&<name>)`. That mechanism **cannot be used by any set
 in this repository**: a delivering or plain subroutine call goes through
@@ -882,7 +882,7 @@ jointly unusable.
 1. **`tag regime=` alone, with the subject set attached to the case
    lines rather than to the block.** A block carries all its cases; each
    case is tagged with its regime. Needs a per-CASE scope, which Frank
-   ruled against (`format_design.md:1884-1886`: "there is no case scope").
+   ruled against (`format_design.md:1888-1889`: "there is no case scope").
 2. **A regime-scoped case group inside one block** — an indented
    `regime <label>` sub-block holding its own case lines. Same head/body
    indentation problem as §2.1.
@@ -924,7 +924,7 @@ later, and it is the cheapest of the twelve asks to get wrong.**
    rows.
 2. **Sections.** `docs/spec/table_contract.md`'s `#section` mechanism
    exists for one command emitting several tables with different columns,
-   and `rxt_format.md:483-491` DECLINES it here for a stated reason —
+   and `rxt_format.md:484-491` DECLINES it here for a stated reason —
    head/body INTERLEAVING is what a consumer checks, and that is
    expressible only as row order in one stream — while naming the trigger
    that would earn it: "a data block whose rows cannot be columns of this
@@ -974,7 +974,7 @@ measured BEFORE rather than against a remembered one.
 | **A2** | the same for W3 | as A1 with `oracle`, `variant`, `use`, `config … testee`, `config … option` | exit 0; BEFORE as A1 |
 | **A3** | an unknown keyword is STILL a hard error naming its context | `$P --list-source $F/bogus.rxt` with a line `taggg family=x` | exit 1, the diagnostic names the CONTEXT (head / config body / pattern block), per `rxt_format.md:154-159` |
 | **A4** | a W2 keyword in the WRONG context is still refused | `tag` inside a `config` body | exit 1 naming the context |
-| **A5** | `tag` accumulates across repeated lines and mixes bare labels with pairs | two `tag` lines on one block, one bare-label one pair-valued | both sets present in the dump; per `format_design.md:1843` |
+| **A5** | `tag` accumulates across repeated lines and mixes bare labels with pairs | two `tag` lines on one block, one bare-label one pair-valued | both sets present in the dump; per `format_design.md:1846` |
 
 ### Group B — raw bytes round-trip (needs N-1, N-3, N-4, N-5, N-28)
 
@@ -986,7 +986,7 @@ measured BEFORE rather than against a remembered one.
 | **B4** | the NUL refusal does not fire on a NUL-free file | any existing corpus file | exit 0 — the control that B3 is not refusing everything |
 | **B5** | if `pattern-esc` (§2.7) ships: a newline, a NUL and a trailing CR all round-trip | `pattern-esc "a\nb\x00c\r"` decoded against the source bytes | byte-exact |
 | **B6** | if `pattern-esc` ships: a block carrying BOTH `pattern` and `pattern-esc` is refused | — | exit 1 naming both lines |
-| **B7** | `@file:`'s bytes are taken raw — a subject file containing a NUL and invalid UTF-8 reaches the matcher whole | a 3-byte file `\x00\xff\x41` referenced by `@file:` | the case runs and the engine sees three bytes. `format_design.md:1195-1199` promises this; nothing has ever verified it |
+| **B7** | `@file:`'s bytes are taken raw — a subject file containing a NUL and invalid UTF-8 reaches the matcher whole | a 3-byte file `\x00\xff\x41` referenced by `@file:` | the case runs and the engine sees three bytes. `format_design.md:1193-1199` promises this; nothing has ever verified it |
 
 ### Group C — refusal by name, and the negative arms (needs N-10, N-21, N-26)
 
@@ -1193,7 +1193,7 @@ feature, and it is the item this note would take first if it could take
 only one.
 
 **Q8 — `@file:`'s optional `sha256` (§2.5) against
-`format_design.md:1205-1208`'s explicit "no content hash on a subject
+`format_design.md:1203-1208`'s explicit "no content hash on a subject
 reference".** That ruling's premise — a subject file is committed and
 reviewed — does not hold for a generated, gitignored subject tree. Does
 pcrecdev1 read the ruling as a principle or as a default?
