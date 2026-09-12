@@ -1574,7 +1574,7 @@ follow-up.
 | 1 | OWASP Validation Regex Repository | CC BY-SA 4.0 | yes (page footer) | **yes** — 3 quoted verbatim |
 | 1, 2 | Elastic `logstash-patterns-core` grok | Apache-2.0 | **yes** (direct fetch) | **yes** — 4 quoted verbatim |
 | 3 | OWASP CRS `REQUEST-942-*` | Apache-2.0 | **yes** (direct fetch) | **yes** — 5 rules quoted, one truncated by the fetcher (942360 — **re-fetch before use**) |
-| 4 | rebar `regexes/wild/noseyparker.txt` | Unlicense | yes | **NO** — categorical description only. **OWED** |
+| 4 | rebar `regexes/wild/noseyparker.txt` | Unlicense | yes | **yes (CB4/F1) — RE-FETCHED and CONFIRMED**: 30+ verbatim patterns for AWS/GitHub/GCP/Azure/Dynatrace/Figma tokens and `username=...password=...` pairs, quoted directly from the raw file on the first attempt. v0.1's "categorical description only, OWED" claim was stale |
 | 5 | rebar `regexes/wild/date.txt` | Unlicense | yes | **yes** — fragment quoted, full file located |
 | 6 | VS Code `JSON.tmLanguage.json` | MIT | not re-fetched (well-known) | **yes** — 5 quoted verbatim |
 | 7, 8 | Oniguruma `test/test_syntax.c` | BSD-2-Clause | **yes** (`COPYING` fetched) | **yes** — 5 `x2()` cases quoted |
@@ -1585,6 +1585,7 @@ follow-up.
 | 12 | Suricata/ET `pcre:` rules | mixed by sid range | no | **NO** — three attempts failed. Family 12 is authored |
 | — | GNU grep `tests/` (`Turkish-I`, `backref*`, `bre`/`ere`) | **GPLv3** | **yes** (`COPYING`) | tree located, contents characterized — **import blocked by Q1** |
 
-**Three OWED fetches gate L1**, none of them blocking this design:
-`noseyparker.txt`'s literal patterns, CRS 942360's full text, and the
-CVE index for family 10's inspirations.
+**Two OWED fetches gate L1** (corrected from three, CB4 —
+`noseyparker.txt`'s literal text is confirmed above, not owed), neither
+blocking this design: CRS 942360's full text, and the CVE index for
+family 10's inspirations.
