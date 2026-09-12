@@ -109,9 +109,20 @@ pcrecdev1.
 
 ## 1. THE NEED TABLE
 
-Forty-one needs in eight blocks. Counts by priority: **18 MUST, 15
-SHOULD, 8 COULD**. Counts by status: **12 BUILT, 13 REFUSED BY NAME
-(designed, later wave), 16 ABSENT (no production in any wave)**.
+Fifty needs in eight blocks, numbered N-1..N-53 (three rows — N-29,
+N-51, N-53 — are recorded for completeness and ask the format for
+nothing). Counts by priority: **36 MUST** (one of them conditional on
+N-42 landing), **9 SHOULD**, **5 COULD**. Counts by status at the pin:
+**14 BUILT**, **2 BUILT AND LOSSY**, **20 REFUSED BY NAME** (designed, a
+later wave), **15 ABSENT** (no production in any wave).
+
+The MUST count is high because Frank's ruling makes it so: under the
+hybrid, everything in blocks C through H could have stayed in a sidecar
+and been a SHOULD. Built on the format for real, a set cannot express its
+own patterns' provenance, tags, subjects or expectations without W2 and
+W3, so those become MUSTs by the ruling rather than by this note's
+judgment. §4 separates what blocks a FIRST SAMPLE from what blocks the
+set's full claims.
 
 ### 1.1 Block A — pattern text
 
@@ -325,5 +336,607 @@ values"), so a `@file:` subject inside a case line passes the dump
 silently even though `@file:` is a refused W2 production. `--list-source`
 is therefore not a validator for case-line content — which matters for
 §3's acceptance checks and for N-52.
+
+---
+
+## 2. The productions this would need
+
+Twelve proposals. Each gives a grammar sketch in `format_design.md`
+§1.3's own EBNF style, states scope and repeatability, and says what
+pcrec's OWN harness could do with it — because the format's stated stance
+is one format for both repos (`format_design.md:1902-1907`: "what the
+bench must still own… this note's contribution is that when they do, the
+sidecar has somewhere to go"), and an ask that only serves one consumer
+is a worse ask.
+
+**These are sketches, not a specification.** Every one is pcrecdev1's to
+accept, redesign or refuse. Where this note has a preference it says so;
+where the choice is genuinely open it says that instead.
+
+### 2.1 A `provenance` block — needs N-11..N-19
+
+**The gap.** Nine required-or-conditional fields per pattern, no
+production in any wave, and `description`'s one line cannot hold them
+(§1.3).
+
+**The precedent to copy, not invent.** The `freq` data block already does
+exactly this shape: a keyword, a name, an indented body of `<key> <value>`
+lines, with SOME LINES REQUIRED and a block missing them REFUSED
+(`format_design.md:1242-1288`; the membership rule at `:1251-1258`). Its
+own provenance half — `exemplar`, `bytes`, `sha256`, `analyzer`, `date`
+— is required "because the exemplar is absent by design" (`:1279-1283`).
+A wild pattern's source is absent by exactly the same logic: a URL fetched
+on a date, a licence nobody committed into this repo.
+
+**Grammar sketch** (W2; block-scoped; at most ONE per pattern block):
+
+```ebnf
+(* ---------- body: a pattern block ---------- *)
+block-line  = … | provenance-block ;
+
+provenance-block = "provenance" , eol , { INDENT , prov-line , eol } ;
+prov-line =
+      "source"     , ws , ident            (* a registered source slug, REQUIRED *)
+    | "url"        , ws , rest-of-line     (* the exact URL fetched,    REQUIRED *)
+    | "ref"        , ws , rest-of-line     (* file/rule/line inside it, conditional *)
+    | "licence"    , ws , spdx-id          (* from the source's own LICENSE, REQUIRED *)
+    | "licence-note" , ws , prose-value    (* optional *)
+    | "retrieved"  , ws , iso-date         (* RFC 3339,                 REQUIRED *)
+    | "fidelity"   , ws , ( "verbatim" | "adapted" | "inspired" )   (* REQUIRED *)
+    | "adaptation" , ws , prose-value      (* REQUIRED iff fidelity != verbatim *)
+    | "attribution", ws , prose-value ;    (* REQUIRED iff the licence demands it *)
+```
+
+**Scope and rules.**
+
+- Block-scoped, at most one per pattern block. A SECOND `provenance`
+  block in one block is REFUSED by name — not last-wins, which is the
+  `description` hazard M5 measured.
+- `source`, `url`, `licence`, `retrieved`, `fidelity` are REQUIRED; a
+  block missing one is refused naming the missing line, exactly as a
+  `freq` block without `question`/`reader` is.
+- `ref` is REQUIRED unless `source` is the reserved slug `authored`.
+- `adaptation` is REQUIRED iff `fidelity` is not `verbatim`. This is the
+  one conditional the format would have to enforce and it is the whole
+  value of making it structural: a mechanically-changed pattern with no
+  stated change is the failure a reviewer cannot catch by reading.
+- `attribution`'s conditionality on the LICENCE is a policy the format
+  should NOT know (SPDX ids are an open set). Proposal: the format
+  enforces nothing here and the consuming project's own gate does — but
+  the FIELD must exist, because a CC BY-SA 4.0 pattern with nowhere to
+  put its attribution is a licence breach with a format cause.
+- **It carries a block scalar.** `adaptation` and `attribution` are
+  prose, so they take `prose-value` — and here the head/body asymmetry
+  bites: a block scalar is a HEAD form only (`rxt_format.md:196-203`),
+  because a pattern block's lines are not indented. A `provenance` block
+  is ITSELF indented continuation, which means it is a head-shaped
+  construct living in the body. **This note flags that as the design
+  problem in its own proposal and does not resolve it**; §5 Q1 asks it.
+  The alternative, if the asymmetry must hold, is nine flat block-scoped
+  lines (`prov-source`, `prov-url`, …) — uglier, no indentation, and it
+  keeps the body's one rule intact.
+
+**Worked example** — one real capability-set member, a CRS rule imported
+verbatim (family 3, `capability_set_v1.md:180`):
+
+```
+pattern (?i)\b(?:d(?:atabas|b_nam)e[^0-9A-Z_a-z]*\(|schema_name\b)
+name waf-sqli-keywords
+description CRS 942140's database/schema keyword alternation
+provenance
+  source        crs
+  url           https://raw.githubusercontent.com/coreruleset/coreruleset/v4.x/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf
+  ref           rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf#942140
+  licence       Apache-2.0
+  retrieved     2026-09-12
+  fidelity      adapted
+  adaptation    the ModSecurity `@rx` wrapper and its transformation chain
+                dropped; the regex body is byte-identical to the rule's
+```
+
+**What pcrec's own harness gets.** pcrec's corpus already carries
+imported material whose origin lives only in a file header comment —
+`tests/base/d27_*.rxt`'s generator provenance, the `# pcre2-only` marks
+whose justification lives in `docs/dev/upstream_issues.md`
+(`rxt_format.md:509-513`). A structured `provenance` block gives pcrec's
+own imports (the Fowler suite, PCRE2 `testdata`-derived cases) the same
+machine-readable origin, and makes "where did this block come from" a
+`--list-source` column rather than a grep through comments. It is also
+the natural home for the D27 blinded corpora's own authorship statement.
+
+### 2.2 A vocabulary DECLARATION for closed tag keys — needs N-10, N-21, and N-20's closed half
+
+**The gap.** `tag` is the carrier for family, role, hazard class, size
+class, convention, regime, method and REQUIRES — eight key families —
+and `tag-value` is free vocabulary by design (`format_design.md:341-343`).
+A typo is a legal tag. `capability_set_v1.md:521-525` states the closed-set
+requirement for REQUIRES in the strongest terms and R5 finding B3 makes
+the identical point about this project's own `patterns[].tags`: "a typo
+that silently becomes a new tag is a capability claim nobody checked."
+
+**What is NOT being asked.** Not a fixed vocabulary in the format. AR-6
+forbids putting engine-shaped enums in the format
+(`format_design.md:2047`) and the bench's own vocabularies must stay the
+bench's. What is asked is a way for a FILE to declare its own closed sets
+and have the parser enforce them.
+
+**Grammar sketch** (W2; head-only; repeatable, one per key):
+
+```ebnf
+decl-line = … | "vocabulary" , ws , tag-key , ws , tag-value , { ws , tag-value } ;
+```
+
+**Rules.** A `vocabulary <key> <v1> <v2> …` head line declares that
+`tag <key>=<value>` may only take a listed value; a `tag` whose key is
+declared and whose value is not listed is REFUSED BY NAME, naming the
+key, the offending value and the declared set. A key with NO `vocabulary`
+line keeps today's free-vocabulary behaviour exactly, so nothing in the
+existing corpus changes and the production is purely additive. A
+`vocabulary` line for a key no `tag` uses is legal (it is a declaration,
+not an assertion) but a `--list-source` consumer can see it and warn.
+
+**Worked example** (the head of the capability set):
+
+```
+vocabulary hazard   none exponential-backtracking ambiguous-decomposition \
+                    exact-minimum-boundary large-count wide-alternation
+vocabulary fidelity verbatim adapted inspired
+vocabulary requires backrefs lookaround lookbehind-variable atomic-possessive \
+                    recursion conditionals k-reset control-verbs \
+                    unicode-properties named-groups free-spacing callouts \
+                    span-reporting non-utf8-subject captures true-end-anchor
+```
+
+(The continuation shown here as `\` is illustrative only — a
+`vocabulary` line is a head declaration, so INDENTATION IS CONTINUATION
+already, `rxt_format.md:160-168`, and the real spelling wraps with an
+indented second line. Stated because it is the kind of detail an
+implementer should not have to guess.)
+
+**Why `requires` should be a `tag` key and not its own production.** It
+was tempting to ask for `requires <label> …` as a first-class block line.
+Against it: `tag` already accumulates across repeated lines and already
+mixes bare labels with pairs (`format_design.md:1843`, the U1 ruling), so
+`tag requires=backrefs requires=lookaround` costs nothing new; and a
+dedicated production would make the capability model a FORMAT concept,
+which is exactly the engine-neutrality line AR-6 draws. With
+`vocabulary`, the closed-set discipline is available to every key without
+the format knowing what any of them mean.
+
+**What pcrec's own harness gets.** pcrec's corpus has its own closed sets
+that live in prose today — `gu`'s four give-up codes are enforced by the
+parser, but a file-level convention like `tests/known_fail/`'s membership
+rule is not. More directly: `vocabulary` is what makes
+`format_design.md`'s own §4.5 mapping SAFE. That table sends
+`hazard_class`, `size_class`, `convention` and `role` — four closed
+record-schema enums — into free-vocabulary tags. Without a declaration
+mechanism, the absorption silently downgrades four validated fields to
+unvalidated strings, which is a regression the format should not have to
+ship.
+
+### 2.3 A per-config capability declaration — need N-22
+
+**The gap.** W3's `config` body can say what an engine IS
+(`testee pcre2/10.46`) and what options it takes (`option k=v`), but not
+what it CAN DO. `capability_set_v1.md:532-552` establishes that the
+declaration must be PER CONFIG, not per engine: `pcre2-dfa` and
+`pcre2-interp` are one library at one version satisfying different tag
+sets.
+
+**Grammar sketch** (W3; a `config`-body line; repeatable, accumulating):
+
+```ebnf
+config-line = … | "capable" , ws , tag-value , { ws , tag-value } ;
+```
+
+**Rules.** Lists the vocabulary values (§2.2) this config SATISFIES.
+Repeatable and accumulating, like `tag`. **Absent means NOTHING is
+satisfied** — fail-closed, deliberately, so a new adapter cannot claim
+capabilities by omission (`capability_set_v1.md:549-552`). Under §2.2's
+`vocabulary requires …` declaration the values are checkable, which is
+the point: a `capable backrefs` on a config beside a `vocabulary requires`
+that does not list `backrefs` is a typo the parser can catch.
+
+**Worked example:**
+
+```
+config pcre2-dfa
+  testee pcre2/10.46
+  option match-mode=dfa
+  capable lookaround atomic-possessive recursion conditionals
+  capable unicode-properties named-groups free-spacing true-end-anchor
+  # NOT capable: captures, k-reset, backrefs, control-verbs
+  # (man pcre2matching items 2, 4, 7)
+
+config tre-default
+  testee tre/0.8.0
+  capable named-groups
+```
+
+**This is the proposal this note is least sure of** — see §1.4's own
+note. A capability list describes an engine, and a format that carries it
+is carrying engine knowledge. The counter-argument is that `config … testee`
+ALREADY carries engine knowledge (a version string), and that a reader of
+the file who sees a pattern with no result for `tre-default` needs the
+reason in the same file. §5 Q4 puts it to pcrecdev1 as an open choice.
+
+### 2.4 Convention-scoped expectations — need N-35 (the deepest gap)
+
+**The gap.** One pattern, one subject, TWO different correct answers. `a|ab`
+against `"ab"` is `0 1` under `perl-leftmost-first` and `0 2` under
+`posix-leftmost-longest`. Today a case line is one expected answer, and
+`variant` supplies different pattern TEXT for a testee rather than a
+different ANSWER for the same text. R-BENCH-5 asked for the convention
+TAG and got it designed; it did not ask for the second answer, and without
+it the tag cannot be acted on.
+
+**Grammar sketch** (W3; a case-line QUALIFIER, not a new case kind):
+
+```ebnf
+block-line = … | "under" , ws , tag-value , ws , case-line ;
+case-line  = ( "m" | "n" | "ms" | "ns" | "mc" ) , … ;   (* today's, unchanged *)
+```
+
+**Rules.**
+
+- An UNQUALIFIED case line means what it means today: the expectation
+  under the file's or block's declared convention (`tag convention=…`),
+  which is the canonical one.
+- `under <convention> m "<subject>" <start> <end>` states the answer a
+  testee tagged with THAT convention is scored against, for the same
+  (pattern, subject). A testee whose convention has no `under` line for a
+  case falls back to the unqualified line — so a set that declares no
+  conventions behaves exactly as today, and the production is additive.
+- `<convention>` is a `tag-value`, so §2.2's `vocabulary convention …`
+  declaration closes it. The format does not know what
+  `posix-leftmost-longest` means, which is the AR-6 line held.
+- Two `under` lines for one (convention, subject) pair are REFUSED as a
+  duplicate, not last-wins.
+
+**Worked example** (family 11's separator case):
+
+```
+pattern a|ab
+name sem-alt-order
+description the leftmost-first / leftmost-longest separator
+tag family=semantics-divergence hazard=none size=tiny role=member
+tag convention=perl-leftmost-first
+provenance
+  source        authored
+  url           n/a
+  licence       n-a
+  retrieved     2026-09-12
+  fidelity      inspired
+  adaptation    written from the leftmost-first vs leftmost-longest rule
+                as stated in re2's own Syntax documentation
+m "ab" 0 1
+under posix-leftmost-longest m "ab" 0 2
+```
+
+**Why not `variant`.** `variant tre a|ab` would give TRE the same text and
+still score it against `m "ab" 0 1`. Making `variant` carry an answer
+would conflate two axes the format deliberately separates: a variant is
+about SPELLING (R-BENCH-7), a convention is about SEMANTICS (R-BENCH-5).
+`format_design.md:1237-1241` already states the rule that makes this
+matter: "a testee's variant is checked against the *canonical*
+expectations, which the *canonical* oracle produced." That rule is right
+and it is exactly why conventions need their own carrier.
+
+**What pcrec's own harness gets.** Less than the others, honestly —
+pcrec is a single-convention engine and `tests/harness/run.sh` has one
+oracle. Two things: `tests/assertions/`'s `verify_pcre2.py` differential
+exists because several constructs "have no python equivalent at all"
+(`rxt_format.md:516-522`), which is the same shape one step smaller — an
+`under python …` line would let a divergence be STATED in the corpus
+instead of parked behind a `# pcre2-only` mark plus an
+`upstream_issues.md` entry. And `docs/testing.md`'s "Oracle exclusions"
+list becomes data.
+
+### 2.5 A subject reference with an id and an optional hash — needs N-26, N-27
+
+**The gap.** `@file:"path"` gives a path. This project needs a stable
+subject ID (every expectation key, report row and interpreter fact names
+one) and an integrity hash (its subject trees are gitignored and
+regenerated, so the referenced file is NOT committed and NOT reviewed —
+which is precisely the condition under which `format_design.md:1205-1208`
+itself says provenance IS required).
+
+**Grammar sketch** (W2, extending `file-subject`):
+
+```ebnf
+file-subject = '@file:"' , path-chars , '"' , [ ws , "as" , ws , ident ]
+                                            , [ ws , "sha256" , ws , hex64 ] ;
+```
+
+**Rules.** `as <id>` names the subject; the id is in a per-file subject
+namespace and must be unique there, so a case can be cited as
+`(pattern, subject-id)` rather than by line. `sha256 <hex64>` is OPTIONAL
+and, when present, is CHECKED by whatever reads the subject: a mismatch
+is a refusal naming the path, the expected and the actual digest. Absent
+means today's behaviour, unchanged.
+
+**Why optional rather than required.** `format_design.md:1205-1208`'s
+argument against a hash is that a committed subject file "sits in the repo
+beside the `.rxt` and is covered by the same review and the same history".
+That argument is exactly right for pcrec's corpus and exactly wrong for a
+generated subject tree. Optional keeps both true: pcrec writes none, this
+project writes one on every reference, and neither has to argue.
+
+**Worked example:**
+
+```
+m @file:"subjects/http-mixed-004.bin" as http-mixed-004 sha256 3f2a…  1284 1309
+n @file:"subjects/http-mixed-005.bin" as http-mixed-005 sha256 91c0…
+```
+
+**What pcrec's own harness gets.** A named subject makes a failure line
+`file:line: subject http-mixed-004: expected … got …`, which is more
+useful than a line number when a corpus is generated and its line numbers
+move on every regeneration. pcrec's own generated corpora
+(`tests/recursion/gen_corpus.py`, the D27 sets) have exactly that
+property.
+
+### 2.6 A scoping rule that keeps a set's config out of pcrec's build — need N-44
+
+**The gap, restated.** D93: a `.rxt` source's composed config WINS over a
+command-line flag on the same axis
+(`subbench_directory_model.md:441-448`; `rxt_format.md:133-136`). This
+project's entire pcrec testee matrix — sixteen configs — is command-line
+flags. `format_design.md:2198-2284` §6.2's own worked bench file carries
+`config pcrec` with a `pcrec --features all` line and a `use pcrec, pcre2,
+re2`. If that file is the corpus, every pcrec testee compiling from it is
+silently pinned by the file. The exporter already refuses to write such a
+line (`tools/export_rxt.py:34-37` rule 5) precisely for this reason.
+
+**Three candidate resolutions**, in this note's order of preference.
+
+1. **A file declares whether its configs are BUILD directives or TESTEE
+   descriptions.** One head line, `configs describe` (default: `build`,
+   today's meaning). Under `describe`, `config` blocks are read by
+   consumers and IGNORED by `pcrec --source`, which then builds only what
+   its command line says. A set file writes `configs describe` once and
+   the collision cannot occur.
+2. **A `config` carrying a `testee` line is inert for pcrec's own
+   build.** No new production: the rule becomes "a config that names a
+   foreign testee is a description, not a build config." Cheaper, but it
+   leaves `config pcrec` in §6.2's example still winning, which is the
+   actual hazard.
+3. **The set writes no `config` at all**, as today's exporter does, and
+   the testee roster lives somewhere else. This is the status quo and it
+   is the hybrid Frank's ruling removed — recorded as the null option.
+
+**What pcrec's own harness gets.** Resolution 1 also answers a question
+`--source` has today: a file whose configs are descriptions can be listed,
+diffed and reviewed without any risk that reading it changes what a build
+does. It makes `--list-source`'s "AS WRITTEN, never resolved" stance
+(`rxt_format.md:476-482`) into a property of the FILE rather than only of
+the dump.
+
+### 2.7 A pattern spelling that can carry a newline, a NUL or a trailing CR — needs N-2, N-4, N-5
+
+**The gap.** `pattern` is rest-of-line, verbatim, unquoted, unescaped
+(`rxt_format.md:210-212`). That is a GOOD rule — it is why this project's
+185 patterns export byte-exactly with no escaping layer
+(`tools/export_rxt.py:38-61` rule 6) — and it means three byte values
+have no representation: `\n` (no continuation), `\0` (silently truncated,
+MEASURED M1), and a CR immediately before the line end (silently trimmed,
+MEASURED M2).
+
+**What is NOT asked.** Do not change `pattern`. Every existing file and
+every existing exporter depends on its verbatim rule.
+
+**Grammar sketch** — a SECOND spelling, distinctly named (W2):
+
+```ebnf
+block-line = … | "pattern-esc" , ws , quoted-pattern ;
+quoted-pattern = '"' , { subject-char | escape } , '"' ;   (* the SAME seven escapes *)
+```
+
+**Rules.** `pattern-esc "…"` starts a block exactly as `pattern` does and
+means the same thing; its text is the decoded bytes, using the format's
+OWN seven-escape subject vocabulary (`rxt_format.md:374-385`) and no
+second vocabulary. A block carries one or the other, never both. Because
+the escape table already includes `\n`, `\xHH` and `\\`, all three
+unrepresentable cases become expressible with nothing new invented, and
+`tests/harness/driver.c`'s existing `decode()` already implements the
+decoder (`rxt_format.md:462-464` makes that point about the dump's
+escaping).
+
+**Worked example** (family 6's VS Code `number` rule, as authored):
+
+```
+pattern-esc "(?x)\n  -?  (?:0 | [1-9]\\d*)\n  (?: \\.\\d+ )?\n  (?: [eE][-+]?\\d+ )?\n"
+name code-json-number
+description VS Code JSON.tmLanguage's `number` rule, free-spacing, as written
+```
+
+**And a refusal, whichever way this goes.** Even if `pattern-esc` is
+refused as a feature, **M1's silent truncation should become a refusal**.
+A NUL in a `pattern` line today produces a shorter pattern, exit 0, no
+diagnostic — a wrong artifact from a valid-looking file. `slurp_lines`
+(`rxt_source.c:399-456`) already reads the whole file and knows every
+byte; a scan for an embedded NUL before splitting would refuse by name at
+no measurable cost. **This note ranks that refusal ABOVE `pattern-esc`
+itself**: a missing capability is a known limit, a silent truncation is a
+trap.
+
+**What pcrec's own harness gets.** The NUL refusal is unambiguously
+pcrec's own win — its corpus is hand-written and a stray NUL from a bad
+editor or a botched generator would today produce a passing test of the
+wrong pattern. `pattern-esc` is more marginal for pcrec, though
+`tests/modifiers/`'s `(?x)` coverage is the one place its corpus has the
+same shape as family 6.
+
+### 2.8 `variant_kind`, and a tag value that can hold a sentence — need N-41
+
+**Two small gaps in one place.** `variant`'s designed body carries the
+replacement text and an optional `groups <name>=<n>` map
+(`format_design.md:422-424`). This project carries three more fields:
+`variant_kind` (a closed two-value enum, `syntax-only` / `restructured`,
+which the reporter is meant to show beside the number), `objective_
+preserved` (a reviewed sentence) and `capture_map` (↔ `groups`, fits).
+`format_design.md:1879-1883` routes the reviewed sentence to
+`tag variant-note=…` — but a `tag-value` may contain **no whitespace**
+(`format_design.md:342`), so a sentence does not fit in one.
+
+**Grammar sketch** (W3, extending `variant-body`; and W2 for the second half):
+
+```ebnf
+variant-body = "unsupported" , ws , rest-of-line
+             | [ "kind" , ws , tag-value , ws ] , rest-of-line ,
+               [ eol , "groups" , ws , group-map ] ;
+
+(* and, for prose: *)
+tag-item = tag-label | tag-pair | tag-prose ;
+tag-prose = tag-key , "=" , quoted-subject ;   (* whitespace allowed inside quotes *)
+```
+
+**Rules.** `kind <value>` is optional and closed by §2.2's `vocabulary
+kind …`. The quoted `tag-prose` form lets a reviewer's sentence be a tag
+value without loosening the bare form's no-whitespace rule; the existing
+seven escapes apply inside the quotes, so the vocabulary count stays at
+one.
+
+**What pcrec's own harness gets.** `tag-prose` is generally useful the
+moment `tag` ships — a one-word tag value is a real constraint for any
+descriptive key (`method=`, `question=`, an exclusion reason). The
+`variant kind` half is bench-only.
+
+### 2.9 An oracle that can name any engine, at a version — needs N-36, N-38
+
+**The gap.** `oracle-spec = "python" | "pcre2" | "none" , ws ,
+rest-of-line` (`format_design.md:365`) is a closed set of two engines. A
+capability set's roster is eight, and family 11's POSIX cases want a
+POSIX engine as their own oracle. Separately, no production names the
+oracle's VERSION, and a cross-engine correctness claim that does not say
+"libpcre2 10.46" is not reproducible.
+
+**Grammar sketch** (W3, widening the existing production):
+
+```ebnf
+oracle-spec = "none" , ws , rest-of-line
+            | engine-ref ;                 (* ident , [ "/" , version-chars ] *)
+```
+
+**Rules.** `oracle python` and `oracle pcre2` keep their exact meanings
+(they are `engine-ref`s with no version), so nothing in pcrec's corpus
+moves. `oracle pcre2/10.46` pins the version. `oracle tre/0.8.0` names an
+engine a consumer may not have — which is already handled: R-VG-3's rule
+is that "an absent oracle degrades to a labelled skip, never a silent
+pass and never a hard failure" (`format_design.md:1220-1223`), and that
+rule is what makes widening the enum safe rather than a portability
+hazard.
+
+**What pcrec's own harness gets.** A version on the oracle is the fact
+`docs/testing.md`'s "Oracle exclusions" list is implicitly about — a
+divergence is between pcrec and a SPECIFIC python or libpcre2 build, and
+recording which one is what makes the exclusion re-checkable when the
+oracle moves.
+
+### 2.10 `mc`'s counting rule, stated — need N-32
+
+**Not a new production — a semantics statement the spec owes.** `mc ,
+ws , subject , ws , int` (`format_design.md:419`) is a match COUNT. Its
+overlap rule is not stated anywhere this note could find. This project's
+driver protocol fixes non-overlapping advancement as
+`pos = max(end, pos+1)` (`pcrecbench/adapters.py:20-22`) — the `+1` is
+what makes an empty match terminate. Two engines counting under different
+rules would both satisfy the same `mc` line, which is R-BENCH-4's
+adjudication requirement failing quietly.
+
+**The ask is one paragraph in `rxt_format.md`**, not code: state whether
+`mc` counts non-overlapping matches, and if so under which advancement
+rule for an empty match. If the intended answer is "the harness's rule,
+whatever it is", say that — it is still better than silence, because a
+foreign-engine adapter then knows it must match the harness rather than
+its own library's default (RE2's `FindAll`, PCRE2's `pcre2_match` loop
+and Oniguruma's `onig_scan` do not all agree here).
+
+### 2.11 Regime membership without the subroutine wrapper — need N-48
+
+**The gap, and it is a real defect in a shipped design.**
+`format_design.md:1884-1897` §4.5 item 4 resolves regimes by writing the
+canonical pattern once as a `name`d definition and one block per regime
+whose pattern is `(?&<name>)`. That mechanism **cannot be used by any set
+in this repository**: a delivering or plain subroutine call goes through
+PCRE2's own group-name grammar, which refuses `-` and `.`, and
+`rxt_format.md:284-291` states it outright — "a definition whose name
+carries `-` or `.` **cannot be called from a pattern**". Every pattern id
+in all five sets here is a hyphenated slug (`cls-upto-1024`, `iso-ts`,
+`w-256`, `anc-caret`). The widened name grammar exists precisely so those
+ids need no map (`rxt_format.md:290-296`) — and the regime mechanism
+needs the narrow grammar. The two rulings are individually right and
+jointly unusable.
+
+**Three ways out**, none of which this note picks for pcrecdev1:
+
+1. **`tag regime=` alone, with the subject set attached to the case
+   lines rather than to the block.** A block carries all its cases; each
+   case is tagged with its regime. Needs a per-CASE scope, which Frank
+   ruled against (`format_design.md:1884-1886`: "there is no case scope").
+2. **A regime-scoped case group inside one block** — an indented
+   `regime <label>` sub-block holding its own case lines. Same head/body
+   indentation problem as §2.1.
+3. **Let a definition be called by a NAME MAP the format derives**, the
+   way `target =` already derives a C prefix by `-`/`.` → `_`
+   (`rxt_format.md:107-110`). `(?&cls_upto_1024)` would reach
+   `name cls-upto-1024` by the same rule. Cheap, uses machinery that
+   already exists, and has one sharp edge: the derivation is deliberately
+   NOT injective (`a-b` and `a.b` both give `a_b`, and the spec says the
+   refusal is where that is paid for, `:111-119`), so a call would need
+   the same collision refusal a duplicate `target` prefix gets.
+
+**This note's observation, not a recommendation:** option 3 costs the
+least and reuses a rule the format already defends. But the deeper point
+for pcrecdev1 is that §4.5 item 4 should not be treated as settled — it
+was measured against `bench/loglines`' eleven patterns, whose ids include
+`iso-ts` and `level-context`, and the mechanism it proposes cannot
+express either of them.
+
+### 2.12 `--list-source`, extended to the descriptive productions — need N-52
+
+**The gap, and why it matters more than it looks.** `--list-source` is
+THE SEAM (`rxt_format.md:418-423`): pcrec owns the head grammar, is its
+only implementation, and `tests/harness/run.sh` "gains no head arms at
+all". This project relies on the same seam in the export direction today
+(`tools/selfcheck.py`'s `check_rxt_export`, [B38]). The dump's sixteen
+columns cover W1's head and the pattern block's W1 attributes and NOTHING
+ELSE — no `tag`, no `oracle`, no `variant`, no `mc`, no provenance, and
+no case lines at all. If W2/W3 land without extending it, a bench-side
+loader must grow its own parser for exactly the productions the seam
+exists to keep single-implementation. **That is the same hazard one wave
+later, and it is the cheapest of the twelve asks to get wrong.**
+
+**Two shapes, and this note prefers the second.**
+
+1. **More columns.** A `tag` row kind and a `variant` row kind in the
+   same stream, with the existing sixteen columns plus a few. Keeps one
+   table; the column count grows toward thirty and most are empty on most
+   rows.
+2. **Sections.** `docs/spec/table_contract.md`'s `#section` mechanism
+   exists for one command emitting several tables with different columns,
+   and `rxt_format.md:483-491` DECLINES it here for a stated reason —
+   head/body INTERLEAVING is what a consumer checks, and that is
+   expressible only as row order in one stream — while naming the trigger
+   that would earn it: "a data block whose rows cannot be columns of this
+   table under any reading." A `provenance` block (§2.1) is exactly that:
+   nine keyed lines that are not attributes of the `pattern` row. So the
+   trigger the spec named is met by this note's own first ask, and
+   adopting sections stays free ("a stream with no `#section` line is a
+   single anonymous section").
+
+**One thing the extension must not lose.** MEASURED (the observation
+after §1.9): `--list-source` accepts a case line containing a REFUSED
+`@file:` subject without complaint, because the head parser recognises
+`m` as a keyword and reads none of its values. That is correct today and
+becomes wrong the moment a consumer treats the dump as a validator for
+the whole file. Whatever the extension does, it should say plainly which
+productions it VALIDATES and which it merely recognises.
+
+**What pcrec's own harness gets.** The same thing it got the first time:
+`run.sh` never grows a parser for a production pcrec already parses. With
+W2's `include`, the dump is also the only place the include CLOSURE is
+visible without re-implementing resolution — which §2.11's population
+accounting (`format_design.md:1289-1300`) will need a reader for.
 
 ---
