@@ -808,8 +808,21 @@ mechanism stamp is honest, an invented one is not.
 `record_schema.md §5` already carries the three tokens as `conventions[]`
 (`perl-leftmost-first`, `posix-leftmost-longest`, `all-ends`), and
 `requirements.md §7` already says convention is a per-CASE expectation tag
-and testees are scored against their own. Family 11 is the family that
-exercises this for the first time in this repo.
+and testees are scored against their own. **Neither claim is a working
+mechanism today (CB1):** `outcome_for` (`pcrecbench/harness.py:106`) has
+no convention parameter and `Subbench.expectation`
+(`pcrecbench/subbench.py:268`) is keyed on `(pattern, subject_id,
+regime)` only, so every testee in a cell is graded against one
+canonical expectation row regardless of its declared convention. **v1's
+family 11 is therefore scoped to the shared-convention population**
+(§3.1's note on family 11) — pcre2-interp, pcre2-jit, pcrec, and
+`pcre2-dfa` once its decreasing-length-order difference below is
+confirmed not to change the answer on family 11's own cases, all
+`perl-leftmost-first`. The cross-convention scoring this section
+otherwise describes is what family 11 will exercise once a
+divergent-convention testee (`re2-longest`, `tre-default`) lands and the
+missing per-testee/variant expectation override is built — that lane's
+own scope, not v1's.
 
 How each roster engine is tagged (N2 §2):
 
@@ -832,38 +845,60 @@ the driver protocol's `--find-all` NON-OVERLAPPING count
 | option | what it means | consequence |
 |---|---|---|
 | **(A) span grain via a declared variant** restating the expectation as a SET of end-offsets | the honest reading of what the engine does | needs a THIRD driver invocation mode and a LIST-VALUED row shape — which is **OD-B3**, explicitly unruled (`requirements.md §12`), and a schema change. Large |
-| **(B) boolean grain for this engine only** — measure Vectorscan only where the canonical expectation is "does this match anywhere", plus compile/refusal comparisons | cheap, ships now | **narrows `requirements.md §4.5` constraint 1 ("results identical on EVERY subject") for one engine**. That is a real relaxation of a Frank ruling and must be visible in every report row, not a footnote |
+| **(B) boolean grain for this engine only** — measure Vectorscan only where the canonical expectation is "does this match anywhere", plus compile/refusal comparisons | cheap, ships now, **grounded directly in the driver protocol (S11)**: the protocol already tolerates a degenerate `subject` line — "START,END the FIRST match's span, **or `-`**" (`pcrecbench/adapters.py`) — so a Vectorscan driver reporting `ANSWER=match/nomatch` with `START=END=-` fits the EXISTING protocol with no new invocation mode. This strengthens, not merely asserts, "cheap, ships now" | **narrows `requirements.md §4.5` constraint 1 ("results identical on EVERY subject") for one engine**. That is a real relaxation of a Frank ruling and must be visible in every report row, not a footnote |
 | (C) Vectorscan out of v1 | no relaxation, no schema change | loses the roster's only `simd-multipattern` automaton class and the only engine whose REFUSAL SET is the interesting datum |
 
-**RECOMMENDATION: (B), decided before the Vectorscan adapter lane opens,
-not before the set is built.** Vectorscan is not in the v1 first-sample
-roster (§8, §11) so this question DEFAULTS — the set can be designed,
-built and first-sampled without it. **§12 Q3, defaultable, trigger =
-[B7]'s Vectorscan lane.**
+**RECOMMENDATION: (B), with a ruling required before the Vectorscan
+adapter lane opens — not before the set is built, and not a silent
+DEFAULT (CS3).** §5.6's own text above states this narrows an explicit,
+dated Frank ruling (`requirements.md §4.5` constraint 1, ADOPTED v3,
+2026-08-25: "no variation in results... no 'approximates with stated
+differences' grade"). A proposed exception to Frank's own prior word is
+not the shape a silent DEFAULT should carry, even though nothing is
+built on the answer today. **§12 Q3 is marked BLOCK, asked at the
+RESTART** — Vectorscan is not in the v1 first-sample roster (§8, §11)
+and the build itself is parked (§9) well before [B7]'s Vectorscan lane
+would open, so this costs nothing now.
 
-If (B) is ruled: the set declares a Vectorscan-scoped boolean-grain arm
-in the sidecar's `[testees.<id>]` section, the reporter shows the grain
-beside the number the way it already shows `variant.kind`, and
-`NOTES.md` states in one sentence that a Vectorscan cell answers a weaker
-question than every other cell in its row.
+**One throughput-regime gap this note now states rather than leaves
+implicit (S11):** if (B) is ruled, the throughput regime's `NMATCHES`
+for an all-ends engine needs an adapter-side reduction to the driver's
+own `pos = max(end, pos+1)` non-overlapping rule
+(`pcrecbench/adapters.py:20-22`) to produce a comparable count at all —
+Hyperscan's natural one-pass "all ends" callback does not produce that
+count on its own. If (B) is ruled: the set declares a Vectorscan-scoped
+boolean-grain arm in the sidecar's `[testees.<id>]` section, the
+reporter shows the grain beside the number the way it already shows
+`variant.kind`, and `NOTES.md` states in one sentence that a Vectorscan
+cell answers a weaker question than every other cell in its row.
 
 ### 5.7 How the scoreboard shows an engine that ran a rewritten spelling
 
-Already built and already ruled, needing only a check at this set's
-scale:
+**Corrected (CB2): the write side is built; the RENDER side is not.**
+v0.1 stated this section was "Already built and already ruled, needing
+only a check at this set's scale" — that is false for `variant.kind`'s
+rendering. An exhaustive grep of `pcrecbench/report.py` for `variant`
+returns exactly two hits, both unrelated prose; `pcrecbench/reduce.py`
+has zero. The only code that touches `variant` at all is
+`pcrecbench/record.py:177-187`, the WRITE side (`"variant": None`).
+Nothing in this project's five existing sub-benches has ever exercised a
+testee variant whose `variant.kind` needed showing, so the render path
+was never built to begin with.
 
 - `patterns[].variant` is REQUIRED on every pattern entry and is `null`
   when the testee ran the canonical text — "a variant is never a silent
-  fork; the record states one either way" (`record_schema.md §8`).
+  fork; the record states one either way" (`record_schema.md §8`). **This
+  half is built.**
 - `variant.kind` (`syntax-only` / `restructured`) is informational
-  (OD-B5) and the reporter shows it beside the number
-  (`requirements.md §4.5` closing).
-- **The gap N2 §7 item 4 names, restated as a build task:** every
-  existing sub-bench runs zero or a handful of variants; this one will
-  run many (§6). The reporter's variant-kind rendering has **never been
-  exercised at a dozen-plus variant rows in one table** and must be
-  checked against a synthetic many-variant report BEFORE the set ships.
-  That is lane L5 in §11.
+  (OD-B5) and `requirements.md §4.5`'s closing sentence describes an
+  intended rendering rule for it. **This half is UNBUILT.**
+- **The build task, restated and re-sized:** every existing sub-bench
+  runs zero or a handful of variants; this one will run many (§6). L5
+  (§11) must **design and build** the `variant.kind` rendering from
+  nothing — not merely check an existing path at scale — and validate it
+  against a synthetic many-variant report BEFORE the set ships. Its
+  absence would silently make every one of family 2, 6, 7, 8's designed
+  control-twin variants invisible in a rendered report table.
 
 ---
 
