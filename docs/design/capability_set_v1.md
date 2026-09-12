@@ -680,14 +680,15 @@ distinguishes them and its tag list did not:
 | `backrefs` | a backreference, numbered or named | RE2, Rust `regex`, Vectorscan |
 | `lookaround` | any lookahead or lookbehind | RE2, Rust, Vectorscan, TRE |
 | `lookbehind-variable` † | a lookbehind whose body is not fixed-width | + python `re` (CPython 3.14 docs, N2 §8 (8)) |
-| `atomic-possessive` | `(?>...)`, `x*+`, `x++`, `x?+`, `x{n,m}+` | RE2, Rust, Vectorscan, TRE (Oniguruma HAS possessive intervals — flag-confirmed in `regsyntax.c`, N2 §4 (4)) |
+| `possessive-quantifier` (CB5, split from `atomic-possessive`) | `x*+`, `x++`, `x?+`, `x{n,m}+` | RE2, Rust, Vectorscan, TRE. Oniguruma HAS these — flag-confirmed in `regsyntax.c` (`ONIG_SYN_OP2_PLUS_POSSESSIVE_REPEAT`/`_INTERVAL`, N2 §4 (4)) |
+| `atomic-group` (CB5, split from `atomic-possessive`) | `(?>...)` | RE2, Rust, Vectorscan, TRE. **Oniguruma's support is UNCONFIRMED at the evidence quality of the row above**: `(?>...)` is "not controlled by a distinct op2 flag... not independently re-derived from the group-parser source" (N2 §4 (4)) — a wrong-direction risk (a wrongly-CLAIMED capability, which §5.3's fail-closed default does nothing to protect against, unlike a wrongly-UNCLAIMED one). **Before an `onig-*` config declares `atomic-group`, its support must be independently re-derived from `regparse.c`** — Oniguruma is not in v1's roster (§8, `later`), so this does not block L1-L5 or the first sample |
 | `recursion` | `(?R)`, `(?1)`, `(?&name)`, `\g<n>`, `(?P>name)` | RE2, Rust, Vectorscan, TRE, python `re` |
 | `conditionals` | `(?(cond)yes\|no)` | RE2, Rust, Vectorscan, TRE, python `re` |
-| `k-reset` | `\K` | RE2, Rust, Vectorscan, TRE, python `re`, **and `pcre2_dfa_match`** (man `pcre2matching` item 4, N2 §4 (3)) |
+| `k-reset` | `\K` | RE2, Rust, Vectorscan, TRE, python `re`, **and `pcre2_dfa_match`** (man `pcre2matching` item 4, N2 §4 (3)). **Oniguruma is deliberately NOT listed here (CB6) and must not be read as satisfying it by omission**: N2 states Oniguruma has "not general PCRE-style `\K`; has its own reset-point extensions under some syntaxes" — neither a clean yes nor a clean no. **Before an `onig-*` config declares `k-reset`, this must be resolved**: either confirm behavioral equivalence to `\K` for this bench's own family 7-9 `\K`-tagged patterns, or declare `k-reset: false` for Oniguruma and route those patterns to `unsupported-by-declaration`. Not in v1's roster, so not before L6b |
 | `control-verbs` † | `(*ACCEPT)`, `(*SKIP)`, `(*PRUNE)`, … | RE2, Rust, Vectorscan, TRE, python `re`; `pcre2_dfa_match` supports `(*FAIL)` only (item 7) |
 | `unicode-properties` | `\p{...}` / `\P{...}` | TRE (locale classes, not properties); python `re` spells Unicode categories differently and has no `\p{Greek}` token |
-| `named-groups` † | any named-group spelling | TRE |
-| `free-spacing` † | `(?x)` / extended mode | TRE |
+| `named-groups` † | any named-group spelling | TRE — **UNCONFIRMED (CS5)**: N2 §3's table has no column for named-group spelling at all; neither research note states this for TRE. The natural primary source is POSIX ERE's own grammar (TRE's default mode), not yet cited. Route through §5.3's witness-refusal check either way before an `onig-*`/`tre-default` config declares it |
+| `free-spacing` † | `(?x)` / extended mode | TRE — **UNCONFIRMED (CS5)**, same gap and same remedy as `named-groups` above |
 | `callouts` | `(?C1)` and friends | everything but pcre2/perl |
 | `span-reporting` | the driver must report a match START, not just "matched" | **Vectorscan without `HS_FLAG_SOM_LEFTMOST`** (N2 §4) |
 | `non-utf8-subject` | the subject bytes are not valid UTF-8 | Rust `regex`'s default `str` API (N1 §ii) |
