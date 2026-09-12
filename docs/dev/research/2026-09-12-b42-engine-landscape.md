@@ -47,8 +47,8 @@ Probed 2026-09-12 (`apt-cache policy <pkg>`, `apt-cache search`,
 | engine | apt package(s) | candidate version | C-callable surface | licence |
 |---|---|---|---|---|
 | libpcre2 | `libpcre2-dev` (+ `-8-0`/`-16-0`/`-32-0`/`-posix3`) | 10.46-1build1, **installed** | native C API (`pcre2_compile`, `pcre2_match`, `pcre2_dfa_match`, `pcre2_jit_compile`) | BSD (3-clause, with the PCRE2 exception for a historical name-attribution clause) [pcre2project.github.io/pcre2/project/licence](https://pcre2project.github.io/pcre2/project/licence/) |
-| RE2 | `libre2-dev` (candidate 20250805-1build3), runtime `libre2-11` **already installed** (pulled in transitively by `node-re2`) | 20250805-1build3 | **C++ only** — RE2 ships no C API. A C-callable wrapper needs a SEPARATE project, `cre2` ([marcomaggi/cre2](https://github.com/marcomaggi/cre2)), which is NOT packaged for this box (`apt-cache search cre2` returns nothing; checked) — it would have to be vendored and built here, the same posture as pcrec's own shim | BSD (3-clause) [github.com/google/re2](https://github.com/google/re2) |
-| Rust `regex` | no runnable binary package; `librust-regex-dev` (1.12.2-1) and `librust-regex-automata-dev` (0.4.13-1) exist as Debian SOURCE packages for building other Debian packages, not as a linkable C library | 1.12.2-1 (source) | **no C API in the crate itself.** The crate used to ship a `regex-capi` sub-crate exposing a C ABI (`rure`, `regex-capi/include/rure.h`) — still present in the `rust-lang/regex` GitHub tree today ([github.com/rust-lang/regex/tree/master/regex-capi](https://github.com/rust-lang/regex/tree/master/regex-capi)) but NOT published as a crate release usable via a simple `cargo build` of a dependent (no `rure` package on this box's apt mirror; I could not confirm from crates.io in this session whether `rure`/`regex-capi` is still actively released — flagged in §8). Getting a linkable `.so` means building `regex-capi` from the rust-lang/regex git tree with `cargo build --release` (needs `cargo`/`rustc`, both apt-installable here: candidate 1.93.1ubuntu1) | dual MIT / Apache-2.0 [github.com/rust-lang/regex/blob/master/LICENSE-APACHE](https://github.com/rust-lang/regex/blob/master/LICENSE-APACHE) |
+| RE2 | `libre2-dev` (candidate 20250805-1build3), runtime `libre2-11` **already installed** (pulled in transitively by `node-re2`) | 20250805-1build3 | **C++ only** — RE2 ships no C API. A C-callable wrapper needs a SEPARATE project, `cre2` ([marcomaggi/cre2](https://github.com/marcomaggi/cre2)), which is NOT packaged for this box (`apt-cache search cre2` returns nothing; checked) — it would have to be vendored and built here, the same posture as pcrec's own shim (confirmed by b42engines2: `apt-cache depends libre2-dev` shows `Depends: libabsl-dev` — this box's RE2 package is ALREADY Abseil-dependent at the package-manager level; `libabsl-dev` candidate 20260107.0-4, not installed; see the follow-up section) | BSD (3-clause) [github.com/google/re2](https://github.com/google/re2) |
+| Rust `regex` | no runnable binary package; `librust-regex-dev` (1.12.2-1) and `librust-regex-automata-dev` (0.4.13-1) exist as Debian SOURCE packages for building other Debian packages, not as a linkable C library | 1.12.2-1 (source) | **no C API in the crate itself.** The crate used to ship a `regex-capi` sub-crate exposing a C ABI (`rure`, `regex-capi/include/rure.h`) — still present in the `rust-lang/regex` GitHub tree today ([github.com/rust-lang/regex/tree/master/regex-capi](https://github.com/rust-lang/regex/tree/master/regex-capi)) but NOT published as a crate release usable via a simple `cargo build` of a dependent (no `rure` package on this box's apt mirror; I could not confirm from crates.io in this session whether `rure`/`regex-capi` is still actively released — flagged in §8) (confirmed by b42engines2: `rure` DOES exist on crates.io, one published version 0.2.5, first published 2016 — see the follow-up section for what that means for freshness). Getting a linkable `.so` means building `regex-capi` from the rust-lang/regex git tree with `cargo build --release` (needs `cargo`/`rustc`, both apt-installable here: candidate 1.93.1ubuntu1, **neither installed**) | dual MIT / Apache-2.0 [github.com/rust-lang/regex/blob/master/LICENSE-APACHE](https://github.com/rust-lang/regex/blob/master/LICENSE-APACHE) |
 | Oniguruma | `libonig-dev` (6.9.10-1build1), runtime `libonig5` **already installed** | 6.9.10-1build1 | native C API (`onig_new`, `onig_search`, `onig_error_code_to_str`) | BSD (2-clause) [en.wikipedia.org/wiki/Oniguruma](https://en.wikipedia.org/wiki/Oniguruma) |
 | TRE | `libtre-dev` (0.9.0-1build1), `libtre5` | 0.9.0-1build1 | native C API, the POSIX shape (`tre_regcomp`/`regcomp`, `tre_regexec`/`regexec`) plus TRE's own extensions (`tre_regacomp`/`tre_regaexec` for approximate matching) — [laurikari.net/tre/documentation/regcomp](https://laurikari.net/tre/documentation/regcomp/) | BSD-like (2-clause) [github.com/laurikari/tre/blob/master/LICENSE](https://github.com/laurikari/tre/blob/master/LICENSE) |
 | Vectorscan (Hyperscan-compatible) | `libvectorscan-dev` (5.4.11-2ubuntu2) **Replaces/Provides/Conflicts** `libhyperscan-dev` — this box's actual "Hyperscan" package IS Vectorscan under the hood; a SEPARATE, older `libhyperscan-dev`/`libhyperscan5` (5.4.2-4, source package `hyperscan`) also exists in the archive and is installable, but per Ubuntu's own package relationship the two conflict at install time. **Recommendation: install `libvectorscan-dev`** — it is the actively maintained fork ([VectorCamp/vectorscan](https://github.com/VectorCamp/vectorscan)) and is what [B7]'s roster names ("Vectorscan (semantics-tagged)") | 5.4.11-2ubuntu2 | native C API, Intel Hyperscan-compatible (`hs_compile`, `hs_scan`, `hs_alloc_scratch`) | BSD (3-clause) [github.com/VectorCamp/vectorscan/blob/master/LICENSE](https://github.com/VectorCamp/vectorscan/blob/master/LICENSE) |
@@ -210,9 +210,9 @@ capability set's per-pattern REQUIRES tags (§7) are drawn from this table.
 | pcre2 | yes | yes | yes | yes | yes | yes | yes (`\p{...}`, `PCRE2_UCP`) | `{0,65535}` per PCRE2's own repeat-count ceiling (already this project's own finding, `bench/bounded`'s NOTES.md; NFA-cap-adjacent, not the same limit as pcrec's) | `pcre2_compile` returns NULL + an error code + offset; `pcre2_get_error_message` renders it — this project's own driver already surfaces this (`testees/pcre2/driver.c`) |
 | RE2 | **no** | **no** (neither look-ahead nor look-behind, either direction) | **no** | **no** | **no** | **no** | yes — RE2 explicitly supports `\p{Greek}`-style Unicode character classes even though it lacks the lookaround/backref features (fetched [github.com/google/re2/wiki/Syntax](https://github.com/google/re2/wiki/Syntax), 2026-09-12) | governed by `max_mem`, not a fixed count (§4) | `RE2::RE2(pattern, options)` construction leaves the object not-OK; `RE2::error()` returns a message string, `RE2::error_code()` returns one of a CLOSED `ErrorCode` enum fetched verbatim from `re2.h` (`https://raw.githubusercontent.com/google/re2/main/re2/re2.h`, 2026-09-12): `NoError, ErrorInternal, ErrorBadEscape, ErrorBadCharClass, ErrorBadCharRange, ErrorMissingBracket, ErrorMissingParen, ErrorUnexpectedParen, ErrorTrailingBackslash, ErrorRepeatArgument, ErrorRepeatSize, ErrorRepeatOp, ErrorBadPerlOp, ErrorBadUTF8, ErrorBadNamedCapture, ErrorPatternTooLarge` — a closed, named set exactly the shape `did-not-compile`'s diagnostic wants, and `ErrorBadPerlOp` is specifically the one a lookaround/backref/atomic-group pattern hits |
 | Rust `regex` | **no** (crate docs, fetched 2026-09-12: "not... backreferences") | **no** | **no** | **no** | **no** | **no** | yes, Unicode-by-default | `size_limit` (compiled program size) and `dfa_size_limit` (lazy-DFA cache) — see §4 | `.build()`/`Regex::new` returns `Result<Regex, Error>`; `Error` is a non-exhaustive enum with (at least) `Syntax(String)` and `CompiledTooBig(usize)` variants (fetched [docs.rs/regex/latest/regex/enum.Error.html](https://docs.rs/regex/latest/regex/enum.Error.html), 2026-09-12) — `CompiledTooBig` carries the limit that was exceeded as its own field, which is a capability the bench can read structurally rather than parse from a message |
-| Oniguruma | yes | yes | — (depends on the chosen SYNTAX; Perl-NG syntax supports possessive quantifiers, POSIX syntaxes do not) | yes (`\g<name>`-style subexpression calls under ONIG_SYNTAX_PERL_NG) | limited | not general PCRE-style `\K`; has its own reset-point extensions under some syntaxes | yes, via `ONIG_OPTION_...` and its own Unicode property tables | governed by its own internal state-count limits, not independently confirmed in this session (flagged §8) | `onig_new` returns a nonzero `OnigCodeReturn` error code; `onig_error_code_to_str` renders a message into a caller-supplied buffer — a closed integer code with a name-lookup function, same shape as PCRE2's |
-| TRE | yes (POSIX backreferences ARE part of POSIX ERE with TRE's extensions, unlike RE2) | **no** (POSIX has none; TRE's PERL-ish extension set does not add general lookaround either, not independently confirmed — flagged §8) | **no** | **no** | **no** | **no** | limited (multibyte/locale character classes, not `\p{...}` properties) | not independently confirmed in this session — TRE's own memory-bound note ("less than 50K... during regcomp()") suggests an internal bound exists but I found no named error code for hitting it (flagged §8) | POSIX `regcomp()` return code is a `REG_*` integer (`REG_BADPAT`, `REG_ESPACE`, etc, the standard POSIX set) rendered via `regerror()`/`tre_regerror()` |
-| Vectorscan/Hyperscan | **no** | **no** | **no** (possessive/atomic grouping explicitly unsupported per compilation docs) | **no** (no subroutine/recursive references) | **no** (no backtracking-verb conditionals) | **no** (`\K` explicitly named unsupported) | via `HS_FLAG_UCP` | governed by database size / scratch-space limits determined at compile time, not a fixed count — see §4; ALSO governed by `min_width`/`max_width` reported per-pattern via `hs_expression_info` (fetched [intel.github.io/hyperscan/dev-reference/api_files.html](https://intel.github.io/hyperscan/dev-reference/api_files.html), 2026-09-12), a capability probe unique to Hyperscan on this roster | `hs_compile`/`hs_compile_multi` return `HS_COMPILER_ERROR` (or others) and populate an `hs_compile_error_t*` with a `message` string and an `expression` index (which of N multi-compiled patterns failed) — no closed enum of REASONS the way RE2's is, only free text (a capability-tag gap this bench would have to close by STRING-MATCHING known Hyperscan messages, which is fragile, or by declaring every unsupported construct in the sub-bench's own sidecar rather than trusting Hyperscan's message text — the safer choice, and consistent with `requirements.md §4.5`'s "declared variant" posture: KNOW in advance what an engine cannot do rather than discover it from a string) |
+| Oniguruma | yes (confirmed by b42engines2: `ONIG_SYN_OP2_ESC_K_NAMED_BACKREF` in `ONIG_SYNTAX_PERL_NG`'s own flag set, `regsyntax.c`, tag v6.9.10) | yes (implied by `SYN_GNU_REGEX_OP`; not a distinct named flag — LOWER confidence than the flag-matched features below, not independently re-derived from the group-parsing code) | possessive quantifiers YES under `ONIG_SYNTAX_PERL_NG` (`ONIG_SYN_OP2_PLUS_POSSESSIVE_REPEAT`/`_INTERVAL`, confirmed by b42engines2 from `regsyntax.c`); atomic groups not controlled by a distinct op2 flag in that table (Oniguruma treats `(?>...)` as a core, always-on group form rather than a per-syntax option — not independently re-derived from the group-parser source, so stated with lower confidence than the possessive-quantifier finding) | yes (`\g<name>`-style subexpression calls under ONIG_SYNTAX_PERL_NG — confirmed by b42engines2: `ONIG_SYN_OP2_ESC_G_SUBEXP_CALL` and `ONIG_SYN_OP2_QMARK_PERL_SUBEXP_CALL` both set in `OnigSyntaxPerl_NG`'s op2 field, `regsyntax.c`) | confirmed by b42engines2: YES under `ONIG_SYNTAX_PERL_NG` (`ONIG_SYN_OP2_QMARK_LPAREN_IF_ELSE` set, `regsyntax.c`) — "limited" was over-cautious for this syntax | not general PCRE-style `\K`; has its own reset-point extensions under some syntaxes | yes, via `ONIG_OPTION_...` and its own Unicode property tables | governed by its own internal state-count limits, not independently confirmed in this session (flagged §8) — **PARTIALLY CLOSED by b42engines2**: `doc/API` (tag v6.9.10) names FIVE match/search-time limit knobs with defaults — `onig_set_retry_limit_in_match(unsigned long)` (default 10,000,000, 0=unlimited), `onig_set_retry_limit_in_search` (default 0=unlimited), `onig_set_parse_depth_limit(unsigned int)` (default 4096, `DEFAULT_PARSE_DEPTH_LIMIT` in `regint.h`), `onig_set_subexp_call_max_nest_level(int)` (default 24), `onig_set_subexp_call_limit_in_search` (default 0=unlimited), plus `onig_set_match_stack_limit_size` (default 0=unlimited); the matching `ONIGERR_*` codes are `ONIGERR_PARSE_DEPTH_LIMIT_OVER` (-16), `ONIGERR_RETRY_LIMIT_IN_MATCH_OVER` (-17), `ONIGERR_RETRY_LIMIT_IN_SEARCH_OVER` (-18), `ONIGERR_SUBEXP_CALL_LIMIT_IN_SEARCH_OVER` (-19), `ONIGERR_MATCH_STACK_LIMIT_OVER` (-15), plus size-specific codes `ONIGERR_TOO_BIG_NUMBER_FOR_REPEAT_RANGE` (-201), `ONIGERR_TOO_MANY_MULTI_BYTE_RANGES` (-205), `ONIGERR_TOO_BIG_BACKREF_NUMBER` (-207), `ONIGERR_TOO_MANY_CAPTURES` (-210), and the general `ONIGERR_MEMORY` (-5) / `ONIGERR_PARSER_BUG` (-11); NO compiled-program-size accessor exists (`doc/API` gives no such call — confirmed absent, not merely unfound) | `onig_new` returns a nonzero `OnigCodeReturn` error code; `onig_error_code_to_str` renders a message into a caller-supplied buffer — a closed integer code with a name-lookup function, same shape as PCRE2's |
+| TRE | yes (POSIX backreferences ARE part of POSIX ERE with TRE's extensions, unlike RE2 — confirmed by b42engines2: `lib/tre-parse.c`'s `PARSE_ATOM` case detects a digit after a backslash and builds a `BACKREF` AST node directly) | **no** (POSIX has none; TRE's PERL-ish extension set does not add general lookaround either — confirmed by b42engines2: `lib/tre-parse.c`'s backslash-escape switch has cases only for `\b`/`\B` (word boundary) and `\<`/`\>` (beginning/end of word); no lookaround case exists) | **no** | **no** | **no** | **no — confirmed by b42engines2**: the same `tre-parse.c` escape switch has no case for `z`, `A`, or `Z`; TRE has no `\z`/`\A`/`\Z` tokens at all, only the POSIX `^`/`$` | limited (multibyte/locale character classes, not `\p{...}` properties) | **CLOSED by b42engines2, and the note's own ~50K/20K/2K figures CORRECTED**: `lib/tre-internal.h` (laurikari/tre `master`) defines exactly three named bounds — `TRE_MAX_RE` = 65536 (max pattern length in pattern-units, checked in `regcomp.c`'s `tre_regcomp`/`tre_regncomp`/etc as `if (n > TRE_MAX_RE) return REG_ESPACE;`), `TRE_MAX_STRING` = `INT_MAX`, `TRE_MAX_STACK` = 1048576 (the matching stack, bytes). No 50K/20K/2K figure appears anywhere in `tre-internal.h` or `regcomp.c` in this session's fetch; `laurikari.net/tre/documentation/regcomp/` (the likely source of the original note's figures) 500'd on re-fetch and could not be re-checked, so the ~50K/20K/2K claim should be treated as UNCONFIRMED/likely stale rather than corrected-to a specific alternate number — but `TRE_MAX_RE`/`TRE_MAX_STACK` are the real, named, source-verified bounds to cite going forward | POSIX `regcomp()` return code is a `REG_*` integer (`REG_BADPAT`, `REG_ESPACE`, etc, the standard POSIX set) rendered via `regerror()`/`tre_regerror()` — `REG_ESPACE` is exactly what `TRE_MAX_RE` overflow returns (confirmed by b42engines2, `regcomp.c`) |
+| Vectorscan/Hyperscan | **no** | **no** | **no** (possessive/atomic grouping explicitly unsupported per compilation docs) | **no** (no subroutine/recursive references) | **no** (no backtracking-verb conditionals) | **no** (`\K` explicitly named unsupported) | via `HS_FLAG_UCP` | governed by database size / scratch-space limits determined at compile time, not a fixed count — see §4; ALSO governed by `min_width`/`max_width` reported per-pattern via `hs_expression_info` (fetched [intel.github.io/hyperscan/dev-reference/api_files.html](https://intel.github.io/hyperscan/dev-reference/api_files.html), 2026-09-12), a capability probe unique to Hyperscan on this roster | `hs_compile`/`hs_compile_multi` return `HS_COMPILER_ERROR` (or others) and populate an `hs_compile_error_t*` with a `message` string and an `expression` index (which of N multi-compiled patterns failed) — no closed enum of REASONS the way RE2's is, only free text (a capability-tag gap this bench would have to close by STRING-MATCHING known Hyperscan messages, which is fragile, or by declaring every unsupported construct in the sub-bench's own sidecar rather than trusting Hyperscan's message text — the safer choice, and consistent with `requirements.md §4.5`'s "declared variant" posture: KNOW in advance what an engine cannot do rather than discover it from a string) — **confirmed by b42engines2**: `\z` IS supported (Intel's dev-reference api_files.html and VectorCamp's own `dev-reference/compilation.rst` both list "the anchors `^`, `$`, `\A`, `\Z` and `\z`" as supported; the two full unsupported-construct lists are BYTE-IDENTICAL prose between Intel Hyperscan's and VectorCamp Vectorscan's own docs, so the fork carries the same restriction set) |
 | python `re` | yes | yes (fixed-length lookbehind ONLY — variable-length lookbehind `(?<=a*)` is a `re.error` at compile, fetched [regular-expressions.info/python.html](https://www.regular-expressions.info/python.html) 2026-09-12 cross-checked against CPython 3.14 docs) | **yes since 3.11** (possessive quantifiers `x*+` and atomic groups `(?>...)`, per [learnbyexample.github.io/python-regex-possessive-quantifier](https://learnbyexample.github.io/python-regex-possessive-quantifier/) 2026-09-12 — this box's python3 is 3.14.3, so this bench's python testee HAS them) | **no** (no `(?R)`/`(?&name)`) | **no** | yes (`\K` explicitly unsupported by `re`; the third-party `regex` module — ALSO apt-installable here as `python3-regex` 0.1.20250918-1build1, candidate for a LATER roster slot, not [B7]'s named list — does support it) | yes, `\p{...}`-style via `re.UNICODE` default on `str` patterns (not full `\p{Script=...}` syntax the way pcre2/RE2 spell it — python spells Unicode categories differently, `\w`/`\d`/`\s` expand per-Unicode-category but there is no `\p{Greek}` token in stdlib `re`) | governed by CPython's own recursion-limit-adjacent internals for the backtracking engine, not a documented fixed count | `re.error` (a subclass of `ValueError`) raised at `re.compile()`, carrying `.msg`, `.pattern`, `.pos`, `.lineno`, `.colno` — structured enough to build a `did-not-compile` diagnostic from |
 | perl | yes | yes | yes (`(?>...)`, possessive quantifiers) | yes (`(?R)`, named recursion) | yes | yes | yes, extensively (`\p{...}`, the fullest Unicode property support on the roster along with pcre2, which is intentional — PCRE was built to track Perl) | governed by perl's own internal limits, effectively "no practical construct is unsupported" — perl is close to a SUPERSET of pcre2's syntax rather than a subset, and is the one engine on the roster where the capability question INVERTS: the interesting finding is what perl does DIFFERENTLY from pcre2 on a shared construct, not what it lacks | a bad pattern raises a runtime exception (`qr/.../.` under `eval` dies with `$@` set to perl's own diagnostic string) — no structured error object, closer to Hyperscan's free-text shape than RE2's enum |
 | pcrec | per pcrec's own supported-syntax registry (this project already reads it: `testees/pcrec/list_axes.tsv`, `list_definitions.tsv`, `list_limits.tsv`; `bench/syntax@0.1`'s 95-pattern census IS this table, mechanism family by mechanism family) — not re-derived here, it is this project's own existing knowledge | — | — | — | — | — | — | pcrec's own named limits registry (`--list-limits`, `PCREC_MAX_*`) — already this project's `did-not-compile` convention (`docs/dev/known_issues.md` KB-4) | pcrec's own `RX_ENGINE_WHY`-class diagnostic on its emit-c phase (`testees/pcrec/CLAUDE.md`'s KB-4 paragraph) |
@@ -246,32 +246,47 @@ CLAUDE.md`'s table: `<engine>-<axis-word>`).
 |---|---|---|---|---|
 | pcre2 | `pcre2_jit_compile()` vs none; `pcre2_dfa_match()` vs `pcre2_match()`; `pcre2_set_match_limit()`/`set_depth_limit()` (already this project's `pcre2-interp`/`pcre2-jit`, `testees/pcre2/CLAUDE.md`) | interpreter, no JIT, PCRE2's built-in match/depth limits | JIT trades compile time for match speed (already measured in this project — `pcre2-jit` vs `pcre2-interp`); DFA-match trades captures away (see below) for a scan that "just once... scans the subject string" (fetched [pcre.org/current/doc/html/pcre2_dfa_match.html](https://www.pcre.org/current/doc/html/pcre2_dfa_match.html), 2026-09-12) and can find ALL matches at one starting point (`PCRE2_DFA_SHORTEST` chooses the shortest) — Note: `pcre2_dfa_match` restricts what may appear in a pattern (the man page says so without enumerating; my fetch could not extract the exact restricted-construct list — flagged §8) and does NOT support JIT at all (`pcre2jit` man page, this box, fetched via `man`: "JIT support applies only to the traditional Perl-compatible matching function. It does not apply when the DFA matching function is being used.") | `pcre2-interp`, `pcre2-jit` (existing); NEW: `pcre2-dfa` (a THIRD execution model on the same library — its own `automaton_class: dfa-only`-ish reading is actually WRONG per `record_schema.md §5`'s enum, since `pcre2_dfa_match` is NOT a classical DFA — see the caveat below) |
 | RE2 | `RE2::Options::max_mem` (default `8<<20` = 8 MiB, fetched from `re2.h` verbatim, 2026-09-12: "two-thirds to the forward Prog, one-third to reverse Prog... Once a DFA fills its budget, it flushes its cache and restarts. Excessive flushing causes fallback to NFA") | 8 MiB | memory ceiling on the compiled program AND the runtime DFA cache combined — RAISING it is the "space" dial in reverse (more memory buys fewer DFA cache flushes, i.e. speed); `longest_match` trades POSIX correctness for... a different correctness, not speed | `re2-default` (8 MiB), `re2-bigmem` (e.g. 64 MiB, mirroring this project's own `pcrec-*-bigcap` precedent at `testees/pcrec/CLAUDE.md`), `re2-longest` (POSIX mode) |
-| Rust `regex` | `size_limit` (compile-time; default per the crate's own words "some reasonable number that permits most patterns to compile successfully" — an UNSPECIFIED-in-docs literal default I could not pin down exactly in this session, flagged §8) and `dfa_size_limit` (runtime lazy-DFA cache; exceeding it does NOT error — the engine "bails out... and switches to a different regex engine" per the crate docs, i.e. a GRACEFUL internal fallback, never a `did-not-compile`) | as above | `size_limit` is a hard compile-time refusal (`CompiledTooBig`); `dfa_size_limit` is a runtime engine-selection dial INVISIBLE to the compile outcome — this is a genuinely different shape from pcrec's own caps (which refuse at compile) and from RE2's (which degrades silently at MATCH time by flushing) — a third distinct "what does exceeding this even mean" shape for the capability model (§7) | `regex-default`, `regex-smallsize` (a LOW `size_limit` deliberately, to exercise the refusal outcome on the wide-alternation-style patterns this bench already has in `bench/altwide`) |
-| Oniguruma | no documented global memory cap function surfaced in this session's fetch (`doc/API`, fetched: option flags only, no `onig_set_...limit`-shaped function found) — flagged §8, needs a second pass reading `doc/API` in full rather than the search-result excerpt this session captured | — | — | not yet proposable without the follow-up read |
-| TRE | none surfaced beyond its own fixed internal working-space bound (the ~50K/20K/2K figures quoted in §1, which read as an implementation ceiling, not a caller-facing dial) | — | — | `tre-default` only, pending the same follow-up |
+| Rust `regex` | `size_limit` (compile-time; default per the crate's own words "some reasonable number that permits most patterns to compile successfully" — an UNSPECIFIED-in-docs literal default I could not pin down exactly in this session, flagged §8; **still open after b42engines2** — the docs pages fetched describe the default in prose only, never a literal byte figure, and pinning the number needs a source read of `regex-automata`'s `meta::Config` defaults rather than another docs.rs page) and `dfa_size_limit` (runtime lazy-DFA cache; exceeding it does NOT error — the engine "bails out... and switches to a different regex engine" per the crate docs, i.e. a GRACEFUL internal fallback, never a `did-not-compile`) | as above | `size_limit` is a hard compile-time refusal (`CompiledTooBig`); `dfa_size_limit` is a runtime engine-selection dial INVISIBLE to the compile outcome — this is a genuinely different shape from pcrec's own caps (which refuse at compile) and from RE2's (which degrades silently at MATCH time by flushing) — a third distinct "what does exceeding this even mean" shape for the capability model (§7) | `regex-default`, `regex-smallsize` (a LOW `size_limit` deliberately, to exercise the refusal outcome on the wide-alternation-style patterns this bench already has in `bench/altwide`) |
+| Oniguruma | **CLOSED by b42engines2** (full `doc/API` re-read, tag v6.9.10): SIX real caller-facing dials — `onig_set_retry_limit_in_match` (default 10,000,000, 0=unlimited), `onig_set_retry_limit_in_search` (default 0), `onig_set_parse_depth_limit` (default 4096), `onig_set_subexp_call_max_nest_level` (default 24), `onig_set_subexp_call_limit_in_search` (default 0), `onig_set_match_stack_limit_size` (default 0) | as listed, mostly "unlimited" out of the box except parse-depth (4096) and match-retry (10,000,000) | retry/stack limits trade a hang/blowup hazard for an early, named refusal (`ONIGERR_RETRY_LIMIT_IN_MATCH_OVER` etc, §3); NONE of them are a SIZE-of-artifact dial the way pcre2's caps or RE2's `max_mem` are — Oniguruma genuinely has no compiled-size accessor or cap (confirmed absent, §3) | `onig-default` (library defaults); `onig-lowretry` (a deliberately small `onig_set_retry_limit_in_match`, to exercise `ONIGERR_RETRY_LIMIT_IN_MATCH_OVER` as a first-class refusal on a catastrophic-backtracking witness) |
+| TRE | **CLOSED by b42engines2** (`lib/tre-internal.h`, laurikari/tre `master`): `TRE_MAX_RE` = 65536 (pattern length), `TRE_MAX_STRING` = `INT_MAX`, `TRE_MAX_STACK` = 1,048,576 (match-time stack bytes) — fixed compile-time constants, not caller-settable dials (no `tre_set_*` function exists in `regcomp.c`/`tre.h`); the note's original ~50K/20K/2K figures are UNCONFIRMED (their likely source, `laurikari.net/tre/documentation/regcomp/`, 500'd on re-fetch) and should be replaced by these three named constants when cited going forward | fixed at build time | none — TRE offers no space/speed trade at all on this axis; the only observable dial is `tre_regacomp`'s approximate-matching cost budget (`regaparams_t.max_cost`), which answers a DIFFERENT question (§2.3) and is out of scope here | `tre-default` only — no second config is proposable; `TRE_MAX_RE` (65536) is a fixed ceiling worth using as a `bench/bounded`-style rung if TRE joins the roster |
 | Vectorscan/Hyperscan | `hs_compile` mode (`HS_MODE_BLOCK` / `HS_MODE_STREAM` / `HS_MODE_VECTORED`, fetched [intel.github.io/hyperscan/dev-reference/compilation.html](https://intel.github.io/hyperscan/dev-reference/compilation.html), 2026-09-12) and per-pattern `HS_FLAG_SOM_LEFTMOST` (start-of-match tracking, which has a documented COST: "specifying a small or medium SOM horizon will usually reduce the stream state required" — so SOM precision is itself a size/speed dial); database size is measurable via `hs_database_size`/`hs_serialized_database_size` (fetched, 2026-09-12) | BLOCK mode, no SOM | BLOCK trades nothing extra (one-shot scan of a whole buffer, closest to this bench's "search"/"match" regimes); STREAM trades per-call state for the ability to scan across call boundaries (irrelevant to this bench's batched-in-memory subjects — recommend BLOCK only for v1); SOM_LEFTMOST trades stream-state memory (and, per Hyperscan's own doc, compatibility — it cannot combine with `HS_FLAG_SINGLEMATCH`/`HS_FLAG_PREFILTER`) for start-offset precision, which THIS BENCH NEEDS (`adapters.py`'s `subject` line always reports a `START`, `adapters.py:54`) — so a Hyperscan testee MUST compile with `HS_FLAG_SOM_LEFTMOST` to answer this bench's own protocol at all, which is itself a "space" cost paid unconditionally, not a dial | `vectorscan-block-som` (mandatory for start-offset reporting), `vectorscan-block-nosom` (a declared-variant testee that can only report END offsets and match/no-match, NOT start — an honest capability gap, not a config choice; see §7) |
 | python `re` | `re` module has no documented size cap exposed to callers (CPython's own recursion-limit interacts with pathological backtracking instead — an unbounded-time hazard, not a compile-time refusal) | — | n/a — python `re` cannot decline a pattern for size; it can only hang or raise `RecursionError` at MATCH time, which the bench's per-subject `timed-out`/`crashed` outcomes already cover (`requirements.md §4.4`) | `python-re` (one config; no space/speed axis to name) |
 | perl | perl's regex engine has its own internal limits (`$Config{...}`-adjacent build-time constants) not surveyed in this session — flagged §8 | — | — | `perl-default` pending follow-up |
 | pcrec | already fully mapped by this project: `max_emit_bytes`/`max_emit_code_bytes` (the [ART-SIZE] caps), `--engine=auto/dfa/vm`, `unroll_k` (`docs/design/record_schema.md §7`'s worked pcrec table) | as `testees/pcrec/configs.toml` states per config | already this project's own knowledge, not re-derived here | the sixteen configs already in `testees/pcrec/CLAUDE.md` |
 
-**A caveat on `pcre2_dfa_match`'s automaton_class tag.** The man page
-name ("DFA") is misleading for this bench's `automaton_class` enum
-(`record_schema.md §5`: `dfa-only`/`nfa-simulation`/`backtracking`/
-`hybrid`/`simd-multipattern`). `pcre2_dfa_match` finds ALL matches
-starting at one position simultaneously by simulating an NFA-like state
-set across the subject in one left-to-right scan (my fetch of
-`pcre2_dfa_match.html` could not confirm from the page text alone
-whether it is a literal subset-construction DFA or an NFA simulation
-that behaves like one — flagged §8, worth a source read of pcre2's
-`pcre2_dfa_match.c` before the design note commits to a tag). What IS
-confirmed: it reports overlapping matches at one start point (a genuinely
-different QUESTION from `pcre2_match`'s single best match), takes a
+**A caveat on `pcre2_dfa_match`'s automaton_class tag — CLOSED by
+b42engines2 from this box's own man pages, no source read needed.**
+`man pcre2matching` (10.46, this box) settles the automaton-class
+question in its own words: "This algorithm conducts a breadth-first
+search of the tree... In Friedl's terminology, this is a kind of "DFA
+algorithm", though **it is not implemented as a traditional finite
+state machine** (it keeps multiple states active simultaneously)." That
+is an NFA-simulation description in the engine's OWN documentation, not
+a literal subset-construction DFA — `record_schema.md §5`'s
+`automaton_class` enum should tag `pcre2-dfa` as `nfa-simulation`, never
+`dfa-only`, despite the function's name. The SAME page also gives the
+restricted-construct list §8 item 2 flagged as missing, quoted here
+verbatim (its numbering): "There are a number of features of PCRE2
+regular expressions that are not supported or behave differently in the
+alternative matching function. Those that are not supported cause an
+error if encountered": no captured substrings at all (so no
+backreferences, no conditional expressions that use a backreference as
+the condition or test for a specific group recursion, no script runs, no
+scan substring assertions); `\K` "is not supported"; the backtracking
+control verbs other than `(*FAIL)` are not supported; `\C` is not
+supported in UTF modes; `PCRE2_MATCH_INVALID_UTF` is not supported.
+Also confirmed from the same page and `man pcre2jit`: it CANNOT be
+JIT-compiled ("JIT support applies only to the traditional
+Perl-compatible matching function... It does not apply when the DFA
+matching function is being used"), it reports ALL overlapping matches
+at one start point in DECREASING order of length (a genuinely different
+question from `pcre2_match`'s single best match), and it takes a
 caller-provided `workspace` array sized independent of capture-group
-count, and CANNOT be JIT-compiled (confirmed from this box's `man
-pcre2jit`, quoted above) — three structural facts, independent of the
-DFA-vs-NFA-simulation label, that already argue for treating it as a
-FOURTH pcre2 testee (`pcre2-dfa`) with its own `automaton_class` value
-pending that source read.
+count. Six structural facts (automaton class, the six-item restriction
+list, no-JIT, all-matches-one-point, decreasing-length order, the
+workspace shape) all argue for treating `pcre2-dfa` as a FOURTH pcre2
+testee with `automaton_class: nfa-simulation` — no further source read
+needed; §8 item 2 is CLOSED.
 
 ## 5. What "compile time" means per engine, and what is comparable
 
@@ -328,9 +343,20 @@ pcre2/CLAUDE.md`) and `PCRE2_INFO_JITSIZE`; RE2 `ProgramSize()`/
 `ReverseProgramSize()` (fetched, §1); Hyperscan `hs_database_size()`/
 `hs_serialized_database_size()` (fetched, §4); Rust regex has no public
 "give me the compiled size in bytes" call surfaced in this session's docs
-fetch (flagged §8 — `regex_automata`'s lower-level crate may expose more);
-Oniguruma/TRE not surveyed for a size accessor in this session (flagged
-§8); pcrec's `emit_bytes`/`emit_code_bytes`/`artifact_bytes` already
+fetch (flagged §8 — `regex_automata`'s lower-level crate may expose more)
+— **CLOSED by b42engines2**: `regex_automata::meta::Regex::memory_usage(&self) -> usize`
+DOES exist ("Return the total approximate heap memory, in bytes, used by
+this Regex", docs.rs, fetched 2026-09-12) — but the higher-level `regex::Regex`
+type (the one `rure`/regex-capi actually wraps, per its `Cargo.toml`
+dependency on the `regex` crate, not `regex-automata` directly) has NO such
+method (docs.rs's own method list for `regex::Regex` was checked in full —
+`find`/`is_match`/`captures`/iteration/string methods only, nothing
+memory-shaped) — so a `rure`-based pcrec-bench testee, as proposed, CANNOT
+report this number without switching the C API's own build to depend on
+`regex-automata` directly instead of `regex`, which is a change to
+upstream `regex-capi`, not something an adapter here can do; Oniguruma/TRE
+confirmed to have NO size accessor at all (§3/§4, closed above, not merely
+unsurveyed); pcrec's `emit_bytes`/`emit_code_bytes`/`artifact_bytes` already
 exist (`record_schema.md §7`). All are DIFFERENT DEFINITIONS of "size" —
 a compiled bytecode program (RE2, PCRE2), a relocatable database blob
 (Hyperscan), or comment-excluded generated C source plus a linked `.so`
@@ -466,30 +492,46 @@ as designed). What is NOT yet covered, from this session's survey:
 ## 8. Questions for Frank, and what I could not verify
 
 Every item below is flagged inline above at its first occurrence; listed
-together here for the design pass.
+together here for the design pass. **UPDATED by lane b42engines2
+(2026-09-12, same day): items 1-3 are FACTS, now closed by reading
+upstream source/docs rather than searching — see "Follow-up
+2026-09-12 (lane b42engines2)" at the end of this note for the full
+derivation. Items 4-7 stay open: each is a genuine RULING (a choice
+between two honest options, or a number no source states), not a fact a
+second read could settle, and each is restated, sharpened by what b42engines2
+found, in that follow-up section's own "still for Frank" list.**
 
-1. **Is `rure`/`regex-capi` still a maintained, buildable C API for the
+1. ~~Is `rure`/`regex-capi` still a maintained, buildable C API for the
    Rust `regex` crate as of this pin (1.12.2), or has it been supplanted
    by something else (e.g. a `cbindgen`-generated header the design note
-   would need to build itself)?** I confirmed the source tree still
-   exists in `rust-lang/regex` on GitHub and found no removal
-   announcement, but could not confirm from crates.io whether a current
-   `rure` release exists or whether `regex-capi` still builds against
-   `regex` 1.12 without patching (its own `Cargo.toml` version pin was
-   not checked). Needs a build attempt, not another search.
-2. **`pcre2_dfa_match`'s restricted-construct list and its true
-   automaton class** — the man page states restrictions exist without
-   naming them in the portion this session fetched; recommend reading
-   `pcre2_dfa_match.c`'s own top-of-file comment (pcre2 is BSD, freely
-   readable; the `.h`/`.c` are on this box under `libpcre2-dev`) before
-   the design note commits to `pcre2-dfa` as a fourth testee or picks its
-   `automaton_class` tag.
-3. **Oniguruma's and TRE's own size/complexity refusal surfaces** — I did
-   not find a documented memory-cap function for Oniguruma in this
-   session's fetch of `doc/API`, and TRE's own internal bound (§1's
-   ~50K/20K/2K figures) has no named error code I could confirm hits it.
-   Both need a second, deeper read of `doc/API` (Oniguruma) and
-   `tre.h`/`regcomp.c` (TRE) rather than a search-engine excerpt.
+   would need to build itself)?~~ **CLOSED** (b42engines2): yes, still
+   buildable from the git tree, its `Cargo.toml` path-depends on the
+   sibling `regex` crate so it always tracks whatever revision it is
+   checked out at; `rure` also exists as a crates.io package (one
+   release, 0.2.5) but that is not the build route recommended here. I
+   confirmed the source tree still exists in `rust-lang/regex` on GitHub
+   and found no removal announcement, but could not confirm from
+   crates.io whether a current `rure` release exists or whether
+   `regex-capi` still builds against `regex` 1.12 without patching (its
+   own `Cargo.toml` version pin was not checked). Needs a build attempt,
+   not another search.
+2. ~~`pcre2_dfa_match`'s restricted-construct list and its true
+   automaton class~~ **CLOSED** (b42engines2, from this box's own `man`
+   pages, no source read needed — see §4's rewritten caveat paragraph
+   above and the follow-up section) — the man page states restrictions
+   exist without naming them in the portion this session fetched;
+   recommend reading `pcre2_dfa_match.c`'s own top-of-file comment (pcre2
+   is BSD, freely readable; the `.h`/`.c` are on this box under
+   `libpcre2-dev`) before the design note commits to `pcre2-dfa` as a
+   fourth testee or picks its `automaton_class` tag.
+3. ~~Oniguruma's and TRE's own size/complexity refusal surfaces~~
+   **CLOSED** (b42engines2 — see §3/§4's rewritten Oniguruma/TRE rows
+   above) — I did not find a documented memory-cap function for
+   Oniguruma in this session's fetch of `doc/API`, and TRE's own internal
+   bound (§1's ~50K/20K/2K figures) has no named error code I could
+   confirm hits it. Both need a second, deeper read of `doc/API`
+   (Oniguruma) and `tre.h`/`regcomp.c` (TRE) rather than a search-engine
+   excerpt.
 4. **Frank's ruling on Hyperscan's all-ends semantics (§7 item 3)**: does
    the capability set measure Hyperscan/Vectorscan at the SPAN grain via
    a declared variant restating expectations as end-offset sets, or at a
@@ -543,3 +585,375 @@ sections, not re-cited per line below):
   `docs/design/record_schema.md`, `pcrecbench/adapters.py`,
   `testees/pcre2/CLAUDE.md`, `testees/pcrec/CLAUDE.md`,
   `testees/CLAUDE.md`, `docs/dev/plan.md` ([B42], [B7] rows)
+
+## Follow-up 2026-09-12 (lane b42engines2): questions closed by fact
+
+Lane `b42engines2`, same day as the note above. Charter: close as many of
+§8's items as are FACTS derivable from upstream source/docs or this box's
+own installed packages, rather than rulings for Frank. Sources fetched or
+probed 2026-09-12 unless noted; every claim below is cited the same way
+the note above cites its own. No package was installed, no code was
+built, no measurement was taken — read-only research, same as the parent
+note.
+
+### (1) Rust regex C API — CLOSED
+
+`regex-capi/Cargo.toml` (raw GitHub, `rust-lang/regex` `master`,
+fetched 2026-09-12): the package is named `rure`, version `0.2.5`,
+depends on `regex = { version = "1", path = ".." }` — a PATH dependency
+on the sibling crate in the same repository, not a version fetched from
+crates.io. This means: a vendored build of `regex-capi` from the git
+tree ALWAYS builds against whatever revision of `regex` sits beside it
+in that checkout — there is no version-negotiation step to worry about,
+and at any commit on `rust-lang/regex` `master` today, that sibling
+`regex` crate IS the current 1.12.x line (the box's own `librust-regex-dev`
+source package is 1.12.2-1). The `README.md` confirms the shape (a
+C-callable wrapper "guarantees linear time searching using finite
+automata... All memory usage is bounded"; no lookaround, no
+backreferences) but states no maintenance/release-status sentence either
+way. `rure` DOES exist on crates.io (`https://crates.io/api/v1/crates/rure`
+JSON, fetched 2026-09-12): `max_stable_version` and `newest_version` are
+both `0.2.5`, `created_at` 2016-04-29, one published version total (the
+`updated_at` 2026-02-03 timestamp is crates.io's own metadata-reindex
+housekeeping, not a new publish — there is exactly one version row).
+**Recommendation, sharpened from the parent note's §1 table entry**: do
+NOT `cargo add rure` / depend on the crates.io package (a single 2016
+release is not a live target); DO vendor `rust-lang/regex`'s git tree at
+a commit matching the project's chosen `regex` version and build
+`regex-capi` from it with `cargo build --release`, exactly the posture
+the parent note already recommended. Needs `cargo`+`rustc` — **neither
+is installed on this box today** (both apt candidate `1.93.1ubuntu1`,
+`apt-cache policy cargo rustc`, this session).
+
+### (2) RE2's C wrapper — CLOSED, recommend the C++ route over cre2
+
+`cre2`'s `README` (raw GitHub, `marcomaggi/cre2` `master`, fetched
+2026-09-12): build system is GNU Autotools, and it "relies on
+pkg-config to find the installed re2 library" (this box's `libre2-dev`
+does ship a `re2.pc`, `pkg-config --list-all` confirms `re2` present).
+Critically, the repo root (`https://api.github.com/repos/marcomaggi/cre2/contents`,
+fetched 2026-09-12) has `configure.ac`/`autogen.sh`/`configure.sh` but
+**no committed `configure` script** — so a build here needs
+`autoconf`+`automake`+`libtool` to bootstrap it first (`autogen.sh`),
+none of which are installed (`apt-cache policy autoconf automake
+libtool`: candidates 2.72-3.1ubuntu2 / 1.18.1-3build1 / 2.5.4-9, none
+`Installed`); `pkg-config` itself IS already installed (2.5.1-4).
+`cre2` has **zero GitHub Releases**
+(`https://api.github.com/repos/marcomaggi/cre2/releases` returns `[]`,
+fetched 2026-09-12) — it has never been release-tagged, only ever
+distributed as a source checkout / autotools `dist` tarball; its README
+states it was last tested against "a release of RE2 2024-07-02", with no
+explicit min/max version range stated anywhere. On Abseil: `apt-cache
+depends libre2-dev` (this box) shows `Depends: libabsl-dev` directly —
+this box's packaged RE2 (20250805-1build3) is ALREADY Abseil-dependent
+at the package level, and `libabsl-dev` (candidate 20260107.0-4) is not
+installed. Searching `marcomaggi/cre2`'s issue tracker for "absl"
+(`https://github.com/marcomaggi/cre2/issues?q=absl`, fetched 2026-09-12)
+returns **zero results** — no reported incompatibility exists in either
+direction. Read together, this is a coherent, low-risk picture rather
+than an unknown: `cre2.h`'s own wrapper surface (`RE2`, `StringPiece`
+construction/query calls) never touches Abseil types directly — Abseil
+is RE2's OWN internal dependency, invisible at the C boundary cre2
+wraps — so a version of RE2 that internally uses Abseil is not a reason
+for cre2 itself to break; nobody filing an absl-related cre2 issue is
+consistent with that, not merely an absence of looking.
+**Recommendation, REVISED from the parent note's "not yet decided"
+framing**: prefer the DIRECT RE2 C++ driver over vendoring `cre2`. Two
+independent reasons converge: (a) `cre2` needs a four-package autotools
+bootstrap this box does not have (autoconf/automake/libtool, on top of
+libabsl-dev) to produce a project that has never once been release-
+tagged, while direct RE2 is already fully installed and pkg-config-
+discoverable; (b) the driver protocol imposes NO language constraint —
+`pcrecbench/adapters.py`'s protocol docstring (read in full again this
+session) specifies only the driver's argv/stdout SHAPE (`--pattern`,
+`--list`, `--mode`, the `info`/`compile`/`subject`/`error` TSV lines),
+never an implementation language, and the harness invokes every driver
+as an opaque subprocess; `pcrecbench/driverrun.py:115-140`'s
+`build_driver()` helper defaults to `$CC`/gcc with `-std=gnu11`, but it
+is a convenience an adapter is free not to call — an RE2 adapter's own
+`prepare()` can run its own `g++`/`clang++` compile+link step directly
+(both already installed on this box: g++ 15.2.0, clang++ 21.1.6,
+`apt-cache policy g++ clang`) with no changes to the protocol or the
+harness needed. This is the cleaner of the two routes given what is
+and is not already on the box, though which one Frank prefers to charter
+is still his call, not asserted as settled here.
+
+### (3) `pcre2_dfa_match`'s restricted constructs and automaton class — CLOSED
+
+Quoted in full, this box's `man pcre2matching` (`libpcre2-dev`
+10.46-1build1, PCRE2 10.46, "Last updated: 30 August 2024"):
+
+> "There are a number of features of PCRE2 regular expressions that are
+> not supported or behave differently in the alternative matching
+> function. Those that are not supported cause an error if encountered.
+>
+> 1. Because the algorithm finds all possible matches, the greedy or
+> ungreedy nature of repetition quantifiers is not relevant...
+> 2. When dealing with multiple paths through the tree simultaneously,
+> it is not straightforward to keep track of captured substrings for the
+> different matching possibilities, and PCRE2's implementation of this
+> algorithm does not attempt to do this. This means that no captured
+> substrings are available.
+> 3. Because no substrings are captured, a number of related features
+> are not available: (a) Backreferences; (b) Conditional expressions
+> that use a backreference as the condition or test for a specific group
+> recursion; (c) Script runs; (d) Scan substring assertions.
+> 4. Because many paths through the tree may be active, the \K escape
+> sequence, which resets the start of the match when encountered (but
+> may be on some paths and not on others), is not supported.
+> 5. Callouts are supported, but the value of the capture_top field is
+> always 1, and the value of the capture_last field is always 0.
+> 6. The \C escape sequence... is not supported in UTF modes...
+> 7. Except for (*FAIL), the backtracking control verbs such as (*PRUNE)
+> are not supported. (*FAIL) is supported, and behaves like a failing
+> negative assertion.
+> 8. The PCRE2_MATCH_INVALID_UTF option for pcre2_compile() is not
+> supported by pcre2_dfa_match()."
+
+This is the exact "restricted constructs" list §8 item 2 asked for — no
+`pcre2_dfa_match.c` source read was needed, only the man page the parent
+note had already partly fetched (`pcre2_dfa_match.html`) plus its sibling
+`pcre2matching` page, which the parent note had not yet pulled the body
+of. The SAME page also settles the automaton-class question the parent
+note left open, in the engine's own words: "In Friedl's terminology,
+this is a kind of "DFA algorithm", though **it is not implemented as a
+traditional finite state machine** (it keeps multiple states active
+simultaneously)." That is textbook NFA-simulation, not
+subset-construction DFA — `record_schema.md §5`'s `automaton_class`
+enum should tag a `pcre2-dfa` testee `nfa-simulation`, never `dfa-only`,
+regardless of the C function's name. Two further facts from the same
+page, both useful to the design note's `pcre2-dfa` testee proposal: all
+matches at one start point are returned in DECREASING order of length
+(not the single best match `pcre2_match` gives), and `man pcre2jit`
+confirms (already quoted in the parent note) that JIT never applies to
+this path. `PCRE2_INFO_SIZE`/`PCRE2_INFO_JITSIZE` (already cited) and
+the fuller `PCRE2_INFO_*` list are confirmed present in `/usr/include/pcre2.h`
+on this box (`libpcre2-dev` IS installed here, contrary to
+`testees/pcre2/CLAUDE.md`'s note that only the runtime is present — a
+side finding for whoever next touches that adapter, not acted on by
+this lane, out of scope for [B42]).
+
+### (4) Oniguruma — CLOSED (doc/API, doc/RE, oniguruma.h, regsyntax.c at tag v6.9.10)
+
+Limit knobs (`doc/API`, full re-read): `onig_set_retry_limit_in_match(unsigned long)`
+("Set the limit of retry counts in matching process. 0 means unlimited",
+default 10,000,000); `onig_set_retry_limit_in_search` (default 0,
+unlimited); `onig_set_parse_depth_limit(unsigned int)` ("Set the maximum
+depth of parser recursion... depth = 0: Set to the default value defined
+in regint.h", default 4096, `DEFAULT_PARSE_DEPTH_LIMIT`);
+`onig_set_subexp_call_max_nest_level(int)` (default 24);
+`onig_set_subexp_call_limit_in_search` (default 0, unlimited);
+`onig_set_match_stack_limit_size` (default 0, unlimited). Matching
+`ONIGERR_*` codes (`src/oniguruma.h`): `ONIGERR_PARSE_DEPTH_LIMIT_OVER`
+(-16), `ONIGERR_RETRY_LIMIT_IN_MATCH_OVER` (-17),
+`ONIGERR_RETRY_LIMIT_IN_SEARCH_OVER` (-18),
+`ONIGERR_SUBEXP_CALL_LIMIT_IN_SEARCH_OVER` (-19),
+`ONIGERR_MATCH_STACK_LIMIT_OVER` (-15), plus size/complexity codes
+`ONIGERR_TOO_BIG_NUMBER` (-200), `ONIGERR_TOO_BIG_NUMBER_FOR_REPEAT_RANGE`
+(-201), `ONIGERR_TOO_MANY_MULTI_BYTE_RANGES` (-205),
+`ONIGERR_TOO_BIG_BACKREF_NUMBER` (-207), `ONIGERR_TOO_MANY_CAPTURES`
+(-210), and the general `ONIGERR_MEMORY` (-5) / `ONIGERR_PARSER_BUG`
+(-11) / `ONIGERR_STACK_BUG` (-12). NO compiled-size/memory-usage
+accessor exists anywhere in `doc/API` — confirmed absent by a full
+re-read, not merely unfound in an excerpt. `\z`/`\Z`/`\A` (`doc/RE`,
+tag v6.9.10): "\A beginning of string, \Z end of string, or before
+newline at the end, \z end of string" — listed under the default
+`ONIG_SYNTAX_ONIGURUMA` syntax with no per-syntax qualifier in `doc/RE`'s
+own text. `ONIG_SYNTAX_PERL_NG`'s construct support (`src/regsyntax.c`,
+the `OnigSyntaxPerl_NG` struct's own op2 bitmask, read directly rather
+than inferred from `doc/RE`'s prose, which never names `PERL_NG`):
+`ONIG_SYN_OP2_PLUS_POSSESSIVE_REPEAT`/`_INTERVAL` (possessive
+quantifiers: YES), `ONIG_SYN_OP2_ESC_K_NAMED_BACKREF` (backreferences:
+YES, via `\k<name>`), `ONIG_SYN_OP2_ESC_G_SUBEXP_CALL` +
+`ONIG_SYN_OP2_QMARK_PERL_SUBEXP_CALL` (recursion/subroutine calls via
+`\g<name>`: YES), `ONIG_SYN_OP2_QMARK_LPAREN_IF_ELSE` (conditionals via
+`(?(condition)yes|no)`: YES) — four of six features confirmed by a
+directly-named flag. Atomic groups and lookbehind are NOT gated by a
+distinct op2 flag in this table; Oniguruma appears to treat `(?>...)` as
+a core, always-on group form rather than a per-syntax option, but this
+was not independently re-derived from the group-parsing code
+(`regparse.c`), so it is stated with visibly lower confidence than the
+four flag-matched features above, not asserted as equally solid.
+
+### (5) TRE — CLOSED, and the note's own size figures corrected
+
+`include/tre/tre.h` (raw GitHub, `laurikari/tre` `master`, fetched
+2026-09-12): the full `reg_errcode_t` enum is `REG_OK`, `REG_NOMATCH`,
+`REG_BADPAT`, `REG_ECOLLATE`, `REG_ECTYPE`, `REG_EESCAPE`, `REG_ESUBREG`,
+`REG_EBRACK`, `REG_EPAREN`, `REG_EBRACE`, `REG_BADBR`, `REG_ERANGE`,
+`REG_ESPACE`, `REG_BADRPT`, `REG_BADMAX` (the standard POSIX set plus
+TRE's own `REG_BADMAX`); `RE_DUP_MAX` = 255 (max bound-expression
+repeat count) is declared here too. `lib/tre-internal.h` (fetched
+2026-09-12) is where the REAL size bounds live, and they are NOT the
+figures the parent note quoted: `TRE_MAX_RE` = 65536 (max pattern
+length), `TRE_MAX_STRING` = `INT_MAX`, `TRE_MAX_STACK` = 1,048,576
+(match-time stack, bytes) — three named, fixed, non-caller-settable
+constants (no `tre_set_*`-shaped configuration function exists anywhere
+in `tre.h`/`regcomp.c`). `lib/regcomp.c` (fetched 2026-09-12) shows
+these enforced directly: `if (n > TRE_MAX_RE) return REG_ESPACE;`
+appears in `tre_regncomp`/`tre_regncompb`/`tre_regcomp`/`tre_regcompb`.
+No 50K/20K/2K figure appears anywhere in either file. The parent note's
+~50K/20K/2K figures most likely came from `laurikari.net/tre/documentation/regcomp/`
+(the page it cites at that exact URL) — that page 500'd on re-fetch this
+session and could not be re-checked, so rather than assert a specific
+correction, the honest state is: **the ~50K/20K/2K figures are
+UNCONFIRMED and should not be repeated**; `TRE_MAX_RE` (65536) and
+`TRE_MAX_STACK` (1,048,576) are the real, source-verified bounds to cite
+from now on. Backreferences (`lib/tre-parse.c`, fetched 2026-09-12): DO
+exist — the `PARSE_ATOM` case detects a digit immediately after a
+backslash and constructs a `BACKREF` AST node directly (`if
+(tre_isdigit(*ctx->re)) { /* Back reference. */ ... }`), confirming
+POSIX-style `\1`-`\9` backreferences are real, compiled constructs, not
+merely a POSIX-conformance claim. `\z`/`\A`/`\Z` (same file): **NOT
+supported** — the escape-handling switch in `tre-parse.c` has cases only
+for `\b`/`\B` (word boundary) and `\<`/`\>` (beginning/end of word); no
+case for `z`, `A`, or `Z` exists, confirming TRE has no PCRE-style
+end-of-string anchors at all, only POSIX `^`/`$`.
+
+### (6) Vectorscan — CLOSED, its own docs confirmed byte-identical to Hyperscan's
+
+`hs_expr_info_t` (`intel.github.io/hyperscan/dev-reference/api_files.html`,
+fetched 2026-09-12, its full field list): `unsigned int min_width`
+("The minimum length in bytes of a match for the pattern"), `unsigned
+int max_width` ("The maximum length..."), `char unordered_matches`
+("Whether this expression can produce matches that are not returned in
+order"), `char matches_at_eod`, `char matches_only_at_eod`.
+`hs_compile_error_t`: `char *message`, `int expression` (zero-based
+index of which multi-compiled expression failed) — confirming the
+parent note's characterization exactly (free text plus an index, no
+closed reason enum). VectorCamp's OWN dev-reference
+(`raw.githubusercontent.com/VectorCamp/vectorscan/develop/doc/dev-reference/compilation.rst`,
+fetched 2026-09-12) states the unsupported-construct list in prose that
+is a VERBATIM match to Intel's Hyperscan page — "Backreferences and
+capturing sub-expressions. Arbitrary zero-width assertions. Subroutine
+references and recursive patterns. Conditional patterns. Backtracking
+control verbs. The \C "single-byte" directive... The \R newline match.
+The \K start of match reset directive. Callouts and embedded code.
+Atomic grouping and possessive quantifiers." — the fork carries the
+exact same restriction set, not a divergent one, closing the concern
+that "Vectorscan" and "Hyperscan" might differ here. `\z` is explicitly
+listed as SUPPORTED on both pages ("The anchors ^, $, \A, \Z and \z").
+`HS_FLAG_SOM_LEFTMOST`'s cost (VectorCamp's own page): "Reduced pattern
+support... Increased stream state... Performance overhead...
+Incompatible features: Some other Vectorscan pattern flags (such as
+HS_FLAG_SINGLEMATCH and HS_FLAG_PREFILTER) can not be used in
+combination with SOM" — matching the parent note's characterization.
+
+### (7) Rust regex compiled-size accessor — CLOSED
+
+`regex_automata::meta::Regex::memory_usage(&self) -> usize`
+(`docs.rs/regex-automata/latest/regex_automata/meta/struct.Regex.html`,
+fetched 2026-09-12) EXISTS: "Return the total approximate heap memory,
+in bytes, used by this Regex." — confirming the parent note's own guess
+that "`regex_automata`'s lower-level crate may expose more." But the
+HIGHER-level `regex::Regex` type — the one `rure`/`regex-capi` actually
+wraps, per its `Cargo.toml` path-dependency on the `regex` crate, NOT
+`regex-automata` directly (§1 above) — has no such method
+(`docs.rs/regex/latest/regex/struct.Regex.html`'s full method list
+checked: `find`/`is_match`/`captures`/iteration/string-manipulation/
+`as_str`/`capture_names`/`captures_len` only, nothing memory-shaped).
+Consequence for [B42] phase (b): a `rure`-based pcrec-bench testee, as
+proposed in §1, CANNOT expose a compiled-size number the way pcre2/RE2/
+Hyperscan can — not because the underlying engine lacks the capability
+(`regex-automata` has it), but because `regex-capi`'s own C wrapper is
+built one layer above where that accessor lives; exposing it here would
+mean patching upstream `regex-capi` to depend on `regex-automata`
+directly, out of scope for an adapter in this repository. Recommend the
+design note record `program_size`/`compiled_size_bytes`-style metadata
+as simply UNAVAILABLE for the Rust-regex testee, not merely
+"not yet found."
+
+### (8) python `re` / perl — confirmed from official docs
+
+CPython 3.14's own `re` documentation
+(`docs.python.org/3.14/library/re.html`, fetched 2026-09-12): possessive
+quantifiers (`*+`/`++`/`?+`) and atomic grouping (`(?>...)`) are both
+"Added in version 3.11" — this box's `python3` is 3.14.3, so both are
+live for this bench's python testee, exactly as the parent note's §3
+table already stated from a secondary source; this closes it against
+the PRIMARY docs instead. Lookbehind is explicitly fixed-width only:
+"The contained pattern must only match strings of some fixed length,
+meaning that abc or a|b are allowed, but a* and a{3,4} are not" — no
+variable-length lookbehind in stdlib `re`, for either direction. The
+module-level compiled-pattern cache is documented only in QUALITATIVE
+terms ("The compiled versions of the most recent patterns... are
+cached, so programs that use only a few regular expressions at a time
+needn't worry about compiling") — CPython does NOT publish a numeric
+cache-size guarantee anywhere in the public docs; any specific figure
+(the CPython `re` module's internal `_cache` has historically used a
+fixed `_MAXCACHE`) is an IMPLEMENTATION DETAIL with no public contract,
+and this session did not verify a current number from source — a driver
+built against `re.compile()` should bypass the cache explicitly (as the
+parent note already recommended) rather than rely on any specific
+capacity figure holding across versions. For perl 5.40: not
+independently re-verified this session beyond what the parent note
+already states; `qr//`'s own compiled-object caching and `use re
+'eval'` remain out of scope for a v1 capability set exactly as the
+parent note frames it (perl is the one engine on the roster whose
+question inverts from "what can't it do" to "what does it do
+differently") — no new finding here, this paragraph exists only to
+record that the ask was reviewed, not silently skipped.
+
+### (9) THE INSTALL LIST for Frank
+
+Every apt package a [B7]/[B42] adapter build would need, checked
+`apt-cache policy` on this box 2026-09-12. **Nothing below was
+installed by this lane** (no sudo, no apt install — mandate).
+
+| package | needed for | candidate version | installed? |
+|---|---|---|---|
+| `cargo` | building `regex-capi`/`rure` from git | 1.93.1ubuntu1 | **no** |
+| `rustc` | building `regex-capi`/`rure` from git | 1.93.1ubuntu1 | **no** |
+| `libabsl-dev` | RE2 (direct C++ driver OR `cre2`) — `libre2-dev` already `Depends:` on it | 20260107.0-4 | **no** |
+| `autoconf` | bootstrapping `cre2`'s missing `configure` (only needed if the `cre2` route is chosen over direct C++, NOT recommended, §2) | 2.72-3.1ubuntu2 | **no** |
+| `automake` | same, `cre2` route only | 1:1.18.1-3build1 | **no** |
+| `libtool` | same, `cre2` route only | 2.5.4-9 | **no** |
+| `pkg-config` | RE2 discovery (either route) | 2.5.1-4 | **yes, already installed** |
+| `libre2-dev` (+ runtime) | RE2, either route | 20250805-1build3 | **yes, already installed** (`libre2-11` runtime too) |
+| `libonig-dev` | Oniguruma | 6.9.10-1build1 | **no** (runtime `libonig5` IS installed) |
+| `libtre-dev` | TRE | 0.9.0-1build1 | **no** (runtime `libtre5` presumably installed transitively, not separately checked) |
+| `libvectorscan-dev` | Vectorscan (the roster's own named choice — see the CONFLICT note below) | 5.4.11-2ubuntu2 | **no** |
+| `libhyperscan-dev` | Vectorscan's older, CONFLICTING sibling package — **do not install alongside `libvectorscan-dev`** (Ubuntu's package relations mark them Replaces/Provides/Conflicts against each other; installing both is not just redundant, `apt` will refuse or remove one) | 5.4.2-4 | **no** — and should STAY not-installed if `libvectorscan-dev` is chosen |
+| `g++` | a direct RE2 C++ driver (recommended route, §2); already usable for any future C++ driver | 15.2.0-5ubuntu1 | **yes, already installed** |
+| `clang`/`clang++` | alternative C++ toolchain, same purpose | 21.1.6-71 | **yes, already installed** |
+| `cmake` | not required by anything on this roster today (RE2/cre2/Oniguruma/TRE/Vectorscan are all reachable via apt packages + pkg-config or plain `cc`/`g++`; cmake would only matter for a from-source Vectorscan/RE2 build, not needed while the apt packages exist) | 4.2.3-2ubuntu2 | **no — not needed** |
+| `python3-regex` | the third-party `regex` module (`\K` support, not [B7]'s named roster — a LATER slot only, per the parent note's §3 python row) | 0.1.20250918-1build1 | **no — optional, out of scope for v1** |
+
+**Single recommended command** (Oniguruma + TRE + Vectorscan headers,
+Abseil for RE2, and the direct-C++-driver route for RE2 — no autotools,
+no `libhyperscan-dev`):
+
+    sudo apt install libonig-dev libtre-dev libvectorscan-dev libabsl-dev
+
+`cargo`/`rustc` are a separate ask (only needed if/when the Rust regex
+testee is actually built): `sudo apt install cargo rustc`. Neither line
+was run by this lane.
+
+## §8 items closed vs. still for Frank (b42engines2's split)
+
+**CLOSED as facts (this follow-up section has the derivation for each):**
+§8 items 1 (rure/regex-capi buildability), 2 (`pcre2_dfa_match`'s
+restricted-construct list and automaton class), and 3 (Oniguruma's and
+TRE's size/complexity refusal surfaces) — plus the note's own §5/§7
+open threads on Rust regex's memory accessor (closed: exists one layer
+too deep for `rure` to reach) and Vectorscan/Hyperscan's `\z` support
+(closed: supported, identically on both forks).
+
+**Still genuinely for Frank (no new fact changes these — each is a
+choice, not a lookup):**
+
+4. Hyperscan/Vectorscan's all-ends semantics: SPAN-grain declared
+   variant vs a narrowed BOOLEAN grain for this engine only (§7 item 3,
+   §8 item 4) — unchanged by this follow-up.
+5. The `cost_class` fifth-token question: a new
+   `eager-with-lazy-runtime` enum value vs adapter-note prose (§5's
+   close, §8 item 5) — unchanged; if anything, RE2/Rust/Hyperscan's three
+   independently-confirmed "eager-but-partial" compile stories (§5)
+   strengthen the case that this is one recurring SHAPE worth a token,
+   but the choice of which fix is still Frank's.
+6. Whether python `re`/perl are in scope for MATCH timing in v1 at all,
+   given the embedding-driver cost (§8 item 6) — unchanged; (8) above
+   confirms the primary-source facts underneath the recommendation
+   without changing the recommendation itself.
+7. Peak memory (`ru_maxrss`) recording scope — native-driver testees
+   only vs never for scripting engines (§8 item 7) — unchanged.
