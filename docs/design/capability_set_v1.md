@@ -1346,12 +1346,13 @@ consumes three data shapes that already exist:
   puts it in `testees/<engine>/configs.toml` — machine-readable, but
   scattered across adapter directories. A trivial later collector can
   union them; nothing here blocks it.
-- **(d) Provenance and licence are not in the record at all.** §4.1 puts
-  two tags (`src:`, `fid:`) in `patterns[].tags` deliberately so a REPORT
-  can bucket wild vs designed; the full provenance row (URL, licence,
-  attribution) stays in the set directory. A public interface that
-  displays a wild pattern MUST display its attribution — CC BY-SA 4.0
-  requires it (N1 §9). **Leave room, and flag:** the day a public page
+- **(d) Provenance and licence are not in the record at all.** §4.1
+  (revised, CB3) puts two real enumerated FILTERABLE fields
+  (`patterns[].provenance_source`, `patterns[].fidelity`) in the record
+  so a REPORT can bucket wild vs designed; the full provenance row (URL,
+  licence, attribution) stays in the set directory. A public interface
+  that displays a wild pattern MUST display its attribution — CC BY-SA
+  4.0 requires it (N1 §9). **Leave room, and flag:** the day a public page
   renders an OWASP-sourced pattern, the attribution must travel with it,
   and today nothing but the set directory carries it. That is a
   requirement on the later UI, recorded here so it is not discovered
@@ -1361,17 +1362,31 @@ consumes three data shapes that already exist:
 
 ## 11. The build plan
 
+**This whole section is PARKED and will be RE-SEQUENCED at the restart
+(F8, and the §9 supersession above).** The lane plan below still states
+what the set needs done — its shape is unaffected by the Q3 ruling — but
+its dependency edges assumed §9's old Option B (a sidecar-hybrid loader
+L4 would build against a file L3 authored by hand). Under the restart,
+L3's `patterns.rxt`-equivalent and L4's loader are built against whatever
+pcrecdev1 actually delivers, checked against `rxt_needs_v1.md`'s
+acceptance checklist rather than v0.1's §9.2-§9.4. F8's own finding —
+that L3 shipped its file with no automated proof its block names matched
+the sidecar until L4's gates landed — is superseded the same way: the
+restart's block↔sidecar gate is scoped and built once, against the
+delivered grammar, not staged across two lanes whose sequencing this
+note can no longer specify honestly.
+
 ### 11.1 Lanes and order
 
 | lane | what | tier | depends on | size |
 |---|---|---|---|---|
 | **L1 import/curation** | fetch the confirmed-permissive sources; extract the wild members verbatim; write `provenance.tsv`'s rows; record every fetch URL + licence + date. **NOT blinded** — reading the sources is the task | Sonnet | Frank's §4.2 ruling | 1 session |
-| **L2 designed members** | author families 7-12's designed members and every control twin, **blinded per D27**: `man pcre2pattern` and the engine docs only; no `testees/`, no `pcrecbench/adapters.py`, no `store/`, no `reports/`, no ledgers. May read L1's `provenance.tsv` for the `inspired` citations but NOT the wild pattern TEXT until its own patterns are committed | Sonnet | §4.3's ratio | 1 session, parallel with L1 |
-| **L3 the set** | `patterns.rxt`, `subbench.toml`, `captext.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, `gen_expectations.py`, `gen_provenance.py`, `gen_variants.py`, manifests, `NOTES.md` (objective, families, blinding statement, subjects, **the outlier rule and the predictions, both stated before any run**), `CLAUDE.md` | Sonnet | L1 + L2 | 1-2 sessions |
-| **L4 the `.rxt` loader** | `subbench.py`'s `source_format = "rxt"` path; the four §9.4 gates with their positive controls; `export_rxt.py`'s skip | Sonnet | L3's file shape | 1 session |
-| **L5 the capability machinery** | the closed tag vocabulary + load-time validation; `capabilities = [...]` per config; the pre-compile policy in `harness.py`; the §5.3 witness-refusal check arm; **the reporter's many-variant rendering check** (N2 §7 item 4) | Sonnet | L3, L4 | 1 session |
+| **L2 designed members** | author families 7-12's designed members and every control twin, **blinded per D27**: `man pcre2pattern` and the engine docs only; no `testees/`, no `pcrecbench/adapters.py`, no `store/`, no `reports/`, no ledgers. May read L1's `provenance.tsv` for the `inspired` citations but NOT the wild pattern TEXT until its own patterns are committed. Held to §4.3's REALISM rule, same as L1's imports | Sonnet | §4.3's realism rule (Q2 RESOLVED — not a ratio to size against) | 1 session, parallel with L1 |
+| **L3 the set** | pattern source (shape depends on the restart's delivery — §9), `subbench.toml`, `captext.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, `gen_expectations.py`, `gen_provenance.py`, `gen_variants.py`, manifests, `NOTES.md` (objective, families, blinding statement, subjects, **the outlier rule and the predictions, both stated before any run**), `CLAUDE.md` | Sonnet | L1 + L2 | 1-2 sessions |
+| **L4 the pattern-source loader** | `subbench.py`'s loader path for the delivered format; the block↔sidecar and no-build-directive gates, restated against the actual grammar (CS8) with their positive controls; `export_rxt.py`'s skip | Sonnet | L3's file shape; `rxt_needs_v1.md`'s delivered productions | 1 session |
+| **L5 the capability machinery** | the closed tag vocabulary + load-time validation; `capabilities = [...]` per config; the pre-compile policy in `harness.py`; the §5.3 witness-refusal check arm; **design and build the `variant.kind` rendering from nothing** (CB2 — not a check against existing code, a new one); family 11's shared-convention scoping (CB1) confirmed in the harness's expectation lookup | Sonnet | L3, L4 | 1 session, larger than v0.1 scoped (CB2) |
 | **L6a `pcre2-dfa`** | the fourth pcre2 testee — no new dependency, no new build machinery | Sonnet | L5 | 1 session |
-| **L6b.. one lane per new engine** ([B7]) | RE2 (direct C++ driver), Oniguruma, TRE, Vectorscan, Rust `regex` — each its own lane with its own adapter note | Sonnet each | Frank's install line; L5 | 1 session each |
+| **L6b.. one lane per new engine** ([B7]) | RE2 (direct C++ driver), Oniguruma, TRE, Vectorscan, Rust `regex` — each its own lane with its own adapter note. Oniguruma's lane independently re-derives `atomic-group` support from `regparse.c` (CB5) and resolves `k-reset` (CB6) and the TRE `named-groups`/`free-spacing` citations (CS5) before declaring them | Sonnet each | Frank's install line; L5 | 1 session each |
 
 **Order:** L1 ∥ L2 → L3 → L4 → L5 → **first sample** → L6a → L6b…, with
 each new engine measured as its adapter lands. The first sample does NOT
