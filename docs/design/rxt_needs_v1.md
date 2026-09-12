@@ -396,7 +396,7 @@ block-line  = … | provenance-block ;
 provenance-block = "provenance" , eol , { INDENT , prov-line , eol } ;
 prov-line =
       "source"     , ws , ident            (* a registered source slug, REQUIRED *)
-    | "url"        , ws , rest-of-line     (* the exact URL fetched,    REQUIRED *)
+    | "url"        , ws , rest-of-line     (* the exact URL fetched,  conditional *)
     | "ref"        , ws , rest-of-line     (* file/rule/line inside it, conditional *)
     | "licence"    , ws , spdx-id          (* from the source's own LICENSE, REQUIRED *)
     | "licence-note" , ws , prose-value    (* optional *)
@@ -411,10 +411,14 @@ prov-line =
 - Block-scoped, at most one per pattern block. A SECOND `provenance`
   block in one block is REFUSED by name — not last-wins, which is the
   `description` hazard M5 measured.
-- `source`, `url`, `licence`, `retrieved`, `fidelity` are REQUIRED; a
-  block missing one is refused naming the missing line, exactly as a
-  `freq` block without `question`/`reader` is.
-- `ref` is REQUIRED unless `source` is the reserved slug `authored`.
+- `source`, `licence`, `retrieved`, `fidelity` are REQUIRED; a block
+  missing one is refused naming the missing line, exactly as a `freq`
+  block without `question`/`reader` is.
+- `url` and `ref` are REQUIRED unless `source` is the reserved slug
+  `authored`, which is the value a freshly-written pattern carries and
+  which by definition has neither. An `authored` block that writes one
+  anyway is refused: the slug and the fields must agree, or `authored`
+  stops meaning anything.
 - `adaptation` is REQUIRED iff `fidelity` is not `verbatim`. This is the
   one conditional the format would have to enforce and it is the whole
   value of making it structural: a mechanically-changed pattern with no
@@ -622,7 +626,6 @@ tag family=semantics-divergence hazard=none size=tiny role=member
 tag convention=perl-leftmost-first
 provenance
   source        authored
-  url           n/a
   licence       n-a
   retrieved     2026-09-12
   fidelity      inspired
