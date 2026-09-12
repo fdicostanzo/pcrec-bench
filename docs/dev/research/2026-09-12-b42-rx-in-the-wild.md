@@ -99,11 +99,72 @@ lane re-checks before relying on them.
   the other named benchmark files (AWS-key detection, the lexer
   benchmark, the Unicode-word benchmark) verbatim this session — OWED
   if the design lane wants more than the one sample.
+  **(confirmed/corrected by b42wild2)**: those three benchmarks are
+  NOT under `regexes/wild/` — they live in `benchmarks/definitions/
+  curated/` as `09-aws-keys.toml`, `05-lexer-veryl.toml` and
+  `07-unicode-character-data.toml` respectively (a 14-file numbered
+  series, `01-literal.toml` through `14-quadratic.toml`, fetched as a
+  directory listing; contents not fetched — still OWED). The
+  "Unicode-word" description was imprecise: `07-unicode-character-data`
+  is sized off Unicode Character Database data, not a word-boundary
+  benchmark specifically. `benchmarks/definitions/wild/` (distinct from
+  `regexes/wild/`) holds eight top-level wild-benchmark TOMLs:
+  `bibleref.toml`, `caddy.toml`, `dot-star-capture.toml`,
+  `grapheme.toml`, `parol-veryl.toml`, `ruff.toml`,
+  `rustsec-cargo-audit.toml`, `url.toml`. `ruff.toml` was fetched in
+  full: six benchmarks (`whitespace-around-keywords`, `noqa`,
+  `unnecessary-coding-comment`, `string-quote-prefix`,
+  `space-around-operator`, `shebang`), every one run against the SAME
+  real haystack `wild/cpython-226484e4.py` (actual CPython source) with
+  a stated expected match count per benchmark (e.g.
+  `whitespace-around-keywords` expects 1,312,482 matches over that
+  file), and each restricts its `engines` list to a subset of
+  `pcre2/jit`, `re2`, `rust/regex`, `rust/regexold` — closing family-
+  taxonomy item (ii)'s "stated reason for exclusion" ask with a named,
+  general-purpose reason rather than a construct-specific one: rebar's
+  own comment states "many regex engines don't run well on the haystack
+  because it contains invalid UTF-8" once Unicode mode is enabled,
+  which is WHY Python and Hyperscan are absent from every `ruff.toml`
+  benchmark — a haystack-driven exclusion, not a pattern-driven one, a
+  distinct exclusion CLASS from the AWS-key/lexer pattern-driven
+  exclusions this note's family taxonomy otherwise assumes.
+  `regexes/wild/` itself (confirmed by directory listing) actually
+  holds: `README.md`, `bibleref.txt`, `date.txt`, `grapheme.txt`,
+  `huge-character-class.txt`, `noseyparker.txt`, `parol-veryl.txt`,
+  `ucd-parse.txt`, `unstructured-to-json.txt`, `url.txt` — ten files,
+  none named for AWS keys or a lexer, confirming the correction above.
+  `noseyparker.txt` was fetched: it is confirmed to be the Nosey Parker
+  secrets-scanner's real production pattern set (AWS/Azure/GCP
+  credentials, GitHub/GitLab/Slack/Stripe/Shopify/Square/SendGrid/Okta
+  tokens, JWTs, SSH private keys, generic connection strings) but the
+  fetch returned a categorical description rather than verbatim regex
+  text — STILL OWED if literal patterns are wanted (Unlicense permits
+  quoting freely once fetched raw).
+  `benchmarks/haystacks/` (directory listing fetched) holds subfolders
+  `imported/`, `opensubtitles/`, `unicode/`, `wild/` plus loose files
+  `bstr-ext-slice-65993b58.txt`, `cloud-flare-redos.txt`,
+  `github-rustlang-regex-i787.txt`, `lines-with-invalid-utf8.txt`,
+  `one-byte-xFF.txt`, `pile-of-poo-prefix.txt`,
+  `rust-src-tools-3b0d4813.txt`, `sherlock.txt` (the last is the
+  Sherlock Holmes text, public domain; several of the others are
+  derived from `rust-lang/regex`'s own issue reports/source tree, so
+  share that project's MIT/Apache-2.0 licensing by provenance, not
+  independently re-confirmed per file). `haystacks/opensubtitles/`'s
+  own `README.md` was fetched and states these files "were downloaded
+  and derived from the Open Subtitles data set:
+  <https://opus.nlpl.eu/OpenSubtitles-v2018.php>" at six size tiers
+  (`teeny`/`tiny`/`small`/`medium`/`huge`/`sampled`) per language
+  (English/Russian/Chinese) — OPUS's own OpenSubtitles-v2018 terms are
+  NOT independently confirmed here (OPUS aggregates subtitle text of
+  mixed underlying rights; this stays flagged, not resolved, exactly as
+  the original note anticipated).
 
 ### 2. mariomka/regex-benchmark
 
 - **URL(s) fetched**: <https://github.com/mariomka/regex-benchmark/blob/master/README.md>.
-- **Licence**: MIT (per the README, "MIT © Mario Juárez").
+- **Licence**: MIT (per the README, "MIT © Mario Juárez"); (confirmed by
+  b42wild2: direct fetch of the repo's `LICENSE` file returns standard MIT
+  boilerplate text).
 - **Dialect**: one pattern set, re-implemented per language's native
   regex engine (17 languages) — so it is really a cross-LANGUAGE speed
   comparison using PCRE-ish syntax, not a multi-engine harness.
@@ -247,7 +308,14 @@ lane re-checks before relying on them.
   release) and Vectorscan (its portable fork, ARM/Power support) are
   both BSD-3-Clause (per the search summaries; not independently
   fetched as a raw LICENSE file this session — flag as "not verified
-  this session").
+  this session"). **(confirmed by b42wild2)**: both `LICENSE` files
+  fetched directly — Hyperscan's own is "Copyright (c) 2015, Intel
+  Corporation" under a standard BSD redistribution/disclaimer text
+  (Intel-name-endorsement clause included), plus BSD/Boost-1.0/Google-
+  Test-BSD-style licences for three vendored third-party components
+  (Intel's Slicing-by-8 CRC32, Boost headers, Google Test); Vectorscan's
+  `LICENSE` carries the same BSD family text and the same three
+  third-party components. Both CONFIRMED BSD, not just well-known.
 - **Dialect**: PCRE-syntax-following but with Hyperscan's own
   restrictions (it is a MULTI-PATTERN, streaming, SIMD engine; it
   REJECTS constructs it cannot support in its execution model —
@@ -338,6 +406,25 @@ lane re-checks before relying on them.
   fetched (by design, most rules don't use it); OWED — a targeted fetch
   of a rules file known to carry `pcre:` (e.g. an HTTP/app-layer rule
   file) would produce quotable samples; not done this session for time.
+  **b42wild2 attempted this and STILL FAILED to produce a sample** —
+  recorded in detail because the failure mode is itself a finding: a
+  GitHub code search for `pcre:` inside `OISF/suricata-verify` required
+  a logged-in session (refused); a direct fetch of `tests/<name>/
+  test.rules` for four PCRE-related test directory names
+  (`pcre-jit-disabled`, `pcre-jit-enabled`, `pcre-jit-stack-size`,
+  `pcre-modifier-x`) 404'd for all four; those four names themselves
+  came from asking the WebFetch summarizer to extract "pcre"-matching
+  entries out of a raw `api.github.com/.../contents/tests` JSON array
+  (a directory of 1,232+ entries) — when the raw JSON's first ~500
+  bytes were checked directly (not summarized), they WERE genuine
+  GitHub API output (real `sha`/`url` fields, starting alphabetically
+  at `7858-stream-events`), but the four "pcre-*" names were never
+  independently confirmed to appear verbatim in that array — treat
+  them as UNCONFIRMED, possibly summarizer-invented plausible names for
+  a directory too large to reliably eyeball this way, not as
+  established fact. A general honesty lesson worth carrying into note
+  3 or the design note: a fetch tool's own summary of a huge listing is
+  not itself a citable source — only a directly quoted raw excerpt is.
 
 ### 8. ModSecurity / OWASP Core Rule Set (CRS)
 
@@ -347,6 +434,11 @@ lane re-checks before relying on them.
 - **Licence**: Apache License 2.0 (per WebSearch summary of the
   project's own description — commonly cited and low-risk, but not
   independently confirmed against a LICENSE file this session).
+  **(confirmed by b42wild2)**: `LICENSE` fetched directly —
+  "Apache License Version 2.0, January 2004", "Copyright 2026 OWASP
+  CRS project" (the copyright line's year is a rolling stamp the
+  project keeps current in its own file, not a dating error on my
+  part).
 - **Dialect**: ModSecurity's own regex dialect, which is PCRE-based
   (ModSecurity links libpcre/PCRE2 for its `@rx` operator).
 - **Size**: CRS ships hundreds of rules across attack-category files
@@ -381,6 +473,19 @@ lane re-checks before relying on them.
 - **Samples**: none fetched verbatim this session (Apache-2.0 permits
   quoting; OWED — a targeted fetch of one CRS rule file, e.g. the SQLi
   rules, would produce 3-6 quotable patterns for the design note).
+  **CLOSED by b42wild2** — fetched
+  `rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf` and pulled five
+  `@rx`-bearing rules verbatim (Apache-2.0, quoting freely; rule ids are
+  CRS's own numbering):
+  - 942140: `(?i)\b(?:d(?:atabas|b_nam)e[^0-9A-Z_a-z]*\(|(?:information_schema|m(?:aster\.\.sysdatabases|s(?:db|ys(?:ac(?:cess(?:objects|storage|xml)|es)|modules2?|(?:object|querie|relationship)s))|ysql\.db)|northwind|pg_(?:catalog|toast)|tempdb)\b|s(?:chema(?:_name\b|[^0-9A-Z_a-z]*\()|(?:qlite_(?:temp_)?master|ys(?:aux|\.database_name))\b))`
+  - 942160: `(?i:sleep\s*?\(.*?\)|benchmark\s*?\(.*?\,.*?\))`
+  - 942270: `(?i)union.*?select.*?from`
+  - 942360: `(?i)\b(?:(?:alter|(?:(?:cre|trunc|upd)at|renam)e|de(?:lete|sc)|(?:inser|selec)t|load)[\s\x0b]+(?:char|group_concat|load_file)\b...` (truncated by the fetcher; the leading clause is exact, the tail is elided — re-fetch directly before using this one verbatim)
+  - 942500: `(?i)/\*[\s\x0b]*?[!\+](?:[\s\x0b\(\)\-0-9=A-Z_a-z]+)?\*/`
+  These are exactly the ADVERSARIALLY-TESTED, community-grown alternation
+  shapes §8 already predicted (942140/942360 in particular are large
+  keyword alternations of the kind that historically grows quadratic
+  over years of patches) — a strong `wild-waf` family anchor.
 
 ### 9. OWASP Validation Regex Repository
 
@@ -517,6 +622,38 @@ lane re-checks before relying on them.
   the paper's own "Artifact Available" badge / a Zenodo or GitHub link
   in the full PDF (not fetched — arXiv HTML rendering of the PDF body
   was not attempted this session).
+  **CLOSED by b42wild2 — availability CONFIRMED, ranked #1 per this
+  note's own re-rank instruction.** The artifact is
+  <https://doi.org/10.5281/zenodo.3257777> ("Lingua Franca FSE19
+  Artifact"), GitHub-backed by `VTLeeLab/LinguaFranca-FSE19` (the
+  paper's ESEC/FSE'19 title is "Lingua Franca"). Zenodo's own metadata
+  fetched directly: one `tmp.txt` (53 B) and
+  `VTLeeLab-LinguaFranca-FSE19-v1.0.zip` (34.1 MB); Zenodo's licence
+  FIELD reads "Other (Open)" with no further description — AMBIGUOUS on
+  its own. The GitHub repo itself was fetched separately and DOES carry
+  an MIT `LICENSE` file per its own footer — a real MISMATCH between
+  the Zenodo record's metadata and the backing repo's stated licence
+  that the design lane should resolve (which one governs? most likely
+  the repo's, since Zenodo's "Other (Open)" reads like an unset/default
+  field rather than a deliberate override, but this is a judgment call,
+  not a fact I can settle by fetching more). Format (from the GitHub
+  README): "JSON... files named `*.json` are generally NDJSON-formatted
+  files that contain one JSON object per line" — streamable, matches
+  this bench's own JSONL record convention structurally (not
+  semantically). Per-regex provenance: the README confirms the corpus
+  is "extracted from about 200,000 software projects written in 8
+  programming languages" but does NOT explicitly document, in the text
+  fetched, a per-regex field carrying which project/file/language each
+  regex came from — this needs the actual zip contents inspected before
+  assuming per-regex provenance survives (a real risk: if the NDJSON
+  rows carry only the regex text and its target language, not source
+  project/file, half of requirement (1)'s "provenance recorded per
+  pattern" ask would need a different source, or acceptance of
+  language-level rather than project-level provenance). STILL OWED: the
+  34.1 MB zip's actual contents (schema, per-record fields) — not
+  downloaded/unzipped this session (out of scope for a WebFetch-only
+  lane; a future lane with direct download capability should do this
+  before the design note commits to using it).
 - **Dialect**: eight languages — JavaScript, Java, PHP, Python, Ruby,
   Go, Perl, Rust — i.e., patterns as WRITTEN for each language's own
   engine, which is directly useful for the [B7] capability-landscape
@@ -554,6 +691,20 @@ lane re-checks before relying on them.
   independently confirmed this session (GitHub default view did not
   surface a LICENSE badge in the search summary — OWED). The Zenodo
   artifact's licence also not confirmed.
+  **CLOSED (partially) by b42wild2**: `davisjam/vuln-regex-detector`'s
+  `LICENSE` fetched directly — MIT. IMPORTANT CORRECTION: the Zenodo
+  DOI this note cited (`10.5281/zenodo.5916441`) is NOT
+  `vuln-regex-detector`'s own artifact — fetched directly, it is titled
+  "ICSE2022-ReDoS-Artifact", the artifact for a LATER, DIFFERENT paper
+  by an overlapping author set (Barlas, Du, Davis, "Exploiting Input
+  Sanitization for Regex Denial of Service", ICSE 2022), also MIT
+  licensed, and MUCH larger than the earlier summary suggested: three
+  files, `ArtifactDocs.zip` (348.6 kB), `HTMLForms.zip` (7.8 GB, the
+  bulk of it), `redos-xplore.zip` (25.8 MB) — a web-forms-focused ReDoS
+  dataset, not the original "regexes mined from web forms and API
+  specs" description this note gave (that description was closer to
+  right in spirit — HTML forms ARE a big part of it — but the paper and
+  size were both unconfirmed guesses before this fetch).
 - **Dialect**: JS/PCRE-family, per the tool's stated purpose (detect
   ReDoS in real project regexes).
 - **Size**: the cited Zenodo artifact is described (per the search
@@ -650,6 +801,26 @@ lane re-checks before relying on them.
 - **Samples**: none fetched (file listing/content not retrieved this
   session — OWED, and probably the single most mechanically-cheap OWED
   item here given the existing oracle tooling).
+  **CLOSED by b42wild2**: a `testdata/README` fetch 404'd (no such file
+  at that exact path — the file may be named/located differently or not
+  exist standalone), so file-purpose mapping is by direct sampling
+  instead. `testinput1` (the main, non-UTF test file) DOES carry
+  empty-match cases: `/.*?/g,aftertext` run globally over `abc`
+  (zero-length matches at every position), `/\b/g,aftertext` over `abc`
+  (word-boundary zero-width matches), and `/(a|)*\d/` against a run of
+  60 `a`s followed by `4` (an empty alternation branch repeated
+  unboundedly before a required digit — a correctness-not-performance
+  cousin of the ReDoS-nested-quantifier family, since the empty branch
+  makes naive repeat-tracking ambiguous without being slow). `testinput2`
+  (the UTF-8 test file) DOES carry Unicode/ASCII case-fold cases:
+  `/[[:upper:]]/Ii` against `A`/`a`, `/((?-i)[[:lower:]])[[:lower:]]/Ii`
+  (scoped case-fold toggling inside a group), and `/(?i)a(?-i)b|c/B`
+  (mixed-mode case-folding within one alternation). This answers the
+  brief's question directly: empty-match cases are in `testinput1`,
+  fold cases are (at least partly) in `testinput2` — a fuller
+  `\p{}`-property fold census across the other 27 testinput files was
+  NOT attempted (time), still OWED if the design note wants breadth
+  beyond these two confirmed files.
 
 ### 16. Oniguruma's own test suite (`kkos/oniguruma`)
 
@@ -672,6 +843,26 @@ lane re-checks before relying on them.
   clusters (grok, TextMate) are both independently well covered above,
   this is lower priority than PCRE2's testdata but should still be
   checked before the design note is written.
+  **CLOSED by b42wild2**: `kkos/oniguruma/test/` fetched as a directory
+  listing — `CMakeLists.txt`, `Makefile.am`, `test.sh`, `test_back.c`,
+  `test_options.c`, `test_regset.c`, `test_syntax.c`, `test_utf8.c`,
+  `testc.c`, `testp.c`, `testu.c` (a C test harness, not a data file —
+  same conformance-suite character as PCRE2's and rust-regex's testdata,
+  maintainer-authored). `test_syntax.c` sampled: it drives an `x2(pattern,
+  subject, start, end)` macro (`n()` for expected non-match, `e()` for
+  expected error code), and its actual cases include
+  `x2("a{1,3}?", "aaa", 0, 1)` (lazy interval), `x2("a{1,3}+", "aaaaaa",
+  0, 3)` (POSSESSIVE interval — Oniguruma supports possessive bounded
+  repeats directly, a capability datum for note 2), `x2("(?=a).b", "ab",
+  0, 2)` (lookahead), `x2("(?<=a|(.))\\1", "abcc", 3, 4)` (VARIABLE-
+  LENGTH lookbehind combined with a backreference — a construct
+  combination RE2/Vectorscan/Rust-regex all refuse outright, and one
+  even PCRE2's fixed-width-lookbehind-by-default posture historically
+  treated differently — worth a note-2 capability line), and
+  `x2("(?P<name>abc)(?P=name)", "abcabc", 0, 6)` (Python-style named
+  group + explicit backref syntax, confirming Oniguruma accepts more
+  than one named-group SPELLING convention, relevant to the [B7]
+  roster's "slight syntactic adjustment" allowance).
 
 ### 17. GNU grep / sed test suites
 
@@ -685,7 +876,10 @@ lane re-checks before relying on them.
   patterns into this repo (which does not otherwise carry a GPL
   obligation) is a REAL licensing question, not a formality — flag
   prominently for Frank (§5) rather than assuming the design lane can
-  just decide.
+  just decide. **CONFIRMED by b42wild2**: fetched `COPYING` directly
+  from Savannah's cgit mirror (after one redirect) — "GNU GENERAL
+  PUBLIC LICENSE / Version 3, 29 June 2007" verbatim. The GPLv3 flag
+  stands as fact, not just well-known belief, now.
 - **Dialect**: POSIX BRE/ERE (grep's default and `-E`) plus GNU
   extensions and, via `-P`, PCRE through libpcre — directly useful for
   the TRE/POSIX entry on the [B7] roster (APPROACH.md §5: "TRE (POSIX,
@@ -702,6 +896,24 @@ lane re-checks before relying on them.
   session beyond the licence flag above — genuine gap, OWED, and given
   the GPLv3 flag, this source needs a Frank ruling before any import
   effort is spent on it regardless of technical value.
+  **b42wild2 located the tests/ tree** (via `cgit.git.savannah.gnu.org/
+  cgit/grep.git/tree/tests`, a real listing, not the earlier "did not
+  resolve" gap): it holds dedicated conformance files directly relevant
+  to the [B7] POSIX/TRE entry — `bre`/`bre.tests`, `ere`/`ere.tests`,
+  the Henry Spencer suites (`spencer1`, `spencer1-locale`, `spencer2`),
+  a large backref family (`backref`, `backref-alt`, `backref-anchor`,
+  `backref-multibyte-slow`, `backref-word`, `triple-backref`,
+  `case-fold-backref`), a PCRE-under-grep family (`pcre`, `pcre-utf8`,
+  `pcre-jitstack`, `pcre-infloop`, `pcre-invalid-utf8-infloop`, …),
+  locale-specific case-fold tests including `Turkish-I` and
+  `turkish-I-without-dot` (the classic dotless-ı/dotted-İ Turkish
+  case-folding divergence — a genuinely wild, citable locale edge case
+  no existing pcrec-bench set has), `hangul-syllable`, and
+  equivalence-class/bracket-expression tests (`posix-bracket`,
+  `equiv-classes`, `reversed-range-endpoints`). This is exactly the
+  BRE/ERE-vs-Perl divergence material the original note predicted this
+  source would hold — still gated on Frank's GPLv3 ruling before any
+  literal import, but no longer an unlocated gap.
 
 ### 18. TextMate grammars / syntax highlighters (Oniguruma-dialect regexes in the wild)
 
@@ -752,6 +964,28 @@ lane re-checks before relying on them.
 - **Samples**: none fetched verbatim this session (would need a
   specific grammar file, e.g. a JSON language grammar, fetched
   directly — not done this session, OWED, low cost if wanted).
+  **CLOSED by b42wild2**: fetched `microsoft/vscode`'s own
+  `extensions/json/syntaxes/JSON.tmLanguage.json` (MIT, per the vscode
+  repo's well-known licensing — not independently re-fetched as a raw
+  LICENSE file this session, same "well-known, low-risk" caveat as
+  elsewhere). Five quoted regex fields: the `array` rule's `begin`:
+  `\[`; the `constant` rule's `match`: `\b(?:true|false|null)\b`; the
+  `object` rule's `begin`: `\{`; the `number` rule's `match` (an
+  EXTENDED-mode, `(?x)`-flagged pattern for the full JSON number
+  grammar — sign, integer part, optional fraction, optional exponent);
+  and the `stringcontent` rule's `match` for escape sequences:
+  `(?x)\\(?:["\\/bfnrt]|u[0-9a-fA-F]{4})`. Two things worth carrying
+  into the family taxonomy: (a) TextMate grammars use the `(?x)`
+  EXTENDED/free-spacing mode routinely, which none of this bench's
+  existing sets exercise as a distinct construct (`bench/syntax`'s
+  `modifiers` family should be checked for whether `(?x)` itself is
+  already covered — a note-2/note-3 cross-check, not resolved here);
+  (b) this one file alone is ~15-20 regexes applied in the
+  `begin`/`end`/`patterns` priority structure the family taxonomy
+  already flagged as the NEW `regex-set-priority` measurement shape —
+  a JSON grammar specifically is small and simple enough to be a
+  reasonable FIRST instance of that shape if Frank green-lights it
+  (see question (v)5 in the original note, unchanged by this fetch).
 
 ## Additional context: GNU grep/sed and the licensing shape of this survey generally
 
@@ -767,28 +1001,51 @@ rules, CRS) are also the ones with the MOST licensing homework still owed.
 
 ## (i) Shortlist, ranked
 
-1. **BurntSushi/rebar** — highest overall value: multi-engine-aware by
-   construction, Unlicense, explicit real-vs-synthetic labeling per
-   benchmark, an existing model for the `unsupported`-engine vocabulary
-   [B42] needs, and one confirmed genuinely-wild pattern (`datefinder`'s
-   date regex) already in hand. Should be read in FULL (not just this
-   session's partial fetch) before the design note is drafted.
-2. **PCRE2's own testdata** — cheapest to ingest (same dialect as the
-   existing oracle, same tooling family this bench already trusts),
-   very high construct-combination depth, likely-BSD (pending a
-   one-file re-check this repo probably already has on hand via its
-   PCRE2 dependency records). The single best "do this first" item.
-3. **Elastic grok patterns** — very strong real-use evidence, Apache-2.0,
-   Oniguruma dialect (covers a [B7] roster gap), and — notably —
-   patterns where the ORIGINAL AUTHOR already fought and fixed
-   catastrophic backtracking (the atomic-group patterns), which is a
-   genuinely rare and valuable kind of "wild" evidence.
-4. **Davis et al.'s polyglot corpus** — the single biggest potential
-   win IF the artifact is available and licensable (537,806 real
-   regexes, 8 languages, with published findings on cross-engine
-   divergence already pointing at specific interesting cases) — ranked
-   4th rather than 1st only because availability/licence is UNCONFIRMED
-   this session; re-rank to #1 if confirmed.
+**Re-ranked by b42wild2, 2026-09-12** (see the follow-up section below
+for the fetches behind this): Davis et al.'s corpus moves from 4th to
+1st per this note's own stated rule ("re-rank to #1 if confirmed") now
+that its artifact is located and its licence is at least
+partially resolved (GitHub repo states MIT; the Zenodo record's own
+metadata is ambiguously "Other (Open)" — a real mismatch, not a clean
+confirmation, so treat this as STRONG not TOTAL confirmation). Original
+ranks 1-3 are otherwise unchanged in relative order, now with more
+fetched evidence behind rebar and PCRE2's testdata specifically.
+
+1. **Davis et al.'s polyglot corpus** (was 4th) — the single biggest
+   potential win: 537,806 real regexes from ~200,000 projects across 8
+   languages, NDJSON, artifact FOUND
+   (<https://doi.org/10.5281/zenodo.3257777>, backed by
+   `VTLeeLab/LinguaFranca-FSE19`, 34.1 MB), licence MIT per the GitHub
+   repo (Zenodo's own field says "Other (Open)" — flagged, not
+   resolved, see the follow-up section). Ranked 1st on the STRENGTH of
+   this fetch, but the zip's actual per-record schema (does provenance
+   survive per-regex, or only per-language?) is still unopened — the
+   design lane's first move on this source should be downloading and
+   inspecting that zip, not assuming the README's description of its
+   shape is complete.
+2. **BurntSushi/rebar** (was 1st) — highest overall STRUCTURAL value:
+   multi-engine-aware by construction, Unlicense, explicit
+   real-vs-synthetic labeling per benchmark, an existing model for the
+   `unsupported`-engine vocabulary [B42] needs, and — now confirmed in
+   more depth — a concrete `ruff.toml` benchmark set (six real CPython-
+   source benchmarks with engine-exclusion reasons stated for a
+   haystack-driven, not just pattern-driven, reason) plus a 14-file
+   curated benchmark series (`01-literal.toml`…`14-quadratic.toml`)
+   whose full contents are still OWED. Should be read in FULL (not just
+   this session's partial fetch) before the design note is drafted.
+3. **PCRE2's own testdata** (was 2nd) — cheapest to ingest (same
+   dialect as the existing oracle, same tooling family this bench
+   already trusts), very high construct-combination depth, BSD-3-Clause
+   WITH PCRE2-exception (confirmed by direct `LICENCE.md` fetch in the
+   original session). Empty-match cases confirmed in `testinput1`,
+   Unicode/ASCII fold cases confirmed in `testinput2` (b42wild2). Still
+   the single best "do this first" item given how little new
+   infrastructure it needs.
+4. **Elastic grok patterns** (was 3rd) — very strong real-use evidence,
+   Apache-2.0, Oniguruma dialect (covers a [B7] roster gap), and —
+   notably — patterns where the ORIGINAL AUTHOR already fought and
+   fixed catastrophic backtracking (the atomic-group patterns), which
+   is a genuinely rare and valuable kind of "wild" evidence.
 5. **ModSecurity OWASP CRS** — very high edge-case value (adversarially
    tested for years), Apache-2.0, but needs a transformation-chain
    design decision before import (do we strip `t:lowercase` etc.).
@@ -1031,4 +1288,206 @@ Oniguruma, TRE/POSIX, pcre2, pcrec (APPROACH.md §5).
   the sources on the final shortlist (rebar's is already Unlicense per
   item 1; grok patterns, CRS, RE2's BSD header is already quoted in
   item 4) would close this gap further before the design note is
-  written.
+  written. **CLOSED by b42wild2 for five of these six** — see the
+  follow-up section below: Hyperscan/Vectorscan (BSD, direct fetch),
+  rust-lang/regex (MIT, direct fetch of `LICENSE-MIT`), GNU grep
+  (GPLv3, direct fetch of `COPYING`), Elastic's plugin (Apache-2.0,
+  direct fetch), ModSecurity CRS (Apache-2.0, direct fetch). Only
+  mariomka's MIT claim was ALSO independently re-confirmed (bonus, not
+  in the original six). RE2's BSD header was already directly quoted in
+  the original session (item 4) and needed no re-check.
+
+## Follow-up 2026-09-12 (lane b42wild2): gaps closed
+
+Per the manager's brief: close as many named fetch gaps as possible by
+DIRECT fetch of primary sources, record what was fetched verbatim-cited,
+and correct anything a fetch refutes. Every fetch below is via WebFetch
+against a raw/primary URL or WebSearch where a primary URL first had to
+be located; results are cited inline above at the item they close, with
+a `(confirmed by b42wild2: …)` or `CLOSED by b42wild2` marker. This
+section is the roll-up plus the material that didn't belong inside any
+single existing item (the (5) "one more source" survey) plus this lane's
+own honesty list.
+
+### (1) rebar — CLOSED substantially
+
+Full `benchmarks/` shape confirmed: `definitions/` (curated/, dictionary/,
+imported/, opt/, reported/, test/, unicode/, wild/, aho-corasick/, plus
+top-level `engines.toml`/`captures.toml`/`folly.toml`/`grep.toml`/
+`hyperscan.toml`/`slow.toml`), `regexes/` (dictionary/english/, reported/,
+wild/), `haystacks/` (imported/, opensubtitles/, unicode/, wild/, plus
+loose files including `sherlock.txt` and several `rust-lang/regex`-
+derived snippets). The original note's belief that the AWS-key/lexer/
+Unicode-word benchmarks live under `regexes/wild/` was WRONG — corrected
+in place at item 1: they are `definitions/curated/09-aws-keys.toml`,
+`05-lexer-veryl.toml`, `07-unicode-character-data.toml` in a 14-file
+numbered curated series. `ruff.toml` (one of eight files in
+`definitions/wild/`) was fetched in FULL: six real benchmarks against
+actual CPython source with per-benchmark expected match counts and
+per-benchmark engine-inclusion lists, closing the "engines inclusion
+list with stated reason for exclusion" ask with a concrete, general
+(haystack-validity-driven) exclusion reason rather than a construct-
+specific one. `haystacks/opensubtitles/README.md` confirms the haystack
+source is OPUS's OpenSubtitles-v2018 dataset by name and URL — the
+underlying licence of THAT upstream data is still not independently
+resolved (OPUS aggregates subtitle rights from many sources), an honest
+limit, not an oversight.
+
+STILL NOT FETCHED for rebar: the 14 curated TOML files' actual contents
+(only the file list, not the bodies); `noseyparker.txt`'s literal regex
+text (got a categorical description of what it covers, not the pattern
+strings — Unlicense permits a direct re-fetch and quote whenever
+wanted); the other seven `definitions/wild/*.toml` files beyond
+`ruff.toml`; `FORMAT.md`'s full field reference (only fetched in the
+original session, not re-checked here).
+
+### (2) Davis et al. / Chapman & Stolee / vuln-regex-detector — Davis CLOSED, Chapman still open
+
+Davis et al.'s corpus artifact is FOUND and its licence STRONGLY (not
+totally) resolved — see item 12's rewrite above and the re-ranked
+shortlist. `vuln-regex-detector`'s own licence is MIT (direct fetch).
+The Zenodo DOI the original note cited for a "ReDoS corpus" turned out,
+on direct fetch, to be a DIFFERENT and later artifact (ICSE 2022's
+"Exploiting Input Sanitization for Regex Denial of Service", Barlas/Du/
+Davis) — also MIT, also real, just misidentified before — see item 13's
+correction. `engn33r/awesome-redos-security` (the lighter-weight CVE
+index the original note flagged as a good starting point) was NOT
+re-checked this session — still exactly as OWED as before.
+
+Chapman & Stolee's ISSTA 2016 study: a fresh WebSearch this session
+(not shown in detail above, folded into this summary since it changed
+nothing) surfaced no new artifact link beyond what the original note
+already found — ACM DL remains paywalled, no GitHub/Zenodo companion
+was located. This item stays exactly as OWED as the original note left
+it: cite its findings, do not expect a corpus.
+
+### (3) LICENSE files — five of six closed, regexlib.com still unknown
+
+Hyperscan (BSD), Vectorscan (BSD), rust-lang/regex (MIT, per
+`LICENSE-MIT`), GNU grep (GPLv3, per `COPYING`), Elastic
+logstash-patterns-core (Apache-2.0), OWASP CRS (Apache-2.0), and
+mariomka/regex-benchmark (MIT) were ALL fetched directly this session —
+see the corrected items above. Suricata/ET's rule-range-mixed licensing
+picture was NOT re-verified (no new fetch attempted; the original
+note's "mixed by sid range" claim stands, sourced from a WebSearch
+summary, not a direct fetch, in both sessions now).
+
+regexlib.com's terms of use are STILL UNKNOWN: a targeted WebSearch this
+session found the site (4,149-ish entries per a secondary source, not
+independently counted), its GitHub source-code mirror (`ardalis/
+RegExLib.com` — the ASP.NET application code, not a data export), and
+general commentary about it, but no terms-of-use or licensing page for
+the pattern DATABASE itself. This source stays deprioritized exactly as
+the original note ranked it (#12).
+
+### (4) Content samples — four of five closed, Suricata's `pcre:` sample still not found
+
+ModSecurity CRS: CLOSED — five `@rx` SQLi rules quoted verbatim with
+their rule ids (see item 8's update above).
+Suricata/ET rule with `pcre:`: STILL NOT FOUND, and the attempt itself
+is worth reading (see item 7's update above) — it surfaced a concrete
+methodological lesson (an AI summarizer's read of a huge JSON directory
+listing is not itself verified content; only a directly-quoted raw
+excerpt is trustworthy) that should travel into any future large-listing
+fetch, not just this one.
+TextMate grammar: CLOSED — five regexes quoted from VS Code's own JSON
+grammar (see item 18's update above), plus two design-relevant
+observations (the `(?x)` extended-mode construct, and this file as a
+plausible first instance of the `regex-set-priority` measurement shape).
+Oniguruma test files: CLOSED — location (11 files under `test/`) and
+five sample `x2()` cases quoted from `test_syntax.c`, including a
+possessive-bounded-repeat capability datum and a variable-length-
+lookbehind-plus-backref combination datum for note 2 (see item 16's
+update above).
+GNU grep's `tests/` tree: CLOSED — location confirmed
+(`git.savannah.gnu.org` via its cgit mirror) and its contents
+characterized in depth: BRE/ERE conformance, the Henry Spencer suites,
+a large backref family, a PCRE-under-grep family, and — genuinely new
+material for this bench's edge-case catalogue — locale-specific
+case-fold tests including the Turkish dotless-ı/dotted-İ divergence
+(`Turkish-I`, `turkish-I-without-dot`) and Hangul syllable handling (see
+item 17's update above).
+PCRE2 testdata's empty-match/Unicode-fold files: CLOSED — `testinput1`
+confirmed to carry empty-match cases, `testinput2` confirmed to carry
+case-fold cases, both with quoted sample lines (see item 15's update
+above); a fuller census across all 29 testinput files for either
+category was NOT attempted (time-boxed out), so treat "which file
+holds X" as answered for these two categories only, not exhaustively.
+
+### (5) One more published real-world regex corpus — four found, one paragraph each
+
+**regex101.com's public library** — a community-submitted pattern
+library, browsable at `regex101.com/library/<ID>`, reported (via a
+secondary source, not independently counted here) to hold 20,000+
+entries; regex101 itself does not appear to publish a bulk licence
+statement for the library's contents in what this session could reach,
+so per-pattern reuse rights are as unresolved as regexlib.com's — but
+TWO derivative datasets built FROM it were found with their OWN clear
+MIT licences (below), which sidesteps the question for a stratified
+sample rather than answering it for the whole library.
+
+**`innovatorved/regex_dataset` (Hugging Face)** — MIT licensed, 8,551
+rows / 45.5 MB total, JSON auto-converted to Parquet by the Hugging
+Face Datasets viewer, explicitly "sourced from regex101.com" per its
+dataset card (fetched directly). This is a ready-to-use, clearly-
+licensed SAMPLE of the regex101 library — the single most immediately
+importable "one more corpus" this session found, modulo the same
+per-pattern-provenance question Davis et al.'s corpus raises (does each
+row carry the ORIGINAL regex101 entry's title/use-case/language, or
+just the pattern text? not confirmed — the dataset card fetched did not
+say, OWED).
+
+**`dataunitylab/semantic-regex` (GitHub)** — MIT-licensed CODE (a
+pipeline that downloads regex101 patterns and trains a semantic-type
+classifier), not itself a frozen dataset release; notable because its
+README states it also incorporates "the dataset from the Sherlock
+project" (a well-known PII-type-detection semantic-labeling corpus) —
+worth a closer look if the design note ever wants semantically-labeled
+(not just syntactically-varied) patterns, but this is a build pipeline
+to run, not a file to download, and was not run this session.
+
+**RE2's own `re2-exhaustive.txt` corpus** — found via WebSearch of
+`google/re2`'s own testing infrastructure: RE2 generates all regexes
+within stated parameters, all strings of a given length over a given
+alphabet, and checks that its NFA, DFA, and PCRE agree — the resulting
+log (`re2-exhaustive.txt`, 59 MB uncompressed / 385 kB as the
+`.txt.bz2` the repo actually stores) is committed to `google/re2` under
+its own BSD licence (already confirmed above) and is reportedly reused
+by the Go standard library's `regexp` package to cross-validate its own
+engine. This is a MACHINE-GENERATED correctness corpus, not a
+wild-provenance one — best filed alongside rust-regex's `testdata/` and
+the Fowler suite (item 5) as a correctness-edge-case source, not a
+"found in the wild" one, but genuinely a fourth source with a clean,
+already-confirmed licence.
+
+**Related but NOT independently confirmed this session**: a 2018
+ESEC/FSE paper from the SAME Davis/Coghlan/Servant/Lee research lineage
+("The Impact of Regular Expression Denial of Service (ReDoS) in
+Practice") reportedly extracted regexes from Node.js and Python core
+libraries plus "more than half of the npm and pypi registry modules" for
+a ReDoS census — found via WebSearch only, no artifact link located this
+session, named here as a candidate fifth source and a plausible sibling
+to Davis et al.'s 2019 corpus rather than as a confirmed addition to the
+shortlist.
+
+### What b42wild2 still could NOT fetch (honesty summary, additive to the original)
+
+- Davis et al.'s actual 34.1 MB zip contents (schema/per-record fields
+  unopened; only the artifact's EXISTENCE, size, format description and
+  licence-mismatch are confirmed).
+- Chapman & Stolee's paper body and any dataset (no new artifact found;
+  ACM still paywalled).
+- A `pcre:`-bearing Suricata/ET rule, despite three distinct attempts —
+  see item 7's update for why, including the summarizer-reliability
+  finding.
+- The 14 rebar `definitions/curated/*.toml` file bodies (file list only)
+  and `noseyparker.txt`'s literal pattern text (categorical description
+  only).
+- regexlib.com's and regex101.com's own terms of use for their pattern
+  databases (both still genuinely unknown; two MIT-licensed DERIVATIVE
+  datasets of regex101 content were found instead, which is not the
+  same thing as resolving the source's own terms).
+- A fuller PCRE2 testdata census beyond `testinput1`/`testinput2` (29
+  files exist; only two were sampled).
+- The `npm`/`pypi`-registry ReDoS census paper's own artifact, if one
+  exists (only its existence and rough method were found via search).
