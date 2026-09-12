@@ -1046,7 +1046,7 @@ measured BEFORE rather than against a remembered one.
 |---|---|---|---|
 | **F1** | a `target`-less, `config`-less set file parses and is a PERMANENT legal shape | **(existing, M12)**, plus the spec sentence | exit 0 AND a sentence in `rxt_format.md` saying so. The parse already works; the CONTRACT is the ask |
 | **F2** | whatever scoping rule ships (§2.6), a `config` in the set cannot change what a pcrec testee compiles | compile one pattern from the set with `--engine=vm` on the command line while the file declares `engine` in a config | the command line wins, or the file is refused — **either is acceptable, silence is not** |
-| **F3** | the negative arm: planting a build directive in the set file FAILS this project's own gate | `capability_set_v1.md:1075`'s "no build directives" gate, restated per R5 finding B5 as "no `target`/`config`-kind ROW, and every `pattern`-kind row's flags/features/encoding/engine/budget columns EMPTY" | a planted `engine vm` line makes `make check` fail by name |
+| **F3** | the negative arm: planting a build directive in the set file FAILS this project's own gate | `capability_set_v1.md:1075`'s "no build directives" gate, restated per R5 finding B5 / consolidated CS8 as "no `target`/`config`-kind ROW, and every `pattern`-kind row's flags/features/encoding/engine/budget columns EMPTY" | a planted `engine vm` line makes `make check` fail by name |
 | **F4** | the set carries no pcrec-oracled limits file and no pcrec-shaped expectation | review | R-BENCH-4 / AR-6; Frank's [B31] clearance already set this precedent |
 
 ### Group G — the format's own regressions (all needs)
@@ -1237,12 +1237,18 @@ set's family 6 is authored? The difference is one pattern family's
 fidelity against one format production.
 
 **F-Q3 — This note is written for Option A** (the set's truth lives in
-`.rxt`) per Frank's 2026-09-12 ruling, which supersedes both N3 §6's recommendation
-and `capability_set_v1.md` §9.1's adoption of Option B. **Those two
-documents are now stale on their central recommendation.** This note does
-not edit either — it is feedback, not a revision — and asks the manager
-whether `capability_set_v1.md` §9 should be revised to v0.2 now or at the
-restart, when the format's actual shape is known.
+`.rxt`) per Frank's 2026-09-12 ruling, which supersedes both N3 §6's
+recommendation and `capability_set_v1.md` §9.1's adoption of Option B.
+**Those two documents are now stale on their central recommendation**,
+and this note edits neither — it is feedback, not a revision. The
+consolidated R5 panel already plans the repair
+(`docs/dev/reviews/2026-09-12-r5-capability-set-v1.md`, the manager's
+ratification: Q10-Q12 SUPERSEDED, "§9 becomes a pointer to
+`rxt_needs_v1.md` plus the restart acceptance checklist… the revision
+lane opens once `rxt_needs_v1.md` is merged so the two agree"). So F-Q3
+is not really a question for Frank at all — it is a sequencing fact, and
+it is recorded here only so a reader of THIS file is not misled by the
+stale §9 while both documents stand.
 
 ---
 
