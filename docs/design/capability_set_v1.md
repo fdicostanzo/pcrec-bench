@@ -497,18 +497,41 @@ makes for its seed.
 `provenance.tsv` from the sidecar and fails by name on: a pattern with no
 provenance row; a `fidelity ≠ verbatim` row with no `adaptation`; a
 licence outside the allowlist (§4.2); a CC BY-SA row with no
-`attribution`. This is the generic `gen_*.py --check` hook `make
-check-harness` already runs over every `bench/*/` directory by
-enumeration (`bench/CLAUDE.md`), so it costs no new harness machinery.
+`attribution`; **and, per Frank's 2026-09-12 Q1 ruling, an `inspired`
+pattern that fails a mechanical similarity check against its cited
+source** (a normalized-text similarity score above a stated threshold
+fails the gate by name, plus a human review pass — the ruling's own
+mitigation for R8, "`fidelity: inspired` becomes a laundering
+mechanism", folded in here rather than carried forward as an open risk).
+This is the generic `gen_*.py --check` hook `make check-harness` already
+runs over every `bench/*/` directory by enumeration
+(`bench/CLAUDE.md`), so it costs no new harness machinery beyond the one
+new check.
 
-**What the RECORD carries.** No schema change. `patterns[].tags` is an
-optional array of string, DIAGNOSTIC (`record_schema.md` §8, patterns
-table), and the capability set puts two tokens in it per pattern:
-`src:<source_name>` and `fid:<fidelity>`. A report can then bucket wild
-against designed without a schema MINOR. The full provenance row stays in
-the set directory, which is where the sub-bench's own truth lives; the
+**What the RECORD carries (CB3, revised).** §0.1's original claim — that
+`patterns[].tags` (`src:<source_name>` / `fid:<fidelity>`) buckets wild
+against designed "without a schema MINOR" — is WRONG. `patterns[].tags`
+is DIAGNOSTIC (`record_schema.md:841-846`, the field-table preamble
+governing the row at `record_schema.md:1025`): "DIAGNOSTIC /
+REPRODUCIBILITY-ONLY fields are free text... and the reporter must NOT
+offer them as filters." Bucketing wild-vs-designed IS filtering/grouping
+— the one operation the field's own rule forbids. Worse, the identical
+mechanism already exists and is already dead: `pcrecbench/record.py:
+215-221` writes `tier:<feature_tier>` and `convention:<convention>` into
+`patterns[].tags` on every record today, and the reporter has never once
+read a `patterns[].tags` value for either existing family. **Revised
+decision: promote provenance bucketing to real enumerated, FILTERABLE
+schema fields** — `patterns[].provenance_source` (a closed slug enum,
+the same vocabulary as `source_name` above) and `patterns[].fidelity`
+(the closed three-value enum §4.1 already defines in substance). This
+**IS a schema MINOR** (contradicting v0.1's "no schema change" claim and
+§1.1's traceability row for requirement (1), both corrected). The full
+provenance row (URL, licence, attribution, `adaptation`) stays in the
+set directory, which is where the sub-bench's own truth lives; the
 record's `subbench.content_hash` covers it because it covers every
 committed file in the directory (`subbench_directory_model.md §1.3`).
+The two promoted record fields exist so a REPORT can bucket wild against
+designed; the full row is never duplicated into the record.
 
 ### 4.2 The licensing floor — options and recommendation
 
@@ -522,9 +545,9 @@ Frank. The three options, each with its consequence:
 |---|---|---|
 | **(a) permissive-confirmed only** | verbatim import only from a source whose LICENSE/COPYING was fetched directly and is on an allowlist | grep's BRE/ERE + Turkish-I fold corpus is OUT as a verbatim source; Suricata is OUT until a per-sid audit; regexlib/regex101 are OUT. Six families are unaffected (their sources are all confirmed permissive) |
 | **(b) small-number individual attribution regardless of repo licence** | a handful of individually-attributed, individually-quoted patterns is fair research use whatever the repo says | brings grep's locale fold tests and Suricata rules into reach; puts this repo in the position of asserting a legal judgment it is not equipped to make, on someone else's copyleft |
-| **(c) hybrid — (a) for verbatim, `inspired` for everything else** | verbatim import per (a); a non-allowlisted source may be cited as INSPIRATION for a freshly-authored pattern (`fidelity: inspired`), never copied | **RECOMMENDED** |
+| **(c) hybrid — (a) for verbatim, `inspired` for everything else** | verbatim import per (a); a non-allowlisted source may be cited as INSPIRATION for a freshly-authored pattern (`fidelity: inspired`), never copied, AND validated as not an actual copy (a mechanical similarity check in the provenance gate, plus review) | **RULED (c) — Frank, live, 2026-09-12** |
 
-**RECOMMENDATION: (c).** It costs nothing the set actually needs: the
+**RULED: (c), with the similarity-check addition above.** It costs nothing the
 `fidelity: inspired` machinery already has to exist for families 10 and
 12 (CVE descriptions and the un-obtainable Suricata sample), and every
 family whose value is real-use EVIDENCE — the Turkish dotless-ı fold
@@ -550,33 +573,37 @@ case is simply lost. **Consequence of (b) instead:** faster import, a
 legal exposure nobody in this project is qualified to size, and a
 precedent that outlives the set.
 
-### 4.3 Wild vs designed — the ratio
+### 4.3 Wild vs designed — REALISM, not a ratio (RULED)
 
-N1 §(v)2 puts this to Frank as "a number or rough ratio would help size
-phase (e)". The options:
+N1 §(v)2 put a ratio question to Frank ("a number or rough ratio would
+help size phase (e)"). **Frank ruled, live, 2026-09-12: it is not a
+ratio.** The "from the wild" requirement is a FRAMING — realism over
+contrivance. No `ab+c`-class toy is a set member, whether imported or
+authored: **every member, wild or designed, must be a shape someone
+would plausibly deploy.** Provenance is recorded where a real source
+exists (§4.1); where none does — families 7-12's designed members, the
+control twins inside families 1-6 — the pattern must still be the kind
+of thing a real regex author would write for that purpose, not a
+constructed edge case whose only job is to be hard. **The actual
+percentage is not important**, and this note no longer sizes the set
+against one.
 
-| option | wild share | consequence |
-|---|---|---|
-| majority-wild (≥ 80 %) | ~48 of 59 | requires Davis's corpus (§4.5) to reach the count, which is the one source whose schema is unopened; the capability families (7-10) would have to import from the licence-messy sources |
-| **minority wild anchors + designed edge cases (~50 %)** | **30 of 59** | **RECOMMENDED** |
-| all-designed (0 %) | 0 | fails requirement (1) outright |
+**Consequence for §3.1's roster, stated plainly:** the 30-wild/29-designed
+split that fell out of building each family honestly (§3.2) is kept, but
+it is now a DESCRIPTION of what the set turned out to contain, not a
+target that was hit. Every authored member in families 7-12 — the
+doubled-word and palindrome backreference shapes, the chained-lookaround
+cases, the balanced-paren recursion shapes, the CVE-inspired ReDoS
+witnesses, the byte-class non-UTF-8 literals — is held to the SAME
+realism rule as the imported members of families 1-6: each is a
+plausible thing a working regex author would write to exercise that
+capability, not a toy built to be refused. L2 (§11.1) authors against
+this rule, and its blinding statement in `NOTES.md` should say so.
 
-**RECOMMENDATION: ~50 %, structured — every WILD family (1-6) is
-majority-verbatim; every CAPABILITY/HAZARD family (7-12) is
-majority-authored.** That is 30 wild members (families 1-6) and 29
-designed (7-12, plus the control twins inside 1-6).
-
-The structure is the point, not the number: the wild half answers "what
-do real patterns cost", the designed half answers "what can this engine
-do at all", and the second question's best sources (CVE indexes, grep's
-GPLv3 suite, un-obtainable Suricata rules) are exactly the ones the
-licensing floor keeps at arm's length. Putting the authored patterns
-where the licence problem is dissolves both problems at once.
-
-**Consequence of a higher wild share:** the set becomes dependent on
-Davis (§4.5) and on the Suricata/grep rulings, both of which can slip.
-**Consequence of a lower one:** requirement (1) is satisfied in name
-only, and the set is `bench/syntax` with longer patterns.
+**The Davis et al. corpus** stays a `capability@0.2` candidate (§4.5),
+unchanged by this ruling — the ruling settles the ratio question Davis's
+count was meant to help size, not whether Davis itself is worth
+importing.
 
 ### 4.4 Subject-data provenance
 
