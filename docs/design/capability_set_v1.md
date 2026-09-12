@@ -930,10 +930,13 @@ quoting `rxt_format.md:57-62`). The format's own wave table names
 "pcrec-bench sub-benches with a non-pcrec testee" as W3's waiting
 consumer (N3 §1.1) — i.e. this set is the named trigger.
 
-**DECISION: the sidecar, unchanged, under Option B (§9).** The migration
-when W3 lands is one field at a time, which is exactly what pcrec's own
-design note expects (`format_design.md:1903-1907`, quoted at N3 §2
-Option B).
+**Superseded by the Q3 ruling (§9):** where a variant lives at the
+restart is one of `rxt_needs_v1.md`'s own asks — its §2.8 proposes a
+`variant kind` production plus a quoted `tag` value, precisely to close
+the gap this subsection described. Until the restart, variants remain
+where they are today (the sidecar's `[testees.<id>]` section, above);
+this is a statement of the current shape, not a decision this note
+still owns.
 
 ### 6.2 The adopted rewrite table
 
