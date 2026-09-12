@@ -20,7 +20,7 @@ feed pcrecdev1 the needed capabilities, restart and verify).
 | §5 open questions for pcrecdev1 and for Frank | **DONE** | §5.1 nine (P-Q1..P-Q9), §5.2 three (F-Q1..F-Q3) |
 | a row in `docs/design/CLAUDE.md` | **DONE** | a full entry, in the file's own house style |
 | cite everything by `file:line` or spec section; say where intent is ambiguous rather than inferring | **DONE** | 59 `format_design.md` citations, 26 distinct `rxt_format.md` ranges, plus `requirements.md`, `rxt_source.c`, and this repo's own files — **every line number re-verified against the source in a dedicated pass** (commit `2c464e5`, 34 moved). Ambiguity is flagged in-place: `mc`'s overlap rule (§2.10, "not stated anywhere I could find"), `@file:`'s NUL-safety (N-28, "UNVERIFIED at the pin"), the head/body asymmetry against §2.1's own proposal (flagged as the proposal's own defect, P-Q1) |
-| commit incrementally; finish with the report; do not merge | **DONE** | seven commits; this file; not merged |
+| commit incrementally; finish with the report; do not merge | **DONE** | ten commits; this file; not merged |
 
 **Nothing is OWED.** No background job, no pending run, no promised number.
 
