@@ -3934,3 +3934,80 @@ their post-close-out item.
 Session arithmetic: one manager (Fable), one lane (Sonnet), two executor
 runs (~65 + ~85 min box time), zero-model watchers throughout, the
 heartbeat cron at :17/:47 for the holds. Lessons in wake.md.
+
+## 2026-09-12 — twentieth session (Fable): [B42] chartered; the research phase
+
+Frank opened the session asking what was queued (nothing: the inbox ends
+at I-66 fully acked, no peer session, box idle, [B7]/[B35] the only
+not-started rows, both uncleared) and then asked about "a broad general
+survey of rx across all the capabilities of the pcrec compiler" — traced
+to pcrec's [BENCH-1] ("not a capability map"), chartered as the syntax
+census I-42 and built here as [B36]. Its one sample (2026-09-07,
+d34c9131) was summarized for him from the report TSV: `auto` ÷ JIT
+median 0.28 on short-subject match (78/78 faster), 0.39 on search
+(73/81), 1.34 on 1 MB throughput (31/78 faster, 19 cells >×2 behind);
+the throughput loss monotone in the DFA's own prefilter stamp (none 0.16
+→ memchr 0.73 → byte-class 1.00 → offset-set 1.29 →
+offset-set-bounded 2.44); lookaround the worst tier (×20.1 lkb-pos);
+rec-define the one ×25 win; the forced VM ×3.8 behind on throughput with
+no prefilter at all. Caveats carried: one sample, 15 refusals per pcrec
+testee, KB-13/14/15 still open.
+
+Frank then CHARTERED [B42] — the capability survey set — with eight
+requirements (wild patterns with provenance; edge cases; compile time and
+other metrics apples-to-apples; BUILT ON .rxt; representative models
+under space/speed option sets; a research + design pass with a design
+review; the public interface as a later effort; approach + questions
+back to him). Plan row written (0d6e919), `docs/dev/research/` created.
+
+Phase (a) RESEARCH ran as three Sonnet lanes in parallel (~60-90 min
+each) plus two follow-ups, all merged the same afternoon:
+- b42rxt (cbdf22b): .rxt carries only W1 (pattern/name/description/
+  target/config/composition); everything a set needs beyond pattern text
+  is W2/W3, designed and REFUSED BY NAME at d34c9131, with pcrec's own
+  format_design.md naming pcrec-bench as the W2/W3 trigger. Format static
+  across five days past the pin. Recommends Option B (hybrid: .rxt holds
+  pattern text + identity, a sidecar the rest, migrating as waves land);
+  D93 forbids config/target lines in an authored source; [B29]'s 63/77
+  illegal-name count superseded (0/185 at the widened grammar); a
+  literal newline in a pattern has NO .rxt representation. Four format
+  asks, three questions.
+- b42wild (962a79e) + b42wild2 (a484ccd): 18 sources; shortlist now led
+  by the Davis FSE19 polyglot corpus (FOUND: Zenodo 3257777 /
+  VTLeeLab/LinguaFranca-FSE19, 537,806 regexes, NDJSON 34 MB, GitHub
+  MIT vs Zenodo "Other (Open)" — a mismatch to resolve), rebar
+  (Unlicense; layout corrected, ruff.toml read in full with its
+  haystack-driven engine exclusions), PCRE2 testdata (BSD-3 w/
+  exception, fetched), grok (Apache-2.0), CRS (Apache-2.0, five @rx
+  rules quoted), TextMate/vscode (MIT); GNU grep GPLv3 (its tests hold
+  the Turkish-I fold divergence); Suricata `pcre:` sample NOT found in
+  three attempts (a fetch-summary hallucinated four directory names —
+  recorded as a caution). A 19-row family taxonomy vs the [B7] roster,
+  an 11-shape edge-case catalogue, five questions (licensing floor,
+  wild-vs-designed ratio, subject provenance, Davis follow-up, the
+  regex-set measurement shape).
+- b42engines (b1ee293): RE2 and Rust regex have NO native C API (cre2 /
+  regex-capi must be vendored and built here); libvectorscan-dev and
+  libhyperscan-dev CONFLICT (install the former); three semantics
+  buckets — leftmost-first, POSIX leftmost-longest, and Hyperscan's
+  all-ends which changes what an expectation IS; refusal shapes enum
+  (RE2) / structured (Rust CompiledTooBig) / free text (Hyperscan,
+  perl); named configs per engine; compile time: only pcrec and
+  pcre2-jit fit cost_class cleanly, RE2/Rust/Hyperscan are
+  eager-but-partial (adapter-note caveat recommended over a fifth
+  token); possessive/atomic rewrites on hazard-class patterns are NOT
+  variants (unsupported-by-declaration instead); no new outcome enum
+  needed, a refusal_class metadata pair + REQUIRES tags proposed; seven
+  questions. Follow-up b42engines2 running (closing Q1-Q3, `\z`
+  support, the size accessors, the install list).
+
+Process: the heartbeat cron at :23/:53; zero-model watcher on the lane
+worktrees; every lane TaskStop'ped at delivery. A stale idle notice from
+lane b41 (spawned before Frank's /clear) arrived — such an agent is
+INVISIBLE to ListAgents and TaskStop after a /clear; Frank is remote and
+/tasks is unavailable there, so it stays until he is at the terminal.
+Lesson: sweep and stop delivered lanes BEFORE any /clear.
+
+Next: merge b42engines2; an Opus design lane writes
+docs/design/capability_set_v1.md from the four notes; D6 panel;
+consolidation with the by-id check; approach + questions to Frank.
