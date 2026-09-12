@@ -1024,21 +1024,24 @@ record encodes it as `cost_class` (MUST equal
 `setup.testee.execution_model`) and `cost.phases[]` (names and order must
 equal `setup.testee.compile_phases`).
 
-Per N2 §5, extended to the roster:
+Per N2 §5, extended to the roster, with `automaton_class` (a separate,
+required fixed enum, `requirements.md:124-128`) stated for every engine
+this note can source it for (S9 — v0.1 left it blank for the two new
+engines the cited research already answers):
 
-| testee | `execution_model` | `compile_phases` | what the timed call actually builds |
-|---|---|---|---|
-| `pcre2-interp` | `interpretive` | `compile` | the whole compiled pattern |
-| `pcre2-jit` | `eager-jit` | `compile`, `jit-compile` | as above + machine code |
-| **`pcre2-dfa`** (new) | `interpretive` | `compile` | the SAME compiled pattern `pcre2_match` uses — `pcre2_dfa_match` has no separate compile step (N2 §5). **A free control: its compile number should be statistically identical to `pcre2-interp`'s** |
-| `pcrec` (16 configs) | `compiled-aot` | `emit-c`, `gcc`/`clang`, `load` | a real compiler + linker |
-| RE2 | `eager-jit` † | `compile` | a forward/reverse `Prog`; the runtime DFA is built LAZILY at match time and can be flushed (N2 §5) |
-| Rust `regex` | `eager-jit` † | `compile` | parse + AST + HIR + literal/prefilter analysis; the lazy DFA is built at match time (N2 §5) |
-| Oniguruma | `interpretive` | `compile` | `onig_new` builds the FULL internal program eagerly — the closest fit to pcre2-interp's own definition (N2 §5) |
-| TRE | `interpretive` | `compile` | one eager `regcomp` |
-| Vectorscan | `eager-jit` † | `compile` | the database IS fully built at compile time — the cleanest `eager-jit` fit of the three † engines (N2 §5) |
-| python `re` | `interpretive` | `compile` | **the driver must bypass CPython's internal pattern cache explicitly**; CPython publishes no numeric cache-size guarantee (N2 §8 (8)) |
-| perl | `interpretive` | `compile` | same caching concern for `qr//` (N2 §5) |
+| testee | `execution_model` | `automaton_class` | `compile_phases` | what the timed call actually builds |
+|---|---|---|---|---|
+| `pcre2-interp` | `interpretive` | `backtracking` | `compile` | the whole compiled pattern |
+| `pcre2-jit` | `eager-jit` | `backtracking` | `compile`, `jit-compile` | as above + machine code |
+| **`pcre2-dfa`** (new) | `interpretive` | `nfa-simulation` (man `pcre2matching`: "not implemented as a traditional finite state machine") | `compile` | the SAME compiled pattern `pcre2_match` uses — `pcre2_dfa_match` has no separate compile step (N2 §5). **A free control: its compile number should be statistically identical to `pcre2-interp`'s** |
+| `pcrec` (16 configs) | `compiled-aot` | `hybrid` (already declared, `testees/pcrec/adapter.py:2828`) | `emit-c`, `gcc`/`clang`, `load` | a real compiler + linker |
+| RE2 | `eager-jit` † | `nfa-simulation` (a `Prog`, not backtracking) | `compile` | a forward/reverse `Prog`; the runtime DFA is built LAZILY at match time and can be flushed (N2 §5) |
+| Rust `regex` | `eager-jit` † | `nfa-simulation` | `compile` | parse + AST + HIR + literal/prefilter analysis; the lazy DFA is built at match time (N2 §5) |
+| Oniguruma | `interpretive` | `backtracking` (N2 §2.1's own match-strategy read) | `compile` | `onig_new` builds the FULL internal program eagerly — the closest fit to pcre2-interp's own definition (N2 §5) |
+| TRE | `interpretive` | `nfa-simulation` — "a tagged-NFA / bit-parallel simulation... not literal backtracking, so it shares RE2/Rust's 'no catastrophic backtracking' property" (`2026-09-12-b42-engine-landscape.md:168-176`) | `compile` | one eager `regcomp` |
+| Vectorscan | `eager-jit` † | `simd-multipattern` (the SIMD multi-pattern enum value, not a generic NFA simulation — §7.5's own "roster's only `simd-multipattern` automaton class" is this row) | `compile` | the database IS fully built at compile time — the cleanest `eager-jit` fit of the three † engines (N2 §5) |
+| python `re` | `interpretive` | `backtracking` | `compile` | **the driver must bypass CPython's internal pattern cache explicitly**; CPython publishes no numeric cache-size guarantee (N2 §8 (8)) |
+| perl | `interpretive` | `backtracking` | `compile` | same caching concern for `qr//` (N2 §5) |
 
 ### 7.2 The `cost_class` fifth-token question
 
