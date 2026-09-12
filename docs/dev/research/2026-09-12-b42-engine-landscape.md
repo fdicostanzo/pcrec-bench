@@ -47,8 +47,8 @@ Probed 2026-09-12 (`apt-cache policy <pkg>`, `apt-cache search`,
 | engine | apt package(s) | candidate version | C-callable surface | licence |
 |---|---|---|---|---|
 | libpcre2 | `libpcre2-dev` (+ `-8-0`/`-16-0`/`-32-0`/`-posix3`) | 10.46-1build1, **installed** | native C API (`pcre2_compile`, `pcre2_match`, `pcre2_dfa_match`, `pcre2_jit_compile`) | BSD (3-clause, with the PCRE2 exception for a historical name-attribution clause) [pcre2project.github.io/pcre2/project/licence](https://pcre2project.github.io/pcre2/project/licence/) |
-| RE2 | `libre2-dev` (candidate 20250805-1build3), runtime `libre2-11` **already installed** (pulled in transitively by `node-re2`) | 20250805-1build3 | **C++ only** — RE2 ships no C API. A C-callable wrapper needs a SEPARATE project, `cre2` ([marcomaggi/cre2](https://github.com/marcomaggi/cre2)), which is NOT packaged for this box (`apt-cache search cre2` returns nothing; checked) — it would have to be vendored and built here, the same posture as pcrec's own shim | BSD (3-clause) [github.com/google/re2](https://github.com/google/re2) |
-| Rust `regex` | no runnable binary package; `librust-regex-dev` (1.12.2-1) and `librust-regex-automata-dev` (0.4.13-1) exist as Debian SOURCE packages for building other Debian packages, not as a linkable C library | 1.12.2-1 (source) | **no C API in the crate itself.** The crate used to ship a `regex-capi` sub-crate exposing a C ABI (`rure`, `regex-capi/include/rure.h`) — still present in the `rust-lang/regex` GitHub tree today ([github.com/rust-lang/regex/tree/master/regex-capi](https://github.com/rust-lang/regex/tree/master/regex-capi)) but NOT published as a crate release usable via a simple `cargo build` of a dependent (no `rure` package on this box's apt mirror; I could not confirm from crates.io in this session whether `rure`/`regex-capi` is still actively released — flagged in §8). Getting a linkable `.so` means building `regex-capi` from the rust-lang/regex git tree with `cargo build --release` (needs `cargo`/`rustc`, both apt-installable here: candidate 1.93.1ubuntu1) | dual MIT / Apache-2.0 [github.com/rust-lang/regex/blob/master/LICENSE-APACHE](https://github.com/rust-lang/regex/blob/master/LICENSE-APACHE) |
+| RE2 | `libre2-dev` (candidate 20250805-1build3), runtime `libre2-11` **already installed** (pulled in transitively by `node-re2`) | 20250805-1build3 | **C++ only** — RE2 ships no C API. A C-callable wrapper needs a SEPARATE project, `cre2` ([marcomaggi/cre2](https://github.com/marcomaggi/cre2)), which is NOT packaged for this box (`apt-cache search cre2` returns nothing; checked) — it would have to be vendored and built here, the same posture as pcrec's own shim (confirmed by b42engines2: `apt-cache depends libre2-dev` shows `Depends: libabsl-dev` — this box's RE2 package is ALREADY Abseil-dependent at the package-manager level; `libabsl-dev` candidate 20260107.0-4, not installed; see the follow-up section) | BSD (3-clause) [github.com/google/re2](https://github.com/google/re2) |
+| Rust `regex` | no runnable binary package; `librust-regex-dev` (1.12.2-1) and `librust-regex-automata-dev` (0.4.13-1) exist as Debian SOURCE packages for building other Debian packages, not as a linkable C library | 1.12.2-1 (source) | **no C API in the crate itself.** The crate used to ship a `regex-capi` sub-crate exposing a C ABI (`rure`, `regex-capi/include/rure.h`) — still present in the `rust-lang/regex` GitHub tree today ([github.com/rust-lang/regex/tree/master/regex-capi](https://github.com/rust-lang/regex/tree/master/regex-capi)) but NOT published as a crate release usable via a simple `cargo build` of a dependent (no `rure` package on this box's apt mirror; I could not confirm from crates.io in this session whether `rure`/`regex-capi` is still actively released — flagged in §8) (confirmed by b42engines2: `rure` DOES exist on crates.io, one published version 0.2.5, first published 2016 — see the follow-up section for what that means for freshness). Getting a linkable `.so` means building `regex-capi` from the rust-lang/regex git tree with `cargo build --release` (needs `cargo`/`rustc`, both apt-installable here: candidate 1.93.1ubuntu1, **neither installed**) | dual MIT / Apache-2.0 [github.com/rust-lang/regex/blob/master/LICENSE-APACHE](https://github.com/rust-lang/regex/blob/master/LICENSE-APACHE) |
 | Oniguruma | `libonig-dev` (6.9.10-1build1), runtime `libonig5` **already installed** | 6.9.10-1build1 | native C API (`onig_new`, `onig_search`, `onig_error_code_to_str`) | BSD (2-clause) [en.wikipedia.org/wiki/Oniguruma](https://en.wikipedia.org/wiki/Oniguruma) |
 | TRE | `libtre-dev` (0.9.0-1build1), `libtre5` | 0.9.0-1build1 | native C API, the POSIX shape (`tre_regcomp`/`regcomp`, `tre_regexec`/`regexec`) plus TRE's own extensions (`tre_regacomp`/`tre_regaexec` for approximate matching) — [laurikari.net/tre/documentation/regcomp](https://laurikari.net/tre/documentation/regcomp/) | BSD-like (2-clause) [github.com/laurikari/tre/blob/master/LICENSE](https://github.com/laurikari/tre/blob/master/LICENSE) |
 | Vectorscan (Hyperscan-compatible) | `libvectorscan-dev` (5.4.11-2ubuntu2) **Replaces/Provides/Conflicts** `libhyperscan-dev` — this box's actual "Hyperscan" package IS Vectorscan under the hood; a SEPARATE, older `libhyperscan-dev`/`libhyperscan5` (5.4.2-4, source package `hyperscan`) also exists in the archive and is installable, but per Ubuntu's own package relationship the two conflict at install time. **Recommendation: install `libvectorscan-dev`** — it is the actively maintained fork ([VectorCamp/vectorscan](https://github.com/VectorCamp/vectorscan)) and is what [B7]'s roster names ("Vectorscan (semantics-tagged)") | 5.4.11-2ubuntu2 | native C API, Intel Hyperscan-compatible (`hs_compile`, `hs_scan`, `hs_alloc_scratch`) | BSD (3-clause) [github.com/VectorCamp/vectorscan/blob/master/LICENSE](https://github.com/VectorCamp/vectorscan/blob/master/LICENSE) |
@@ -254,24 +254,39 @@ CLAUDE.md`'s table: `<engine>-<axis-word>`).
 | perl | perl's regex engine has its own internal limits (`$Config{...}`-adjacent build-time constants) not surveyed in this session — flagged §8 | — | — | `perl-default` pending follow-up |
 | pcrec | already fully mapped by this project: `max_emit_bytes`/`max_emit_code_bytes` (the [ART-SIZE] caps), `--engine=auto/dfa/vm`, `unroll_k` (`docs/design/record_schema.md §7`'s worked pcrec table) | as `testees/pcrec/configs.toml` states per config | already this project's own knowledge, not re-derived here | the sixteen configs already in `testees/pcrec/CLAUDE.md` |
 
-**A caveat on `pcre2_dfa_match`'s automaton_class tag.** The man page
-name ("DFA") is misleading for this bench's `automaton_class` enum
-(`record_schema.md §5`: `dfa-only`/`nfa-simulation`/`backtracking`/
-`hybrid`/`simd-multipattern`). `pcre2_dfa_match` finds ALL matches
-starting at one position simultaneously by simulating an NFA-like state
-set across the subject in one left-to-right scan (my fetch of
-`pcre2_dfa_match.html` could not confirm from the page text alone
-whether it is a literal subset-construction DFA or an NFA simulation
-that behaves like one — flagged §8, worth a source read of pcre2's
-`pcre2_dfa_match.c` before the design note commits to a tag). What IS
-confirmed: it reports overlapping matches at one start point (a genuinely
-different QUESTION from `pcre2_match`'s single best match), takes a
+**A caveat on `pcre2_dfa_match`'s automaton_class tag — CLOSED by
+b42engines2 from this box's own man pages, no source read needed.**
+`man pcre2matching` (10.46, this box) settles the automaton-class
+question in its own words: "This algorithm conducts a breadth-first
+search of the tree... In Friedl's terminology, this is a kind of "DFA
+algorithm", though **it is not implemented as a traditional finite
+state machine** (it keeps multiple states active simultaneously)." That
+is an NFA-simulation description in the engine's OWN documentation, not
+a literal subset-construction DFA — `record_schema.md §5`'s
+`automaton_class` enum should tag `pcre2-dfa` as `nfa-simulation`, never
+`dfa-only`, despite the function's name. The SAME page also gives the
+restricted-construct list §8 item 2 flagged as missing, quoted here
+verbatim (its numbering): "There are a number of features of PCRE2
+regular expressions that are not supported or behave differently in the
+alternative matching function. Those that are not supported cause an
+error if encountered": no captured substrings at all (so no
+backreferences, no conditional expressions that use a backreference as
+the condition or test for a specific group recursion, no script runs, no
+scan substring assertions); `\K` "is not supported"; the backtracking
+control verbs other than `(*FAIL)` are not supported; `\C` is not
+supported in UTF modes; `PCRE2_MATCH_INVALID_UTF` is not supported.
+Also confirmed from the same page and `man pcre2jit`: it CANNOT be
+JIT-compiled ("JIT support applies only to the traditional
+Perl-compatible matching function... It does not apply when the DFA
+matching function is being used"), it reports ALL overlapping matches
+at one start point in DECREASING order of length (a genuinely different
+question from `pcre2_match`'s single best match), and it takes a
 caller-provided `workspace` array sized independent of capture-group
-count, and CANNOT be JIT-compiled (confirmed from this box's `man
-pcre2jit`, quoted above) — three structural facts, independent of the
-DFA-vs-NFA-simulation label, that already argue for treating it as a
-FOURTH pcre2 testee (`pcre2-dfa`) with its own `automaton_class` value
-pending that source read.
+count. Six structural facts (automaton class, the six-item restriction
+list, no-JIT, all-matches-one-point, decreasing-length order, the
+workspace shape) all argue for treating `pcre2-dfa` as a FOURTH pcre2
+testee with `automaton_class: nfa-simulation` — no further source read
+needed; §8 item 2 is CLOSED.
 
 ## 5. What "compile time" means per engine, and what is comparable
 
