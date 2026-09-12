@@ -140,7 +140,7 @@ patterns from the wild. Free-spacing `(?x)` bodies authored across lines
 are how real editor grammars, CRS rules and validators are actually
 written; flattening one to a single line is a `fidelity: adapted` edit
 whose correctness has to be proved by an oracle run
-(`capability_set_v1.md:1089-1100`). Under Frank's Q3 ruling the set is
+(`capability_set_v1.md:1089-1100`). Under Frank's 2026-09-12 ruling the set is
 built on the format for real, so "flatten it because the format cannot
 hold it" is exactly the kind of accommodation the ruling removes. **This
 is roadblock #1.** MEASURED, the failure is at least LOUD: an indented
@@ -225,7 +225,7 @@ in the format anyway, for one reason: `format_design.md`'s own §4.5 puts
 lines, and a capability list is the one field of that section a reader of
 the FILE needs in order to understand why a pattern has no result for a
 testee. If pcrecdev1 prefers to leave it bench-side, that is a legitimate
-answer and §5 Q4 asks it directly — but then the format owes nothing and
+answer and §5.1 P-Q4 asks it directly — but then the format owes nothing and
 this project keeps a second file, which is the hybrid Frank's ruling
 removed.
 
@@ -239,6 +239,16 @@ removed.
 | **N-27** | subject METADATA — a stable subject id, byte length, a description, the `periodic` column ([B17]) | `manifest.tsv` | **NEW** — `@file:` carries a path and nothing else; there is no subject id at all, and a case's identity is `file:line` (`format_design.md:2279-2284`) | **no.** Every expectation key in this project is `(pattern, subject_id, regime)` (`subbench.py:268-271`); every report row and every interpreter fact names a subject by id. `file:line` is not a substitute — it moves when a line is inserted | **ABSENT** | **MUST** |
 | **N-28** | subjects that are not valid UTF-8, and subjects containing NUL — family 12 (`capability_set_v1.md:189`) | raw bytes throughout | `@file:` | **yes, as designed** — `format_design.md:1193-1199` states file-subject bytes are taken raw, NUL-safe, no decoding. **UNVERIFIED at the pin** (the production is refused, so nothing could be measured). An INLINE quoted subject carries `\xHH` and so can express a high byte but the driver protocol passes subjects as `argv` strings, which "can carry neither a NUL nor a megabyte" (`:1200-1202`) | W2, **REFUSED BY NAME** | MUST |
 | **N-29** | a SET-LOCAL generator beside its output, with the manifest re-derivable | `gen_subjects.py` + `gen_throughput_subjects.py` per set, gated by `make check-harness` | "the directory convention" (`format_design.md:1847`) — an explicit non-production | **yes, as a convention.** Nothing is asked of the format here; recorded so the list is complete | n/a | n/a |
+
+**Roadblock #4 is N-27, and it is quieter than the others.** `@file:`
+carries a PATH. Every expectation key, every report row and every
+interpreter fact in this project names a subject by ID
+(`subbench.py:268-271`), and the format's answer is that a case's
+identity is `file:line` (`format_design.md:2279-2284`). A line number
+moves when a line is inserted, and a generated fragment's line numbers
+move on every regeneration — so an `.rxt`-sourced set would have no
+stable name for the thing every one of its numbers is about. §2.5 asks
+for `as <id>` on the reference.
 
 ### 1.6 Block F — expectations, conventions, and the oracle
 
@@ -258,7 +268,7 @@ on the harness side.
 | **N-37** | the verification METHOD, per case — R-BENCH-1's own ask, including non-oracle methods | `[expectations].default_method = "libpcre2-differential"` | `tag method=<name>` — pcrec's own ruling that method and engine are TWO fields (`format_design.md:1850`, r44-consumers U3) | **yes** | W2, **REFUSED BY NAME** | MUST |
 | **N-38** | the oracle's VERSION — "checked against libpcre2 **10.46**" | implicit: `pcrecbench/oracle_pcre2.py` binds whatever the box has; the record carries the engine version of the TESTEE, not of the oracle | **NEW.** `oracle pcre2` names an engine with no version slot; `engine-ref = ident , [ "/" , version-chars ]` exists but only for `testee` (`format_design.md:379`) | **no** | **ABSENT** | SHOULD |
 
-**Roadblock #4, and it is the deepest one: N-35.** The set's family 11
+**Roadblock #5, and it is the deepest one: N-35.** The set's family 11
 (`semantics-divergence`, six members, v1) exists to measure engines that
 answer DIFFERENTLY AND CORRECTLY. R5 finding B1 establishes that this
 project's harness cannot score that today. This note adds the format
@@ -280,7 +290,7 @@ to say "under `posix-leftmost-longest` the answer to this case is
 | **N-43** | **a set file that declares NO pcrec `target` and NO pcrec `config`, legally and PERMANENTLY** | n/a — the exporter already writes such files (`tools/export_rxt.py:34-37` rule 5) | the absence of `target`/`config`; "No `target` and anything else builds NOTHING… It is not an error" (`rxt_format.md:126-127`) | **yes today** — MEASURED: an authored head-plus-blocks file with no `target` and no `config` parses and dumps cleanly (§1.9 M12). What is missing is a CONTRACT that this stays true | W1, **BUILT**; the guarantee **ABSENT** | **MUST** |
 | **N-44** | a scoping rule so a set's own config can never pin this project's testee matrix | the exporter's rule 5 — never write `config`/`flags`/`engine`/`budget`/`encoding` (`tools/export_rxt.py:34-37`) | **NEW.** D93: "a `.rxt` source's composed config wins over a command-line flag on the same axis" (`subbench_directory_model.md:441-448`), and `engine` composes more-specific-wins (`rxt_format.md:133-136`) | **no.** The moment a set carries a `config … testee re2/2024-07-02` block (N-42) the file has configs, and a reader has no way to know that the `pcrec` half of those configs must never reach a build. §2.6 asks for the separation | **ABSENT** | **MUST if N-42 lands** |
 
-**Roadblock #5 is the D93 interaction.** `format_design.md:2198-2284`
+**Roadblock #6 is the D93 interaction.** `format_design.md:2198-2284`
 §6.2's worked bench file carries `config pcrec` / `config pcre2` /
 `config re2` and a `use` line naming all three. Under D93 the `config
 pcrec` block in a file this project treats as its corpus WINS over the
@@ -420,7 +430,7 @@ prov-line =
   because a pattern block's lines are not indented. A `provenance` block
   is ITSELF indented continuation, which means it is a head-shaped
   construct living in the body. **This note flags that as the design
-  problem in its own proposal and does not resolve it**; §5 Q1 asks it.
+  problem in its own proposal and does not resolve it**; §5.1 P-Q1 asks it.
   The alternative, if the asymmetry must hold, is nine flat block-scoped
   lines (`prov-source`, `prov-url`, …) — uglier, no indentation, and it
   keeps the body's one rule intact.
@@ -567,7 +577,7 @@ note. A capability list describes an engine, and a format that carries it
 is carrying engine knowledge. The counter-argument is that `config … testee`
 ALREADY carries engine knowledge (a version string), and that a reader of
 the file who sees a pattern with no result for `tre-default` needs the
-reason in the same file. §5 Q4 puts it to pcrecdev1 as an open choice.
+reason in the same file. §5.1 P-Q4 puts it to pcrecdev1 as an open choice.
 
 ### 2.4 Convention-scoped expectations — need N-35 (the deepest gap)
 
@@ -1114,7 +1124,7 @@ measured and reported against the two pcre2 testees and the sixteen pcrec
 ones, with its oracle declared in prose and its variants absent (the
 current roster runs every pattern canonically, so no variant is needed).
 That is a real, publishable first sample with two stated gaps: no
-per-pattern provenance and no declared capability model. §5 Q6 asks
+per-pattern provenance and no declared capability model. §5.1 P-Q6 asks
 whether that is the shape pcrecdev1 prefers.
 
 ### 4.3 What this project does in the interim
@@ -1157,7 +1167,7 @@ call, not this note's.
 
 ### 5.1 For pcrecdev1 (design choices that are theirs)
 
-**Q1 — The head/body indentation asymmetry, against `provenance` and
+**P-Q1 — The head/body indentation asymmetry, against `provenance` and
 regime grouping.** `rxt_format.md:169-173` calls the asymmetry
 deliberate and "the only one": head lines take indented continuation, a
 pattern block's lines do not. Both §2.1's `provenance` block and §2.11's
@@ -1168,42 +1178,42 @@ to the head keyed by block name (which splits a pattern's truth across
 two places and this note recommends against). **This is the single
 biggest shape decision in the note and it is entirely pcrecdev1's.**
 
-**Q2 — Is `vocabulary` (§2.2) the right mechanism for closed sets, or
+**P-Q2 — Is `vocabulary` (§2.2) the right mechanism for closed sets, or
 does the format prefer to keep every tag free and leave validation to
 consumers?** The cost of the latter: `format_design.md` §4.5's own
 absorption table silently downgrades four validated record-schema enums
 to unvalidated strings.
 
-**Q3 — Does `mc` count non-overlapping matches, and under which
+**P-Q3 — Does `mc` count non-overlapping matches, and under which
 advancement rule for an empty match?** (§2.10.) A one-paragraph answer,
 and the only one of the twelve that may need no code.
 
-**Q4 — Should per-config CAPABILITY declarations (§2.3) live in the
+**P-Q4 — Should per-config CAPABILITY declarations (§2.3) live in the
 format at all, or is that engine knowledge the bench should keep?** A
 legitimate "no" leaves this project with one non-`.rxt` file, which is a
 partial return of the hybrid Frank's ruling removed — so the answer
 should be explicit rather than defaulted.
 
-**Q5 — §4.5 item 4's regime mechanism is unusable for this project's
+**P-Q5 — §4.5 item 4's regime mechanism is unusable for this project's
 pattern ids** (§2.11, `rxt_format.md:284-291` against `:290-296`). What
 replaces it? The note sketches three options and picks none.
 
-**Q6 — Would pcrecdev1 prefer a W2-only first delivery** (§4.2), with
+**P-Q6 — Would pcrecdev1 prefer a W2-only first delivery** (§4.2), with
 provenance, capability and variants following in a second? This project
 can run a real first sample on W2 alone, with two stated gaps.
 
-**Q7 — Is the NUL refusal (§2.7, check B3) acceptable as a standalone
+**P-Q7 — Is the NUL refusal (§2.7, check B3) acceptable as a standalone
 change**, independent of any wave? It is a silent-truncation fix, not a
 feature, and it is the item this note would take first if it could take
 only one.
 
-**Q8 — `@file:`'s optional `sha256` (§2.5) against
+**P-Q8 — `@file:`'s optional `sha256` (§2.5) against
 `format_design.md:1203-1208`'s explicit "no content hash on a subject
 reference".** That ruling's premise — a subject file is committed and
 reviewed — does not hold for a generated, gitignored subject tree. Does
 pcrecdev1 read the ruling as a principle or as a default?
 
-**Q9 — Two hazards this note found in SHIPPED behaviour, both silent:**
+**P-Q9 — Two hazards this note found in SHIPPED behaviour, both silent:**
 a second `description` in a block overwrites the first (M5), and a NUL
 truncates a pattern line (M1). Both are outside this note's ask and both
 are the kind of thing a corpus author would rather hear about now.
@@ -1221,13 +1231,13 @@ waves? This note does not recommend; the charter is Frank's.
 **F-Q2 — The `.rxt` format cannot express a multi-line `(?x)` pattern at
 all** (N-2, roadblock #1), and `capability_set_v1.md:1089-1100` already
 proposed flattening such a pattern to one line as `fidelity: adapted`
-with an oracle check. Under the Q3 ruling, is flattening an acceptable
+with an oracle check. Under Frank's 2026-09-12 ruling, is flattening an acceptable
 accommodation — or is this a capability the format must gain before the
 set's family 6 is authored? The difference is one pattern family's
 fidelity against one format production.
 
 **F-Q3 — This note is written for Option A** (the set's truth lives in
-`.rxt`) per the Q3 ruling, which supersedes both N3 §6's recommendation
+`.rxt`) per Frank's 2026-09-12 ruling, which supersedes both N3 §6's recommendation
 and `capability_set_v1.md` §9.1's adoption of Option B. **Those two
 documents are now stale on their central recommendation.** This note does
 not edit either — it is feedback, not a revision — and asks the manager
@@ -1238,7 +1248,7 @@ restart, when the format's actual shape is known.
 
 ## Appendix — the roadblocks, in one list
 
-The five places the effort PARKS, in the order Frank's ruling would have
+The six places the effort PARKS, in the order Frank's ruling would have
 it read them:
 
 | # | roadblock | need(s) | §  |
@@ -1246,8 +1256,9 @@ it read them:
 | 1 | a multi-line `(?x)` pattern has NO representation | N-2 | §1.1 |
 | 2 | `tag` is refused, so no per-pattern classification is expressible — and when it lands, no closed vocabulary can be declared | N-9, N-10, N-20, N-21 | §1.2, §1.4 |
 | 3 | no pattern-level PROVENANCE production exists in any wave | N-11..N-19 | §1.3 |
-| 4 | a second correct answer under another convention has no carrier — and the harness could not score one either (R5 B1) | N-34, N-35 | §1.6 |
-| 5 | D93 vs a set file carrying a testee roster: `format_design.md` §6.2's own worked bench file would pin this project's testee matrix from inside the set | N-42, N-44 | §1.7 |
+| 4 | `@file:` gives a subject a PATH and no stable ID, and the format's answer is `file:line` — which moves on every regeneration | N-27 | §1.5 |
+| 5 | a second correct answer under another convention has no carrier — and the harness could not score one either (R5 B1) | N-34, N-35 | §1.6 |
+| 6 | D93 vs a set file carrying a testee roster: `format_design.md` §6.2's own worked bench file would pin this project's testee matrix from inside the set | N-42, N-44 | §1.7 |
 
 And two silent-loss defects found in shipped behaviour, outside the ask:
 a NUL truncates a pattern line (M1), a second `description` overwrites the

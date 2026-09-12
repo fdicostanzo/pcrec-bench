@@ -334,7 +334,7 @@ docs/dev/'s append-only records.
   honest smaller cut), Tier 2, Tier 3, and what this project does in the
   interim (nothing under `bench/`; three R5-panel follow-ups that are
   ours regardless). **§5** puts nine questions to pcrecdev1 and three to
-  Frank. The Appendix lists the FIVE ROADBLOCKS in one table. The
+  Frank. The Appendix lists the SIX ROADBLOCKS in one table. The
   manager distils an outbox item from this file; the file itself is the
   full form.
 
