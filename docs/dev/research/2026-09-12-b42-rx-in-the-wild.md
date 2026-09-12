@@ -608,23 +608,24 @@ lane re-checks before relying on them.
 
 - **URL(s)**: found via WebSearch (RunTest script, pcre2test docs); not
   independently WebFetched for file listing/content this session.
-- **Licence**: PCRE2 itself is BSD-licensed — WELL KNOWN but NOT
-  independently verified against a fetched LICENCE file this session
-  (a direct fetch attempt at one candidate URL 404'd); flag for the
-  design lane to confirm against the actual pin's `LICENCE` file before
-  relying on it (this project already vendors/tracks a PCRE2 oracle
-  version per `bench/syntax`'s notes, so the licence is almost
-  certainly already on file somewhere in this repo or its dependency
-  records — check there first rather than re-fetching).
+- **Licence**: CONFIRMED this session — fetched `LICENCE.md` from
+  `PCRE2Project/pcre2` master: `SPDX-License-Identifier: BSD-3-Clause
+  WITH PCRE2-exception`. Permissive, redistribution-friendly (the
+  "exception" clause is PCRE2's own additional permission, not a
+  restriction).
 - **Dialect**: PCRE2, obviously — and this is the ORACLE this bench
   already uses (`oracle_pcre2.py`), so PCRE2's testdata is really an
   EXTENSION of an already-trusted dependency, lower marginal risk than
   any other source here.
-- **Size**: PCRE2's `testdata/` directory holds many `testinputN`/
-  `testoutputN` file pairs (the RunTest harness runs pcre2test against
-  each) — this is PCRE2's OWN conformance/regression suite, likely
-  hundreds to low thousands of individual pattern/subject cases,
-  covering essentially every documented PCRE2 construct plus years of
+- **Size**: CONFIRMED this session — fetched the `testdata/` directory
+  listing: `testinput1` through `testinput29` (29 input files) each
+  with matching `testoutputN` file(s) (some with architecture-specific
+  variants, e.g. `testoutput11-16`, `testoutput8-16-2`), plus
+  `testinputheap`, `testbtables`, a family of `grepinput`/`grepoutput`
+  files for `pcre2grep`-specific testing, compressed large inputs
+  (`grepinputC.bz2`/`.gz`), and a `fuzzing/` subdirectory — 60+ files
+  in all, this is PCRE2's OWN conformance/regression suite, covering
+  essentially every documented PCRE2 construct plus years of
   accumulated regression cases from real bug reports.
 - **Evidence of real use**: MIXED — largely constructed test cases (by
   PCRE2's own maintainers) rather than mined from external projects,
@@ -657,8 +658,10 @@ lane re-checks before relying on them.
   directly — GitHub's file-listing search is not reliable via
   WebSearch; a direct repo browse would be needed, not attempted this
   session due to time). OWED.
-- **Licence**: Oniguruma is BSD-2-Clause — WELL KNOWN, NOT independently
-  verified this session; flag.
+- **Licence**: CONFIRMED this session — fetched `COPYING` from
+  `kkos/oniguruma` master: BSD 2-Clause ("Redistribution and use in
+  source and binary forms, with or without modification, are permitted
+  provided that the following conditions are met").
 - **Dialect**: Oniguruma's own syntax (configurable; PCRE-like by
   default, and this is the SAME engine grok patterns (item 10) and
   TextMate grammars (item 17) both run on, so it sits at the center of
@@ -1003,9 +1006,9 @@ Oniguruma, TRE/POSIX, pcre2, pcrec (APPROACH.md §5).
 - The Zenodo ReDoS artifact's content and licence.
 - regexlib.com's actual pattern-database rows (only confirmed the site
   is live and found its site-source GitHub mirror).
-- PCRE2's `testdata/` directory listing and file content (found the
-  RunTest/pcre2test tooling description, not the files themselves).
-- Oniguruma's test suite file (repo found, test file not located).
+- Oniguruma's test suite file itself (its licence — BSD 2-Clause — WAS
+  confirmed by fetching `COPYING` directly; the test file/content was
+  not located this session).
 - GNU grep's own `tests/` tree (only gnulib's shared `regex.c`/`.h`
   found; grep's own test suite location not confirmed).
 - A `pcre:`-bearing Suricata rule file (fetched one rules file, which
@@ -1016,12 +1019,16 @@ Oniguruma, TRE/POSIX, pcre2, pcrec (APPROACH.md §5).
 - A TextMate grammar file's actual regex content.
 - Rebar's other named benchmark files beyond `date.txt` (AWS-key
   detection, the lexer benchmark, the Unicode-word benchmark).
-- Independent LICENSE-file confirmation for: PCRE2, Oniguruma,
-  Hyperscan/Vectorscan, rust-lang/regex, GNU grep, Elastic's plugin,
-  ModSecurity CRS — all stated above from well-known general knowledge
-  or a WebSearch snippet, flagged individually where used, and each one
-  low-risk to be wrong but NOT independently verified against a fetched
-  LICENSE file this session, per the "fetched, not remembered" bar this
-  task set. A short dedicated pass fetching just the LICENSE files for
-  the sources on the final shortlist (rebar, PCRE2, grok patterns, CRS,
-  RE2) would close this gap cheaply before the design note is written.
+- Independent LICENSE-file confirmation for: Hyperscan/Vectorscan,
+  rust-lang/regex, GNU grep, Elastic's plugin, ModSecurity CRS — all
+  stated above from well-known general knowledge or a WebSearch
+  snippet, flagged individually where used, and each one low-risk to be
+  wrong but NOT independently verified against a fetched LICENSE file
+  this session, per the "fetched, not remembered" bar this task set.
+  (PCRE2 and Oniguruma's licences WERE confirmed by direct fetch this
+  session — see items 15 and 16 — both BSD-family, both permissive.) A
+  short dedicated pass fetching just the remaining LICENSE files for
+  the sources on the final shortlist (rebar's is already Unlicense per
+  item 1; grok patterns, CRS, RE2's BSD header is already quoted in
+  item 4) would close this gap further before the design note is
+  written.
