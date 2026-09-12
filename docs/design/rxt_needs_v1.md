@@ -306,10 +306,19 @@ file is a bench set. This is a DESIGN question for pcrecdev1, not a bug.
 ### 1.9 The thirteen MEASURED facts
 
 Every one from `build/pcrec-d34c9131/build/pcrec --list-source` at pin
-d34c9131 (abi 23), parse-only. Fixtures and the comparison script are in
-the lane's scratchpad; each is one file of at most six lines and is
-reproduced verbatim in §3's acceptance checklist so a reviewer can re-run
-them.
+d34c9131 (abi 23), parse-only — no compile, no artifact, no timing, so
+the box's state is irrelevant to every number here.
+
+**ARCHIVED, with its reproducing script beside it** (the D35 convention,
+`docs/dev/measurements/CLAUDE.md`):
+`docs/dev/measurements/2026-09-12-rxt-format-probes-d34c9131.txt` is the
+verbatim output under a source header, and
+`docs/dev/measurements/probe_rxt_format.py` re-derives it
+(`python3 docs/dev/measurements/probe_rxt_format.py`, under a second;
+`$PCREC_BIN` overrides the pin). Twenty probes produce
+the thirteen facts below; each fixture is at most six lines and is
+printed beside its result, so a reviewer re-runs the whole set at the
+DELIVERED pin and diffs (§3 group G3).
 
 | # | probe | result |
 |---|---|---|
@@ -936,7 +945,305 @@ productions it VALIDATES and which it merely recognises.
 **What pcrec's own harness gets.** The same thing it got the first time:
 `run.sh` never grows a parser for a production pcrec already parses. With
 W2's `include`, the dump is also the only place the include CLOSURE is
-visible without re-implementing resolution — which §2.11's population
-accounting (`format_design.md:1289-1300`) will need a reader for.
+visible without re-implementing resolution — which the format's own
+population accounting (`format_design.md:1289-1300`, its §2.11) will need
+a reader for.
 
 ---
+
+## 3. THE ACCEPTANCE CHECKLIST for the restart
+
+What this project will verify when pcrecdev1 delivers, written so a
+reviewer can run it. Forty-one checks in seven groups, each naming the
+need it closes, the command, and the pass criterion. **Every check has a
+NEGATIVE arm** — this repo's own check-design rule, stated at
+`tools/CLAUDE.md`: "every gate is exercised against an input it must
+REJECT in the same run that exercises it against one it must accept. A
+check with no failing case proves nothing."
+
+Notation: `$P` is the pinned binary, `$F` a fixture directory. Fixtures
+are small enough to write inline; the ones marked **(existing)** are the
+probes §1.9 already ran, reproduced so the delivery is compared against a
+measured BEFORE rather than against a remembered one.
+
+### Group A — the productions parse (needs N-9, N-20, N-25, N-32, N-34, N-36, N-37, N-39, N-40, N-50)
+
+| # | check | command | pass |
+|---|---|---|---|
+| **A1** | every W2/W3 keyword this set needs is ACCEPTED where it was refused | `$P --list-source $F/w2w3.rxt` on a file carrying `tag`, `mc`, `@file:`, `include` at head and block scope | exit 0; **BEFORE (existing, M10): each refused by name with its wave** |
+| **A2** | the same for W3 | as A1 with `oracle`, `variant`, `use`, `config … testee`, `config … option` | exit 0; BEFORE as A1 |
+| **A3** | an unknown keyword is STILL a hard error naming its context | `$P --list-source $F/bogus.rxt` with a line `taggg family=x` | exit 1, the diagnostic names the CONTEXT (head / config body / pattern block), per `rxt_format.md:154-159` |
+| **A4** | a W2 keyword in the WRONG context is still refused | `tag` inside a `config` body | exit 1 naming the context |
+| **A5** | `tag` accumulates across repeated lines and mixes bare labels with pairs | two `tag` lines on one block, one bare-label one pair-valued | both sets present in the dump; per `format_design.md:1843` |
+
+### Group B — raw bytes round-trip (needs N-1, N-3, N-4, N-5, N-28)
+
+| # | check | command | pass |
+|---|---|---|---|
+| **B1** **(existing)** | a high-byte pattern round-trips byte-exactly | `printf 'pattern caf\xe9[\x80-\xff]+\nname h\n'`, dump, decode the `pattern` column with `tools/export_rxt.py`'s `decode_rxt_escape` | bytes equal; **BEFORE: already passes (M3)** — a regression here is a delivery failure |
+| **B2** **(existing)** | a mid-line tab, a doubled backslash, a mid-line CR, trailing spaces | as B1 | all byte-exact; BEFORE: passes (M4) |
+| **B3** | **a NUL in a pattern line is REFUSED BY NAME** | `printf 'pattern ab\x00cd\nname h\n'` | exit non-zero, the diagnostic naming the file, the line and the NUL. **BEFORE (M1): exit 0 and the pattern silently becomes `ab`.** This is the single highest-value item in the checklist |
+| **B4** | the NUL refusal does not fire on a NUL-free file | any existing corpus file | exit 0 — the control that B3 is not refusing everything |
+| **B5** | if `pattern-esc` (§2.7) ships: a newline, a NUL and a trailing CR all round-trip | `pattern-esc "a\nb\x00c\r"` decoded against the source bytes | byte-exact |
+| **B6** | if `pattern-esc` ships: a block carrying BOTH `pattern` and `pattern-esc` is refused | — | exit 1 naming both lines |
+| **B7** | `@file:`'s bytes are taken raw — a subject file containing a NUL and invalid UTF-8 reaches the matcher whole | a 3-byte file `\x00\xff\x41` referenced by `@file:` | the case runs and the engine sees three bytes. `format_design.md:1195-1199` promises this; nothing has ever verified it |
+
+### Group C — refusal by name, and the negative arms (needs N-10, N-21, N-26)
+
+| # | check | command | pass |
+|---|---|---|---|
+| **C1** | a `tag` value outside a declared `vocabulary` is refused BY NAME | `vocabulary hazard none exponential-backtracking` + `tag hazard=exponentail-backtracking` | exit 1 naming the key, the bad value and the declared set |
+| **C2** | the same key with a LISTED value is accepted, same run | — | exit 0. C1's control |
+| **C3** | a key with NO `vocabulary` line keeps free-vocabulary behaviour | `tag whatever=anything` | exit 0 — the compatibility control; no existing corpus file may start failing |
+| **C4** | a `provenance` block missing a REQUIRED line is refused naming the line | drop `licence` | exit 1 naming `licence` |
+| **C5** | `fidelity adapted` with no `adaptation` is refused | — | exit 1 naming the conditional |
+| **C6** | `fidelity verbatim` with no `adaptation` is ACCEPTED | — | exit 0. C5's control |
+| **C7** | a SECOND `provenance` block in one pattern block is refused | — | exit 1. Not last-wins — the M5 hazard must not be repeated |
+| **C8** | `@file:` with a `sha256` that does not match the file is refused naming both digests | — | exit 1 |
+| **C9** | `@file:` with a MATCHING `sha256` is accepted | — | exit 0. C8's control |
+| **C10** | **a second `description` in one pattern block** | **(existing)** | this note asks for a refusal; if pcrecdev1 keeps last-wins, the check records the CHOICE rather than failing. **BEFORE (M5): silently last-wins, exit 0** |
+
+### Group D — `--list-source` columns (need N-52)
+
+| # | check | command | pass |
+|---|---|---|---|
+| **D1** | every descriptive production this set writes appears in the dump | `$P --list-source bench/capability/patterns.rxt` | a row or column for each of: `tag`, `provenance`'s nine keys, `oracle`, `variant`, `mc`, `under`, `@file:`'s id and hash |
+| **D2** | the dump is re-parseable without a second parser | this project's loader reads ONLY the dump | the loader contains no `.rxt` tokenizer of its own — verified by code review at the restart, and by a grep for the format's keywords in `pcrecbench/` |
+| **D3** | the dump's escaping is documented and round-trips | as B1/B2, through every escaped column | byte-exact |
+| **D4** | the dump states which productions it VALIDATES vs merely recognises | read the spec section | a sentence exists. **BEFORE: a case line's `@file:` subject passes the dump although `@file:` is refused** (the observation after §1.9) |
+| **D5** | if sections (§2.12 shape 2) ship: a stream with no `#section` line still reads as one anonymous section | any existing corpus file | exit 0, output unchanged from the current pin |
+
+### Group E — the set loads and measures (needs N-7, N-27, N-30, N-35, N-45, N-48)
+
+| # | check | command | pass |
+|---|---|---|---|
+| **E1** | every block name in the set is a legal bench `pattern_id` | `python3 -m pcrecbench run --subbench capability …` refuses in under a second on a bad id | the KB-12 pre-flight (`pcrecbench/subbench.py:80-90`) fires on the `.rxt`-sourced ids exactly as it does on sidecar ones |
+| **E2** | the id containment holds both ways for THIS set | a script over the set's names | every name is both a legal `.rxt` block name and a legal slug — i.e. `[a-z0-9-]` only, no `_`, no `.`, no uppercase (§1.9 M11) |
+| **E3** | a subject is addressable by ID, not by line | insert a blank line above a case and re-run | every expectation key and every report row is unchanged |
+| **E4** | a duplicate block name is refused | **(existing, M7)** | exit 1. BEFORE: already passes; a regression is a delivery failure |
+| **E5** | an `under <convention>` case reaches the harness as a SECOND expectation for the same (pattern, subject) | a two-testee cell, one per convention | both are scored `matched-as-expected`. **This check cannot pass on the format alone** — R5 finding B1 establishes that `harness.outcome_for()` has no convention parameter, so a matching harness change is owed on THIS side and is named in §4 |
+| **E6** | `make check-harness`'s generic per-set gates pass on an `.rxt`-sourced set | `make check-harness` | the manifest, `gen_*.py --check`, expectations re-derivation and floor-pattern smoke all enumerate the new set (`tools/CLAUDE.md`'s `subbench_dirs()`) |
+| **E7** | the set's `content_hash` covers the `.rxt`, every `include`d fragment and every `@file:` subject | `Subbench.content_hash()` (`subbench.py:287-311`) | a one-byte edit to any of the three moves the hash |
+
+### Group F — D93 and engine neutrality (needs N-43, N-44)
+
+| # | check | command | pass |
+|---|---|---|---|
+| **F1** | a `target`-less, `config`-less set file parses and is a PERMANENT legal shape | **(existing, M12)**, plus the spec sentence | exit 0 AND a sentence in `rxt_format.md` saying so. The parse already works; the CONTRACT is the ask |
+| **F2** | whatever scoping rule ships (§2.6), a `config` in the set cannot change what a pcrec testee compiles | compile one pattern from the set with `--engine=vm` on the command line while the file declares `engine` in a config | the command line wins, or the file is refused — **either is acceptable, silence is not** |
+| **F3** | the negative arm: planting a build directive in the set file FAILS this project's own gate | `capability_set_v1.md:1075`'s "no build directives" gate, restated per R5 finding B5 as "no `target`/`config`-kind ROW, and every `pattern`-kind row's flags/features/encoding/engine/budget columns EMPTY" | a planted `engine vm` line makes `make check` fail by name |
+| **F4** | the set carries no pcrec-oracled limits file and no pcrec-shaped expectation | review | R-BENCH-4 / AR-6; Frank's [B31] clearance already set this precedent |
+
+### Group G — the format's own regressions (all needs)
+
+| # | check | command | pass |
+|---|---|---|---|
+| **G1** | every existing `.rxt` file in pcrec's corpus parses identically | pcrec's own `make test` | green. R-COMPAT-1 |
+| **G2** | this repo's five committed exports still round-trip | `make check-harness`'s `check_rxt_export` ([B38]) | 185/185 patterns match `--list-source` |
+| **G3** | the thirteen MEASURED facts of §1.9 are re-run at the delivered pin | the fixtures above | M1 and M5 are EXPECTED TO CHANGE (that is the ask); M2-M4, M6-M13 must be unchanged, and any other movement is a finding |
+
+**How this checklist will be run.** As a lane, at the restart, against a
+pcrecdev1-delivered pin, before any pattern of the capability set is
+authored — the same order [B39]'s prep lane used (predict, then confirm
+at the build). The fixtures are cheap: `--list-source` is parse-only,
+measured at ~2 ms for a 95-pattern file and under 0.2 s for all five sets
+including python startup (`tools/CLAUDE.md`, [B38]), so the whole group
+fits inside `make check-harness` rather than needing its own target.
+
+---
+
+## 4. Sequencing — what blocks the first sample, what can land later
+
+### 4.1 The minimal W2/W3 subset that unblocks a FIRST SAMPLE
+
+A first sample is: sixty patterns × six pinned testees × two regimes,
+measured into `store/`, reported and read. To reach it, a set must be able
+to state its patterns, its subjects, its expectations and its identity.
+Nothing else is load-bearing on night one.
+
+**Tier 1 — required for a first sample** (nine items):
+
+| need | production | why it cannot wait |
+|---|---|---|
+| N-9, N-45, N-48 | `tag` (W2) | the set's id, version, regimes and every per-pattern classification. The record cannot be built without `hazard_class`/`size_class` — both are REQUIRED fields (`schema/record.schema.json:298`) |
+| N-25, N-27 | `@file:` (W2) + a subject id (§2.5) | 1 MB throughput subjects cannot be inline strings, and every expectation key names a subject id |
+| N-32 | `mc` (W2) + its counting rule (§2.10) | the throughput regime's comparable |
+| N-36, N-37 | `oracle` (W3) + `tag method=` (W2) | R-BENCH-1's verification method; without it an expectation is unattributed |
+| N-43 | the permanence sentence (§2.6 / F1) | the whole file layout rests on it, and it is a sentence, not a feature |
+| N-52 | a `--list-source` that emits the above | otherwise this project writes the second parser the seam exists to prevent |
+
+**Tier 2 — required before the set makes its stated CLAIMS, not before
+it first runs** (six items):
+
+| need | production | what is missing without it |
+|---|---|---|
+| N-11..N-19 | `provenance` (§2.1) | charter requirement (1). The set can measure without it; it cannot CLAIM wild provenance |
+| N-20, N-21 | `tag requires=` + `vocabulary` (§2.2) | the capability model. Without it, an engine that cannot run a pattern produces a refusal rather than a declared `unsupported` |
+| N-39, N-40, N-41 | `variant` (W3) | charter's syntactic-adjustment clause. Not needed while the roster is pcre2 + pcrec, which run every pattern canonically — this is why the first sample can precede it |
+| N-22, N-23 | `capable` (§2.3) | the pre-compile policy |
+| N-10 | `vocabulary` on `hazard` | §6.3's rewrite rule keys on it |
+| N-34, N-35 | `under <convention>` (§2.4) | family 11. **Also blocked on a harness change on THIS side** (R5 B1) |
+
+**Tier 3 — genuinely later** (N-2/N-4/N-5 pattern escaping, N-26's hash,
+N-38's oracle version, N-50's `include`, N-33's neutral capture map,
+N-6, N-47, N-49, N-31).
+
+**The one Tier-3 item this note asks for out of order: the NUL
+refusal (§2.7's second half, check B3).** It is not a capability, it is
+the removal of a silent-wrong-answer path, and it is independent of every
+wave.
+
+### 4.2 Why the first sample cannot simply be Tier 1
+
+A candid statement, because the tiering above could read as optimism:
+**Tier 1 is `tag` + `@file:` + `mc` + `oracle` + `--list-source` — that
+is most of W2 and part of W3.** There is no smaller cut that produces a
+measurable set, because the four things a sub-bench is made of (patterns,
+subjects, expectations, identity) map onto exactly those productions.
+What the tiering buys is a smaller FIRST delivery, not a small one.
+
+If pcrecdev1 wants a still smaller first delivery, the honest minimum is
+**W2 alone** — `tag`, `@file:`, `mc`, `include`, and the `--list-source`
+extension for them. With W2 and no W3, a set can be authored, loaded,
+measured and reported against the two pcre2 testees and the sixteen pcrec
+ones, with its oracle declared in prose and its variants absent (the
+current roster runs every pattern canonically, so no variant is needed).
+That is a real, publishable first sample with two stated gaps: no
+per-pattern provenance and no declared capability model. §5 Q6 asks
+whether that is the shape pcrecdev1 prefers.
+
+### 4.3 What this project does in the interim
+
+**Nothing is built under `bench/`.** Frank's ruling parks the effort; the
+plan row already states "Nothing measured, nothing under bench/ touched
+until (e)". Concretely, between this note and the restart:
+
+- No `bench/capability/` directory, no patterns, no subjects, no sidecar.
+- No loader change in `pcrecbench/subbench.py`, no `source_format = "rxt"`
+  key, no schema change.
+- `tools/export_rxt.py` and its `make check-harness` round-trip are
+  UNTOUCHED — the five existing sets keep their derived exports, which is
+  orthogonal to this ask.
+
+Three things this project CAN do without the format, and which the R5
+panel's findings make it want to:
+
+1. **The convention-scoring harness change** (R5 B1). `under` in the
+   format is useless if `harness.outcome_for()` still grades every testee
+   against one expectation. This side's half is a per-testee/variant
+   expected-answer override, and it is ours to design whether or not the
+   format ships §2.4.
+2. **`variant.kind` rendering** (R5 B2) — claimed built, never
+   implemented, and needed the moment a variant exists.
+3. **The wild-vs-designed bucketing decision** (R5 B3) — whether
+   provenance becomes a real enumerated record field or stays set-local.
+   §2.1's `provenance` block answers where it lives in the SET; it does
+   not answer what the RECORD carries, and the two questions are
+   separable.
+
+None of the three touches `bench/`, all three are on the critical path at
+the restart, and all three are this project's own work. They are named
+here so the parked period is not idle; sequencing them is the manager's
+call, not this note's.
+
+---
+
+## 5. Open questions
+
+### 5.1 For pcrecdev1 (design choices that are theirs)
+
+**Q1 — The head/body indentation asymmetry, against `provenance` and
+regime grouping.** `rxt_format.md:169-173` calls the asymmetry
+deliberate and "the only one": head lines take indented continuation, a
+pattern block's lines do not. Both §2.1's `provenance` block and §2.11's
+option 2 want an indented sub-block IN THE BODY. Three answers are
+available — relax the asymmetry for a named set of body sub-blocks; keep
+it and make provenance nine flat block-scoped lines; or move provenance
+to the head keyed by block name (which splits a pattern's truth across
+two places and this note recommends against). **This is the single
+biggest shape decision in the note and it is entirely pcrecdev1's.**
+
+**Q2 — Is `vocabulary` (§2.2) the right mechanism for closed sets, or
+does the format prefer to keep every tag free and leave validation to
+consumers?** The cost of the latter: `format_design.md` §4.5's own
+absorption table silently downgrades four validated record-schema enums
+to unvalidated strings.
+
+**Q3 — Does `mc` count non-overlapping matches, and under which
+advancement rule for an empty match?** (§2.10.) A one-paragraph answer,
+and the only one of the twelve that may need no code.
+
+**Q4 — Should per-config CAPABILITY declarations (§2.3) live in the
+format at all, or is that engine knowledge the bench should keep?** A
+legitimate "no" leaves this project with one non-`.rxt` file, which is a
+partial return of the hybrid Frank's ruling removed — so the answer
+should be explicit rather than defaulted.
+
+**Q5 — §4.5 item 4's regime mechanism is unusable for this project's
+pattern ids** (§2.11, `rxt_format.md:284-291` against `:290-296`). What
+replaces it? The note sketches three options and picks none.
+
+**Q6 — Would pcrecdev1 prefer a W2-only first delivery** (§4.2), with
+provenance, capability and variants following in a second? This project
+can run a real first sample on W2 alone, with two stated gaps.
+
+**Q7 — Is the NUL refusal (§2.7, check B3) acceptable as a standalone
+change**, independent of any wave? It is a silent-truncation fix, not a
+feature, and it is the item this note would take first if it could take
+only one.
+
+**Q8 — `@file:`'s optional `sha256` (§2.5) against
+`format_design.md:1205-1208`'s explicit "no content hash on a subject
+reference".** That ruling's premise — a subject file is committed and
+reviewed — does not hold for a generated, gitignored subject tree. Does
+pcrecdev1 read the ruling as a principle or as a default?
+
+**Q9 — Two hazards this note found in SHIPPED behaviour, both silent:**
+a second `description` in a block overwrites the first (M5), and a NUL
+truncates a pattern line (M1). Both are outside this note's ask and both
+are the kind of thing a corpus author would rather hear about now.
+
+### 5.2 For Frank
+
+**F-Q1 — The sequencing question §4.2 exposes.** Tier 1 is most of W2
+plus part of W3. If pcrecdev1's W2 lands and W3 does not, the capability
+set can take a real first sample with no per-pattern provenance and no
+declared capability model — i.e. **charter requirement (1) and the
+capability clause both unmet at the first sample**, with everything else
+met. Is that an acceptable first sample, or does the set wait for both
+waves? This note does not recommend; the charter is Frank's.
+
+**F-Q2 — The `.rxt` format cannot express a multi-line `(?x)` pattern at
+all** (N-2, roadblock #1), and `capability_set_v1.md:1089-1100` already
+proposed flattening such a pattern to one line as `fidelity: adapted`
+with an oracle check. Under the Q3 ruling, is flattening an acceptable
+accommodation — or is this a capability the format must gain before the
+set's family 6 is authored? The difference is one pattern family's
+fidelity against one format production.
+
+**F-Q3 — This note is written for Option A** (the set's truth lives in
+`.rxt`) per the Q3 ruling, which supersedes both N3 §6's recommendation
+and `capability_set_v1.md` §9.1's adoption of Option B. **Those two
+documents are now stale on their central recommendation.** This note does
+not edit either — it is feedback, not a revision — and asks the manager
+whether `capability_set_v1.md` §9 should be revised to v0.2 now or at the
+restart, when the format's actual shape is known.
+
+---
+
+## Appendix — the roadblocks, in one list
+
+The five places the effort PARKS, in the order Frank's ruling would have
+it read them:
+
+| # | roadblock | need(s) | §  |
+|---|---|---|---|
+| 1 | a multi-line `(?x)` pattern has NO representation | N-2 | §1.1 |
+| 2 | `tag` is refused, so no per-pattern classification is expressible — and when it lands, no closed vocabulary can be declared | N-9, N-10, N-20, N-21 | §1.2, §1.4 |
+| 3 | no pattern-level PROVENANCE production exists in any wave | N-11..N-19 | §1.3 |
+| 4 | a second correct answer under another convention has no carrier — and the harness could not score one either (R5 B1) | N-34, N-35 | §1.6 |
+| 5 | D93 vs a set file carrying a testee roster: `format_design.md` §6.2's own worked bench file would pin this project's testee matrix from inside the set | N-42, N-44 | §1.7 |
+
+And two silent-loss defects found in shipped behaviour, outside the ask:
+a NUL truncates a pattern line (M1), a second `description` overwrites the
+first (M5).

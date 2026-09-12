@@ -282,6 +282,62 @@ docs/dev/'s append-only records.
   fetches that gate the import lane. Next: the D6 panel (phase (c)), then
   Frank (phase (d)).
 
+- `rxt_needs_v1.md` — **[B42], the `.rxt` CAPABILITY FEEDBACK to pcrec
+  (`pcrecdev1`), 2026-09-12, lane `b42rxtneeds`. FEEDBACK, not a design
+  of this project's own: nothing is built, nothing under `bench/`,
+  `schema/`, `pcrecbench/` or `testees/` is touched, and it revises
+  neither `capability_set_v1.md` nor the research note it supersedes.**
+  Written on Frank's ruling of the same day (plan row `[B42]`, RULINGS
+  Q3): the capability survey set is built ON `.rxt` FOR REAL, not on the
+  hybrid; where the format cannot carry what the set needs the effort
+  PARKS and this project sends pcrecdev1 detailed feedback; pcrecdev1
+  builds it; the effort restarts and this project reviews and VERIFIES.
+  Frank: *"This is as much a driver of the rxt format as anything."*
+  Five parts. **§0** states the ruling and maps the note onto
+  R-BENCH-1..9 (`~/pcrec/docs/design/dd13_format/requirements.md:316-411`)
+  — which of the nine it confirms, extends, finds insufficient, or (one:
+  R-BENCH-8) CORRECTS. **§1 is THE NEED TABLE**: fifty needs in eight
+  blocks (pattern text; identity and descriptive metadata; provenance;
+  the capability model; subjects; expectations, conventions and the
+  oracle; per-testee variants and the testee roster; set-level identity
+  and tooling), each with where it lives today by `file:line`, the
+  EXISTING W2/W3 production that would carry it spelled as
+  `format_design.md` §1.3 spells it or **NEW** where none does, whether
+  that production's designed semantics actually FIT, its wave and status
+  at the current pin, and a MUST/SHOULD/COULD priority — 36 MUST, 9
+  SHOULD, 5 COULD; 14 BUILT, 2 BUILT AND LOSSY, 20 REFUSED BY NAME, 15
+  ABSENT. §1.9 carries THIRTEEN MEASURED facts from twenty parse-only
+  probes of the pinned binary (archived with its script:
+  `../dev/measurements/2026-09-12-rxt-format-probes-d34c9131.txt`,
+  `probe_rxt_format.py`), two of which are SILENT DATA LOSS in shipped
+  behaviour (a NUL truncates a `pattern` line; a second `description`
+  overwrites the first) and one of which corrects a claim
+  `subbench_directory_model.md:554-560` Q4 makes today (a pcrec block
+  name like `iso_ts` is NOT a legal bench `pattern_id` — the slug
+  alphabet has no `_`). **§2** proposes TWELVE productions — a
+  `provenance` block modelled on the `freq` data block's required-line
+  discipline, a `vocabulary` declaration that closes a `tag` key's value
+  set, a per-config `capable` line, `under <convention>` case
+  qualifiers, `@file:` with a subject id and an optional sha256, a
+  config-scoping rule for D93, a `pattern-esc` spelling for the bytes
+  `pattern` cannot hold, `variant kind` plus a quoted `tag` value,
+  `oracle` widened to any engine at a version, `mc`'s counting rule
+  stated, a regime mechanism that survives hyphenated ids, and a
+  `--list-source` extension for the descriptive productions — each with
+  a grammar sketch in the format's own EBNF style, a worked example on a
+  real capability-set pattern, and what pcrec's OWN harness gets from it.
+  **§3 is the ACCEPTANCE CHECKLIST for the restart**: 41 checks in seven
+  groups, every one with a negative arm per this repo's own check-design
+  rule, and with the MEASURED BEFORE quoted where one exists. **§4**
+  sequences Tier 1 (what blocks a first sample — and says candidly that
+  Tier 1 is most of W2 plus part of W3, with W2-alone named as the
+  honest smaller cut), Tier 2, Tier 3, and what this project does in the
+  interim (nothing under `bench/`; three R5-panel follow-ups that are
+  ours regardless). **§5** puts nine questions to pcrecdev1 and three to
+  Frank. The Appendix lists the FIVE ROADBLOCKS in one table. The
+  manager distils an outbox item from this file; the file itself is the
+  full form.
+
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in
