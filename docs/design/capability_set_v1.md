@@ -1515,33 +1515,51 @@ authority. Every unresolved item is asked at the RESTART — none blocks
 | # | risk | what would refute / what it costs | mitigation in this design |
 |---|---|---|---|
 | R1 | **The wild patterns turn out to measure nothing new.** If every wild member's cost is explained by its length and its first byte, the set is `bench/loglines` with worse provenance | the first sample shows no family whose members diverge from each other or from the floor by more than the R2 band | the control twins (§3.2) are the instrument: a wild pattern beside its designed twin isolates structure from length. If they agree everywhere, that IS the finding, and it is a cheap one to reach |
-| R2 | **The `unsupported-by-declaration` share swamps the set.** Families 2, 7-10 are unsupported on RE2/Rust/Vectorscan/TRE; if that is most of the set, half the roster produces mostly empty records | count it before building: 20 of 59 members carry a REQUIRES tag those four engines fail | that is ~1/3, which is a census result, not an empty record. §6.3 is explicit that it is the honest outcome. But a panel should check the count against §3.1's targets |
+| R2 | **The `unsupported-by-declaration` share swamps the set.** Families 2, 7-9 (CS6: corrected from "2, 7-10" — family 10 is explicitly the OPPOSITE case, §3.1's own headline finding) are unsupported on RE2/Rust/Vectorscan/TRE; if that is most of the set, half the roster produces mostly empty records | count it before building: 20 of 59 members carry a REQUIRES tag those four engines fail | that is ~1/3, which is a census result, not an empty record. §6.3 is explicit that it is the honest outcome. But a panel should check the count against §3.1's targets |
 | R3 | **The pre-compile capability policy is WRONG somewhere** and silently converts measurable cells into `unsupported` rows | a declared-unsatisfied tag that the engine actually supports | §5.3's witness check: for every (config, tag) declared UNSATISFIED, one witness pattern is compiled and the refusal asserted BY NAME. A check with no failing case proves nothing |
-| R4 | **The `.rxt` format moves under the set mid-build.** W2/W3 landing would change the file shape | N3 §0 measured the format STATIC over the five days past the pin (the only commit touching the `.rxt` parser is a diagnostic-message shortening) | Option B is chosen partly for this: the sidecar survives W2/W3 landing unchanged; only the loader's SOURCE for pattern text would move |
+| R4 | **SUPERSEDED, restated.** v0.1 framed this as "the `.rxt` format moves under the set mid-build" and cited Option B's sidecar as its own mitigation. Under the Q3 ruling (§9) that framing is backwards: the format moving IS the plan, not a risk to it — the effort deliberately parks and restarts once pcrecdev1 delivers. The residual risk is narrower: **the delivered format does not actually satisfy what `rxt_needs_v1.md` asked for** | the restart's acceptance checklist (41 checks, `rxt_needs_v1.md` §3) fails on a delivered production | the checklist's own negative arms, and the manager's lighter panel pass (§9's restart procedure, step 2) before any lane reopens |
 | R5 | **A licence claim is wrong.** Six of N1's LICENSE confirmations came from direct fetches; several sources' terms are still genuinely unknown | any allowlisted licence that turns out not to govern the file we copied | §4.1 records the exact URL and date per pattern, so a wrong claim is traceable to one row and one fetch, not to "the set". §4.2's allowlist is confirmed-by-direct-fetch only |
-| R6 | **Cell time is underestimated.** §3.5's model is `bench/syntax`'s, and a wild pattern's throughput cell may not behave like a census pattern's | any cell exceeding ~45 min in the first sample | ~5× `CELL_CAP` headroom, the largest of any set here, chosen for exactly this. A cell killed by the cap exits 124 and writes NOTHING (`scripts/CLAUDE.md`), which is why the margin is deliberate |
-| R7 | **The reporter cannot render a dozen-plus variant rows in one table.** Never exercised (N2 §7 item 4) | a synthetic many-variant report that renders wrongly | L5 checks it BEFORE the set ships, against a synthetic report, not against the first sample |
-| R8 | **`fidelity: inspired` becomes a laundering mechanism** — "authored from a description" applied to something that is really a copy | a reviewer comparing an `inspired` pattern to its cited source and finding them substantially the same | `provenance.tsv`'s `adaptation`/`source_ref` fields are required and reviewed; the panel should treat this as a named attack surface rather than a formality |
+| R6 | **Cell time is underestimated.** §3.5's model is `bench/syntax`'s, and a wild pattern's throughput cell may not behave like a census pattern's — **family 10's calibration risk is the sharpest named instance (CB8)**: `calibrate()` picks `iters` once from the median subject and a ReDoS witness's own per-iteration cost, far above the median, is what actually dominates the cell's wall time, not the model's flat 50 ms | any cell exceeding ~45 min in the first sample | ~5× `CELL_CAP` headroom, the largest of any set here, chosen for exactly this. A cell killed by the cap exits 124 and writes NOTHING (`scripts/CLAUDE.md`), which is why the margin is deliberate. §3.5's fixed small `--iters` override for family 10's typed subjects is the targeted mitigation |
+| R7 | **The reporter cannot render a dozen-plus variant rows in one table.** Never exercised (N2 §7 item 4), and confirmed UNBUILT rather than merely unexercised (CB2 — §5.7) | a synthetic many-variant report that renders wrongly | L5 designs and builds the rendering BEFORE the set ships, against a synthetic report, not against the first sample |
+| R8 | **RESOLVED, not merely mitigated.** `fidelity: inspired` becoming a laundering mechanism — "authored from a description" applied to something that is really a copy — was an open risk in v0.1. **Frank's Q1 ruling (2026-09-12) closes it**: an `inspired` pattern is validated as not an actual copy, by a mechanical similarity check in the provenance gate PLUS review, folded into §4.1's `gen_provenance.py --check` | a reviewer or the similarity check finding an `inspired` pattern substantially the same as its cited source | `gen_provenance.py --check`'s new similarity-check arm (§4.1), plus the review Frank's ruling also requires |
 | R9 | **The set's objective is too broad to state.** `requirements.md §4.5` constraint 2 requires a declared OBJECTIVE against which every variant is judged; twelve families may not share one | L3 cannot write a single `objective` string a variant declaration can be checked against | the objective is the CAPABILITY CONTRAST itself — "what each roster engine can express, what it refuses, and what the expressible ones cost" — and §6.3's hazard rule is the one place where "objective preserved" needs a per-family reading. If the panel finds a second such place, the objective is too broad and the set should split (§2.1 option C) |
 
 ### What would refute the whole design
 
-Three things, named so a critic can aim at them:
+Two things still stand from v0.1; the third is retired by this revision
+and one new item takes its place:
 
-1. **Requirement (4) is not satisfied by Option B.** If "BUILT ON the
-   .rxt file format" means the set must be compilable by `pcrec
-   --source`, then §9's whole structure is wrong and Q12's answer flips —
-   which re-opens D93 and [B29]'s compile-cost objection together.
-2. **The capability contrast is already answered by documentation.** N2
+1. **The capability contrast is already answered by documentation.** N2
    §3's table IS the capability matrix, fetched from upstream docs. If
    the only thing a measurement adds is confirmation, the set's value is
    the PERFORMANCE half, and its family taxonomy should be rebuilt around
    cost rather than capability.
-3. **Sixty wild patterns cannot be provenance-recorded honestly.** If L1
-   finds that the verbatim-quotable text is much thinner than N1's
-   fetches suggest (rebar's `noseyparker.txt` literal text is still OWED;
-   no Suricata sample was obtainable in three attempts), the wild share
-   collapses and Q2's answer has to change before the set is built.
+2. **RETIRED (superseded by the Q3 ruling).** v0.1's item 1 ("Requirement
+   (4) is not satisfied by Option B... re-opens D93 and [B29]'s
+   compile-cost objection") no longer applies: there is no Option B to
+   fail to satisfy. Requirement (4) is now satisfied by construction — the
+   set is built on `.rxt` directly, and the only open question is whether
+   pcrecdev1's delivery actually carries what `rxt_needs_v1.md` asked
+   for, which is what the restart's acceptance checklist exists to
+   settle (R4, above), not a design-level refutation.
+3. **RETIRED (Q2 resolved).** v0.1's item 3 ("Sixty wild patterns cannot
+   be provenance-recorded honestly... the wild share collapses and Q2's
+   answer has to change") assumed Q2 was a ratio to hit. It is not
+   (§4.3): there is no target percentage to collapse below. The
+   underlying provenance-honesty concern survives in a narrower form —
+   **a family cannot produce enough REALISTIC members, imported or
+   authored, to reach its target count** — but that is a per-family
+   sizing risk L1/L2 report on, not a whole-design refutation.
+4. **The `.rxt` delivery restart never happens, or happens on a
+   timescale that makes this design stale.** If pcrecdev1's delivery
+   diverges materially from `rxt_needs_v1.md`'s twelve proposed
+   productions — a different grammar shape for the same needs, say — the
+   restart's step 2 (a lighter panel pass) may find this note's family
+   taxonomy, provenance model or capability model need a second revision
+   before L1 reopens. That is a normal restart outcome, not evidence the
+   design was wrong; it is named here so a reader of this note alone
+   knows the design's stability is conditioned on the delivery matching
+   its own request.
 
 ---
 
