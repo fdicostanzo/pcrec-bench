@@ -228,6 +228,60 @@ docs/dev/'s append-only records.
   not fire once while the per-core occupancy gate refused all 12 samples,
   so load1 is the WEAKER instrument and occupancy is the detector.
 
+- `capability_set_v1.md` — **[B42] phase (b), the CAPABILITY SURVEY SET's
+  design, at v0.1 "draft for panel" (2026-09-12, lane `b42design`).
+  DESIGN ONLY: nothing built, no file under `bench/`, `schema/`,
+  `pcrecbench/` or `testees/` touched.** Written from the three
+  `../dev/research/2026-09-12-b42-*` notes and cited to them by section
+  throughout; written to be REFUTED (every decision states its
+  alternatives, every open choice a recommendation AND the consequence of
+  each answer). Thirteen sections against Frank's eight charter
+  requirements, with a traceability table (§1.1). What it DECIDES: a NEW
+  sub-bench `bench/capability@0.1` rather than an extension of
+  `bench/syntax` (§2 — the census is registry-ENUMERATED and its coverage
+  gate would go meaningless, the bodies are incompatible by construction,
+  a version bump strands the measured first sample and its scored
+  prediction set, and the two blinding disciplines cannot both hold in
+  one directory); TWELVE families / 60 patterns / 36 short subjects + a
+  three-rung size sweep, with four of N1's taxonomy rows dropped as depth-
+  set duplicates and every mechanism a depth set owns CITED not
+  re-measured (§3, incl. the cell-time arithmetic — ~15-18 min/cell
+  against `CELL_CAP`'s 5,400 s, calibrated on `loglines`' measured 9.1
+  and `bounded`'s 42-49); `search_short` + `throughput` ONLY in v1, NOT
+  `match`, because the `(?:…)\z` whole-subject wrapper is the syntax
+  ledger's own Tier A instrument defect and four of the twelve families
+  would inherit it (§3.5); a CLOSED per-pattern provenance record with a
+  permissive-allowlist licensing floor and `fidelity:
+  verbatim/adapted/inspired` — the `inspired` value is what lets a GPLv3
+  or unobtainable source contribute EVIDENCE without contributing TEXT
+  (§4); a CLOSED REQUIRES tag vocabulary, capability declared PER CONFIG
+  (not per engine — `pcre2-dfa` and `pcre2-interp` are one library at one
+  version with different tag sets), a fail-closed pre-compile
+  `unsupported-by-declaration` policy with a witness-refusal check arm,
+  and N2's finding ADOPTED that the outcome enums need NO new value (§5);
+  the adopted rewrite table plus the rule that a possessive/atomic
+  rewrite on a hazard-class pattern is NOT a variant but an
+  `unsupported-by-declaration` (§6); one table of what is RECORDED /
+  SCORED / CAVEATED per metric, with `ru_maxrss` native-drivers-only and
+  never ranked (§7); the per-engine config roster incl. `pcre2-dfa` as a
+  FOURTH pcre2 testee that costs nothing (§8); N3's **Option B** for
+  `.rxt` — the block `name` IS the `pattern_id` (pcrec widened that
+  grammar for this project's own ids; 185/185 legal, re-measured), no
+  `target`/`config` line ever (D93), four `make check` gates incl. the
+  `--list-source` head-parser SEAM turned around against an AUTHORED
+  file, and `export_rxt.py` skipping such a set (§9); what a later public
+  UI would consume and the four things missing (§10); the lane plan,
+  Frank's install line quoted, and the first sample's shape (§11).
+  **§12 is the consolidated question list — fourteen, deduplicated across
+  all three research notes, each with a recommendation, the consequence
+  of each answer, and a BLOCK/DEFAULT mark; three BLOCK (Q1 the licensing
+  floor, Q2 the wild-vs-designed ratio, Q10 whether Option B satisfies
+  "BUILT ON the .rxt format").** §13 is the risk table plus the three
+  things that would refute the whole design. Appendix A carries every
+  wild source's fetch status forward from N1, naming the three OWED
+  fetches that gate the import lane. Next: the D6 panel (phase (c)), then
+  Frank (phase (d)).
+
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in
