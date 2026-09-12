@@ -160,6 +160,42 @@ Maintenance: update this file when files are added/removed or change role.
   current pin: see the file's own header/footer for the exact cell count,
   wall-clock and parity verdict (filled in by the real run this lane
   performed; docs/dev/lanes/b33cc_report.md states the numbers inline).
+- `probe_rxt_format.py` — ([B42], lane b42rxtneeds) TWENTY PARSE-ONLY
+  probes of pcrec's `.rxt` SOURCE GRAMMAR at the pinned binary, written
+  for `docs/design/rxt_needs_v1.md` §1.9 (the `.rxt` capability feedback
+  to pcrecdev1). Each probe writes a fixture of at most six lines, runs
+  `pcrec --list-source` on it, and prints the fixture, the exit code,
+  every data row, and — where the probe is about byte fidelity — the
+  decoded `pattern` column against the bytes that went in (the decoder is
+  a byte-level second implementation of `--list-source`'s own TSV-safety
+  escaping, deliberately not shared with `tools/export_rxt.py`'s, so the
+  two are a control on each other). NOTHING HERE IS A TIMING: no compile,
+  no artifact, no dlopen, no driver, no engine run, so the archive
+  carries no load samples and no gate verdict and the box's state cannot
+  affect a character of it — the one respect in which it departs from
+  rule 3 above, by having nothing to report rather than by omitting
+  anything. `$PCREC_BIN` overrides the pin; run from a worktree it
+  resolves `build/` through the git common directory; the fixture
+  directory has a FIXED name (`$TMPDIR/rxtprobe`, emptied each run) so
+  pcrec's path-quoting diagnostics do not put a random component in the
+  archive — a re-run reproduces the committed file byte for byte except
+  its `# bench:` provenance line.
+- `2026-09-12-rxt-format-probes-d34c9131.txt` — its archive at
+  d34c9131 (abi 23). The two findings that are SILENT DATA LOSS in
+  shipped behaviour: a literal NUL in a `pattern` line TRUNCATES the
+  pattern (`ab\0cd` → `ab`, exit 0, no diagnostic — the parser splits the
+  slurped file into NUL-terminated C strings), and a SECOND
+  `description` line in one block silently overwrites the first. Both
+  are outside this project's own ask and are filed to pcrecdev1 as
+  findings. Everything else round-trips byte-exactly (high bytes, a
+  mid-line tab, a doubled backslash, a mid-line CR, trailing spaces); a
+  CRLF line end trims the CR (documented); a duplicate block name, an
+  indented continuation line and every W2/W3 keyword are refused BY NAME
+  with the wave named; a `target`-less, `config`-less authored file with
+  a head block scalar parses and dumps cleanly; and `--list-source`
+  ACCEPTS a case line carrying a refused `@file:` subject, because the
+  head parser recognises `m` and reads none of its values — so the dump
+  is not a validator for case-line content.
 - `2026-09-06-altwide-size-census-d34c9131.txt` — ([B39], the abi-23
   re-pin) the FIRST run of `probe_altwide_size_census.py` against a real
   re-pin: 132 rows at d34c9131 (33 patterns x both forms x both routes,
