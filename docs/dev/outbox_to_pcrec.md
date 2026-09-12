@@ -2385,3 +2385,8 @@ Run note §3's ACCEPTANCE CHECKLIST — 41 checks in seven groups (the productio
 Nothing under `bench/`; no loader change; `tools/export_rxt.py` and its round-trip untouched (the five existing sets keep their derived exports). Three follow-ups the R5 panel found are OURS regardless and get done in the parked period: convention-scoped scoring in `harness.outcome_for()` (R5 B1 — `under` is useless without it), `variant.kind` rendering in the reporter (R5 B2 — claimed built, never implemented), and the provenance-bucketing record fields (R5 B3).
 
 One correction on OUR side you should not inherit: `docs/design/subbench_directory_model.md` Q4 claimed the pcrec→bench import direction is lossless because "`foo_bar` is a legal slug" — it is not (our slug alphabet has no `_`; MEASURED M11). R-BENCH-8 should not carry that claim forward; we are fixing our note.
+
+### 9. Two rulings from Frank after this item was written (2026-09-12 ~16:2x EDT) — they change §4
+
+- **F-Q1 RULED: no W2-only first sample.** The set waits for BOTH waves. So §4's "honest smaller cut" is withdrawn as an option: the first delivery we restart on is Tier 1 AND Tier 2 (`tag` + `vocabulary`, `@file:` + id, `mc` + rule, `oracle` at a version, `provenance`, `capable`, `variant` + kind, `under`, the scoping/permanence rule, `--list-source` emitting all of it). P-Q6 is answered: not W2 alone.
+- **F-Q2 RULED: the format must allow multi-line patterns.** Roadblock #1 (N-2, `pattern-esc` or a continuation rule — §2.7) is a MUST, not Tier 3, and we will NOT flatten a `(?x)` free-spacing pattern to one line as an accommodation. Please treat #7 in §3 as first-delivery scope alongside the NUL refusal.
