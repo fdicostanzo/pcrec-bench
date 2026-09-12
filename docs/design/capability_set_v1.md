@@ -1227,165 +1227,89 @@ amendment).
 
 ---
 
-## 9. `.rxt` as the source
+## 9. `.rxt` as the source — SUPERSEDED, now a pointer (Q3 ruling)
 
-### 9.1 The decision
+**v0.1's §9 adopted N3's Option B: `.rxt` as the source of pattern TEXT
+and IDENTITY, a sidecar for everything else. Frank's Q3 ruling
+(2026-09-12, live, this session) supersedes that decision outright: the
+capability survey set is a DRIVER of the `.rxt` format itself.** Verbatim:
+*"This is as much a driver of the rxt format as anything."* The set is
+built ON `.rxt` for real — not on the sidecar hybrid Option B proposed --
+and where the format cannot yet carry what the set needs, **the effort
+PARKS at that roadblock**, this project sends pcrecdev1 detailed
+capability feedback, pcrecdev1 builds the needed productions, and the
+effort RESTARTS with this project reviewing and VERIFYING the delivery.
 
-**ADOPTED: N3's Option B (hybrid).** `.rxt` is the canonical home of
-PATTERN TEXT and PATTERN IDENTITY; a sidecar is the source of everything
-`.rxt` cannot yet express (subjects, expectations, tags, hazard/size
-class, regime, oracle method, variants, provenance), keyed by the `.rxt`
-block's `name`, which doubles as the `pattern_id`.
+**This section is therefore not a design of its own any more.** The
+detailed feedback already exists and has already been sent:
+`docs/design/rxt_needs_v1.md` (lane `b42rxtneeds`, 2026-09-12) is the
+full form — fifty needs across eight blocks mapped onto pcrec's own
+R-BENCH-1..9, thirteen MEASURED facts from twenty parse-only probes
+(including two silent-data-loss defects in shipped `--list-source`
+behaviour), twelve proposed productions with EBNF sketches and worked
+examples, a 41-check ACCEPTANCE CHECKLIST for the restart, and a
+Tier 1/2/3 sequencing of what blocks a first sample versus what can land
+later. Outbox O-26 (`docs/dev/outbox_to_pcrec.md`) is the distilled form
+pcrecdev1 received. Both documents are BUILD ONLY — nothing under
+`bench/`, `schema/`, `pcrecbench/` or `testees/` is touched by either.
 
-The alternatives and why not:
+**What v0.1's Option B leaves behind, corrected rather than silently
+dropped:**
 
-- **Option A (`.rxt` is everything).** Rejected on two live hazards N3 §2
-  establishes. (i) The descriptive productions this set needs — `tag`,
-  `@file:` subjects, `oracle`, `variant` — are W2/W3 and are **recognised
-  and refused BY NAME as NOT IN THIS BUILD** at the current pin
-  (`rxt_format.md:57-62`, quoted at N3 §1.1). Building Option A today
-  means writing our own parser for keywords pcrec has not shipped — "a
-  private dialect indistinguishable, by construction, from guessing at
-  pcrec's own unshipped design". (ii) D93: a `.rxt` source's composed
-  config WINS over a command-line flag on the same axis. This repo's
-  entire testee matrix is command-line flags; an `engine` line in a file
-  we treat as the corpus would silently pin the matrix from inside the
-  set. Option A makes such a file more tempting to also build from;
-  Option B structurally never needs a `target`/`config` line.
-- **Option C (status quo, `.rxt` derived by `tools/export_rxt.py`).**
-  Foreclosed by the charter, which says "BUILT ON the .rxt FILE FORMAT",
-  not "with an `.rxt` export available" (N3 §2 Option C).
+- Its file-layout mechanics (§9.2's "no build directives" gate, in
+  particular) described `flags`/`engine`/`budget`/`encoding` as
+  distinct `--list-source` row *kinds*; they are `pattern`-kind row
+  *columns*, populated only under block-scoped directives
+  (`~/pcrec/docs/spec/rxt_format.md:425-442`; CS8). This mechanism
+  correction, and the loader-surface understatement B6 found
+  (`Pattern.__init__`'s required-field tuple and `pattern_bytes()` both
+  hard-require `file` today, not just a sidecar key drop), both travel
+  forward into `rxt_needs_v1.md`'s own acceptance checklist rather than
+  being re-fixed in a section this ruling replaces — the checklist
+  already reasons about the delivered format directly, which is the
+  right place for both corrections now.
+- The 185/0 block-name-legality re-measurement N3 §1.2 made for Option B
+  still stands as a fact about the format's `name` grammar; it is
+  reproduced and extended in `rxt_needs_v1.md` §1.9's own thirteen
+  MEASURED facts (M11 in particular corrects a related claim in
+  `subbench_directory_model.md` — see that file's own dated correction,
+  cited from `docs/design/CLAUDE.md`).
+- §9.5's two stated limitations (no literal newline in a `.rxt` pattern
+  line; an unverified literal NUL) are RESTATED as `rxt_needs_v1.md`'s
+  own roadblock #1 (`N-2`) and its NUL-refusal ask (§2.7, check B3) — the
+  multi-line `(?x)` flattening question v0.1 answered for itself is now
+  an OPEN question for Frank at the restart (`rxt_needs_v1.md` F-Q2),
+  not a decision this note carries forward, because Frank's Q3 ruling
+  changes what "acceptable accommodation" even means once the set's
+  truth is meant to live in `.rxt` rather than a sidecar.
 
-**Why Option B genuinely satisfies requirement (4)** rather than
-sidestepping it: the block `name` grammar was WIDENED by pcrec for
-exactly this project's shape — "a first byte that is a letter or `_`,
-then letters, digits, `_`, `-` or `.`", because "an exported set of
-patterns carries ids a person chose (`cls-upto-64`, `w-512`), and
-requiring an identifier would force every such export to carry a name map
-beside it" (`rxt_format.md:290-296`, quoted at N3 §1.2). N3 re-measured
-the whole corpus against the current grammar: **185 patterns, 0 illegal**.
-So under Option B the `.rxt` block name IS the pattern id, with no map,
-and the file is the single source of both text and identity. That is the
-substantive content of "built on the format"; everything else `.rxt`
-would carry is in a wave that is refused by name today.
+**The restart procedure**, stated here so a reader of this file alone
+knows what happens next:
 
-### 9.2 The file layout
+1. Run `rxt_needs_v1.md` §3's 41-check acceptance checklist against
+   pcrecdev1's actual delivery (seven groups: productions parse, raw
+   bytes round-trip, refusal by name, `--list-source` columns, the set
+   loads and measures, D93/engine neutrality, the format's own
+   regressions — §1.9's thirteen MEASURED facts re-run and diffed).
+2. Review the deltas against this note and against `rxt_needs_v1.md`
+   itself — a lighter panel pass than R5's, checking whether the
+   delivery actually resolves the six roadblocks (Appendix, below), not
+   re-litigating the design.
+3. Reopen §11's lanes, re-sequenced against what actually shipped rather
+   than against Tier 1/2/3's prediction (`rxt_needs_v1.md` §4.2 states
+   candidly that even "Tier 1" is most of W2 plus part of W3, and names
+   "W2 alone" as the honest smaller cut if pcrecdev1 prefers a smaller
+   first delivery — `rxt_needs_v1.md` P-Q6).
 
-`bench/capability/patterns.rxt`, hand-authored, committed, one block per
-pattern:
-
-```
-# capability@0.1 -- the capability survey set's pattern source.
-# NO target and NO config lines, deliberately: D93 (a source's composed
-# config wins over a command-line flag), so an engine/flags line here
-# would pin this repo's testee matrix from inside the set.
-
-name        waf-sqli-keywords
-description CRS 942140's database/schema keyword alternation (verbatim)
-pattern     (?i)\b(?:d(?:atabas|b_nam)e[^0-9A-Z_a-z]*\(|...)
-```
-
-Rules the file follows:
-
-1. **No `target`, no `config`, no block-level `flags`/`engine`/`budget`/
-   `encoding`** — D93 (N3 §2, and `tools/export_rxt.py`'s own rule 5,
-   which states the same hazard for the export direction).
-2. **No case lines** (`m`/`n`/`g`/`gp`/`gu`/`perr`). This bench's
-   expectations are per-testee, derived by our own oracle and checked by
-   our own adapters; `.rxt`'s case vocabulary asserts against a compiled
-   *pcrec* artifact (N3 §3) and is not what `expectations.tsv` means.
-3. **`description` is one line per block** (the W1.1 correction,
-   `format_design.md:434-448`, N3 §1.2) — so the prose home is short and
-   the real metadata is in the sidecar, which is where §4.1 puts it
-   anyway.
-
-### 9.3 The loader change in `subbench.py`
-
-Today `subbench.py` reads `patterns/<name>.rx` as RAW BYTES, never
-decoding (`pcrecbench/subbench.py:190-194`). The change:
-
-- The sidecar gains `source_format = "rxt"` and `patterns_file =
-  "patterns.rxt"`; absent, everything behaves exactly as today (the five
-  existing sets parse byte-identically — that is the compatibility
-  requirement).
-- For an `rxt` set, the pattern loader reads the file and, per block,
-  takes `name` as the `pattern_id` and the `pattern` line's rest-of-line
-  as RAW BYTES. `.rxt`'s `pattern` production is unquoted and unescaped
-  rest-of-line (N3 §1.2), so a raw non-ASCII pattern byte round-trips
-  losslessly — which family 12 needs.
-- The sidecar's `[[patterns]]` entries drop their `file` key and key on
-  `name` instead.
-
-**What is deliberately NOT done:** no `pcrec --list-source` shell-out in
-the hot path. N3 §2 establishes `--list-source` as the reusable SEAM for
-the HEAD grammar and warns that writing our own head parser is "exactly
-the second, uncontrolled implementation the SEAM design exists to
-prevent". But an Option-B file has essentially no head — no `target`, no
-`config`, no `lib`, no `include` — and the three productions the loader
-reads (`name`, `description`, `pattern`) are the block grammar, which
-pcrec's own harness parses itself in bash and always will (N3 §3). So the
-loader stays a small reader of three keywords, and the SEAM is preserved
-where it matters by the CHECK below, not by the loader.
-
-### 9.4 The `make check` gates
-
-| gate | what it asserts | shape it copies |
-|---|---|---|
-| **block ↔ sidecar** | the set of `.rxt` block names equals the set of sidecar `[[patterns]]` names, exactly, both directions | `bench/syntax`'s `gen_patterns.py --check` sidecar comparison |
-| **head-parser seam** | `pcrec --list-source bench/capability/patterns.rxt` at the pin parses the file, and the block list it prints equals the sidecar's | `tools/selfcheck.py`'s `check_rxt_export` ([B38]), turned around: it runs the SAME pinned binary against an AUTHORED file instead of a derived one |
-| **no build directives** | the file contains no `target`, `config`, `flags`, `engine`, `budget` or `encoding` line | D93; a positive control (a planted `engine` line) must make it fail by name, per `record_schema.md §9`'s "a check with no failing case proves nothing" |
-| **provenance completeness** | §4.1's `gen_provenance.py --check` | the generic `gen_*.py --check` hook |
-
-**The `[B38]` round-trip's fate.** `tools/export_rxt.py` today DERIVES an
-`.rxt` for each set and `make check-harness` round-trips it against
-`--list-source`. For a set whose `.rxt` is AUTHORED, deriving a second one
-would create two files claiming to be the source. **Decision:
-`export_rxt.py` SKIPS any set declaring `source_format = "rxt"`, and the
-round-trip check is replaced for that set by the head-parser seam gate
-above.** The five existing sets are untouched, and the skip is one
-condition with its own positive control.
-
-### 9.5 The two limitations, stated
-
-1. **Literal newlines cannot be expressed.** `.rxt`'s `pattern` is
-   exactly one line, rest-of-line, unquoted and unescaped — so there is
-   no way to put a literal newline inside a pattern line at all (N3 §5,
-   which notes [B38]'s exporter already found and documented this for
-   SUBJECTS and that the same gap applies to pattern text). **Consequence
-   for this set:** family 6's VS Code JSON `number` rule is a `(?x)`
-   free-spacing pattern authored ACROSS LINES in its source (N1 §18). It
-   must be FLATTENED to one line, which makes it `fidelity: adapted` with
-   the adaptation stated, and the §6.4 oracle check is what proves the
-   flattening did not change the language. This is the concrete case N3
-   §5 flagged as "a forward risk, not a current blocker" — it is now a
-   current one, and it is handled.
-2. **A literal NUL in a pattern line is unverified.** N3 §5 could not
-   confirm whether pcrec's `.rxt` line reader treats a NUL as a
-   terminator. **Consequence:** the set declares NO pattern containing a
-   literal NUL byte in v1, and the authoring lane states that as a
-   constraint rather than discovering it. Family 12's non-UTF-8 content
-   lives in SUBJECTS (which are not in the `.rxt` at all under Option B)
-   and in high-byte pattern literals, neither of which needs a NUL.
-
-### 9.6 The record's citation
-
-`subbench.source_ref` is an optional DIAGNOSTIC field, "where the
-sub-bench came from" (`record_schema.md §8`). Set it to
-`bench/capability/patterns.rxt`. No per-pattern citation is needed,
-because under Option B the block `name` IS the `pattern_id` — the
-citation is the id.
-
-### 9.7 The four format asks to pcrec
-
-N3 §4's four, as candidate outbox items, each with what we do without it.
-**None is blocking.**
-
-| ask | what pcrec would ship | what we do without it |
-|---|---|---|
-| **1. W2's `@file:` subjects and `tag`** | subjects and per-case metadata expressible in `.rxt` | the sidecar keeps them permanently instead of shrinking. `format_design.md:2482-2490` already RECOMMENDS shipping W2 "when the bench's expectation fragment needs it, and treat that set as the validating measurement" — [B42] is the trigger that document names |
-| **2. W3's `oracle`/`variant`/`use`/`testee`/`option`** | per-engine variants and the testee axis in `.rxt` | variants stay in `[testees.<id>]` (§6.1). The format's own wave table names "pcrec-bench sub-benches with a non-pcrec testee" as W3's consumer — again a pre-named trigger, not a cold ask |
-| **3. A documented head-only reader mode for the descriptive productions** once W2/W3 land | a `--list-source` extension a bench-side loader can shell to | the loader must parse `tag`/`variant`/`oracle` lines itself once they exist — a smaller but real re-implementation of the hazard `--list-source` was built to avoid |
-| **4. Confirmation that a `target`-less, `config`-less `.rxt` is a legitimate PERMANENT shape** | a sentence in the spec | we design around an assumption that might be wrong. **This is the one worth asking NOW**, because Option B's whole file layout rests on it, and it is a confirmation, not a feature |
+**The six roadblocks** (`rxt_needs_v1.md` Appendix, reproduced here so
+this file states what it is waiting on without requiring a second
+document open): (1) no representation for a multi-line `(?x)` pattern;
+(2) `tag` refused, so no per-pattern classification or closed vocabulary
+is expressible; (3) no pattern-level PROVENANCE production in any wave;
+(4) `@file:` gives a subject a path and no stable id; (5) a second
+correct answer under another convention has no carrier in the format --
+AND the harness could not score one either (CB1, above); (6) D93 vs. a
+set file carrying a testee roster.
 
 ---
 
