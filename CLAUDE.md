@@ -310,7 +310,16 @@ store), §10's acceptance 25/25; [B13.4] the `/pcrec-bench-interpret` skill +
 three committed `reports/*.interpretation.md` sidecars. **[B13] COMPLETE**
 (follow-ups [B41]: regenerate the sidecars at every window's close — they
 are stamped against the LIVE index). `make check` at a1960a9: 4/72/0 ·
-344/344 · 75+7 · 132. Manager sessions start with the
+344/344 · 75+7 · 132. 2026-09-12 (twentieth session): [B42] THE CAPABILITY SURVEY SET chartered by
+Frank (wild-provenance patterns, edge cases, capability first-class across
+the [B7] roster, compile/size/memory metrics, option-set models, built ON
+`.rxt`), researched (docs/dev/research/), designed
+(docs/design/capability_set_v1.md v0.2), paneled (R5, 26 findings, all
+ratified) and PARKED the same day as a DRIVER of pcrec's `.rxt` format:
+docs/design/rxt_needs_v1.md (50 needs, 12 productions, 41 acceptance
+checks, six roadblocks; 20 archived parse probes found a NUL silently
+truncating a pattern line) went to pcrecdev1 as outbox O-26; the restart
+procedure is in plan.md's [B42] row. Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
