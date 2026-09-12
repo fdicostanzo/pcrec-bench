@@ -1,11 +1,67 @@
-# The capability survey set — design, v0.1 (draft for panel)
+# The capability survey set — design, v0.2
 
-**[B42] phase (b). Plan row `[B42]`; Frank's charter, 2026-09-12.**
-STATUS: **0.1, draft for panel** — written to be refuted. It goes to a D6
-adversarial critic panel (phase (c)), then to Frank with the approach and
-the open questions (phase (d)). Nothing here is built; nothing under
-`bench/`, `schema/`, `pcrecbench/` or `testees/` is touched by the lane
-that wrote it.
+**[B42] phase (b), REVISED under R5. Plan row `[B42]`; Frank's charter,
+2026-09-12.** STATUS: **v0.2 — "revised under R5; BUILD PARKED on
+pcrec's `.rxt` delivery (O-26)"**. v0.1 went to a D6 adversarial critic
+panel (three lenses, 26 findings: 8 BLOCKING / 10 SHOULD-FIX / 8
+WORTH-NOTING) the same day it was drafted; the panel's consolidation
+(`docs/dev/reviews/2026-09-12-r5-capability-set-v1.md`) dispositioned
+every finding, and the manager ratified all of them with three
+amendments from Frank's same-day live rulings. This revision applies
+every ratified disposition and amendment. **The set's DESIGN stands**
+(families, capability model, provenance, metrics, roster, Q1/Q2 as
+Frank ruled them); **the BUILD is PARKED**: Frank's Q3 ruling (2026-09-12)
+makes this set a driver of the `.rxt` format itself — it is built ON
+`.rxt` for real, not on §9's old hybrid — and the effort parks at the
+format's own capability roadblocks. §9 is now a pointer to
+`docs/design/rxt_needs_v1.md` (the detailed capability feedback already
+sent to pcrecdev1, outbox O-26) rather than a design of its own. Nothing
+here is built; nothing under `bench/`, `schema/`, `pcrecbench/` or
+`testees/` is touched. **On restart:** run `rxt_needs_v1.md` §3's
+41-check acceptance checklist against pcrecdev1's delivery, review the
+deltas against this note (a second, lighter panel pass — does the
+delivery actually resolve the six roadblocks), then reopen §11's lanes.
+
+### Revision log, v0.1 → v0.2
+
+One line per applied disposition id (`docs/dev/reviews/2026-09-12-r5-capability-set-v1.md`).
+Ids not applied here are noted with where they actually land (several
+targeted the old §9, which this revision replaces wholesale per the Q3
+ruling, and so travel forward to `rxt_needs_v1.md`'s own restart
+material rather than being re-fixed in a section that no longer makes
+the design it was fixing).
+
+| id | disposition | where in v0.2 |
+|---|---|---|
+| CB1 | family 11 narrowed to v1's shared-convention population; cross-convention scoring machinery deferred | §3.1 row 11, §5.6, §11.1, new §12 question |
+| CB2 | §5.7's "Already built" corrected to UNBUILT; L5 reclassified from a check to a build task | §5.7, §11.1 |
+| CB3 | wild/designed bucketing promoted from `patterns[].tags` to real enumerated fields | §4.1, §1.1, §10(d) |
+| CB4 | `noseyparker.txt` re-fetch confirmed; family 4 target members raised; Appendix A's "three OWED" corrected to two | §3.1 family 4, Appendix A |
+| CB5 | `atomic-possessive` split into two tags; Oniguruma's atomic-group claim flagged for independent re-derivation | §5.1 |
+| CB6 | `k-reset`'s Oniguruma gap resolved before an `onig-*` config declares it | §5.1 |
+| CB7 | `hazard_class` assigned per family in §3.1 (families 2, 5, 10 at minimum) | §3.1 |
+| CB8 | family 10's calibration risk stated explicitly; a mitigation adopted | §3.5, §13 R6 |
+| CS1 | `match`-regime exclusion's family list corrected (drop 7/8 absent a `\K` member); scope stated | §3.5 |
+| CS2 | §2.2 reason 3 dropped | §2.2 |
+| CS3 | Q3 re-marked BLOCK, folded into Frank's ratification amendment 3 (asked at the restart, not before) | §12 |
+| CS4 | `ru_maxrss` ranked within the native-driver population | §7.4, §7.5, §12 Q6 |
+| CS5 | TRE `named-groups`/`free-spacing` rows cited or marked UNCONFIRMED | §5.1 |
+| CS6 | §13 R2's family list corrected, "2, 7-10" → "2, 7-9" | §13 |
+| CS7 | §8.1 states the permanent `inconclusive-spread` caveat | §8.1, §12 Q14 |
+| CS8 | superseded — the "no build directives" gate's mechanism lives in `rxt_needs_v1.md` now, not in a v0.2 §9 | §9 (pointer) |
+| F5 | `pcre2-dfa`'s §8 row corrected: not a dial, a fourth engine identity | §8 |
+| F6 | pcrec's §8 row maps dials vs diagnostic controls explicitly | §8, §1.1 |
+| F8 | L3/L4 sequencing gap — superseded with §9; the restart's lane plan re-derives sequencing against the actual delivery | §9 (pointer), §11.1 note |
+| S9 | `automaton_class` column added for TRE/Oniguruma | §7.1 |
+| S10 | family 12's non-UTF-8 `canonical_text` omission stated (relocated from the old §9.5) | §3.1 family 12 |
+| S11 | Vectorscan boolean-grain cost grounded directly in the driver protocol's degenerate `START`/`END` allowance | §5.6 |
+| B6 | superseded — the `subbench.py` loader surface is now the restart's to scope against the actual delivery | §9 (pointer) |
+| B7 | `unsupported-by-declaration` and `testee.conventions` noted as first production exercises | §5.3 |
+
+Three further changes follow directly from Frank's ratification (not
+individual review findings): **Q2** is answered (realism, not a ratio —
+§4.3 rewritten); **Q10-Q12** are superseded (§9 replaced); and **§12**
+carries a revised, restart-scoped question list.
 
 **How to read it.** Every decision states its alternatives and why this
 one. Every open choice carries a RECOMMENDATION and the consequence of
