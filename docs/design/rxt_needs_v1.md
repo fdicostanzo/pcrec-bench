@@ -955,11 +955,16 @@ a reader for.
 
 What this project will verify when pcrecdev1 delivers, written so a
 reviewer can run it. Forty-one checks in seven groups, each naming the
-need it closes, the command, and the pass criterion. **Every check has a
-NEGATIVE arm** — this repo's own check-design rule, stated at
-`tools/CLAUDE.md`: "every gate is exercised against an input it must
-REJECT in the same run that exercises it against one it must accept. A
-check with no failing case proves nothing."
+need it closes, the command, and the pass criterion. **Every check that
+GATES something is paired with its negative arm in the same group** —
+this repo's own check-design rule, stated at `tools/CLAUDE.md`: "every
+gate is exercised against an input it must REJECT in the same run that
+exercises it against one it must accept. A check with no failing case
+proves nothing." The pairs are C1/C2, C5/C6, C8/C9, B3/B4 and F2/F3,
+with C3 as the compatibility control; the checks marked **(existing)**
+carry a MEASURED BEFORE instead, which is the same discipline read
+backwards — the contrast is against a recorded fact rather than a
+planted one.
 
 Notation: `$P` is the pinned binary, `$F` a fixture directory. Fixtures
 are small enough to write inline; the ones marked **(existing)** are the
@@ -1040,7 +1045,7 @@ measured BEFORE rather than against a remembered one.
 |---|---|---|---|
 | **G1** | every existing `.rxt` file in pcrec's corpus parses identically | pcrec's own `make test` | green. R-COMPAT-1 |
 | **G2** | this repo's five committed exports still round-trip | `make check-harness`'s `check_rxt_export` ([B38]) | 185/185 patterns match `--list-source` |
-| **G3** | the thirteen MEASURED facts of §1.9 are re-run at the delivered pin | the fixtures above | M1 and M5 are EXPECTED TO CHANGE (that is the ask); M2-M4, M6-M13 must be unchanged, and any other movement is a finding |
+| **G3** | the thirteen MEASURED facts of §1.9 are re-run at the delivered pin | `python3 docs/dev/measurements/probe_rxt_format.py`, diffed against the committed archive | **M1 MUST change** (check B3, the NUL refusal — the one item this note ranks first). **M10 changes by design** (the W2/W3 keywords stop being refused). **M5 changes only if the C10 ask is accepted**, and the check records which. M2-M4, M6-M9 and M11-M13 must be UNCHANGED; any other movement is a finding |
 
 **How this checklist will be run.** As a lane, at the restart, against a
 pcrecdev1-delivered pin, before any pattern of the capability set is
@@ -1061,7 +1066,7 @@ measured into `store/`, reported and read. To reach it, a set must be able
 to state its patterns, its subjects, its expectations and its identity.
 Nothing else is load-bearing on night one.
 
-**Tier 1 — required for a first sample** (nine items):
+**Tier 1 — required for a first sample** (ten needs, six rows):
 
 | need | production | why it cannot wait |
 |---|---|---|
@@ -1073,7 +1078,7 @@ Nothing else is load-bearing on night one.
 | N-52 | a `--list-source` that emits the above | otherwise this project writes the second parser the seam exists to prevent |
 
 **Tier 2 — required before the set makes its stated CLAIMS, not before
-it first runs** (six items):
+it first runs** (nineteen needs, six rows):
 
 | need | production | what is missing without it |
 |---|---|---|
