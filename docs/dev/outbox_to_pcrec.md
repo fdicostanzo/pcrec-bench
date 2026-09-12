@@ -2301,3 +2301,87 @@ whole-store validation is ~750 s / 3.6 GB at 160 records (bench/syntax's
 15 MB records dominate) and the harness's memory heuristic kills it as a
 tracked task; and a difflib worst case on a 10 MB report file. Neither
 touches you; they are why `check-report` runs detached here now.
+
+## O-26 (2026-09-12 ~15:5x EDT) — [B42] THE CAPABILITY SURVEY SET IS A DRIVER OF `.rxt`: Frank's ruling, the six roadblocks, the twelve productions we need, the acceptance checklist we will run on your delivery; two silent-loss defects found in shipped `--list-source`
+
+**The full form is `docs/design/rxt_needs_v1.md` in this repo** (1,274
+lines, lane `b42rxtneeds`, merged b108f7b). This item is the distillation;
+where they differ the note wins. Read the note's §1 (the need table), §2
+(the productions) and §5.1 (nine questions for you) in full.
+
+### 1. The ruling
+
+Frank, 2026-09-12, live in this session, on the capability survey set
+([B42] — a broad wild-pattern capability set across the [B7] roster):
+
+> Park effort when we run into roadblock of rxt capabilities. Provide
+> detailed feedback on needed capabilities (considering the
+> pcrec/docs/spec rxt design document). Then I'll have pcrecdev1 build
+> out rxt and restart this effort. Be prepared on restart to review said
+> work and make sure it works. This is as much a driver of the rxt
+> format as anything.
+
+So: the set is BUILT ON `.rxt` for real (the hybrid our research note N3
+recommended and our design v0.1 adopted is WITHDRAWN); the effort is
+PARKED at the format's capability boundary as of this item; nothing is
+built under `bench/` until your delivery; at the restart we run the
+acceptance checklist below against it.
+
+### 2. The six roadblocks (note Appendix; each is a `.rxt` production the set cannot do without)
+
+| # | roadblock | need(s) |
+|---|---|---|
+| 1 | a multi-line `(?x)` free-spacing pattern has NO representation (`pattern` is one unquoted, unescaped rest-of-line; an indented continuation is refused by name — MEASURED M8) | N-2 |
+| 2 | `tag` is refused (W2), so no per-pattern classification is expressible — and when it lands, no CLOSED vocabulary can be declared for a key (our `hazard_class`/`size_class`/REQUIRES tags are validated enums today) | N-9, N-10, N-20, N-21 |
+| 3 | no pattern-level PROVENANCE production exists in any wave (source, URL, licence, retrieval date, fidelity verbatim/adapted/inspired, adaptation, attribution) | N-11..N-19 |
+| 4 | `@file:` (W2) gives a subject a PATH and no stable ID; the format's answer to case identity is `file:line`, which moves on every regeneration | N-27 |
+| 5 | a second correct answer under another matching convention (POSIX leftmost-longest, all-ends) has no carrier — R-BENCH-5's convention TAG without the alternate expectation is unusable (our harness cannot score one either; R5 B1, ours) | N-34, N-35 |
+| 6 | D93 (a source's composed config wins over the command line) vs a set file that carries a testee roster: `format_design.md` §6.2's own worked bench file would pin our sixteen-config pcrec matrix from inside the set | N-42, N-44 |
+
+### 3. The twelve productions (note §2, each with an EBNF sketch in the format's own style, a worked example on a real capability-set pattern, and what YOUR harness gets from it — sketches, yours to accept, redesign or refuse)
+
+1. a `provenance` block (modelled on the `freq` data block's required-line discipline) — N-11..N-19
+2. a `vocabulary` declaration that CLOSES a `tag` key's value set — N-10, N-21, N-20
+3. a per-config `capable` line (which capability tags a testee config satisfies) — N-22
+4. `under <convention>` case qualifiers: convention-scoped expectations — N-35, the deepest gap
+5. `@file:` with `as <id>` and an optional `sha256` — N-26, N-27 (note: `format_design.md:1203-1208` rules out a subject hash; the premise "a subject file is committed and reviewed" does not hold for a generated, gitignored subject tree — P-Q8)
+6. a config-SCOPING rule that keeps a set's config out of pcrec's build (or a stated permanence rule that a `target`-less, `config`-less file is legitimate) — N-43, N-44
+7. `pattern-esc`: a pattern spelling that can carry a newline, a NUL or a trailing CR — N-2, N-4, N-5
+8. `variant kind` (+ a quoted tag value that can hold a sentence) — N-41 (W3's `variant` carries two of the sidecar's three variant fields)
+9. `oracle` widened to any engine AT A VERSION — N-36, N-38 (R-BENCH-1's method has no oracle version)
+10. `mc`'s counting rule stated (non-overlapping? empty-match advancement?) — N-32 (P-Q3: may need no code)
+11. regime membership without the subroutine wrapper — N-48. **MEASURED: `format_design.md` §4.5 item 4's regime mechanism (one block per regime whose pattern is `(?&<name>)`) is UNUSABLE by any set in this repo**: `rxt_format.md:284-291` says a definition whose name carries `-` or `.` cannot be called from a pattern, and every pattern id in all five of our sets is a hyphenated slug. The widened name grammar (`:290-296`) and the regime mechanism are individually right and jointly unusable.
+12. `--list-source` extended to emit the descriptive productions as TSV, so we never write the second parser the seam exists to prevent — N-52. (MEASURED: today `--list-source` never reads a case line's value, so `m @file:"x" 0 3` passes the dump silently although `@file:` is a refused W2 production — it is not a validator for case-line content.)
+
+### 4. Sequencing — your call which first delivery (P-Q6)
+
+- **Tier 1, a FIRST SAMPLE**: `tag` (W2), `@file:` + a subject id, `mc` + its counting rule, `oracle` (W3) + `tag method=`, the permanence/scoping sentence (#6), and `--list-source` emitting them. Candidly: that is most of W2 plus part of W3 — there is no smaller cut that yields a measurable set, because a sub-bench IS patterns + subjects + expectations + identity.
+- **The honest smaller cut is W2 ALONE** (`tag`, `@file:`, `mc`, `include`, the `--list-source` extension for them): we can author, load, measure and report a real first sample against the two pcre2 and sixteen pcrec configs, with two stated gaps — no per-pattern provenance, no declared capability model. Frank is being asked (F-Q1) whether a first sample with those two charter items unmet is acceptable.
+- **Tier 2** (before the set makes its stated CLAIMS): `provenance`, `vocabulary` + `tag requires=`, `variant` (W3), `capable`, `under`.
+- **Tier 3**: `pattern-esc` (except the NUL refusal, below), the subject hash, the oracle version, `include`, the neutral capture map.
+
+### 5. Two SILENT-LOSS defects in shipped `--list-source` at d34c9131 (outside the ask; you would rather hear now — P-Q7/P-Q9)
+
+Twenty parse-only probes, archived D35-style with the reproducing script:
+`docs/dev/measurements/2026-09-12-rxt-format-probes-d34c9131.txt` +
+`probe_rxt_format.py` (`$PCREC_BIN` overrides the pin; runs in under a
+second; re-derives byte for byte except its `# bench:` provenance line).
+
+- **M1 — a literal NUL in a `pattern` line is SILENTLY TRUNCATED**: `pattern ab<NUL>cd` dumps as `ab`, exit 0, no diagnostic (`src/parse/rxt_source.c:437-456` splits the slurped file into NUL-terminated C strings, so every rest-of-line value ends at the first NUL). Our research note left this explicitly unverified; the answer is silent data loss, not refusal. **We ask for the REFUSAL first, ahead of every feature above** — it is the removal of a silent-wrong-answer path and is independent of every wave.
+- **M5 — a second `description` line in one block silently overwrites the first** (last wins, exit 0).
+
+Also measured (for your regression net): CR trimmed at line end (documented, lossy for a CR-terminated pattern); raw high bytes, TAB, doubled backslash, mid-line CR and trailing spaces all round-trip byte-exact; duplicate block names refused by name; a 20,000-byte pattern line parses; `tag`/`variant`/`oracle`/`include` each refused BY NAME with its wave, exactly as `rxt_format.md:57-62` promises; `pattern #` is a pattern; and an authored file with a head `description |` block, `name` + one-line `description` blocks and NO `target`/`config` parses today and dumps one `description` row and two `pattern` rows (the shape #6 asks you to declare permanent).
+
+### 6. Your nine questions (note §5.1, short form)
+
+P-Q1 the head/body indentation asymmetry vs a `provenance` sub-block in the body (the biggest shape decision — relax it for named body sub-blocks, nine flat lines, or move provenance to the head keyed by name; we recommend against the third). P-Q2 is `vocabulary` the right closed-set mechanism or do you prefer free tags + consumer validation (cost: §4.5's absorption table downgrades four validated record enums to strings). P-Q3 `mc`'s counting rule. P-Q4 should per-config CAPABILITY declarations live in the format at all. P-Q5 what replaces the unusable regime mechanism (#11). P-Q6 W2-only first delivery? P-Q7 the NUL refusal as a standalone change? P-Q8 the subject hash vs `format_design.md:1203-1208`. P-Q9 the two silent defects.
+
+### 7. What we will do on your delivery (the restart)
+
+Run note §3's ACCEPTANCE CHECKLIST — 41 checks in seven groups (the productions parse; raw bytes round-trip; refusal by name with negative arms; `--list-source` columns; the set loads and measures; D93 and engine neutrality; the format's own regressions via the probe script re-run at the delivered pin and diffed) — then review your spec/design deltas against the need table, then build the set. We say so now so you can build against the checks.
+
+### 8. What we do meanwhile
+
+Nothing under `bench/`; no loader change; `tools/export_rxt.py` and its round-trip untouched (the five existing sets keep their derived exports). Three follow-ups the R5 panel found are OURS regardless and get done in the parked period: convention-scoped scoring in `harness.outcome_for()` (R5 B1 — `under` is useless without it), `variant.kind` rendering in the reporter (R5 B2 — claimed built, never implemented), and the provenance-bucketing record fields (R5 B3).
+
+One correction on OUR side you should not inherit: `docs/design/subbench_directory_model.md` Q4 claimed the pcrec→bench import direction is lossless because "`foo_bar` is a legal slug" — it is not (our slug alphabet has no `_`; MEASURED M11). R-BENCH-8 should not carry that claim forward; we are fixing our note.
