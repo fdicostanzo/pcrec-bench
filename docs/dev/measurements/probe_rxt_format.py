@@ -24,6 +24,7 @@ resolver also looks one level up from the git common directory.
 """
 
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -135,13 +136,23 @@ def main():
     print("# pcrec --list-source probes -- the .rxt source grammar, PARSE ONLY")
     print("# binary:  %s" % binary)
     print("# pin:     %s (abi 23)" % pin)
-    print("# bench:   %s" % (bench or "unknown"))
+    # The bench commit is PROVENANCE and is the one field that legitimately
+    # moves between a re-run and the committed archive; everything else is a
+    # function of the binary and the fixtures.
+    print("# bench:   %s  (the one field a re-run may differ on)" % (bench or "unknown"))
     print("# script:  docs/dev/measurements/probe_rxt_format.py")
     print("# for:     docs/design/rxt_needs_v1.md 1.9 ([B42], lane b42rxtneeds)")
     print("# box:     NOT GATED and it does not matter -- no compile, no")
     print("#          artifact, no driver, no timing anywhere in this file.")
     print()
-    tmp = tempfile.mkdtemp(prefix="rxtprobe-")
+    # A FIXED directory name, not mkdtemp's random one: pcrec's diagnostics
+    # quote the file path, so a random component would put noise in the
+    # archive and make a re-run diff against it for no reason. Emptied and
+    # recreated on every run; honours $TMPDIR (BD3: never /tmp root for
+    # anything large -- these fixtures are at most a few hundred bytes).
+    tmp = os.path.join(tempfile.gettempdir(), "rxtprobe")
+    shutil.rmtree(tmp, ignore_errors=True)
+    os.makedirs(tmp)
     for pid, desc, body, want in PROBES:
         path = os.path.join(tmp, pid + ".rxt")
         with open(path, "wb") as f:
@@ -165,7 +176,7 @@ def main():
             print("    got:     %r" % got)
             print("    EXACT:   %s" % (got == want))
         print()
-    print("# fixtures written under %s" % tmp)
+    print("# fixtures written under %s (fixed name, emptied each run)" % tmp)
     return 0
 
 

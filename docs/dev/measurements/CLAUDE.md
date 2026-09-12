@@ -175,7 +175,11 @@ Maintenance: update this file when files are added/removed or change role.
   affect a character of it — the one respect in which it departs from
   rule 3 above, by having nothing to report rather than by omitting
   anything. `$PCREC_BIN` overrides the pin; run from a worktree it
-  resolves `build/` through the git common directory.
+  resolves `build/` through the git common directory; the fixture
+  directory has a FIXED name (`$TMPDIR/rxtprobe`, emptied each run) so
+  pcrec's path-quoting diagnostics do not put a random component in the
+  archive — a re-run reproduces the committed file byte for byte except
+  its `# bench:` provenance line.
 - `2026-09-12-rxt-format-probes-d34c9131.txt` — its archive at
   d34c9131 (abi 23). The two findings that are SILENT DATA LOSS in
   shipped behaviour: a literal NUL in a `pattern` line TRUNCATES the
