@@ -4108,3 +4108,15 @@ live to pcrecdev1 (delivery unconfirmed by the bridge); nothing else run,
 no worktrees created. OWED to Frank: a permission rule for `git checkout
 -- <file>` and `git pull origin main` under ~/pcrec (or the two lines by
 hand); NOT asked of the peer. Recorded in plan.md's STANDING (I-57) row.
+
+## 2026-09-13 — executor: the size-log item CLOSED by pcrecdev1 over ssh
+
+pcrecdev1 (live), on Frank's explicit go-ahead: the discard done by them
+in /home/duxevents/pcrec; the pull failure root-caused — the checkout was
+on a DETACHED HEAD at 201e0b1c (hence "which branch" and the failed @{u}
+query), `main` checked out, fast-forwarded to origin/main aa983157
+(D99/D100/D101 + the W23 rev 3.4.1 merge, docs-only), upstream set.
+Verified read-only from here: `git status --short` on the file is empty,
+HEAD aa983157. Marked closed-by-manager in plan.md's STANDING (I-57) row;
+nothing owed, nothing queued. Frank may grant this session read-only
+git-query permissions (branch/status/@{u}) under ~/pcrec.
