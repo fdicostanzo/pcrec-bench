@@ -689,3 +689,58 @@ a lazy-field reader) for a query shape ((b)/(c) would only help a query
 that still selects a great many records) this project's committed
 queries do not exhibit today. Revisit if a committed query ever needs
 to select most of a store larger than today's 160 records.
+
+## KB-17 (2026-09-12) — BOTH drivers' and the oracle's find-all advance rule `pos = max(end, pos+1)` DOUBLE-COUNTS an empty match found AHEAD of the scan position (latent today: no committed expectation is affected)
+
+REPORTED by pcrecdev1 (live, 2026-09-12 evening, while absorbing O-26:
+the W23 `.rxt` delivery will state the match-count rule BY REFERENCE to
+pcrec's match-api §3.1, "which means one adapter edit on your side")
+and CONFIRMED here the same hour against the libpcre2 oracle
+(`pcrecbench.oracle_pcre2._find_all_impl`, the SAME rule both drivers
+implement — `testees/pcre2/driver.c:338`, `testees/pcrec/driver.c:728`,
+documented in `pcrecbench/adapters.py`'s protocol block as the
+throughput regime's operation):
+
+    (?=a)  on b"xax"   -> first (1, 1), count 2      standard walk: 1
+    (?=a)  on b"aXa"   -> first (0, 0), count 3      standard walk: 2
+    a*     on b"xax"   -> first (0, 0), count 4      standard walk: 4  (control)
+
+MECHANISM: after an EMPTY match at `s > pos` (the engine skipped ahead
+from the scan position to a zero-width hit), `end == s > pos` so
+`pos = end = s` — and the next call finds the SAME empty match at `s`
+again before `pos+1` finally moves past it. The `+1` is applied to the
+SCAN position, not to the MATCH position; the rule is right only when
+the empty match lies AT `pos`. The control (`a*`) is right by that
+accident: a pattern that can match empty at EVERY position always
+matches at `pos` itself.
+
+WHAT IS AFFECTED TODAY: nothing committed. Census 2026-09-12 (oracle
+`pattern_info().min_length == 0` over every pattern of every set, then
+which of those run in a throughput regime): altwide 0/33, email 0/3,
+loglines 0/11, syntax 0/95 (its lookaround witnesses all carry a
+consuming body), bounded 17/43 — the `cls-upto-*` ladder (fifteen
+rungs), `cls-lazy-16384` and `grp-upto-1024`, every one a `{0,N}` shape
+that matches at every position, so its empty matches are always AT
+`pos`. Their 37 throughput rows whose FIRST match is empty state
+`nmatches = len + 1` (16385 / 4097 on `t-digits-016k` / `-004k`), the
+all-positions walk — the same number the standard rule gives. Every
+stored throughput count is therefore both internally consistent
+(oracle and drivers share the rule, `expectations.py:19`) AND equal to
+the standard count.
+
+WHERE IT WILL FIRE: any throughput pattern that is zero-width at SOME
+positions only — a lookaround-only pattern, a bare `\b`/`^`/`$` under
+multiline, `(?=...)`-led shapes — i.e. exactly the wild-provenance
+population [B42]'s capability set imports (docs/design/
+capability_set_v1.md). A count off by the number of skipped-ahead empty
+matches would be a WRONG ANSWER on every testee at once (all share the
+rule), invisible to the expectation chain (the oracle shares it too),
+and a cross-engine comparison of a number no other tool reproduces.
+
+FIX (owed; owner: the [B42] restart's adapter lane, trigger: pcrec's
+match-api §3.1 arriving by reference in the W23 correction list):
+adopt §3.1's protocol verbatim in ONE place each — the two drivers and
+`_find_all_impl` — and re-derive every set's expectations under
+`--check` (the 17 bounded patterns' counts must NOT move: that is the
+control). Until then the rule stands as documented; no committed number
+is wrong.

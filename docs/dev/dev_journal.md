@@ -4067,3 +4067,22 @@ acted on. The auto-mode classifier blocked three read-only verification
 commands (a /proc cwd scan, `ls` of ~/pcrec/build, a compound
 `ls`+`git status`); the Read tool and single-purpose git commands got
 through. Heartbeat cron at :13/:43 this session.
+
+Later the same evening, on Frank's ask, a status check to pcrecdev1
+(idle on the other machine over Remote Control). Their answer: the size-
+log brief is NOT tonight (behind the W23 implementation window, 1-2
+days); O-26 ABSORBED in full — our needs note committed in pcrec, the
+W23 DESIGN (Tier 1 + 2) done at format_design.md rev 3.3 / 38289af7
+after a two-round D6 panel; implementation opens on three Frank
+ratifications, HORIZON days not hours (restart later in the week);
+nothing to run tonight. Their heads-up (not final until ratified;
+formal list comes as a D78 inbox commit) included one claim about OUR
+harness — the find-all rule double-counts an empty match found ahead
+of the scan position. CONFIRMED against the oracle in minutes ((?=a)
+on "xax" → 2, on "aXa" → 3; a* on "xax" → 4 as the control) and
+CENSUSED: the only min_length-0 patterns in any set are bounded's
+seventeen `{0,N}` shapes, which match at every position, so no
+committed count is affected (their 37 empty-first-match rows read
+len+1, the standard number). Filed as KB-17 with the fix owed to the
+[B42] restart's adapter lane when match-api §3.1 arrives by reference.
+Recorded in wake.md; session CLOSED on Frank's instruction.
