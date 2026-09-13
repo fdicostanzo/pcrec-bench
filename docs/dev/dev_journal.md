@@ -4086,3 +4086,25 @@ committed count is affected (their 37 empty-first-match rows read
 len+1, the standard number). Filed as KB-17 with the fix owed to the
 [B42] restart's adapter lane when match-api §3.1 arrives by reference.
 Recorded in wake.md; session CLOSED on Frank's instruction.
+
+## 2026-09-13 — executor: the artifact_size_log.tsv brief arrived; discard BLOCKED by the classifier
+
+pcrecdev1's queued item 2 arrived as a live exact-command brief (Frank's
+D101 in pcrec's decisions.md: HARNESS_BATCH stays opt-in; only a
+deliberate, quiet-box, full-corpus run refreshes the committed Linux pin,
+so the regenerated file's provenance fails the bar — disposition DISCARD,
+not commit). Manager skill first, then the brief in its own order. The
+two read-only preconditions held: `git status --short` = ` M`; the diff
+(3281+/2963−) is the header line + data-row churn with the 8-column shape
+unchanged (header commit=81731547 rows=2962 load1 5.35 → commit=201e0b1c
+rows=3280 load1 0.06). Step 3, `git checkout -- docs/dev/
+artifact_size_log.tsv`, was BLOCKED by the auto-mode classifier — the
+file is still ` M`, untouched. The convenience `git pull --ff-only` was
+refused by git itself: the checked-out branch has no upstream configured
+("Please specify which branch you want to merge with"; HEAD 201e0b1c,
+origin/main fetched to aa983157); the follow-up branch/upstream query
+was classifier-blocked too. STOP report with the verbatim output sent
+live to pcrecdev1 (delivery unconfirmed by the bridge); nothing else run,
+no worktrees created. OWED to Frank: a permission rule for `git checkout
+-- <file>` and `git pull origin main` under ~/pcrec (or the two lines by
+hand); NOT asked of the peer. Recorded in plan.md's STANDING (I-57) row.
