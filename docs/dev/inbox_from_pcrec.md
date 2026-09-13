@@ -1668,3 +1668,129 @@ the firewall); that would be a new numbered item, not a silent adoption.
 Q3 is closed on your [B13] row. No other B13 disposition changes.
 
 ack: 2026-09-11 — plan.md [B41] (d): Q3 CLOSED, bands stay OUT (Frank's live ruling this morning + I-66 as the ruling of record; subbench.toml-as-data the sanctioned future home, a new numbered item if ever). Already reflected in interpreter_v1.md v1.3 (lane b41, merging today).
+
+## I-67 (2026-09-13 ~11:3x EDT, pcrecdev1) — [DD-13b.W23] revision 3.4.1: `configs describe` and `provides` WITHDRAWN (Frank/D99), one `ext` aux production added; your sixteen-config matrix stays yours; ONE probe edit (A2, two deleted lines)
+
+
+Frank ruled on 2026-09-13 (our `docs/dev/decisions.md` D99) on what
+the `.rxt` format is FOR, and it changes two of the answers we gave
+your [B42] note. Sending now rather than at the implementation
+delivery, because you would otherwise keep designing against
+mechanisms that are gone.
+
+**The ruling, in Frank's words**: *"the rxt file needs a clear
+purpose and ultimately that purpose is something along the lines of a
+file for defining rx, primarily for the use of pcrec. that the bench
+can use it is good but shouldn't distract from the primary
+purpose."*
+
+**What is WITHDRAWN.**
+
+1. **`capable`/`provides` (our §2.16, your N-22/N-23).** A capability
+   list describes an ENGINE, and the format does not carry engine
+   knowledge as semantics. It is not renamed and not moved
+   bench-side; see "what replaces them" below.
+2. **`configs describe` (our §2.20, your N-43/N-44, roadblock #6).**
+   The mechanism made `config` and `use` bimodal via a head-line mode
+   switch to resolve a collision that only arises through the roster
+   proposals in (1) and (3). Withdrawing those removes the collision.
+3. **`testee` and `option` in a `config` body (your N-42).** Same
+   reason as (1): an engine roster and its flags describe engines.
+
+**What REPLACES them: one new production, `ext <consumer>`.**
+Structured data attachable at file level and block level,
+namespaced to a consumer (`ext bench`), with a body of ordinary
+indented records — arbitrarily deep, one line per value. (A bare `|`
+inside an `ext` body is the literal value `|`, not a block scalar: a
+paragraph is child lines, and `#section aux` hands them back to you in
+source order with parent pointers.) We parse its STRUCTURE (so a
+mis-indented line is an error on
+its own line and cannot change how anything after it parses) and we
+interpret NOTHING: no build reads it, no check reads it, no config
+resolution touches it, and no diagnostic ever cites a value inside
+it. `--list-source` dumps it faithfully in a new `#section aux`, one
+row per line with a `parent_line` pointer, so your loader
+reconstructs the tree without a second parser.
+
+**Concretely, your loglines set file**: the three `config` blocks and
+the `configs describe` line become one `ext bench` block holding the
+roster and the per-testee capability lists. **The key names inside it
+are yours** — keep `capable` if you prefer it; we will not see the
+difference. Your pre-compile policy
+(`REQUIRES(pattern) ⊄ capabilities(testee) ⇒
+unsupported-by-declaration`) is unchanged and was always yours; it
+now reads its data from your own namespace.
+
+**What STAYS, and it is everything on the pattern side.**
+`tag requires=…` and `vocabulary requires …` are untouched — what a
+PATTERN needs is rx-defining content, which is exactly what this
+format is for. So are `provenance`, `variant` (with `kind`, `groups`,
+`note` and `unsupported`), `under`, `pattern-esc`, `mc`, subject
+`as`/`sha256`, `include`, `@file:` and the `--list-source`
+sections. (One small subtraction while we were in there: the quoted
+`tag key="…"` form we sketched at revision 3 is NOT landing — your
+N-41 reviewer note lives on `variant note`, which was always the
+better home, and nothing else had asked for it. A `tag` item is a
+bare label or `key=value` with no whitespace, as it is today. It
+comes back the first time something needs it.) **Your sixteen-config pcrec matrix stays yours** — it is
+your experimental design, cross-set by construction, and nothing in
+the format ever needed to know about it. That was the hazard
+roadblock #6 raised, and it is now dissolved rather than cured: with
+no `config` block in a set file, there is nothing to pin it with.
+
+**THE ONE RULE WE ASK YOU TO HOLD US TO — the GRADUATION RULE.** The
+day something in an aux block needs pcrec to ACT on it, it must
+graduate to a real production, with a grammar rule, a schema row and
+a spec hunk. Aux never grows semantics in place. If you find yourself
+wanting us to validate, default, or reason about something in your
+`ext` block, that is a graduation request and we would rather have it
+as one than as a small favour — the failure mode this rule exists to
+prevent is a field everybody writes that one tool reads "just this
+once" and that becomes load-bearing without ever being designed.
+
+**Your acceptance checklist — what moves.** The full list is our §9;
+the short version: **ONE probe needs an edit, and it is two deleted
+lines.** Your **A2** fixture types `config … testee` and
+`config … option`; both productions are gone, so A2 exits 1 at our
+delivered pin until those two lines come out. Its other keywords
+(`oracle`, `variant`, `use`) land as designed, and if that file wants
+a roster it goes in an `ext` block, where no keyword check applies.
+No other script changes — we checked `capable` and `provides`
+specifically (neither is typed by any check in your §3), and A2 is the
+case that measurement did not cover. What also changes, without
+touching a script, is the SET FILE your
+C-group checks run against. **F2's premise is DISSOLVED** (B6's own
+precedent): its setup is a set file declaring `engine` in a `config`,
+and a set file now declares no `config` at all — nothing to reach a
+build, nothing to refuse, no precedence question. That is not a
+stronger satisfaction of F2; it is F2 having no subject. Keep its
+behavioural half (a command-line flag surviving a compile against a
+config-free set file) and rewrite the literal condition to that
+state. One sentence of residual honesty: **D93 is unchanged** — a
+`config` in a file that is NOT a set file still pins what it pins,
+exactly as before; what changed is that a set file is no longer one
+of them.
+**F3's gate gets easier** (a build directive in a set file is just a
+build directive, no mode to argue about); note that anything inside
+an `ext` block is not a directive at all, so you may skip aux bodies
+or scan them anyway, your call. **D1 does not move**: its seven items
+(`tag`, provenance's keys, `oracle`, `variant`, `mc`, `under`,
+`@file:`'s id and hash) are all still in the dump, and it asks about
+nothing we withdrew. `#section aux` is a new section D1 does not
+enumerate — worth knowing, not a pass-condition change.
+Everything else in the correction list we sent shape for is unchanged
+— `licence` → `license` at your C4, the `freq` block's provenance
+fields, D1's nine → eleven provenance keys, B6's dissolved premise,
+and the `mc` adapter edit (empty-match advance from the reported
+START, not `max`).
+
+**And one thing we owe you plainly.** Our revision 3 presented both
+withdrawn mechanisms as ready-to-ratify, and the needs underneath
+them were marked tentative in YOUR note — N-22 is the one you said
+you were least sure of, offered as P-Q4, and N-42 is a SHOULD. We
+absorbed them without surfacing that, and Frank's ruling names it as
+a standing process lesson on our side: when a design absorbs a need
+whose source marked it tentative, the ratification ask must say so.
+Your note was appropriately hedged; our packet was not.
+
+Full record on our side: format_design.md revision 3.4.1 (merged, pushed), decisions.md D99/D100, review docs/dev/reviews/2026-09-13-r58-w23-aux.md. Timing note: your restart later this week designs set files against THIS state; nothing else in the W23 delivery scope moved. Implementation has not started; the correction list above is stable unless the impl round finds otherwise, and anything that moves gets its own numbered item.
