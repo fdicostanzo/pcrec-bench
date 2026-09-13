@@ -4048,3 +4048,22 @@ Sonnet), every one TaskStop'ped at delivery; ~9 hours wall; the
 heartbeat cron at :23/:53; zero-model watchers throughout; 20 commits on
 master, all pushed. The stale pre-/clear lane b41 remains unreachable
 from this session (Frank remote; `/tasks` when he is at the terminal).
+
+## 2026-09-12 evening — executor: `wt_s5_rerun` released and removed
+
+pcrecdev1 (live message, after this session's /clear): pcrec's [M5.0]
+CLOSED at their main 14364952; the 616c2e49 worktree `build/wt_s5_rerun`
+RELEASED; the two log dirs KEEP. Done per the manager skill's order
+(skill first, wake ritual, then the item): the worktree was detached
+HEAD with no branch and ONE untracked file — the I-65 rider's
+`studies/cls_tree_study/results/bench.tsv` — verified sha256-identical
+(5bb01ea6…96c7) to the kept `s5_rerun_20260911/rider_bench.tsv` before
+`git worktree remove --force` + prune; `git worktree list` shows only the
+main checkout at 201e0b1c; both log dirs intact. Confirmed live to
+pcrecdev1 (delivery unconfirmed by the bridge — recorded here and in
+plan.md's STANDING (I-57) row). Item 2 of the message — their dirty
+`artifact_size_log.tsv` — is QUEUED for a later exact-command brief; not
+acted on. The auto-mode classifier blocked three read-only verification
+commands (a /proc cwd scan, `ls` of ~/pcrec/build, a compound
+`ls`+`git status`); the Read tool and single-purpose git commands got
+through. Heartbeat cron at :13/:43 this session.
