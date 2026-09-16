@@ -18,7 +18,17 @@ INVOCATION
            --iters N               iterations of the per-subject operation
            [--find-all]            search mode only: loop the whole subject
                                    counting NON-OVERLAPPING matches with
-                                   `pos = max(end, pos+1)`. This is the
+                                   pcrec match_api.md S3.1's find-all advance
+                                   rule (adopted BY REFERENCE, KB-17,
+                                   docs/dev/known_issues.md): the next scan
+                                   starts at the match END when the match is
+                                   non-empty, else one past the match's own
+                                   reported START (`s3.1.1`'s `next_pos`
+                                   residual, which is `start + 1` under the
+                                   byte encoding this bench compiles
+                                   everywhere) -- NEVER off the previous scan
+                                   position, which double-counts an empty
+                                   match found ahead of it. This is the
                                    throughput regime's operation, and the
                                    count is what its expectation states.
            [--compile-trials T]    compile T times, timing every phase; T-1

@@ -15,8 +15,11 @@ One row per (pattern x subject x regime), for both patterns:
                       offset 0 (contract 2: SEARCH semantics).
   * `throughput`   -- the three 1 MB subjects, unanchored: the FIRST match's
                       span AND the count of NON-OVERLAPPING matches, both
-                      recorded, found by the same `pos = max(end, pos+1)`
-                      advance rule both drivers use.
+                      recorded, found by pcrec match_api.md S3.1's find-all
+                      loop (KB-17, docs/dev/known_issues.md): the advance is
+                      off the match's own reported START, never off the
+                      previous scan position -- the same rule both drivers
+                      use.
 
 WHAT IS NOT RECORDED, and why: capture-level expectations. `orig.rx` has NO
 capturing group at all, and `factored.rx`'s four named groups are `{0}`

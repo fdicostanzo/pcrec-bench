@@ -7863,6 +7863,87 @@ def check_timeline_provenance():
         shutil.rmtree(scratch, ignore_errors=True)
 
 
+def check_kb17_find_all_advance():
+    """KB-17 (docs/dev/known_issues.md): the find-all advance rule adopted
+    from pcrec match_api.md S3.1 -- the next scan starts at the match END
+    when non-empty, else one past the match's own reported START, never
+    off the previous scan position. Pins the three oracle witnesses BY
+    VALUE (KB-17's own numbers, the FIX, not the bug):
+
+        (?=a)  on b"xax"  -> first (1, 1), count 1
+        (?=a)  on b"aXa"  -> first (0, 0), count 2
+        a*     on b"xax"  -> first (0, 0), count 4   (the CONTROL: a
+                             pattern that matches empty at every position
+                             is right under either rule, and must not move)
+
+    CONTROL: the deliberately-wrong rule this replaces (`pos = max(end,
+    pos + 1)`, advancing off the previous SCAN position rather than the
+    match's own START) is reproduced here, inline, from KB-17's own
+    mechanism description -- never by importing or calling production
+    code -- and must give the OLD, WRONG counts (2, 3) on the two
+    lookaround witnesses, proving the fix actually changed the number and
+    is not a no-op."""
+    print("-- KB-17: the find-all advance rule (pcrec match_api.md S3.1) --")
+    from pcrecbench import oracle_pcre2 as _o
+
+    def old_wrong_rule_count(pattern, subject):
+        """The BUG this check exists to catch, reproduced from KB-17's own
+        MECHANISM paragraph rather than called: `pos = max(end, pos+1)`,
+        which double-counts an empty match found ahead of `pos` because it
+        advances off the previous scan position instead of the match's own
+        start. A second, independent implementation of the discarded rule,
+        so this control does not depend on the fixed code at all."""
+        rx = _o.compile(pattern)
+        n = len(subject)
+        pos = 0
+        count = 0
+        while pos <= n:
+            got = _o._search_raw(rx, subject, pos, 0)
+            if got is None:
+                break
+            (s, e), _g = got
+            count += 1
+            pos = e if e > pos else pos + 1
+        return count
+
+    witnesses = [
+        ("(?=a)", b"xax", (1, 1), 1),
+        ("(?=a)", b"aXa", (0, 0), 2),
+        ("a*",    b"xax", (0, 0), 4),   # the control: unaffected either way
+    ]
+    all_fixed_ok = True
+    for pattern, subject, want_first, want_count in witnesses:
+        rx = _o.compile(pattern)
+        first, count = rx.find_all(subject)
+        if first == want_first and count == want_count:
+            ok("KB-17 fixed: %r over %r -> first %r, count %d"
+               % (pattern, subject, first, count))
+        else:
+            all_fixed_ok = False
+            bad("KB-17 fixed: %r over %r" % (pattern, subject),
+                "got first=%r count=%d, want first=%r count=%d"
+                % (first, count, want_first, want_count))
+
+    # The negative control: the retired rule must give the OLD wrong counts
+    # on the two lookaround witnesses (2 and 3, per KB-17), and must AGREE
+    # with the fixed rule on the control pattern (both rules read `pos` off
+    # the match end there, since `a*`'s empty match is always AT `pos`).
+    old_cases = [("(?=a)", b"xax", 2), ("(?=a)", b"aXa", 3), ("a*", b"xax", 4)]
+    old_ok = all(old_wrong_rule_count(p, s) == want for p, s, want in old_cases)
+    if old_ok:
+        ok("KB-17 control: the retired rule reproduces the OLD wrong counts "
+           "(2, 3) on the lookaround witnesses and agrees with the fix on "
+           "the control -- the fix changed a real number, not a no-op")
+    else:
+        bad("KB-17 control",
+            "the retired rule's reproduction did not match KB-17's own "
+            "reported (2, 3, 4) -- the mechanism description may itself "
+            "be wrong, or the oracle's search primitive moved under it")
+
+    if not (all_fixed_ok and old_ok):
+        return
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -7911,6 +7992,7 @@ def main():
     check_scratch_carries_block()
     check_exit_code_4()
     check_timeline_provenance()
+    check_kb17_find_all_advance()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))

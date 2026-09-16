@@ -690,7 +690,7 @@ that still selects a great many records) this project's committed
 queries do not exhibit today. Revisit if a committed query ever needs
 to select most of a store larger than today's 160 records.
 
-## KB-17 (2026-09-12) — BOTH drivers' and the oracle's find-all advance rule `pos = max(end, pos+1)` DOUBLE-COUNTS an empty match found AHEAD of the scan position (latent today: no committed expectation is affected)
+## KB-17 (2026-09-12, FIXED 2026-09-16 by [B42] restart step (4)/b42repin) — BOTH drivers' and the oracle's find-all advance rule `pos = max(end, pos+1)` DOUBLE-COUNTED an empty match found AHEAD of the scan position (was latent: no committed expectation was ever affected)
 
 REPORTED by pcrecdev1 (live, 2026-09-12 evening, while absorbing O-26:
 the W23 `.rxt` delivery will state the match-count rule BY REFERENCE to
@@ -737,10 +737,35 @@ matches would be a WRONG ANSWER on every testee at once (all share the
 rule), invisible to the expectation chain (the oracle shares it too),
 and a cross-engine comparison of a number no other tool reproduces.
 
-FIX (owed; owner: the [B42] restart's adapter lane, trigger: pcrec's
-match-api §3.1 arriving by reference in the W23 correction list):
-adopt §3.1's protocol verbatim in ONE place each — the two drivers and
-`_find_all_impl` — and re-derive every set's expectations under
-`--check` (the 17 bounded patterns' counts must NOT move: that is the
-control). Until then the rule stands as documented; no committed number
-is wrong.
+FIXED (2026-09-16, [B42] restart step (4), lane b42repin): §3.1's
+protocol adopted BY REFERENCE in the three places that carried the
+rule — `testees/pcre2/driver.c`, `testees/pcrec/driver.c`, and
+`pcrecbench/oracle_pcre2.py`'s `_find_all_impl` — plus the driver-
+protocol docstring in `pcrecbench/adapters.py` and the two comments in
+`pcrecbench/expectations.py` / `bench/email/gen_expectations.py` that
+restated the old (wrong) rule in prose. The advance is now off the
+match's own reported START, never off the previous scan position: a
+non-empty match still resumes at its END; an empty one resumes one past
+its START (`start + 1` — this bench compiles no `utf8` artifact, so
+match_api.md §3.1.1's `next_pos` residual is that constant everywhere
+here).
+
+Every set's `expectations.tsv` was re-derived under its
+`gen_expectations.py --check` after the fix: email (501 rows), loglines
+(1,364), bounded (4,300), altwide (2,772) and syntax all re-derive
+BYTE-IDENTICAL to the committed files — ZERO committed counts moved,
+confirming the census above by re-measurement rather than by
+prediction alone. In particular bounded's 17 `{0,N}` min-length-0
+patterns are the CONTROL this fix is judged against: their empty
+matches are always AT `pos`, so the old and new rules agree there by
+construction, and their counts did not move.
+
+`tools/selfcheck.py`'s `check_kb17_find_all_advance` (new, `make
+check-harness`) pins the two lookaround witnesses BY VALUE against the
+libpcre2 oracle — `(?=a)` over `b"xax"` now reads first `(1, 1)`, count
+`1` (was `2`); `(?=a)` over `b"aXa"` now reads first `(0, 0)`, count `2`
+(was `3`); `a*` over `b"xax"` is unchanged at count `4` (the control) —
+with the deliberately-wrong rule reproduced inline (never by calling
+production code) as the negative control proving the retired rule still
+gives the OLD wrong counts (2, 3), so the fix is shown to have changed a
+real number rather than being a no-op.

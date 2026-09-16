@@ -16,8 +16,11 @@ the sub-bench DECLARES:
                       unanchored at offset 0 (contract 2: SEARCH semantics).
   * `throughput`   -- the throughput subjects, unanchored: the FIRST match's
                       span AND the count of NON-OVERLAPPING matches, both
-                      recorded, found by the same `pos = max(end, pos+1)`
-                      advance rule both drivers use.
+                      recorded, found by pcrec match_api.md S3.1's find-all
+                      loop (KB-17, docs/dev/known_issues.md): the advance is
+                      off the match's own reported START, never off the
+                      previous scan position -- the same rule both drivers
+                      use.
 
 The regime -> subject mapping is never re-implemented here: `Subbench
 .subjects_for()` is the one place it lives (`subbench.py`).
