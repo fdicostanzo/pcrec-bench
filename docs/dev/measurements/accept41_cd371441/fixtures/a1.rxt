@@ -1,0 +1,6 @@
+include "a1_frag.rxt"
+pattern abc
+name t1
+tag family=wild hazard=none
+mc "abcabc" 2
+m @file:"a1_subj.bin" 0 3

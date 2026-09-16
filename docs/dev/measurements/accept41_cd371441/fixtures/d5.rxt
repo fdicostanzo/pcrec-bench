@@ -1,0 +1,5 @@
+pattern abc
+m "abc" 0 3
+pattern a+
+m "aaa" 0 3
+n "b"

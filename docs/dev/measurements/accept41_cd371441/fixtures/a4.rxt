@@ -1,0 +1,4 @@
+config c1
+  tag family=wild
+pattern abc
+name t1

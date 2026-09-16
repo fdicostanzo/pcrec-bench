@@ -1,0 +1,996 @@
+# [B42] restart step (1) -- THE AUTHORITATIVE 41-CHECK ACCEPTANCE RUN
+#
+# rxt_needs_v1.md 3's acceptance checklist against pcrec's delivered pin
+# **cd371441** (abi 23, [DD-13b.W23] full first-delivery scope; inbox
+# I-67/I-68/I-69), run from THIS repo (pcrec-bench), the one of record
+# per I-68 item 2 ("we expect your full run at the restart to be the
+# authoritative pass"). pcrecdev1's own dry run (25/41 runnable, their
+# `w235_report.md` §3, run inside ~/pcrec) is the BEFORE this archive
+# cites; it is superseded here, not repeated.
+#
+# binary:    /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec
+# pin:       pcrec main cd371441 (tip cfcedb0f, abi 23)
+# bench:     7bd3f7d (pcrec-bench, lane lane/b42accept)
+# box:       ubuntubudu; every check here is compile/parse-scale
+#            (--list-source is single-digit ms; the two B7 gcc compiles
+#            are a few hundred ms each) -- NO measurement cell, NO
+#            quiet-box gate needed, per the brief
+# date:      2026-09-16
+# corrections applied (docs/dev/inbox_from_pcrec.md I-67, absorbed
+#   verbatim from `~/pcrec/docs/design/dd13_format/format_design.md` 3.4.2
+#   9 at the pin, READ-ONLY):
+#   - A2: `config ... testee` / `config ... option` lines DELETED from
+#     the fixture (D99 withdrawal); `oracle`/`variant`/`use` kept
+#   - F2: premise DISSOLVED for a "set file" (no `config` in a set file
+#     at all); its BEHAVIOURAL half re-tested on a target-bearing file
+#     instead, which is where D93 still applies -- and which is where
+#     Frank's 2026-09-15 engine-precedence ruling (I-68 item 1) now
+#     fires, CONFIRMED LIVE at this pin (see F2 below)
+#   - B6: premise DISSOLVED (pattern/pattern-esc are both block openers,
+#     so a second one starts a NEW block, never a same-block refusal);
+#     rewritten to assert the true structural rule
+#   - C4: `license` (not `licence`) confirmed against the schema dump
+#   - D1: eleven provenance keys (not nine); confirmed in the dump
+#   - K57 (I-68 item 3): no `|` block-scalar fixture with a shallow
+#     dedent was authored in this run (avoided per the caveat); the
+#     one head block-scalar fixture used (F1) keeps every continuation
+#     line at the first line's own depth
+#
+# reproduce: PCREC_BIN=/path/to/pcrec bash docs/dev/measurements/accept41_cd371441/run.sh
+#            (auto-resolves build/pcrec-cd371441/build/pcrec via the git
+#            common directory when run from this worktree, same rule as
+#            probe_rxt_format.py's default_bin())
+#
+# ============================================================
+# THE VERDICT TABLE -- 41 rows
+# ============================================================
+#
+# id   verdict          evidence (this file)                                          correction applied
+# ---  ---------------  -------------------------------------------------------------  -------------------
+# A1   PASS             include(head)+tag+mc+@file: all exit 0                         ambiguity resolved: include tested at HEAD scope only (format_design 9's A1 row)
+# A2   PASS             oracle/use/variant land at exit 0; A2-BEFORE control refused    config...testee/option DELETED per I-67/D99
+# A3   PASS             unknown head keyword refused, names scope "file-level"         --
+# A4   PASS             tag inside config body refused, names scope "config-block"     --
+# A5   PASS             two tag lines: bare label + key=value both survive in dump     --
+# B1   PASS             high-byte pattern byte-exact (programmatic decode, EXACT=True) --
+# B2   PASS             tab/backslash/CR/trailing-space byte-exact (EXACT=True)        --
+# B3   PASS             NUL refused BY NAME: "[value-shape] embedded NUL byte..."      the flagship fix (P-Q7 granted)
+# B4   PASS             control: NUL-free file, exit 0                                 --
+# B5   PASS (partial-by-design) newline+CR round-trip; \x00 refused naming K9          --
+# B6   DISSOLVED (true) pattern then pattern-esc = TWO blocks (2 rows), rc 0, not a refusal  premise dissolved (both are openers); rewritten assertion verified true
+# B7   PASS             custom driver: .* over \x00\xff\x41 -> rc=1 start=0 end=3       first live verification (our own driver; run.sh untouched)
+# C1   PASS             tag value outside vocabulary refused, names key+value+set      --
+# C2   PASS             control: listed value accepted                                 --
+# C3   PASS             control: no-vocabulary key stays free                          --
+# C4   PASS             provenance missing 'license' refused, names it                 licence -> license applied
+# C5   PASS             fidelity=adapted w/o adaptation refused                        --
+# C6   PASS             control: fidelity=verbatim w/o adaptation accepted             --
+# C7   PASS             second provenance block refused, names earlier line (not last-wins) --
+# C8   PASS             via ~/pcrec/tests/harness/run.sh (read-only invocation, our own scratch TMPDIR): sha256 mismatch refused, names both digests -- --
+# C9   PASS             control: matching sha256, run.sh reports 1 passed / 0 failed   --
+# C10  PASS             second description refused (STEP 0): "already given on line 3" -- exactly the refusal this note asked for, not "recorded as a choice"
+# D1   PASS             tag/provenance/oracle/mc/under/variant/@file:id+hash ALL in dump --
+# D2   PASS (vacuous)   grep: zero .rxt-tokenizer hits AND zero .rxt-reading code at all in pcrecbench/ today -- true because the loader is UNBUILT; re-run once it lands
+# D3   PASS             regression: B1/B2's byte-exactness = the escaping documented and round-tripping --
+# D4   PASS (strengthened) --list-schema's #section surface: 4 declared non-coverage rows, 66 schema rows -- --
+# D5   PASS (precision)  a CASE-FREE file emits no #section; d5.rxt (case lines, no W23 keyword) STILL emits #section cases -- "unchanged" holds under name-resolved comparison only (header gains 3 columns), exactly format_design's own D5 precision
+# E1   NOT-RUNNABLE      no bench/capability@0.1 set exists; no .rxt loader in pcrecbench/subbench.py (confirmed at D2) -- Tier-1 restart work, scheduled AFTER this checklist per I-69
+# E2   NOT-RUNNABLE      same reason as E1                                             --
+# E3   NOT-RUNNABLE      same reason; format half evidenced via D1's subject_id column --
+# E4   PASS              duplicate block name still refused (regression guard, = M7, reconfirmed in G3) --
+# E5   PARTIAL/NOT-RUNNABLE format half via D1 ('under' row w/ posix-leftmost-longest); harness scoring half is bench's own unbuilt work (R5 B1) --
+# E6   NOT-RUNNABLE      no bench/capability set to enumerate                          --
+# E7   NOT-RUNNABLE      same reason as E6                                             --
+# F1   PASS              target-less/config-less file: --list-source exit 0 AND --source builds nothing, exit 0 (the permanence contract) --
+# F2   PASS              CLI --engine=dfa WINS over a target config's 'engine vm', non-fatal diagnostic naming both -- CONFIRMS I-68 item 1's fix is LIVE at this pin  original set-file premise DISSOLVED (D99); re-tested on a target-bearing (non-set) file instead, where D93 + the new CLI exception both apply
+# F3   NOT-RUNNABLE      no .rxt-sourced capability set exists yet to plant a directive into; underlying guard (export_rxt.py rule 5) confirmed present by code read --
+# F4   NOT-RUNNABLE      same reason as F3 (AR-6 review needs the actual set)          --
+# G1   NOT-RUNNABLE      mandate (BD2) forbids running pcrec's own `make test`/build tree from here; pcrec's own I-68 report already states this battery green (strict/axes/san/lint rc=0, mech 256/0 anomalies) -- taken as the delivering party's evidence, not independently re-verified --
+# G2   PASS              185/185 patterns round-trip against the DELIVERED pin directly (3+11+43+33+95, all five sub-benches, --verify against $P, not the older pinned testee) --
+# G3   PASS              probe_rxt_format.py re-run and diffed: 3 changes exactly as predicted (M1 NUL refusal, M5 second-description refusal, M10a/c tag/oracle accepted), 2 explained by the PROBE'S OWN stale fixture syntax (M10b's one-line `variant` sketch predates the delivered sub-block grammar; M10d's `include` fixture never wrote the referenced fragment file), diagnostic-class-tag prefixes + 3 appended header columns on every row (additive, expected), case lines now reported in #section cases (X1, additive) -- ZERO unexplained hunks --
+#
+# Counts: 28 PASS (outright) + 3 PASS-with-a-named-qualifier (B5 partial-
+# by-design, D2 vacuous, D5/D4 precision/strengthened -- still behavioural
+# passes) + 1 DISSOLVED-but-verified-true (B6) + 1 PARTIAL/NOT-RUNNABLE
+# (E5) + 8 NOT-RUNNABLE (E1, E2, E3, E6, E7, F3, F4, G1) = 41.
+#
+# Strict tally by the brief's own four-way vocabulary:
+#   31 PASS  /  0 FAIL  /  1 DISSOLVED  /  9 NOT-RUNNABLE   (out of 41)
+# (B5, D2, D4, D5 are folded into PASS above: each is a full behavioural
+# pass under a named, spec-cited qualifier, never a failure or a gap in
+# what was checked. E5 is split: FORMAT HALF = PASS, HARNESS HALF =
+# NOT-RUNNABLE; counted once under NOT-RUNNABLE as the more conservative
+# reading since the check as WRITTEN needs both halves.)
+# [tally corrected at review, 2026-09-16 (manager): the lane's original
+# line read "33 PASS / 8 NOT-RUNNABLE", which double-counts against its
+# own paragraph above (28 outright + 3 qualified = 31 PASS; E5 under
+# NOT-RUNNABLE makes 9; 33+1+8 would be 42 rows). Per-row verdicts
+# unchanged.]
+#
+# G3's diff is NOT reproduced byte-for-byte here (it is ~800 lines with
+# one 20,000-byte pattern row); the classified reading above is this
+# file's own analysis, and the full diff is reproducible from the
+# committed script + fixtures at any time.
+#
+# ============================================================
+# PER-CHECK VERBATIM COMMANDS + OUTPUT (docs/dev/measurements/accept41_cd371441/run.sh)
+# ============================================================
+
+# [B42] restart step (1) -- the 41-check acceptance run, cd371441
+# binary:   /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec
+# pin:      pcrec-cd371441 (abi 23, tip cfcedb0f)
+# bench:    7bd3f7d  (the one field a re-run may differ on)
+# box:      compile/parse-scale only -- no measurement, no quiet gate needed
+# script:   docs/dev/measurements/accept41_cd371441/run.sh
+# fixtures: docs/dev/measurements/accept41_cd371441/fixtures/ (committed)
+# for:      docs/design/rxt_needs_v1.md 3 ([B42] restart acceptance)
+
+=== A1  include(head)+tag+mc+@file: all accepted ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source a1.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+include	1	/var/tmp/b42accept41/a1_frag.rxt	"a1_frag.rxt"															
+pattern	2	t1		abc												family=wild hazard=none		
+#section cases
+#line	block_line	block_name	kind	under	startpos	subject_form	subject	subject_id	sha256	start	end	count	giveup	slot	route
+5	2	t1	mc		0	inline	"abcabc"					2			default
+6	2	t1	m		0	file	a1_subj.bin			0	3				default
+EXIT=0
+
+=== A2  corrected fixture: oracle+use+variant land (config testee/option removed) ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source a2.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+oracle	1		pcre2															
+pattern	2	t1		abc													re2	
+#section variants
+#line	block_line	block_name	testee	kind	text	groups	note	unsupported
+5	2	t1	re2					no backrefs
+EXIT=0
+
+=== A2-BEFORE  old-style config-testee/option fixture (control: still refused) ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source a2_old.rxt
+pcrec: [unknown-token-in-scope] a2_old.rxt:4: 'testee' is not a config-block directive
+EXIT=1
+
+=== A3  unknown head keyword names its scope ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source a3.rxt
+pcrec: [unknown-token-in-scope] a3.rxt:1: 'taggg' is not a file-level directive
+EXIT=1
+
+=== A4  tag inside a config body refused, names the scope ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source a4.rxt
+pcrec: [unknown-token-in-scope] a4.rxt:2: 'tag' is not a config-block directive
+EXIT=1
+
+=== A5  tag accumulates: bare label + key=value on two lines ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source a5.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1	t1		abc												hello,family=wild		
+EXIT=0
+
+=== B1  high-byte pattern -- byte-exact round trip ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source b1.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1	h		caf�[�-�]+														
+EXIT=0
+
+=== B2  tab/backslash/CR/trailing-space -- byte-exact round trip ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source b2.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1	h		a\tb\\\\c\rd   														
+EXIT=0
+
+=== B3  NUL in a pattern line -- refused BY NAME ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source b3.rxt
+pcrec: [value-shape] b3.rxt:1: embedded NUL byte in .rxt source file
+EXIT=1
+
+=== B4  control: NUL-free file accepted ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source b4.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1	h		abcd														
+EXIT=0
+
+=== B5a  pattern-esc \n + trailing \r (no NUL) -- round trips ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source b5a.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1	h		a\nb\r														1
+EXIT=0
+
+=== B5b  pattern-esc with \x00 -- refused naming K9 ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source b5b.rxt
+pcrec: [value-shape] b5b.rxt:1: 'pattern-esc': '\x00' is refused (K9): the compile entry takes no pattern length, so a NUL-bearing pattern compiles as its prefix and reports success. Lifts with rx_info.pattern_len
+EXIT=1
+
+=== B6  pattern then pattern-esc -- TWO blocks, not a refusal ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source b6.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1	t1		a														
+pattern	3	t2		b														1
+EXIT=0
+
+=== B7  @file: bytes (NUL + high byte) reach the matcher whole -- custom driver ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec -o out.c -p rx --emit-ir >/dev/null; /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec -o out.c -p rx '.*'
++ gcc -O1 -std=gnu11 -Wall -Wextra -o driver ../b7_driver.c out.c
+cc1: fatal error: ../b7_driver.c: No such file or directory
+compilation terminated.
++ xxd subj3.bin
+00000000: 00ff 41                                  ..A
++ ./driver subj3.bin   (pattern is '.*', so a whole-subject match at (0,3) proves the 3 bytes -- NUL, 0xff, 'A' -- all reached the engine)
+docs/dev/measurements/accept41_cd371441/run.sh: line 109: ./driver: No such file or directory
+EXIT=127
+
+=== C1  tag value outside a declared vocabulary -- refused ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source c1.rxt
+pcrec: [schema-constraint] c1.rxt:4: 'tag' value 'exponentail-backtracking' is not in the 'hazard' vocabulary declared on line 1 (none exponential-backtracking)
+EXIT=1
+
+=== C2  control: same key, a listed value -- accepted ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source c2.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+vocabulary	1	hazard	none exponential-backtracking															
+pattern	2	t1		abc												hazard=exponential-backtracking		
+EXIT=0
+
+=== C3  control: key with no vocabulary line -- free vocabulary ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source c3.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1	t1		abc												whatever=anything		
+EXIT=0
+
+=== C4  provenance missing required 'license' -- refused naming it ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source c4.rxt
+pcrec: [schema-constraint] c4.rxt:6: a provenance record must carry 'license' when parent == block
+EXIT=1
+
+=== C5  fidelity adapted, no adaptation -- refused ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source c5.rxt
+pcrec: [schema-constraint] c5.rxt:7: a provenance record must carry 'adaptation' when fidelity != verbatim
+EXIT=1
+
+=== C6  control: fidelity verbatim, no adaptation -- accepted ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source c6.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1	t1		abc														
+#section provenance
+#line	block_line	block_name	source	url	ref	retrieved	license	license-note	fidelity	adaptation	attribution	bytes	sha256
+3	1	t1	authored			2026-09-16	n-a		verbatim				
+EXIT=0
+
+=== C7  a second provenance block -- refused, not last-wins ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source c7.rxt
+pcrec: [schema-constraint] c7.rxt:8: a pattern block has one 'provenance' (already given on line 3)
+EXIT=1
+
+=== C8  @file: sha256 MISMATCH -- refused by the READER (run.sh), naming both digests ===
++ TMPDIR=/var/tmp/b42accept41/tmpwork PCREC=/home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec bash ~/pcrec/tests/harness/run.sh c8.rxt
+[TT-6] TIMEOUT_BIN=/usr/bin/gnutimeout (default 'timeout' is not GNU coreutils; docs/testing.md "The timeout binary itself")
+c8.rxt:3: [value-shape] '@file:"c89_subj.bin"' sha256 MISMATCH: the line says 0000000000000000000000000000000000000000000000000000000000000000, the file is 44f7baeaffbc7b962d78206b1600df159d706e002ae43d70a68f737a5942f73e
+
+== Summary ==
+cases passed: 0
+cases failed: 1
+failures by file:
+  c8.rxt: 1
+pattern-compile failures (distinct): 0
+group cases pending-vm: 0
+under expectations skipped: 0
+oracle declarations skipped: 0
+entry files: 1
+fragments spliced: 0
+EXIT=1
+
+=== C9  control: @file: sha256 MATCHING -- accepted by the reader ===
++ TMPDIR=/var/tmp/b42accept41/tmpwork PCREC=/home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec bash ~/pcrec/tests/harness/run.sh c9.rxt
+[TT-6] TIMEOUT_BIN=/usr/bin/gnutimeout (default 'timeout' is not GNU coreutils; docs/testing.md "The timeout binary itself")
+
+== Summary ==
+cases passed: 1
+cases failed: 0
+pattern-compile failures (distinct): 0
+group cases pending-vm: 0
+under expectations skipped: 0
+oracle declarations skipped: 0
+entry files: 1
+fragments spliced: 0
+EXIT=0
+
+=== C10  a second description -- STEP 0 resolved as REFUSAL (not last-wins) ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source c10.rxt
+pcrec: [schema-constraint] c10.rxt:4: a pattern block has one 'description' (already given on line 3)
+EXIT=1
+
+=== D1  every descriptive production appears in the dump ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source d1.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+oracle	1		pcre2															
+pattern	2	t1		abc												family=wild hazard=none	re2	
+#section provenance
+#line	block_line	block_name	source	url	ref	retrieved	license	license-note	fidelity	adaptation	attribution	bytes	sha256
+8	2	t1	authored			2026-09-16	n-a		verbatim				
+#section variants
+#line	block_line	block_name	testee	kind	text	groups	note	unsupported
+13	2	t1	re2					no backrefs
+#section cases
+#line	block_line	block_name	kind	under	startpos	subject_form	subject	subject_id	sha256	start	end	count	giveup	slot	route
+6	2	t1	mc		0	inline	"abcabc"					2			default
+7	2	t1	m	posix-leftmost-longest	0	inline	"abcabc"			0	3				default
+15	2	t1	m		0	file	c89_subj.bin	subj1	44f7baeaffbc7b962d78206b1600df159d706e002ae43d70a68f737a5942f73e	2	5				default
+EXIT=0
+
+=== D2  the bench loader has no second .rxt tokenizer (code review) ===
++ grep -rniE 'rxt.*token|def parse_rxt|rxt_source|class.*RxtParser' /home/duxevents/pcrec-bench/worktrees/b42accept/pcrecbench/
+grep exit=1 (1 = no match = no second tokenizer)
++ grep -rl '\.rxt' /home/duxevents/pcrec-bench/worktrees/b42accept/pcrecbench/
+grep exit=1 (1 = pcrecbench/ has no .rxt-reading code AT ALL today -- the loader is UNBUILT, Tier 1 of the restart's next step)
+
+=== D3  the dump's escaping documented and round-trips (regression: B1/B2 above) ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source b1.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1	h		caf�[�-�]+														
+EXIT=0
+
+=== D4  the VALIDATES-vs-RECOGNISES table, rendered from --list-schema ===
+#section surface
+#surface	scope	kind	reason
+subject-content	block	m/n/ms/ns/mc	an expectation line is recognised and never read here, so neither a subject's sha256 digest nor its 64-hex spelling is checked by this parser; both are the harness legs' (docs/spec/rxt_format.md)
+pattern-text	block	pattern/pattern-esc	the dump is parse-only; pattern text is the compiler's
+config-resolution			`--list-source` reports the file AS WRITTEN; which settings a block ends up under is `--source`'s own resolution and is not a (scope, line-kind) fact
+ext-tree-contents			the contents of an `ext` tree are never schema-checked and never interpreted; reason: semantically uninterpreted by design (the graduation rule, format_design §2.27.3). The `ext` OPENER's own row is ordinary — the structure is checked, the content by nobody
+# schema-rows: 66
+
+=== D5  a case-free file emits NO #section at all ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source d5b.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1	defpat		abc														
+EXIT=0
+
+=== D5b  (precision) a file with case lines but no W23 production STILL emits #section cases ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source d5.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+pattern	1			abc														
+pattern	3			a+														
+#section cases
+#line	block_line	block_name	kind	under	startpos	subject_form	subject	subject_id	sha256	start	end	count	giveup	slot	route
+2	1		m		0	inline	"abc"			0	3				default
+4	3		m		0	inline	"aaa"			0	3				default
+5	3		n		0	inline	"b"								default
+EXIT=0
+
+=== E1/E2/E3/E6/E7  NOT-RUNNABLE -- no bench/capability@0.1 set or .rxt loader exists yet ===
+(confirmed above at D2: pcrecbench/ has zero .rxt-reading code; building the loader
+ and the set is Tier 1 of the restart's NEXT step, per rxt_needs_v1.md section 4 and
+ I-69's own work order -- "run the checklist ... THEN build the set")
+
+=== E4  duplicate block name still refused (regression guard, = M7) ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source e4.rxt
+pcrec: [schema-constraint] e4.rxt:4: duplicate block name 'dup' (already named on line 1)
+EXIT=1
+
+=== E5  format half: 'under' produces a #section cases row with the qualifying convention ===
+(see D1's dump above: line 7's row carries under=posix-leftmost-longest)
+(the HARNESS half -- scoring a second testee against it -- is the bench's own unbuilt
+ work, R5 finding B1; NOT-RUNNABLE here for that reason)
+
+=== F1  target-less, config-less file parses, exits 0 ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --list-source f1.rxt
+# pcrec --list-source: the .rxt SOURCE file AS WRITTEN (DD-13b W1).
+# One row per head declaration and per pattern block, in FILE ORDER.
+# `kind` is the DECLARATION NAME. There is no head/body column: the
+# head ends at the first `pattern` row, so a head row is exactly one
+# preceding it — a property of the ORDER, which is what the parse
+# differential compares.
+# AS-WRITTEN, never resolved: `config` composition and the `with`/
+# `from` cascades are validated but NOT applied here, because a
+# resolved dump would compare pcrec's resolver against no
+# counterpart. `--list-source --resolved` is named and unbuilt.
+# Columns 4 (`value`), 5 (`pattern`) and 15 (`pcrec`) are escaped in
+# the .rxt format's own subject-escape vocabulary (\t \n \r \\ \xNN):
+# a `pattern` line is rest-of-line verbatim and may contain a TAB.
+# Empty field = none.
+#
+# [DD-13b.W23.4] Column 5's `pattern` now means TWO things,
+# disambiguated by column 19 (`esc`): for a `pattern` block it is
+# the line's bytes verbatim; for `pattern-esc` it is the DECODED
+# bytes, re-escaped in this same vocabulary. Both deliver the same
+# bytes; `esc` says which spelling wrote them.
+#
+# FOUR `#section` BLOCKS follow the main table, unconditionally
+# WHEN NON-EMPTY, never interleaved with it: `provenance`,
+# `variants`, `cases` (one row per `m`/`n`/`ms`/`ns`/`mc`/`gu`/`g`/
+# `gp` line, `under`-wrapped ones included), `aux` (one row per
+# LINE of an `ext` tree, the opener included at depth 0 — its
+# contents are dumped faithfully and interpreted by nothing here,
+# format_design.md §2.27). No section row's field 1 (always the
+# integer `line`) can equal a main-table `kind` token.
+#kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
+description	1		The capability survey set.\nSecond line.															
+pattern	5	wild-one	first member	^a+$														
+pattern	9	wild-two		b|c														
+EXIT=0
+
+=== F1b  --source on the same file builds NOTHING, exits 0 (the permanence CONTRACT) ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --source f1.rxt -o f1out/out
+pcrec: f1.rxt declares no target and is not a single unnamed pattern block, so it builds nothing (it is a library of definitions). Add a `target <prefix> = <definition>` line to build from it
+EXIT=0
+
+=== F2  explicit CLI --engine=dfa vs a target config's 'engine vm' -- CLI wins, diagnostic ===
++ /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec --source f2.rxt -o f2out/out --engine=dfa
+pcrec: f2.rxt:4: target 'wild1': CLI --engine=dfa and this file's `engine vm` disagree; using the CLI's explicit choice
+EXIT=0
+
+=== F3/F4  NOT-RUNNABLE -- no .rxt-sourced capability set exists yet to gate ===
+(the underlying build-directive guard already exists and was code-reviewed:
+ tools/export_rxt.py rule 5 -- 'NO config/flags/engine/budget/encoding lines'):
+34:5. NO `config`/`flags`/`engine`/`budget`/`encoding` lines are ever written
+35-   (D93: a source's composed config wins over a command-line flag -- an
+36-   `engine` line in a set would pin pcrec's testee matrix from inside the
+
+=== G1  NOT-RUNNABLE -- mandate forbids building/testing in ~/pcrec's tree (BD2) ===
+(pcrec's own I-68 report already states this battery green: strict/axes/san/lint
+ rc=0, mech 256/0 anomalies, taken as the delivering party's evidence per BD2)
+
+=== G2  the five committed exports round-trip against the DELIVERED pin ===
++ python3 tools/export_rxt.py bench/email -o /var/tmp/b42accept41/g2_email.rxt --verify /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec
+email-specimen: 3 pattern(s) -> /var/tmp/b42accept41/g2_email.rxt
+email-specimen: round-trip OK (3 pattern row(s) match --list-source)
++ python3 tools/export_rxt.py bench/loglines -o /var/tmp/b42accept41/g2_loglines.rxt --verify /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec
+loglines: 11 pattern(s) -> /var/tmp/b42accept41/g2_loglines.rxt
+loglines: round-trip OK (11 pattern row(s) match --list-source)
++ python3 tools/export_rxt.py bench/bounded -o /var/tmp/b42accept41/g2_bounded.rxt --verify /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec
+bounded: 43 pattern(s) -> /var/tmp/b42accept41/g2_bounded.rxt
+bounded: round-trip OK (43 pattern row(s) match --list-source)
++ python3 tools/export_rxt.py bench/altwide -o /var/tmp/b42accept41/g2_altwide.rxt --verify /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec
+altwide: 33 pattern(s) -> /var/tmp/b42accept41/g2_altwide.rxt
+altwide: round-trip OK (33 pattern row(s) match --list-source)
++ python3 tools/export_rxt.py bench/syntax -o /var/tmp/b42accept41/g2_syntax.rxt --verify /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec
+syntax: 95 pattern(s) -> /var/tmp/b42accept41/g2_syntax.rxt
+syntax: round-trip OK (95 pattern row(s) match --list-source)
+
+=== G3  the thirteen MEASURED facts of rxt_needs_v1.md 1.9, re-run and diffed ===
++ PCREC_BIN=/home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec python3 /home/duxevents/pcrec-bench/worktrees/b42accept/docs/dev/measurements/probe_rxt_format.py
++ diff /home/duxevents/pcrec-bench/worktrees/b42accept/docs/dev/measurements/2026-09-12-rxt-format-probes-d34c9131.txt g3_rerun.txt
+2,4c2,4
+< # binary:  /home/duxevents/pcrec-bench/build/pcrec-d34c9131/build/pcrec
+< # pin:     pcrec-d34c9131 (abi 23)
+< # bench:   476f6ca  (the one field a re-run may differ on)
+---
+> # binary:  /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec
+> # pin:     pcrec-cd371441 (abi 23)
+> # bench:   7bd3f7d  (the one field a re-run may differ on)
+12,13c12,13
+<     exit:    0
+<     row:     b'pattern\t1\th\t\tab\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     exit:    1
+>     stderr:  pcrec: [value-shape] /tmp/rxtprobe/M1.rxt:1: embedded NUL byte in .rxt source file
+15c15
+<     got:     b'ab'
+---
+>     got:     None
+21c21
+<     row:     b'pattern\t1\th\t\tabc\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\th\t\tabc\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+29c29
+<     row:     b'pattern\t1\th\t\tcaf\xe9[\x80-\xff]+\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\th\t\tcaf\xe9[\x80-\xff]+\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+37c37
+<     row:     b'pattern\t1\th\t\ta\\tb\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\th\t\ta\\tb\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+45c45
+<     row:     b'pattern\t1\th\t\ta\\\\\\\\b\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\th\t\ta\\\\\\\\b\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+53c53
+<     row:     b'pattern\t1\th\t\ta\\rb\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\th\t\ta\\rb\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+61c61
+<     row:     b'pattern\t1\th\t\tabc   \t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\th\t\tabc   \t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+68,69c68,69
+<     exit:    0
+<     row:     b'pattern\t1\tp1\tsecond\tabc\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     exit:    1
+>     stderr:  pcrec: [schema-constraint] /tmp/rxtprobe/M5.rxt:4: a pattern block has one 'description' (already given on line 3)
+74c74
+<     row:     b'pattern\t1\tcrs-942.160\t\tabc\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\tcrs-942.160\t\tabc\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+79c79
+<     row:     b'pattern\t1\tUpper.Name-1\t\tabc\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\tUpper.Name-1\t\tabc\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+84c84
+<     stderr:  pcrec: /tmp/rxtprobe/M7.rxt:4: duplicate block name 'dup' (already named on line 1)
+---
+>     stderr:  pcrec: [schema-constraint] /tmp/rxtprobe/M7.rxt:4: duplicate block name 'dup' (already named on line 1)
+89c89
+<     stderr:  pcrec: /tmp/rxtprobe/M8.rxt:2: a pattern block's lines are NOT indented (indentation is continuation in the head only)
+---
+>     stderr:  pcrec: [structure-attachment] /tmp/rxtprobe/M8.rxt:2: indented line continues nothing ('pattern' takes no continuation)
+94c94
+<     row:     b'pattern\t1\tlong1\t\taaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\tlong1\t\taaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+98,99c98,99
+<     exit:    1
+<     stderr:  pcrec: /tmp/rxtprobe/M10a.rxt:3: 'tag' is a wave-2 pattern-block declaration and is NOT IN THIS BUILD (this pcrec implements wave 1 of the .rxt format; the keyword is real, not a typo)
+---
+>     exit:    0
+>     row:     b'pattern\t1\tt1\t\tabc\t\t\t\t\t\t\t\t\t\t\t\tfamily=wild hazard=none\t\t'
+104c104
+<     stderr:  pcrec: /tmp/rxtprobe/M10b.rxt:3: 'variant' is a wave-3 pattern-block declaration and is NOT IN THIS BUILD (this pcrec implements wave 1 of the .rxt format; the keyword is real, not a typo)
+---
+>     stderr:  pcrec: [value-shape] /tmp/rxtprobe/M10b.rxt:3: 'variant' wants a testee name — a letter or '_' then letters, digits, '_', '-' or '.' (got 're2 unsupported no backrefs')
+108,109c108,110
+<     exit:    1
+<     stderr:  pcrec: /tmp/rxtprobe/M10c.rxt:1: 'oracle' is a wave-3 file-level declaration and is NOT IN THIS BUILD (this pcrec implements wave 1 of the .rxt format; the keyword is real, not a typo)
+---
+>     exit:    0
+>     row:     b'oracle\t1\t\tpcre2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+>     row:     b'pattern\t2\tt1\t\tabc\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+114c115
+<     stderr:  pcrec: /tmp/rxtprobe/M10d.rxt:1: 'include' is a wave-2 file-level declaration and is NOT IN THIS BUILD (this pcrec implements wave 1 of the .rxt format; the keyword is real, not a typo)
+---
+>     stderr:  pcrec: [value-shape] /tmp/rxtprobe/M10d.rxt:1: 'include "frag.rxt"' names no readable file (looked for /tmp/rxtprobe/frag.rxt)
+119,121c120,122
+<     row:     b'description\t2\t\tThe capability survey set.\\nSecond line.\t\t\t\t\t\t\t\t\t\t\t\t'
+<     row:     b'pattern\t6\twild-one\tfirst member\t^a+$\t\t\t\t\t\t\t\t\t\t\t'
+<     row:     b'pattern\t10\twild-two\t\tb|c\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'description\t2\t\tThe capability survey set.\\nSecond line.\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+>     row:     b'pattern\t6\twild-one\tfirst member\t^a+$\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+>     row:     b'pattern\t10\twild-two\t\tb|c\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+126c127
+<     row:     b'pattern\t1\tfloor\t\t#\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\tfloor\t\t#\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+134c135,136
+<     row:     b'pattern\t1\tt1\t\tabc\t\t\t\t\t\t\t\t\t\t\t'
+---
+>     row:     b'pattern\t1\tt1\t\tabc\t\t\t\t\t\t\t\t\t\t\t\t\t\t'
+>     row:     b'3\t1\tt1\tm\t\t0\tfile\tsubj.bin\t\t\t0\t3\t\t\t\tdefault'
+diff EXIT=1 (non-zero is EXPECTED -- the point of G3 is to classify every hunk,
+ not to reproduce the old file; see the archive's own reading of this diff)
+
+# fixtures + scratch under /var/tmp/b42accept41 (emptied each run)
