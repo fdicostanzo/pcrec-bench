@@ -13,7 +13,7 @@ vocabulary requires backrefs lookaround lookbehind-variable possessive-quantifie
 vocabulary convention perl-leftmost-first posix-leftmost-longest
 tag set=capability, version=0.1
 ext bench
-  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in
+  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in pcre2-dfa
   capabilities pcre2-interp
     backrefs
     lookaround
@@ -104,6 +104,19 @@ ext bench
     span-reporting
     non-utf8-subject
     captures
+    true-end-anchor
+  capabilities pcre2-dfa
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    unicode-properties
+    named-groups
+    free-spacing
+    callouts
+    span-reporting
+    non-utf8-subject
     true-end-anchor
 
 pattern ^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$

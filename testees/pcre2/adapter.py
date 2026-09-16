@@ -76,6 +76,51 @@ GAVE_UP_CODES = {
 #        (PCRE2 10.46's recursion-loop rule), not a resource limit.
 #   -1  "no match"        -- an answer, not a refusal.
 
+# [B42] L6a, 2026-09-16: `pcre2-dfa`'s OWN negative-code space, on top of
+# GAVE_UP_CODES above (pcre2_dfa_match can still hit MATCHLIMIT/DEPTHLIMIT/
+# HEAPLIMIT -- the same budgets, forced the same way -- never JIT_STACKLIMIT,
+# which cannot fire on a matcher with no JIT). [verified] 2026-09-16 against
+# /usr/include/pcre2.h (now installed on this box, docs/dev/research/
+# 2026-09-12-b42-engine-landscape.md (3)) AND reproduced live with
+# `pcre2test -dfa` -- testees/pcre2/CLAUDE.md's "pcre2-dfa" section has the
+# transcript, man pcre2api's "Error returns from pcre2_dfa_match()" the
+# prose. Two are RESOURCE-shaped, the same shape as the four above (this
+# driver's own workspace budget; internal-recursion-ovector exhaustion the
+# man page calls "extremely rare"):
+#   -43 PCRE2_ERROR_DFA_WSSIZE   "workspace size exceeded in DFA matching"
+#   -39 PCRE2_ERROR_DFA_RECURSE  "too much recursion for DFA matching"
+# Two are STRUCTURAL -- a construct `pcre2_dfa_match` can never run, on ANY
+# subject, that `pcre2_compile_8` has no way to see (it compiles the SAME
+# pattern for every matcher; man pcre2matching's own restricted-construct
+# list is a MATCH-time restriction, discovered here). `record_schema.md`'s
+# `match_outcome` enum has no dedicated STRUCTURAL-refusal value (only
+# `unsupported-by-declaration`, a COMPILE-row outcome the pre-compile
+# capability policy produces for a set that DECLARES the construct missing,
+# docs/design/capability_set_v1.md 5.3 -- bench/capability's `ext bench`
+# matrix does this for `pcre2-dfa`, testees/pcre2/CLAUDE.md's own section).
+# For a set with no such declaration (every pre-[B42] set; bench/syntax's
+# backreference/`\K`/control-verb/conditional patterns are real, present,
+# untagged witnesses), these two codes land here instead -- `gave-up` is
+# the LEAST WRONG of the two outcomes that exist without inventing a third
+# (`requirements.md 4.4`'s own definition, "the engine's OWN resource
+# limit", is a stretch for a STRUCTURAL refusal, but a real, named,
+# by-code-distinguishable refusal is honest; `crashed` would claim an
+# engine defect that is not one; a silent `nomatch` would be a wrong
+# answer). Flagged for the schema owner as a genuine, documented gap --
+# not routed around quietly -- the same open list `capability_set_v1.md`
+# 5.4 already keeps:
+#   -42 PCRE2_ERROR_DFA_UITEM   "pattern contains an item that is not
+#                                supported for DFA matching" (e.g. a
+#                                backreference, `\K`)
+#   -40 PCRE2_ERROR_DFA_UCOND   "backreference condition or recursion test
+#                                is not supported for DFA matching"
+# NOT included, each for a stated reason (this driver's own construction,
+# not merely rare):
+#   -38 PCRE2_ERROR_DFA_BADRESTART  only from PCRE2_DFA_RESTART, never set
+#   -41 PCRE2_ERROR_DFA_UFUNC       only from substring-by-NAME calls, never made
+#   -66 PCRE2_ERROR_DFA_UINVALID_UTF only from PCRE2_MATCH_INVALID_UTF, never compiled with it
+GAVE_UP_CODES_DFA = (set(GAVE_UP_CODES) - {-46}) | {-43, -39, -42, -40}
+
 
 class Adapter(_ad.Adapter):
     name = "pcre2"
@@ -101,6 +146,7 @@ class Adapter(_ad.Adapter):
         raw = self.probe_version(workdir or os.getcwd())
         version = raw.split()[0]
         jit = bool(cfg.get("jit"))
+        dfa = bool(cfg.get("dfa"))
         phases = ["compile", "jit-compile"] if jit else ["compile"]
         decl = dict(METADATA_DECL)
         if not jit:
@@ -110,9 +156,24 @@ class Adapter(_ad.Adapter):
             "engine_version": version,
             "engine_commit": None,
             "execution_model": "eager-jit" if jit else "interpretive",
-            "automaton_class": "backtracking",
+            # [B42] L6a, capability_set_v1.md 8: `pcre2_dfa_match` is NOT a
+            # classical subset-construction DFA -- man pcre2matching, in the
+            # engine's own words, "it is not implemented as a traditional
+            # finite state machine (it keeps multiple states active
+            # simultaneously)" -- textbook NFA-simulation. Tagging it
+            # `dfa-only` because of the C function's NAME would be the exact
+            # kind of un-probed claim this field exists to prevent.
+            "automaton_class": "nfa-simulation" if dfa else "backtracking",
             "openness": "open-source",
             "license_id": "BSD-3-Clause",
+            # capability_set_v1.md 5.6: `pcre2-dfa` is tagged the SAME
+            # convention token as the rest of the shared-convention roster
+            # ("at the API shape the driver uses") -- its real divergence
+            # (returns the LONGEST match at a start point, in DECREASING
+            # length order, not the first alternative tried) is a SEMANTIC
+            # difference this note states in prose, not a second token; see
+            # this file's "pcre2-dfa" section for the three corpus cases it
+            # is confirmed to change the answer on.
             "conventions": ["perl-leftmost-first"],
             "captures": cfg.get("captures", "on"),
             "engine_mode": cfg["engine_mode"],
@@ -126,6 +187,14 @@ class Adapter(_ad.Adapter):
                 "pcre2_jit_compile_8(PCRE2_JIT_COMPLETE) (`jit-compile`). "
                 "Median of N with spread is the REPORTER's reduction."
                 if jit else
+                "pcre2_dfa_match (capability_set_v1.md 8): NO separate "
+                "compile step exists -- pcre2_dfa_match reuses the SAME "
+                "pcre2_compile_8 artifact pcre2_match would use, timed "
+                "in-driver exactly as pcre2-interp's is (`compile`); the "
+                "two numbers should be statistically indistinguishable, "
+                "which is a control this bench can check for free. Median "
+                "of N with spread is the REPORTER's reduction."
+                if dfa else
                 "interpreter (requirements 3): the compile call, timed "
                 "in-driver -- pcre2_compile_8 (`compile`). Median of N with "
                 "spread is the REPORTER's reduction."),
@@ -196,6 +265,8 @@ class Adapter(_ad.Adapter):
         argv = [drv, "--pattern", patfile, "--compile-trials", str(trials)]
         if cfg.get("jit"):
             argv.append("--jit")
+        if cfg.get("dfa"):
+            argv.append("--dfa")
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
 
         def one(res):
@@ -224,9 +295,15 @@ class Adapter(_ad.Adapter):
                 meta[name] = int(out.info[name])
         # The MEASURED set of libpcre2 resource-limit refusals travels with
         # the handle, so harness.classify_giveup needs no engine knowledge.
+        # [B42] L6a: pcre2-dfa's handle carries its OWN wider code set
+        # (GAVE_UP_CODES_DFA, this file's own comment on it) -- never the
+        # interp/jit one, which would misclassify a structural DFA refusal
+        # as `crashed`.
         handle = {"driver": drv, "pattern_file": patfile,
                   "jit": bool(cfg.get("jit")),
-                  "giveup_codes": set(GAVE_UP_CODES)}
+                  "dfa": bool(cfg.get("dfa")),
+                  "giveup_codes": set(GAVE_UP_CODES_DFA if cfg.get("dfa")
+                                      else GAVE_UP_CODES)}
         return one(_ad.CompileResult(
             "compiled", phase_seconds=out.phase_seconds,
             engine_metadata=meta, handle=handle,
@@ -240,6 +317,8 @@ class Adapter(_ad.Adapter):
                 "--mode", REGIME_MODE[regime], "--iters", str(iters)]
         if handle["jit"]:
             argv.append("--jit")
+        if handle.get("dfa"):
+            argv.append("--dfa")
         if regime == "throughput":
             argv.append("--find-all")
         return per_trial(argv, subjects, trials, timeout=timeout,
