@@ -1,0 +1,36 @@
+Source: https://raw.githubusercontent.com/rust-lang/regex/master/testdata/leftmost-all.toml
+Retrieved: 2026-09-16T05:08:00Z (direct curl fetch, this lane, [B42] fam11)
+Note: the file's first test block ("alt"), quoted in full, verbatim -- the
+same rust-regex crate's own committed demonstration that 'foo|foobar'
+against "foobar" answers differently under match-kind=leftmost (the
+crate's normal, Perl-style leftmost-first mode: span [0,3], "foo") than
+under match-kind=all (this file's own declared mode: span [0,6], the whole
+haystack) -- this repo's oracle only runs the crate's normal mode, so this
+member's designed-subject pairing (members.tsv's adaptation-equivalent note)
+is what actually exercises the divergence once L3 builds the set.
+---
+[[test]]
+name = "alt"
+regex = 'foo|foobar'
+haystack = "foobar"
+matches = [[0, 6]]
+match-kind = "all"
+search-kind = "leftmost"
+
+[[test]]
+name = "multi"
+regex = ['foo', 'foobar']
+haystack = "foobar"
+matches = [
+  { id = 1, span = [0, 6] },
+]
+match-kind = "all"
+search-kind = "leftmost"
+
+[[test]]
+name = "dotall"
+regex = '(?s:.)'
+haystack = "foobar"
+matches = [[5, 6]]
+match-kind = "all"
+search-kind = "leftmost"

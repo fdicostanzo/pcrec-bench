@@ -1,9 +1,24 @@
-# bench/capability/curation/wild/ — L1's delivery: families 1-6's wild members
+# bench/capability/curation/wild/ — L1's delivery + the family-11 follow-up
 
-Twenty-six wild candidate members for the capability survey set's six
-"wild" families (`wild-validator`, `wild-logparse`, `wild-waf`,
-`wild-secrets`, `wild-datetime`, `wild-codegrammar`;
-`docs/design/capability_set_v1.md` §3.1). This is NOT the sub-bench —
+Twenty-nine wild candidate members: L1's original twenty-six for the
+capability survey set's six "wild" families (`wild-validator`,
+`wild-logparse`, `wild-waf`, `wild-secrets`, `wild-datetime`,
+`wild-codegrammar`; `docs/design/capability_set_v1.md` §3.1), plus a
+2026-09-16 follow-up lane's three `semantics-divergence` (family 11)
+members — `wild-semdiv-empty-alt-repeat-pcre2`,
+`wild-semdiv-dollar-trailing-newline-pcre2` (both from PCRE2's
+`testdata/testinput1`) and `wild-semdiv-altorder-foo-foobar-rustregex`
+(from rust-lang/regex's `testdata/leftmost-all.toml`) — which close the
+gap between L1 (scoped to families 1-6) and L2 (which delivered 3 of
+family 11's 6-member target as DESIGNED members, all in the
+alternation-order sub-mechanism; these three cover the family's other
+two named mechanisms, empty-match-in-repeat and `$`-before-a-final-
+newline, plus a genuine wild alternation-order case closing the
+`rust-lang/regex testdata/ ... OWED for specific cases` line in
+`docs/design/capability_set_v1.md` Appendix A). See
+`docs/dev/lanes/b42fam11_report.md` for the fetch/verification detail
+and one flagged discrepancy against the design note's own prior
+research citations. This is NOT the sub-bench —
 there is no manifest, no oracle expectation, no `pattern_id` collision
 check against a live `patterns.rxt` yet. L3 selects from and builds on
 this table; it does not have to take every row.
@@ -35,8 +50,8 @@ Tab-separated, one header row, one row per candidate member:
 | `pattern_text` | the pattern, inline, for every row except the two `text_location != inline` rows (empty there) |
 
 No row's pattern text contains a literal tab or newline byte — checked
-at generation time (an assertion, not a hand audit) — which is why 24 of
-26 rows are inline rather than sidecar files. The two VS Code entries
+at generation time (an assertion, not a hand audit) — which is why 27 of
+29 rows are inline rather than sidecar files. The two VS Code entries
 (`wild-codegrammar-json-number-extended`,
 `wild-codegrammar-json-stringcontent-escape`) are genuinely multi-line
 `(?x)` bodies with their own inline comments and are kept multi-line in
@@ -65,6 +80,16 @@ the VS Code grammar's five imported JSON entries). `date.txt`'s own
 excerpt is a fetch-provenance note only — that member IS the whole
 6,348-byte file, already carried in full in `members.tsv`'s
 `pattern_text` column, not duplicated in `fetches/`.
+
+The 2026-09-16 family-11 follow-up added four more: `pcre2-LICENCE.txt`
+(the full fetched licence, incl. its own statement that `testdata/` is
+public domain — a stronger status than the row-level `license` field
+this project's Appendix A phrasing states, flagged rather than silently
+upgraded), `pcre2-testinput1-excerpt.txt` (the two quoted test blocks by
+line number, plus a note on citations from the design note's own prior
+research that this fetch could NOT verify — see the lane report),
+`rust-regex-LICENSE-MIT.txt` and `rust-regex-leftmost-all-excerpt.txt`
+(the file's own committed leftmost-vs-all divergence demonstration).
 
 Every quoted line/rule/JSON value in `members.tsv` and `patterns/` was
 either read straight out of a parsed source file (grok's dict lookup,
