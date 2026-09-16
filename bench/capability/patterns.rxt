@@ -1,0 +1,840 @@
+description |
+  bench/capability@0.1 -- the capability survey set
+  ([B42]). Sixty-four patterns in twelve capability/
+  provenance families plus the floor, BUILT ON this
+  format as its pattern source of truth. See
+  docs/design/capability_set_v1.md and
+  bench/capability/NOTES.md.
+
+oracle pcre2
+vocabulary family wild-validator wild-logparse wild-waf wild-secrets wild-datetime wild-codegrammar cap-backref cap-lookaround cap-recursion redos-nested semantics-divergence binary-nonutf8 floor
+vocabulary hazard none exponential-backtracking ambiguous-decomposition
+vocabulary requires backrefs lookaround lookbehind-variable possessive-quantifier atomic-group recursion conditionals k-reset control-verbs unicode-properties named-groups free-spacing callouts span-reporting non-utf8-subject captures true-end-anchor
+vocabulary convention perl-leftmost-first posix-leftmost-longest
+tag set=capability, version=0.1
+ext bench
+  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in
+  capabilities pcre2-interp
+    backrefs
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    control-verbs
+    unicode-properties
+    named-groups
+    free-spacing
+    callouts
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcre2-jit
+    backrefs
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    control-verbs
+    unicode-properties
+    named-groups
+    free-spacing
+    callouts
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcrec-auto
+    backrefs
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    control-verbs
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcrec-nocaps
+    backrefs
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    control-verbs
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    true-end-anchor
+  capabilities pcrec-vm
+    backrefs
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    control-verbs
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcrec-vm-in
+    backrefs
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    control-verbs
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+
+pattern ^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$
+name ipv4-near-miss
+tag family=wild-validator, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    the classic "\d{1,3} per octet" IPv4 regex gotcha, documented across regex-validator writeups; the family's own stress mechanism, verbatim: "class-heavy, anchored, alternation-of-ranges" (capability_set_v1.md §3.1 family 1)
+
+pattern ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$
+name uuid-near-miss
+tag family=wild-validator, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    RFC 4122 §4.1.3 (the UUID version/variant nibble constraint); pairs against L1's imported grok UUID pattern named in capability_set_v1.md §3.1 family 1
+
+pattern ^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$
+name wild-validator-email-owasp
+tag family=wild-validator, hazard=none
+provenance
+  source owasp-validation
+  url https://community.owasp.org/OWASP_Validation_Regex_Repository
+  ref regex[name=e-mail]/pattern
+  retrieved 2026-09-16
+  license CC-BY-SA-4.0
+  fidelity verbatim
+  attribution OWASP Validation Regex Repository (community.owasp.org), CC BY-SA 4.0
+
+pattern ^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+name wild-validator-ipv4-owasp
+tag family=wild-validator, hazard=none
+provenance
+  source owasp-validation
+  url https://community.owasp.org/OWASP_Validation_Regex_Repository
+  ref regex[name=IP]/pattern
+  retrieved 2026-09-16
+  license CC-BY-SA-4.0
+  fidelity verbatim
+  attribution OWASP Validation Regex Repository (community.owasp.org), CC BY-SA 4.0
+
+pattern ^\d{5}(-\d{4})?$
+name wild-validator-us-zip-owasp
+tag family=wild-validator, hazard=none
+provenance
+  source owasp-validation
+  url https://community.owasp.org/OWASP_Validation_Regex_Repository
+  ref regex[name=US_zip]/pattern
+  retrieved 2026-09-16
+  license CC-BY-SA-4.0
+  fidelity verbatim
+  attribution OWASP Validation Regex Repository (community.owasp.org), CC BY-SA 4.0
+
+pattern [A-Fa-f0-9]{8}-(?:[A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}
+name wild-validator-uuid-grok
+tag family=wild-validator, hazard=none
+provenance
+  source grok
+  url https://raw.githubusercontent.com/logstash-plugins/logstash-patterns-core/main/patterns/legacy/grok-patterns
+  ref grok-patterns:19 (UUID)
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity verbatim
+
+pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+name base10num-near-miss
+tag family=wild-logparse, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    the JSON-number grammar's leading-zero/bare-sign strictness (RFC 8259 §6); pairs against L1's imported grok BASE10NUM pattern named in capability_set_v1.md §3.1 family 1
+
+pattern ^(?>(?:kern|user|mail|daemon|auth|syslog|cron)\.(?:emerg|alert|crit|err|warning|notice|info|debug)): (.*)$
+name logparse-atomic
+tag family=wild-logparse, hazard=exponential-backtracking, requires=atomic-group
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on grok's own SYSLOGFACILITY-style facility.severity tag matching (the family's cited wild source is grok's log macros, capability_set_v1.md §3.1 family 2); the atomic wrap follows the family's own stress-mechanism text verbatim: "atomic groups the ORIGINAL author added to fight backtracking"
+
+pattern ^(?:(?:kern|user|mail|daemon|auth|syslog|cron)\.(?:emerg|alert|crit|err|warning|notice|info|debug)): (.*)$
+name logparse-atomic-removed
+tag family=wild-logparse, hazard=exponential-backtracking
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    the family's own designed-member spec verbatim: "the same pattern with the atomic groups REMOVED -- the author's own fix as a control pair" (capability_set_v1.md §3.1 family 2)
+
+pattern (?<![0-9.+-])(?>[+-]?(?:(?:[0-9]+(?:\.[0-9]+)?)|(?:\.[0-9]+)))
+name wild-logparse-base10num-grok
+tag family=wild-logparse, hazard=exponential-backtracking, requires=atomic-group, requires=lookaround
+provenance
+  source grok
+  url https://raw.githubusercontent.com/logstash-plugins/logstash-patterns-core/main/patterns/legacy/grok-patterns
+  ref grok-patterns:6 (BASE10NUM)
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity verbatim
+
+pattern (?<![0-9.+-])(?:[+-]?(?:(?:[0-9]+(?:\.[0-9]+)?)|(?:\.[0-9]+)))
+name wild-logparse-base10num-noatomic
+tag family=wild-logparse, hazard=exponential-backtracking, requires=lookaround
+provenance
+  source grok
+  url https://raw.githubusercontent.com/logstash-plugins/logstash-patterns-core/main/patterns/legacy/grok-patterns
+  ref grok-patterns:6 (BASE10NUM)
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity adapted
+  adaptation |
+    every atomic group (?>...) in the verbatim BASE10NUM rewritten to a plain non-capturing group (?:...), the author's own construct removed and nothing else changed -- the pattern's own performance fix undone, as a control for the fidelity-preserving member
+
+pattern (?>(?<!\\)(?>"(?>\\.|[^\\"]+)+"|""|(?>'(?>\\.|[^\\']+)+')|''|(?>`(?>\\.|[^\\`]+)+`)|``))
+name wild-logparse-quotedstring-grok
+tag family=wild-logparse, hazard=exponential-backtracking, requires=atomic-group, requires=lookaround
+provenance
+  source grok
+  url https://raw.githubusercontent.com/logstash-plugins/logstash-patterns-core/main/patterns/legacy/grok-patterns
+  ref grok-patterns:18 (QUOTEDSTRING)
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity verbatim
+
+pattern (?:(?<!\\)(?:"(?:\\.|[^\\"]+)+"|""|(?:'(?:\\.|[^\\']+)+')|''|(?:`(?:\\.|[^\\`]+)+`)|``))
+name wild-logparse-quotedstring-noatomic
+tag family=wild-logparse, hazard=exponential-backtracking, requires=lookaround
+provenance
+  source grok
+  url https://raw.githubusercontent.com/logstash-plugins/logstash-patterns-core/main/patterns/legacy/grok-patterns
+  ref grok-patterns:18 (QUOTEDSTRING)
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity adapted
+  adaptation |
+    every atomic group (?>...) in the verbatim QUOTEDSTRING rewritten to a plain non-capturing group (?:...), the author's own construct removed and nothing else changed -- the pattern's own performance fix undone, as a control for the fidelity-preserving member
+
+pattern-esc "(?<timestamp>(?:\\b(?:[Jj]an(?:uary|uar)?|[Ff]eb(?:ruary|ruar)?|[Mm](?:a|\xc3\xa4)?r(?:ch|z)?|[Aa]pr(?:il)?|[Mm]a(?:y|i)?|[Jj]un(?:e|i)?|[Jj]ul(?:y|i)?|[Aa]ug(?:ust)?|[Ss]ep(?:tember)?|[Oo](?:c|k)?t(?:ober)?|[Nn]ov(?:ember)?|[Dd]e(?:c|z)(?:ember)?)\\b) +(?:(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])) (?:(?!<[0-9])(?:(?:2[0123]|[01]?[0-9])):(?:(?:[0-5][0-9]))(?::(?:(?:(?:[0-5]?[0-9]|60)(?:[:.,][0-9]+)?)))(?![0-9]))) (?:(?:<(?<facility>\\b(?:[0-9]+)\\b).(?<priority>\\b(?:[0-9]+)\\b)>) )?(?<logsource>(?:(?:(?:(?:(?:((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?)|(?:(?<![0-9])(?:(?:[0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])[.](?:[0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])[.](?:[0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])[.](?:[0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]))(?![0-9]))))|(?:\\b(?:[0-9A-Za-z][0-9A-Za-z-]{0,62})(?:\\.(?:[0-9A-Za-z][0-9A-Za-z-]{0,62}))*(\\.?|\\b))))) (?:(?<program>[\\x21-\\x5a\\x5c\\x5e-\\x7e]+)(?:\\[(?<pid>\\b(?:[1-9][0-9]*)\\b)\\])?):"
+name wild-logparse-syslogbase-expanded
+tag family=wild-logparse, hazard=exponential-backtracking, requires=lookaround, requires=named-groups
+provenance
+  source grok
+  url https://raw.githubusercontent.com/logstash-plugins/logstash-patterns-core/main/patterns/legacy/grok-patterns
+  ref grok-patterns:92 (SYSLOGBASE) + its own transitive %{...} macros (SYSLOGTIMESTAMP:81, SYSLOGFACILITY:85, SYSLOGHOST:84/IPORHOST:32/IP:30/IPV6:28/IPV4:29/HOSTNAME:31, SYSLOGPROG:83/PROG:82, MONTH:51, MONTHDAY:54, TIME:65/HOUR:61/MINUTE:62/SECOND:64, NONNEGINT:12, POSINT:11)
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity adapted
+  adaptation |
+    every %{NAME} and %{NAME:label} grok macro reference mechanically substituted, recursively, by the named pattern's own definition in the same file -- unlabelled to a plain non-capturing group (?:...), labelled to a named group (?<label>...), exactly grok's own compile step -- producing one self-contained pattern with no remaining %{...} references
+
+pattern (?>[A-Za-z]+:|\\)(?:\\[^\\?*]*)+
+name wild-logparse-winpath-grok
+tag family=wild-logparse, hazard=exponential-backtracking, requires=atomic-group
+provenance
+  source grok
+  url https://raw.githubusercontent.com/logstash-plugins/logstash-patterns-core/main/patterns/legacy/grok-patterns
+  ref grok-patterns:39 (WINPATH)
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity verbatim
+
+pattern ^[A-Za-z]:\\(?:[^<>:"/\\|?*]+\\)*[^<>:"/\\|?*]+$
+name winpath-near-miss
+tag family=wild-logparse, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    the Windows API's nine reserved filename characters (< > : " / \ | ? *); pairs against L1's imported grok WINPATH pattern named in capability_set_v1.md §3.1 family 1
+
+pattern (?i)\b(?:d(?:atabas|b_nam)e[^0-9A-Z_a-z]*\(|(?:information_schema|m(?:aster\.\.sysdatabases|s(?:db|ys(?:ac(?:cess(?:objects|storage|xml)|es)|modules2?|(?:object|querie|relationship)s))|ysql\.db)|northwind|pg_(?:catalog|toast)|tempdb)\b|s(?:chema(?:_name\b|[^0-9A-Z_a-z]*\()|(?:qlite_(?:temp_)?master|ys(?:aux|\.database_name))\b))
+name wild-waf-crs-942140-dbnames
+tag family=wild-waf, hazard=none
+provenance
+  source crs
+  url https://raw.githubusercontent.com/coreruleset/coreruleset/main/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf
+  ref REQUEST-942-APPLICATION-ATTACK-SQLI.conf#942140
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity verbatim
+
+pattern (?i:sleep\s*?\(.*?\)|benchmark\s*?\(.*?\,.*?\))
+name wild-waf-crs-942160-sleep-benchmark
+tag family=wild-waf, hazard=none
+provenance
+  source crs
+  url https://raw.githubusercontent.com/coreruleset/coreruleset/main/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf
+  ref REQUEST-942-APPLICATION-ATTACK-SQLI.conf#942160
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity verbatim
+
+pattern (?i)union.*?select.*?from
+name wild-waf-crs-942270-union-select
+tag family=wild-waf, hazard=none
+provenance
+  source crs
+  url https://raw.githubusercontent.com/coreruleset/coreruleset/main/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf
+  ref REQUEST-942-APPLICATION-ATTACK-SQLI.conf#942270
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity verbatim
+
+pattern (?i)\b(?:(?:alter|(?:(?:cre|trunc|upd)at|renam)e|de(?:lete|sc)|(?:inser|selec)t|load)[\s\x0b]+(?:char|group_concat|load_file)\b[\s\x0b]*\(?|end[\s\x0b]*?\);)|[\s\x0b\(]load_file[\s\x0b]*?\(|[\"'`][\s\x0b]+regexp[^0-9A-Z_a-z]|[\"'0-9A-Z_-z][\s\x0b]+as\b[\s\x0b]*[\"'0-9A-Z_-z]+[\s\x0b]*\bfrom|^(?:json\.)?[^A-Z_a-z]+[\s\x0b]*?(?:(?:(?:(?:cre|trunc)at|renam)e|d(?:e(?:lete|sc)|rop)|(?:inser|selec)t|load)[\s\x0b]+[0-9A-Z_a-z]+|u(?:pdate[\s\x0b]+[0-9A-Z_a-z]+|nion[\s\x0b]*(?:all|(?:sele|distin)ct)\b)|alter[\s\x0b]*(?:a(?:(?:ggregat|pplication[\s\x0b]*rol)e|s(?:sembl|ymmetric[\s\x0b]*ke)y|u(?:dit|thorization)|vailability[\s\x0b]*group)|b(?:roker[\s\x0b]*priority|ufferpool)|c(?:ertificate|luster|o(?:l(?:latio|um)|nversio)n|r(?:edential|yptographic[\s\x0b]*provider))|d(?:atabase|efault|i(?:mension|skgroup)|omain)|e(?:(?:ndpoi|ve)nt|xte(?:nsion|rnal))|f(?:lashback|oreign|u(?:lltext|nction))|hi(?:erarchy|stogram)|group|in(?:dex(?:type)?|memory|stance)|java|l(?:a(?:ngua|r)ge|ibrary|o(?:ckdown|g(?:file[\s\x0b]*group|in)))|m(?:a(?:s(?:k|ter[\s\x0b]*key)|terialized)|e(?:ssage[\s\x0b]*type|thod)|odule)|(?:nicknam|queu)e|o(?:perator|utline)|p(?:a(?:ckage|rtition)|ermission|ro(?:cedur|fil)e)|r(?:e(?:mot|sourc)e|o(?:l(?:e|lback)|ute))|s(?:chema|e(?:arch|curity|rv(?:er|ice)|quence|ssion)|y(?:mmetric[\s\x0b]*key|nonym)|togroup)|t(?:able(?:space)?|ext|hreshold|r(?:igger|usted)|ype)|us(?:age|er)|view|w(?:ork(?:load)?|rapper)|x(?:ml[\s\x0b]*schema|srobject))\b)
+name wild-waf-crs-942360-concat-sqli
+tag family=wild-waf, hazard=none
+provenance
+  source crs
+  url https://raw.githubusercontent.com/coreruleset/coreruleset/main/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf
+  ref REQUEST-942-APPLICATION-ATTACK-SQLI.conf#942360
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity verbatim
+
+pattern (?i)/\*[\s\x0b]*?[!\+](?:[\s\x0b\(\)\-0-9=A-Z_a-z]+)?\*/
+name wild-waf-crs-942500-comment-obfuscation
+tag family=wild-waf, hazard=none
+provenance
+  source crs
+  url https://raw.githubusercontent.com/coreruleset/coreruleset/main/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf
+  ref REQUEST-942-APPLICATION-ATTACK-SQLI.conf#942500
+  retrieved 2026-09-16
+  license Apache-2.0
+  fidelity verbatim
+
+pattern \b((?:A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16})\b
+name wild-secrets-aws-access-key-id
+tag family=wild-secrets, hazard=none
+provenance
+  source rebar-wild
+  url https://raw.githubusercontent.com/BurntSushi/rebar/master/benchmarks/regexes/wild/noseyparker.txt
+  ref noseyparker.txt:5
+  retrieved 2026-09-16
+  license Unlicense
+  fidelity verbatim
+
+pattern \b(github_pat_[0-9a-zA-Z_]{82})\b
+name wild-secrets-github-pat
+tag family=wild-secrets, hazard=none
+provenance
+  source rebar-wild
+  url https://raw.githubusercontent.com/BurntSushi/rebar/master/benchmarks/regexes/wild/noseyparker.txt
+  ref noseyparker.txt:31
+  retrieved 2026-09-16
+  license Unlicense
+  fidelity verbatim
+
+pattern (?i)https://hooks.slack.com/services/(T[a-z0-9_]{8}/B[a-z0-9_]{8,12}/[a-z0-9_]{24})
+name wild-secrets-slack-webhook-url
+tag family=wild-secrets, hazard=none
+provenance
+  source rebar-wild
+  url https://raw.githubusercontent.com/BurntSushi/rebar/master/benchmarks/regexes/wild/noseyparker.txt
+  ref noseyparker.txt:86
+  retrieved 2026-09-16
+  license Unlicense
+  fidelity verbatim
+
+pattern (?:username|USERNAME|user|USER)[ \t]*=[ \t]*["']([a-zA-Z0-9.@_\-+]{3,30})["']\s*[,;]?\s*(?:\s*(?:\#|//)[^\n\r]*[\n\r])*(?:password|pass|PASSWORD|PASS)[ \t]*=[ \t]*["']([^"']{5,30})["']
+name wild-secrets-username-password-pair
+tag family=wild-secrets, hazard=none
+provenance
+  source rebar-wild
+  url https://raw.githubusercontent.com/BurntSushi/rebar/master/benchmarks/regexes/wild/noseyparker.txt
+  ref noseyparker.txt:23
+  retrieved 2026-09-16
+  license Unlicense
+  fidelity verbatim
+
+pattern ((19\d\d01[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d01[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d02[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d02[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d03[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d03[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d04[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d04[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d05[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d05[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d06[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d06[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d07[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d07[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d08[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d08[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d09[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d09[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d10[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d10[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d11[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d11[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d12[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d12[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d01[0123]\d|20\d\d01[0123]\d|19\d\d02[0123]\d|20\d\d02[0123]\d|19\d\d03[0123]\d|20\d\d03[0123]\d|19\d\d04[0123]\d|20\d\d04[0123]\d|19\d\d05[0123]\d|20\d\d05[0123]\d|19\d\d06[0123]\d|20\d\d06[0123]\d|19\d\d07[0123]\d|20\d\d07[0123]\d|19\d\d08[0123]\d|20\d\d08[0123]\d|19\d\d09[0123]\d|20\d\d09[0123]\d|19\d\d10[0123]\d|20\d\d10[0123]\d|19\d\d11[0123]\d|20\d\d11[0123]\d|19\d\d12[0123]\d|20\d\d12[0123]\d|19\d\d01|20\d\d01|19\d\d02|20\d\d02|19\d\d03|20\d\d03|19\d\d04|20\d\d04|19\d\d05|20\d\d05|19\d\d06|20\d\d06|19\d\d07|20\d\d07|19\d\d08|20\d\d08|19\d\d09|20\d\d09|19\d\d10|20\d\d10|19\d\d11|20\d\d11|19\d\d12|20\d\d12|(-?(:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(?:[.,]+([0-9]+))?((?:Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9]))?)|((((\d{1,2}):(\d{1,2})(:(\d{1,2}))?([.,](\d{1,6}))?\s*(a.m.|am|p.m.|pm)?\s*(ACDT|ACST|ACT|ACWDT|ACWST|ADDT|ADMT|ADT|AEDT|AEST|AFT|AHDT|AHST|AKDT|AKST|AKTST|AKTT|ALMST|ALMT|AMST|AMT|ANAST|ANAT|ANT|APT|AQTST|AQTT|ARST|ART|ASHST|ASHT|AST|AWDT|AWST|AWT|AZOMT|AZOST|AZOT|AZST|AZT|BAKST|BAKT|BDST|BDT|BEAT|BEAUT|BIOT|BMT|BNT|BORT|BOST|BOT|BRST|BRT|BST|BTT|BURT|CANT|CAPT|CAST|CAT|CAWT|CCT|CDDT|CDT|CEDT|CEMT|CEST|CET|CGST|CGT|CHADT|CHAST|CHDT|CHOST|CHOT|CIST|CKHST|CKT|CLST|CLT|CMT|COST|COT|CPT|CST|CUT|CVST|CVT|CWT|CXT|ChST|DACT|DAVT|DDUT|DFT|DMT|DUSST|DUST|EASST|EAST|EAT|ECT|EDDT|EDT|EEDT|EEST|EET|EGST|EGT|EHDT|EMT|EPT|EST|ET|EWT|FET|FFMT|FJST|FJT|FKST|FKT|FMT|FNST|FNT|FORT|FRUST|FRUT|GALT|GAMT|GBGT|GEST|GET|GFT|GHST|GILT|GIT|GMT|GST|GYT|HAA|HAC|HADT|HAE|HAP|HAR|HAST|HAT|HAY|HDT|HKST|HKT|HLV|HMT|HNA|HNC|HNE|HNP|HNR|HNT|HNY|HOVST|HOVT|HST|ICT|IDDT|IDT|IHST|IMT|IOT|IRDT|IRKST|IRKT|IRST|ISST|IST|JAVT|JCST|JDT|JMT|JST|JWST|KART|KDT|KGST|KGT|KIZST|KIZT|KMT|KOST|KRAST|KRAT|KST|KUYST|KUYT|KWAT|LHDT|LHST|LINT|LKT|LMT|LMT|LMT|LMT|LRT|LST|MADMT|MADST|MADT|MAGST|MAGT|MALST|MALT|MART|MAWT|MDDT|MDST|MDT|MEST|MET|MHT|MIST|MIT|MMT|MOST|MOT|MPT|MSD|MSK|MSM|MST|MUST|MUT|MVT|MWT|MYT|NCST|NCT|NDDT|NDT|NEGT|NEST|NET|NFT|NMT|NOVST|NOVT|NPT|NRT|NST|NT|NUT|NWT|NZDT|NZMT|NZST|OMSST|OMST|ORAST|ORAT|PDDT|PDT|PEST|PET|PETST|PETT|PGT|PHOT|PHST|PHT|PKST|PKT|PLMT|PMDT|PMMT|PMST|PMT|PNT|PONT|PPMT|PPT|PST|PT|PWT|PYST|PYT|QMT|QYZST|QYZT|RET|RMT|ROTT|SAKST|SAKT|SAMT|SAST|SBT|SCT|SDMT|SDT|SET|SGT|SHEST|SHET|SJMT|SLT|SMT|SRET|SRT|SST|STAT|SVEST|SVET|SWAT|SYOT|TAHT|TASST|TAST|TBIST|TBIT|TBMT|TFT|THA|TJT|TKT|TLT|TMT|TOST|TOT|TRST|TRT|TSAT|TVT|ULAST|ULAT|URAST|URAT|UTC|UYHST|UYST|UYT|UZST|UZT|VET|VLAST|VLAT|VOLST|VOLT|VOST|VUST|VUT|WARST|WART|WAST|WAT|WDT|WEDT|WEMT|WEST|WET|WFT|WGST|WGT|WIB|WIT|WITA|WMT|WSDT|WSST|WST|WT|XJT|YAKST|YAKT|YAPT|YDDT|YDT|YEKST|YEKST|YEKT|YEKT|YERST|YERT|YPT|YST|YWT|zzz|pacific|eastern|mountain|central)?)|((\d{1,2})\s*(a.m.|am|p.m.|pm)\s*(ACDT|ACST|ACT|ACWDT|ACWST|ADDT|ADMT|ADT|AEDT|AEST|AFT|AHDT|AHST|AKDT|AKST|AKTST|AKTT|ALMST|ALMT|AMST|AMT|ANAST|ANAT|ANT|APT|AQTST|AQTT|ARST|ART|ASHST|ASHT|AST|AWDT|AWST|AWT|AZOMT|AZOST|AZOT|AZST|AZT|BAKST|BAKT|BDST|BDT|BEAT|BEAUT|BIOT|BMT|BNT|BORT|BOST|BOT|BRST|BRT|BST|BTT|BURT|CANT|CAPT|CAST|CAT|CAWT|CCT|CDDT|CDT|CEDT|CEMT|CEST|CET|CGST|CGT|CHADT|CHAST|CHDT|CHOST|CHOT|CIST|CKHST|CKT|CLST|CLT|CMT|COST|COT|CPT|CST|CUT|CVST|CVT|CWT|CXT|ChST|DACT|DAVT|DDUT|DFT|DMT|DUSST|DUST|EASST|EAST|EAT|ECT|EDDT|EDT|EEDT|EEST|EET|EGST|EGT|EHDT|EMT|EPT|EST|ET|EWT|FET|FFMT|FJST|FJT|FKST|FKT|FMT|FNST|FNT|FORT|FRUST|FRUT|GALT|GAMT|GBGT|GEST|GET|GFT|GHST|GILT|GIT|GMT|GST|GYT|HAA|HAC|HADT|HAE|HAP|HAR|HAST|HAT|HAY|HDT|HKST|HKT|HLV|HMT|HNA|HNC|HNE|HNP|HNR|HNT|HNY|HOVST|HOVT|HST|ICT|IDDT|IDT|IHST|IMT|IOT|IRDT|IRKST|IRKT|IRST|ISST|IST|JAVT|JCST|JDT|JMT|JST|JWST|KART|KDT|KGST|KGT|KIZST|KIZT|KMT|KOST|KRAST|KRAT|KST|KUYST|KUYT|KWAT|LHDT|LHST|LINT|LKT|LMT|LMT|LMT|LMT|LRT|LST|MADMT|MADST|MADT|MAGST|MAGT|MALST|MALT|MART|MAWT|MDDT|MDST|MDT|MEST|MET|MHT|MIST|MIT|MMT|MOST|MOT|MPT|MSD|MSK|MSM|MST|MUST|MUT|MVT|MWT|MYT|NCST|NCT|NDDT|NDT|NEGT|NEST|NET|NFT|NMT|NOVST|NOVT|NPT|NRT|NST|NT|NUT|NWT|NZDT|NZMT|NZST|OMSST|OMST|ORAST|ORAT|PDDT|PDT|PEST|PET|PETST|PETT|PGT|PHOT|PHST|PHT|PKST|PKT|PLMT|PMDT|PMMT|PMST|PMT|PNT|PONT|PPMT|PPT|PST|PT|PWT|PYST|PYT|QMT|QYZST|QYZT|RET|RMT|ROTT|SAKST|SAKT|SAMT|SAST|SBT|SCT|SDMT|SDT|SET|SGT|SHEST|SHET|SJMT|SLT|SMT|SRET|SRT|SST|STAT|SVEST|SVET|SWAT|SYOT|TAHT|TASST|TAST|TBIST|TBIT|TBMT|TFT|THA|TJT|TKT|TLT|TMT|TOST|TOT|TRST|TRT|TSAT|TVT|ULAST|ULAT|URAST|URAT|UTC|UYHST|UYST|UYT|UZST|UZT|VET|VLAST|VLAT|VOLST|VOLT|VOST|VUST|VUT|WARST|WART|WAST|WAT|WDT|WEDT|WEMT|WEST|WET|WFT|WGST|WGT|WIB|WIT|WITA|WMT|WSDT|WSST|WST|WT|XJT|YAKST|YAKT|YAPT|YDDT|YDT|YEKST|YEKST|YEKT|YEKT|YERST|YERT|YPT|YST|YWT|zzz|pacific|eastern|mountain|central)*))|(19\d\d|20\d\d)|(first|second|third|fourth|fifth|sixth|seventh|eighth|nineth|tenth)|(\d+)(st|th|rd|nd)?|(monday|tuesday|wednesday|thursday|friday|saturday|sunday|mandag|tirsdag|onsdag|torsdag|fredag|lordag|sondag|mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun|man|tir|tirs|ons|tor|tors|fre|lor|son)|(january|february|march|april|may|june|july|august|september|october|november|december|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|januar|februar|marts|april|maj|juni|juli|august|september|oktober|november|december|jan[.\s]|ene[.\s]|feb[.\s]|mar[.\s]|apr[.\s]|abr[.\s]|may[.\s]|maj[.\s]|jun[.\s]|jul[.\s]|aug[.\s]|ago[.\s]|sep[^A-Za-z]|sept[.\s]|oct[.\s]|okt[.\s]|nov[.\s]|dec[.\s]|dic[.\s])|([/:\-,.\s_+@]+)|(next|last)|(due|by|on|during|standard|daylight|savings|time|date|dated|of|to|through|between|until|at|day)){1,1})
+name wild-datetime-datefinder-alternation
+tag family=wild-datetime, hazard=ambiguous-decomposition
+provenance
+  source rebar-wild
+  url https://raw.githubusercontent.com/BurntSushi/rebar/master/benchmarks/regexes/wild/date.txt
+  ref date.txt (whole file: datefinder's production pattern)
+  retrieved 2026-09-16
+  license Unlicense
+  fidelity verbatim
+
+pattern ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$
+name wild-datetime-moment-iso8601
+tag family=wild-datetime, hazard=ambiguous-decomposition
+provenance
+  source moment-js
+  url https://raw.githubusercontent.com/moment/moment/develop/src/lib/create/from-string.js
+  ref src/lib/create/from-string.js:12 (extendedIsoRegex)
+  retrieved 2026-09-16
+  license MIT
+  license-note |
+    NEW SLUG -- 'moment-js' is not in section 4.1's pre-registered source_name enum (owasp-validation/grok/crs/rebar-wild/pcre2-testdata/rust-regex-testdata/oniguruma-test/re2-bench/vscode-json-grammar/cve/authored); moment.js was not on N1's shortlist and this second wild-datetime member needed a genuine second wild source (rebar's date.txt supplies only one). Using 'authored' here would be wrong -- the text is verbatim-imported, not ours. Flagged for L3/Frank to register the slug rather than silently overload 'authored'.
+  fidelity verbatim
+
+pattern ([^\\]+)"\s*:\s*
+name codegrammar-flat
+tag family=wild-codegrammar, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    the family's own designed-member spec verbatim: "one flattened (?x) twin" (capability_set_v1.md §3.1 family 6)
+
+pattern-esc "(?x)\n  \"                     # opening quote\n  (?<key> [^\"\\\\]+ )     # the key text (no escape handling, kept simple)\n  \"\n  \\s* : \\s*             # colon separator, optional surrounding whitespace\n"
+name codegrammar-xflag
+tag family=wild-codegrammar, hazard=none, requires=free-spacing
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on VS Code's JSON.tmLanguage.json free-spacing token patterns, the family's cited wild source (capability_set_v1.md §3.1 family 6); a small per-token editor-grammar shape (an object key followed by its colon), the family's own stress-mechanism text
+
+pattern \[
+name wild-codegrammar-json-array-begin
+tag family=wild-codegrammar, hazard=none
+provenance
+  source vscode-json-grammar
+  url https://raw.githubusercontent.com/microsoft/vscode/main/extensions/json/syntaxes/JSON.tmLanguage.json
+  ref repository.array.begin
+  retrieved 2026-09-16
+  license MIT
+  fidelity verbatim
+
+pattern \b(?:true|false|null)\b
+name wild-codegrammar-json-constant
+tag family=wild-codegrammar, hazard=none
+provenance
+  source vscode-json-grammar
+  url https://raw.githubusercontent.com/microsoft/vscode/main/extensions/json/syntaxes/JSON.tmLanguage.json
+  ref repository.constant.match
+  retrieved 2026-09-16
+  license MIT
+  fidelity verbatim
+
+pattern-esc "(?x)        # turn on extended mode\n  -?        # an optional minus\n  (?:\n    0       # a zero\n    |       # ...or...\n    [1-9]   # a 1-9 character\n    \\d*     # followed by zero or more digits\n  )\n  (?:\n    (?:\n      \\.    # a period\n      \\d+   # followed by one or more digits\n    )?\n    (?:\n      [eE]  # an e character\n      [+-]? # followed by an option +/-\n      \\d+   # followed by one or more digits\n    )?      # make exponent optional\n  )?        # make decimal portion optional"
+name wild-codegrammar-json-number-extended
+tag family=wild-codegrammar, hazard=none, requires=free-spacing
+provenance
+  source vscode-json-grammar
+  url https://raw.githubusercontent.com/microsoft/vscode/main/extensions/json/syntaxes/JSON.tmLanguage.json
+  ref repository.number.match
+  retrieved 2026-09-16
+  license MIT
+  fidelity verbatim
+
+pattern \{
+name wild-codegrammar-json-object-begin
+tag family=wild-codegrammar, hazard=none
+provenance
+  source vscode-json-grammar
+  url https://raw.githubusercontent.com/microsoft/vscode/main/extensions/json/syntaxes/JSON.tmLanguage.json
+  ref repository.object.begin
+  retrieved 2026-09-16
+  license MIT
+  fidelity verbatim
+
+pattern-esc "(?x)                # turn on extended mode\n  \\\\                # a literal backslash\n  (?:               # ...followed by...\n    [\"\\\\/bfnrt]     # one of these characters\n    |               # ...or...\n    u               # a u\n    [0-9a-fA-F]{4}) # and four hex digits"
+name wild-codegrammar-json-stringcontent-escape
+tag family=wild-codegrammar, hazard=none, requires=free-spacing
+provenance
+  source vscode-json-grammar
+  url https://raw.githubusercontent.com/microsoft/vscode/main/extensions/json/syntaxes/JSON.tmLanguage.json
+  ref repository.stringcontent.patterns[0].match
+  retrieved 2026-09-16
+  license MIT
+  fidelity verbatim
+
+pattern \b(\w+)\b\s+\1\b
+name doubled-word
+tag family=cap-backref, hazard=none, requires=backrefs
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on the doubled-word idiom used by real prose linters (e.g. Vale, proselint-style checks), a standard backreference use in deployed tooling
+
+pattern \b(\w+)=[^&]*&(?:[^&]*&)*\1=
+name dup-param-detect
+tag family=cap-backref, hazard=none, requires=backrefs
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on HTTP Parameter Pollution defensive checks (a documented web-security testing/WAF technique: flag a query string that repeats the same key), a real deployed security idiom
+
+pattern (\d)(\d)(\d)\3\2\1
+name phone-palindrome-6
+tag family=cap-backref, hazard=none, requires=backrefs
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on vanity/palindrome phone-number finder tools -- a documented real service class: businesses market and search listings for memorable palindrome phone numbers
+
+pattern (["'])(?:(?!\1)[^\\]|\\.)*\1
+name quoted-delim-match
+tag family=cap-backref, hazard=none, requires=backrefs
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on quoted-string tokenizing (matching single- or double-quoted strings where the closing delimiter must equal the opening one), a ubiquitous lexer/tokenizer idiom
+
+pattern <([a-zA-Z][\w:-]*)(?:\s[^>]*)?>.*?</\1\s*>
+name tag-pair-match
+tag family=cap-backref, hazard=none, requires=backrefs
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on open/close tag matching in simple HTML/template sanitizers and linters, a very common deployed backreference idiom
+
+pattern (?<=\$)\d+(?:\.\d{2})?\b
+name currency-lookbehind-fixed
+tag family=cap-lookaround, hazard=none, requires=lookaround
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on invoice/financial-text extraction tools that pull a dollar amount only when immediately preceded by the currency symbol, a fixed-width lookbehind (one character) in real deployed use
+
+pattern ^(?!.*\.\.)[A-Za-z0-9.]+(?=@)
+name email-local-nodup
+tag family=cap-lookaround, hazard=none, requires=lookaround
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on RFC 5321 §4.1.2's prohibition on consecutive dots in an email local-part, a check real email validators implement with a negative lookahead
+
+pattern (?<![\d.])\d+\.\d+(?![\d.])
+name float-literal-bound
+tag family=cap-lookaround, hazard=none, requires=lookaround
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on standalone-numeric-literal boundary detection in code formatters/linters (a real need: extracting a float literal without also matching inside a longer dotted/versioned token)
+
+pattern (?<!\bnot\s{1,3}(?:\w{1,12}\s{1,3}){0,3})\bavailable\b
+name negation-scope-lookbehind-var
+tag family=cap-lookaround, hazard=none, requires=lookaround, requires=lookbehind-variable
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on sentiment/content-moderation tooling that must not flag a word when a short negation phrase ("not ... available") precedes it within a few words -- a documented technique, and a known engine-capability line since it needs a variable-width lookbehind
+
+pattern ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$
+name pwd-strength-chain
+tag family=cap-lookaround, hazard=none, requires=lookaround
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    the single most widely deployed chained-lookahead idiom on the public web: password-strength validators requiring lowercase, uppercase, digit and symbol
+
+pattern \((?:[^()]|(?R))*\)
+name balanced-parens-rec
+tag family=cap-recursion, hazard=none, requires=recursion
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on balanced-parenthesis validation in formula/config-expression validators, the best-known real deployed use of PCRE-style whole-pattern recursion (?R)
+
+pattern-esc "(?x)\n(?(DEFINE)\n  (?<brackets>\n    \\[\n      (?: [^\\[\\]] | (?&brackets) )*\n    \\]\n  )\n)\n^ (?&brackets) $\n"
+name bracket-array-define
+tag family=cap-recursion, hazard=none, requires=recursion, requires=free-spacing
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on the (?(DEFINE)...) named-subroutine idiom used for readability in real, deployed complex validators (bracket/array balance via a named recursive group rather than bare (?R)), a documented production technique
+
+pattern (/\*(?:[^*/]|\*(?!/)|/(?!\*)|(?1))*\*/)
+name nested-comment-rec
+tag family=cap-recursion, hazard=none, requires=recursion
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on nested block-comment matching in languages that permit it (Rust's /* /* */ */ nesting is the clearest real case), a genuine syntax-highlighter/linter need for subroutine-call recursion (?1)
+
+pattern <(\w+)>(?:[^<]|<(\w+)>(?:[^<]|<(\w+)>[^<]*</\3>)*</\2>)*</\1>
+name tag-depth3-bound
+tag family=cap-recursion, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on security-conscious HTML/XML sanitizers that deliberately bound nesting depth (here, 3 levels) explicitly rather than use unbounded (?R)/(?1) recursion, a documented defensive practice against unbounded-recursion DoS/stack exhaustion
+
+pattern ^(([0-9]+[-/])+)+$
+name date-nested-plus
+tag family=redos-nested, hazard=exponential-backtracking
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on the date-parsing ReDoS class documented in moment.js's CVE-2017-18214 and CVE-2022-31129 advisories (ambiguous nested optional-group repetition over a delimited numeric token)
+
+pattern ^([a-zA-Z0-9._%+-]+)+@
+name email-nested-plus
+tag family=redos-nested, hazard=exponential-backtracking
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on a documented ReDoS advisory in Kubeflow's email-validation regex, which used exactly this nested-quantifier shape ((charclass+)+@) over the local-part before the @
+
+pattern ^(([a-z]+)*)+$
+name evil-alt-nested
+tag family=redos-nested, hazard=exponential-backtracking
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    the canonical "evil regex" cited throughout the public ReDoS literature (e.g. OWASP's ReDoS material): nested repetition over an inner alternation/group with no distinguishing anchor between iterations
+
+pattern ^(\d+)+$
+name numeric-id-nested-plus
+tag family=redos-nested, hazard=exponential-backtracking
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on the numeric-ID validator ReDoS shape catalogued in engn33r/awesome-redos-security (the family's own cited CVE index, capability_set_v1.md §3.1 family 10) -- a nested + over a +-quantified digit class
+
+pattern ^(\d+\s*)+$
+name phone-list-nested-plus
+tag family=redos-nested, hazard=exponential-backtracking
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on phone-number/number-list validator ReDoS reports catalogued in the same awesome-redos-security CVE index
+
+pattern ^(\s+)*$
+name trim-nested-star
+tag family=redos-nested, hazard=exponential-backtracking
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on CVE-2022-25927 (ua-parser-js): a trim()-style trailing-whitespace regex vulnerable to catastrophic backtracking via a redundant nested quantifier over \s
+
+pattern \.tar|\.tar\.gz
+name file-ext-order
+tag family=semantics-divergence, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on a documented real bug class in build-tool file-extension matchers: listing .tar before .tar.gz means a leftmost-first engine reports the shorter suffix on "archive.tar.gz"
+
+pattern in|instanceof
+name keyword-prefix-order
+tag family=semantics-divergence, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on the classic hand-rolled-lexer keyword/identifier prefix ambiguity (matching the keyword "in" before "instanceof" was a documented real bug class before lexers moved to longest-match tables)
+
+pattern /user|/users
+name router-prefix-order
+tag family=semantics-divergence, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on a documented real bug class in hand-rolled URL routers: a route table ordered /user before /users matches the shorter route first under leftmost-first semantics even when the longer route is the intended match on "/users"
+
+pattern foo|foobar
+name wild-semdiv-altorder-foo-foobar-rustregex
+tag family=semantics-divergence, hazard=none
+provenance
+  source rust-regex-testdata
+  url https://raw.githubusercontent.com/rust-lang/regex/master/testdata/leftmost-all.toml
+  ref testdata/leftmost-all.toml, test "alt" (regex/haystack/matches/match-kind lines)
+  retrieved 2026-09-16
+  license MIT
+  license-note |
+    closes Appendix A's family-11 rust-regex 'OWED for specific cases' line -- L1's fetch was a directory listing only. This quotes testdata/leftmost-all.toml (testdata/ root), not the fowler/ subdirectory by name: this session also fetched fowler/basic.toml and fowler/nullsubexpr.toml and found real alternation-order patterns there (e.g. "ab|a") but none demonstrably diverges in the regenerated TOML's own recorded answer -- the regenerated Fowler files carry only the crate's resolved leftmost-first answer, not a second POSIX-longest answer inline. leftmost-all.toml is rust-regex's own committed, MIT-licensed demonstration that the SAME pattern answers differently under match-kind=leftmost (crate default: span [0,3], "foo") vs match-kind=all (this file's own declared mode: span [0,6], "foobar") -- the actual mechanism family 11 names, on a real file the crate ships and tests against, not synthesized
+  fidelity verbatim
+
+pattern abc$
+name wild-semdiv-dollar-trailing-newline-pcre2
+tag family=semantics-divergence, hazard=none
+provenance
+  source pcre2-testdata
+  url https://raw.githubusercontent.com/PCRE2Project/pcre2/master/testdata/testinput1
+  ref testinput1:1463 (matches "abc" and "abc\n"; "Expect no match" against "abc\ndef", testinput1:1466-1467)
+  retrieved 2026-09-16
+  license BSD-3-Clause WITH PCRE2-exception
+  license-note |
+    same public-domain-testdata note as wild-semdiv-empty-alt-repeat-pcre2; not repeated in full here
+  fidelity verbatim
+
+pattern (a|)*\d
+name wild-semdiv-empty-alt-repeat-pcre2
+tag family=semantics-divergence, hazard=none
+provenance
+  source pcre2-testdata
+  url https://raw.githubusercontent.com/PCRE2Project/pcre2/master/testdata/testinput1
+  ref testinput1:4027 ((a|)*\d against 60 a's + a digit; "Expect no match" against 60 a's alone, testinput1:4029-4030)
+  retrieved 2026-09-16
+  license BSD-3-Clause WITH PCRE2-exception
+  license-note |
+    PCRE2's own LICENCE.md (fetched) states testdata/ is not copyrighted and is public domain -- a STRONGER status than this row's stated licence, which matches Appendix A's family-11 phrasing rather than upgrading it unilaterally; flagged for L3/Frank
+  fidelity verbatim
+
+pattern [\x80-\xff]{2,4}
+name high-byte-run
+tag family=binary-nonutf8, hazard=none, requires=non-utf8-subject
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on legacy-encoding / mixed-encoding log-cleanup tools that scan raw bytes for runs of non-ASCII high bytes to flag encoding problems
+
+pattern-esc "\x93[\\x20-\\x7e]*\x94"
+name mojibake-curly-quote
+tag family=binary-nonutf8, hazard=none, requires=non-utf8-subject
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on "fix mojibake" / encoding-repair tools that scan raw legacy-Windows-1252 text for curly-quote byte pairs (0x93 ... 0x94) still present after a bad UTF-8 conversion -- a genuinely real, documented class of encoding-repair utility
+
+pattern [\xc2-\xdf](?![\x80-\xbf])
+name utf8-lead-no-cont
+tag family=binary-nonutf8, hazard=none, requires=non-utf8-subject
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    modeled on UTF-8 validators/sanitizers that flag a two-byte lead byte (0xC2-0xDF) not followed by a valid continuation byte -- a real, common malformed-UTF-8 detector shape
+
+pattern ~
+name floor-byte
+tag family=floor, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation |
+    requirements.md §5's per-call floor-pattern control, in bench/syntax's own idiom (that set uses `#`); this set's subject vocabulary skews log-line/HTTP/source-code/prose (captext.py, per capability_set_v1.md §3.4), where a bare tilde is rare

@@ -1,0 +1,5 @@
+(?x)
+  "                     # opening quote
+  (?<key> [^"\\]+ )     # the key text (no escape handling, kept simple)
+  "
+  \s* : \s*             # colon separator, optional surrounding whitespace

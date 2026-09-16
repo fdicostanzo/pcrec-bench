@@ -1,0 +1,706 @@
+# The capability survey set's SIDECAR (harness contract 2, requirements 5).
+# Fields only, no grammar, no directives, no includes -- [DD-13]'s territory
+# is deliberately untouched here, exactly as bench/syntax's own sidecar
+# states it (the pattern SOURCE lives in patterns.rxt, per Frank's Q3
+# ruling, docs/design/capability_set_v1.md 9; this file's `[[patterns]]`
+# array is DERIVED from gen_patterns.py's own table, which is itself
+# derived from patterns.rxt + curation/ -- `gen_patterns.py --sidecar`
+# prints it, `--check` compares it entry for entry).
+
+id = "capability"
+version = "0.1"
+objective_kind = "feature"
+objective = """\
+A CAPABILITY CONTRAST across the [B7] engine roster: what each engine can \
+EXPRESS, what it REFUSES, and what the expressible patterns COST -- over a \
+set built from real, deployed regex shapes wherever a permissive-licensed \
+source could be fetched (OWASP's validation repository and CRS ruleset, \
+Elastic's grok patterns, rebar's wild corpora, VS Code's JSON grammar, \
+PCRE2's and rust-regex's own test corpora) and authored fresh, held to the \
+SAME realism rule, where none exists (backreference, lookaround, \
+recursion, ReDoS and non-UTF-8 shapes a real author would plausibly write \
+for that purpose -- Frank's Q2 ruling, 2026-09-12: 'from the wild' is a \
+REALISM framing, not a ratio to hit). BUILT ON pcrec's `.rxt` format as \
+this set's pattern source of truth (Frank's Q3 ruling), the first \
+pcrec-bench set authored that way. See docs/design/capability_set_v1.md \
+and NOTES.md."""
+description = """\
+Sixty-four patterns (63 members + the floor) across twelve provenance/ \
+capability families: six WILD families built from imported, \
+provenance-tracked patterns (wild-validator, wild-logparse, wild-waf, \
+wild-secrets, wild-datetime, wild-codegrammar) and six \
+CAPABILITY/HAZARD families of designed members probing one closed \
+REQUIRES tag each (cap-backref, cap-lookaround, cap-recursion, \
+redos-nested, semantics-divergence, binary-nonutf8), plus the floor. \
+Every pattern carries a native `.rxt` `provenance` sub-block (source, \
+licence, fidelity, adaptation) and a `tag family=/hazard=/requires=` \
+classification; the source of truth is patterns.rxt (`--list-source` \
+clean), with patterns/*.rx a derived export the harness's current \
+(pre-.rxt-loader) `pcrecbench.subbench` reads. See NOTES.md for the \
+family table, the twin-pairing reconciliation, the outlier rule and the \
+predictions, all stated before any run."""
+
+# `search_short` + `throughput` ONLY, per Frank's own ruling recorded in
+# capability_set_v1.md 3.5: `match` (the whole-subject compliance regime)
+# is excluded set-wide in v1 -- pcrec's own lexical `(?:pattern)\z` wrapper
+# has three documented defects (a `(?R)` recursing into the wrapper, a
+# `(?x)` comment eating the close, `\K` unable to report a non-zero start)
+# that families 6 and 9 here would inherit directly, per the syntax
+# census's own first-sample finding this design note cites verbatim.
+regimes = ["search_short", "throughput"]
+
+[subjects]
+generator = "gen_subjects.py"
+manifest = "manifest.tsv"
+throughput_generator = "gen_throughput_subjects.py"
+throughput_manifest = "manifest_throughput.tsv"
+# Real-world pattern bodies (a CRS rule, a syslog line, a validator hit)
+# run longer than the syntax census's 2-14 B fields; 512 keeps every typed
+# short subject inside the band while staying well under altwide's own 512
+# precedent for a similar reason.
+short_search_max_bytes = 512
+
+[expectations]
+file = "expectations.tsv"
+default_method = "libpcre2-differential"
+
+[[patterns]]
+name = "ipv4-near-miss"
+file = "patterns/ipv4-near-miss.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-validator", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "uuid-near-miss"
+file = "patterns/uuid-near-miss.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-validator", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "wild-validator-email-owasp"
+file = "patterns/wild-validator-email-owasp.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-validator", "hazard-none", "provenance-owasp-validation", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-validator-ipv4-owasp"
+file = "patterns/wild-validator-ipv4-owasp.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-validator", "hazard-none", "provenance-owasp-validation", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-validator-us-zip-owasp"
+file = "patterns/wild-validator-us-zip-owasp.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-validator", "hazard-none", "provenance-owasp-validation", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-validator-uuid-grok"
+file = "patterns/wild-validator-uuid-grok.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-validator", "hazard-none", "provenance-grok", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "base10num-near-miss"
+file = "patterns/base10num-near-miss.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "logparse-atomic"
+file = "patterns/logparse-atomic.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized", "requires-atomic-group"]
+role = "member"
+
+[[patterns]]
+name = "logparse-atomic-removed"
+file = "patterns/logparse-atomic-removed.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "wild-logparse-base10num-grok"
+file = "patterns/wild-logparse-base10num-grok.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-exponential-backtracking", "provenance-grok", "fidelity-verbatim", "requires-atomic-group", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "wild-logparse-base10num-noatomic"
+file = "patterns/wild-logparse-base10num-noatomic.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-exponential-backtracking", "provenance-grok", "fidelity-adapted", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "wild-logparse-quotedstring-grok"
+file = "patterns/wild-logparse-quotedstring-grok.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-exponential-backtracking", "provenance-grok", "fidelity-verbatim", "requires-atomic-group", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "wild-logparse-quotedstring-noatomic"
+file = "patterns/wild-logparse-quotedstring-noatomic.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-exponential-backtracking", "provenance-grok", "fidelity-adapted", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "wild-logparse-syslogbase-expanded"
+file = "patterns/wild-logparse-syslogbase-expanded.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-exponential-backtracking", "provenance-grok", "fidelity-adapted", "requires-lookaround", "requires-named-groups"]
+role = "member"
+
+[[patterns]]
+name = "wild-logparse-winpath-grok"
+file = "patterns/wild-logparse-winpath-grok.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-exponential-backtracking", "provenance-grok", "fidelity-verbatim", "requires-atomic-group"]
+role = "member"
+
+[[patterns]]
+name = "winpath-near-miss"
+file = "patterns/winpath-near-miss.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "wild-waf-crs-942140-dbnames"
+file = "patterns/wild-waf-crs-942140-dbnames.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["family-wild-waf", "hazard-none", "provenance-crs", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-waf-crs-942160-sleep-benchmark"
+file = "patterns/wild-waf-crs-942160-sleep-benchmark.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-waf", "hazard-none", "provenance-crs", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-waf-crs-942270-union-select"
+file = "patterns/wild-waf-crs-942270-union-select.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-waf", "hazard-none", "provenance-crs", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-waf-crs-942360-concat-sqli"
+file = "patterns/wild-waf-crs-942360-concat-sqli.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["family-wild-waf", "hazard-none", "provenance-crs", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-waf-crs-942500-comment-obfuscation"
+file = "patterns/wild-waf-crs-942500-comment-obfuscation.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-waf", "hazard-none", "provenance-crs", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-secrets-aws-access-key-id"
+file = "patterns/wild-secrets-aws-access-key-id.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-secrets", "hazard-none", "provenance-rebar-wild", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-secrets-github-pat"
+file = "patterns/wild-secrets-github-pat.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-secrets", "hazard-none", "provenance-rebar-wild", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-secrets-slack-webhook-url"
+file = "patterns/wild-secrets-slack-webhook-url.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-secrets", "hazard-none", "provenance-rebar-wild", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-secrets-username-password-pair"
+file = "patterns/wild-secrets-username-password-pair.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-secrets", "hazard-none", "provenance-rebar-wild", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-datetime-datefinder-alternation"
+file = "patterns/wild-datetime-datefinder-alternation.rx"
+feature_tier = "base"
+hazard_class = "ambiguous-decomposition"
+size_class = "large"
+convention = "perl-leftmost-first"
+tags = ["family-wild-datetime", "hazard-ambiguous-decomposition", "provenance-rebar-wild", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-datetime-moment-iso8601"
+file = "patterns/wild-datetime-moment-iso8601.rx"
+feature_tier = "base"
+hazard_class = "ambiguous-decomposition"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-datetime", "hazard-ambiguous-decomposition", "provenance-moment-js", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "codegrammar-flat"
+file = "patterns/codegrammar-flat.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-codegrammar", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "codegrammar-xflag"
+file = "patterns/codegrammar-xflag.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-codegrammar", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-free-spacing"]
+role = "member"
+
+[[patterns]]
+name = "wild-codegrammar-json-array-begin"
+file = "patterns/wild-codegrammar-json-array-begin.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-wild-codegrammar", "hazard-none", "provenance-vscode-json-grammar", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-codegrammar-json-constant"
+file = "patterns/wild-codegrammar-json-constant.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-codegrammar", "hazard-none", "provenance-vscode-json-grammar", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-codegrammar-json-number-extended"
+file = "patterns/wild-codegrammar-json-number-extended.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["family-wild-codegrammar", "hazard-none", "provenance-vscode-json-grammar", "fidelity-verbatim", "requires-free-spacing"]
+role = "member"
+
+[[patterns]]
+name = "wild-codegrammar-json-object-begin"
+file = "patterns/wild-codegrammar-json-object-begin.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-wild-codegrammar", "hazard-none", "provenance-vscode-json-grammar", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-codegrammar-json-stringcontent-escape"
+file = "patterns/wild-codegrammar-json-stringcontent-escape.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["family-wild-codegrammar", "hazard-none", "provenance-vscode-json-grammar", "fidelity-verbatim", "requires-free-spacing"]
+role = "member"
+
+[[patterns]]
+name = "doubled-word"
+file = "patterns/doubled-word.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-backref", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-backrefs"]
+role = "member"
+
+[[patterns]]
+name = "dup-param-detect"
+file = "patterns/dup-param-detect.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-backref", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-backrefs"]
+role = "member"
+
+[[patterns]]
+name = "phone-palindrome-6"
+file = "patterns/phone-palindrome-6.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-backref", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-backrefs"]
+role = "member"
+
+[[patterns]]
+name = "quoted-delim-match"
+file = "patterns/quoted-delim-match.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-backref", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-backrefs"]
+role = "member"
+
+[[patterns]]
+name = "tag-pair-match"
+file = "patterns/tag-pair-match.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-backref", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-backrefs"]
+role = "member"
+
+[[patterns]]
+name = "currency-lookbehind-fixed"
+file = "patterns/currency-lookbehind-fixed.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-lookaround", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "email-local-nodup"
+file = "patterns/email-local-nodup.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-lookaround", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "float-literal-bound"
+file = "patterns/float-literal-bound.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-lookaround", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "negation-scope-lookbehind-var"
+file = "patterns/negation-scope-lookbehind-var.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-lookaround", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-lookaround", "requires-lookbehind-variable"]
+role = "member"
+
+[[patterns]]
+name = "pwd-strength-chain"
+file = "patterns/pwd-strength-chain.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-lookaround", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "balanced-parens-rec"
+file = "patterns/balanced-parens-rec.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-recursion", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-recursion"]
+role = "member"
+
+[[patterns]]
+name = "bracket-array-define"
+file = "patterns/bracket-array-define.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-recursion", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-recursion", "requires-free-spacing"]
+role = "member"
+
+[[patterns]]
+name = "nested-comment-rec"
+file = "patterns/nested-comment-rec.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-recursion", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-recursion"]
+role = "member"
+
+[[patterns]]
+name = "tag-depth3-bound"
+file = "patterns/tag-depth3-bound.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cap-recursion", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "date-nested-plus"
+file = "patterns/date-nested-plus.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-redos-nested", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "email-nested-plus"
+file = "patterns/email-nested-plus.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-redos-nested", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "evil-alt-nested"
+file = "patterns/evil-alt-nested.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-redos-nested", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "numeric-id-nested-plus"
+file = "patterns/numeric-id-nested-plus.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-redos-nested", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "phone-list-nested-plus"
+file = "patterns/phone-list-nested-plus.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-redos-nested", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "trim-nested-star"
+file = "patterns/trim-nested-star.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-redos-nested", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "file-ext-order"
+file = "patterns/file-ext-order.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-semantics-divergence", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "keyword-prefix-order"
+file = "patterns/keyword-prefix-order.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-semantics-divergence", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "router-prefix-order"
+file = "patterns/router-prefix-order.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-semantics-divergence", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "wild-semdiv-altorder-foo-foobar-rustregex"
+file = "patterns/wild-semdiv-altorder-foo-foobar-rustregex.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-semantics-divergence", "hazard-none", "provenance-rust-regex-testdata", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-semdiv-dollar-trailing-newline-pcre2"
+file = "patterns/wild-semdiv-dollar-trailing-newline-pcre2.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-semantics-divergence", "hazard-none", "provenance-pcre2-testdata", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-semdiv-empty-alt-repeat-pcre2"
+file = "patterns/wild-semdiv-empty-alt-repeat-pcre2.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-semantics-divergence", "hazard-none", "provenance-pcre2-testdata", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "high-byte-run"
+file = "patterns/high-byte-run.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-binary-nonutf8", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-non-utf8-subject"]
+role = "member"
+
+[[patterns]]
+name = "mojibake-curly-quote"
+file = "patterns/mojibake-curly-quote.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-binary-nonutf8", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-non-utf8-subject"]
+role = "member"
+
+[[patterns]]
+name = "utf8-lead-no-cont"
+file = "patterns/utf8-lead-no-cont.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-binary-nonutf8", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-non-utf8-subject"]
+role = "member"
+
+[[patterns]]
+name = "floor-byte"
+file = "patterns/floor-byte.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-floor", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "floor"
+
