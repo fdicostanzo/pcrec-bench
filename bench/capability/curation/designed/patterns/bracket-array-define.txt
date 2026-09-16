@@ -1,0 +1,9 @@
+(?x)
+(?(DEFINE)
+  (?<brackets>
+    \[
+      (?: [^\[\]] | (?&brackets) )*
+    \]
+  )
+)
+^ (?&brackets) $
