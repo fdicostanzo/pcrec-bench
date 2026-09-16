@@ -4269,3 +4269,16 @@ lifted), no syntax re-seed now, the first sample waiting on O-29.
 Recorded: §12's postscript block in capability_set_v1.md, the
 O-27/O-28/O-29 postscript in the outbox, the plan row. Zero rulings
 outstanding; the only blocker to the first sample is pcrec's O-29 fix.
+
+## 2026-09-16 (cont. 4) — the combined gate GREEN in one run
+
+The authoritative full `make check` on merged master (c2eb2a9 + the L5
+merge): 4/72/0 · 386/386 · check-report OK · check-interpret 132/132,
+rc=0, single un-stitched run (scratchpad/master_make_check2.log). This
+is the confirmation of record for the whole restart's merged state —
+the re-pin, the set, the loader + three gates, the capability
+machinery, and the two seam fixes, together. Harness check growth this
+session: 324 → 386. L6a (pcre2-dfa, lane b42dfa) opened on Frank's
+Q13 ratification; pcrecdev1 confirmed live that their O-29 fix lane is
+chartered (fix pin expected within hours as an inbox item, which also
+lifts the K57 caveat).
