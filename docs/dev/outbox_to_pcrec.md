@@ -2586,3 +2586,15 @@ carries a third loader gate (`check_provenance_agreement`): a
 provenance-row count strictly between 0 and the block count refuses BY
 NAME citing O-29 (all-or-nothing per set), with the O-29 shape and its
 vacuous control as fixture arms.
+
+**O-27/O-28/O-29 postscript (2026-09-16, Frank live at the terminal):
+every parked ruling is RATIFIED as recommended.** The fidelity mapping
+(`synthesized` ≡ the ruled `inspired`; the not-a-copy gate on
+`≠ verbatim`); all ten §12 DEFAULTs incl. pcre2-dfa IN the v1 roster;
+Q3 RULED — Vectorscan at boolean grain (no longer BLOCK); no
+bench/syntax re-seed before the next census-motivated pin; and the
+[B42] first sample WAITS on your O-29 fix — so the moment your fix
+pins, the whole chain (verify O-29's repro + the 64/64 corpus dump +
+the loader gate flip, the sidecar switch to `rxt_source`, the first
+sample × the six pinned configs + pcre2-dfa when its adapter lands) is
+unblocked on our side with no ruling outstanding.

@@ -4245,3 +4245,27 @@ Lesson (for BOILERPLATE at some point): a detached or killed
 background run's watcher must key on the LOG'S OWN terminal lines
 (the make targets' printed counts), not only on a wrapper-printed
 DONE marker — two waits tonight were on markers that never printed.
+
+## 2026-09-16 (cont. 3) — L5 merged; ALL parked rulings RATIFIED (Frank live)
+
+L5 (b42cap) merged c24de5c: the pre-compile capability policy wired
+(unsupported-by-declaration before compile, ext-bench read via
+load_aux_rows — the aux path O-29 doesn't touch), THREE wrong
+first-cut capability declarations corrected by a real witness-compile
+census (conditionals/control-verbs/lookbehind-variable all REFUSED on
+pcrec-* at the pin; L3's inference error, not pcrec's), the
+convention-scoring parameter (R5 B1), variant.kind rendering (CB2)
+against a synthetic fixture, 16 new selfcheck arms. The lane's
+detached stale-base check run killed by verified PID (it predated the
+seam fixes); the authoritative combined make check launched on master.
+Two combined-tree seams had been fixed by the manager directly
+(c0a8d59): gen_patterns' binary resolution anchored to HERE, the
+export gate skipping a committed-patterns.rxt set.
+
+Frank, live at the terminal, went over the parked rulings and RATIFIED
+ALL as recommended: the R6-1 fidelity mapping (incl. the gate covering
+`adapted`), the ten §12 DEFAULTs, Q3 RULED at boolean grain (BLOCK
+lifted), no syntax re-seed now, the first sample waiting on O-29.
+Recorded: §12's postscript block in capability_set_v1.md, the
+O-27/O-28/O-29 postscript in the outbox, the plan row. Zero rulings
+outstanding; the only blocker to the first sample is pcrec's O-29 fix.

@@ -1479,6 +1479,21 @@ built against it. If the set is wrong, one night finds it.
 
 ## 12. Questions for Frank — REVISED under R5, marked for the parked state
 
+> **ALL RULED (Frank, live, 2026-09-16, at the restart — recorded in
+> plan.md [B42] and O-27's postscript):** every DEFAULT below is
+> RATIFIED as its stated recommendation (Q4 prose+footnote, Q5 no
+> `match` regime, Q6 ru_maxrss native-only ranked-within, Q7 out, Q8
+> out/@0.2, Q9 synthetic, Q13 pcre2-dfa IN, Q14 compile+correctness
+> with the spread-rule caveat, family-11 shared-convention scope,
+> provenance as real schema fields). **Q3 is RULED, no longer BLOCK:
+> Vectorscan scores at BOOLEAN GRAIN** (§5.6 option B). The same
+> session also ratified the R6-1 fidelity mapping (`synthesized`
+> carries the ruled `inspired` semantics; the Q1 not-a-copy gate keys
+> on `fidelity ≠ verbatim`, covering `adapted` too), no bench/syntax
+> re-seed before the next census-motivated pin, and the first sample
+> WAITING on pcrec's O-29 fix. The table below is kept as the
+> pre-ruling record.
+
 **Three items are now RESOLVED** (Frank ruled them live, 2026-09-12, this
 session): Q1 (the licensing floor), Q2 (wild vs. designed is realism, not
 a ratio). **Three items are SUPERSEDED** by the same session's Q3 ruling
