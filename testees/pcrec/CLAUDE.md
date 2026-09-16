@@ -29,19 +29,26 @@ re-pin, up from fourteen):
 | `configs.toml` | the config ids, `pin = "<commit>"`, the optional per-config `cc` and its precedence ruling ([B24]), the optional per-config `max_emit_bytes` / `max_emit_code_bytes` with the measured derivation of the 8 MiB bound ([B31]), the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 | `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved |
 | `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
-| `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` joined), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing a RECORD carries is read from it (every cap/capacity a record needs is stamped per artifact); the ONE thing that reads it is the [B31] cap axis' raise-only FLOOR check, which refuses a below-default config value in the bench's own words and takes pcrec's two defaults from here rather than keeping a second copy of them. `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
+| `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf, 57 at cd371441 — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` and [K50]'s `PCREC_STARTPOS_GUARD_TEXT_MAX` joined in turn), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing a RECORD carries is read from it (every cap/capacity a record needs is stamped per artifact); the ONE thing that reads it is the [B31] cap axis' raise-only FLOOR check, which refuses a below-default config value in the bench's own words and takes pcrec's two defaults from here rather than keeping a second copy of them. `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
+| `list_schema.tsv` | ([B42] restart step (4)/b42repin, 2026-09-16) pcrec's `--list-schema` output at the pin, VERBATIM under a source header — the SEVENTH registry surface ([DD-13b.W23.1], docs/spec/rxt_format.md / table_contract.md), archived for the FIRST TIME at cd371441 (the pin that shipped the query itself): one row per (scope, line-kind) the `.rxt` parser enforces, plus a `surface` section naming what it deliberately does NOT validate. Nothing in this project's adapters or checks reads it yet — archived now so the registry-surface census stays complete at this pin, and against the day `docs/design/rxt_needs_v1.md` needs it. NOT diffed by `make check-harness` (no `check_list_schema_registry` exists) |
 
-**The RE-PIN CHECKLIST, in full** ([B41] (b), 2026-09-11): re-archive
-`list_axes.tsv`, `list_definitions.tsv` and `list_limits.tsv` against
-the new pin's live output (the three rows above), THEN append the new
-pin to `catalogue/rules.toml`'s `[[pin_order]]` table — a MINOR
-catalogue-version bump, interpreter_v1.md §11 Q10's ruling ("both": the
-checklist prevents the omission, and R-BUCKET-SPAN's exit-2 message
-naming the missing slug is the fallback if it happens anyway). See
-`catalogue/CLAUDE.md`'s own "At a RE-PIN" paragraph for the exact step
-and its version-bump rule; do it in the SAME commit as the re-pin, not a
-follow-up — a pin absent from `[[pin_order]]` is silent until
-`make check-interpret` (or a report spanning it) actually needs it.
+**The RE-PIN CHECKLIST, in full** ([B41] (b), 2026-09-11; extended
+2026-09-16 for `list_schema.tsv`): re-archive `list_axes.tsv`,
+`list_definitions.tsv`, `list_limits.tsv` and, since cd371441,
+`list_schema.tsv` against the new pin's live output (the four rows
+above), THEN append the new pin to `catalogue/rules.toml`'s
+`[[pin_order]]` table — a MINOR catalogue-version bump,
+interpreter_v1.md §11 Q10's ruling ("both": the checklist prevents the
+omission, and R-BUCKET-SPAN's exit-2 message naming the missing slug is
+the fallback if it happens anyway). See `catalogue/CLAUDE.md`'s own "At
+a RE-PIN" paragraph for the exact step and its version-bump rule; do it
+in the SAME commit as the re-pin, not a follow-up — a pin absent from
+`[[pin_order]]` is silent until `make check-interpret` (or a report
+spanning it) actually needs it. Also check `--list-syntax` against
+`bench/syntax`'s seed file (`bench/syntax/list_syntax_<sha>.tsv`): if it
+moved, DO NOT re-seed on your own initiative unless only non-machine-read
+columns changed — report the delta for a ruling (cd371441 moved two
+rows' `built` column only, `\p{L}`/`\P{L}`, left un-re-seeded).
 
 ## `pin.sh` never writes inside pcrec
 
