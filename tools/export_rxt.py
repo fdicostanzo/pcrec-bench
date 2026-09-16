@@ -112,7 +112,24 @@ def build_rxt(sb):
     order is preserved throughout (`sb.patterns`, i.e. the TOML array
     order == file order in `subbench.toml`) -- both for the head's
     `target =` rows and for the pattern blocks, matching the shape
-    pcrec's own composed.rxtin example uses."""
+    pcrec's own composed.rxtin example uses.
+
+    [B42] L4 (lane b42load): a set whose sidecar declares `rxt_source =`
+    (`sb.rxt` is populated, `pcrecbench.subbench.Subbench`'s own rule) is
+    refused OUTRIGHT, naming the set. Its pattern source of truth is
+    ALREADY an `.rxt` file -- exporting it back to `.rxt` would be a
+    CIRCULAR derivation (a copy of a copy through this tool's own
+    escaping/target-prefix machinery, which the file did not need in the
+    first place since it never went through TOML), and this exporter's
+    whole reason to exist (pcrec's own harnesses pulling a TOML-sidecar
+    set in via `--source`) does not apply: pcrec can read the set's own
+    committed `.rxt` file directly."""
+    if getattr(sb, "rxt", None) is not None:
+        raise ExportError(
+            "%s: this set's pattern source is ALREADY an `.rxt` file "
+            "(sidecar `rxt_source = %r`) -- exporting it back to `.rxt` "
+            "would be a circular derivation; pcrec's own harnesses should "
+            "read %s directly" % (sb.id, sb.cfg.get("rxt_source"), sb.rxt.path))
     names = [p.name for p in sb.patterns]
 
     for n in names:

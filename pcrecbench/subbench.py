@@ -91,8 +91,8 @@ def check_id(kind, value, set_id):
 
 
 class Pattern:
-    __slots__ = ("name", "file", "feature_tier", "hazard_class", "size_class",
-                 "convention", "tags", "role")
+    __slots__ = ("name", "file", "text", "feature_tier", "hazard_class",
+                 "size_class", "convention", "tags", "role")
 
     def __init__(self, d):
         for k in self.__slots__:
@@ -103,9 +103,78 @@ class Pattern:
         # declare. Defaulting here, not in the record, means an old sidecar
         # with no `role` key loads exactly as it always did.
         self.role = self.role or "member"
-        for req in ("name", "file", "hazard_class", "size_class"):
+        for req in ("name", "hazard_class", "size_class"):
             if not getattr(self, req):
                 raise SubbenchError("pattern entry is missing %r: %r" % (req, d))
+        # [B42] L4: a pattern's bytes come from EITHER a sidecar `file`
+        # (the original per-pattern-.rx-file shape) OR inline `text` (an
+        # `.rxt`-sourced pattern, `rxt_source.build_pattern_dicts`'s own
+        # decoded bytes) -- never neither. `text is None` is the "absent"
+        # test, not `not self.text`: an empty pattern body (`b""`) is a
+        # legal, if odd, pattern and must not be mistaken for "no text".
+        if not self.file and self.text is None:
+            raise SubbenchError(
+                "pattern entry %r has neither `file` nor inline `text` -- "
+                "one pattern-bytes source is required" % d.get("name"))
+
+
+# [B42] L4: DEFAULT size_class FOR AN `.rxt`-SOURCED PATTERN. Required by
+# the record schema (`hazard_class`/`size_class` are both REQUIRED,
+# schema/record.schema.json:298) but carried by no `.rxt` production today
+# (rxt_needs_v1.md's need table has no size-class equivalent) -- a
+# LOADER-SIDE default, not an `.rxt` fact, matching what bench/capability's
+# own gen_patterns.py already derives for every one of its 64 patterns
+# (`subbench.toml`'s committed `[[patterns]]` shim: `size_class = "small"`
+# throughout, since v1's subjects are all typed-short + a throughput sweep,
+# never a per-pattern size axis). Named as a constant here so the day a
+# set wants a REAL per-pattern size class, this is the one place that
+# changes.
+_RXT_DEFAULT_SIZE_CLASS = "small"
+_RXT_DEFAULT_FEATURE_TIER = "base"
+
+
+def _pattern_dict_from_rxt(p, rxt):
+    """`rxt_source.RxtSource.patterns[i]` (one block's dict) -> the dict
+    shape `Pattern.__init__` expects. `hazard_class` comes straight from
+    the block's own `tag hazard=...` (the record schema's enum is a
+    SUBSET of this set's declared `vocabulary hazard` list, so a value
+    the vocabulary accepted is always schema-legal); `role` is `floor`
+    iff the block's `family` tag says so (the vocabulary's own `floor`
+    value exists for exactly this, `capability_set_v1.md` 3.3);
+    `convention` is the block's own tag if declared, else left unset (no
+    bench-side default invented -- unlike `size_class`/`feature_tier`,
+    every pattern that CARES about its convention declares one)."""
+    tags = p["tags"]
+    hazards = tags.get("hazard") or []
+    if not hazards:
+        raise SubbenchError(
+            "%s: pattern block %r (line %s) carries no `tag hazard=...` "
+            "-- required by the record schema's hazard_class field"
+            % (rxt.path, p["name"], p["block_line"]))
+    families = tags.get("family") or []
+    conventions = tags.get("convention") or []
+    flat_tags = list(tags.get("_labels") or [])
+    for k, values in tags.items():
+        if k == "_labels":
+            continue
+        flat_tags.extend("%s-%s" % (k, v) for v in values)
+    prov = rxt.provenance_for(p["block_line"])
+    if prov:
+        if prov.get("source"):
+            flat_tags.append("provenance-%s" % prov["source"])
+        if prov.get("fidelity"):
+            flat_tags.append("fidelity-%s" % prov["fidelity"])
+    return {
+        "name": p["name"],
+        "file": None,
+        "text": p["text"],
+        "feature_tier": _RXT_DEFAULT_FEATURE_TIER,
+        "hazard_class": hazards[0],
+        "size_class": _RXT_DEFAULT_SIZE_CLASS,
+        "convention": conventions[0] if conventions else None,
+        "tags": flat_tags,
+        "role": "floor" if "floor" in families else "member",
+    }
 
 
 class Subject:
@@ -155,7 +224,28 @@ class Subbench:
         unknown = [r for r in self.regimes if r not in REGIME_TO_ENUM]
         if unknown:
             raise SubbenchError("unknown regime(s) %r in %s" % (unknown, sidecar))
-        self.patterns = [Pattern(p) for p in self.cfg.get("patterns", [])]
+        # [B42] L4: `rxt_source = "<relative path>"` is the ONE sidecar key
+        # that switches a set from the TOML `[[patterns]]` array to an
+        # `.rxt` pattern source, loaded through `pcrecbench.rxt_source`'s
+        # ONE sanctioned reader (`pcrec --list-source`, never a second
+        # `.rxt` parser). Present, `[[patterns]]` is ignored outright --
+        # a set does not need to delete a stale array to switch (this is
+        # the ONE-LINE toggle a manager merge applies); absent, loading is
+        # byte-for-byte what it always was.
+        self.rxt = None
+        rxt_rel = self.cfg.get("rxt_source")
+        if rxt_rel:
+            from pcrecbench import rxt_source as _rxt
+            rxt_path = os.path.join(self.root, rxt_rel)
+            try:
+                self.rxt = _rxt.load_rxt_source(rxt_path)
+            except _rxt.RxtSourceError as e:
+                raise SubbenchError("%s: rxt_source=%r: %s"
+                                    % (sidecar, rxt_rel, e))
+            self.patterns = [Pattern(_pattern_dict_from_rxt(p, self.rxt))
+                             for p in self.rxt.patterns]
+        else:
+            self.patterns = [Pattern(p) for p in self.cfg.get("patterns", [])]
         if not self.patterns:
             raise SubbenchError("%s declares no patterns" % sidecar)
         for p in self.patterns:
@@ -241,8 +331,14 @@ class Subbench:
 
     def pattern_bytes(self, name):
         """The canonical pattern as RAW BYTES -- never decoded and re-encoded:
-        the specimen's classes carry bytes that are not valid UTF-8 text."""
-        with open(os.path.join(self.root, self.pattern(name).file), "rb") as f:
+        the specimen's classes carry bytes that are not valid UTF-8 text.
+        [B42] L4: an `.rxt`-sourced pattern carries its bytes INLINE
+        (`Pattern.text`, already decoded by `rxt_source.py` from
+        `--list-source`'s own dump) -- no file to open at all."""
+        p = self.pattern(name)
+        if p.text is not None:
+            return p.text
+        with open(os.path.join(self.root, p.file), "rb") as f:
             return f.read()
 
     def subject_bytes(self, subject_id):

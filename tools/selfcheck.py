@@ -154,8 +154,9 @@ from pcrecbench import adapters as _ad                    # noqa: E402
 from pcrecbench.driverrun import build_driver, run_driver  # noqa: E402
 from pcrecbench import record as _rec                      # noqa: E402
 from pcrecbench.harness import outcome_for                # noqa: E402
-from pcrecbench.subbench import Subbench, Expectation     # noqa: E402
+from pcrecbench.subbench import Subbench, Expectation, Pattern, SubbenchError  # noqa: E402
 import export_rxt as _rxt                                 # noqa: E402
+from pcrecbench import rxt_source as _rxtsrc               # noqa: E402
 
 C_ENV = dict(os.environ, LC_ALL="C", LANG="C")
 BENCH = os.path.join(ROOT, "bench", "email")
@@ -1946,6 +1947,15 @@ def check_rxt_export():
     for name, bench in subbench_dirs():
         try:
             sb = Subbench(bench)
+            # [B42] L4: a set whose sidecar declares `rxt_source =` is
+            # ALREADY an `.rxt` file -- exporting it back would be
+            # circular, and `export_rxt.build_rxt` refuses it BY NAME
+            # (its own docstring). That refusal is the PASS here, not a
+            # failure of this check.
+            if getattr(sb, "rxt", None) is not None:
+                ok("%s: .rxt-sourced set -- export SKIPPED (would be "
+                   "circular)" % name, "source: %s" % sb.rxt.path)
+                continue
             rxt_bytes, witnesses = _rxt.build_rxt(sb)
             n = _rxt.verify_roundtrip(sb, rxt_bytes, pcrec_bin)
             ok("%s: the export round-trips against --list-source" % name,
@@ -1993,6 +2003,367 @@ def check_rxt_export():
            "%d byte(s)" % len(data))
     except _rxt.ExportError as e:
         bad("rxt-export control: two non-colliding ids build fine", str(e))
+
+
+# ------------------------------------------------------ [B42] L4 .rxt LOADER
+
+# Small, self-contained fixtures (written to a fresh tempdir at check time,
+# never committed as standalone files -- same posture as `_write_synthetic_
+# subbench`/`_StubSubbench` above: a fixture this small is clearer read
+# beside the check that uses it than filed away).
+_RXT_CLEAN = b"""\
+description |
+  a tiny synthetic .rxt-sourced sub-bench, b42load's own selfcheck fixture.
+
+oracle pcre2
+vocabulary family wild floor
+vocabulary hazard none
+tag id=synthfake, version=0.1
+
+pattern-esc "caf\\xe9[\\x80-\\xff]+"
+name high-byte-witness
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity verbatim
+tag family=wild, hazard=none
+
+pattern ~
+name floor-byte
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation the floor pattern needs no wild source
+tag family=floor, hazard=none
+"""
+
+# O-29's own symptom (docs/dev/outbox_to_pcrec.md; found by this lane,
+# 2026-09-16): three pattern blocks, EACH declaring its own single, valid
+# `provenance` sub-block -- at the pin in use, `--list-source` keeps only
+# the textually LAST one. Used to exercise `check_provenance_agreement`'s
+# refusal arm with the EXACT shape that fooled the 41-check acceptance
+# run (whose fixtures were all single-pattern-block files). MEASURED
+# (this lane): the trigger is narrower than "a block has provenance" --
+# it is a block whose LAST line is the provenance sub-block's own last
+# line (nothing after it before the next `pattern`/EOF). `tag` BEFORE
+# `provenance`, never after, exactly `bench/capability`'s own authored
+# order (`pattern` / `name` / `tag family=...` / `provenance` / its
+# sub-lines) -- a `tag` line placed AFTER `provenance` was measured NOT
+# to reproduce it, which is why this fixture's field order matters and
+# is not incidental.
+_RXT_PARTIAL_PROVENANCE = b"""\
+pattern abc
+name q1
+tag family=wild, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation q1's own note
+
+pattern def
+name q2
+tag family=wild, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation q2's own note
+
+pattern ghi
+name q3
+tag family=wild, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation q3's own note
+"""
+
+_RXT_DIRECTIVE = b"""\
+target = t1
+
+pattern abc
+name t1
+"""
+
+_RXT_EXT_CONTROL = b"""\
+pattern abc
+name t1
+
+ext bench
+  roster pcre2-interp pcrec-auto
+"""
+
+_RXT_SUBBENCH_TOML = b"""\
+id = "synthfake"
+version = "0.1"
+objective_kind = "feature"
+objective = "b42load selfcheck: an .rxt-sourced sub-bench loads without the .rx shim"
+description = "never under bench/ -- a check-time-only fixture"
+regimes = ["search_short"]
+rxt_source = "patterns.rxt"
+
+[subjects]
+generator = "gen_subjects.py"
+manifest = "manifest.tsv"
+short_search_max_bytes = 256
+
+[expectations]
+file = "expectations.tsv"
+default_method = "libpcre2-differential"
+"""
+
+
+def _rxt_source_pcrec_bin():
+    adapter = _ad.discover()["pcrec"]
+    return adapter.pin_binary(build=False)
+
+
+def check_rxt_source_load():
+    """[B42] L4 (lane b42load): `pcrecbench.rxt_source` + `subbench.py`'s
+    `rxt_source =` sidecar key -- a real `.rxt` pattern-source LOADER, so a
+    set built on `.rxt` (Frank's Q3 ruling, docs/design/capability_set_v1.md
+    9) does not need a derived-`.rx`-per-pattern compatibility shim.
+
+    Reads ONLY through `pcrec --list-source` (no second `.rxt` parser --
+    `pcrecbench/rxt_source.py`'s own module docstring is the authority on
+    why it does not reuse `export_rxt.decode_rxt_escape`: that decoder's
+    `.encode("utf-8")` fallback corrupts a RAW, unescaped high byte a plain
+    `pattern` block's own column carries verbatim -- MEASURED, this check's
+    own high-byte witness below is exactly that shape). Seven arms, each
+    gate exercised against BOTH an input it must accept and one it must
+    reject, in the same run (`tools/CLAUDE.md`'s own check-design rule):
+
+    (1) a full `Subbench()` load of an `.rxt`-sourced fixture via the
+        ONE-LINE sidecar switch (`rxt_source = "patterns.rxt"`) --
+        pattern text, hazard_class, role (`floor` from `family=floor`,
+        never a sidecar field), tags and per-pattern provenance all
+        correct, and the raw high byte in `high-byte-witness`'s
+        `pattern-esc` spelling round-trips BYTE-EXACT (the surrogateescape
+        fix's own witness -- a naive UTF-8 decode of `--list-source`'s
+        stdout crashes on this fixture, which is exactly why it is here);
+    (2) the no-build-directive gate (design constraint (b)): a `target =`
+        head row is refused BY NAME naming the line; the CONTROL is the
+        SAME fixture family with an `ext bench` roster/capabilities block
+        instead (bench/capability's own shape) -- `ext` never trips it,
+        because its rows live only in `#section aux`, never the main
+        table this gate scans;
+    (3) the block<->sidecar agreement gate (design constraint (a)): a
+        hand-doctored `patterns` list missing one block is refused BY
+        NAME naming what is missing; the CONTROL is the real agreement
+        (no doctoring) passing clean;
+    (3b) the block<->PROVENANCE agreement gate (outbox O-29, manager
+        ruling 2026-09-16): a THREE-pattern fixture where each block
+        declares its own valid `provenance` sub-block and only the
+        textually LAST one survives in the dump -- exactly O-29's own
+        symptom, and exactly the shape the 41-check acceptance run never
+        tried (every one of its fixtures had a single pattern block) --
+        is refused BY NAME citing O-29; the CONTROL is a 0-provenance
+        file (arm 2's `ext_control.rxt`, which never uses the production
+        at all) loading clean, proving the gate is NOT "every set must
+        carry provenance", only "a set that started carrying it must
+        carry it everywhere the dump says a block exists";
+    (4) a missing/unbuilt pcrec binary is a refusal BY NAME
+        (`resolve_pcrec_bin`), never a silent fallback -- exercised
+        directly against a bogus binary path;
+    (5) `Pattern.__init__`'s required-field RELAXATION
+        (rxt_needs_v1.md 9's own noted gap, capability_set_v1.md 9:
+        "`Pattern.__init__`'s required-field tuple and `pattern_bytes()`
+        both hard-require `file` today"): an entry with inline `text` and
+        no `file` loads, and `pattern_bytes()` returns it with no file
+        opened; the CONTROL is an entry with NEITHER `file` nor `text`,
+        refused by name;
+    (6) `tools/export_rxt.py`'s `.rxt`-sourced-set skip (`build_rxt`
+        refuses naming the set, since exporting a set already built ON
+        `.rxt` back to `.rxt` would be a circular derivation) -- exercised
+        against the same fixture's `Subbench` object, with a normal
+        (non-`.rxt`-sourced) set as the control (unaffected, still
+        exports)."""
+    print("-- [B42] L4: the .rxt pattern-source loader -- "
+          "gates, byte-exactness, the export skip --")
+    pcrec_bin = None
+    try:
+        pcrec_bin = _rxt_source_pcrec_bin()
+    except Exception as e:                              # noqa: BLE001
+        bad("rxt-source: a pcrec adapter is discoverable", str(e))
+        return
+    if not os.path.exists(pcrec_bin):
+        bad("rxt-source: the pinned pcrec is already built",
+            "%s does not exist -- this check never builds" % pcrec_bin)
+        return
+
+    tmp = tempfile.mkdtemp(prefix="rxtsrc-selfcheck-")
+    try:
+        sb_dir = os.path.join(tmp, "synthfake")
+        os.makedirs(os.path.join(sb_dir, "subjects"), exist_ok=True)
+        with open(os.path.join(sb_dir, "patterns.rxt"), "wb") as f:
+            f.write(_RXT_CLEAN)
+        with open(os.path.join(sb_dir, "subbench.toml"), "wb") as f:
+            f.write(_RXT_SUBBENCH_TOML)
+        with open(os.path.join(sb_dir, "manifest.tsv"), "w") as f:
+            f.write("id\tlen\tsha256\tdescription\n")
+
+        # (1) the full load
+        try:
+            sb = Subbench(sb_dir)
+            names = sorted(p.name for p in sb.patterns)
+            want_names = ["floor-byte", "high-byte-witness"]
+            hb = sb.pattern("high-byte-witness")
+            hb_bytes = sb.pattern_bytes("high-byte-witness")
+            floor = sb.pattern("floor-byte")
+            checks = [
+                (names == want_names, "pattern set == %r, got %r" % (want_names, names)),
+                (hb.file is None, "high-byte-witness.file should be None (inline text)"),
+                (hb_bytes == b"caf\xe9[\x80-\xff]+",
+                 "high-byte-witness bytes MISMATCH: %r" % hb_bytes),
+                (hb.hazard_class == "none", "hazard_class"),
+                ("provenance-authored" in hb.tags and "fidelity-verbatim" in hb.tags,
+                 "provenance/fidelity tags: %r" % hb.tags),
+                (floor.role == "floor", "floor-byte.role should be 'floor', got %r" % floor.role),
+                (hb.role == "member", "high-byte-witness.role should be 'member'"),
+                (sb.rxt is not None, "sb.rxt should be populated"),
+            ]
+            failing = [msg for cond, msg in checks if not cond]
+            if failing:
+                bad("rxt-source: a full Subbench() load via rxt_source=",
+                    "; ".join(failing))
+            else:
+                ok("rxt-source: a full Subbench() load via rxt_source=",
+                   "%d pattern(s), high byte round-tripped byte-exact" % len(sb.patterns))
+        except Exception as e:                          # noqa: BLE001
+            bad("rxt-source: a full Subbench() load via rxt_source=", str(e)[:300])
+
+        # (2) no-build-directive gate + ext control
+        directive_path = os.path.join(tmp, "directive.rxt")
+        with open(directive_path, "wb") as f:
+            f.write(_RXT_DIRECTIVE)
+        try:
+            _rxtsrc.load_rxt_source(directive_path, pcrec_bin=pcrec_bin)
+            bad("rxt-source: a `target =` head row is refused BY NAME",
+                "no exception raised")
+        except _rxtsrc.RxtSourceError as e:
+            if "target" in str(e) and "build directive" in str(e):
+                ok("rxt-source: a `target =` head row is refused BY NAME", str(e)[:160])
+            else:
+                bad("rxt-source: a `target =` head row is refused BY NAME",
+                    "wrong message: %s" % str(e)[:160])
+
+        ext_path = os.path.join(tmp, "ext_control.rxt")
+        with open(ext_path, "wb") as f:
+            f.write(_RXT_EXT_CONTROL)
+        try:
+            ext_src = _rxtsrc.load_rxt_source(ext_path, pcrec_bin=pcrec_bin)
+            ok("rxt-source control: an `ext bench` block does NOT trip the "
+               "no-build-directive gate",
+               "%d pattern(s), %d aux row(s)" % (len(ext_src.patterns), len(ext_src.aux_rows)))
+        except _rxtsrc.RxtSourceError as e:
+            bad("rxt-source control: an `ext bench` block does NOT trip the "
+                "no-build-directive gate", str(e)[:200])
+
+        # (3) block<->sidecar agreement gate
+        try:
+            _rxtsrc.check_block_sidecar_agreement(ext_src.main_rows, [], "planted")
+            bad("rxt-source: a dropped pattern block is refused BY NAME",
+                "no exception raised")
+        except _rxtsrc.RxtSourceError as e:
+            if "missing=" in str(e):
+                ok("rxt-source: a dropped pattern block is refused BY NAME", str(e)[:200])
+            else:
+                bad("rxt-source: a dropped pattern block is refused BY NAME",
+                    "wrong message: %s" % str(e)[:200])
+        try:
+            _rxtsrc.check_block_sidecar_agreement(ext_src.main_rows, ext_src.patterns, "ok")
+            ok("rxt-source control: real block<->loader agreement passes clean", "")
+        except _rxtsrc.RxtSourceError as e:
+            bad("rxt-source control: real block<->loader agreement passes clean", str(e))
+
+        # (3b) block<->PROVENANCE agreement gate -- O-29 (manager ruling,
+        # 2026-09-16): a partial provenance count (this lane's own O-29
+        # finding's exact symptom -- three blocks, only the LAST keeps its
+        # row) is refused BY NAME citing O-29; a 0-row file (no set here
+        # uses provenance at all) is the vacuous control.
+        partial_path = os.path.join(tmp, "partial_provenance.rxt")
+        with open(partial_path, "wb") as f:
+            f.write(_RXT_PARTIAL_PROVENANCE)
+        try:
+            _rxtsrc.load_rxt_source(partial_path, pcrec_bin=pcrec_bin)
+            bad("rxt-source: partial provenance coverage is refused BY "
+                "NAME (O-29)", "no exception raised")
+        except _rxtsrc.RxtSourceError as e:
+            if "O-29" in str(e) and "provenance" in str(e):
+                ok("rxt-source: partial provenance coverage is refused BY "
+                   "NAME (O-29)", str(e)[:200])
+            else:
+                bad("rxt-source: partial provenance coverage is refused BY "
+                    "NAME (O-29)", "wrong message: %s" % str(e)[:200])
+        try:
+            # ext_control.rxt (arm 2's control) declares NO provenance at
+            # all -- 0 rows, the OTHER passing case (not full coverage).
+            zero_src = _rxtsrc.load_rxt_source(ext_path, pcrec_bin=pcrec_bin)
+            ok("rxt-source control: zero provenance rows (a set that never "
+               "uses the production) is not O-29's shape",
+               "%d pattern(s), 0 provenance row(s)" % len(zero_src.patterns))
+        except _rxtsrc.RxtSourceError as e:
+            bad("rxt-source control: zero provenance rows (a set that "
+                "never uses the production) is not O-29's shape", str(e))
+
+        # (4) a missing/unbuilt binary is a refusal BY NAME
+        try:
+            _rxtsrc.run_list_source(ext_path, pcrec_bin="/nonexistent/pcrec-nope")
+            bad("rxt-source: a missing pcrec binary is refused BY NAME",
+                "no exception raised")
+        except _rxtsrc.RxtSourceError:
+            ok("rxt-source: a missing pcrec binary is refused BY NAME", "")
+        except OSError as e:
+            bad("rxt-source: a missing pcrec binary is refused BY NAME",
+                "raised OSError instead of RxtSourceError: %s" % e)
+
+        # (5) Pattern's required-field relaxation (file OR text)
+        try:
+            p = Pattern({"name": "inline-only", "hazard_class": "none",
+                        "size_class": "small", "text": b"xyz"})
+            ok("rxt-source: Pattern accepts inline `text` with no `file`",
+               "text=%r" % p.text)
+        except SubbenchError as e:
+            bad("rxt-source: Pattern accepts inline `text` with no `file`", str(e))
+        try:
+            Pattern({"name": "neither", "hazard_class": "none", "size_class": "small"})
+            bad("rxt-source control: neither `file` nor `text` is refused BY NAME",
+                "no exception raised")
+        except SubbenchError as e:
+            if "neither" in str(e).lower() or "file" in str(e) and "text" in str(e):
+                ok("rxt-source control: neither `file` nor `text` is refused BY NAME",
+                   str(e)[:160])
+            else:
+                bad("rxt-source control: neither `file` nor `text` is refused BY NAME",
+                    "wrong message: %s" % str(e)[:160])
+
+        # (6) export_rxt's .rxt-sourced-set skip
+        try:
+            sb = Subbench(sb_dir)
+            try:
+                _rxt.build_rxt(sb)
+                bad("rxt-export: an .rxt-sourced set is refused (circular "
+                    "derivation)", "no exception raised")
+            except _rxt.ExportError as e:
+                if "rxt_source" in str(e) or "circular" in str(e).lower():
+                    ok("rxt-export: an .rxt-sourced set is refused (circular "
+                       "derivation)", str(e)[:160])
+                else:
+                    bad("rxt-export: an .rxt-sourced set is refused (circular "
+                        "derivation)", "wrong message: %s" % str(e)[:160])
+        except Exception as e:                          # noqa: BLE001
+            bad("rxt-export: an .rxt-sourced set is refused (circular "
+                "derivation)", str(e)[:200])
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def check_kb1_runtime_options():
@@ -8125,6 +8496,7 @@ def main():
     check_floor_pattern()
     check_id_preflight()
     check_rxt_export()
+    check_rxt_source_load()
     check_kb1_runtime_options()
     check_mechanism_stamps()
     check_deny_flag_controls()
