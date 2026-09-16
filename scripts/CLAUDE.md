@@ -116,3 +116,5 @@ at 334fd10e, ledger 2026-09-05-b37 6 (13)), the `vm` figure elsewhere.
 ## Maintenance
 
 Update this file when a script is added, removed, or changes role.
+
+| `install_l6b_deps.sh` | ([B42], 2026-09-16) the [B7]/L6b engine-adapter dependency set (capability_set_v1.md §11.2), scripted with every package name VALIDATED against this box's apt: check-only by default (exit 0 iff all present; never installs), `--install` runs `sudo apt-get install` of the missing set, `--with-rust` adds cargo/rustc (only if the Rust testee is actually built). Refuses outright if `libhyperscan-dev` is installed (the Vectorscan conflict). Includes `libre2-dev` — the research note's "already installed" claim measured STALE 2026-09-16. |

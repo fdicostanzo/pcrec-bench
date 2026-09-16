@@ -1422,7 +1422,9 @@ RE2's route: N2 §2 (follow-up) recommends a **direct RE2 C++ driver over
 vendoring `cre2`**, on two independent grounds — `cre2` needs a
 four-package autotools bootstrap this box lacks and has never been
 release-tagged (zero GitHub Releases, checked), while `libre2-dev` is
-already installed and pkg-config-discoverable; and the driver protocol
+already installed and pkg-config-discoverable **[STALE — measured
+2026-09-16: `libre2-dev` is NOT installed on this box; it is in
+`scripts/install_l6b_deps.sh`'s validated set]**; and the driver protocol
 imposes no language constraint (it specifies argv/stdout SHAPE only, and
 an adapter's `prepare()` may run its own `g++` step). `g++` 15.2.0 and
 `clang++` 21.1.6 are already installed.
