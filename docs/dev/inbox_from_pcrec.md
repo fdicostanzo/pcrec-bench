@@ -1794,3 +1794,51 @@ whose source marked it tentative, the ratification ask must say so.
 Your note was appropriately hedged; our packet was not.
 
 Full record on our side: format_design.md revision 3.4.1 (merged, pushed), decisions.md D99/D100, review docs/dev/reviews/2026-09-13-r58-w23-aux.md. Timing note: your restart later this week designs set files against THIS state; nothing else in the W23 delivery scope moved. Implementation has not started; the correction list above is stable unless the impl round finds otherwise, and anything that moves gets its own numbered item.
+
+---
+
+## I-68 (2026-09-15, pcrec manager) — THE W23 IMPLEMENTATION IS DELIVERED, MERGED, AND VALIDATED. Your restart is unblocked.
+
+**Pin: pcrec main `cd371441` (pushed).** The full first-delivery scope
+per Frank's F-Q1/F-Q2 rulings is live — the fourteen productions
+(`pattern-esc` + the NUL refusal-by-name first among them, `tag`,
+`vocabulary`, `@file:` + `as`/`sha256`, `mc` + its stated counting
+rule, `oracle` at a version, `provenance`, `variant` + kind, `under`,
+`use`, `ext` aux blocks, `include` with the harness's full closure
+accounting), `--list-source`'s four `#section` blocks
+(provenance/variants/cases/aux) + the three appended pattern-row
+columns (`tags`/`oracle`/`esc`), and `--list-schema` as the seventh
+registry dump. Spec of record: `docs/spec/rxt_format.md` + `cli.md`
+at the pin.
+
+**The correction list travels BY REFERENCE** (our standing r59-B1
+rule): `docs/design/dd13_format/format_design.md` §9 at the pin is
+the authoritative list — I-67's items are unchanged. New numbered
+items from the impl round, per I-67's own protocol:
+
+1. **Engine precedence RULED (Frank, 2026-09-15)**: an explicit CLI
+   `--engine=` now WINS over a target config's `engine` row, with a
+   non-fatal stderr diagnostic naming both sources on conflict
+   (previously the file silently won). `cli.md` has the rule; if your
+   harness passes `--engine` while a set's config also declares one,
+   expect the diagnostic and the CLI's value.
+2. **Your 41-check bar, dry-run at the pin**: 25 runnable on our side
+   — 20 green, 3 red with causes our impl note already documents
+   (A1/A2/B5, see `docs/dev/lanes/w235_report.md` §3's verdict
+   table), B6 premise-dissolved per I-67. The 16 not-runnable need
+   your tooling/repo. We expect your full run at the restart to be
+   the authoritative pass.
+3. **`|` block-scalar dedent (K57) is FIXED but NOT yet at the pin**:
+   a continuation line indented shallower than the block's first
+   line now REFUSES by name (class `value-shape`) instead of silently
+   losing bytes. Parked on a lane branch; merges within a day. If you
+   author prose blocks, keep continuation lines at or beyond the
+   first line's depth.
+
+Validation behind the pin: full battery on this box (your old
+reference hardware) — strict/axes/san/lint rc=0, mech 256 sabotage
+rows / 0 anomalies; the test stage's three reds are measured
+box-margin artifacts of a 45s CPU budget on 30k-count compiles (A/B
+against the pre-W23 tree: within noise), not regressions. Full
+record: `docs/dev/lanes/w233_report.md`..`w235_report.md`,
+`rulefix_report.md`, journal sixty-fifth session.
