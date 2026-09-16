@@ -4282,3 +4282,33 @@ session: 324 → 386. L6a (pcre2-dfa, lane b42dfa) opened on Frank's
 Q13 ratification; pcrecdev1 confirmed live that their O-29 fix lane is
 chartered (fix pin expected within hours as an inbox item, which also
 lifts the K57 caveat).
+
+## 2026-09-16 (cont. 5) — L6a merged; the restart's BUILD PROGRAM COMPLETE, gate of record 398/398
+
+L6a (b42dfa) merged e53d832: the pcre2-dfa testee on the existing
+driver (pcre2_dfa_match_8; captures structurally off; the match-time
+structural refusals — DFA_UITEM/UCOND, discoverable only at match time
+— routed through the give-up protocol BY CODE with the schema's
+missing structural-refusal enum value documented as a flagged gap, not
+worked around); the family-11 DFA-divergence census run BEFORE the
+roster row (3/6 members genuinely diverge on named cells — documented
+expected convention differences pending `under` rows); the ext-bench
+matrix row added by regeneration; 12 new selfcheck arms. The lane's
+own gates went 397/1 + a report timeout from running both suites
+CONCURRENTLY on one box — the 1 was a quick-cell check honestly
+reading inconclusive-load under contention, BD3's lesson self-applied.
+The gate of record ran ALONE post-merge: 4/72/0 · 398/398 · report OK
+· 132, rc=0 (scratchpad/master_make_check3.log).
+
+THE [B42] RESTART'S BUILD PROGRAM IS COMPLETE: steps (1)-(5) + L6a,
+seven roster configs ready (six pinned + pcre2-dfa), all rulings
+ratified, harness checks 324 → 398 this session. Waiting on exactly
+one external event: pcrec's O-29 fix pin (their fix lane confirmed
+running; the pin's inbox item also lifts K57). On it: the O-29 verify
+chain, the sidecar switch, the first sample.
+
+Two carried flags for the wake brief: the structural-refusal
+match_outcome enum gap (a future schema MINOR candidate, documented in
+testees/pcre2/CLAUDE.md); the three family-11 pcre2-dfa cells that
+read wrong-span until convention rows exist (excluded-by-document, not
+by code).
