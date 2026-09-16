@@ -4212,3 +4212,36 @@ re-measurement), the two oracle witnesses pinned by value in a new
 selfcheck with an inline negative control. Merge gated on the make
 check counts. L3 waits on that merge (its expectations must derive
 under the fixed rule).
+
+## 2026-09-16 (cont. 2) — [B42] step (4) LANDED: pin cd371441/abi 25, KB-17 fixed, K53 wall-move; O-28 sent
+
+b42repin merged (054d703) after three make-check rounds plus a
+memory-kill: round 1 found 17+1 movers, round 2's triage split them
+into the size-book class (decomposed to the byte: +161 B flat =
+K50-NULLGATE's two #define lines, +2 B per DFA scan-edge machine =
+PORTFIX's label semicolons, one direct-measured exception at +164) and
+one absorbed spec change ([K53-SELRETRY]'s second size-cap-retry rung,
+§6.3 read at the pin, agreement check now two-armed); round 2's
+residue exposed a REAL wall move — K53's DFA-route rescue (pcrec's
+commit names our altwide witnesses as its corpus) moves the measured
+DFA wall 256<w≤384 → 512<w≤1024, VM wall unchanged — re-derived as
+[B37] precedent, with the [B31] control witness moved pfx3-512→wb-512;
+round 3 green through harness 348/0 then killed by memory pressure
+entering check-report (recorded hazard); round 4 (detached) finished
+report OK + interpret 132/0. Stitched suite green. THE FINDING FOR THE
+CHANNEL: the pin's abi is 25, not I-68's "23" — two steps read
+verbatim from pcrec's history; rx_info byte-identical so the floor-16
+rule held and every stamp row passed. O-28 sent (04992a7): the abi
+correction, the K53 wall move + acceptance-surface note, the
+--list-syntax built-flip parked as a re-seed ruling, KB-17 FIXED (all
+expectations byte-identical; mc embargo lifted). The acceptance
+archive's "abi 23" header line corrected in place with a dated note.
+Manager interventions this arc: two lost-completion-signal nudges (the
+round-3 kill ate the DONE marker; round 4's launch omitted it — the
+lane twice waited on a signal that could not come; lesson recorded
+below), plus the two triage-direction messages.
+
+Lesson (for BOILERPLATE at some point): a detached or killed
+background run's watcher must key on the LOG'S OWN terminal lines
+(the make targets' printed counts), not only on a wrapper-printed
+DONE marker — two waits tonight were on markers that never printed.
