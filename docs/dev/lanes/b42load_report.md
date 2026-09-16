@@ -128,13 +128,35 @@ This directly touches the acceptance archive's C4/C7/D1 PASS verdicts
 (`docs/dev/measurements/2026-09-16-b42-acceptance-41-cd371441.txt`) — all
 were exercised on SINGLE-pattern-block fixtures, so "every descriptive
 production appears in the dump" does not generalize to a real
-multi-pattern set. **Not worked around here** (see `rxt_source.py`'s
-module docstring): this loader reads the dump FAITHFULLY either way — a
-missing provenance row for 63/64 patterns is not a loader bug, it is what
-the dump says today. Recommend a numbered outbox item to pcrecdev1 (a
-missing acceptance-checklist case: several blocks in one file, each with
-ONE valid provenance/variant sub-block — the untested twin of C7's
-same-block negative control).
+multi-pattern set. **Filed as outbox O-29** (the manager, same day, with
+this repro plus the 64-block corpus confirmation) and acked back to this
+lane with an addendum scoping D1/C4/C7's verdicts to single-block files.
+
+**MEASURED, refining O-29's own scope** (found while building the
+follow-up gate below): the trigger is narrower than "a block has
+provenance" — it is specifically a block whose provenance sub-block is
+the LAST content in the block (nothing after it but a blank line before
+the next `pattern`/EOF). A `tag family=..., hazard=...` line placed
+AFTER `provenance` in the SAME block was measured NOT to reproduce the
+drop; `bench/capability`'s own authored order (`pattern` / `name` / `tag
+family=...` / `provenance` / its sub-lines, i.e. `tag` BEFORE
+`provenance`) is exactly the order that DOES trigger it. Folded into
+O-29 rather than filed separately.
+
+**THE MANAGER'S RULING (2026-09-16), applied in this branch, not merely
+documented**: `pcrecbench/rxt_source.py` gained a THIRD gate,
+`check_provenance_agreement` — a provenance-row count strictly between 0
+and the pattern-block count (never a legitimate authoring choice on any
+set this project has seen) is refused BY NAME citing O-29; 0 rows (a set
+that never uses the production) and a full 1:1 count both pass. This
+makes `bench/capability` UN-LOADABLE at this pin (64 blocks, 1
+provenance row) — confirmed directly: `Subbench("bench/capability")`
+(once L3+L4 are merged) will raise `RxtSourceError` naming O-29. **This
+is the correct terminal state, not a loader bug**: no shim path around
+the gate, per the ruling. `check_rxt_source_load` gained arm (3b): the
+exact O-29 shape (three blocks, `tag`-before-`provenance`, only the
+last survives) refused by name, with a 0-provenance file as the
+vacuous control. 11/11 PASS standalone (up from 9/9).
 
 ## A second, smaller finding (not a defect — a plumbing note, fixed here)
 
@@ -172,27 +194,46 @@ a git object, `git show c2b5bde:bench/capability/patterns.rxt`, never
 checked out under `bench/`) where the check is about the real corpus's
 own content.
 
+Per the manager's note on reading this table: any check whose PASS
+depends on `bench/capability`'s real corpus actually LOADING is marked
+**BLOCKED-ON-O-29** below, not FAIL — the new `check_provenance_agreement`
+gate (previous section) makes that load correctly refuse at this pin, so
+"the real set does not load" is the gate working as ruled, not a defect
+this lane owes.
+
 | # | check | verdict here | evidence |
 |---|---|---|---|
-| **E1** | a bad id refuses fast (KB-12 pre-flight) | MECHANISM VERIFIED (synthetic); full check NOT YET RUNNABLE | `check_id` fires on `.rxt`-derived ids through the SAME code path as TOML ones (unchanged) — proven on this lane's own fixture; `python3 -m pcrecbench run --subbench capability ...` needs `lane/b42set` merged into this branch first (exact command below) |
-| **E2** | id containment both ways for THIS set | **PASS** | all 64 real `bench/capability` pattern ids checked against `subbench.check_id` directly (loaded via `rxt_source.load_rxt_source` on the committed `c2b5bde` blob): 0/64 illegal |
+| **E1** | a bad id refuses fast (KB-12 pre-flight) | MECHANISM VERIFIED (synthetic); full check **BLOCKED-ON-O-29** | `check_id` fires on `.rxt`-derived ids through the SAME code path as TOML ones (unchanged) — proven on this lane's own fixture. Against the REAL `bench/capability` corpus, `python3 -m pcrecbench run --subbench capability ...` now refuses at `Subbench()` construction citing O-29, before an id is even checked — correct per the ruling, but it means this check's own full run waits on the same fix E6/F1 do |
+| **E2** | id containment both ways for THIS set | **PASS** | all 64 real `bench/capability` pattern ids checked against `subbench.check_id` directly (`rxt_source.build_pattern_dicts` on the `c2b5bde` blob's parsed rows, BELOW the provenance gate — a deliberate lower-level check, since this fact does not depend on provenance at all): 0/64 illegal. The full gated `load_rxt_source`/`Subbench()` path on this same file now correctly refuses (O-29) — this check's own fact stands independently |
 | **E3** | a subject addressable by ID, not by line | **NOT APPLICABLE to L4's scope** | `bench/capability`'s subjects come from the standard generated-manifest pipeline (`gen_subjects.py`/`gen_throughput_subjects.py`), never from `.rxt` `@file:` references — the dump's `#section cases` carries inline/`@file:` case rows in its schema, but this loader does not consume them for expectations (out of L4's brief; `expectations.tsv` stays the harness's expectation source, unchanged). Revisit if a future lane wires case-derived expectations. |
 | **E4** | a duplicate block name is refused | **PASS (regression, existing)** | unchanged pcrec behavior (M7); not this lane's own code, re-confirmed incidentally by every load in this report |
 | **E5** | an `under <convention>` case reaches the harness as a second expectation | **NOT THIS LANE'S SCOPE (unchanged)** | R5 finding B1 stands: `harness.outcome_for()` has no convention parameter. This loader exposes `RxtSource.cases` (incl. `under`-wrapped rows) for a future harness-side lane; it does not wire them |
-| **E6** | `make check-harness`'s generic per-set gates pass on an `.rxt`-sourced set | NOT YET RUNNABLE from this branch alone | needs `bench/capability/` present (the merge); this lane's OWN synthetic `.rxt`-sourced fixture passes the generic gates it CAN exercise standalone (`check_rxt_source_load`'s arm 1) |
-| **E7** | `content_hash` covers the `.rxt` | **PASS** | `Subbench.content_hash()` needed NO code change: its existing `os.walk` over every non-generated committed file already includes `patterns.rxt` — a one-byte edit to the synthetic fixture's `.rxt` file moved the hash (`8511ed76...` → `8e5bff48...`), verified directly. "every included fragment and every `@file:` subject" is vacuous for `bench/capability@0.1` (no `include`, no `@file:` subjects) |
-| **F1** | `make check-harness`'s generic set gates enumerate a fifth set | pending the merge | mechanical once `bench/capability/` exists — `subbench_dirs()` already enumerates by discovery, no code change needed |
+| **E6** | `make check-harness`'s generic per-set gates pass on an `.rxt`-sourced set | **BLOCKED-ON-O-29** | needs `bench/capability/` to LOAD, which the new gate correctly refuses at this pin (64 blocks, 1 provenance row). This lane's OWN synthetic `.rxt`-sourced fixture (full 1:1 provenance coverage) passes the generic gates it CAN exercise standalone (`check_rxt_source_load`'s arm 1) — proving the MECHANISM works, not that the real set loads today |
+| **E7** | `content_hash` covers the `.rxt` | **PASS** | `Subbench.content_hash()` needed NO code change: its existing `os.walk` over every non-generated committed file already includes `patterns.rxt` — a one-byte edit to the synthetic fixture's `.rxt` file moved the hash (`8511ed76...` → `8e5bff48...`), verified directly. "every included fragment and every `@file:` subject" is vacuous for `bench/capability@0.1` (no `include`, no `@file:` subjects). Independent of O-29 (content_hash walks bytes, never loads through the gates) |
+| **F1** | `make check-harness`'s generic set gates enumerate a fifth set | **BLOCKED-ON-O-29** | `subbench_dirs()` already enumerates by discovery (no code change needed) — but every generic gate that then tries to `Subbench()` the set hits the same correct refusal E6 does |
 | **F2** | a command-line flag survives a compile against a config-free `.rxt`-sourced set | **NOT EXERCISED (out of L4's scope)** | this loader never builds a pcrec artifact; F2 is a compile-time D93 question the pcrec-side acceptance run already confirmed live (`F2` row, accept-41 archive) |
 | **F3** | the negative arm: a planted build directive in the set file fails this project's own gate | **PASS** | `check_no_build_directives`'s own positive fixture IS this check, run against a real gate this lane wrote (not merely "the underlying guard confirmed present by code read", as the archive's NOT-RUNNABLE note put it) — `target = t1` refused by name, `docs/dev/lanes/b42load_report.md` repro above |
 | **F4** | the set carries no pcrec-oracled limits file and no pcrec-shaped expectation | **PASS (review, unchanged)** | `bench/capability`'s sidecar (read at `c2b5bde`) declares no such file; `.rxt`-sourced loading adds none — R-BENCH-4/AR-6 hold |
 
-**The merge-time command for E1/E6/F1** (once the manager merges
-`lane/b42set` and `lane/b42load`, plus the one-line switch below):
+**The merge-time re-read**: once pcrec's O-29 fix lands and this branch's
+`testees/pcrec` pin advances to pick it up, E1/E6/F1 become runnable for
+real with no further code change here — `check_provenance_agreement`
+will see a full 64/64 count and pass through to the existing two gates,
+exactly as it does today on this lane's own synthetic fixture.
+
+**The re-read command for E1/E6/F1** (once the manager merges
+`lane/b42set` and `lane/b42load` with the one-line switch below, AND
+pcrec's O-29 fix is picked up by the pin this project's `testees/pcrec`
+points at — both are needed, not just the merge):
 
 ```
 python3 -m pcrecbench run --subbench capability --testee pcre2-jit --tier scratch   # E1's timing
 make check-harness                                                                   # E6/F1, generic gates enumerate capability@0.1
 ```
+
+Before the O-29 fix lands, running either command against the merged
+tree is EXPECTED to refuse citing O-29 — that is `check_provenance_
+agreement` doing its job, not a new bug to chase.
 
 ## The exact one-line sidecar switch
 
@@ -217,11 +258,15 @@ switch to function.
 - ✅ `pcrecbench/subbench.py` — the loading path + its CLAUDE.md update
 - ✅ `pcrecbench/rxt_source.py` — the loader module (new)
 - ✅ `tools/export_rxt.py` — the circular-derivation skip
-- ✅ `tools/selfcheck.py` — `check_rxt_source_load`, 9/9 PASS standalone
+- ✅ `tools/selfcheck.py` — `check_rxt_source_load`, 11/11 PASS standalone
 - ✅ design constraint (a) — the block↔sidecar agreement gate, with its
   positive/negative controls
 - ✅ design constraint (b) — the no-build-directive gate, with its
   `ext`-block control
+- ✅ the block↔provenance agreement gate (O-29, manager ruling
+  2026-09-16, added after the initial delivery) — refuses the current
+  pin's `bench/capability` dump BY NAME, with the 0-provenance vacuous
+  control and the exact O-29 negative fixture
 - ✅ engine-neutrality statement in the code (the module docstring:
   "the pinned pcrec binary used HERE is TOOLING, exactly like the
   libpcre2 oracle")
@@ -236,20 +281,26 @@ switch to function.
 
 ## Owed
 
-`make check-harness` (full suite, ~20 min historically) was launched in
-the background from this worktree before this report was finalized:
+`make check-harness` (full suite, ~20 min historically) is running in
+the background from this worktree, launched AFTER the O-29 gate was
+added (a first launch, before the O-29 gate existed, was killed by
+verified PID once it was clear it would validate stale code):
 
 ```
 cd /home/duxevents/pcrec-bench/worktrees/b42load && gnutimeout 900 make check-harness
 ```
 
-Tracked as a harness background task (Bash `run_in_background`, auto-
-armed at the 120s foreground cutoff) — it notifies on completion; the
-durable marker is its own exit and the tail of
-`/tmp/claude-1001/-home-duxevents-pcrec-bench/932894fa-f62e-4029-8fb0-f23809c3696f/tasks/bzomf6dbs.output`
-(this session's scratchpad; re-run the command above from a fresh agent
-if that path is gone). Standalone, `check_rxt_source_load` alone is
-9/9 PASS (shown above) and does not depend on the rest of the suite;
+Tracked with an explicit DURABLE MARKER per this project's boilerplate
+(not just the harness's own background-task notification): output
+redirects to
+`/tmp/claude-1001/-home-duxevents-pcrec-bench/932894fa-f62e-4029-8fb0-f23809c3696f/scratchpad/check_harness_run2.log`,
+with a trailing `DONE rc=<code>` line appended on exit — check that line
+(or its absence) as the source of truth, not process-list forensics; the
+harness task id is `bnokf2srg` (`tasks/bnokf2srg.output` in the same
+scratchpad) if that notification is what a resuming agent sees first.
+Standalone, `check_rxt_source_load` alone is 11/11 PASS (shown above,
+INCLUDING the O-29 gate's own positive/negative/vacuous arms) and does
+not depend on the rest of the suite;
 the OWED number is whether anything ELSE in the 300+-check suite moved
 under `Pattern.file` becoming optional and `Subbench.__init__` gaining
 the `rxt_source` branch — both changes are additive/conditional (no

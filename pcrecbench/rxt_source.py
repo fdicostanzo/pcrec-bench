@@ -31,23 +31,27 @@ testees/pcrec/pin.sh's own resolution) -- never a second rule, and never a
 build: a missing pin is a refusal BY NAME (`RxtSourceError`), never a
 silent fallback to a `.rx` shim.
 
-KNOWN GAP (found by this lane, 2026-09-16, reported to the manager before
-this module was written): at pin cd371441, `--list-source` silently drops
-the `#section provenance` and `#section variants` rows for every pattern
-block EXCEPT THE LAST ONE IN THE FILE, when multiple blocks each carry
-their own single, valid `provenance`/`variant` sub-block (no diagnostic,
-exit 0; the flat per-line `m`/`n`/`mc` case rows are NOT affected).
-Reproduced on a synthetic 3-pattern fixture and on the real
-`bench/capability` corpus (64 patterns, 1 provenance row survives). This
-module does not work around it -- doing so would mean inventing data
-`--list-source` never emitted, which is exactly the second-parser hazard
-this module exists to avoid. It reads the dump FAITHFULLY: a pattern
-block's provenance is whatever `#section provenance` says it is, `None`
-when the dump does not carry a row for that `block_line`. A set that
-wants per-pattern provenance back needs the upstream fix (outbox item
-pending); this loader's own block<->sidecar agreement gate (below) is
-about PATTERN blocks, not provenance rows, precisely because the dump
-cannot promise the latter today.
+KNOWN GAP, outbox O-29 (found by this lane, 2026-09-16, reported to the
+manager before this module was written; filed as O-29,
+`docs/dev/outbox_to_pcrec.md`, with an acceptance-archive addendum
+scoping the affected checks to single-pattern-block fixtures): at pin
+cd371441, `--list-source` silently drops the `#section provenance` and
+`#section variants` rows for every pattern block EXCEPT THE LAST ONE IN
+THE FILE, when multiple blocks each carry their own single, valid
+`provenance`/`variant` sub-block (no diagnostic, exit 0; the flat
+per-line `m`/`n`/`mc` case rows are NOT affected). Reproduced on a
+synthetic 3-pattern fixture and on the real `bench/capability` corpus (64
+patterns, 1 provenance row survives). This module does not WORK AROUND
+it -- doing so would mean inventing data `--list-source` never emitted,
+exactly the second-parser hazard this module exists to avoid -- but it
+does REFUSE on it: `check_provenance_agreement` (manager ruling,
+2026-09-16) treats a provenance-row count strictly between 0 and the
+pattern-block count as O-29's own symptom rather than a set's own
+choice, and refuses the WHOLE LOAD by name citing O-29. This makes
+`bench/capability` un-loadable at this pin -- the correct terminal state
+per the ruling, not a bug in this loader: no shim path around the gate,
+the fix belongs upstream. A set that never uses `provenance` at all (a
+0-row file) or that carries a full 1:1 count is unaffected.
 """
 
 import os
@@ -340,6 +344,47 @@ def check_block_sidecar_agreement(main_rows, patterns, source_path):
             % (source_path, len(block_names), len(got_names), missing, extra, dupes))
 
 
+def check_provenance_agreement(main_rows, provenance, source_path):
+    """THE THIRD GATE (manager ruling, 2026-09-16, on this lane's own
+    finding -- outbox O-29, `docs/dev/outbox_to_pcrec.md`): at the pin in
+    use, `--list-source` silently drops every pattern block's own
+    `#section provenance` row EXCEPT THE TEXTUALLY LAST ONE IN THE FILE
+    when several blocks each declare their own single, valid sub-block
+    (no diagnostic, exit 0 -- see this module's own KNOWN GAP note).
+    MEASURED: no set this project has ever authored declares provenance
+    for SOME but not all of its patterns -- either none do (a set that
+    does not use the production at all) or the charter requires every
+    one to (bench/capability@0.1: "Every pattern carries a native `.rxt`
+    `provenance` sub-block"). A count strictly between 0 and the number
+    of pattern blocks is therefore never a legitimate authoring choice on
+    any corpus seen so far -- it is O-29's own symptom, not a set's own
+    decision -- and this gate refuses BY NAME, citing O-29, rather than
+    silently handing the harness a provenance table it cannot tell apart
+    from "this set never wanted it". THE RULING (manager, 2026-09-16):
+    refusal is the CORRECT TERMINAL STATE for a set like bench/capability
+    at this pin -- no shim path around this gate; the fix belongs
+    upstream. 0 (no provenance anywhere) and a full 1:1 count both pass
+    -- this is NOT "every set must carry provenance", only "a set that
+    STARTED carrying it must carry it EVERYWHERE the dump says a pattern
+    block exists"."""
+    n_blocks = [r for r in main_rows if r.get("kind") in _PATTERN_KINDS]
+    n_prov = len(provenance)
+    if 0 < n_prov < len(n_blocks):
+        want_lines = sorted((r.get("line") for r in n_blocks), key=str)
+        have_lines = set(provenance.keys())
+        missing = [ln for ln in want_lines if ln not in have_lines]
+        raise RxtSourceError(
+            "%s: block<->provenance agreement FAILED -- %d pattern "
+            "block(s), only %d carry a #section provenance row (missing "
+            "at line(s): %s). This is outbox O-29's own symptom: "
+            "--list-source silently drops a pattern block's provenance "
+            "row unless it is the textually LAST one in the file to "
+            "declare one. Refusal is the correct terminal state until "
+            "pcrec's own fix lands -- this loader does not shim around "
+            "it (manager ruling, 2026-09-16)."
+            % (source_path, len(n_blocks), n_prov, ", ".join(missing)))
+
+
 # --------------------------------------------------------------- assembly
 
 def build_pattern_dicts(main_rows):
@@ -468,6 +513,7 @@ def load_rxt_source(path, pcrec_bin=None):
         raise RxtSourceError("%s: no pattern block found" % path)
     check_block_sidecar_agreement(main_rows, patterns, path)
     provenance = _index_single(sections.get("provenance"))
+    check_provenance_agreement(main_rows, provenance, path)
     variants = _index_multi(sections.get("variants"))
     cases = _index_multi(sections.get("cases"))
     aux_cols, aux_rows = sections.get("aux", (None, []))

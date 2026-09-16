@@ -2031,7 +2031,59 @@ tag family=wild, hazard=none
 
 pattern ~
 name floor-byte
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation the floor pattern needs no wild source
 tag family=floor, hazard=none
+"""
+
+# O-29's own symptom (docs/dev/outbox_to_pcrec.md; found by this lane,
+# 2026-09-16): three pattern blocks, EACH declaring its own single, valid
+# `provenance` sub-block -- at the pin in use, `--list-source` keeps only
+# the textually LAST one. Used to exercise `check_provenance_agreement`'s
+# refusal arm with the EXACT shape that fooled the 41-check acceptance
+# run (whose fixtures were all single-pattern-block files). MEASURED
+# (this lane): the trigger is narrower than "a block has provenance" --
+# it is a block whose LAST line is the provenance sub-block's own last
+# line (nothing after it before the next `pattern`/EOF). `tag` BEFORE
+# `provenance`, never after, exactly `bench/capability`'s own authored
+# order (`pattern` / `name` / `tag family=...` / `provenance` / its
+# sub-lines) -- a `tag` line placed AFTER `provenance` was measured NOT
+# to reproduce it, which is why this fixture's field order matters and
+# is not incidental.
+_RXT_PARTIAL_PROVENANCE = b"""\
+pattern abc
+name q1
+tag family=wild, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation q1's own note
+
+pattern def
+name q2
+tag family=wild, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation q2's own note
+
+pattern ghi
+name q3
+tag family=wild, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity synthesized
+  adaptation q3's own note
 """
 
 _RXT_DIRECTIVE = b"""\
@@ -2085,7 +2137,7 @@ def check_rxt_source_load():
     why it does not reuse `export_rxt.decode_rxt_escape`: that decoder's
     `.encode("utf-8")` fallback corrupts a RAW, unescaped high byte a plain
     `pattern` block's own column carries verbatim -- MEASURED, this check's
-    own high-byte witness below is exactly that shape). Six arms, each
+    own high-byte witness below is exactly that shape). Seven arms, each
     gate exercised against BOTH an input it must accept and one it must
     reject, in the same run (`tools/CLAUDE.md`'s own check-design rule):
 
@@ -2107,6 +2159,17 @@ def check_rxt_source_load():
         hand-doctored `patterns` list missing one block is refused BY
         NAME naming what is missing; the CONTROL is the real agreement
         (no doctoring) passing clean;
+    (3b) the block<->PROVENANCE agreement gate (outbox O-29, manager
+        ruling 2026-09-16): a THREE-pattern fixture where each block
+        declares its own valid `provenance` sub-block and only the
+        textually LAST one survives in the dump -- exactly O-29's own
+        symptom, and exactly the shape the 41-check acceptance run never
+        tried (every one of its fixtures had a single pattern block) --
+        is refused BY NAME citing O-29; the CONTROL is a 0-provenance
+        file (arm 2's `ext_control.rxt`, which never uses the production
+        at all) loading clean, proving the gate is NOT "every set must
+        carry provenance", only "a set that started carrying it must
+        carry it everywhere the dump says a block exists";
     (4) a missing/unbuilt pcrec binary is a refusal BY NAME
         (`resolve_pcrec_bin`), never a silent fallback -- exercised
         directly against a bogus binary path;
@@ -2220,6 +2283,36 @@ def check_rxt_source_load():
             ok("rxt-source control: real block<->loader agreement passes clean", "")
         except _rxtsrc.RxtSourceError as e:
             bad("rxt-source control: real block<->loader agreement passes clean", str(e))
+
+        # (3b) block<->PROVENANCE agreement gate -- O-29 (manager ruling,
+        # 2026-09-16): a partial provenance count (this lane's own O-29
+        # finding's exact symptom -- three blocks, only the LAST keeps its
+        # row) is refused BY NAME citing O-29; a 0-row file (no set here
+        # uses provenance at all) is the vacuous control.
+        partial_path = os.path.join(tmp, "partial_provenance.rxt")
+        with open(partial_path, "wb") as f:
+            f.write(_RXT_PARTIAL_PROVENANCE)
+        try:
+            _rxtsrc.load_rxt_source(partial_path, pcrec_bin=pcrec_bin)
+            bad("rxt-source: partial provenance coverage is refused BY "
+                "NAME (O-29)", "no exception raised")
+        except _rxtsrc.RxtSourceError as e:
+            if "O-29" in str(e) and "provenance" in str(e):
+                ok("rxt-source: partial provenance coverage is refused BY "
+                   "NAME (O-29)", str(e)[:200])
+            else:
+                bad("rxt-source: partial provenance coverage is refused BY "
+                    "NAME (O-29)", "wrong message: %s" % str(e)[:200])
+        try:
+            # ext_control.rxt (arm 2's control) declares NO provenance at
+            # all -- 0 rows, the OTHER passing case (not full coverage).
+            zero_src = _rxtsrc.load_rxt_source(ext_path, pcrec_bin=pcrec_bin)
+            ok("rxt-source control: zero provenance rows (a set that never "
+               "uses the production) is not O-29's shape",
+               "%d pattern(s), 0 provenance row(s)" % len(zero_src.patterns))
+        except _rxtsrc.RxtSourceError as e:
+            bad("rxt-source control: zero provenance rows (a set that "
+                "never uses the production) is not O-29's shape", str(e))
 
         # (4) a missing/unbuilt binary is a refusal BY NAME
         try:
