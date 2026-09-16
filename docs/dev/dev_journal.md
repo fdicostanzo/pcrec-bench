@@ -4312,3 +4312,20 @@ match_outcome enum gap (a future schema MINOR candidate, documented in
 testees/pcre2/CLAUDE.md); the three family-11 pcre2-dfa cells that
 read wrong-span until convention rows exist (excluded-by-document, not
 by code).
+
+## 2026-09-16 ~10:3x — window SWAP agreed with pcrecdev1 (live); L6b install script; O-30
+
+Frank directed the extension ask (O-30) and the L6b install script.
+scripts/install_l6b_deps.sh committed with every package apt-validated
+— finding: the research note's "libre2-dev already installed" is STALE
+(not installed; corrected in §11.2, package added to the set).
+pcrecdev1 countered O-30 with a SWAP that makes the contingency
+self-fulfilling: we cede the rest of I-69's window NOW (box verified
+quiet, all lanes stopped, worktrees swept — one forgotten b42cap
+worktree caught and removed in the verification), their o29fix
+validation battery runs here this afternoon (~7.5 h, what makes the
+fix pin land TONIGHT ~20:00-22:00 EDT instead of tomorrow), and O-30
+is GRANTED from their pin-announcement inbox item through 2026-09-17
+morning. Red battery → pin slips, extension lapses. Accepted live;
+I-70 makes it durable. Our next action is the I-70/pin inbox item:
+the O-29 verify chain, the sidecar switch, the 7-cell first sample.
