@@ -4355,3 +4355,18 @@ kept 1); post-fix 64/64. cases/aux confirmed immune structurally
 (pushed per-line, never deferred to a close). Next trigger: the pin
 item (~20:45+); then the verify chain → sidecar switch → 7-cell first
 sample in our granted overnight window.
+
+## 2026-09-16 ~14:0x — twenty-second session CLOSED at Frank's reset, mid-hold
+
+Session-end routine run at Frank's direction (context at 43%, reset
+before tonight's window): wake.md rewritten from scratch — the
+successor's runbook is the pin-item → O-29 verify chain → re-pin →
+sidecar switch → full make check → 7-cell first sample chain, with
+the battery-owns-the-box caveat until ~20:45 EDT. Heartbeat cron
+deleted; all lanes stopped and worktrees removed (verified);
+pcrecdev1 notified of the reset over the bridge. Tree clean, pushed.
+Session arithmetic: one manager (Fable), nine lanes (all Sonnet, all
+reviewed-merged-stopped), ~14 h wall, ~30 commits on master, the
+restart complete steps (1)-(5)+L6a, checks 324→398, two outbox
+findings filed against the delivered pin (abi-25, O-29) and one
+against our own docs (libre2-dev staleness).
