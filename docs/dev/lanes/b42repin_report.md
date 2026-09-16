@@ -225,11 +225,37 @@ two failure classes, on rows the first pass's fix didn't reach:
   this bench's own corpus, not a bug report.
 
 **Round 3** (log `make_check3.log`, box quiet — load 0.69/0.54/0.40 at
-launch): launched after both fixes; **OWED** at report-commit time — see
-the follow-up message for the counts. All fixes for both classes are
-committed; every standalone check that could be run without the ~20-min
-full suite (`check_mechanism_stamps`, `check_deny_flag_controls`,
-`check_cap_axis`, `check_kb17_find_all_advance`) is green.
+launch, `run_in_background: true` — a harness-tracked, NOT detached,
+job): `check-schema` (4/72/0) and `check-harness` (**348 check(s)
+passed, 0 FAILED** — both triage classes confirmed fixed) both
+completed and printed clean. `check-report` then started and the
+tracked job was KILLED — the harness's own completion notification
+read "stopped because the system is running low on memory," and the
+log's last two lines are `== check-report ==` /
+`make: *** [Makefile:162: check-report] Terminated`, with no `DONE
+rc=<n>` line (the wrapper died with the job). This is the SAME
+memory-heuristic hazard `docs/dev/lanes/BOILERPLATE.md` and KB-16 both
+name: `check-report` loads the whole record store
+(`pcrecbench.tests.test_report`'s `REAL_STORE`, ~3.6 GB RSS at scale)
+and BOILERPLATE's own rule is that such a run must go DETACHED
+(`setsid … & disown`), never a plain tracked background job — this run
+used the harness-tracked form instead (an oversight this report is
+noting so the next lane does not repeat it) and paid for it. `gnutimeout`
+was set to 3600 s and elapsed nowhere near that when the kill landed, so
+this was NOT a `gnutimeout` firing — it is the box's/harness's own
+memory pressure response, a recorded event, not a check failure: nothing
+`check-harness` asserted was wrong, and nothing `check-report` had begun
+asserting was wrong either — the process simply never got to print
+anything for that stage.
+
+**Round 4** (log `make_check4.log`, launched DETACHED this time —
+`setsid gnutimeout 1800 make check-report check-interpret … & disown`,
+per BOILERPLATE's rule for a memory-heavy run): re-runs ONLY the two
+stages round 3 never reported on. `check-schema` and `check-harness`
+already stand from round 3's log (4/72/0 and 348/0) and are not
+re-run. **OWED** at report-commit time — see the follow-up message for
+the stitched full-suite counts (schema + harness from round 3's log,
+report + interpret from round 4's).
 
 ## Charter-vs-committed checklist
 
@@ -248,7 +274,7 @@ full suite (`check_mechanism_stamps`, `check_deny_flag_controls`,
 | HALF 2 control: 17 bounded patterns unmoved | DONE — confirmed by re-measurement |
 | HALF 2 oracle witnesses pinned by value + negative control | DONE — `check_kb17_find_all_advance`, 4/4 PASS standalone |
 | HALF 2 KB-17 → FIXED | DONE |
-| GATE: `make check` full, every count green | Round 3 **OWED** (running); rounds 1-2's failures both fixed and verified standalone — see the "three rounds to green" section above |
+| GATE: `make check` full, every count green | check-schema 4/72/0 and check-harness 348/0 CONFIRMED (round 3's log, both classes fixed); check-report + check-interpret **OWED** (round 4, detached, running) — see the rounds section above and the follow-up message |
 | Any red implicating pcrec: verbatim repro, no diagnosis | The abi surprise (HALF 1) is reported verbatim per BD2. The [K53-SELRETRY] wall movement is NOT a bug — it is a real, positive, pcrec-acknowledged improvement this bench's own corpus triggered; reported as a finding for the outbox (O-28), not a red |
 
 ## Commits (chronological)
