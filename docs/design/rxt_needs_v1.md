@@ -181,7 +181,7 @@ family exists for exemplar-analysis findings, not for a pattern's origin.
 | **N-14** | `licence` — an SPDX id from the source's own LICENSE, fetched | — | **NEW** | no | **ABSENT** | MUST |
 | **N-15** | `licence_note` — where a source's own licence metadata disagrees with itself (the Davis Zenodo/GitHub mismatch, `capability_set_v1.md:464-466`) | — | **NEW** | no | **ABSENT** | SHOULD |
 | **N-16** | `retrieved_utc` — RFC 3339, the date of the fetch that produced THIS text | — | **NEW** | no | **ABSENT** | MUST |
-| **N-17** | `fidelity` — `verbatim` / `adapted` / `inspired`, a CLOSED three-value set | — | **NEW** | no | **ABSENT** | MUST |
+| **N-17** | `fidelity` — `verbatim` / `adapted` / `inspired`, a CLOSED three-value set. **DELIVERED 2026-09-16 with a different third value**: the shipped closed set is `verbatim`/`adapted`/`synthesized` (`inspired` refused by name at cd371441, measured — r6 R6-1); the bench adopts the shipped spelling, semantics unchanged | — | **NEW** | no | **ABSENT** | MUST |
 | **N-18** | `adaptation` — one checkable sentence, required when `fidelity ≠ verbatim` | — | **NEW** | no | **ABSENT** | MUST |
 | **N-19** | `attribution` — required where the licence demands it (CC BY-SA 4.0) | — | **NEW** | no | **ABSENT** | MUST |
 

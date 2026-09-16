@@ -469,7 +469,7 @@ A closed set of fields, one row per pattern, in the sidecar's
 | `licence` | SPDX id | R | from the source's own LICENSE/COPYING, fetched; `n-a` for `authored` |
 | `licence_note` | string | o | required where a source's licence metadata disagrees with itself (the Davis Zenodo/GitHub mismatch, §4.5) |
 | `retrieved_utc` | RFC 3339 | R | the date of the fetch that produced THIS text |
-| `fidelity` | enum | R | `verbatim` / `adapted` / `inspired` |
+| `fidelity` | enum | R | `verbatim` / `adapted` / `synthesized` — **AMENDED 2026-09-16 (r6 finding R6-1)**: the delivered `.rxt` format declares `fidelity` as a FORMAT-closed set `verbatim`/`adapted`/`synthesized` (no `vocabulary` line can widen it; `inspired` is refused by name at pin cd371441, measured). This note's earlier third value `inspired` maps to the shipped `synthesized` with its semantics UNCHANGED; Frank's Q1 not-a-copy gate keys on `fidelity ≠ verbatim`, both remaining values. Parked for Frank in the outbox with this as the recommendation |
 | `adaptation` | string | c | required when `fidelity ≠ verbatim`: what changed and why, in one sentence a reviewer can check against the source |
 | `attribution` | string | c | required when the licence demands it (CC BY-SA 4.0 — N1 §9) |
 
@@ -481,10 +481,15 @@ A closed set of fields, one row per pattern, in the sidecar's
   expanded, a multi-line `(?x)` body flattened to one line (now an OPEN
   question for Frank at the restart, `rxt_needs_v1.md` F-Q2 — §9). The
   `adaptation` sentence names which.
-- **`inspired`** — AUTHORED fresh from a description, never copied. This
+- **`synthesized`** (spelled `inspired` in this note before 2026-09-16;
+  renamed to the shipped format vocabulary, semantics unchanged — R6-1) —
+  AUTHORED fresh from a description, never copied. This
   is the value that makes families 10 and 12 possible without a licence
   question: a ReDoS shape written from a CVE's prose description is our
   text, and the CVE is cited as the reason it exists, not as its source.
+  Wherever this note or the ruling record below says `inspired`, read
+  `synthesized`; the Q1 similarity check applies to every
+  `fidelity ≠ verbatim` row.
 
 **Why a closed field set rather than free prose in `description`:** N3
 §1.3 establishes that `.rxt` has NO pattern-level provenance production

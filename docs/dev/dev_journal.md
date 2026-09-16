@@ -4120,3 +4120,46 @@ Verified read-only from here: `git status --short` on the file is empty,
 HEAD aa983157. Marked closed-by-manager in plan.md's STANDING (I-57) row;
 nothing owed, nothing queued. Frank may grant this session read-only
 git-query permissions (branch/status/@{u}) under ~/pcrec.
+
+## 2026-09-16 — twenty-second session (Fable manager): [B42] RESTART GO — wake, acks, step (2) r6 done, step (1) in flight
+
+Fresh manager session on Frank's wake charter (I-69, relayed ~00:10 EDT;
+the prior parked session stood down). Full wake ritual run; heartbeat
+cron at :17/:47. I-67/I-68/I-69 acked and moved into plan.md's [B42]
+row (STATE:started) in one commit (7bd3f7d, pushed). The inbox file
+carries a DUPLICATED I-69 header (first copy truncated mid-sentence) —
+flagged in the ack line for pcrecdev1's next wake, neither copy edited.
+~/pcrec pulled --ff-only to the pushed tip cfcedb0f per I-69's explicit
+"pull freely"; the delivery pin cd371441 is its direct parent. Pin built
+clean: build/pcrec-cd371441/build/pcrec (pin.sh, exit 0). pcrecdev1
+sent a live identity probe over a bridge despite I-69's no-live-link
+note; answered "(a) active manager", delivery unconfirmed — durable
+files remain the channel of record.
+
+Restart step (2) DONE (ahead of step (1), both launched in parallel):
+lane b42roadblk (Sonnet) delivered the light second panel pass, merged
+e89a9b2 — docs/dev/reviews/2026-09-16-r6-w23-delivery-roadblocks.md.
+Verdicts: roadblocks #1-#4 RESOLVED (measured against the pinned
+binary), #6 DISSOLVED (config withdrawn from set files; roster to `ext
+bench`), #5 PARTIAL — the `under` carrier works but SCORING is our own
+R5 B1 (harness.outcome_for() convention parameter, unbuilt); both
+Frank MUSTs (pattern-esc multi-line, NUL refusal by name) RESOLVED,
+measured. Eight findings; R6-1 BLOCKING: the shipped `fidelity` closed
+set is verbatim/adapted/SYNTHESIZED — `inspired` refused by name, and
+it is FORMAT-closed. Both design docs corrected in this commit
+(capability_set_v1.md §4.1, rxt_needs_v1.md N-17): `synthesized`
+carries the inspired semantics unchanged, the Q1 not-a-copy gate keys
+on fidelity ≠ verbatim. Parked for Frank with that recommendation (the
+alternative — asking pcrec to widen the closed set — rejected as
+unnecessary: no semantic loss). All nine P-Q + three F-Q questions
+answered/mooted (r6 §4). Lane TaskStop'ped, worktree removed, branch
+deleted.
+
+Step (1) in flight: lane b42accept running the authoritative 41-check
+acceptance pass at cd371441 (worktree lane/b42accept), with the
+I-67/I-68 corrections in the brief and a mid-run relay of r6's R6-4
+(A1's include is HEAD-only at the pin) + B6/C10 confirmations. Next on
+its delivery: consolidate, outbox item (acceptance verdict + parked
+rulings incl. fidelity and the §12 DEFAULTs), then step (4) the re-pin
+lane (folding in KB-17's mc advance-rule fix with bounded's 17 {0,N}
+counts as the must-not-move control) and step (5) L1 ∥ L2.
