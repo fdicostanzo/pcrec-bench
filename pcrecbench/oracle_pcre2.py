@@ -299,8 +299,13 @@ def _match_impl(self, subject, start=0):
 def _find_all_impl(self, subject, limit=None):
     """The THROUGHPUT regime's expectation: the FIRST match's span and the
     COUNT of non-overlapping matches, found by the same advance rule both
-    drivers use (`pos = max(match_end, pos + 1)`), so the number the oracle
-    states is the number a driver can reproduce."""
+    drivers use -- pcrec match_api.md S3.1's find-all loop, adopted BY
+    REFERENCE (KB-17, docs/dev/known_issues.md): the advance is off the
+    match's own reported START (`s`), never off the previous scan position
+    (`pos`) -- an empty match can be found AHEAD of `pos`, and advancing
+    `pos` itself re-finds the same empty match next call. Byte encoding:
+    S3.1.1's `<prefix>_next_pos` residual is `start + 1` (every position is
+    a character boundary); this bench never compiles a utf8 artifact."""
     if isinstance(subject, str):
         subject = subject.encode("latin-1")
     n = len(subject)
@@ -315,7 +320,7 @@ def _find_all_impl(self, subject, limit=None):
         if first is None:
             first = (s, e)
         count += 1
-        pos = e if e > pos else pos + 1
+        pos = e if e > s else s + 1
         if limit is not None and count >= limit:
             break
     return first, count

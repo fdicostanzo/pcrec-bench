@@ -29,19 +29,26 @@ re-pin, up from fourteen):
 | `configs.toml` | the config ids, `pin = "<commit>"`, the optional per-config `cc` and its precedence ruling ([B24]), the optional per-config `max_emit_bytes` / `max_emit_code_bytes` with the measured derivation of the 8 MiB bound ([B31]), the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 | `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved |
 | `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
-| `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` joined), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing a RECORD carries is read from it (every cap/capacity a record needs is stamped per artifact); the ONE thing that reads it is the [B31] cap axis' raise-only FLOOR check, which refuses a below-default config value in the bench's own words and takes pcrec's two defaults from here rather than keeping a second copy of them. `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
+| `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf, 57 at cd371441 — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` and [K50]'s `PCREC_STARTPOS_GUARD_TEXT_MAX` joined in turn), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing a RECORD carries is read from it (every cap/capacity a record needs is stamped per artifact); the ONE thing that reads it is the [B31] cap axis' raise-only FLOOR check, which refuses a below-default config value in the bench's own words and takes pcrec's two defaults from here rather than keeping a second copy of them. `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
+| `list_schema.tsv` | ([B42] restart step (4)/b42repin, 2026-09-16) pcrec's `--list-schema` output at the pin, VERBATIM under a source header — the SEVENTH registry surface ([DD-13b.W23.1], docs/spec/rxt_format.md / table_contract.md), archived for the FIRST TIME at cd371441 (the pin that shipped the query itself): one row per (scope, line-kind) the `.rxt` parser enforces, plus a `surface` section naming what it deliberately does NOT validate. Nothing in this project's adapters or checks reads it yet — archived now so the registry-surface census stays complete at this pin, and against the day `docs/design/rxt_needs_v1.md` needs it. NOT diffed by `make check-harness` (no `check_list_schema_registry` exists) |
 
-**The RE-PIN CHECKLIST, in full** ([B41] (b), 2026-09-11): re-archive
-`list_axes.tsv`, `list_definitions.tsv` and `list_limits.tsv` against
-the new pin's live output (the three rows above), THEN append the new
-pin to `catalogue/rules.toml`'s `[[pin_order]]` table — a MINOR
-catalogue-version bump, interpreter_v1.md §11 Q10's ruling ("both": the
-checklist prevents the omission, and R-BUCKET-SPAN's exit-2 message
-naming the missing slug is the fallback if it happens anyway). See
-`catalogue/CLAUDE.md`'s own "At a RE-PIN" paragraph for the exact step
-and its version-bump rule; do it in the SAME commit as the re-pin, not a
-follow-up — a pin absent from `[[pin_order]]` is silent until
-`make check-interpret` (or a report spanning it) actually needs it.
+**The RE-PIN CHECKLIST, in full** ([B41] (b), 2026-09-11; extended
+2026-09-16 for `list_schema.tsv`): re-archive `list_axes.tsv`,
+`list_definitions.tsv`, `list_limits.tsv` and, since cd371441,
+`list_schema.tsv` against the new pin's live output (the four rows
+above), THEN append the new pin to `catalogue/rules.toml`'s
+`[[pin_order]]` table — a MINOR catalogue-version bump,
+interpreter_v1.md §11 Q10's ruling ("both": the checklist prevents the
+omission, and R-BUCKET-SPAN's exit-2 message naming the missing slug is
+the fallback if it happens anyway). See `catalogue/CLAUDE.md`'s own "At
+a RE-PIN" paragraph for the exact step and its version-bump rule; do it
+in the SAME commit as the re-pin, not a follow-up — a pin absent from
+`[[pin_order]]` is silent until `make check-interpret` (or a report
+spanning it) actually needs it. Also check `--list-syntax` against
+`bench/syntax`'s seed file (`bench/syntax/list_syntax_<sha>.tsv`): if it
+moved, DO NOT re-seed on your own initiative unless only non-machine-read
+columns changed — report the delta for a ruling (cd371441 moved two
+rows' `built` column only, `\p{L}`/`\P{L}`, left un-re-seeded).
 
 ## `pin.sh` never writes inside pcrec
 
@@ -1680,3 +1687,70 @@ this box's). The `-fno-scan-edge` deny row's denied arm 367,390 → 252,587
 the 250,000 default, by 2,587 B. The clang refusal set stays EMPTY. The
 65535 NFA wall, the plain/`\z` overflow routes and every 288d505 stamp
 value are unchanged.
+
+**[B42] restart step (4) at cd371441 (abi 25) — 2026-09-16, lane
+b42repin.** Two real pcrec abi steps past d34c9131's 23, NOT zero as
+inbox I-68 first stated — read verbatim from pcrec's own (read-only)
+history rather than diagnosed: abi 23→24 is [K50-NULLGATE]'s
+caller-startpos boundary guard (`RX_STARTPOS_GUARD` + the shared
+`PCREC_ERR_STARTPOS` = −7); abi 24→25 is [PORTFIX], a gcc-16-vs-clang21
+label-then-declaration portability fix in the DFA scan-edge emission.
+Registries: axes 76/26 → **78/27** (ONE new axis, `startpos-guard`, two
+`predicate` rows — `guarded`/`permissive`, no stamp_value, deny
+`-fno-startpos-guard` bit 25); definitions **50 rows byte-identical**
+for the SEVENTH pin running; limits 56 → **57** (`PCREC_STARTPOS_GUARD_
+TEXT_MAX` 1024, `identifier cap`). `struct rx_info` is byte-identical
+(no member added — diffed field for field at the build): the shim floor
+STAYS 16. `--list-schema` archived for the FIRST TIME (the SEVENTH
+registry surface; cd371441 is the pin that shipped the query). On BYTE
+encoding (this bench compiles no other) `RX_STARTPOS_GUARD` reads
+`"permissive"` on every artifact and no runtime guard is emitted at all
+(match_api.md §3.1: "costs a byte-compiled caller nothing").
+
+**THE SIZE BOOKS, decomposed into two named, independently-measured
+additions** (every affected `tools/selfcheck.py` witness re-derived by
+compiling both pins with a MATCHING output basename and diffing
+comment-excluded `emit_size()` directly — not by inference; see
+`B42_STARTPOS_GUARD_LINES` / `B42_PORTFIX_SEMI_PER_MACHINE` there):
+
+- **+161 B FLAT, both engines, any route** — one new macro line in the
+  `.c` (`#define RX_STARTPOS_GUARD "permissive"`, 39 B with its
+  newline) and one new shared error-code line in the `.h`
+  (`#define PCREC_ERR_STARTPOS (-7)  /* ... */`, 122 B with its
+  newline) — NEITHER line is prose by `emit_size()`'s own rule (a line
+  is prose only when its first non-blank byte OPENS a block comment;
+  both open with `#define`), so both count in full, in BOTH
+  `emit_bytes` and `emit_code_bytes`. Verified on a non-hybrid
+  forced-VM witness (`foo|bar`, no DFA scan at all: 18,637 → 18,798)
+  and on both VM-declined-nullable bounded ledger rows (18,280 →
+  18,441; 18,489 → 18,650).
+- **+2 B PER DFA SCAN-EDGE-BEARING MACHINE** ([PORTFIX]'s own fix: one
+  trailing `;` added to each of that machine's two labels,
+  `<mach>_scan_views:` and `<mach>_scan_edge:`) — MEASURED on
+  `[a-z]{0,64}` (pinned, so no reverse machine, but TWO scan-edge
+  machines: forward search + the anchored match-here one): all four
+  labels gain a `;`, +4 B on top of the flat 161 (16,558 → 16,723,
+  +165 total) — and on bounded's `cls-upto-16384` (`dfa_match
+  search-filter` + `dfa_start pinned`: exactly ONE scan-edge machine,
+  its anchored one never built and its reverse one elided): only that
+  machine's two labels move, +2 B on top of 161 (13,305/11,828 →
+  13,468/11,991, +163 total AND code). A non-hybrid VM artifact and a
+  declined-nullable one have NO DFA scan machine at all, hence 0× this
+  term — confirmed above.
+
+**THE ADAPTER-SIDE finding, and why the check crashed before this
+lane's fix.** Match_api.md §6.3's `size-cap-retry` table CHANGED between
+d34c9131 and cd371441 ([K53-SELRETRY], 2026-09-10): a SECOND rung now
+reaches the value, on a DFA artifact whose OPTIONAL anchored
+match-here machine was dropped to fit an emitted-size cap (legible as
+`RX_DFA_MATCH "search-filter"`, no VM prefilter at all) — distinct from
+the pre-existing VM-hybrid rung (`RX_VM_PREFILTER "hybrid"` +
+`_LANG "count-collapsed"`), and mutually exclusive with it by ENGINE.
+`_check_agreement`'s single-armed check (unchanged since [B22]) refused
+every real `size-cap-retry` artifact whose route is the new DFA rung —
+crashing `check_mechanism_stamps` before it could print a single FAIL
+line. Fixed as a two-armed OR exclusive by engine, citing the updated
+table verbatim in the code comment at the point of the check. No
+committed record is affected (this pin has not been measured into
+`store/` yet); the crash was compile-time only, inside `make
+check-harness`.

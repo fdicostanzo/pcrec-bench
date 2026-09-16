@@ -431,17 +431,22 @@ bindings) live here, vendored or system, pinned either way.
   altwide) — and `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
   (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
   denied at the same pin, the fold's BEFORE) — at a pinned commit —
-  **d34c9131, abi 23** ([B39], 2026-09-06: the pin ADVANCED from a
-  prep lane's 37f5ae02 on Frank's ruling (inbox I-52), one abi step
-  (23) absorbed in one adapter change — the shim reads
-  `RX_VM_CLS_FOLDS` (VM scope only, never on a DFA artifact; no
-  rx_info field, the floor STAYS 16); registries 76/26 · 50 · 56 (the
+  **cd371441, abi 25** (re-pinned from d34c9131/abi 23 at [B42] restart
+  step (4)/b42repin, 2026-09-16: registries 78/27 · 50 · 57, plus the
+  new `list_schema.tsv` archive — the SEVENTH registry surface,
+  `--list-schema`, archived for the first time at this pin; struct
+  rx_info unchanged, the shim floor STAYS 16; sixteen pinned pcrec
+  configs, unchanged in count. Earlier, [B39], 2026-09-06: the pin
+  ADVANCED from a prep lane's 37f5ae02 to d34c9131 on Frank's ruling
+  (inbox I-52), one abi step (23) absorbed in one adapter change — the
+  shim reads `RX_VM_CLS_FOLDS` (VM scope only, never on a DFA artifact;
+  no rx_info field, the floor STAYS 16); registries 76/26 · 50 · 56 (the
   new `cls-fold` axis, `--list-definitions` byte-identical, the new
-  `PCREC_MAX_AUTO_DFA_ELEMS` limit); sixteen pinned pcrec configs now)
+  `PCREC_MAX_AUTO_DFA_ELEMS` limit))
   — with `list_axes.tsv`,
-  `list_definitions.tsv` and
-  `list_limits.tsv`, the pin's `--list-axes` / `--list-definitions` /
-  `--list-limits` registry surfaces archived
+  `list_definitions.tsv`, `list_limits.tsv` and `list_schema.tsv`, the
+  pin's `--list-axes` / `--list-definitions` / `--list-limits` /
+  `--list-schema` registry surfaces archived
   verbatim; and `pcrec-local`, a PROVIDED binary at no pin).
   See their CLAUDE.mds.
 - `store/` — the CANONICAL record store (the `.canonical` marker):

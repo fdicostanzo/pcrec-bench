@@ -15,12 +15,16 @@
 # field, or adds a `[[signature]]`, must carry a reviewer's approval line
 # in the commit message naming the rule ids reviewed (§8(6)).
 
-catalogue_version = "1.1"
+catalogue_version = "1.2"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). MINOR: a rule added, a template's wording, a link, a `legend`
 # line, an `example`, a `[[pin_order]]` append. MAJOR: a predicate or
 # threshold changes, a rule is removed, `inputs` read a different
 # column, or a `[[signature]]` is registered.
+#
+# 1.2 (2026-09-16, [B42] restart step (4), b42repin lane): `[[pin_order]]`
+# gains `cd371441` (the re-pin from d34c9131). No predicate, threshold or
+# rule's `inputs` moved.
 #
 # 1.1 (2026-09-11, [B41] (c), Frank's ruling): R-ARM-1 gains an optional
 # `legend` field -- one static, slot-free sentence, rendered once under
@@ -42,7 +46,7 @@ catalogue_version = "1.1"
 engine = "pcrec"
 pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "263b013", "a7e0bdf", "1989c62", "288d505", "334fd10e",
-          "d34c9131"]
+          "d34c9131", "cd371441"]
 
 # ===================================================== class R-STATUS ==
 

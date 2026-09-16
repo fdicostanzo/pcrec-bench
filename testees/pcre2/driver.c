@@ -334,8 +334,15 @@ int main(int argc, char **argv) {
                             rc_final = rc;
                         }
                         count++;
+                        /* pcrec match_api.md S3.1's find-all advance: off the
+                         * match's own reported START (ov[0]), never off the
+                         * scan position -- an empty match can be found AHEAD
+                         * of pos, and advancing pos itself re-finds the same
+                         * empty match next call (KB-17). Byte encoding: the
+                         * S3.1.1 `next_pos` residual is start+1. */
+                        size_t start = ov[0];
                         size_t end = ov[1];
-                        pos = (end > pos) ? end : pos + 1;
+                        pos = (end > start) ? end : start + 1;
                         if (pos > s->len) break;
                     }
                     nmatch = count;

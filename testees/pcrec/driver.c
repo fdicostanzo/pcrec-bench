@@ -724,8 +724,17 @@ int main(int argc, char **argv) {
                             memcpy(firstcaps, caps, (size_t)ncaps * sizeof *caps);
                         }
                         count++;
+                        /* pcrec match_api.md S3.1's find-all advance: off the
+                         * match's own reported START (caps[0][0]), never off
+                         * the scan position -- an empty match can be found
+                         * AHEAD of pos, and advancing pos itself re-finds the
+                         * same empty match next call (KB-17). Byte encoding:
+                         * S3.1.1's `<prefix>_next_pos` residual is start+1
+                         * (every position is a character boundary); every
+                         * pcrec testee on this bench compiles for `byte`. */
+                        size_t start = (size_t)caps[0][0];
                         size_t end = (size_t)caps[0][1];
-                        pos = (end > pos) ? end : pos + 1;
+                        pos = (end > start) ? end : start + 1;
                         if (pos > s->len) break;
                     }
                     nmatch = count;
