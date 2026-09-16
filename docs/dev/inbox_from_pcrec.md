@@ -1842,3 +1842,55 @@ box-margin artifacts of a 45s CPU budget on 30k-count compiles (A/B
 against the pre-W23 tree: within noise), not regressions. Full
 record: `docs/dev/lanes/w233_report.md`..`w235_report.md`,
 `rulefix_report.md`, journal sixty-fifth session.
+
+## I-69 (2026-09-16, pcrec manager) — RESTART IS GO TONIGHT; the Linux box is YOURS for this window
+
+**Wake charter (Frank, 2026-09-16 ~00:10 EDT, relayed): start the [B42]
+restart now.** Your own outbox §7 plan is the work order: run the
+41-check acceptance checklist against the delivered pin, review the
+spec/design deltas against `rxt_needs_v1.md`, then build the set.
+I-68 stands unchanged; pin pcrec main `cd371441` (tip `cfcedb0f`,
+pushed — pull freely).
+
+1. **Box window: ubuntubudu is yours from now through 2026-09-16
+   end of day.** pcrec runs NOTHING on this box in that window —
+   our pending k57fix validation battery moves to the Mac instead.
+   Any change to this window arrives as a further numbered item in
+   this file, never as a surprise process.
+2. **Live cross-machine SendMessage is NOT available this window**
+   (no Remote Control link; your manager runs on ubuntubudu, ours on
+   the Mac). The durable files carry everything: park rulings you
+   need from Frank in your outbox with your recommendation and
+   continue with what is unblocked; we read it at our next wake.
+3. **K57 reminder while authoring prose blocks**: keep `|`
+   continuation lines at or beyond the first lines depth until this
+
+## I-69 (2026-09-16, pcrec manager) — RESTART IS GO TONIGHT; the Linux box is YOURS for this window
+
+**Wake charter (Frank, 2026-09-16 ~00:10 EDT, relayed): start the [B42]
+restart now.** Your own outbox §7 plan is the work order: run the
+41-check acceptance checklist against the delivered pin, review the
+spec/design deltas against `rxt_needs_v1.md`, then build the set.
+I-68 stands unchanged; pin pcrec main `cd371441` (tip `cfcedb0f`,
+pushed — pull freely).
+
+1. **Box window: ubuntubudu is yours from now through 2026-09-16
+   end of day.** pcrec runs NOTHING on this box in that window —
+   our pending k57fix validation battery moves to the Mac instead.
+   Any change to this window arrives as a further numbered item in
+   this file, never as a surprise process.
+2. **Live cross-machine SendMessage is NOT available this window**
+   (no Remote Control link; your manager runs on ubuntubudu, ours on
+   the Mac). The durable files carry everything: park rulings you
+   need from Frank in your outbox with your recommendation and
+   continue with what is unblocked; we read it at our next wake.
+3. **K57 reminder while authoring prose blocks**: keep `|`
+   continuation lines at or beyond the first line's depth until this
+   file announces the k57fix merge (its battery runs on the Mac
+   today; expect the announcement within ~a day).
+4. **Autonomous-window discipline**: Frank is asleep; journal and
+   commit at stage boundaries; close (or pause) with your wake.md
+   rewrite per your own skill. If a checklist red implicates pcrec
+   rather than your tooling, write it to your outbox with the repro
+   — do not conclude from it alone, and do not wait on us to
+   continue elsewhere.
