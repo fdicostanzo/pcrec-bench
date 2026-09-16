@@ -1687,3 +1687,70 @@ this box's). The `-fno-scan-edge` deny row's denied arm 367,390 → 252,587
 the 250,000 default, by 2,587 B. The clang refusal set stays EMPTY. The
 65535 NFA wall, the plain/`\z` overflow routes and every 288d505 stamp
 value are unchanged.
+
+**[B42] restart step (4) at cd371441 (abi 25) — 2026-09-16, lane
+b42repin.** Two real pcrec abi steps past d34c9131's 23, NOT zero as
+inbox I-68 first stated — read verbatim from pcrec's own (read-only)
+history rather than diagnosed: abi 23→24 is [K50-NULLGATE]'s
+caller-startpos boundary guard (`RX_STARTPOS_GUARD` + the shared
+`PCREC_ERR_STARTPOS` = −7); abi 24→25 is [PORTFIX], a gcc-16-vs-clang21
+label-then-declaration portability fix in the DFA scan-edge emission.
+Registries: axes 76/26 → **78/27** (ONE new axis, `startpos-guard`, two
+`predicate` rows — `guarded`/`permissive`, no stamp_value, deny
+`-fno-startpos-guard` bit 25); definitions **50 rows byte-identical**
+for the SEVENTH pin running; limits 56 → **57** (`PCREC_STARTPOS_GUARD_
+TEXT_MAX` 1024, `identifier cap`). `struct rx_info` is byte-identical
+(no member added — diffed field for field at the build): the shim floor
+STAYS 16. `--list-schema` archived for the FIRST TIME (the SEVENTH
+registry surface; cd371441 is the pin that shipped the query). On BYTE
+encoding (this bench compiles no other) `RX_STARTPOS_GUARD` reads
+`"permissive"` on every artifact and no runtime guard is emitted at all
+(match_api.md §3.1: "costs a byte-compiled caller nothing").
+
+**THE SIZE BOOKS, decomposed into two named, independently-measured
+additions** (every affected `tools/selfcheck.py` witness re-derived by
+compiling both pins with a MATCHING output basename and diffing
+comment-excluded `emit_size()` directly — not by inference; see
+`B42_STARTPOS_GUARD_LINES` / `B42_PORTFIX_SEMI_PER_MACHINE` there):
+
+- **+161 B FLAT, both engines, any route** — one new macro line in the
+  `.c` (`#define RX_STARTPOS_GUARD "permissive"`, 39 B with its
+  newline) and one new shared error-code line in the `.h`
+  (`#define PCREC_ERR_STARTPOS (-7)  /* ... */`, 122 B with its
+  newline) — NEITHER line is prose by `emit_size()`'s own rule (a line
+  is prose only when its first non-blank byte OPENS a block comment;
+  both open with `#define`), so both count in full, in BOTH
+  `emit_bytes` and `emit_code_bytes`. Verified on a non-hybrid
+  forced-VM witness (`foo|bar`, no DFA scan at all: 18,637 → 18,798)
+  and on both VM-declined-nullable bounded ledger rows (18,280 →
+  18,441; 18,489 → 18,650).
+- **+2 B PER DFA SCAN-EDGE-BEARING MACHINE** ([PORTFIX]'s own fix: one
+  trailing `;` added to each of that machine's two labels,
+  `<mach>_scan_views:` and `<mach>_scan_edge:`) — MEASURED on
+  `[a-z]{0,64}` (pinned, so no reverse machine, but TWO scan-edge
+  machines: forward search + the anchored match-here one): all four
+  labels gain a `;`, +4 B on top of the flat 161 (16,558 → 16,723,
+  +165 total) — and on bounded's `cls-upto-16384` (`dfa_match
+  search-filter` + `dfa_start pinned`: exactly ONE scan-edge machine,
+  its anchored one never built and its reverse one elided): only that
+  machine's two labels move, +2 B on top of 161 (13,305/11,828 →
+  13,468/11,991, +163 total AND code). A non-hybrid VM artifact and a
+  declined-nullable one have NO DFA scan machine at all, hence 0× this
+  term — confirmed above.
+
+**THE ADAPTER-SIDE finding, and why the check crashed before this
+lane's fix.** Match_api.md §6.3's `size-cap-retry` table CHANGED between
+d34c9131 and cd371441 ([K53-SELRETRY], 2026-09-10): a SECOND rung now
+reaches the value, on a DFA artifact whose OPTIONAL anchored
+match-here machine was dropped to fit an emitted-size cap (legible as
+`RX_DFA_MATCH "search-filter"`, no VM prefilter at all) — distinct from
+the pre-existing VM-hybrid rung (`RX_VM_PREFILTER "hybrid"` +
+`_LANG "count-collapsed"`), and mutually exclusive with it by ENGINE.
+`_check_agreement`'s single-armed check (unchanged since [B22]) refused
+every real `size-cap-retry` artifact whose route is the new DFA rung —
+crashing `check_mechanism_stamps` before it could print a single FAIL
+line. Fixed as a two-armed OR exclusive by engine, citing the updated
+table verbatim in the code comment at the point of the check. No
+committed record is affected (this pin has not been measured into
+`store/` yet); the crash was compile-time only, inside `make
+check-harness`.

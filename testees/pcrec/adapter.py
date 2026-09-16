@@ -512,12 +512,20 @@ for on the pcrec side first:
 4. A STAMP WITH NO MIRROR IS CHECKED AGAINST WHAT IT IMPLIES ([B19]).
    `RX_ENGINE_SEL` has no rx_info field, so its control is the CONFIG and
    the stamps beside it: `forced` IFF the testee named `--engine=`;
-   `collapsed-prefilter` and ([B22]) `size-cap-retry` imply a VM hybrid
-   whose language is `count-collapsed`; the two `overflowed-*` values,
-   ([B22]) `declined-nullable` and ([B26]) `declined-nullable-default`
-   imply a VM artifact with no prefilter -- and the two DECLINE values
-   imply the absence of the language pair as well, the iff's other
-   direction (match_api.md 6.3's table, read as implications).
+   `collapsed-prefilter` implies a VM hybrid whose language is
+   `count-collapsed`; the two `overflowed-*` values, ([B22])
+   `declined-nullable` and ([B26]) `declined-nullable-default` imply a VM
+   artifact with no prefilter -- and the two DECLINE values imply the
+   absence of the language pair as well, the iff's other direction
+   (match_api.md 6.3's table, read as implications). ([B22]/[B42])
+   `size-cap-retry` USED to imply the same vm/hybrid/count-collapsed
+   triple; at cd371441 ([K53-SELRETRY], absorbed by [B42] restart step
+   (4)/b42repin) match_api.md 6.3 gained a SECOND rung reaching this same
+   value on a DFA artifact (no VM prefilter, `<PREFIX>_DFA_MATCH
+   "search-filter"` -- the anchored match-here machine dropped to fit an
+   emitted-size cap), so the check is now a two-armed OR exclusive by
+   engine. See `_check_agreement`'s own comment at the point of the
+   check for the citation.
 5. A FIELD WITH NO STAMP IS CHECKED AGAINST ITS OWN CONTRACT ([B26]).
    `rx_info.name` and `.nentries` (abi 15) are spelled nowhere else, so
    there is no second spelling to check them against; what the spec DOES
@@ -534,7 +542,13 @@ abi that appended `search_form`, the sixth field it reads, and UNCHANGED at
 [B37]'s abi 22: six abi steps, four new macros, no new field -- and at
 [B39]'s abi 23, unchanged again: one macro, no field; 15 from [B26]
 for `name` and `nentries`, 10 from [B18] for `match_form`, 6 before that
-for `scan` / `prefilter`) and is enforced in `driver.c`, which
+for `scan` / `prefilter`) and UNCHANGED AGAIN at [B42] restart step (4)'s
+cd371441 re-pin (abi 25 -- TWO real steps past d34c9131's 23, not zero as
+inbox I-68 first stated: abi 23->24 is [K50-NULLGATE]'s
+`RX_STARTPOS_GUARD` macro + the shared `PCREC_ERR_STARTPOS` code, abi
+24->25 is [PORTFIX]'s clang-portability label fix; struct rx_info is
+byte-identical to d34c9131's -- diffed field for field at the build, no
+member added) and is enforced in `driver.c`, which
 refuses a lower artifact by name before printing anything else. This file
 does NOT keep a second copy of the number: it recognises the driver's
 refusal line and re-raises it as an AdapterError carrying pcrec's own two
@@ -3423,7 +3437,7 @@ class Adapter(_ad.Adapter):
             #    a RUNG was involved, which is exactly why pcrec kept them
             #    apart, and nothing in this check collapses them.
             lang = meta.get("vm_prefilter_lang")
-            if sel in ("collapsed-prefilter", "size-cap-retry") and not (
+            if sel == "collapsed-prefilter" and not (
                     engine == "vm" and macro_vm_pf == "hybrid"
                     and lang == "count-collapsed"):
                 raise _ad.AdapterError(
@@ -3433,6 +3447,48 @@ class Adapter(_ad.Adapter):
                     "%r, <PREFIX>_VM_PREFILTER %r, <PREFIX>_VM_PREFILTER_LANG "
                     "%r -- match_api.md 6.3's table says vm / hybrid / "
                     "count-collapsed." % (sel, engine, macro_vm_pf, lang))
+            # ([B42] restart step (4)/b42repin, pin cd371441: [K53-SELRETRY],
+            #    2026-09-10, ABSORBED a spec change between d34c9131 and
+            #    cd371441) -- `size-cap-retry` USED to imply the same vm/
+            #    hybrid/count-collapsed triple as `collapsed-prefilter`
+            #    (the [B22] comment above, and this check, before this
+            #    edit). match_api.md 6.3 NOW reads (verbatim, cd371441):
+            #    "TWO rungs reach it, and they are mutually exclusive by
+            #    ENGINE, so the artifact's own axis stamps say which: on a
+            #    VM hybrid it is [LIM-1]/[OPT-4]'s rung and the
+            #    count-collapsed prefilter survived (legible as
+            #    <PREFIX>_DFA_PREFILTER with <PREFIX>_PREFILTER_LANG_WHY
+            #    "count-collapsed"); on a DFA artifact it is
+            #    [K53-SELRETRY]'s optional-contributor drop and the
+            #    anchored match-here machine was dropped (legible as
+            #    <PREFIX>_DFA_MATCH "search-filter")." So the iff is now a
+            #    two-armed OR, exclusive by engine: a VM hybrid must still
+            #    carry the count-collapsed language pair (the [LIM-1]/
+            #    [OPT-4] rung, unchanged), and a DFA artifact must stamp
+            #    NO VM prefilter at all and <PREFIX>_DFA_MATCH
+            #    "search-filter" (limits.md 8's "optional-contributor
+            #    drop" -- the anchored machine pcrec would otherwise emit
+            #    was dropped to fit the size cap). Confirmed at this pin's
+            #    own build: a cd371441 artifact of the DFA rung reads
+            #    engine "dfa", <PREFIX>_VM_PREFILTER absent (None),
+            #    <PREFIX>_VM_PREFILTER_LANG absent (None) -- exactly what
+            #    the updated table says, and exactly what the OLD,
+            #    single-armed check refused.
+            macro_mf = meta.get("dfa_match")
+            vm_arm_ok = (engine == "vm" and macro_vm_pf == "hybrid"
+                         and lang == "count-collapsed")
+            dfa_arm_ok = (engine == "dfa" and macro_vm_pf is None
+                          and lang is None and macro_mf == "search-filter")
+            if sel == "size-cap-retry" and not (vm_arm_ok or dfa_arm_ok):
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_ENGINE_SEL 'size-cap-retry' "
+                    "but reads engine %r, <PREFIX>_VM_PREFILTER %r, "
+                    "<PREFIX>_VM_PREFILTER_LANG %r, <PREFIX>_DFA_MATCH %r -- "
+                    "match_api.md 6.3's table (cd371441, [K53-SELRETRY]) says "
+                    "EITHER vm / hybrid / count-collapsed (the [LIM-1]/[OPT-4] "
+                    "rung) OR dfa / no prefilter / no language / "
+                    "search-filter (the [K53-SELRETRY] optional-contributor "
+                    "drop)." % (engine, macro_vm_pf, lang, macro_mf))
             if sel in ("overflowed-dfa", "overflowed-prefilter",
                        "declined-nullable",
                        "declined-nullable-default") and not (

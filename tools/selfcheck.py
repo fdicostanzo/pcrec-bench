@@ -2082,6 +2082,46 @@ _K41W2 = (rb"(?:(0{28,30}|[\n\t]?(?:c{1}?c{28,30}?a|1{1,}a{0,30}0|c){5,10}?\n)"
 # one edit here moves them all, and the DFA sizes are predicted UNMOVED.
 B39_VM_STAMP_LINE = 26
 
+# [B42] restart step (4) / b42repin, 2026-09-16 -- the cd371441 re-pin
+# (rx_info.abi 23 -> 25, TWO real steps; see testees/pcrec/CLAUDE.md's ABI
+# FLOOR paragraph and adapter.py's own note for the abi-25 flag). Every
+# EMIT_BYTES/EMIT_CODE_BYTES want below moved, and the delta decomposes
+# into two NAMED, independently-measured additions -- confirmed by
+# compiling each affected witness at both pins with a MATCHING output
+# basename (the CLAUDE.md-documented include-line-length rule) and diffing
+# comment-excluded emit_size() directly, not by inference:
+#
+#   B42_STARTPOS_GUARD_LINES = 161 -- FLAT on every artifact, either
+#     engine, any route ([K50-NULLGATE], abi 23->24): one new macro line
+#     in the .c, `#define RX_STARTPOS_GUARD "permissive"\n` (39 B), and one
+#     new shared error-code line in the .h,
+#     `#define PCREC_ERR_STARTPOS (-7)  /* ... */\n` (122 B) -- NEITHER
+#     line is PROSE by emit_size()'s own rule (a line is prose only when
+#     its FIRST NON-BLANK byte opens a block comment; both lines open with
+#     `#define`), so both count in full, in BOTH emit_bytes and
+#     emit_code_bytes (neither is a table line either). 39 + 122 = 161,
+#     verified on a non-hybrid forced-VM witness (`foo|bar`, no DFA scan
+#     at all: 18637 -> 18798) and on both VM-declined-nullable bounded
+#     ledger rows (18280 -> 18441, 18489 -> 18650) -- every one exactly
+#     161, nothing else moved.
+#   B42_PORTFIX_SEMI_PER_MACHINE = 2 -- PER DFA SCAN-EDGE-BEARING MACHINE
+#     ([PORTFIX], abi 24->25, the gcc-16-vs-clang21 label-then-declaration
+#     fix): one trailing `;` added to EACH of that machine's two labels,
+#     `<mach>_scan_views:` and `<mach>_scan_edge:` -- MEASURED directly on
+#     `[a-z]{0,64}` (pinned, so no reverse machine, but TWO scan-edge
+#     machines: forward search + the anchored match-here one) --
+#     `rx_forward_scan_views:` / `rx_forward_scan_edge:` / `rx_anchored_
+#     scan_views:` / `rx_anchored_scan_edge:` all gain a `;`, +4 B on top
+#     of the flat 161 (16558 -> 16723, +165 total) -- and on bounded's
+#     `cls-upto-16384` (ONE scan-edge machine: `dfa_match search-filter`
+#     means its anchored machine was never built) -- only `rx_forward_
+#     scan_views:` / `rx_forward_scan_edge:` move, +2 B on top of 161
+#     (13305/11828 -> 13468/11991, +163 total AND code). A non-hybrid VM
+#     artifact and a declined-nullable one have NO DFA scan machine at
+#     all, hence 0 * this constant, confirmed above.
+B42_STARTPOS_GUARD_LINES = 161
+B42_PORTFIX_SEMI_PER_MACHINE = 2
+
 
 class _Draft:
     """[B39] DRAFT: a predicted value, compared exactly. See above."""
@@ -2339,7 +2379,11 @@ STAMP_CASES = (
       "dfa_match": "unwrapped", "engine_sel": "selected",
       "altcls_merges": 0, "altcls_factored": 0,
       "dfa_uniform_folds": 4,
-      "scan_edges": 1, "emit_bytes": 16558, **_CAPS_DFA}),
+      "scan_edges": 1,
+      # [B42]: two scan-edge machines (forward + anchored; pinned, so no
+      # reverse one) -- 161 flat + 2*2 (each machine's two labels) = 165.
+      "emit_bytes": 16558 + B42_STARTPOS_GUARD_LINES
+                    + 2 * B42_PORTFIX_SEMI_PER_MACHINE, **_CAPS_DFA}),
     # ... and its ONE-CHARACTER CONTROL. `{4096,}` is a LOWER bound, so
     # the start state does not accept and the predicate declines: the same
     # class, the same ladder, the fallback candidate. Without this row the
@@ -2380,7 +2424,9 @@ STAMP_CASES = (
       # [B39] (MEASURED 2026-09-06): no class at all in a literal
       # alternation, so the fold count reads 0.
       "vm_cls_folds": 0,
-      "emit_bytes": 18611 + B39_VM_STAMP_LINE, **_CAPS_VM}),
+      # [B42]: non-hybrid VM, no DFA scan machine at all -- flat 161.
+      "emit_bytes": 18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
+      **_CAPS_VM}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE HAND-CHOSEN
     # FOLD WITNESS AND ITS ONE-CHARACTER CONTROLS (predicted from source
     # 2026-09-05, MEASURED at the d34c9131 build 2026-09-06: every
@@ -2399,7 +2445,9 @@ STAMP_CASES = (
      {"engine": "vm", "prefilter": "none", "engine_sel": "forced",
       "vm_frameless": 1, "vm_alt_islands": 0,
       "vm_entry_shape": "forward", "vm_program_bytes": 634,
-      "vm_cls_folds": 3, "emit_bytes": 18045, **_CAPS_VM}),
+      "vm_cls_folds": 3,
+      # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
+      "emit_bytes": 18045 + B42_STARTPOS_GUARD_LINES, **_CAPS_VM}),
     # CONTROL 1 (tuning.md 2.22's own decline table, row 2): `[ac]` is a
     # two-member set NOT differing only in bit 0x20 -- the or-mask would
     # admit `b`/`B` -- so it stays a BITMAP class: folds 0 on a class-
@@ -2408,7 +2456,9 @@ STAMP_CASES = (
     ("ASCII-fold declined: [ac] under --engine=vm (not a 0x20 pair), folds 0",
      "pcrec-vm", b"x[ac]y",
      {"engine": "vm", "engine_sel": "forced",
-      "vm_cls_folds": 0, "emit_bytes": 18261, **_CAPS_VM}),
+      "vm_cls_folds": 0,
+      # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
+      "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES, **_CAPS_VM}),
     # CONTROL 2 (row 3): `[@\x60]` IS a 0x20 pair (0x40 / 0x60) but of
     # NON-letters -- the compare would be exact, yet the recognizer names
     # what caseless folding PRODUCES and a wider two-member-compare form
@@ -2416,7 +2466,10 @@ STAMP_CASES = (
     ("ASCII-fold declined: [@`] under --engine=vm (a 0x20 pair of non-letters), folds 0",
      "pcrec-vm", b"x[@`]y",
      {"engine": "vm", "engine_sel": "forced",
-      "vm_cls_folds": 0, "emit_bytes": 18261, **_CAPS_VM}),  # MEASURED: the two controls are the same size (one bitmap each)
+      "vm_cls_folds": 0,
+      # [B42]: non-hybrid VM, no DFA scan machine -- flat 161. MEASURED:
+      # the two controls are still the same size (one bitmap each).
+      "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES, **_CAPS_VM}),
     # CONTROL 3 (the scope's other side): the same three caseless letters
     # under `auto` select the DFA, and the DFA route never consults
     # `vm_cls_shape` -- NO pair (asserted after the loop by the scope
@@ -2635,7 +2688,9 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 0, "vm_entry_shape": "forward",
       "vm_program_bytes": 653,
       "vm_cls_folds": 0,   # [B39] MEASURED: `[a-z]` is a RANGE, not a pair
-      "emit_bytes": 18254 + B39_VM_STAMP_LINE, "emit_code_bytes": 18254 + B39_VM_STAMP_LINE,
+      # [B42]: declined-nullable VM, no DFA scan machine -- flat 161.
+      "emit_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
+      "emit_code_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
       **_CAPS_VM}),
     # [B19] (e) -> [B25]: until a7e0bdf the 16384 rung was THE DFA THAT
     # WARNS (724,699 B of source, over `--warn-emit-bytes` 250,000 --
@@ -2680,8 +2735,13 @@ LEDGER_STAMP_CASES = (
       "dfa_prefilter": "none", "dfa_scan_edge": "range",
       "dfa_match": "search-filter", "dfa_start": "pinned",
       "dfa_uniform_folds": 2,
-      "warned_emit_bytes": None, "emit_bytes": 13305,
-      "emit_code_bytes": 11828, **_CAPS_DFA}),
+      "warned_emit_bytes": None,
+      # [B42]: `search-filter` + pinned = exactly ONE scan-edge machine
+      # (the forward search; no anchored, no reverse) -- 161 flat + 2*1.
+      "emit_bytes": 13305 + B42_STARTPOS_GUARD_LINES
+                    + B42_PORTFIX_SEMI_PER_MACHINE,
+      "emit_code_bytes": 11828 + B42_STARTPOS_GUARD_LINES
+                    + B42_PORTFIX_SEMI_PER_MACHINE, **_CAPS_DFA}),
     # ------ [B22] THE DECLINE/KEEP SETS at 263b013 (the I-21 CORRECTION's
     # code-derived minw analysis, stamped 11/11 as predicted -- inbox
     # I-23/I-25; plan [B22]). DECLINE (`pcrec_minw(root) == 0` on the
@@ -2712,7 +2772,9 @@ LEDGER_STAMP_CASES = (
       "engine_sel": "declined-nullable", "vm_frameless": 1,
       "vm_alt_islands": 0, "vm_entry_shape": "forward",
       "vm_program_bytes": 756,
-      "emit_bytes": 18459 + B39_VM_STAMP_LINE + 4, "emit_code_bytes": 18459 + B39_VM_STAMP_LINE + 4,  # +4: the N1 _WHY prose
+      # [B42]: declined-nullable VM, no DFA scan machine -- flat 161.
+      "emit_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES,
+      "emit_code_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES,  # +4: the N1 _WHY prose
       **_CAPS_VM}, "whole-subject"),
     ("bounded cls-upto-16384 whole: declined", "pcrec-auto",
      "bounded", "cls-upto-16384",
