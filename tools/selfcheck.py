@@ -8689,6 +8689,33 @@ def check_convention_scoring():
             outcome)
 
 
+def check_capability_policy_noop_elsewhere():
+    """`pcrecbench.capability`'s own module docstring claims the
+    pre-compile policy is "a silent no-op on every pre-[B42] set" because
+    none of them authors a `requires-*` tag -- CHECKED here, not merely
+    asserted in a docstring: for EVERY `bench/*/` set other than
+    `capability` (discovered, never named, `subbench_dirs()`, [B11.1]'s
+    own enumeration rule), `pattern_requires()` must return an empty set
+    for every one of its patterns. The corpus this lane's own tests use
+    IS the control for `capability` itself: `check_capability_policy`
+    above shows the policy DOES fire there."""
+    print("-- the capability policy is a no-op on every non-capability set --")
+    from pcrecbench import capability as _cap
+    from pcrecbench.subbench import find as _find_sb
+
+    for name, _path in subbench_dirs():
+        if name == "capability":
+            continue
+        sb = _find_sb(name)
+        offenders = [p.name for p in sb.patterns if _cap.pattern_requires(p)]
+        if not offenders:
+            ok("capability policy no-op: %s declares zero requires-* tags" % name,
+               "%d pattern(s) checked" % len(sb.patterns))
+        else:
+            bad("capability policy no-op: %s declares zero requires-* tags" % name,
+                "found requires-* on: %r" % offenders)
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -8740,6 +8767,7 @@ def main():
     check_timeline_provenance()
     check_kb17_find_all_advance()
     check_capability_policy()
+    check_capability_policy_noop_elsewhere()
     check_convention_scoring()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"

@@ -92,8 +92,21 @@ THINGS A FUTURE EDITOR SHOULD NOT UNDO WITHOUT READING NOTES.md FIRST:
    own convention, re-derived by `gen_patterns.py`.
 
 WHAT IS NOT BUILT HERE (see NOTES.md for the full list and why): family
-11's cross-convention scoring; the pre-compile REQUIRES capability
-policy in `pcrecbench/harness.py` (the `ext bench` block is
-documentation for that future lane, not enforcement); `variant.kind`
-rendering; the `.rxt` loader in `pcrecbench.subbench` (L4); the six
-[B7] non-pcre2/pcrec adapters.
+11's cross-convention SCORING machinery (an `under`-qualified expectation
+row, still unauthored); the `.rxt` loader in `pcrecbench.subbench` (L4,
+built, but this set is not whole-file loadable through it at this pin --
+outbox O-29); the six [B7] non-pcre2/pcrec adapters.
+
+**[B42] L5 (lane b42cap, 2026-09-16) CORRECTS the two claims above that
+used to read "not built":** the pre-compile REQUIRES capability policy
+IS wired into `pcrecbench/harness.py` (`pcrecbench/capability.py`), read
+from this set's own `ext bench` block via the sidecar/shim load path
+(`rxt_source.load_aux_rows()`, which does not trip O-29 -- an `ext`
+block lives outside the per-pattern content those gates scan); and
+`variant.kind` IS rendered by the reporter now, though never exercised
+by this set (`gen_variants.py`'s table is deliberately empty in v1).
+L5's own witness-compile census also corrected three wrong `pcrec-*`
+declarations the first cut staged (`conditionals`, `control-verbs`,
+`lookbehind-variable` -- all three actually REFUSED at the pinned
+pcrec); see `NOTES.md` and `docs/dev/lanes/b42cap_report.md` for the
+full matrix.

@@ -957,6 +957,37 @@ implementable without them. Both ship in this one change, one
   `test_giveup_smallest_rows_two_codes_p2`,
   `test_provenance_path_cwd_independent`); 75 + `test_quick`'s 7 = 82
   reporter-side tests total (`pcrecbench/tests/CLAUDE.md`).
+
+## [B42] CB2 (2026-09-16) -- `variant.kind` rendering, built from nothing
+
+`docs/design/capability_set_v1.md` 5.7 / `requirements.md` 4.5's closing
+sentence ("reports show the variant kind beside the number"): DESIGNED
+AND BUILT here for the first time ([B42] L5, lane b42cap) -- an
+exhaustive grep for `variant` in this module before this change returned
+exactly two hits, both unrelated prose (R5 finding B2/CB2). A per-GROUP
+`variant_by_testee` dict (the SAME per-table-conditional shape
+`dominated_by_testee`/`delta_by_testee` already use, not `show_form`'s
+report-wide flag: a column empty on THIS table is omitted from THIS
+table, R5's own rule) adds a `variant` column to the ranking table --
+`` `syntax-only` ``/`` `restructured` `` beside the row that ran one,
+`-` beside a row in the same table that did not -- fed by a new
+`ReportData.variant_by_cell` index ((sb, testee_id, pattern_id) ->
+`patterns[].variant`, populated wherever a record carries a non-null
+one), built and populated the same way `floor_pattern_by_sb` ([B14] R9)
+already is. A legend note explains the two `variant.kind` tokens and
+`requirements.md` 4.5's two constraints wherever the column fires.
+
+Validated against a SYNTHETIC many-variant report fixture (a dozen-plus
+variant rows spanning both `variant.kind` values, mixed with plain rows
+in the same table), never a live sample -- **no committed record carries
+a non-null `patterns[].variant` today** (`gen_variants.py`'s table is
+deliberately empty in v1 for every set; grep over `store/records/`
+confirms zero), so `REPORTER_VERSION` is UNCHANGED and no committed
+report under `reports/` moves a single byte. `pcrecbench/tests/
+test_report.py` gained `test_variant_kind_rendering_cb2` (the firing
+case: a dozen+ variant rows rendered correctly beside plain ones; the
+"column omitted when every row is plain" control; the legend note's
+presence/absence).
 """
 
 from __future__ import annotations
@@ -2858,6 +2889,12 @@ class ReportData:
     # any record in the selection declares one (schema v1.3, not yet
     # schema-legal -- see the module docstring's R9 note).
     floor_pattern_by_sb: dict = field(default_factory=dict)
+    # CB2 (`docs/design/capability_set_v1.md` 5.7, [B42] L5): (sb,
+    # testee_id, pattern_id) -> that pattern entry's own `variant` dict
+    # (`patterns[].variant`, schema), populated only where a record
+    # carries a non-null one. No committed record does yet -- see the
+    # ranking-table rendering site's own note.
+    variant_by_cell: dict = field(default_factory=dict)
     # [B12] R10: (sb, pattern_id) -> {testee_id: diagnostic} for every
     # testee whose compile of `pattern_id` reported `compile_outcome ==
     # "did-not-compile"` -- indexed independently of whether the testee
@@ -3122,6 +3159,7 @@ def build_report(loaded, args, known_testee_ids=None):
     tier_by_testee = {}
     record_ts_by_testee = {}
     subject_bytes = {}
+    variant_by_cell = {}  # CB2: (sb, testee_id, pattern_id) -> variant dict, non-null only
     floor_pattern_by_sb = {}  # [B14] R9: sb -> pattern_id of its `role: floor` pattern, if any
     # [B20] v1.4: the block, the after-sample failures, the provenance and
     # the X13 rule version, per RECORD (there is no per-testee line).
@@ -3186,6 +3224,8 @@ def build_report(loaded, args, known_testee_ids=None):
         for p in s.get("patterns", []) or []:
             if p.get("role") == "floor" and sb not in floor_pattern_by_sb:
                 floor_pattern_by_sb[sb] = p["pattern_id"]
+            if p.get("variant") is not None:
+                variant_by_cell[(sb, testee_id, p["pattern_id"])] = p["variant"]
 
         # Match rows: grouped by `pcrecbench.reduce.cells_from_record` --
         # the SAME (pattern_id, regime, form) -> {subject_id: [rows]}
@@ -3311,6 +3351,7 @@ def build_report(loaded, args, known_testee_ids=None):
         all_records=all_records,
         subbench_alias_note=getattr(args, "_subbench_alias_note", None),
         floor_pattern_by_sb=floor_pattern_by_sb,
+        variant_by_cell=variant_by_cell,
         did_not_compile_by_pattern=did_not_compile_by_pattern,
         agreement_by_record=agreement_by_record,
         schema_version_by_record=schema_version_by_record,
@@ -3734,9 +3775,28 @@ def render_markdown(rd: ReportData):
                     if dom:
                         dominated_by_testee[t] = dom
 
+            # CB2 (`docs/design/capability_set_v1.md` 5.7, [B42] L5):
+            # `requirements.md` 4.5's closing sentence -- "reports show
+            # the variant kind beside the number". Per-GROUP, not
+            # report-wide (`rd.show_form`'s own shape): a column empty on
+            # every row of THIS table is omitted from THIS table, the R5
+            # rule `dominated_by_testee`/`delta_by_testee` already apply
+            # just above. No committed record has ever carried a non-null
+            # `patterns[].variant` (`gen_variants.py`'s table is
+            # deliberately empty in v1 -- `bench/capability/NOTES.md`),
+            # so this fires only against the synthetic fixture built to
+            # exercise it (`pcrecbench/tests/test_report.py`).
+            variant_by_testee = {}
+            for t, form, r in rankable:
+                v = rd.variant_by_cell.get((sb, t, pattern_id))
+                if v:
+                    variant_by_testee[t] = v
+
             header = ["rank", "testee", "status"]
             if rd.show_form:
                 header += ["form", "fact"]
+            if variant_by_testee:
+                header.append("variant")
             header.append("median ns/call")
             if is_throughput:
                 header.append("ns/byte")
@@ -3780,6 +3840,9 @@ def render_markdown(rd: ReportData):
                 row = [str(i), f"`{t}`", _status_cell(rd, sb, t, status)]
                 if rd.show_form:
                     row += [f"`{form}`", _form_fact(form)]
+                if variant_by_testee:
+                    v = variant_by_testee.get(t)
+                    row.append(f"`{v['kind']}`" if v else "-")
                 row.append(_fmt_ns(r.median_ns))
                 if is_throughput:
                     row.append(f"{r.median_ns / total_bytes:.4f}"
@@ -3810,6 +3873,17 @@ def render_markdown(rd: ReportData):
                     row.append(tier)
                 out.append("| " + " | ".join(row) + " |")
             out.append("")
+
+            if variant_by_testee:
+                out.append(
+                    "_**variant**: this testee did not run the canonical pattern "
+                    "text -- `syntax-only` is a mechanical re-spelling a "
+                    "reviewer can check token by token, `restructured` a "
+                    "deeper rewrite; either way `requirements.md` 4.5's two "
+                    "constraints (identical results on every subject, the "
+                    "sub-bench's own objective preserved) are what make it "
+                    "comparable at all, and the row's number is that "
+                    "variant's, not the canonical pattern's._\n")
 
             if dominated_by_testee:
                 out.append(
