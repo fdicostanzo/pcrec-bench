@@ -453,3 +453,29 @@ miss:
   CROSS-SET collision across all FIVE sets (bench/syntax's own `floor`
   pattern makes it five, not four) -- still not a within-set one, so the
   per-set export still avoids it entirely. 7 PASS lines.
+
+[B42] L5 (lane b42cap, 2026-09-16): two new `check-harness` arms.
+`check_capability_policy` runs `pcrecbench.capability`'s pre-compile
+policy end to end through the REAL `quick` CLI on the real
+`bench/capability` set (the sidecar/shim load path, since that set is
+not `.rxt`-loadable as a whole at this pin, outbox O-29): the blocked
+witness pattern (`unsupported-by-declaration` + `declaration_ref`, no
+match row, no engine diagnostic leaking through), two positive controls
+that a satisfied token is not over-blocked (on the declaring config and
+on another config), the closed-vocabulary rejection with its accepted-
+token control, and the fail-closed rule on an undeclared testee id.
+`check_convention_scoring` exercises `harness.outcome_for`'s new
+`convention` parameter (R5 B1/CB1) against hand-built fixtures, since no
+committed `expectations.tsv` row anywhere sets `.convention` yet: the
+matching case, the mismatch case (with both conventions named in the
+diagnostic), and two backward-compatibility controls (an unset
+`expectation.convention` ignores the caller; an unset `convention`
+argument ignores the expectation) proving the parameter is inert on
+every call shape that predates this lane.
+`check_capability_policy_noop_elsewhere` checks the flip side of
+`pcrecbench.capability`'s own docstring claim: every OTHER `bench/*/`
+set (discovered, never named) declares zero `requires-*` tags on any
+pattern, so the policy can never fire there -- `check_capability_policy`
+above is the control showing it DOES fire on `bench/capability`. 16
+checks total across the three arms, every one with the negative
+control the "no failing case proves nothing" rule asks for.

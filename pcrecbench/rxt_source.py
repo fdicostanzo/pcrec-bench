@@ -495,6 +495,41 @@ class RxtSource:
         return self.provenance.get(block_line)
 
 
+def load_aux_rows(path, pcrec_bin=None):
+    """A NARROWER entry point than `load_rxt_source`: the `#section aux`
+    rows (the `ext ...` tree, e.g. `ext bench`'s testee roster +
+    capability matrix) and the head-scope facts, WITHOUT the two gates
+    that are about per-pattern-BLOCK content (`check_block_sidecar_
+    agreement`, `check_provenance_agreement`) -- an `ext` block lives
+    entirely in `#section aux`, outside the main pattern table those
+    gates scan (`check_no_build_directives`'s own docstring says so),
+    so a file whose PATTERN content trips O-29's provenance-agreement
+    gate (`bench/capability/patterns.rxt` at this pin: 1 of 64
+    provenance rows survives `--list-source`, refused whole by
+    `load_rxt_source`) still has a readable aux tree here. This is not a
+    workaround for O-29 -- it reads nothing `--list-source` did not
+    actually emit, the same rule `load_rxt_source` itself follows -- it
+    is a narrower READ than the full pattern-source load, for a caller
+    (`pcrecbench.capability`) that wants only the `ext` tree and has no
+    use for `patterns`/`provenance`/`variants` at all.
+
+    `check_no_build_directives` still runs (cheap, and orthogonal to
+    O-29: an `ext` block is never a `target`/`config` row, so a set that
+    uses one never trips it either).
+
+    -> `(aux_rows, head)`, same shapes as `RxtSource.aux_rows`/`.head`."""
+    text = run_list_source(path, pcrec_bin=pcrec_bin)
+    main_cols, main_rows, sections = parse_list_source(text)
+    if main_cols is None:
+        raise RxtSourceError(
+            "%s: --list-source produced no #kind header -- empty or "
+            "malformed dump" % path)
+    check_no_build_directives(main_rows, path)
+    aux_cols, aux_rows = sections.get("aux", (None, []))
+    head = parse_head(main_rows)
+    return aux_rows, head
+
+
 def load_rxt_source(path, pcrec_bin=None):
     """THE ENTRY POINT: load and gate one `.rxt` pattern-source file.
     `pcrecbench.subbench.Subbench` calls this when a sidecar declares

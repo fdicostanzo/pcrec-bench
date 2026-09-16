@@ -3815,6 +3815,97 @@ def test_kb16_query_never_opens_other_subbench_files():
            f"{target!r} -- opened={opened[:3]}")
 
 
+def test_variant_kind_rendering_cb2():
+    """CB2 (`docs/design/capability_set_v1.md` 5.7, [B42] L5):
+    `variant.kind` rendering, DESIGNED AND BUILT from nothing here -- no
+    committed record has ever carried a non-null `patterns[].variant`
+    (`gen_variants.py`'s table is deliberately empty in v1 for every
+    set), so this is a SYNTHETIC many-variant fixture, never a live
+    sample, per the brief's own instruction.
+
+    `engine-a` runs the CANONICAL text on every one of thirteen patterns
+    (`p00`..`p12`); `engine-b` runs a declared VARIANT on twelve of them
+    (`p01`..`p12`, alternating `syntax-only`/`restructured`) and the
+    canonical text on `p00` (the CONTROL pattern). Each (pattern,
+    regime) group is therefore a mixed table: one variant row beside one
+    plain row.
+
+      1. every one of the twelve variant tables shows a `variant` column
+         with `` `syntax-only` `` or `` `restructured` `` beside
+         `engine-b`'s row and `-` beside `engine-a`'s.
+      2. CONTROL: `p00`'s table -- NEITHER testee ran a variant -- has NO
+         `variant` column at all (the per-table, not report-wide, rule:
+         same shape as `dominated_by_testee`/`delta_by_testee`).
+      3. the explanatory legend note appears under every table that
+         fires (2), and not under `p00`'s."""
+    kinds = ["syntax-only", "restructured"]
+    patterns_a = [{"pattern_id": "p00", "role": "member"}]
+    patterns_b = [{"pattern_id": "p00", "role": "member"}]
+    rows_a, rows_b = [], []
+    seq = 1
+    for i in range(1, 13):
+        pid = f"p{i:02d}"
+        kind = kinds[i % 2]
+        patterns_a.append({"pattern_id": pid, "role": "member"})
+        patterns_b.append({
+            "pattern_id": pid, "role": "member",
+            "variant": {
+                "kind": kind,
+                "text": f"VARIANT-TEXT-{pid}",
+                "objective_preservation": "preserves the objective (fixture)",
+                "capture_correspondence": {"mode": "identical"},
+            },
+        })
+    for pid in ["p00"] + [f"p{i:02d}" for i in range(1, 13)]:
+        rows_a.append(_mini_row(pid, "s1", "short-subject-search", 1, seq, 50))
+        seq += 1
+        rows_b.append(_mini_row(pid, "s1", "short-subject-search", 1, seq, 60))
+        seq += 1
+
+    setup_a = _mini_setup("engine-a_1.0.0_cfg-caps-simdna", patterns=patterns_a)
+    setup_b = _mini_setup("engine-b_1.0.0_cfg-caps-simdna", patterns=patterns_b)
+    loaded = [_mk_loaded("a.jsonl", setup_a, rows_a),
+             _mk_loaded("b.jsonl", setup_b, rows_b)]
+
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+
+    n_variant_cells = sum(1 for k in rd.variant_by_cell
+                          if k[2] != "p00")
+    _check(n_variant_cells == 12,
+           f"expected 12 variant cells indexed (one per p01..p12 on "
+           f"engine-b), got {n_variant_cells}: {sorted(rd.variant_by_cell)}")
+    _check(("rb-mini@1.0", "engine-b_1.0.0_cfg-caps-simdna", "p00")
+           not in rd.variant_by_cell,
+           "p00's engine-b entry must NOT be indexed (it ran the canonical "
+           "text, variant is null)")
+
+    md = report.render_markdown(rd)
+
+    for i in range(1, 13):
+        pid = f"p{i:02d}"
+        kind = kinds[i % 2]
+        section = md.split(f"\n### `{pid}` / `short-subject-search`")[1].split("\n### `")[0]
+        _check("| variant |" in section or "|variant|" in section.replace(" ", ""),
+               f"{pid}: expected a `variant` column header:\n{section[:400]}")
+        _check(f"`{kind}`" in section,
+               f"{pid}: expected the variant kind `{kind}` in the table:\n{section[:400]}")
+        _check(re.search(r"\|\s*-\s*\|", section),
+               f"{pid}: expected engine-a's row to show `-` for the variant "
+               f"column:\n{section[:400]}")
+        _check("requirements.md` 4.5's two constraints" in section,
+               f"{pid}: expected the variant legend note:\n{section[-500:]}")
+
+    # CONTROL: p00 -- neither testee ran a variant here -- carries NO
+    # `variant` column and NO legend note, even though the SAME REPORT
+    # carries both everywhere else (the per-table rule, not report-wide).
+    p00_section = md.split("\n### `p00` / `short-subject-search`")[1].split("\n### `")[0]
+    _check("variant |" not in p00_section,
+           f"CONTROL p00: must carry no `variant` column:\n{p00_section[:400]}")
+    _check("requirements.md` 4.5's two constraints" not in p00_section,
+           f"CONTROL p00: must carry no variant legend note:\n{p00_section[:400]}")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -3903,6 +3994,8 @@ TESTS = [
     test_vm_cls_folds_legend_b39,
     # KB-16 ([B41] (e))
     test_kb16_query_never_opens_other_subbench_files,
+    # CB2 ([B42] L5)
+    test_variant_kind_rendering_cb2,
 ]
 
 

@@ -302,6 +302,26 @@ selects all 3 records either way).
   cells`/`_diagnostic_first_line` KB-10 added. 73 reporter-side tests
   total across both files.
 
+**[B42] CB2 addition (2026-09-16, 1 new test, 74 reporter-side tests
+total; lane b42cap)**: `test_variant_kind_rendering_cb2` -- `variant.kind`
+rendering, designed and built from nothing (R5 B2/CB2: before this
+change, `variant` appeared nowhere in `report.py` but as unrelated
+prose). A SYNTHETIC many-variant fixture (thirteen patterns, two
+testees: `engine-a` always runs the canonical text, `engine-b` runs a
+declared variant -- alternating `syntax-only`/`restructured` -- on
+twelve of them and the canonical text on the thirteenth, the control),
+never a live sample: no committed record anywhere carries a non-null
+`patterns[].variant` (`gen_variants.py`'s table is deliberately empty in
+v1 for every set). Asserts the `variant` column and kind token appear in
+every one of the twelve mixed tables (`engine-b`'s row shows the kind,
+`engine-a`'s shows `-`, the explanatory legend note is present), and
+that the thirteenth (control) pattern's table carries NEITHER the column
+nor the note even though the SAME report shows both everywhere else --
+the per-table conditional rule (`dominated_by_testee`/`delta_by_testee`'s
+own shape), not `show_form`'s report-wide flag. `REPORTER_VERSION` is
+UNCHANGED (no committed report renders differently); see `report.py`'s
+own `[B42] CB2` module-docstring section.
+
 ## `make check-report`
 
 Runs `python3 -m pcrecbench.tests.test_report`, then

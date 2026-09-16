@@ -115,20 +115,37 @@ values (12 + `floor`).
   score yet — a future lane building the missing expectation-override
   machinery is where they belong).
 - **The pre-compile capability policy** (§5.3: `REQUIRES(pattern) ⊄
-  capabilities(config) ⇒ unsupported-by-declaration`) is NOT wired into
-  `pcrecbench/harness.py`. This lane's `ext bench` block in
-  `patterns.rxt` carries a first-cut capability matrix for the roster
-  (six pinned pcre2-\*/pcrec-\* configs) as DOCUMENTATION for that future
-  wiring (L5's scope) — it is a faithfully-dumped `ext` aux block
-  ("pcrec parses the structure... and interprets nothing",
-  `rxt_format.md`), never enforced today. **Caveat, stated plainly**:
-  the pcrec capability entries (callouts marked unsupported;
-  control-verbs, k-reset marked supported) are inferred from
-  `bench/syntax`'s own census findings and pcrec's D26 PCRE2-compatibility
-  posture, NOT independently re-derived from a real compile census the
-  way §5.1's engine-notes table demands for a production capability
-  declaration. L5 should re-verify every `pcrec-*` row before this
-  matrix is trusted for real routing.
+  capabilities(config) ⇒ unsupported-by-declaration`) is now WIRED into
+  `pcrecbench/harness.py` (`pcrecbench/capability.py`, lane `b42cap`,
+  L5, 2026-09-16), decided BEFORE `adapter.compile()` is ever called for
+  a pattern whose REQUIRES tokens are not a subset of the testee's
+  declared capabilities. The `ext bench` block in `patterns.rxt` is the
+  declaration it reads (via `pcrecbench.rxt_source.load_aux_rows`, which
+  does not run into outbox O-29 — that gate is scoped to per-pattern
+  `provenance`/`variants` rows, and the `ext` aux block sits outside the
+  main pattern table entirely; see `docs/dev/lanes/b42cap_report.md` for
+  which load path each check exercises, since `bench/capability` itself
+  is NOT rxt-loadable as a whole at this pin).
+- **L5's re-verification (2026-09-16) corrected three wrong `pcrec-*`
+  declarations.** This lane's own caveat above was right to distrust the
+  first cut: it was inferred from `bench/syntax`'s census and pcrec's
+  D26 posture, not from a real compile census. A witness compile per
+  (config, token) pair at the pinned pcrec (`--features all`, each
+  config's own `--engine=`/`--no-captures` flags) found `conditionals`
+  and `control-verbs` WRONGLY marked satisfied on every `pcrec-*` config
+  (both are `REJECTED`/"not implemented yet" even with their module
+  enabled — `(?(1)a|b)(a)?` and `a(*ACCEPT)b` both refuse, D26 tier 4 for
+  the verb; `(?(DEFINE)...)` alone ships, under module `recursion`, and
+  is NOT this token) and `lookbehind-variable` WRONGLY marked satisfied
+  (pcrec's lookbehind ships FIXED-WIDTH PER BRANCH — differing branch
+  widths compile, e.g. `(?<=a|bc)x`, but this set's OWN
+  `negation-scope-lookbehind-var` witness, a single-branch variable-width
+  body, is refused: "variable-length lookbehind is not implemented").
+  `callouts` was already correctly marked unsupported. Every other token
+  was spot-verified compiling on every `pcrec-*` config. `gen_patterns.py`'s
+  `EXT_BENCH_ROSTER` table is the fix (never hand-edit `patterns.rxt`);
+  the full (config, token) witness matrix is
+  `docs/dev/lanes/b42cap_report.md`.
 - **`variant.kind` rendering** (CB2) and the harness's own REQUIRES
   vocabulary validation are both unbuilt — outside this lane's scope
   (L5).
