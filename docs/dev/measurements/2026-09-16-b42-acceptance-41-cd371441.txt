@@ -46,6 +46,16 @@
 #            common directory when run from this worktree, same rule as
 #            probe_rxt_format.py's default_bin())
 #
+# ADDENDUM (2026-09-16 ~09:1x EDT, manager, after the L4 loader lane's
+# finding — outbox O-29): D1/C4/C7's PASS verdicts are SINGLE-BLOCK-
+# SCOPED. Every fixture in this run carried exactly one pattern block;
+# at this pin a multi-block file's `--list-source` silently emits only
+# the LAST block's #section provenance/variants rows (exit 0, no
+# diagnostic). The verdicts stand for the checks as written; the
+# generalization gap is O-29's defect report and the many-blocks case
+# is added to the bench's own gates (the L4 loader's 1:1 agreement
+# gate + negative control).
+#
 # ============================================================
 # THE VERDICT TABLE -- 41 rows
 # ============================================================

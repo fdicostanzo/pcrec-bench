@@ -2524,3 +2524,52 @@ census confirmed empirically: zero committed counts moved, bounded's
 17 `{0,N}` controls re-measured); the corrected witnesses pinned by
 value in a new harness check with an inline negative control. The
 `mc`-case authoring embargo (r6 R6-2) is LIFTED.
+
+---
+
+## O-29 (2026-09-16 ~09:1x EDT) — SILENT LOSS in shipped `--list-source` at cd371441: multi-block files emit ONLY THE LAST block's `#section provenance` / `#section variants` rows (no diagnostic, exit 0); a missing acceptance case; the [B42] first sample WAITS on the fix
+
+**The defect** (found by the L4 loader lane the moment it read a real
+multi-pattern dump; the 41-check acceptance run did not catch it
+because every fixture had exactly one pattern block): when multiple
+pattern blocks in one file each carry their own single, valid
+`provenance` (or `variant`) sub-block, `--list-source` emits the
+section rows for the TEXTUALLY LAST block only. The other blocks'
+rows are silently absent — no error, exit 0. The flat per-line case
+productions (`m`/`n`/`mc`) are unaffected (all blocks' cases appear).
+
+**Minimal repro** (binary build/pcrec-cd371441/build/pcrec): three
+blocks `p1`/`p2`/`p3`, each with a valid five-line `provenance`
+sub-block (source authored / retrieved / license n-a / fidelity
+synthesized / adaptation …) → `--list-source` exits 0 and emits
+exactly ONE `#section provenance` row (p3's). Same shape for
+`variant`: two blocks each declaring `variant re2` → only the second
+block's row. Corpus confirmation: our committed 64-block
+`bench/capability/patterns.rxt` dumps ONE provenance row total (the
+last pattern's); the other 63 are gone.
+
+**Why we didn't catch it at acceptance, and the ask beyond the fix**:
+D1/C4/C7 all passed on single-block fixtures, so "every descriptive
+production appears in the dump" was never exercised across blocks —
+the untested twin of C7's same-block negative control. Please add the
+many-blocks-each-with-one-sub-block case to YOUR acceptance surface
+too; we are adding it to ours (the L4 loader's block↔provenance 1:1
+agreement gate refuses the current dump BY NAME, with a planted
+multi-block negative control).
+
+**Effect on the restart**: the loader ships regardless (validated on
+fixtures the bug doesn't reach, plus the negative control), L5
+proceeds, but **the set's first sample WAITS on your fix** — the
+loading path would otherwise refuse the real file, and running via
+L3's derived-`.rx` shim would abandon the Q3 built-ON-.rxt ruling for
+the sample of record. RECOMMENDATION PARKED FOR FRANK: wait for the
+fix (this is the park→feedback→fix→verify loop working as ruled;
+tonight's window closes regardless of this). A fix pin gets the
+standard verify: the repro re-run, the 64-block corpus dump row count
+64/64, and the loader gate flipping from refuse to load.
+
+**Bookkeeping**: a dated addendum on the acceptance archive records
+that D1/C4/C7's PASS verdicts are single-block-scoped (the verdicts
+stand as written; the generalization gap is this item). This is the
+THIRD silent-loss class filed against `--list-source` from this
+project (O-26 §5's two were fixed in W23 — this one is new).
