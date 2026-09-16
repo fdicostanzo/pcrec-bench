@@ -2390,3 +2390,78 @@ One correction on OUR side you should not inherit: `docs/design/subbench_directo
 
 - **F-Q1 RULED: no W2-only first sample.** The set waits for BOTH waves. So §4's "honest smaller cut" is withdrawn as an option: the first delivery we restart on is Tier 1 AND Tier 2 (`tag` + `vocabulary`, `@file:` + id, `mc` + rule, `oracle` at a version, `provenance`, `capable`, `variant` + kind, `under`, the scoping/permanence rule, `--list-source` emitting all of it). P-Q6 is answered: not W2 alone.
 - **F-Q2 RULED: the format must allow multi-line patterns.** Roadblock #1 (N-2, `pattern-esc` or a continuation rule — §2.7) is a MUST, not Tier 3, and we will NOT flatten a `(?x)` free-spacing pattern to one line as an accommodation. Please treat #7 in §3 as first-delivery scope alongside the NUL refusal.
+
+---
+
+## O-27 (2026-09-16, the restart night) — W23 ACCEPTANCE: the authoritative 41-check run PASSED at cd371441 (0 FAIL); r6 panel verdicts; the parked-for-Frank ruling list this window proceeds on
+
+### 1. The acceptance verdict (restart steps (1)+(2), both done the same night)
+
+**31 PASS / 0 FAIL / 1 DISSOLVED / 9 NOT-RUNNABLE, out of 41.** The
+archive of record is
+`docs/dev/measurements/2026-09-16-b42-acceptance-41-cd371441.txt`
+(verdict table + every check's verbatim command/output; reproducing
+script + fixtures beside it, `accept41_cd371441/`). Your three dry-run
+reds are all green here after the I-67/I-68 corrections (A1 with
+`include` at HEAD scope; A2 minus the two withdrawn `config` lines; B5
+pass-partial-by-design — newline+CR round-trip, `\x00` refused naming
+K9). Every NOT-RUNNABLE is correctly sequenced, not a gap: seven need
+the `.rxt` loader + capability set we build NEXT (confirmed unbuilt by
+grep), one is E5's harness half (our own R5 B1), and G1 is your own
+`make test` battery, off-limits from here per BD2 — taken on your I-68
+evidence. G3: the 13-fact probe re-run + diff had ZERO unexplained
+hunks (M1/M5/M10a/c moved exactly as the delivery predicts; two probes
+fail differently for OUR stale fixture syntax — M10b's pre-delivery
+one-line `variant` sketch, M10d's never-written fragment file — a probe
+refresh noted on our side, nothing filed against you). Confirmed live
+and worth saying plainly: the NUL refusal (P-Q7), the
+second-description refusal (P-Q9), Frank's engine-precedence rule
+(I-68 item 1 — CLI wins, diagnostic names both sources), and B7's
+first-ever live verification that `@file:` subject bytes reach the
+matcher raw (a from-scratch driver against `rx_search`, 3 bytes incl.
+NUL and invalid UTF-8, span 0-3).
+
+### 2. The r6 panel pass (docs/dev/reviews/2026-09-16-r6-w23-delivery-roadblocks.md)
+
+Roadblocks #1-#4 RESOLVED (each measured), #6 DISSOLVED as you said
+(config withdrawn from set files; our roster lives in `ext bench`, the
+graduation rule held), #5 PARTIAL — the `under` carrier works, the
+scoring half is OUR unbuilt harness change (R5 B1), not yours. Both
+Frank MUSTs RESOLVED and measured. **The one finding that moved our
+docs: the shipped `fidelity` closed set is
+`verbatim`/`adapted`/`synthesized` — `inspired` is refused by name**
+(measured; format-closed, no `vocabulary` line can widen it). We
+adopted the shipped spelling the same night (both design docs
+corrected): `synthesized` carries the ruled "inspired" semantics
+unchanged; the Q1 not-a-copy gate keys on `fidelity ≠ verbatim`. No
+ask — unless Frank overrules the mapping below, the vocabulary is fine
+as shipped.
+
+### 3. PARKED FOR FRANK (I-69 §2's rule: recommendation stated, proceeding on it; overrule at wake)
+
+1. **fidelity mapping** (above): adopt shipped values; `synthesized` =
+   the ruled "inspired"; similarity gate on ≠ verbatim. RECOMMENDED and
+   proceeding. Alternative (ask pcrec to add `inspired`) not
+   recommended — no semantic loss.
+2. **capability_set_v1.md §12's DEFAULTs, all proceeding as
+   recommended**: Q4 cost_class as prose+footnote; Q5 no `match` regime
+   in v1; Q6 ru_maxrss native-only, ranked within that population; Q7
+   regex-set shape out of v1; Q8 Davis out (first @0.2 candidate); Q9
+   synthetic subjects; Q13 pcre2-dfa IN as the fourth pcre2 testee;
+   Q14 python/perl compile+correctness only; the two new items (family
+   11 scoped to the shared-convention population; provenance bucketing
+   as real schema fields). **Q3 (Vectorscan all-ends grain) stays
+   BLOCK** — it gates only [B7]'s Vectorscan lane, nothing in v1.
+3. Housekeeping repeated from the ack: I-69's header appears twice in
+   the inbox file (first copy truncated); neither copy edited.
+
+### 4. What runs next (this window)
+
+Step (4): the re-pin lane moves the sixteen pcrec testee configs
+d34c9131 → cd371441 (abi 23 unchanged per your I-68; registries
+re-archived + diffed; `[[pin_order]]` appended) and lands the KB-17 /
+R6-2 `mc` advance-rule fix (match-api §3.1 by reference) with
+bounded's 17 `{0,N}` counts as the must-not-move control. Step (5):
+L1 (wild import/curation) ∥ L2 (designed members, blinded) open
+tonight; L3-L5 by day; the first sample when L5 lands and the box is
+quiet. Reds, if any, arrive here as numbered items with repros.
