@@ -168,26 +168,66 @@ smaller than the design's original ~5× headroom, closer to ~2-2.5×, but
 not a cap risk. Stated here as a deliberate, checked adjustment rather
 than a silent overrun.
 
-## A finding from this lane's own oracle-derivation run
+## A finding from this lane's own oracle-derivation run (CORRECTED)
 
-**`wild-datetime-datefinder-alternation`'s throughput cost is real and
-large, confirming family 5's own stress-mechanism framing** ("the
-COMPILE-time and SIZE axis, not the match axis" — §3.1). Deriving
-`expectations.tsv` (`gen_expectations.py`, the libpcre2 oracle) took
-substantially longer than `bench/syntax`'s ~3.3-minute run over a
-comparably-sized subject×pattern grid; the datefinder pattern's
-~200-branch top-level alternation, UNANCHORED, run via `find_all()`
-across three throughput texts up to 1 MB, is the plausible dominant
-cost (every one of `redos-nested`'s six patterns is `^`-anchored and
-was confirmed safe by `gen_throughput_subjects.py`'s own empirical
-timing guard — this is a DIFFERENT family's cost, not a hazard-class
-repeat of the ReDoS risk CB8 already named). **This is exactly the kind
-of first-sample surprise a capability set with "the least predictable
-cells" (§3.5) is supposed to surface before a real window runs it**; a
-future window should watch `wild-datetime-datefinder-alternation`'s
-`throughput` regime cell time specifically, and R6 (below) is written
-with this pattern named as the leading candidate for a `CELL_CAP`-
-adjacent reading, not merely `redos-nested`.
+**The real cause of the multi-hour `gen_expectations.py` run was a TSV
+CSV-QUOTING BUG in `gen_patterns.py`, not a slow pattern.** First
+foreground attempt at deriving `expectations.tsv` ran past 1h39m before
+the manager intervened (killed by verified PID, per the lane
+boilerplate); this lane's own `diag_expectations_timing.py`
+(per-pattern `gnutimeout`-wrapped, timing every cell) isolated the true
+culprit: `codegrammar-flat` (the family-6 `(?x)`/flattened control
+twin, `"([^"\\]+)"\s*:\s*`) alone timed out at 90 s on just the 64 KB
+throughput text, having completed all 77 other cells in milliseconds.
+
+**Root cause**: `gen_patterns.py`'s `_read_tsv()` used Python's
+`csv.DictReader` with its DEFAULT quoting rules on a plain
+TAB-DELIMITED file. `codegrammar-flat`'s canonical text is the one
+field, across both curation TSVs, that STARTS with a literal `"`
+(`"([^"\\]+)"\s*:\s*`) — csv's default quoting silently treated that as
+an OPENING QUOTE CHARACTER and swallowed it, so the actually-compiled
+pattern was `([^\\]+)"\s*:\s*`, missing its leading `"`. Without that
+leading literal, PCRE2 has NO required-first-byte optimization at all
+(the pattern now starts with a capturing group matching almost every
+byte), so an unanchored search over background text with no `"`
+anywhere backtracks QUADRATICALLY over the whole unbroken run — 37 s on
+64 KB, i.e. hours projected at 1 MB. **Fixed two ways**: (1)
+`_read_tsv()` now passes `quoting=csv.QUOTE_NONE` (TSV is not CSV, and
+no other field in either curation table was affected — checked by
+grep, one field total across 64 rows × ~15 columns); (2) `load_designed()`
+now cross-checks every text against `curation/designed/patterns/
+SHA256SUMS.txt`'s own independently-staged hash, so a future parsing
+regression of this shape fails loudly at generation time rather than
+silently compiling the wrong pattern. **A second, independent
+belt-and-braces fix**: `captext.py`'s `_source_line` now emits a
+double-quoted string literal in roughly half its lines (a genuinely
+common real source-code shape, `log.info("word_123")`), which bounds
+ANY future `[^"...]+`-shaped pattern's worst-case unanchored backtrack
+to one line's length instead of the whole subject — so this class of
+hazard cannot recur even from a DIFFERENT cause.
+
+With both fixes, the full `gen_expectations.py` run (4,990 rows) takes
+**12.7 seconds**, not hours; the diagnostic sweep's own re-run confirms
+zero pattern times out and the slowest single pattern
+(`wild-datetime-datefinder-alternation`, genuinely the largest
+alternation in the set) completes all 79 of its own cells in 9.3 s —
+real, but nowhere near the runaway the first attempt suggested. My
+original hypothesis (blamed on the datefinder alternation's breadth)
+was WRONG and is corrected here rather than left standing.
+
+**A second, smaller finding from the same corrected run**: the oracle
+GAVE UP (PCRE2's own match-limit, not a hang) on two triples —
+`evil-alt-nested` (`^(([a-z]+)*)+$`) against its own SHORT near-miss
+subject (`rd-evil-alt-near-miss`, 17 `a`s + `!`) and against
+`sd-empty-alt-hit` (60 `a`s + a digit, authored for a DIFFERENT
+pattern's PCRE2-testdata case). Both are DROPPED from `expectations.tsv`
+and listed on stderr, per the shared derivation's own existing rule —
+the correct, honest outcome for a genuinely nested-quantifier pattern
+meeting an adversarial-shaped subject, not a bug. It confirms
+`evil-alt-nested` needs no SEPARATE calibration mitigation beyond what
+already exists (family 10's design-stated fixed-`--iters` plan, CB8):
+the oracle-derivation stage already demonstrates the pattern is
+immune to a real hang, only to PCRE2's own bounded give-up.
 
 ## The outlier rule (R0–Rn, stated before any run)
 
@@ -214,15 +254,19 @@ where this design predicted departure would be needed
   OTHER and to their own control twins, never pooled across families.
 - **R5 — compile/size cliffs.** Any pcrec compile row whose
   `emit_bytes`/`artifact_bytes` jumps by an order of magnitude against a
-  same-family sibling (the datefinder alternation is the leading
-  candidate, per this lane's own oracle-run finding above) is read
-  before any speed number from that row.
-- **R6 — a non-flat throughput sweep.** `wild-datetime-datefinder-
-  alternation`'s three throughput cells (64 KB/256 KB/1 MB) are read
-  FIRST for linearity in subject size; any super-linear growth is the
-  headline finding of the whole sample, not a footnote (this lane's own
-  oracle-derivation timing is the reason it is named explicitly rather
-  than left to `redos-nested`'s already-named risk).
+  same-family sibling (the datefinder alternation, the largest pattern
+  in the set by source bytes, is the leading candidate) is read before
+  any speed number from that row.
+- **R6 — a non-flat throughput sweep, on EVERY pattern, not one named
+  candidate.** This lane's own diagnostic finding (NOTES.md, "A finding
+  from this lane's own oracle-derivation run") is that the set's real
+  first-sample risk is not one slow pattern but a QUADRATIC-BACKTRACK
+  HAZARD any unanchored `[^X]+`-shaped pattern can hit against
+  background text lacking its terminator `X` — found once
+  (`codegrammar-flat`, a TSV-parsing bug, now fixed and guarded two
+  ways) and not assumed absent elsewhere. Any throughput cell whose
+  ns/byte is NOT flat across the three sizes is read FIRST, for every
+  pattern, as this rule's own positive case.
 - **R7 — an `unsupported-by-declaration` share is a CENSUS finding, not
   missing data.** Per §13 R2, roughly a third of the set's members carry
   a REQUIRES tag that RE2/Rust/Vectorscan/TRE fail; those four engines
@@ -251,11 +295,13 @@ v1's roster: auto, nocaps, vm, vm-in) are assumed unless stated.
   `wild-waf-crs-942360-concat-sqli` and `wild-datetime-datefinder-
   alternation` specifically (the two largest patterns in the set by
   source bytes) and is within the usual small band everywhere else.
-- **P3.** `wild-datetime-datefinder-alternation`'s `throughput` regime
-  ns/byte is NOT flat across the three sizes (64 KB/256 KB/1 MB) — see
-  "A finding from this lane's own oracle-derivation run" above; this
-  prediction is written FROM that finding, stated here as what the
-  window should confirm by name rather than merely notice.
+- **P3.** `codegrammar-flat`'s `throughput` regime cost is measurably
+  the highest ns/byte of any `wild-codegrammar`/family-6 member (the
+  pattern whose quadratic-backtrack hazard this lane's own diagnostic
+  sweep found and fixed at generation time — see "A finding from this
+  lane's own oracle-derivation run"): even with the fix, a per-position
+  greedy negated-class scan is intrinsically more expensive per byte
+  than the set's other short, literal-anchored codegrammar members.
 - **P4.** `logparse-atomic` compiles to a smaller or equal artifact than
   `logparse-atomic-removed` on every pcrec config, and the ATOMIC form's
   `search_short` cost on `lp-atomic-nonmatch` (the crafted near-miss) is

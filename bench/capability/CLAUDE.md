@@ -42,6 +42,24 @@ capability policy, `variant.kind` rendering — all future lanes' scope).
 | `variants.tsv` | empty (header only) in v1 |
 | `NOTES.md` | the objective, the family table, the twin-pairing reconciliation, the subjects, the outlier rule, the predictions, what is deferred |
 | `curation/` | L1's and L2's staging output — kept as PROVENANCE-OF-AUTHORSHIP (the blinding statements, the raw fetch excerpts, the per-lane reports this set's `gen_patterns.py` reads from), not deleted now that L3 has built on it. See its own CLAUDE.md |
+| `_diag_worker.py`, `diag_expectations_timing.py` | diagnostic tooling (not part of the generator chain `make check-harness` runs): one pattern's full oracle derivation timed cell-by-cell, driven per-pattern under `gnutimeout`. Built to root-cause the `codegrammar-flat` CSV-quoting bug below; kept for any future set-authoring bug of the same shape |
+
+**A TSV-QUOTING BUG THIS LANE FOUND AND FIXED (read before touching
+`_read_tsv()`).** `gen_patterns.py`'s curation-table reader originally
+used `csv.DictReader`'s DEFAULT quoting on a plain tab-delimited file.
+Exactly one field across both curation TSVs starts with a literal `"`
+(`codegrammar-flat`'s canonical text) and CSV's default quoting
+silently swallowed it, shipping a pattern missing its leading `"` —
+which cost the whole set its PCRE2 required-first-byte optimization on
+that ONE pattern and turned a 1 MB unanchored throughput search into a
+multi-hour quadratic backtrack (root-caused by `diag_expectations_
+timing.py`, not by inspection). Fixed three ways: `_read_tsv()` now
+passes `quoting=csv.QUOTE_NONE`; `load_designed()` cross-checks every
+parsed pattern against `curation/designed/patterns/SHA256SUMS.txt`'s
+independently-staged hash; `captext.py`'s throughput grammar now emits
+a quoted string in roughly half its source lines as a second,
+independent guard against the same HAZARD CLASS recurring from a
+different cause. Full account: `docs/dev/lanes/b42set_report.md`.
 
 REGENERATING. `python3 bench/capability/gen_patterns.py`, `gen_subjects.py`,
 `gen_throughput_subjects.py`, `gen_expectations.py`, `gen_provenance.py`,

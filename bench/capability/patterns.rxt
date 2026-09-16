@@ -426,7 +426,7 @@ provenance
     NEW SLUG -- 'moment-js' is not in section 4.1's pre-registered source_name enum (owasp-validation/grok/crs/rebar-wild/pcre2-testdata/rust-regex-testdata/oniguruma-test/re2-bench/vscode-json-grammar/cve/authored); moment.js was not on N1's shortlist and this second wild-datetime member needed a genuine second wild source (rebar's date.txt supplies only one). Using 'authored' here would be wrong -- the text is verbatim-imported, not ours. Flagged for L3/Frank to register the slug rather than silently overload 'authored'.
   fidelity verbatim
 
-pattern ([^\\]+)"\s*:\s*
+pattern "([^"\\]+)"\s*:\s*
 name codegrammar-flat
 tag family=wild-codegrammar, hazard=none
 provenance

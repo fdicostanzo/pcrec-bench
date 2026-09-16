@@ -67,8 +67,22 @@ def _http_line(rng):
 
 
 def _source_line(rng):
+    # Roughly every other source line carries a double-quoted string
+    # literal (a log call or an f-string), a REAL, common source-code
+    # shape -- and, not incidentally, what keeps this grammar SAFE for an
+    # unanchored `[^"\\]+`-shaped pattern (capability_set_v1.md 3.1
+    # family 6's own `codegrammar-flat`): with NO quote in the whole
+    # background text, that construct's negated class never finds its
+    # terminator anywhere in a 1 MB subject and backtracks QUADRATICALLY
+    # over the entire unbroken run (measured: 37s on a 64 KB throughput
+    # text alone, projecting to hours at 1 MB -- found by this lane's own
+    # diagnostic sweep, `diag_expectations_timing.py`, not by inspection).
+    # A quote roughly every ~40-80 bytes bounds that worst case to one
+    # line's length, not the whole subject's.
     name = rng.choice(_WORDS)
     val = rng.randrange(1000)
+    if rng.randrange(2) == 0:
+        return 'log.info("%s_%d")' % (name, val)
     return "def %s_%d(x): return x + %d  # %s" % (
         name, rng.randrange(99), val, rng.choice(_WORDS))
 

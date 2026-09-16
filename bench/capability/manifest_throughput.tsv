@@ -1,4 +1,4 @@
 id	len	sha256	description	periodic
-t-64k	65536	8b4fe7904b778d4a42e24678b1c22f7e196a20ac64bde80be45069e98600c70b	throughput/mixed log+http+source+prose grammar, seed 0xc0ffee1	no
-t-256k	262144	5b72ed4990a2fffc031a177ae4b2fbde6de92999c01dbdda846d44c2c1233e08	throughput/mixed log+http+source+prose grammar, seed 0xc0ffee2	no
-t-1m	1048576	3dcf7a7caaa2dd7396483297f3181c2468571290d82b1b514c00c923aa46bc29	throughput/mixed log+http+source+prose grammar, seed 0xc0ffee3	no
+t-64k	65536	d2e4f134473cc40a9a4e7df7a30e0efa11f566d96ee990c62cd663a2439c8524	throughput/mixed log+http+source+prose grammar, seed 0xc0ffee1	no
+t-256k	262144	3cf7b248873da164518b74e039cc2380f39e233b2899716c82c8eb4b7b49b5a7	throughput/mixed log+http+source+prose grammar, seed 0xc0ffee2	no
+t-1m	1048576	ccbdf7eb97f15776a68b8bbb9d6387870cd01d4796207fb20032958caf9754ee	throughput/mixed log+http+source+prose grammar, seed 0xc0ffee3	no

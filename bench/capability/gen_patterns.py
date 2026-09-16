@@ -178,8 +178,18 @@ class Pattern:
 
 
 def _read_tsv(path):
+    # QUOTE_NONE: this is a plain TAB-DELIMITED file, not CSV -- several
+    # pattern texts carry a literal `"` at the START of the field
+    # (codegrammar-flat's `"([^"\\]+)"\s*:\s*`), and csv's DEFAULT
+    # quoting would silently treat that as an OPENING QUOTE CHARACTER
+    # and swallow it, corrupting the pattern text with no error at all.
+    # Found the hard way: the corrupted pattern (missing its leading `"`)
+    # lost its PCRE2 required-first-byte optimization entirely and
+    # backtracked QUADRATICALLY over an unanchored 1 MB search --
+    # `diag_expectations_timing.py`'s own timeout, not a hang in the
+    # oracle itself.
     with open(path, "r", encoding="utf-8", newline="") as f:
-        return list(csv.DictReader(f, delimiter="\t"))
+        return list(csv.DictReader(f, delimiter="\t", quoting=csv.QUOTE_NONE))
 
 
 def _short_date(rfc3339):
@@ -225,8 +235,21 @@ def load_wild():
     return out
 
 
+def _load_designed_sha256sums():
+    path = os.path.join(CURATION, "designed", "patterns", "SHA256SUMS.txt")
+    out = {}
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            if line.startswith("#") or not line.strip():
+                continue
+            pid, digest = line.rstrip("\n").split("\t")
+            out[pid] = digest
+    return out
+
+
 def load_designed():
     rows = _read_tsv(DESIGNED_TSV)
+    sums = _load_designed_sha256sums()
     out = []
     for r in rows:
         pid = r["pattern_id"]
@@ -240,6 +263,13 @@ def load_designed():
                 omit = True
         else:
             text = r["canonical_text"].encode("utf-8")
+        if pid in sums:
+            got = hashlib.sha256(text).hexdigest()
+            assert got == sums[pid], (
+                "designed %s: sha256 mismatch against curation/designed/"
+                "patterns/SHA256SUMS.txt: got %s want %s -- the TSV parse "
+                "may have corrupted this pattern's text (see the "
+                "quoting note on _read_tsv)" % (pid, got, sums[pid]))
         family = FAMILY_REASSIGN.get(pid, r["family"])
         requires = [t for t in r["requires"].split(";") if t and t != "-"]
         out.append(Pattern(
