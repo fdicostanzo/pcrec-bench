@@ -1,0 +1,19 @@
+(?x)        # turn on extended mode
+  -?        # an optional minus
+  (?:
+    0       # a zero
+    |       # ...or...
+    [1-9]   # a 1-9 character
+    \d*     # followed by zero or more digits
+  )
+  (?:
+    (?:
+      \.    # a period
+      \d+   # followed by one or more digits
+    )?
+    (?:
+      [eE]  # an e character
+      [+-]? # followed by an option +/-
+      \d+   # followed by one or more digits
+    )?      # make exponent optional
+  )?        # make decimal portion optional

@@ -1,0 +1,20 @@
+Source: https://raw.githubusercontent.com/moment/moment/develop/src/lib/create/from-string.js
+Retrieved: 2026-09-16T04:49:00Z (direct curl fetch, this lane, [B42] L1)
+Note: lines 1-15 of the fetched file, showing extendedIsoRegex in its own
+source context.
+---
+import { configFromStringAndFormat } from './from-string-and-format';
+import { createUTCDate } from './date-from-array';
+import { hooks } from '../utils/hooks';
+import { deprecate } from '../utils/deprecate';
+import getParsingFlags from './parsing-flags';
+import { defaultLocaleMonthsShort } from '../units/month';
+import { defaultLocaleWeekdaysShort } from '../units/day-of-week';
+
+// iso 8601 regex
+// 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
+var extendedIsoRegex =
+        /^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
+    basicIsoRegex =
+        /^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d|))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
+    tzRegex = /Z|[+-]\d\d(?::?\d\d)?/,
