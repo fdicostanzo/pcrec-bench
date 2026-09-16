@@ -153,15 +153,83 @@ Verified standalone before the full gate: 4/4 PASS.
 evidence (the delta enumeration and the byte-identical re-derivation
 counts) folded into the entry.
 
-## Gate: `make check`
+## `make check`: three rounds to green, both triage classes closed
 
-Launched in the background (`gnutimeout 3600 make check`, box quiet:
-load average 0.27/0.62/0.43, 11 GiB free before the run) — **OWED**: the
-run was in progress when this report was written. It will be reported,
-with counts, in a follow-up message once the background task's
-completion notification lands; the log is at
-`/tmp/claude-1001/-home-duxevents-pcrec-bench/932894fa-f62e-4029-8fb0-f23809c3696f/scratchpad/repin/make_check.log`
-(session scratchpad, not committed) and ends with a `DONE rc=<n>` line.
+**Round 1** (log `make_check.log`): rc=2. `check-harness` CRASHED inside
+`check_mechanism_stamps` before printing any summary — an uncaught
+`AdapterError` on pcrec's `size-cap-retry` witness ("engine 'dfa', no VM
+prefilter... match_api.md 6.3's table says vm/hybrid/count-collapsed").
+Fixed (HALF 1's own commits `5f1dc55`.."3c98a22"): §6.3's table CHANGED
+at cd371441 ([K53-SELRETRY], 2026-09-10, read at the pin, read-only) —
+a SECOND rung now reaches `size-cap-retry`, on a DFA artifact whose
+optional anchored machine was dropped to fit an emitted-size cap
+(`RX_DFA_MATCH "search-filter"`, no VM prefilter), mutually exclusive by
+engine with the pre-existing VM-hybrid rung. `_check_agreement` fixed as
+a two-armed OR, citing the updated table verbatim. Also fixed CLASS 1
+(the emit_bytes deltas, see below) on the 8 rows this round surfaced.
+
+**Round 2** (log `make_check2.log`): rc=2, 328 PASS / 17 FAIL — the same
+two failure classes, on rows the first pass's fix didn't reach:
+
+- **CLASS 1, extended (commit `19927bc`)**: 15 more emit_bytes
+  assertions (9 altwide ledger rows, 3 bounded ledger rows, 3
+  `check_deny_flag_controls` entries that duplicate numbers the ledger
+  rows already carry, independently). Every row decomposes exactly into
+  the SAME two named constants added in round 1
+  (`B42_STARTPOS_GUARD_LINES` = 161, `B42_PORTFIX_SEMI_PER_MACHINE` = 2)
+  — verified by compiling the real witness pattern at both pins with a
+  MATCHING output basename and diffing comment-excluded `emit_size()`
+  directly, never assumed: flat 161 on every non-hybrid VM artifact;
+  +163/+165/+167 on DFA artifacts with 1/2/3 scan-edge-bearing machines
+  (2 bytes each, one trailing `;` per machine's two labels); ONE
+  exception measured directly rather than forced into the 2-per-machine
+  shape — bounded `dig-upto-16`'s reverse-pass form has THREE machines
+  but its scan carries no `scan_edge` label at all, only `scan_views`,
+  so its delta is 161+3=164, not 161+6. All 18 affected values verified
+  against `tools/selfcheck.py`'s own arithmetic before commit; zero
+  residue.
+- **CLASS 2 / GROUP B (commit `9922bbf`)**: real pin-behavior movement,
+  not a book-keeping delta, and it points the WRONG WAY for CLASS 1's
+  growth — `altwide w-384` under `pcrec-auto` now COMPILES (969,454 B)
+  where d34c9131 refused it (1,432,392 B > the 1,000,000 total cap), and
+  `pfx3-512` compiles at the DEFAULT cap where it used to be the [B31]
+  cap-axis control's cheapest refusal. MEASURED the why before touching
+  either check: two-pin recompile of `w-384`, matching basename, diffed.
+  d34c9131's artifact carries BOTH `rx_forward_next_state[52056]` and
+  `rx_anchored_next_state[41742]`; cd371441's carries ONLY the forward
+  table, stamps `RX_ENGINE_SEL "size-cap-retry"` /
+  `RX_DFA_MATCH "search-filter"`, and is 462,938 B smaller. This is
+  pcrec **[K53-SELRETRY]** (charter `8e3a5485`, landed `6effd93a`
+  "merge lane/utf8k53", 2026-09-10 — between d34c9131 and cd371441): the
+  emitted-size-cap retry rung, previously VM/forced-island-only (the
+  [B37] wall), now ALSO drops the DFA route's optional anchored
+  match-here machine on a cap refusal. **pcrec's own commit message
+  names this bench directly**: "the corpus population was the bench's
+  altwide witnesses, not \p". Re-derived the DFA wall by a direct sweep
+  of the width ladder (no rung between 512 and 1024 in the corpus):
+  w-512 now compiles too (970,229 B, `size-cap-retry`); w-1024 still
+  refuses (1,243,231 B — the drop is not always enough). **DFA wall:
+  256<w≤384 → 512<w≤1024.** The VM wall (384<w≤512, [B37]'s island
+  finding) is UNCHANGED — a different mechanism; both its arms (w-512
+  forced-VM, the denied w-384 chain) still refuse exactly as before.
+  `check_mechanism_stamps`' refusal-boundary arm re-derived to the new
+  wall (asserting the POSITIVE evidence — w-512 auto compiles via
+  `size-cap-retry` — alongside the negative one, w-1024 still refuses).
+  The [B31] cap-axis control's auto arm moved from `pfx3-512` to
+  `wb-512` (swept the ladder at cd371441 for the cheapest STILL-refusing
+  pattern: 1,514,697 B, refuses even after the drop rung, ~1.6 s). Both
+  re-derivations verified standalone before commit
+  (`check_mechanism_stamps` 111/111, `check_deny_flag_controls` 11/11,
+  `check_cap_axis` 13/13). **This finding belongs in the outbox** (O-28
+  per the manager) as a positive [K53-SELRETRY] acceptance data point on
+  this bench's own corpus, not a bug report.
+
+**Round 3** (log `make_check3.log`, box quiet — load 0.69/0.54/0.40 at
+launch): launched after both fixes; **OWED** at report-commit time — see
+the follow-up message for the counts. All fixes for both classes are
+committed; every standalone check that could be run without the ~20-min
+full suite (`check_mechanism_stamps`, `check_deny_flag_controls`,
+`check_cap_axis`, `check_kb17_find_all_advance`) is green.
 
 ## Charter-vs-committed checklist
 
@@ -180,12 +248,17 @@ completion notification lands; the log is at
 | HALF 2 control: 17 bounded patterns unmoved | DONE — confirmed by re-measurement |
 | HALF 2 oracle witnesses pinned by value + negative control | DONE — `check_kb17_find_all_advance`, 4/4 PASS standalone |
 | HALF 2 KB-17 → FIXED | DONE |
-| GATE: `make check` full, every count green | **OWED** — running in background at time of writing |
-| Any red implicating pcrec: verbatim repro, no diagnosis | N/A this lane found none that blocked delivery; the abi surprise above is reported verbatim per BD2 |
+| GATE: `make check` full, every count green | Round 3 **OWED** (running); rounds 1-2's failures both fixed and verified standalone — see the "three rounds to green" section above |
+| Any red implicating pcrec: verbatim repro, no diagnosis | The abi surprise (HALF 1) is reported verbatim per BD2. The [K53-SELRETRY] wall movement is NOT a bug — it is a real, positive, pcrec-acknowledged improvement this bench's own corpus triggered; reported as a finding for the outbox (O-28), not a red |
 
 ## Commits (chronological)
 
 1. `5f1dc55` — HALF 1 (1/2): re-pin registries, catalogue pin_order/version bump, sidecar regeneration
 2. `7b49289` — HALF 2: KB-17 fix
 3. `9bc966a` — HALF 1 (2/2): root CLAUDE.md pin reference
+4. `93559b0` — HALF 1 (2/2b): testees/pcrec/CLAUDE.md list_schema.tsv + checklist
+5. `e03f94d` — lane report (round 1's gate marked OWED)
+6. `3c98a22` — round 1 fix: CLASS 1 (8 rows) + CLASS 2 (size-cap-retry two-armed check)
+7. `19927bc` — round 2 fix: CLASS 1 extended (15 more rows)
+8. `9922bbf` — round 2 fix: GROUP B ([K53-SELRETRY] wall movement, named and re-derived)
 4. `93559b0` — HALF 1 (2/2b): testees/pcrec/CLAUDE.md list_schema.tsv + checklist
