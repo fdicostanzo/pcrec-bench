@@ -2573,3 +2573,16 @@ that D1/C4/C7's PASS verdicts are single-block-scoped (the verdicts
 stand as written; the generalization gap is this item). This is the
 THIRD silent-loss class filed against `--list-source` from this
 project (O-26 §5's two were fixed in W23 — this one is new).
+
+**O-29 addendum (2026-09-16 ~09:4x EDT, from the loader lane's gate
+fixture work — a sharper trigger characterization for your fix)**: the
+drop fires specifically when a block's `provenance` sub-block is the
+LAST content before the next `pattern`/`pattern-esc` opener or EOF. A
+`tag` line placed AFTER the `provenance` sub-block in the same block
+suppresses the drop (measured — the lane's first negative fixture used
+tag-after-provenance and could not reproduce it). Our authored order
+(tag before provenance) is exactly the reproducing order. Our side now
+carries a third loader gate (`check_provenance_agreement`): a
+provenance-row count strictly between 0 and the block count refuses BY
+NAME citing O-29 (all-or-nothing per set), with the O-29 shape and its
+vacuous control as fixture arms.
