@@ -95,12 +95,17 @@
 # (E5) + 8 NOT-RUNNABLE (E1, E2, E3, E6, E7, F3, F4, G1) = 41.
 #
 # Strict tally by the brief's own four-way vocabulary:
-#   33 PASS  /  0 FAIL  /  1 DISSOLVED  /  8 NOT-RUNNABLE   (out of 41)
+#   31 PASS  /  0 FAIL  /  1 DISSOLVED  /  9 NOT-RUNNABLE   (out of 41)
 # (B5, D2, D4, D5 are folded into PASS above: each is a full behavioural
 # pass under a named, spec-cited qualifier, never a failure or a gap in
 # what was checked. E5 is split: FORMAT HALF = PASS, HARNESS HALF =
 # NOT-RUNNABLE; counted once under NOT-RUNNABLE as the more conservative
 # reading since the check as WRITTEN needs both halves.)
+# [tally corrected at review, 2026-09-16 (manager): the lane's original
+# line read "33 PASS / 8 NOT-RUNNABLE", which double-counts against its
+# own paragraph above (28 outright + 3 qualified = 31 PASS; E5 under
+# NOT-RUNNABLE makes 9; 33+1+8 would be 42 rows). Per-row verdicts
+# unchanged.]
 #
 # G3's diff is NOT reproduced byte-for-byte here (it is ~800 lines with
 # one 20,000-byte pattern row); the classified reading above is this
@@ -281,7 +286,7 @@ EXIT=0
 # format_design.md Â§2.27). No section row's field 1 (always the
 # integer `line`) can equal a main-table `kind` token.
 #kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
-pattern	1	h		café[€-ÿ]+														
+pattern	1	h		cafï¿½[ï¿½-ï¿½]+														
 EXIT=0
 
 === B2  tab/backslash/CR/trailing-space -- byte-exact round trip ===
@@ -698,7 +703,7 @@ grep exit=1 (1 = pcrecbench/ has no .rxt-reading code AT ALL today -- the loader
 # format_design.md Â§2.27). No section row's field 1 (always the
 # integer `line`) can equal a main-table `kind` token.
 #kind	line	name	value	pattern	flags	features	features_only	encoding	engine	budget_steps	budget_frames	with	from	pcrec	export	tags	oracle	esc
-pattern	1	h		café[€-ÿ]+														
+pattern	1	h		cafï¿½[ï¿½-ï¿½]+														
 EXIT=0
 
 === D4  the VALIDATES-vs-RECOGNISES table, rendered from --list-schema ===
