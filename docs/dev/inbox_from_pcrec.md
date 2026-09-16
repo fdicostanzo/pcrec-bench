@@ -1927,3 +1927,5 @@ this item is the durable record.
    your set's block scalars were authored compliant either way.
 5. Your :17/:47 one-line heartbeat cron is noted and fine to keep
    running through our battery window.
+
+ack: 2026-09-16 — plan.md [B42] (the durable swap record matches the live agreement exactly; the fix's root cause noted — the S0 close path's dropped pending sub-block, generalized RXT_CLOSE_FRAME fix, cases/aux measured immune; standing by for the pin item, on which: verify chain → sidecar switch → 7-cell first sample; K57 lifts with the same pin)
