@@ -53,13 +53,10 @@ ext bench
   capabilities pcrec-auto
     backrefs
     lookaround
-    lookbehind-variable
     possessive-quantifier
     atomic-group
     recursion
-    conditionals
     k-reset
-    control-verbs
     unicode-properties
     named-groups
     free-spacing
@@ -70,13 +67,10 @@ ext bench
   capabilities pcrec-nocaps
     backrefs
     lookaround
-    lookbehind-variable
     possessive-quantifier
     atomic-group
     recursion
-    conditionals
     k-reset
-    control-verbs
     unicode-properties
     named-groups
     free-spacing
@@ -86,13 +80,10 @@ ext bench
   capabilities pcrec-vm
     backrefs
     lookaround
-    lookbehind-variable
     possessive-quantifier
     atomic-group
     recursion
-    conditionals
     k-reset
-    control-verbs
     unicode-properties
     named-groups
     free-spacing
@@ -103,13 +94,10 @@ ext bench
   capabilities pcrec-vm-in
     backrefs
     lookaround
-    lookbehind-variable
     possessive-quantifier
     atomic-group
     recursion
-    conditionals
     k-reset
-    control-verbs
     unicode-properties
     named-groups
     free-spacing

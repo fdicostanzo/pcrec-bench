@@ -63,6 +63,7 @@ import sys
 import time
 
 from . import adapters as _ad
+from . import capability as _cap
 from . import driverrun, env, quiet, record, store
 from .subbench import REGIME_TO_ENUM, REGIME_MODE
 from . import HARNESS_VERSION
@@ -575,8 +576,27 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
 
     for p in cell_patterns:
         say("compiling %s / %s (%d trial(s)) ..." % (testee_id, p.name, trials))
-        cp = adapter.compile(testee_id, p.name, sb.pattern_bytes(p.name),
-                             options, trials, workdir)
+        # THE PRE-COMPILE CAPABILITY POLICY (capability_set_v1.md 5.3,
+        # [B42] L5): REQUIRES(pattern) not-subset-of capabilities(testee)
+        # is decided BEFORE `adapter.compile()` is ever called -- an
+        # engine that would refuse this construct is never asked to try,
+        # and the outcome is OUR declaration's, not a string match on
+        # whatever diagnostic the engine happens to print for a
+        # construct it lacks (5.3's own "why pre-compile" argument). A
+        # set that authors no `requires-*` tag (every set but
+        # bench/capability today) never reaches the `if`: `missing` is
+        # always empty when `pcrecbench.capability.pattern_requires`
+        # finds nothing to check.
+        missing = _cap.missing_capabilities(sb, testee_id, p)
+        if missing:
+            cp = _ad.CompiledPattern({_ad.FORM_PLAIN: _ad.CompileResult(
+                outcome="unsupported-by-declaration",
+                diagnostic=("REQUIRES %s; %s declares none of it"
+                            % (", ".join(sorted(missing)), testee_id)),
+                declaration_ref=_cap.declaration_ref(sb, testee_id, p, missing))})
+        else:
+            cp = adapter.compile(testee_id, p.name, sb.pattern_bytes(p.name),
+                                 options, trials, workdir)
         compiled[p.name] = cp
         phases = testee_block["compile_phases"]
         for form, cr in cp.forms.items():

@@ -378,20 +378,72 @@ def render_pattern_block(p):
 
 
 EXT_BENCH_ROSTER = [
-    # (testee_id-family, capabilities this config satisfies -- see
-    # gen_patterns.py's module docstring on how this matrix was derived;
-    # it is documentation for a FUTURE pre-compile capability policy
-    # (L5), never enforced by the format or by this lane's own build.
+    # (testee_id-family, capabilities this config satisfies). RE-VERIFIED
+    # (L5, [B42] lane b42cap, 2026-09-16) against a real compile census at
+    # the pinned pcrec (cd371441, `--features all`, every pcrec-* config's
+    # OWN flags): a witness pattern per (config, token) pair, actually
+    # compiled, its refusal or success asserted BY NAME -- never inferred
+    # from docs/pcre2_compliance.md's prose alone (that survey is what
+    # NARROWED the search; the witness compile is what DECIDED it). This
+    # is now ENFORCED by `pcrecbench.capability`'s pre-compile policy
+    # (harness.py), not documentation for a future lane.
+    #
+    # pcre2-interp/pcre2-jit: both are `pcre2_match`/JIT on a plain
+    # compiled pattern (NOT `pcre2_dfa_match`, which this vocabulary's
+    # own table calls out as lacking k-reset/captures/etc) -- PCRE2
+    # 10.46 supports the full vocabulary, spot-verified with pcre2test
+    # (variable-length lookbehind, `(?(1)a|b)`, `(*ACCEPT)`, `(?C1)`,
+    # `\p{L}` all compile clean; docs/dev/lanes/b42cap_report.md's
+    # witness matrix).
     ("pcre2-interp", REQUIRES_VOCAB),
     ("pcre2-jit", REQUIRES_VOCAB),
+    # pcrec-*: three tokens WITNESSED REFUSED under `--features all` on
+    # every pcrec-* config regardless of --engine=/--no-captures (docs/
+    # pcre2_compliance.md's Conditional patterns / Backtracking control
+    # verbs sections; D26 tier 4 "NEVER-IMPLEMENTING" for control-verbs,
+    # "not implemented yet" for the general `(?(n)...)` conditional even
+    # with its module enabled):
+    #   conditionals        -- `(?(1)a|b)(a)?` REFUSED: "module
+    #                          'conditionals' is enabled but (?(...) is
+    #                          not implemented yet" ((?(DEFINE)...) alone
+    #                          ships, under module `recursion`, D71 item 4
+    #                          -- it is NOT this token)
+    #   control-verbs        -- `a(*ACCEPT)b` REFUSED: "(*...) requires
+    #                          module 'verbs'" (ACCEPT/FAIL are `PLANNED`
+    #                          not shipped; the rest OUT-OF-SCOPE)
+    #   lookbehind-variable  -- pcrec's lookbehind ships FIXED-WIDTH PER
+    #                          BRANCH (differing branch widths compile,
+    #                          e.g. `(?<=a|bc)x`), which is NARROWER than
+    #                          this tag's "not fixed-width" definition:
+    #                          the corpus's own witness,
+    #                          negation-scope-lookbehind-var
+    #                          (`(?<!\bnot\s{1,3}(?:\w{1,12}\s{1,3}){0,3})
+    #                          \bavailable\b`, a single-branch VARIABLE
+    #                          body) is REFUSED: "variable-length
+    #                          lookbehind is not implemented: every
+    #                          alternative of a lookbehind must have a
+    #                          fixed length"
+    # `callouts` was already correctly absent (unchanged: PLANNED, not
+    # shipped -- `a(?C1)b` REFUSED: "module 'callouts' is enabled but
+    # (?C...) is not implemented yet"). Every other token spot-verified
+    # COMPILING on every pcrec-* config (backrefs, lookaround,
+    # possessive-quantifier, atomic-group, recursion, k-reset,
+    # unicode-properties [both -e byte and -e utf8], named-groups,
+    # free-spacing, true-end-anchor); span-reporting/non-utf8-subject/
+    # captures are execution-model facts, not compile witnesses (see the
+    # lane report).
     ("pcrec-auto", [t for t in REQUIRES_VOCAB
-                    if t not in ("callouts",)]),
+                    if t not in ("callouts", "conditionals",
+                                 "control-verbs", "lookbehind-variable")]),
     ("pcrec-nocaps", [t for t in REQUIRES_VOCAB
-                      if t not in ("callouts", "captures")]),
+                      if t not in ("callouts", "captures", "conditionals",
+                                   "control-verbs", "lookbehind-variable")]),
     ("pcrec-vm", [t for t in REQUIRES_VOCAB
-                  if t not in ("callouts",)]),
+                  if t not in ("callouts", "conditionals",
+                               "control-verbs", "lookbehind-variable")]),
     ("pcrec-vm-in", [t for t in REQUIRES_VOCAB
-                     if t not in ("callouts",)]),
+                     if t not in ("callouts", "conditionals",
+                                  "control-verbs", "lookbehind-variable")]),
 ]
 
 
