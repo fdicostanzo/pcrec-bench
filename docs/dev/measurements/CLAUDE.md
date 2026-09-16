@@ -257,3 +257,18 @@ Maintenance: update this file when files are added/removed or change role.
   UNBUILT (Tier 1 of the restart's next step, confirmed empty by a
   grep at D2); G1 is NOT-RUNNABLE by the repository mandate (BD2: no
   build/test in `~/pcrec`'s tree from here).
+- `probe_o29_verify.py` — ([B42] runbook step 3, lane b42verify,
+  2026-09-16) the O-29 (+K57) fix-pin verify chain: nine parse-only
+  probes (the 3-block minimal repro + the 2-block variant twin, the
+  64-block corpus dump + the loader-gate refuse→load flip run against
+  BOTH pins as a two-sided control, all four `#section` kinds in one
+  multi-block file, B3's NUL refusal + its control, the K57 shallow-
+  dedent refusal + its compliant control). Every fixture's bytes are
+  literals in the script; every probe states its failing direction.
+  Takes the pcrec binary as argv[1] (default: the pin's).
+- `2026-09-16-o29-verify-a770139e.txt` — its archive at the fix pin:
+  9/9 PASS. The corpus dumps 64/64 provenance rows (0 variants,
+  matching variants.tsv); `load_rxt_source` refuses the same file at
+  cd371441 citing O-29 and loads it at a770139e; the K57 diagnostic
+  refuses by name, class `value-shape`. The verify I-71 asked for,
+  and the gate on which the [B42] sidecar switch + first sample ran.

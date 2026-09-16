@@ -4370,3 +4370,38 @@ reviewed-merged-stopped), ~14 h wall, ~30 commits on master, the
 restart complete steps (1)-(5)+L6a, checks 324→398, two outbox
 findings filed against the delivered pin (abi-25, O-29) and one
 against our own docs (libre2-dev staleness).
+
+## 2026-09-16 (evening) — twenty-third session: I-71 → verify → re-pin → sidecar switch (the [B42] window chain, stages 1-5)
+
+The pin item landed as promised (inbox I-71, ~19:5x EDT: pcrec main
+a770139e, battery all six stages rc=0 on this box; K57 lifts; D102 —
+pcrec pins are now nightly-batteried tips). Acked and pushed (266f21c,
+carrying pcrecdev1's unpushed inbox commit per their note).
+
+Stages run since, per the wake runbook:
+1. BUILD: pin.sh a770139e clean (~/pcrec pulled --ff-only; the pin and
+   its journal successor 74261426 exactly as announced).
+2. O-29 VERIFY CHAIN (lane b42verify, Sonnet): 9/9 PASS —
+   docs/dev/measurements/2026-09-16-o29-verify-a770139e.txt +
+   probe_o29_verify.py. The 3-block repro 3/3 with correct attribution;
+   the corpus 64/64 provenance rows exit 0; the loader gate run as a
+   TWO-SIDED control (cd371441 refuses citing O-29, a770139e loads —
+   both binaries live in one run); all four #section kinds present per
+   block; B3's NUL refusal unregressed; the K57 witness refuses by
+   name, class value-shape, with its compliant control loading.
+3. RE-PIN (runbook step 4, manager): all four registry surfaces
+   BYTE-IDENTICAL to cd371441's archives (re-stamped headers only);
+   abi read 25 UNCHANGED off a compiled `abc` witness; shim floor 16;
+   configs.toml → a770139e; catalogue 1.3 ([[pin_order]] append, the
+   three committed sidecars regenerated, stamp-only diffs); CLAUDE.md
+   pin refs + a testees/pcrec/CLAUDE.md history entry.
+4. SIDECAR SWITCH (runbook step 5): `rxt_source = "patterns.rxt"` in
+   bench/capability/subbench.toml; the interim committed-patterns.rxt
+   arm removed from tools/selfcheck.py check_rxt_export; stale
+   load-path prose corrected in bench/capability/, pcrecbench/ and
+   tools/ CLAUDE.mds. LIVE SMOKE: Subbench('bench/capability') loads
+   64 patterns / 64 provenance rows through the pinned binary — the
+   refuse→load flip, witnessed twice (lane control + main-tree smoke).
+
+Next: full `make check` alone on the box (expect ~398+ harness), then
+the quiet gate and the 7-cell capability@0.1 first sample.

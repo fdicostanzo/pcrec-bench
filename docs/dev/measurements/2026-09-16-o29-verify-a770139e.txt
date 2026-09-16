@@ -1,0 +1,168 @@
+# [B42] restart runbook step 3 -- THE O-29 (+K57) VERIFY CHAIN
+#
+# docs/dev/outbox_to_pcrec.md "## O-29" (the multi-block --list-source
+# silent-loss defect) + inbox I-71's K57 lift, against pcrec's FIX PIN.
+# Per inbox I-71 (2026-09-16, pcrec manager): "Run your three-step verify
+# (repro; 64/64; loader gate refuse->load) against the pin." This archive
+# is that chain, widened to nine probes across the four lettered checks
+# the manager's own brief asked for (repro + variant twin; the corpus
+# dump + the loader gate flip; all four #section kinds in one file + B3's
+# NUL control; the K57 positive witness + its control).
+#
+# date:      2026-09-16
+# box:       ubuntubudu (Linux 7.0.0-29-generic, x86_64), load average at
+#            run time 0.12 0.30 1.47 -- NOT GATED and it does not matter:
+#            every check here is --list-source on a fixture of at most a
+#            few dozen lines (single-digit ms); no compile, no artifact,
+#            no driver, no engine run, so the box's load cannot affect a
+#            character of this output (the one respect in which this
+#            departs from docs/dev/measurements/CLAUDE.md rule 3, by
+#            having nothing to report rather than by omitting anything --
+#            same stated exception probe_rxt_format.py's archive uses).
+# pin:       pcrec main a770139e (inbox I-71: "the O-29 FIX PIN"; carries
+#            BOTH lane/o29fix and lane/k57fix since cd371441)
+# binary:    /home/duxevents/pcrec-bench/build/pcrec-a770139e/build/pcrec
+# sha256:    562bee73cd678e1ed93ba6c66993043d60d3768811f8f8ec50d81de8d0bb7a93
+# bench:     266f21c (pcrec-bench; the one field a re-run may differ on)
+# script:    docs/dev/measurements/probe_o29_verify.py
+# for:       [B42] runbook step 3 (the O-29/K57 verify, ahead of the
+#            re-pin ritual, the rxt_source sidecar switch, `make check`
+#            and the 7-cell first sample)
+#
+# reproduce: python3 docs/dev/measurements/probe_o29_verify.py \
+#              [build/pcrec-a770139e/build/pcrec]
+#            (auto-resolves the pin's own binary via the git common
+#            directory when run from a worktree, same rule as
+#            probe_rxt_format.py's default_bin(); a positional arg
+#            overrides it, since this run also reads the PRE-FIX binary
+#            build/pcrec-cd371441/build/pcrec as a control for the
+#            loader-gate-flip check)
+#
+# ============================================================
+# THE VERDICT TABLE -- 9 checks, 9/9 PASS
+# ============================================================
+#
+# id              verdict  what it checks
+# --------------  -------  -------------------------------------------------
+# a-repro         PASS     O-29 minimal repro: 3 pattern blocks, each its own
+#                          5-line provenance sub-block, tag-before-provenance
+#                          (the reproducing order), trailing blank at EOF ->
+#                          3/3 #section provenance rows, correct per-block
+#                          attribution (p1/p2/p3)
+# a-variant-twin  PASS     the variant twin: 2 blocks, each one `variant re2`
+#                          sub-block -> 2/2 #section variants rows (v1/v2)
+# b-corpus        PASS     bench/capability/patterns.rxt (64 pattern blocks):
+#                          64 #section provenance rows (== block count), 0
+#                          #section variants rows (== variants.tsv's 0 data
+#                          rows), exit 0
+# b-loader-gate   PASS     pcrecbench.rxt_source.load_rxt_source on the SAME
+#                          corpus file: REFUSES at the pre-fix pin (cd371441,
+#                          citing O-29, 1/64 provenance rows) and LOADS
+#                          cleanly at the fix pin (64 patterns, 64
+#                          provenance, 0 variants) -- the two-sided control
+# c-kinds         PASS     one multi-block fixture carrying all FOUR
+#                          #section kinds (provenance, variants, cases, aux)
+#                          across two blocks + one file-scope ext block ->
+#                          every kind's rows present for both blocks that
+#                          declare them
+# c-nul-refused   PASS     B3 reconfirmed at the fix pin: a raw NUL byte in a
+#                          pattern line refused BY NAME, class value-shape
+#                          (not itself part of O-29; a regression control)
+# c-nul-control   PASS     control: the same fixture with no NUL accepts
+# d-k57-witness   PASS     K57 (inbox I-68 item 3, LIFTED per I-71 item 2): a
+#                          block-scalar `|` continuation indented LESS than
+#                          the first line's own depth now refuses BY NAME,
+#                          class value-shape (previously silently truncated)
+# d-k57-control   PASS     control: the same block scalar at compliant
+#                          (equal) depth loads clean
+#
+# Every probe states its own FAILING DIRECTION inline (what the pre-fix
+# binary would show), quoting O-29's own report / the 2026-09-16
+# acceptance archive / inbox I-68 item 3 -- no probe was re-run against
+# the pre-fix binary to produce that text except b-loader-gate, which
+# DOES re-run the pre-fix binary (build/pcrec-cd371441/build/pcrec) live,
+# as the two-sided control the loader-gate-flip check is.
+#
+# ============================================================
+# VERBATIM SCRIPT OUTPUT
+# ============================================================
+
+# O-29 (+K57) verify chain -- PARSE ONLY, no timing
+# binary:  /home/duxevents/pcrec-bench/build/pcrec-a770139e/build/pcrec
+# pin:     pcrec-a770139e
+# bench:   266f21c  (the one field a re-run may differ on)
+# script:  docs/dev/measurements/probe_o29_verify.py
+# for:     [B42] runbook step 3 (inbox I-71: O-29 fix pin a770139e)
+
+=== a-repro: O-29 minimal repro: 3 blocks each with their own provenance sub-block -- PASS
+    fixture: /tmp/o29probe/a_prov3.rxt (3 pattern blocks, tag-before-provenance, trailing blank at EOF)
+    exit: 0
+    #section provenance rows: 3 (want 3)
+    block_name attribution: ['p1', 'p2', 'p3'] (want ['p1', 'p2', 'p3'])
+    pre-fix (what O-29's own symptom looks like): exactly ONE #section provenance row (p3's only) -- O-29's own report, "the other blocks' rows are silently absent -- no error, exit 0"
+
+=== a-variant-twin: O-29 variant twin: 2 blocks each with their own variant sub-block -- PASS
+    fixture: /tmp/o29probe/a_variant2.rxt (2 blocks each declaring 'variant re2')
+    exit: 0
+    #section variants rows: 2 (want 2)
+    block_name attribution: ['v1', 'v2'] (want ['v1', 'v2'])
+    pre-fix (what O-29's own symptom looks like): only the second block's row -- O-29: "same shape for variant: two blocks each declaring variant re2 -> only the second block's row"
+
+=== b-corpus: the 64-block corpus dump: provenance == block count, variants == variants.tsv -- PASS
+    corpus: bench/capability/patterns.rxt
+    exit: 0
+    pattern blocks (kind in {pattern, pattern-esc}): 64
+    #section provenance rows: 64 (want == block count 64)
+    #section variants rows: 0 (want == bench/capability/variants.tsv data rows 0)
+    pre-fix (what O-29's own symptom looks like): ONE #section provenance row total (the last pattern's); the other 63 are gone -- O-29: "our committed 64-block bench/capability/patterns.rxt dumps ONE provenance row total"
+
+=== b-loader-gate: the loader gate flip: refuse (pre-fix) -> load (fix), same corpus file -- PASS
+    PRE-FIX (pcrec-cd371441): REFUSED as expected -- /home/duxevents/pcrec-bench/bench/capability/patterns.rxt: block<->provenance agreement FAILED -- 64 pattern block(s), only 1 carry a #section provenance row (missing at line(s): 122, 133, 144, 156, 1
+    FIX (pcrec-a770139e): loaded cleanly -- 64 patterns, 64 provenance, 0 variants
+    pre-fix (what O-29's own symptom looks like): pcrecbench.rxt_source.check_provenance_agreement refuses the whole load, citing O-29, at any pin whose provenance-row count is strictly between 0 and the block count
+
+=== c-kinds: all four #section kinds present for every block that declares them -- PASS
+    fixture: /tmp/o29probe/c_kinds.rxt (2 blocks x {provenance, variant, cases, block-scope ext} + 1 file-scope ext)
+    exit: 0
+    #section provenance block_names: ['c1', 'c2'] (want ['c1', 'c2'])
+    #section variants   block_names: ['c1', 'c2'] (want ['c1', 'c2'])
+    #section cases      block_names: ['c1', 'c2'] (want ['c1', 'c2'])
+    #section aux block-scope names: ['c1', 'c2'] (want ['c1', 'c2']); file-scope row present: True
+    pre-fix (what O-29's own symptom looks like): provenance/variants would each show only c2's row (the textually-last block); cases and aux are unaffected -- O-29: "the flat per-line case productions (m/n/mc) are unaffected (all blocks' cases appear)"
+
+=== c-nul-refused: B3: a raw NUL byte in a pattern line is refused BY NAME -- PASS
+    fixture: b'pattern ab\x00cd\nname h\n'
+    exit: 1 (want != 0)
+    stderr: pcrec: [value-shape] /tmp/o29probe/c_nul.rxt:1: embedded NUL byte in .rxt source file
+    pre-fix (what O-29's own symptom looks like): n/a -- this is the FLAGSHIP fix already confirmed at cd371441 (2026-09-16-b42-acceptance-41-cd371441.txt B3); reconfirmed here at the O-29 fix pin as a control that the fix did not regress it
+
+=== c-nul-control: control: the same fixture with no NUL byte accepts cleanly -- PASS
+    fixture: b'pattern abcd\nname h\n'
+    exit: 0 (want 0)
+    pre-fix (what O-29's own symptom looks like): n/a -- negative control
+
+=== d-k57-witness: K57: a block-scalar continuation shallower than the first line's depth refuses, class value-shape -- PASS
+    fixture: b'description |\n  first line\n second\npattern abc\nname h\n' (first continuation at depth 2, second at depth 1)
+    exit: 1 (want != 0)
+    stderr: pcrec: [value-shape] /tmp/o29probe/d_k57_bad.rxt:3: block scalar '|' continuation is indented 1, less than the block's own indent 2 set by line 2 -- dedenting would delete content
+    pre-fix (what O-29's own symptom looks like): loads cleanly with the shallower line silently truncated to depth 2's byte count (inbox I-68 item 3's parked caveat, lifted by this pin per I-71 item 2)
+
+=== d-k57-control: control: the same block scalar at compliant (equal) depth loads clean -- PASS
+    fixture: b'description |\n  first line\n  second\npattern abc\nname h\n'
+    exit: 0 (want 0)
+    pre-fix (what O-29's own symptom looks like): n/a -- negative control
+
+# ============================================================
+# SUMMARY
+# ============================================================
+# a-repro          PASS  O-29 minimal repro: 3 blocks each with their own provenance sub-block
+# a-variant-twin   PASS  O-29 variant twin: 2 blocks each with their own variant sub-block
+# b-corpus         PASS  the 64-block corpus dump: provenance == block count, variants == variants.tsv
+# b-loader-gate    PASS  the loader gate flip: refuse (pre-fix) -> load (fix), same corpus file
+# c-kinds          PASS  all four #section kinds present for every block that declares them
+# c-nul-refused    PASS  B3: a raw NUL byte in a pattern line is refused BY NAME
+# c-nul-control    PASS  control: the same fixture with no NUL byte accepts cleanly
+# d-k57-witness    PASS  K57: a block-scalar continuation shallower than the first line's depth refuses, class value-shape
+# d-k57-control    PASS  control: the same block scalar at compliant (equal) depth loads clean
+# 9/9 PASS
+# fixtures written under /tmp/o29probe (fixed name, emptied each run)
