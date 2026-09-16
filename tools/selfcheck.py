@@ -153,7 +153,7 @@ sys.path.insert(0, HERE)
 from pcrecbench import adapters as _ad                    # noqa: E402
 from pcrecbench.driverrun import build_driver, run_driver  # noqa: E402
 from pcrecbench import record as _rec                      # noqa: E402
-from pcrecbench.harness import outcome_for                # noqa: E402
+from pcrecbench.harness import outcome_for, classify_giveup  # noqa: E402
 from pcrecbench.subbench import Subbench, Expectation, Pattern, SubbenchError  # noqa: E402
 import export_rxt as _rxt                                 # noqa: E402
 from pcrecbench import rxt_source as _rxtsrc               # noqa: E402
@@ -8731,6 +8731,241 @@ def check_capability_policy_noop_elsewhere():
                 "found requires-* on: %r" % offenders)
 
 
+def check_pcre2_dfa():
+    """THE `pcre2-dfa` TESTEE ([B42] L6a, testees/pcre2/adapter.py +
+    driver.c): a THIRD execution model on the existing pcre2 driver file
+    (`pcre2_dfa_match` instead of `pcre2_match`, chosen by `--dfa`), never
+    a new driver. Four arms, each with the control the house rule asks
+    for:
+
+      1. describe() facts and their controls: `automaton_class` is
+         `nfa-simulation` (man pcre2matching's own words) with
+         pcre2-interp's `backtracking` as the CONTROL it must NOT read
+         either testee as; `captures` is `off`.
+      2. the NO-CAPTURES shape, driven straight through the adapter (like
+         `check_driver_smokes`, MatchRow.ncaps/.caps visible): `(a)(b)`
+         over a subject containing "ab" reports ncaps=0, caps=None (the
+         wire's "-", parsed -- `adapters._opt`) on
+         pcre2-dfa where pcre2-interp (the CONTROL, same pattern, same
+         subject) reports 2 captured pairs -- and the SAME cell also
+         witnesses the documented semantic divergence (testees/pcre2/
+         CLAUDE.md's "pcre2-dfa" section): `\\.tar|\\.tar\\.gz` over
+         "archive.tar.gz" answers [7,11) under NFA leftmost-first and
+         [7,14) under DFA longest-at-one-point -- both real, neither a
+         bug, the START unmoved.
+      3. the STRUCTURAL refusal, BY NAME, never a crash: `(\\w+) \\1`
+         (an untagged backreference -- no bench/capability declaration
+         involved here on purpose, the driver-level fallback this
+         project's own gap analysis names) over a subject with a doubled
+         word compiles CLEANLY (`compile_outcome=compiled` -- pcre2_compile
+         does not know which matcher will run) and then GIVES UP with
+         `-42:...not supported for DFA matching` at MATCH time, classified
+         `gave-up` (never `crashed`) by `harness.classify_giveup` against
+         the handle's own `giveup_codes`; the CONTROL is the identical
+         pattern on pcre2-interp, which matches normally.
+      4. a REAL `quick` cell into a scratch store, twice: bench/capability's
+         `doubled-word` (`requires=backrefs`) on pcre2-dfa is BLOCKED
+         pre-compile (`unsupported-by-declaration`, this lane's own
+         `ext bench` matrix row, [B42] L5's policy) with pcre2-interp (the
+         CONTROL, same pattern) measuring normally; bench/email's floor
+         pattern on pcre2-dfa is a full MEASURED record, schema-validated
+         by `store.write()`."""
+    print("-- the pcre2-dfa testee ([B42] L6a) --")
+    adapter = _ad.discover()["pcre2"]
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-pcre2dfa-")
+    try:
+        adapter.prepare("pcre2-dfa", tmp)
+        adapter.prepare("pcre2-interp", tmp)
+
+        # 1. describe() facts.
+        d_dfa = adapter.describe("pcre2-dfa", tmp)
+        d_interp = adapter.describe("pcre2-interp", tmp)
+        if d_dfa["automaton_class"] == "nfa-simulation":
+            ok("pcre2-dfa automaton_class is nfa-simulation",
+               "man pcre2matching: not a traditional finite state machine")
+        else:
+            bad("pcre2-dfa automaton_class is nfa-simulation",
+                "got %r" % d_dfa["automaton_class"])
+        if d_interp["automaton_class"] == "backtracking":
+            ok("CONTROL: pcre2-interp automaton_class stays backtracking",
+               "unmoved by the dfa branch")
+        else:
+            bad("CONTROL: pcre2-interp automaton_class stays backtracking",
+                "got %r" % d_interp["automaton_class"])
+        if d_dfa["captures"] == "off":
+            ok("pcre2-dfa declares captures=off", "man item 2: no captures")
+        else:
+            bad("pcre2-dfa declares captures=off", "got %r" % d_dfa["captures"])
+
+        def compile_one(testee_id, pattern, pattern_id):
+            return adapter.compile(testee_id, pattern_id, pattern, {}, 1,
+                                   tmp).get(_ad.FORM_PLAIN)
+
+        def measure_one(cr, subject_id, path, length):
+            class S:
+                pass
+            S.subject_id, S.path, S.length = subject_id, path, length
+            handle = dict(cr.handle)
+            rows_by_trial, _info, _notes = adapter.measure(
+                handle, "search_short", [S()], 1, 1, timeout=60)
+            return (rows_by_trial[0] if rows_by_trial else [None])[0], handle
+
+        # 2. the no-captures shape + the documented semantic divergence,
+        # in one cell: `(a)(b)` over a subject containing "ab".
+        subj2 = os.path.join(tmp, "s-ab.bin")
+        with open(subj2, "wb") as f:
+            f.write(b"xaby")
+        cr_dfa = compile_one("pcre2-dfa", b"(a)(b)", "caps-dfa")
+        cr_interp = compile_one("pcre2-interp", b"(a)(b)", "caps-interp")
+        if cr_dfa.outcome == "compiled" and cr_interp.outcome == "compiled":
+            r_dfa, _h = measure_one(cr_dfa, "s-ab", subj2, 4)
+            r_interp, _h = measure_one(cr_interp, "s-ab", subj2, 4)
+            if (r_dfa and r_dfa.matched and (r_dfa.start, r_dfa.end) == (1, 3)
+                    and r_dfa.ncaps == 0 and r_dfa.caps is None):
+                ok("pcre2-dfa reports NO captures on a real match",
+                   "(a)(b) over 'xaby' -> [1,3), ncaps=0, caps=None "
+                   "(the wire '-', parsed)")
+            else:
+                bad("pcre2-dfa reports NO captures on a real match",
+                    repr(r_dfa and (r_dfa.matched, r_dfa.start, r_dfa.end,
+                                    r_dfa.ncaps, r_dfa.caps)))
+            if (r_interp and r_interp.matched
+                    and (r_interp.start, r_interp.end) == (1, 3)
+                    and r_interp.ncaps == 2):
+                ok("CONTROL: pcre2-interp reports 2 captures on the same cell",
+                   "%r" % r_interp.caps)
+            else:
+                bad("CONTROL: pcre2-interp reports 2 captures on the same cell",
+                    repr(r_interp and (r_interp.ncaps, r_interp.caps)))
+        else:
+            bad("pcre2-dfa reports NO captures on a real match",
+                "compile: dfa=%s interp=%s"
+                % (cr_dfa.outcome, cr_interp.outcome))
+
+        subj3 = os.path.join(tmp, "s-tarball.bin")
+        with open(subj3, "wb") as f:
+            f.write(b"archive.tar.gz")
+        cr_alt_dfa = compile_one("pcre2-dfa", br"\.tar|\.tar\.gz", "alt-dfa")
+        cr_alt_interp = compile_one("pcre2-interp", br"\.tar|\.tar\.gz",
+                                    "alt-interp")
+        r_alt_dfa, _h = measure_one(cr_alt_dfa, "s-tarball", subj3, 14)
+        r_alt_interp, _h = measure_one(cr_alt_interp, "s-tarball", subj3, 14)
+        if r_alt_dfa and (r_alt_dfa.start, r_alt_dfa.end) == (7, 14):
+            ok("pcre2-dfa returns the LONGEST alternative (documented divergence)",
+               r"\.tar|\.tar\.gz over archive.tar.gz -> [7,14)")
+        else:
+            bad("pcre2-dfa returns the LONGEST alternative (documented divergence)",
+                repr(r_alt_dfa and (r_alt_dfa.start, r_alt_dfa.end)))
+        if r_alt_interp and (r_alt_interp.start, r_alt_interp.end) == (7, 11):
+            ok("CONTROL: pcre2-interp returns the FIRST alternative",
+               r"\.tar|\.tar\.gz over archive.tar.gz -> [7,11)")
+        else:
+            bad("CONTROL: pcre2-interp returns the FIRST alternative",
+                repr(r_alt_interp and (r_alt_interp.start, r_alt_interp.end)))
+
+        # 3. the structural refusal, BY NAME, never a crash -- untagged
+        # (no bench/capability declaration involved): the driver-level
+        # fallback this project's own gap analysis (adapter.py's
+        # GAVE_UP_CODES_DFA comment) names.
+        subj4 = os.path.join(tmp, "s-dup.bin")
+        with open(subj4, "wb") as f:
+            f.write(b"we saw the the cat")
+        cr_bak_dfa = compile_one("pcre2-dfa", br"(\w+) \1", "bak-dfa")
+        cr_bak_interp = compile_one("pcre2-interp", br"(\w+) \1", "bak-interp")
+        if cr_bak_dfa.outcome != "compiled":
+            bad("pcre2-dfa compiles a backreference pattern cleanly",
+                "outcome=%s (pcre2_compile does not know the matcher yet)"
+                % cr_bak_dfa.outcome)
+        else:
+            r_bak, handle = measure_one(cr_bak_dfa, "s-dup", subj4, 19)
+            giveup_ok = r_bak is not None and classify_giveup(r_bak.answer, handle)
+            crashed_wrongly = r_bak is not None and r_bak.answer.startswith("error")
+            if (r_bak and r_bak.is_giveup and giveup_ok and not crashed_wrongly
+                    and "-42" in r_bak.answer):
+                ok("pcre2-dfa gives up BY NAME on a structural refusal",
+                   "%s -> classify_giveup=True (never crashed)" % r_bak.answer)
+            else:
+                bad("pcre2-dfa gives up BY NAME on a structural refusal",
+                    "%r giveup_ok=%r" % (r_bak and r_bak.answer, giveup_ok))
+        if cr_bak_interp.outcome == "compiled":
+            r_bi, _h = measure_one(cr_bak_interp, "s-dup", subj4, 19)
+            if r_bi and r_bi.matched:
+                ok("CONTROL: pcre2-interp matches the same backreference pattern",
+                   "%r" % ((r_bi.start, r_bi.end),))
+            else:
+                bad("CONTROL: pcre2-interp matches the same backreference pattern",
+                    "%r" % (r_bi and r_bi.answer))
+        else:
+            bad("CONTROL: pcre2-interp matches the same backreference pattern",
+                "compile outcome %s" % cr_bak_interp.outcome)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # 4. a real `quick` cell into a scratch store, twice.
+    import json as _json
+    import glob as _glob
+    scratch = os.path.join(ROOT, "build", "selfcheck-pcre2dfa-store")
+    shutil.rmtree(scratch, ignore_errors=True)
+
+    def quick_cell(subbench, pattern, testee):
+        proc = run(["gnutimeout", "120", sys.executable, "-m", "pcrecbench",
+                    "quick", "--subbench", subbench, "--pattern", pattern,
+                    "--regime", "search_short", "--testee", testee,
+                    "--subjects", "2", "--trials", "1", "--store", scratch,
+                    "--synthetic", "--quiet-output"],
+                   cwd=ROOT, timeout=150)
+        files = sorted(_glob.glob(os.path.join(
+            scratch, "records", subbench + "*", "*", "*.jsonl")),
+            key=os.path.getmtime)
+        rows = []
+        if files:
+            with open(files[-1], encoding="utf-8") as fh:
+                rows = [_json.loads(l) for l in fh if l.strip()]
+        return proc, (files[-1] if files else None), rows
+
+    for gen in ("gen_subjects.py", "gen_throughput_subjects.py"):
+        path = os.path.join(ROOT, "bench", "capability", gen)
+        if os.path.exists(path):
+            run([sys.executable, path], timeout=120)
+
+    proc, f, rows = quick_cell("capability", "doubled-word", "pcre2-dfa")
+    crows = [r for r in rows if r.get("kind") == "compile"]
+    mrows = [r for r in rows if r.get("kind") == "match"]
+    blocked = (f and len(crows) == 1
+              and crows[0].get("compile_outcome") == "unsupported-by-declaration"
+              and bool(crows[0].get("declaration_ref")) and not mrows)
+    if blocked:
+        ok("bench/capability's ext-bench row blocks pcre2-dfa on doubled-word",
+           "declaration_ref=%r" % crows[0]["declaration_ref"])
+    else:
+        bad("bench/capability's ext-bench row blocks pcre2-dfa on doubled-word",
+            "%s" % ((proc.stderr or proc.stdout)[-300:] if not f
+                    else (crows, len(mrows))))
+
+    proc, f, rows = quick_cell("capability", "doubled-word", "pcre2-interp")
+    mrows = [r for r in rows if r.get("kind") == "match"]
+    if f and mrows:
+        ok("CONTROL: pcre2-interp measures doubled-word normally",
+           "%d match row(s)" % len(mrows))
+    else:
+        bad("CONTROL: pcre2-interp measures doubled-word normally",
+            (proc.stderr or proc.stdout)[-300:] if not f else "no match rows")
+    shutil.rmtree(scratch, ignore_errors=True)
+
+    proc, f, rows = quick_cell("email", "orig", "pcre2-dfa")
+    mrows = [r for r in rows if r.get("kind") == "match"]
+    status = next((r.get("status") for r in rows if r.get("kind") == "setup"), None)
+    tier = next((r.get("tier") for r in rows if r.get("kind") == "setup"), None)
+    if f and mrows and status == "measured" and tier == "scratch":
+        ok("a real quick cell on bench/email writes a MEASURED scratch record",
+           "%d match row(s), status=%s, tier=%s" % (len(mrows), status, tier))
+    else:
+        bad("a real quick cell on bench/email writes a MEASURED scratch record",
+            (proc.stderr or proc.stdout)[-300:] if not f
+            else "status=%s tier=%s rows=%d" % (status, tier, len(mrows)))
+    shutil.rmtree(scratch, ignore_errors=True)
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -8784,6 +9019,7 @@ def main():
     check_capability_policy()
     check_capability_policy_noop_elsewhere()
     check_convention_scoring()
+    check_pcre2_dfa()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))

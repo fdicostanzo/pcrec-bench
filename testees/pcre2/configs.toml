@@ -22,3 +22,9 @@ engine_mode = "jit"
 jit = true
 captures = "on"
 description = "libpcre2 8-bit with pcre2_jit_compile(PCRE2_JIT_COMPLETE) -- an EAGER JIT: the compile cost is a separable call and is timed as a second phase"
+
+[testees.pcre2-dfa]
+engine_mode = "dfa"
+dfa = true
+captures = "off"
+description = "libpcre2 8-bit via pcre2_dfa_match -- a THIRD execution model on the SAME compiled pattern (no separate compile step, no JIT): an NFA-simulation breadth-first scan that reports no per-group captures and returns the LONGEST match at its leftmost start point, not necessarily the first alternative tried ([B42] L6a, capability_set_v1.md 8/5.6, man pcre2matching)"

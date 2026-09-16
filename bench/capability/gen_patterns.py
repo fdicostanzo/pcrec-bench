@@ -449,6 +449,41 @@ EXT_BENCH_ROSTER = [
     ("pcrec-vm-in", [t for t in REQUIRES_VOCAB
                      if t not in ("callouts", "conditionals",
                                   "control-verbs", "lookbehind-variable")]),
+    # pcre2-dfa ([B42] L6a, testees/pcre2/adapter.py; the SAME library and
+    # version as pcre2-interp/pcre2-jit above, via `pcre2_dfa_match`
+    # instead): man `pcre2matching`'s own eight-item restricted-construct
+    # list, quoted in full in testees/pcre2/CLAUDE.md's "pcre2-dfa"
+    # section, read against THIS vocabulary token by token and each
+    # exclusion reproduced LIVE with `pcre2test -dfa` (the transcript is
+    # in that same CLAUDE.md section) -- not inferred from the man page's
+    # prose alone, the same "spot-verified, not merely documented"
+    # discipline the pcrec-* rows above already hold themselves to.
+    #   backrefs       -- item 3(a); UITEM (-42) live on `(\1)(a)` and on
+    #                     bench/syntax's own untagged bak-1 (`(\w+) \1`,
+    #                     subject "the the")
+    #   conditionals    -- item 3(b) (a backreference-condition or a
+    #                     specific-group-recursion test only -- this
+    #                     vocabulary has no finer token, so the whole tag
+    #                     is excluded); UCOND (-40) live on `(?(1)a|b)(a)?`
+    #   k-reset         -- item 4 (`\K`); UITEM (-42) live on `a\Kb`
+    #   control-verbs   -- item 7: everything but `(*FAIL)`, which this
+    #                     vocabulary also has no finer token for
+    #   captures        -- item 2, this vocabulary's OWN worked example
+    #                     of a capability line that is an execution-model
+    #                     fact, not a construct (5.1's own note)
+    # Every OTHER token compiles and matches structurally unchanged under
+    # DFA (lookaround, possessive quantifiers and atomic groups are all
+    # explicitly discussed as WORKING, just without capture reporting;
+    # `\p{...}`/named groups/free-spacing/callouts are compile-time or
+    # orthogonal to which matcher runs; span-reporting and
+    # true-end-anchor are the driver's own PCRE2_ANCHORED/
+    # PCRE2_ENDANCHORED runtime options, which `pcre2_dfa_match`'s own
+    # synopsis lists as accepted options) -- kept, per 5.2's fail-closed
+    # rule cutting the OTHER way: a token withheld without evidence is as
+    # dishonest as one wrongly claimed.
+    ("pcre2-dfa", [t for t in REQUIRES_VOCAB
+                   if t not in ("backrefs", "conditionals", "k-reset",
+                                "control-verbs", "captures")]),
 ]
 
 

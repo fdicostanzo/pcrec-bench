@@ -16,6 +16,38 @@
  * (pcre2_jit_compile_8) additionally when --jit. Both timed IN-DRIVER, which
  * is what an eager-JIT's compile cost is (requirements 3).
  *
+ * --dfa ([B42] L6a, 2026-09-16): a THIRD execution model on the SAME
+ * compiled pattern -- pcre2_dfa_match_8 instead of pcre2_match_8, chosen at
+ * MATCH time, never at compile time (`pcre2_compile_8` does not know or
+ * care which matcher will be used; testees/pcre2/CLAUDE.md's "pcre2-dfa"
+ * section states the full semantics). Three consequences for this file:
+ *   (1) a match_data block for DFA is NOT created from the pattern (man
+ *       `pcre2_dfa_match`: "the size of vector needed ... depends on the
+ *       number of simultaneous matches, not on the number of parentheses
+ *       ... therefore not advisable") -- `pcre2_match_data_create_8` with a
+ *       small fixed oveccount instead, since this driver reads only the
+ *       FIRST (longest) match's span either way (below).
+ *   (2) `pcre2_dfa_match` needs a caller-owned WORKSPACE (`workspace`,
+ *       `wscount`) with no relation to subject length or capture count --
+ *       malloc'd once, sized generously (`DFA_WS_ELEMS`, its own comment).
+ *   (3) the ovector's [0]/[1] pair is ALWAYS the LONGEST match at the
+ *       leftmost successful start point regardless of how many
+ *       SIMULTANEOUS matches were found there (man `pcre2_dfa_match`:
+ *       "stored ... in reverse order of length; the longest matching
+ *       string is first" -- true whether the return code is the exact
+ *       count or 0, "too many to fit, filled with the longest"). So the
+ *       existing rc>=0-is-a-match / ov[0..1]-is-the-span structure below
+ *       needs NO change for DFA -- only the match CALL itself branches
+ *       (`do_match`), and the CAPTURES reporting is forced to "none" (man
+ *       item 2: "no captured substrings are available" -- DFA_UITEM/
+ *       DFA_UCOND/DFA_UINVALID_UTF, the STRUCTURAL refusals a pattern the
+ *       DFA route cannot run at all raises, and DFA_WSSIZE/DFA_RECURSE, the
+ *       RESOURCE-shaped ones, all surface through the SAME
+ *       `giveup:<code>:<message>` protocol every other negative code
+ *       already uses below -- classified `gave-up` vs `crashed` by the
+ *       ADAPTER's per-testee code set (testees/pcre2/adapter.py), never in
+ *       this file.
+ *
  * consumed_length: the LENGTH ARGUMENT the driver passed and pcre2 accepted,
  * i.e. the whole subject. pcre2_match takes a size_t length and has no
  * subject-size ceiling to truncate against, and the API exposes no scan
@@ -47,6 +79,9 @@ static int      (*p_jit_compile)(void *, uint32_t);
 static void    *(*p_match_data_create_from_pattern)(void *, void *);
 static int      (*p_match)(void *, const unsigned char *, size_t, size_t,
                            uint32_t, void *, void *);
+static int      (*p_dfa_match)(void *, const unsigned char *, size_t, size_t,
+                               uint32_t, void *, void *, int *, size_t);
+static void    *(*p_match_data_create)(uint32_t, void *);
 static size_t  *(*p_get_ovector_pointer)(void *);
 static uint32_t (*p_get_ovector_count)(void *);
 static void     (*p_match_data_free)(void *);
@@ -63,6 +98,35 @@ static int      (*p_pattern_info)(const void *, uint32_t, void *);
 #define PCRE2_ENDANCHORED     0x20000000u
 #define PCRE2_JIT_COMPLETE    0x00000001u
 #define PCRE2_CONFIG_VERSION  11u
+
+/* [verified] 2026-09-16 ([B42] L6a): this box now HAS libpcre2-dev (a side
+ * finding of docs/dev/research/2026-09-12-b42-engine-landscape.md (3),
+ * unactioned there), so these five are read straight off
+ * /usr/include/pcre2.h and independently reproduced live with
+ * `pcre2test -dfa` (a backreference atom and `\K` both raise -42; a
+ * backreference-CONDITION raises -40 -- testees/pcre2/CLAUDE.md's
+ * "pcre2-dfa" section has the transcript) rather than probed blind, the
+ * discipline every other constant in this file states for itself. The
+ * two STRUCTURAL refusals `pcre2_compile_8` cannot see (a construct
+ * `pcre2_dfa_match` never supports, at any subject) and the three
+ * RESOURCE-shaped ones (this driver's own budgets, not the pattern's
+ * fault) are told apart in testees/pcre2/adapter.py's own comment, not
+ * here -- this file emits every one of them through the SAME
+ * `giveup:<code>:<message>` line every other negative code already uses. */
+#define PCRE2_ERROR_DFA_BADRESTART    (-38)  /* unreachable: no --dfa-restart */
+#define PCRE2_ERROR_DFA_RECURSE       (-39)  /* resource-shaped, "extremely rare" */
+#define PCRE2_ERROR_DFA_UCOND         (-40)  /* structural: backref/recursion cond */
+#define PCRE2_ERROR_DFA_UFUNC         (-41)  /* unreachable: no substring-by-name call */
+#define PCRE2_ERROR_DFA_UITEM         (-42)  /* structural: e.g. a backref, \K */
+#define PCRE2_ERROR_DFA_WSSIZE        (-43)  /* resource-shaped: our own workspace */
+#define PCRE2_ERROR_DFA_UINVALID_UTF  (-66)  /* unreachable: never compiled with it */
+/* Chosen generously against this project's own worst case
+ * (bench/bounded's `cls-upto-65535` = `[a-z]{0,65535}`): `pcre2test -dfa`
+ * matches it cleanly against a 70,000-byte all-matching subject in
+ * single-digit milliseconds with no workspace complaint. A real
+ * exhaustion is PCRE2_ERROR_DFA_WSSIZE above, a first-class per-subject
+ * outcome (never assumed impossible), not a crash. */
+#define PCRE2_DFA_WS_ELEMS    100000
 
 /* [measured] 2026-08-25 on this box's libpcre2 10.46, by the same discipline
  * pcrec's tests/fuzz/pcre2_abi.h uses for PCRE2_INFO_CAPTURECOUNT (its
@@ -173,6 +237,16 @@ static void emit_caps(size_t *ov, uint32_t npairs, char *out, size_t outcap) {
     if (!out[0]) { out[0] = '-'; out[1] = 0; }
 }
 
+/* ONE call site for both matchers ([B42] L6a): the rc>=0-is-a-match /
+ * ov[0..1]-is-the-span reading downstream is IDENTICAL either way (this
+ * file's header comment says why), so only the CALL itself branches. */
+static int do_match(int dfa, void *code, const unsigned char *buf, size_t len,
+                    size_t pos, uint32_t opts, void *md,
+                    int *ws, size_t wsn) {
+    if (dfa) return p_dfa_match(code, buf, len, pos, opts, md, NULL, ws, wsn);
+    return p_match(code, buf, len, pos, opts, md, NULL);
+}
+
 int main(int argc, char **argv) {
     const char *pattern_path = NULL, *list_path = NULL, *mode = "search";
     /* `volatile` on everything the per-subject sigsetjmp/siglongjmp pair can
@@ -183,7 +257,7 @@ int main(int argc, char **argv) {
     volatile long iters = 1, subject_timeout = 0, skip = 0;
     long compile_trials = 1;
     volatile int find_all = 0;
-    int jit = 0;
+    int jit = 0, dfa = 0;
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -196,8 +270,12 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--skip") && i + 1 < argc)      skip = strtol(argv[++i], NULL, 10);
         else if (!strcmp(a, "--find-all"))                  find_all = 1;
         else if (!strcmp(a, "--jit"))                       jit = 1;
+        else if (!strcmp(a, "--dfa"))                       dfa = 1;
         else { printf("error\tunknown argument %s\n", a); return 2; }
     }
+    if (dfa && jit) die("--dfa and --jit together: pcre2_dfa_match has no JIT "
+                        "(man pcre2jit: \"It does not apply when the DFA "
+                        "matching function is being used\")");
     if (!pattern_path) die("--pattern is required");
     if (iters < 1) iters = 1;
 
@@ -210,6 +288,8 @@ int main(int argc, char **argv) {
     p_jit_compile = dlsym(lib, "pcre2_jit_compile_8");
     p_match_data_create_from_pattern = dlsym(lib, "pcre2_match_data_create_from_pattern_8");
     p_match       = dlsym(lib, "pcre2_match_8");
+    p_dfa_match   = dlsym(lib, "pcre2_dfa_match_8");
+    p_match_data_create = dlsym(lib, "pcre2_match_data_create_8");
     p_get_ovector_pointer = dlsym(lib, "pcre2_get_ovector_pointer_8");
     p_get_ovector_count   = dlsym(lib, "pcre2_get_ovector_count_8");
     p_match_data_free = dlsym(lib, "pcre2_match_data_free_8");
@@ -219,7 +299,8 @@ int main(int argc, char **argv) {
     if (!p_compile || !p_match || !p_get_ovector_pointer ||
         !p_match_data_create_from_pattern || !p_match_data_free ||
         !p_code_free || !p_get_error_message || !p_config ||
-        !p_get_ovector_count || (jit && !p_jit_compile)) {
+        !p_get_ovector_count || (jit && !p_jit_compile) ||
+        (dfa && (!p_dfa_match || !p_match_data_create))) {
         printf("error\tdlsym: a required libpcre2 symbol is missing\n");
         return 2;
     }
@@ -229,6 +310,7 @@ int main(int argc, char **argv) {
     if (vn <= 0) strcpy(ver, "unknown");
     printf("info\tversion\t%s\n", ver);
     printf("info\tjit\t%s\n", jit ? "on" : "off");
+    printf("info\tdfa\t%s\n", dfa ? "on" : "off");
 
     size_t patlen = 0;
     unsigned char *pat = slurp(pattern_path, &patlen);
@@ -291,10 +373,22 @@ int main(int argc, char **argv) {
     const int anchored = !strcmp(mode, "match");
     const uint32_t opts = anchored ? (PCRE2_ANCHORED | PCRE2_ENDANCHORED) : 0;
 
-    void *md = p_match_data_create_from_pattern(code, NULL);
+    /* man pcre2_dfa_match: a match_data block sized from the PATTERN's own
+     * capture count "is therefore not advisable" for DFA -- a small fixed
+     * oveccount instead (this driver only ever reads the first pair). */
+    void *md = dfa ? p_match_data_create(16, NULL)
+                   : p_match_data_create_from_pattern(code, NULL);
     if (!md) { printf("error\tmatch_data_create failed\n"); return 2; }
     size_t *ov = p_get_ovector_pointer(md);
     uint32_t ovn = p_get_ovector_count(md);
+
+    int *dfa_ws = NULL;
+    size_t dfa_ws_n = 0;
+    if (dfa) {
+        dfa_ws_n = PCRE2_DFA_WS_ELEMS;
+        dfa_ws = malloc(dfa_ws_n * sizeof *dfa_ws);
+        if (!dfa_ws) { printf("error\tmalloc dfa workspace failed\n"); return 2; }
+    }
 
     struct sigaction sa;
     memset(&sa, 0, sizeof sa);
@@ -322,12 +416,18 @@ int main(int argc, char **argv) {
                     size_t pos = 0;
                     long   count = 0;
                     for (;;) {
-                        int rc = p_match(code, s->buf, s->len, pos, opts, md, NULL);
+                        int rc = do_match(dfa, code, s->buf, s->len, pos, opts,
+                                          md, dfa_ws, dfa_ws_n);
                         if (rc < 0) { if (count == 0) rc_final = rc; break; }
                         if (first_s < 0) {
                             first_s = (long)ov[0];
                             first_e = (long)ov[1];
-                            npairs = (uint32_t)(rc > 0 ? rc : 1);
+                            /* DFA: `rc` is the SIMULTANEOUS-match count at
+                             * this start point, not a capture-pair count
+                             * (man pcre2_dfa_match item 2: "no captured
+                             * substrings are available") -- forced to 0,
+                             * never read as if it were one. */
+                            npairs = dfa ? 0 : (uint32_t)(rc > 0 ? rc : 1);
                             if (npairs > ovn) npairs = ovn;
                             if (npairs > 256) npairs = 256;
                             memcpy(firstov, ov, (size_t)npairs * 2 * sizeof *ov);
@@ -347,12 +447,13 @@ int main(int argc, char **argv) {
                     }
                     nmatch = count;
                 } else {
-                    int rc = p_match(code, s->buf, s->len, 0, opts, md, NULL);
+                    int rc = do_match(dfa, code, s->buf, s->len, 0, opts,
+                                      md, dfa_ws, dfa_ws_n);
                     rc_final = rc;
                     if (rc >= 0) {
                         first_s = (long)ov[0];
                         first_e = (long)ov[1];
-                        npairs = (uint32_t)(rc > 0 ? rc : 1);
+                        npairs = dfa ? 0 : (uint32_t)(rc > 0 ? rc : 1);
                         if (npairs > ovn) npairs = ovn;
                         if (npairs > 256) npairs = 256;
                         memcpy(firstov, ov, (size_t)npairs * 2 * sizeof *ov);
@@ -375,7 +476,12 @@ int main(int argc, char **argv) {
 
         if (first_s >= 0) {
             answer = "match";
-            emit_caps(firstov, (uint32_t)npairs, caps, sizeof caps);
+            /* DFA structurally reports no per-group captures (npairs is
+             * forced 0 above) -- "-" here is the same spelling emit_caps
+             * itself falls back to on npairs==0, made explicit rather than
+             * relying on that fallback silently doing the right thing. */
+            if (dfa) { caps[0] = '-'; caps[1] = 0; }
+            else emit_caps(firstov, (uint32_t)npairs, caps, sizeof caps);
             snprintf(sbuf, sizeof sbuf, "%ld", (long)first_s);
             snprintf(ebuf, sizeof ebuf, "%ld", (long)first_e);
         } else {
@@ -415,6 +521,7 @@ int main(int argc, char **argv) {
 
     p_match_data_free(md);
     p_code_free(code);
+    free(dfa_ws);
     fflush(stdout);
     return 0;
 }
