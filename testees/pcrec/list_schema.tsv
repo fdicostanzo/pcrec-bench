@@ -1,0 +1,140 @@
+# testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
+# registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
+# docs/spec/table_contract.md), archived VERBATIM under a source header --
+# the FIRST archiving of this surface (the manager's decision, [B42]
+# restart step (4)/b42repin, 2026-09-16: cd371441 is the W23 delivery pin
+# that shipped `--list-schema` itself, so there is no earlier pin to have
+# archived it at). Everything below this header is the unmodified output
+# of:
+#
+#     build/pcrec-cd371441/build/pcrec --list-schema
+#
+# pcrec commit cd3714410cab2c0cce74dfa815fba630e0564db5 (rx_info.abi 25 --
+# see the flag in list_axes.tsv's header), archived 2026-09-16 by the
+# b42repin lane. 70 data rows across two sections: `#section schema`
+# (scope, kind, value, opens_group, children, cardinality, constraints,
+# source, validated_by, wave -- one row per (scope, line-kind) the parser
+# enforces, walked out of src/parse/rxt_schema.def) and `#section surface`
+# (surface, scope, kind, reason -- the format's own statement of what it
+# does NOT validate: subject-content digests/hex, pattern text, `--source`
+# config resolution, and an `ext` tree's contents). Nothing in this
+# project's adapters or checks reads this file yet (declared for a future
+# `.rxt`-format check, per docs/design/rxt_needs_v1.md); it is archived now
+# so the registry-surface census stays complete at this pin regardless.
+# pcrec .rxt FORMAT SCHEMA (docs/spec/rxt_format.md,
+# docs/spec/table_contract.md; the SEVENTH registry dump,
+# [DD-13b.W23.1]). One row per (scope, line-kind), walked out of
+# src/parse/rxt_schema.def — the same table the parser enforces.
+#
+# THE THREE STRUCTURE-LAYER PARAMETERS are column values, not
+# separate queries: a generic reader that wants to recover a file's
+# tree from syntax alone selects
+#   opens_group = true                   (S2, the block-opener set)
+#   value = prose AND children = prose   (S3, prose-region openers)
+#   children = tree                      (the OPEN SUBTREE)
+# and needs no other keyword knowledge. See rxt_format.md's lexical
+# rules for what each one does.
+#
+# value: the value shape (none/token/int/line/prose/list/pair/
+#   subject/case/qualified-line/raw).
+# children: what may be INDENTED under the line — none, prose (the
+#   indented lines ARE the value), tree (parsed, never validated,
+#   never interpreted), or the named scope they live in.
+# cardinality: one | at-most-one | repeat | accumulate.
+# constraints: `;`-separated, each `<kind> [argument]` from the
+#   seven-kind closed vocabulary.
+# source: format (pcrec declares the row) | file (a `vocabulary`
+#   line in the .rxt file declares it).
+# validated_by: pcrec | all-readers (pcrec, tests/harness/run.sh
+#   and tests/harness/verify_rxt.py, with a fixture proving they
+#   agree) | none (see #section surface for the reason).
+# wave: which delivery introduces the kind. A row whose wave is
+#   above this build's is RECOGNISED and refused BY NAME as NOT IN
+#   THIS BUILD, never as an unknown token. The one exception is the
+#   RESERVED sentinel (`# wave-reserved:` below): no delivery
+#   introduces such a kind, and it refuses BY NAME as RESERVED.
+#section schema
+#scope	kind	value	opens_group	children	cardinality	constraints	source	validated_by	wave
+file	lib	token	false	none	repeat		format	pcrec	1
+file	target	line	false	none	repeat		format	pcrec	1
+file	config	line	false	config	repeat		format	pcrec	1
+file	description	prose	false	prose	at-most-one		format	pcrec	1
+file	include	token	false	none	repeat		format	pcrec	23
+file	vocabulary	list	false	prose	repeat	unique-by first-word	format	pcrec	23
+file	oracle	token	false	none	at-most-one		format	pcrec	23
+file	tag	list	false	none	repeat	closed per-key	format	pcrec	23
+file	use	list	false	none	repeat		format	pcrec	23
+file	freq	token	false	data	repeat		format	pcrec	23
+file	ext	token	false	tree	repeat		format	pcrec	23
+file	version	token	false	none	at-most-one		format	pcrec	999
+config	pcrec	raw	false	none	accumulate		format	pcrec	1
+config	flags	token	false	none	at-most-one		format	pcrec	1
+config	features	list	false	none	at-most-one		format	pcrec	1
+config	encoding	token	false	none	at-most-one		format	pcrec	1
+config	engine	token	false	none	at-most-one		format	pcrec	1
+config	budget	pair	false	none	accumulate		format	pcrec	1
+config	analysis	list	false	none	repeat		format	pcrec	23
+block	pattern	raw	true	none	repeat		format	none	1
+block	pattern-esc	raw	true	none	repeat		format	none	23
+block	name	token	false	none	at-most-one		format	all-readers	1
+block	description	prose	false	prose	at-most-one		format	all-readers	1
+block	export	list	false	none	at-most-one		format	pcrec	1
+block	flags	token	false	none	at-most-one		format	all-readers	1
+block	features	list	false	none	at-most-one		format	pcrec	1
+block	encoding	token	false	none	at-most-one		format	all-readers	1
+block	engine	token	false	none	at-most-one		format	all-readers	1
+block	budget	pair	false	none	accumulate		format	pcrec	1
+block	frames-buffer=	token	false	none	repeat		format	pcrec	1
+block	perr	none	false	none	repeat		format	pcrec	1
+block	m	case	false	none	repeat		format	none	1
+block	n	case	false	none	repeat		format	none	1
+block	ms	case	false	none	repeat		format	none	1
+block	ns	case	false	none	repeat		format	none	1
+block	g	case	false	none	repeat		format	pcrec	1
+block	gp	case	false	none	repeat		format	pcrec	1
+block	gu	case	false	none	repeat		format	pcrec	1
+block	tag	list	false	none	repeat	closed per-key	format	pcrec	23
+block	mc	case	false	none	repeat		format	none	23
+block	under	qualified-line	false	none	repeat	closed convention;unique-by under-key	format	pcrec	23
+block	oracle	token	false	none	at-most-one		format	pcrec	23
+block	provenance	none	false	provenance	at-most-one		format	pcrec	23
+block	variant	token	false	variant	repeat	unique-by value	format	pcrec	23
+block	ext	token	false	tree	repeat		format	pcrec	23
+provenance	source	token	false	none	at-most-one	required	format	pcrec	23
+provenance	url	token	false	none	at-most-one	required-if source != authored;forbidden-if source == authored	format	pcrec	23
+provenance	ref	token	false	none	at-most-one	required-if source != authored;forbidden-if source == authored	format	pcrec	23
+provenance	retrieved	token	false	none	at-most-one	required	format	pcrec	23
+provenance	license	token	false	none	at-most-one	required-if parent == block	format	pcrec	23
+provenance	license-note	prose	false	prose	at-most-one		format	pcrec	23
+provenance	fidelity	token	false	none	at-most-one	required-if parent == block;closed fidelity verbatim adapted synthesized	format	pcrec	23
+provenance	adaptation	prose	false	prose	at-most-one	required-if fidelity != verbatim	format	pcrec	23
+provenance	attribution	prose	false	prose	at-most-one		format	pcrec	23
+provenance	bytes	int	false	none	at-most-one	required-if parent == data	format	pcrec	23
+provenance	sha256	token	false	none	at-most-one	required-if parent == data	format	pcrec	23
+variant	text	raw	false	none	at-most-one	exactly-one-of text unsupported	format	pcrec	23
+variant	unsupported	line	false	none	at-most-one	exactly-one-of text unsupported	format	pcrec	23
+variant	kind	token	false	none	at-most-one	closed kind;forbidden-if unsupported present	format	pcrec	23
+variant	groups	list	false	none	at-most-one	forbidden-if unsupported present	format	pcrec	23
+variant	note	prose	false	prose	at-most-one	forbidden-if unsupported present	format	pcrec	23
+data	question	line	false	none	one	required	format	pcrec	23
+data	reader	line	false	none	one	required	format	pcrec	23
+data	analyzer	line	false	none	one	required	format	pcrec	23
+data	row	list	false	none	repeat		format	pcrec	23
+data	provenance	none	false	provenance	at-most-one	required	format	pcrec	23
+#
+# THE DECLARED NON-COVERAGE. Each row names something this schema
+# deliberately does NOT validate, and why. Two of the four are also
+# (scope, kind) facts and carry `validated_by: none` on their own
+# rows above — `scope`/`kind` here is the join back to them; the
+# other two are whole-file or content questions with no row to
+# carry a column, which is why this is a section and not a wider
+# cell.
+#section surface
+#surface	scope	kind	reason
+subject-content	block	m/n/ms/ns/mc	an expectation line is recognised and never read here, so neither a subject's sha256 digest nor its 64-hex spelling is checked by this parser; both are the harness legs' (docs/spec/rxt_format.md)
+pattern-text	block	pattern/pattern-esc	the dump is parse-only; pattern text is the compiler's
+config-resolution			`--list-source` reports the file AS WRITTEN; which settings a block ends up under is `--source`'s own resolution and is not a (scope, line-kind) fact
+ext-tree-contents			the contents of an `ext` tree are never schema-checked and never interpreted; reason: semantically uninterpreted by design (the graduation rule, format_design §2.27.3). The `ext` OPENER's own row is ordinary — the structure is checked, the content by nobody
+# schema-rows: 66
+# wave-built: 23
+# wave-reserved: 999

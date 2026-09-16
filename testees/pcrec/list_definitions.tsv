@@ -3,31 +3,15 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-d34c9131/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-cd371441/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit d34c91311ba27968bf2ff5ebfd9d6bebe5639f2f (abi 23), archived
-# 2026-09-06 by the manager ([B39], the eleventh session). 50 data rows / 7
-# columns: kind, selector, syntax, order, predicate, definition, applies --
-# one row per construct DEFINED in terms of another (`\d` = `[0-9]`, the
-# POSIX classes, `\R`, the `\c`/`\x`/`\o` decoders as text functions), the
-# predicate being the option-scope tag's own name (a closed vocabulary).
-# BYTE-IDENTICAL to the 334fd10e copy below the header, which was
-# byte-identical to the 288d505, 1989c62, a7e0bdf and 263b013 ones: no
-# definition has moved across SIX pins. As the b39prep lane predicted:
-# [FORM-CHAR] STEP 1 (the ASCII fold-pair class lowering) is an EMITTER
-# change, and the `\x{...}` move to the base grammar behind this pin
-# ([M5.0] stage 2) is parse.c's and `--list-syntax`'s -- definitions.c and
-# registry.c are untouched between 334fd10e and d34c9131.
-# The grep strips pcrec's own `#` comment/header lines, so the data rows
-# are the whole body; the column header is restated here for a reader:
-#
-#     kind	selector	syntax	order	predicate	definition	applies
-#
-# WHAT THIS FILE IS FOR: nothing the adapter reads depends on it (the
-# stamps carry every fact the records need); it is archived so the pin's
-# definitional surface is diffable across re-pins, and `make
-# check-harness` diffs it against the pin's live output
-# (check_list_definitions_registry).
+# pcrec commit cd3714410cab2c0cce74dfa815fba630e0564db5 (rx_info.abi 25 --
+# see the flag in list_axes.tsv's header), archived 2026-09-16 by the
+# b42repin lane ([B42] restart step (4)). 50 data rows / 7 columns: kind,
+# selector, syntax, order, predicate, definition, applies -- one row per
+# construct DEFINED in terms of another. BYTE-IDENTICAL to the d34c9131
+# copy below the header (diffed line for line): no definition changed,
+# none added, none removed at this pin -- the seventh pin running.
 esc	d	\d	1	DEF_ALWAYS	[0-9]	active
 esc	D	\D	1	DEF_ALWAYS	[^0-9]	active
 esc	s	\s	1	DEF_ALWAYS	[\t\n\x0b\f\r ]	active
