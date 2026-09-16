@@ -6,6 +6,27 @@
 | `export_rxt.py` | [B38] THE .rxt SET EXPORTER (pcrec [DD-13b.W1.3]): `python3 tools/export_rxt.py <bench-dir> [-o out.rxt] [--verify [PCREC_BIN]]` writes a `.rxt` SOURCE file (no `m`/`n`/`ms`/`ns` cases — pure `target =` / `pattern` / `name` blocks) from one `bench/<name>/`'s sidecar, in sidecar order, so pcrec's own harnesses can pull our patterns in via `--source`. `--verify` round-trips the freshly-built export against `PCREC_BIN --list-source` (default: the pinned binary, never built if missing) — `decode_rxt_escape` undoes `--list-source`'s own TSV-safety escaping (`\t \n \r \\ \xNN`) before comparing against `Subbench.pattern_bytes()`. `selfcheck.py` adds `tools/` (its own directory) to `sys.path` and imports it directly as `export_rxt` -- no package `__init__.py` needed, same as this directory's other scripts. Its own module docstring is the authority on inbox I-43's rules and on WHY the exporter never escapes a pattern line itself (rule 6: `docs/spec/rxt_format.md` — a `pattern` line is rest-of-line VERBATIM with no escaping at all; escaping only the DUMP needs decoding). Engine-neutral (R-BENCH-4): the sidecar stays the source of truth, this is a derived, regeneratable view; the five committed `.rxt` files live under `bench/<name>/export/` (each bench's own CLAUDE.md documents its own). |
 | `archive_inbox.py` | `make archive-inbox` (BD11): relocates fully-acked, aged-out entries from `docs/dev/inbox_from_pcrec.md` to `docs/dev/inbox_from_pcrec_archive.md`, byte-for-byte, never touching an unacked item. Not part of `make check` — a manual maintenance step. |
 
+[B42] L4 (lane b42load, 2026-09-16): `pcrecbench/rxt_source.py` is the new
+`.rxt` PATTERN-SOURCE LOADER (see `pcrecbench/CLAUDE.md`). Two tools/
+touchpoints: `export_rxt.py`'s `build_rxt()` now refuses OUTRIGHT, naming
+the set, when `sb.rxt is not None` (a sidecar `rxt_source =` set) — its
+pattern source is already an `.rxt` file, so exporting it back would be a
+circular derivation; `check_rxt_export`'s per-set loop treats that refusal
+as the PASS (`ok(...continue)`), not a failure, for exactly such a set.
+`check_rxt_source_load` (new, `make check-harness`) is the loader's own
+selfcheck: a full `Subbench()` load through the one-line `rxt_source =`
+sidecar switch (pattern text incl. a raw-high-byte witness round-tripping
+BYTE-EXACT — the `errors="surrogateescape"` fix's own regression test —
+hazard_class, role-from-`family=floor`, tags, provenance), the no-build-
+directive gate with its `ext`-block control, the block<->sidecar
+agreement gate with its real-agreement control, a missing pcrec binary
+refused by name, `Pattern`'s `file`-OR-`text` relaxation with its
+neither-one control, and the export skip above. Every fixture is a small
+string literal written to a fresh tempdir at check time (same posture as
+`check_id_preflight`'s `_write_synthetic_subbench` / `check_rxt_export`'s
+`_StubSubbench` above — nothing this small earns a standalone committed
+fixture file).
+
 THE GENERIC GATES ENUMERATE (`subbench_dirs()`, [B11.1]). Harness contract 6
 says "bench/*/ each", and the checks that belong to the sub-bench CONTRACT --
 the generators reproduce their committed manifests, any other `gen_*.py` in
