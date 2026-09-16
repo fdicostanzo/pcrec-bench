@@ -1,0 +1,4 @@
+vocabulary hazard none exponential-backtracking
+pattern abc
+name t1
+tag hazard=exponential-backtracking

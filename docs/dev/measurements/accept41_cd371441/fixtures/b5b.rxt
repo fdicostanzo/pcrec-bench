@@ -1,0 +1,2 @@
+pattern-esc "a\nb\x00c\r"
+name h

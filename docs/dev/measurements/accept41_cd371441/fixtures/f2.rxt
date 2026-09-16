@@ -1,0 +1,5 @@
+config c1
+  engine vm
+target = wild1 with c1
+pattern a+
+name wild1

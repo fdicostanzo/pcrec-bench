@@ -1,0 +1,6 @@
+oracle pcre2
+pattern abc
+name t1
+oracle re2
+variant re2
+  unsupported no backrefs

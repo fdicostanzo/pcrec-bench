@@ -1,0 +1,10 @@
+description |
+  The capability survey set.
+  Second line.
+
+pattern ^a+$
+name wild-one
+description first member
+
+pattern b|c
+name wild-two

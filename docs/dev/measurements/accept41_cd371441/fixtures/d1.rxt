@@ -1,0 +1,15 @@
+oracle pcre2
+pattern abc
+name t1
+tag family=wild hazard=none
+oracle re2
+mc "abcabc" 2
+under posix-leftmost-longest m "abcabc" 0 3
+provenance
+  source authored
+  retrieved 2026-09-16
+  license n-a
+  fidelity verbatim
+variant re2
+  unsupported no backrefs
+m @file:"c89_subj.bin" as subj1 sha256 44f7baeaffbc7b962d78206b1600df159d706e002ae43d70a68f737a5942f73e 2 5

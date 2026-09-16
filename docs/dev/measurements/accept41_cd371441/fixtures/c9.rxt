@@ -1,0 +1,3 @@
+pattern abc
+name t1
+m @file:"c89_subj.bin" sha256 44f7baeaffbc7b962d78206b1600df159d706e002ae43d70a68f737a5942f73e 2 5

@@ -1,0 +1,9 @@
+oracle pcre2
+use re2
+config re2cfg
+  testee re2/2024-07-02
+  option match-mode=dfa
+pattern abc
+name t1
+variant re2
+  unsupported no backrefs

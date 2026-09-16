@@ -216,3 +216,44 @@ Maintenance: update this file when files are added/removed or change role.
   w-384 compile on the VM route. This is the [B35] (7) re-derivation
   I-50 §5 asked for; the numbers replace the 2026-09-02 table's for any
   reader of the size books.
+- `accept41_cd371441/` — ([B42] restart step (1), lane `b42accept`) THE
+  AUTHORITATIVE RUN of `docs/design/rxt_needs_v1.md` §3's 41-check
+  acceptance checklist against pcrec's delivered pin **cd371441** (abi
+  23, [DD-13b.W23] full first-delivery scope): `run.sh` (reproduces the
+  archive below byte for byte except its `# bench:` line; resolves the
+  binary through the git common directory when run from a worktree,
+  same rule as `probe_rxt_format.py`) + `fixtures/` (one `.rxt` per
+  check, `b7_driver.c` — a from-scratch C driver against the generated
+  matcher's own `rx_search` API, built because B7 needs a subject read
+  from a FILE, which pcrec's own `tests/harness/run.sh` reads but this
+  project may only invoke read-only, never build inside; C8/C9 instead
+  invoke that script directly, pointed at our own fixtures with
+  `TMPDIR` under our own scratch — no write ever lands in `~/pcrec`).
+  Corrections from inbox I-67 (absorbed from
+  `~/pcrec/docs/design/dd13_format/format_design.md` §9 at the pin,
+  read-only) applied before running, not after: A2's fixture drops
+  `config … testee`/`option` (D99); F2's literal set-file premise is
+  DISSOLVED (D99) and re-tested on a target-bearing file instead, where
+  Frank's 2026-09-15 engine-precedence ruling (inbox I-68 item 1) fires
+  live; B6's premise is DISSOLVED (`pattern`/`pattern-esc` are both
+  block openers, so a second one starts a new block) and the rewritten
+  assertion verified true; `license` not `licence`; eleven provenance
+  keys, not nine.
+- `2026-09-16-b42-acceptance-41-cd371441.txt` — its archive: a 41-row
+  verdict table (33 PASS / 0 FAIL / 1 DISSOLVED-but-verified-true / 8
+  NOT-RUNNABLE) followed by every check's verbatim command and output.
+  Superseded pcrecdev1's own dry run (25/41 runnable,
+  `~/pcrec/docs/dev/lanes/w235_report.md` §3) as the pass of record
+  (I-68 item 2). Findings: B3's NUL-refusal and C10's second-description
+  refusal are BOTH now live exactly as asked (`rxt_needs_v1.md` P-Q7,
+  P-Q9); F2's CLI-vs-file engine-precedence exception (I-68 item 1) is
+  CONFIRMED LIVE, closing the one NEW finding pcrecdev1's own dry run
+  raised; G2's 185/185 round-trip was re-run directly against the
+  delivered pin (not the older pinned testee); G3's diff has ZERO
+  unexplained hunks — two apparent regressions (M10b, M10d) are the
+  ARCHIVED PROBE's OWN fixtures predating the finalized `variant`/
+  `include` grammar, not a delivery defect. E1/E2/E3/E6/E7/F3/F4 are
+  NOT-RUNNABLE because the `.rxt` loader and the capability@0.1 set are
+  UNBUILT (Tier 1 of the restart's next step, confirmed empty by a
+  grep at D2); G1 is NOT-RUNNABLE by the repository mandate (BD2: no
+  build/test in `~/pcrec`'s tree from here).
