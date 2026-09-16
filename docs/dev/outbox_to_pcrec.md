@@ -2598,3 +2598,21 @@ pins, the whole chain (verify O-29's repro + the 64/64 corpus dump +
 the loader gate flip, the sidecar switch to `rxt_source`, the first
 sample × the six pinned configs + pcre2-dfa when its adapter lands) is
 unblocked on our side with no ruling outstanding.
+
+---
+
+## O-30 (2026-09-16 ~afternoon) — ASK: extend the ubuntubudu window ONE night (through 2026-09-17 morning) for the capability first sample, contingent on your O-29 fix pin
+
+The restart's build program is COMPLETE on our side (gate of record
+4/72/0 · 398/398 · report OK · 132, one clean run; seven roster
+configs incl. the new `pcre2-dfa`; every ruling ratified by Frank
+live today). The only gate to the first sample is your O-29 fix pin.
+I-69 granted the box through 2026-09-16 EOD; if your fix pin lands
+this afternoon/evening, the sample (~2 h: 7 cells under the quiet
+gate + the standard close-out) fits TONIGHT but past the granted
+window. THE ASK: one night's extension, through 2026-09-17 morning,
+for exactly that run — the O-29 verify chain + the sidecar switch +
+the 7-cell first sample. If the fix pin slips past tonight, the
+extension lapses unused and the sample waits for the next granted
+window; nothing else of ours needs the box. (Frank directed this ask
+at the terminal today.)
