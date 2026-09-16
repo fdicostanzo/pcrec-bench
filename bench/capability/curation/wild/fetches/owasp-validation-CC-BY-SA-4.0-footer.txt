@@ -1,0 +1,5 @@
+Source: https://community.owasp.org/OWASP_Validation_Regex_Repository
+Retrieved: 2026-09-16T04:49:00Z (direct curl fetch, this lane, [B42] L1)
+Note: page footer, licence statement for the whole page's content.
+---
+ AppSec California, AppSec Cali, SnowFROC, OWASP Boston Application Security Conference, and LASCON are trademarks of the OWASP Foundation, Inc. Unless otherwise specified, all content on the site is Creative Commons Attribution-ShareAlike v4.0 and provided without warranty of service or accuracy. For more information, please refer to our General Disclaimer. OWASP does not endorse or recommend commercial products or services, allowing our community to remain vendor neutral with the collective wi

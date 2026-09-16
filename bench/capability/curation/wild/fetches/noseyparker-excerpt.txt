@@ -1,0 +1,9 @@
+Source: https://raw.githubusercontent.com/BurntSushi/rebar/master/benchmarks/regexes/wild/noseyparker.txt
+Retrieved: 2026-09-16T04:49:00Z (direct curl fetch, this lane, [B42] L1)
+Note: the four lines this lane imports, quoted with their line numbers from the raw
+fetched file (Nosey Parker's own production secret-detection patterns).
+---
+5: \b((?:A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16})\b
+23: (?:username|USERNAME|user|USER)[ \t]*=[ \t]*["']([a-zA-Z0-9.@_\-+]{3,30})["']\s*[,;]?\s*(?:\s*(?:\#|//)[^\n\r]*[\n\r])*(?:password|pass|PASSWORD|PASS)[ \t]*=[ \t]*["']([^"']{5,30})["']
+31: \b(github_pat_[0-9a-zA-Z_]{82})\b
+86: (?i)https://hooks.slack.com/services/(T[a-z0-9_]{8}/B[a-z0-9_]{8,12}/[a-z0-9_]{24})

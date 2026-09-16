@@ -1,0 +1,11 @@
+Source: https://raw.githubusercontent.com/microsoft/vscode/main/extensions/json/syntaxes/JSON.tmLanguage.json
+Retrieved: 2026-09-16T04:49:00Z (direct curl fetch, this lane, [B42] L1)
+Note: the five repository entries this lane imports, extracted from the parsed JSON.
+---
+{
+ "array.begin": "\\[",
+ "constant.match": "\\b(?:true|false|null)\\b",
+ "object.begin": "\\{",
+ "number.match": "(?x)        # turn on extended mode\n  -?        # an optional minus\n  (?:\n    0       # a zero\n    |       # ...or...\n    [1-9]   # a 1-9 character\n    \\d*     # followed by zero or more digits\n  )\n  (?:\n    (?:\n      \\.    # a period\n      \\d+   # followed by one or more digits\n    )?\n    (?:\n      [eE]  # an e character\n      [+-]? # followed by an option +/-\n      \\d+   # followed by one or more digits\n    )?      # make exponent optional\n  )?        # make decimal portion optional",
+ "stringcontent.patterns[0].match": "(?x)                # turn on extended mode\n  \\\\                # a literal backslash\n  (?:               # ...followed by...\n    [\"\\\\/bfnrt]     # one of these characters\n    |               # ...or...\n    u               # a u\n    [0-9a-fA-F]{4}) # and four hex digits"
+}

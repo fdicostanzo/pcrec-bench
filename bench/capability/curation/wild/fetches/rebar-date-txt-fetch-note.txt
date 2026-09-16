@@ -1,0 +1,9 @@
+Source: https://raw.githubusercontent.com/BurntSushi/rebar/master/benchmarks/regexes/wild/date.txt
+Retrieved: 2026-09-16T04:49:00Z (direct curl fetch, this lane, [B42] L1)
+Note: this member IS the whole file (datefinder's production date/time alternation,
+one pattern, no per-line structure) -- the full 6,348-byte text is carried in
+members.tsv's pattern_text column for wild-datetime-datefinder-alternation, not
+duplicated here; this file records only the fetch provenance.
+---
+6349 date.txt
+((19\d\d01[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d01[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d02[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d02[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d03[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d03[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19\d\d04[0-3]\d[0-5]\d[0-5]\d[0-5]\d|20\d\d04[0-3]\d[0-5]\d[0-5]\d[0-5]\d|19 ...[truncated in this excerpt only; full text is in members.tsv]...
