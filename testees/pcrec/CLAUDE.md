@@ -1754,3 +1754,25 @@ table verbatim in the code comment at the point of the check. No
 committed record is affected (this pin has not been measured into
 `store/` yet); the crash was compile-time only, inside `make
 check-harness`.
+
+**[B42] runbook step 4 at a770139e (abi 25 UNCHANGED) — 2026-09-16
+evening, the manager (inbox I-71, the O-29 fix pin).** The pin advances
+cd371441 → a770139e carrying pcrec's two batteried merges: `lane/o29fix`
+(the `--list-source` S0 blank/comment attachment close now runs the
+general RXT_CLOSE_FRAME loop instead of a bare depth reset, so every
+block's pending `provenance`/`variant` sub-block reaches its `#section`
+rows — the O-29 silent loss; `cases` and aux `ext` measured immune on
+pcrec's side) and `lane/k57fix` (a block-scalar content line shallower
+than the first line's depth now REFUSES by name, class `value-shape` —
+the K57 caveat lifts). PARSE-LAYER ONLY, measured not assumed: rx_info
+abi reads 25 on the plain `abc` witness, the shim floor STAYS 16, and
+all four registry surfaces (axes 78/27, definitions 50, limits 57,
+schema 70) are BYTE-IDENTICAL below their re-stamped source headers to
+the cd371441 archives — no axis, limit, definition or schema row moved,
+so every stamp table, size book and deny-control row above stands
+unedited at this pin. Verified on our side by the O-29 verify chain
+(docs/dev/measurements/2026-09-16-o29-verify-a770139e.txt): the 3-block
+repro 3/3, the 64-block corpus dump 64/64 provenance rows, all four
+#section kinds present per block, the NUL refusal unchanged, and the
+K57 positive witness refusing with its control loading. Catalogue 1.3
+(`[[pin_order]]` append). Sixteen pinned configs, unchanged.

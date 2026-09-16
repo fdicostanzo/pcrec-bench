@@ -2,45 +2,21 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-cd371441/build/pcrec --list-axes
+#     build/pcrec-a770139e/build/pcrec --list-axes
 #
-# pcrec commit cd3714410cab2c0cce74dfa815fba630e0564db5 (rx_info.abi 25 --
-# SEE THE FLAG BELOW), archived by testees/pcrec/pin.sh on 2026-09-16
-# (PIN.tsv); captured 2026-09-16 by the b42repin lane ([B42] restart step
-# (4), the re-pin from d34c9131). 78 data rows / 27 axes / 12 columns --
-# the FOURTH registry surface (pcrec docs/spec/registry.md 6, [CHK-2]).
+# pcrec commit a770139e7d7acf3a7c0c459bff667cf37e7b74bb (rx_info.abi 25,
+# read off a plain `abc` witness at this build), archived 2026-09-16 by
+# the manager ([B42] runbook step 4: the re-pin cd371441 -> a770139e, the
+# O-29 fix pin, inbox I-71). 78 data rows / 27 axes / 12 columns -- the
+# FOURTH registry surface (pcrec docs/spec/registry.md 6, [CHK-2]).
 #
-# The diff from the d34c9131 copy (76 / 26, [B39]) is ONE NEW AXIS of two
-# rows and nothing else -- no column change, no existing row's text moved,
-# no renumbering:
-#
-#   - `startpos-guard` (pcrec [K50], abi 24), appended after `cls-fold` as
-#     the registry's last axis, stamped through RX_STARTPOS_GUARD (a
-#     STRING, so a stamp_value column but no bit-flag row of its own):
-#     order 1 `guarded` (kind `predicate`, deny PCREC_NO_STARTPOS_GUARD /
-#     bit 25 / `-fno-startpos-guard`: "per artifact: this encoding has
-#     positions that are not character boundaries, so the entries refuse a
-#     mid-character caller startpos with PCREC_ERR_STARTPOS") and order 2
-#     `permissive` (the fallback, always taken on a BYTE artifact -- every
-#     position is a boundary there, so this axis is INERT on this bench
-#     today; every corpus pattern is byte-encoded).
-#
-# FLAG FOR THE MANAGER'S OUTBOX -- inbox I-68 said this re-pin's abi is
-# "23 UNCHANGED"; MEASURED here it is NOT: rx_info.abi reads 25 on a plain
-# witness (`abc`, byte encoding), two real steps past d34c9131's 23. Read
-# from pcrec's own (read-only) history: abi 23->24 is [K50-NULLGATE]'s
-# caller-startpos boundary guard (`RX_STARTPOS_GUARD` + `PCREC_ERR_STARTPOS`
-# -7, the ONE axis/limit delta this file and list_limits.tsv show); abi
-# 24->25 is [PORTFIX], a gcc-16-vs-clang21 label/declaration portability fix
-# in the DFA scan-edge emission with NO new stamp and NO rx_info field
-# (verbatim commit subjects: "5ce02f81 WIP k50bnd: abi 23 -> 24 + ... the
-# RX_STARTPOS_GUARD stamp"; "e1bf0025 [PORTFIX] abi 24 -> 25 (D76): the
-# clang-compatibility label fix's abi ritual"). struct rx_info is
-# BYTE-IDENTICAL to d34c9131's (no member added -- diffed at the build),
-# so this shim's floor rule ("it rises iff a FIELD is added") holds:
-# PB_SHIM_MIN_ABI stays 16 regardless of the abi NUMBER's movement. This is
-# reported verbatim for the manager's ruling on I-68, not diagnosed further
-# here (pcrec is read-only from this project).
+# BYTE-IDENTICAL to the cd371441 copy below the header (diffed line for
+# line, pcrec's own comments included): the pin carries the O-29
+# `--list-source` S0 close-frame parser fix and the K57 block-scalar
+# dedent refusal only -- no axis, no row, no column moved. The cd371441
+# copy's header (git history) carries the last delta narrative (the
+# `startpos-guard` axis, [K50]) and the abi-25-vs-I-68's-"23" flag, since
+# resolved (O-28 / I-71 era; abi 25 is confirmed unchanged here).
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).

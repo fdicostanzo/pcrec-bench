@@ -3,15 +3,16 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-cd371441/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-a770139e/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit cd3714410cab2c0cce74dfa815fba630e0564db5 (rx_info.abi 25 --
-# see the flag in list_axes.tsv's header), archived 2026-09-16 by the
-# b42repin lane ([B42] restart step (4)). 50 data rows / 7 columns: kind,
-# selector, syntax, order, predicate, definition, applies -- one row per
-# construct DEFINED in terms of another. BYTE-IDENTICAL to the d34c9131
-# copy below the header (diffed line for line): no definition changed,
-# none added, none removed at this pin -- the seventh pin running.
+# pcrec commit a770139e7d7acf3a7c0c459bff667cf37e7b74bb (rx_info.abi 25 --
+# see list_axes.tsv's header), archived 2026-09-16 by the manager ([B42]
+# runbook step 4: the re-pin cd371441 -> a770139e, the O-29 fix pin, inbox
+# I-71). 50 data rows / 7 columns: kind, selector, syntax, order,
+# predicate, definition, applies -- one row per construct DEFINED in terms
+# of another. BYTE-IDENTICAL to the cd371441 copy below the header (diffed
+# line for line): no definition changed, none added, none removed at this
+# pin -- the eighth pin running.
 esc	d	\d	1	DEF_ALWAYS	[0-9]	active
 esc	D	\D	1	DEF_ALWAYS	[^0-9]	active
 esc	s	\s	1	DEF_ALWAYS	[\t\n\x0b\f\r ]	active

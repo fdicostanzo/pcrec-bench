@@ -1,24 +1,19 @@
 # testees/pcrec/list_limits.tsv -- pcrec's NUMERIC-LIMITS TABLE at the pin
 # (the SIXTH registry surface, pcrec D90 / [LIM-1],
-# docs/spec/table_contract.md), archived VERBATIM under a source header --
-# the THIRD archive target beside list_axes.tsv / list_definitions.tsv.
+# docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-cd371441/build/pcrec --list-limits
+#     build/pcrec-a770139e/build/pcrec --list-limits
 #
-# pcrec commit cd3714410cab2c0cce74dfa815fba630e0564db5 (rx_info.abi 25 --
-# see the flag in list_axes.tsv's header), archived 2026-09-16 by the
-# b42repin lane ([B42] restart step (4)). 57 data rows / 7 columns (name,
-# value, unit, kind, override, anchor, desc) -- one row per numeric limit
-# in pcrec src/core/limits.def, in the table's own order. The diff from
-# the d34c9131 copy (56 rows, [B39]) is ONE NEW ROW and nothing else:
-#
-#   - PCREC_STARTPOS_GUARD_TEXT_MAX 1024 (`bytes`, `identifier cap`,
-#     override `none`) -- the [K50] caller-startpos boundary guard's fixed
-#     rendered-C-expression buffer (src/core/internal.h's
-#     pcrec_startpos_guard_text), sized as margin over enc_utf8.c's own
-#     46-byte guard text with the @-placeholders expanded, joining the same
-#     axis this file's list_axes.tsv sibling names (`startpos-guard`).
+# pcrec commit a770139e7d7acf3a7c0c459bff667cf37e7b74bb (rx_info.abi 25 --
+# see list_axes.tsv's header), archived 2026-09-16 by the manager ([B42]
+# runbook step 4: the re-pin cd371441 -> a770139e, the O-29 fix pin, inbox
+# I-71). 57 data rows / 7 columns (name, value, unit, kind, override,
+# anchor, desc) -- one row per numeric limit in pcrec src/core/limits.def,
+# in the table's own order. BYTE-IDENTICAL to the cd371441 copy below the
+# header (diffed line for line): no limit moved at this pin. The cd371441
+# copy's header (git history) carries the last delta narrative
+# (PCREC_STARTPOS_GUARD_TEXT_MAX, [K50]).
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.

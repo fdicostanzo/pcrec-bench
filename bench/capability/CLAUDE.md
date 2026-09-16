@@ -14,7 +14,12 @@ its SOURCE OF TRUTH, not a derived export. `patterns.rxt` carries every
 pattern's text, native `provenance` sub-block, `tag family=/hazard=/
 requires=` classification and one file-scope `ext bench` block (the
 testee roster + REQUIRES capability matrix); it passes `pcrec
---list-source patterns.rxt` cleanly.
+--list-source patterns.rxt` cleanly. Since the [B42] SIDECAR SWITCH
+(2026-09-16, runbook step 5, at the O-29 fix pin a770139e) the sidecar's
+`rxt_source = "patterns.rxt"` key makes it the LOADED source too
+(`pcrecbench/rxt_source.py`), not just the declared one — the 64/64
+provenance-agreement gate flipped refuse→load at that pin
+(docs/dev/measurements/2026-09-16-o29-verify-a770139e.txt).
 
 **Read `NOTES.md` first** — the objective, the twelve families, L1's and
 L2's blinding statements, the twin-pairing reconciliation (two designed
@@ -26,10 +31,10 @@ capability policy, `variant.kind` rendering — all future lanes' scope).
 
 | file | role |
 |---|---|
-| `patterns.rxt` | THE PATTERN SOURCE OF TRUTH: 64 blocks, each with a native `provenance` sub-block and a `tag family=/hazard=/requires=` line, plus one file-scope `ext bench` roster/capability block. Derived by `gen_patterns.py` from `curation/wild/members.tsv` + `curation/designed/members.tsv`; `--list-source`-clean at pin cd371441 |
+| `patterns.rxt` | THE PATTERN SOURCE OF TRUTH: 64 blocks, each with a native `provenance` sub-block and a `tag family=/hazard=/requires=` line, plus one file-scope `ext bench` roster/capability block. Derived by `gen_patterns.py` from `curation/wild/members.tsv` + `curation/designed/members.tsv`; `--list-source`-clean at pin cd371441 and dump-complete (64/64 provenance rows) at a770139e |
 | `gen_patterns.py` | THE MASTER TABLE: reads both curation TSVs, applies the twin-pairing reconciliation and the REQUIRES-tag derivation, and renders both `patterns.rxt` and `patterns/*.rx`. `--check` re-derives both AND round-trips `patterns.rxt` through a real pcrec binary, comparing the DECODED `pattern` column against the table's own canonical bytes for every block (the DD-13b.W23.5 dump-value seam). `--sidecar` prints `subbench.toml`'s `[[patterns]]` blocks; `--provenance` prints `provenance.tsv`'s rows |
-| `patterns/*.rx` | one raw-bytes file per pattern, DERIVED from the table — kept so `pcrecbench.subbench` (no `.rxt` reader yet; that is L4's build) can load this set with today's loader. `patterns.rxt` is authoritative |
-| `subbench.toml` | the SIDECAR: `id="capability"`, `version="0.1"`, `regimes = ["search_short", "throughput"]` (no `match` — capability_set_v1.md 3.5's set-wide exclusion), `short_search_max_bytes = 512`. Its `[[patterns]]` array is `gen_patterns.py --sidecar`'s own output |
+| `patterns/*.rx` | one raw-bytes file per pattern, DERIVED from the table — was the load path before the [B42] sidecar switch (the `.rxt` loader now reads `patterns.rxt` directly); kept as a derived export for reference. `patterns.rxt` is authoritative |
+| `subbench.toml` | the SIDECAR: `id="capability"`, `version="0.1"`, `regimes = ["search_short", "throughput"]` (no `match` — capability_set_v1.md 3.5's set-wide exclusion), `short_search_max_bytes = 512`, and since the [B42] switch `rxt_source = "patterns.rxt"` (the loaded source). Its `[[patterns]]` array is `gen_patterns.py --sidecar`'s own output |
 | `captext.py` | the shared randomness primitive (xorshift64*, in `bench/syntax/censustext.py`'s shape) + the throughput grammar: mixed log-line/HTTP/source-code/prose text (capability_set_v1.md 3.4's own words), re-exports `pcrecbench.periodic.periodic_field` |
 | `gen_subjects.py` | writes `subjects/` (gitignored) + `manifest.tsv`: 75 typed short subjects, grouped and typed BY FAMILY (not one shared vocabulary — `bench/syntax`'s R3/R4 outlier rules do not transfer to a wild-provenance set). Three subjects carry genuine raw non-UTF-8 bytes for family 12 |
 | `gen_throughput_subjects.py` | writes `throughput/` (gitignored) + `manifest_throughput.tsv`: `t-64k`/`t-256k`/`t-1m` from `captext.text()`. Carries an empirical REDOS SAFETY CHECK (`_redos_safety_check`): every `redos-nested` pattern's `find_all` over all three texts is timed and asserted under a 2 s guard, the belt-and-braces control beyond the structural `^`-anchor argument NOTES.md states |
@@ -93,9 +98,9 @@ THINGS A FUTURE EDITOR SHOULD NOT UNDO WITHOUT READING NOTES.md FIRST:
 
 WHAT IS NOT BUILT HERE (see NOTES.md for the full list and why): family
 11's cross-convention SCORING machinery (an `under`-qualified expectation
-row, still unauthored); the `.rxt` loader in `pcrecbench.subbench` (L4,
-built, but this set is not whole-file loadable through it at this pin --
-outbox O-29); the six [B7] non-pcre2/pcrec adapters.
+row, still unauthored); the six [B7] non-pcre2/pcrec adapters. (The
+`.rxt` loader gap this list used to carry closed at the O-29 fix pin
+a770139e — the sidecar switch above.)
 
 **[B42] L5 (lane b42cap, 2026-09-16) CORRECTS the two claims above that
 used to read "not built":** the pre-compile REQUIRES capability policy

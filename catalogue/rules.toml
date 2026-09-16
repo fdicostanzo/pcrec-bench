@@ -15,12 +15,17 @@
 # field, or adds a `[[signature]]`, must carry a reviewer's approval line
 # in the commit message naming the rule ids reviewed (§8(6)).
 
-catalogue_version = "1.2"
+catalogue_version = "1.3"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). MINOR: a rule added, a template's wording, a link, a `legend`
 # line, an `example`, a `[[pin_order]]` append. MAJOR: a predicate or
 # threshold changes, a rule is removed, `inputs` read a different
 # column, or a `[[signature]]` is registered.
+#
+# 1.3 (2026-09-16, [B42] runbook step 4, the O-29 fix re-pin): `[[pin_order]]`
+# gains `a770139e` (the re-pin from cd371441; parser fix, abi 25 unchanged,
+# registries byte-identical). No predicate, threshold or rule's `inputs`
+# moved.
 #
 # 1.2 (2026-09-16, [B42] restart step (4), b42repin lane): `[[pin_order]]`
 # gains `cd371441` (the re-pin from d34c9131). No predicate, threshold or
@@ -46,7 +51,7 @@ catalogue_version = "1.2"
 engine = "pcrec"
 pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "263b013", "a7e0bdf", "1989c62", "288d505", "334fd10e",
-          "d34c9131", "cd371441"]
+          "d34c9131", "cd371441", "a770139e"]
 
 # ===================================================== class R-STATUS ==
 

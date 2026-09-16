@@ -457,8 +457,10 @@ miss:
 [B42] L5 (lane b42cap, 2026-09-16): two new `check-harness` arms.
 `check_capability_policy` runs `pcrecbench.capability`'s pre-compile
 policy end to end through the REAL `quick` CLI on the real
-`bench/capability` set (the sidecar/shim load path, since that set is
-not `.rxt`-loadable as a whole at this pin, outbox O-29): the blocked
+`bench/capability` set (via the sidecar/shim load path when it was
+built; since the [B42] sidecar switch at the O-29 fix pin a770139e the
+set loads whole-file through `rxt_source =` and the check exercises
+that path): the blocked
 witness pattern (`unsupported-by-declaration` + `declaration_ref`, no
 match row, no engine diagnostic leaking through), two positive controls
 that a satisfied token is not over-blocked (on the declaring config and

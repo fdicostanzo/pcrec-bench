@@ -431,7 +431,12 @@ bindings) live here, vendored or system, pinned either way.
   altwide) — and `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
   (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
   denied at the same pin, the fold's BEFORE) — at a pinned commit —
-  **cd371441, abi 25** (re-pinned from d34c9131/abi 23 at [B42] restart
+  **a770139e, abi 25** (re-pinned from cd371441 at [B42] runbook step 4,
+  2026-09-16 evening, inbox I-71: the O-29 `--list-source` S0
+  close-frame parser fix + the K57 block-scalar dedent refusal; abi 25
+  UNCHANGED, all four registry surfaces BYTE-IDENTICAL to cd371441's
+  archives, shim floor stays 16, catalogue 1.3. Before it, cd371441:
+  re-pinned from d34c9131/abi 23 at [B42] restart
   step (4)/b42repin, 2026-09-16: registries 78/27 · 50 · 57, plus the
   new `list_schema.tsv` archive — the SEVENTH registry surface,
   `--list-schema`, archived for the first time at this pin; struct

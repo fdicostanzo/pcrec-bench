@@ -1956,21 +1956,6 @@ def check_rxt_export():
                 ok("%s: .rxt-sourced set -- export SKIPPED (would be "
                    "circular)" % name, "source: %s" % sb.rxt.path)
                 continue
-            # [B42] interim (2026-09-16): a set whose directory COMMITS a
-            # patterns.rxt as its declared source of record, but whose
-            # sidecar has not yet flipped to `rxt_source =` (the switch
-            # is parked on pcrec's O-29 fix), is the same circularity --
-            # the round-trip proof for such a set is its own
-            # gen_patterns.py --check against the committed file, not a
-            # re-export of the derived `.rx` shim (which by design
-            # cannot carry a multi-line pattern in a plain `pattern`
-            # line). Remove this arm when the sidecar switch lands.
-            committed_rxt = os.path.join(bench, "patterns.rxt")
-            if os.path.exists(committed_rxt):
-                ok("%s: committed patterns.rxt is the source of record -- "
-                   "export SKIPPED (loader switch parked on O-29)" % name,
-                   "source: %s" % committed_rxt)
-                continue
             rxt_bytes, witnesses = _rxt.build_rxt(sb)
             n = _rxt.verify_roundtrip(sb, rxt_bytes, pcrec_bin)
             ok("%s: the export round-trips against --list-source" % name,

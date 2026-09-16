@@ -1,26 +1,24 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# the FIRST archiving of this surface (the manager's decision, [B42]
-# restart step (4)/b42repin, 2026-09-16: cd371441 is the W23 delivery pin
-# that shipped `--list-schema` itself, so there is no earlier pin to have
-# archived it at). Everything below this header is the unmodified output
-# of:
+# second archiving of this surface (first: cd371441, the W23 delivery pin
+# that shipped `--list-schema` itself). Everything below this header is
+# the unmodified output of:
 #
-#     build/pcrec-cd371441/build/pcrec --list-schema
+#     build/pcrec-a770139e/build/pcrec --list-schema
 #
-# pcrec commit cd3714410cab2c0cce74dfa815fba630e0564db5 (rx_info.abi 25 --
-# see the flag in list_axes.tsv's header), archived 2026-09-16 by the
-# b42repin lane. 70 data rows across two sections: `#section schema`
-# (scope, kind, value, opens_group, children, cardinality, constraints,
-# source, validated_by, wave -- one row per (scope, line-kind) the parser
-# enforces, walked out of src/parse/rxt_schema.def) and `#section surface`
-# (surface, scope, kind, reason -- the format's own statement of what it
-# does NOT validate: subject-content digests/hex, pattern text, `--source`
-# config resolution, and an `ext` tree's contents). Nothing in this
-# project's adapters or checks reads this file yet (declared for a future
-# `.rxt`-format check, per docs/design/rxt_needs_v1.md); it is archived now
-# so the registry-surface census stays complete at this pin regardless.
+# pcrec commit a770139e7d7acf3a7c0c459bff667cf37e7b74bb (rx_info.abi 25 --
+# see list_axes.tsv's header), archived 2026-09-16 by the manager ([B42]
+# runbook step 4: the re-pin cd371441 -> a770139e, the O-29 fix pin, inbox
+# I-71). 70 data rows across two sections (`#section schema`,
+# `#section surface`). BYTE-IDENTICAL to the cd371441 copy below the
+# header (diffed line for line) -- NOTE this includes the S3 prose/block-
+# scalar rows: the K57 dedent fix landed as spec text (rxt_format.md S3's
+# decode rule made normative) and parser behaviour, not as a schema-table
+# change. Nothing in this project's adapters or checks reads this file
+# yet (declared for a future `.rxt`-format check, per
+# docs/design/rxt_needs_v1.md); archived so the registry-surface census
+# stays complete at this pin.
 # pcrec .rxt FORMAT SCHEMA (docs/spec/rxt_format.md,
 # docs/spec/table_contract.md; the SEVENTH registry dump,
 # [DD-13b.W23.1]). One row per (scope, line-kind), walked out of

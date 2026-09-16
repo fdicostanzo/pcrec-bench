@@ -35,8 +35,9 @@ redos-nested, semantics-divergence, binary-nonutf8), plus the floor. \
 Every pattern carries a native `.rxt` `provenance` sub-block (source, \
 licence, fidelity, adaptation) and a `tag family=/hazard=/requires=` \
 classification; the source of truth is patterns.rxt (`--list-source` \
-clean), with patterns/*.rx a derived export the harness's current \
-(pre-.rxt-loader) `pcrecbench.subbench` reads. See NOTES.md for the \
+clean), LOADED as such since the [B42] sidecar switch (2026-09-16, pin \
+a770139e: the `rxt_source =` key below; pcrecbench/rxt_source.py), with \
+patterns/*.rx a derived export kept for reference. See NOTES.md for the \
 family table, the twin-pairing reconciliation, the outlier rule and the \
 predictions, all stated before any run."""
 
@@ -48,6 +49,13 @@ predictions, all stated before any run."""
 # that families 6 and 9 here would inherit directly, per the syntax
 # census's own first-sample finding this design note cites verbatim.
 regimes = ["search_short", "throughput"]
+# [B42] THE SIDECAR SWITCH (runbook step 5, 2026-09-16, at pin a770139e —
+# the O-29 fix pin): patterns.rxt is now LOADED as the pattern source
+# (pcrecbench/rxt_source.py via the pinned `pcrec --list-source`), not
+# merely declared; patterns/*.rx remain a derived export. Parked on O-29
+# until this pin; the loader's provenance-agreement gate (64/64) is the
+# refuse→load flip's witness.
+rxt_source = "patterns.rxt"
 
 [subjects]
 generator = "gen_subjects.py"
