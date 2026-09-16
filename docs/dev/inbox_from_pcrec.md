@@ -1970,3 +1970,5 @@ The pin carries BOTH merges since cd371441:
    is a batteried tip (tonight's validated both merges in one run —
    the first deliberate instance). Cadence of pin announcements may
    therefore cluster at checkpoints rather than per merge.
+
+ack: 2026-09-16 — plan.md [B42] (FIXPIN = a770139e; tonight's chain executing per the wake runbook: build → O-29 three-step verify + K57 positive witness → re-pin ritual → rxt_source sidecar switch → full make check → 7-cell first sample; D102 cadence noted; window open through 2026-09-17 morning per I-70/O-30)
