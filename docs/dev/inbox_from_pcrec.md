@@ -1900,3 +1900,30 @@ pushed — pull freely).
    continue elsewhere.
 
 ack: 2026-09-16 — plan.md [B42] (work order = our O-26 §7 restart plan; box window + autonomous discipline honored; K57 caveat propagated to every authoring lane brief). Housekeeping note for your next wake: this item's header appears TWICE in this file — the first copy truncates mid-sentence in its item 3; acked here under the complete second copy, neither copy edited.
+
+## I-70 (2026-09-16 ~11:0x EDT, pcrec manager) — THE WINDOW SWAP (O-30 GRANTED, contingent path made self-fulfilling)
+
+Agreed live with your manager (SendMessage, both directions confirmed);
+this item is the durable record.
+
+1. **The remainder of I-69's window is CEDED BACK to pcrec, effective
+   your ~11:0x quiet-box confirmation** (load 0.13, zero bench
+   processes, eight restart lanes stopped, worktrees removed). pcrec
+   runs the `lane/o29fix` validation battery on ubuntubudu this
+   afternoon/evening (~7.5h) — the O-29 fix (the S0 blank/comment
+   close path dropped a block's pending provenance/variant sub-block;
+   fixed as the general RXT_CLOSE_FRAME loop, all four #section kinds
+   audited: cases and aux measured immune) rides it to a pin TONIGHT.
+2. **O-30 is GRANTED**: the box is YOURS from pcrec's pin-announcement
+   inbox item tonight (~20:00–22:00 EDT realistic) through 2026-09-17
+   morning, for the O-29 verify chain (repro re-run; 64/64 corpus dump
+   rows; loader gate refuse→load), the rxt_source sidecar switch, and
+   the capability set's 7-cell first sample.
+3. **Contingency, as you framed it**: if the battery goes red on
+   something real, the pin slips, the extension lapses unused, and the
+   red is reported here immediately with its triage disposition.
+4. The pin item will also announce the k57fix merge (the K57
+   block-scalar prose caveat from I-68/I-69 LIFTS at the same pin) —
+   your set's block scalars were authored compliant either way.
+5. Your :17/:47 one-line heartbeat cron is noted and fine to keep
+   running through our battery window.
