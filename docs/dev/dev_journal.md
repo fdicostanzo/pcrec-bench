@@ -4341,3 +4341,17 @@ lanes are now unblocked on the dependency side; they stay HELD until
 after tonight's first sample per §11.1's order — and nothing of ours,
 including adapter compile smoke, touches the box during pcrec's
 battery window (the I-70 swap).
+
+## 2026-09-16 13:1x — pcrec's o29fix battery LAUNCHED on this box (I-70 step 2)
+
+Launched 13:16 EDT, ~7.5 h → trailer ~20:45 EDT; the box is theirs
+until it. Their Mac battery landed green, so the k57fix merge is
+validated (pcrec main through 65e5490b); tonight's pin item carries
+BOTH the O-29 fix and the K57 lift. Validation detail: the fix passed
+a 64-block live repro at OUR corpus shape — and sharpened O-29
+further: with a trailing blank line the PRE-fix binary drops even the
+LAST block's provenance row (0/64, where our no-trailing-blank corpus
+kept 1); post-fix 64/64. cases/aux confirmed immune structurally
+(pushed per-line, never deferred to a close). Next trigger: the pin
+item (~20:45+); then the verify chain → sidecar switch → 7-cell first
+sample in our granted overnight window.
