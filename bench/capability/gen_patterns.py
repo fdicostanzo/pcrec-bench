@@ -85,6 +85,11 @@ def _default_pcrec_bin():
         common = subprocess.run(
             ["git", "rev-parse", "--git-common-dir"], cwd=HERE,
             capture_output=True, text=True, check=True).stdout.strip()
+        # git may print the common dir RELATIVE TO ITS cwd (HERE), and
+        # os.path.abspath resolves against the PROCESS cwd -- anchor it
+        # to HERE explicitly or a main-tree run resolves to a wrong root.
+        if not os.path.isabs(common):
+            common = os.path.join(HERE, common)
         repo_root = os.path.dirname(os.path.abspath(common))
     except Exception:
         repo_root = os.path.dirname(os.path.dirname(HERE))
