@@ -253,9 +253,29 @@ anything for that stage.
 per BOILERPLATE's rule for a memory-heavy run): re-runs ONLY the two
 stages round 3 never reported on. `check-schema` and `check-harness`
 already stand from round 3's log (4/72/0 and 348/0) and are not
-re-run. **OWED** at report-commit time — see the follow-up message for
-the stitched full-suite counts (schema + harness from round 3's log,
-report + interpret from round 4's).
+re-run. Confirmed finished (no `make`/`test_report`/`check_interpret`
+process left running, box back to 12 GiB available): `check-report: OK`
+and `check-interpret: 132 passed, 0 FAILED`. No `DONE rc=` marker was
+written — this lane's own oversight, omitted from the detached launch's
+command chain — but the log's own last lines and the confirmed-absent
+process are unambiguous: the run finished clean, not mid-flight.
+
+**THE STITCHED FULL SUITE, green, by log:**
+
+| stage | result | log |
+|---|---|---|
+| `check-schema` | 4 example(s) accepted, 72 sabotage(s) rejected, 0 WRONG | `make_check3.log` |
+| `check-harness` | **348 check(s) passed, 0 FAILED** | `make_check3.log` |
+| `check-report` | OK | `make_check4.log` |
+| `check-interpret` | 132 passed, 0 FAILED | `make_check4.log` |
+
+No stage was ever run twice with conflicting results — round 3 is the
+authoritative source for schema/harness (both classes' fixes proven
+there), round 4 for report/interpret (never reached in round 3). This
+is a STITCHED run across two log files, stated plainly as such per the
+manager's instruction, not a single unbroken `make check` invocation —
+the reason is the round-3 memory-pressure kill documented above, itself
+a recorded event and not a check failure.
 
 ## Charter-vs-committed checklist
 
@@ -274,7 +294,7 @@ report + interpret from round 4's).
 | HALF 2 control: 17 bounded patterns unmoved | DONE — confirmed by re-measurement |
 | HALF 2 oracle witnesses pinned by value + negative control | DONE — `check_kb17_find_all_advance`, 4/4 PASS standalone |
 | HALF 2 KB-17 → FIXED | DONE |
-| GATE: `make check` full, every count green | check-schema 4/72/0 and check-harness 348/0 CONFIRMED (round 3's log, both classes fixed); check-report + check-interpret **OWED** (round 4, detached, running) — see the rounds section above and the follow-up message |
+| GATE: `make check` full, every count green | **DONE, stitched**: check-schema 4/72/0 + check-harness 348/0 (`make_check3.log`) + check-report OK + check-interpret 132/0 (`make_check4.log`) — see the rounds section above |
 | Any red implicating pcrec: verbatim repro, no diagnosis | The abi surprise (HALF 1) is reported verbatim per BD2. The [K53-SELRETRY] wall movement is NOT a bug — it is a real, positive, pcrec-acknowledged improvement this bench's own corpus triggered; reported as a finding for the outbox (O-28), not a red |
 
 ## Commits (chronological)
