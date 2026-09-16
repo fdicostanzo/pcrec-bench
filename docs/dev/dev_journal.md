@@ -4163,3 +4163,52 @@ its delivery: consolidate, outbox item (acceptance verdict + parked
 rulings incl. fidelity and the §12 DEFAULTs), then step (4) the re-pin
 lane (folding in KB-17's mc advance-rule fix with bounded's 17 {0,N}
 counts as the must-not-move control) and step (5) L1 ∥ L2.
+
+## 2026-09-16 (cont.) — [B42] restart: acceptance gate CLEARED, L1/L2/fam11 landed, re-pin at the make-check gate
+
+Step (1) landed (lane b42accept, merged 5384c5a): the authoritative
+41-check run at cd371441 — 31 PASS / 0 FAIL / 1 DISSOLVED / 9
+NOT-RUNNABLE, every NR correctly sequenced; G3's probe diff zero
+unexplained hunks; the engine-precedence ruling, NUL refusal,
+second-description refusal and B7's raw-bytes path all confirmed live.
+One review catch: the lane's strict-tally line (33/8) contradicted its
+own count paragraph — corrected on the branch to 31/9 with a dated
+note before merge. O-27 sent (174ee93): verdict + r6 + the
+parked-for-Frank list (fidelity mapping recommendation; all §12
+DEFAULTs proceeding; Q3 stays BLOCK for [B7]-Vectorscan only).
+
+Steps (4)+(5) ran as three lanes. L1 (b42curate, merged 050baa1): 26
+wild members, families 1-6, every license direct-fetched, every
+transcription re-verified byte-exact; two rulings RATIFIED in the
+design note (ed78f39) — WINPATH reassigned to family 2 (its atomic
+group vs family 1's none-unsupported invariant), `moment-js`
+registered as the twelfth source slug. L2 (b42author, merged 2ca0001):
+35 synthesized members, families 7-10/12 at target, control twins for
+1/2/6, blinded per D27, every pattern validated via pcre2test (one
+self-caught bug: unbounded quantifiers in a lookbehind); the
+family-1/2 twin-pairing reconciliation against L1's actual imports is
+flagged to L3. Follow-up lane b42fam11 (merged, +979acd9): family 11's
+3 wild members (PCRE2 testdata ×2, rust-regex leftmost-all ×1) — 6/6
+with all three mechanisms; Appendix A's rust-regex OWED row CLOSED;
+a real discrepancy found and recorded as a dated correction on the
+research note (five §15 quoted PCRE2 testinput strings fail byte
+re-verification against master — do not import without fresh
+fetch-and-verify). Curation totals: 29 wild + 35 designed = 64
+members staged under bench/capability/curation/.
+
+b42repin (in flight, both halves committed, make check running): the
+registry deltas are +1 axis `startpos-guard` / +1 limit / definitions
+byte-identical / list_schema.tsv archived first time; --list-syntax
+delta confined to two rows' built column (\p{L}/\P{L} unbuilt→built,
+no machine-read column moved — NOT re-seeded, parked for a ruling);
+THE FINDING: **the pin's abi is 25, not I-68's claimed 23** — two
+steps (K50-NULLGATE's caller-startpos guard = the registry delta; a
+no-stamp portability fix), rx_info byte-identical so the shim floor
+16 holds by our own rule; flagged for the outbox correction item at
+merge. KB-17's fix is in: match_api.md §3.1 by reference in both
+drivers + _find_all_impl, every set's expectations re-derived with
+ZERO committed counts moved (bounded's 17 {0,N} controls confirmed by
+re-measurement), the two oracle witnesses pinned by value in a new
+selfcheck with an inline negative control. Merge gated on the make
+check counts. L3 waits on that merge (its expectations must derive
+under the fixed rule).
