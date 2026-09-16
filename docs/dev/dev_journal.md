@@ -4329,3 +4329,15 @@ is GRANTED from their pin-announcement inbox item through 2026-09-17
 morning. Red battery → pin slips, extension lapses. Accepted live;
 I-70 makes it durable. Our next action is the I-70/pin inbox item:
 the O-29 verify chain, the sidecar switch, the 7-cell first sample.
+
+## 2026-09-16 ~11:xx — L6b dependencies installed (Frank, at the terminal)
+
+Frank ran scripts/install_l6b_deps.sh --install: all five packages
+present (libonig-dev 6.9.10, libtre-dev 0.9.0, libvectorscan-dev
+5.4.11, libabsl-dev 20260107.0, libre2-dev 20250805), the hyperscan
+conflict gate clean, check-only re-run exits 0. cargo/rustc NOT
+installed (only if the Rust testee proceeds). The [B7]/L6b adapter
+lanes are now unblocked on the dependency side; they stay HELD until
+after tonight's first sample per §11.1's order — and nothing of ours,
+including adapter compile smoke, touches the box during pcrec's
+battery window (the I-70 swap).
