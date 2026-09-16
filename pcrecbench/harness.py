@@ -132,8 +132,9 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
     correct under a convention nobody asked for is not the expected
     answer either". No `under`-qualified row exists in any committed
     set yet (`bench/capability/NOTES.md`'s own stated deferral), so this
-    branch is exercised by a hand-built fixture
-    (`pcrecbench/tests/test_harness.py`), never by a real corpus case."""
+    branch is exercised by hand-built fixtures
+    (`tools/selfcheck.py`'s `check_convention_scoring`), never by a real
+    corpus case."""
     if row.answer == "timedout":
         return "timed-out", None, (row.detail or
                                    "the per-subject alarm fired")
