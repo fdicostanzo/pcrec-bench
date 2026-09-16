@@ -1589,8 +1589,8 @@ follow-up.
 | 7, 8 | Oniguruma `test/test_syntax.c` | BSD-2-Clause | **yes** (`COPYING` fetched) | **yes** — 5 `x2()` cases quoted |
 | 10 | RE2 `regexp_benchmark.cc` | BSD-3-Clause | yes (header quoted) | **yes** — 5 quoted verbatim |
 | 10 | `awesome-redos-security` CVE index | n/a (inspiration) | — | **NO** — not deep-fetched. **OWED** |
-| 11 | PCRE2 `testdata/testinput1`, `testinput2` | BSD-3-Clause WITH PCRE2-exception | **yes** (`LICENCE.md`) | **yes** — empty-match and fold cases quoted |
-| 11 | rust-lang/regex `testdata/` incl. `fowler/` | MIT | **yes** (`LICENSE-MIT`) | directory listing only — **OWED** for specific cases |
+| 11 | PCRE2 `testdata/testinput1`, `testinput2` | BSD-3-Clause WITH PCRE2-exception | **yes** (`LICENCE.md`) | **yes** — empty-match and fold cases quoted. CAVEAT (2026-09-16, b42fam11): the research note's five quoted testinput strings did NOT re-verify byte-for-byte against a fresh fetch of master — only `(a|)*\d` did; the two imported members are the re-verified ones (report) |
+| 11 | rust-lang/regex `testdata/` incl. `fowler/` | MIT | **yes** (`LICENSE-MIT`) | **CLOSED 2026-09-16** (was: OWED for specific cases) — `leftmost-all.toml`'s "alt" case imported as `wild-semdiv-altorder-foo-foobar-rustregex`, fetch archived (lane b42fam11) |
 | 12 | Suricata/ET `pcre:` rules | mixed by sid range | no | **NO** — three attempts failed. Family 12 is authored |
 | — | GNU grep `tests/` (`Turkish-I`, `backref*`, `bre`/`ere`) | **GPLv3** | **yes** (`COPYING`) | tree located, contents characterized — **import blocked by Q1** |
 

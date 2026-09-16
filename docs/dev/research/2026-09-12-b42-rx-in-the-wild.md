@@ -1491,3 +1491,15 @@ shortlist.
   files exist; only two were sampled).
 - The `npm`/`pypi`-registry ReDoS census paper's own artifact, if one
   exists (only its existence and rough method were found via search).
+
+---
+
+**CORRECTION (2026-09-16, manager, from lane b42fam11's re-verification —
+the note itself is otherwise unedited):** §15's five quoted PCRE2
+testinput1/testinput2 literal strings (the two aftertext /g empty-match
+cases, three testinput2 fold cases) did NOT re-verify byte-for-byte
+against a fresh fetch of PCRE2 master on 2026-09-16; only `(a|)*\d`
+verified. Either master moved or the five were never independently
+re-verified at research time. Do not import any of the five without a
+fresh fetch-and-verify; method and detail in
+`docs/dev/lanes/b42fam11_report.md`.
