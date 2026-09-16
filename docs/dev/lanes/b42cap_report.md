@@ -265,15 +265,42 @@ brief's own ask, not because it fired.
 
 ## Validation
 
-OWED at report-writing time, per DO-THEN-FINISH: `pcrecbench.tests.
-test_report` (the full suite, `REAL_STORE` = 161-record `store/`) was
-launched DETACHED (`setsid bash -c 'gnutimeout 1200 python3 -m
-pcrecbench.tests.test_report > /tmp/test_report_out.txt 2>&1; echo
-"DONE rc=$?" >> /tmp/test_report_out.txt'`) — the whole-store-load
-memory heuristic this project's own BOILERPLATE names (KB-16: ~750s /
-~3.6GB at 160 records). Marker: the literal line `DONE rc=0` (or a
-non-zero rc) appended to `/tmp/test_report_out.txt` on this box. A
-fresh invocation resuming this lane must check that file FIRST.
+**`make check-schema`: GREEN** (4 examples accepted, 72 sabotages
+rejected for the intended rule, 0 wrong) — unaffected by this lane, as
+expected (no schema change).
 
-[to be filled in once the marker lands: pass/fail count, then
-`make check-harness`, then `make check` as a whole]
+**`make check-interpret`: GREEN**, 132/132 (six sections) — unaffected,
+as expected (no catalogue change).
+
+**`make check-report`: GREEN.** `pcrecbench.tests.test_report`'s full
+suite (`REAL_STORE` = the 161-record `store/`, run DETACHED per this
+project's own memory heuristic, KB-16: ~750s/~3.6GB at 160 records —
+this run took ~13 min and ~3.9 GB RSS, consistent) — **77 passed, 0
+failed**, including `test_variant_kind_rendering_cb2`.
+`pcrecbench.tests.test_quick` — **7 passed, 0 failed**. The three
+fixture-store `--check-filename` validations and the two CLI-format
+smoke invocations all exit 0. 84 reporter-side tests total, all green.
+
+**This lane's own three new selfcheck arms, standalone: 16/16 PASS**
+(`check_capability_policy` 7, `check_capability_policy_noop_elsewhere`
+5, `check_convention_scoring` 4), every negative control included,
+re-confirmed individually before each commit.
+
+**`make check-harness` (the ~350-check full suite, ~20 min): OWED at
+report-finalization time**, per the BOILERPLATE's DO-THEN-FINISH rule
+for a run this long — launched DETACHED
+(`setsid bash -c 'gnutimeout 2700 make check-harness >
+/tmp/check_harness_out.txt 2>&1; echo "DONE rc=$?" >>
+/tmp/check_harness_out.txt'`, started 08:11 on this box). Marker: the
+literal line `DONE rc=0` (or non-zero) appended to
+`/tmp/check_harness_out.txt`. This lane's own three arms have already
+been individually verified (above) and are wired into `main()`
+(confirmed by reading the file, not merely claimed); the risk this run
+covers is an INTERACTION with a pre-existing check, which the design
+(a fail-closed, purely-additive policy that is a no-op on every
+non-capability set, checked directly by
+`check_capability_policy_noop_elsewhere`) argues against but does not
+prove. A fresh invocation resuming this lane, or the manager before
+merge, must check `/tmp/check_harness_out.txt` FIRST and re-run if the
+marker or the box is gone (it is a `/tmp` path, not committed
+anywhere).
