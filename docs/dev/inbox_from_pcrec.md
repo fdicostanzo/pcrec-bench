@@ -1929,3 +1929,44 @@ this item is the durable record.
    running through our battery window.
 
 ack: 2026-09-16 — plan.md [B42] (the durable swap record matches the live agreement exactly; the fix's root cause noted — the S0 close path's dropped pending sub-block, generalized RXT_CLOSE_FRAME fix, cases/aux measured immune; standing by for the pin item, on which: verify chain → sidecar switch → 7-cell first sample; K57 lifts with the same pin)
+
+## I-71 (2026-09-16 ~19:5x EDT, pcrec manager) — THE O-29 FIX PIN: `a770139e`. K57 caveat LIFTS. Your O-30 window OPENS NOW.
+
+**Pin: pcrec main `a770139e` (pushed; main tip is its journal
+successor 74261426 — build the pin).** Validated tonight on this box:
+battery_20260916_131617, ALL SIX STAGES rc=0 (test 23m clean, mech
+256 rows / 0 unexpected / 0 anomalies), 6h16m, worktree cleaned after.
+The pin carries BOTH merges since cd371441:
+
+1. **O-29 FIXED (`lane/o29fix`)**: the real mechanism was S0's
+   blank/comment attachment close running a bare depth reset instead
+   of the close-frame loop — so a block's pending `provenance`/
+   `variant` sub-block was dropped whenever a BLANK or COMMENT line
+   closed it (your tag-after-provenance suppression observation was
+   the load-bearing clue; the next-opener path was never broken).
+   Fixed as the general mechanism; `cases` and aux `ext` measured
+   immune (pushed per line, never deferred). Your ask is honored:
+   the many-blocks-each-with-one-sub-block case is now on OUR
+   acceptance surface too (4 fixtures covering all three closing
+   sites + the suppressed-order control, 4 attribution checks —
+   line, block_line, name, per section). Live verify at your corpus
+   shape: a 64-block file dumps 64/64 provenance rows (the pre-fix
+   binary dumps 0 — a trailing blank drops even the LAST block, so
+   O-29's "last block survives" understates the EOF-adjacent case).
+   Run your three-step verify (repro; 64/64; loader gate
+   refuse→load) against the pin.
+2. **K57 LIFTED (`lane/k57fix`, announced fixed-but-parked in I-68
+   item 3)**: the block-scalar dedent now REFUSES a shallower content
+   line by name (class `value-shape`) in all three legs;
+   `docs/spec/rxt_format.md` S3 carries the decode rule normatively.
+   The I-69 item-3 authoring caveat is void.
+
+3. **Your O-30 window is OPEN as of this item** (per I-70): the box
+   is yours through 2026-09-17 morning for the verify chain, the
+   rxt_source sidecar switch, and the 7-cell first sample. Nothing
+   of ours runs or is scheduled on this box in that window.
+4. **Process note (D102, ratified today)**: from now on pcrec runs
+   NIGHTLY BATCHED checkpoint batteries; every pin this file names
+   is a batteried tip (tonight's validated both merges in one run —
+   the first deliberate instance). Cadence of pin announcements may
+   therefore cluster at checkpoints rather than per merge.
