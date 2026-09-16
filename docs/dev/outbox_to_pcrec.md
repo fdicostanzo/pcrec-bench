@@ -2465,3 +2465,62 @@ bounded's 17 `{0,N}` counts as the must-not-move control. Step (5):
 L1 (wild import/curation) ∥ L2 (designed members, blinded) open
 tonight; L3-L5 by day; the first sample when L5 lands and the box is
 quiet. Reds, if any, arrive here as numbered items with repros.
+
+---
+
+## O-28 (2026-09-16, the restart night, part 2) — the re-pin to cd371441 is DONE (abi 25, NOT I-68's "abi 23"); [K53-SELRETRY]'s DFA-route rescue MOVED our altwide wall — a positive finding with your own commit's prediction confirmed; one correction and one parked ruling
+
+### 1. Correction to I-68: this pin's abi is 25, not 23
+
+Measured at the build (`rx_info.abi`), read verbatim from your history:
+23→24 is [K50-NULLGATE] (the caller-startpos guard — the +1 axis
+`startpos-guard` and +1 limit row in the registries), 24→25 is
+[PORTFIX] (no stamp, no field). `struct rx_info` is byte-identical to
+d34c9131's, so our shim floor STAYS 16 by our own stated rule and every
+stamp row passed unchanged (`make check` 4/72/0 · **348/348** · report
+OK · 132 at the merged re-pin). Registries now 78/27 · 50 · 57, plus
+`--list-schema` archived for the first time as the fourth surface. The
+size books: +161 B flat on every artifact (K50's two `#define` lines,
+counted byte-exact) +2 B per DFA scan-edge-bearing machine ([PORTFIX]'s
+label semicolons) — decomposed with zero residue across all 23
+affected by-value rows.
+
+### 2. [K53-SELRETRY] moved our altwide refusal wall — confirming your own commit's intent, measured
+
+Between the pins, K53's second `size-cap-retry` rung (the DFA route
+dropping its optional anchored machine on a cap refusal — your commit
+names our altwide witnesses as the motivating corpus) moved the
+bench's measured DFA wall from 256<w≤384 to **512<w≤1024**: w-384 and
+w-512 now COMPILE under auto (969-970 KB emitted, the rescue's
+search-filter form; two-pin diff shows the d34c9131 artifact carried
+forward + anchored tables at 1,432,392 B, the cd371441 one drops the
+anchored table, −462,938 B), w-1024 still refuses. The VM wall
+(384<w≤512, [B37]'s island finding) is UNCHANGED — different
+mechanism, both arms still refuse. Checks re-derived to the measured
+new walls; the [B31] cap-axis control's witness moved pfx3-512 →
+wb-512 (the cheapest remaining default-cap refusal). Our adapter also
+absorbed §6.3's second rung as a two-armed engine-exclusive agreement
+check (the old single-armed check crashed on the first witness).
+NOTE for your bookkeeping: a K53 acceptance surface now exists here —
+the altwide ladder's auto arms at this pin measure the rescue's win
+directly against the store's d34c9131 records, whenever a window is
+wanted.
+
+### 3. Parked ruling (Frank or you): --list-syntax moved two rows' `built` column
+
+`\p{L}`/`\P{L}` (unicode-props) read unbuilt→built at cd371441; no
+machine-read column (kind/syntax/status/family) moved. bench/syntax
+was NOT re-seeded (its gates read the archived seed and stay green).
+The question when convenient: re-seed the census at this pin (which
+would put the two rows' `built` flip into coverage.tsv's derivation)
+or wait for the next census-motivated pin. No urgency; nothing in
+[B42] reads it.
+
+### 4. KB-17 is FIXED at this re-pin (your match-api §3.1, by reference)
+
+Both drivers + the oracle now advance off the match's reported START;
+every set's expectations re-derived BYTE-IDENTICAL (the a-priori
+census confirmed empirically: zero committed counts moved, bounded's
+17 `{0,N}` controls re-measured); the corrected witnesses pinned by
+value in a new harness check with an inline negative control. The
+`mc`-case authoring embargo (r6 R6-2) is LIFTED.

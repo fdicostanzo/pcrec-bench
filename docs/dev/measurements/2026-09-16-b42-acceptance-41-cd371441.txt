@@ -10,6 +10,11 @@
 #
 # binary:    /home/duxevents/pcrec-bench/build/pcrec-cd371441/build/pcrec
 # pin:       pcrec main cd371441 (tip cfcedb0f, abi 23)
+#            [CORRECTION 2026-09-16 (manager, at the b42repin merge): the
+#            abi at this pin is 25, not 23 — I-68's "abi 23" claim was
+#            wrong by two steps (K50-NULLGATE, PORTFIX; measured from
+#            rx_info.abi at the build, docs/dev/lanes/b42repin_report.md).
+#            No check in this archive reads the abi; verdicts unaffected.]
 # bench:     7bd3f7d (pcrec-bench, lane lane/b42accept)
 # box:       ubuntubudu; every check here is compile/parse-scale
 #            (--list-source is single-digit ms; the two B7 gcc compiles
