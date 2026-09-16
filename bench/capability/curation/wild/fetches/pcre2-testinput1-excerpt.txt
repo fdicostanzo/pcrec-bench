@@ -1,0 +1,26 @@
+Source: https://raw.githubusercontent.com/PCRE2Project/pcre2/master/testdata/testinput1
+Retrieved: 2026-09-16T05:08:00Z (direct curl fetch, this lane, [B42] fam11)
+Note: two quoted blocks, with the raw fetched file's own line numbers, backing
+wild-semdiv-empty-alt-repeat-pcre2 and wild-semdiv-dollar-trailing-newline-pcre2.
+Every other line the design note's research phase (N1 §15) named as present in
+this file -- the /.*?/g,aftertext and /\b/g,aftertext empty-match-via-/g cases,
+and the testinput2 fold cases -- was searched for in this fetch and NOT FOUND
+verbatim; this lane does not use them and flags the discrepancy in its report
+rather than quoting text that is not actually in the file at this pin (master,
+this session's fetch).
+---
+4022:/(a){0,3}(?(1)b|(c|))*D/
+4023:    abbD
+4024:    ccccD
+4025:    D
+
+4027:/(a|)*\d/
+4028:  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4
+4029:\= Expect no match
+4030:  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+---
+1463:/abc$/
+1464:    abc
+1465:    abc\n
+1466:\= Expect no match
+1467:    abc\ndef
