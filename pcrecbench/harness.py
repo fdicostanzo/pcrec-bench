@@ -104,7 +104,8 @@ class RunResult:
 
 # ------------------------------------------------------------- the judging
 
-def outcome_for(row, expectation, regime, subject, giveup_ok=True):
+def outcome_for(row, expectation, regime, subject, giveup_ok=True,
+                convention=None):
     """(match_outcome, observed, diagnostic) for one driver answer.
 
     Requirements 4.4's per-(pattern, subject) set, plus the two [B2]
@@ -112,7 +113,27 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True):
     is `did-not-match-as-expected`: from the bench's point of view the
     expected answer was not produced, and there is no `gave-up` value because
     a wrong answer and a refused one are both "not the expected answer"
-    (bench/email/NOTES.md states this where a reader of the numbers is)."""
+    (bench/email/NOTES.md states this where a reader of the numbers is).
+
+    `convention` (R5 B1, `docs/design/capability_set_v1.md` 5.6, [B42] L5):
+    the CALLER's own declared convention (`testee.conventions`'s first
+    entry, `run_cell`'s own reading) -- OPTIONAL, and a no-op on every
+    expectation this project has ever authored (`Subbench.Expectation`'s
+    9-column TSV loader never sets `.convention`; it stays `None`, the
+    SAME shared-convention canonical answer every testee is graded
+    against today, CB1's narrowed v1 scope for family 11). Built for
+    the day an `under <convention>`-qualified expectation row exists
+    (`.rxt`'s own `under` production, `rxt_needs_v1.md` 2.x) and carries
+    a real `.convention`: a testee whose OWN declared convention does
+    not match that row's is graded `did-not-match-as-expected` rather
+    than silently scored against an answer authored for a DIFFERENT
+    convention -- the same "a wrong answer and a refused one are both
+    not the expected answer" principle above, extended to "an answer
+    correct under a convention nobody asked for is not the expected
+    answer either". No `under`-qualified row exists in any committed
+    set yet (`bench/capability/NOTES.md`'s own stated deferral), so this
+    branch is exercised by a hand-built fixture
+    (`pcrecbench/tests/test_harness.py`), never by a real corpus case."""
     if row.answer == "timedout":
         return "timed-out", None, (row.detail or
                                    "the per-subject alarm fired")
@@ -158,6 +179,23 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True):
                  "captures": None},
                 "no expectation exists for this (pattern, subject, regime) -- "
                 "the sub-bench must state one before the cell can be judged")
+
+    if (convention is not None
+            and getattr(expectation, "convention", None) not in (None, convention)):
+        # R5 B1 / CB1 ([B42] L5): a real answer exists, but it is being
+        # compared against an expectation AUTHORED for a different
+        # convention than this testee itself declares. No corpus row
+        # sets `.convention` today (see this function's own docstring),
+        # so this branch never fires on a real record.
+        return ("did-not-match-as-expected",
+                {"matched": row.matched,
+                 "span": [row.start, row.end] if row.matched else None,
+                 "captures": None},
+                "the expectation is scoped to convention %r; this testee's "
+                "own declared convention is %r -- no expectation exists "
+                "for it here (a convention-tagged variant or an "
+                "`under`-qualified expectation row would be needed)"
+                % (expectation.convention, convention))
 
     if row.matched != expectation.matched:
         return ("did-not-match-as-expected",
@@ -549,6 +587,13 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     if scratch and "binary" not in testee_block:
         # X29: a scratch record says what the binary was.
         testee_block["binary"] = adapter.binary_identity(testee_id, workdir)
+    # R5 B1 / CB1 ([B42] L5): the testee's OWN declared convention
+    # (`testee.conventions`, required by schema, `["perl-leftmost-first"]`
+    # on every roster testee today) -- the first entry, since a testee
+    # declares one convention it matches its outcomes against
+    # (`outcome_for`'s own `convention` parameter; a no-op today, see its
+    # docstring, since no expectation row carries `.convention` yet).
+    testee_convention = (testee_block.get("conventions") or [None])[0]
 
     # O, the OTHER sentences (module docstring): the scratch-tier sentence,
     # did-not-compile, calibration and adapter notes. The gate's reasons are
@@ -676,7 +721,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                     exp = sb.expectation(p.name, r.subject_id, regime)
                     outcome, observed, diag = outcome_for(
                         r, exp, regime, subj,
-                        giveup_ok=classify_giveup(r.answer, handle))
+                        giveup_ok=classify_giveup(r.answer, handle),
+                        convention=testee_convention)
                     timing = None
                     if outcome == "matched-as-expected":
                         timing = {

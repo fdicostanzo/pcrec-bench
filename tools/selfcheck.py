@@ -8474,6 +8474,221 @@ def check_kb17_find_all_advance():
         return
 
 
+# --------------------------------------------- 47 the capability policy
+
+def check_capability_policy():
+    """THE PRE-COMPILE CAPABILITY POLICY ([B42] L5, capability_set_v1.md
+    5.3, `pcrecbench/capability.py`): `REQUIRES(pattern) not-subset-of
+    capabilities(testee)` => `unsupported-by-declaration`, decided BEFORE
+    `adapter.compile()` is ever called. Checked on the REAL
+    `bench/capability` set through the REAL `quick` CLI (the same path a
+    real cell runs, and the SIDECAR/SHIM load path -- `bench/capability`
+    is not `.rxt`-loadable as a whole at this pin, outbox O-29), plus two
+    unit-level controls on the module itself:
+
+      1. `negation-scope-lookbehind-var` (requires `lookbehind-variable`)
+         is BLOCKED on `pcrec-auto`: the written record's only row is a
+         compile row, `compile_outcome=unsupported-by-declaration`, WITH
+         a `declaration_ref` (schema: required for that outcome), and NO
+         match row exists -- `adapter.compile()` was never called (a
+         real pcrec refusal would say "is not implemented"; OUR
+         diagnostic never does, checked below).
+      2. CONTROL: the SAME pattern under `pcre2-interp` (which declares
+         the full REQUIRES vocabulary) measures NORMALLY.
+      3. CONTROL: `balanced-parens-rec` (requires `recursion`, which
+         `pcrec-auto` DOES declare) measures normally on `pcrec-auto` --
+         the policy does not over-block.
+      4. the closed-vocabulary rule: a hand-built pattern carrying an
+         unknown `requires-*` tag raises `CapabilityError` naming the
+         token; CONTROL: a real token pair is accepted.
+      5. the fail-closed rule: a testee id absent from the set's own
+         `ext bench` roster resolves to `frozenset()`, so
+         `missing_capabilities` returns the pattern's WHOLE requires set,
+         never an empty one by omission."""
+    print("-- the pre-compile capability policy (bench/capability) --")
+    import json as _json
+    import glob as _glob
+    from pcrecbench import capability as _cap
+    from pcrecbench.subbench import find as _find_sb
+
+    for gen in ("gen_subjects.py", "gen_throughput_subjects.py"):
+        path = os.path.join(ROOT, "bench", "capability", gen)
+        if os.path.exists(path):
+            run([sys.executable, path], timeout=120)
+
+    scratch = os.path.join(ROOT, "build", "selfcheck-capability-store")
+    shutil.rmtree(scratch, ignore_errors=True)
+
+    def quick_one(pattern, testee):
+        proc = run(["gnutimeout", "120", sys.executable, "-m", "pcrecbench",
+                    "quick", "--subbench", "capability", "--pattern", pattern,
+                    "--regime", "search_short", "--testee", testee,
+                    "--subjects", "2", "--trials", "1", "--store", scratch,
+                    "--synthetic", "--quiet-output"],
+                   cwd=ROOT, timeout=150)
+        files = sorted(_glob.glob(os.path.join(
+            scratch, "records", "capability@0.1", "*", "*.jsonl")),
+            key=os.path.getmtime)
+        return proc, (files[-1] if files else None)
+
+    def rows_of(path):
+        with open(path, encoding="utf-8") as fh:
+            lines = [l for l in fh if l.strip()]
+        return [_json.loads(l) for l in lines[1:]]
+
+    # 1. BLOCKED: the witness pattern on pcrec-auto.
+    proc, f = quick_one("negation-scope-lookbehind-var", "pcrec-auto")
+    if f is None:
+        bad("capability policy blocks negation-scope-lookbehind-var on pcrec-auto",
+            "no record written: %s" % (proc.stderr or proc.stdout)[-300:])
+    else:
+        rows = rows_of(f)
+        crows = [r for r in rows if r.get("kind") == "compile"]
+        mrows = [r for r in rows if r.get("kind") == "match"]
+        blocked = (len(crows) == 1
+                  and crows[0].get("compile_outcome") == "unsupported-by-declaration"
+                  and bool(crows[0].get("declaration_ref"))
+                  and not mrows
+                  and "not implemented" not in (crows[0].get("diagnostic") or ""))
+        if blocked:
+            ok("capability policy blocks negation-scope-lookbehind-var on pcrec-auto",
+               "compile_outcome=unsupported-by-declaration, declaration_ref=%r"
+               % crows[0]["declaration_ref"])
+        else:
+            bad("capability policy blocks negation-scope-lookbehind-var on pcrec-auto",
+                "compile rows=%r match rows=%d" % (crows, len(mrows)))
+
+    # 2. CONTROL: same pattern, pcre2-interp declares the full vocabulary.
+    proc, f = quick_one("negation-scope-lookbehind-var", "pcre2-interp")
+    mrows = rows_of(f) if f else []
+    mrows = [r for r in mrows if r.get("kind") == "match"] if f else []
+    if f and mrows:
+        ok("CONTROL: pcre2-interp measures negation-scope-lookbehind-var normally",
+           "%d match row(s)" % len(mrows))
+    else:
+        bad("CONTROL: pcre2-interp measures negation-scope-lookbehind-var normally",
+            (proc.stderr or proc.stdout)[-300:] if not f else "no match rows")
+
+    # 3. CONTROL: a satisfied token on pcrec-auto is not over-blocked.
+    proc, f = quick_one("balanced-parens-rec", "pcrec-auto")
+    mrows = [r for r in rows_of(f) if r.get("kind") == "match"] if f else []
+    if f and mrows:
+        ok("CONTROL: pcrec-auto measures balanced-parens-rec (requires=recursion) normally",
+           "%d match row(s)" % len(mrows))
+    else:
+        bad("CONTROL: pcrec-auto measures balanced-parens-rec (requires=recursion) normally",
+            (proc.stderr or proc.stdout)[-300:] if not f else "no match rows")
+    shutil.rmtree(scratch, ignore_errors=True)
+
+    # 4. the closed-vocabulary rule.
+    bogus = Pattern({"name": "z-selfcheck-bogus", "hazard_class": "none",
+                     "size_class": "small", "text": b"x",
+                     "tags": ["requires-not-a-real-token"]})
+    try:
+        _cap.pattern_requires(bogus)
+        bad("closed-vocabulary rule rejects an unknown requires-* tag",
+            "no exception raised")
+    except _cap.CapabilityError as e:
+        if "not-a-real-token" in str(e):
+            ok("closed-vocabulary rule rejects an unknown requires-* tag",
+               str(e)[:120])
+        else:
+            bad("closed-vocabulary rule rejects an unknown requires-* tag",
+                "wrong message: %s" % e)
+
+    real = Pattern({"name": "z-selfcheck-real", "hazard_class": "none",
+                    "size_class": "small", "text": b"x",
+                    "tags": ["requires-backrefs", "requires-lookaround"]})
+    got = _cap.pattern_requires(real)
+    if got == frozenset({"backrefs", "lookaround"}):
+        ok("CONTROL: a real requires-* tag pair is accepted", "%r" % sorted(got))
+    else:
+        bad("CONTROL: a real requires-* tag pair is accepted", "%r" % got)
+
+    # 5. the fail-closed rule.
+    sb = _find_sb("capability")
+    absent = _cap.capabilities_for(sb, "not-a-real-testee-id")
+    if absent == frozenset():
+        ok("fail-closed: an undeclared testee id satisfies nothing", "%r" % absent)
+    else:
+        bad("fail-closed: an undeclared testee id satisfies nothing", "%r" % absent)
+    missing = _cap.missing_capabilities(sb, "not-a-real-testee-id", real)
+    if missing == frozenset({"backrefs", "lookaround"}):
+        ok("fail-closed: missing_capabilities returns the WHOLE requires set",
+           "%r" % sorted(missing))
+    else:
+        bad("fail-closed: missing_capabilities returns the WHOLE requires set",
+            "%r" % missing)
+
+
+# ------------------------------------------- 48 convention-scoped scoring
+
+def check_convention_scoring():
+    """CONVENTION-SCOPED SCORING (R5 B1 / CB1, [B42] L5, `harness.
+    outcome_for`'s `convention` parameter): exercised against HAND-BUILT
+    fixtures, because no committed `expectations.tsv` anywhere in this
+    project sets `.convention` (an `under`-qualified row is unauthored --
+    `bench/capability/NOTES.md`'s own stated deferral), so a real corpus
+    record can never reach the new branch. This is the check that
+    prevents it from being dead code.
+
+      1. the testee's declared convention MATCHES the expectation's own
+         -> scores normally.
+      2. CONTROL: they DISAGREE -> `did-not-match-as-expected`, with a
+         diagnostic naming BOTH conventions.
+      3. CONTROL: `expectation.convention is None` (every REAL
+         `expectations.tsv` row today) -> the caller's `convention` is
+         IGNORED -- unchanged behavior on every existing record.
+      4. CONTROL: `convention=None` (no caller argument -- every call
+         site before this lane) -> unchanged behavior regardless of what
+         `expectation.convention` says."""
+    print("-- convention-scoped scoring (outcome_for's convention parameter) --")
+
+    class _Subj:
+        length = 3
+
+    row = _ad.MatchRow("s1", "match", start=0, end=3, iters=1, seconds=1e-6)
+    exp = Expectation(["p", "s1", "search_short", "match", "0", "3", "-", "m", "o"])
+    subj = _Subj()
+
+    exp.convention = "perl-leftmost-first"
+    outcome, _obs, _diag = outcome_for(row, exp, "search_short", subj,
+                                       convention="perl-leftmost-first")
+    if outcome == "matched-as-expected":
+        ok("convention matches the expectation's own: scores normally", outcome)
+    else:
+        bad("convention matches the expectation's own: scores normally", outcome)
+
+    outcome, _obs, diag = outcome_for(row, exp, "search_short", subj,
+                                      convention="posix-leftmost-longest")
+    if (outcome == "did-not-match-as-expected" and "perl-leftmost-first" in diag
+            and "posix-leftmost-longest" in diag):
+        ok("CONTROL: mismatched conventions score did-not-match-as-expected",
+           diag[:140])
+    else:
+        bad("CONTROL: mismatched conventions score did-not-match-as-expected",
+            "%s / %r" % (outcome, diag))
+
+    exp.convention = None
+    outcome, _obs, _diag = outcome_for(row, exp, "search_short", subj,
+                                       convention="posix-leftmost-longest")
+    if outcome == "matched-as-expected":
+        ok("CONTROL: expectation.convention=None ignores the caller's convention",
+           outcome)
+    else:
+        bad("CONTROL: expectation.convention=None ignores the caller's convention",
+            outcome)
+
+    exp.convention = "posix-leftmost-longest"
+    outcome, _obs, _diag = outcome_for(row, exp, "search_short", subj)
+    if outcome == "matched-as-expected":
+        ok("CONTROL: convention=None (the default) ignores expectation.convention",
+           outcome)
+    else:
+        bad("CONTROL: convention=None (the default) ignores expectation.convention",
+            outcome)
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -8524,6 +8739,8 @@ def main():
     check_exit_code_4()
     check_timeline_provenance()
     check_kb17_find_all_advance()
+    check_capability_policy()
+    check_convention_scoring()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))

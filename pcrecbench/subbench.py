@@ -192,7 +192,7 @@ class Subject:
 
 class Expectation:
     __slots__ = ("pattern", "subject", "regime", "expected", "start", "end",
-                 "nmatches", "method", "oracle")
+                 "nmatches", "method", "oracle", "convention")
 
     def __init__(self, cols):
         (self.pattern, self.subject, self.regime, self.expected, start, end,
@@ -200,6 +200,19 @@ class Expectation:
         self.start = None if start == "-" else int(start)
         self.end = None if end == "-" else int(end)
         self.nmatches = None if n == "-" else int(n)
+        # R5 B1 / CB1 ([B42] L5, docs/design/capability_set_v1.md 5.6):
+        # which CONVENTION this row's answer was authored under; `None`
+        # means "the shared canonical answer, correct for every testee"
+        # -- the ONLY value the 9-column `expectations.tsv` FORMAT can
+        # produce (this constructor never receives a tenth column), so
+        # every real row loads with `.convention is None`. An `under
+        # <convention>`-qualified row is UNAUTHORED in any committed set
+        # (bench/capability/NOTES.md's own stated deferral) -- when one
+        # exists, its own loader sets this attribute directly, the same
+        # way `harness.outcome_for`'s `convention` parameter is built to
+        # read it (a fixture-only path today, see that function's own
+        # docstring).
+        self.convention = None
 
     @property
     def matched(self):
