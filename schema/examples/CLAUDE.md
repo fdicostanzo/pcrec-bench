@@ -103,6 +103,24 @@ File names are not chosen: rule X4 makes the name the record id plus
   the harness, on purpose — see above). `--check` fails the build when
   the committed file drifts from what it produces.
 
+- `boolgrain-example@0.1__example-boolscan_1.0.0_block-nosom-nocaps-simd__example-box__20260917T120000Z.jsonl`
+  — the schema **v1.6** record (lane `b44boolgrain`, Frank's Q3
+  boolean-grain ruling, `capability_set_v1.md` §5.6 option B):
+  `testee.grain = boolean` on a fictional `example-boolscan` engine
+  (modeled on `testees/vectorscan/CLAUDE.md`'s real shape, named
+  differently so it never collides with that lane's own testee_id
+  namespace — no adapter under `testees/` corresponds to it, same
+  precedent as the `v8-regexp` example above). Two match rows: a
+  genuine match, scored `matched-as-expected` with `observed` ABSENT
+  entirely (the grain skips the span comparison — no span is emitted,
+  correct or otherwise); and a false positive (expected nomatch,
+  observed match), scored `did-not-match-as-expected` with
+  `observed.span: null` — the schema's OTHER legal shape for "no span
+  known", never the schema-illegal `[null, null]` array
+  `harness.outcome_for`'s old, ungrained code would have built. This is
+  the ACCEPT-side coverage of rule X34; `bad/x34-boolean-grain-nonnull-
+  span.jsonl` is its one-field-mutation reject-side control.
+
 ## Editing one
 
 Records are hashed (`content_hash`, note §3). After editing, restamp:
