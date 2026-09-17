@@ -665,6 +665,58 @@ EXT_BENCH_ROSTER = [
                                     "recursion", "conditionals", "k-reset",
                                     "control-verbs", "callouts",
                                     "span-reporting", "captures")]),
+    # tre-default ([B7]/L6b wave 2, lane l6btre, 2026-09-17): a POSIX
+    # leftmost-longest engine (`testees/tre/`, `tre_regncompb`/
+    # `tre_regnexecb`, REG_EXTENDED). WITNESSED before declaring (CS5's
+    # own rule, docs/dev/measurements/2026-09-17-tre-capability-witness-
+    # census.txt, `probe_tre_capability_census.py` beside it): a real
+    # compile through the adapter for all 17 REQUIRES_VOCAB tokens PLUS
+    # all 64 corpus patterns (41/64 compiled), plus MATCH-GRAIN
+    # confirmations for four constructs that COMPILE but do NOT mean
+    # what their spelling suggests (testees/tre/CLAUDE.md has the full
+    # account -- these are SILENT MISPARSE hazards, not capabilities):
+    #   k-reset          -- `a\Kb` compiles and MATCHES "aKb" literally
+    #                       (backslash before a non-special letter drops
+    #                       silently to the bare letter -- no keep-reset
+    #                       ever happens; NOMATCH on "ab" proves it)
+    #   control-verbs    -- `a(*FAIL)b`/`(*ACCEPT)`/`(*SKIP)` all
+    #                       compile as an ORDINARY capturing group whose
+    #                       leading `*` is silently DROPPED (`(*FAIL)`
+    #                       parses as a group matching literal "FAIL") --
+    #                       none of the three ever fires as a control verb
+    #   recursion        -- `(a\g<1>?b)` (the one recursion spelling that
+    #                       compiles) matches "ag<1>b" literally, i.e.
+    #                       `\g` drops to bare "g" the same way `\K` drops
+    #                       to bare "K" -- NO recursion ever happens
+    #                       (NOMATCH on the genuinely-recursive "aabb")
+    #   unicode-properties -- both `\p{L}` and `\p{Alpha}` REFUSE (code
+    #                       10, "Invalid contents of {}") -- unlike
+    #                       Oniguruma's ASCII-encoding narrowing
+    #                       (testees/onig/CLAUDE.md item 3), TRE has NO
+    #                       `\p{...}` construct at all, not even a POSIX
+    #                       ctype-name variant
+    # `named-groups`/`free-spacing` (CS5's own two named opens) BOTH
+    # REFUSE outright (`(?<name>...)`/`(?P<name>...)`/`(?x)` all "Invalid
+    # regexp") -- CONFIRMED UNSATISFIED, not merely undocumented.
+    # `lookbehind-variable`/`lookaround`/`atomic-group`/`possessive-
+    # quantifier`/`conditionals`/`callouts` all REFUSE cleanly (each its
+    # own distinct diagnostic; possessive quantifiers alone give a
+    # DIFFERENT code, 13 "Invalid use of repetition operators", not the
+    # generic 2).
+    # SATISFIED, all confirmed by witness at MATCH grain, not compile
+    # alone: `backrefs` (`(a)\1`, tre_have_backrefs=1); `span-reporting`/
+    # `captures` (tre_regnexecb always reports pmatch[0..re_nsub], the
+    # SAME per-group span PCRE2/Oniguruma report); `non-utf8-subject`
+    # (tre_regncompb/tre_regnexecb's "b"-suffixed BYTE-LITERAL variants
+    # bypass locale/multibyte decoding entirely -- the I-72 literal-byte
+    # witness matches [0,7) end to end, testees/tre/CLAUDE.md's own
+    # note on why the SHARED cross-engine `\x93[\x20-\x7e]*\x94` witness
+    # is NOT the right one for TRE, which has no `\xHH` escape at all);
+    # `true-end-anchor` (this adapter's OWN `^(?:...)$` whole-subject
+    # wrap, witnessed both directions plus the trailing-newline TRUE-
+    # end-anchor control -- testees/tre/CLAUDE.md).
+    ("tre-default", ["backrefs", "span-reporting", "non-utf8-subject",
+                     "captures", "true-end-anchor"]),
 ]
 
 
