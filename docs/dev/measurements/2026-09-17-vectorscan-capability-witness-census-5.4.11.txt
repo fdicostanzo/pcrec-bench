@@ -1,0 +1,102 @@
+docs/dev/measurements/2026-09-17-vectorscan-capability-witness-census-5.4.11.txt
+Source: probe_vectorscan_capability_census.py (this directory)
+Lane: l6bvs ([B7]/L6b wave 2, capability_set_v1.md 11.1)
+Date: 2026-09-17T15:00:15Z
+Bench commit (worktree base): master @ c5180ed, branch lane/l6bvs
+Vectorscan: libvectorscan-dev 5.4.11-2ubuntu2 (pkg-config libhs 5.4.11),
+  direct-linked -lhs, /usr/include/hs/*.h
+Compiler: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, -O2 -std=gnu11
+Box: ubuntubudu, Linux 7.0.0-29-generic x86_64
+Load at run time: 6.88 7.79 7.79 (pcrec's ~7.5h solo battery owns the box
+  per this session's HARD RULE; NOT a quiet-box run and does not need to
+  be -- this probe is COMPILE-ONLY, no timing, no match run, no driver
+  loop beyond the compile call itself, mirroring probe_rxt_format.py's
+  own stated exemption from the quiet-box discipline)
+Command: python3 docs/dev/measurements/probe_vectorscan_capability_census.py
+
+THIS ARCHIVE IS THE SECOND OF TWO RUNS (the driver's `VS_DRIVER_FLAGS`
+changed between them, on evidence THIS FIRST RUN produced -- see
+"A/B COMPARISON" at the foot). The table immediately below is the FINAL
+run, `VS_DRIVER_FLAGS = 0` (no HS_FLAG_UCP, no HS_FLAG_UTF8, no
+HS_FLAG_SOM_LEFTMOST) -- the flags testees/vectorscan/driver.c ships
+with. The roster declaration in bench/capability/gen_patterns.py's
+EXT_BENCH_ROSTER is derived from THIS run.
+
+=== EXECUTION-MODEL facts (not compile witnesses) ===
+span-reporting       NOT SATISFIED -- HS_FLAG_SOM_LEFTMOST is never set by this config (that is the `nosom` config's whole reason to exist; the som config, documented not built, would satisfy it)
+non-utf8-subject     SATISFIED -- HS_FLAG_UTF8 is never set; this driver is byte-oriented (Vectorscan's documented default), same as every other testee's default 8-bit convention
+captures             NOT SATISFIED -- Hyperscan has NO capturing-group mechanism at all, structurally (confirmed by pass 1's own `named-groups` witnesses below: they compile clean, because Hyperscan accepts the SYNTAX and silently treats every group as non-capturing -- see this file's own reading in testees/vectorscan/CLAUDE.md)
+
+=== pass 1: one isolated witness per REQUIRES token (compile-time constructs only) ===
+backrefs                 b'(a)\\1'                      did-not-compile  hs_compile failed (code -4, expression 0): Back-references are unsupported.
+lookaround               b'(?=a)a'                      did-not-compile  hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+lookaround               b'(?<=a)b'                     did-not-compile  hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+lookbehind-variable      b'(?<=a|bc)x'                  did-not-compile  hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+possessive-quantifier    b'a*+'                         did-not-compile  hs_compile failed (code -4, expression 0): Possessive quantifiers are not supported.
+atomic-group             b'(?>a*)b'                     did-not-compile  hs_compile failed (code -4, expression 0): Atomic groups are unsupported.
+recursion                b'(a(?R)?b)'                   did-not-compile  hs_compile failed (code -4, expression 0): Unrecognised character after (? at index 2.
+recursion                b'(a(?1)?b)'                   did-not-compile  hs_compile failed (code -4, expression 0): Subpattern reference unsupported at index 2.
+conditionals             b'(?(1)a|b)(a)?'               did-not-compile  hs_compile failed (code -4, expression 0): Conditional references are not supported.
+k-reset                  b'a\\Kb'                       did-not-compile  hs_compile failed (code -4, expression 0): \K at index 1 not supported.
+control-verbs            b'a(*ACCEPT)b'                 did-not-compile  hs_compile failed (code -4, expression 0): Unknown control verb (*ACCEPT) at index 1.
+control-verbs            b'a(*FAIL)b'                   did-not-compile  hs_compile failed (code -4, expression 0): Unknown control verb (*FAIL) at index 1.
+control-verbs            b'a(*SKIP)b'                   did-not-compile  hs_compile failed (code -4, expression 0): Unknown control verb (*SKIP) at index 1.
+unicode-properties       b'\\p{L}'                      compiled
+unicode-properties       b'\\p{Alpha}'                  did-not-compile  hs_compile failed (code -4, expression 0): Unknown property at index 3.
+named-groups             b'(?<name>a)'                  compiled
+named-groups             b'(?P<name>a)'                 compiled
+free-spacing             b'(?x) a b c'                  compiled
+callouts                 b'a(?C1)b'                     did-not-compile  hs_compile failed (code -4, expression 0): Callout at index 1 not supported.
+true-end-anchor          b'a\\z'                        compiled
+
+=== pass 2: every bench/capability corpus pattern (64) ===
+n patterns: 64
+REFUSED  logparse-atomic                                  ['requires-atomic-group']                -> hs_compile failed (code -4, expression 0): Atomic groups are unsupported.
+REFUSED  wild-logparse-base10num-grok                     ['requires-atomic-group', 'requires-lookaround'] -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+REFUSED  wild-logparse-base10num-noatomic                 ['requires-lookaround']                  -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+REFUSED  wild-logparse-quotedstring-grok                  ['requires-atomic-group', 'requires-lookaround'] -> hs_compile failed (code -4, expression 0): Atomic groups are unsupported.
+REFUSED  wild-logparse-quotedstring-noatomic              ['requires-lookaround']                  -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+REFUSED  wild-logparse-syslogbase-expanded                ['requires-lookaround', 'requires-named-groups'] -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+REFUSED  wild-logparse-winpath-grok                       ['requires-atomic-group']                -> hs_compile failed (code -4, expression 0): Atomic groups are unsupported.
+REFUSED  wild-codegrammar-json-number-extended            ['requires-free-spacing']                -> hs_compile failed (code -4, expression 0): Unterminated comment.
+REFUSED  wild-codegrammar-json-stringcontent-escape       ['requires-free-spacing']                -> hs_compile failed (code -4, expression 0): Unterminated comment.
+REFUSED  doubled-word                                     ['requires-backrefs']                    -> hs_compile failed (code -4, expression 0): Back-references are unsupported.
+REFUSED  dup-param-detect                                 ['requires-backrefs']                    -> hs_compile failed (code -4, expression 0): Back-references are unsupported.
+REFUSED  phone-palindrome-6                                ['requires-backrefs']                    -> hs_compile failed (code -4, expression 0): Back-references are unsupported.
+REFUSED  quoted-delim-match                                ['requires-backrefs']                    -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+REFUSED  tag-pair-match                                    ['requires-backrefs']                    -> hs_compile failed (code -4, expression 0): Back-references are unsupported.
+REFUSED  currency-lookbehind-fixed                         ['requires-lookaround']                  -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+REFUSED  email-local-nodup                                 ['requires-lookaround']                  -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+REFUSED  float-literal-bound                               ['requires-lookaround']                  -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+REFUSED  negation-scope-lookbehind-var                     ['requires-lookaround', 'requires-lookbehind-variable'] -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+REFUSED  pwd-strength-chain                                ['requires-lookaround']                  -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+REFUSED  balanced-parens-rec                               ['requires-recursion']                   -> hs_compile failed (code -4, expression 0): Unrecognised character after (? at index 11.
+REFUSED  bracket-array-define                              ['requires-recursion', 'requires-free-spacing'] -> hs_compile failed (code -4, expression 0): Subpattern reference unsupported at index 58.
+REFUSED  nested-comment-rec                                ['requires-recursion']                   -> hs_compile failed (code -4, expression 0): Subpattern reference unsupported at index 29.
+REFUSED  tag-depth3-bound                                  []                                       -> hs_compile failed (code -4, expression 0): Back-references are unsupported.
+REFUSED  utf8-lead-no-cont                                 ['requires-non-utf8-subject']            -> hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+compiled: 40 / 64
+
+=== A/B COMPARISON: HS_FLAG_UCP set vs unset (the reason the driver ships with flags=0) ===
+
+WITH HS_FLAG_UCP (the driver's first cut, REJECTED):
+  corpus compiled: 35 / 64
+  five ADDITIONAL refusals vs the flags=0 table above, none tagged
+  requires-unicode-properties, all "\b unsupported in UCP mode":
+    wild-waf-crs-942140-dbnames        (no requires-* tags)
+    wild-waf-crs-942360-concat-sqli    (no requires-* tags)
+    wild-secrets-aws-access-key-id     (no requires-* tags)
+    wild-secrets-github-pat            (no requires-* tags)
+    wild-codegrammar-json-constant     (no requires-* tags)
+  isolated witness \p{L} compiled IDENTICALLY either way (both runs:
+  "unicode-properties  b'\\p{L}'  compiled")
+
+WITHOUT HS_FLAG_UCP (the driver's shipped flags, this archive's main
+table above):
+  corpus compiled: 40 / 64
+  all five \b-bearing patterns above compile clean; \p{L} still compiles
+  clean; \p{Alpha} still refuses ("Unknown property") on both runs
+
+VERDICT: HS_FLAG_UCP buys `unicode-properties` NOTHING (the \p{L}
+witness is flag-independent) and COSTS 5 real corpus patterns' worth of
+\b support. VS_DRIVER_FLAGS = 0 is strictly better; shipped as such.

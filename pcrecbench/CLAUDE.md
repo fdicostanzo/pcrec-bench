@@ -8,7 +8,7 @@ the record's shape is `docs/design/record_schema.md`.
 |---|---|
 | `__main__.py` | the CLI: `run` (`--tier pinned\|scratch`), `quick` (the edit-test loop's one-cell surface, [B10]), `index`, `quiet`, `testees`, `report`, `interpret` |
 | `interpret.py` | THE INTERPRETER ([B13], `docs/design/interpreter_v1.md` v1.2): a deterministic fact-finder over a committed report **TSV** and `store/index.tsv` — never the markdown, never a record, never an engine. Emits the FIRED catalogue rules with their rows, numbers and record ids, and the rules that did NOT fire with the reason each did not. The rules live in `catalogue/rules.toml`, which this module is checked against by `make check-interpret`; this file holds the header's known-key split (§2.1, normative), the raising VIEW every rule function is handed (§3.2.2), the 31 rule functions, §5.2's counted collapse, the predictions reader and evaluator (§6), and the renderer whose only sentence-production surface is one `str.format` per rule template (§7.1) |
-| `harness.py` | contract §4's seven steps; `outcome_for()` is the ONE place an engine's answer becomes a `match_outcome` (since [B42] L5: an optional `convention` parameter, R5 B1/CB1 — a no-op on every real corpus row, see `capability.py`'s docstring); `run_cell(tier=, patterns=, subject_limit=, budget=)` is what `quick` parameterises — no second code path; since [B42] L5 also runs `capability.missing_capabilities()` before `adapter.compile()` for every pattern, producing an `unsupported-by-declaration` compile row (with `declaration_ref`) in place of a real compile attempt where it fires |
+| `harness.py` | contract §4's seven steps; `outcome_for()` is the ONE place an engine's answer becomes a `match_outcome` (since [B42] L5: an optional `convention` parameter, R5 B1/CB1 — a no-op on every real corpus row, see `capability.py`'s docstring; since lane `b44boolgrain`, schema v1.6: an optional `grain` parameter, default `"full"` — `run_cell` reads `testee_block.get("grain", "full")`, the same declaration seam `conventions` already has — at `grain="boolean"` a matching row is never scored against a span it cannot know, and the private `_observed_span()` helper never builds a schema-illegal `[None, None]` array); `run_cell(tier=, patterns=, subject_limit=, budget=)` is what `quick` parameterises — no second code path; since [B42] L5 also runs `capability.missing_capabilities()` before `adapter.compile()` for every pattern, producing an `unsupported-by-declaration` compile row (with `declaration_ref`) in place of a real compile attempt where it fires |
 | `capability.py` | [B42] L5 (lane b42cap, 2026-09-16): THE PRE-COMPILE CAPABILITY POLICY (`docs/design/capability_set_v1.md` 5.3) — `REQUIRES(pattern) ⊄ capabilities(testee) ⇒ unsupported-by-declaration`, decided in `harness.run_cell` before `adapter.compile()` is called. `REQUIRES_VOCAB` (17 tokens, 5.1 + 6.2's `true-end-anchor`) is the closed vocabulary; `pattern_requires()` reads `Pattern.tags`' `requires-*` entries against it; `capabilities_for()`/`missing_capabilities()` read a set's `.rxt` `ext bench` aux block via TWO paths — `sb.rxt.aux_rows` when the loader already has it, or `rxt_source.load_aux_rows()` (the sidecar/shim path — was `bench/capability`'s real path until the O-29 fix pin a770139e + the [B42] sidecar switch made that set whole-file loadable, `sb.rxt.aux_rows`; still the path for any future non-`.rxt` set carrying an `ext bench` block) otherwise — cached per `sb.root`. Fail-closed throughout: a testee/token absent from the matrix satisfies nothing |
 | `subbench.py` | loads `bench/<name>/`; owns the regime→subject mapping and `subbench.content_hash`; `_load_manifest` is GENERIC on a subject manifest's column count (4, the original shape, or 5 with `periodic` appended, [B17]) — no column position is hard-coded beyond "periodic, if present, is last". `bench/loglines`' manifests use the same column, in the same place ([B11.1]). Since KB-12 ([B36]'s incident): `Subbench.__init__` checks EVERY pattern and subject id (short and throughput) against the record schema's own `$defs/slug` rule (`check_id`, `_slug_pattern` — the regex is READ from `schema/record.schema.json`, never retyped) and raises `SubbenchError` naming the offending id, the set and the rule, so `run`/`quick` refuse in under a second instead of after every trial of a cell has already run (bench/syntax@0.1's incident: six cells, 259 minutes, 0 records written, all refused at `store.write()`'s validator). Since [B42] L4 (lane b42load): a sidecar's `rxt_source = "<relative path>"` is the ONE-LINE switch that loads `[[patterns]]` from an `.rxt` file (`rxt_source.py`) instead of the TOML array — present, `[[patterns]]` is ignored outright, so a set does not need its stale array deleted to switch. `Pattern.file` is now OPTIONAL: a pattern carries EITHER `file` (the original per-pattern-`.rx`-file shape) OR inline `text` (an `.rxt` block's own decoded bytes), never neither — `pattern_bytes()` reads whichever is present, opening nothing for an `.rxt`-sourced pattern. Since [B42] L5: `Expectation` gains a `.convention` slot (R5 B1/CB1), always `None` from the real 9-column `expectations.tsv` loader — set only by a future `under <convention>`-qualified row's own loader, which does not exist yet |
 | `rxt_source.py` | [B42] L4 (lane b42load): THE `.rxt` PATTERN-SOURCE LOADER — the ONE sanctioned reader of pcrec's `.rxt` format on this side (`pcrec --list-source`, docs/spec/rxt_format.md at pin a770139e/abi 25 (cd371441 + the O-29 close-frame fix); no second `.rxt` parser — D2 of `docs/design/rxt_needs_v1.md` 3's acceptance checklist). `resolve_pcrec_bin()` delegates to the SAME pin resolution `export_rxt.py --verify`'s default already uses (`adapters.discover()["pcrec"].pin_binary(build=False)`) — never builds; a missing pin is `RxtSourceError` BY NAME. `parse_list_source()` reads the dump's own `#kind`/`#line`/`#section` structure column-NAME-driven (never a hard-coded column index); `_decode_dump_field` is its OWN escape decoder (NOT `export_rxt.decode_rxt_escape` — that one's plain `.encode("utf-8")` fallback corrupts a RAW, unescaped high byte a plain `pattern` block's column carries verbatim, MEASURED this lane; `errors="surrogateescape"` on both the subprocess decode and the re-encode is the lossless fix). `load_rxt_source()` is the entry point: it runs two gates before returning anything — `check_no_build_directives` (a pattern-SOURCE `.rxt` file declares no `target`/`config` row, ever; an `ext` block's rows live only in `#section aux` and never trip it) and `check_block_sidecar_agreement` (every pattern block appears exactly once in what the loader hands the harness, ids matched by the block's own `name`). `RxtSource` exposes `patterns` (in file order), `provenance`/`variants`/`cases` indexed by `block_line`, `aux_rows` (the `ext` tree, verbatim — interpreted by nothing here, a future L5's own reading), and `head` (file-level description/oracle/vocabulary/tag). **KNOWN GAP (outbox O-29), found by this lane and FIXED UPSTREAM at pin a770139e (2026-09-16, inbox I-71 — see the lane report `docs/dev/lanes/b42load_report.md` and docs/dev/measurements/2026-09-16-o29-verify-a770139e.txt):** at pin cd371441, `--list-source` silently dropped the `#section provenance`/`variants` rows for every pattern block whose sub-block was closed by a blank/comment line (no diagnostic, exit 0; the flat `m`/`n`/`mc` case rows unaffected) — reproduced on a 3-pattern synthetic fixture and on the real 64-pattern `bench/capability` corpus. This module reads the dump FAITHFULLY either way; at the fix pin the corpus dumps 64/64 and `bench/capability` loads whole-file (the sidecar switch). Since [B42] L5: `load_aux_rows()` is a NARROWER entry point — the `#section aux` tree and head facts only, skipping the two per-pattern-content gates (`check_block_sidecar_agreement`, `check_provenance_agreement`) that make `bench/capability` un-loadable AS A WHOLE at this pin — for a caller (`capability.py`) that wants only the `ext` tree |
@@ -1023,3 +1023,71 @@ must know:
 does not change it. The `interpret` subcommand is dispatched before
 argparse in `__main__.py`, the same way `report` is, so it owns its own
 flags.
+
+## The reporter, KB-18 (2026-09-17) -- a did-not-compile diagnostic is FULL, never truncated, v17
+
+Lanes `b42repdiag` (the fix) and `b42repfin` (the regen wave and this
+entry). `docs/dev/known_issues.md` KB-18, found on bench/capability@0.1's
+first sample: `wild-waf-crs-942500-comment-obfuscation`'s did-not-compile
+diagnostic (a genuine pcrec DFA-emitter bug -- an unescaped `*/` in a
+generated comment desynchronizes the rest of the C compile, cascading
+into two more errors) had to be read out of the raw JSONL record because
+`_diagnostic_first_line` (since [B12] R10) kept only the first line and
+printed `[truncated, diagnostic continues]` in its place
+(docs/dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md, Finding F).
+
+- **`_diagnostic_full` replaces `_diagnostic_first_line`.** A
+  did-not-compile row's `diagnostic` is carried VERBATIM and IN FULL,
+  bounded only by `record.FREE_TEXT_MAX` (1,048,576 chars, schema v1.5's
+  hygiene bound, [B30]) as a defensive ceiling -- the schema itself caps
+  a compile row's `diagnostic` at 8192 chars today, well under it. Both
+  call sites (the markdown `not ranked: ... did-not-compile (<diagnostic>)`
+  bullet, the TSV `did_not_compile` row) are ONE-PHYSICAL-LINE contexts,
+  so an embedded newline/tab/backslash is rendered VISIBLY (backslash
+  escaped FIRST, then `\n`/`\t`) rather than executed -- nothing is
+  dropped, and the mapping is losslessly reversible: a diagnostic that
+  happens to already contain the literal two characters `\n` renders
+  distinguishably from one with a real embedded newline. This means
+  EVERY literal backslash in a diagnostic is doubled, not only ones
+  adjacent to a real control character -- a deliberate, necessary part
+  of the reversibility guarantee, not an oversight; see the finding
+  below for where it fires on ordinary single-line text.
+  `pcrecbench/__main__.py`'s OWN, SEPARATE `_diagnostic_first_line`
+  (KB-10's `quick --vs` refused-arm one-liner, genuinely one-line-by-
+  design) is UNCHANGED.
+- `REPORTER_VERSION` bumps to `v17 (2026-09-17)`;
+  `pcrecbench/tests/test_report.py` gained `test_diagnostic_full_kb18`
+  (a multi-line diagnostic escapes visibly and survives whole; a
+  single-line one is unchanged when it carries no backslash; `None`/empty
+  render `(no diagnostic)`; a literal two-character `\n` in the SOURCE
+  renders distinguishably from a real embedded newline). Standalone run
+  (`python3 -m pcrecbench.tests.test_report`, pre-regen): 78 passed, 0
+  failed.
+- **The regen wave (lane b42repfin) touched TWO groups beyond the
+  version-line stamp, both EXPLAINED, neither a bug.** All 43 committed
+  report groups (129 files) were re-rendered from each file's OWN
+  committed query and diffed against the last commit; 41 groups are
+  byte-identical but for the `reporter: v16` -> `v17` line.
+  `2026-09-17-capability-0.1-*-first-a770139e.*` moves exactly as KB-18
+  intended (5/5/157 changed lines in tsv/md/subject-grain: the four
+  `wild-waf-crs-942500-comment-obfuscation` did-not-compile rows now
+  carry the full gcc transcript). `2026-09-07-syntax-0.1-*-first-
+  d34c9131.*` ALSO moves (85/85/2437 changed lines) -- diagnosed and
+  CONFIRMED NOT store drift (the query already carries an explicit
+  `--since`/`--until` pair; both renders match the same 6 records, 0
+  superseded, 0 excluded) but the SAME escaping rule firing on seven
+  bench/syntax patterns whose pcrec diagnostics quote a literal
+  backslash-letter escape sequence with no embedded control character at
+  all -- `esc-ctrl` (`\c`), `esc-octal-o` (`\o`), `msc-c-uc` (`\C`),
+  `msc-r-uc` (`\R`), `msc-x-uc` (`\x`), `unp-p-lc`/`unp-p-uc` (`\p{...}`)
+  -- each rendering e.g. `\c` as `\\c` for the same lossless-reversibility
+  reason stated above. Neither the lane's own one-record manual proof nor
+  the disposable `regen_reports.py` scratch script's diff classifier
+  (which only recognised the OLD truncation marker as an expected class)
+  anticipated this population; `git diff` against the last commit is
+  what confirms both groups' deltas are fully accounted for by these two
+  causes and nothing else. The four committed `reports/*.interpretation.md`
+  sidecars were also regenerated (`scripts/regen_sidecars.py`, 0
+  failures, all determinism-checked) -- the capability sidecar's own
+  finding line now shows the full gcc transcript in place of the old
+  truncation marker, proving the fix reaches the interpreter path too.

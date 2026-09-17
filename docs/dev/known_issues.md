@@ -769,3 +769,204 @@ with the deliberately-wrong rule reproduced inline (never by calling
 production code) as the negative control proving the retired rule still
 gives the OLD wrong counts (2, 3), so the fix is shown to have changed a
 real number rather than being a no-op.
+
+## KB-18 (2026-09-17, FIXED same day by lane b42repdiag) — the reporter's did-not-compile diagnostic was truncated to its first line, dropping the rest silently past a stated marker
+
+Flagged by `docs/dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md`
+§2 Finding F: `wild-waf-crs-942500-comment-obfuscation` (a WAF
+SQLi-obfuscation detection rule whose own subject matter is the C-comment
+idiom `/*!...*/`) does not compile on pcrec's DFA route — a genuine
+pcrec DFA-emitter code-generation bug, not a declared cap: the generated
+`artifact.c` embeds the pattern's own literal bytes, unescaped, inside a
+human-readable annotation comment naming the matched byte sequence at
+each DFA state, and the pattern's own `/*!*/` terminates that C comment
+early, desynchronizing the rest of the file (two cascading errors follow
+from the one `*/`). The ledger's author had to read the FULL gcc
+diagnostic out of the raw record
+(`store/records/capability@0.1/pcrec_a770139e_auto-caps-simdna/…jsonl`)
+because the report's own `not ranked:` bullet read `"the artifact did
+not build: [truncated, diagnostic continues]"` — `_diagnostic_first_line`
+(`pcrecbench/report.py`, since [B12] R10) partitioned the diagnostic on
+its first `\n` and discarded everything after it, printing that marker
+in place of the rest rather than the rest itself. The marker made the
+loss VISIBLE, which is more than silent truncation would have done, but
+the information itself was still gone from the one place ([B41]'s own
+premise) a reader is meant to be able to trust without re-opening the
+JSONL.
+
+FIXED (2026-09-17, lane b42repdiag): `_diagnostic_first_line` is
+REPLACED by `_diagnostic_full` (`pcrecbench/report.py`) — the record's
+own `diagnostic` string, VERBATIM and IN FULL, bounded only by
+`record.FREE_TEXT_MAX` (1,048,576 characters, schema v1.5's hygiene
+bound, [B30]) as a defensive ceiling (the schema caps a compile row's
+`diagnostic` at 8192 characters today, well under it — this ceiling
+exists for a future schema revision, not for any record this project
+can write now). Both call sites — the markdown `not ranked: ...
+did-not-compile (<diagnostic>)` bullet, and the TSV's `did_not_compile`
+row — are one-physical-line contexts, so an embedded newline, tab or
+backslash is rendered VISIBLY (backslash-escaped, backslash escaped
+FIRST so the mapping is losslessly reversible rather than merely
+readable) instead of executed; nothing is dropped to make that true.
+`pcrecbench/__main__.py`'s OWN, separate `_diagnostic_first_line`
+(KB-10's `quick --vs` refused-arm one-liner, a genuinely one-line-by-
+design CLI printout) is a different function at a different call site
+and is UNCHANGED.
+
+`REPORTER_VERSION` bumps `v16 (2026-09-08)` → `v17 (2026-09-17)`; every
+committed report under `reports/` and its `.interpretation.md` sidecar
+is regenerated in the same commit (see `reports/CLAUDE.md` for the
+diff classification — mechanically, only the version-stamp line and the
+one pattern's did-not-compile diagnostic cell move, on the two committed
+capability@0.1 reports). `pcrecbench/tests/test_report.py` gains
+`test_diagnostic_full_kb18` (a multi-line diagnostic survives whole with
+visibly-escaped newlines in both render formats; controls: an unchanged
+single-line diagnostic, `None`/empty rendering `(no diagnostic)`, and a
+diagnostic already containing the literal two characters `\n` rendering
+distinguishably from a real embedded newline); `test_reporter_version_pin`
+re-pins `v17`.
+## KB-19 (2026-09-17, FIXED same day by [B42] L6b; filed as KB-18 in lane l6bre2, RENUMBERED at merge — KB-18 is the reporter truncation above) — `run.driver_compiler` joined EVERY driver built in the process, not just the current record's own, once a second compiler FAMILY existed on the roster
+
+`pcrecbench/driverrun.py`'s `DRIVER_BUILDS` dict is process-global,
+keyed by driver binary path, and `driver_build_provenance()` read it
+UNSCOPED — every entry any adapter had registered so far in the current
+process, joined with `", "` — into `run.driver_compiler`. This was a
+silent no-op invariant for the project's whole prior history: every
+testee's driver was built by the SAME compiler family (`gcc`), so "every
+compiler used so far in this process" and "the compiler THIS record's
+driver used" always happened to be the same one value.
+
+`testees/re2/`'s driver ([B42] L6b) is the first built by a DIFFERENT
+family, `g++`. A `quick --vs` comparing an `re2-*` testee against a
+`pcre2-*` one (both testees prepared in ONE process) populated both
+adapters' entries before either record was built, so the SECOND record's
+`run.driver_compiler` read `"g-15.2.0, gcc"` — both, comma-and-space
+joined — and failed `schema/validate.py`'s single-token pattern
+(`^[a-z0-9][a-z0-9._-]*$`, which also excludes the bare `+` in a literal
+`"g++"` even before the join). Reproduced: `quick --subbench email
+--pattern orig --regime search --testee re2-default --vs pcre2-interp
+--subjects 5` rejected the SECOND (pcre2-interp) record at
+`store.write()` with exactly that message.
+
+A separate, smaller issue in the same path: `g++`'s raw name cannot
+satisfy the pattern at all (the `+` characters), so `run.driver_compiler`
+must go through `record_schema.md §6.7`'s shared `env.canon_compiler`
+normalization (the SAME function `environment.compiler` uses) rather
+than the raw `$CC`/`$CXX` token — `"g++ (Ubuntu 15.2.0-16ubuntu1)
+15.2.0"` normalizes to `"g-15.2.0"` (the `++` run collapsing to one
+separator), which the pattern accepts. `record_schema.md §6.7`'s own
+text already flags the underlying gap ("one `compiler` field may be the
+wrong shape once a non-C testee lands") — this is that flagged case
+landing for a C-FAMILY toolchain that is not literally `gcc`, not yet
+the fully non-C case (rustc, a python interpreter) the note anticipated.
+
+**Fixed** two ways: (1) `testees/re2/adapter.py`'s `prepare_driver`
+registers `env.canon_compiler(env.compiler_raw(cxx))`, never the raw
+`cxx` string, into `DRIVER_BUILDS`; (2) `pcrecbench/harness.py` clears
+`DRIVER_BUILDS` immediately before `adapter.prepare(testee_id, workdir)`
+for the CURRENT testee — since `prepare()` always re-registers its own
+entry immediately afterward, this scopes the dict to one testee's own
+build(s) by construction and is a strict no-op for every existing
+single-compiler-family testee. Verified: the same `quick --vs` command
+above now writes two valid records (`run.driver_compiler` = `"g-15.2.0"`
+on the re2-default record, `"gcc-15.2.0"` on the pcre2-interp one), and
+no existing committed record or test exercises two compiler families in
+one process, so the fix moves no existing number.
+## KB-20 (2026-09-17, FIXED by lane b43giveup) — the driver protocol's BATCHED iteration loop re-paid a per-call give-up's cost `iters` times, turning a cheap `gave-up` outcome into a `timed-out` one purely as an artifact of how many times the harness happened to ask
+
+(NUMBERING NOTE: KB-18 is lane/b42repdiag's diagnostic-truncation row and
+KB-19 is lane/l6bre2's `DRIVER_BUILDS` row, both pending merge as of this
+lane's start — renumber on conflict at merge; this row's own content does
+not depend on either number.)
+
+REPORTED by pcrecdev1's F3 investigation (2026-09-17, their
+`docs/dev/lanes/f3search_report.md`) and CONFIRMED here against the
+records it names: `store/records/capability@0.1/pcrec_a770139e_{auto,vm,
+vm-in}-caps-simdna/…jsonl`, pattern `evil-alt-nested`, subject
+`rd-evil-alt-near-miss`. All three cells' five trials read
+`match_outcome: timed-out`, `diagnostic: "the per-subject alarm fired"`
+(re-verified in this lane, byte for byte, before the fix — every trial
+of every one of the three testees).
+
+THE BUG, precisely (pcrecdev1's numbers, confirmed against the driver
+protocol's own text at the top of `pcrecbench/adapters.py`): pcrec's step
+budget is one-per-search-call and fires CORRECTLY and CHEAPLY on its own
+terms — a typed give-up in ~2.5-2.8 s per call on the 18-byte subject.
+But the driver's per-subject loop (`testees/pcrec/driver.c`:
+`for (it = 0; it < iters; it++) { ... }`) never breaks early on a
+give-up — it resets and retries every iteration, keeping only the LAST
+answer — and the calibration probe sizes this subject's batch at
+`iters` ≈ 200 (`PROBE_ITERS["search_short"]`, `pcrecbench/harness.py`).
+So EVERY one of ~200 iterations re-pays the ~2.7 s give-up: ≈540 s
+against the 60 s per-subject alarm (`--subject-timeout`). From the
+harness's point of view "the first timed iteration never returned" —
+because the BATCH never returned, though each underlying call did — and
+the row is recorded `timed-out` where the true outcome is `gave-up`.
+
+WHY THIS IS THE BENCH'S OWN HAZARD, not pcrec's: the pcre2 reference arms
+on the SAME (pattern, subject) recorded `gave-up` (via their own
+match-limit refusal) only because pcre2's per-call give-up is cheap
+enough that its ~200-iteration batch fits inside the 60 s alarm. So,
+before this fix, the RECORDED OUTCOME for one (pattern, subject, regime)
+cell depended on the ENGINE's own per-call give-up cost — exactly the
+kind of harness artifact `APPROACH.md`'s comparator exists not to
+produce: a scoreboard column ("timed-out" vs "gave-up") that measures
+the harness's batching choice, not the engine.
+
+FIXED (2026-09-17, lane b43giveup): `pcrecbench/harness.py` gains
+`_first_call_outcomes` (one iters=1 driver call over every subject in a
+regime, BEFORE any batch-sized call runs) and `measure_regime_cell`
+(the new seam `run_cell`'s per-regime loop calls in place of the old
+direct `calibrate()` + `adapter.measure()` pair). A subject whose first
+call gives up is pulled out of `calibrate()`'s probe (so its inflated
+per-iteration time can no longer skew the median that sets `iters` for
+every OTHER subject in the cell either) and out of the batched timed
+run, and is instead measured on its own, at iters=1, for every trial —
+a give-up is now TERMINAL for its own (pattern, subject, regime) cell,
+never re-paid `iters` times. The recorded outcome is still the DRIVER's
+own typed answer (`giveup:<code>[:<name>]`, classified `gave-up` vs
+`crashed` by `harness.classify_giveup`'s existing range rule) — nothing
+about the row's SHAPE changes, because `record.match_row` never stamps a
+`timing` block on any outcome but `matched-as-expected`; a give-up row
+carries no timing today or after this fix. This is a WALL-TIME and
+CORRECTNESS fix (the outcome itself stops depending on the engine's
+give-up cost), never a schema change.
+
+THE NO-OP ARGUMENT for every cell with no give-up subject: when
+`_first_call_outcomes` finds nothing, `measure_regime_cell` calibrates
+and measures over the FULL, UNCHANGED subject list — the exact two
+calls (`calibrate()`, then `adapter.measure()`) `run_cell` made before
+this fix, in the same order, over the same list. The only difference
+from the pre-fix code path is the one extra iters=1 probe call, whose
+rows are inspected and discarded: nothing it returns feeds calibration,
+`n_iters`, or any row the function returns. Checked directly in
+`tools/selfcheck.py`'s `check_giveup_not_batched` (below) with a
+same-subject-list control run alone vs. inside a two-subject cell: both
+reach the identical `n_iters` and the identical per-subject answers.
+
+`tools/selfcheck.py`'s `check_giveup_not_batched` (new, `make
+check-harness`) exercises the fix in ISOLATION against a stub
+`Adapter.measure()` (never pcrec, never a compile — seconds, not the
+540 s the bug's own arithmetic would cost to reproduce for real): a
+give-up subject is NEVER handed a call asking for more than one
+iteration; every trial's row for it reads `giveup:...` BY NAME (dense
+1..N) and `outcome_for` judges it `gave-up`; a sibling "every subject
+gives up" cell does not crash; and the DISTINCTNESS from `timed-out` is
+checked against `check_subject_timeout` (unmodified by this fix: its
+`s-hang` witness never emits a `giveup:` answer at all, so
+`_first_call_outcomes` never touches it — the two paths are shown
+separate, never merged into one).
+
+RE-MEASURE CONSEQUENCE: the three `capability@0.1` first-sample cells
+named above (`evil-alt-nested` × `pcrec-auto-caps`/`pcrec-vm-caps`/
+`pcrec-vm-in-caps`) carry pinned, canonical `timed-out` rows that would
+read `gave-up` under the fixed harness. Pinned records are APPEND-ONLY
+(record_schema.md; this repo never edits or deletes one) — the
+re-measure rides the NEXT capability window (the F1-fix checkpoint pin),
+alongside the I-72 erratum cells it will already be re-running.
+
+OWED: `make check-harness` (324+ checks, ~20 min; NOT run in this lane
+per the manager's hard rule — pcrec's solo battery owns the box) —
+exact command `make check-harness` from the repo root after `pin.sh`'s
+build is in place; `check_giveup_not_batched` is verified standalone
+above and is included in `main()`'s check list so it runs as part of
+that target once granted.

@@ -104,8 +104,28 @@ class RunResult:
 
 # ------------------------------------------------------------- the judging
 
+def _observed_span(row):
+    """The `observed.span` value for a row that claims a MATCH: the real
+    `[start, end]` pair when the driver reported one, or `None` when it did
+    not. Never `[None, None]` -- that array shape is schema-illegal
+    (`schema/record.schema.json`'s `observed.span` requires two INTEGER
+    items when the field is an array at all; `null` is only legal for the
+    whole field). A `grain="boolean"` testee's driver protocol degenerate
+    shape (`docs/design/capability_set_v1.md` 5.6 option B: `START,END ...
+    or "-"`) reports `row.start = row.end = None` on every match, by
+    construction -- this is what turns that into the schema's OTHER legal
+    shape (the field absent from the array) instead of a validator crash on
+    every matching cell (lane l6bvs's finding, `testees/vectorscan/
+    CLAUDE.md` "THE GOVERNING RULING", Level 2). Applied uniformly, not only
+    under `grain="boolean"`: any row that claims a match with no known start
+    is the same "no span to report" fact regardless of why."""
+    if row.matched and row.start is not None and row.end is not None:
+        return [row.start, row.end]
+    return None
+
+
 def outcome_for(row, expectation, regime, subject, giveup_ok=True,
-                convention=None):
+                convention=None, grain="full"):
     """(match_outcome, observed, diagnostic) for one driver answer.
 
     Requirements 4.4's per-(pattern, subject) set, plus the two [B2]
@@ -114,6 +134,31 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
     expected answer was not produced, and there is no `gave-up` value because
     a wrong answer and a refused one are both "not the expected answer"
     (bench/email/NOTES.md states this where a reader of the numbers is).
+
+    `grain` (`docs/design/capability_set_v1.md` 5.6 option B, Frank's Q3
+    ruling 2026-09-16; lane b44boolgrain, the harness half of the finding
+    lane l6bvs proved against this function): the CALLER's own declared
+    SCORING GRAIN -- `testee.grain`, `schema/record.schema.json`, the same
+    shape `convention` above already has. `"full"` (the default, every
+    testee before this lane and every testee that declares nothing) is
+    UNCHANGED: a matching row's span is compared against the expectation's,
+    and a mismatch is `wrong-span-or-captures`. `"boolean"` is for a testee
+    that is STRUCTURALLY incapable of reporting a span at all (Vectorscan's
+    `nosom` config: Hyperscan's `hs_scan` callback hands back an end offset
+    but no start, and this project's driver protocol reports the degenerate
+    `start=end=None` shape rather than a half-true one, `testees/vectorscan/
+    CLAUDE.md` "THE GOVERNING RULING") -- for such a testee, `row.start`/
+    `row.end` are `None` on EVERY match, correct or not, and comparing them
+    against a real expectation span would score every true match
+    `wrong-span-or-captures` (l6bvs's Level 1 finding) with an unwritable
+    record behind it (`_observed_span`'s docstring, Level 2). At
+    `grain="boolean"` the span/capture comparison below is SKIPPED
+    entirely: a match row is `matched-as-expected` iff
+    `row.matched == expectation.matched`, exactly as `did-not-match-as-
+    expected`'s own boolean check already reads regardless of grain --
+    the only thing `grain` changes is which branch a CORRECT match takes.
+    No span or capture is ever emitted for such a testee (`_observed_span`
+    is null-safe on every path, `grain` or no).
 
     `convention` (R5 B1, `docs/design/capability_set_v1.md` 5.6, [B42] L5):
     the CALLER's own declared convention (`testee.conventions`'s first
@@ -169,14 +214,14 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
         # `make check` rather than something the corpus exercises.
         return ("truncated-subject",
                 {"matched": row.matched,
-                 "span": [row.start, row.end] if row.matched else None,
+                 "span": _observed_span(row),
                  "captures": None},
                 "offered %d bytes, the engine took %d"
                 % (subject.length, row.consumed))
     if expectation is None:
         return ("did-not-match-as-expected",
                 {"matched": row.matched,
-                 "span": [row.start, row.end] if row.matched else None,
+                 "span": _observed_span(row),
                  "captures": None},
                 "no expectation exists for this (pattern, subject, regime) -- "
                 "the sub-bench must state one before the cell can be judged")
@@ -190,7 +235,7 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
         # so this branch never fires on a real record.
         return ("did-not-match-as-expected",
                 {"matched": row.matched,
-                 "span": [row.start, row.end] if row.matched else None,
+                 "span": _observed_span(row),
                  "captures": None},
                 "the expectation is scoped to convention %r; this testee's "
                 "own declared convention is %r -- no expectation exists "
@@ -201,16 +246,26 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
     if row.matched != expectation.matched:
         return ("did-not-match-as-expected",
                 {"matched": row.matched,
-                 "span": [row.start, row.end] if row.matched else None,
+                 "span": _observed_span(row),
                  "captures": None},
                 "expected %s, observed %s"
                 % (expectation.expected,
                    "match" if row.matched else "nomatch"))
 
-    if row.matched and (row.start != expectation.start
-                        or row.end != expectation.end):
+    if (grain != "boolean" and row.matched
+            and (row.start != expectation.start
+                 or row.end != expectation.end)):
+        # `grain="boolean"` (docs/design/capability_set_v1.md 5.6 option B):
+        # a testee that structurally never knows its span is never asked
+        # "is this the RIGHT span" -- only "does this row's boolean answer
+        # match the expectation's", which the `row.matched != expectation.
+        # matched` branch above already judges regardless of grain. Without
+        # this guard every genuine match from such a testee lands here
+        # (`row.start`/`row.end` are always `None`, always unequal to a real
+        # expectation span) -- l6bvs's Level 1 finding, reproduced against
+        # this function before the fix.
         return ("wrong-span-or-captures",
-                {"matched": True, "span": [row.start, row.end],
+                {"matched": True, "span": _observed_span(row),
                  "captures": None},
                 "expected span [%s,%s]; observed [%s,%s]"
                 % (expectation.start, expectation.end, row.start, row.end))
@@ -220,7 +275,7 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
             and row.nmatches != expectation.nmatches):
         return ("wrong-span-or-captures",
                 {"matched": row.matched,
-                 "span": [row.start, row.end] if row.matched else None,
+                 "span": _observed_span(row),
                  "captures": None},
                 "expected %d non-overlapping match(es); observed %d"
                 % (expectation.nmatches, row.nmatches))
@@ -403,6 +458,116 @@ def _iters_meeting_target(target_ns, probe_ns, probe_n):
     return iters
 
 
+# ------------------------------------------------------ giveup vs. batching
+
+def _first_call_outcomes(adapter, handle, regime, subjects, timeout):
+    """One iters=1 driver call over every subject in this regime -- the
+    FIRST call, before any batch-sized call runs. -> {subject_id: MatchRow}.
+
+    KB-20 (docs/dev/known_issues.md; the F3 give-up investigation,
+    2026-09-17): the driver protocol's per-subject loop
+    (`for (it = 0; it < iters; it++)`, `adapters.py`'s protocol docstring)
+    never breaks early on a give-up -- it re-tries `iters` times, keeping
+    only the last answer -- so a subject whose ENGINE gives up on every
+    call re-pays that engine's own give-up cost `iters` times inside BOTH
+    `calibrate()`'s probe (sized ~200 for search_short/match) and the
+    timed run that follows it. An engine whose give-up is cheap (pcre2's
+    match-limit refusal) hides this inside the alarm's slack; an engine
+    whose give-up is expensive (pcrec's ~2.7 s/call witness on
+    `evil-alt-nested`) turns a per-call OUTCOME into a per-subject
+    `timed-out` purely as an artifact of how many times the harness
+    happened to ask -- so the RECORDED outcome ends up depending on the
+    engine's own give-up cost, which is exactly the kind of harness
+    artifact this bench exists not to have.
+
+    This probe is cheap (iters=1) and runs BEFORE either batch-sized call,
+    so a give-up is caught on the strength of the driver's own typed
+    answer, never inferred from a batch's timing."""
+    rows_by_trial, _info, _notes = adapter.measure(
+        handle, regime, subjects, 1, 1, timeout=timeout)
+    rows = rows_by_trial[0] if rows_by_trial else []
+    return {r.subject_id: r for r in rows}
+
+
+def measure_regime_cell(adapter, handle, regime, subjects, requested_iters,
+                        trials, driver_timeout, subject_timeout, budget=None):
+    """Calibrate and measure ONE (pattern, form, regime) cell's subjects.
+    -> (n_iters, why, cal, rows_by_trial, notes).
+
+    `rows_by_trial` is a list of `trials` lists of `MatchRow` (the same
+    shape `adapter.measure()` returns); `notes` are harness-level remarks,
+    same meaning as `adapter.measure()`'s own third return value, with the
+    KB-20 sentence appended when a give-up subject was found.
+
+    THE NO-OP CASE, first, because it is the one that must never move a
+    recorded number: when `_first_call_outcomes` finds no give-up, this
+    function calibrates and measures over `subjects` UNCHANGED -- the
+    exact two calls (`calibrate()`, then `adapter.measure()`) `run_cell`
+    made before this function existed, in the same order, over the same
+    list. The only difference from the pre-fix code path is the one extra
+    iters=1 probe call itself, whose rows are inspected and discarded --
+    nothing it returns feeds calibration, `n_iters`, or any row this
+    function returns. A cell with a slow-but-completing subject population
+    (no give-up anywhere) is therefore provably unaffected.
+
+    THE GIVE-UP CASE: subjects whose first call gave up are pulled out of
+    `calibrate()` (so a give-up's inflated per-iteration time can no
+    longer skew the median that sets `n_iters` for everyone else) and out
+    of the batched `measure()` call, and are instead measured on their
+    own, at iters=1, for every trial -- a give-up outcome is TERMINAL for
+    its own (pattern, subject, regime) cell, never re-paid `n_iters`
+    times. Nothing about the give-up ROW's shape in the record changes:
+    `record.match_row` never stamps a `timing` block on any outcome but
+    `matched-as-expected` (a give-up carries none today or after this
+    fix), so this is a WALL-TIME and CORRECTNESS fix (the outcome itself
+    stops depending on the engine's give-up cost), not a schema change."""
+    first = _first_call_outcomes(adapter, handle, regime, subjects,
+                                 driver_timeout)
+    giveup_ids = {sid for sid, row in first.items() if row.is_giveup}
+
+    if not giveup_ids:
+        n_iters, why, cal = calibrate(adapter, handle, regime, subjects,
+                                      requested_iters, driver_timeout,
+                                      subject_timeout, budget=budget)
+        rows_by_trial, _info, notes = adapter.measure(
+            handle, regime, subjects, n_iters, trials, timeout=driver_timeout)
+        return n_iters, why, cal, rows_by_trial, notes
+
+    cal_subjects = [s for s in subjects if s.subject_id not in giveup_ids]
+    giveup_subjects = [s for s in subjects if s.subject_id in giveup_ids]
+    notes = ["%d of %d subject(s) gave up on their first (iters=1) call and "
+             "were held at iters=1 for every trial rather than batched "
+             "(KB-20, docs/dev/known_issues.md): %s"
+             % (len(giveup_subjects), len(subjects),
+                ", ".join(s.subject_id for s in giveup_subjects))]
+
+    if cal_subjects:
+        n_iters, why, cal = calibrate(adapter, handle, regime, cal_subjects,
+                                      requested_iters, driver_timeout,
+                                      subject_timeout, budget=budget)
+    else:
+        # every subject in this (pattern, form, regime) gave up on its
+        # first call: nothing is left to calibrate against.
+        n_iters, why, cal = (
+            1, "every subject gave up on its first call; nothing to "
+               "calibrate", None)
+
+    rows_by_trial = [[] for _ in range(trials)]
+    if cal_subjects:
+        cal_rows, _info, cal_notes = adapter.measure(
+            handle, regime, cal_subjects, n_iters, trials,
+            timeout=driver_timeout)
+        notes.extend(cal_notes)
+        for i, trial_rows in enumerate(cal_rows):
+            rows_by_trial[i].extend(trial_rows)
+    gu_rows, _info2, gu_notes = adapter.measure(
+        handle, regime, giveup_subjects, 1, trials, timeout=driver_timeout)
+    notes.extend(gu_notes)
+    for i, trial_rows in enumerate(gu_rows):
+        rows_by_trial[i].extend(trial_rows)
+    return n_iters, why, cal, rows_by_trial, notes
+
+
 # ------------------------------------------------------------ the status
 
 STATUS_MEASURED = "measured"
@@ -574,6 +739,25 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                                       testee_id)
     os.makedirs(workdir, exist_ok=True)
     say("preparing %s ..." % testee_id)
+    # driverrun.DRIVER_BUILDS is a PROCESS-GLOBAL dict (every driver binary
+    # built in this process, keyed by path) that driver_build_provenance()
+    # below reads UNSCOPED -- every entry, from every testee prepared so
+    # far in this process. That was a silent no-op invariant until [B42]
+    # L6b (testees/re2/), the first adapter whose driver is built by a
+    # DIFFERENT compiler family (g++) than every prior one (gcc): a `quick
+    # --vs` comparing an re2-* testee against a pcre2-* one in one process
+    # populated BOTH testees' compiler entries before either record was
+    # built, and the SECOND testee's record then carried a
+    # `run.driver_compiler` joining both ("g-15.2.0, gcc") -- invalid
+    # against the schema's single-token pattern, and wrong regardless: a
+    # record must state how ITS OWN driver was built, not every driver any
+    # testee measured earlier in this process happened to need. Clearing
+    # here, right before THIS testee's own prepare() (re-)populates it,
+    # scopes the dict to one testee's build(s) by construction -- a
+    # strict no-op for every existing single-compiler-family testee
+    # (prepare() always re-registers its own entry immediately after).
+    from . import driverrun as _drv
+    _drv.DRIVER_BUILDS.clear()
     adapter.prepare(testee_id, workdir)
     testee_block = adapter.describe(testee_id, workdir)
     # `tier` is a SETUP field, not a testee field; an adapter that forces it
@@ -595,6 +779,18 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     # (`outcome_for`'s own `convention` parameter; a no-op today, see its
     # docstring, since no expectation row carries `.convention` yet).
     testee_convention = (testee_block.get("conventions") or [None])[0]
+    # Q3 boolean-grain ruling (lane b44boolgrain, docs/design/
+    # capability_set_v1.md 5.6 option B, `schema/record.schema.json`'s
+    # optional `testee.grain`): the DECLARATION SEAM. An adapter's
+    # `describe()` sets `grain` in the dict it returns (the SAME shape
+    # `conventions` above already reads -- a per-config Python literal
+    # today, exactly as every other testee-level fact in this block is);
+    # `build_setup` copies `testee_block` wholesale into the record's
+    # `testee` object, so a declaring adapter's `grain` is queryable on
+    # every record it writes. ABSENT means `"full"`, so every testee
+    # before this lane -- and every testee that declares nothing --
+    # is provably unchanged.
+    testee_grain = testee_block.get("grain", "full")
 
     # O, the OTHER sentences (module docstring): the scratch-tier sentence,
     # did-not-compile, calibration and adapter notes. The gate's reasons are
@@ -686,9 +882,22 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             handle["subject_timeout"] = subject_timeout
             if iters is None:
                 say("calibrating %s / %s / %s ..." % (testee_id, p.name, regime))
-            n_iters, why, cal = calibrate(adapter, handle, regime, subjects,
-                                          iters, driver_timeout,
-                                          subject_timeout, budget=budget)
+            else:
+                say("measuring %s / %s [%s] / %s ..."
+                    % (testee_id, p.name, form, regime))
+            enum = REGIME_TO_ENUM[regime]
+            t_before = quiet.cpu_times() if timeline is not None else None
+            t_start = time.monotonic()
+            # KB-20 (docs/dev/known_issues.md): a give-up subject is pulled
+            # out of calibration and out of the batched call BEFORE either
+            # runs, on the strength of its own iters=1 first call -- see
+            # `measure_regime_cell`'s docstring. A cell with no give-up
+            # subject takes the pre-KB-20 code path exactly (one calibrate()
+            # call, one measure() call, both over `subjects` unchanged).
+            n_iters, why, cal, rows_by_trial, mnotes = measure_regime_cell(
+                adapter, handle, regime, subjects, iters, trials,
+                driver_timeout, subject_timeout, budget=budget)
+            notes.extend(mnotes)
             # The routine calibration ("median per-iteration X -> iters=N")
             # is NOT a note: every row's `calibration` block and
             # `timing.iterations` carry it, and one sentence per (pattern,
@@ -698,16 +907,9 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             if cal is not None and cal.get("calibration_note"):
                 notes.append("calibration for (%s, %s, %s) = %d iters: %s"
                              % (p.name, form, regime, n_iters, why))
-            say("measuring %s / %s [%s] / %s: %d subject(s) x %d iter(s) x %d "
+            say("measured %s / %s [%s] / %s: %d subject(s) x %d iter(s) x %d "
                 "trial(s)" % (testee_id, p.name, form, regime, len(subjects),
                               n_iters, trials))
-            enum = REGIME_TO_ENUM[regime]
-            t_before = quiet.cpu_times() if timeline is not None else None
-            t_start = time.monotonic()
-            rows_by_trial, _info, mnotes = adapter.measure(
-                handle, regime, subjects, n_iters, trials,
-                timeout=driver_timeout)
-            notes.extend(mnotes)
             if t_before is not None:
                 t_after = quiet.cpu_times()
                 if t_after is not None:
@@ -723,7 +925,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                     outcome, observed, diag = outcome_for(
                         r, exp, regime, subj,
                         giveup_ok=classify_giveup(r.answer, handle),
-                        convention=testee_convention)
+                        convention=testee_convention, grain=testee_grain)
                     timing = None
                     if outcome == "matched-as-expected":
                         timing = {

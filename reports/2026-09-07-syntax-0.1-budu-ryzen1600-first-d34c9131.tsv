@@ -1,4 +1,4 @@
-# reporter: v16 (2026-09-08); filters: subbench=syntax, version=0.1, since=2026-09-07T00:00:00Z, until=2026-09-07T05:00:00Z, testee=libpcre2_10.46_interp-caps-simdna, testee=libpcre2_10.46_jit-caps-simdna, testee=pcrec_d34c9131_auto-caps-simdna, testee=pcrec_d34c9131_auto-nocaps-simdna, testee=pcrec_d34c9131_vm-caps-simdna, testee=pcrec_d34c9131_vm-in-caps-simdna; source: store/index.tsv (6 record(s) matching this query); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: syntax@0.1; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 6; mixed_x13: False; include_provenance: False; worst_other_core_busy: 30.15% (libpcre2_10.46_interp-caps-simdna / grp-atomic-alt / large-subject-throughput); floor_pattern: floor
+# reporter: v17 (2026-09-17); filters: subbench=syntax, version=0.1, since=2026-09-07T00:00:00Z, until=2026-09-07T05:00:00Z, testee=libpcre2_10.46_interp-caps-simdna, testee=libpcre2_10.46_jit-caps-simdna, testee=pcrec_d34c9131_auto-caps-simdna, testee=pcrec_d34c9131_auto-nocaps-simdna, testee=pcrec_d34c9131_vm-caps-simdna, testee=pcrec_d34c9131_vm-in-caps-simdna; source: store/index.tsv (6 record(s) matching this query); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: syntax@0.1; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 6; mixed_x13: False; include_provenance: False; worst_other_core_busy: 30.15% (libpcre2_10.46_interp-caps-simdna / grp-atomic-alt / large-subject-throughput); floor_pattern: floor
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 record						syntax@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260907T003211Z				agreement	agree (0 of 282 groups; 0 of 8256 rows; 9 unjudged; k=1.5, 2/3; 5 trials)						
 record						syntax@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260907T012625Z				agreement	agree (0 of 282 groups; 0 of 8256 rows; 9 unjudged; k=1.5, 2/3; 5 trials)						
@@ -3718,10 +3718,10 @@ rank	esc-ctrl	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_i
 rank	esc-ctrl	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	269.430792	3	1.0000	0	0		
 rank	esc-ctrl	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	esc-ctrl	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	12.053518	3	1.0000	0	0		
-did_not_compile	esc-ctrl	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
-did_not_compile	esc-ctrl	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
-did_not_compile	esc-ctrl	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
-did_not_compile	esc-ctrl	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
 rank	esc-ctrl	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1330.194826	42	1.0000	0	0		
 rank	esc-ctrl	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1325.990519	42	1.0000	0	0		
 rank	esc-ctrl	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1341.726081	42	1.0000	0	0		
@@ -3734,10 +3734,10 @@ rank	esc-ctrl	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-ca
 rank	esc-ctrl	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	41.289449	42	1.0000	0	0		
 rank	esc-ctrl	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	esc-ctrl	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.016008	42	1.0000	0	0		
-did_not_compile	esc-ctrl	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
-did_not_compile	esc-ctrl	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
-did_not_compile	esc-ctrl	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
-did_not_compile	esc-ctrl	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
 rank	esc-ctrl	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1562.228146	42	1.0000	0	0		
 rank	esc-ctrl	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1541.308428	42	1.0000	0	0		
 rank	esc-ctrl	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	2044.718136	42	1.0000	0	0		
@@ -3750,10 +3750,10 @@ rank	esc-ctrl	(set)	short-subject-search	plain	same program	libpcre2_10.46_inter
 rank	esc-ctrl	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	14.889487	42	1.0000	0	0		
 rank	esc-ctrl	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	esc-ctrl	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.294233	42	1.0000	0	0		
-did_not_compile	esc-ctrl	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
-did_not_compile	esc-ctrl	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
-did_not_compile	esc-ctrl	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
-did_not_compile	esc-ctrl	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
+did_not_compile	esc-ctrl	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)	
 rank	esc-hex	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	514903.636139	3	1.0000	0	0		
 rank	esc-hex	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	513723.576733	3	1.0000	0	0		
 rank	esc-hex	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	517638.675743	3	1.0000	0	0		
@@ -4198,10 +4198,10 @@ rank	esc-octal-o	(set)	large-subject-throughput	plain	same program	libpcre2_10.4
 rank	esc-octal-o	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	8859.566516	3	1.0000	0	0		
 rank	esc-octal-o	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	esc-octal-o	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	5.802997	3	1.0000	0	0		
-did_not_compile	esc-octal-o	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
-did_not_compile	esc-octal-o	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
-did_not_compile	esc-octal-o	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
-did_not_compile	esc-octal-o	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
 rank	esc-octal-o	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1408.302076	42	1.0000	0	0		
 rank	esc-octal-o	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1402.610061	42	1.0000	0	0		
 rank	esc-octal-o	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1516.385112	42	1.0000	0	0		
@@ -4214,10 +4214,10 @@ rank	esc-octal-o	(set)	match-compliance	plain	same program	libpcre2_10.46_interp
 rank	esc-octal-o	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	6.189823	42	1.0000	0	0		
 rank	esc-octal-o	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	esc-octal-o	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.011946	42	1.0000	0	0		
-did_not_compile	esc-octal-o	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
-did_not_compile	esc-octal-o	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
-did_not_compile	esc-octal-o	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
-did_not_compile	esc-octal-o	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
 rank	esc-octal-o	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1594.788884	42	1.0000	0	0		
 rank	esc-octal-o	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1592.616140	42	1.0000	0	0		
 rank	esc-octal-o	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1607.520746	42	1.0000	0	0		
@@ -4230,10 +4230,10 @@ rank	esc-octal-o	(set)	short-subject-search	plain	same program	libpcre2_10.46_in
 rank	esc-octal-o	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	4.695300	42	1.0000	0	0		
 rank	esc-octal-o	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	esc-octal-o	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.340174	42	1.0000	0	0		
-did_not_compile	esc-octal-o	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
-did_not_compile	esc-octal-o	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
-did_not_compile	esc-octal-o	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
-did_not_compile	esc-octal-o	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
+did_not_compile	esc-octal-o	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)	
 rank	esc-quote	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	106124.238037	3	1.0000	0	0		
 rank	esc-quote	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	105969.549693	3	1.0000	0	0		
 rank	esc-quote	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	106546.504294	3	1.0000	0	0		
@@ -7178,10 +7178,10 @@ rank	msc-c-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_i
 rank	msc-c-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	17096.436277	3	1.0000	0	0		
 rank	msc-c-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	msc-c-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	6.827661	3	1.0000	0	0		
-did_not_compile	msc-c-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
-did_not_compile	msc-c-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
-did_not_compile	msc-c-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
-did_not_compile	msc-c-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
 rank	msc-c-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1407.464613	42	1.0000	0	0		
 rank	msc-c-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1398.726665	42	1.0000	0	0		
 rank	msc-c-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1411.423572	42	1.0000	0	0		
@@ -7194,10 +7194,10 @@ rank	msc-c-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-ca
 rank	msc-c-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	50.761725	42	1.0000	0	0		
 rank	msc-c-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	msc-c-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.013278	42	1.0000	0	0		
-did_not_compile	msc-c-uc	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
-did_not_compile	msc-c-uc	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
-did_not_compile	msc-c-uc	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
-did_not_compile	msc-c-uc	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
 rank	msc-c-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1647.247890	42	1.0000	0	0		
 rank	msc-c-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1577.349082	42	1.0000	0	0		
 rank	msc-c-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1733.542019	42	1.0000	0	0		
@@ -7210,10 +7210,10 @@ rank	msc-c-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_inter
 rank	msc-c-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	12.566805	42	1.0000	0	0		
 rank	msc-c-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	msc-c-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.304680	42	1.0000	0	0		
-did_not_compile	msc-c-uc	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
-did_not_compile	msc-c-uc	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
-did_not_compile	msc-c-uc	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
-did_not_compile	msc-c-uc	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
+did_not_compile	msc-c-uc	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)	
 rank	msc-r-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	170213.549493	3	1.0000	0	0		
 rank	msc-r-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	169816.632892	3	1.0000	0	0		
 rank	msc-r-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	170322.708496	3	1.0000	0	0		
@@ -7226,10 +7226,10 @@ rank	msc-r-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_i
 rank	msc-r-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	5437.857055	3	1.0000	0	0		
 rank	msc-r-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	msc-r-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	13.912203	3	1.0000	0	0		
-did_not_compile	msc-r-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
-did_not_compile	msc-r-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
-did_not_compile	msc-r-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
-did_not_compile	msc-r-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
 rank	msc-r-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1876.998687	42	1.0000	0	0		
 rank	msc-r-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1871.608182	42	1.0000	0	0		
 rank	msc-r-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	2081.962834	42	1.0000	0	0		
@@ -7242,10 +7242,10 @@ rank	msc-r-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-ca
 rank	msc-r-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	5.252912	42	1.0000	0	0		
 rank	msc-r-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	msc-r-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.009811	42	1.0000	0	0		
-did_not_compile	msc-r-uc	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
-did_not_compile	msc-r-uc	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
-did_not_compile	msc-r-uc	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
-did_not_compile	msc-r-uc	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
 rank	msc-r-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1774.046591	42	1.0000	0	0		
 rank	msc-r-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1652.121365	42	1.0000	0	0		
 rank	msc-r-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1906.156016	42	1.0000	0	0		
@@ -7258,10 +7258,10 @@ rank	msc-r-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_inter
 rank	msc-r-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	16.257938	42	1.0000	0	0		
 rank	msc-r-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	msc-r-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.668564	42	1.0000	0	0		
-did_not_compile	msc-r-uc	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
-did_not_compile	msc-r-uc	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
-did_not_compile	msc-r-uc	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
-did_not_compile	msc-r-uc	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
+did_not_compile	msc-r-uc	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)	
 rank	msc-x-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1305841.696774	3	1.0000	0	0		
 rank	msc-x-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1301819.354839	3	1.0000	0	0		
 rank	msc-x-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1312527.929032	3	1.0000	0	0		
@@ -7274,10 +7274,10 @@ rank	msc-x-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_i
 rank	msc-x-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	11608.246510	3	1.0000	0	0		
 rank	msc-x-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	msc-x-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	2.481553	3	1.0000	0	0		
-did_not_compile	msc-x-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
-did_not_compile	msc-x-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
-did_not_compile	msc-x-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
-did_not_compile	msc-x-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
 rank	msc-x-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1424.652579	42	1.0000	0	0		
 rank	msc-x-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1419.136911	42	1.0000	0	0		
 rank	msc-x-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1431.041177	42	1.0000	0	0		
@@ -7290,10 +7290,10 @@ rank	msc-x-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-ca
 rank	msc-x-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	4.447266	42	1.0000	0	0		
 rank	msc-x-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	msc-x-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.015165	42	1.0000	0	0		
-did_not_compile	msc-x-uc	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
-did_not_compile	msc-x-uc	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
-did_not_compile	msc-x-uc	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
-did_not_compile	msc-x-uc	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
 rank	msc-x-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1746.173338	42	1.0000	0	0		
 rank	msc-x-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1706.650279	42	1.0000	0	0		
 rank	msc-x-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1783.611428	42	1.0000	0	0		
@@ -7306,10 +7306,10 @@ rank	msc-x-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_inter
 rank	msc-x-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	35.673571	42	1.0000	0	0		
 rank	msc-x-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	msc-x-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.273519	42	1.0000	0	0		
-did_not_compile	msc-x-uc	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
-did_not_compile	msc-x-uc	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
-did_not_compile	msc-x-uc	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
-did_not_compile	msc-x-uc	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
+did_not_compile	msc-x-uc	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)	
 rank	qnt-lazy	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-nocaps-simdna	measured	pinned	1	median_ns	144951.158408	3	1.0000	0	0		
 rank	qnt-lazy	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-nocaps-simdna	measured	pinned	1	min_ns	144715.473724	3	1.0000	0	0		
 rank	qnt-lazy	(set)	large-subject-throughput	plain	same program	pcrec_d34c9131_auto-nocaps-simdna	measured	pinned	1	max_ns	145833.123874	3	1.0000	0	0		
@@ -9063,10 +9063,10 @@ rank	unp-p-lc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_i
 rank	unp-p-lc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	265007.852714	3	1.0000	0	0		
 rank	unp-p-lc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	unp-p-lc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	3.222389	3	1.0000	0	0		
-did_not_compile	unp-p-lc	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-lc	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-lc	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-lc	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
 rank	unp-p-lc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	median_ns	4511.480841	42	1.0000	0	0		
 rank	unp-p-lc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	min_ns	4492.061386	42	1.0000	0	0		
 rank	unp-p-lc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	max_ns	4525.496129	42	1.0000	0	0		
@@ -9079,10 +9079,10 @@ rank	unp-p-lc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-
 rank	unp-p-lc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	30.643159	42	1.0000	0	0		
 rank	unp-p-lc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000672	42	1.0000	0	0		
 rank	unp-p-lc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	1.000672	42	1.0000	0	0		
-did_not_compile	unp-p-lc	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-lc	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-lc	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-lc	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
 rank	unp-p-lc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	2310.484266	42	1.0000	0	0		
 rank	unp-p-lc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	2274.049877	42	1.0000	0	0		
 rank	unp-p-lc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	2333.586018	42	1.0000	0	0		
@@ -9095,10 +9095,10 @@ rank	unp-p-lc	(set)	short-subject-search	plain	same program	libpcre2_10.46_inter
 rank	unp-p-lc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	27.121743	42	1.0000	0	0		
 rank	unp-p-lc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	unp-p-lc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	2.574806	42	1.0000	0	0		
-did_not_compile	unp-p-lc	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-lc	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-lc	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-lc	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-lc	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \\p requires module 'unicode-props' (pattern offset 5)	
 rank	unp-p-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	16256292.875000	3	1.0000	0	0		
 rank	unp-p-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	16142064.625000	3	1.0000	0	0		
 rank	unp-p-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	16308280.062500	3	1.0000	0	0		
@@ -9111,10 +9111,10 @@ rank	unp-p-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_i
 rank	unp-p-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	237921.110080	3	1.0000	0	0		
 rank	unp-p-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	unp-p-uc	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	4.432760	3	1.0000	0	0		
-did_not_compile	unp-p-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	large-subject-throughput			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	large-subject-throughput			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
 rank	unp-p-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	3807.074489	42	1.0000	0	0		
 rank	unp-p-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	3761.482723	42	1.0000	0	0		
 rank	unp-p-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	3819.003868	42	1.0000	0	0		
@@ -9127,10 +9127,10 @@ rank	unp-p-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-ca
 rank	unp-p-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	7.902007	42	1.0000	0	0		
 rank	unp-p-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	unp-p-uc	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.002797	42	1.0000	0	0		
-did_not_compile	unp-p-uc	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-uc	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-uc	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-uc	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	match-compliance			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	match-compliance			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	match-compliance			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	match-compliance			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
 rank	unp-p-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	2510.988245	42	1.0000	0	0		
 rank	unp-p-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	2495.619419	42	1.0000	0	0		
 rank	unp-p-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	2525.579307	42	1.0000	0	0		
@@ -9143,10 +9143,10 @@ rank	unp-p-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_inter
 rank	unp-p-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	18.603005	42	1.0000	0	0		
 rank	unp-p-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	42	1.0000	0	0		
 rank	unp-p-uc	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	4.350014	42	1.0000	0	0		
-did_not_compile	unp-p-uc	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-uc	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-uc	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
-did_not_compile	unp-p-uc	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	short-subject-search			pcrec_d34c9131_auto-caps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	short-subject-search			pcrec_d34c9131_auto-nocaps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	short-subject-search			pcrec_d34c9131_vm-caps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
+did_not_compile	unp-p-uc	(set)	short-subject-search			pcrec_d34c9131_vm-in-caps-simdna	did-not-compile									pcrec: \\P requires module 'unicode-props' (pattern offset 5)	
 rank	vrb-accept	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	269137.651940	3	1.0000	0	0		
 rank	vrb-accept	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	267436.315733	3	1.0000	0	0		
 rank	vrb-accept	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	276150.346983	3	1.0000	0	0		

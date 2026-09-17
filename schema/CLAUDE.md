@@ -8,8 +8,9 @@ statically"). This directory owns that format.
 
 The DESIGN lives in `../docs/design/record_schema.md` — every field, why
 it exists, the enums, the normalization rules, the cross-line rules
-X1..X33, the record tiers (§6.8), the floor-pattern role (§5 ADDITIONS
-7), trial agreement (§6.9, designed in `gate_shape_v14.md`), and the
+X1..X34, the record tiers (§6.8), the floor-pattern role (§5 ADDITIONS
+7), trial agreement (§6.9, designed in `gate_shape_v14.md`), the
+boolean scoring grain (§6.10), and the
 open questions. Read it before changing anything here;
 the files below are its implementation and `make check-schema` fails if
 they and the note disagree.
@@ -20,7 +21,7 @@ they and the note disagree.
   per line kind (`setup`, `match_row`, `compile_row`); the root is their
   `oneOf`, so a generic tool can validate a line without knowing which
   it is. `x-record-schema-version` at the root is the version this
-  schema IMPLEMENTS (1.5), which is what `validate.py` compares a file's
+  schema IMPLEMENTS (1.6), which is what `validate.py` compares a file's
   `schema_version` against. v1.2 added the two optional TIER fields
   (`tier`, `testee.binary`) and the `local:` shape of `engine_version`
   ([B10]); v1.3 added optional `patterns[].role` (`member`/`floor`,
@@ -33,10 +34,15 @@ they and the note disagree.
   a refusal" branch (KB-4); v1.5 ([B30], 2026-09-02, KB-7, Frank's
   ruling) raised `$defs.free_text.maxLength` 8192 → 1,048,576 (1 MiB) —
   a hygiene bound, not a content limit, and the ONLY thing that moved:
-  no field, no enum value, no rule. Every 1.1, 1.2, 1.3 and 1.4 record
-  still validates, and the older examples are left stamped at their own
-  versions to prove it — a string that fit under 8192 fits under
-  1,048,576 too, so nothing needed re-checking to know this.
+  no field, no enum value, no rule; v1.6 (lane `b44boolgrain`, 2026-09-17,
+  Frank's Q3 boolean-grain ruling, `capability_set_v1.md` §5.6 option B)
+  added optional `testee.grain` (`full`/`boolean`, absent = `full`) and
+  rule X34 (a `boolean`-grain testee's match rows never carry a non-null
+  `observed.span`) — executes lane `l6bvs`'s finding that
+  `harness.outcome_for` scored every genuine match from such a testee
+  `wrong-span-or-captures` with a schema-illegal `[None, None]` span.
+  Every 1.1 through 1.5 record still validates, and the older examples
+  are left stamped at their own versions to prove it.
 - `validate.py` — the validator the harness and the reporter share
   (requirements §6). Per-line schema validation PLUS the cross-line
   rules a schema cannot express, PLUS the three normalization rules of

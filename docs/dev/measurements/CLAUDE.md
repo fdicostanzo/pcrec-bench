@@ -44,6 +44,21 @@ is the same as ~/pcrec's `docs/design/*_measurements/` and its D35:
 | `2026-09-01-hybrid-gained-edge-census.tsv` | its archive over `bounded@0.2` at a7e0bdf vs 263b013 (eight records, source header naming each): 132 rows. The POPULATION is **two artifacts** -- `nest2-64` and `nest3-16` WHOLE-SUBJECT, both `collapsed-prefilter` / `byte-class-bounded`, edge absent -> `range` -- on the two `auto` testees, four record cells, exercised by the `match` regime ALONE |
 | `2026-09-01-hybrid-gained-edge-census.md` | its reading note: (a) the ledger's "thr x1.57-1.59 faster, match x1.04-1.05 slower" is NOT one artifact's trade -- the throughput and search wins belong to the sibling PLAIN DFA artifact and the hybrid that gained the edge is only ever measured in `match`, where it only ever got slower; (b) the cost is a FIXED per-call term (+5.9..+7.9 ns on `nest2-64` across a x13 span of call cost), so the x1.53 worst case is that term on a 24 ns call; (c) it fires only on MATCHING calls -- the seven pure-digit subjects moved, the other 23 are x0.98-1.01 including those that enter the digit run before failing. One tunable term plausibly explains asks (ii) and (v) together; nothing here locates the boundary, which is what `bounded@0.3`'s low-rung sweep is built to read |
 
+- `probe_re2_capability_census.py` / `2026-09-17-re2-capability-census.txt`
+  — ([B42] L6b, `testees/re2/`) THE RE2 CAPABILITY WITNESS CENSUS: one
+  witness pattern per `REQUIRES_VOCAB` token plus every `bench/
+  capability@0.1` (64) and `bench/syntax@0.1` (95) canonical pattern,
+  compiled through the real `testees/re2/adapter.py` `compile()` path
+  (compile-only, no timing, never a ranking input). Derives
+  `bench/capability/gen_patterns.py`'s `re2-default`/`re2-longest`
+  `EXT_BENCH_ROSTER` rows: REFUSED (RE2's own `ErrorCode`, every time) —
+  `backrefs`, `lookaround`, `lookbehind-variable`,
+  `possessive-quantifier`, `atomic-group`, `recursion`, `conditionals`,
+  `k-reset`, `control-verbs`, `free-spacing`, `callouts`; SATISFIED —
+  `unicode-properties`, `named-groups`, `span-reporting`,
+  `non-utf8-subject`, `captures`, `true-end-anchor`. Corpus totals:
+  `bench/capability` 39/64 compiled; `bench/syntax` 47/95 compiled.
+
 Maintenance: update this file when files are added/removed or change role.
 - `2026-09-01-engine-sel-census-a7e0bdf-vs-1989c62.tsv` — ([B26] (a), lane b26repin) every bench pattern × form × engine mode compiled at both pins, the RX_ENGINE_SEL / engine / prefilter / lang stamps per cell: identical totals at both pins; NO bench artifact stamps `declined-nullable-default`; 80 refusals per pin incl. altwide's ci-512 at the 1,000,000 B emit cap.
 - `2026-09-01-emit-sizes-a7e0bdf-vs-1989c62.tsv` — ([B26] (a)) the emit-size port on the ledger patterns at both pins: +202 B total / +105 B code flat (abi 15's two rx_info fields), o42's declines the only downward moves.
@@ -290,3 +305,60 @@ Maintenance: update this file when files are added/removed or change role.
   plan are in the header. Guard: selfcheck's
   check_high_byte_pattern_argv. The prior probe archive's data
   stands; its attribution sentence is superseded by this file.
+- `probe_onig_capability_census.py` — ([B7]/L6b, lane l6bonig, 2026-09-17)
+  the ONIGURUMA ADAPTER'S capability witness census, mandatory before
+  `bench/capability/gen_patterns.py`'s `EXT_BENCH_ROSTER` declares
+  anything for `onig-default`: pass 1 runs one (or several, where one
+  spelling would not settle the question alone) isolated witness per
+  `REQUIRES_VOCAB` token through the real `onig-default` adapter; pass 2
+  runs all 64 real `bench/capability` corpus patterns through the same
+  adapter, cross-referenced against each pattern's own `requires-*` tags.
+  Runs from the repo root; needs the `onig` adapter (built on demand).
+- `2026-09-17-onig-capability-witness-census-6.9.10.txt` — its archive:
+  CB5 (atomic-group) and CB6 (`\K`/k-reset) resolved by DIRECT SOURCE
+  READ of Oniguruma 6.9.10's `regparse.c`/`regexec.c` (both SATISFIED,
+  `(?>...)` ungated by any syntax flag, `\K` architecturally identical to
+  PCRE's own reset-the-reported-start mechanism) before either is
+  declared; 62/64 corpus patterns compile clean, the two refusals
+  (`negation-scope-lookbehind-var`, `balanced-parens-rec`) reproduced
+  exactly by isolated witnesses; 13 of 17 REQUIRES tokens SATISFIED
+  (backrefs, lookaround, possessive-quantifier, atomic-group, recursion,
+  conditionals, k-reset, named-groups, free-spacing, span-reporting,
+  non-utf8-subject, captures, true-end-anchor), 4 NOT (lookbehind-
+  variable, control-verbs, unicode-properties, callouts) — including the
+  census's own "wrong first-cut" catch: `\p{Alpha}` compiles but `\p{L}`
+  (a real Unicode category, the shape every PCRE corpus pattern actually
+  uses) does not under `ONIG_ENCODING_ASCII`, so `unicode-properties` is
+  declared UNSATISFIED despite the OP2 flag being present — and a
+  documented spelling-only gap (PCRE's `(?R)` fails; `(?1)`/`(?&name)`/
+  `(?0)`/`\g<n>` all work) that does not change the `recursion`
+  declaration.
+- `probe_vectorscan_capability_census.py` — ([B7]/L6b wave 2, lane
+  l6bvs, 2026-09-17) the VECTORSCAN ADAPTER'S capability witness
+  census, mandatory before `bench/capability/gen_patterns.py`'s
+  `EXT_BENCH_ROSTER` declares anything for `vectorscan-block-nosom`:
+  pass 1 runs one isolated witness per compile-time `REQUIRES_VOCAB`
+  token through the real adapter (`span-reporting`/`captures` are
+  stated as execution-model facts, not witnessed); pass 2 runs all 64
+  real `bench/capability` corpus patterns through the same adapter,
+  cross-referenced against each pattern's own `requires-*` tags. Runs
+  from the repo root; needs the `vectorscan` adapter (built on demand,
+  needs `libvectorscan-dev`).
+- `2026-09-17-vectorscan-capability-witness-census-5.4.11.txt` — its
+  archive: 5 of 17 REQUIRES tokens SATISFIED (the narrowest on the
+  roster) — `unicode-properties`, `named-groups`, `free-spacing`,
+  `non-utf8-subject`, `true-end-anchor`; 12 NOT, each witnessed live
+  with Vectorscan's own diagnostic text (backrefs, lookaround incl.
+  lookbehind-variable, possessive-quantifier, atomic-group, recursion,
+  conditionals, k-reset, control-verbs, callouts, span-reporting,
+  captures). 40/64 corpus patterns compile. Carries an A/B COMPARISON
+  that DECIDED the driver's compile flags: `HS_FLAG_UCP` was tried
+  first and REJECTED — it broke `\b` compiling under UCP mode on 5 real
+  corpus patterns carrying no unicode-properties requirement at all
+  (35/64 compiled), for zero gain (`\p{L}` compiles identically with or
+  without the flag); the shipped driver uses `VS_DRIVER_FLAGS = 0`.
+  `unicode-properties` is the OPPOSITE finding from Oniguruma's own
+  census (`testees/onig/CLAUDE.md`'s "wrong first-cut" catch): here
+  `\p{L}` (a real Unicode category) compiles and `\p{Alpha}` (POSIX
+  ctype name) does not — the reverse of onig's ASCII-encoding
+  narrowing.

@@ -484,6 +484,239 @@ EXT_BENCH_ROSTER = [
     ("pcre2-dfa", [t for t in REQUIRES_VOCAB
                    if t not in ("backrefs", "conditionals", "k-reset",
                                 "control-verbs", "captures")]),
+    # re2-default / re2-longest ([B42] L6b, testees/re2/adapter.py,
+    # 2026-09-17): a REAL COMPILE CENSUS over BOTH RE2 corpora
+    # (docs/dev/measurements/2026-09-17-re2-capability-census.txt,
+    # `probe_re2_capability_census.py`) -- one witness pattern per
+    # REQUIRES_VOCAB token AND every one of this set's own 64 patterns
+    # AND bench/syntax@0.1's 95, run through the REAL
+    # `testees/re2/adapter.py` `compile()` path (never inferred from N2's
+    # docs-only survey). The two configs are IDENTICAL here:
+    # `set_longest_match(true)` changes which alternative wins at one
+    # start point, never what RE2's PARSER accepts -- confirmed on the
+    # census (both configs run against the witness set with the same
+    # result).
+    #   backrefs / lookaround / lookbehind-variable /
+    #   possessive-quantifier / atomic-group / recursion / conditionals /
+    #   k-reset / control-verbs / free-spacing / callouts -- ALL REFUSED,
+    #   each on its own witness, RE2's OWN closed `ErrorCode` naming the
+    #   mechanism (`ErrorBadPerlOp` for every `(?...)` extension RE2 does
+    #   not have; `ErrorBadEscape` for `\1`/`\K`; `ErrorRepeatOp`/
+    #   `ErrorRepeatArgument` for `++`/`(*FAIL)`) -- exactly N2 3's table,
+    #   independently re-derived rather than trusted. `free-spacing`
+    #   (`(?x)`) is the one N2 left as a documentation-only claim; this
+    #   census CONFIRMS the refusal, live, on both the witness and three
+    #   corpus patterns (`codegrammar-xflag`,
+    #   `wild-codegrammar-json-number-extended`,
+    #   `wild-codegrammar-json-stringcontent-escape`, `mod-x` in
+    #   bench/syntax) -- `ErrorBadPerlOp: invalid perl operator: (?x`
+    #   every time.
+    #   unicode-properties / named-groups / span-reporting /
+    #   non-utf8-subject / captures / true-end-anchor -- ALL COMPILE.
+    #   `non-utf8-subject` is witnessed on the SAME raw-high-byte shape
+    #   the pcrec-side I-72 guard uses (`\x93[...]*\x94`), which compiles
+    #   ONLY because `testees/re2/driver.cc` builds every RE2 object with
+    #   `EncodingLatin1` -- see that file's header for why. `true-end-
+    #   anchor` (`\z`) is witnessed twice (the dedicated witness AND
+    #   bench/syntax's own `anc-z-lc`); its sibling `\Z` (bench/syntax's
+    #   `anc-z-uc`) REFUSES (`ErrorBadEscape`) -- RE2 has `\z`, not `\Z`,
+    #   consistent with re2.h's documented anchor set.
+    # Corpus totals (compile-only, no ranking claim): bench/capability
+    # 39/64 compiled, 25 refused; bench/syntax 47/95 compiled, 48
+    # refused -- every refusal's ErrorCode falls under one of the eleven
+    # excluded tokens above, or is a PCRE-only escape/production this
+    # vocabulary has no token for at all (`\Z`, `\G`, `\h`, `\N`, inline
+    # comments `(?#...)`, branch-reset `(?|...)`), never an unexplained
+    # refusal.
+    ("re2-default", [t for t in REQUIRES_VOCAB
+                     if t not in ("backrefs", "lookaround",
+                                  "lookbehind-variable",
+                                  "possessive-quantifier", "atomic-group",
+                                  "recursion", "conditionals", "k-reset",
+                                  "control-verbs", "free-spacing",
+                                  "callouts")]),
+    ("re2-longest", [t for t in REQUIRES_VOCAB
+                     if t not in ("backrefs", "lookaround",
+                                  "lookbehind-variable",
+                                  "possessive-quantifier", "atomic-group",
+                                  "recursion", "conditionals", "k-reset",
+                                  "control-verbs", "free-spacing",
+                                  "callouts")]),
+    # onig-default ([B7]/L6b, lane l6bonig, 2026-09-17): Oniguruma 6.9.10,
+    # ONIG_SYNTAX_PERL_NG / ONIG_ENCODING_ASCII (testees/onig/CLAUDE.md).
+    # CB5 (atomic-group) and CB6 (k-reset) resolved by DIRECT SOURCE READ
+    # of regparse.c/regexec.c BEFORE this declaration (both satisfied --
+    # docs/dev/measurements/2026-09-17-onig-capability-witness-census-
+    # 6.9.10.txt). The full witness census (17 tokens, one or more
+    # isolated witnesses each, PLUS all 64 real corpus patterns through
+    # the real adapter) is in that same file; four tokens withheld, each
+    # for a DIFFERENT reason than pcrec's own four-token withhold list:
+    #   lookbehind-variable -- REFUSED live ("invalid pattern in
+    #                          look-behind"); a lookbehind's ALTERNATIVES
+    #                          must share one fixed width. Confirmed on
+    #                          the corpus's own witness,
+    #                          negation-scope-lookbehind-var.
+    #   control-verbs        -- `(*ACCEPT)` REFUSED ("undefined callout
+    #                          name"); `(*FAIL)`/`(*SKIP)` compile only
+    #                          because Oniguruma's OWN, semantically
+    #                          DIFFERENT callout registry happens to
+    #                          share those two names -- withheld
+    #                          wholesale, same precedent as pcre2-dfa's
+    #                          own `(*FAIL)`-only row above.
+    #   unicode-properties    -- REFUSED for a REAL Unicode category
+    #                          (`\p{L}`) under ASCII encoding, though a
+    #                          POSIX-style name (`\p{Alpha}`) compiles --
+    #                          a narrower, DIFFERENT vocabulary from
+    #                          PCRE's, not a subset by coincidence of
+    #                          spelling. The corpus tags zero patterns
+    #                          with this token today, so the finding
+    #                          moves no current ranking; withheld so a
+    #                          future corpus is not silently mis-served.
+    #   callouts              -- PCRE's `(?Cn)` spelling REFUSED outright
+    #                          ("undefined group option").
+    # `recursion` is SATISFIED despite one corpus pattern
+    # (balanced-parens-rec, PCRE's `(?R)` shorthand) refusing: `(?1)`,
+    # `(?&name)`, `(?0)` and `\g<n>`/`\g<name>` all compile, incl. on the
+    # OTHER two corpus recursion patterns -- a documented SPELLING gap
+    # (capability_set_v1.md 6.2's rewrite-table territory), not a
+    # capability gap; the one corpus refusal is left to fail HONESTLY as
+    # its own real `did-not-compile` (refusal_class: syntax) rather than
+    # being hidden behind a wholesale withhold.
+    ("onig-default", [t for t in REQUIRES_VOCAB
+                      if t not in ("lookbehind-variable", "control-verbs",
+                                   "unicode-properties", "callouts")]),
+    # vectorscan-block-nosom ([B7]/L6b wave 2, lane l6bvs, 2026-09-17;
+    # testees/vectorscan/adapter.py). BOOLEAN GRAIN (capability_set_v1.md
+    # 5.6 option (B), Frank's Q3 ruling): the NARROWEST REQUIRES
+    # satisfaction on the roster, and the only one where TWO tokens are
+    # withheld for a reason that is not "the construct doesn't compile" --
+    # `span-reporting` (this config never carries HS_FLAG_SOM_LEFTMOST,
+    # so it cannot report a match START; the som config, documented not
+    # built, would satisfy it) and `captures` (Hyperscan has NO capturing-
+    # group mechanism at ALL, structurally -- it silently treats every
+    # group, named or not, as non-capturing; confirmed live: `(?<name>a)`
+    # and `(?P<name>a)` both COMPILE clean, which is what makes this an
+    # execution-model fact and not a syntax refusal). Every remaining
+    # exclusion is a REAL hs_compile refusal, witnessed live (docs/dev/
+    # measurements/2026-09-17-vectorscan-capability-witness-census-
+    # 5.4.11.txt), quoting Vectorscan's own diagnostic text:
+    #   backrefs               -- "Back-references are unsupported."
+    #   lookaround              -- "Zero-width assertions are not
+    #                              supported." (subsumes lookbehind-
+    #                              variable: no lookaround at all)
+    #   lookbehind-variable    -- as above
+    #   possessive-quantifier   -- "Possessive quantifiers are not
+    #                              supported."
+    #   atomic-group            -- "Atomic groups are unsupported."
+    #   recursion               -- `(?R)`/`(?1)` both refused ("Unrecognised
+    #                              character after (?" / "Subpattern
+    #                              reference unsupported")
+    #   conditionals            -- "Conditional references are not
+    #                              supported."
+    #   k-reset                 -- "\K at index N not supported."
+    #   control-verbs           -- "Unknown control verb (*NAME)" (all
+    #                              three of ACCEPT/FAIL/SKIP witnessed)
+    #   callouts                -- "Callout at index N not supported."
+    # KEPT, each witnessed compiling (`unicode-properties`: `\p{L}` (a
+    # REAL Unicode General Category, unlike Oniguruma's own ASCII-encoding
+    # narrowing to POSIX ctype names -- testees/onig/CLAUDE.md's own
+    # "wrong first-cut" catch does NOT repeat here) compiles WITHOUT any
+    # HS_FLAG_UCP/HS_FLAG_UTF8 flag at all, confirmed by direct A/B census
+    # (this driver sets flags=0 unconditionally: setting HS_FLAG_UCP was
+    # tried and REJECTED -- it broke `\b` compiling at all under UCP mode,
+    # costing 5 real corpus patterns that carry NO unicode-properties
+    # requirement whatsoever, for zero gain since `\p{L}` needs no flag;
+    # testees/vectorscan/CLAUDE.md has the full A/B numbers); `named-
+    # groups`: both `(?<name>a)` and `(?P<name>a)` spellings compile
+    # clean (silently non-capturing, per `captures`'s own exclusion
+    # above); `free-spacing`: `(?x) a b c` compiles clean -- two REAL
+    # corpus patterns tagged `requires-free-spacing`
+    # (`wild-codegrammar-json-number-extended`,
+    # `wild-codegrammar-json-stringcontent-escape`) still REFUSE
+    # ("Unterminated comment") because Hyperscan's own `(?x)` parser does
+    # not accept a `#`-to-end-of-LINE comment the way PCRE's does across a
+    # real multi-line pattern -- a genuine, corpus-witnessed divergence
+    # kept in prose (testees/vectorscan/CLAUDE.md), not a second
+    # vocabulary token, the SAME precedent testees/pcre2/CLAUDE.md's
+    # "pcre2-dfa" family-11 divergence table and testees/onig/CLAUDE.md's
+    # recursion-spelling gap both set: an isolated witness settles the
+    # TOKEN, a real corpus failure under a satisfied token is a
+    # documented, honest `did-not-compile`, never a re-litigation of the
+    # declaration; `true-end-anchor`: `a\z` compiles clean (`\z` is
+    # explicitly documented supported on both Intel's and VectorCamp's
+    # own pages, docs/dev/research/2026-09-12-b42-engine-landscape.md's
+    # own finding (6))). `non-utf8-subject` is an EXECUTION-MODEL fact
+    # like `captures`/`span-reporting` above, but on the SATISFIED side:
+    # HS_FLAG_UTF8 is never set, so this driver is byte-oriented by
+    # construction (Vectorscan's own documented default), the same
+    # convention every other testee on this roster keeps for its default
+    # 8-bit mode. Corpus confirmation: 40 of 64 real bench/capability
+    # patterns compile through the real adapter; every one of the 24
+    # refusals cites a token this roster row withholds (one exception,
+    # `tag-depth3-bound`, carries NO `requires-*` tag at all despite using
+    # backreferences -- a pre-existing corpus tagging gap, not a
+    # capability-declaration error; it refuses honestly via the ordinary
+    # `did-not-compile` path either way).
+    ("vectorscan-block-nosom", [t for t in REQUIRES_VOCAB
+                                if t not in (
+                                    "backrefs", "lookaround",
+                                    "lookbehind-variable",
+                                    "possessive-quantifier", "atomic-group",
+                                    "recursion", "conditionals", "k-reset",
+                                    "control-verbs", "callouts",
+                                    "span-reporting", "captures")]),
+    # tre-default ([B7]/L6b wave 2, lane l6btre, 2026-09-17): a POSIX
+    # leftmost-longest engine (`testees/tre/`, `tre_regncompb`/
+    # `tre_regnexecb`, REG_EXTENDED). WITNESSED before declaring (CS5's
+    # own rule, docs/dev/measurements/2026-09-17-tre-capability-witness-
+    # census.txt, `probe_tre_capability_census.py` beside it): a real
+    # compile through the adapter for all 17 REQUIRES_VOCAB tokens PLUS
+    # all 64 corpus patterns (41/64 compiled), plus MATCH-GRAIN
+    # confirmations for four constructs that COMPILE but do NOT mean
+    # what their spelling suggests (testees/tre/CLAUDE.md has the full
+    # account -- these are SILENT MISPARSE hazards, not capabilities):
+    #   k-reset          -- `a\Kb` compiles and MATCHES "aKb" literally
+    #                       (backslash before a non-special letter drops
+    #                       silently to the bare letter -- no keep-reset
+    #                       ever happens; NOMATCH on "ab" proves it)
+    #   control-verbs    -- `a(*FAIL)b`/`(*ACCEPT)`/`(*SKIP)` all
+    #                       compile as an ORDINARY capturing group whose
+    #                       leading `*` is silently DROPPED (`(*FAIL)`
+    #                       parses as a group matching literal "FAIL") --
+    #                       none of the three ever fires as a control verb
+    #   recursion        -- `(a\g<1>?b)` (the one recursion spelling that
+    #                       compiles) matches "ag<1>b" literally, i.e.
+    #                       `\g` drops to bare "g" the same way `\K` drops
+    #                       to bare "K" -- NO recursion ever happens
+    #                       (NOMATCH on the genuinely-recursive "aabb")
+    #   unicode-properties -- both `\p{L}` and `\p{Alpha}` REFUSE (code
+    #                       10, "Invalid contents of {}") -- unlike
+    #                       Oniguruma's ASCII-encoding narrowing
+    #                       (testees/onig/CLAUDE.md item 3), TRE has NO
+    #                       `\p{...}` construct at all, not even a POSIX
+    #                       ctype-name variant
+    # `named-groups`/`free-spacing` (CS5's own two named opens) BOTH
+    # REFUSE outright (`(?<name>...)`/`(?P<name>...)`/`(?x)` all "Invalid
+    # regexp") -- CONFIRMED UNSATISFIED, not merely undocumented.
+    # `lookbehind-variable`/`lookaround`/`atomic-group`/`possessive-
+    # quantifier`/`conditionals`/`callouts` all REFUSE cleanly (each its
+    # own distinct diagnostic; possessive quantifiers alone give a
+    # DIFFERENT code, 13 "Invalid use of repetition operators", not the
+    # generic 2).
+    # SATISFIED, all confirmed by witness at MATCH grain, not compile
+    # alone: `backrefs` (`(a)\1`, tre_have_backrefs=1); `span-reporting`/
+    # `captures` (tre_regnexecb always reports pmatch[0..re_nsub], the
+    # SAME per-group span PCRE2/Oniguruma report); `non-utf8-subject`
+    # (tre_regncompb/tre_regnexecb's "b"-suffixed BYTE-LITERAL variants
+    # bypass locale/multibyte decoding entirely -- the I-72 literal-byte
+    # witness matches [0,7) end to end, testees/tre/CLAUDE.md's own
+    # note on why the SHARED cross-engine `\x93[\x20-\x7e]*\x94` witness
+    # is NOT the right one for TRE, which has no `\xHH` escape at all);
+    # `true-end-anchor` (this adapter's OWN `^(?:...)$` whole-subject
+    # wrap, witnessed both directions plus the trailing-newline TRUE-
+    # end-anchor control -- testees/tre/CLAUDE.md).
+    ("tre-default", ["backrefs", "span-reporting", "non-utf8-subject",
+                     "captures", "true-end-anchor"]),
 ]
 
 

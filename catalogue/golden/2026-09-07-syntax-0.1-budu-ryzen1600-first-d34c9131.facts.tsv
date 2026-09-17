@@ -199,28 +199,28 @@ R-STATUS-4	1	4	cnd-group				pcrec_d34c9131_vm-in-caps-simdna			testee	pcrec_d34c
 R-STATUS-4	1	4	cnd-group				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 8)
 R-STATUS-4	1	5	esc-ctrl				pcrec_d34c9131_auto-caps-simdna			pattern	esc-ctrl
 R-STATUS-4	1	5	esc-ctrl				pcrec_d34c9131_auto-caps-simdna			testee	pcrec_d34c9131_auto-caps-simdna
-R-STATUS-4	1	5	esc-ctrl				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)
+R-STATUS-4	1	5	esc-ctrl				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)
 R-STATUS-4	1	6	esc-ctrl				pcrec_d34c9131_auto-nocaps-simdna			pattern	esc-ctrl
 R-STATUS-4	1	6	esc-ctrl				pcrec_d34c9131_auto-nocaps-simdna			testee	pcrec_d34c9131_auto-nocaps-simdna
-R-STATUS-4	1	6	esc-ctrl				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)
+R-STATUS-4	1	6	esc-ctrl				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)
 R-STATUS-4	1	7	esc-ctrl				pcrec_d34c9131_vm-caps-simdna			pattern	esc-ctrl
 R-STATUS-4	1	7	esc-ctrl				pcrec_d34c9131_vm-caps-simdna			testee	pcrec_d34c9131_vm-caps-simdna
-R-STATUS-4	1	7	esc-ctrl				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)
+R-STATUS-4	1	7	esc-ctrl				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)
 R-STATUS-4	1	8	esc-ctrl				pcrec_d34c9131_vm-in-caps-simdna			pattern	esc-ctrl
 R-STATUS-4	1	8	esc-ctrl				pcrec_d34c9131_vm-in-caps-simdna			testee	pcrec_d34c9131_vm-in-caps-simdna
-R-STATUS-4	1	8	esc-ctrl				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)
+R-STATUS-4	1	8	esc-ctrl				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\c is not implemented yet (pattern offset 4)
 R-STATUS-4	1	9	esc-octal-o				pcrec_d34c9131_auto-caps-simdna			pattern	esc-octal-o
 R-STATUS-4	1	9	esc-octal-o				pcrec_d34c9131_auto-caps-simdna			testee	pcrec_d34c9131_auto-caps-simdna
-R-STATUS-4	1	9	esc-octal-o				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)
+R-STATUS-4	1	9	esc-octal-o				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)
 R-STATUS-4	1	10	esc-octal-o				pcrec_d34c9131_auto-nocaps-simdna			pattern	esc-octal-o
 R-STATUS-4	1	10	esc-octal-o				pcrec_d34c9131_auto-nocaps-simdna			testee	pcrec_d34c9131_auto-nocaps-simdna
-R-STATUS-4	1	10	esc-octal-o				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)
+R-STATUS-4	1	10	esc-octal-o				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)
 R-STATUS-4	1	11	esc-octal-o				pcrec_d34c9131_vm-caps-simdna			pattern	esc-octal-o
 R-STATUS-4	1	11	esc-octal-o				pcrec_d34c9131_vm-caps-simdna			testee	pcrec_d34c9131_vm-caps-simdna
-R-STATUS-4	1	11	esc-octal-o				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)
+R-STATUS-4	1	11	esc-octal-o				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)
 R-STATUS-4	1	12	esc-octal-o				pcrec_d34c9131_vm-in-caps-simdna			pattern	esc-octal-o
 R-STATUS-4	1	12	esc-octal-o				pcrec_d34c9131_vm-in-caps-simdna			testee	pcrec_d34c9131_vm-in-caps-simdna
-R-STATUS-4	1	12	esc-octal-o				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)
+R-STATUS-4	1	12	esc-octal-o				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\o is not implemented yet (pattern offset 0)
 R-STATUS-4	1	13	grp-branch-reset				pcrec_d34c9131_auto-caps-simdna			pattern	grp-branch-reset
 R-STATUS-4	1	13	grp-branch-reset				pcrec_d34c9131_auto-caps-simdna			testee	pcrec_d34c9131_auto-caps-simdna
 R-STATUS-4	1	13	grp-branch-reset				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 0)
@@ -271,64 +271,64 @@ R-STATUS-4	1	28	mod-x				pcrec_d34c9131_vm-in-caps-simdna			testee	pcrec_d34c913
 R-STATUS-4	1	28	mod-x				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: missing closing ) for group (pattern offset 0)
 R-STATUS-4	1	29	msc-c-uc				pcrec_d34c9131_auto-caps-simdna			pattern	msc-c-uc
 R-STATUS-4	1	29	msc-c-uc				pcrec_d34c9131_auto-caps-simdna			testee	pcrec_d34c9131_auto-caps-simdna
-R-STATUS-4	1	29	msc-c-uc				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)
+R-STATUS-4	1	29	msc-c-uc				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)
 R-STATUS-4	1	30	msc-c-uc				pcrec_d34c9131_auto-nocaps-simdna			pattern	msc-c-uc
 R-STATUS-4	1	30	msc-c-uc				pcrec_d34c9131_auto-nocaps-simdna			testee	pcrec_d34c9131_auto-nocaps-simdna
-R-STATUS-4	1	30	msc-c-uc				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)
+R-STATUS-4	1	30	msc-c-uc				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)
 R-STATUS-4	1	31	msc-c-uc				pcrec_d34c9131_vm-caps-simdna			pattern	msc-c-uc
 R-STATUS-4	1	31	msc-c-uc				pcrec_d34c9131_vm-caps-simdna			testee	pcrec_d34c9131_vm-caps-simdna
-R-STATUS-4	1	31	msc-c-uc				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)
+R-STATUS-4	1	31	msc-c-uc				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)
 R-STATUS-4	1	32	msc-c-uc				pcrec_d34c9131_vm-in-caps-simdna			pattern	msc-c-uc
 R-STATUS-4	1	32	msc-c-uc				pcrec_d34c9131_vm-in-caps-simdna			testee	pcrec_d34c9131_vm-in-caps-simdna
-R-STATUS-4	1	32	msc-c-uc				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)
+R-STATUS-4	1	32	msc-c-uc				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\C is not implemented yet (pattern offset 1)
 R-STATUS-4	1	33	msc-r-uc				pcrec_d34c9131_auto-caps-simdna			pattern	msc-r-uc
 R-STATUS-4	1	33	msc-r-uc				pcrec_d34c9131_auto-caps-simdna			testee	pcrec_d34c9131_auto-caps-simdna
-R-STATUS-4	1	33	msc-r-uc				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)
+R-STATUS-4	1	33	msc-r-uc				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)
 R-STATUS-4	1	34	msc-r-uc				pcrec_d34c9131_auto-nocaps-simdna			pattern	msc-r-uc
 R-STATUS-4	1	34	msc-r-uc				pcrec_d34c9131_auto-nocaps-simdna			testee	pcrec_d34c9131_auto-nocaps-simdna
-R-STATUS-4	1	34	msc-r-uc				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)
+R-STATUS-4	1	34	msc-r-uc				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)
 R-STATUS-4	1	35	msc-r-uc				pcrec_d34c9131_vm-caps-simdna			pattern	msc-r-uc
 R-STATUS-4	1	35	msc-r-uc				pcrec_d34c9131_vm-caps-simdna			testee	pcrec_d34c9131_vm-caps-simdna
-R-STATUS-4	1	35	msc-r-uc				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)
+R-STATUS-4	1	35	msc-r-uc				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)
 R-STATUS-4	1	36	msc-r-uc				pcrec_d34c9131_vm-in-caps-simdna			pattern	msc-r-uc
 R-STATUS-4	1	36	msc-r-uc				pcrec_d34c9131_vm-in-caps-simdna			testee	pcrec_d34c9131_vm-in-caps-simdna
-R-STATUS-4	1	36	msc-r-uc				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)
+R-STATUS-4	1	36	msc-r-uc				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\R is not implemented yet (pattern offset 4)
 R-STATUS-4	1	37	msc-x-uc				pcrec_d34c9131_auto-caps-simdna			pattern	msc-x-uc
 R-STATUS-4	1	37	msc-x-uc				pcrec_d34c9131_auto-caps-simdna			testee	pcrec_d34c9131_auto-caps-simdna
-R-STATUS-4	1	37	msc-x-uc				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)
+R-STATUS-4	1	37	msc-x-uc				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)
 R-STATUS-4	1	38	msc-x-uc				pcrec_d34c9131_auto-nocaps-simdna			pattern	msc-x-uc
 R-STATUS-4	1	38	msc-x-uc				pcrec_d34c9131_auto-nocaps-simdna			testee	pcrec_d34c9131_auto-nocaps-simdna
-R-STATUS-4	1	38	msc-x-uc				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)
+R-STATUS-4	1	38	msc-x-uc				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)
 R-STATUS-4	1	39	msc-x-uc				pcrec_d34c9131_vm-caps-simdna			pattern	msc-x-uc
 R-STATUS-4	1	39	msc-x-uc				pcrec_d34c9131_vm-caps-simdna			testee	pcrec_d34c9131_vm-caps-simdna
-R-STATUS-4	1	39	msc-x-uc				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)
+R-STATUS-4	1	39	msc-x-uc				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)
 R-STATUS-4	1	40	msc-x-uc				pcrec_d34c9131_vm-in-caps-simdna			pattern	msc-x-uc
 R-STATUS-4	1	40	msc-x-uc				pcrec_d34c9131_vm-in-caps-simdna			testee	pcrec_d34c9131_vm-in-caps-simdna
-R-STATUS-4	1	40	msc-x-uc				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)
+R-STATUS-4	1	40	msc-x-uc				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: module 'misc' is enabled but \\X is not implemented yet (pattern offset 1)
 R-STATUS-4	1	41	unp-p-lc				pcrec_d34c9131_auto-caps-simdna			pattern	unp-p-lc
 R-STATUS-4	1	41	unp-p-lc				pcrec_d34c9131_auto-caps-simdna			testee	pcrec_d34c9131_auto-caps-simdna
-R-STATUS-4	1	41	unp-p-lc				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: \p requires module 'unicode-props' (pattern offset 5)
+R-STATUS-4	1	41	unp-p-lc				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: \\p requires module 'unicode-props' (pattern offset 5)
 R-STATUS-4	1	42	unp-p-lc				pcrec_d34c9131_auto-nocaps-simdna			pattern	unp-p-lc
 R-STATUS-4	1	42	unp-p-lc				pcrec_d34c9131_auto-nocaps-simdna			testee	pcrec_d34c9131_auto-nocaps-simdna
-R-STATUS-4	1	42	unp-p-lc				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: \p requires module 'unicode-props' (pattern offset 5)
+R-STATUS-4	1	42	unp-p-lc				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: \\p requires module 'unicode-props' (pattern offset 5)
 R-STATUS-4	1	43	unp-p-lc				pcrec_d34c9131_vm-caps-simdna			pattern	unp-p-lc
 R-STATUS-4	1	43	unp-p-lc				pcrec_d34c9131_vm-caps-simdna			testee	pcrec_d34c9131_vm-caps-simdna
-R-STATUS-4	1	43	unp-p-lc				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: \p requires module 'unicode-props' (pattern offset 5)
+R-STATUS-4	1	43	unp-p-lc				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: \\p requires module 'unicode-props' (pattern offset 5)
 R-STATUS-4	1	44	unp-p-lc				pcrec_d34c9131_vm-in-caps-simdna			pattern	unp-p-lc
 R-STATUS-4	1	44	unp-p-lc				pcrec_d34c9131_vm-in-caps-simdna			testee	pcrec_d34c9131_vm-in-caps-simdna
-R-STATUS-4	1	44	unp-p-lc				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: \p requires module 'unicode-props' (pattern offset 5)
+R-STATUS-4	1	44	unp-p-lc				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: \\p requires module 'unicode-props' (pattern offset 5)
 R-STATUS-4	1	45	unp-p-uc				pcrec_d34c9131_auto-caps-simdna			pattern	unp-p-uc
 R-STATUS-4	1	45	unp-p-uc				pcrec_d34c9131_auto-caps-simdna			testee	pcrec_d34c9131_auto-caps-simdna
-R-STATUS-4	1	45	unp-p-uc				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: \P requires module 'unicode-props' (pattern offset 5)
+R-STATUS-4	1	45	unp-p-uc				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: \\P requires module 'unicode-props' (pattern offset 5)
 R-STATUS-4	1	46	unp-p-uc				pcrec_d34c9131_auto-nocaps-simdna			pattern	unp-p-uc
 R-STATUS-4	1	46	unp-p-uc				pcrec_d34c9131_auto-nocaps-simdna			testee	pcrec_d34c9131_auto-nocaps-simdna
-R-STATUS-4	1	46	unp-p-uc				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: \P requires module 'unicode-props' (pattern offset 5)
+R-STATUS-4	1	46	unp-p-uc				pcrec_d34c9131_auto-nocaps-simdna			diagnostic	pcrec: \\P requires module 'unicode-props' (pattern offset 5)
 R-STATUS-4	1	47	unp-p-uc				pcrec_d34c9131_vm-caps-simdna			pattern	unp-p-uc
 R-STATUS-4	1	47	unp-p-uc				pcrec_d34c9131_vm-caps-simdna			testee	pcrec_d34c9131_vm-caps-simdna
-R-STATUS-4	1	47	unp-p-uc				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: \P requires module 'unicode-props' (pattern offset 5)
+R-STATUS-4	1	47	unp-p-uc				pcrec_d34c9131_vm-caps-simdna			diagnostic	pcrec: \\P requires module 'unicode-props' (pattern offset 5)
 R-STATUS-4	1	48	unp-p-uc				pcrec_d34c9131_vm-in-caps-simdna			pattern	unp-p-uc
 R-STATUS-4	1	48	unp-p-uc				pcrec_d34c9131_vm-in-caps-simdna			testee	pcrec_d34c9131_vm-in-caps-simdna
-R-STATUS-4	1	48	unp-p-uc				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: \P requires module 'unicode-props' (pattern offset 5)
+R-STATUS-4	1	48	unp-p-uc				pcrec_d34c9131_vm-in-caps-simdna			diagnostic	pcrec: \\P requires module 'unicode-props' (pattern offset 5)
 R-STATUS-4	1	49	vrb-accept				pcrec_d34c9131_auto-caps-simdna			pattern	vrb-accept
 R-STATUS-4	1	49	vrb-accept				pcrec_d34c9131_auto-caps-simdna			testee	pcrec_d34c9131_auto-caps-simdna
 R-STATUS-4	1	49	vrb-accept				pcrec_d34c9131_auto-caps-simdna			diagnostic	pcrec: (*...) requires module 'verbs' (pattern offset 4)

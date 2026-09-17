@@ -13,7 +13,7 @@ vocabulary requires backrefs lookaround lookbehind-variable possessive-quantifie
 vocabulary convention perl-leftmost-first posix-leftmost-longest
 tag set=capability, version=0.1
 ext bench
-  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in pcre2-dfa
+  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in pcre2-dfa re2-default re2-longest onig-default vectorscan-block-nosom tre-default
   capabilities pcre2-interp
     backrefs
     lookaround
@@ -117,6 +117,46 @@ ext bench
     callouts
     span-reporting
     non-utf8-subject
+    true-end-anchor
+  capabilities re2-default
+    unicode-properties
+    named-groups
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities re2-longest
+    unicode-properties
+    named-groups
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities onig-default
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities vectorscan-block-nosom
+    unicode-properties
+    named-groups
+    free-spacing
+    non-utf8-subject
+    true-end-anchor
+  capabilities tre-default
+    backrefs
+    span-reporting
+    non-utf8-subject
+    captures
     true-end-anchor
 
 pattern ^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$

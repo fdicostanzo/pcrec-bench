@@ -6,7 +6,7 @@ It checks two things a record must satisfy:
 
   * every LINE against its kind's JSON Schema (schema/record.schema.json),
     line 1 as the setup layer and every later line as a result row; and
-  * the CROSS-LINE rules a schema cannot express -- X1..X33 in
+  * the CROSS-LINE rules a schema cannot express -- X1..X34 in
     docs/design/record_schema.md 9: derived identifiers, the content hash,
     roster references, dense trial numbering, the compile-cost class, the
     "no timing on a cell that did not compile or did not agree with its
@@ -23,6 +23,10 @@ It checks two things a record must satisfy:
     evidence when something independent re-derives it), and the block is
     present iff the record is stamped >= 1.4 (X33). X13 is VERSIONED at
     1.4: the record's own `schema_version` selects which text judges it.
+    (v1.6, Frank's Q3 boolean-grain ruling, lane b44boolgrain) a
+    `testee.grain = boolean` testee's match rows never carry a non-null
+    `observed.span` (X34) -- the checked half of "such a testee never
+    claims a specific span, correct or wrong".
 
 Every message names the FILE, the 1-based LINE and the field path.
 
@@ -511,6 +515,7 @@ class RecordValidator:
         regimes = set(setup.get("subbench", {}).get("regimes", []))
         decl = testee.get("engine_metadata_declaration", {}) or {}
         phases = list(testee.get("compile_phases", []) or [])
+        boolean_grain = testee.get("grain") == "boolean"
 
         # Everything below is keyed by (pattern, FORM): a testee with no
         # end-anchored mode compiles a SECOND artifact for the whole-subject
@@ -539,6 +544,18 @@ class RecordValidator:
                                 f"{row.get('regime')!r} is not among the "
                                 f"sub-bench's declared regimes "
                                 f"{sorted(regimes)}", "X8"))
+                # X34 a boolean-grain testee's match rows never carry a
+                # non-null span (record_schema.md 6.10, 9): its whole
+                # reason to declare `grain: boolean` is "I never know a
+                # span", in either direction.
+                if boolean_grain:
+                    span = (row.get("observed") or {}).get("span")
+                    if span is not None:
+                        add(Problem(path, n, "observed.span",
+                                    f"is {span!r} but testee.grain is "
+                                    f"`boolean` -- such a testee never "
+                                    f"knows a span, correct or wrong, so "
+                                    f"this must be absent or null", "X34"))
                 key = (pid, sid, row.get("regime"), form)
                 seen_match.setdefault(key, {}).setdefault(row.get("trial"), []).append(n)
             else:
@@ -977,7 +994,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X33 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X34 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")

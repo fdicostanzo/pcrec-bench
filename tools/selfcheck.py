@@ -154,6 +154,7 @@ from pcrecbench import adapters as _ad                    # noqa: E402
 from pcrecbench.driverrun import build_driver, run_driver  # noqa: E402
 from pcrecbench import record as _rec                      # noqa: E402
 from pcrecbench.harness import outcome_for, classify_giveup  # noqa: E402
+from pcrecbench import harness as _harness                    # noqa: E402
 from pcrecbench.subbench import Subbench, Expectation, Pattern, SubbenchError  # noqa: E402
 import export_rxt as _rxt                                 # noqa: E402
 from pcrecbench import rxt_source as _rxtsrc               # noqa: E402
@@ -337,7 +338,25 @@ def check_driver_smokes():
             rows_by_trial, _info, _notes = adapter.measure(
                 handle, "search_short", [S()], 1, 1, timeout=120)
             rows = rows_by_trial[0] if rows_by_trial else []
-            if len(rows) == 1 and rows[0].matched and \
+            # A `grain: boolean` testee (schema v1.6, Frank's Q3 ruling;
+            # vectorscan-block-nosom is the first) reports NO span by
+            # construction -- start/end None IS its correct answer, and
+            # asserting [1,6) here would fail the testee for obeying its
+            # own declared grain. The smoke's question narrows to the
+            # boolean fact, exactly as outcome_for's own judging does.
+            grain = adapter.describe(tid, tmp).get("grain", "full")
+            if grain == "boolean":
+                if len(rows) == 1 and rows[0].matched and \
+                        rows[0].start is None and rows[0].end is None:
+                    ok("%s driver smoke" % engine,
+                       "a(b|c)+d over 'xabcbd' -> MATCH (boolean grain, "
+                       "span None,None)")
+                else:
+                    bad("%s driver smoke" % engine,
+                        "expected boolean-grain match (span None,None); "
+                        "got %s"
+                        % ([(r.answer, r.start, r.end) for r in rows]))
+            elif len(rows) == 1 and rows[0].matched and \
                     (rows[0].start, rows[0].end) == (1, 6):
                 ok("%s driver smoke" % engine,
                    "a(b|c)+d over 'xabcbd' -> [1,6)")
@@ -1194,6 +1213,78 @@ def check_high_byte_pattern_argv():
                     "matched=%s span=[%s,%s) -- the argv encoding bug's "
                     "own signature is matched=False" % (r.matched, r.start,
                                                         r.end))
+        # 1b. the SAME witness on onig-default (lane l6bonig, [B7]/L6b,
+        # 2026-09-17: this adapter passes the pattern via a FILE exactly
+        # like testees/pcre2/adapter.py's own convention -- never argv
+        # text -- so it should never have been exposed to I-72's bug
+        # class at all; this is the CONFIRMING witness, not a fix).
+        if "onig" in _ad.discover():
+            r, err = one("onig", "onig-default", PAT, "hib-raw-onig")
+            if err:
+                bad("high-byte argv: raw \\x93 pattern matches [0,7) "
+                    "on onig-default", err)
+            elif r.matched and (r.start, r.end) == (0, 7):
+                ok("high-byte argv: raw \\x93 pattern matches [0,7) "
+                   "on onig-default", "span [%d,%d)" % (r.start, r.end))
+            else:
+                bad("high-byte argv: raw \\x93 pattern matches [0,7) "
+                    "on onig-default",
+                    "matched=%s span=[%s,%s)" % (r.matched, r.start, r.end))
+        # 1c. the SAME transport property on tre-default (lane l6btre,
+        # [B7]/L6b, 2026-09-17) -- with a DIFFERENT pattern spelling, and
+        # that difference is itself the finding this arm exists to state:
+        # TRE has NO `\xHH` hex-escape syntax at all (confirmed,
+        # testees/tre/CLAUDE.md (d) item 1 -- `\x93` compiles as the three
+        # literal characters "x93", never byte 0x93), so the SHARED
+        # PAT above (which relies on the ENGINE interpreting `\xHH`
+        # escapes inside a class) would test TRE's escape-syntax GAP, not
+        # I-72's actual transport property. This arm uses the raw bytes
+        # as a LITERAL exact-match pattern instead -- the identical
+        # transport property (does a raw high pattern byte survive the
+        # adapter's file-based delivery unmangled), without the confound.
+        # This adapter passes the pattern via a FILE exactly like
+        # testees/pcre2/'s and testees/onig/'s own convention -- never
+        # argv text -- so it should never have been exposed to I-72's bug
+        # class at all; this is the CONFIRMING witness, not a fix.
+        if "tre" in _ad.discover():
+            r, err = one("tre", "tre-default", SUBJ, "hib-raw-tre")
+            if err:
+                bad("high-byte argv: literal \\x93hello\\x94 pattern "
+                    "matches [0,7) on tre-default", err)
+            elif r.matched and (r.start, r.end) == (0, 7):
+                ok("high-byte argv: literal \\x93hello\\x94 pattern "
+                   "matches [0,7) on tre-default",
+                   "span [%d,%d)" % (r.start, r.end))
+            else:
+                bad("high-byte argv: literal \\x93hello\\x94 pattern "
+                    "matches [0,7) on tre-default",
+                    "matched=%s span=[%s,%s)" % (r.matched, r.start, r.end))
+        # 1d. the SAME transport property on vectorscan-block-nosom
+        # (lane l6bvs / manager landing-bar item at the wave merge,
+        # 2026-09-17). Same file-based delivery, so a confirming witness
+        # like 1b/1c -- but at BOOLEAN GRAIN (Frank's Q3 ruling, schema
+        # v1.6 testee.grain): this config reports NO span by
+        # construction, so the arm asserts matched=True ALONE, and
+        # start/end None is the EXPECTED degenerate shape, not a
+        # failure. Uses the tre arm's literal-bytes spelling: Hyperscan
+        # DOES have \xHH, but the literal form tests the transport
+        # property with one fewer moving part.
+        if "vectorscan" in _ad.discover():
+            r, err = one("vectorscan", "vectorscan-block-nosom", SUBJ,
+                         "hib-raw-vs")
+            if err:
+                bad("high-byte argv: literal \\x93hello\\x94 pattern "
+                    "MATCHES (boolean grain) on vectorscan-block-nosom",
+                    err)
+            elif r.matched and r.start is None and r.end is None:
+                ok("high-byte argv: literal \\x93hello\\x94 pattern "
+                   "MATCHES (boolean grain) on vectorscan-block-nosom",
+                   "matched=True span=None,None (X34's own shape)")
+            else:
+                bad("high-byte argv: literal \\x93hello\\x94 pattern "
+                    "MATCHES (boolean grain) on vectorscan-block-nosom",
+                    "matched=%s span=[%s,%s)" % (r.matched, r.start,
+                                                 r.end))
         # 2. the pcre2 reference agrees
         r, err = one("pcre2", "pcre2-interp", PAT, "hib-ref")
         if err:
@@ -8787,6 +8878,111 @@ def check_convention_scoring():
             outcome)
 
 
+def check_boolean_grain_scoring():
+    """BOOLEAN-GRAIN SCORING (Frank's Q3 ruling, `capability_set_v1.md`
+    5.6 option B; lane `b44boolgrain`, `harness.outcome_for`'s `grain`
+    parameter): exercised against HAND-BUILT fixtures, the same posture
+    `check_convention_scoring` above takes and for the same reason --
+    lane `l6bvs`'s `vectorscan-block-nosom` is the only testee that will
+    ever set `testee.grain = "boolean"`, and its own delivery is a
+    separate lane's scope (not built here). This is the check that
+    reproduces l6bvs's own two findings against the REAL function, fixed:
+
+      1. a TRUE MATCH at `grain="boolean"` (row.start=row.end=None, the
+         driver protocol's own degenerate shape) scores
+         `matched-as-expected` -- l6bvs's Level 1 finding
+         (`wrong-span-or-captures` on every genuine match) does not
+         reproduce.
+      2. that same row's `observed` is ABSENT from the tuple entirely
+         (not `{"span": null}`, not `{"span": [None, None]}`) -- the
+         same shape a FULL-grain testee's correct match already has;
+         l6bvs's Level 2 finding (the schema-illegal `[None, None]`
+         array) has no `observed` to be illegal in.
+      3. a TRUE NOMATCH at `grain="boolean"` also scores
+         `matched-as-expected` -- the boolean check was never
+         span-shaped, so `grain` changes nothing about it.
+      4. a FALSE POSITIVE (row.matched=True, expectation.matched=False)
+         at `grain="boolean"` scores `did-not-match-as-expected` with
+         `observed.span: None` (the schema's legal null-span shape) --
+         `_observed_span`'s null-safety, exercised on the OTHER branch
+         `outcome_for` can reach with a span-less matched row.
+      5. CONTROL: the identical fixtures at `grain="full"` (the default
+         -- every call site before this lane, and every call site that
+         passes nothing) score EXACTLY as they did before this lane: a
+         span mismatch against a real expectation span is
+         `wrong-span-or-captures`, proving the relaxation is
+         `grain`-gated, not a change to every testee's scoring."""
+    print("-- boolean-grain scoring (outcome_for's grain parameter) --")
+
+    class _Subj:
+        length = 3
+
+    exp_match = Expectation(["p", "s1", "search_short", "match", "0", "3", "-", "m", "o"])
+    exp_nomatch = Expectation(["p", "s2", "search_short", "nomatch", "-", "-", "-", "m", "o"])
+    subj = _Subj()
+
+    # 1+2: a true match, boolean grain -- no span the driver can report.
+    row_bool_match = _ad.MatchRow("s1", "match", start=None, end=None,
+                                  iters=1, seconds=1e-6)
+    outcome, obs, _diag = outcome_for(row_bool_match, exp_match, "search_short",
+                                      subj, grain="boolean")
+    if outcome == "matched-as-expected" and obs is None:
+        ok("boolean grain: a true match scores matched-as-expected, no observed",
+           (outcome, obs))
+    else:
+        bad("boolean grain: a true match scores matched-as-expected, no observed",
+            (outcome, obs))
+
+    # 3: a true nomatch, boolean grain.
+    row_bool_nomatch = _ad.MatchRow("s2", "nomatch", start=None, end=None,
+                                    iters=1, seconds=1e-6)
+    outcome, obs, _diag = outcome_for(row_bool_nomatch, exp_nomatch, "search_short",
+                                      subj, grain="boolean")
+    if outcome == "matched-as-expected" and obs is None:
+        ok("boolean grain: a true nomatch scores matched-as-expected, no observed",
+           (outcome, obs))
+    else:
+        bad("boolean grain: a true nomatch scores matched-as-expected, no observed",
+            (outcome, obs))
+
+    # 4: a false positive, boolean grain -- observed.span is null, never
+    # [None, None] (l6bvs's Level 2 finding, fixed by _observed_span).
+    row_bool_falsepos = _ad.MatchRow("s2", "match", start=None, end=None,
+                                     iters=1, seconds=1e-6)
+    outcome, obs, _diag = outcome_for(row_bool_falsepos, exp_nomatch, "search_short",
+                                      subj, grain="boolean")
+    if (outcome == "did-not-match-as-expected" and obs is not None
+            and obs.get("span") is None):
+        ok("boolean grain: a false positive's observed.span is null, "
+           "never [None, None]", obs)
+    else:
+        bad("boolean grain: a false positive's observed.span is null, "
+            "never [None, None]", obs)
+
+    # 5: CONTROL -- the same true-match row at grain="full" (the default)
+    # is still wrong-span-or-captures: the relaxation is grain-gated.
+    outcome, obs, _diag = outcome_for(row_bool_match, exp_match, "search_short", subj)
+    if outcome == "wrong-span-or-captures" and obs is not None and obs.get("span") is None:
+        ok("CONTROL: grain=\"full\" (the default) still scores a spanless "
+           "match wrong-span-or-captures", (outcome, obs))
+    else:
+        bad("CONTROL: grain=\"full\" (the default) still scores a spanless "
+            "match wrong-span-or-captures", (outcome, obs))
+
+    # CONTROL: a full-grain testee's ORDINARY correct match (a real,
+    # agreeing span) is unaffected by this lane at all -- the same shape
+    # `check_convention_scoring`'s own fixture 1 exercises, repeated here
+    # so this check does not depend on that one running first.
+    row_full_match = _ad.MatchRow("s1", "match", start=0, end=3, iters=1, seconds=1e-6)
+    outcome, obs, _diag = outcome_for(row_full_match, exp_match, "search_short", subj)
+    if outcome == "matched-as-expected" and obs is None:
+        ok("CONTROL: a full-grain testee's real matching span is unchanged",
+           (outcome, obs))
+    else:
+        bad("CONTROL: a full-grain testee's real matching span is unchanged",
+            (outcome, obs))
+
+
 def check_capability_policy_noop_elsewhere():
     """`pcrecbench.capability`'s own module docstring claims the
     pre-compile policy is "a silent no-op on every pre-[B42] set" because
@@ -9049,6 +9245,145 @@ def check_pcre2_dfa():
     shutil.rmtree(scratch, ignore_errors=True)
 
 
+class _GiveupStubAdapter:
+    """A stub `Adapter.measure()` for `check_giveup_not_batched` -- never
+    pcrec, never a compile, so the check runs in seconds rather than
+    waiting out a real give-up's cost x a real batch's iters to see the
+    bug. Reproduces the ONE fact the fix depends on: the driver protocol's
+    per-subject loop (`adapters.py`'s docstring; `testees/pcrec/driver.c`'s
+    `for (it = 0; it < iters; it++)`) never breaks early on a give-up, so
+    ITS `seconds` scale with `iters` exactly the way the real C loop's do."""
+
+    def __init__(self, giveup_ids, cost_per_call=2.7):
+        self.giveup_ids = set(giveup_ids)
+        self.cost_per_call = cost_per_call
+        self.calls = []  # (regime, [subject_id, ...], iters, trials)
+
+    def measure(self, handle, regime, subjects, iters, trials, timeout=None):
+        self.calls.append((regime, [s.subject_id for s in subjects], iters,
+                           trials))
+        rows_by_trial = []
+        for _t in range(trials):
+            rows = []
+            for s in subjects:
+                if s.subject_id in self.giveup_ids:
+                    rows.append(_ad.MatchRow(
+                        s.subject_id, "giveup:-3:PCREC_ERR_FRAMES",
+                        iters=iters, seconds=self.cost_per_call * iters))
+                else:
+                    rows.append(_ad.MatchRow(
+                        s.subject_id, "match", start=0, end=1,
+                        iters=iters, seconds=1e-6 * iters))
+            rows_by_trial.append(rows)
+        return rows_by_trial, {}, []
+
+
+class _GiveupSubject:
+    def __init__(self, sid, length=8):
+        self.subject_id, self.length = sid, length
+
+
+def check_giveup_not_batched():
+    """KB-20 (docs/dev/known_issues.md; the F3 give-up investigation,
+    2026-09-17): a give-up must be TERMINAL for its own (pattern, subject,
+    regime) cell -- never re-paid `iters` times by the calibration probe
+    or the batched timed run (`harness.measure_regime_cell`, the fix's
+    whole seam). Exercised against `_GiveupStubAdapter` above, ISOLATED
+    from pcrec and from any compile, so this runs in seconds: a stub whose
+    give-up costs 2.7 s/call -- the F3 witness's own number on
+    `evil-alt-nested` -- proves the fix without waiting out 2.7 s x a
+    ~200-iteration batch (~540 s, the bug's own arithmetic) to see it.
+
+    Two subjects, `s-giveup` (gives up on every call) and `s-ok` (answers
+    normally):
+
+      1. `s-giveup` is NEVER handed a call asking for more than one
+         iteration -- the batching the bug depends on never happens.
+      2. every trial's row for `s-giveup` reads `giveup:...` BY NAME
+         (dense 1..N trials), and `outcome_for` judges it `gave-up` --
+         DISTINCT from `timed-out` (`check_subject_timeout`, above,
+         which hangs a real artifact and never emits a `giveup:` answer
+         at all, so this fix does not touch it -- the two paths are
+         shown separately, never merged).
+      3. THE NO-OP ARGUMENT: `s-ok`'s own calibration and rows are
+         byte-identical whether or not `s-giveup` shares its cell --
+         calibrating and measuring `[s-ok]` alone (the control) reaches
+         the exact same `n_iters` and the exact same answers as the
+         `s-ok` slice of the two-subject cell.
+      4. THE ALL-GIVE-UP EDGE: every subject in the cell gives up on its
+         first call -- nothing is left to calibrate, and the cell must
+         not crash or hang (`cal is None`, `n_iters == 1`, one row per
+         trial)."""
+    print("-- KB-20: a give-up is terminal, never batched --")
+    subjects = [_GiveupSubject("s-giveup"), _GiveupSubject("s-ok")]
+    adapter = _GiveupStubAdapter(giveup_ids=["s-giveup"])
+    handle = {"giveup_range": (-5, -2)}
+
+    n_iters, _why, cal, rows_by_trial, notes = _harness.measure_regime_cell(
+        adapter, handle, "search_short", subjects, None, 3,
+        driver_timeout=120, subject_timeout=60, budget=2.0)
+
+    giveup_calls = [c for c in adapter.calls if "s-giveup" in c[1]]
+    max_giveup_iters = max((c[2] for c in giveup_calls), default=None)
+    if giveup_calls and max_giveup_iters == 1:
+        ok("s-giveup is NEVER asked for iters > 1",
+           "%d call(s) touched it, max iters=%d"
+           % (len(giveup_calls), max_giveup_iters))
+    else:
+        bad("s-giveup is NEVER asked for iters > 1", "calls=%r" % (giveup_calls,))
+
+    giveup_rows = [r for trial in rows_by_trial for r in trial
+                   if r.subject_id == "s-giveup"]
+    giveup_answers = [r.answer for r in giveup_rows]
+    if (len(giveup_answers) == 3
+            and all(a == "giveup:-3:PCREC_ERR_FRAMES" for a in giveup_answers)):
+        ok("s-giveup reads gave-up BY NAME, dense across all 3 trials",
+           "%r" % giveup_answers)
+    else:
+        bad("s-giveup reads gave-up BY NAME, dense across all 3 trials",
+            "%r" % giveup_answers)
+
+    outcome, _obs, _diag = outcome_for(
+        giveup_rows[0], None, "search_short", subjects[0],
+        giveup_ok=classify_giveup(giveup_rows[0].answer, handle))
+    if outcome == "gave-up":
+        ok("outcome_for judges it gave-up -- DISTINCT from timed-out", outcome)
+    else:
+        bad("outcome_for judges it gave-up -- DISTINCT from timed-out", outcome)
+
+    control_adapter = _GiveupStubAdapter(giveup_ids=[])
+    c_iters, _c_why, _c_cal, c_rows, _c_notes = _harness.measure_regime_cell(
+        control_adapter, handle, "search_short", [_GiveupSubject("s-ok")],
+        None, 3, driver_timeout=120, subject_timeout=60, budget=2.0)
+    ok_answers_in_cell = [r.answer for trial in rows_by_trial for r in trial
+                          if r.subject_id == "s-ok"]
+    ok_answers_alone = [r.answer for trial in c_rows for r in trial]
+    if n_iters == c_iters and ok_answers_in_cell == ok_answers_alone:
+        ok("s-ok's own numbers are a NO-OP: unaffected by s-giveup's presence",
+           "n_iters=%d both ways" % n_iters)
+    else:
+        bad("s-ok's own numbers are a NO-OP: unaffected by s-giveup's presence",
+            "n_iters=%r vs %r; answers %r vs %r"
+            % (n_iters, c_iters, ok_answers_in_cell, ok_answers_alone))
+
+    all_giveup_adapter = _GiveupStubAdapter(giveup_ids=["s-only"])
+    n2, _why2, cal2, rows2, _notes2 = _harness.measure_regime_cell(
+        all_giveup_adapter, handle, "search_short", [_GiveupSubject("s-only")],
+        None, 3, driver_timeout=120, subject_timeout=60, budget=2.0)
+    answers2 = [r.answer for trial in rows2 for r in trial]
+    if cal2 is None and n2 == 1 and len(answers2) == 3:
+        ok("every subject giving up leaves nothing to calibrate; no crash",
+           "n_iters=%d, %d row(s)" % (n2, len(answers2)))
+    else:
+        bad("every subject giving up leaves nothing to calibrate; no crash",
+            "n_iters=%r cal=%r rows=%r" % (n2, cal2, answers2))
+
+    if notes and "s-giveup" in " ".join(notes):
+        ok("the note names the held-back subject", " ".join(notes)[:160])
+    else:
+        bad("the note names the held-back subject", "%r" % notes)
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -9057,6 +9392,7 @@ def main():
     check_wrong_answer_control()
     check_patterns_distinct()
     check_subject_timeout()
+    check_giveup_not_batched()
     check_store_race()
     check_whole_subject_form()
     check_v11_fields()
@@ -9103,6 +9439,7 @@ def main():
     check_capability_policy()
     check_capability_policy_noop_elsewhere()
     check_convention_scoring()
+    check_boolean_grain_scoring()
     check_pcre2_dfa()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
