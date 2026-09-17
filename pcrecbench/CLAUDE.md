@@ -1023,3 +1023,71 @@ must know:
 does not change it. The `interpret` subcommand is dispatched before
 argparse in `__main__.py`, the same way `report` is, so it owns its own
 flags.
+
+## The reporter, KB-18 (2026-09-17) -- a did-not-compile diagnostic is FULL, never truncated, v17
+
+Lanes `b42repdiag` (the fix) and `b42repfin` (the regen wave and this
+entry). `docs/dev/known_issues.md` KB-18, found on bench/capability@0.1's
+first sample: `wild-waf-crs-942500-comment-obfuscation`'s did-not-compile
+diagnostic (a genuine pcrec DFA-emitter bug -- an unescaped `*/` in a
+generated comment desynchronizes the rest of the C compile, cascading
+into two more errors) had to be read out of the raw JSONL record because
+`_diagnostic_first_line` (since [B12] R10) kept only the first line and
+printed `[truncated, diagnostic continues]` in its place
+(docs/dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md, Finding F).
+
+- **`_diagnostic_full` replaces `_diagnostic_first_line`.** A
+  did-not-compile row's `diagnostic` is carried VERBATIM and IN FULL,
+  bounded only by `record.FREE_TEXT_MAX` (1,048,576 chars, schema v1.5's
+  hygiene bound, [B30]) as a defensive ceiling -- the schema itself caps
+  a compile row's `diagnostic` at 8192 chars today, well under it. Both
+  call sites (the markdown `not ranked: ... did-not-compile (<diagnostic>)`
+  bullet, the TSV `did_not_compile` row) are ONE-PHYSICAL-LINE contexts,
+  so an embedded newline/tab/backslash is rendered VISIBLY (backslash
+  escaped FIRST, then `\n`/`\t`) rather than executed -- nothing is
+  dropped, and the mapping is losslessly reversible: a diagnostic that
+  happens to already contain the literal two characters `\n` renders
+  distinguishably from one with a real embedded newline. This means
+  EVERY literal backslash in a diagnostic is doubled, not only ones
+  adjacent to a real control character -- a deliberate, necessary part
+  of the reversibility guarantee, not an oversight; see the finding
+  below for where it fires on ordinary single-line text.
+  `pcrecbench/__main__.py`'s OWN, SEPARATE `_diagnostic_first_line`
+  (KB-10's `quick --vs` refused-arm one-liner, genuinely one-line-by-
+  design) is UNCHANGED.
+- `REPORTER_VERSION` bumps to `v17 (2026-09-17)`;
+  `pcrecbench/tests/test_report.py` gained `test_diagnostic_full_kb18`
+  (a multi-line diagnostic escapes visibly and survives whole; a
+  single-line one is unchanged when it carries no backslash; `None`/empty
+  render `(no diagnostic)`; a literal two-character `\n` in the SOURCE
+  renders distinguishably from a real embedded newline). Standalone run
+  (`python3 -m pcrecbench.tests.test_report`, pre-regen): 78 passed, 0
+  failed.
+- **The regen wave (lane b42repfin) touched TWO groups beyond the
+  version-line stamp, both EXPLAINED, neither a bug.** All 43 committed
+  report groups (129 files) were re-rendered from each file's OWN
+  committed query and diffed against the last commit; 41 groups are
+  byte-identical but for the `reporter: v16` -> `v17` line.
+  `2026-09-17-capability-0.1-*-first-a770139e.*` moves exactly as KB-18
+  intended (5/5/157 changed lines in tsv/md/subject-grain: the four
+  `wild-waf-crs-942500-comment-obfuscation` did-not-compile rows now
+  carry the full gcc transcript). `2026-09-07-syntax-0.1-*-first-
+  d34c9131.*` ALSO moves (85/85/2437 changed lines) -- diagnosed and
+  CONFIRMED NOT store drift (the query already carries an explicit
+  `--since`/`--until` pair; both renders match the same 6 records, 0
+  superseded, 0 excluded) but the SAME escaping rule firing on seven
+  bench/syntax patterns whose pcrec diagnostics quote a literal
+  backslash-letter escape sequence with no embedded control character at
+  all -- `esc-ctrl` (`\c`), `esc-octal-o` (`\o`), `msc-c-uc` (`\C`),
+  `msc-r-uc` (`\R`), `msc-x-uc` (`\x`), `unp-p-lc`/`unp-p-uc` (`\p{...}`)
+  -- each rendering e.g. `\c` as `\\c` for the same lossless-reversibility
+  reason stated above. Neither the lane's own one-record manual proof nor
+  the disposable `regen_reports.py` scratch script's diff classifier
+  (which only recognised the OLD truncation marker as an expected class)
+  anticipated this population; `git diff` against the last commit is
+  what confirms both groups' deltas are fully accounted for by these two
+  causes and nothing else. The four committed `reports/*.interpretation.md`
+  sidecars were also regenerated (`scripts/regen_sidecars.py`, 0
+  failures, all determinism-checked) -- the capability sidecar's own
+  finding line now shows the full gcc transcript in place of the old
+  truncation marker, proving the fix reaches the interpreter path too.

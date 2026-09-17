@@ -1,13 +1,13 @@
 <!-- pcrecbench interpret
 report:          reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv
-report_sha256:   e27cd1a2e0c494493431a60523dcb3b7892f62f6d69a83dd27def837e8515ea3
+report_sha256:   ddee2a130eddaa80c9e81afa4434a15b8c360247e4c29b0f4c003a232669da30
 index:           store/index.tsv
 index_sha256:    9b2f464cc19848ba5f0ede400f6f8a71d3f830980ca199282908ce2e650dedd3
 predictions:     (none)
 predictions_sha256:(none)
 catalogue:       1.3
 interpret:       v1
-reporter:        v16 (2026-09-08)
+reporter:        v17 (2026-09-17)
 query:           subbench=email-specimen, version=0.1
 -->
 

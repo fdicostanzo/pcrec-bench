@@ -31,6 +31,59 @@ catalogue change (`catalogue/rules.toml`), not an edit to the rendered
 file. Committed today: the three `docs/design/interpreter_v1.md` §10
 acceptance reports (A, B, C); the rest are generated on demand (§11 Q5).
 
+**KB-18 (2026-09-17, lanes b42repdiag → b42repfin) regenerated EVERY
+committed report against reporter `v17 (2026-09-17)`** (a did-not-compile
+diagnostic is now carried FULL and verbatim, never truncated to its
+first line -- docs/dev/known_issues.md KB-18, `pcrecbench/CLAUDE.md`'s
+report.py entry). All 43 groups (129 files: 43 `.tsv` + 43 `.md` + 43
+`.subject-grain.md`) re-rendered from their OWN committed query and
+diffed against the LAST COMMIT before being written back:
+
+- **41 groups are byte-identical but for the version-line stamp**
+  (`reporter: v16 (2026-09-08)` -> `v17 (2026-09-17)`, one line, every
+  file).
+- **`2026-09-17-capability-0.1-budu-ryzen1600-first-a770139e.*` moves
+  exactly as KB-18 intended** (5 lines changed in `.tsv`/`.md`, 157 in
+  `.subject-grain.md`): the four `wild-waf-crs-942500-comment-
+  obfuscation` did-not-compile rows (both `pcrec-auto`/`pcrec-auto-
+  nocaps`, both `large-subject-throughput`/`short-subject-search`) now
+  carry gcc's full transcript in place of `[truncated, diagnostic
+  continues]` -- the finding KB-18 exists to fix.
+- **`2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.*` ALSO moves**
+  (85 lines in `.tsv`/`.md`, 2437 in `.subject-grain.md`) — diagnosed
+  and CONFIRMED as NOT store drift before being accepted: the group's
+  query already carries an explicit `--since 2026-09-07T00:00:00Z
+  --until 2026-09-07T05:00:00Z` pair (the 2026-08-30 rule), and both the
+  committed and the re-rendered header read `records: 6; excluded_invalid:
+  0; superseded: 0; newer_not_measured: 0` — the identical six records,
+  not a shifted population. The real cause is the SAME KB-18 escaping
+  rule firing on ordinary single-line diagnostics: seven bench/syntax
+  patterns' pcrec diagnostics quote a literal backslash-letter escape
+  sequence with no embedded newline at all — `esc-ctrl` (`` \c ``),
+  `esc-octal-o` (`` \o ``), `msc-c-uc` (`` \C ``), `msc-r-uc` (`` \R ``),
+  `msc-x-uc` (`` \x ``), `unp-p-lc`/`unp-p-uc` (`` \p{...} ``) — each
+  rendering e.g. `` \c `` as `` \\c `` for the SAME lossless-
+  reversibility reason `_diagnostic_full`'s docstring states (a `\n`
+  escape must render distinguishably from a real embedded newline, so
+  EVERY backslash is escaped, not only ones beside a control character).
+  Confirmed by `git diff` against the last commit: every one of the 85
+  (resp. 2437) changed lines is a `did_not_compile` row (or its
+  `subject-grain` expansion) or the bullet-list equivalent on one of
+  those seven pattern ids, nothing else. Neither this lane's own
+  one-record manual proof nor the disposable `regen_reports.py` scratch
+  tool's diff classifier (which only recognised the OLD truncation
+  marker as an expected class) anticipated this population before the
+  regen ran; the `--until`-drift hypothesis considered first (the [B12]
+  precedent) was RULED OUT by the unchanged record count and the
+  already-present `--until` clause, then abandoned once the real cause
+  was found in the diff content itself.
+- **The four committed `reports/*.interpretation.md` sidecars were also
+  regenerated** (`scripts/regen_sidecars.py`, 0 failures, all
+  determinism-checked): the capability sidecar's own finding line now
+  shows the full gcc transcript in place of the old truncation marker,
+  proving the fix reaches the interpreter's fact-finding path, not only
+  the reporter's own render.
+
 **[B13.2] (2026-09-08, lanes b13pre → b13regen → b13regen2 → b13fin)
 regenerated EVERY committed report against reporter `v16 (2026-09-08)`**
 (docs/design/interpreter_v1.md §2.5's two reporter preconditions,
