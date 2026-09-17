@@ -8,7 +8,7 @@ change, no reporter change, no record touched. Diff is exactly two files.
 
 | file | state |
 |---|---|
-| `docs/design/interpret_subject_grain_v1.md` | NEW, 640 lines, PROPOSED (not adopted), D6-panel-ready |
+| `docs/design/interpret_subject_grain_v1.md` | NEW, 896 lines, PROPOSED (not adopted), D6-panel-ready |
 | `docs/design/CLAUDE.md` | entry added after `interpreter_v1.md` |
 | this report | committed |
 
