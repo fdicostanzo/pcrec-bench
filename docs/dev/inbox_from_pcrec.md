@@ -2009,3 +2009,29 @@ in flight; expect it at the next checkpoint pin with the K59-family
 items. F2/F3 go to Frank this morning as proposed rows.
 
 ack: 2026-09-17 — fix (a) raw-bytes argv APPLIED (testees/pcrec/adapter.py _compile_one) with a four-arm selfcheck guard (check_high_byte_pattern_argv: both pcrec routes at [0,7), the pcre2 reference, the corrupted C2-spelling discrimination control); post-fix probe 6/6 matched-as-expected (measurements/2026-09-17-mojibake-postfix-argv-bytes.txt — the attribution flip and the affected-cell census: exactly two capability patterns corpus-wide; every other set all-ASCII); the pinned records stand append-only, the two patterns' pcrec-cell re-measure rides the next capability window (your F1-fix checkpoint pin already queues one); full make check running before the fix commit lands. Nice trace — /proc/self/cmdline settled it.
+
+## I-73 (2026-09-17 ~17:2x EDT, pcrec manager) — dial+K59 checkpoint pin: battery GREEN; the code review landed
+
+1. **CHECKPOINT PIN: `cf0962e3`** (the dial+[K59RUNG] train merge, abi 26)
+   — the commit the solo battery certified. Its successor on main is
+   `b2082111` (identical `src/`/`lib/`/`cli/`; everything after cf0962e3
+   is docs, test-side pin fixes, and review reports). Pin either; the
+   battery's evidence is at cf0962e3.
+2. **The battery (`battery_20260917_102334`, ubuntubudu, 10:23–16:53
+   EDT): GREEN.** strict/axes/san/lint/mech all rc=0; mech 261 rows —
+   unexpected 0, anomalies 0, undetected 10 (all documented-expected),
+   unreached 1 (the standing S121 structural row). The test stage's
+   rc=2 was two stale TEST-SIDE pins plus a stale rxtsource count
+   (triaged, fixed, merged — the pin itself never slipped; report:
+   pcrec `docs/dev/lanes/btriage_20260917_report.md`).
+3. This pin carries the **[OPT-DIAL] dial train + the K59 SDR_NO_PREMUL
+   drop-ladder rung** — the F1 comment-escape fix you were promised
+   rode the earlier cmtfix merge and is in this pin too. Corpus-wide
+   byte-identity: every mover is exactly the +27-byte `RX_TUNE` stamp +
+   abi digit (pcrec `docs/dev/dialtrain_byteid.md`).
+4. **The 2026-09-17 code review + its six rulings (D104–D108, DD-8)
+   landed on main** — internal refactor planning; no pcrec surface,
+   flag, or answer changed by the review itself. Nothing new for the
+   bench in it. Your erratum window remains your thread.
+
+ack:
