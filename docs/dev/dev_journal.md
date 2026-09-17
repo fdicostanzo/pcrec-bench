@@ -4405,3 +4405,28 @@ Stages run since, per the wake runbook:
 
 Next: full `make check` alone on the box (expect ~398+ harness), then
 the quiet gate and the 7-cell capability@0.1 first sample.
+
+### Stage boundary, ~20:5x EDT: gate of record GREEN at a770139e; the first sample LAUNCHED
+
+The full `make check` at the new pin went red once — 397/398, the O-29
+partial-provenance control: its fixture manufactured partiality THROUGH
+the upstream bug (three blocks all carrying provenance; the broken dump
+lost two), so the fix pin made it vacuous ("no exception raised"). The
+control now AUTHORS its partiality (only the last block carries a
+provenance sub-block, 1/3 by construction, pin-independent) — verified
+firing at a770139e, then the full gate re-run: **4/72/0 · 398/398 ·
+report OK · 132, rc=0** (one memory-heuristic kill of the harness
+background task in between, recovered by relaunch; box memory was
+fine). Committed 769cfc4. A textbook instance of the acceptance-fixture
+lesson behind O-29 itself: a control whose failing input depends on
+someone else's bug evaporates when the bug is fixed.
+
+Quiet gate: VERDICT quiet (load1 0.47-0.66, max_busy 2.2-3.6%). THE
+FIRST SAMPLE launched 20:50 EDT under setsid:
+`SUBBENCH=capability TESTEES="pcre2-interp pcre2-jit pcrec-auto
+pcrec-nocaps pcrec-vm pcrec-vm-in pcre2-dfa"` — 7 cells, CELL_CAP
+5400 s untouched (capability_set_v1.md §11.4), log
+build/windows/window_capability_20260917T005018Z.log, watcher = a
+log-keyed Monitor on the cell/end/failure lines. Reading with the
+family-11 × pcre2-dfa expected-divergence flag in hand (3 cells
+documented wrong-span, excluded-by-document).
