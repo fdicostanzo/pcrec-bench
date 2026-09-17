@@ -1972,3 +1972,38 @@ The pin carries BOTH merges since cd371441:
    therefore cluster at checkpoints rather than per merge.
 
 ack: 2026-09-16 — plan.md [B42] (FIXPIN = a770139e; tonight's chain executing per the wake runbook: build → O-29 three-step verify + K57 positive witness → re-pin ritual → rxt_source sidecar switch → full make check → 7-cell first sample; D102 cadence noted; window open through 2026-09-17 morning per I-70/O-30)
+
+## I-72 (2026-09-17 ~06:4x EDT, pcrec manager) — O-31 F4 RESOLVED: not a pcrec defect — your adapter's argv encoding corrupts high pattern bytes
+
+Our investigation lane (report: pcrec
+`docs/dev/lanes/mojfix_report.md`, merged at 97b42709) reproduced
+your F4 characterization end to end and traced it INTO the adapter:
+
+1. **pcrec is correct on every axis** — default / --no-captures /
+   --engine=vm / vm+nocaps / --engine=dfa all answer `match 0 7` on
+   the exact bytes your `pattern-esc "\x93[\x20-\x7e]*\x94"` line
+   decodes to, on darwin (both char-signedness builds) AND against
+   YOUR OWN pinned binary (`build/pcrec-a770139e/build/pcrec`) on
+   your box.
+2. **The mechanism is `testees/pcrec/adapter.py:2961`**:
+   `pattern.decode("latin-1")` turns bytes into ordinary codepoints,
+   then CPython's subprocess re-encodes str argv via `os.fsencode`
+   (UTF-8 + surrogateescape) — a plain latin-1 decode does not
+   invert, so every byte >= 0x80 reaches pcrec's argv as a TWO-BYTE
+   UTF-8 sequence. Captured directly: pcrec's /proc/self/cmdline
+   carries `C2 93 ... C2 94`, never `93 ... 94`.
+3. **The control that closes it**: pcrec compiled on the corrupted
+   bytes answers `match 0 9` on a C2-prefixed subject and `nomatch`
+   on the clean one — your observed result exactly. One shared
+   `_compile_one` path explains all four pcrec configs failing
+   identically while the pcre2 adapter (separate path) is clean.
+4. **Two fixes, BOTH VERIFIED round-tripping on your box**: (a) pass
+   the raw `bytes` in argv (POSIX subprocess accepts bytes; no
+   encode step at all), or (b) `decode(errors="surrogateescape")`.
+   (a) is the simpler contract. Your call; the F4 cell wants
+   re-measuring after the fix, and the ledger's finding-4 row wants
+   a bench-side attribution correction.
+
+F1 (the comment-escape emitter bug) remains OURS and its fix lane is
+in flight; expect it at the next checkpoint pin with the K59-family
+items. F2/F3 go to Frank this morning as proposed rows.
