@@ -338,7 +338,25 @@ def check_driver_smokes():
             rows_by_trial, _info, _notes = adapter.measure(
                 handle, "search_short", [S()], 1, 1, timeout=120)
             rows = rows_by_trial[0] if rows_by_trial else []
-            if len(rows) == 1 and rows[0].matched and \
+            # A `grain: boolean` testee (schema v1.6, Frank's Q3 ruling;
+            # vectorscan-block-nosom is the first) reports NO span by
+            # construction -- start/end None IS its correct answer, and
+            # asserting [1,6) here would fail the testee for obeying its
+            # own declared grain. The smoke's question narrows to the
+            # boolean fact, exactly as outcome_for's own judging does.
+            grain = adapter.describe(tid, tmp).get("grain", "full")
+            if grain == "boolean":
+                if len(rows) == 1 and rows[0].matched and \
+                        rows[0].start is None and rows[0].end is None:
+                    ok("%s driver smoke" % engine,
+                       "a(b|c)+d over 'xabcbd' -> MATCH (boolean grain, "
+                       "span None,None)")
+                else:
+                    bad("%s driver smoke" % engine,
+                        "expected boolean-grain match (span None,None); "
+                        "got %s"
+                        % ([(r.answer, r.start, r.end) for r in rows]))
+            elif len(rows) == 1 and rows[0].matched and \
                     (rows[0].start, rows[0].end) == (1, 6):
                 ok("%s driver smoke" % engine,
                    "a(b|c)+d over 'xabcbd' -> [1,6)")
