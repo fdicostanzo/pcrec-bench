@@ -403,6 +403,116 @@ def _iters_meeting_target(target_ns, probe_ns, probe_n):
     return iters
 
 
+# ------------------------------------------------------ giveup vs. batching
+
+def _first_call_outcomes(adapter, handle, regime, subjects, timeout):
+    """One iters=1 driver call over every subject in this regime -- the
+    FIRST call, before any batch-sized call runs. -> {subject_id: MatchRow}.
+
+    KB-20 (docs/dev/known_issues.md; the F3 give-up investigation,
+    2026-09-17): the driver protocol's per-subject loop
+    (`for (it = 0; it < iters; it++)`, `adapters.py`'s protocol docstring)
+    never breaks early on a give-up -- it re-tries `iters` times, keeping
+    only the last answer -- so a subject whose ENGINE gives up on every
+    call re-pays that engine's own give-up cost `iters` times inside BOTH
+    `calibrate()`'s probe (sized ~200 for search_short/match) and the
+    timed run that follows it. An engine whose give-up is cheap (pcre2's
+    match-limit refusal) hides this inside the alarm's slack; an engine
+    whose give-up is expensive (pcrec's ~2.7 s/call witness on
+    `evil-alt-nested`) turns a per-call OUTCOME into a per-subject
+    `timed-out` purely as an artifact of how many times the harness
+    happened to ask -- so the RECORDED outcome ends up depending on the
+    engine's own give-up cost, which is exactly the kind of harness
+    artifact this bench exists not to have.
+
+    This probe is cheap (iters=1) and runs BEFORE either batch-sized call,
+    so a give-up is caught on the strength of the driver's own typed
+    answer, never inferred from a batch's timing."""
+    rows_by_trial, _info, _notes = adapter.measure(
+        handle, regime, subjects, 1, 1, timeout=timeout)
+    rows = rows_by_trial[0] if rows_by_trial else []
+    return {r.subject_id: r for r in rows}
+
+
+def measure_regime_cell(adapter, handle, regime, subjects, requested_iters,
+                        trials, driver_timeout, subject_timeout, budget=None):
+    """Calibrate and measure ONE (pattern, form, regime) cell's subjects.
+    -> (n_iters, why, cal, rows_by_trial, notes).
+
+    `rows_by_trial` is a list of `trials` lists of `MatchRow` (the same
+    shape `adapter.measure()` returns); `notes` are harness-level remarks,
+    same meaning as `adapter.measure()`'s own third return value, with the
+    KB-20 sentence appended when a give-up subject was found.
+
+    THE NO-OP CASE, first, because it is the one that must never move a
+    recorded number: when `_first_call_outcomes` finds no give-up, this
+    function calibrates and measures over `subjects` UNCHANGED -- the
+    exact two calls (`calibrate()`, then `adapter.measure()`) `run_cell`
+    made before this function existed, in the same order, over the same
+    list. The only difference from the pre-fix code path is the one extra
+    iters=1 probe call itself, whose rows are inspected and discarded --
+    nothing it returns feeds calibration, `n_iters`, or any row this
+    function returns. A cell with a slow-but-completing subject population
+    (no give-up anywhere) is therefore provably unaffected.
+
+    THE GIVE-UP CASE: subjects whose first call gave up are pulled out of
+    `calibrate()` (so a give-up's inflated per-iteration time can no
+    longer skew the median that sets `n_iters` for everyone else) and out
+    of the batched `measure()` call, and are instead measured on their
+    own, at iters=1, for every trial -- a give-up outcome is TERMINAL for
+    its own (pattern, subject, regime) cell, never re-paid `n_iters`
+    times. Nothing about the give-up ROW's shape in the record changes:
+    `record.match_row` never stamps a `timing` block on any outcome but
+    `matched-as-expected` (a give-up carries none today or after this
+    fix), so this is a WALL-TIME and CORRECTNESS fix (the outcome itself
+    stops depending on the engine's give-up cost), not a schema change."""
+    first = _first_call_outcomes(adapter, handle, regime, subjects,
+                                 driver_timeout)
+    giveup_ids = {sid for sid, row in first.items() if row.is_giveup}
+
+    if not giveup_ids:
+        n_iters, why, cal = calibrate(adapter, handle, regime, subjects,
+                                      requested_iters, driver_timeout,
+                                      subject_timeout, budget=budget)
+        rows_by_trial, _info, notes = adapter.measure(
+            handle, regime, subjects, n_iters, trials, timeout=driver_timeout)
+        return n_iters, why, cal, rows_by_trial, notes
+
+    cal_subjects = [s for s in subjects if s.subject_id not in giveup_ids]
+    giveup_subjects = [s for s in subjects if s.subject_id in giveup_ids]
+    notes = ["%d of %d subject(s) gave up on their first (iters=1) call and "
+             "were held at iters=1 for every trial rather than batched "
+             "(KB-20, docs/dev/known_issues.md): %s"
+             % (len(giveup_subjects), len(subjects),
+                ", ".join(s.subject_id for s in giveup_subjects))]
+
+    if cal_subjects:
+        n_iters, why, cal = calibrate(adapter, handle, regime, cal_subjects,
+                                      requested_iters, driver_timeout,
+                                      subject_timeout, budget=budget)
+    else:
+        # every subject in this (pattern, form, regime) gave up on its
+        # first call: nothing is left to calibrate against.
+        n_iters, why, cal = (
+            1, "every subject gave up on its first call; nothing to "
+               "calibrate", None)
+
+    rows_by_trial = [[] for _ in range(trials)]
+    if cal_subjects:
+        cal_rows, _info, cal_notes = adapter.measure(
+            handle, regime, cal_subjects, n_iters, trials,
+            timeout=driver_timeout)
+        notes.extend(cal_notes)
+        for i, trial_rows in enumerate(cal_rows):
+            rows_by_trial[i].extend(trial_rows)
+    gu_rows, _info2, gu_notes = adapter.measure(
+        handle, regime, giveup_subjects, 1, trials, timeout=driver_timeout)
+    notes.extend(gu_notes)
+    for i, trial_rows in enumerate(gu_rows):
+        rows_by_trial[i].extend(trial_rows)
+    return n_iters, why, cal, rows_by_trial, notes
+
+
 # ------------------------------------------------------------ the status
 
 STATUS_MEASURED = "measured"
@@ -686,9 +796,22 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             handle["subject_timeout"] = subject_timeout
             if iters is None:
                 say("calibrating %s / %s / %s ..." % (testee_id, p.name, regime))
-            n_iters, why, cal = calibrate(adapter, handle, regime, subjects,
-                                          iters, driver_timeout,
-                                          subject_timeout, budget=budget)
+            else:
+                say("measuring %s / %s [%s] / %s ..."
+                    % (testee_id, p.name, form, regime))
+            enum = REGIME_TO_ENUM[regime]
+            t_before = quiet.cpu_times() if timeline is not None else None
+            t_start = time.monotonic()
+            # KB-20 (docs/dev/known_issues.md): a give-up subject is pulled
+            # out of calibration and out of the batched call BEFORE either
+            # runs, on the strength of its own iters=1 first call -- see
+            # `measure_regime_cell`'s docstring. A cell with no give-up
+            # subject takes the pre-KB-20 code path exactly (one calibrate()
+            # call, one measure() call, both over `subjects` unchanged).
+            n_iters, why, cal, rows_by_trial, mnotes = measure_regime_cell(
+                adapter, handle, regime, subjects, iters, trials,
+                driver_timeout, subject_timeout, budget=budget)
+            notes.extend(mnotes)
             # The routine calibration ("median per-iteration X -> iters=N")
             # is NOT a note: every row's `calibration` block and
             # `timing.iterations` carry it, and one sentence per (pattern,
@@ -698,16 +821,9 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             if cal is not None and cal.get("calibration_note"):
                 notes.append("calibration for (%s, %s, %s) = %d iters: %s"
                              % (p.name, form, regime, n_iters, why))
-            say("measuring %s / %s [%s] / %s: %d subject(s) x %d iter(s) x %d "
+            say("measured %s / %s [%s] / %s: %d subject(s) x %d iter(s) x %d "
                 "trial(s)" % (testee_id, p.name, form, regime, len(subjects),
                               n_iters, trials))
-            enum = REGIME_TO_ENUM[regime]
-            t_before = quiet.cpu_times() if timeline is not None else None
-            t_start = time.monotonic()
-            rows_by_trial, _info, mnotes = adapter.measure(
-                handle, regime, subjects, n_iters, trials,
-                timeout=driver_timeout)
-            notes.extend(mnotes)
             if t_before is not None:
                 t_after = quiet.cpu_times()
                 if t_after is not None:
