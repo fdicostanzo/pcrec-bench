@@ -205,6 +205,7 @@ migration exists. Concretely, and enforced by `validate.py`:
 | 1.3 | 2026-08-25 | the FLOOR PATTERN ([B15], pcrecdev1's feedback item 1(d)): optional `patterns[].role` (`member`/`floor`, absent = `member`), rule X30 (at most one `floor` pattern per record) |
 | 1.4 | 2026-08-30 | THE GATE'S SHAPE after BD7 ([B20], `docs/design/gate_shape_v14.md`, Frank's ruling I-19): `status` gains `inconclusive-spread`; `occupancy.<sample>.target_busy_pct` (tri-state, keyed on `pinning.cpu`); the `trial_agreement` setup block (rule `v1.4-group`, k = 1.5, d_min = 2, share_c = 3, N ≥ 5 and odd) REQUIRED at 1.4 and FORBIDDEN below (X33), its counts recomputed (X32) and its verdict required to follow (X31); the per-group `occupancy.timeline` (provenance); X13 VERSIONED (the pre-flight + trial agreement at ≥ 1.4; the v1.1 text below); KB-4's schema half (`cost` may sit beside a non-`compiled` outcome) |
 | 1.5 | 2026-09-02 | [B30], `docs/dev/known_issues.md` KB-7, Frank's ruling: `$defs.free_text.maxLength` raised 8192 → 1,048,576 (1 MiB) — a HYGIENE bound against a stray blob in a text field, not a content limit; no rule's applicability changes, and no record's verdict of any kind changes (see the paragraph below) |
+| 1.6 | 2026-09-17 | lane `b44boolgrain`, Frank's Q3 boolean-grain ruling (`capability_set_v1.md` §5.6 option B; the finding lane `l6bvs` proved against `harness.outcome_for` and the schema): optional `testee.grain` (`full`/`boolean`, absent = `full`, §6.10), rule X34 (a `grain: boolean` testee's match rows never carry a non-null `observed.span`) |
 
 **1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
 the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
@@ -485,6 +486,29 @@ The enums, in full:
    the rest against. `bench/email`'s is a one-byte literal `@`
    (`patterns/floor.rx`), the first sub-bench to declare one — see its
    `NOTES.md` "The floor pattern" section for what it is and is not.
+8. **`grain` exists at all: `full` and `boolean`.** ADOPTED at v1.6
+   (2026-09-17, lane `b44boolgrain`), executing Frank's Q3 ruling
+   (`capability_set_v1.md` §5.6 option B). The precedent is `conventions`
+   above, restated for a different axis: a testee's OWN declared shape,
+   read by `outcome_for` against the same expectation every other testee
+   is judged against, never a per-record override. `full` (ABSENT means
+   `full`) is every testee's shape today — a matching row's span is
+   compared against the expectation's own, and a mismatch is
+   `wrong-span-or-captures`. `boolean` is for a testee that cannot
+   report a span AT ALL, by construction — Hyperscan/Vectorscan's
+   `nosom` config is the first (`testees/vectorscan/CLAUDE.md`, lane
+   `l6bvs`): its driver reports `start=end=None` on every match, correct
+   or not, because the API it wraps hands back an end offset with no
+   matching start. Without this field, `outcome_for`'s unconditional
+   span comparison (`row.matched and (row.start != expectation.start or
+   ...)`) scores EVERY genuine match from such a testee
+   `wrong-span-or-captures` — l6bvs's own reproduction against the real
+   function — and the `observed.span` it then has to build,
+   `[row.start, row.end]` with both `None`, is not even schema-legal (an
+   array's items must be integers; only the WHOLE field may be `null`).
+   §6.10 states the mechanism; rule X34 is the checked half of "no span
+   is ever emitted" — a boolean-grain testee's honesty is enforced, not
+   merely documented.
 
 `engine_mode` is deliberately NOT a fixed enum: §4.3 gives its values
 as "auto/dfa/vm/... per engine", which is per-engine by construction. It
@@ -680,6 +704,62 @@ carries the same block and, under `n/a-trials` (fewer than five odd
 trials — `quick`'s default), keeps the pre-flight's status. The block
 is the ONE place this schema stores numbers derived from rows —
 COUNTS under a recomputation rule (X32), never a time — see §10.3.
+
+### 6.10 `grain` (v1.6)
+
+Ruled by Frank (Q3, 2026-09-16; `capability_set_v1.md` §5.6 option B),
+executed by lane `b44boolgrain` after lane `l6bvs` proved the gap against
+the real `harness.outcome_for` (`testees/vectorscan/CLAUDE.md` "THE
+GOVERNING RULING", Levels 1 and 2): every record's optional
+`testee.grain` field, ABSENT meaning `full`.
+
+- **The declaration seam is `Adapter.describe()`.** `grain` is one more
+  key in the dict an adapter's `describe()` returns — the SAME shape
+  `conventions` already has (§6, a per-config Python literal, not a
+  dynamically-read `configs.toml` key on any adapter today) —
+  `harness.run_cell` reads `testee_block.get("grain", "full")` and
+  `record.build_setup` copies the whole `testee_block` into the record's
+  `testee` object verbatim, so a declaring adapter's grain is queryable
+  on every record it writes without a second code path. An engine-
+  neutral key on purpose (R-BENCH-4): nothing in `pcrecbench/harness.py`
+  names Vectorscan, and a future engine or a future Vectorscan config
+  (`vectorscan-block-som`, §5.6's own footnote — full span grain, once
+  option (A)'s machinery exists) declares its OWN grain the same way.
+- **What `boolean` changes, precisely, in `outcome_for`.** A row whose
+  `matched` disagrees with the expectation's is `did-not-match-as-
+  expected` regardless of grain — that check was never span-shaped.
+  The ONLY branch `grain` gates is the span-mismatch check
+  (`row.matched and (row.start != expectation.start or row.end !=
+  expectation.end)`): at `grain="boolean"` it never fires, so a
+  genuinely correct match is `matched-as-expected`, full stop, with
+  `observed` absent from the row exactly as a `full`-grain testee's
+  correct match already leaves it. `grain` does NOT gate the
+  `throughput` regime's `nmatches` comparison (§4.4's non-overlapping
+  match COUNT is a different question from "which span", and a testee
+  that also cannot produce a count reports `nmatches: null` on the
+  wire, which the existing `row.nmatches is not None` guard already
+  keeps out of that branch — capability_set_v1.md §5.6's own
+  throughput-regime note).
+- **No span is ever emitted, at any grain, for a row with no real
+  span.** `outcome_for`'s private `_observed_span(row)` helper —
+  `[row.start, row.end]` when both are not `None`, else the bare
+  `None` the schema's `observed.span` field allows for the whole
+  field — replaces every `[row.start, row.end] if row.matched else
+  None` expression the function used to build by hand. This is
+  UNCONDITIONAL, not `grain`-gated: a `full`-grain testee's match rows
+  always carry real integers when `row.matched` is true (that is what
+  "full grain" means), so the helper is a no-op change on the shape
+  those rows already had — the only PRACTICAL beneficiary is a
+  `boolean`-grain testee's `did-not-match-as-expected` and
+  `truncated-subject` rows (a false positive/negative, or a boundary
+  case), which is where `[None, None]` was ALSO schema-illegal before
+  this lane and no `grain` value fixes it by name; `_observed_span`
+  fixes it by construction instead.
+- **X34 is the checked half.** A field's meaning is a promise until
+  something refuses the record that breaks it; X34 (§9) is what makes
+  "a boolean-grain testee's rows never carry a span" a property
+  `schema/validate.py` enforces on every record stamped ≥ 1.6, not
+  merely a fact this section states in prose.
 
 ### 6.7 `kernel` and `compiler`
 
@@ -907,6 +987,7 @@ enumerated or normalized.
 | `testee.openness` | enum | R | FILTERABLE | §4.3; §8's worked query is "only open-source" |
 | `testee.license_id` | string | R | SPDX id, or `proprietary`/`unknown`; FILTERABLE | §4.3 "openness + license id" |
 | `testee.conventions` | array of enum | R | the conventions this testee CAN produce | §4.3; §7 "testees are scored against their own" |
+| `testee.grain` | enum `full`/`boolean` | o | ABSENT means `full`; FILTERABLE. X34: a `boolean` testee's match rows never carry a non-null `observed.span` | v1.6 ADDITION (§5 ADDITIONS 8, §6.10): a testee structurally incapable of reporting a span is judged and reported at a WEAKER, honestly-declared grain rather than scored against a comparison it cannot answer |
 | `testee.captures` | enum `on`/`off` | R | FILTERABLE | §4.3 headline axis; A4 |
 | `testee.engine_mode` | slug | R | §6.3 registry; FILTERABLE | §4.3 headline axis; A4 |
 | `testee.simd` | enum `on`/`off`/`n-a` | R | FILTERABLE | §4.3 headline axis; A4 |
@@ -1166,6 +1247,7 @@ both ways before being believed.
 | X31 | `trial_agreement.verdict` is `n/a-trials` iff `trials < 5` or `trials` is even; else `disagree` iff `groups_disagreeing ≥ 1`; else `agree` | v1.4 (gate_shape_v14.md §3.3): the verdict beside its numbers, required to agree with them — X20's argument for the third instrument |
 | X32 | `trials`, `groups_judged`, `groups_disagreeing`, `rows_judged`, `rows_disagreeing`, `rows_unjudged` and `rows_unjudged_reasons` equal the values RECOMPUTED from the record's match rows under gate_shape_v14.md §3.5 with the block's own `k`, `d_min`, `share_c`; `worst_group` (when not null) equals the recomputed one (key, `d`, `n`) and its ids exist among the record's patterns/regimes; `rows_judged + rows_unjudged` = the record's row keys. The validator's recomputation is a DELIBERATE second implementation of §3.5 (no `pcrecbench` import) comparing INTEGER counts and the group key, never floats | v1.4: without X32, X31 is inert — a harness can stamp `0 of 72` beside rows that say otherwise (X20's and X26's situation exactly) |
 | X33 | TWO-DIRECTIONAL: for `schema_version ≥ 1.4` the `trial_agreement` block is REQUIRED on every record; for `< 1.4` it is FORBIDDEN | v1.4: a block on a record stamped before the version that defined it is a mis-stamped record, not a forward-compatible one (X17 never looks at fields, so this needs its own rule and control) |
+| X34 | When `testee.grain` = `boolean`, no match row's `observed.span` is a non-null value | v1.6 (§5 ADDITIONS 8, §6.10): a boolean-grain testee's whole reason to declare itself is "I never know a span" — a record that declares `boolean` and then emits one anyway is lying about which of the two it is, in either direction |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each
