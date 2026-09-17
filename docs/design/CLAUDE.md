@@ -394,6 +394,46 @@ docs/dev/'s append-only records.
   manager distils an outbox item from this file; the file itself is the
   full form.
 
+- `data_management_v1.md` — **THE DATA-MANAGEMENT WHITE PAPER, v1.0,
+  chartered by Frank live 2026-09-17** (lane `b45datamgmt`), a DESIGN
+  NOTE that enacts nothing: the store is growing fast, "we are going to
+  have to cull at some point", "truth — this should be a database but I
+  don't want to use one". One section per axis Frank named — culling,
+  compression, git pruning, policy, the case for a DB — plus a synthesis
+  and eleven numbered questions for him, each self-contained with a
+  recommendation. Every number measured on the box at commit `77bc390`
+  under pcrec's battery (du/git/wc-class probes, `nice -n 19`), with an
+  Appendix mapping each claim to how it was taken and naming what is
+  PROJECTED rather than measured. **Two measurements reframed the
+  charter and are stated up front in §0.** (1) There is almost nothing
+  to cull: the reporter's own SUPERSEDED class
+  (`report.py:3117-3150`, OD-B15) is 32 records / 96.9 MB / 13.7% of the
+  store, but 25 of those 32 are NAMED in a committed report — because
+  supersession is computed over a query's selected set while each
+  committed report carries its own `since`/`until` filters — so the
+  globally-safe cold set is **7 records / 18.4 MB / 2.6%**, all of them
+  failed-gate records cited by nothing. (2) Compressing the committed
+  store would make the REPOSITORY LARGER: measured write-once on 14 real
+  records, plain JSONL packs to 390,207 B and `zstd -3` to 449,720 B
+  (**+15.3%**), because 149 of the store's 168 record blobs are already
+  stored as git deltas against OTHER records; compression buys only the
+  working tree (674 MB → ~29 MB). Also measured: `.subject-grain.md` is
+  77.6% of `reports/` and `reports/` has produced 713 blob versions /
+  32.12 MB of pack against `store/`'s 187 / 35.21 MB (the regeneration
+  standing rule is the second-largest history input); 2,257 loose
+  objects sit at 6.9× where the pack achieves 25.1× (a ~30 MB `git gc`
+  saving, PROJECTED); 248 short SHAs in committed prose resolve to
+  commits here (the measured cost of ever rewriting history); the store
+  is 408 B/row, ±8% across all ten sets, growing 26.6 MB/day; KB-16 is
+  CLOSED and decompression costs 6.3% of what `json.loads` costs, so
+  compression is a disk-space tool here and never a performance one. §5
+  argues the DB case both ways and proposes SQLite as a GITIGNORED
+  DERIVED CACHE with five invariants (never a source of truth; divergence
+  means rebuild; the validator still gates writes; the cache supplies
+  rows and never aggregates; byte-identity is the acceptance test) —
+  recommended HELD behind a trigger, not built. No served database: Frank
+  ruled that posture out.
+
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in
