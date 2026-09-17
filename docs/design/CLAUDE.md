@@ -227,6 +227,60 @@ docs/dev/'s append-only records.
   skill; an implementation lane may open against v1.2 once the two
   reporter preconditions P-1/P-2 (§2.5) land.
 
+- `interpret_subject_grain_v1.md` — **[B42] follow-up (iii), chartered by
+  Frank at the 2026-09-17 reset; lane `b42subgrain`, 2026-09-17.
+  PROPOSED, NOT ADOPTED — D6-panel input. DESIGN ONLY: no code, no
+  catalogue change, no reporter change, nothing under `pcrecbench/`,
+  `catalogue/` or `reports/` touched.** Answers the question of record
+  from `../dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md` §7.1
+  — how to stop six of ten capability predictions landing `not evaluable`
+  by construction — and the first thing it does is **correct the ledger**:
+  re-resolving all fifteen clause rows of
+  `../dev/predictions/capability-0.1-first.tsv` through `interpret`'s OWN
+  `parse_selector` / `_glob_match` / `_select` shows **three distinct
+  causes, not one**. (A) the grain gap — seven clauses name a real subject
+  id while `report.py:4413` writes the literal `(set)` into
+  `subject_or_na` at set grain; (B) P2's `regime_or_na=n/a` against the
+  `compile` section's EMPTY string (`report.py:4493`), grain-INDEPENDENT
+  and fixed by no grain change; (C) P4's `testee=pcrec_*-auto-*`, which
+  matches no testee that exists (`pcrec_a770139e_auto-caps-simdna` has an
+  UNDERSCORE before `auto`). MEASURED against a real subject-grain TSV
+  rendered in-lane: a subject-grain input alone makes **four** of the six
+  parents evaluable (P3, P6, P7, P10) and half of a fifth; P2 is untouched
+  by any grain change whatsoever. **The mechanism already half-exists and
+  is untested**: `interpret --subject-grain` is a shipped flag
+  (`interpret.py:2101`) that one rule consumes (`r_bucket_dominated`), no
+  `.subject-grain.tsv` is committed for any of the 43 report groups, the
+  prediction evaluator cannot reach it (`_select` reads the primary report
+  only), `build_stamp` is NOT closed over it and
+  `check_interpret.py`'s freshness re-render does not pass it — **a live
+  latent defect** that would fail `make check-interpret` §3 the first time
+  any sidecar used the flag. Five options priced (a second input; a
+  selector extension; per-grain runs — REJECTED, since all four R-PRED
+  rules declare `grain = ["set"]` and `delta_verdict` is empty on
+  **0 of 202,794** subject-grain rank rows; subject rows inside the
+  set-grain TSV — rejected on measured size; and a subject-grain SLICE),
+  with the recommendation **(a)+(b) carrying (e)'s row filter**: MEASURED
+  5.62 MiB against the full grain's 33.5 MiB, ×4.8 the set TSV rather than
+  ×28.5. **KB-16 is preserved by every option** — each hands `interpret` a
+  committed TSV, so the interpreter still never loads the store; the cost
+  is a fourth reporter store load per group, MEASURED at 100.75 s /
+  678 MiB, a ~33 % increase on the three renderings already paid. §4
+  gives the per-prediction acceptance shape (including two notes whose
+  claims are §6.4-inexpressible at ANY grain, and two store-free
+  load-time checks that turn causes B and C into named LOAD ERRORS). §5
+  settles the **P5 rank-blindness** lesson with the measurement that
+  decides it: across all 43 committed report TSVs and **92,892 `rank`
+  rows, ZERO carry `n_wrong > 0` or `n_gave_up > 0`**, while 33 of 111
+  `excluded` rows do — so `n_wrong eq 0` over `_select`'s default `rank`
+  section is a corpus-wide TAUTOLOGY, and R-PRED-1's "confirmed" on P5 was
+  structurally guaranteed. Both sides of "should `section=` be MANDATORY?"
+  are argued; the recommendation is **NO** — instead make the DEFAULT
+  honest for the four failure-population quantities, and have the tool
+  ANNOUNCE the elsewhere-population it did not read. **§6 puts eleven
+  numbered questions to Frank**, each with a recommendation; §7 states
+  what the note deliberately does not decide.
+
 - `quiet_baseline.md` — **[B3]'s answer to OD-B8, MEASURED 2026-08-25**:
   what "quiet" means numerically on this box, the 12 samples behind it,
   and the two thresholds `pcrecbench/quiet.py` defaults to. It carries a
