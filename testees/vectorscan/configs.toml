@@ -1,0 +1,26 @@
+# testees/vectorscan/configs.toml -- the testee this adapter provides.
+#
+# The key here is a CONFIG ID: what `--testee` takes and what the adapter
+# indexes. It is NOT the record's `testee_id`, which record_schema.md 6.4
+# DERIVES from (engine_name, engine_version, engine_mode, captures, simd) and
+# rule X5 checks -- `vectorscan-block-nosom` becomes
+# `vectorscan_5.4.11_block-nosom-nocaps-simd` in the record and in the store
+# path.
+#
+# No version is written here. It is PROBED from the loaded library
+# (`hs_version()`) on every run.
+#
+# ONLY ONE CONFIG WIRED: `vectorscan-block-nosom`, per Frank's Q3 boolean-
+# grain ruling (2026-09-16) -- boolean grain (does this pattern match
+# anywhere) does not need HS_FLAG_SOM_LEFTMOST. `vectorscan-block-som`
+# (capability_set_v1.md 8's own roster row) is documented, not built, in
+# testees/vectorscan/CLAUDE.md: it is gated on the span-grain scoring
+# machinery (capability_set_v1.md 5.6 option (A)) that does not exist yet,
+# and SOM is "an unconditional space cost, not a dial" once compiled with it
+# -- there is no runtime toggle a second `[testees.*]` entry sharing this
+# driver could turn on cheaply; it would need its own driver invocation
+# with HS_FLAG_SOM_LEFTMOST always set.
+
+[testees.vectorscan-block-nosom]
+engine_mode = "block-nosom"
+description = "Vectorscan (Hyperscan-ABI-compatible fork) 5.4.11, block mode (HS_MODE_BLOCK), NO HS_FLAG_SOM_LEFTMOST -- BOOLEAN GRAIN ONLY (capability_set_v1.md 5.6 option (B), Frank's Q3 ruling): match/no-match and compile/refusal comparisons, never a match span or a non-overlapping match count. See testees/vectorscan/CLAUDE.md before reading a report row for this testee."
