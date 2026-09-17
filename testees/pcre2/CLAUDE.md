@@ -257,6 +257,71 @@ these three named cells — this is EXPECTED, DOCUMENTED, and NOT a
 report first. Closing it needs the convention-scoring machinery
 `capability_set_v1.md` §5.6 already scopes to a later lane.
 
+### A SEVENTH `pcre2-dfa` divergence, outside family 11 — atomic groups,
+not alternation order (`wild-logparse-quotedstring-grok`, found by
+`bench/capability@0.1`'s first sample, 2026-09-17)
+
+This one is NOT a family-11 (`semantics-divergence`) pattern — its
+provenance family is `wild-logparse` (an Apache-2.0 `grok-patterns`
+import, `bench/capability/curation/wild/members.tsv` row 8,
+`patterns.rxt:249`) — and its divergence mechanism is a DIFFERENT half
+of the same documented man-page item the six family-11 patterns never
+exercise. Recorded here rather than folded into the table above so the
+table's own six-pattern count stays accurate.
+
+**Pattern**: `(?>(?<!\\)(?>"(?>\\.|[^\\"]+)+"|""|(?>'(?>\\.|[^\\']+)+')|''|(?>`(?>\\.|[^\\`]+)+`)|``))`
+— the grok `QUOTEDSTRING` macro, verbatim; every one of its five
+alternatives is wrapped in an **atomic group** `(?>...)`.
+
+**Subject**: `lp-quoted-escaped` — `"say \"hi\" now"` (16 bytes),
+authored as this pattern's own designed edge case
+(`bench/capability/gen_subjects.py`: "a double-quoted string with an
+escaped quote inside: the atomic QUOTEDSTRING's own `\\.|[^\\"]+`
+alternation").
+
+**CONFIRMED live on this box** (direct `pcre2_compile_8` /
+`pcre2_match_8` / `pcre2_dfa_match_8` calls against `libpcre2-8.so.0`,
+this note's own dlopen convention, 2026-09-17): `pcre2_match` returns
+one match, span `[0,16)` — the whole subject, agreeing with
+`expectations.tsv`'s oracle row (`method = libpcre2-differential`).
+`pcre2_dfa_match` returns **rc = 1** (a single simultaneous match, not
+several in decreasing-length order) at span **`[0,11)`** —
+`"say \"hi\"`, five bytes short of the full string. `bench/capability@0.1`'s
+first production sample reads this as `wrong-span-or-captures`, 5/5
+trials, on `dfa-nocaps` (`reports/2026-09-17-capability-0.1-budu-
+ryzen1600-first-a770139e.{md,tsv}`; ledger `docs/dev/ledgers/2026-09-17-
+capability-0.1-first-a770139e.md` §1.2 Finding B).
+
+**Mechanism — documented, not a bug, and a different clause of the same
+item this note's own "item 1" reference above already cites for
+possessive repeats**: man `pcre2matching`'s numbered list, item 1, in
+full: *"if an atomic group is present, it is matched as if it were a
+standalone pattern at the current point, and the longest match is then
+'locked in' for the rest of the overall pattern."* Every alternative in
+this pattern IS an atomic group (none of family 11's six patterns
+contains one — their divergence is pure alternation ORDER, not
+atomicity), so this is the atomic-group half of item 1 that no
+family-11 witness exercises. This lane did not re-derive, byte by byte,
+why the DFA's own "standalone longest, locked in" computation settles
+on 11 rather than the full 14-byte body a step-by-step greedy reading
+of the atomic group's own alternation would suggest is reachable —
+the live transcript above is the evidence; the man page's own sentence
+is the documented mechanism CLASS it falls under, in the same spirit as
+the family-11 table's own citations (which likewise cite the mechanism,
+not a byte-level trace, for `\.tar|\.tar\.gz` etc. above).
+
+**Consequence, same shape as family 11's**: a `quick`/`run` cell
+measuring `pcre2-dfa` against `wild-logparse-quotedstring-grok`/
+`lp-quoted-escaped` WILL show `wrong-span-or-captures` — EXPECTED,
+DOCUMENTED, and NOT a `pcre2-dfa` defect.
+
+**Honest gap, stated rather than implied**: this lane did not audit
+`bench/capability`'s other five `wild-logparse` members, or any other
+atomic/possessive-bearing pattern in the set, for the same class of
+divergence — mirroring family 11's own "honest gap" convention above
+(the two unchecked `router-prefix-order` throughput subjects) rather
+than claiming a completeness this lane did not check.
+
 ### `--find-all` (throughput regime)
 
 Uses the SAME advance rule as every other testee (`ov[0]`/`ov[1]` of the

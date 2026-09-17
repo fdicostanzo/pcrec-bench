@@ -62,6 +62,62 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   per-clause verdicts are `interpret`'s output and are authoritative,
   the parent verdict is the stated arithmetic, and a ledger's tally is a
   human reading the tool must not try to reproduce.
+- `capability-0.1-first.tsv` — `bench/capability/NOTES.md`'s **P1-P10**,
+  transcribed 2026-09-16, 17 clause rows over 9 parents (P9 has no row —
+  see below). Scored against `reports/2026-09-17-capability-0.1-budu-
+  ryzen1600-first-a770139e.tsv`: 1 confirmed (P1), 1 refuted (P8), 6 not
+  evaluable (P2/P3/P4/P6/P7/P10 — this report's grain is `set` only, no
+  `.subject-grain.md` sibling `interpret` reads, and several clauses
+  select a `subject_or_na` or `compile:`-scoped comparison the set-grain
+  TSV structurally cannot answer). **P5 is a KNOWN FALSE-POSITIVE
+  CONFIRM, read by the manager as REFUTED** (ledger `docs/dev/ledgers/
+  2026-09-17-capability-0.1-first-a770139e.md` §3, §7.2): its selector
+  names no `section`, so per §6.3's own rule it reads the `rank` section
+  only — and a row with `n_wrong > 0` is by construction NEVER a `rank`
+  row (R-STATUS-3 moves it to `excluded` instead), so `interpret`
+  mechanically "confirms" P5 by being structurally blind to the very
+  population (six `redos-nested` patterns' give-ups/wrong-answers/
+  timeouts) it was meant to check. `evil-alt-nested` — one of P5's six
+  named patterns — is wrong on `dfa-nocaps`/`auto-nocaps` and times out
+  on three pcrec captures arms in this exact report (§1.2 Finding C),
+  which the interpreter's own mechanical run cannot see.
+  **VERIFIED FIX, not yet transcribed into this file** (lane `b42predhyg`,
+  2026-09-17, scratch-tested against the real report, never committed):
+  adding `section=excluded` to the selector and switching the clause to
+  `quantity section; reducer set_of(pattern); op set-subset` (hi empty —
+  P8's own mechanism, already committed above) correctly REFUTES on the
+  real population (`measured: {email-nested-plus, evil-alt-nested}`,
+  `R-PRED-2`) rather than false-confirming. Residual, honestly noted: the
+  SAME mechanism reads a truly clean single-pattern population as
+  **not evaluable** ("no row in this report matches the selector",
+  `R-PRED-3`), not confirmed — `set-subset` of an empty target set has no
+  way to distinguish "checked and clean" from "never checked", a property
+  P8's own use of the identical mechanism never exposed because P8's
+  measured set was never empty. **Predictions are stated-PRE-RUN
+  artifacts (this file's own "Writing one" section, `interpreter_v1.md`
+  §6.5) and this format defines no revision mechanism for an
+  already-scored file** — the fix above is therefore NOT applied to this
+  committed file (which stays the historical record of what was
+  predicted and how it was actually scored) and is instead the
+  RECOMMENDED shape for a new, separately-dated predictions file stated
+  before this set's next sample; full derivation and the exact proposed
+  TSV rows are in `docs/dev/lanes/b42predhyg_report.md`.
+  **P9 (NOTES.md: `mojibake-curly-quote`'s record omits
+  `patterns[].canonical_text`) has NO row and is INEXPRESSIBLE by this
+  format, more fundamentally than syntax's own P9/P12 fixture cases
+  above**: `canonical_text`'s presence or absence is a fact about the
+  RECORD's own `patterns[]` array, which neither the report TSV nor
+  `store/index.tsv` carries at any grain — there is no `quantity` in
+  §6.3's closed set that could even be attempted (syntax's P9, by
+  contrast, could at least name `n_wrong` as a wrong-but-unattributable
+  signal; this claim has no analogous foothold). NOTES.md's own text
+  anticipates this ("checkable once the schema promotion (CB3) and a
+  future measurement land") — P9 was never meant to be `interpret`-scored
+  today, and the recommended new file above should carry it as a
+  documented ABSENT-by-construction line (ledger §7.3), not a load-error
+  fixture case (it is not a "wrong quantity token" mistake to guard
+  against — the format simply has no vocabulary for a schema-presence
+  claim).
 
 ## Writing one
 
