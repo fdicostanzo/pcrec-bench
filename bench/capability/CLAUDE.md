@@ -115,3 +115,18 @@ declarations the first cut staged (`conditionals`, `control-verbs`,
 `lookbehind-variable` -- all three actually REFUSED at the pinned
 pcrec); see `NOTES.md` and `docs/dev/lanes/b42cap_report.md` for the
 full matrix.
+
+**[B7]/L6b (lane l6bonig, 2026-09-17) adds `onig-default` to the `ext
+bench` roster** (`EXT_BENCH_ROSTER` in `gen_patterns.py`, `patterns.rxt`
+regenerated): 13 of 17 REQUIRES tokens satisfied, withholding
+`lookbehind-variable`, `control-verbs`, `unicode-properties` and
+`callouts` -- each independently witnessed (isolated witness + all 64
+real corpus patterns compiled through the real adapter) in
+`docs/dev/measurements/2026-09-17-onig-capability-witness-census-
+6.9.10.txt` and `testees/onig/CLAUDE.md`. 62/64 corpus patterns compile
+under `onig-default`; the two refusals
+(`negation-scope-lookbehind-var`, `balanced-parens-rec`) reproduce their
+isolated witness's exact `ONIGERR_*` code and are left to fail HONESTLY
+as real `did-not-compile` rows rather than being hidden behind a token
+withhold that would misrepresent the other patterns in their own
+families.
