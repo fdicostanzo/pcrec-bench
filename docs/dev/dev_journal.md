@@ -4430,3 +4430,24 @@ build/windows/window_capability_20260917T005018Z.log, watcher = a
 log-keyed Monitor on the cell/end/failure lines. Reading with the
 family-11 × pcre2-dfa expected-divergence flag in hand (3 cells
 documented wrong-span, excluded-by-document).
+
+### Stage boundary, 2026-09-17 03:1x EDT: THE FIRST SAMPLE IS MEASURED — 7/7 cells, one contract re-measure
+
+The capability@0.1 first sample ran 20:50 EDT → 03:05 EDT (6h15m wall,
+~2.5-3x the design's §11.4 estimate — the per-cell range 25-80 min,
+pcre2-interp 42 / pcre2-jit 28 / pcrec-auto 41 / pcrec-nocaps 25 /
+pcrec-vm 80 / pcrec-vm-in 78 / pcre2-dfa 36+42; CELL_CAP never
+threatened). Six cells `measured` at attempt 1. The seventh
+(pcre2-dfa) fired the v1.4 spread rule on attempt 1 (rc=4,
+`inconclusive-spread`, agreement `2 of 116 groups`) and was
+re-measured ONCE per contract → attempt 2 `measured`, agreement
+`agree (0 of 116 groups; 5 of 4572 rows)` — the rule's second
+production firing, both records kept (R-6). Store 168 records
+(capability adds 8: 7 measured + the kept spread record). Sidecars
+regenerated at window close 3/3 (R-STATUS-2's live-index facts moved).
+WINDOW_RUN_COMPLETE; the box stayed quiet throughout (load ~1.0 =
+the pinned cell itself).
+
+Now: the report group (2026-09-17-capability-0.1-budu-ryzen1600-
+first-a770139e.{tsv,md,subject-grain.md}), its interpretation sidecar
+with predictions P1-P10 scored, the ledger, O-31, and the box release.
