@@ -1765,7 +1765,11 @@ def test_reporter_version_pin():
     two interpreter preconditions, P-1's `floor_pattern:` header key and
     P-2's `giveup_smallest` rows -- both additive, both change what
     `render_tsv` prints on every report that carries an excluded give-up
-    cell or a header at all) took it to v16.
+    cell or a header at all) took it to v16; KB-18 (`_diagnostic_first_line`
+    replaced by `_diagnostic_full` -- a did-not-compile row's diagnostic is
+    carried in FULL instead of truncated to its first line, which renders
+    differently on any report that already prints a multi-line one, two
+    committed capability@0.1 files) took it to v17.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -1776,15 +1780,15 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v16 (2026-09-08)",
-           f"expected REPORTER_VERSION == 'v16 (2026-09-08)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v17 (2026-09-17)",
+           f"expected REPORTER_VERSION == 'v17 (2026-09-17)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v16 (2026-09-08)" in md, f"expected the v16 header line:\n{md[:200]}")
+    _check("reporter: v17 (2026-09-17)" in md, f"expected the v17 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v16 (2026-09-08)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v17 (2026-09-17)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # ... and the CONTROL for the paragraph above: rendering the whole
     # fixture store under v14 must print NONE of the conditional clauses,
     # because no record in it carries any of the pairs. If this fires, a
@@ -3906,6 +3910,91 @@ def test_variant_kind_rendering_cb2():
            f"CONTROL p00: must carry no variant legend note:\n{p00_section[:400]}")
 
 
+def test_diagnostic_full_kb18():
+    """KB-18 (2026-09-17): `_diagnostic_full` carries a did-not-compile
+    row's diagnostic WHOLE, REPLACING `_diagnostic_first_line`, which cut
+    it to its first line and printed "[truncated, diagnostic continues]"
+    in place of the rest -- found on bench/capability@0.1's first sample
+    (docs/dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md 2
+    Finding F), where a genuine pcrec DFA-emitter compile error had to be
+    read out of the raw record because of it.
+
+    Unit-level: a multi-line diagnostic renders with its embedded
+    newlines ESCAPED VISIBLY (backslash-n), never dropped; a single-line
+    diagnostic is unchanged; `None`/empty still render `(no diagnostic)`;
+    a diagnostic that already contains the literal two characters
+    backslash-n is distinguishable from one with a real embedded newline
+    (backslash escaped FIRST, so the mapping is losslessly reversible,
+    not merely readable). End to end: both render formats carry every
+    line, and the old truncation marker never appears again."""
+    _check(report._diagnostic_full("one line") == "one line",
+           "a single-line diagnostic must render unchanged")
+    _check(report._diagnostic_full(None) == "(no diagnostic)",
+           "None must render '(no diagnostic)'")
+    _check(report._diagnostic_full("") == "(no diagnostic)",
+           "an empty string must render '(no diagnostic)'")
+    multiline = ("artifact.c:200:20: error: missing terminating \" character\n"
+                 "artifact.c:201:7: error: expected expression before '/' token")
+    got = report._diagnostic_full(multiline)
+    _check("\\n" in got and "\n" not in got,
+           f"a real embedded newline must render as the two characters "
+           f"backslash-n, never a raw newline: {got!r}")
+    _check("artifact.c:200:20" in got and "artifact.c:201:7" in got,
+           f"BOTH lines of the diagnostic must survive whole, not just the "
+           f"first: {got!r}")
+
+    # A literal two-character `\n` already in the SOURCE diagnostic (not
+    # a real newline) must render distinguishably from a real one -- the
+    # reversibility control.
+    literal = report._diagnostic_full("a\\nb")   # source: a, backslash, n, b
+    real = report._diagnostic_full("a\nb")       # source: a, real newline, b
+    _check(literal != real,
+           f"a literal backslash-n and a real embedded newline must not "
+           f"render the same: literal={literal!r} real={real!r}")
+    _check(literal == "a\\\\nb", f"a literal backslash must itself be escaped: {literal!r}")
+    _check(real == "a\\nb", f"a real newline must render as backslash-n: {real!r}")
+
+    # End to end: a did-not-compile row's diagnostic reaches BOTH render
+    # formats in full, not truncated to its first line.
+    setup_e = _mini_setup("engine-e_1.0.0_cfg-caps-simdna")
+    row_dnc = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+               "compile_outcome": "did-not-compile", "cost_class": "interpretive",
+               "diagnostic": multiline}
+    row_e_p2_compile = {"kind": "compile", "pattern_id": "p2", "trial": 1, "seq": 2,
+                         "compile_outcome": "compiled", "cost_class": "interpretive",
+                         "cost": {"total_ns": 1000}}
+    rows_e_p2_match = [_mini_row("p2", "s1", "short-subject-search", t, 10 + t, 50) for t in (1, 2, 3)]
+    loaded_e = [_mk_loaded("e.jsonl", setup_e, [row_dnc, row_e_p2_compile] + rows_e_p2_match)]
+
+    setup_f = _mini_setup("engine-f_1.0.0_cfg-caps-simdna")
+    rows_f_p1_match = [_mini_row("p1", "s1", "short-subject-search", t, 20 + t, 60) for t in (1, 2, 3)]
+    row_f_p2_compile = {"kind": "compile", "pattern_id": "p2", "trial": 1, "seq": 2,
+                         "compile_outcome": "compiled", "cost_class": "interpretive",
+                         "cost": {"total_ns": 1200}}
+    rows_f_p2_match = [_mini_row("p2", "s1", "short-subject-search", t, 30 + t, 55) for t in (1, 2, 3)]
+    loaded_f = [_mk_loaded("f.jsonl", setup_f, rows_f_p1_match + [row_f_p2_compile] + rows_f_p2_match)]
+
+    rd, err = report.build_report(loaded_e + loaded_f, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    _check(rd.did_not_compile_by_pattern.get(("rb-mini@1.0", "p1"), {}).get(
+               "engine-e_1.0.0_cfg-caps-simdna") == report._diagnostic_full(multiline),
+           f"the indexed diagnostic must be the FULL escaped string: "
+           f"{rd.did_not_compile_by_pattern}")
+
+    md = report.render_markdown(rd)
+    p1_section = md.split("\n### `p1` / `short-subject-search`")[1].split("\n### `")[0]
+    _check("artifact.c:200:20" in p1_section and "artifact.c:201:7" in p1_section,
+           f"both lines of the diagnostic must appear in the markdown bullet:\n{p1_section}")
+    _check("[truncated, diagnostic continues]" not in p1_section,
+           f"the old truncation marker must never appear again:\n{p1_section}")
+
+    tsv = report.render_tsv(rd)
+    _check("artifact.c:200:20" in tsv and "artifact.c:201:7" in tsv,
+           "both lines of the diagnostic must appear in the TSV row")
+    _check("[truncated, diagnostic continues]" not in tsv,
+           "the old truncation marker must never appear in the TSV either")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -3996,6 +4085,7 @@ TESTS = [
     test_kb16_query_never_opens_other_subbench_files,
     # CB2 ([B42] L5)
     test_variant_kind_rendering_cb2,
+    test_diagnostic_full_kb18,
 ]
 
 

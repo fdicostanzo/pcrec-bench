@@ -769,3 +769,58 @@ with the deliberately-wrong rule reproduced inline (never by calling
 production code) as the negative control proving the retired rule still
 gives the OLD wrong counts (2, 3), so the fix is shown to have changed a
 real number rather than being a no-op.
+
+## KB-18 (2026-09-17, FIXED same day by lane b42repdiag) — the reporter's did-not-compile diagnostic was truncated to its first line, dropping the rest silently past a stated marker
+
+Flagged by `docs/dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md`
+§2 Finding F: `wild-waf-crs-942500-comment-obfuscation` (a WAF
+SQLi-obfuscation detection rule whose own subject matter is the C-comment
+idiom `/*!...*/`) does not compile on pcrec's DFA route — a genuine
+pcrec DFA-emitter code-generation bug, not a declared cap: the generated
+`artifact.c` embeds the pattern's own literal bytes, unescaped, inside a
+human-readable annotation comment naming the matched byte sequence at
+each DFA state, and the pattern's own `/*!*/` terminates that C comment
+early, desynchronizing the rest of the file (two cascading errors follow
+from the one `*/`). The ledger's author had to read the FULL gcc
+diagnostic out of the raw record
+(`store/records/capability@0.1/pcrec_a770139e_auto-caps-simdna/…jsonl`)
+because the report's own `not ranked:` bullet read `"the artifact did
+not build: [truncated, diagnostic continues]"` — `_diagnostic_first_line`
+(`pcrecbench/report.py`, since [B12] R10) partitioned the diagnostic on
+its first `\n` and discarded everything after it, printing that marker
+in place of the rest rather than the rest itself. The marker made the
+loss VISIBLE, which is more than silent truncation would have done, but
+the information itself was still gone from the one place ([B41]'s own
+premise) a reader is meant to be able to trust without re-opening the
+JSONL.
+
+FIXED (2026-09-17, lane b42repdiag): `_diagnostic_first_line` is
+REPLACED by `_diagnostic_full` (`pcrecbench/report.py`) — the record's
+own `diagnostic` string, VERBATIM and IN FULL, bounded only by
+`record.FREE_TEXT_MAX` (1,048,576 characters, schema v1.5's hygiene
+bound, [B30]) as a defensive ceiling (the schema caps a compile row's
+`diagnostic` at 8192 characters today, well under it — this ceiling
+exists for a future schema revision, not for any record this project
+can write now). Both call sites — the markdown `not ranked: ...
+did-not-compile (<diagnostic>)` bullet, and the TSV's `did_not_compile`
+row — are one-physical-line contexts, so an embedded newline, tab or
+backslash is rendered VISIBLY (backslash-escaped, backslash escaped
+FIRST so the mapping is losslessly reversible rather than merely
+readable) instead of executed; nothing is dropped to make that true.
+`pcrecbench/__main__.py`'s OWN, separate `_diagnostic_first_line`
+(KB-10's `quick --vs` refused-arm one-liner, a genuinely one-line-by-
+design CLI printout) is a different function at a different call site
+and is UNCHANGED.
+
+`REPORTER_VERSION` bumps `v16 (2026-09-08)` → `v17 (2026-09-17)`; every
+committed report under `reports/` and its `.interpretation.md` sidecar
+is regenerated in the same commit (see `reports/CLAUDE.md` for the
+diff classification — mechanically, only the version-stamp line and the
+one pattern's did-not-compile diagnostic cell move, on the two committed
+capability@0.1 reports). `pcrecbench/tests/test_report.py` gains
+`test_diagnostic_full_kb18` (a multi-line diagnostic survives whole with
+visibly-escaped newlines in both render formats; controls: an unchanged
+single-line diagnostic, `None`/empty rendering `(no diagnostic)`, and a
+diagnostic already containing the literal two characters `\n` rendering
+distinguishably from a real embedded newline); `test_reporter_version_pin`
+re-pins `v17`.
