@@ -1,7 +1,7 @@
 # lane b42subgrain — interpret at subject grain (design note)
 
-**Branch** `lane/b42subgrain`, worktree `worktrees/b42subgrain`, one
-commit `9a03263`. **DESIGN ONLY**, as chartered: no code, no catalogue
+**Branch** `lane/b42subgrain`, worktree `worktrees/b42subgrain`; the
+note is commit `9a03263`, this report and its line-count fix follow it. **DESIGN ONLY**, as chartered: no code, no catalogue
 change, no reporter change, no record touched. Diff is exactly two files.
 
 ## Deliverable
