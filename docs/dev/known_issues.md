@@ -824,3 +824,50 @@ single-line diagnostic, `None`/empty rendering `(no diagnostic)`, and a
 diagnostic already containing the literal two characters `\n` rendering
 distinguishably from a real embedded newline); `test_reporter_version_pin`
 re-pins `v17`.
+## KB-19 (2026-09-17, FIXED same day by [B42] L6b; filed as KB-18 in lane l6bre2, RENUMBERED at merge — KB-18 is the reporter truncation above) — `run.driver_compiler` joined EVERY driver built in the process, not just the current record's own, once a second compiler FAMILY existed on the roster
+
+`pcrecbench/driverrun.py`'s `DRIVER_BUILDS` dict is process-global,
+keyed by driver binary path, and `driver_build_provenance()` read it
+UNSCOPED — every entry any adapter had registered so far in the current
+process, joined with `", "` — into `run.driver_compiler`. This was a
+silent no-op invariant for the project's whole prior history: every
+testee's driver was built by the SAME compiler family (`gcc`), so "every
+compiler used so far in this process" and "the compiler THIS record's
+driver used" always happened to be the same one value.
+
+`testees/re2/`'s driver ([B42] L6b) is the first built by a DIFFERENT
+family, `g++`. A `quick --vs` comparing an `re2-*` testee against a
+`pcre2-*` one (both testees prepared in ONE process) populated both
+adapters' entries before either record was built, so the SECOND record's
+`run.driver_compiler` read `"g-15.2.0, gcc"` — both, comma-and-space
+joined — and failed `schema/validate.py`'s single-token pattern
+(`^[a-z0-9][a-z0-9._-]*$`, which also excludes the bare `+` in a literal
+`"g++"` even before the join). Reproduced: `quick --subbench email
+--pattern orig --regime search --testee re2-default --vs pcre2-interp
+--subjects 5` rejected the SECOND (pcre2-interp) record at
+`store.write()` with exactly that message.
+
+A separate, smaller issue in the same path: `g++`'s raw name cannot
+satisfy the pattern at all (the `+` characters), so `run.driver_compiler`
+must go through `record_schema.md §6.7`'s shared `env.canon_compiler`
+normalization (the SAME function `environment.compiler` uses) rather
+than the raw `$CC`/`$CXX` token — `"g++ (Ubuntu 15.2.0-16ubuntu1)
+15.2.0"` normalizes to `"g-15.2.0"` (the `++` run collapsing to one
+separator), which the pattern accepts. `record_schema.md §6.7`'s own
+text already flags the underlying gap ("one `compiler` field may be the
+wrong shape once a non-C testee lands") — this is that flagged case
+landing for a C-FAMILY toolchain that is not literally `gcc`, not yet
+the fully non-C case (rustc, a python interpreter) the note anticipated.
+
+**Fixed** two ways: (1) `testees/re2/adapter.py`'s `prepare_driver`
+registers `env.canon_compiler(env.compiler_raw(cxx))`, never the raw
+`cxx` string, into `DRIVER_BUILDS`; (2) `pcrecbench/harness.py` clears
+`DRIVER_BUILDS` immediately before `adapter.prepare(testee_id, workdir)`
+for the CURRENT testee — since `prepare()` always re-registers its own
+entry immediately afterward, this scopes the dict to one testee's own
+build(s) by construction and is a strict no-op for every existing
+single-compiler-family testee. Verified: the same `quick --vs` command
+above now writes two valid records (`run.driver_compiler` = `"g-15.2.0"`
+on the re2-default record, `"gcc-15.2.0"` on the pcre2-interp one), and
+no existing committed record or test exercises two compiler families in
+one process, so the fix moves no existing number.

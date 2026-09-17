@@ -1,0 +1,242 @@
+docs/dev/measurements/2026-09-17-re2-capability-census.txt
+============================================================
+[B42] L6b (testees/re2/), the RE2 capability witness census -- the L5
+lesson applied to a new engine: a REQUIRES-vocabulary capability
+declaration is derived from witnessed compiles/refusals, not from
+documentation (bench/capability/gen_patterns.py's EXT_BENCH_ROSTER
+comment, "RE-VERIFIED ... never inferred from ... prose alone"). Reused
+`testees/re2/adapter.py`'s own `compile()` path throughout -- no second
+copy of the g++/pkg-config flags or the Latin1-encoding decision -- via
+`docs/dev/measurements/probe_re2_capability_census.py`, committed
+beside this file.
+
+Bench commit (worktree lane/l6bre2, parent HEAD): 4c0a6bc24a5615081681df107fdf2f6ef38cbae6
+RE2 library: libre2-11 / libre2-dev, pkg-config Version 11.0.0 (the
+  soname/ABI version), Debian package 20250805-1build3 (RE2's own
+  upstream snapshot date -- see testees/re2/adapter.py's `_probe_version`
+  docstring for why neither is a "typed" version).
+Compiler: g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+Box: ubuntubudu, Linux 7.0.0-29-generic x86_64
+Command: python3 docs/dev/measurements/probe_re2_capability_census.py
+Load: /proc/loadavg at run time: 17.64 8.20 3.94 16/733 1744252 (NOT
+  quiet -- pcrecdev1's afternoon/evening battery per this lane's brief).
+  IRRELEVANT to this probe: every compile here is COMPILE-ONLY, no
+  match run, no timing loop, nothing here is a number that matters for
+  ranking (pcrec D35 rule 5) -- the outcome (compiled/refused) and the
+  diagnostic are the only facts this file records, and neither is
+  load-sensitive.
+Corpora: bench/capability@0.1 (64 patterns, the set this census exists
+  to declare RE2's capabilities for) and bench/syntax@0.1 (95 patterns,
+  a second, independently-authored corpus -- brief item 3's "other
+  sets' patterns as available"), both read via `pcrecbench.subbench`'s
+  real loader, patterns compiled byte for byte as their canonical text.
+
+---------------------------------------------------------------- output
+== witness census: re2-default ==
+  backrefs                 REFUSED    b'(a)\\1'  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \1
+  lookaround               REFUSED    b'a(?=b)'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?=
+  lookbehind-variable      REFUSED    b'(?<=a|bc)x'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<=
+  possessive-quantifier    REFUSED    b'a++'  [syntax/ErrorRepeatOp] RE2 construction failed [ErrorRepeatOp]: bad repetition operator: ++
+  atomic-group             REFUSED    b'(?>a)'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?>
+  recursion                REFUSED    b'a(?R)?b'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?R
+  conditionals             REFUSED    b'(?(1)a|b)(a)?'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?(
+  k-reset                  REFUSED    b'a\\Kb'  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \K
+  control-verbs            REFUSED    b'a(*FAIL)b'  [syntax/ErrorRepeatArgument] RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+  unicode-properties       COMPILED   b'\\p{L}+'
+  named-groups             COMPILED   b'(?P<x>a)'
+  free-spacing             REFUSED    b'(?x) a b c'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?x
+  callouts                 REFUSED    b'a(?C1)b'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?C
+  span-reporting           COMPILED   b'abc'
+  non-utf8-subject         COMPILED   b'\\x93[\\x20-\\x7e]*\\x94'
+  captures                 COMPILED   b'(a)(b)'
+  true-end-anchor          COMPILED   b'abc\\z'
+  -> capabilities satisfied: unicode-properties, named-groups, span-reporting, non-utf8-subject, captures, true-end-anchor
+  -> capabilities REFUSED:   backrefs, lookaround, lookbehind-variable, possessive-quantifier, atomic-group, recursion, conditionals, k-reset, control-verbs, free-spacing, callouts
+
+== witness census: re2-longest ==
+  backrefs                 REFUSED    b'(a)\\1'  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \1
+  lookaround               REFUSED    b'a(?=b)'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?=
+  lookbehind-variable      REFUSED    b'(?<=a|bc)x'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<=
+  possessive-quantifier    REFUSED    b'a++'  [syntax/ErrorRepeatOp] RE2 construction failed [ErrorRepeatOp]: bad repetition operator: ++
+  atomic-group             REFUSED    b'(?>a)'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?>
+  recursion                REFUSED    b'a(?R)?b'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?R
+  conditionals             REFUSED    b'(?(1)a|b)(a)?'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?(
+  k-reset                  REFUSED    b'a\\Kb'  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \K
+  control-verbs            REFUSED    b'a(*FAIL)b'  [syntax/ErrorRepeatArgument] RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+  unicode-properties       COMPILED   b'\\p{L}+'
+  named-groups             COMPILED   b'(?P<x>a)'
+  free-spacing             REFUSED    b'(?x) a b c'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?x
+  callouts                 REFUSED    b'a(?C1)b'  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?C
+  span-reporting           COMPILED   b'abc'
+  non-utf8-subject         COMPILED   b'\\x93[\\x20-\\x7e]*\\x94'
+  captures                 COMPILED   b'(a)(b)'
+  true-end-anchor          COMPILED   b'abc\\z'
+  -> capabilities satisfied: unicode-properties, named-groups, span-reporting, non-utf8-subject, captures, true-end-anchor
+  -> capabilities REFUSED:   backrefs, lookaround, lookbehind-variable, possessive-quantifier, atomic-group, recursion, conditionals, k-reset, control-verbs, free-spacing, callouts
+
+== corpus census: re2-default over bench/capability@0.1 (64 patterns) ==
+  ipv4-near-miss                                   COMPILED
+  uuid-near-miss                                   COMPILED
+  wild-validator-email-owasp                       COMPILED
+  wild-validator-ipv4-owasp                        COMPILED
+  wild-validator-us-zip-owasp                      COMPILED
+  wild-validator-uuid-grok                         COMPILED
+  base10num-near-miss                              COMPILED
+  logparse-atomic                                  REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?>
+  logparse-atomic-removed                          COMPILED
+  wild-logparse-base10num-grok                     REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<!
+  wild-logparse-base10num-noatomic                 REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<!
+  wild-logparse-quotedstring-grok                  REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?>
+  wild-logparse-quotedstring-noatomic              REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<!
+  wild-logparse-syslogbase-expanded                REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?!
+  wild-logparse-winpath-grok                       REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?>
+  winpath-near-miss                                COMPILED
+  wild-waf-crs-942140-dbnames                      COMPILED
+  wild-waf-crs-942160-sleep-benchmark              COMPILED
+  wild-waf-crs-942270-union-select                 COMPILED
+  wild-waf-crs-942360-concat-sqli                  COMPILED
+  wild-waf-crs-942500-comment-obfuscation          COMPILED
+  wild-secrets-aws-access-key-id                   COMPILED
+  wild-secrets-github-pat                          COMPILED
+  wild-secrets-slack-webhook-url                   COMPILED
+  wild-secrets-username-password-pair              COMPILED
+  wild-datetime-datefinder-alternation             COMPILED
+  wild-datetime-moment-iso8601                     COMPILED
+  codegrammar-flat                                 COMPILED
+  codegrammar-xflag                                REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?x
+  wild-codegrammar-json-array-begin                COMPILED
+  wild-codegrammar-json-constant                   COMPILED
+  wild-codegrammar-json-number-extended            REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?x
+  wild-codegrammar-json-object-begin               COMPILED
+  wild-codegrammar-json-stringcontent-escape       REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?x
+  doubled-word                                     REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \1
+  dup-param-detect                                 REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \1
+  phone-palindrome-6                               REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \3
+  quoted-delim-match                               REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?!
+  tag-pair-match                                   REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \1
+  currency-lookbehind-fixed                        REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<=
+  email-local-nodup                                REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?!
+  float-literal-bound                              REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<!
+  negation-scope-lookbehind-var                    REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<!
+  pwd-strength-chain                               REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?=
+  balanced-parens-rec                              REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?R
+  bracket-array-define                             REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?x
+  nested-comment-rec                               REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?!
+  tag-depth3-bound                                 REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \3
+  date-nested-plus                                 COMPILED
+  email-nested-plus                                COMPILED
+  evil-alt-nested                                  COMPILED
+  numeric-id-nested-plus                           COMPILED
+  phone-list-nested-plus                           COMPILED
+  trim-nested-star                                 COMPILED
+  file-ext-order                                   COMPILED
+  keyword-prefix-order                             COMPILED
+  router-prefix-order                              COMPILED
+  wild-semdiv-altorder-foo-foobar-rustregex        COMPILED
+  wild-semdiv-dollar-trailing-newline-pcre2        COMPILED
+  wild-semdiv-empty-alt-repeat-pcre2               COMPILED
+  high-byte-run                                    COMPILED
+  mojibake-curly-quote                             COMPILED
+  utf8-lead-no-cont                                REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?!
+  floor-byte                                       COMPILED
+  -> 39/64 compiled, 25 refused
+  -> refusal codes: ErrorBadEscape x5, ErrorBadPerlOp x20
+
+== corpus census: re2-default over bench/syntax@0.1 (95 patterns) ==
+  lit-cat                                          COMPILED
+  anc-caret                                        COMPILED
+  anc-dollar                                       COMPILED
+  anc-a-uc                                         COMPILED
+  anc-z-uc                                         REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \Z
+  anc-z-lc                                         COMPILED
+  anc-g-uc                                         REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \G
+  anc-m-caret                                      COMPILED
+  anc-m-dollar                                     COMPILED
+  asr-wb                                           COMPILED
+  asr-nwb                                          COMPILED
+  asr-k-uc                                         REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \K
+  cls-d                                            COMPILED
+  cls-s-lc                                         COMPILED
+  cls-s-uc                                         COMPILED
+  cls-w                                            COMPILED
+  cls-h                                            REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \h
+  cls-v                                            COMPILED
+  cls-n-uc                                         REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \N
+  cls-posix                                        COMPILED
+  cls-negset                                       COMPILED
+  cls-range                                        COMPILED
+  cls-dot                                          COMPILED
+  cls-fold-pair                                    COMPILED
+  cls-pair-ctl                                     COMPILED
+  cls-mixed-case                                   COMPILED
+  cls-i-class                                      COMPILED
+  qnt-star                                         COMPILED
+  qnt-plus                                         COMPILED
+  qnt-quest                                        COMPILED
+  qnt-lazy                                         COMPILED
+  qnt-poss-star                                    REFUSED  [syntax/ErrorRepeatOp] RE2 construction failed [ErrorRepeatOp]: bad repetition operator: *+
+  qnt-poss-plus                                    REFUSED  [syntax/ErrorRepeatOp] RE2 construction failed [ErrorRepeatOp]: bad repetition operator: ++
+  qnt-plus-ctl                                     COMPILED
+  qnt-poss-quest                                   REFUSED  [syntax/ErrorRepeatOp] RE2 construction failed [ErrorRepeatOp]: bad repetition operator: ?+
+  qnt-poss-brace                                   REFUSED  [syntax/ErrorRepeatOp] RE2 construction failed [ErrorRepeatOp]: bad repetition operator: {1,2}+
+  grp-cap                                          COMPILED
+  grp-noncap                                       COMPILED
+  grp-named                                        COMPILED
+  grp-named-quote                                  REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?'
+  grp-atomic-rep                                   REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?>
+  grp-atomic-alt                                   REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?>
+  grp-comment                                      REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?#
+  grp-branch-reset                                 REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?|
+  grp-callout                                      REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?C
+  alt-two                                          COMPILED
+  alt-nested                                       COMPILED
+  bak-1                                            REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \1
+  bak-2                                            REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \2
+  bak-g-rel                                        REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \g
+  bak-k-named                                      REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \k
+  bak-py                                           REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?P
+  lka-pos                                          REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?=
+  lka-neg                                          REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?!
+  lkb-pos                                          REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<=
+  lkb-neg                                          REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<!
+  lka-nonatomic                                    REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?*
+  lka-verb                                         REFUSED  [syntax/ErrorRepeatArgument] RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+  cnd-group                                        REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?(
+  rec-r-uc                                         REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?R
+  rec-1                                            REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?1
+  rec-name                                         REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?&
+  rec-define                                       REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?(
+  rec-g-angle                                      REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \g
+  rec-py                                           REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?P
+  rec-fwd                                          REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?+
+  rec-back                                         REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?-1
+  mod-i                                            COMPILED
+  mod-s                                            COMPILED
+  mod-x                                            REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?x
+  mod-n                                            REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?n
+  mod-u-uc                                         COMPILED
+  mod-j-uc                                         REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?J
+  mod-a                                            REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?a
+  mod-r                                            REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?ir
+  mod-reset                                        REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?^
+  mod-unset                                        COMPILED
+  esc-tab                                          COMPILED
+  esc-nl                                           COMPILED
+  esc-cr                                           COMPILED
+  esc-hex                                          COMPILED
+  esc-hex-braced                                   COMPILED
+  esc-ctrl                                         REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \c
+  esc-octal-o                                      REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \o
+  esc-octal-0                                      COMPILED
+  esc-quote                                        COMPILED
+  msc-r-uc                                         REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \R
+  msc-x-uc                                         REFUSED  [syntax/ErrorBadEscape] RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \X
+  msc-c-uc                                         COMPILED
+  unp-p-lc                                         COMPILED
+  unp-p-uc                                         COMPILED
+  vrb-accept                                       REFUSED  [syntax/ErrorRepeatArgument] RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+  vrb-skip                                         REFUSED  [syntax/ErrorRepeatArgument] RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+  xcl-minus                                        REFUSED  [syntax/ErrorBadPerlOp] RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?[
+  floor                                            COMPILED
+  -> 47/95 compiled, 48 refused
+  -> refusal codes: ErrorBadEscape x14, ErrorBadPerlOp x27, ErrorRepeatArgument x3, ErrorRepeatOp x4

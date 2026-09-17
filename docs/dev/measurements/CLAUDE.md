@@ -44,6 +44,21 @@ is the same as ~/pcrec's `docs/design/*_measurements/` and its D35:
 | `2026-09-01-hybrid-gained-edge-census.tsv` | its archive over `bounded@0.2` at a7e0bdf vs 263b013 (eight records, source header naming each): 132 rows. The POPULATION is **two artifacts** -- `nest2-64` and `nest3-16` WHOLE-SUBJECT, both `collapsed-prefilter` / `byte-class-bounded`, edge absent -> `range` -- on the two `auto` testees, four record cells, exercised by the `match` regime ALONE |
 | `2026-09-01-hybrid-gained-edge-census.md` | its reading note: (a) the ledger's "thr x1.57-1.59 faster, match x1.04-1.05 slower" is NOT one artifact's trade -- the throughput and search wins belong to the sibling PLAIN DFA artifact and the hybrid that gained the edge is only ever measured in `match`, where it only ever got slower; (b) the cost is a FIXED per-call term (+5.9..+7.9 ns on `nest2-64` across a x13 span of call cost), so the x1.53 worst case is that term on a 24 ns call; (c) it fires only on MATCHING calls -- the seven pure-digit subjects moved, the other 23 are x0.98-1.01 including those that enter the digit run before failing. One tunable term plausibly explains asks (ii) and (v) together; nothing here locates the boundary, which is what `bounded@0.3`'s low-rung sweep is built to read |
 
+- `probe_re2_capability_census.py` / `2026-09-17-re2-capability-census.txt`
+  — ([B42] L6b, `testees/re2/`) THE RE2 CAPABILITY WITNESS CENSUS: one
+  witness pattern per `REQUIRES_VOCAB` token plus every `bench/
+  capability@0.1` (64) and `bench/syntax@0.1` (95) canonical pattern,
+  compiled through the real `testees/re2/adapter.py` `compile()` path
+  (compile-only, no timing, never a ranking input). Derives
+  `bench/capability/gen_patterns.py`'s `re2-default`/`re2-longest`
+  `EXT_BENCH_ROSTER` rows: REFUSED (RE2's own `ErrorCode`, every time) —
+  `backrefs`, `lookaround`, `lookbehind-variable`,
+  `possessive-quantifier`, `atomic-group`, `recursion`, `conditionals`,
+  `k-reset`, `control-verbs`, `free-spacing`, `callouts`; SATISFIED —
+  `unicode-properties`, `named-groups`, `span-reporting`,
+  `non-utf8-subject`, `captures`, `true-end-anchor`. Corpus totals:
+  `bench/capability` 39/64 compiled; `bench/syntax` 47/95 compiled.
+
 Maintenance: update this file when files are added/removed or change role.
 - `2026-09-01-engine-sel-census-a7e0bdf-vs-1989c62.tsv` — ([B26] (a), lane b26repin) every bench pattern × form × engine mode compiled at both pins, the RX_ENGINE_SEL / engine / prefilter / lang stamps per cell: identical totals at both pins; NO bench artifact stamps `declined-nullable-default`; 80 refusals per pin incl. altwide's ci-512 at the 1,000,000 B emit cap.
 - `2026-09-01-emit-sizes-a7e0bdf-vs-1989c62.tsv` — ([B26] (a)) the emit-size port on the ledger patterns at both pins: +202 B total / +105 B code flat (abi 15's two rx_info fields), o42's declines the only downward moves.

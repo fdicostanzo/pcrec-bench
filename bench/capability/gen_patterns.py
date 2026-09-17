@@ -484,6 +484,64 @@ EXT_BENCH_ROSTER = [
     ("pcre2-dfa", [t for t in REQUIRES_VOCAB
                    if t not in ("backrefs", "conditionals", "k-reset",
                                 "control-verbs", "captures")]),
+    # re2-default / re2-longest ([B42] L6b, testees/re2/adapter.py,
+    # 2026-09-17): a REAL COMPILE CENSUS over BOTH RE2 corpora
+    # (docs/dev/measurements/2026-09-17-re2-capability-census.txt,
+    # `probe_re2_capability_census.py`) -- one witness pattern per
+    # REQUIRES_VOCAB token AND every one of this set's own 64 patterns
+    # AND bench/syntax@0.1's 95, run through the REAL
+    # `testees/re2/adapter.py` `compile()` path (never inferred from N2's
+    # docs-only survey). The two configs are IDENTICAL here:
+    # `set_longest_match(true)` changes which alternative wins at one
+    # start point, never what RE2's PARSER accepts -- confirmed on the
+    # census (both configs run against the witness set with the same
+    # result).
+    #   backrefs / lookaround / lookbehind-variable /
+    #   possessive-quantifier / atomic-group / recursion / conditionals /
+    #   k-reset / control-verbs / free-spacing / callouts -- ALL REFUSED,
+    #   each on its own witness, RE2's OWN closed `ErrorCode` naming the
+    #   mechanism (`ErrorBadPerlOp` for every `(?...)` extension RE2 does
+    #   not have; `ErrorBadEscape` for `\1`/`\K`; `ErrorRepeatOp`/
+    #   `ErrorRepeatArgument` for `++`/`(*FAIL)`) -- exactly N2 3's table,
+    #   independently re-derived rather than trusted. `free-spacing`
+    #   (`(?x)`) is the one N2 left as a documentation-only claim; this
+    #   census CONFIRMS the refusal, live, on both the witness and three
+    #   corpus patterns (`codegrammar-xflag`,
+    #   `wild-codegrammar-json-number-extended`,
+    #   `wild-codegrammar-json-stringcontent-escape`, `mod-x` in
+    #   bench/syntax) -- `ErrorBadPerlOp: invalid perl operator: (?x`
+    #   every time.
+    #   unicode-properties / named-groups / span-reporting /
+    #   non-utf8-subject / captures / true-end-anchor -- ALL COMPILE.
+    #   `non-utf8-subject` is witnessed on the SAME raw-high-byte shape
+    #   the pcrec-side I-72 guard uses (`\x93[...]*\x94`), which compiles
+    #   ONLY because `testees/re2/driver.cc` builds every RE2 object with
+    #   `EncodingLatin1` -- see that file's header for why. `true-end-
+    #   anchor` (`\z`) is witnessed twice (the dedicated witness AND
+    #   bench/syntax's own `anc-z-lc`); its sibling `\Z` (bench/syntax's
+    #   `anc-z-uc`) REFUSES (`ErrorBadEscape`) -- RE2 has `\z`, not `\Z`,
+    #   consistent with re2.h's documented anchor set.
+    # Corpus totals (compile-only, no ranking claim): bench/capability
+    # 39/64 compiled, 25 refused; bench/syntax 47/95 compiled, 48
+    # refused -- every refusal's ErrorCode falls under one of the eleven
+    # excluded tokens above, or is a PCRE-only escape/production this
+    # vocabulary has no token for at all (`\Z`, `\G`, `\h`, `\N`, inline
+    # comments `(?#...)`, branch-reset `(?|...)`), never an unexplained
+    # refusal.
+    ("re2-default", [t for t in REQUIRES_VOCAB
+                     if t not in ("backrefs", "lookaround",
+                                  "lookbehind-variable",
+                                  "possessive-quantifier", "atomic-group",
+                                  "recursion", "conditionals", "k-reset",
+                                  "control-verbs", "free-spacing",
+                                  "callouts")]),
+    ("re2-longest", [t for t in REQUIRES_VOCAB
+                     if t not in ("backrefs", "lookaround",
+                                  "lookbehind-variable",
+                                  "possessive-quantifier", "atomic-group",
+                                  "recursion", "conditionals", "k-reset",
+                                  "control-verbs", "free-spacing",
+                                  "callouts")]),
 ]
 
 
