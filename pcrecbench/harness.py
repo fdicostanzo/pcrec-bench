@@ -574,6 +574,25 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                                       testee_id)
     os.makedirs(workdir, exist_ok=True)
     say("preparing %s ..." % testee_id)
+    # driverrun.DRIVER_BUILDS is a PROCESS-GLOBAL dict (every driver binary
+    # built in this process, keyed by path) that driver_build_provenance()
+    # below reads UNSCOPED -- every entry, from every testee prepared so
+    # far in this process. That was a silent no-op invariant until [B42]
+    # L6b (testees/re2/), the first adapter whose driver is built by a
+    # DIFFERENT compiler family (g++) than every prior one (gcc): a `quick
+    # --vs` comparing an re2-* testee against a pcre2-* one in one process
+    # populated BOTH testees' compiler entries before either record was
+    # built, and the SECOND testee's record then carried a
+    # `run.driver_compiler` joining both ("g-15.2.0, gcc") -- invalid
+    # against the schema's single-token pattern, and wrong regardless: a
+    # record must state how ITS OWN driver was built, not every driver any
+    # testee measured earlier in this process happened to need. Clearing
+    # here, right before THIS testee's own prepare() (re-)populates it,
+    # scopes the dict to one testee's build(s) by construction -- a
+    # strict no-op for every existing single-compiler-family testee
+    # (prepare() always re-registers its own entry immediately after).
+    from . import driverrun as _drv
+    _drv.DRIVER_BUILDS.clear()
     adapter.prepare(testee_id, workdir)
     testee_block = adapter.describe(testee_id, workdir)
     # `tier` is a SETUP field, not a testee field; an adapter that forces it

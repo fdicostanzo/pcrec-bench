@@ -1,0 +1,22 @@
+# testees/re2/configs.toml -- the testees this adapter provides.
+#
+# capability_set_v1.md 8's v1 RE2 roster: `re2-default` and `re2-longest`
+# only. `re2-bigmem` (64 MiB `max_mem`) is explicitly `later` and is not
+# a key here.
+#
+# No version is written here (testees/CLAUDE.md's "one rule that is not
+# obvious"): RE2 has no runtime version API at all (testees/re2/
+# adapter.py's `_probe_version` docstring), so `engine_version` is probed
+# from the installed package's pkg-config metadata on every run instead.
+
+[testees.re2-default]
+engine_mode = "default"
+longest = false
+max_mem = 8388608
+description = "RE2 at library defaults: leftmost-first-LIKE selection (RE2's own submatch-selection algorithm, not literal backtracking), max_mem 8 MiB (RE2::Options::kDefaultMaxMem)"
+
+[testees.re2-longest]
+engine_mode = "longest"
+longest = true
+max_mem = 8388608
+description = "RE2 with RE2::Options::set_longest_match(true) -- POSIX leftmost-longest selection, the second convention reading capability_set_v1.md's family 11 (semantics-divergence) needs; max_mem unchanged at 8 MiB"
