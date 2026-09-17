@@ -342,6 +342,12 @@ the *real store* has):
 | plain JSONL | 10,536,064 B | **390,207 B** (27.0×) |
 | `zstd -3` | 445,844 B | **449,720 B** (+15.3%) |
 
+Experiment (ii) was re-run with `git repack -adf --window=250
+--depth=250` on both arms, to rule out the result being an artifact of
+default packing: **390,360 B plain vs 449,721 B zstd (+15.2%)** — the
+plain arm moved by 153 bytes, the compressed arm by one. Git's default
+window already finds every delta there is to find here.
+
 So the trap holds in **both** regimes, and the write-once escape hatch
 does not exist for this data. Committing the store compressed would cost
 about 15% more pack, forever, and would also make `git clone` transfer
@@ -1039,6 +1045,7 @@ probes `nice -n 19`.
 | 2.2 | 149 of 168 store blobs are deltas; per-surface ratios | `git cat-file --batch-all-objects --batch-check` with `%(deltabase)`, joined to `git rev-list --objects --all` |
 | 2.2 | same-path: 92,334 B plain vs 93,795 B zstd | throwaway repo, 3 versions, `gc --aggressive` |
 | 2.2 | **write-once: 390,207 B plain vs 449,720 B zstd (+15.3%)** | throwaway repo, 14 records, one commit, `repack -adq` |
+| 2.2 | same, aggressive: 390,360 B vs 449,721 B (+15.2%) | re-run with `repack -adf --window=250 --depth=250` on both arms |
 | 2.3 | decompress 0.014 s vs `json.loads` 0.222 s | store's largest record, warm cache, best of 3 |
 | 2.3 | KB-16 CLOSED; 765.67 s → 116.78 s, 3.84 GiB → 745 MiB | `docs/dev/known_issues.md:634-672`, measured by lane b41 |
 | 2.4 | Python 3.14.4; `compression.zstd` in stdlib; `pyproject` floor 3.11 | `python3 -VV`, import probe, `pyproject.toml` |
