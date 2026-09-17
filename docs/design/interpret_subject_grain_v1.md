@@ -776,6 +776,25 @@ reads.
 
 ## §6. Questions for Frank / rulings needed
 
+> **ALL ELEVEN RULED (Frank, live, 2026-09-17, twenty-fourth session —
+> one question at a time, recorded by the manager):** every
+> recommendation below is RATIFIED as stated. Q1 (a)+(b) as one ruling;
+> Q2 the `grain=subject` selector key; Q3 MAJOR, catalogue 2.0; Q4 the
+> slice (with Frank's growth concern noted — it feeds Q9 and the
+> data-management white paper chartered the same session); Q5 not
+> coupled, the reporter refactor a follow-up with its own measurement
+> first; Q6 both load checks, under Frank's stated general posture
+> "fail loudly generally"; Q7 (α)+(β) — and a WIDER DIRECTIVE beyond
+> this note: audit the other predicates/queries for the same class of
+> structurally-incomplete answer, and make results carry the context
+> around their numbers, especially where a Claude session is the
+> consumer (chartered as its own follow-up lane); Q8 goldens stay at
+> set grain, subject-grain coverage as new fixtures; Q9 new samples
+> plus on demand, no back-fill; Q10 the stamp gap fixed now,
+> unconditionally; Q11 rulings fold into `interpreter_v1.md`, this
+> file stays the derivation record. The text below is kept as the
+> pre-ruling record.
+
 Each with this lane's recommendation. None of these is decided here.
 
 **Q1. Adopt (a)+(b) — commit a subject-grain TSV per report group AND give
