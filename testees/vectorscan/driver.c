@@ -47,10 +47,12 @@
  * (dies loudly on disagreement rather than silently measuring the wrong
  * form).
  *
- * FLAGS: `HS_FLAG_UCP` is set UNCONDITIONALLY (every pattern, every
- * form) -- `\p{...}` Unicode-property classes do not compile without it
- * (this lane's own witness census, see CLAUDE.md); it is harmless on a
- * pattern that never uses `\p{...}`. `HS_FLAG_UTF8` is NEVER set: this
+ * FLAGS: `VS_DRIVER_FLAGS` is 0 -- `HS_FLAG_UCP` is NEVER set, on the
+ * MEASURED A/B in CLAUDE.md ("VS_DRIVER_FLAGS is 0"): `\p{L}` compiles
+ * identically with or without it, while setting it BREAKS `\b` on five
+ * real corpus patterns (40/64 corpus compiles at 0 vs 35/64 under UCP).
+ * (An earlier draft of this header said UCP was set unconditionally --
+ * that was the pre-A/B first cut.) `HS_FLAG_UTF8` is NEVER set: this
  * driver is byte-oriented (Vectorscan's documented default -- "ASCII by
  * default", docs/dev/research/2026-09-12-b42-engine-landscape.md, table
  * row 195), matching every OTHER testee on this roster's own default

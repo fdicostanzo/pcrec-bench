@@ -156,15 +156,20 @@ class Adapter(_ad.Adapter):
             # "which end" or "how many", only "did it match" -- see this
             # module's own docstring and testees/vectorscan/CLAUDE.md.
             "conventions": ["all-ends"],
+            # schema v1.6 (lane b44boolgrain, Frank's Q3 ruling): this
+            # config is judged on `matched` alone -- outcome_for skips the
+            # span comparison and rule X34 holds its rows span-free.
+            "grain": "boolean",
             "captures": "off",   # Hyperscan has NO capturing groups at all
             "engine_mode": cfg["engine_mode"],
             "simd": "on",        # Vectorscan/Hyperscan's whole raison d'etre
             "build_flags": "distribution libhs.so.5 (%s), direct-linked "
                            "(-lhs, pkg-config libhs); driver built with "
-                           "$CC -O2 -std=gnu11; HS_FLAG_UCP always set, "
-                           "HS_FLAG_UTF8/HS_FLAG_SOM_LEFTMOST never "
-                           "(testees/vectorscan/CLAUDE.md states the "
-                           "choice and its consequences)" % raw,
+                           "$CC -O2 -std=gnu11; hs_compile flags 0 -- "
+                           "HS_FLAG_UCP/HS_FLAG_UTF8/HS_FLAG_SOM_LEFTMOST "
+                           "never set (testees/vectorscan/CLAUDE.md "
+                           "states the measured A/B and its "
+                           "consequences)" % raw,
             "runtime_options": [],
             "compile_cost_definition": (
                 "eager, monolithic compile (requirements 3; docs/dev/"

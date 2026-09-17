@@ -1241,6 +1241,32 @@ def check_high_byte_pattern_argv():
                 bad("high-byte argv: literal \\x93hello\\x94 pattern "
                     "matches [0,7) on tre-default",
                     "matched=%s span=[%s,%s)" % (r.matched, r.start, r.end))
+        # 1d. the SAME transport property on vectorscan-block-nosom
+        # (lane l6bvs / manager landing-bar item at the wave merge,
+        # 2026-09-17). Same file-based delivery, so a confirming witness
+        # like 1b/1c -- but at BOOLEAN GRAIN (Frank's Q3 ruling, schema
+        # v1.6 testee.grain): this config reports NO span by
+        # construction, so the arm asserts matched=True ALONE, and
+        # start/end None is the EXPECTED degenerate shape, not a
+        # failure. Uses the tre arm's literal-bytes spelling: Hyperscan
+        # DOES have \xHH, but the literal form tests the transport
+        # property with one fewer moving part.
+        if "vectorscan" in _ad.discover():
+            r, err = one("vectorscan", "vectorscan-block-nosom", SUBJ,
+                         "hib-raw-vs")
+            if err:
+                bad("high-byte argv: literal \\x93hello\\x94 pattern "
+                    "MATCHES (boolean grain) on vectorscan-block-nosom",
+                    err)
+            elif r.matched and r.start is None and r.end is None:
+                ok("high-byte argv: literal \\x93hello\\x94 pattern "
+                   "MATCHES (boolean grain) on vectorscan-block-nosom",
+                   "matched=True span=None,None (X34's own shape)")
+            else:
+                bad("high-byte argv: literal \\x93hello\\x94 pattern "
+                    "MATCHES (boolean grain) on vectorscan-block-nosom",
+                    "matched=%s span=[%s,%s)" % (r.matched, r.start,
+                                                 r.end))
         # 2. the pcre2 reference agrees
         r, err = one("pcre2", "pcre2-interp", PAT, "hib-ref")
         if err:
