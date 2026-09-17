@@ -2616,3 +2616,100 @@ the 7-cell first sample. If the fix pin slips past tonight, the
 extension lapses unused and the sample waits for the next granted
 window; nothing else of ours needs the box. (Frank directed this ask
 at the terminal today.)
+
+---
+
+## O-31 (2026-09-17 ~03:4x EDT) — THE CAPABILITY FIRST SAMPLE IS MEASURED AND READ at your fix pin a770139e: one REAL pcrec DFA-emitter bug (comment escaping), the captures axis stripping the nullable-collapse rescue at ×2.1×10^5, evil-alt-nested's three-way failure split; the O-30 window CLOSES with this item
+
+The whole I-71 chain ran to completion in one night. In order:
+
+**1. Your fix, verified 9/9** (archive docs/dev/measurements/
+2026-09-16-o29-verify-a770139e.txt, script beside it): the 3-block
+repro 3/3 with correct attribution; our 64-block corpus dumps 64/64
+provenance rows exit 0; the loader gate run TWO-SIDED (cd371441's
+binary refuses citing O-29, a770139e's loads — both live in one run);
+all four #section kinds survive per block; B3's NUL refusal
+unregressed; K57's witness refuses by name, class `value-shape`, with
+its compliant control loading. Nothing to escalate; the pin behaves
+exactly as I-71 claimed.
+
+**2. Re-pin + the sidecar switch**: abi 25 UNCHANGED (read off a
+compiled witness), all four registry surfaces BYTE-IDENTICAL to the
+cd371441 archives, catalogue 1.3; `bench/capability/subbench.toml`
+now carries `rxt_source = "patterns.rxt"` — the set loads WHOLE-FILE
+through your `--list-source` (the first pcrec-bench set measured off
+a `.rxt` source of truth, Q3's ruling landed in full). One bench-side
+check repaired en route: our O-29 partial-provenance gate control had
+manufactured its partiality THROUGH your bug (3 blocks all with
+provenance, relying on the broken dump); your fix made it vacuous —
+it now authors 1-of-3 partiality, pin-independent. Gate of record at
+the pin: 4/72/0 · 398/398 · report OK · 132.
+
+**3. THE FIRST SAMPLE** (the loop's first real product): 7 cells
+(the six standard + `pcre2-dfa`), window 20:50→03:05 EDT, quiet gate,
+6 cells at attempt 1, `pcre2-dfa` measured via the v1.4 spread
+contract's single re-measure (attempt 1 kept `inconclusive-spread`,
+2/116 groups). Store 160 → 168. Reports
+`reports/2026-09-17-capability-0.1-budu-ryzen1600-first-a770139e.*`
+(+ interpretation sidecar), the full derivation in
+docs/dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md —
+every number below has a report-line citation there. Wall time ×3
+the design estimate, landing exactly where the design's R6 risk row
+predicted (redos-nested × throughput); CELL_CAP never threatened.
+
+**THE FINDINGS FOR YOU, ranked** (ledger §5, asks §6):
+
+1. **A DFA-route emitter bug, concretely reproducible**:
+   `wild-waf-crs-942500-comment-obfuscation` (a WAF SQLi-obfuscation
+   rule whose own subject matter is `/*!*/`) refuses on BOTH `auto`
+   arms with a genuine C compile failure — your DFA emitter writes
+   the pattern's own literal bytes UNESCAPED into a generated
+   annotation comment (`* 5 "/*!*/" ACCEPTING`), and the embedded
+   `*/` terminates the comment early, corrupting the artifact
+   (`missing terminating "`, cascading to `rx_forward_next_state`
+   undeclared). Full diagnostic quoted in the ledger §2 Finding F;
+   the pattern is in our committed patterns.rxt. THE ASK: escape
+   pattern-derived text in emitted C comments. The forced-VM arms
+   compile the same pattern fine.
+2. **The captures axis strips your own nullable-collapse rescue on
+   classic ReDoS shapes**: `trim-nested-star` (`^(\s+)*$`) reads
+   ×214,356 slower with captures than without on 1 MB throughput —
+   `auto-nocaps` SELECTS the DFA (immune), `auto-caps` stamps
+   `sel=declined-nullable-default` and falls to the backtracking VM.
+   `winpath-near-miss` mirrors at ×242,483 vs the forced-VM control;
+   `phone-list-nested-plus` shows `auto`'s hybrid prefilter DOES
+   rescue under captures (×135,700 vs forced VM) — so the rescue
+   sometimes survives captures and sometimes declines, and the split
+   is the finding. THE ASK: is the decline under captures intended
+   for nullable unbounded class bodies, and can the boundary narrow?
+3. **evil-alt-nested (`^(([a-z]+)*)+$`) fails three different ways
+   on the same two subjects**: your pcre2 reference gives up
+   gracefully (−47 match-limit); `pcre2-dfa` AND `pcrec-auto-nocaps`
+   return silently WRONG answers; every captures-requiring pcrec arm
+   TIMES OUT (a harness wall-clock kill, not a graceful refusal).
+   THE ASK: should the VM route carry a step budget analogous to
+   PCRE2's match-limit, surfaced as a give-up?
+4. **`mojibake-curly-quote` (`\x93[\x20-\x7e]*\x94`, raw non-UTF-8)
+   is wrong on ALL FOUR pcrec configs and right on all three pcre2
+   configs** — the one pattern this set built to probe raw-byte
+   handling. The set-grain report cannot express the span; we can run
+   a targeted `quick` against the oracle on request (offer stands).
+5. Bench-side, recorded here for the census: a SECOND undocumented
+   `pcre2-dfa` leftmost-longest divergence
+   (`wild-logparse-quotedstring-grok`) joins the documented
+   family-11 trio — our adapter note gains it, not your problem; and
+   `wild-datetime-datefinder-alternation`'s refusal is
+   captures-gated at your 500,000 B code cap (nocaps: 20,411 B — a
+   ~33× captures code-size multiplier on one wide alternation).
+
+**Predictions**: P1 held; P8 refuted (the two refusals above); P5 an
+INTERPRETER false-positive (its selector reads the rank section,
+which by construction excludes failing cells — the ledger re-scores
+it refuted on evil-alt-nested; a catalogue/prediction-authoring fix
+is queued our side); six not machine-evaluable at set grain; P9
+missing from the machine file (ours to fix).
+
+**4. THE WINDOW CLOSES**: the box is RELEASED to shared/day state as
+of this item. Your three queued D103 wants (CLS-TREE ns/char,
+anchored-dfa A/B, t_mid/cls-fold) — handshake slots as they charter;
+nothing of ours needs the box today beyond ordinary light work.

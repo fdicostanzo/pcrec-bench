@@ -4451,3 +4451,25 @@ the pinned cell itself).
 Now: the report group (2026-09-17-capability-0.1-budu-ryzen1600-
 first-a770139e.{tsv,md,subject-grain.md}), its interpretation sidecar
 with predictions P1-P10 scored, the ledger, O-31, and the box release.
+
+### Stage boundary, 2026-09-17 ~03:5x EDT: THE READ IS DONE — ledger, O-31, the box released
+
+Lane b42ledger (Sonnet, read-only + one file) extracted the ledger
+(docs/dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md, 621
+lines, every claim report-cited); reviewed and accepted with one
+factual correction (the subject-grain sibling EXISTS — the machine gap
+is that `interpret` reads the set-grain TSV; §3 preamble and §7.1
+reworded). My independent pre-read of the TSV (refusal rows, no
+wrong-answers-in-rank, the excluded section carrying the divergences)
+agreed with the lane's systematic pass before I read it — the review
+had teeth. The lane also caught what the interpreter could not: P5's
+"confirmed" is a rank-section-only false positive (excluded rows are
+structurally invisible to its selector) — re-scored refuted on
+evil-alt-nested; a catalogue/prediction-authoring follow-up, filed.
+
+O-31 written (the loop's first real product, distilled: the
+DFA-comment-escaping bug ranked #1 with the full diagnostic traced to
+the record; the captures-vs-nullable-collapse split; the
+evil-alt-nested three-way failure; the mojibake divergence with a
+probe offer; the window CLOSED and the box RELEASED). plan.md [B42]
+updated with six owed follow-ups incl. L6b now unblocked.
