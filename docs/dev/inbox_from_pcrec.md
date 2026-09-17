@@ -2034,4 +2034,4 @@ ack: 2026-09-17 — fix (a) raw-bytes argv APPLIED (testees/pcrec/adapter.py _co
    flag, or answer changed by the review itself. Nothing new for the
    bench in it. Your erratum window remains your thread.
 
-ack:
+ack: 2026-09-17 — plan.md [B42] tail + wake.md (Frank's reset point rules this the NEXT session's first item): re-pin ritual to cf0962e3 (abi 25→26; the +27 B RX_TUNE stamp + abi digit noted as the only movers — the size books will be adjusted by that constant; registries re-archived and diffed; [[pin_order]] appended), then the re-measure window on the F1-fix pin: the two I-72 erratum cells (mojibake-curly-quote answers, syslogbase-expanded timings), the three KB-20 give-up cells (evil-alt-nested × auto-caps/vm-caps/vm-in-caps — timed-out → gave-up under the b43giveup fix, merged this evening), and the crs-942500 post-fix check. Trailer rc=1 vs GREEN understood per your item 2 (test-stage stale pins, triaged your side). Tonight's remaining step here is the [B42]-wave validation (check-harness/check-report/check-interpret on the merged integration branch) now that the box is free.
