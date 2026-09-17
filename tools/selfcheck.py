@@ -1126,6 +1126,103 @@ def check_frame_buffer():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def check_high_byte_pattern_argv():
+    """RAW HIGH PATTERN BYTES SURVIVE THE ADAPTER'S ARGV (inbox I-72,
+    2026-09-17; the capability first sample's F4, outbox O-31 + addendum).
+
+    The bug this guards against: `_compile_one` used to pass the pattern
+    as `pattern.decode("latin-1")`, and CPython's subprocess re-encodes a
+    str argv element via os.fsencode (UTF-8) -- so every pattern byte
+    >= 0x80 reached pcrec's argv as a TWO-BYTE UTF-8 sequence (0x93 ->
+    C2 93, captured in /proc/self/cmdline by pcrec's own lane). pcrec
+    then compiled the corrupted pattern and CORRECTLY answered nomatch
+    on the clean subject -- recorded by the bench as a wrong answer on
+    all four pcrec configs (ledger 1.2 Finding A, attribution since
+    flipped bench-side).
+
+    Three arms, both directions per the house rule:
+      1. the mojibake witness (raw 0x93/0x94 literals) compiles under
+         pcrec-auto AND pcrec-vm (both engine routes -- the bug hit
+         both identically through the one shared argv site) and matches
+         the raw subject \\x93hello\\x94 at [0,7) exactly as the
+         committed oracle expectation says;
+      2. cross-engine agreement: pcre2-interp (a separate adapter path,
+         clean throughout) answers the same [0,7) -- the reference the
+         pcrec arms are held to;
+      3. THE DISCRIMINATION CONTROL: the deliberately UTF-8-corrupted
+         spelling (C2 93 ... C2 94 -- byte for byte what the broken
+         argv used to deliver) compiles fine and does NOT match the
+         clean subject. A check that cannot tell the two artifacts
+         apart would have passed the pre-fix adapter; this arm is the
+         proof it can."""
+    print("-- raw high pattern bytes survive the adapter argv (I-72) --")
+    PAT = b"\x93[\\x20-\\x7e]*\x94"
+    PAT_CORRUPT = b"\xc2\x93[\\x20-\\x7e]*\xc2\x94"
+    SUBJ = b"\x93hello\x94"
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-hib-")
+    try:
+        subj_path = os.path.join(tmp, "s.bin")
+        with open(subj_path, "wb") as f:
+            f.write(SUBJ)
+
+        class S:
+            subject_id, path, length = "s-mojibake", subj_path, len(SUBJ)
+
+        def one(engine, tid, pat, label):
+            adapter = _ad.discover()[engine]
+            adapter.prepare(tid, tmp)
+            cr = adapter.compile(tid, label, pat, {}, 1,
+                                 tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                return None, "did not compile: %s" % (cr.diagnostic,)
+            rows, _i, _n = adapter.measure(dict(cr.handle), "search_short",
+                                           [S()], 1, 1, timeout=120)
+            return rows[0][0], None
+
+        # 1. the raw witness on both pcrec routes
+        for tid in ("pcrec-auto", "pcrec-vm"):
+            r, err = one("pcrec", tid, PAT, "hib-raw")
+            if err:
+                bad("high-byte argv: raw \\x93 pattern matches [0,7) "
+                    "on %s" % tid, err)
+            elif r.matched and (r.start, r.end) == (0, 7):
+                ok("high-byte argv: raw \\x93 pattern matches [0,7) "
+                   "on %s" % tid, "span [%d,%d)" % (r.start, r.end))
+            else:
+                bad("high-byte argv: raw \\x93 pattern matches [0,7) "
+                    "on %s" % tid,
+                    "matched=%s span=[%s,%s) -- the argv encoding bug's "
+                    "own signature is matched=False" % (r.matched, r.start,
+                                                        r.end))
+        # 2. the pcre2 reference agrees
+        r, err = one("pcre2", "pcre2-interp", PAT, "hib-ref")
+        if err:
+            bad("high-byte argv: pcre2-interp reference [0,7)", err)
+        elif r.matched and (r.start, r.end) == (0, 7):
+            ok("high-byte argv: pcre2-interp reference [0,7)",
+               "span [%d,%d)" % (r.start, r.end))
+        else:
+            bad("high-byte argv: pcre2-interp reference [0,7)",
+                "matched=%s span=[%s,%s)" % (r.matched, r.start, r.end))
+        # 3. the corrupted spelling is distinguishable
+        r, err = one("pcrec", "pcrec-auto", PAT_CORRUPT, "hib-corrupt")
+        if err:
+            bad("high-byte argv CONTROL: the UTF-8-corrupted spelling "
+                "does NOT match the clean subject", err)
+        elif not r.matched:
+            ok("high-byte argv CONTROL: the UTF-8-corrupted spelling "
+               "does NOT match the clean subject",
+               "C2 93 ... C2 94 compiled, nomatch on \\x93hello\\x94 -- "
+               "the two artifacts are distinguishable")
+        else:
+            bad("high-byte argv CONTROL: the UTF-8-corrupted spelling "
+                "does NOT match the clean subject",
+                "matched span=[%s,%s) -- the control cannot see the bug"
+                % (r.start, r.end))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_run_smoke():
     """A full `run` of ONE cell into a SCRATCH store, validated. Not a
     measurement: --trials 1 --iters 1, one regime, --force-unquiet, and the
@@ -8965,6 +9062,7 @@ def main():
     check_v11_fields()
     check_calibration_meets_target()
     check_frame_buffer()
+    check_high_byte_pattern_argv()
     check_run_smoke()
     check_tier_schema()
     check_store_tier_refusal()

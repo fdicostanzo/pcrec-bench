@@ -1,0 +1,66 @@
+# docs/dev/measurements/2026-09-17-mojibake-postfix-argv-bytes.txt
+#
+# THE F4 RESOLUTION'S POST-FIX RUN (inbox I-72; the attribution FLIP).
+# Supersedes the READING (not the data) of
+# 2026-09-17-mojibake-span-probe-a770139e.txt: that archive's verbatim
+# output stands, but its "the mechanism inside pcrec is theirs"
+# sentence is now known WRONG -- pcrec's lane traced the mechanism to
+# OUR adapter (testees/pcrec/adapter.py `_compile_one`):
+# `pattern.decode("latin-1")` + CPython subprocess's os.fsencode
+# re-encode delivered every pattern byte >= 0x80 to pcrec's argv as a
+# TWO-BYTE UTF-8 sequence (pcrec's /proc/self/cmdline: C2 93 ... C2 94).
+# pcrec compiled the corrupted pattern and answered it CORRECTLY --
+# nomatch on the clean subject -- which the bench recorded as a wrong
+# answer on all four pcrec configs. pcrec is exonerated on every axis
+# (their lane: darwin both char-signedness builds + our own pinned
+# binary on this box).
+#
+# THE FIX (I-72 option (a), the simpler contract): the pattern argv
+# element is now passed as raw BYTES -- POSIX subprocess passes a bytes
+# element through untouched; no encode step exists to corrupt it.
+#
+# date:      2026-09-17 (~07:0x EDT)
+# box:       ubuntubudu, shared/day state (scratch tier, correctness)
+# pin:       pcrec a770139e (abi 25) -- UNCHANGED; the fix is bench-side
+# bench:     the fix commit this archive lands in (parent 80bbf28)
+# script:    docs/dev/measurements/probe_mojibake_span.py (unchanged)
+# guard:     tools/selfcheck.py check_high_byte_pattern_argv (4 arms:
+#            the raw witness on BOTH pcrec routes at [0,7), the pcre2
+#            reference, and the deliberately-corrupted C2-spelling
+#            compiled and shown NOT to match -- the discrimination the
+#            pre-fix adapter destroyed)
+#
+# AFFECTED-CELL CENSUS (the re-measure scope; measured over every
+# committed set's pattern_bytes): exactly TWO patterns anywhere carry
+# a raw byte >= 0x80, both in bench/capability --
+#   mojibake-curly-quote            (0x93/0x94; answers WERE wrong on
+#                                    all four pcrec configs -> flip to
+#                                    matched, below)
+#   wild-logparse-syslogbase-expanded (a UTF-8 a-umlaut C3 A4 in the
+#                                    German month alternation; its
+#                                    ASCII subjects masked the answer,
+#                                    but the pcrec arms' TIMING rows
+#                                    measured a slightly-different
+#                                    artifact)
+# Every other set is all-ASCII ([B38]'s 185-pattern census). The
+# pinned first-sample records stand as measured (append-only); the
+# re-measure of the two patterns' pcrec cells rides the next
+# capability window (the F1-fix checkpoint pin already queues one --
+# ledger 7 item 4).
+#
+# VERBATIM POST-FIX PROBE OUTPUT (all six matched-as-expected; the
+# pre-fix output is in the superseded archive):
+#
+quick pcrec-auto     rc=0
+quick pcrec-nocaps   rc=0
+quick pcrec-vm       rc=0
+quick pcrec-vm-in    rc=0
+quick pcre2-jit      rc=0
+quick pcre2-interp   rc=0
+
+libpcre2_10.46_interp-caps-simdna            outcome=matched-as-expected          matched=None span=None diag=None
+libpcre2_10.46_jit-caps-simdna               outcome=matched-as-expected          matched=None span=None diag=None
+pcrec_a770139e_auto-caps-simdna              outcome=matched-as-expected          matched=None span=None diag=None
+pcrec_a770139e_auto-nocaps-simdna            outcome=matched-as-expected          matched=None span=None diag=None
+pcrec_a770139e_vm-caps-simdna                outcome=matched-as-expected          matched=None span=None diag=None
+pcrec_a770139e_vm-in-caps-simdna             outcome=matched-as-expected          matched=None span=None diag=None

@@ -2957,8 +2957,17 @@ class Adapter(_ad.Adapter):
             art_c = os.path.join(cdir, "artifact.c")
 
             # phase 1: emit-c ------------------------------------------------
+            # The pattern element stays BYTES (inbox I-72, 2026-09-17): on
+            # POSIX, subprocess passes a bytes argv element through
+            # untouched, while a str element is re-encoded via os.fsencode
+            # (UTF-8) -- so the old `pattern.decode("latin-1")` delivered
+            # every byte >= 0x80 to pcrec's argv as a TWO-BYTE UTF-8
+            # sequence (captured in pcrec's /proc/self/cmdline: C2 93 for
+            # 0x93). pcrec then correctly matched the corrupted pattern,
+            # which read as a wrong answer on the bench's raw-high-byte
+            # witnesses (the capability first sample's F4, O-31).
             argv = ([pcrec, "-p", "rx"] + list(cfg.get("flags", []))
-                    + ["-o", art_c, "--"] + [pattern.decode("latin-1")])
+                    + ["-o", art_c, "--"] + [bytes(pattern)])
             t0 = time.monotonic()
             proc = subprocess.run(argv, capture_output=True, env=C_ENV,
                                   timeout=600)

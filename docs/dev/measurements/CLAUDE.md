@@ -280,3 +280,13 @@ Maintenance: update this file when files are added/removed or change role.
   bytes IN THE PATTERN TEXT are the failing shape (subject-side raw
   high bytes and regex-level `\xNN` pattern escapes both work —
   `utf8-lead-no-cont` is the clean control through the same loader).
+- `2026-09-17-mojibake-postfix-argv-bytes.txt` — (inbox I-72) the F4
+  attribution FLIP and post-fix run: the mechanism was OUR adapter's
+  `pattern.decode("latin-1")` + fsencode re-encode (every pattern byte
+  >= 0x80 reached pcrec's argv UTF-8-mangled; pcrec answered the
+  corrupted pattern correctly). Fixed as raw-bytes argv; all six
+  probe arms flip to matched-as-expected; the affected-cell census
+  (exactly two capability patterns corpus-wide) and the re-measure
+  plan are in the header. Guard: selfcheck's
+  check_high_byte_pattern_argv. The prior probe archive's data
+  stands; its attribution sentence is superseded by this file.

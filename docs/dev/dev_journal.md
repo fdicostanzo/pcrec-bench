@@ -4490,3 +4490,36 @@ through the same loader rule out our side). Archive + script
 committed (measurements/2026-09-17-mojibake-span-probe-a770139e.txt);
 O-31 addendum sent. Scratch-tier correctness probe, no quiet gate
 needed, box stays in shared/day state.
+
+### 2026-09-17 ~07:5x EDT: I-72 — F4 was OURS; fixed, guarded, gate green
+
+pcrec's lane traced F4 into our adapter: `_compile_one`'s
+`pattern.decode("latin-1")` + subprocess's fsencode re-encode delivered
+every >=0x80 pattern byte to pcrec's argv as a 2-byte UTF-8 sequence
+(their /proc/self/cmdline capture: C2 93 ... C2 94). pcrec compiled
+the corrupted pattern and answered it CORRECTLY — the bench recorded
+that as a wrong answer on all four pcrec configs. pcrec exonerated on
+every axis. Fixed as I-72's option (a), raw-bytes argv (the simpler
+contract — no encode step exists to corrupt), with a four-arm
+selfcheck guard (check_high_byte_pattern_argv: the raw witness at
+[0,7) on BOTH pcrec routes, the pcre2 reference, and the deliberately
+C2-corrupted spelling compiled and shown NOT to match — the
+discrimination the pre-fix adapter destroyed). Post-fix probe 6/6
+matched-as-expected (archive
+measurements/2026-09-17-mojibake-postfix-argv-bytes.txt, which also
+carries the affected-cell census: exactly two capability patterns
+corpus-wide carry raw high bytes; every other set is all-ASCII per
+[B38]'s census). The pinned first-sample records stand append-only;
+the two patterns' pcrec-cell re-measure rides the next capability
+window (the F1-fix checkpoint pin already queues one). Gate of
+record: 4/72/0 · **402/402** · OK · **133** (the capability sidecar
+joined check-interpret's committed set). The tracked-background gate
+was memory-heuristic-killed a second time this session; the setsid +
+DONE-marker + Monitor shape carried it clean — adopt that as the gate
+default for this box.
+
+Lesson (mirror of last night's): the sample's "wrong answer on all
+four configs" was REAL data wrongly attributed — one shared argv site
+explains a four-config-identical failure better than four independent
+engine bugs. Cross-config-identical wrongness should point suspicion
+at the shared adapter path first.
