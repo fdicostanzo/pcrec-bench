@@ -116,6 +116,18 @@ declarations the first cut staged (`conditionals`, `control-verbs`,
 pcrec); see `NOTES.md` and `docs/dev/lanes/b42cap_report.md` for the
 full matrix.
 
+**The REQUIRES-TAG CORRECTION WAVE (lane b46tags, 2026-09-17) fixed six
+under-tagged patterns** (`quoted-delim-match`, `utf8-lead-no-cont`,
+`tag-depth3-bound`, `codegrammar-xflag`, `bracket-array-define`,
+`nested-comment-rec` — all in `curation/designed/members.tsv`, all
+missing a `lookaround`/`named-groups`/`backrefs` token their own text
+actually uses), triggered by `l6btre`'s census finding two of them; see
+`NOTES.md`'s own section for the full evidence table and
+`docs/dev/lanes/b46tags_report.md` for the audit method and the
+behavioral witnesses (`tre-default`/`vectorscan-block-nosom` flipping a
+raw driver refusal to a clean `unsupported-by-declaration`). No pattern
+was found over-tagged.
+
 **[B7]/L6b (lane l6bonig, 2026-09-17) adds `onig-default` to the `ext
 bench` roster** (`EXT_BENCH_ROSTER` in `gen_patterns.py`, `patterns.rxt`
 regenerated): 13 of 17 REQUIRES tokens satisfied, withholding

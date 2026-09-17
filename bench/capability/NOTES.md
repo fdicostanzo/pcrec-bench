@@ -362,6 +362,49 @@ from libpcre2 (`method = libpcre2-differential`), and the `ext bench`
 capability matrix is documentation for a future harness policy, never a
 gate this set's own generators enforce.
 
+## The REQUIRES-tag correction wave (lane b46tags, 2026-09-17)
+
+[B42] set hygiene, per Frank's ruling that capability-set completion is
+the priority: a mechanical + eyes-on audit of every one of the 64
+patterns' `requires-*` tags against the constructs its own canonical
+text actually uses (PCRE2 `pcre2_pattern_info`'s `NAMECOUNT`/
+`BACKREFMAX` for `backrefs`/`named-groups`, a textual construct scan for
+the rest, cross-checked by inspection), triggered by lane `l6btre`'s
+census finding two under-tagged members. **Six patterns were
+under-tagged; none were over-tagged.** All six fixes are in
+`curation/designed/members.tsv`'s `requires` column (every affected
+pattern is a DESIGNED member; no `REQUIRES_OVERRIDE` entry in
+`gen_patterns.py` needed a change):
+
+| pattern | old `requires` | new `requires` | evidence |
+|---|---|---|---|
+| `quoted-delim-match` | `backrefs` | `backrefs;lookaround` | body is `(["'])(?:(?!\1)[^\\]|\\.)*\1` — the refusal cause on an engine that satisfies `backrefs` but not `lookaround` is the embedded `(?!\1)` negative lookahead, not the backreference (`l6btre`'s census finding, `testees/tre/CLAUDE.md` item (d).5) |
+| `utf8-lead-no-cont` | `non-utf8-subject` | `non-utf8-subject;lookaround` | body is `[\xc2-\xdf](?![\x80-\xbf])` — same shape, the `(?!...)` negative lookahead (`l6btre`'s census finding) |
+| `tag-depth3-bound` | `-` (none) | `backrefs` | body is `<(\w+)>(?:[^<]\|<(\w+)>(?:[^<]\|<(\w+)>[^<]*</\3>)*</\2>)*</\1>` — three numbered backreferences (`\1`/`\2`/`\3`), confirmed via `pcre2_pattern_info(PCRE2_INFO_BACKREFMAX)` = 3; independently already flagged in `gen_patterns.py`'s own `vectorscan-block-nosom` comment as "a pre-existing corpus tagging gap" |
+| `codegrammar-xflag` | `free-spacing` | `free-spacing;named-groups` | body contains `(?<key> ... )`, a genuine named capturing group used inside `(?x)` mode — confirmed via `pcre2_pattern_info(PCRE2_INFO_NAMECOUNT)` = 1 |
+| `bracket-array-define` | `recursion;free-spacing` | `recursion;free-spacing;named-groups` | the `(?(DEFINE) (?<brackets> ... ) )` subroutine target is a named group `(?&brackets)` calls by name — `PCRE2_INFO_NAMECOUNT` = 1 |
+| `nested-comment-rec` | `recursion` | `recursion;lookaround` | body `(/\*(?:[^*/]\|\*(?!/)\|/(?!\*)\|(?1))*\*/)` carries two negative lookaheads (`\*(?!/)`, `/(?!\*)`) alongside the numbered subroutine call `(?1)` |
+
+**No live roster witness currently flips for the `named-groups`/
+`lookaround`-on-`nested-comment-rec` additions**: every `ext bench` row
+that satisfies `recursion` also already satisfies `free-spacing`,
+`named-groups` and `lookaround` together (`pcre2-*`, `pcrec-*`,
+`onig-default`) — there is no config today that would have compiled
+these three patterns wrongly-attributed before the fix. The fix is
+still correct (a future roster engine with `recursion` but not
+`named-groups`, or `lookaround` without a lookbehind story, would need
+it) and is evidenced structurally, not behaviorally, for these three.
+The other three fixes (`quoted-delim-match`, `utf8-lead-no-cont` on
+`tre-default`; `tag-depth3-bound` on `vectorscan-block-nosom`) WERE
+witnessed flipping from what would have been a raw driver-level refusal
+to a clean `unsupported-by-declaration` compile row citing the missing
+token by name — `docs/dev/lanes/b46tags_report.md` has the full
+transcripts, including the raw `libtre.so.5`/direct-ctypes compile
+proving the isolated construct (not the backreference) is what refuses.
+Every satisfied engine (`pcre2-interp`, `pcrec-auto` on the two
+`tre-default` witnesses) was re-run and confirmed UNCHANGED — still a
+real, measured match cell, not a refusal.
+
 ## Room left, not built
 
 - Family 11's cross-convention scoring (above).
