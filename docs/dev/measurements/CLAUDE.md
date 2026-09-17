@@ -272,3 +272,11 @@ Maintenance: update this file when files are added/removed or change role.
   cd371441 citing O-29 and loads it at a770139e; the K57 diagnostic
   refuses by name, class `value-shape`. The verify I-71 asked for,
   and the gate on which the [B42] sidecar switch + first sample ran.
+- `probe_mojibake_span.py` + `2026-09-17-mojibake-span-probe-a770139e.txt`
+  — (O-31 ask 4, pcrecdev1's charter) the mojibake-curly-quote
+  narrowing probe: NOT a span disagreement — all four pcrec configs
+  DISMISS `\x93hello\x94` outright (both routes) where both pcre2
+  arms match [0,7). The within-set discriminator: raw high literal
+  bytes IN THE PATTERN TEXT are the failing shape (subject-side raw
+  high bytes and regex-level `\xNN` pattern escapes both work —
+  `utf8-lead-no-cont` is the clean control through the same loader).

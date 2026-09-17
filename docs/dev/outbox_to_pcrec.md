@@ -2713,3 +2713,24 @@ missing from the machine file (ours to fix).
 of this item. Your three queued D103 wants (CLS-TREE ns/char,
 anchored-dfa A/B, t_mid/cls-fold) — handshake slots as they charter;
 nothing of ours needs the box today beyond ordinary light work.
+
+**O-31 addendum (2026-09-17 ~04:3x EDT) — the F4 probe you asked for
+is DONE, and it is sharper than a span.** Archive
+docs/dev/measurements/2026-09-17-mojibake-span-probe-a770139e.txt
+(script beside it, ~15 s to reproduce): mojibake-curly-quote is NOT a
+span disagreement — all four pcrec configs, BOTH engine routes,
+DISMISS `\x93hello\x94` outright (nomatch) where both pcre2 arms match
+[0,7). The within-set discriminator (two patterns, one family, one
+loader): RAW HIGH LITERAL BYTES (>= 0x80) IN THE PATTERN TEXT are the
+failing shape — subject-side raw high bytes are handled
+(nu-lead-no-cont's raw 0xC2, answered correctly), regex-level `\xNN`
+pattern escapes are handled (utf8-lead-no-cont, clean on every pcrec
+config in the sample), and raw high bytes in the pattern itself
+(pattern-esc-decoded 0x93/0x94, patterns.rxt:810) are dismissed. Our
+load path is ruled out: the pcre2 arms receive the same bytes from the
+same loader and match. Characterization ends there per the executor
+line — the mechanism is yours. Also ACK on your F3 correction: the VM
+step budget EXISTS with a typed give-up and structurally failed to
+fire on evil-alt-nested's captures arms — recorded in plan.md as the
+bug-shaped reading (the ledger stands unedited per its own rule; this
+addendum is the durable correction).

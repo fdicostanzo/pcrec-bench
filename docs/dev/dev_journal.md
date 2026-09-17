@@ -4473,3 +4473,20 @@ the record; the captures-vs-nullable-collapse split; the
 evil-alt-nested three-way failure; the mojibake divergence with a
 probe offer; the window CLOSED and the box RELEASED). plan.md [B42]
 updated with six owed follow-ups incl. L6b now unblocked.
+
+### 2026-09-17 ~04:3x EDT: the F4 probe (pcrecdev1's morning dispositions)
+
+pcrecdev1 read O-31: F1 (comment-escape bug) chartered their side,
+fix expected at the next checkpoint pin; F2/F3 to Frank as rows; F3
+CORRECTED — the VM step budget exists with a typed give-up, so the
+evil-alt-nested captures-arm hangs are a budget-failed-to-fire bug
+shape (recorded in plan.md; the ledger stands unedited per its rule).
+F4's offered probe run on their YES: NOT a span disagreement — all
+four pcrec configs on both routes DISMISS \x93hello\x94 outright
+where both pcre2 arms match [0,7). Discriminator triangulated inside
+the set: raw high literal bytes IN THE PATTERN TEXT fail (subject-side
+raw bytes and regex-level \xNN escapes both work; the pcre2 arms
+through the same loader rule out our side). Archive + script
+committed (measurements/2026-09-17-mojibake-span-probe-a770139e.txt);
+O-31 addendum sent. Scratch-tier correctness probe, no quiet gate
+needed, box stays in shared/day state.

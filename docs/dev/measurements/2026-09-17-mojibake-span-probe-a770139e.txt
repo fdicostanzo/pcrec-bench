@@ -1,0 +1,66 @@
+# docs/dev/measurements/2026-09-17-mojibake-span-probe-a770139e.txt
+#
+# THE mojibake-curly-quote PROBE (O-31 ask 4; pcrecdev1's YES, their
+# investigation charters on this file). The first sample read
+# (docs/dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md 1.2
+# Finding A) could say only "wrong on all four pcrec configs"; this
+# probe narrows it.
+#
+# date:      2026-09-17 (~04:2x EDT)
+# box:       ubuntubudu, shared/day state (scratch tier -- no quiet
+#            gate; correctness observations, not timings)
+# pin:       pcrec a770139e (abi 25), binary build/pcrec-a770139e/build/pcrec
+# bench:     e51a659 (+ this probe)
+# script:    docs/dev/measurements/probe_mojibake_span.py (reproduces
+#            everything below; ~15 s)
+#
+# THE RESULT -- NOT a span disagreement: A TOTAL DISMISSAL.
+# Pattern `\x93[\x20-\x7e]*\x94` (raw 0x93/0x94 literals), subject
+# nu-mojibake = raw bytes 93 68 65 6c 6c 6f 94 ("\x93hello\x94"),
+# oracle libpcre2-differential: match [0,7).
+# All FOUR pcrec configs (auto-caps, auto-nocaps, vm-caps, vm-in-caps
+# -- BOTH engine routes) observe NOMATCH. Both pcre2 configs match as
+# the oracle says.
+#
+# THE WITHIN-SET DISCRIMINATOR (two patterns, one family, one loader):
+#   - mojibake-curly-quote is authored `pattern-esc
+#     "\x93[\\x20-\\x7e]*\x94"` (bench/capability/patterns.rxt:810):
+#     the .rxt escape layer decodes \x93/\x94 to RAW BYTES in the
+#     pattern text; the class bounds stay regex-level escapes.
+#     -> pcrec: NOMATCH on all four configs.
+#   - utf8-lead-no-cont is authored `pattern
+#     [\xc2-\xdf](?![\x80-\xbf])` (patterns.rxt:821, a plain verbatim
+#     pattern line): its high bytes are REGEX-LEVEL \xNN escapes,
+#     decoded by the regex compiler, not the file format.
+#     -> pcrec: CORRECT on every config in the first sample (match
+#     [0,1) on nu-lead-no-cont, whose SUBJECT carries a raw 0xC2;
+#     no exclusion row for it anywhere in the committed report).
+#
+# So the divergence tracks RAW HIGH LITERAL BYTES (>= 0x80) IN THE
+# PATTERN TEXT itself:
+#   raw high bytes in the SUBJECT      -- handled (nu-lead-no-cont);
+#   \xNN-escaped high bytes in PATTERN -- handled (utf8-lead-no-cont);
+#   raw high bytes in the PATTERN      -- dismissed (this witness),
+#                                         identically on the DFA and
+#                                         VM routes.
+# NOT the bench's .rxt load path: the pcre2 arms receive the same
+# pattern bytes from the same loader (pcrecbench/rxt_source.py, whose
+# raw-high-byte round-trip is a standing make check arm) and match.
+# Characterization ends here; the mechanism inside pcrec is theirs
+# (I-57/BD10: report, never diagnose).
+#
+# VERBATIM PROBE OUTPUT (script above, this box, this date):
+#
+quick pcrec-auto     rc=0
+quick pcrec-nocaps   rc=0
+quick pcrec-vm       rc=0
+quick pcrec-vm-in    rc=0
+quick pcre2-jit      rc=0
+quick pcre2-interp   rc=0
+
+libpcre2_10.46_interp-caps-simdna            outcome=matched-as-expected          matched=None span=None diag=None
+libpcre2_10.46_jit-caps-simdna               outcome=matched-as-expected          matched=None span=None diag=None
+pcrec_a770139e_auto-caps-simdna              outcome=did-not-match-as-expected    matched=False span=None diag=expected match, observed nomatch
+pcrec_a770139e_auto-nocaps-simdna            outcome=did-not-match-as-expected    matched=False span=None diag=expected match, observed nomatch
+pcrec_a770139e_vm-caps-simdna                outcome=did-not-match-as-expected    matched=False span=None diag=expected match, observed nomatch
+pcrec_a770139e_vm-in-caps-simdna             outcome=did-not-match-as-expected    matched=False span=None diag=expected match, observed nomatch
