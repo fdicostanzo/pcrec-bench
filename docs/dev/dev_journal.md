@@ -4595,3 +4595,49 @@ the box from late morning (heavy validation held OWED throughout, BD3):
   tag correction wave (l6btre's census: two corpus patterns under-tagged),
   the subgrain note's eleven rulings for Frank, the erratum+give-up
   re-measure list for the next capability window at the F1-fix pin.
+
+## 2026-09-17 (evening) — twenty-fourth session close: the wave LANDED, the white paper in, reset-ready
+
+The day's second half, after the all-delivered boundary above:
+
+- Frank ruled ALL ELEVEN subject-grain questions live, one at a time
+  (the ruling block is in interpret_subject_grain_v1.md §6), and issued
+  two wider directives now chartered: the PREDICATE AUDIT
+  (context-around-numbers, memory feedback-context-around-numbers) and
+  the DATA-MANAGEMENT WHITE PAPER.
+- b45datamgmt (Opus) delivered docs/design/data_management_v1.md v1.0
+  the same afternoon — merged 3234e98. Its two reframing measurements:
+  the safe cull is 2.6% not 13.7% (superseded ∩ uncited = 7 records;
+  25 of 32 superseded records are NAMED in committed reports), and
+  compressing the store GROWS the pack (+15%, controlled, repack-proof —
+  149/168 record blobs are cross-record deltas). KB-16 baseline
+  corrected (closed 2026-09-11). ELEVEN questions for Frank — UNRULED
+  at close, parked in wake.md (Q2 git gc is the no-design-work win).
+- I-73 arrived on battery green: checkpoint pin cf0962e3 (abi 26, the
+  F1 fix + dial train; movers = the +27 B RX_TUNE stamp + abi digit).
+  Acked; the re-pin + re-measure window is the NEXT session's first
+  item per Frank's reset ruling.
+- THE WAVE VALIDATED AND LANDED (master 90b10db): check-schema 5/73/0,
+  check-harness 420/0, check-report rc=0, check-interpret 133/0. Three
+  landing-bar items the full run surfaced, each fixed in place: the
+  fixture corpus regenerated at v17 (57 version-stamp lines — the regen
+  the repdiag OWED list missed; add "fixtures + goldens" to any future
+  reporter-bump checklist), the syntax goldens refreshed
+  (refresh_golden.py, the sanctioned flow, 56 diagnostic-fact lines =
+  KB-18's escaping), and the generic driver smoke taught to honor a
+  declared grain (vectorscan's None,None span is its correct answer —
+  the l6bvs/b44 seam nobody owned; 419→420).
+- Cleanup: all seven lane worktrees/branches removed, no live agents,
+  tree clean, master pushed. Two more memory-heuristic kills today
+  (the tracked check-harness beside check-report's store load; the tiny
+  trailer-watch loop) — both recovered by the detached+marker pattern;
+  the pattern is now reflex.
+- Session lessons recorded in wake.md: never echo $? into another
+  process's marker log; spawn agents from the repo root (two lanes
+  inherited a stray worktree cwd); reporter bumps regenerate REPORTS +
+  SIDECARS + FIXTURES + GOLDENS, all four.
+
+Gate of record at close: 5/73/0 · 420/420 · check-report rc=0 ·
+133/133. Pin a770139e/abi 25 (cf0962e3 pending). Reporter v17, schema
+v1.6, catalogue 1.3. Store 169. Roster: 24 configs / 12 capability
+ext-bench testees across six engines.
