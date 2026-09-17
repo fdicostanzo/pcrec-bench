@@ -2054,26 +2054,25 @@ tag family=floor, hazard=none
 # sub-lines) -- a `tag` line placed AFTER `provenance` was measured NOT
 # to reproduce it, which is why this fixture's field order matters and
 # is not incidental.
+# Three blocks, only the LAST carrying a provenance sub-block, so the
+# dump reads 1/3 -- the O-29 partial shape AUTHORED rather than
+# manufactured through the upstream bug. Until the O-29 fix pin
+# (a770139e) this fixture gave all three blocks provenance and relied on
+# the broken `--list-source` to drop two rows; at the fixed pin that
+# dump is 3/3 (full coverage, no refusal) and the check went red on
+# 2026-09-16's first post-fix `make check`. The gate cannot (and by its
+# all-or-nothing-per-set rule, docs/dev/outbox_to_pcrec.md O-29
+# addendum, SHOULD not) distinguish an upstream drop from a
+# partially-provenanced set, so genuine partiality is the
+# pin-independent way to exercise its refusal path.
 _RXT_PARTIAL_PROVENANCE = b"""\
 pattern abc
 name q1
 tag family=wild, hazard=none
-provenance
-  source authored
-  retrieved 2026-09-16
-  license n-a
-  fidelity synthesized
-  adaptation q1's own note
 
 pattern def
 name q2
 tag family=wild, hazard=none
-provenance
-  source authored
-  retrieved 2026-09-16
-  license n-a
-  fidelity synthesized
-  adaptation q2's own note
 
 pattern ghi
 name q3
@@ -2285,10 +2284,12 @@ def check_rxt_source_load():
             bad("rxt-source control: real block<->loader agreement passes clean", str(e))
 
         # (3b) block<->PROVENANCE agreement gate -- O-29 (manager ruling,
-        # 2026-09-16): a partial provenance count (this lane's own O-29
-        # finding's exact symptom -- three blocks, only the LAST keeps its
-        # row) is refused BY NAME citing O-29; a 0-row file (no set here
-        # uses provenance at all) is the vacuous control.
+        # 2026-09-16): a partial provenance count (three blocks, only the
+        # last AUTHORED with a row -- see _RXT_PARTIAL_PROVENANCE's
+        # comment for why the partiality is authored, not bug-derived,
+        # since the a770139e fix pin) is refused BY NAME citing O-29; a
+        # 0-row file (no set here uses provenance at all) is the vacuous
+        # control.
         partial_path = os.path.join(tmp, "partial_provenance.rxt")
         with open(partial_path, "wb") as f:
             f.write(_RXT_PARTIAL_PROVENANCE)
