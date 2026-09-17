@@ -4523,3 +4523,19 @@ four configs" was REAL data wrongly attributed — one shared argv site
 explains a four-config-identical failure better than four independent
 engine bugs. Cross-config-identical wrongness should point suspicion
 at the shared adapter path first.
+
+### 2026-09-17 ~08:2x EDT: twenty-third session CLOSED at Frank's reset
+
+Frank live at the terminal: current situation good; L6b (the other
+engines) is next session's main course; the three follow-up lanes
+(reporter truncation fix, predictions/adapter-note hygiene, the
+interpret-at-subject-grain design note) approved as proposed; PARALLEL
+DEV ENCOURAGED — ample token budget, run lanes concurrently. All of it
+written into wake.md as charter-ready briefs (L6b wave plan included,
+with the I-72 bytes-end-to-end lesson stamped into every future
+adapter brief). Session totals: the full I-71 night chain (verify →
+re-pin → switch → gate → first sample → read → O-31), the I-72
+morning epilogue (F4 ours, fixed + guarded), two lanes spawned/
+reviewed/merged/stopped (b42verify, b42ledger), gate 398 → 402
+harness / 132 → 133 interpret, store 160 → 168, ~15 commits pushed.
+No lanes, monitors, or crons left live; tree clean.
