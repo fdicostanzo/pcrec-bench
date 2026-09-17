@@ -484,6 +484,86 @@ EXT_BENCH_ROSTER = [
     ("pcre2-dfa", [t for t in REQUIRES_VOCAB
                    if t not in ("backrefs", "conditionals", "k-reset",
                                 "control-verbs", "captures")]),
+    # vectorscan-block-nosom ([B7]/L6b wave 2, lane l6bvs, 2026-09-17;
+    # testees/vectorscan/adapter.py). BOOLEAN GRAIN (capability_set_v1.md
+    # 5.6 option (B), Frank's Q3 ruling): the NARROWEST REQUIRES
+    # satisfaction on the roster, and the only one where TWO tokens are
+    # withheld for a reason that is not "the construct doesn't compile" --
+    # `span-reporting` (this config never carries HS_FLAG_SOM_LEFTMOST,
+    # so it cannot report a match START; the som config, documented not
+    # built, would satisfy it) and `captures` (Hyperscan has NO capturing-
+    # group mechanism at ALL, structurally -- it silently treats every
+    # group, named or not, as non-capturing; confirmed live: `(?<name>a)`
+    # and `(?P<name>a)` both COMPILE clean, which is what makes this an
+    # execution-model fact and not a syntax refusal). Every remaining
+    # exclusion is a REAL hs_compile refusal, witnessed live (docs/dev/
+    # measurements/2026-09-17-vectorscan-capability-witness-census-
+    # 5.4.11.txt), quoting Vectorscan's own diagnostic text:
+    #   backrefs               -- "Back-references are unsupported."
+    #   lookaround              -- "Zero-width assertions are not
+    #                              supported." (subsumes lookbehind-
+    #                              variable: no lookaround at all)
+    #   lookbehind-variable    -- as above
+    #   possessive-quantifier   -- "Possessive quantifiers are not
+    #                              supported."
+    #   atomic-group            -- "Atomic groups are unsupported."
+    #   recursion               -- `(?R)`/`(?1)` both refused ("Unrecognised
+    #                              character after (?" / "Subpattern
+    #                              reference unsupported")
+    #   conditionals            -- "Conditional references are not
+    #                              supported."
+    #   k-reset                 -- "\K at index N not supported."
+    #   control-verbs           -- "Unknown control verb (*NAME)" (all
+    #                              three of ACCEPT/FAIL/SKIP witnessed)
+    #   callouts                -- "Callout at index N not supported."
+    # KEPT, each witnessed compiling (`unicode-properties`: `\p{L}` (a
+    # REAL Unicode General Category, unlike Oniguruma's own ASCII-encoding
+    # narrowing to POSIX ctype names -- testees/onig/CLAUDE.md's own
+    # "wrong first-cut" catch does NOT repeat here) compiles WITHOUT any
+    # HS_FLAG_UCP/HS_FLAG_UTF8 flag at all, confirmed by direct A/B census
+    # (this driver sets flags=0 unconditionally: setting HS_FLAG_UCP was
+    # tried and REJECTED -- it broke `\b` compiling at all under UCP mode,
+    # costing 5 real corpus patterns that carry NO unicode-properties
+    # requirement whatsoever, for zero gain since `\p{L}` needs no flag;
+    # testees/vectorscan/CLAUDE.md has the full A/B numbers); `named-
+    # groups`: both `(?<name>a)` and `(?P<name>a)` spellings compile
+    # clean (silently non-capturing, per `captures`'s own exclusion
+    # above); `free-spacing`: `(?x) a b c` compiles clean -- two REAL
+    # corpus patterns tagged `requires-free-spacing`
+    # (`wild-codegrammar-json-number-extended`,
+    # `wild-codegrammar-json-stringcontent-escape`) still REFUSE
+    # ("Unterminated comment") because Hyperscan's own `(?x)` parser does
+    # not accept a `#`-to-end-of-LINE comment the way PCRE's does across a
+    # real multi-line pattern -- a genuine, corpus-witnessed divergence
+    # kept in prose (testees/vectorscan/CLAUDE.md), not a second
+    # vocabulary token, the SAME precedent testees/pcre2/CLAUDE.md's
+    # "pcre2-dfa" family-11 divergence table and testees/onig/CLAUDE.md's
+    # recursion-spelling gap both set: an isolated witness settles the
+    # TOKEN, a real corpus failure under a satisfied token is a
+    # documented, honest `did-not-compile`, never a re-litigation of the
+    # declaration; `true-end-anchor`: `a\z` compiles clean (`\z` is
+    # explicitly documented supported on both Intel's and VectorCamp's
+    # own pages, docs/dev/research/2026-09-12-b42-engine-landscape.md's
+    # own finding (6))). `non-utf8-subject` is an EXECUTION-MODEL fact
+    # like `captures`/`span-reporting` above, but on the SATISFIED side:
+    # HS_FLAG_UTF8 is never set, so this driver is byte-oriented by
+    # construction (Vectorscan's own documented default), the same
+    # convention every other testee on this roster keeps for its default
+    # 8-bit mode. Corpus confirmation: 40 of 64 real bench/capability
+    # patterns compile through the real adapter; every one of the 24
+    # refusals cites a token this roster row withholds (one exception,
+    # `tag-depth3-bound`, carries NO `requires-*` tag at all despite using
+    # backreferences -- a pre-existing corpus tagging gap, not a
+    # capability-declaration error; it refuses honestly via the ordinary
+    # `did-not-compile` path either way).
+    ("vectorscan-block-nosom", [t for t in REQUIRES_VOCAB
+                                if t not in (
+                                    "backrefs", "lookaround",
+                                    "lookbehind-variable",
+                                    "possessive-quantifier", "atomic-group",
+                                    "recursion", "conditionals", "k-reset",
+                                    "control-verbs", "callouts",
+                                    "span-reporting", "captures")]),
 ]
 
 

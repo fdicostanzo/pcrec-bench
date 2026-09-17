@@ -290,3 +290,32 @@ Maintenance: update this file when files are added/removed or change role.
   plan are in the header. Guard: selfcheck's
   check_high_byte_pattern_argv. The prior probe archive's data
   stands; its attribution sentence is superseded by this file.
+- `probe_vectorscan_capability_census.py` — ([B7]/L6b wave 2, lane
+  l6bvs, 2026-09-17) the VECTORSCAN ADAPTER'S capability witness
+  census, mandatory before `bench/capability/gen_patterns.py`'s
+  `EXT_BENCH_ROSTER` declares anything for `vectorscan-block-nosom`:
+  pass 1 runs one isolated witness per compile-time `REQUIRES_VOCAB`
+  token through the real adapter (`span-reporting`/`captures` are
+  stated as execution-model facts, not witnessed); pass 2 runs all 64
+  real `bench/capability` corpus patterns through the same adapter,
+  cross-referenced against each pattern's own `requires-*` tags. Runs
+  from the repo root; needs the `vectorscan` adapter (built on demand,
+  needs `libvectorscan-dev`).
+- `2026-09-17-vectorscan-capability-witness-census-5.4.11.txt` — its
+  archive: 5 of 17 REQUIRES tokens SATISFIED (the narrowest on the
+  roster) — `unicode-properties`, `named-groups`, `free-spacing`,
+  `non-utf8-subject`, `true-end-anchor`; 12 NOT, each witnessed live
+  with Vectorscan's own diagnostic text (backrefs, lookaround incl.
+  lookbehind-variable, possessive-quantifier, atomic-group, recursion,
+  conditionals, k-reset, control-verbs, callouts, span-reporting,
+  captures). 40/64 corpus patterns compile. Carries an A/B COMPARISON
+  that DECIDED the driver's compile flags: `HS_FLAG_UCP` was tried
+  first and REJECTED — it broke `\b` compiling under UCP mode on 5 real
+  corpus patterns carrying no unicode-properties requirement at all
+  (35/64 compiled), for zero gain (`\p{L}` compiles identically with or
+  without the flag); the shipped driver uses `VS_DRIVER_FLAGS = 0`.
+  `unicode-properties` is the OPPOSITE finding from Oniguruma's own
+  census (`testees/onig/CLAUDE.md`'s "wrong first-cut" catch): here
+  `\p{L}` (a real Unicode category) compiles and `\p{Alpha}` (POSIX
+  ctype name) does not — the reverse of onig's ASCII-encoding
+  narrowing.
