@@ -8787,6 +8787,111 @@ def check_convention_scoring():
             outcome)
 
 
+def check_boolean_grain_scoring():
+    """BOOLEAN-GRAIN SCORING (Frank's Q3 ruling, `capability_set_v1.md`
+    5.6 option B; lane `b44boolgrain`, `harness.outcome_for`'s `grain`
+    parameter): exercised against HAND-BUILT fixtures, the same posture
+    `check_convention_scoring` above takes and for the same reason --
+    lane `l6bvs`'s `vectorscan-block-nosom` is the only testee that will
+    ever set `testee.grain = "boolean"`, and its own delivery is a
+    separate lane's scope (not built here). This is the check that
+    reproduces l6bvs's own two findings against the REAL function, fixed:
+
+      1. a TRUE MATCH at `grain="boolean"` (row.start=row.end=None, the
+         driver protocol's own degenerate shape) scores
+         `matched-as-expected` -- l6bvs's Level 1 finding
+         (`wrong-span-or-captures` on every genuine match) does not
+         reproduce.
+      2. that same row's `observed` is ABSENT from the tuple entirely
+         (not `{"span": null}`, not `{"span": [None, None]}`) -- the
+         same shape a FULL-grain testee's correct match already has;
+         l6bvs's Level 2 finding (the schema-illegal `[None, None]`
+         array) has no `observed` to be illegal in.
+      3. a TRUE NOMATCH at `grain="boolean"` also scores
+         `matched-as-expected` -- the boolean check was never
+         span-shaped, so `grain` changes nothing about it.
+      4. a FALSE POSITIVE (row.matched=True, expectation.matched=False)
+         at `grain="boolean"` scores `did-not-match-as-expected` with
+         `observed.span: None` (the schema's legal null-span shape) --
+         `_observed_span`'s null-safety, exercised on the OTHER branch
+         `outcome_for` can reach with a span-less matched row.
+      5. CONTROL: the identical fixtures at `grain="full"` (the default
+         -- every call site before this lane, and every call site that
+         passes nothing) score EXACTLY as they did before this lane: a
+         span mismatch against a real expectation span is
+         `wrong-span-or-captures`, proving the relaxation is
+         `grain`-gated, not a change to every testee's scoring."""
+    print("-- boolean-grain scoring (outcome_for's grain parameter) --")
+
+    class _Subj:
+        length = 3
+
+    exp_match = Expectation(["p", "s1", "search_short", "match", "0", "3", "-", "m", "o"])
+    exp_nomatch = Expectation(["p", "s2", "search_short", "nomatch", "-", "-", "-", "m", "o"])
+    subj = _Subj()
+
+    # 1+2: a true match, boolean grain -- no span the driver can report.
+    row_bool_match = _ad.MatchRow("s1", "match", start=None, end=None,
+                                  iters=1, seconds=1e-6)
+    outcome, obs, _diag = outcome_for(row_bool_match, exp_match, "search_short",
+                                      subj, grain="boolean")
+    if outcome == "matched-as-expected" and obs is None:
+        ok("boolean grain: a true match scores matched-as-expected, no observed",
+           (outcome, obs))
+    else:
+        bad("boolean grain: a true match scores matched-as-expected, no observed",
+            (outcome, obs))
+
+    # 3: a true nomatch, boolean grain.
+    row_bool_nomatch = _ad.MatchRow("s2", "nomatch", start=None, end=None,
+                                    iters=1, seconds=1e-6)
+    outcome, obs, _diag = outcome_for(row_bool_nomatch, exp_nomatch, "search_short",
+                                      subj, grain="boolean")
+    if outcome == "matched-as-expected" and obs is None:
+        ok("boolean grain: a true nomatch scores matched-as-expected, no observed",
+           (outcome, obs))
+    else:
+        bad("boolean grain: a true nomatch scores matched-as-expected, no observed",
+            (outcome, obs))
+
+    # 4: a false positive, boolean grain -- observed.span is null, never
+    # [None, None] (l6bvs's Level 2 finding, fixed by _observed_span).
+    row_bool_falsepos = _ad.MatchRow("s2", "match", start=None, end=None,
+                                     iters=1, seconds=1e-6)
+    outcome, obs, _diag = outcome_for(row_bool_falsepos, exp_nomatch, "search_short",
+                                      subj, grain="boolean")
+    if (outcome == "did-not-match-as-expected" and obs is not None
+            and obs.get("span") is None):
+        ok("boolean grain: a false positive's observed.span is null, "
+           "never [None, None]", obs)
+    else:
+        bad("boolean grain: a false positive's observed.span is null, "
+            "never [None, None]", obs)
+
+    # 5: CONTROL -- the same true-match row at grain="full" (the default)
+    # is still wrong-span-or-captures: the relaxation is grain-gated.
+    outcome, obs, _diag = outcome_for(row_bool_match, exp_match, "search_short", subj)
+    if outcome == "wrong-span-or-captures" and obs is not None and obs.get("span") is None:
+        ok("CONTROL: grain=\"full\" (the default) still scores a spanless "
+           "match wrong-span-or-captures", (outcome, obs))
+    else:
+        bad("CONTROL: grain=\"full\" (the default) still scores a spanless "
+            "match wrong-span-or-captures", (outcome, obs))
+
+    # CONTROL: a full-grain testee's ORDINARY correct match (a real,
+    # agreeing span) is unaffected by this lane at all -- the same shape
+    # `check_convention_scoring`'s own fixture 1 exercises, repeated here
+    # so this check does not depend on that one running first.
+    row_full_match = _ad.MatchRow("s1", "match", start=0, end=3, iters=1, seconds=1e-6)
+    outcome, obs, _diag = outcome_for(row_full_match, exp_match, "search_short", subj)
+    if outcome == "matched-as-expected" and obs is None:
+        ok("CONTROL: a full-grain testee's real matching span is unchanged",
+           (outcome, obs))
+    else:
+        bad("CONTROL: a full-grain testee's real matching span is unchanged",
+            (outcome, obs))
+
+
 def check_capability_policy_noop_elsewhere():
     """`pcrecbench.capability`'s own module docstring claims the
     pre-compile policy is "a silent no-op on every pre-[B42] set" because
@@ -9103,6 +9208,7 @@ def main():
     check_capability_policy()
     check_capability_policy_noop_elsewhere()
     check_convention_scoring()
+    check_boolean_grain_scoring()
     check_pcre2_dfa()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"

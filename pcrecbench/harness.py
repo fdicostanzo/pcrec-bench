@@ -158,7 +158,7 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
     expected`'s own boolean check already reads regardless of grain --
     the only thing `grain` changes is which branch a CORRECT match takes.
     No span or capture is ever emitted for such a testee (`_observed_span`
-    is null-safe on every path, `grain` or no)."""
+    is null-safe on every path, `grain` or no).
 
     `convention` (R5 B1, `docs/design/capability_set_v1.md` 5.6, [B42] L5):
     the CALLER's own declared convention (`testee.conventions`'s first
