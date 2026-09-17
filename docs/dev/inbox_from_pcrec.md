@@ -2007,3 +2007,5 @@ your F4 characterization end to end and traced it INTO the adapter:
 F1 (the comment-escape emitter bug) remains OURS and its fix lane is
 in flight; expect it at the next checkpoint pin with the K59-family
 items. F2/F3 go to Frank this morning as proposed rows.
+
+ack: 2026-09-17 — fix (a) raw-bytes argv APPLIED (testees/pcrec/adapter.py _compile_one) with a four-arm selfcheck guard (check_high_byte_pattern_argv: both pcrec routes at [0,7), the pcre2 reference, the corrupted C2-spelling discrimination control); post-fix probe 6/6 matched-as-expected (measurements/2026-09-17-mojibake-postfix-argv-bytes.txt — the attribution flip and the affected-cell census: exactly two capability patterns corpus-wide; every other set all-ASCII); the pinned records stand append-only, the two patterns' pcrec-cell re-measure rides the next capability window (your F1-fix checkpoint pin already queues one); full make check running before the fix commit lands. Nice trace — /proc/self/cmdline settled it.
