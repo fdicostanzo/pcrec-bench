@@ -424,11 +424,15 @@ label rather than restarting at R1 (docs/dev/plan.md row [B12], "[ADDED
 
       not ranked: <testee> — did-not-compile (<diagnostic>)
 
-  `<diagnostic>` is the record's own `diagnostic` string VERBATIM
-  (never reworded), truncated to its first line with a stated note when
-  the diagnostic itself is multi-line (`_diagnostic_first_line`) -- the
-  same "never launder a fact through a summary" discipline record_schema
-  applies to `engine_metadata`. A testee with more than one failing
+  `<diagnostic>` is the record's own `diagnostic` string VERBATIM and IN
+  FULL (never reworded, never truncated), with any embedded newline/tab/
+  backslash rendered visibly rather than executed, since the bullet is a
+  one-physical-line context (`_diagnostic_full`; KB-18 -- this used to
+  cut a multi-line diagnostic to its first line, which is how pcrec's
+  own compiler diagnostic on `wild-waf-crs-942500-comment-obfuscation`
+  had to be read out of the raw record instead) -- the same "never
+  launder a fact through a summary" discipline record_schema applies to
+  `engine_metadata`. A testee with more than one failing
   form (rare -- `plain` and `whole-subject` can fail independently)
   reports the `plain` form's diagnostic, since `plain` is what the
   ranked regimes actually run on; a testee that compiled cleanly gets
@@ -988,6 +992,56 @@ test_report.py` gained `test_variant_kind_rendering_cb2` (the firing
 case: a dozen+ variant rows rendered correctly beside plain ones; the
 "column omitted when every row is plain" control; the legend note's
 presence/absence).
+
+## KB-18 (2026-09-17) -- REPORTER_VERSION v17: the did-not-compile diagnostic is FULL, never truncated to its first line
+
+Plan row [B42] follow-up (v), chartered by Frank at the 2026-09-17
+reset: `docs/dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md`
+§2 Finding F found that `wild-waf-crs-942500-comment-obfuscation`'s
+did-not-compile diagnostic -- a genuine pcrec DFA-emitter bug, its own
+generated C comment unescaped against the pattern's literal `/*`/`*/`
+bytes, cascading into two more compile errors -- had to be read out of
+the raw JSONL record because the report's own `not ranked:` bullet cut
+it to `"the artifact did not build: [truncated, diagnostic
+continues]"`. `docs/dev/known_issues.md` KB-18 has the full account.
+
+`_diagnostic_first_line` (`_diagnostic_first_line(diag)`, since [B12]
+R10) is REPLACED by `_diagnostic_full(diag)`: the record's own
+`diagnostic` string, VERBATIM and IN FULL, bounded only by
+`record.FREE_TEXT_MAX` (1,048,576 characters, schema v1.5's hygiene
+bound, [B30]) as a defensive ceiling -- the schema caps a compile row's
+own `diagnostic` at 8192 characters today, well under it, so this ceiling
+is never reached by any record this project can write; it exists so a
+future schema revision widening that field needs no change here. Both
+call sites (the markdown `not ranked: ... did-not-compile (<diagnostic>)`
+bullet, the TSV's `did_not_compile` row) are one-physical-line contexts,
+so an embedded newline/tab/backslash is rendered VISIBLY (backslash-
+escaped, backslash escaped first so the result is losslessly reversible)
+rather than executed -- nothing is DROPPED to make that true, which is
+the whole point: a truncation silently drops information, an escape
+does not.
+
+`pcrecbench/__main__.py`'s OWN, SEPARATE `_diagnostic_first_line`
+(KB-10's `quick --vs` refused-arm one-liner) is UNCHANGED -- a different
+function, a different call site, genuinely one-line-by-design for a CLI
+printout, not a place a compiler's multi-line diagnostic needs to survive
+whole.
+
+`REPORTER_VERSION` bumps to `v17 (2026-09-17)`; every committed report
+under `reports/` (and its `.interpretation.md` sidecar, [B41]) is
+regenerated -- see `reports/CLAUDE.md`. Mechanically, only two kinds of
+line move: the `reporter: vN` version line, and any did-not-compile
+diagnostic cell that used to end `[truncated, diagnostic continues]` (one
+pattern, `wild-waf-crs-942500-comment-obfuscation`, on the two
+committed capability@0.1 reports). `pcrecbench/tests/test_report.py`'s
+`test_did_not_compile_ranking_line_r10` and
+`test_kb4_refusal_cost_in_phase_medians` needed no change (their fixture
+diagnostics are single-line); `test_reporter_version_pin` pins v17; one
+new test, `test_diagnostic_full_kb18` (a multi-line diagnostic survives
+whole with escaped newlines in both the markdown bullet and the TSV row;
+controls: a single-line diagnostic is unchanged; `None`/empty still
+render `(no diagnostic)`; a diagnostic containing a literal backslash-n
+two-character sequence renders distinguishably from a real newline).
 """
 
 from __future__ import annotations
@@ -1006,7 +1060,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v16 (2026-09-08)"
+REPORTER_VERSION = "v17 (2026-09-17)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -1360,6 +1414,13 @@ from pcrecbench.reduce import (  # noqa: E402
     reduce_match_cell,
     reduce_set_cell,
 )
+
+# KB-18: `record.FREE_TEXT_MAX` is the shared hygiene bound (1,048,576
+# characters, schema v1.5, [B30]) -- `_diagnostic_full` below reads it as
+# ITS OWN ceiling rather than inventing a stricter one, so a future schema
+# revision that widens a compile row's `diagnostic` field (today capped at
+# 8192, schema/record.schema.json) past that needs no change here.
+from pcrecbench.record import FREE_TEXT_MAX  # noqa: E402
 
 
 def _failure_label(red: "MatchCellReduction"):
@@ -3294,7 +3355,7 @@ def build_report(loaded, args, known_testee_ids=None):
         if diag_row is not None:
             by_pattern = did_not_compile_by_pattern[(sb, pattern_id)]
             if testee_id not in by_pattern or form == "plain":
-                by_pattern[testee_id] = _diagnostic_first_line(diag_row.get("diagnostic"))
+                by_pattern[testee_id] = _diagnostic_full(diag_row.get("diagnostic"))
     did_not_compile_by_pattern = dict(did_not_compile_by_pattern)
 
     query_desc = []
@@ -3454,19 +3515,35 @@ def _excerpt(text, n=120):
     return text[:n] + ("..." if len(text) > n else "")
 
 
-def _diagnostic_first_line(diag):
-    """[B12] R10: a did-not-compile row's `diagnostic`, VERBATIM (never
-    reworded) but never more than one line -- a `not ranked:` bullet is
-    one line by construction, and a multi-line diagnostic dumped into it
-    would run the table's markdown together. Says so explicitly rather
-    than silently dropping the rest."""
+def _diagnostic_full(diag):
+    """KB-18 (2026-09-17): a did-not-compile row's `diagnostic`, VERBATIM
+    and IN FULL -- REPLACES `_diagnostic_first_line`, which threw away
+    every line but the first and printed "[truncated, diagnostic
+    continues]" in its place. Found on bench/capability@0.1's first
+    sample: `wild-waf-crs-942500-comment-obfuscation`'s diagnostic (a
+    genuine pcrec DFA-emitter bug -- an unescaped `*/` in a generated
+    comment desynchronizes the rest of the C compile, cascading into two
+    more errors) had to be read out of the raw record because the
+    report's own row was truncated at the first line
+    (docs/dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md,
+    Finding F) -- a harness/report truncation gap in its own right.
+
+    Both call sites (a markdown bullet-list item, a TSV column) are
+    ONE-PHYSICAL-LINE contexts, so an embedded newline is rendered
+    VISIBLY (the two characters `\\` + `n`) rather than executed --
+    nothing is DROPPED to make that true. Backslashes and tabs are
+    escaped the same way, and in that order (backslash first), so the
+    result is losslessly reversible rather than merely readable: a
+    diagnostic that happens to already contain the literal two
+    characters `\\n` renders distinguishably from one with a real
+    newline. Bounded by `record.FREE_TEXT_MAX` (1,048,576 characters,
+    schema v1.5's hygiene bound, [B30]) as a defensive ceiling only --
+    the schema caps a compile row's own `diagnostic` at 8192 characters
+    today, well under it."""
     if not diag:
         return "(no diagnostic)"
-    text = str(diag)
-    first, sep, rest = text.partition("\n")
-    if sep and rest.strip():
-        return first + " [truncated, diagnostic continues]"
-    return first
+    text = str(diag)[:FREE_TEXT_MAX]
+    return text.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t")
 
 
 def render_markdown(rd: ReportData):
