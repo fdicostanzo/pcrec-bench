@@ -1194,6 +1194,23 @@ def check_high_byte_pattern_argv():
                     "matched=%s span=[%s,%s) -- the argv encoding bug's "
                     "own signature is matched=False" % (r.matched, r.start,
                                                         r.end))
+        # 1b. the SAME witness on onig-default (lane l6bonig, [B7]/L6b,
+        # 2026-09-17: this adapter passes the pattern via a FILE exactly
+        # like testees/pcre2/adapter.py's own convention -- never argv
+        # text -- so it should never have been exposed to I-72's bug
+        # class at all; this is the CONFIRMING witness, not a fix).
+        if "onig" in _ad.discover():
+            r, err = one("onig", "onig-default", PAT, "hib-raw-onig")
+            if err:
+                bad("high-byte argv: raw \\x93 pattern matches [0,7) "
+                    "on onig-default", err)
+            elif r.matched and (r.start, r.end) == (0, 7):
+                ok("high-byte argv: raw \\x93 pattern matches [0,7) "
+                   "on onig-default", "span [%d,%d)" % (r.start, r.end))
+            else:
+                bad("high-byte argv: raw \\x93 pattern matches [0,7) "
+                    "on onig-default",
+                    "matched=%s span=[%s,%s)" % (r.matched, r.start, r.end))
         # 2. the pcre2 reference agrees
         r, err = one("pcre2", "pcre2-interp", PAT, "hib-ref")
         if err:

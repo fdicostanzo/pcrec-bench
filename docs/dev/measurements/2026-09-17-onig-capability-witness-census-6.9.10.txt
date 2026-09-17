@@ -1,0 +1,253 @@
+# docs/dev/measurements/2026-09-17-onig-capability-witness-census-6.9.10.txt
+#
+# Lane l6bonig ([B7]/L6b, capability_set_v1.md 11.1: "Oniguruma's lane
+# independently re-derives `atomic-group` support from `regparse.c` (CB5)
+# and resolves `k-reset` (CB6)... Then the full CAPABILITY WITNESS CENSUS
+# (the L5 lesson: three wrong first-cut declarations)"). The mandatory
+# census BEFORE the `onig-default` row is added to
+# bench/capability/gen_patterns.py's EXT_BENCH_ROSTER.
+#
+# Source: python3 docs/dev/measurements/probe_onig_capability_census.py
+# (the reproducing script beside this file), run 2026-09-17 on this box
+# (Oniguruma 6.9.10-1build1, /usr/include/oniguruma.h; testees/onig/
+# adapter.py + driver.c, this lane's own build). NOT probed blind against
+# documentation: every REFUSED line below is a REAL onig_new() call
+# through the real adapter, and CB5/CB6 (below) additionally cite the
+# exact regparse.c/regexec.c line numbers from a direct read of the
+# v6.9.10 source tag (byte-identical diff against this box's installed
+# header, confirmed before reading).
+#
+# =====================================================================
+# CB5 -- atomic-group support, re-derived from src/regparse.c (MANDATORY,
+# before any declaration; capability_set_v1.md 5.1's own flag: "not
+# independently re-derived from the group-parser source" was N2's
+# unresolved caveat)
+# =====================================================================
+#
+# VERDICT: SATISFIED, UNCONDITIONALLY (every syntax, not gated by any
+# ONIG_SYN_OP2_* flag) -- direct read of regparse.c (v6.9.10 tag,
+# confirmed byte-identical to this box's /usr/include/oniguruma.h):
+#
+#   regparse.c:7886-7888 (the `(?...)` group-option switch):
+#       case '>':            /* (?>...) stop backtrack */
+#         *np = node_new_bag(BAG_STOP_BACKTRACK);
+#         break;
+#   -- NO `IS_SYNTAX_OP2(...)` guard on this case (contrast the
+#   surrounding cases: `'\''` and `'<'` DO check
+#   ONIG_SYN_OP2_QMARK_LT_NAMED_GROUP before accepting their syntax).
+#   `(?>...)` is therefore parsed under EVERY syntax profile, not a
+#   subset.
+#
+#   BAG_STOP_BACKTRACK is a REAL, fully wired node type, not parsed and
+#   discarded: regparse.c has 6 more references (compile-tree
+#   traversal, possessive-quantifier lowering at regparse.c:2966/3029 --
+#   Oniguruma implements a possessive quantifier BY WRAPPING it in the
+#   SAME atomic-group node, direct evidence the mechanism is load-
+#   bearing, not vestigial); regcomp.c has 13 references across
+#   optimization, length computation and the compile_tree emitter
+#   (regcomp.c:777,1641,1792,3294,3498-3499,3706,4722,5104,5569,5826,
+#   6588,6869,8535).
+#
+#   Live confirmation: `(?>a*)b` COMPILES (pass 1 below) -- reused
+#   verbatim from pcrec's own census witness (docs/dev/lanes/
+#   b42cap_report.md 2) for direct cross-engine comparability.
+#
+# =====================================================================
+# CB6 -- k-reset (\K), resolved by WITNESS (N2's own hedge: "not general
+# PCRE-style \K; has its own reset-point extensions under some syntaxes"
+# -- neither a clean yes nor no)
+# =====================================================================
+#
+# VERDICT: SATISFIED, AND ARCHITECTURALLY EQUIVALENT TO PCRE's \K, under
+# ONIG_SYNTAX_PERL_NG (and OnigSyntaxPerl, OnigSyntaxPython,
+# OnigSyntaxOniguruma, OnigSyntaxRuby -- every shipped syntax but the
+# POSIX-family ones, Emacs/Grep/GnuRegex/Java/ASIS):
+#
+#   oniguruma.h:508  ONIG_SYN_OP2_ESC_CAPITAL_K_KEEP (1U<<22) -- "\K"
+#   regparse.c:5773-5775  `case 'K': if (!IS_SYNTAX_OP2(syn,
+#     ONIG_SYN_OP2_ESC_CAPITAL_K_KEEP)) break; tok->type = TK_KEEP;`
+#   regparse.c:2809  `node_new_save_gimmick(node, SAVE_KEEP, env)`
+#
+#   THE MECHANISM (regexec.c, the runtime): `\K` compiles to a
+#   SAVE_VAL/SAVE_KEEP gimmick. At match time (regexec.c:4319-4340,
+#   CASE_OP(SAVE_VAL)/case SAVE_KEEP): `STACK_PUSH_SAVE_VAL(mem, type,
+#   s)` -- the CURRENT position `s` is pushed onto oniguruma's own
+#   BACKTRACKABLE stack (so a `\K` inside a branch that later backtracks
+#   is correctly undone, exactly as PCRE's \K is). At
+#   UPDATE_VAR_KEEP_FROM_STACK_LAST (regexec.c:4350-4351):
+#   `STACK_GET_SAVE_VAL_TYPE_LAST(SAVE_KEEP, keep)` pops the saved
+#   position back into the local `keep` variable. On overall match
+#   success (regexec.c:3070 initializes `keep = s = sstart`; ~3121
+#   `if (keep > s) keep = s;`; ~3127/3141 `region->beg[0] = keep - str`
+#   / `rmt[0].rm_so = keep - str`): `keep` OVERRIDES the REPORTED match
+#   START, without moving the actual search anchor point (backtracking,
+#   any lookaround before the `\K`, all work exactly as without it).
+#   This is PCRE's \K semantics precisely, not an approximation.
+#
+#   Live confirmation: `a\Kb` COMPILES (pass 1 below); `bench/email`'s
+#   own quick run (this lane, `quick --regime match --testee
+#   onig-default`) independently confirms the whole-subject `\z`-wrapped
+#   artifact answers 5/5 as expected on real corpus subjects, which
+#   would not hold if `\K`/anchor interaction were subtly wrong on any
+#   witnessed pattern using it.
+#
+# =====================================================================
+# PASS 1 -- one isolated witness per REQUIRES_VOCAB token (17 tokens;
+# several witnesses where one alone would not settle the question)
+# =====================================================================
+
+=== pass 1: one isolated witness per REQUIRES token ===
+backrefs                 b'(a)\\1'                                compiled
+lookaround               b'(?=a)a'                                compiled
+lookaround               b'(?<=a)b'                               compiled
+lookbehind-variable      b'(?<=a|bc)x'                            did-not-compile  onig_new failed (code -122): invalid pattern in look-behind
+possessive-quantifier    b'a*+'                                   compiled
+atomic-group             b'(?>a*)b'                               compiled
+recursion                b'(a(?R)?b)'                             did-not-compile  onig_new failed (code -116): unmatched close parenthesis
+recursion                b'(a(?1)?b)'                             compiled
+recursion                b'(?<n>a(?&n)?b)'                        compiled
+recursion                b'(a\\g<1>?b)'                           compiled
+recursion                b'(?<n>a\\g<n>?b)'                       compiled
+recursion                b'(a(?0)?b)'                             compiled
+conditionals             b'(?(1)a|b)(a)?'                         compiled
+k-reset                  b'a\\Kb'                                 compiled
+control-verbs            b'a(*ACCEPT)b'                           did-not-compile  onig_new failed (code -229): undefined callout name
+control-verbs            b'a(*FAIL)b'                             compiled
+control-verbs            b'a(*SKIP)b'                             compiled
+unicode-properties       b'\\p{L}'                                did-not-compile  onig_new failed (code -223): invalid character property name {L}
+unicode-properties       b'\\p{Alpha}'                            compiled
+named-groups             b'(?<name>a)'                            compiled
+named-groups             b'(?P<name>a)'                           did-not-compile  onig_new failed (code -119): undefined group option
+free-spacing             b'(?x) a b c'                            compiled
+callouts                 b'a(?C1)b'                               did-not-compile  onig_new failed (code -119): undefined group option
+true-end-anchor          b'a\\z'                                  compiled
+
+# =====================================================================
+# PASS 2 -- every one of bench/capability's 64 real corpus patterns,
+# through the real adapter, cross-referenced against each pattern's own
+# `requires-*` tags
+# =====================================================================
+
+=== pass 2: every bench/capability corpus pattern (64) ===
+n patterns: 64
+REFUSED  negation-scope-lookbehind-var            ['requires-lookaround', 'requires-lookbehind-variable'] -> onig_new failed (code -122): invalid pattern in look-behind
+REFUSED  balanced-parens-rec                      ['requires-recursion']                   -> onig_new failed (code -116): unmatched close parenthesis
+compiled: 62 / 64
+
+# =====================================================================
+# READING (what the ext bench roster row, below, is built from)
+# =====================================================================
+#
+# SATISFIED (13 of 17): backrefs, lookaround, possessive-quantifier,
+# atomic-group, recursion, conditionals, k-reset, unicode-properties(*),
+# named-groups, free-spacing, span-reporting, non-utf8-subject, captures,
+# true-end-anchor.
+#   (*) unicode-properties gets its own paragraph below -- read the
+#       asterisk before assuming it means what pcre2/pcrec's rows mean.
+#
+# NOT SATISFIED (4 of 17): lookbehind-variable, control-verbs,
+# unicode-properties, callouts.
+#
+# Wait -- unicode-properties appears in BOTH lists above on purpose: the
+# witness census found the token's own definition is not clean for this
+# engine at this lane's encoding choice, and the roster declares the
+# CONSERVATIVE (fail-closed) reading, below.
+#
+# 1. lookaround vs lookbehind-variable -- CB5-style split confirmed on
+#    REAL corpus text, not just the isolated witness: 9 of 10
+#    `requires-lookaround` patterns compile clean; the ONE failure
+#    (`negation-scope-lookbehind-var`) ALSO carries `requires-
+#    lookbehind-variable`, and the isolated witness `(?<=a|bc)x`
+#    (branches of differing fixed width) reproduces the SAME refusal
+#    (-122, "invalid pattern in look-behind") in isolation. Fixed-width
+#    lookbehind and lookahead are both fine; a lookbehind whose
+#    ALTERNATIVES differ in width is not -- exactly the tag's own
+#    definition ("a lookbehind whose body is not fixed-width").
+#    DECLARED: `lookaround` satisfied, `lookbehind-variable` not.
+#
+# 2. recursion -- SATISFIED, but with a documented SPELLING gap, not a
+#    capability gap: `(?1)`, `(?&name)`, `(?0)`, `\g<1>` and `\g<name>`
+#    all compile (five independent, functioning recursion/subexp-call
+#    spellings); PCRE's `(?R)` shorthand for "recurse into the whole
+#    pattern" specifically does NOT parse under Oniguruma (-116,
+#    "unmatched close parenthesis" -- `R` is not a recognised group-
+#    option character at all, so the parser reads the rest of the
+#    pattern as ordinary text and the closing `)` count goes wrong).
+#    CONFIRMED on real corpus text: `nested-comment-rec` (`(?1)`) and
+#    `bracket-array-define` (`(?(DEFINE)...)` + `(?&brackets)`) both
+#    compile; `balanced-parens-rec` (`(?R)`) is the ONE corpus refusal
+#    in this family, reproducing the isolated witness exactly.
+#    `(?0)` (Oniguruma's own "call group 0 = the whole pattern"
+#    convention) is confirmed live as `(?R)`'s functional replacement --
+#    a `variant.kind: syntax-only` rewrite for a future set that wants
+#    to run this pattern on `onig-default` (capability_set_v1.md 6.2's
+#    rewrite-table shape; not built by this lane, which does not touch
+#    bench/capability's own variant declarations).
+#    DECLARED: `recursion` satisfied. `balanced-parens-rec` is left to
+#    fail HONESTLY as a real, per-pattern `did-not-compile`
+#    (`refusal_class: syntax`, this adapter's own derivation) rather
+#    than being hidden behind a wholesale `unsupported-by-declaration`
+#    that would misreport 2 of 3 real recursion patterns as untestable.
+#
+# 3. control-verbs -- NOT SATISFIED, despite a coincidence worth
+#    recording rather than glossing over: `(*FAIL)` and `(*SKIP)`
+#    COMPILE. This is NOT partial control-verb support -- Oniguruma has
+#    its own, structurally different CALLOUT mechanism
+#    (ONIG_SYN_OP2_ASTERISK_CALLOUT_NAME, present under Perl_NG) with a
+#    small BUILT-IN callout registry (src/ascii.c's own `init()`:
+#    `name = "FAIL"; BC0_P(name, fail); name = "MISMATCH"; ...`) that
+#    happens to share PCRE's `(*NAME)` SYNTAX for two of PCRE's five
+#    control-verb names. `(*ACCEPT)` is not in that registry ("undefined
+#    callout name", -229) -- the corpus witness this lane's real corpus
+#    would need is absent; this lane did NOT verify that a compiling
+#    `(*FAIL)`/`(*SKIP)` callout produces PCRE's exact backtracking
+#    behaviour (a callout can invoke a user-supplied function; onig's
+#    OWN default when none is registered is unverified against PCRE's
+#    control-verb semantics byte for byte). Per the SAME precedent
+#    testees/pcre2/CLAUDE.md's own "pcre2-dfa" section sets ("every
+#    backtracking control verb except `(*FAIL)`... this vocabulary has
+#    no finer token for 'FAIL only'"), the token is withheld WHOLESALE
+#    rather than half-claimed.
+#
+# 4. unicode-properties -- NOT SATISFIED under this lane's ENCODING
+#    CHOICE (ONIG_ENCODING_ASCII, testees/onig/CLAUDE.md deliverable
+#    (d)), and this is the census's own "wrong first-cut" catch: a
+#    first-cut declaration reading only "does `\p{...}` PARSE" would
+#    have said yes (the OP2 flag is present under Perl_NG, and
+#    `\p{Alpha}` genuinely compiles). But `\p{L}` -- a REAL Unicode
+#    General Category name, the shape every PCRE `\p{...}` corpus
+#    pattern actually uses -- is REFUSED ("invalid character property
+#    name {L}", -223). Under ASCII encoding, Oniguruma's property table
+#    is POSIX-style ctype names only (`Alpha`, `Digit`, `Space`, ...),
+#    NOT Unicode General Categories/Scripts -- a narrower, DIFFERENT
+#    vocabulary than PCRE's, not a subset of it by coincidence of
+#    spelling. bench/capability@0.1 happens to tag ZERO patterns
+#    `requires-unicode-properties` today (the corpus census above), so
+#    this finding changes no CURRENT ranking -- it is recorded here so
+#    a FUTURE set (or a future onig config compiled under
+#    ONIG_ENCODING_UTF8, where real \p{...} property tables load) is
+#    not silently mis-declared by copying this row forward unread.
+#    DECLARED: `unicode-properties` NOT satisfied for `onig-default`.
+#
+# 5. named-groups -- SATISFIED: `(?<name>...)` (Oniguruma's/Ruby's own
+#    spelling, also PCRE's) compiles; `(?P<name>...)` (Python's
+#    spelling) does not (-119, "undefined group option" -- ESC's `P` is
+#    not recognised as a named-group introducer under Perl_NG at all).
+#    The tag's own definition is "any named-group spelling", and
+#    `wild-logparse-syslogbase-expanded` (the corpus's one `requires-
+#    named-groups` pattern, using `(?<name>...)`) compiles clean,
+#    confirming the working spelling is the one this corpus actually
+#    uses.
+#
+# 6. span-reporting / non-utf8-subject / captures -- EXECUTION-MODEL
+#    facts, not compile witnesses (capability_set_v1.md 5.1's own note,
+#    the same class pcre2/pcrec's censuses treat this way): onig_search/
+#    onig_match always populate `region->beg[0]`/`end[0]` (a real
+#    START, never boolean-only) and per-group spans (never a
+#    captures="off" execution model, unlike `pcre2-dfa`); ONIG_ENCODING_
+#    ASCII's `is_valid_mbc_string` is unconditionally true (src/ascii.c:
+#    `onigenc_always_true_is_valid_mbc_string`), confirmed LIVE by this
+#    lane's own I-72-style high-byte witness (`\x93[\x20-\x7e]*\x94`
+#    over `\x93hello\x94`, matched [0,7) exactly, the same pattern/
+#    subject pair `tools/selfcheck.py check_high_byte_pattern_argv`
+#    uses for pcrec). All three DECLARED satisfied.

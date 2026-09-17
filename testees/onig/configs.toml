@@ -1,0 +1,24 @@
+# testees/onig/configs.toml -- the testees this adapter provides.
+#
+# The keys here are CONFIG IDS: what `--testee` takes and what the adapter
+# indexes. They are NOT the record's `testee_id`, which record_schema.md 6.4
+# DERIVES from (engine_name, engine_version, engine_mode, captures, simd) and
+# rule X5 checks. Two id spaces on purpose: one a human types, one a machine
+# derives and can verify (testees/pcre2/configs.toml's own comment, same
+# rule here).
+#
+# No version is written here. It is PROBED from the loaded library
+# (`onig_version()`) on every run: a hand-typed version would silently
+# rename the testee the day the distro package moves.
+#
+# ONLY `onig-default` is wired at [B7]/L6b (capability_set_v1.md 11.1's lane
+# row). `onig-lowretry` (a small `onig_set_retry_limit_in_match`, exercising
+# `ONIGERR_RETRY_LIMIT_IN_MATCH_OVER` as a first-class `gave-up` on a ReDoS
+# witness -- capability_set_v1.md 8) is a LATER config per the design note's
+# own roster table; testees/onig/CLAUDE.md documents it and this lane does
+# NOT wire it.
+
+[testees.onig-default]
+engine_mode = "default"
+captures = "on"
+description = "Oniguruma 6.9.10 (system libonig, direct-linked): ONIG_SYNTAX_PERL_NG / ONIG_ENCODING_ASCII, onig_new/onig_search (search regime, unanchored) and onig_new/onig_match on a `(?:pattern)\\z`-wrapped SECOND artifact (match regime, anchored+end-anchored) -- an interpretive backtracking engine with no separate compile/JIT split ([B7]/L6b, capability_set_v1.md 8/11.1). See testees/onig/CLAUDE.md for the syntax/encoding choice and every known divergence from PCRE semantics this lane found."

@@ -484,6 +484,49 @@ EXT_BENCH_ROSTER = [
     ("pcre2-dfa", [t for t in REQUIRES_VOCAB
                    if t not in ("backrefs", "conditionals", "k-reset",
                                 "control-verbs", "captures")]),
+    # onig-default ([B7]/L6b, lane l6bonig, 2026-09-17): Oniguruma 6.9.10,
+    # ONIG_SYNTAX_PERL_NG / ONIG_ENCODING_ASCII (testees/onig/CLAUDE.md).
+    # CB5 (atomic-group) and CB6 (k-reset) resolved by DIRECT SOURCE READ
+    # of regparse.c/regexec.c BEFORE this declaration (both satisfied --
+    # docs/dev/measurements/2026-09-17-onig-capability-witness-census-
+    # 6.9.10.txt). The full witness census (17 tokens, one or more
+    # isolated witnesses each, PLUS all 64 real corpus patterns through
+    # the real adapter) is in that same file; four tokens withheld, each
+    # for a DIFFERENT reason than pcrec's own four-token withhold list:
+    #   lookbehind-variable -- REFUSED live ("invalid pattern in
+    #                          look-behind"); a lookbehind's ALTERNATIVES
+    #                          must share one fixed width. Confirmed on
+    #                          the corpus's own witness,
+    #                          negation-scope-lookbehind-var.
+    #   control-verbs        -- `(*ACCEPT)` REFUSED ("undefined callout
+    #                          name"); `(*FAIL)`/`(*SKIP)` compile only
+    #                          because Oniguruma's OWN, semantically
+    #                          DIFFERENT callout registry happens to
+    #                          share those two names -- withheld
+    #                          wholesale, same precedent as pcre2-dfa's
+    #                          own `(*FAIL)`-only row above.
+    #   unicode-properties    -- REFUSED for a REAL Unicode category
+    #                          (`\p{L}`) under ASCII encoding, though a
+    #                          POSIX-style name (`\p{Alpha}`) compiles --
+    #                          a narrower, DIFFERENT vocabulary from
+    #                          PCRE's, not a subset by coincidence of
+    #                          spelling. The corpus tags zero patterns
+    #                          with this token today, so the finding
+    #                          moves no current ranking; withheld so a
+    #                          future corpus is not silently mis-served.
+    #   callouts              -- PCRE's `(?Cn)` spelling REFUSED outright
+    #                          ("undefined group option").
+    # `recursion` is SATISFIED despite one corpus pattern
+    # (balanced-parens-rec, PCRE's `(?R)` shorthand) refusing: `(?1)`,
+    # `(?&name)`, `(?0)` and `\g<n>`/`\g<name>` all compile, incl. on the
+    # OTHER two corpus recursion patterns -- a documented SPELLING gap
+    # (capability_set_v1.md 6.2's rewrite-table territory), not a
+    # capability gap; the one corpus refusal is left to fail HONESTLY as
+    # its own real `did-not-compile` (refusal_class: syntax) rather than
+    # being hidden behind a wholesale withhold.
+    ("onig-default", [t for t in REQUIRES_VOCAB
+                      if t not in ("lookbehind-variable", "control-verbs",
+                                   "unicode-properties", "callouts")]),
 ]
 
 

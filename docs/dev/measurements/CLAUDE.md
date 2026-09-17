@@ -290,3 +290,31 @@ Maintenance: update this file when files are added/removed or change role.
   plan are in the header. Guard: selfcheck's
   check_high_byte_pattern_argv. The prior probe archive's data
   stands; its attribution sentence is superseded by this file.
+- `probe_onig_capability_census.py` — ([B7]/L6b, lane l6bonig, 2026-09-17)
+  the ONIGURUMA ADAPTER'S capability witness census, mandatory before
+  `bench/capability/gen_patterns.py`'s `EXT_BENCH_ROSTER` declares
+  anything for `onig-default`: pass 1 runs one (or several, where one
+  spelling would not settle the question alone) isolated witness per
+  `REQUIRES_VOCAB` token through the real `onig-default` adapter; pass 2
+  runs all 64 real `bench/capability` corpus patterns through the same
+  adapter, cross-referenced against each pattern's own `requires-*` tags.
+  Runs from the repo root; needs the `onig` adapter (built on demand).
+- `2026-09-17-onig-capability-witness-census-6.9.10.txt` — its archive:
+  CB5 (atomic-group) and CB6 (`\K`/k-reset) resolved by DIRECT SOURCE
+  READ of Oniguruma 6.9.10's `regparse.c`/`regexec.c` (both SATISFIED,
+  `(?>...)` ungated by any syntax flag, `\K` architecturally identical to
+  PCRE's own reset-the-reported-start mechanism) before either is
+  declared; 62/64 corpus patterns compile clean, the two refusals
+  (`negation-scope-lookbehind-var`, `balanced-parens-rec`) reproduced
+  exactly by isolated witnesses; 13 of 17 REQUIRES tokens SATISFIED
+  (backrefs, lookaround, possessive-quantifier, atomic-group, recursion,
+  conditionals, k-reset, named-groups, free-spacing, span-reporting,
+  non-utf8-subject, captures, true-end-anchor), 4 NOT (lookbehind-
+  variable, control-verbs, unicode-properties, callouts) — including the
+  census's own "wrong first-cut" catch: `\p{Alpha}` compiles but `\p{L}`
+  (a real Unicode category, the shape every PCRE corpus pattern actually
+  uses) does not under `ONIG_ENCODING_ASCII`, so `unicode-properties` is
+  declared UNSATISFIED despite the OP2 flag being present — and a
+  documented spelling-only gap (PCRE's `(?R)` fails; `(?1)`/`(?&name)`/
+  `(?0)`/`\g<n>` all work) that does not change the `recursion`
+  declaration.

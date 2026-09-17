@@ -6,7 +6,8 @@ triple each (requirements §2) — enumerated in its `configs.toml`.
 
 | directory | testees it provides |
 |---|---|
-| `pcre2/` | `pcre2-interp`, `pcre2-jit` |
+| `pcre2/` | `pcre2-interp`, `pcre2-jit`, `pcre2-dfa` |
+| `onig/` | `onig-default` ([B7]/L6b, lane l6bonig, 2026-09-17: Oniguruma 6.9.10, `ONIG_SYNTAX_PERL_NG` / `ONIG_ENCODING_ASCII`, direct-linked `-lonig`. `onig-lowretry` is documented, not wired) |
 | `pcrec/` | `pcrec-auto`, `pcrec-nocaps`, `pcrec-vm` (the plain three, gcc); `pcrec-auto-in`, `pcrec-vm-in` (the caller-provided frame-buffer variants, [B8]); `pcrec-auto-clang`, `pcrec-nocaps-clang`, `pcrec-vm-clang` (the compilee-toolchain axis, [B24]); `pcrec-auto-bigcap`, `pcrec-vm-bigcap` (the emitted-size cap axis at 8 MiB, [B31] — bench/altwide's window only); `pcrec-auto-noedge` (the scan-edge deny axis, [B32] — [OPT-EDGE]'s BEFORE on bench/loglines and bench/bounded); `pcrec-auto-noisland` (the alternation-island deny axis, [B37] — the island's BEFORE on bench/altwide); `pcrec-auto-noclsfold`, `pcrec-vm-noclsfold` (the ASCII-fold class-test deny axis, [B39] — the fold's BEFORE on bench/altwide); `pcrec-auto-align64` (the compilee-FLAGS axis, [B35] — `-falign-functions=64`, pcrec I-39 (v)'s layout probe, against `pcrec-auto`); and `pcrec-local`, a PROVIDED binary at no pin (scratch tier by construction, [B10]). Sixteen pinned configs + one local; `testees/pcrec/configs.toml` is the roster, `python3 -m pcrecbench testees` prints it |
 
 An adapter is `adapter.py` (a subclass of `pcrecbench.adapters.Adapter`),
