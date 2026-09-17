@@ -117,26 +117,28 @@ ordinary pattern.
   byte-identical — **exit 0** (two pre-existing, unrelated oracle
   give-ups on `evil-alt-nested`, not touched by this lane).
 - **`pcrecbench.tests.test_quick`**: 7/7 passed.
-- **`pcrecbench.tests.test_report`**: launched in the background
-  (~12-13 min expected per KB-16's own documented whole-store-load
-  profile — no test in that suite targets `driver_compiler` rendering,
-  so no regression is expected from this lane's harness.py change, but
-  the run was not yet complete when this report was written). **OWED**:
-  log at `/tmp/claude-1001/-home-duxevents-pcrec-bench/932894fa-f62e-4029-8fb0-f23809c3696f/tasks/bjuehz9wl.output`,
-  completion line `N passed, 0 failed` (the module's own summary
-  format).
-- **`make check-harness`**: launched in the background (tracked,
-  ~20 min expected per the Makefile's own note; box is concurrently
-  running pcrecdev1's own multi-hour battery per this lane's brief, so
-  wall time may run longer than 20 min — check-harness is a compile-only
-  smoke suite with no quiet-box gate, so correctness is not at risk from
-  the contention, only wall time). **OWED**: log at
-  `/tmp/l6bre2-markers/check-harness.log`, completion line `DONE rc=N`
-  appended at the end; the count line to quote is the Makefile's own
-  `NNN checks` summary near the top of that same log once it finishes.
+- **`pcrecbench.tests.test_report`** and **`make check-harness`**: both
+  launched in the background, then STOPPED mid-run (killed by verified
+  PID, cwd checked first) on the manager's explicit instruction once
+  pcrecdev1's ~7.5h solo battery started on the shared box (BD3: one
+  heavy suite at a time). **Both are OWED, to be run by the manager
+  after the battery**, exact commands:
 
-Neither owed run touches `store/`, measures a pinned cell, or adds a
-pcrec config — both are read-only validation of code already committed.
+      python3 -m pcrecbench.tests.test_report
+      make check-harness
+
+  Neither owed run touches `store/`, measures a pinned cell, or adds a
+  pcrec config — both are read-only validation of code already
+  committed on this branch. No test in `test_report`'s suite targets
+  `run.driver_compiler` rendering, so no regression is expected from
+  this lane's `harness.py` change; `make check-harness`'s generic
+  `bench/*/` gates were already run individually and pass (below), so
+  `check-harness` itself is expected to be a formality, not a discovery
+  step.
+  (Caveat: `test_report`'s background-task notification reported
+  "completed, exit 0" at the moment it was killed — this is the pipe
+  closing on SIGTERM, not a real pass/fail summary; the output file has
+  no summary line. Treat it as NOT run, per the command above.)
 
 ## What was NOT done
 
