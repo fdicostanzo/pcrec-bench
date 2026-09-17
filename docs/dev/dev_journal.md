@@ -4539,3 +4539,59 @@ morning epilogue (F4 ours, fixed + guarded), two lanes spawned/
 reviewed/merged/stopped (b42verify, b42ledger), gate 398 → 402
 harness / 132 → 133 interpret, store 160 → 168, ~15 commits pushed.
 No lanes, monitors, or crons left live; tree clean.
+
+## 2026-09-17 — twenty-fourth session (Fable): the full-speed day — nine lanes, all four L6b adapters, two harness defects fixed, F3 closed
+
+Frank's reset ruling ("start FULL SPEED on wake; parallel dev encouraged")
+executed as written. In one day, with pcrec's ~7.5 h solo battery owning
+the box from late morning (heavy validation held OWED throughout, BD3):
+
+- MERGED this morning: b42predhyg (the pcre2-dfa ATOMIC-GROUP divergence
+  documented as a seventh divergence outside family 11, reproduced live
+  [0,16) vs [0,11); P5's verified fix left as a RECOMMENDATION because
+  the predictions format defines no revision mechanism; P9 inexpressible
+  by construction) and b42subgrain (docs/design/interpret_subject_grain_v1.md,
+  PROPOSED — corrects the ledger: THREE causes not one; finds
+  --subject-grain half-shipped and a live build_stamp/check-freshness
+  latent defect; eleven questions for Frank).
+- DELIVERED, merge held for post-battery validation: b42repdiag (reporter
+  v17 _diagnostic_full, KB-18, test 78/0; the 43-group regen detached —
+  run1 cut at its 30-min cap, run2 relaunched niced at 5400 s),
+  l6bre2 (RE2, direct C++ driver; found+fixed the DRIVER_BUILDS
+  cross-compiler-family join — its KB-18 renumbers to KB-19 at merge),
+  l6bonig (Onig 6.9.10; CB5/CB6 by source read; the \p{L}-vs-\p{Alpha}
+  census catch), l6bvs (Vectorscan at Frank's Q3 BOOLEAN GRAIN; proved
+  outcome_for has no boolean path AND the [None,None] span fails schema
+  validation — vectorscan couldn't write a matching cell at all),
+  l6btre (TRE; CS5 by witness; FOUR silent-misparse hazards proven
+  BEHAVIORALLY — \K matches literal K; the POSIX bracket-escape
+  portability finding; two own-code bugs caught by its own controls),
+  b43giveup (KB-20: the F3 harness artifact — the timed batch re-paying
+  pcrec's honest ~2.7 s give-up ~200× past the 60 s alarm; give-up now
+  TERMINAL by the driver's own typed answer; the F3 cell 52 s/gave-up
+  ×3 BY NAME vs ~540 s/timed-out), b44boolgrain (schema v1.6 additive:
+  testee.grain, X34, _observed_span null-safe uniformly; the first
+  schema-valid boolean-grain record written).
+- F3 CLOSED with pcrecdev1 in three rounds inside the day: our facts
+  (subject b"a"*17+b"!", --subject-timeout 60, "the per-subject alarm
+  fired") refuted their calibration hypothesis; their round 2 with our
+  search-regime discriminator found the real mechanism (per-call budget,
+  fires correctly; OUR batch re-pays it); recommended bench-side fix
+  built the same afternoon as b43giveup. All four O-31 findings now
+  dispositioned (F1 rides tonight's checkpoint pin; F2 no-change; F3
+  bench-side, fixed; F4 fixed ours yesterday).
+- DISCIPLINE NOTES, honest: both wave-1 L6b lanes launched check-harness
+  despite the mid-flight battery hold (killed by PID, cwd-verified;
+  wave-2 briefs carried the rule as a HARD RULE up front and both wave-2
+  lanes + both fix lanes honored it); the manager briefly polluted
+  l6bre2's marker log with a bogus DONE rc=0 during the kill (corrected
+  in place, lesson: never echo $? into someone else's marker log);
+  wave-2 lanes were spawned while the manager's shell cwd sat in a lane
+  worktree — both inherited the stray cwd, both flagged before acting
+  (lesson: spawn from the repo root); b42repdiag's first idle message
+  was the waiting-on-nothing anti-pattern, corrected to DO-THEN-FINISH
+  and executed properly.
+- QUEUED: the post-battery merge wave (order in plan.md), the REQUIRES-
+  tag correction wave (l6btre's census: two corpus patterns under-tagged),
+  the subgrain note's eleven rulings for Frank, the erratum+give-up
+  re-measure list for the next capability window at the F1-fix pin.
