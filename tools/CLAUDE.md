@@ -481,3 +481,18 @@ pattern, so the policy can never fire there -- `check_capability_policy`
 above is the control showing it DOES fire on `bench/capability`. 16
 checks total across the three arms, every one with the negative
 control the "no failing case proves nothing" rule asks for.
+
+[B44] (2026-09-17, lane `b44boolgrain`, Frank's Q3 boolean-grain ruling,
+`capability_set_v1.md` §5.6 option B, schema v1.6): `check_boolean_grain_
+scoring`, in the SAME fixture-only posture `check_convention_scoring`
+takes (no committed testee sets `testee.grain = "boolean"` yet -- lane
+`l6bvs`'s `vectorscan-block-nosom` delivery is a separate lane's scope).
+Reproduces l6bvs's own two findings against the REAL `outcome_for`,
+fixed: a true match and a true nomatch at `grain="boolean"` both score
+`matched-as-expected` with `observed` ABSENT entirely (Level 1: no more
+`wrong-span-or-captures` on every genuine match); a false positive's
+`observed.span` is the schema's null shape, never `[None, None]`
+(Level 2: `_observed_span`'s null-safety); and two `grain="full"`
+(the default) controls prove the relaxation is `grain`-gated -- a
+spanless match still scores `wrong-span-or-captures` at full grain, and
+an ordinary real-span match is unchanged. 5 checks.

@@ -104,8 +104,28 @@ class RunResult:
 
 # ------------------------------------------------------------- the judging
 
+def _observed_span(row):
+    """The `observed.span` value for a row that claims a MATCH: the real
+    `[start, end]` pair when the driver reported one, or `None` when it did
+    not. Never `[None, None]` -- that array shape is schema-illegal
+    (`schema/record.schema.json`'s `observed.span` requires two INTEGER
+    items when the field is an array at all; `null` is only legal for the
+    whole field). A `grain="boolean"` testee's driver protocol degenerate
+    shape (`docs/design/capability_set_v1.md` 5.6 option B: `START,END ...
+    or "-"`) reports `row.start = row.end = None` on every match, by
+    construction -- this is what turns that into the schema's OTHER legal
+    shape (the field absent from the array) instead of a validator crash on
+    every matching cell (lane l6bvs's finding, `testees/vectorscan/
+    CLAUDE.md` "THE GOVERNING RULING", Level 2). Applied uniformly, not only
+    under `grain="boolean"`: any row that claims a match with no known start
+    is the same "no span to report" fact regardless of why."""
+    if row.matched and row.start is not None and row.end is not None:
+        return [row.start, row.end]
+    return None
+
+
 def outcome_for(row, expectation, regime, subject, giveup_ok=True,
-                convention=None):
+                convention=None, grain="full"):
     """(match_outcome, observed, diagnostic) for one driver answer.
 
     Requirements 4.4's per-(pattern, subject) set, plus the two [B2]
@@ -114,6 +134,31 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
     expected answer was not produced, and there is no `gave-up` value because
     a wrong answer and a refused one are both "not the expected answer"
     (bench/email/NOTES.md states this where a reader of the numbers is).
+
+    `grain` (`docs/design/capability_set_v1.md` 5.6 option B, Frank's Q3
+    ruling 2026-09-16; lane b44boolgrain, the harness half of the finding
+    lane l6bvs proved against this function): the CALLER's own declared
+    SCORING GRAIN -- `testee.grain`, `schema/record.schema.json`, the same
+    shape `convention` above already has. `"full"` (the default, every
+    testee before this lane and every testee that declares nothing) is
+    UNCHANGED: a matching row's span is compared against the expectation's,
+    and a mismatch is `wrong-span-or-captures`. `"boolean"` is for a testee
+    that is STRUCTURALLY incapable of reporting a span at all (Vectorscan's
+    `nosom` config: Hyperscan's `hs_scan` callback hands back an end offset
+    but no start, and this project's driver protocol reports the degenerate
+    `start=end=None` shape rather than a half-true one, `testees/vectorscan/
+    CLAUDE.md` "THE GOVERNING RULING") -- for such a testee, `row.start`/
+    `row.end` are `None` on EVERY match, correct or not, and comparing them
+    against a real expectation span would score every true match
+    `wrong-span-or-captures` (l6bvs's Level 1 finding) with an unwritable
+    record behind it (`_observed_span`'s docstring, Level 2). At
+    `grain="boolean"` the span/capture comparison below is SKIPPED
+    entirely: a match row is `matched-as-expected` iff
+    `row.matched == expectation.matched`, exactly as `did-not-match-as-
+    expected`'s own boolean check already reads regardless of grain --
+    the only thing `grain` changes is which branch a CORRECT match takes.
+    No span or capture is ever emitted for such a testee (`_observed_span`
+    is null-safe on every path, `grain` or no).
 
     `convention` (R5 B1, `docs/design/capability_set_v1.md` 5.6, [B42] L5):
     the CALLER's own declared convention (`testee.conventions`'s first
@@ -169,14 +214,14 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
         # `make check` rather than something the corpus exercises.
         return ("truncated-subject",
                 {"matched": row.matched,
-                 "span": [row.start, row.end] if row.matched else None,
+                 "span": _observed_span(row),
                  "captures": None},
                 "offered %d bytes, the engine took %d"
                 % (subject.length, row.consumed))
     if expectation is None:
         return ("did-not-match-as-expected",
                 {"matched": row.matched,
-                 "span": [row.start, row.end] if row.matched else None,
+                 "span": _observed_span(row),
                  "captures": None},
                 "no expectation exists for this (pattern, subject, regime) -- "
                 "the sub-bench must state one before the cell can be judged")
@@ -190,7 +235,7 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
         # so this branch never fires on a real record.
         return ("did-not-match-as-expected",
                 {"matched": row.matched,
-                 "span": [row.start, row.end] if row.matched else None,
+                 "span": _observed_span(row),
                  "captures": None},
                 "the expectation is scoped to convention %r; this testee's "
                 "own declared convention is %r -- no expectation exists "
@@ -201,16 +246,26 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
     if row.matched != expectation.matched:
         return ("did-not-match-as-expected",
                 {"matched": row.matched,
-                 "span": [row.start, row.end] if row.matched else None,
+                 "span": _observed_span(row),
                  "captures": None},
                 "expected %s, observed %s"
                 % (expectation.expected,
                    "match" if row.matched else "nomatch"))
 
-    if row.matched and (row.start != expectation.start
-                        or row.end != expectation.end):
+    if (grain != "boolean" and row.matched
+            and (row.start != expectation.start
+                 or row.end != expectation.end)):
+        # `grain="boolean"` (docs/design/capability_set_v1.md 5.6 option B):
+        # a testee that structurally never knows its span is never asked
+        # "is this the RIGHT span" -- only "does this row's boolean answer
+        # match the expectation's", which the `row.matched != expectation.
+        # matched` branch above already judges regardless of grain. Without
+        # this guard every genuine match from such a testee lands here
+        # (`row.start`/`row.end` are always `None`, always unequal to a real
+        # expectation span) -- l6bvs's Level 1 finding, reproduced against
+        # this function before the fix.
         return ("wrong-span-or-captures",
-                {"matched": True, "span": [row.start, row.end],
+                {"matched": True, "span": _observed_span(row),
                  "captures": None},
                 "expected span [%s,%s]; observed [%s,%s]"
                 % (expectation.start, expectation.end, row.start, row.end))
@@ -220,7 +275,7 @@ def outcome_for(row, expectation, regime, subject, giveup_ok=True,
             and row.nmatches != expectation.nmatches):
         return ("wrong-span-or-captures",
                 {"matched": row.matched,
-                 "span": [row.start, row.end] if row.matched else None,
+                 "span": _observed_span(row),
                  "captures": None},
                 "expected %d non-overlapping match(es); observed %d"
                 % (expectation.nmatches, row.nmatches))
@@ -724,6 +779,18 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     # (`outcome_for`'s own `convention` parameter; a no-op today, see its
     # docstring, since no expectation row carries `.convention` yet).
     testee_convention = (testee_block.get("conventions") or [None])[0]
+    # Q3 boolean-grain ruling (lane b44boolgrain, docs/design/
+    # capability_set_v1.md 5.6 option B, `schema/record.schema.json`'s
+    # optional `testee.grain`): the DECLARATION SEAM. An adapter's
+    # `describe()` sets `grain` in the dict it returns (the SAME shape
+    # `conventions` above already reads -- a per-config Python literal
+    # today, exactly as every other testee-level fact in this block is);
+    # `build_setup` copies `testee_block` wholesale into the record's
+    # `testee` object, so a declaring adapter's `grain` is queryable on
+    # every record it writes. ABSENT means `"full"`, so every testee
+    # before this lane -- and every testee that declares nothing --
+    # is provably unchanged.
+    testee_grain = testee_block.get("grain", "full")
 
     # O, the OTHER sentences (module docstring): the scratch-tier sentence,
     # did-not-compile, calibration and adapter notes. The gate's reasons are
@@ -858,7 +925,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                     outcome, observed, diag = outcome_for(
                         r, exp, regime, subj,
                         giveup_ok=classify_giveup(r.answer, handle),
-                        convention=testee_convention)
+                        convention=testee_convention, grain=testee_grain)
                     timing = None
                     if outcome == "matched-as-expected":
                         timing = {
