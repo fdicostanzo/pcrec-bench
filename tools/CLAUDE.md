@@ -485,8 +485,9 @@ control the "no failing case proves nothing" rule asks for.
 [B44] (2026-09-17, lane `b44boolgrain`, Frank's Q3 boolean-grain ruling,
 `capability_set_v1.md` §5.6 option B, schema v1.6): `check_boolean_grain_
 scoring`, in the SAME fixture-only posture `check_convention_scoring`
-takes (no committed testee sets `testee.grain = "boolean"` yet -- lane
-`l6bvs`'s `vectorscan-block-nosom` delivery is a separate lane's scope).
+takes (when the lane wrote it no committed testee set
+`testee.grain = "boolean"`; at the [B42] wave merge the manager wired
+`vectorscan-block-nosom`'s `"grain": "boolean"` line, the first).
 Reproduces l6bvs's own two findings against the REAL `outcome_for`,
 fixed: a true match and a true nomatch at `grain="boolean"` both score
 `matched-as-expected` with `observed` ABSENT entirely (Level 1: no more
@@ -496,3 +497,24 @@ fixed: a true match and a true nomatch at `grain="boolean"` both score
 (the default) controls prove the relaxation is `grain`-gated -- a
 spanless match still scores `wrong-span-or-captures` at full grain, and
 an ordinary real-span match is unchanged. 5 checks.
+
+[B43] (2026-09-17, lane `b43giveup`, KB-20 -- the F3 investigation's
+bench-side fix): `check_giveup_not_batched`, a STUB-adapter check (never
+a real pcrec compile, seconds): a subject whose first iters=1 call gives
+up is NEVER asked for iters>1, reads `gave-up` BY NAME dense across all
+trials (shown DISTINCT from the existing hanging-subject `timed-out`
+control), a control subject's `n_iters` and answers are IDENTICAL
+whether it shares the cell with a give-up sibling or not (the no-op
+witness), an all-give-up cell leaves nothing to calibrate without
+crashing, and the harness note names the held-back subject. 6 checks.
+
+[B42] L6b wave (2026-09-17, the four engine-adapter lanes + the merge's
+landing bar): `check_high_byte_pattern_argv` -- the I-72 guard -- grew
+three CONFIRMING arms beside the original pcrec/pcre2 ones: 1b
+`onig-default` (the shared `\x93`-class witness), 1c `tre-default` (a
+LITERAL raw-bytes witness, because TRE has no `\xHH` escape at all and
+the shared spelling would test that gap, not the transport property),
+1d `vectorscan-block-nosom` (BOOLEAN GRAIN: asserts `matched=True`
+with `start`/`end` None -- X34's own shape -- never a span). Each arm
+is gated on its adapter discovering, so a box without that engine's dev
+package skips it by name rather than failing.
