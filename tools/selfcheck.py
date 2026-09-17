@@ -1194,6 +1194,35 @@ def check_high_byte_pattern_argv():
                     "matched=%s span=[%s,%s) -- the argv encoding bug's "
                     "own signature is matched=False" % (r.matched, r.start,
                                                         r.end))
+        # 1b. the SAME transport property on tre-default (lane l6btre,
+        # [B7]/L6b, 2026-09-17) -- with a DIFFERENT pattern spelling, and
+        # that difference is itself the finding this arm exists to state:
+        # TRE has NO `\xHH` hex-escape syntax at all (confirmed,
+        # testees/tre/CLAUDE.md (d) item 1 -- `\x93` compiles as the three
+        # literal characters "x93", never byte 0x93), so the SHARED
+        # PAT above (which relies on the ENGINE interpreting `\xHH`
+        # escapes inside a class) would test TRE's escape-syntax GAP, not
+        # I-72's actual transport property. This arm uses the raw bytes
+        # as a LITERAL exact-match pattern instead -- the identical
+        # transport property (does a raw high pattern byte survive the
+        # adapter's file-based delivery unmangled), without the confound.
+        # This adapter passes the pattern via a FILE exactly like
+        # testees/pcre2/'s and testees/onig/'s own convention -- never
+        # argv text -- so it should never have been exposed to I-72's bug
+        # class at all; this is the CONFIRMING witness, not a fix.
+        if "tre" in _ad.discover():
+            r, err = one("tre", "tre-default", SUBJ, "hib-raw-tre")
+            if err:
+                bad("high-byte argv: literal \\x93hello\\x94 pattern "
+                    "matches [0,7) on tre-default", err)
+            elif r.matched and (r.start, r.end) == (0, 7):
+                ok("high-byte argv: literal \\x93hello\\x94 pattern "
+                   "matches [0,7) on tre-default",
+                   "span [%d,%d)" % (r.start, r.end))
+            else:
+                bad("high-byte argv: literal \\x93hello\\x94 pattern "
+                    "matches [0,7) on tre-default",
+                    "matched=%s span=[%s,%s)" % (r.matched, r.start, r.end))
         # 2. the pcre2 reference agrees
         r, err = one("pcre2", "pcre2-interp", PAT, "hib-ref")
         if err:
