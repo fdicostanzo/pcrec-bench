@@ -1,0 +1,28 @@
+# testees/tre/configs.toml -- the testees this adapter provides.
+#
+# The keys here are CONFIG IDS: what `--testee` takes and what the adapter
+# indexes. They are NOT the record's `testee_id`, which record_schema.md 6.4
+# DERIVES from (engine_name, engine_version, engine_mode, captures, simd) and
+# rule X5 checks. Two id spaces on purpose: one a human types, one a machine
+# derives and can verify (testees/pcre2/configs.toml's own comment, same
+# rule here).
+#
+# No version is written here. It is PROBED from the loaded library
+# (`tre_version()`) on every run: a hand-typed version would silently
+# rename the testee the day the distro package moves.
+#
+# ONLY `tre-default` exists -- and this is the WHOLE roster, not a first
+# entry beside later siblings. TRE's three bounds (TRE_MAX_RE = 65536,
+# TRE_MAX_STRING = INT_MAX, TRE_MAX_STACK = 1,048,576 B) are fixed
+# compile-time constants with no `tre_set_*`-shaped configuration function
+# anywhere in tre.h/regcomp.c ([B7]/L6b, capability_set_v1.md 8's own
+# roster table: "none -- TRE offers no space/speed trade at all on this
+# axis"). `tre_regaexec`'s approximate-matching cost budget
+# (`regaparams_t.max_cost`) answers a DIFFERENT question (edit-distance
+# fuzzy matching) and this bench does not use TRE's approximate-matching
+# extension at all.
+
+[testees.tre-default]
+engine_mode = "default"
+captures = "on"
+description = "TRE 0.9.0 (system libtre, direct-linked): REG_EXTENDED (no REG_NEWLINE), tre_regncompb/tre_regnexecb (byte-literal, explicit-length) -- a POSIX leftmost-longest engine, TNFA (linear-time) for backreference-free patterns, backtracking (bounded by TRE_MAX_STACK) once a backreference is present ([B7]/L6b, capability_set_v1.md 8/11.1). See testees/tre/CLAUDE.md for the convention, every syntactic divergence from PCRE this lane found, and the two silent-misparse hazards (\\K, (*NAME)) it uncovered."
