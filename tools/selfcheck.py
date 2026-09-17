@@ -5885,12 +5885,27 @@ def _committed_at_any_pin(committed, block):
 #: refused at 1,089,110 B at d34c9131 -- exactly the control's own premise
 #: check catches ("it compiled -- pick a wider rung"). Re-derived from a
 #: direct sweep of the [B31] census at cd371441 (the altwide refusal-
-#: boundary check above has the same finding, by ROUTE): `wb-512` is the
-#: cheapest auto-route refusal still standing at this pin (1,514,697 B,
+#: boundary check above has the same finding, by ROUTE): `wb-512` was the
+#: cheapest auto-route refusal still standing at that pin (1,514,697 B,
 #: refuses even after the drop rung -- the [K53-SELRETRY] rescue is not
 #: always enough), 1.58 s either way in the same census's terms.
+#:
+#: THE AUTO ARM MOVED AGAIN AT cf0962e3, `wb-512` -> `w-1024` ([B42]-tail
+#: re-pin, 2026-09-17, the manager's landing-bar fix on lane b45repin --
+#: this check's own premise arm caught it, exactly as designed). pcrec K59
+#: (inbox I-73's pin) added the PREMULTIPLIED-TABLE DROP to the size
+#: drop-ladder, and the two rungs TOGETHER now land `wb-512` under the
+#: default cap where [K53-SELRETRY] alone could not: MEASURED at the pin,
+#: `wb-512` under `pcrec-auto` compiles at 905,834 emit-measure bytes
+#: (917,086 file bytes, 2.3 s) with pcrec's own two rescue notes -- the
+#: anchored match-here machine dropped ([K53]) AND the premultiplied DFA
+#: table dropped ([K59]) -- plus the 250,000 advisory warning. Re-swept
+#: at cf0962e3: `w-1024` is the cheapest auto-route refusal still
+#: standing ("pattern too large: 1243275 bytes ... (limit 1000000)",
+#: 5.6 s) and compiles under the 8 MiB raise (1,263,319 B, 2.8 s) -- both
+#: of the control's premises, measured.
 _CAP_PAIRS = (("pcrec-vm-bigcap", "pcrec-vm", "w-512"),
-              ("pcrec-auto-bigcap", "pcrec-auto", "wb-512"))
+              ("pcrec-auto-bigcap", "pcrec-auto", "w-1024"))
 
 
 class _ArgvSpy:

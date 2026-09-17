@@ -1818,9 +1818,18 @@ once per artifact regardless of engine, route or scan-edge-machine
 count — simpler than the previous re-pin's two-term decomposition
 (`B42_STARTPOS_GUARD_LINES` + `B42_PORTFIX_SEMI_PER_MACHINE`), because
 this stamp is a single file-scope `#define` rather than a per-machine
-label edit. No cap-adjacent stderr size-drop rescue note was observed
-on any witness compiled during this re-pin's verification (none of the
-four witnesses sits near a cap; the ask stands open for the first
-window that revisits `bench/altwide`'s bigcap cells or `bench/bounded`'s
-ladder). Catalogue **1.4** (`[[pin_order]]` append: `cf0962e3`). Sixteen
-pinned configs, unchanged.
+label edit. The cap-adjacent size-drop rescue I-73 promised WAS
+observed — by the full `make check`'s own [B31] premise arm, not by
+the four witnesses (none sits near a cap): altwide `wb-512` under
+`pcrec-auto`, the cap control's refusal witness since cd371441, now
+COMPILES at the default cap (905,834 emit-measure bytes, 917,086 file
+bytes, 2.3 s) under BOTH drop-ladder rungs — the [K53-SELRETRY]
+anchored match-here machine drop AND K59's new premultiplied-table
+drop, each with its own `pcrec: note:` line, plus the 250,000
+advisory warning. The control's auto arm moved `wb-512` → `w-1024`
+(refuses at 1,243,275 B in 5.6 s; compiles under the 8 MiB raise at
+1,263,319 B in 2.8 s — both premises re-measured at the pin;
+`tools/selfcheck.py` `_CAP_PAIRS`). The wider altwide
+refusal-boundary re-derivation belongs to the next altwide window,
+not this re-pin. Catalogue **1.4** (`[[pin_order]]` append:
+`cf0962e3`). Sixteen pinned configs, unchanged.
