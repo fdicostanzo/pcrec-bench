@@ -20,16 +20,39 @@ catalogue instead.
 
 A sidecar is **generated and never hand-edited**. Its opening HTML
 comment stamps the report path and its sha256, the index path and its
-sha256, the predictions file (if any) and its sha256, the catalogue
-version, and the `interpret`/`reporter` versions — `make check-interpret`
-section 3 re-renders every committed sidecar from that stamp and requires
-byte equality, so a stale one is a `make check` failure. Regenerate one
-with the skill, never by hand: `/pcrec-bench-interpret <report>`
+sha256, the predictions file (if any) and its sha256, the subject-grain
+file (if any) and its sha256 ([B47], `interpret_subject_grain_v1.md` §6
+Q10, unconditional since catalogue 2.0), the catalogue version, and the
+`interpret`/`reporter` versions — `make check-interpret` section 3
+re-renders every committed sidecar from that stamp and requires byte
+equality, so a stale one is a `make check` failure. Regenerate one with
+the skill, never by hand: `/pcrec-bench-interpret <report>`
 (`.claude/skills/pcrec-bench-interpret/SKILL.md`), whose own text states
 the full opinion-firewall rule — a wrong or missing finding is a
 catalogue change (`catalogue/rules.toml`), not an edit to the rendered
 file. Committed today: the three `docs/design/interpreter_v1.md` §10
-acceptance reports (A, B, C); the rest are generated on demand (§11 Q5).
+acceptance reports (A, B, C) plus the capability-0.1 first sample; the
+rest are generated on demand (§11 Q5).
+
+## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
+
+A group may also carry `<name>.subject-grain.tsv` beside its
+`.subject-grain.md` — the §6 Q4 SLICE
+(`pcrecbench report --grain subject --format tsv --subject-grain-slice`,
+`docs/design/interpret_subject_grain_v1.md` §6.7): every `record` row,
+every `rank` row's `median_ns` metric (the other five per-cell metrics
+dropped), and the `excluded`/`not_ranked`/`scratch`/`did_not_compile`
+sections whole, with `compile`/`compile_stamp` dropped outright — same
+18-column shape as the plain `.tsv`, ×4.8 its size rather than the full
+`--grain subject`'s ×28.5. It is `interpret`'s second input
+(`--subject-grain`), consulted by R-BUCKET-DOMINATED and by any
+prediction clause whose selector names `grain=subject`. **No back-fill**
+(§6 Q9): exactly one group carries one today,
+`2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8` (chosen for
+a real R-BUCKET-DOMINATED firing — `orig`/`large-subject-throughput`/
+`libpcre2_10.46_interp-caps-simdna` at a 99.877% share on subject
+`t-a-valid-addrs`); new samples and on-demand requests are the only
+route to a second one.
 
 **KB-18 (2026-09-17, lanes b42repdiag → b42repfin) regenerated EVERY
 committed report against reporter `v17 (2026-09-17)`** (a did-not-compile

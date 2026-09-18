@@ -1,4 +1,46 @@
-# The interpreter — design note v1.3 ([B13])
+# The interpreter — design note v1.4 ([B13])
+
+**v1.4, 2026-09-17 (lane `b47subgrain`, [B42] follow-up (iii)'s eleven §6
+rulings, Frank ratified in full, live)** — folds
+`docs/design/interpret_subject_grain_v1.md`'s RULINGS into this note as
+the design of record; that file stays the derivation record (§6 Q11).
+Catalogue **2.0** (MAJOR, §6 Q3 — a rule now reads a second declared
+file). In one list: a prediction selector gains a SIXTH key,
+`grain=subject` (§6.7, new; §6 Q1/Q2), routing a clause to
+`--subject-grain PATH` instead of the primary report — absent that key
+every existing predictions file evaluates exactly as before; the
+reporter commits the §6 Q4 SLICE (`pcrecbench report --grain subject
+--format tsv --subject-grain-slice`, `render_tsv_subject_grain_slice`),
+5.62 MiB against the full grain's 33.5 MiB on the note's own measured
+query, and `reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-
+692c2e8.subject-grain.tsv` is the first one committed, giving
+R-BUCKET-DOMINATED its first real firing (§4.7's `example` corrected;
+§2.5's "recorded as follow-up" line for it is retired — the mechanism
+is implemented, not merely available); `pcrecbench.interpret._select`'s
+DEFAULT section read for the four failure-population quantities
+(`n_wrong`, `n_gave_up`, `pass_rate`, `status`) widens from `rank` alone
+to `rank` UNION `excluded` (base rows only), closing the corpus-wide
+tautology §5 describes (ruling (α), §6 Q7) — MEASURED on the capability-
+0.1-first report: P5 flips from a false `confirmed` (worst 0.000,
+masking `date-nested-plus`) to the correct `refuted` (worst 10.000 on
+`evil-alt-nested`), the exact verdict the ledger reached by hand; any
+EVALUATED clause (not only a not-evaluable one) is annotated with what
+its selector reaches outside that default read (ruling (β)) — MEASURED
+on two real syntax predictions (P11, P13), each now carrying an
+"; also present in: excluded (N)" / "did_not_compile (N)" clause. The
+`build_stamp`/`check_interpret.py` §3 freshness gap (§2.0 (a3), §6 Q10)
+is fixed UNCONDITIONALLY: `build_stamp` now records `subject_grain` /
+`subject_grain_sha256` on every stamp (`(none)` where absent), and
+section 3's re-render reads them back. No goldens moved beyond what
+(α)/(β)/the stamp fix change; the three §10 acceptance reports and their
+own goldens/sidecar are regenerated and `make check-interpret` is
+147/147 (up from 133) — the six new checks are section 4's new
+R-BUCKET-DOMINATED and R-PRED fixtures (a real firing, a real
+`grain=subject` confirm/refute pair, an `input-absent` control, and an
+(α) confirm/refute pair on a real excluded cell). §10's acceptance test
+still runs 25/25 unaffected (none of its three reports/predictions
+exercises `grain=subject`, and (α)/(β) touch no MUST/MUST-NOT item
+there). Full disposition: `docs/dev/lanes/b47subgrain_report.md`.
 
 STATUS: **IMPLEMENTED (lane b13impl, 2026-09-09)** — part 1 is built
 against v1.2 as it stood: `catalogue/rules.toml` (catalogue **1.1** as
@@ -478,8 +520,12 @@ derivation, none is required for a rule to be correct):
   | no-data | other` for the `now measured (was: …)` verdict and throws
   it away for the excluded row. Until it is emitted, R-STATUS-3's
   template says only what the columns support (§4.1).
-- `<name>.subject-grain.tsv` for every report group, which would let
-  R-BUCKET-DOMINATED fire (Q2, ruled: `input-absent` until then).
+- ~~`<name>.subject-grain.tsv` for every report group, which would let
+  R-BUCKET-DOMINATED fire (Q2, ruled: `input-absent` until then).~~
+  **IMPLEMENTED, v1.4** (`interpret_subject_grain_v1.md` §6, ratified):
+  the mechanism exists (§6.7), and one report group carries the file —
+  see §4.7's corrected `example`. Not back-filled to the other 42 groups
+  (§6 Q9).
 - an `expectation_detail` slot that would make R-BUCKET-KB reachable
   (§4.7, B4 — **not designed here**, and the reason is stated there).
 
@@ -1397,7 +1443,7 @@ that must resolve to a committed file (§7.3).
 | R-BUCKET-FORM | set | `[]` | a ranking group whose *rankable* rows carry both `same program` and `separate artifact` in `fact` | pcrec has no end-anchored mode, so its whole-subject form is a SECOND ARTIFACT `(?:P)\z`; libpcre2 reaches the same regime with `PCRE2_ANCHORED\|PCRE2_ENDANCHORED` on its ordinary artifact. Source: docs/design/record_schema.md §5; report.py `_form_fact` ([B9] R4); pcrec [OS-4]. |
 | R-BUCKET-VSBEST | set | `[]` | a ranking group carrying ≥ 2 distinct pcrec pin slugs | `vs best` inverts visually wherever an OLDER pin's row ranks first; read same-pin rows or the Δ column. Source: reports/CLAUDE.md's reader's caveat (the a7e0bdf bounded entry), which records the "8192 inversion" REFUTED as a cross-pin `vs best` mis-reading ([B25]). |
 | R-BUCKET-SPAN | set | `["config"]` | a cross-pin pair whose two pins are not adjacent in `[[pin_order]]` | the Δ spans more than one pin and is not a one-variable comparison. Source: reports/CLAUDE.md ("the bounded `vm-in` row's Δ partner is 288d505, not 334fd10e … spans THREE abi steps (16 → 22 → 23)"). |
-| R-BUCKET-DOMINATED | set, subject | `["testee"]` | a set cell > 90 % one subject | a ratio between two such sums is a real number about a real total AND a statement about ONE subject wearing the set's name. Source: `_DOMINANCE_SHARE` (report.py `_dominant_subject`'s docstring, [B16] R7). **Needs a subject-grain TSV** (§11 Q2, ruled (a): `input-absent` until the reporter commits one) — `grain` names BOTH (corrected here, v1.3): its input is that subject-grain sidecar regardless of which grain the report under interpretation itself is, so `input-absent` is the honest answer on either. |
+| R-BUCKET-DOMINATED | set, subject | `["testee"]` | a set cell > 90 % one subject | a ratio between two such sums is a real number about a real total AND a statement about ONE subject wearing the set's name. Source: `_DOMINANCE_SHARE` (report.py `_dominant_subject`'s docstring, [B16] R7). **Needs a subject-grain TSV** (§11 Q2, IMPLEMENTED v1.4, §6.7) — `grain` names BOTH (corrected here, v1.3): its input is that subject-grain sidecar regardless of which grain the report under interpretation itself is, so `input-absent` is the honest answer on a report with none supplied; one committed report group (email-specimen-0.1's repin-692c2e8) carries one, giving the rule its first real firing (§6 Q9: not back-filled to the other 42). |
 | R-BUCKET-KB | set | `["kb_id"]` | a cell matching a REGISTERED signature | **No signature is registered in catalogue v1.0. See below.** |
 
 **R-BUCKET-FORM's predicate says *rankable* deliberately**: the `fact`
@@ -1713,10 +1759,13 @@ note            "no compile time beyond x10 the median on any compiled testee"
   key list omitted `section` while §6.6's own P1 transcription already
   used it, `selector section=did_not_compile;testee=pcrec_*`, which was
   otherwise inexpressible against a grammar that did not name the key it
-  matched on). `*` is the only wildcard, and a `|`-joined alternation is
-  permitted in one field (`pattern=anc-caret|anc-A|anc-G`). A testee glob
-  may name a config without a pin (`pcrec_*_auto-caps-simdna`) so a
-  prediction survives a re-pin.
+  matched on) **and, since v1.4, `grain`** (§6.7: `set` | `subject`,
+  routing the clause to `--subject-grain PATH` instead of the primary
+  report; absent, or `grain=set`, means what every selector meant before
+  this key existed). `*` is the only wildcard, and a `|`-joined
+  alternation is permitted in one field (`pattern=anc-caret|anc-A|anc-G`).
+  A testee glob may name a config without a pin (`pcrec_*_auto-caps-
+  simdna`) so a prediction survives a re-pin.
 - **`quantity`** is drawn from a CLOSED SET the TSV can answer, declared
   in the catalogue and validated at load:
   `median_ns | min_ns | max_ns | stddev_ns | ratio_vs_baseline |
@@ -1742,12 +1791,17 @@ note            "no compile time beyond x10 the median on any compiled testee"
   (or the `compile` section for a `compile:` quantity), never every
   section at once (v1.3, `docs/dev/lanes/b13impl_report.md`'s
   deviation 10 — §6.3 did not previously say which section a
-  section-less selector reads). This is the reading §6.6's own P2
-  transcription depends on: P2.a is an `excluded` cell by construction
-  and P2.d lands in `did_not_compile`, and both are found by their
-  OWN mechanism, `_elsewhere` below, rather than by widening the default
-  section set. A selector that DOES name `section` reads exactly the
-  section(s) named, by glob.
+  section-less selector reads) — **EXCEPT, since v1.4 (§6.7, ruling
+  (α)), for the four failure-population quantities (`n_wrong`,
+  `n_gave_up`, `pass_rate`, `status`), whose section-less default is
+  `rank` UNION `excluded`** (base rows only, `metric=pass_rate`). This
+  is the reading §6.6's own P2 transcription depends on: P2.a is an
+  `excluded` cell by construction and P2.d lands in `did_not_compile`,
+  and both are found by their OWN mechanism, `_elsewhere` below (which,
+  since v1.4, also annotates an EVALUATED clause with what it finds
+  outside its own default read — ruling (β) — not only an unevaluable
+  one). A selector that DOES name `section` reads exactly the
+  section(s) named, by glob, at either grain.
 - **`reducer`** (optional) turns a population into one number or one
   set: `identity | ratio_to(<selector>) | ratio_to_median_over(<key>) |
   ratio_max_min_over(<key>) | rank_over(<key>) | count | set_of(<key>) |
@@ -1954,6 +2008,109 @@ output and are authoritative; the parent verdict is the stated
 arithmetic; a ledger's tally is a human reading and the tool must not try
 to reproduce it.** The four disagreements are the "no opinions" property
 working, and a reader who wants the human tally has the ledger.
+
+### §6.7 The `grain=subject` selector key, and the (α)/(β) default fix (v1.4, `interpret_subject_grain_v1.md` §6, ratified in full)
+
+**Q1/Q2 — a sixth selector key.** §6.3's closed key list
+(`pattern`, `subject_or_na`, `regime_or_na`, `form`, `testee`, `section`)
+gains a SEVENTH: `grain`, whose only legal values are `set` (the
+default, unwritten) and `subject`. A clause naming `grain=subject` is
+evaluated against the SECOND input, `--subject-grain PATH` (§2.0's
+half-built mechanism, now completed), instead of the primary report:
+the same rule's declared `inputs` — R-PRED-1's, which already names
+every section — bound to a second `RuleView` over that file, exactly
+the pattern `r_bucket_dominated` already used for its own subject-grain
+read. `grain=subject` with no `--subject-grain` file supplied is
+`not-evaluable` BY NAME ("the clause selects grain=subject but no
+--subject-grain input was supplied"), never silently read as if it said
+`grain=set`. A `ratio_to(<selector>)` reducer's own inner selector is
+evaluated against the SAME grain the outer clause resolved to — the
+inner argument does not carry a second, independent `grain=` key.
+
+**Q3 — the catalogue bump.** Reading a second declared file is a
+catalogue MAJOR (§3.3's own bar, "`inputs` change in a way that reads a
+different column" — a different FILE is at least that): catalogue
+**2.0**. R-BUCKET-DOMINATED's own predicate/threshold/`inputs` are
+UNCHANGED by this bump; only its `example` moves (§4.7 corrected below).
+
+**Q4 — the committed input is the SLICE, not the full grain.** The
+reporter's `render_tsv_subject_grain_slice` (`pcrecbench/report.py`,
+`--grain subject --format tsv --subject-grain-slice`) keeps every
+`record` row, every `rank` row's `median_ns` metric (dropping the five
+others), and the `excluded`/`not_ranked`/`scratch`/`did_not_compile`
+sections whole, dropping `compile`/`compile_stamp` outright — MEASURED
+at 5.62 MiB against the full grain's 33.5 MiB on the note's own query,
+a strict superset of everything R-BUCKET-DOMINATED and every §4
+acceptance case need. Same header, same 18 columns: `ReportTsv` reads
+it with no code change. The full `--grain subject --format tsv` render
+(no slice flag) stays available ad hoc for a human.
+
+**Q5 — not coupled to a reporter refactor.** The fourth store load a
+`.subject-grain.tsv` costs (~100 s / ~680 MiB on the note's own
+measurement, a ~33% increase on the three renderings a report group
+already pays) is NOT a precondition on a `report.main()` change that
+would render several grains from one `load_all` — that refactor is an
+unscoped follow-up, filed, not built here.
+
+**Q6 — two store-free load checks, OWED, not built in this lane.** The
+note's two load-time checks — a `compile:` quantity's selector may not
+name `subject_or_na`/`regime_or_na` (closes Cause B, P2's defect); every
+`testee=` glob must match ≥1 index testee for its own `(subbench,
+version)`, vacuous when unmeasured (closes Cause C, P4's defect) — are
+RULED YES but are a SEPARATE, store-free `load_predictions` change this
+lane did not implement (its own charter item; tracked as an OWED
+follow-up, `docs/dev/lanes/b47subgrain_report.md`).
+
+**Q7 — ruling (α)+(β), not the `section=` mandate.** `_select`'s DEFAULT
+population for the four failure-population quantities (`n_wrong`,
+`n_gave_up`, `pass_rate`, `status`) with no explicit `section=` clause
+widens from `rank` alone to `rank` UNION `excluded` (base rows only,
+`metric=pass_rate` — the same scoping R-STATUS-3 uses, so a P-2
+`giveup_smallest` detail row is never double-counted) — closing the
+corpus-wide tautology §5 states: 92,892 `rank` rows across every
+committed report, ZERO with `n_wrong>0` or `n_gave_up>0`, against 33 of
+111 `excluded` rows that do. **(β)**: `_elsewhere`, previously consulted
+only when a selector matched NOTHING, now also annotates an EVALUATED
+(confirmed/refuted) clause with what its own selector reaches OUTSIDE
+its default read — "; also present in: excluded (N)" — so the tool
+states its own population instead of a reader having to notice the gap.
+Neither change moves a `template`/`no_fire`/`legend`/`links` field
+(§8(6)'s human-review gate is untouched); both are `predicate`/
+`threshold_src` text and code (`pcrecbench/interpret.py`'s `_select` /
+`_sections_for` / `_elsewhere`). `section=` remains AVAILABLE and
+`docs/dev/predictions/CLAUDE.md` should document the new default (OWED,
+this lane's follow-up).
+
+**Q8 — the §10 goldens stay at set grain.** No acceptance report's
+predictions clause uses `grain=subject`; subject-grain coverage is new
+FIXTURES (`R-BUCKET-DOMINATED__firing`/`__control-not-dominated`,
+`R-PRED-1__grain-subject-confirmed`/`R-PRED-2__grain-subject-refuted`/
+`R-PRED-3__grain-subject-input-absent`, `R-PRED-1__alpha-narrow-
+selector-control`/`R-PRED-2__alpha-widened-default`), never a §10 MUST.
+
+**Q9 — no back-fill.** Exactly one `.subject-grain.tsv` is committed by
+this lane (email-specimen-0.1's repin-692c2e8 report, chosen because it
+carries a REAL R-BUCKET-DOMINATED firing, MEASURED: `orig`/`large-
+subject-throughput`/`libpcre2_10.46_interp-caps-simdna` reads
+`t-a-valid-addrs` at a 99.877% share). The other 42 committed report
+groups carry none; new samples and on-demand requests are the only
+route to a second one.
+
+**Q10 — the stamp gap, fixed unconditionally.** `build_stamp` records
+`subject_grain`/`subject_grain_sha256` on EVERY stamp regardless of
+whether `--subject-grain` was supplied (`(none)` when it was not), and
+`check_interpret.py` section 3's freshness re-render reads the recorded
+path back and passes it to its own re-render call. This was a live
+latent defect before v1.4 (unexposed only because no committed sidecar
+used the flag) and is now closed independently of every other ruling
+above.
+
+**Q11 — where this lives.** The rulings are folded in here (this
+section, plus §2.5's corrected follow-up list and §4.7's corrected
+`example`); `docs/design/interpret_subject_grain_v1.md` stays the
+derivation record — the measurements, the options priced, and the
+questions as originally put, with this section's ratified answers
+layered on top rather than rewritten into it.
 
 ---
 
@@ -2777,7 +2934,12 @@ settled. One remains Frank's.
   skew is live today.
 - **Q2** (subject-grain input for R-BUCKET-DOMINATED) — **RULED: (a)**,
   `input-absent` until a separate reporter change commits
-  `<name>.subject-grain.tsv` for every group.
+  `<name>.subject-grain.tsv` for every group. **IMPLEMENTED, v1.4**
+  (`interpret_subject_grain_v1.md` §6, ratified in full): §6.7 states
+  the mechanism as built — the reporter commits the §6 Q4 SLICE (not
+  the full grain), one group carries one (not a back-fill, §6 Q9), and
+  the predictions selector gained the same `grain=subject` route (§6
+  Q1/Q2, beyond what this question alone asked for).
 - **Q3** (should set-local outlier bands, `bench/*/NOTES.md`'s R0-R7,
   become catalogue-readable data in `subbench.toml`?) — **OPEN, Frank's
   call.** §1.1 says not in v1. For: the bands are already written before
