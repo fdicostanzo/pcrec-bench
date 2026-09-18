@@ -1,9 +1,24 @@
 """The INTERPRETER (part 1) -- `pcrecbench interpret`, [B13].
 
 A deterministic fact-finder over a committed report TSV and
-`store/index.tsv`. Specified by `docs/design/interpreter_v1.md` (v1.2);
-the rules themselves live in `catalogue/rules.toml`, which is the
-contract this module is checked against by `make check-interpret`.
+`store/index.tsv`. Specified by `docs/design/interpreter_v1.md` (v1.2)
+and, for SUBJECT GRAIN, `docs/design/interpret_subject_grain_v1.md` (§6
+ratified in full, 2026-09-17); the rules themselves live in
+`catalogue/rules.toml`, which is the contract this module is checked
+against by `make check-interpret`.
+
+A prediction clause may name a sixth selector key, `grain=subject`,
+routing it to a SECOND input -- `--subject-grain PATH`, a subject-grain
+report TSV (the SLICE `pcrecbench report --grain subject --format tsv
+--subject-grain-slice` renders) -- instead of the primary report; absent
+that key, or supplied `--subject-grain` but a clause not asking for it,
+nothing changes from before subject grain existed. `_select`'s default
+section read is also widened for the four FAILURE-POPULATION quantities
+(`n_wrong`, `n_gave_up`, `pass_rate`, `status`): `rank` UNION `excluded`
+rather than `rank` alone, closing a corpus-wide tautology a `rank`-only
+default produced (ruling (α)); `_elsewhere` annotates an EVALUATED
+clause with what its own selector reaches outside that default read,
+not only an unevaluable one (ruling (β)).
 
 Three properties this file exists to keep (interpreter_v1.md §7):
 
@@ -1588,7 +1603,26 @@ REDUCERS = {"identity", "ratio_to", "ratio_to_median_over",
             "min", "median"}
 
 SELECTOR_KEYS = {"pattern", "subject_or_na", "regime_or_na", "form", "testee",
-                 "section"}
+                 "section", "grain"}
+
+# interpret_subject_grain_v1.md §6 Q2 (ratified): a sixth selector key,
+# `grain=subject`, says WHERE a clause looks -- alongside the five keys
+# that say WHICH rows -- and routes the clause to the `--subject-grain`
+# input instead of the primary report. Absent, or `grain=set`, means
+# "the primary report", which is what every clause meant before this key
+# existed -- no committed predictions file changes behaviour.
+GRAIN_VALUES = {"set", "subject"}
+
+# interpret_subject_grain_v1.md §5.3/§5.4, ruling (α): for these four
+# FAILURE-POPULATION quantities, a selector naming no `section` now reads
+# `rank` UNION `excluded` (base rows only, `metric=pass_rate`) rather
+# than `rank` alone -- closing the corpus-wide tautology a `rank`-only
+# default produced (MEASURED, the note's §5.2: 92,892 `rank` rows across
+# every committed report, ZERO with `n_wrong>0` or `n_gave_up>0`, while
+# 33 of 111 `excluded` rows do). A quantity outside this set is
+# unaffected: its default stays `rank` (or `compile` for a `compile:`
+# quantity), exactly as interpreter_v1.md §6.3 already states.
+_FAILURE_QUANTITIES = {"n_wrong", "n_gave_up", "pass_rate", "status"}
 
 
 class PredictionError(InterpretError):
@@ -1609,6 +1643,10 @@ def parse_selector(text, where):
             raise PredictionError(
                 f"{where}: selector key {k!r} is not one of the closed set "
                 f"{sorted(SELECTOR_KEYS)}")
+        if k == "grain" and v not in GRAIN_VALUES:
+            raise PredictionError(
+                f"{where}: grain {v!r} is not one of the closed set "
+                f"{sorted(GRAIN_VALUES)} (interpret_subject_grain_v1.md §6 Q2)")
         out[k] = v
     return out
 
@@ -1703,28 +1741,52 @@ _COMPILE_METRIC = {"compile:median_total_ns": ("median_total_ns",
                    "compile:emit_code_bytes": ("emit_code_bytes",)}
 
 
+def _sections_for(pred):
+    """The sections a selector reads BY DEFAULT (no explicit `section`
+    clause): `compile` for a `compile:` quantity; `rank` UNION `excluded`
+    for one of the four failure-population quantities (ruling (α),
+    interpret_subject_grain_v1.md §5.3/§5.4); `rank` otherwise -- exactly
+    interpreter_v1.md §6.3's rule, extended by (α) alone."""
+    sel = pred["_selector"]
+    section = sel.get("section")
+    quantity = pred["quantity"]
+    if quantity in _COMPILE_METRIC:
+        return ["compile"]
+    if section:
+        return [s for s in SECTIONS if _glob_match(section, s)]
+    if quantity in _FAILURE_QUANTITIES:
+        return ["rank", "excluded"]
+    return ["rank"]
+
+
 def _select(view, pred, sections=None):
     """The prediction's own selector, applied to the sections it names.
 
     A selector that names `section` reads exactly those sections. One
-    that does not reads `rank` (or `compile` for a `compile:` quantity)
-    -- and `_elsewhere` below is what finds the same cell in the
-    excluded / not-ranked / did-not-compile / scratch sections so
-    R-PRED-3 can say WHERE it went instead of "absent".
+    that does not reads `_sections_for`'s default -- and `_elsewhere`
+    below is what finds the same cell in whatever section its default
+    read did NOT cover, so R-PRED-3 can say WHERE it went instead of
+    "absent", and (β) can annotate a CONFIRMED/REFUTED clause with what
+    else the same selector touches.
+
+    `grain` is popped and never glob-matched (it routes which VIEW is
+    passed in, §6 Q1/Q2 -- the caller's job, not this function's); the
+    `excluded` section, read under the (α) DEFAULT (not an explicit
+    `section=` clause), is scoped to `metric=pass_rate` base rows so a
+    P-2 `giveup_smallest` detail row is never double-counted (the same
+    scoping R-STATUS-3 uses, interpreter_v1.md §4.1).
     """
-    sel = dict(pred["_selector"])
-    section = sel.pop("section", None)
-    quantity = pred["quantity"]
+    sel = {k: v for k, v in pred["_selector"].items()
+           if k not in ("section", "grain")}
+    explicit_section = "section" in pred["_selector"]
     if sections is None:
-        if quantity in _COMPILE_METRIC:
-            sections = ["compile"]
-        elif section:
-            sections = [s for s in SECTIONS if _glob_match(section, s)]
-        else:
-            sections = ["rank"]
+        sections = _sections_for(pred)
     rows = []
     for s in sections:
         for r in view.rows(s):
+            if s == "excluded" and not explicit_section \
+                    and r["metric"] != "pass_rate":
+                continue
             if not all(_glob_match(g, r[k]) for k, g in sel.items()):
                 continue
             rows.append(r)
@@ -1735,11 +1797,20 @@ _ELSEWHERE = ("excluded", "not_ranked", "did_not_compile", "scratch")
 
 
 def _elsewhere(view, pred):
-    """The non-ranked sections a prediction's cell landed in, if any."""
+    """The sections OUTSIDE the selector's own default read that still
+    carry a matching row, as {section: count} -- ruling (β)'s mechanism.
+    Never consulted for a selector that names `section` explicitly (it
+    already read exactly what it asked for)."""
     if "section" in pred["_selector"]:
-        return set()
-    rows = _select(view, pred, sections=list(_ELSEWHERE))
-    return {r["section"] for r in rows}
+        return {}
+    primary = set(_sections_for(pred))
+    others = [s for s in _ELSEWHERE if s not in primary]
+    if not others:
+        return {}
+    counts = defaultdict(int)
+    for r in _select(view, pred, sections=others):
+        counts[r["section"]] += 1
+    return counts
 
 
 def _value_of(row, quantity):
@@ -1918,12 +1989,32 @@ def _op_holds(pred, value):
             "gte": v >= bound, "eq": v == bound, "neq": v != bound}[op]
 
 
+def _elsewhere_note(counts):
+    """(β)'s annotation text, or '' when there is nothing to say."""
+    if not counts:
+        return ""
+    return ("; also present in: "
+            + ", ".join(f"{s} ({n})" for s, n in sorted(counts.items())))
+
+
 def evaluate_predictions(cat, report, index, predictions, ctx):
     """Score every clause, then roll each parent prediction up by §4.6's
     arithmetic: all-confirmed -> R-PRED-1, all-refuted -> R-PRED-2, any
-    mix -> R-PRED-4, no evaluable clause -> R-PRED-3."""
+    mix -> R-PRED-4, no evaluable clause -> R-PRED-3.
+
+    §6 Q1/Q2 (ratified): a clause whose selector names `grain=subject`
+    is evaluated against `ctx.subject_grain` instead of the primary
+    report -- the SAME rule's declared `inputs` (R-PRED-1's, which
+    already names every section) bound to a second `RuleView`, exactly
+    the pattern `r_bucket_dominated` already uses. A `grain=subject`
+    clause with no `--subject-grain` file supplied is `not-evaluable`
+    with a reason that says so BY NAME, never silently read as if it
+    said `grain=set`.
+    """
     rule = next(r for r in cat["rule"] if r["id"] == "R-PRED-1")
-    view = RuleView(rule, report, index)
+    set_view = RuleView(rule, report, index)
+    subject_view = (RuleView(rule, ctx.subject_grain, index)
+                    if ctx.subject_grain is not None else None)
     by_parent = defaultdict(list)
     for p in predictions:
         by_parent[p["prediction_id"]].append(p)
@@ -1933,6 +2024,14 @@ def evaluate_predictions(cat, report, index, predictions, ctx):
         clauses = sorted(by_parent[pid], key=lambda p: p["clause"])
         per = []
         for p in clauses:
+            wants_subject = p["_selector"].get("grain") == "subject"
+            if wants_subject and subject_view is None:
+                per.append((p, "not-evaluable",
+                            f"{p['prediction_id']}{p['clause'] or ''}: the "
+                            f"clause selects grain=subject but no "
+                            f"--subject-grain input was supplied", ""))
+                continue
+            view = subject_view if wants_subject else set_view
             rows = _select(view, p)
             for r in rows:
                 coverage.add((r["pattern"], r["regime_or_na"], r["form"],
@@ -1943,7 +2042,9 @@ def evaluate_predictions(cat, report, index, predictions, ctx):
                     per.append((p, "not-evaluable",
                                 f"{p['prediction_id']}{p['clause'] or ''}: the "
                                 f"selected cell is in the "
-                                + ", ".join(sorted(other)) + " section", ""))
+                                + ", ".join(f"{s} ({n})" for s, n
+                                           in sorted(other.items()))
+                                + " section", ""))
                 else:
                     per.append((p, "not-evaluable",
                                 f"{p['prediction_id']}{p['clause'] or ''}: no "
@@ -1961,7 +2062,12 @@ def evaluate_predictions(cat, report, index, predictions, ctx):
                                                 "value", ""))
                 continue
             bad = [(lbl, v) for lbl, v in reduced if not _op_holds(p, v)]
-            measured = _measured_text(p, reduced, bad, kind)
+            # (β): a clause that DID evaluate is still annotated with
+            # what the same selector reaches outside its own default
+            # read -- the tool stating its own population rather than
+            # a reader having to notice the gap by hand.
+            measured = _measured_text(p, reduced, bad, kind) \
+                + _elsewhere_note(_elsewhere(view, p))
             per.append((p, "refuted" if bad else "confirmed", "", measured))
         n_c = sum(1 for _p, v, _r, _m in per if v == "confirmed")
         n_r = sum(1 for _p, v, _r, _m in per if v == "refuted")
@@ -2060,16 +2166,24 @@ def interpret(report_path, index_path, catalogue_path, predictions_path=None,
     if fmt == "tsv":
         return render_facts_tsv(results)
     stamp = build_stamp(cat, report, report_path, index_path,
-                        predictions_path, root)
+                        predictions_path, root, subject_grain_path)
     return render_markdown(results, ctx, stamp)
 
 
-def build_stamp(cat, report, report_path, index_path, predictions_path, root):
+def build_stamp(cat, report, report_path, index_path, predictions_path, root,
+                subject_grain_path=None):
     """The sidecar's stamp block (§9.2), built in ONE place: the CLI render
     and `check-interpret` section 5's re-render-from-facts both call this,
     so the two cannot drift (they did, at the [B13.3] merge, when the check
     carried its own copy and the path rule changed under it). Paths are
-    `display_path`'s repo-relative form."""
+    `display_path`'s repo-relative form.
+
+    `subject_grain_path` is recorded UNCONDITIONALLY (interpret_subject_
+    grain_v1.md §2.0 (a3) / §6 Q10, ratified): before this fix the stamp
+    did not name the `--subject-grain` input at all, so a sidecar rendered
+    WITH it would re-render WITHOUT it at `check-interpret` section 3's
+    freshness check -- a live latent defect, unexposed only because no
+    committed sidecar used the flag yet."""
     return [
         ("report", display_path(report_path, root)),
         ("report_sha256", sha256_of(report_path)),
@@ -2079,6 +2193,10 @@ def build_stamp(cat, report, report_path, index_path, predictions_path, root):
          if predictions_path else "(none)"),
         ("predictions_sha256",
          sha256_of(predictions_path) if predictions_path else "(none)"),
+        ("subject_grain", display_path(subject_grain_path, root)
+         if subject_grain_path else "(none)"),
+        ("subject_grain_sha256",
+         sha256_of(subject_grain_path) if subject_grain_path else "(none)"),
         ("catalogue", cat["catalogue_version"]),
         ("interpret", INTERPRET_VERSION),
         ("reporter", report.header.get("reporter", "?")),
@@ -2098,7 +2216,13 @@ def build_argparser():
                     help="the record index (default: store/index.tsv; the "
                          "golden check passes a frozen snapshot instead)")
     ap.add_argument("--predictions", help="a docs/dev/predictions/<slug>.tsv")
-    ap.add_argument("--subject-grain", help="a subject-grain report TSV")
+    ap.add_argument("--subject-grain",
+                    help="a subject-grain report TSV (the 5.62 MiB SLICE "
+                         "`pcrecbench report --grain subject --format tsv "
+                         "--subject-grain-slice` renders, interpret_"
+                         "subject_grain_v1.md §6 Q4): consulted by "
+                         "R-BUCKET-DOMINATED and by any prediction clause "
+                         "whose selector names `grain=subject`")
     ap.add_argument("--catalogue", default="catalogue/rules.toml")
     ap.add_argument("--format", choices=("tsv", "md"), default="tsv")
     ap.add_argument("--render", action="store_true",
