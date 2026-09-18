@@ -1114,14 +1114,6 @@ sentence -- Frank's context-around-numbers directive
 reader gets what was read and what the tokens mean in the same file as
 the numbers, not in a separate design note.
 
-`scripts/matrix_page.py` (new, committed, stdlib-only) renders any
-`.matrix.tsv` into a self-contained interactive HTML page: a sticky
-matrix table, a log-scale colour ramp from x1 to x10^7, one chip style
-per status token, a hover tooltip with the cell's absolute median (`ns`,
-recovered from `best_ns` x the printed ratio) and testee id, the
-provenance comment rendered verbatim, and both a light and a dark theme.
-See its own module docstring and `scripts/CLAUDE.md`.
-
 `REPORTER_VERSION` bumps to `v18 (2026-09-18)`; this IS the every-
 committed-report-regenerates case (the version line moves on
 `render_markdown`/`render_tsv`'s existing output too, even though
