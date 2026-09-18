@@ -268,6 +268,89 @@ FIVE THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS:
   and the file the CLI-equivalence proof was run on. Ledger:
   `docs/dev/ledgers/2026-09-07-b36-syntax-first-d34c9131.md`.
 
+**[B48] reports (2026-09-18, lane b48read) ADDED two file groups — the
+2026-09-17/18 capability window at pcrec pin cf0962e3 (abi 26)** — and
+changed NOTHING else here: the reporter is unchanged at `v17
+(2026-09-17)`, no committed report was regenerated, no reporter code was
+touched. Both new groups carry an explicit `--since`/`--until` PAIR *and*
+an explicit `--testee` roster (the 2026-08-30 rule and KB-5). The
+window: two runs (`build/windows/window_capability_20260918T011018Z.log`,
+21:10:18-01:19:30 EDT, 9 cells attempted; `..._20260918T052141Z.log`,
+01:21:42-01:37:11 EDT, the KB-21 retry of `re2-longest`'s failed first
+attempt), 9/9 cells eventually measured, store 169 → 178. The nine
+records were committed on master before these were rendered; this lane
+rendered from its own worktree's `store/` and commits no store file.
+
+RE-RENDER INVARIANT not applicable (both groups are NEW, not
+regenerations): each was CLI-generated directly (`python3 -m pcrecbench
+report ...`, no in-process script needed — a KB-16-narrowed query over an
+explicit roster loads only the matching records, seconds to tens of
+seconds, not the whole-store cost KB-16 exists to warn about) and each
+`.interpretation.md` sidecar was verified deterministic (a second,
+independent `interpret` invocation to stdout diffs clean against the
+committed file, both groups).
+
+TWO THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS:
+
+- **Report A verifies three pcrec-side FIXES cross-pin, and finds one
+  UNPREDICTED cost of the correct one.** The two I-72 erratum cells
+  (`mojibake-curly-quote`'s wrong answer, `wild-logparse-syslogbase-
+  expanded`'s artifact) and the F1 DFA-emitter comment-escape fix
+  (`wild-waf-crs-942500-comment-obfuscation`) all confirm fixed by
+  value — the reporter's own `R-DELTA-3` rule states the mojibake flip
+  as "now measured (was: wrong)" on all four pcrec configs without this
+  ledger inferring it. The one surprise: mojibake's forced-VM
+  `large-subject-throughput` cell reads `slower ×2.00` cross-pin — the
+  corrected byte pattern can no longer be dismissed as cheaply as the
+  argv bug's corrupted one was, a real (and expected, once traced) cost
+  of the fix being correct, not a regression.
+- **Report B's compile census had to be read from the records directly.**
+  `pcrecbench/report.py`'s own `did_not_compile_by_pattern` bucket is
+  built ONLY from `compile_outcome == "did-not-compile"` rows,
+  deliberately excluding `unsupported-by-declaration` — so NEITHER
+  report renders which patterns a new engine declined by capability
+  declaration. The ledger's §5.1/§5.2 census reads each record's
+  `compile`-kind rows directly to confirm the b46tags REQUIRES-tag
+  correction against the real corpus (not just the isolated witnesses
+  the audit lane used) and to build the five-engine refusal table.
+
+- `2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.md` — the
+  pcrec **CROSS-PIN AFTER**, a770139e vs cf0962e3, plus the three pcre2
+  baselines: eleven testees, four cells fresh (`pcrec_cf0962e3_
+  {auto,auto-nocaps,vm,vm-in}-caps-simdna`, 01:10:54Z-02:51:49Z). Query:
+  `report --subbench capability --version 0.1 --since
+  2026-09-17T00:00:00Z --until 2026-09-18T03:00:00Z` plus the eleven
+  `--testee` values (three pcre2 + four pcrec testee_ids at EACH pin) —
+  **12 record(s) matching this query, 11 included, 1 superseded** (the
+  `pcre2-dfa` `inconclusive-spread` history row from the first sample's
+  own pre-flight retry). `worst_other_core_busy: 49.26%`. Read
+  `docs/dev/ledgers/2026-09-18-capability-window-cf0962e3.md` §1-4 before
+  the numbers: §1 the two I-72 cells, §2 the three KB-20 give-up flips,
+  §3 the F1 fix, §4 the day's noise floor (93.2% of 2,904 Δ cells
+  `unchanged (within spread)`). `.subject-grain.md`/`.subject-grain.tsv`
+  (the catalogue-2.0 slice, [B47]) and `.tsv` the same query.
+- `2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.md` — the
+  **FIRST SAMPLE of the five ext-bench engines** on `bench/capability@0.1`:
+  `re2-default`, `re2-longest`, `onig-default`, `tre-default`,
+  `vectorscan-block-nosom`, five cells 03:33:45Z-05:22:17Z (the last a
+  KB-21 retry — the first `re2-longest` attempt refused at `store.write`
+  on a schema violation the same lane's own fix corrected same night, LOG
+  line 1764). No pcrec pin is involved; the label carries `cf0962e3`
+  as the WINDOW's own checkpoint identifier, not a claim that these
+  testees are pinned to it. Query: `report --subbench capability
+  --version 0.1 --since 2026-09-18T03:00:00Z --until
+  2026-09-18T06:00:00Z` plus the five `--testee` values — **5 record(s)
+  matching this query, 5 included, 0 superseded** (the failed first
+  `re2-longest` attempt wrote nothing at all, per KB-21). `worst_
+  other_core_busy: 76.52%`. Read the ledger's §5 before the numbers: the
+  b46tags REQUIRES-tag cross-check (§5.2), the boolean-grain confirmation
+  on `vectorscan-block-nosom` (§5.3, read from the record directly — no
+  report column shows `testee.grain`), and the correctness census (§5.4:
+  `evil-alt-nested`'s fourth response shape, the family-11 trio on both
+  leftmost-longest engines, TRE's own wider gap). `.subject-grain.md`/
+  `.subject-grain.tsv` and `.tsv` the same query.
+  Ledger for both groups: `docs/dev/ledgers/2026-09-18-capability-window-cf0962e3.md`.
+
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
 CLS-FOLD AFTER** — and changed NOTHING else here: the reporter is
