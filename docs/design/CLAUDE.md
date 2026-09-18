@@ -476,7 +476,7 @@ docs/dev/'s append-only records.
   read-only probes (`../dev/measurements/2026-09-18-predicate-audit-
   probes.txt` + five scripts, each importing `interpret`'s OWN functions
   rather than reimplementing the predicate it audits) supply every
-  number. **Eight defects are LIVE on committed sidecars**, three
+  number. **Ten defects are LIVE on committed sidecars**, three
   sharply: R-FLOOR-2 renders *"no ranked cell is at or below its set's
   own floor pattern"* on a report whose header reads `floor_pattern:
   none` and where the rule returned early without comparing anything —
@@ -490,7 +490,7 @@ docs/dev/'s append-only records.
   R-BUCKET-DOMINATED reports a dominance share *"of this cell's total"*
   for **8 of its 33 firings** on set cells the same report EXCLUDED from
   ranking, over a denominator that omits the failing subjects (94.6% over
-  73 ranked subjects with 2 excluded ones unseen). Fourteen further
+  73 ranked subjects with 2 excluded ones unseen). Twelve further
   findings are silent omissions or latent, the largest two being
   structural rather than textual: **R-ARM-1 cannot see an arm pair one
   of whose arms REFUSED to compile** — the strongest possible arm

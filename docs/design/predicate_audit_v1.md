@@ -31,9 +31,10 @@ four questions, and it audits the **rendered sentences** separately, because
 a sound predicate rendered as a sentence that omits its population is the
 same failure one step later.
 
-**What it found, in one paragraph.** Eight defects are LIVE — a committed
-sidecar renders a structurally unsound verdict today — of which the sharpest
-three are: R-FLOOR-2 renders *"no ranked cell is at or below its set's own
+**What it found, in one paragraph.** **Ten** defects are LIVE — a committed
+sidecar renders a structurally unsound verdict or an uninterpretable number
+today — of which the sharpest three are: R-FLOOR-2 renders *"no ranked
+cell is at or below its set's own
 floor pattern"* on a report whose set has **no floor pattern at all** and
 where the rule therefore never evaluated anything (and `interpreter_v1.md`
 §4.5 specifies a different rendering, so this is a build deviation, not a
@@ -41,9 +42,16 @@ design gap); R-DELTA-4 renders *"no prediction … selects that cell"* about
 cells a prediction names **by name** but could not evaluate; and
 R-BUCKET-DOMINATED renders a dominance share *"of this cell's total"* for
 eight cells the same report **excluded from ranking**, over a denominator
-that silently omits the subjects that failed. Fourteen further defects are
-silent omissions or latent. Two narrowings audited clean, and are recorded
-as clean so a later pass does not "fix" them.
+that silently omits the subjects that failed. Twelve further findings are
+silent omissions or latent, the two largest structural rather than textual:
+**R-ARM-1 cannot see an arm pair one of whose arms refused to compile** (532
+such triples in the corpus — the strongest possible arm difference, and
+exactly what the deny-flag testees exist to measure), and **the reporter has
+no "was measured, now failing" verdict at all**, so the whole R-DELTA class
+is blind to a regression that removed a cell from the ranking. Two
+narrowings audited CLEAN — and are recorded as clean, with the reason, so a
+later pass does not "fix" them — beside one population that is inert
+rather than sound.
 
 ---
 
@@ -181,7 +189,7 @@ The scoring path is `_sections_for` → `_select` → `_value_of` /
 | stage | the population question | verdict |
 |---|---|---|
 | `_sections_for` | §3.1 | see above |
-| `_select`'s `excluded` scoping | the `metric=pass_rate` scope applies **only** under the (α) default, not under an explicit `section=excluded` | **D** F14 — and `metric` is not a selector key, so an author cannot separate them |
+| `_select`'s `excluded` scoping | the `metric=pass_rate` scope applies **only** under the (α) default, not under an explicit `section=excluded` | **L** F14 — and `metric` is not a selector key, so an author cannot separate them |
 | `_keyed_values` | a row whose quantity column is empty or non-finite is DROPPED (`_float_or_none`) | sound, and the reason `did_not_compile` cannot be widened into |
 | `_reduce` (`ratio_to`) | the denominator's own population size is never stated; `med = sorted(denom)[len//2]` silently collapses N values to one | **O** F6b |
 | `_reduce` (`count`/`median`/`max`/`min`) | reduces over ROWS, which for a rank quantity is 6× the cells | **D** F6/F13 |
@@ -504,7 +512,7 @@ before reducing (MAJOR: it changes what a reducer computes — and it is the
 same fix F6 wants); plus a load check refusing an averaging reducer on a
 failure quantity, or (β)-style per-section row counts in the rendering.
 
-### F14 — LIVE, MEDIUM. An explicit `section=excluded` mixes two numbers under one column name
+### F14 — LATENT (mechanism in use), MEDIUM. An explicit `section=excluded` mixes two numbers under one column name
 
 `_select` scopes the `excluded` section to `metric=pass_rate` base rows
 **only when the section came from the (α) default** (`explicit_section` gate,
@@ -517,6 +525,15 @@ capability AFTER report selects **34 rows: 25 `pass_rate` base rows
 (n_gave_up = 25, 10, 75, 15 — trials) and 9 `giveup_smallest` rows
 (n_gave_up = 5, 2, 3, 15 — subjects)**, reduced together. A `max` returns
 75 trials; a `count` returns a meaningless 34.
+
+**Live mechanism, cell-dependent firing.** A committed prediction already
+uses the shape — syntax P2.a's selector is
+`section=excluded;pattern=rec-r-uc;regime_or_na=match-compliance;form=whole-subject`
+with `quantity=n_wrong` — and MEASURED, its four selected rows are all
+`pass_rate` base rows, because that cell happens to carry no give-up detail
+rows. The mixing fires the first time such a clause lands on a cell that
+does. It is not a hazard waiting on a new authoring habit; it is waiting on
+a give-up.
 
 And the author has no way out: **`metric` is not a selector key**
 (`SELECTOR_KEYS` is `pattern`, `subject_or_na`, `regime_or_na`, `form`,
