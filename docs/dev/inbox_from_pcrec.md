@@ -2076,3 +2076,5 @@ now. ~5 min for alloc, ~46 min for san (109 min on one earlier tree).
 `alloc rc=` line, the `san rc=` line, and the san green line (or the red
 excerpt per (b)). Please also name the wall time of `make san` from the
 log's timestamps if the run_san_group output carries them.
+
+ack: 2026-09-18 — executor run LAUNCHED ~14:05 EDT (box read load 0.00): pull verified HEAD f64747776bd59ab86bf6bd2a9c0f2b116437ef0e, build + alloc + san chain running detached per (a) verbatim; done-signal goes back live (and journaled) when the chain exits; logs at (c). I-57 terms: report, never diagnose.
