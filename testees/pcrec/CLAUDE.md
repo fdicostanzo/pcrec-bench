@@ -561,6 +561,37 @@ refusal one phase later (pcrec succeeded; only gcc/clang refused — see
 requires `phases[].name` to equal `compile_phases` EXACTLY when the key
 is present at all, and a refusal never ran every declared phase.
 
+## The I-72 fix: raw-bytes argv, and its own accepted cost
+
+MEASURED / FIXED 2026-09-17 (pcrec inbox I-72, traced to
+`testees/pcrec/adapter.py`'s `_compile_one`, phase 1's argv): the pattern
+element used to travel as `pattern.decode("latin-1")`, a `str`, which
+CPython's `subprocess` then re-encodes via `os.fsencode` (UTF-8) on
+POSIX — a plain latin-1 decode does not invert that, so every raw
+pattern byte >= 0x80 reached pcrec's argv as a TWO-BYTE UTF-8 sequence
+(`/proc/self/cmdline` carried `C2 93` for `0x93`). pcrec answered the
+CORRUPTED bytes correctly, which read on this side as a wrong-answer
+finding on the bench's two raw-high-byte capability patterns. **Fix**:
+the pattern element is now passed as raw `bytes` in argv (POSIX
+`subprocess` accepts a `bytes` element unchanged — no encode step at
+all), so the artifact is built from the TRUE high bytes.
+
+**The fix's own accepted cost, MEASURED at the cf0962e3 cross-pin AFTER**
+(`docs/dev/ledgers/2026-09-18-capability-window-cf0962e3.md` §1.3):
+`mojibake-curly-quote`'s `large-subject-throughput` cell reads
+`slower ×2.00` on BOTH forced-VM configs after the fix
+(`vm-caps` 407,560.4 → 814,717.8 ns; `vm-in-caps` 407,415.6 → 813,909.7
+ns), while the `auto-caps`/`auto-nocaps`/pcre2 rows on the SAME
+pattern/regime read `unchanged (within spread)`. Mechanism (the
+ledger's own reading): the auto/DFA route dismisses the 1 MB subject on
+a required-first-byte check that costs the same either way; the forced-VM
+route now performs a genuine byte-for-byte scan against the CORRECT
+two-byte sequence across the whole subject, where before the fix it
+scanned for the corrupted, coincidentally-cheaper one. This is the fix
+BEING correct costing something real, isolated to the one testee class
+that cannot skip the byte comparison — a known, accepted price of the
+fix, not a regression and not a pcrec ask.
+
 ## The MATCH regime uses a SECOND artifact — `(?:<pattern>)\z`
 
 RULED by the manager, 2026-08-25, from the pcrec manager: pcrec has no

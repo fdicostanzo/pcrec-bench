@@ -350,3 +350,35 @@ divergence): backreference-free patterns run TRE's linear-time TNFA
 (Thompson-construction); a pattern WITH a backreference (`has_backrefs`,
 this file's own `METADATA_DECL`) falls back to a backtracking matcher
 bounded by `TRE_MAX_STACK`, per the gave-up section above.
+
+## Correctness: the widest gap of any new engine, MEASURED on `bench/capability@0.1`
+
+The 2026-09-18 capability window
+(`docs/dev/ledgers/2026-09-18-capability-window-cf0962e3.md` §5.4/§6
+item 5) found `tre-default`'s correctness gap the WIDEST of any of the
+five new [B7]/L6b engines in the roster's first cross-engine sample —
+and on patterns TRE never DECLINED by capability: it compiled them and
+answered wrong.
+
+| pattern | regime | pass-rate | detail |
+|---|---|---|---|
+| `high-byte-run` | throughput | **0.0000** (3/3 wrong) | ALL THREE throughput subjects wrong |
+| `high-byte-run` | search | **0.4800** (195/375 wrong) | over half the short subjects wrong |
+| `tag-pair-match` | search | 0.9867 (5/75 wrong) | a `backrefs`-only pattern TRE declares satisfied and compiles |
+| `wild-waf-crs-942360-concat-sqli` | search | 0.9867 (5/75 wrong) | a WAF SQLi rule, no unusual construct |
+
+(`mojibake-curly-quote`, search, 5/75 wrong at 0.9867, is the SAME
+raw-high-byte shape pcrec itself got wrong before its own I-72 fix —
+`testees/pcrec/CLAUDE.md`'s "The I-72 fix" section — and TRE reads
+wrong on it too.)
+
+**Reading (the ledger's own):** the 0%/48% split on `high-byte-run`,
+plus `tag-pair-match` and `crs-942360-concat-sqli` failing on
+constructs TRE declares fully satisfied, point at a SYSTEMATIC
+raw-high-byte handling gap in `tre_regncompb`'s byte-mode matching, not
+a one-off — consistent across three independent patterns, but not
+confirmed as TRE's settled behavior: the ledger's own next-sample
+checklist (§8 item 2) names the pass-rate split itself (0% throughput
+vs 48% search on the identical pattern) as worth re-checking for
+reproducibility — a possible one-off box artifact — the next time
+`tre-default` measures this set, before treating it as settled.
