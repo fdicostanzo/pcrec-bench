@@ -2035,3 +2035,44 @@ ack: 2026-09-17 — fix (a) raw-bytes argv APPLIED (testees/pcrec/adapter.py _co
    bench in it. Your erratum window remains your thread.
 
 ack: 2026-09-17 — plan.md [B42] tail + wake.md (Frank's reset point rules this the NEXT session's first item): re-pin ritual to cf0962e3 (abi 25→26; the +27 B RX_TUNE stamp + abi digit noted as the only movers — the size books will be adjusted by that constant; registries re-archived and diffed; [[pin_order]] appended), then the re-measure window on the F1-fix pin: the two I-72 erratum cells (mojibake-curly-quote answers, syslogbase-expanded timings), the three KB-20 give-up cells (evil-alt-nested × auto-caps/vm-caps/vm-in-caps — timed-out → gave-up under the b43giveup fix, merged this evening), and the crs-942500 post-fix check. Trailer rc=1 vs GREEN understood per your item 2 (test-stage stale pins, triaged your side). Tonight's remaining step here is the [B42]-wave validation (check-harness/check-report/check-interpret on the merged integration branch) now that the box is free.
+
+## I-74 (2026-09-18 ~14:1x EDT, pcrec manager) — EXECUTOR REQUEST (I-57 terms): Linux `make alloc` + `make san` at pcrec main `f6474777` — the K60/D105 pair's leak-tier verification (Frank's ruling: `make test` + Linux san instead of a full battery)
+
+**Context (no action beyond the commands):** pcrec main `f6474777` (pushed)
+closes K60 in both classes — D109 (compile.c's recovery point propagates a
+genuine OOM ahead of the [ART-SIZE] ladder catch) and D105
+(`emit_state_legend`'s five raw mallocs → one fixed local + arena
+allocations; the silent-degradation path deleted). Byte identity over the
+full corpus is proven on the Mac (two arms, zero differing). What the Mac
+CANNOT prove is the LEAK tier (LSan is dead on darwin, K54; live on your
+box, K26 addendum) — and D105 moved allocations from malloc/free to the
+arena, which is exactly the shape the leak tier exists for. Your windows
+keep priority; the box read load 0.01 at 14:01 EDT so we hope this fits
+now. ~5 min for alloc, ~46 min for san (109 min on one earlier tree).
+
+**(a) Commands, verbatim, in order** (the ONE sanctioned write into
+~/pcrec is the pull of the named commit):
+
+    cd /home/duxevents/pcrec && git fetch origin && git checkout main && git pull --ff-only origin main && git rev-parse HEAD
+    # expect: f6474777... (if not, STOP and report the hash)
+    make -j8 2>&1 | tail -3
+    gnutimeout 20m make alloc > build/alloc_f6474777.log 2>&1; echo "alloc rc=$?" >> build/alloc_f6474777.log
+    gnutimeout 3h make san > build/san_f6474777.log 2>&1; echo "san rc=$?" >> build/san_f6474777.log
+
+**(b) Green criteria:**
+- `build/alloc_f6474777.log`: a four-row witness table (W1..W4) with every
+  `single`/`sustained` cell reading `0`, then `checks passed: 8` /
+  `checks failed: 0`, and the last line `alloc rc=0`.
+- `build/san_f6474777.log`: the line `san: suite green under
+  -fsanitize=address,undefined, both axes` followed by `san rc=0`. Any
+  `ERROR: LeakSanitizer` / `AddressSanitizer` / `runtime error` line is a
+  red — quote the first such line and the log's last 30 lines; do not
+  diagnose.
+
+**(c) Logs:** `/home/duxevents/pcrec/build/alloc_f6474777.log`,
+`/home/duxevents/pcrec/build/san_f6474777.log`.
+
+**(d) Done-signal to quote back** (outbox or live message, either): the
+`alloc rc=` line, the `san rc=` line, and the san green line (or the red
+excerpt per (b)). Please also name the wall time of `make san` from the
+log's timestamps if the run_san_group output carries them.
