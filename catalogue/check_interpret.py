@@ -63,8 +63,10 @@ def golden_name(report_rel, predictions_rel):
     return base + ".facts.tsv"
 
 
-def run_interpret(report, index, predictions=None, fmt="tsv"):
-    return I.interpret(report, index, CATALOGUE, predictions, None, fmt)
+def run_interpret(report, index, predictions=None, fmt="tsv",
+                  subject_grain=None):
+    return I.interpret(report, index, CATALOGUE, predictions, subject_grain,
+                       fmt)
 
 
 # ------------------------------------------------------------ section 1
@@ -262,7 +264,15 @@ def section_3():
         index = os.path.join(ROOT, index) if index and index != "(none)" else None
         pred = stamp.get("predictions")
         pred = os.path.join(ROOT, pred) if pred and pred != "(none)" else None
-        fresh = run_interpret(report, index, pred, "md")
+        # [B47] interpret_subject_grain_v1.md §6 Q10 (ratified,
+        # UNCONDITIONALLY): the stamp gap fix. Before this, a sidecar
+        # rendered WITH --subject-grain would re-render WITHOUT it here
+        # -- a live latent defect, unexposed only because no committed
+        # sidecar used the flag. `subject_grain` is `(none)` on every
+        # sidecar committed before this fix, so this is a no-op there.
+        sg = stamp.get("subject_grain")
+        sg = os.path.join(ROOT, sg) if sg and sg != "(none)" else None
+        fresh = run_interpret(report, index, pred, "md", subject_grain=sg)
         if fresh != text:
             bad(3, f"{name}: re-renders byte-identical")
         else:
@@ -315,9 +325,12 @@ def section_4(cat):
         d = os.path.join(FIXTURES, name)
         pred = os.path.join(d, "predictions.tsv")
         pred = pred if os.path.exists(pred) else None
+        sg = os.path.join(d, "subject_grain.tsv")
+        sg = sg if os.path.exists(sg) else None
         try:
             facts = run_interpret(os.path.join(d, "report.tsv"),
-                                  os.path.join(d, "index.tsv"), pred, "tsv")
+                                  os.path.join(d, "index.tsv"), pred, "tsv",
+                                  subject_grain=sg)
         except I.InterpretError as exc:
             bad(4, f"{name}: interpret runs", str(exc))
             continue
@@ -358,10 +371,18 @@ def section_4(cat):
             bad(4, f"{name}: names an existing base", base)
             continue
         other = specs[base]
+        # [B47] `mutate_subject_grain` joins the differing-mutation set
+        # (a one-field VALUE change on the subject-grain slice, same
+        # shape as `mutate`/`mutate_index`); `subject_grain` itself (the
+        # SOURCE key naming which slice a fixture uses) joins `report`/
+        # `select`/`synthetic` in the SHARED set -- interpret_subject_
+        # grain_v1.md §2.1: "a subject-grain slice is a second BASE, not
+        # a mutation", so a base/control pair must agree on it.
         keys = ("mutate", "mutate_header", "mutate_index",
-                "mutate_predictions", "predictions_select")
+                "mutate_predictions", "predictions_select",
+                "mutate_subject_grain")
         differing = [k for k in keys if spec.get(k) != other.get(k)]
-        shared = [k for k in ("report", "select", "synthetic")
+        shared = [k for k in ("report", "select", "synthetic", "subject_grain")
                   if spec.get(k) != other.get(k)]
         if shared:
             bad(4, f"{name}: shares its base's slice", f"differs on {shared}")
@@ -371,7 +392,8 @@ def section_4(cat):
             continue
         columns = set()
         rows_differ = False
-        for fname in ("report.tsv", "index.tsv", "predictions.tsv"):
+        for fname in ("report.tsv", "index.tsv", "predictions.tsv",
+                     "subject_grain.tsv"):
             a = os.path.join(FIXTURES, base, fname)
             b = os.path.join(FIXTURES, name, fname)
             if not os.path.exists(a) or not os.path.exists(b):
@@ -423,7 +445,8 @@ def section_4(cat):
 
 _FILE_COLUMNS = {"report.tsv": I.REPORT_COLUMNS,
                  "index.tsv": I.INDEX_COLUMNS,
-                 "predictions.tsv": I.PRED_COLUMNS}
+                 "predictions.tsv": I.PRED_COLUMNS,
+                 "subject_grain.tsv": I.REPORT_COLUMNS}
 
 
 def _field_diff(path_a, path_b, fname):
@@ -434,7 +457,7 @@ def _field_diff(path_a, path_b, fname):
     with open(path_b, encoding="utf-8") as fh:
         b = fh.read().split("\n")
     columns = set()
-    if fname == "report.tsv" and a[0] != b[0]:
+    if fname in ("report.tsv", "subject_grain.tsv") and a[0] != b[0]:
         ka = dict(c.partition(": ")[::2] for c in a[0].lstrip("# ").split("; "))
         kb = dict(c.partition(": ")[::2] for c in b[0].lstrip("# ").split("; "))
         for k in set(ka) | set(kb):

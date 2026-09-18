@@ -14764,7 +14764,7 @@ R-PRED-1	1	2							P13	prediction_id	P13
 R-PRED-1	1	2							P13	source	bench/syntax/NOTES.md
 R-PRED-1	1	2							P13	source_ref	P13
 R-PRED-1	1	2							P13	claim	P13: compile:median_total_ns lte 10x
-R-PRED-1	1	2							P13	measured	P13: worst mod-j-uc///plain/libpcre2_10.46_interp-caps-simdna = 2.543 over 834 value(s)
+R-PRED-1	1	2							P13	measured	P13: worst mod-j-uc///plain/libpcre2_10.46_interp-caps-simdna = 2.543 over 834 value(s); also present in: did_not_compile (172), excluded (23)
 R-PRED-1	1	3							P8	prediction_id	P8
 R-PRED-1	1	3							P8	source	bench/syntax/NOTES.md
 R-PRED-1	1	3							P8	source_ref	P8
@@ -14784,7 +14784,7 @@ R-PRED-2	1	2							P11	prediction_id	P11
 R-PRED-2	1	2							P11	source	bench/syntax/NOTES.md
 R-PRED-2	1	2							P11	source_ref	P11
 R-PRED-2	1	2							P11	claim	P11: median_ns lte 3x
-R-PRED-2	1	2							P11	measured	P11: worst (set)/large-subject-throughput/plain/libpcre2_10.46_interp-caps-simdna = 110.191 over 2 value(s)
+R-PRED-2	1	2							P11	measured	P11: worst (set)/large-subject-throughput/plain/libpcre2_10.46_interp-caps-simdna = 110.191 over 2 value(s); also present in: excluded (3)
 R-PRED-2	1	3							P12	prediction_id	P12
 R-PRED-2	1	3							P12	source	bench/syntax/NOTES.md
 R-PRED-2	1	3							P12	source_ref	P12
