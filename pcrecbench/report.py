@@ -4619,6 +4619,53 @@ def render_tsv(rd: ReportData):
     return "\n".join(lines) + "\n"
 
 
+# [B47] interpret_subject_grain_v1.md §6 Q4 (ratified): the SUBJECT-GRAIN
+# SLICE. The full `--grain subject --format tsv` render is ×28.5 the
+# set-grain file by bytes (MEASURED, the note's §2.1: 35,126,390 B /
+# 206,331 lines against 1,230,812 B / 8,217 lines, one real query) --
+# far more than any consumer (R-BUCKET-DOMINATED, a `grain=subject`
+# prediction clause) is ever consulted for. The slice keeps every
+# `record` row and every `rank` row whose `metric` is `median_ns` (the
+# five other per-cell metrics -- `min_ns`/`max_ns`/`stddev_ns`/
+# `ratio_vs_baseline`/`ratio_vs_best` -- are dropped), keeps the
+# `excluded`/`not_ranked`/`scratch`/`did_not_compile` sections WHOLE
+# (their own rows already carry only `pass_rate`/`giveup_smallest`
+# metrics), and drops `compile`/`compile_stamp` outright (grain-
+# independent, and already available in the set-grain file). A pure ROW
+# FILTER over `render_tsv`'s own subject-grain output: same header, same
+# 18 columns, so `pcrecbench.interpret.ReportTsv` reads it with no code
+# change at all. MEASURED on this slice's own first real use (email-
+# specimen@0.1's repin-692c2e8 report, `orig`/`large-subject-throughput`):
+# 17,836 full subject-grain lines -> a slice of the `rank` median_ns and
+# `record` rows only, the ×4.8-vs-set-grain ratio the note reports at
+# corpus scale.
+_SUBJECT_GRAIN_SLICE_RANK_METRICS = {"median_ns"}
+_SUBJECT_GRAIN_SLICE_DROPPED_SECTIONS = {"compile", "compile_stamp"}
+
+
+def render_tsv_subject_grain_slice(rd: ReportData):
+    """The committed `.subject-grain.tsv` shape (§6 Q4): a row filter over
+    `render_tsv`'s own `--grain subject` output. Requires `rd.grain ==
+    'subject'` -- the slice is a FILTER on the subject-grain render, never
+    a third grain of its own (§7: "everything here is TSV", and this note
+    does not introduce a new value for `rd.grain`)."""
+    if rd.grain != "subject":
+        raise ValueError("the subject-grain slice requires --grain subject")
+    full = render_tsv(rd).split("\n")
+    out = [full[0], full[1]]
+    for ln in full[2:]:
+        if not ln:
+            continue
+        fields = ln.split("\t")
+        section, metric = fields[0], fields[10]
+        if section in _SUBJECT_GRAIN_SLICE_DROPPED_SECTIONS:
+            continue
+        if section == "rank" and metric not in _SUBJECT_GRAIN_SLICE_RANK_METRICS:
+            continue
+        out.append(ln)
+    return "\n".join(out) + "\n"
+
+
 # --------------------------------------------------------------------- CLI
 
 def build_argparser():
@@ -4691,6 +4738,17 @@ def build_argparser():
                           "occupancy timeline under its header line "
                           "(default: off -- provenance by ruling, not a "
                           "caveat on the number).")
+    ap.add_argument("--subject-grain-slice", action="store_true",
+                     help="[B47] interpret_subject_grain_v1.md §6 Q4: emit "
+                          "the 5.62 MiB SLICE (record rows + rank rows' "
+                          "median_ns metric + the excluded/not_ranked/"
+                          "scratch/did_not_compile sections, dropping "
+                          "compile/compile_stamp and the five non-median "
+                          "rank metrics) instead of the full subject-grain "
+                          "render -- requires --grain subject --format tsv; "
+                          "this is the shape a committed `.subject-grain."
+                          "tsv` takes. The full render stays available ad "
+                          "hoc without this flag.")
     return ap
 
 
@@ -4711,6 +4769,12 @@ def main(argv=None):
         args.where = _parse_where(args.where)
     except ValueError as exc:
         print(f"pcrecbench report: {exc}", file=sys.stderr)
+        return 2
+
+    if args.subject_grain_slice and (args.grain != "subject"
+                                     or args.format != "tsv"):
+        print("pcrecbench report: --subject-grain-slice requires "
+              "--grain subject --format tsv", file=sys.stderr)
         return 2
 
     args._subbench_alias_note = None
@@ -4752,7 +4816,9 @@ def main(argv=None):
         print(f"pcrecbench report: {err}", file=sys.stderr)
         return 1
 
-    if args.format == "tsv":
+    if args.subject_grain_slice:
+        sys.stdout.write(render_tsv_subject_grain_slice(rd))
+    elif args.format == "tsv":
         sys.stdout.write(render_tsv(rd))
     else:
         sys.stdout.write(render_markdown(rd))

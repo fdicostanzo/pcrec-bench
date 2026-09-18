@@ -24,10 +24,30 @@ selector  quantity  reducer  op  lo  hi  unit  note
   verdict is R-PRED-1/2/4's arithmetic roll-up (all-confirmed →
   confirmed, all-refuted → refuted, any mix → `partial`).
 - **`selector`** — `;`-joined `key=glob` over the report TSV's own key
-  columns (`pattern`, `subject_or_na`, `regime_or_na`, `form`, `testee`)
-  and `section`. `*` is the only wildcard; one field may carry a
-  `|`-joined alternation. A testee glob may name a config without a pin
-  (`pcrec_*_auto-caps-simdna`) so a prediction survives a re-pin.
+  columns (`pattern`, `subject_or_na`, `regime_or_na`, `form`, `testee`),
+  `section`, and (catalogue 2.0, [B47]) `grain` (`set` | `subject`). `*`
+  is the only wildcard; one field may carry a `|`-joined alternation. A
+  testee glob may name a config without a pin (`pcrec_*_auto-caps-
+  simdna`) so a prediction survives a re-pin.
+- **`grain=subject`** routes the clause to the SECOND input,
+  `--subject-grain PATH` (a committed `<report>.subject-grain.tsv`
+  slice — `reports/CLAUDE.md`), instead of the primary report; with none
+  supplied the clause is `not-evaluable` BY NAME ("the clause selects
+  grain=subject but no --subject-grain input was supplied"). Absent this
+  key (every predictions file committed before catalogue 2.0), nothing
+  changes. **The DEFAULT section a selector with no `section=` clause
+  reads is now `rank` UNION `excluded` for `n_wrong`/`n_gave_up`/
+  `pass_rate`/`status`** (ruling (α)) — `rank` alone, as before, for
+  every other quantity — closing a corpus-wide tautology under which
+  such a clause could never see a failing cell (a wrong-answer or
+  give-up cell is EXCLUDED from ranking by construction, so `rank` rows
+  never carry a positive failure count). An EVALUATED clause (confirmed
+  or refuted, not only not-evaluable) is also annotated with what its
+  own selector reaches OUTSIDE that default read — "; also present in:
+  excluded (N)" (ruling (β)) — stating the tool's own population rather
+  than leaving a reader to notice the gap. `docs/design/interpreter_v1.md`
+  §6.7 is the full statement; `docs/design/interpret_subject_grain_v1.md`
+  §5/§6 is the derivation and the eleven rulings.
 - **`quantity`**, **`reducer`**, **`op`** — CLOSED SETS, validated at
   load (§6.3). A token outside one is a LOAD ERROR naming the closed
   set, never a silent skip.
@@ -102,6 +122,22 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   RECOMMENDED shape for a new, separately-dated predictions file stated
   before this set's next sample; full derivation and the exact proposed
   TSV rows are in `docs/dev/lanes/b42predhyg_report.md`.
+  **SUPERSEDED, catalogue 2.0 ([B47], 2026-09-17, ruling (α)):** the
+  false-confirm this note diagnoses is now fixed MECHANICALLY, without
+  editing this file's own selector — `_select`'s default section for
+  `n_wrong`/`n_gave_up`/`pass_rate`/`status` widened from `rank` alone
+  to `rank` UNION `excluded`, so P5's ORIGINAL committed clause (no
+  `section=` clause at all) now reads REFUTED against this exact report:
+  `measured: worst evil-alt-nested/(set)/short-subject-search/plain/
+  libpcre2_10.46_dfa-nocaps-simdna = 10.000 over 207 value(s)` — the
+  verdict the manager reached by hand, from the ORIGINAL file, no
+  transcription needed. `b42predhyg`'s `section=excluded` +
+  `set-subset` shape remains the RECOMMENDED way to state a NEW P5-style
+  clause going forward (it is more precise about the population and
+  names the set of offending patterns rather than only their worst
+  ratio), but is no longer required to avoid the false-confirm hazard.
+  `docs/design/interpreter_v1.md` §6.7 / `interpret_subject_grain_v1.md`
+  §5 are the full derivation.
   **P9 (NOTES.md: `mojibake-curly-quote`'s record omits
   `patterns[].canonical_text`) has NO row and is INEXPRESSIBLE by this
   format, more fundamentally than syntax's own P9/P12 fixture cases

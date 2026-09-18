@@ -113,7 +113,27 @@ docs/dev/'s append-only records.
   `2026-09-12-b42-rxt-as-source.md` §1.2). Neither correction rewrites
   the note otherwise.
 
-- `interpreter_v1.md` — **[B13] the interpreter design note, at **v1.3**
+- `interpreter_v1.md` — **[B13] the interpreter design note, at **v1.4**
+  (2026-09-17, lane `b47subgrain`): folds [B42] follow-up (iii)'s eleven
+  ratified §6 rulings from `interpret_subject_grain_v1.md` in as the
+  design of record — a seventh selector key `grain=subject` (new §6.7),
+  catalogue **2.0** (MAJOR: a rule reads a second declared file), the
+  reporter's committed subject-grain SLICE
+  (`render_tsv_subject_grain_slice`, `--subject-grain-slice`, 5.62 MiB
+  against the full grain's 33.5 MiB) with the first one committed
+  (`reports/2026-08-25-email-specimen-0.1-...-repin-692c2e8.subject-
+  grain.tsv`, giving R-BUCKET-DOMINATED its first real firing),
+  `_select`'s default-section fix for the four failure-population
+  quantities (ruling α, MEASURED to flip capability-0.1's P5 from a
+  false `confirmed` to the ledger's own `refuted`) plus the
+  elsewhere-population annotation on an evaluated clause (ruling β), and
+  the `build_stamp`/`check_interpret.py` §3 stamp-gap fix (unconditional,
+  §6 Q10). `make check-interpret` 147/147 (was 133); §10's acceptance
+  test unaffected, still 25/25. IMPLEMENTED same day (`pcrecbench/
+  interpret.py`, `pcrecbench/report.py`, `catalogue/rules.toml` +
+  `check_interpret.py` + `fixtures/`, four sidecars regenerated).
+  `interpret_subject_grain_v1.md` stays the derivation record (its own
+  §6 Q11). Before v1.4, **v1.3**
   (2026-09-11, [B41] (c), a HYGIENE revision folding lane `b13impl`'s 17
   build deviations back into the note plus Frank's ruling adding an
   R-ARM-1 `legend` field, catalogue 1.1 — no rule's predicate, threshold
@@ -228,8 +248,12 @@ docs/dev/'s append-only records.
   reporter preconditions P-1/P-2 (§2.5) land.
 
 - `interpret_subject_grain_v1.md` — **[B42] follow-up (iii), chartered by
-  Frank at the 2026-09-17 reset; lane `b42subgrain`, 2026-09-17.
-  PROPOSED, NOT ADOPTED — D6-panel input. DESIGN ONLY: no code, no
+  Frank at the 2026-09-17 reset; lane `b42subgrain`, 2026-09-17. §6's
+  eleven questions ALL RATIFIED IN FULL the same day (Frank, live); the
+  rulings are IMPLEMENTED the same day too (lane `b47subgrain`,
+  `interpreter_v1.md` v1.4 §6.7 is the folded design of record, this
+  file stays the derivation record per §6 Q11). At authoring time it was
+  PROPOSED, NOT ADOPTED — D6-panel input; DESIGN ONLY: no code, no
   catalogue change, no reporter change, nothing under `pcrecbench/`,
   `catalogue/` or `reports/` touched.** Answers the question of record
   from `../dev/ledgers/2026-09-17-capability-0.1-first-a770139e.md` §7.1

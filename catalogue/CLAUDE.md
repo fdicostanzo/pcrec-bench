@@ -1,7 +1,7 @@
 # catalogue/ — the interpreter's RULE CATALOGUE and its checks
 
 The versioned catalogue `pcrecbench interpret` reads ([B13];
-`docs/design/interpreter_v1.md` is the design note, at v1.2). It sits at
+`docs/design/interpreter_v1.md` is the design note, at v1.4). It sits at
 the repository ROOT beside `schema/` deliberately: it is a FORMAT with a
 version, a validator and a fixture corpus, read by two consumers (the
 `interpret` subcommand and `make check-interpret`), not an
@@ -18,14 +18,15 @@ it is the place they are visible.
 
 | file | role |
 |---|---|
-| `rules.toml` | THE CATALOGUE: `catalogue_version`, the `[[pin_order]]` table, and 31 `[[rule]]` blocks in 7 classes (R-STATUS 13, R-DELTA 4, R-RANK 1, R-ARM 1, R-FLOOR 3, R-PRED 4, R-BUCKET 5). Every rule carries `id`, `title`, `class`, `since`, `grain`, `aggregate`, `inputs`, `predicate`, `threshold`, `threshold_src`, `slots`, `arith`, `template`, `no_fire`, `links`, `example`, and optionally `extremal` and (catalogue 1.1) `legend` — one static, slot-free sentence rendered once under the rule's heading whenever it fires; a rule that aggregates and carries a numeric slot MUST declare `extremal` (checked at render time, `check_extremal` — there is no implicit "first numeric slot" default). |
-| `check_interpret.py` | `make check-interpret`'s six sections (interpreter_v1.md §8). Never loads the record store. |
+| `rules.toml` | THE CATALOGUE: `catalogue_version` (**2.0**, [B47], 2026-09-17 — MAJOR: R-PRED-1..4 now read a SECOND declared file, `--subject-grain`, per a `grain=subject` selector clause, and `_select`'s default section read widens for four quantities; see `docs/design/interpreter_v1.md` §6.7), the `[[pin_order]]` table, and 31 `[[rule]]` blocks in 7 classes (R-STATUS 13, R-DELTA 4, R-RANK 1, R-ARM 1, R-FLOOR 3, R-PRED 4, R-BUCKET 5). Every rule carries `id`, `title`, `class`, `since`, `grain`, `aggregate`, `inputs`, `predicate`, `threshold`, `threshold_src`, `slots`, `arith`, `template`, `no_fire`, `links`, `example`, and optionally `extremal` and (catalogue 1.1) `legend` — one static, slot-free sentence rendered once under the rule's heading whenever it fires; a rule that aggregates and carries a numeric slot MUST declare `extremal` (checked at render time, `check_extremal` — there is no implicit "first numeric slot" default). |
+| `check_interpret.py` | `make check-interpret`'s six sections (interpreter_v1.md §8; 147 checks at catalogue 2.0). Never loads the record store. |
 | `acceptance_10.py` | §10's ACCEPTANCE TEST, run: every numbered MUST / MUST-NOT on Reports A, B, C and D with its actual firing. Not part of `make check`; run at a catalogue change. |
 | `refresh_golden.py` | Regenerates `golden/*.facts.tsv`. Run ONLY in a commit entitled to move a golden fact (§8(2)'s table). |
-| `fixtures/fixtures.toml` | The one authored fixture DECLARATION: 58 fixtures, each a real reporter-produced slice plus at most one declared mutation. |
+| `fixtures/fixtures.toml` | The one authored fixture DECLARATION: 65 fixtures ([B47] added 7: R-BUCKET-DOMINATED's first real firing pair, a `grain=subject` confirm/refute/input-absent trio, an (α) default-widening confirm/refute pair), each a real reporter-produced slice plus at most one declared mutation. A fixture may also declare `subject_grain`/`mutate_subject_grain` (a second real slice, resolved against `decl["subject_grain_<key>"]` — a second BASE, not a mutation) and `predictions_source` (draw `predictions_select` from a declared file other than the default `predictions` key). |
 | `fixtures/gen.py` | The generator (`--check` re-derives and diffs), and the synthetic §10 Report D null control. |
-| `fixtures/<name>/` | `source.toml` (the declaration, materialised) + the GENERATED `report.tsv` / `index.tsv` / `predictions.tsv`. |
+| `fixtures/<name>/` | `source.toml` (the declaration, materialised) + the GENERATED `report.tsv` / `index.tsv` / `predictions.tsv` / (since [B47]) `subject_grain.tsv`. |
 | `fixtures/predictions-inexpressible.tsv` | The two §6.4 clauses that MUST fail at load (P9's span, P12's answer-equality). A fixture, never a committed prediction. |
+| `fixtures/predictions-subject-grain.tsv` | [B47]: two fixture-only clauses (SG1 `grain=subject`, AG1 ruling (α)'s default-widening), never a committed prediction — same precedent as `predictions-inexpressible.tsv`. |
 | `golden/index@<date>.tsv` | The FROZEN `store/index.tsv` snapshot the golden comparison reads. |
 | `golden/<report>.facts.tsv` | The pinned facts for §10's acceptance reports. |
 

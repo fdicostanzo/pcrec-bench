@@ -7,7 +7,7 @@ the record's shape is `docs/design/record_schema.md`.
 | file | role |
 |---|---|
 | `__main__.py` | the CLI: `run` (`--tier pinned\|scratch`), `quick` (the edit-test loop's one-cell surface, [B10]), `index`, `quiet`, `testees`, `report`, `interpret` |
-| `interpret.py` | THE INTERPRETER ([B13], `docs/design/interpreter_v1.md` v1.2): a deterministic fact-finder over a committed report **TSV** and `store/index.tsv` — never the markdown, never a record, never an engine. Emits the FIRED catalogue rules with their rows, numbers and record ids, and the rules that did NOT fire with the reason each did not. The rules live in `catalogue/rules.toml`, which this module is checked against by `make check-interpret`; this file holds the header's known-key split (§2.1, normative), the raising VIEW every rule function is handed (§3.2.2), the 31 rule functions, §5.2's counted collapse, the predictions reader and evaluator (§6), and the renderer whose only sentence-production surface is one `str.format` per rule template (§7.1) |
+| `interpret.py` | THE INTERPRETER ([B13], `docs/design/interpreter_v1.md` v1.4): a deterministic fact-finder over a committed report **TSV** and `store/index.tsv` — never the markdown, never a record, never an engine. Emits the FIRED catalogue rules with their rows, numbers and record ids, and the rules that did NOT fire with the reason each did not. The rules live in `catalogue/rules.toml` (**2.0**), which this module is checked against by `make check-interpret`; this file holds the header's known-key split (§2.1, normative), the raising VIEW every rule function is handed (§3.2.2), the 31 rule functions, §5.2's counted collapse, the predictions reader and evaluator (§6, since [B47] §6.7: a SEVENTH selector key `grain=subject` routes a clause to `--subject-grain PATH`'s `ReportTsv` instead of the primary report; `_select`'s default section for `n_wrong`/`n_gave_up`/`pass_rate`/`status` widens to `rank` UNION `excluded` — ruling (α) — and `_elsewhere` also annotates an EVALUATED clause with what it finds outside that default read — ruling (β)), `build_stamp`'s now-unconditional `subject_grain`/`subject_grain_sha256` stamp lines, and the renderer whose only sentence-production surface is one `str.format` per rule template (§7.1) |
 | `harness.py` | contract §4's seven steps; `outcome_for()` is the ONE place an engine's answer becomes a `match_outcome` (since [B42] L5: an optional `convention` parameter, R5 B1/CB1 — a no-op on every real corpus row, see `capability.py`'s docstring; since lane `b44boolgrain`, schema v1.6: an optional `grain` parameter, default `"full"` — `run_cell` reads `testee_block.get("grain", "full")`, the same declaration seam `conventions` already has — at `grain="boolean"` a matching row is never scored against a span it cannot know, and the private `_observed_span()` helper never builds a schema-illegal `[None, None]` array); `run_cell(tier=, patterns=, subject_limit=, budget=)` is what `quick` parameterises — no second code path; since [B42] L5 also runs `capability.missing_capabilities()` before `adapter.compile()` for every pattern, producing an `unsupported-by-declaration` compile row (with `declaration_ref`) in place of a real compile attempt where it fires |
 | `capability.py` | [B42] L5 (lane b42cap, 2026-09-16): THE PRE-COMPILE CAPABILITY POLICY (`docs/design/capability_set_v1.md` 5.3) — `REQUIRES(pattern) ⊄ capabilities(testee) ⇒ unsupported-by-declaration`, decided in `harness.run_cell` before `adapter.compile()` is called. `REQUIRES_VOCAB` (17 tokens, 5.1 + 6.2's `true-end-anchor`) is the closed vocabulary; `pattern_requires()` reads `Pattern.tags`' `requires-*` entries against it; `capabilities_for()`/`missing_capabilities()` read a set's `.rxt` `ext bench` aux block via TWO paths — `sb.rxt.aux_rows` when the loader already has it, or `rxt_source.load_aux_rows()` (the sidecar/shim path — was `bench/capability`'s real path until the O-29 fix pin a770139e + the [B42] sidecar switch made that set whole-file loadable, `sb.rxt.aux_rows`; still the path for any future non-`.rxt` set carrying an `ext bench` block) otherwise — cached per `sb.root`. Fail-closed throughout: a testee/token absent from the matrix satisfies nothing |
 | `subbench.py` | loads `bench/<name>/`; owns the regime→subject mapping and `subbench.content_hash`; `_load_manifest` is GENERIC on a subject manifest's column count (4, the original shape, or 5 with `periodic` appended, [B17]) — no column position is hard-coded beyond "periodic, if present, is last". `bench/loglines`' manifests use the same column, in the same place ([B11.1]). Since KB-12 ([B36]'s incident): `Subbench.__init__` checks EVERY pattern and subject id (short and throughput) against the record schema's own `$defs/slug` rule (`check_id`, `_slug_pattern` — the regex is READ from `schema/record.schema.json`, never retyped) and raises `SubbenchError` naming the offending id, the set and the rule, so `run`/`quick` refuse in under a second instead of after every trial of a cell has already run (bench/syntax@0.1's incident: six cells, 259 minutes, 0 records written, all refused at `store.write()`'s validator). Since [B42] L4 (lane b42load): a sidecar's `rxt_source = "<relative path>"` is the ONE-LINE switch that loads `[[patterns]]` from an `.rxt` file (`rxt_source.py`) instead of the TOML array — present, `[[patterns]]` is ignored outright, so a set does not need its stale array deleted to switch. `Pattern.file` is now OPTIONAL: a pattern carries EITHER `file` (the original per-pattern-`.rx`-file shape) OR inline `text` (an `.rxt` block's own decoded bytes), never neither — `pattern_bytes()` reads whichever is present, opening nothing for an `.rxt`-sourced pattern. Since [B42] L5: `Expectation` gains a `.convention` slot (R5 B1/CB1), always `None` from the real 9-column `expectations.tsv` loader — set only by a future `under <convention>`-qualified row's own loader, which does not exist yet |
@@ -1091,3 +1091,32 @@ printed `[truncated, diagnostic continues]` in its place
   failures, all determinism-checked) -- the capability sidecar's own
   finding line now shows the full gcc transcript in place of the old
   truncation marker, proving the fix reaches the interpreter path too.
+
+## The reporter, [B47] (2026-09-17) -- the subject-grain SLICE
+
+Lane `b47subgrain`, implementing `docs/design/interpret_subject_grain_v1.md`
+§6's eleven ratified rulings (folded into `docs/design/interpreter_v1.md`
+v1.4 §6.7 as the design of record). `REPORTER_VERSION` UNCHANGED (`v17`):
+this is a NEW, additive rendering path, never a change to what `--grain
+set` or `--grain subject` already emit -- every existing committed report
+renders byte-identical.
+
+- **`render_tsv_subject_grain_slice(rd)`** is a pure ROW FILTER over
+  `render_tsv`'s own `--grain subject` output: keeps every `record` row
+  and every `rank` row's `median_ns` metric (dropping the five others --
+  `min_ns`/`max_ns`/`stddev_ns`/`ratio_vs_baseline`/`ratio_vs_best`),
+  keeps `excluded`/`not_ranked`/`scratch`/`did_not_compile` WHOLE, and
+  drops `compile`/`compile_stamp` outright (grain-independent, already in
+  the set-grain file). Same header, same 18 columns -- `pcrecbench.
+  interpret.ReportTsv` reads it unchanged.
+- **`--subject-grain-slice`** (requires `--grain subject --format tsv`,
+  refused BY NAME otherwise): the CLI surface. MEASURED on its first real
+  use (email-specimen@0.1's repin-692c2e8 query): 17,836 full
+  subject-grain lines -> a 2,981-line slice (16.7%), matching the design
+  note's corpus-scale ×4.8-vs-set-grain estimate.
+- The committed artifact this produces is `<name>.subject-grain.tsv`
+  (`reports/CLAUDE.md`'s own section): `interpret`'s SECOND input,
+  `--subject-grain`, consulted by R-BUCKET-DOMINATED and by a prediction
+  clause naming `grain=subject` (catalogue 2.0, `interpret.py`'s
+  `_select`/`evaluate_predictions`). Exactly one group carries one today
+  (§6 Q9: no back-fill) -- see `reports/CLAUDE.md`.

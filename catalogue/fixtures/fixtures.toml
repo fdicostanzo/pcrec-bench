@@ -25,6 +25,16 @@ report_c = "reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv"
 index    = "catalogue/golden/index@2026-09-09.tsv"
 predictions = "docs/dev/predictions/syntax-0.1-first.tsv"
 
+# [B47] interpret_subject_grain_v1.md §2.1/§6 Q4: a real, committed
+# `.subject-grain.tsv` SLICE beside `report_a` -- the same query,
+# `--grain subject --format tsv --subject-grain-slice`. A second BASE,
+# not a mutation (a base/control fixture pair must agree on it).
+subject_grain_a = "reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.subject-grain.tsv"
+# A fixture-only predictions file (never a real, committed prediction --
+# the `predictions-inexpressible.tsv` precedent), exercising the
+# `grain=subject` selector key against `subject_grain_a`.
+predictions_subjectgrain = "catalogue/fixtures/predictions-subject-grain.tsv"
+
 # ---------------------------------------------------------- R-STATUS --
 
 [[fixture]]
@@ -444,6 +454,94 @@ name   = "R-BUCKET-DOMINATED__input-absent"
 report = "a"
 select = { pattern = "orig", regime_or_na = "short-subject-search" }
 expect_token = { "R-BUCKET-DOMINATED" = "input-absent" }
+
+# [B47] R-BUCKET-DOMINATED's FIRST FIRING FIXTURE (interpret_subject_
+# grain_v1.md §2.0's own corollary: "any option that starts supplying
+# the file is also the first real test of ~30 lines of shipped code").
+# Real data: orig/large-subject-throughput/libpcre2-interp reads
+# t-a-valid-addrs at 28,731,331.9 ns against t-b-no-at (17,769.8) and
+# t-c-long-atom-run (17,698.8) -- a 99.877% share, MEASURED in the
+# committed subject-grain slice.
+[[fixture]]
+name   = "R-BUCKET-DOMINATED__firing"
+report = "a"
+subject_grain = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput", testee = "libpcre2_10.46_interp-caps-simdna" }
+expect = ["R-BUCKET-DOMINATED"]
+
+[[fixture]]
+name   = "R-BUCKET-DOMINATED__control-not-dominated"
+base   = "R-BUCKET-DOMINATED__firing"
+report = "a"
+subject_grain = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput", testee = "libpcre2_10.46_interp-caps-simdna" }
+mutate_subject_grain = { column = "value", value = "30000.000000", where = { section = "rank", metric = "median_ns", testee = "libpcre2_10.46_interp-caps-simdna", subject_or_na = "t-a-valid-addrs" } }
+expect_not = ["R-BUCKET-DOMINATED"]
+
+# [B47] the `grain=subject` selector key (§6 Q1/Q2), routing a
+# prediction clause to the subject-grain input. SG1 (catalogue/fixtures/
+# predictions-subject-grain.tsv, never a real committed prediction) is
+# scored against the SAME real cell R-BUCKET-DOMINATED's own fixture
+# reads: 28,731,331.9 ns.
+[[fixture]]
+name   = "R-PRED-1__grain-subject-confirmed"
+report = "a"
+subject_grain = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput", testee = "libpcre2_10.46_interp-caps-simdna" }
+predictions_source = "predictions_subjectgrain"
+predictions_select = ["SG1"]
+expect = ["R-PRED-1"]
+
+[[fixture]]
+name   = "R-PRED-2__grain-subject-refuted"
+base   = "R-PRED-1__grain-subject-confirmed"
+report = "a"
+subject_grain = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput", testee = "libpcre2_10.46_interp-caps-simdna" }
+predictions_source = "predictions_subjectgrain"
+predictions_select = ["SG1"]
+mutate_predictions = { column = "hi", value = "100", where = { prediction_id = "SG1" } }
+expect = ["R-PRED-2"]
+expect_not = ["R-PRED-1"]
+
+# Standalone (no base/control pair -- `subject_grain` is absent here,
+# not toggled against a control that shares it, per §2.1's own rule):
+# the SAME clause with NO --subject-grain input supplied at all.
+[[fixture]]
+name   = "R-PRED-3__grain-subject-input-absent"
+report = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput", testee = "libpcre2_10.46_interp-caps-simdna" }
+predictions_source = "predictions_subjectgrain"
+predictions_select = ["SG1"]
+expect = ["R-PRED-3"]
+expect_not = ["R-PRED-1", "R-PRED-2"]
+
+# [B47] ruling (alpha) (§6 Q7): AG1's selector is UNCHANGED between these
+# two -- what differs is which report ROWS the fixture's own `select`
+# admits. With the group's EXCLUDED testees present, the (alpha) default
+# (rank UNION excluded) sees their real n_gave_up=5 and refutes; with
+# only the ranked (AUTO/reference) testees present, there is nothing
+# excluded to widen into and the clause (correctly) confirms. This is
+# the exact corpus-wide tautology (alpha) closes: a `rank`-only default
+# would have read the WIDER selector below as confirmed too, missing the
+# three excluded arms entirely.
+[[fixture]]
+name   = "R-PRED-2__alpha-widened-default"
+report = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput" }
+predictions_source = "predictions_subjectgrain"
+predictions_select = ["AG1"]
+expect = ["R-PRED-2"]
+expect_not = ["R-PRED-1"]
+
+[[fixture]]
+name   = "R-PRED-1__alpha-narrow-selector-control"
+report = "a"
+select = { pattern = "orig", regime_or_na = "large-subject-throughput", testee = ["libpcre2_10.46_interp-caps-simdna", "libpcre2_10.46_jit-caps-simdna", "pcrec_692c2e8_auto-caps-simdna", "pcrec_692c2e8_auto-nocaps-simdna", "pcrec_8da6120_auto-caps-simdna", "pcrec_8da6120_auto-nocaps-simdna"] }
+predictions_source = "predictions_subjectgrain"
+predictions_select = ["AG1"]
+expect = ["R-PRED-1"]
+expect_not = ["R-PRED-2"]
 
 [[fixture]]
 name   = "R-BUCKET-KB__no-registered-signatures"

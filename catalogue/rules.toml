@@ -15,12 +15,38 @@
 # field, or adds a `[[signature]]`, must carry a reviewer's approval line
 # in the commit message naming the rule ids reviewed (§8(6)).
 
-catalogue_version = "1.4"
+catalogue_version = "2.0"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). MINOR: a rule added, a template's wording, a link, a `legend`
 # line, an `example`, a `[[pin_order]]` append. MAJOR: a predicate or
 # threshold changes, a rule is removed, `inputs` read a different
 # column, or a `[[signature]]` is registered.
+#
+# 2.0 (2026-09-17, lane b47subgrain, Frank's ELEVEN §6 rulings on
+# docs/design/interpret_subject_grain_v1.md, ratified in full):
+# MAJOR, per §6 Q3 -- a rule now reads a SECOND declared FILE. Four
+# R-PRED rules gain a routing behaviour, no predicate/threshold/slots
+# changed: a prediction clause's selector may name a sixth key,
+# `grain=subject` (§6 Q2), which reads `--subject-grain PATH` (the
+# `report --grain subject --format tsv --subject-grain-slice` render,
+# §6 Q4) in place of the primary report -- absent that key every
+# existing predictions file evaluates exactly as before. R-BUCKET-
+# DOMINATED's own predicate/threshold/inputs are UNCHANGED; its
+# `example` is corrected (the note's premise -- "no committed report
+# group has a `.subject-grain.tsv`" -- is superseded by this bump:
+# reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.
+# subject-grain.tsv is the first one, giving the rule its first real
+# firing fixture). SEPARATELY (§6 Q7, ruling (α)+(β), not the `section=`
+# mandate): `pcrecbench.interpret._select`'s DEFAULT section read for
+# the four failure-population quantities (`n_wrong`, `n_gave_up`,
+# `pass_rate`, `status`) widens from `rank` alone to `rank` UNION
+# `excluded` (base rows only) -- closing a corpus-wide tautology
+# MEASURED across every committed report (92,892 `rank` rows, ZERO with
+# `n_wrong>0` or `n_gave_up>0`, while 33 of 111 `excluded` rows do); an
+# EVALUATED clause is now also annotated with what its own selector
+# reaches OUTSIDE that default read (β). Both are `inputs`-shape
+# changes to what R-PRED-1..4 can see, at the SAME MAJOR bump. No
+# rule's `template`/`no_fire`/`legend`/`links` moved.
 #
 # 1.4 (2026-09-17, [B42]-tail re-pin, inbox I-73): `[[pin_order]]` gains
 # `cf0962e3` (the dial+K59 checkpoint pin, re-pinned from a770139e; abi
@@ -903,6 +929,16 @@ predicate     = """
 A prediction clause whose claim HOLDS against this report. A COMPOUND
 prediction's parent verdict is `confirmed` only when every one of its
 clauses is confirmed (§4.6's roll-up).
+
+interpret_subject_grain_v1.md §6 (ratified, catalogue 2.0): a clause
+whose selector names `grain=subject` is evaluated against the
+`--subject-grain` input instead of the primary report (Q1/Q2); with
+none supplied it is `not-evaluable` (R-PRED-3), never silently read as
+`grain=set`. For the four failure-population quantities (`n_wrong`,
+`n_gave_up`, `pass_rate`, `status`) with no explicit `section=`, the
+DEFAULT population this rule sees is `rank` UNION `excluded` rather
+than `rank` alone (ruling (α)) -- see R-PRED-3's own note for why the
+narrower default was a corpus-wide false-CONFIRM hazard.
 """
 threshold     = "the prediction's own stated bounds"
 threshold_src = """
@@ -946,6 +982,11 @@ predicate     = """
 A prediction clause whose claim FAILS against this report. A COMPOUND
 prediction's parent verdict is `refuted` only when every one of its
 clauses is refuted (§4.6's roll-up).
+
+interpret_subject_grain_v1.md §6 (ratified, catalogue 2.0): the same
+`grain=subject` routing and (α) default-widening R-PRED-1 states apply
+here -- a clause is REFUTED against whichever population it actually
+read, subject-grain or set-grain, `rank`-only or `rank`+`excluded`.
 """
 threshold     = "the prediction's own stated bounds"
 threshold_src = """
@@ -986,6 +1027,23 @@ predicate     = """
 A prediction clause whose cell is absent from the report, or present but
 excluded / not-ranked / did-not-compile. The rule exists so a prediction
 can never be silently dropped -- the failure mode a hand-kept ledger has.
+
+interpret_subject_grain_v1.md §6 (ratified, catalogue 2.0): a clause
+naming `grain=subject` with no `--subject-grain` input supplied is
+`not-evaluable` here, by name -- "the clause selects grain=subject but
+no --subject-grain input was supplied" -- never a bare "no row matches"
+(the grain gap, MEASURED as the cause of seven of the ten [B42]
+capability-0.1 predictions' `not-evaluable` verdicts, §1 of the note).
+Separately (ruling (α)+(β), Q7 -- NOT the `section=` mandate): the
+default population for `n_wrong`/`n_gave_up`/`pass_rate`/`status` is now
+`rank` UNION `excluded`, closing the tautology under which `n_wrong eq
+0` over `rank` alone could never fail (MEASURED over all 43 committed
+reports at the note's writing: 92,892 `rank` rows, ZERO with `n_wrong>0`
+or `n_gave_up>0`, against 33 of 111 `excluded` rows that do); and any
+CONFIRMED or REFUTED clause (not only a not-evaluable one) is annotated
+with what its own selector reaches outside its default read, so a
+reader is told the elsewhere-population without having to notice its
+absence by hand.
 """
 threshold     = "none of this rule's own"
 threshold_src = """
@@ -1024,6 +1082,11 @@ predicate     = """
 A COMPOUND prediction (one with more than one clause) whose clause
 verdicts are not all the same: all-confirmed rolls up to R-PRED-1,
 all-refuted to R-PRED-2, any mix to this rule.
+
+interpret_subject_grain_v1.md §6 (ratified, catalogue 2.0): each clause
+rolled up here may itself have been evaluated at set or subject grain
+per its own `grain=` selector key, and against R-PRED-1/2/3's (α)
+widened default population -- the roll-up arithmetic is unchanged.
 """
 threshold     = "none of this rule's own"
 threshold_src = """
@@ -1212,9 +1275,15 @@ links         = [
   "reports/CLAUDE.md",
 ]
 example       = """
-No committed report group has a `.subject-grain.tsv`; the reporter
-commits `.subject-grain.md` only. The rule therefore reports
-`input-absent` on every committed report.
+reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.
+subject-grain.tsv (catalogue 2.0's first committed `.subject-grain.tsv`,
+the §6 Q4 slice): `orig` / `large-subject-throughput` /
+`libpcre2_10.46_interp-caps-simdna` reads `t-a-valid-addrs` at
+28,731,331.9 ns against `t-b-no-at` (17,769.8 ns) and
+`t-c-long-atom-run` (17,698.8 ns) -- a 99.877 % share, the rule's first
+real firing. On every OTHER committed report, which carries no
+`.subject-grain.tsv` (Q9: new samples plus on demand, no back-fill), the
+rule still reports `input-absent`.
 """
 
 [[rule]]

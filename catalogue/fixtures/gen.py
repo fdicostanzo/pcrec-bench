@@ -17,6 +17,18 @@ The one exception is `CLEAN__all-measured`, the §10 Report D null
 control, which is SYNTHETIC by construction: a report on which the tool
 must stay quiet cannot be projected out of a real one, because
 R-STATUS-5 and R-FLOOR-1 fire on essentially every committed report.
+
+[B47] interpret_subject_grain_v1.md §2.1: a fixture may declare a second
+source, `subject_grain = "<key>"`, resolved against `decl["subject_grain_
+<key>"]` -- a real `.subject-grain.tsv` slice, projected with the SAME
+`select` as the fixture's `report`. It is a second BASE, not a mutation
+(a base/control pair must share it); `mutate_subject_grain` is the
+one-field VALUE mutation on that slice, the same shape as `mutate`/
+`mutate_index`. A fixture may also declare `predictions_source` to draw
+`predictions_select` from a DIFFERENT declared predictions file than the
+default `decl["predictions"]` (e.g. a fixture-only file that is never a
+real, committed prediction -- the same precedent
+`predictions-inexpressible.tsv` already sets).
 """
 
 import argparse
@@ -214,9 +226,20 @@ def build(spec, decl):
     files = {"report.tsv": text,
              "index.tsv": project_index(os.path.join(ROOT, decl["index"]),
                                         text, spec.get("mutate_index"))}
+    # [B47] interpret_subject_grain_v1.md §2.1: "a subject-grain slice is
+    # a second BASE, not a mutation" -- a second, real, committed slice
+    # projected with the SAME `select`, never a hand-typed file. Named by
+    # `spec["subject_grain"]`, the same short-key convention `report`
+    # already uses (`decl["subject_grain_" + key]`).
+    if spec.get("subject_grain"):
+        sg_path = os.path.join(ROOT,
+                               decl["subject_grain_" + spec["subject_grain"]])
+        files["subject_grain.tsv"] = project_report(
+            sg_path, spec.get("select"), spec.get("mutate_subject_grain"))
     if spec.get("predictions_select"):
+        pred_path = decl[spec.get("predictions_source", "predictions")]
         files["predictions.tsv"] = project_predictions(
-            os.path.join(ROOT, decl["predictions"]),
+            os.path.join(ROOT, pred_path),
             set(spec["predictions_select"]), spec.get("mutate_predictions"))
     return files
 
@@ -231,7 +254,9 @@ def source_toml(spec):
            "declared mutation."]
     for key in ("name", "base", "report", "synthetic", "select", "mutate",
                 "mutate_header", "mutate_index", "predictions_select",
-                "mutate_predictions", "expect", "expect_not", "expect_token"):
+                "predictions_source", "mutate_predictions", "subject_grain",
+                "mutate_subject_grain", "expect", "expect_not",
+                "expect_token"):
         if key in spec:
             out.append(f"{key} = {_toml(spec[key])}")
     return "\n".join(out) + "\n"
