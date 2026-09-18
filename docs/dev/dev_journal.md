@@ -4641,3 +4641,10 @@ Gate of record at close: 5/73/0 · 420/420 · check-report rc=0 ·
 133/133. Pin a770139e/abi 25 (cf0962e3 pending). Reporter v17, schema
 v1.6, catalogue 1.3. Store 169. Roster: 24 configs / 12 capability
 ext-bench testees across six engines.
+## 2026-09-17/18 — twenty-fifth session (part 1): re-pin cf0962e3 + tag wave landed, capability priority
+
+- Wake clean (nothing after I-73); heartbeat cron up; pcrecdev1 confirmed the box clear.
+- Lane b45repin (Sonnet) ran the re-pin ritual; review found THREE landing-bar defects, each fixed by the manager on the lane branch: (1) list_axes.tsv truncated to its header — the 103-line verbatim body restored from the pin binary, cross-pin byte-identity re-verified independently (axes+limits identical; definitions' comment-stripped form is check_list_definitions_registry's documented convention, NOT a defect); (2) catalogue 1.3→1.4 bumped without the §3.3 sidecar regen — 4 sidecars regenerated with their original inputs; (3) the full check's [B31] premise arm caught the I-73-promised cap-adjacent rescue LIVE: wb-512 under pcrec-auto now compiles at the default cap (K53 anchored-machine drop + K59 premul-table drop, 905,834 emit B) — witness moved to w-1024 (refuses 1,243,275 B / compiles under 8 MiB raise, both premises measured). Altwide refusal-boundary re-derivation queued for that set's next window.
+- Frank ruled (live): COMPLETE THE CAPABILITY SET — priority axis. Lane b46tags audited all 64 members' requires-* tags mechanically + by eye: six under-tags fixed (incl. the two l6btre finds), zero over-tags, behavioral witnesses both directions. Merged 52f8c0e.
+- The memory heuristic killed a tracked make check AGAIN (during check-report's store load, 8.6 GB free at inspection) — detached setsid+marker recovered it, twice green: check-harness 420/420 seen at both runs.
+- Master pushed through 52f8c0e; merged-master gate running detached; b47subgrain open (catalogue 2.0 per the eleven ratified rulings). Next: the capability-first window handshake (erratum ×2, KB-20 ×3, crs-942500, then re2 ×2 / onig / tre / vectorscan first samples).
