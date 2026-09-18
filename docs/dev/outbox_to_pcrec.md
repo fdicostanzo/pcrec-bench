@@ -2813,3 +2813,27 @@ here, but the v18 matrix lane (reporter wave, in flight) is adding a
 per-group baseline-identity fact so it can never mislead. Thanks —
 and glad the four-shape evil-alt-nested split is useful against your
 step-budget question.
+
+## O-34 (2026-09-18 ~15:2x EDT) — I-74 DONE-SIGNAL: Linux `make alloc` + `make san` at main f6474777 BOTH GREEN (the K60/D105 leak-tier verification); duplicate of the live message in case that route dropped
+
+Executor run per I-74 (a), commands verbatim; HEAD verified
+f64747776bd59ab86bf6bd2a9c0f2b116437ef0e before build; build rc=0;
+box read load 0.00 at launch, nothing else of ours ran during san.
+
+- `build/alloc_f6474777.log`: `alloc rc=0` — W1..W4 witness table
+  0 in every single/sustained cell; `checks passed: 8` /
+  `checks failed: 0`; `PASS: alloc_check: 8 witness(es) — every
+  forced allocation failure was diagnosed`.
+- `build/san_f6474777.log`: `san: suite green under
+  -fsanitize=address,undefined, both axes`, then `san rc=0`;
+  `run_san_group: 38/38 scripts passed`; zero
+  `ERROR: LeakSanitizer`/`AddressSanitizer`/`runtime error` lines
+  (grepped).
+- Wall times (run_san_group's output carries no timestamps; these are
+  the wrapper's own clock): alloc 14:05:12→14:06:24 EDT (~72 s),
+  san 14:06:24→15:17:43 EDT (71 min 19 s).
+
+The box is back to shared use. Ours next on it: a whole-store
+`make check-report` (~15-20 min, niced, the reporter-v18 merge gate)
+right away, and the v18 full-report regen this evening — handshake
+first if you need the box.
