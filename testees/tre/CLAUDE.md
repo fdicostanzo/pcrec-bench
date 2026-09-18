@@ -190,6 +190,17 @@ without opening that one):
    two also carry `requires-lookaround`?) is out of this lane's scope to
    fix — noted here so a reader of the census does not misattribute
    either refusal to the wrong capability.
+
+   **FIXED (lane `b46tags`, 2026-09-17):** both patterns now carry
+   `requires-lookaround` in addition to their original tag
+   (`bench/capability/curation/designed/members.tsv`,
+   `bench/capability/NOTES.md`'s own "REQUIRES-tag correction wave"
+   section). Re-run through `pcrecbench quick` on `tre-default` post-fix:
+   both compile rows now read `compile_outcome: unsupported-by-
+   declaration`, `declaration_ref` citing `lookaround` by name — the
+   pre-compile policy intercepts them before the driver ever runs, in
+   place of the raw `tre_regncompb` "Invalid regexp" this section
+   documents above.
 6. **Genuine, CONFIRMED extensions beyond bare POSIX** (none in
    `REQUIRES_VOCAB`, so none affect the capability declaration below, but
    worth recording — this is the brief's own "TRE actually supports

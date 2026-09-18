@@ -480,7 +480,7 @@ provenance
 
 pattern-esc "(?x)\n  \"                     # opening quote\n  (?<key> [^\"\\\\]+ )     # the key text (no escape handling, kept simple)\n  \"\n  \\s* : \\s*             # colon separator, optional surrounding whitespace\n"
 name codegrammar-xflag
-tag family=wild-codegrammar, hazard=none, requires=free-spacing
+tag family=wild-codegrammar, hazard=none, requires=free-spacing, requires=named-groups
 provenance
   source authored
   retrieved 2026-09-16
@@ -579,7 +579,7 @@ provenance
 
 pattern (["'])(?:(?!\1)[^\\]|\\.)*\1
 name quoted-delim-match
-tag family=cap-backref, hazard=none, requires=backrefs
+tag family=cap-backref, hazard=none, requires=backrefs, requires=lookaround
 provenance
   source authored
   retrieved 2026-09-16
@@ -667,7 +667,7 @@ provenance
 
 pattern-esc "(?x)\n(?(DEFINE)\n  (?<brackets>\n    \\[\n      (?: [^\\[\\]] | (?&brackets) )*\n    \\]\n  )\n)\n^ (?&brackets) $\n"
 name bracket-array-define
-tag family=cap-recursion, hazard=none, requires=recursion, requires=free-spacing
+tag family=cap-recursion, hazard=none, requires=recursion, requires=free-spacing, requires=named-groups
 provenance
   source authored
   retrieved 2026-09-16
@@ -678,7 +678,7 @@ provenance
 
 pattern (/\*(?:[^*/]|\*(?!/)|/(?!\*)|(?1))*\*/)
 name nested-comment-rec
-tag family=cap-recursion, hazard=none, requires=recursion
+tag family=cap-recursion, hazard=none, requires=recursion, requires=lookaround
 provenance
   source authored
   retrieved 2026-09-16
@@ -689,7 +689,7 @@ provenance
 
 pattern <(\w+)>(?:[^<]|<(\w+)>(?:[^<]|<(\w+)>[^<]*</\3>)*</\2>)*</\1>
 name tag-depth3-bound
-tag family=cap-recursion, hazard=none
+tag family=cap-recursion, hazard=none, requires=backrefs
 provenance
   source authored
   retrieved 2026-09-16
@@ -860,7 +860,7 @@ provenance
 
 pattern [\xc2-\xdf](?![\x80-\xbf])
 name utf8-lead-no-cont
-tag family=binary-nonutf8, hazard=none, requires=non-utf8-subject
+tag family=binary-nonutf8, hazard=none, requires=non-utf8-subject, requires=lookaround
 provenance
   source authored
   retrieved 2026-09-16

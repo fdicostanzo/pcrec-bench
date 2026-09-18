@@ -652,11 +652,17 @@ EXT_BENCH_ROSTER = [
     # convention every other testee on this roster keeps for its default
     # 8-bit mode. Corpus confirmation: 40 of 64 real bench/capability
     # patterns compile through the real adapter; every one of the 24
-    # refusals cites a token this roster row withholds (one exception,
-    # `tag-depth3-bound`, carries NO `requires-*` tag at all despite using
-    # backreferences -- a pre-existing corpus tagging gap, not a
-    # capability-declaration error; it refuses honestly via the ordinary
-    # `did-not-compile` path either way).
+    # refusals cites a token this roster row withholds (one exception at
+    # the time this row was authored: `tag-depth3-bound` carried NO
+    # `requires-*` tag at all despite using backreferences -- a
+    # pre-existing corpus tagging gap, not a capability-declaration
+    # error; it refused honestly via the ordinary `did-not-compile` path
+    # either way. FIXED lane `b46tags`, 2026-09-17: `tag-depth3-bound`
+    # now carries `requires-backrefs` -- see `bench/capability/NOTES.md`'s
+    # "REQUIRES-tag correction wave" -- so this exception no longer
+    # exists; the compile row now reads `unsupported-by-declaration`
+    # (the pre-compile policy) in place of this row's own real
+    # `did-not-compile` refusal -- confirmed live via `pcrecbench quick`).
     ("vectorscan-block-nosom", [t for t in REQUIRES_VOCAB
                                 if t not in (
                                     "backrefs", "lookaround",
