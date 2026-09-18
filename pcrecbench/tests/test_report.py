@@ -1780,15 +1780,29 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v17 (2026-09-17)",
-           f"expected REPORTER_VERSION == 'v17 (2026-09-17)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v18 (2026-09-18)",
+           f"expected REPORTER_VERSION == 'v18 (2026-09-18)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v17 (2026-09-17)" in md, f"expected the v17 header line:\n{md[:200]}")
+    _check("reporter: v18 (2026-09-18)" in md, f"expected the v18 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v17 (2026-09-17)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v18 (2026-09-18)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    # [B52]: the matrix format carries the same version line, and refuses
+    # BY NAME at --grain subject (the same refusal shape --subject-grain-
+    # slice already uses for the opposite grain).
+    matrix = report.render_matrix_tsv(rd)
+    _check("reporter: v18 (2026-09-18)" in matrix,
+           f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
+    rd_subj, err_subj = report.build_report(
+        loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
+    _check(err_subj is None, f"unexpected refusal: {err_subj}")
+    try:
+        report.render_matrix_tsv(rd_subj)
+        _check(False, "render_matrix_tsv must refuse a subject-grain ReportData")
+    except ValueError as exc:
+        _check("grain set" in str(exc), f"unexpected refusal message: {exc}")
     # ... and the CONTROL for the paragraph above: rendering the whole
     # fixture store under v14 must print NONE of the conditional clauses,
     # because no record in it carries any of the pairs. If this fires, a
@@ -3006,6 +3020,10 @@ _V9_ALLOWED_ADDED = (
     # permanent addition against the pre-[B32] golden, same footing as
     # the two v1.4 legend lines above.
     "- worst other-core busy: ",
+    # [B52] charter item 3 (the O-33 addendum): the per-group
+    # baseline-identity bullet is UNCONDITIONAL on every rankable group,
+    # same footing as the line above.
+    "- baseline: ",
 )
 
 
@@ -3995,6 +4013,325 @@ def test_diagnostic_full_kb18():
            "the old truncation marker must never appear in the TSV either")
 
 
+# --------------------------------------------------- [B52] the matrix report
+
+def _matrix_rows_by_key(matrix_tsv):
+    """(subbench, pattern, regime_or_na, form) -> {testee_id: cell} for
+    every data row of a rendered matrix TSV -- the shared parser every
+    [B52] test below uses instead of re-deriving column positions by
+    hand in each one."""
+    lines = matrix_tsv.splitlines()
+    header = None
+    out = {}
+    for line in lines:
+        if line.startswith("#"):
+            continue
+        cols = line.split("\t")
+        if header is None:
+            header = cols
+            continue
+        fixed = dict(zip(header[:6], cols[:6]))
+        testee_cells = dict(zip(header[6:], cols[6:]))
+        key = (fixed["subbench"], fixed["pattern"], fixed["regime_or_na"], fixed["form"])
+        out[key] = {"best_testee": fixed["best_testee"], "best_ns": fixed["best_ns"],
+                    "cells": testee_cells}
+    return out
+
+
+def test_matrix_all_refused_pattern_f26():
+    """F26 (`docs/design/predicate_audit_v1.md`): a pattern refused (or
+    declared unsupported) by EVERY testee in the roster produces no
+    ranking group anywhere in `render_tsv`, and the committed ext
+    sidecar's R-STATUS-4 understated its own refusals by eleven cells
+    because of it. `render_matrix_tsv` must still render one FULL row
+    for such a pattern (`regime_or_na=""`, `form=""`), every testee's
+    cell one of the closed tokens, never blank -- immune by
+    construction (`_matrix_row_keys`' own population is the UNION of
+    `did_not_compile_by_pattern`/`unsupported_by_pattern` with every
+    pattern that has a real `set_cells` entry, not the ranking groups
+    F26 found blind).
+
+    Two testees, `engine-g` (did-not-compile) and `engine-h` (declares
+    `p1` unsupported), share `p1`; NEITHER produces a single match row
+    for it. `p2` is the CONTROL both testees compile and measure
+    cleanly, so its own row is an ordinary ratio row beside the F26 row
+    in the same file."""
+    setup_g = _mini_setup("engine-g_1.0.0_cfg-caps-simdna")
+    row_g_p1_dnc = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                     "compile_outcome": "did-not-compile", "cost_class": "interpretive",
+                     "diagnostic": "engine-g: refused p1 -- FIXTURE"}
+    row_g_p2_compile = {"kind": "compile", "pattern_id": "p2", "trial": 1, "seq": 2,
+                         "compile_outcome": "compiled", "cost_class": "interpretive",
+                         "cost": {"total_ns": 1000}}
+    rows_g_p2_match = [_mini_row("p2", "s1", "short-subject-search", t, 10 + t, 50) for t in (1, 2, 3)]
+    loaded_g = [_mk_loaded("g.jsonl", setup_g,
+                           [row_g_p1_dnc, row_g_p2_compile] + rows_g_p2_match)]
+
+    setup_h = _mini_setup("engine-h_1.0.0_cfg-caps-simdna")
+    row_h_p1_unsup = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                       "compile_outcome": "unsupported-by-declaration", "cost_class": "interpretive",
+                       "diagnostic": "REQUIRES foo; engine-h declares none of it -- FIXTURE"}
+    row_h_p2_compile = {"kind": "compile", "pattern_id": "p2", "trial": 1, "seq": 2,
+                         "compile_outcome": "compiled", "cost_class": "interpretive",
+                         "cost": {"total_ns": 1200}}
+    rows_h_p2_match = [_mini_row("p2", "s1", "short-subject-search", t, 30 + t, 55) for t in (1, 2, 3)]
+    loaded_h = [_mk_loaded("h.jsonl", setup_h,
+                           [row_h_p1_unsup, row_h_p2_compile] + rows_h_p2_match)]
+
+    rd, err = report.build_report(loaded_g + loaded_h, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    _check(rd.unsupported_by_pattern.get(("rb-mini@1.0", "p1")) ==
+           {"engine-h_1.0.0_cfg-caps-simdna": "REQUIRES foo; engine-h declares "
+            "none of it -- FIXTURE"},
+           f"expected the unsupported-by-declaration diagnostic indexed by "
+           f"(sb, pattern_id): {rd.unsupported_by_pattern}")
+
+    matrix = report.render_matrix_tsv(rd)
+    rows = _matrix_rows_by_key(matrix)
+    f26_key = ("rb-mini@1.0", "p1", "", "")
+    _check(f26_key in rows, f"expected the F26 row {f26_key} in:\n{sorted(rows)}")
+    cells = rows[f26_key]["cells"]
+    _check(cells["engine-g_1.0.0_cfg-caps-simdna"] == "refused",
+           f"engine-g refused p1: {cells}")
+    _check(cells["engine-h_1.0.0_cfg-caps-simdna"] == "unsup",
+           f"engine-h declared p1 unsupported: {cells}")
+    _check(rows[f26_key]["best_testee"] == "" and rows[f26_key]["best_ns"] == "",
+           f"an all-refused row has no best (no cell was ever timed): {rows[f26_key]}")
+    _check(all(v in ("refused", "unsup") for v in cells.values()),
+           f"no cell of an all-refused row may be blank or numeric: {cells}")
+
+    # CONTROL: p2 has an ordinary rank row, best_ns/best_testee populated.
+    p2_key = ("rb-mini@1.0", "p2", "short-subject-search", "plain")
+    _check(p2_key in rows, f"expected p2's ordinary row: {sorted(rows)}")
+    _check(rows[p2_key]["best_ns"] != "" and rows[p2_key]["best_testee"] != "",
+           f"p2 compiled and measured on both testees: {rows[p2_key]}")
+
+
+def test_matrix_status_tokens():
+    """One row exercising all four EXCLUDED-population tokens at once,
+    beside `unsup`/`refused` (covered by `test_matrix_all_refused_
+    pattern_f26`) -- `wrong` (a wrong-answer subject), `gave-up` (a
+    give-up subject, no wrong answer), and `excluded` (a `not-measured`
+    status row -- the catch-all "other" bucket). Same `p1` pattern
+    across FOUR testees, one per token, plus a fifth testee `engine-m`
+    ranking normally so the row's `best_ns`/`best_testee` are real."""
+    setup_wrong = _mini_setup("engine-wrong_1.0.0_cfg-caps-simdna")
+    row_wrong = dict(_mini_row("p1", "s1", "short-subject-search", 1, 1, 50))
+    row_wrong["match_outcome"] = "wrong-span-or-captures"
+    loaded_wrong = [_mk_loaded("wrong.jsonl", setup_wrong, [row_wrong])]
+
+    setup_gaveup = _mini_setup("engine-gaveup_1.0.0_cfg-caps-simdna")
+    row_gaveup = dict(_mini_row("p1", "s1", "short-subject-search", 1, 1, 50))
+    row_gaveup["match_outcome"] = "gave-up"
+    row_gaveup["diagnostic"] = "giveup: -3:PCREC_ERR_FRAMES -- FIXTURE"
+    loaded_gaveup = [_mk_loaded("gaveup.jsonl", setup_gaveup, [row_gaveup])]
+
+    setup_notmeas = _mini_setup("engine-notmeas_1.0.0_cfg-caps-simdna",
+                                status="inconclusive-load", status_detail="box busy -- FIXTURE")
+    rows_notmeas = [_mini_row("p1", "s1", "short-subject-search", t, t, 50) for t in (1, 2, 3)]
+    loaded_notmeas = [_mk_loaded("notmeas.jsonl", setup_notmeas, rows_notmeas)]
+
+    setup_m = _mini_setup("engine-m_1.0.0_cfg-caps-simdna")
+    rows_m = [_mini_row("p1", "s1", "short-subject-search", t, 10 + t, 40) for t in (1, 2, 3)]
+    loaded_m = [_mk_loaded("m.jsonl", setup_m, rows_m)]
+
+    rd, err = report.build_report(loaded_wrong + loaded_gaveup + loaded_notmeas + loaded_m,
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    matrix = report.render_matrix_tsv(rd)
+    rows = _matrix_rows_by_key(matrix)
+    key = ("rb-mini@1.0", "p1", "short-subject-search", "plain")
+    _check(key in rows, f"expected p1's row: {sorted(rows)}")
+    cells = rows[key]["cells"]
+    _check(cells["engine-wrong_1.0.0_cfg-caps-simdna"] == "wrong", cells)
+    _check(cells["engine-gaveup_1.0.0_cfg-caps-simdna"] == "gave-up", cells)
+    _check(cells["engine-notmeas_1.0.0_cfg-caps-simdna"] == "excluded", cells)
+    _check(cells["engine-m_1.0.0_cfg-caps-simdna"] == "1.000000",
+           f"the only rankable testee must be the row's own 1.00x: {cells}")
+    _check(rows[key]["best_testee"] == "engine-m_1.0.0_cfg-caps-simdna", rows[key])
+
+
+def test_matrix_no_empty_cells():
+    """THE NO-EMPTY-CELLS INVARIANT, checked mechanically over the whole
+    `REAL_STORE`-independent mixed fixture built by the two tests above
+    PLUS `test_did_not_compile_ranking_line_r10`'s own shape reused here
+    -- every (row, testee) cell in a rendered matrix is EITHER a
+    parseable float OR one of the five closed tokens, never `""`. This
+    is the property `_matrix_cell`'s fallback chain exists to guarantee;
+    this test is what makes that a checked fact rather than an assertion
+    in a docstring."""
+    setup_c = _mini_setup("engine-c2_1.0.0_cfg-caps-simdna")
+    row_dnc = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+               "compile_outcome": "did-not-compile", "cost_class": "interpretive",
+               "diagnostic": "engine-c2: refused -- FIXTURE"}
+    row_c_p2 = {"kind": "compile", "pattern_id": "p2", "trial": 1, "seq": 2,
+                "compile_outcome": "compiled", "cost_class": "interpretive",
+                "cost": {"total_ns": 1000}}
+    rows_c_p2_match = [_mini_row("p2", "s1", "short-subject-search", t, 10 + t, 50) for t in (1, 2, 3)]
+    loaded_c = [_mk_loaded("c2.jsonl", setup_c, [row_dnc, row_c_p2] + rows_c_p2_match)]
+
+    setup_d = _mini_setup("engine-d2_1.0.0_cfg-caps-simdna")
+    rows_d_p1_match = [_mini_row("p1", "s1", "short-subject-search", t, 20 + t, 60) for t in (1, 2, 3)]
+    row_d_p2 = {"kind": "compile", "pattern_id": "p2", "trial": 1, "seq": 2,
+                "compile_outcome": "compiled", "cost_class": "interpretive",
+                "cost": {"total_ns": 1200}}
+    rows_d_p2_match = [_mini_row("p2", "s1", "short-subject-search", t, 30 + t, 55) for t in (1, 2, 3)]
+    loaded_d = [_mk_loaded("d2.jsonl", setup_d, rows_d_p1_match + [row_d_p2] + rows_d_p2_match)]
+
+    setup_e = _mini_setup("engine-e2_1.0.0_cfg-caps-simdna", status="inconclusive-load")
+    rows_e_p2_match = [_mini_row("p2", "s1", "short-subject-search", t, 5 + t, 45) for t in (1, 2, 3)]
+    loaded_e = [_mk_loaded("e2.jsonl", setup_e, rows_e_p2_match)]
+
+    rd, err = report.build_report(loaded_c + loaded_d + loaded_e,
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    matrix = report.render_matrix_tsv(rd)
+    rows = _matrix_rows_by_key(matrix)
+    _check(len(rows) >= 2, f"expected at least the p1 F26 row and p2's rank row: {sorted(rows)}")
+    _FLOAT_OR_TOKEN = {"unsup", "refused", "wrong", "gave-up", "excluded"}
+    for rowkey, data in rows.items():
+        for testee_id, cell in data["cells"].items():
+            _check(cell != "", f"empty cell at row {rowkey}, testee {testee_id}")
+            if cell not in _FLOAT_OR_TOKEN:
+                try:
+                    float(cell)
+                except ValueError:
+                    _check(False, f"cell at row {rowkey}, testee {testee_id} is "
+                                  f"neither a closed token nor a parseable float: {cell!r}")
+
+
+def test_matrix_ratio_arithmetic():
+    """Ratio arithmetic against a HAND-COMPUTED fixture: three testees
+    measuring the same (pattern, regime) at 40, 60 and 80 ns/call. The
+    fastest (40) must read EXACTLY `1.000000`; the other two must read
+    `60/40 = 1.500000` and `80/40 = 2.000000` -- and `best_ns`/
+    `best_testee` must name the 40-ns testee. `median_ns` (not the mean
+    or a single trial) is the value under test: each testee runs THREE
+    trials whose median is the stated figure, with a non-median
+    outlier trial on either side so a wrong reduction (mean, min, last)
+    would visibly disagree."""
+    setup_slow = _mini_setup("engine-slow_1.0.0_cfg-caps-simdna")
+    rows_slow = [_mini_row("p1", "s1", "short-subject-search", 1, 1, 70),
+                 _mini_row("p1", "s1", "short-subject-search", 2, 2, 80),
+                 _mini_row("p1", "s1", "short-subject-search", 3, 3, 90)]
+    loaded_slow = [_mk_loaded("slow.jsonl", setup_slow, rows_slow)]
+
+    setup_mid = _mini_setup("engine-mid_1.0.0_cfg-caps-simdna")
+    rows_mid = [_mini_row("p1", "s1", "short-subject-search", 1, 1, 50),
+                _mini_row("p1", "s1", "short-subject-search", 2, 2, 60),
+                _mini_row("p1", "s1", "short-subject-search", 3, 3, 70)]
+    loaded_mid = [_mk_loaded("mid.jsonl", setup_mid, rows_mid)]
+
+    setup_fast = _mini_setup("engine-fast_1.0.0_cfg-caps-simdna")
+    rows_fast = [_mini_row("p1", "s1", "short-subject-search", 1, 1, 30),
+                 _mini_row("p1", "s1", "short-subject-search", 2, 2, 40),
+                 _mini_row("p1", "s1", "short-subject-search", 3, 3, 50)]
+    loaded_fast = [_mk_loaded("fast.jsonl", setup_fast, rows_fast)]
+
+    rd, err = report.build_report(loaded_slow + loaded_mid + loaded_fast,
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    matrix = report.render_matrix_tsv(rd)
+    rows = _matrix_rows_by_key(matrix)
+    key = ("rb-mini@1.0", "p1", "short-subject-search", "plain")
+    _check(key in rows, f"expected p1's row: {sorted(rows)}")
+    cells = rows[key]["cells"]
+    _check(cells["engine-fast_1.0.0_cfg-caps-simdna"] == "1.000000",
+           f"the fastest testee's own ratio must be exactly 1.0: {cells}")
+    _check(cells["engine-mid_1.0.0_cfg-caps-simdna"] == "1.500000",
+           f"expected 60/40 = 1.5: {cells}")
+    _check(cells["engine-slow_1.0.0_cfg-caps-simdna"] == "2.000000",
+           f"expected 80/40 = 2.0: {cells}")
+    _check(rows[key]["best_testee"] == "engine-fast_1.0.0_cfg-caps-simdna", rows[key])
+    _check(rows[key]["best_ns"] == "40.0", rows[key])
+
+
+# --------------------------------------------- [B52] the baseline-identity fact
+
+def test_baseline_identity_interp_present():
+    """[B52] charter item 3, the O-33 addendum (docs/dev/dev_journal.md,
+    2026-09-18 close): a group whose roster DOES include the interp
+    reference (`_is_reference`) must STATE that the baseline is the
+    interp row, by name, in both renderings. `TESTEE_B` (the module's own
+    `libpcre2_10.46_interp-caps-simdna` constant) is the interp testee;
+    a faster non-interp testee sits beside it so the fact under test is
+    "the ratio baseline is the SLOWER interp row, not the fastest row"
+    -- the case `_resolve_baseline`'s fallback branch would get wrong if
+    it fired here."""
+    setup_fast = _mini_setup("engine-fast_1.0.0_cfg-caps-simdna")
+    rows_fast = [_mini_row("p1", "s1", "short-subject-search", t, t, 10) for t in (1, 2, 3)]
+    loaded_fast = [_mk_loaded("fast.jsonl", setup_fast, rows_fast)]
+
+    setup_interp = _mini_setup(TESTEE_B)
+    rows_interp = [_mini_row("p1", "s1", "short-subject-search", t, t, 50) for t in (1, 2, 3)]
+    loaded_interp = [_mk_loaded("interp.jsonl", setup_interp, rows_interp)]
+
+    rd, err = report.build_report(loaded_fast + loaded_interp,
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+
+    md = report.render_markdown(rd)
+    _check(f"- baseline: {TESTEE_B} (interp, present in this group)" in md,
+           f"expected the interp-present baseline bullet naming {TESTEE_B}:\n{md}")
+    _check("row-best fallback" not in md, "no fallback wording when interp is present")
+
+    tsv = report.render_tsv(rd)
+    baseline_rows = [ln for ln in tsv.splitlines() if ln.startswith("baseline\t")]
+    _check(len(baseline_rows) == 1, f"expected exactly one baseline row: {baseline_rows}")
+    cols = baseline_rows[0].split("\t")
+    header = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
+              "testee", "status", "tier", "rank_or_na", "metric", "value", "n", "pass_rate",
+              "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
+    row = dict(zip(header, cols))
+    _check(row["testee"] == TESTEE_B, f"expected testee={TESTEE_B}: {row}")
+    _check(row["value"] == "interp", f"expected value=interp: {row}")
+    _check(f"{TESTEE_B} (interp, present in this group)" == row["gave_up_summary"],
+           f"the TSV free-text slot must state the SAME sentence the markdown "
+           f"bullet does: {row}")
+
+
+def test_baseline_identity_row_best_fallback():
+    """[B52] charter item 3, the O-33 addendum: a group with NO interp
+    testee must state the FALLBACK explicitly and name the row-best
+    testee that stood in for it -- never silently reusing
+    `ratio_vs_baseline`'s old un-stated behaviour. Two non-interp
+    testees, `engine-mid` (60 ns) and `engine-fast` (40 ns): the
+    fallback must name `engine-fast` (the row's OWN best), never
+    `engine-mid` and never the query's predicted
+    `libpcre2 engine_mode=interp` (which the title line states
+    unconditionally and is not this bullet's job to contradict)."""
+    setup_mid = _mini_setup("engine-mid_1.0.0_cfg-caps-simdna")
+    rows_mid = [_mini_row("p1", "s1", "short-subject-search", t, t, 60) for t in (1, 2, 3)]
+    loaded_mid = [_mk_loaded("mid.jsonl", setup_mid, rows_mid)]
+
+    setup_fast = _mini_setup("engine-fast_1.0.0_cfg-caps-simdna")
+    rows_fast = [_mini_row("p1", "s1", "short-subject-search", t, t, 40) for t in (1, 2, 3)]
+    loaded_fast = [_mk_loaded("fast.jsonl", setup_fast, rows_fast)]
+
+    rd, err = report.build_report(loaded_mid + loaded_fast,
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+
+    md = report.render_markdown(rd)
+    fast_id = "engine-fast_1.0.0_cfg-caps-simdna"
+    _check(f"- baseline: {fast_id} (row-best fallback -- interp absent "
+           f"from this group)" in md,
+           f"expected the fallback bullet naming the row-best {fast_id}:\n{md}")
+    _check("engine-mid" not in md.split("- baseline:", 1)[1].split("\n", 1)[0],
+           "the fallback must name the FASTEST testee, not the slower one")
+
+    tsv = report.render_tsv(rd)
+    baseline_rows = [ln for ln in tsv.splitlines() if ln.startswith("baseline\t")]
+    _check(len(baseline_rows) == 1, f"expected exactly one baseline row: {baseline_rows}")
+    cols = baseline_rows[0].split("\t")
+    header = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
+              "testee", "status", "tier", "rank_or_na", "metric", "value", "n", "pass_rate",
+              "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
+    row = dict(zip(header, cols))
+    _check(row["testee"] == fast_id, f"expected testee={fast_id}: {row}")
+    _check(row["value"] == "row-best-fallback", f"expected value=row-best-fallback: {row}")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -4086,6 +4423,14 @@ TESTS = [
     # CB2 ([B42] L5)
     test_variant_kind_rendering_cb2,
     test_diagnostic_full_kb18,
+    # [B52] the matrix report surface
+    test_matrix_all_refused_pattern_f26,
+    test_matrix_status_tokens,
+    test_matrix_no_empty_cells,
+    test_matrix_ratio_arithmetic,
+    # [B52] the baseline-identity fact (O-33 addendum, charter item 3)
+    test_baseline_identity_interp_present,
+    test_baseline_identity_row_best_fallback,
 ]
 
 

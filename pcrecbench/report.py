@@ -1042,6 +1042,159 @@ whole with escaped newlines in both the markdown bullet and the TSV row;
 controls: a single-line diagnostic is unchanged; `None`/empty still
 render `(no diagnostic)`; a diagnostic containing a literal backslash-n
 two-character sequence renders distinguishably from a real newline).
+
+[B52] THE MATRIX REPORT SURFACE (2026-09-18, lane b52matrix). Frank's
+ruling, live: the tests-x-engines ratio matrix a manager session had been
+building ad hoc becomes a STANDARD committed report output,
+Claude-readable first -- `--format matrix` (requires `--grain set`: a
+matrix row has no subject dimension, the same restriction
+`--subject-grain-slice` puts on `--grain subject`), `render_matrix_tsv`.
+
+Rows are TIMING CELLS, `(subbench, pattern, regime_or_na, form)` --
+`subbench` is prepended to the brief's stated `(pattern, regime_or_na,
+form)` triple because two subbenches sharing a query (`--all-records`
+across a range, say) can share a pattern_id by coincidence and a merged
+row would silently average two unrelated things; documented in the
+matrix's own provenance comment rather than left for a reader to
+discover. Columns are the query's own testee roster (`rd.
+status_by_testee`'s keys for that subbench -- exactly the testees with
+at least one INCLUDED record, so a `--testee` filter narrows the matrix
+the same way it narrows every other rendering). A data cell is EITHER
+`value.median_ns / row_best_ns` (six decimals; `row_best_ns` is the
+lowest `measured`, pinned-tier, expectation-passing median in THAT ROW
+-- ratios compare WITHIN A ROW ONLY, matching every other `ratio_vs_*`
+column this module renders) OR one of five CLOSED status tokens:
+`unsup` (`unsupported-by-declaration`), `refused` (`did-not-compile`),
+`wrong` (excluded, `n_wrong > 0`), `gave-up` (excluded, `n_gave_up > 0`
+and no wrong answer), `excluded` (every other reason a cell is not
+timed: a non-`measured` status, a `scratch` tier row not included, a
+different FORM's own row, or a testee this report's roster never ran
+this pattern under at all). `wrong` is checked before `gave-up` when a
+cell carries both (a wrong answer is the stronger finding). NO CELL IS
+EVER LEFT BLANK: `_matrix_cell` always returns one of the two kinds, and
+the roster loop fills every column for every row regardless of whether
+that testee has any record for the row's exact key.
+
+**F26 IMMUNITY, BY CONSTRUCTION** (`docs/design/predicate_audit_v1.md`
+F26: `render_tsv`'s `did_not_compile` section lives INSIDE the
+per-ranking-group loop, so a pattern nothing compiled has no ranking
+group and therefore no row anywhere -- the committed ext sidecar
+understates its refusals by eleven cells this way, and a report over
+`bench/bounded`'s own 65535-cap wall would render "every pattern
+compiled on every testee"). `_matrix_row_keys` computes the FULL
+population -- every `(sb, pattern_id)` with a `did_not_compile_by_
+pattern` or `unsupported_by_pattern` entry, UNIONED with every pattern
+that has at least one real `set_cells` entry -- and any pattern in the
+first set but not the second (compiled on NOBODY) gets exactly one row
+with `regime_or_na = ""` and `form = ""` (F26's own suggested shape),
+every column filled with `refused`/`unsup`/`excluded`. This is
+structural, not a special case bolted onto the row loop: the SAME
+`_matrix_cell` fallback chain (set_cells lookup, then did_not_compile,
+then unsupported, then `excluded`) answers both kinds of row.
+
+`unsupported_by_pattern` is a NEW `ReportData` field, built the same way
+`did_not_compile_by_pattern` already is (same loop, same
+`testee_id not in by_pattern or form == "plain"` first-form-wins rule)
+but keyed on `compile_outcome == "unsupported-by-declaration"` instead --
+a fact `did_not_compile_by_pattern` deliberately excludes (`build_report`
+1's own comment: "a testee's own advance declaration and a different
+fact") and that nothing before this lane rendered anywhere.
+
+The header carries the reporter's usual self-description (filters,
+source, record count, subbench/machine/schema-version sets, the
+superseded and newer-not-measured counts -- the SAME fields `render_tsv`
+already prints, so a reader can see whether this matrix mixes more than
+one window's data) PLUS a second, matrix-specific comment line stating
+the ratio definition, the within-row-only comparability rule, the
+wrong/gave-up correctness-exclusion rule (a cell excluded for a wrong
+answer or a give-up never enters the best-of comparison even where it
+also carries a timing), the closed token meanings, and the F26-immunity
+sentence -- Frank's context-around-numbers directive
+(`docs/dev/decisions.md`, this lane's own BDn): a Claude-consuming
+reader gets what was read and what the tokens mean in the same file as
+the numbers, not in a separate design note.
+
+`scripts/matrix_page.py` (new, committed, stdlib-only) renders any
+`.matrix.tsv` into a self-contained interactive HTML page: a sticky
+matrix table, a log-scale colour ramp from x1 to x10^7, one chip style
+per status token, a hover tooltip with the cell's absolute median (`ns`,
+recovered from `best_ns` x the printed ratio) and testee id, the
+provenance comment rendered verbatim, and both a light and a dark theme.
+See its own module docstring and `scripts/CLAUDE.md`.
+
+`REPORTER_VERSION` bumps to `v18 (2026-09-18)`; this IS the every-
+committed-report-regenerates case (the version line moves on
+`render_markdown`/`render_tsv`'s existing output too, even though
+neither one's OWN rendering changed a single other byte) -- see
+`reports/CLAUDE.md` for the regeneration this lane leaves OWED to the
+window that next holds the store (KB-16: a whole-store load is
+untouched work here, never done from a lane). `pcrecbench/tests/
+test_report.py` gains `test_matrix_all_refused_pattern_f26` (a pattern
+with zero compiling testees renders one full `regime_or_na=""` row, no
+blank cells), `test_matrix_status_tokens` (one fixture cell per token:
+`unsup`, `refused`, `wrong`, `gave-up`, `excluded`), `test_matrix_no_
+empty_cells` (every (row, testee) cell over a mixed fixture is either a
+parseable float or one of the five tokens, never `""`), and `test_
+matrix_ratio_arithmetic` (a hand-computed ratio against three testees'
+medians, the fastest reading exactly `1.000000`); `test_reporter_
+version_pin` pins v18 and gains the matrix-format smoke (the new format
+carries the same version line; `--format matrix --grain subject` is
+refused BY NAME). A LATER resumption of this same lane found these four
+tests had been WRITTEN but never added to the module's `TESTS` list --
+the plain runner (`__main__`'s `main()`) walks exactly that list, so
+they had never actually been exercised; wired in and confirmed passing
+before anything else in this section was built on top.
+
+THE BASELINE-IDENTITY FACT (the O-33 addendum, charter item 3; found
+investigating outbox O-32's ×102-vs-×2.24 mislabel, docs/dev/
+dev_journal.md 2026-09-18). `ratio_vs_baseline` (`render_markdown`'s
+`vs baseline` column, `render_tsv`'s `ratio_vs_baseline` metric) reads a
+group's INTERP reference testee's median when one is rankable in the
+group, and SILENTLY FALLS BACK to the group's own row-best median
+otherwise -- with nothing in either rendering stating which one applied.
+`_resolve_baseline(pairs)` is the one function both renderings now call
+(so they can never name two different baselines for the same group):
+given `rankable`'s own `(testee_id, median_ns)` pairs in ascending
+order, it returns `(baseline_ns, baseline_testee, is_interp)` -- the
+interp row's own reading when `_is_reference` finds one, else
+`pairs[0]` (the row's own best) with `is_interp=False`. Rendered as an
+UNCONDITIONAL bullet on every rankable group -- `render_markdown` prints
+`- baseline: <testee> (interp, present in this group)` or `(row-best
+fallback -- interp absent from this group)` right under the group's
+title (which still states the QUERY's own PREDICTED baseline
+unconditionally, via `reference_testee_pred`; the bullet states what
+THIS GROUP actually used, which the title's static string cannot); the
+same sentence lands in `render_tsv` as a `baseline` section row
+(`metric=baseline_identity`, `value=interp`/`row-best-fallback`, the
+sentence itself in the `gave_up_summary` free-text slot -- the only
+column shape that fits it, same technique [B13.2] P-2's give-up-smallest
+rows already use). `render_matrix_tsv` needed NO change here: its
+`best_ns`/`best_testee` are ALREADY always row-best by construction and
+ALREADY documented as such in its own header comment, so the matrix
+surface was immune to the ambiguity by design -- only the two ratio
+renderings that silently mean "baseline" as "the interp reference,
+usually" needed the fix. Tests, BOTH ARMS:
+`test_baseline_identity_interp_present` (a slower interp testee beside a
+faster non-interp one -- the case a naive "just use row-best" reading
+would get wrong) and `test_baseline_identity_row_best_fallback` (no
+interp testee at all; asserts the FASTEST of the two non-interp testees
+is named, never the slower one and never `reference_testee_pred`'s
+static string). `_V9_ALLOWED_ADDED` (`test_v13_record_still_renders`'s
+classifier) gains the `"- baseline: "` prefix, same footing as the
+`"- worst other-core busy: "` line [B32] added before it -- the bullet
+is unconditional, so it is a permanent addition against every older
+golden.
+
+`scripts/matrix_page.py` (new, committed, stdlib-only -- see
+`scripts/CLAUDE.md`) renders any `.matrix.tsv` into a self-contained
+interactive HTML page: a sticky matrix table, a log-scale colour ramp
+from 1x to 10^7 (clamped, not extrapolated, past the ceiling), one chip
+style per status token, a hover tooltip with the cell's absolute median
+(`ns`, recovered from `best_ns x` the printed ratio) and testee id, the
+provenance comment rendered verbatim, and both a light and a dark
+theme. Tested by `pcrecbench/tests/test_matrix_page.py` (8 tests, no
+engine or store -- loaded by file path since `scripts/` carries no
+`__init__.py`). See its own module docstring and `scripts/CLAUDE.md`.
 """
 
 from __future__ import annotations
@@ -1060,7 +1213,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v17 (2026-09-17)"
+REPORTER_VERSION = "v18 (2026-09-18)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -2964,6 +3117,14 @@ class ReportData:
     # bullet even though the testee is absent from `match_cells`/`set_cells`
     # entirely. See the module docstring's [B12] R10 section.
     did_not_compile_by_pattern: dict = field(default_factory=dict)
+    # [B52] (2026-09-18, the matrix report surface): (sb, pattern_id) ->
+    # {testee_id: diagnostic} for a testee whose compile of `pattern_id`
+    # reported `compile_outcome == "unsupported-by-declaration"` -- built
+    # the same way as `did_not_compile_by_pattern` above but for the fact
+    # that dict deliberately excludes (a testee's own advance declaration,
+    # never an engine failure). Read only by `render_matrix_tsv`'s `unsup`
+    # token today; nothing before this lane rendered it anywhere.
+    unsupported_by_pattern: dict = field(default_factory=dict)
     # [B20] v1.4 (gate_shape_v14.md 6): threaded beside status_by_testee.
     agreement_by_record: dict = field(default_factory=dict)   # record_id -> block | None
     schema_version_by_record: dict = field(default_factory=dict)  # record_id -> "1.4"
@@ -3345,6 +3506,10 @@ def build_report(loaded, args, known_testee_ids=None):
     # `whole-subject` can fail independently) keeps its `plain` diagnostic,
     # since `plain` is what the ranked regimes actually run on.
     did_not_compile_by_pattern = defaultdict(dict)  # (sb, pattern_id) -> {testee_id: diagnostic}
+    # [B52]: the parallel dict for `unsupported-by-declaration` -- see the
+    # ReportData field's own comment for why this is not folded into
+    # `did_not_compile_by_pattern` above.
+    unsupported_by_pattern = defaultdict(dict)  # (sb, pattern_id) -> {testee_id: diagnostic}
     for key, rows in compile_rows_by_key.items():
         sb, testee_id, pattern_id, form = key
         pt_key = (sb, testee_id, pattern_id)
@@ -3356,7 +3521,14 @@ def build_report(loaded, args, known_testee_ids=None):
             by_pattern = did_not_compile_by_pattern[(sb, pattern_id)]
             if testee_id not in by_pattern or form == "plain":
                 by_pattern[testee_id] = _diagnostic_full(diag_row.get("diagnostic"))
+        unsup_row = next((row for row in rows
+                          if row.get("compile_outcome") == "unsupported-by-declaration"), None)
+        if unsup_row is not None:
+            by_pattern_u = unsupported_by_pattern[(sb, pattern_id)]
+            if testee_id not in by_pattern_u or form == "plain":
+                by_pattern_u[testee_id] = _diagnostic_full(unsup_row.get("diagnostic"))
     did_not_compile_by_pattern = dict(did_not_compile_by_pattern)
+    unsupported_by_pattern = dict(unsupported_by_pattern)
 
     query_desc = []
     for name in ("subbench", "version", "regime", "machine", "since", "until"):
@@ -3414,6 +3586,7 @@ def build_report(loaded, args, known_testee_ids=None):
         floor_pattern_by_sb=floor_pattern_by_sb,
         variant_by_cell=variant_by_cell,
         did_not_compile_by_pattern=did_not_compile_by_pattern,
+        unsupported_by_pattern=unsupported_by_pattern,
         agreement_by_record=agreement_by_record,
         schema_version_by_record=schema_version_by_record,
         schema_version_by_testee=schema_version_by_testee,
@@ -3457,6 +3630,41 @@ def _is_reference(testee_setup_by_id, testee_id):
     # possible --all-records `@<timestamp>` suffix first.
     base = testee_id.split("@", 1)[0]
     return base.startswith("libpcre2_") and "_interp-" in base
+
+
+def _resolve_baseline(pairs):
+    """[B52] the O-33 addendum (docs/dev/dev_journal.md, 2026-09-18
+    close, charter item 3): `ratio_vs_baseline`'s own baseline SILENTLY
+    fell back to the group's row-best when no testee in it is the interp
+    reference (`_is_reference`) -- nothing stated which one applied.
+    `pairs` is `rankable`'s own `(testee_id, median_ns)` view, in
+    rankable's sorted-ascending order (so `pairs[0]` IS the row's best
+    when no reference is present). Returns `(baseline_ns, baseline_testee,
+    is_interp)`: the interp reference's own reading when one exists in
+    this group, else `pairs[0]` with `is_interp=False`; `(None, None,
+    False)` for an empty group. ONE function, called by both
+    `render_markdown` and `render_tsv`, so the two renderings can never
+    name two different baselines for the same group."""
+    pairs = list(pairs)
+    for t, ns in pairs:
+        if _is_reference(None, t):
+            return ns, t, True
+    if pairs:
+        return pairs[0][1], pairs[0][0], False
+    return None, None, False
+
+
+def _baseline_identity_note(ref_t, ref_is_interp):
+    """The human sentence `_resolve_baseline`'s two outcomes render as --
+    shared so `render_markdown`'s bullet and `render_tsv`'s `baseline`
+    row state the identical fact in the identical words. Plain text (no
+    markdown backticks): `render_markdown` wraps the testee id itself
+    where it wants the code-span, `render_tsv` never does."""
+    if ref_t is None:
+        return "n/a (no rankable rows)"
+    if ref_is_interp:
+        return f"{ref_t} (interp, present in this group)"
+    return f"{ref_t} (row-best fallback -- interp absent from this group)"
 
 
 def _ranking_groups(rd: ReportData, grain):
@@ -3819,9 +4027,17 @@ def render_markdown(rd: ReportData):
 
         if rankable:
             rankable.sort(key=lambda tfr: tfr[2].median_ns)
-            ref = next((r for t, form, r in rankable if _is_reference(None, t)), None)
-            ref_ns = ref.median_ns if ref else rankable[0][2].median_ns
+            ref_ns, ref_t, ref_is_interp = _resolve_baseline(
+                (t, r.median_ns) for t, _f, r in rankable)
             best_ns = rankable[0][2].median_ns
+
+            # [B52] the O-33 addendum (charter item 3): STATE which
+            # baseline this group actually used -- the title's own
+            # "baseline: {rd.reference_testee_pred}" names what the
+            # QUERY predicts, unconditionally; this bullet names what
+            # `_resolve_baseline` actually found IN THIS GROUP, which a
+            # group with no interp row silently was not the same thing.
+            out.append(f"- baseline: {_baseline_identity_note(ref_t, ref_is_interp)}")
 
             facts_present = {_form_fact(form) for _t, form, _r in rankable}
             if len(facts_present) > 1:
@@ -4506,9 +4722,21 @@ def render_tsv(rd: ReportData):
                 continue
             rankable.append((t, form, r, _status_cell(rd, sb, t, status), tier))
         rankable.sort(key=lambda x: x[2].median_ns)
-        ref = next((r for t, form, r, _s, _ti in rankable if _is_reference(None, t)), None)
-        ref_ns = ref.median_ns if ref else (rankable[0][2].median_ns if rankable else None)
+        ref_ns, ref_t, ref_is_interp = _resolve_baseline(
+            (t, r.median_ns) for t, _f, r, _s, _ti in rankable)
         best_ns = rankable[0][2].median_ns if rankable else None
+        if rankable:
+            # [B52] the O-33 addendum (charter item 3): one `baseline`
+            # row per group, same shape as the `record`/`excluded` rows
+            # above -- `value` carries `interp`/`row-best-fallback` (a
+            # closed two-token fact a reader can grep for across every
+            # group), `gave_up_summary`'s free-text slot carries the
+            # human sentence `render_markdown`'s bullet also prints, so
+            # the two renderings can never disagree.
+            lines.append("\t".join([
+                "baseline", pattern_id, subject_id, regime, "", "", ref_t or "",
+                "", "", "", "baseline_identity", "interp" if ref_is_interp else "row-best-fallback",
+                "", "", "", "", _baseline_identity_note(ref_t, ref_is_interp), ""]))
         for i, (t, form, r, status, tier) in enumerate(rankable, start=1):
             ratio_b = (r.median_ns / ref_ns) if ref_ns else float("nan")
             ratio_best = (r.median_ns / best_ns) if best_ns else float("nan")
@@ -4619,6 +4847,179 @@ def render_tsv(rd: ReportData):
     return "\n".join(lines) + "\n"
 
 
+# ------------------------------------------------------- [B52] the matrix
+
+def _matrix_row_keys(rd: ReportData):
+    """Every `(sb, pattern_id, regime, form)` row `render_matrix_tsv`
+    renders. Real rows come straight from `rd.set_cells`'s own keys
+    (dropping `testee_id`): two testees answering the same (pattern,
+    regime) with two different forms genuinely produce two rows here,
+    each testee's OTHER form reading `excluded` in the row it does not
+    own (see `_matrix_cell`'s fallback chain).
+
+    F26 (`docs/design/predicate_audit_v1.md`): a pattern with a
+    `did_not_compile_by_pattern` or `unsupported_by_pattern` entry but
+    ZERO `set_cells` entries anywhere -- refused or declared unsupported
+    by every testee in the roster -- gets exactly one extra row,
+    `(sb, pattern_id, "", "")`: no regime ever ran, so none is named."""
+    keys = set()
+    compiled_patterns = set()
+    for (sb, _testee_id, pattern_id, regime, form) in rd.set_cells:
+        keys.add((sb, pattern_id, regime, form))
+        compiled_patterns.add((sb, pattern_id))
+    all_patterns = set(compiled_patterns)
+    all_patterns.update(rd.did_not_compile_by_pattern.keys())
+    all_patterns.update(rd.unsupported_by_pattern.keys())
+    for (sb, pattern_id) in all_patterns - compiled_patterns:
+        keys.add((sb, pattern_id, "", ""))
+    return keys
+
+
+def _matrix_rankable(rd: ReportData, sb, testee_id, pattern_id, regime, form):
+    """The `SetCellReduction`, iff this exact cell is RANKABLE by the
+    same rule `render_tsv`'s own ranking loop uses (not expectation-
+    failing, `status == measured` unless `--include-unmeasured`, tier
+    `pinned` unless `--include-scratch`) -- `None` otherwise, whatever
+    the reason. Shared by `_matrix_best` (the row's 1.00x) and
+    `_matrix_cell` (every other column's ratio)."""
+    entry = rd.set_cells.get((sb, testee_id, pattern_id, regime, form))
+    if entry is None:
+        return None
+    _tid, r = entry
+    if r.expectation_failing or not getattr(r, "n_timed", r.n_trials):
+        return None
+    status, _detail, _rid = _status_lookup(rd, sb, testee_id)
+    if status != "measured" and not rd.include_unmeasured:
+        return None
+    if _tier_lookup(rd, sb, testee_id) == "scratch" and not rd.include_scratch:
+        return None
+    return r
+
+
+def _matrix_best(rd: ReportData, sb, pattern_id, regime, form, roster):
+    """(best_ns, best_testee) over `roster` -- `(None, None)` when no
+    testee in the row is rankable (the F26 row, or a row every testee
+    failed/excluded on). A cell excluded for correctness (`wrong`/
+    `gave-up`) is never a candidate even where it also carries a
+    `median_ns` -- `_matrix_rankable` already filters on
+    `expectation_failing`, which both set."""
+    if not regime:
+        return None, None
+    best_ns, best_t = None, None
+    for t in roster:
+        r = _matrix_rankable(rd, sb, t, pattern_id, regime, form)
+        if r is None or r.median_ns is None:
+            continue
+        if best_ns is None or r.median_ns < best_ns:
+            best_ns, best_t = r.median_ns, t
+    return best_ns, best_t
+
+
+def _matrix_cell(rd: ReportData, sb, pattern_id, regime, form, testee_id, best_ns):
+    """One matrix data cell: a `ratio_vs_best` string (six decimals) or
+    one of the five closed status tokens `unsup`/`refused`/`wrong`/
+    `gave-up`/`excluded` -- NEVER blank. `wrong` is checked ahead of
+    `gave-up` (a wrong answer is the stronger finding when a cell
+    somehow carries both)."""
+    if regime:
+        entry = rd.set_cells.get((sb, testee_id, pattern_id, regime, form))
+        if entry is not None:
+            _tid, r = entry
+            if r.expectation_failing or not getattr(r, "n_timed", r.n_trials):
+                if r.n_wrong > 0:
+                    return "wrong"
+                if r.n_gave_up > 0:
+                    return "gave-up"
+                return "excluded"
+            r2 = _matrix_rankable(rd, sb, testee_id, pattern_id, regime, form)
+            if r2 is not None and best_ns:
+                return f"{r2.median_ns / best_ns:.6f}"
+            return "excluded"
+    if testee_id in rd.did_not_compile_by_pattern.get((sb, pattern_id), {}):
+        return "refused"
+    if testee_id in rd.unsupported_by_pattern.get((sb, pattern_id), {}):
+        return "unsup"
+    return "excluded"
+
+
+def render_matrix_tsv(rd: ReportData):
+    """[B52] THE MATRIX REPORT SURFACE (Frank's ruling, 2026-09-18): a
+    tests-x-engines ratio matrix, one row per timing cell
+    `(subbench, pattern, regime_or_na, form)`, one column per testee in
+    this query's own roster, every cell a `ratio_vs_best` float or one of
+    five closed status tokens -- see the module docstring's `[B52]`
+    section for the full design and F26-immunity argument
+    (`docs/design/predicate_audit_v1.md`).
+
+    Requires `rd.grain == "set"`: a matrix row carries no subject
+    dimension (the brief's own row shape), the same restriction
+    `render_tsv_subject_grain_slice` puts on the opposite grain."""
+    if rd.grain != "set":
+        raise ValueError("the matrix report requires --grain set (a matrix "
+                          "row has no subject dimension)")
+    roster_by_sb = defaultdict(set)
+    for (sb, testee_id) in rd.status_by_testee:
+        roster_by_sb[sb].add(testee_id)
+    all_testees = sorted({t for ts in roster_by_sb.values() for t in ts})
+
+    lines = []
+    lines.append("# " + "; ".join([
+        f"reporter: {REPORTER_VERSION}", "surface: matrix",
+        f"filters: {', '.join(rd.query_desc) or '(none)'}",
+        f"source: {rd.source_desc}",
+        f"records: {len(rd.included)}",
+        f"subbench_versions: {','.join(sorted(rd.subbench_versions))}",
+        f"machines: {','.join(sorted(rd.machines))}",
+        f"schema_versions: {','.join(sorted(rd.schema_versions))}",
+        f"superseded: {sum(len(v) for _k, v in rd.superseded)}",
+        f"newer_not_measured: {len(rd.newer_not_measured)}",
+        f"testees: {','.join(all_testees)}",
+    ]))
+    # Frank's context-around-numbers directive (docs/dev/decisions.md):
+    # what a cell MEANS and what this file does/does not mix, inline with
+    # the numbers rather than left for a reader to fetch from a design
+    # note. The subbench/machine/schema-version/superseded/newer-not-
+    # measured facts above ARE the cross-window-mixing disclosure -- this
+    # file states no additional query scope beyond what the primary
+    # `render_tsv`/`render_markdown` renderings of the SAME query already
+    # print in their own headers.
+    lines.append(
+        "# matrix: a data cell is testee median_ns / this ROW's best "
+        "measured median_ns (best = lowest median_ns among the row's "
+        "measured, pinned-tier, expectation-passing cells) -- ratios "
+        "compare WITHIN A ROW ONLY, never across rows, patterns or "
+        "subbenches; best_testee/best_ns recover the absolute scale a "
+        "ratio alone loses. A cell excluded for a wrong answer or a "
+        "give-up never enters the best-of comparison even where it also "
+        "carries a timing. Closed status tokens, checked in this order: "
+        "unsup = unsupported-by-declaration (the testee's own advance "
+        "capability declaration, not an engine failure); refused = "
+        "did-not-compile; wrong = excluded, n_wrong > 0; gave-up = "
+        "excluded, n_gave_up > 0 and no wrong answer; excluded = every "
+        "other reason a cell is not timed (a non-measured status, a "
+        "scratch-tier row not included, a different form's own row, or "
+        "this testee never ran this pattern under this row's form at "
+        "all). A row with regime_or_na=\"\" and form=\"\" is F26's own "
+        "case (docs/design/predicate_audit_v1.md): every testee in the "
+        "roster refused or declared unsupported for that pattern, so no "
+        "ranking group -- and no regime -- ever existed for it; every "
+        "(row, testee) cell in this file is populated, by construction, "
+        "never blank.")
+    header = ["subbench", "pattern", "regime_or_na", "form", "best_testee", "best_ns"] + all_testees
+    lines.append("\t".join(header))
+
+    for sb, pattern_id, regime, form in sorted(_matrix_row_keys(rd)):
+        roster = sorted(roster_by_sb.get(sb, ()))
+        best_ns, best_t = _matrix_best(rd, sb, pattern_id, regime, form, roster)
+        row = [sb, pattern_id, regime, form, best_t or "",
+               f"{best_ns:.1f}" if best_ns is not None else ""]
+        for t in all_testees:
+            row.append(_matrix_cell(rd, sb, pattern_id, regime, form, t, best_ns)
+                       if t in roster else "excluded")
+        lines.append("\t".join(row))
+    return "\n".join(lines) + "\n"
+
+
 # [B47] interpret_subject_grain_v1.md §6 Q4 (ratified): the SUBJECT-GRAIN
 # SLICE. The full `--grain subject --format tsv` render is ×28.5 the
 # set-grain file by bytes (MEASURED, the note's §2.1: 35,126,390 B /
@@ -4702,7 +5103,10 @@ def build_argparser():
     ap.add_argument("--where", action="append", default=[], metavar="field=value",
                      help="filter on a dotted setup-layer path, e.g. "
                           "testee.openness=open-source; repeatable (AND)")
-    ap.add_argument("--format", choices=["md", "tsv"], default="md")
+    ap.add_argument("--format", choices=["md", "tsv", "matrix"], default="md",
+                     help="'matrix' ([B52]): the tests-x-engines ratio matrix, "
+                          "one row per (subbench, pattern, regime_or_na, form), "
+                          "one column per testee; requires --grain set")
     ap.add_argument("--grain", choices=["set", "subject"], default="set",
                      help="ranking grain (manager change request, 2026-08-25): "
                           "'set' (default) reduces over the whole subject set "
@@ -4777,6 +5181,14 @@ def main(argv=None):
               "--grain subject --format tsv", file=sys.stderr)
         return 2
 
+    # [B52]: a matrix row has no subject dimension -- refused BY NAME
+    # before anything is loaded, same shape as the subject-grain-slice
+    # refusal just above.
+    if args.format == "matrix" and args.grain != "set":
+        print("pcrecbench report: --format matrix requires --grain set",
+              file=sys.stderr)
+        return 2
+
     args._subbench_alias_note = None
     if args.subbench:
         resolved, note = resolve_subbench_arg(args.subbench, REPO_ROOT)
@@ -4818,6 +5230,8 @@ def main(argv=None):
 
     if args.subject_grain_slice:
         sys.stdout.write(render_tsv_subject_grain_slice(rd))
+    elif args.format == "matrix":
+        sys.stdout.write(render_matrix_tsv(rd))
     elif args.format == "tsv":
         sys.stdout.write(render_tsv(rd))
     else:

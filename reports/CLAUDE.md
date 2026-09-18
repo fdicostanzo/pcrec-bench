@@ -34,6 +34,54 @@ file. Committed today: the three `docs/design/interpreter_v1.md` §10
 acceptance reports (A, B, C) plus the capability-0.1 first sample; the
 rest are generated on demand (§11 Q5).
 
+## `.matrix.tsv` / `.matrix.html` siblings ([B52], 2026-09-18)
+
+A group may also carry `<name>.matrix.tsv` — the CANONICAL tests-x-
+engines ratio matrix (Frank's ruling, docs/dev/dev_journal.md, the
+twenty-fifth session close): `pcrecbench report --format matrix` (same
+query as the group's own `.tsv`/`.md`, `--grain set` — the format
+refuses BY NAME at `--grain subject`, a matrix row has no subject
+dimension). One row per timing cell `(subbench, pattern, regime_or_na,
+form)`, one column per testee in the query's own roster, every cell
+EITHER a `median_ns / row-best` ratio (six decimals) or one of five
+CLOSED status tokens (`unsup`/`refused`/`wrong`/`gave-up`/`excluded`) —
+NEVER blank. `best_testee`/`best_ns` columns carry the row's absolute
+scale. **F26-immune by construction**
+(`docs/design/predicate_audit_v1.md`): a pattern refused or declared
+unsupported by every testee in the roster still gets one full row
+(`regime_or_na=""`/`form=""`), where `render_tsv`'s own ranking-group
+loop would have produced no row anywhere. The file's own two-line
+header comment states the ratio definition, the within-row-only
+comparability rule, the closed-token meanings and the F26-immunity
+sentence — Frank's context-around-numbers directive
+(`docs/dev/decisions.md`): what a cell means travels WITH the numbers,
+not in a separate design note a Claude-consuming reader might not open.
+Full design: `pcrecbench/CLAUDE.md`'s `[B52]` section, `report.py`'s own
+module docstring.
+
+`scripts/matrix_page.py` renders any `.matrix.tsv` into
+`<name>.matrix.html` — a dependency-free, self-contained page (sticky
+table, log-scale colour ramp, one chip per status token, a hover
+tooltip recovering each cell's absolute median, light + dark themes).
+The `.html` is DERIVED and regenerated on demand
+(`python3 scripts/matrix_page.py <name>.matrix.tsv`), never hand-edited;
+whether `.matrix.html` files are committed alongside their `.tsv` or
+generated on demand only is a call for whichever window/manager session
+first regenerates the full `reports/` set under reporter v18 — this
+lane ships the capability, not the regen (see the note below).
+
+**NOT YET BACK-FILLED.** [B52] landed the CAPABILITY (`--format matrix`,
+the baseline-identity fact on every EXISTING `.tsv`/`.md` rendering,
+`scripts/matrix_page.py`) without running the whole-store regeneration
+every prior `REPORTER_VERSION` bump has triggered (KB-18's, [B13.2]'s,
+etc., logged below) — lane b52matrix's own brief keeps that regen out
+of scope (a sanitizer suite held the box; the four-surface regen is the
+manager's, gated separately). No `<name>.matrix.tsv` is committed yet;
+every existing `.tsv`/`.md` under `reports/` still renders under
+`v17`'s bytes plus the version-line stamp and the new unconditional
+`- baseline: ...` bullet/row until the next regeneration wave runs it
+through `v18`.
+
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
 A group may also carry `<name>.subject-grain.tsv` beside its

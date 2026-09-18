@@ -157,12 +157,18 @@ deps:
 #      cell-lookup helper `pcrecbench.__main__._split_quick_cells` a
 #      `--vs` arm's refusal goes through, run with no engine, no bench
 #      directory and no store.
+#   5. [B52]: pcrecbench/tests/test_matrix_page.py -- scripts/
+#      matrix_page.py's `.matrix.tsv` parser and HTML renderer, run
+#      against hand-built fixture strings; no engine, no store.
 check-report:
 	@echo "== check-report =="
 	@$(PYTHON) -m pcrecbench.tests.test_report
 	@echo
 	@echo "-- pcrecbench.tests.test_quick (KB-10, quick's cell-lookup helper) --"
 	@$(PYTHON) -m pcrecbench.tests.test_quick
+	@echo
+	@echo "-- pcrecbench.tests.test_matrix_page ([B52], scripts/matrix_page.py) --"
+	@$(PYTHON) -m pcrecbench.tests.test_matrix_page
 	@echo
 	@echo "-- fixtures independently accepted by schema/validate.py --"
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store/records/*/*/*.jsonl
@@ -178,6 +184,16 @@ check-report:
 	    --include-synthetic --format tsv > /dev/null
 	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
 	    --include-synthetic --grain subject --format md > /dev/null
+	@echo
+	@echo "-- CLI smoke: --format matrix, refused at --grain subject, and scripts/matrix_page.py --"
+	@$(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
+	    --include-synthetic --format matrix > build/check-report-smoke.matrix.tsv
+	@$(PYTHON) scripts/matrix_page.py build/check-report-smoke.matrix.tsv \
+	    -o build/check-report-smoke.matrix.html > /dev/null
+	@if $(PYTHON) -m pcrecbench report --store pcrecbench/tests/fixtures/store \
+	    --include-synthetic --grain subject --format matrix > /dev/null 2>&1; then \
+	    echo "check-report: FAILED -- --format matrix must refuse --grain subject"; exit 1; \
+	fi
 	@echo "check-report: OK"
 
 ## cc-gate-census: [B33] (1) THE CLANG COMPILE-ONLY GATE -- every bench

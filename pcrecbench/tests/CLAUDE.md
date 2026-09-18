@@ -281,6 +281,36 @@ gained the new unconditional `worst other-core busy:` header line
 `record source` line's wording was updated in place to match KB-8's new
 phrasing (its record COUNT is unchanged -- the fixture's own query
 selects all 3 records either way).
+**[B52] additions (2026-09-18, lane b52matrix; reporter v18)**: 6 new
+tests in `test_report.py` -- `test_matrix_all_refused_pattern_f26`,
+`test_matrix_status_tokens`, `test_matrix_no_empty_cells`,
+`test_matrix_ratio_arithmetic` (the F26-immunity row, the five closed
+status tokens each in one hand-built fixture cell, the mechanical
+no-blank-cells sweep over a mixed fixture, and a hand-computed ratio
+arithmetic proof -- these four were WRITTEN by a predecessor lane's WIP
+but never added to the `TESTS` list the plain runner (`main()`) walks,
+so they had never actually been RUN before this lane found and fixed
+the gap), plus `test_baseline_identity_interp_present` and
+`test_baseline_identity_row_best_fallback` (the O-33 addendum's
+baseline-identity fact, BOTH ARMS: the interp reference present in a
+group states its own testee id by name; interp absent states the
+FASTEST non-interp testee, never a slower one and never the query's
+static predicted-baseline string). `_V9_ALLOWED_ADDED` gains the
+`"- baseline: "` prefix (the new bullet is unconditional on every
+rankable group, same footing as the KB-8/ledger-12(d) additions before
+it) so `test_v13_record_still_renders` keeps passing. A NEW file,
+`test_matrix_page.py` (8 tests): `scripts/matrix_page.py`'s `.matrix.tsv`
+parser (provenance-lines-verbatim, header-shape refusal, empty-file
+refusal) and HTML renderer (each status token's own fixed chip class
+vs. the ratio ramp's inline `background:rgb(...)`, the log-scale ramp's
+endpoints and its clamp past the ceiling, a full mixed-population page,
+and `main()`'s default-output-path rule) -- loaded by file path
+(`importlib.util`) since `scripts/` carries no `__init__.py`
+deliberately. 84 tests in `test_report.py` (every one of them now
+actually wired into `TESTS`), 7 in `test_quick.py`, 8 in
+`test_matrix_page.py`: **99 reporter-side tests total across the three
+files.**
+
 - `test_quick.py` (new file, 7 tests, KB-10, `pcrecbench/__main__.py`'s
   `quick` command): `_split_quick_cells` (the cell-lookup helper pulled
   out of `cmd_quick` so it needs no engine, bench directory or store) is
@@ -325,9 +355,11 @@ own `[B42] CB2` module-docstring section.
 ## `make check-report`
 
 Runs `python3 -m pcrecbench.tests.test_report`, then
-`python3 -m pcrecbench.tests.test_quick` ([B32] (b), KB-10), then a smoke
-invocation of the CLI itself over `fixtures/store` in both formats. See
-the root Makefile.
+`python3 -m pcrecbench.tests.test_quick` ([B32] (b), KB-10), then
+`python3 -m pcrecbench.tests.test_matrix_page` ([B52]), then a smoke
+invocation of the CLI itself over `fixtures/store` in both formats plus
+`--format matrix` (rendered through `scripts/matrix_page.py`, and
+refused BY NAME at `--grain subject`). See the root Makefile.
 
 Maintenance: update this file when files are added/removed or change
 role.

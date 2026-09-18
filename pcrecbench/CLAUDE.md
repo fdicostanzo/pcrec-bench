@@ -1120,3 +1120,95 @@ renders byte-identical.
   clause naming `grain=subject` (catalogue 2.0, `interpret.py`'s
   `_select`/`evaluate_predictions`). Exactly one group carries one today
   (§6 Q9: no back-fill) -- see `reports/CLAUDE.md`.
+
+## The reporter, [B52] (2026-09-18) -- THE MATRIX REPORT SURFACE, v18
+
+Lane `b52matrix`. Frank's ruling, live at the twenty-fifth session close
+(docs/dev/dev_journal.md): the tests-x-engines ratio matrix a manager
+session had been building ad hoc (from two committed report TSVs plus
+the raw compile outcomes) becomes a STANDARD committed reporter surface,
+Claude-readable TSV canonical, HTML derived. Four charter items:
+
+1. **`--format matrix`** (requires `--grain set`, refused BY NAME at
+   `--grain subject` -- same shape `--subject-grain-slice` already uses
+   for the opposite grain), `render_matrix_tsv(rd)`: one row per timing
+   cell `(subbench, pattern, regime_or_na, form)`, one column per testee
+   in the query's own roster, every data cell EITHER `median_ns /
+   this row's best measured median_ns` (six decimals) or one of five
+   CLOSED status tokens (`unsup`/`refused`/`wrong`/`gave-up`/`excluded`)
+   -- NEVER blank (the NO-EMPTY-CELLS invariant, mechanically checked by
+   `test_matrix_no_empty_cells`). `best_testee`/`best_ns` columns recover
+   the absolute scale a bare ratio loses. **F26 IMMUNITY, BY
+   CONSTRUCTION** (`docs/design/predicate_audit_v1.md` F26): the row
+   population (`_matrix_row_keys`) is the UNION of every pattern with a
+   real `set_cells` entry and every pattern with a
+   `did_not_compile_by_pattern`/`unsupported_by_pattern` entry -- a
+   pattern refused or declared unsupported by EVERY testee in the
+   roster (no ranking group, and therefore no row, in `render_tsv`'s own
+   loop) gets exactly one full row, `regime_or_na=""`/`form=""`, every
+   column a status token. `unsupported_by_pattern` is a NEW
+   `ReportData` field (built the same way `did_not_compile_by_pattern`
+   already is, keyed on `compile_outcome ==
+   "unsupported-by-declaration"` instead) -- the fact that dict
+   deliberately excludes and that nothing before this lane rendered
+   anywhere. Full design and worked examples: `report.py`'s own module
+   docstring, `[B52]` section.
+2. **The `.matrix.tsv` sibling itself** is produced by running the SAME
+   committed query through `--format matrix` -- charter item 1 is the
+   CAPABILITY; regenerating the sibling for every existing report group
+   is the whole-store regen this lane does NOT do (out of scope by the
+   lane's own brief; owed to the window/manager that next holds the
+   store, same footing as every prior `REPORTER_VERSION` bump's
+   regeneration wave -- see `reports/CLAUDE.md`).
+3. **THE BASELINE-IDENTITY FACT** (the O-33 addendum: `ratio_vs_baseline`
+   silently fell back to the group's own row-best whenever no testee in
+   it is the interp reference, with nothing stating which applied --
+   found investigating O-32's ×102-vs-×2.24 mislabel). `_resolve_baseline`
+   (shared by `render_markdown` and `render_tsv`, so the two renderings
+   can never name two different baselines for one group) returns
+   `(baseline_ns, baseline_testee, is_interp)`: the interp row's own
+   reading when one is rankable in the group, else the row's own best
+   with `is_interp=False`. Rendered as an UNCONDITIONAL bullet on every
+   rankable group in `render_markdown` (`- baseline: <testee> (interp,
+   present in this group)` / `(row-best fallback -- interp absent from
+   this group)`, right under the group's title -- which still states the
+   QUERY's own PREDICTED baseline unconditionally; the bullet states what
+   this GROUP actually used) and a `baseline` section row in `render_tsv`
+   (`metric=baseline_identity`, `value=interp` or `row-best-fallback`,
+   the same sentence in `gave_up_summary`'s free-text slot). This is the
+   matrix's own baseline column TOO -- `best_ns`/`best_testee` are
+   ALREADY always row-best by construction and ALREADY documented as
+   such in the matrix header, so the matrix surface was immune to the
+   ambiguity by design; only `render_markdown`/`render_tsv`'s
+   `ratio_vs_baseline` needed the fix. Tests, BOTH ARMS
+   (`test_baseline_identity_interp_present`,
+   `test_baseline_identity_row_best_fallback`): the fallback case asserts
+   the FASTEST non-interp testee is named, not a slower one and not the
+   query's static prediction string.
+4. **`scripts/matrix_page.py`** (new, committed, stdlib-only -- see
+   `scripts/CLAUDE.md`): renders any `.matrix.tsv` into a self-contained
+   interactive HTML page (a sticky table, a log-scale colour ramp 1x-10^7x,
+   one fixed chip per status token, a hover tooltip recovering the
+   absolute median from `best_ns x ratio`, the provenance comment
+   verbatim, light + dark themes). The ad hoc page Frank read at the
+   session reset is this script's visual reference, not its input --
+   this script takes only a `.matrix.tsv` and writes only HTML, so the
+   TSV stays canonical (item 1) and the HTML stays DERIVED, regenerable
+   on demand.
+
+`REPORTER_VERSION` bumps to `v18 (2026-09-18)`; every committed report
+regenerates on its own version-line stamp alone (item 3's baseline
+bullet/row is now UNCONDITIONAL on every rankable group of every
+existing report too -- `_V9_ALLOWED_ADDED` gained the `"- baseline: "`
+prefix so `test_v13_record_still_renders`'s classifier keeps passing);
+the actual regeneration wave is OWED to the window/manager holding the
+store, same as every prior version bump (`reports/CLAUDE.md`).
+`pcrecbench/tests/test_report.py` gains 6 tests (4 matrix-format, 2
+baseline-identity; 84 total, ALL now registered in `TESTS` -- a
+predecessor lane's WIP had left the 4 matrix tests defined but not
+wired into the plain-runner's list, silently never run; this lane
+wired them in and confirmed all pass), plus the new
+`pcrecbench/tests/test_matrix_page.py` (8 tests, `scripts/
+matrix_page.py`'s parser and renderer, no engine/store). 99
+reporter-side tests total across the three files
+(`pcrecbench/tests/CLAUDE.md`).
