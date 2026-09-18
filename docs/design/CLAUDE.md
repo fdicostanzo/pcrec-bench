@@ -458,7 +458,30 @@ docs/dev/'s append-only records.
   recommended HELD behind a trigger, not built. No served database: Frank
   ruled that posture out.
 
-- `predicate_audit_v1.md` — **THE PREDICATE AUDIT, v1, 2026-09-18
+- `predicate_audit_v1.md` — **THE PREDICATE AUDIT, at v1.1** (2026-09-18,
+  lane `lane/r7consol`, the R7 D6 panel:
+  `../dev/reviews/2026-09-18-r7-predicate-audit.md`, 17 findings across
+  three lenses — population semantics, catalogue/interpreter versioning,
+  code reality — 13 applied, 2 recorded clean, 0 escalated). v1.1
+  corrects the note's OWN remediation reasoning, not its underlying
+  findings F1-F27 (unchanged, independently reconfirmed by all three
+  lenses): F7/F7b's cost-group placement fixed against their own cited
+  evidence (a new §6 Group 1B, an `example`-field MINOR split), a new
+  §6.05 subsection on the `INTERPRET_VERSION` stamp folded into eight
+  fixes' cost lines, §6 rebuilt as a fix-by-fix table over all four
+  regeneration surfaces (catalogue/`INTERPRET_VERSION`/sidecars/fixtures/
+  goldens) with F9's new fixture-pair need and F3/F4/F9's unmeasured
+  golden-file exposure named as open rather than assumed clear, §7 Q2's
+  false MINOR/MAJOR binary corrected and grounded in the 2.0 bump's own
+  precedent, Q4's uncited "changes every … median … one" claim struck and
+  replaced with a hand-derivation, F13's four-reducer risk claim split by
+  actual vulnerability, F11's fix shape corrected for a join key
+  (`form`) that silently excludes half the population it claims to widen,
+  F1's fix shape completed for all three of R-FLOOR-2's early-return
+  causes, and F27's fix shape rewritten wholesale (the anchor is the
+  OD-B15 dedup key, not the R-STATUS-1 join originally cited) with two
+  stated risks — gameability, a cross-config look-ahead gap — carried
+  into the ruling rather than presented as a strict improvement. **v1**
   (lane `b50predaudit`, `[B42]`'s tail charter (i)). PROPOSED, D6-panel
   input; NO code and NO catalogue change — nothing under `pcrecbench/`,
   `catalogue/`, `reports/`, `schema/` or `store/` touched.** Executes

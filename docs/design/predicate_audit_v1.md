@@ -1,9 +1,19 @@
-# THE PREDICATE AUDIT — a design note (v1, 2026-09-18)
+# THE PREDICATE AUDIT — a design note (v1.1, 2026-09-18)
 
 **Status: PROPOSED, not adopted. D6-panel input. NO code and NO catalogue
 change in this lane** — nothing under `pcrecbench/`, `catalogue/`,
 `reports/`, `schema/` or `store/` is touched. The note proposes; fixes
 land on a ruling.
+
+**v1.1** (2026-09-18, lane `lane/r7consol`): applies the R7 D6 panel's
+accepted findings (`docs/dev/reviews/2026-09-18-r7-predicate-audit.md`,
+17 findings across three lenses — population semantics `r7pop-1..5`,
+catalogue/interpreter versioning `r7ver-1..9`, code reality `r7code-1..3`)
+to the fix designs and the §6/§7 cost accounting below. Every accepted
+edit cites its finding id in place; nothing under `pcrecbench/`,
+`catalogue/`, `reports/`, `schema/` or `store/` moved, and the audit's
+own findings F1-F27 are unchanged — this revision corrects the note's
+OWN reasoning about its remediation, not the underlying catalogue defects.
 
 Written by lane `b50predaudit` on Frank's standing directive of
 2026-09-17 — `docs/dev/plan.md`'s `[B42]` tail charter (i), recorded as
@@ -77,6 +87,21 @@ own reimplementation.
 | **M5** | the Δ-partner divergence and the give-up subject coverage | R-BUCKET-SPAN's partner population against the reporter's own; R-STATUS-12's subject population against the subjects that gave up |
 | **M7** | the consequence of `render_tsv` emitting the `did_not_compile` section only INSIDE an existing ranking group — lane `b51preds`' finding 2, re-asked as a RULE-population question | 29 (report, pattern) pairs whose every compile cell is a refusal and which have NO `did_not_compile` row anywhere, so R-STATUS-4 cannot see them |
 | **M6** | the THIRD predictions file (`capability-0.1-ext-roster.tsv`, merged to master mid-lane) re-resolved clause by clause, each also forced through the PRE-(α) `rank`-only default | whether the authoring lessons landed, which clauses ruling (α) is load-bearing for, and how exposed F14 is in freshly authored work |
+
+**A labeling note (r7code-2): the M-numbers above are this note's own
+bookkeeping, not all of them literal probe output.** The archived
+`2026-09-18-predicate-audit-probes.txt` prints literal `M2`, `M3`, `M5`,
+`M6` and `M8` section headers (all inside `probe2.py`'s output; `M8` is
+the `not_ranked`/`scratch` occupancy census folded into M4's row above).
+`M1` (probe1.py's structural census), `M4` (split across probe3.py's and
+probe4.py's several `====` sections with no numeric label of their own)
+and `M7` (probe7.py, headed only by `########## probe7.py ##########`)
+never appear as that literal string in the archive — a reader `grep`-ing
+for "M4" to find its evidence must know it means "probe3.py + probe4.py."
+This does not affect any number's traceability (every M-labeled claim
+below is independently re-derivable from the named script), and it is
+purely a labeling mismatch between this table and the archive it points
+to.
 
 **The corpus, as of this lane** (`HEAD` = `4eb413a`, catalogue 2.0,
 reporter v17, `interpreter_v1.md` v1.4, plus `a5018f8` merged in
@@ -247,10 +272,33 @@ declared in the rule's own block, and the renderer prints
 `token (reason)` in place of `no_fire` when one is given. That closes F1,
 F2 and the F5 class in one mechanism, keeps the opinion firewall intact
 (the reason strings are declared prose under §8(6) review, like `no_fire`),
-and needs no predicate to move. **Version: MINOR + §8(6) review + full
-sidecar regeneration** (§3.3's own rule). The alternative — returning
-`input-absent` instead — is cheaper still but leaves the sentence
-mismatched for every other rule with the same shape.
+and needs no predicate to move.
+
+**Corrected, r7pop-5: the channel must be worked out for all three of
+`r_floor_2`'s causes, not one.** `r_floor_2`'s single early return
+(`interpret.py:946-948`) conflates THREE distinct causes into the one
+`no-matching-rows` token: the header key absent, the literal string
+`"none"`, and a comma-joined multi-value `floor_pattern`. `interpreter_v1.md`
+§4.5's own worked precedent — the one this fix cites as proof the
+rendering is "the code's own intended rendering" — only demonstrates the
+wording for the `none` case (`no-matching-rows (floor_pattern: none)`,
+`interpreter_v1.md:474`). The multi-value case is a materially different
+population by `report.py:4418-4432`'s own docstring — multiple sub-benches,
+each declaring a genuine but DIFFERENT floor pattern, an ambiguity about
+WHICH comparison to make, not an absence of one to make — and needs its
+own reason string, not a copy of the `none` wording. MEASURED (probe1's
+`floor_pattern` census): 40 committed reports read `floor`, 3 read
+`floor-byte`, 2 read `none`, and ZERO read a multi-valued header — the
+third cause has **no corpus witness today**, so its wording is unverified
+by any real sidecar and must be reviewed as carefully as the other two
+(§8(6)), not assumed correct by analogy to the `none` case that does have
+a witness. The reason set for R-FLOOR-2 therefore needs three closed
+members, not one generic "the rule declined."
+
+**Version: MINOR + §8(6) review + full sidecar regeneration** (§3.3's own
+rule). The alternative — returning `input-absent` instead — is cheaper
+still but leaves the sentence mismatched for every other rule with the
+same shape.
 
 ### F2 — LIVE, HIGH. R-DELTA-4's `input-absent` renders a coverage claim
 
@@ -379,7 +427,18 @@ right annotation — 172 compile cells whose cost was never measured. The 23
 `excluded` rows are match cells; a reader, and certainly a Claude session,
 will read them as 23 excluded compile cells. Fix: scope `_ELSEWHERE` by
 quantity class — a `compile:` quantity's elsewhere is `did_not_compile`
-alone. Code + `predicate` text; no template moves.
+alone. Code + `predicate` text.
+
+**Cost, corrected (r7ver-1): this fix moves a committed sidecar, so it is
+not "no sidecar regeneration."** The witness quoted above is a **currently
+committed** `reports/*.interpretation.md` rendering, and this fix changes
+what that exact line reads (the false `excluded (23)` clause is removed).
+`interpreter_v1.md` §3.3's bump rule is explicit that regeneration is
+forced by content, not by version-label bookkeeping — a change that
+changes any rendering forces regeneration of every affected sidecar in the
+same commit. F7 therefore does NOT belong with "no catalogue bump, no
+sidecar regeneration" (see §6's Group 1, corrected). It also needs an
+`INTERPRET_VERSION` bump — see the new §6.05 subsection below (r7ver-3).
 
 **F7b — LIVE, MEDIUM. (β) is blind wherever the selector names a column
 the other sections leave empty.** `_elsewhere` re-runs the same selector,
@@ -395,6 +454,28 @@ because P2.d's selector names `form=whole-subject`. This is
 and the same fix applies: when a re-run finds nothing, retry with the
 columns the target section cannot carry DROPPED, and say which were
 dropped. Code + `example` correction.
+
+**F7b splits in two, r7ver-2.** The finding's own closing line — "Code +
+`example` correction" — is itself two different costs the note originally
+filed as one "code only" item. The retry-mechanism half (dropping
+impossible columns and saying which) is code only, and today changes
+nothing any committed sidecar renders (P2.d's reason string is currently
+DISCARDED by F8's own defect, not shown at all — see F8/F16's interaction
+note). The `example`-field half is a literal edit to
+`catalogue/rules.toml`'s R-PRED-3 `example` field, and the catalogue's own
+versioning rule — stated identically at `catalogue/rules.toml:19-23`,
+`catalogue/CLAUDE.md:66-68` and `interpreter_v1.md:730-733` — lists "an
+`example` refreshed" as one of the enumerated **MINOR**-bump triggers, on
+the same footing as a template wording change or a link add. So F7b's own
+stated fix already names a catalogue field that moves the version and
+forces the same full-sidecar regeneration F7 needs, above. Note, though,
+that `example` is not one of the four fields (`template`/`no_fire`/
+`legend`/`links`) `catalogue/CLAUDE.md` §8(6)'s named-reviewer gate lists
+— so this half needs the MINOR bump and the regeneration, but not
+necessarily the named-reviewer commit line the template-prose fields
+require. **Version: F7b-code = code only, no bump; F7b-example = MINOR +
+regeneration (no §8(6) named-reviewer line required) + an `INTERPRET_VERSION`
+bump for the code half of the retry mechanism** (r7ver-3, below).
 
 ### F8 — LIVE, MEDIUM. A `partial` prediction renders no number at all
 
@@ -486,11 +567,29 @@ that sits in the `excluded` section. R-BUCKET-SPAN cannot reach it. (484
 of the other 488 Δ-carrying rows have exactly one same-config sibling in
 the cell, so the divergence is narrow, not pervasive.)
 
-**Fix shape.** Widen the partner search to `excluded` and
-`did_not_compile` — an `inputs` change → **MAJOR** — or, if the panel
-prefers to hold the population, correct the catalogue's `threshold_src` to
-say what the rule actually reads and add the skip count to the rendering.
-Either way the current text is a claim the code does not keep.
+**Fix shape, corrected (r7pop-3): the widening as stated cannot reach half
+of what it names.** "Widen the partner search to `excluded` and
+`did_not_compile`" is not itself sufficient. `r_bucket_span` groups
+candidate partners by `by_cell[(pattern, regime, form)]`
+(`interpret.py:1050`) — the JOIN KEY includes `form` — and a
+`did_not_compile` row's `form` column is unconditionally empty (§0 fact
+3). Under the literal widening, a `did_not_compile` row can therefore
+never satisfy the same `(pattern, regime, form)` key a ranked row groups
+under, no matter how the section search is widened, because the key
+excludes it before the search runs. Only the `excluded` half of the
+widening (whose rows DO carry `form`) becomes reachable as originally
+stated; the `did_not_compile` half needs its own re-keyed join — dropping
+`form`, or falling back to `(pattern, regime)` when the candidate section
+is `did_not_compile` — which neither this fix shape nor §7 Q2's discussion
+specified. Widening the `excluded` half alone is still an `inputs` change
+→ **MAJOR**; the `did_not_compile` half's join shape is **TBD AT
+IMPLEMENTATION** and must be specified before it is built, or it silently
+reproduces this same audit's own P5 shape — a population widened in name
+that cannot structurally contain the counterevidence it claims to add —
+inside the fix meant to close F11. The interim (holding the population,
+correcting `threshold_src`, and adding a skip count to the rendering) is
+unaffected by this correction and remains available either way. Either
+way the current catalogue text is a claim the code does not keep.
 
 ### F12 — SILENT OMISSION, MEDIUM. R-STATUS-1 treats an unjoined record as measured
 
@@ -525,13 +624,48 @@ resolve entirely to `excluded` rows with ZERO rank rows, so under the
 pre-(α) `rank`-only default every one of them would have scored
 `not-evaluable`. (The probe substitutes a MEASURED testee glob for the
 as-yet-unsampled ext-roster one, so this is a fact about the clause
-SHAPE, not a score of P3-P7.) With `median`, `count`, `max` or `min`
-the clean rank rows outweigh the counterevidence **100-158:1** and a real
-failure can be arithmetically invisible. **Fix shape.** Collapse the six
-identical rank metric rows to one per cell for the four failure quantities
-before reducing (MAJOR: it changes what a reducer computes — and it is the
-same fix F6 wants); plus a load check refusing an averaging reducer on a
-failure quantity, or (β)-style per-section row counts in the rendering.
+SHAPE, not a score of P3-P7.)
+
+**The four reducers are not equally at risk (corrected, r7pop-2).** The
+original draft of this finding folded `median`, `count`, `max` and `min`
+into one "100-158:1, arithmetically invisible" claim; read against
+`_reduce`'s own code (`interpret.py:1873-1874,1880-1886`) with the op
+actually used on this quantity in the corpus (`eq 0`, P5.a's own clause),
+the four reducers split into three different risk classes:
+
+- **`median` is genuinely vulnerable.** Verified by hand for P5.a
+  (r7pop-1, Q4 below): the clean rows so outweigh the 3 counterevidence
+  rows that the sorted median index lands inside the zeros either side of
+  any row-count collapse — a real failure's VALUE can be arithmetically
+  invisible, exactly as this finding names.
+- **`min` carries a related but weaker exposure**, not the same shape.
+  For an `eq 0` hypothesis, `min eq 0` proves only "at least one row is
+  clean" — a near-vacuous claim when most rows are clean by construction.
+  That is a different failure than median's silent overwrite (it never
+  actively hides a violation the way `median` can), but it still cannot
+  surface one.
+- **`max` is, by contrast, the reducer LEAST susceptible to this class.**
+  `max` picks `nums[-1]`, the single WORST value in the population: for an
+  `n_wrong eq 0` hypothesis, if even one row is nonzero, `max` returns it
+  and the clause correctly reads *refuted* regardless of how many
+  thousands of clean rows dilute the population — the closest thing this
+  catalogue has to `identity`'s own per-row guarantee. Grouping it with
+  `median`/`min` under the same "100-158:1" severity number overstates its
+  risk.
+- **`count` (`len(values)`) never reads the quantity's VALUE at all** — it
+  counts selected rows. Whatever hazard exists in its number is F6's
+  row-count inflation (6× for a rank quantity, §0 fact 2), a different
+  problem from value dilution, and should not be folded into the same
+  severity claim as `median`/`min`.
+
+**Fix shape.** Collapse the six identical rank metric rows to one per cell
+for the four failure quantities before reducing (MAJOR: it changes what a
+reducer computes — and it is the same fix F6 wants); plus a load check
+refusing an averaging reducer (`median`, and arguably `min`) on a failure
+quantity, or (β)-style per-section row counts in the rendering. The
+collapse fixes F6's row-count inflation for all four reducers; it is
+NOT, by itself, what makes `median`'s value-dilution hazard safe — see
+Q4's correction below (r7pop-1).
 
 ### F14 — LATENT (mechanism in use), MEDIUM. An explicit `section=excluded` mixes two numbers under one column name
 
@@ -772,18 +906,89 @@ GATE whose population cannot distinguish the thing it is checking
 not name that the check makes a whole legitimate class mechanically
 unscoreable.
 
-**Fix shape**, and the population is the answer: anchor against the
-earliest index timestamp of **the records this report actually includes**
-(the report's own `record` rows joined to the index — the join
-R-STATUS-1 and R-BUCKET-SPAN already use), with the supersession window
-closed by including any index row superseded by one of them. That is
-strictly what §6.5 wants to prove, it moves forward with each sample, and
-it is still store-free. Code only, no catalogue change — but it changes
-what the check REFUSES, so it wants the panel's word and a fixture on
-both sides. The interim, if the panel prefers to wait: nothing in the
-tool, and a `--no-check-utc` style escape is NOT recommended, because an
-escape hatch on the one check that keeps a prediction honest is the wrong
-default to add.
+**Fix shape, rewritten (r7code-1): the cited join does not close the
+window it claims to.** The v1 draft of this fix named "the join
+R-STATUS-1 and R-BUCKET-SPAN already use" — the `record_id_of` join
+against a report's `record` rows. That join recovers exactly the
+*included* records' own index rows; it does **not** recover which OTHER
+index rows those records superseded. The kept→superseded id mapping lives
+only transiently inside `report.py`'s `dup_groups` processing
+(`report.py:3166-3206`, `superseded.append((kept_r.setup["record_id"], […])`)
+and the only trace of it that survives into a committed TSV is a scalar
+count in the header (`report.py:4446`, `f"superseded: {sum(len(v) for _k,
+v in rd.superseded)}"`) — the mapping itself is discarded after
+rendering. A reader implementing the fix literally, via that join, gets
+the report-scoped earliest timestamp with NO supersession extension at
+all, which is not what this fix promises.
+
+**The corrected construction**: reuse OD-B15's own dedup key, not the
+R-STATUS-1/R-BUCKET-SPAN join. For each of the report's included records,
+take its `(subbench, version, testee_id, machine_id)` tuple (via the
+record_id→index-row join — the one piece `check_stated_utc` genuinely
+gains from a `report` argument) — `index.tsv` carries `testee_id` and
+`machine_id` directly (`INDEX_COLUMNS`, `interpret.py:67`) — then take the
+minimum index timestamp over **every** `index.tsv` row sharing that
+tuple. That recovers the superseded population by the same grouping key
+the reporter itself dedups on (`report.py:3166-3168`), with no read of
+the reporter's discarded mapping and no store load — KB-16 is preserved.
+This keeps "code only, store-free," but it is a DIFFERENT join from the
+one originally cited, one line longer, and the note's "Code only" framing
+did not previously mention that `check_stated_utc(predictions, index,
+where=...)` has no `report` parameter today (`interpret.py:1700`) and
+needs a signature change at its one call site (`interpret.py:2159`).
+
+**Two stated risks for the panel's ruling, both ways (r7ver-7, r7pop-4).**
+Neither is disqualifying on its own; the panel should weigh them rather
+than treat the re-anchor as a strict improvement, which is how the v1
+draft (and §7 Q7 below) originally framed it.
+
+1. **Gameability (r7ver-7).** The CURRENT global anchor — the earliest
+   `store/index.tsv` timestamp for the whole `(subbench, version)`,
+   monotonically non-decreasing — cannot be gamed by a report's own
+   `--since`/`--until`/`--where` filters, because it never reads them. The
+   proposed anchor IS a function of a scope decision made after the
+   predictions were authored: an author who already knows a later
+   sample's numbers (the exact honesty failure §6.5 exists to catch)
+   could, in principle, construct or select a report whose filters
+   exclude the early records that would make `stated_utc` fail, and pass
+   a `stated_utc` the global anchor would have refused. This is not a
+   contrived scenario here: `--since`/`--until`/`--where` queries are this
+   project's ordinary way of building a report (`reports/CLAUDE.md`'s own
+   convention), so report-scope narrowing is an everyday act, not an
+   adversarial edge case that needs inventing.
+2. **The fix closes only the same-testee half of the residual (r7pop-4).**
+   Even with the OD-B15 join above closing the supersession window, the
+   anchor is still only as recent as the report's OWN testee/config
+   selection. A report scoped (by filter, not by the store's real state)
+   to exclude an older baseline moves the anchor forward to the newest
+   pin's own earliest record, and would then accept a `stated_utc`
+   authored after the analyst had already seen results from OTHER,
+   differently-configured testees of the SAME `(subbench, version)` that
+   the report's filters simply chose not to include — the
+   cross-testee/cross-config half of the "residual limit"
+   `interpreter_v1.md` v1.1 already named once for a related supersession
+   gap. The fix closes the SAME-testee half explicitly ("the supersession
+   window closed") but not this half, and the panel should be told so
+   rather than have the re-anchor read as a strict improvement.
+
+**Cost, corrected (r7ver-8): the design note itself is now stale and owed
+a revision.** `interpreter_v1.md` §6.5's own honesty paragraph names what
+the check cannot PROVE; it does not name that the check makes a whole
+legitimate class mechanically unscoreable — which is exactly what this
+finding demonstrates. Consistent with how this project has always folded
+a built-vs-designed correction back into the design note of record (v1.1
+through v1.4 each did this), Group 5's cost list must include revising
+`interpreter_v1.md` §6.5 to state the new class explicitly, alongside the
+two stated risks above.
+
+Code only, no catalogue change — but it changes what the check REFUSES,
+needs `check_stated_utc`'s signature change, an `INTERPRET_VERSION` bump
+(r7ver-3, below), the `interpreter_v1.md` §6.5 revision (r7ver-8), and a
+fixture on both sides, so it wants the panel's word on the two stated
+risks above before it lands. The interim, if the panel prefers to wait:
+nothing in the tool, and a `--no-check-utc` style escape is NOT
+recommended, because an escape hatch on the one check that keeps a
+prediction honest is the wrong default to add.
 
 ### F23 / F24 / F25 — audited CLEAN, recorded so a later pass does not "fix" them
 
@@ -841,29 +1046,111 @@ cases.
 
 ## §6. Proposed fixes, grouped by what they cost
 
-Nothing here is adopted. The grouping is what a panel needs to buy in
-order.
+Nothing here is adopted. **Rebuilt (r7ver-4) over all FOUR regeneration
+surfaces this project's own tooling gates on** — `catalogue/rules.toml`
+(the catalogue version), `INTERPRET_VERSION` (§6.05, new), committed
+sidecars, and the two surfaces the v1 draft never named at all:
+`catalogue/fixtures/fixtures.toml` (each of the 31 rules ships a
+control/sabotage pair `make check-interpret`'s fixture section asserts by
+name) and `catalogue/golden/<report>.facts.tsv` (`acceptance_10.py`'s
+pinned facts for the three named acceptance reports, refreshed only by a
+commit `catalogue/CLAUDE.md` recognizes as entitled to move a golden
+fact). The v1 draft's groups named only two costs (catalogue bump,
+sidecar regeneration) and — per r7ver-1/r7ver-2 — mis-bucketed F7 and
+F7b against their own evidence. The table below is the corrected cost
+model; the group prose after it is unchanged in shape but re-derived from
+the table, not from the original two-cost framing.
 
-**Group 1 — code only, no catalogue bump, no sidecar regeneration.**
-F7 (scope `_ELSEWHERE` by quantity class), F7b (retry `_elsewhere` with
-impossible columns dropped, and say which), F15 (the three load checks),
-F16 (pick the extreme by the op's direction), F19 (guard the floats).
-Each is independently landable and each closes a whole class.
+| fix | catalogue bump | `INTERPRET_VERSION` | sidecars | fixtures | goldens |
+|---|---|---|---|---|---|
+| F15 (three load checks) | none | no | none today (no witness renders differently) | none | none |
+| F16 (extreme by op direction) | none | no | none today (F8 must land first to expose it) | none | none |
+| F19 (guard floats) | none | no | none today (0 witnesses) | none | none |
+| F7b-code (retry `_elsewhere`, dropped columns) | none | **yes (r7ver-3)** | none today (same F8 dependency as F16) | none | none |
+| **F7** (scope `_ELSEWHERE` by quantity class) | none | **yes (r7ver-3)** | **YES — moves the syntax sidecar's committed P13 line today (r7ver-1)** | none | none |
+| **F7b-example** (R-PRED-3's `example` field) | **MINOR (r7ver-2)** | **yes (r7ver-3)** | full regen (§3.3's rule) | none | none |
+| F1/F2 (reason channel) | MINOR | not separately asked (catalogue bump already signals) | full regen | none (existing rules' fixtures must still byte-match; no NEW pair) | none |
+| F5 (reword + a version-literal check) | MINOR | — | full regen | none | none |
+| F8 (R-PRED-4's three slots) | MINOR | — | full regen | none | possible — check against Reports A-D before assuming none |
+| **F9** (new rule R-ARM-2) | MINOR | — | full regen | **NEW control/sabotage pair required (r7ver-4) — every one of the 31 existing rules has one; a 32nd rule is not exempt** | **possibly moved — UNMEASURED whether R-ARM-2 fires on any of Reports A-D (532 witnessed triples in the corpus make this plausible, not confirmed)** |
+| F18/F20/F21/F22 (state narrowings, add slots) | MINOR each | — | full regen | none | none |
+| **F3** (coverage from the selector) | MAJOR, precedent-grounded (r7ver-5/6) — **zero individual-rule field characters move** | **yes (r7ver-3)** | full regen | none | **possibly moved — UNMEASURED against Reports A-D** |
+| F4 (read the slice's `excluded` rows) | MAJOR (new `inputs`) | — | full regen | none | **possibly moved — UNMEASURED against Reports A-D** |
+| F6/F13 (collapse six rank rows) | MAJOR | — | full regen | none | none named |
+| **F11** (widen R-BUCKET-SPAN's partner search) | MAJOR for the `excluded` half; the `did_not_compile` half's join is **TBD at implementation (r7pop-3)** | **yes (r7ver-3)** | full regen | none | none named |
+| F14 (`metric` as a selector key) | MAJOR | — | full regen | none | none named |
+| F26 (emit `did_not_compile` for a zero-ranking-group pattern) | none (rule's predicate/`inputs` unmoved) | — | `REPORTER_VERSION` bump + full regen | none | none named |
+| F10 (`now failing (was: measured)` clause) | MINOR (one new rule) | — | `REPORTER_VERSION` bump + full regen | new pair for the new rule | none named |
+| **F27** (`check_stated_utc`'s anchor, rewritten — r7code-1) | none | **yes (r7ver-3)** | fixture on both sides; no existing sidecar moves (the check currently REFUSES, it does not mis-render) | new pair | none | plus `interpreter_v1.md` §6.5 revision (r7ver-8) |
 
-**Group 2 — MINOR catalogue + §8(6) review + full sidecar regeneration.**
-F1/F2 (the did-not-fire REASON channel — one mechanism, two live defects,
-and it is `interpreter_v1.md` §4.5's own intended rendering), F5 (reword
-+ a `check-interpret` assertion that no prose names a catalogue version),
-F8 (R-PRED-4's three discarded slots — **the cheapest large win**), F9
-(the new rule R-ARM-2), F18 (state R-STATUS-12's narrowing), F20 (the
+**§6.05 — `INTERPRET_VERSION`, a second stamp this note originally never
+named (r7ver-3).** Every rendered sidecar's stamp block carries TWO
+version fields, built in one place (`build_stamp`, `interpret.py:2173-2204`):
+`("catalogue", cat["catalogue_version"])` and `("interpret",
+INTERPRET_VERSION)`. `INTERPRET_VERSION = "v1"` (`interpret.py:54`) has
+never moved since it was introduced, across every catalogue bump 1.0
+through 2.0 and across multiple documented `interpret.py` changes. No
+design document states a bump rule for it. `interpreter_v1.md` §3.3
+models the catalogue's OWN regeneration discipline on `REPORTER_VERSION`'s
+precedent — "bump whenever rendering changes, so two reports are never
+mistaken for each other," applied one layer up. Applied one layer up
+AGAIN: `INTERPRET_VERSION` should bump whenever a pure code change (no
+catalogue text moves) alters what a sidecar renders — independent of
+whether `catalogue_version` also moves, because two different
+`interpret.py` builds could render a cell differently at the SAME
+catalogue version. **Ruling applied here**: the code-only fix class —
+F7, F7b-code, F11, F15, F16, F19 and F27, plus F3 (which per r7ver-5/6
+gets a catalogue MAJOR bump with zero individual rule-field text moving,
+leaving `INTERPRET_VERSION` as the only signal a reader can check against
+the actual code) — MUST bump `INTERPRET_VERSION` in the same commit; this
+is folded into each fix's cost line in the table above. `make
+check-interpret`'s byte-equality freshness check (§3) already forces
+regeneration by content regardless, so nothing is *silently* stale — the
+gap is that a regenerated sidecar's own stamp line would read `interpret:
+v1` before and after any of these fixes land, giving a reader no way to
+tell from the stamp alone that the tool producing the file has changed.
+This is the same "context around the numbers" class Frank's 2026-09-17
+directive names, applied to the interpreter's own provenance rather than
+to a rule's population.
+
+**Group 1 — code only, no catalogue bump, no sidecar regeneration
+(corrected).** F7b-code, F15, F16, F19. Each is independently landable
+and each closes a whole class. (F7 is removed from this group — see
+below.)
+
+**Group 1B — code only, no catalogue bump, but sidecar regeneration IS
+required (new, r7ver-1).** **F7** alone: its own witness quotes a
+CURRENTLY COMMITTED sidecar line (the syntax report's P13 clause) that
+the fix rewrites, so `interpreter_v1.md` §3.3's content-driven
+regeneration rule fires even though no catalogue field moves. Plus an
+`INTERPRET_VERSION` bump (§6.05).
+
+**Group 2 — MINOR catalogue + §8(6) review (where the field is one of
+the four gated ones) + full sidecar regeneration.** F1/F2 (the
+did-not-fire REASON channel, now specified for all three of R-FLOOR-2's
+causes per r7pop-5 — one mechanism, two live defects, and it is
+`interpreter_v1.md` §4.5's own intended rendering for the `none` case),
+**F7b-example** (R-PRED-3's `example` field — split out of the original
+"F7b" per r7ver-2; `example` is not one of the four §8(6)-gated fields,
+so the regeneration and version bump apply without the named-reviewer
+line), F5 (reword + a `check-interpret` assertion that no prose names a
+catalogue version), F8 (R-PRED-4's three discarded slots — **the cheapest
+large win**), **F9** (the new rule R-ARM-2 — now costed with its own
+required fixture pair and an unmeasured golden-file exposure, r7ver-4;
+see §6.05's note above), F18 (state R-STATUS-12's narrowing), F20 (the
 comparand pin), F21 (the 2-member group), F22 (R-STATUS-8's legend).
 
-**Group 3 — MAJOR catalogue (a predicate, a threshold, or `inputs` move).**
-F3 (coverage from the selector, not from the matched rows — a bug fix
-against the catalogue's own stated predicate, which is why the panel must
-rule on the label), F4 (read the slice's `excluded` rows), F6/F13 (collapse
-the six identical rank rows before reducing), F11 (widen R-BUCKET-SPAN's
-partner search), F14 (`metric` as a selector key).
+**Group 3 — MAJOR catalogue (a predicate, a threshold, or `inputs`
+move).** **F3** (coverage from the selector, not from the matched rows —
+a bug fix against the catalogue's own stated predicate; the panel's MAJOR
+ruling now precedent-grounded rather than asserted, per r7ver-5/6 — see
+§7 Q2), F4 (read the slice's `excluded` rows — check against Reports A-D
+for golden movement before landing, r7ver-4), F6/F13 (collapse the six
+identical rank rows before reducing — see the corrected Q4 in §7,
+r7pop-1/r7pop-2), **F11** (widen R-BUCKET-SPAN's partner search — the
+`excluded` half only; the `did_not_compile` half's join is a SEPARATE,
+unspecified fix per r7pop-3, TBD at implementation), F14 (`metric` as a
+selector key).
 
 **Group 4 — reporter changes, on §2.5's P-1/P-2 precedent.** Two, and
 they belong in one wave because both are `render_tsv` row-emission
@@ -872,17 +1159,34 @@ changes with one regeneration between them: **F26** (emit the
 smaller and strictly-additive of the two) and **F10** (a
 `now failing (was: measured)` clause on the excluded / refused row,
 after which a rule reads it as R-DELTA-3 reads its mirror).
-`REPORTER_VERSION` bump + full regeneration + one MINOR rule.
+`REPORTER_VERSION` bump + full regeneration + one MINOR rule (with its
+own new fixture pair).
 
-**Group 5 — the one gate.** F27, `check_stated_utc`'s population. Code
-only, no catalogue change, but it changes what the tool REFUSES and it
-is blocking a committed file today.
+**Group 5 — the one gate.** F27, `check_stated_utc`'s population,
+**rewritten (r7code-1)**: the anchor is the OD-B15 dedup key's own
+minimum timestamp over `index.tsv` rows sharing an included record's
+`(subbench, version, testee_id, machine_id)` tuple, not the
+R-STATUS-1/R-BUCKET-SPAN join the v1 draft cited — see the finding text
+above for the full correction, the `check_stated_utc` signature change it
+needs, and the two stated risks (gameability, r7ver-7; the cross-config
+look-ahead gap the fix does not close, r7pop-4) the panel weighs before
+ruling. Code only, no catalogue change, but it changes what the tool
+REFUSES, needs an `INTERPRET_VERSION` bump, an `interpreter_v1.md` §6.5
+revision (r7ver-8), and it is blocking a committed file today.
 
 **Recommended order**, if the panel wants one: **F27 first** — it is the
-only finding blocking work that is already committed. Then Group 2's F8
-and F1/F2 (they make every existing sidecar honest and cost no
-predicate), then Group 1 entire, then F9, then Group 3's F3 and F4, then
-Group 4's F26 + F10 as one reporter wave.
+only finding blocking work that is already committed, now against its
+corrected fix shape. Then Group 2's F8 and F1/F2 (they make every
+existing sidecar honest and cost no predicate). Then Group 1 + Group 1B
+(F7's own regeneration is now priced in, not assumed free). Then F9 —
+**but only after checking, at implementation time, whether R-ARM-1's
+fixture-pair discipline extends a measurable cost to F9 and whether it
+fires on any of Reports A-D; this order treats F9 as cheap-then-expensive
+on the UNMEASURED assumption that it does not move a golden fact, which
+r7ver-4 flags as open, not confirmed.** Then Group 3's F3 and F4 — same
+caveat: F3/F4's golden-file exposure over Reports A-D is unmeasured by
+this note and must be checked before `refresh_golden.py` is skipped or
+assumed necessary. Then Group 4's F26 + F10 as one reporter wave.
 
 ---
 
@@ -896,10 +1200,36 @@ slot-free, §8(6)-reviewed prose like `no_fire`).
 
 **Q2. When the code and the catalogue's `predicate`/`threshold_src`
 disagree and the PROSE is right (F3, F11) — is the code fix MINOR or
-MAJOR?** *Recommend MAJOR*, because the firing set moves and a sidecar
-stamped at the old version is no longer derivable — §3.3's own test — even
-though no declared predicate changes. The panel should settle this once;
-it will recur.
+MAJOR?** *Recommend MAJOR — corrected and now precedent-grounded
+(r7ver-5, r7ver-6).* The original framing of this question was a false
+binary: checked directly against the catalogue text, R-DELTA-4's
+`predicate` (`rules.toml:678-683`) and R-BUCKET-SPAN's `threshold_src`
+(`rules.toml:1213-1220`) ALREADY read the corrected population F3/F11
+fix — **zero characters of any individual rule's `predicate`, `threshold`,
+`threshold_src` or `inputs` field would change**, because the declared
+text is already right and only the `interpret.py` function is wrong.
+Read literally, §3.3's MINOR/MAJOR definitions are worded entirely as
+edits to catalogue FIELDS ("a rule's PREDICATE or THRESHOLD changes,"
+"`inputs` change in a way that reads a different column"); a fix that
+edits no field triggers neither definition on its own text, and there is
+nothing in `rules.toml` for a mechanical version-bump process to diff.
+**This is not a novel question — the project already answered it.** The
+2.0 bump's own justification (`rules.toml:39-49`) is the identical
+reasoning shape: "the `_select`'s DEFAULT section read for the four
+failure-population quantities … widens … Both are `inputs`-shape changes
+to what R-PRED-1..4 can see, at the SAME MAJOR bump" — a change to a
+SHARED HELPER, classified MAJOR, without every affected rule's own
+`predicate`/`inputs` text being edited line-by-line to match
+(`R-PRED-1`'s own `inputs` array is untouched by the (α) widening, which
+lives in `_select`). F3/F11 are the same shape: a shared-code fix,
+correctly classified MAJOR at the catalogue-version level (a header-
+comment-documented bump, `rules.toml`'s own historical practice for every
+1.1-2.0 step), without any individual rule's field text moving. The
+recommendation (MAJOR) stands, now grounded in this project's own working
+precedent rather than asserted as a first-time call; see §6.05 for the
+`INTERPRET_VERSION` bump this class also needs, since `catalogue_version`
+moving at the header level is not, by itself, a signal a reader can trace
+to `interpret.py`'s actual code.
 
 **Q3. F4's fix: the full one (read the slice's `excluded` rows, MAJOR) or
 the interim (state the denominator's subject count, MINOR)?**
@@ -908,12 +1238,31 @@ failures; stating only the denominator leaves "of this cell's total"
 reading as the set cell's total.
 
 **Q4. Should the six identical rank metric rows collapse to one per cell
-for the four failure quantities (F6/F13)?** *Recommend yes.* It is the
-root cause of both the 6× inflated "over N value(s)" and α's 100-158:1
-dilution, and for these four quantities the six rows are literally
+for the four failure quantities (F6/F13)?** *Recommend yes, but corrected
+(r7pop-1).* It is the root cause of the 6× inflated "over N value(s)" and
+α's dilution, and for these four quantities the six rows are literally
 duplicates. It is a MAJOR that changes no committed verdict under
-`identity` (MEASURED: P5.a still refutes, P1.a-c still confirm) and
-changes every count/median/max/min one — which is the point.
+`identity` (MEASURED: P5.a still refutes, P1.a-c still confirm). The
+earlier draft of this recommendation also claimed the collapse "changes
+every count/median/max/min one — which is the point," marked MEASURED
+with no probe backing it; that clause is struck. Hand-derived from
+probe2's own already-verified output: P5.a selects 321 `n_wrong` values,
+318 zero and 3 at 10.000; `_reduce`'s `median` branch
+(`interpret.py:1880-1886`) is `nums[len(nums) // 2]` after sorting, and
+sorted ascending the 3 tens sit at the top — index `321 // 2 = 160` lands
+inside the 318 zeros, so **median = 0**. Collapsing the six duplicate rank
+rows to one per cell turns this into 66 values (51 rank + 15 `excluded`),
+63 zero + 3 at 10.000; index `66 // 2 = 33` still lands inside the zeros
+→ **median = 0, unchanged**. The collapse moves the clean:dirty ratio from
+318:3 (106:1) to 63:3 (21:1) — still overwhelming, and the `median`
+reducer's picked VALUE does not move, let alone flip a verdict. **The
+collapse is still the right fix for F6's row-count inflation** (the
+"over N value(s)" number stops meaning two different things depending on
+quantity class) and it is necessary groundwork, but **on its own it does
+NOT close F13's median-invisibility hazard** (see the corrected F13 text,
+r7pop-2) — that needs the separate load check F13's own fix-shape
+paragraph proposes (refusing an averaging reducer on a failure quantity),
+landed together with the collapse, not instead of it.
 
 **Q5. `metric` as a seventh selector key (F14)?** *Recommend yes* — the
 additive half. It fixes the base-row/detail-row mixing, and it also lets a
@@ -927,15 +1276,27 @@ not cost us anything yet; it will cost us exactly once, in the report where
 it matters most.
 
 **Q7. F27 — re-anchor `check_stated_utc` to the report's OWN records?**
-*Recommend YES, and first.* The check today anchors to the set's
+*Recommend YES, and first, weighed against two stated risks (not a strict
+improvement — r7ver-7, r7pop-4).* The check today anchors to the set's
 first-ever measurement, which never moves, so no predictions file about a
 second sample of an already-sampled set can pass — and one is committed
-and unusable right now. Anchoring to the earliest index timestamp of the
-records THIS report includes (with the supersession window closed the way
-§6.5's own correction closed it) is strictly what the check wants to
-prove, moves forward with each sample, and stays store-free. No escape
-hatch: a `--no-check-utc` flag on the one check that keeps a prediction
-honest is the wrong thing to add.
+and unusable right now. Anchoring to the OD-B15-keyed earliest index
+timestamp of the records THIS report includes (the corrected join,
+r7code-1, not the R-STATUS-1 join this note originally cited), with the
+supersession window closed the way §6.5's own correction closed it, is
+strictly what the check wants to prove and moves forward with each
+sample, staying store-free. **But it is a trade, not a pure gain**: the
+current global anchor cannot be gamed by a report's own filters, and the
+report-scoped one is a function of a scope decision made after the
+predictions were authored (r7ver-7's gameability argument); and even with
+the supersession window closed, the fix narrows only the same-testee half
+of the residual `interpreter_v1.md` v1.1 already named, leaving the
+cross-testee/cross-config half open (r7pop-4). Neither risk disqualifies
+the fix — the gaming scenario needs an author already acting in bad
+faith, which no anchor here was ever going to catch in every case — but
+the panel should rule with both stated, per the full argument in F27's
+§4 entry. No escape hatch: a `--no-check-utc` flag on the one check that
+keeps a prediction honest is the wrong thing to add.
 
 **Q8. F26 — emit the `did_not_compile` rows for a pattern that reached no
 ranking group?** *Recommend YES*, in the same reporter wave as F10. It is
@@ -988,3 +1349,14 @@ and the six committed `reports/*.interpretation.md` sidecars. Every
 contested number is marked MEASURED and traceable to a named probe. No
 file under `store/`, `reports/`, `catalogue/`, `pcrecbench/` or `~/pcrec`
 was modified by this lane.
+
+**v1.1's own source.** The R7 panel (`docs/dev/reviews/2026-09-18-r7-
+predicate-audit.md`) re-derived every code citation and corpus count
+independently against the same `HEAD` = `4eb413a` (`git diff` to
+`8a0ec37` at panel time touched only `docs/`, confirmed zero code/
+catalogue drift) plus re-runs of all seven archived probes and two
+from-scratch one-liners sharing no code with `interpret.py`. No new
+probe was run for v1.1 itself; every correction above is either a
+hand-derivation from an already-archived probe's output (r7pop-1,
+cited inline) or a direct code/contract citation (r7ver-1..8,
+r7code-1..2), stated as such at each edit.
