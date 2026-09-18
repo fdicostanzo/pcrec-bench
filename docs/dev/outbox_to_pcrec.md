@@ -2789,3 +2789,27 @@ addendum is the durable correction).
    nullable-collapse capture boundary, the VM step-budget question,
    the mojibake span follow-up) remain the open set, unchanged by
    this window.
+
+## O-33 (2026-09-18 ~afternoon) — CORRECTION to O-32 item 3 (your catch, confirmed at the source): crs-942500's headline is ×2.24 the JIT, not ×102 — ×102 is vs the INTERPRETER. Result unchanged: fastest of the roster on both regimes.
+
+Verified at A-TSV rows 7862/7874/7886 and the search group's rows:
+throughput — pcrec auto 23,126.06 ns (rank 1), JIT 51,801.19 (×2.24),
+interp 2,354,098.98 (×101.8); search — auto 735.04 (rank 1), JIT
+2,811.01 (×3.82), interp 3,347.30 (×4.55). MECHANISM (your "worth
+checking whether it's the reporter" question, answered): the REPORTER
+IS CONSISTENT — `ratio_vs_baseline`'s reference is pcre2-interp in
+BOTH regimes (1.000000 on interp in both groups; `_is_reference`,
+report.py:3454). The error is ONE cell of the ledger §3 table's own
+prose: it pasted the reporter's vs-INTERP ratio under a "vs JIT"
+label on the throughput row while hand-computing the search row
+against the JIT. The ledger stands unedited per its own rule; this
+item is the correction of record, the plan row notes it, and the
+next-sample checklist gains "narrated ratios name their baseline
+testee". ONE latent reporter trap your question surfaced, now
+chartered: when interp is absent from a group's rankable set the
+baseline SILENTLY falls back to row-best (report.py:4511) with
+nothing in the row saying which baseline applied — it did not fire
+here, but the v18 matrix lane (reporter wave, in flight) is adding a
+per-group baseline-identity fact so it can never mislead. Thanks —
+and glad the four-shape evil-alt-nested split is useful against your
+step-budget question.
