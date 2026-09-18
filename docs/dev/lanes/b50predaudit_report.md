@@ -16,9 +16,9 @@ touched. The note proposes; fixes land on a ruling, as the brief says.
 | a table answering (a)-(d) for EVERY rule | §2 — 28 rows covering all 31 rules (R-PRED-1..4 share one row and are expanded in §3) | DONE |
 | a table answering (a)-(d) for every prediction quantity | §3.1 — all **17** `QUANTITIES` members in five classes; §3.2 adds the same audit per PIPELINE STAGE (`_sections_for` → `_select` → `_keyed_values` → `_reduce` → `_op_holds` → `_measured_text` → `_elsewhere` → the roll-up) | DONE |
 | flag every template whose sentence states a verdict without its population | §5, the separate rendered-sentence audit: 8 surfaces flagged, 3 named as the models to copy | DONE |
-| findings ranked, with fixes and their version implications | §4 (F1-F25, each with severity, witness, fix shape and MINOR/MAJOR label) + §6 (four cost groups + a recommended order) | DONE |
-| name any rule whose verdict on a COMMITTED sidecar is structurally unsound | **F1 named prominently** in the status paragraph, the CLAUDE.md entry and §4: R-FLOOR-2 at `reports/2026-08-25-email-specimen-0.1-…-repin-692c2e8.interpretation.md:152`. F2, F3, F4 named beside it | DONE |
-| `docs/design/predicate_audit_v1.md`, D6-panel-ready | committed, 833 lines: status block, §0 method, §1 the four questions, §2/§3 the audit tables, §4 the ranked findings, §5 the sentence audit, §6 the costed fixes, §7 seven questions for the panel, §8 what it does not decide, source header | DONE |
+| findings ranked, with fixes and their version implications | §4 (F1-F27, each with severity, witness, fix shape and MINOR/MAJOR label) + §6 (five cost groups + a recommended order) | DONE |
+| name any rule whose verdict on a COMMITTED sidecar is structurally unsound | **F1 named prominently** in the status paragraph, the CLAUDE.md entry and §4: R-FLOOR-2 at `reports/2026-08-25-email-specimen-0.1-…-repin-692c2e8.interpretation.md:152`. F2, F3, F4 and F26 named beside it | DONE |
+| `docs/design/predicate_audit_v1.md`, D6-panel-ready | committed, ~990 lines: status block, §0 method, §1 the four questions, §2/§3 the audit tables, §4 the ranked findings, §5 the sentence audit, §6 the costed fixes, §7 nine questions for the panel, §8 what it does not decide, source header | DONE |
 | the lane report (charter-vs-committed) | this file | DONE |
 | NO code or catalogue changes | verified: `git diff --stat master` touches only `docs/` | DONE |
 
@@ -27,7 +27,7 @@ Not in the brief, added because the project's own convention requires it
 CLAUDE.md's archived-probe rule):
 
 - `docs/dev/measurements/2026-09-18-predicate-audit-probes.txt` +
-  `…-probe1.py` … `…-probe5.py` — the five probes archived with a source
+  `…-probe1.py` … `…-probe7.py` — the seven probes archived with a source
   header and verbatim output, reproducible with
   `PCRECBENCH_ROOT=<checkout> python3 <probe>`.
 - `docs/design/CLAUDE.md` and `docs/dev/measurements/CLAUDE.md` entries.
@@ -38,14 +38,15 @@ Every rule and every prediction quantity was asked: what population does
 the predicate ACTUALLY read (by code path); what counterevidence would
 refute the verdict it renders — its `no_fire` sentence included, since a
 negative is the one verdict nobody double-checks; can that counterevidence
-appear there; and if not, what is the failure shape. Five read-only probes
+appear there; and if not, what is the failure shape. Seven read-only probes
 supply the numbers, each importing `pcrecbench.interpret`'s own functions
 rather than reimplementing a predicate it is auditing.
 
 ## Headline findings
 
-**Ten LIVE** (a committed sidecar renders a structurally unsound verdict
-or an uninterpretable number today):
+**Eleven LIVE** (a committed sidecar renders a structurally unsound
+verdict or an uninterpretable number today, or a committed artefact is
+unusable):
 
 1. **F1, R-FLOOR-2 renders a verdict it never evaluated.** `floor_pattern`
    absent / `none` / multi-valued returns `no-matching-rows` and the
@@ -97,8 +98,37 @@ or an uninterpretable number today):
 9. **F22** R-STATUS-8 prints "30.15%" with no statement that the
    project's quiet bar is 10% and that this number is provenance, not the
    gate.
+10. **F26, R-STATUS-4 cannot see a pattern NO testee compiled.**
+   `render_tsv` emits the `did_not_compile` section from inside the
+   per-ranking-group loop (`report.py:4555-4564`), and a pattern nothing
+   compiled has no ranking group — so no row exists for it anywhere,
+   while the rule's whole population is that section. MEASURED: **29**
+   (report, pattern) pairs. The committed ext sidecar renders
+   *"R-STATUS-4 … (5 firing(s))"* while `balanced-parens-rec` (6 refused
+   cells) and `negation-scope-lookbehind-var` (5) appear in none; and
+   `reports/2026-09-05-bounded-0.3-…-ccboth-288d505.tsv` carries ZERO
+   `did_not_compile` rows, so the rule would render *"every pattern
+   compiled on every testee in this report"* over `cls-upto-65535` — the
+   65535 NFA-cap refusal `bench/bounded`'s ladder was built to reach.
+   Worst single report: altwide's clsfold run, **11** invisible patterns
+   (the whole refusal wall). Found as a predictions problem by lane
+   `b51preds` (its finding 2); audited here as the rule-population
+   question it also is.
+11. **F27, `check_stated_utc`'s population blocks a committed file.**
+   The check anchors to the set's FIRST-EVER index timestamp, which never
+   moves, so no predictions file about a later sample of an
+   already-sampled set can pass. Re-verified live: the just-merged
+   `capability-0.1-ext-roster.tsv` is REFUSED (`stated_utc
+   2026-09-18T00:00:00Z` vs capability@0.1's earliest
+   `2026-09-17T00:50:53Z`) and the whole `interpret` call aborts before a
+   clause is scored. Found by lane `b51preds`; audited here as the same
+   class one layer up — a gate whose population cannot distinguish
+   "stated before the population it predicts" from "stated after an
+   unrelated earlier population of the same set". **The one finding
+   blocking work that is already committed, and §7 Q7 recommends it be
+   fixed first.**
 
-**Twelve silent omissions or latent**, the two largest structural:
+**Thirteen silent omissions or latent**, the two largest structural:
 
 - **F9** R-ARM-1 cannot see an arm pair one of whose arms REFUSED to
   compile — the strongest possible arm difference, and exactly the shape
@@ -154,11 +184,22 @@ session may hold the box).
 
 - **Nothing is OWED to complete this deliverable.** The note is finished
   and self-contained.
-- **Every fix is a RULING**, not an omission: §6 groups them by cost and
-  §7 puts seven questions to the panel. The one that will recur beyond
-  this note is **Q2**: when the code and the catalogue's own
-  `predicate`/`threshold_src` prose disagree and the PROSE is right (F3,
-  F11), is the code fix MINOR or MAJOR? The note recommends MAJOR.
+- **Master moved mid-lane** (`a5018f8`, lane `b51preds`' ext-roster
+  predictions file). It is MERGED into this branch, and its arrival made
+  the audit better rather than stale: probe 6 re-resolves its 19 clauses
+  (7 of its 11 failure-quantity clauses are evaluable ONLY under ruling
+  (α) — prospective evidence the ruling was load-bearing), probe 7 turns
+  its finding 2 into F26, and its finding 1 is audited as F27. Both of
+  that lane's findings are CREDITED to it in the note.
+- **Every fix is a RULING**, not an omission: §6 groups them by cost
+  (code-only / MINOR+regeneration / MAJOR / a reporter wave / the one
+  gate) and §7 puts nine questions to the panel. Two are worth the
+  manager's attention before the panel meets: **Q7** recommends fixing
+  F27 FIRST, because it is the only finding blocking a committed
+  artefact; and **Q2** is the one that will recur beyond this note —
+  when the code and the catalogue's own `predicate`/`threshold_src`
+  prose disagree and the PROSE is right (F3, F11), is the code fix MINOR
+  or MAJOR? The note recommends MAJOR.
 - **A plan row.** The audit is chartered under `[B42]`'s tail charter (i)
   and has no row of its own; if the manager wants the fixes tracked
   separately they want a row, because they span code-only, MINOR, MAJOR
@@ -173,13 +214,15 @@ session may hold the box).
 ## Commits
 
 ```
-d94fa32  [B50] WIP: archive the predicate-audit probes (5 scripts + output)
+d94fa32  [B50] WIP: archive the predicate-audit probes
 84e9f60  [B42] tail (i): the PREDICATE AUDIT -- docs/design/predicate_audit_v1.md
-         (31 rules + 17 prediction quantities, 8 live defects, 5 archived probes)
-<this>   [B42] tail (i): count corrections + the lane report
+2da8531  [B42] tail (i): count corrections (ten LIVE) + the lane report
+a8b860e  [B42] tail (i): merge master (b51preds' ext-roster predictions file)
+4e5e129  [B42] tail (i): fold in b51preds' merge -- probes 6+7, F26, F27, eleven LIVE
+<this>   [B42] tail (i): lane report brought up to the final audit
 ```
 
-(The second commit's subject says "8 live defects"; the count was
-corrected to **ten** in the third commit after F7b and F22 were promoted
-to LIVE and F14 demoted to latent-with-a-live-mechanism. The note, the
-`docs/design/CLAUDE.md` entry and this report all read ten.)
+The live-defect count moved twice as the audit ran: 8 → 10 (F7b and F22
+promoted to LIVE, F14 demoted to latent-with-a-live-mechanism) → 11 (F26
+added). Two commit SUBJECTS carry the superseded counts; the note, the
+`docs/design/CLAUDE.md` entry and this report all read **eleven**.
