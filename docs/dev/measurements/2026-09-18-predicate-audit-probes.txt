@@ -1,0 +1,338 @@
+# ARCHIVED PROBE OUTPUT -- the PREDICATE AUDIT (docs/dev/plan.md [B42]'s
+# tail charter (i), 2026-09-17; lane b50predaudit)
+#
+# Question: for every catalogue rule and every prediction-scoring
+# quantity, what population does the predicate actually read, and can
+# the counterevidence that would refute its verdict appear there?
+# (Frank's standing directive 2026-09-17, interpret_subject_grain_v1.md
+# 6 Q7's wider ruling; the derivation is docs/design/predicate_audit_v1.md.)
+#
+# Method: seven read-only python probes over the 45 committed set-grain
+# report TSVs, the 3 committed .subject-grain.tsv slices, the 3 committed
+# predictions files (the third, capability-0.1-ext-roster.tsv, merged from
+# lane b51preds mid-audit) and the 6 committed .interpretation.md sidecars,
+# importing pcrecbench.interpret's OWN functions (parse_selector,
+# _glob_match, _select, _sections_for, _keyed_values, _reduce, _op_holds,
+# _measured_text, _elsewhere, split_testee, config_of, is_reference,
+# r_arm_1, r_bucket_dominated, evaluate_predictions) rather than
+# reimplementing any of them. Nothing under store/, reports/, catalogue/
+# or ~/pcrec was written. No engine ran; store/index.tsv is read by
+# probes 5 and 6 only, as interpret itself reads it.
+#
+# Scripts: 2026-09-18-predicate-audit-probe{1..7}.py, beside this file.
+# Reproduce: PCRECBENCH_ROOT=<checkout> python3 <script> -- seconds each;
+# ROOT defaults to the cwd.
+# Source revision: pcrec-bench 4eb413a, catalogue 2.0, reporter v17,
+# interpreter_v1.md v1.4. Run 2026-09-18.
+
+
+########## probe1.py ##########
+# set-grain report TSVs: 45
+# subject-grain slices:  3
+
+## rows and ever-non-empty columns, by section
+compile          rows=  53,589  ALWAYS-EMPTY: subject_or_na,regime_or_na,status,tier,rank_or_na,pass_rate,n_gave_up,n_wrong,gave_up_summary,delta_verdict
+compile_stamp    rows=   2,418  ALWAYS-EMPTY: pattern,subject_or_na,regime_or_na,form,fact,status,tier,rank_or_na,n,pass_rate,n_gave_up,n_wrong,gave_up_summary,delta_verdict
+did_not_compile  rows=   1,416  ALWAYS-EMPTY: form,fact,tier,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict
+excluded         rows=     229  ALWAYS-EMPTY: rank_or_na,delta_verdict
+rank             rows= 103,488  ALWAYS-EMPTY: gave_up_summary
+record           rows=     296  ALWAYS-EMPTY: pattern,subject_or_na,regime_or_na,form,fact,status,tier,rank_or_na,n,pass_rate,n_gave_up,n_wrong,gave_up_summary,delta_verdict
+
+## metrics by section
+compile          median_total_ns=12,741, jitter=11,475, artifact_bytes=11,271, emit_bytes=8,585, emit_code_bytes=8,585, warned_emit_bytes=932
+compile_stamp    engine=296, entry=296, prefilter=296, vm_rungs=296, buffers=296, frame=296, engine_sel=173, dfa_prefilter_offsets=111, dfa_match=111, scan_edges=87, scan_edges_match=87, dfa_scan_edge=73
+did_not_compile  (empty)=1,416
+excluded         pass_rate=153, giveup_smallest=76
+rank             median_ns=17,248, min_ns=17,248, max_ns=17,248, stddev_ns=17,248, ratio_vs_baseline=17,248, ratio_vs_best=17,248
+record           agreement=296
+
+## rows carrying n_wrong>0 or n_gave_up>0, by section
+compile                 0 of   53,589
+compile_stamp           0 of    2,418
+did_not_compile         0 of    1,416
+excluded              211 of      229
+rank                    0 of  103,488
+record                  0 of      296
+
+## rank rows per (pattern,regime,form,testee) cell
+  6 rows/cell : 17,248 cells
+
+## header floor_pattern values
+  'floor': 40 report(s)
+  'floor-byte': 3 report(s)
+  'none': 2 report(s)
+## header grain values
+  'set': 45
+
+## non-finite / empty numeric rank values
+  0 occurrence(s)
+
+########## probe2.py ##########
+========================================================================
+M2  ruling (alpha)'s POPULATION on the newest capability report
+  P1.a  q=n_wrong                    default_sections=['rank', 'excluded'] rows=  18 valued=  18 distinct_cells=   3 by_section={'rank': 18}
+  P1.b  q=n_wrong                    default_sections=['rank', 'excluded'] rows=  18 valued=  18 distinct_cells=   3 by_section={'rank': 18}
+  P1.c  q=n_wrong                    default_sections=['rank', 'excluded'] rows=  18 valued=  18 distinct_cells=   3 by_section={'rank': 18}
+  P2.a  q=compile:median_total_ns    default_sections=['compile'] rows=   0 valued=   0 distinct_cells=   0 by_section={}
+  P2.b  q=compile:median_total_ns    default_sections=['compile'] rows=   0 valued=   0 distinct_cells=   0 by_section={}
+  P3    q=median_ns                  default_sections=['rank'] rows=   0 valued=   0 distinct_cells=   0 by_section={}
+  P4.a  q=compile:artifact_bytes     default_sections=['compile'] rows=   0 valued=   0 distinct_cells=   0 by_section={}
+  P4.b  q=median_ns                  default_sections=['rank'] rows=   0 valued=   0 distinct_cells=   0 by_section={}
+  P5.a  q=n_wrong                    default_sections=['rank', 'excluded'] rows= 321 valued= 321 distinct_cells=  66 by_section={'rank': 306, 'excluded': 15}
+  P6.a  q=n_wrong                    default_sections=['rank', 'excluded'] rows=   0 valued=   0 distinct_cells=   0 by_section={}
+  P6.b  q=n_wrong                    default_sections=['rank', 'excluded'] rows=   0 valued=   0 distinct_cells=   0 by_section={}
+  P7    q=n_wrong                    default_sections=['rank', 'excluded'] rows=   0 valued=   0 distinct_cells=   0 by_section={}
+  P8    q=section                    default_sections=['did_not_compile'] rows=  16 valued=  16 distinct_cells=  16 by_section={'did_not_compile': 16}
+  P10.a  q=n_wrong                    default_sections=['rank', 'excluded'] rows=   0 valued=   0 distinct_cells=   0 by_section={}
+  P10.b  q=n_wrong                    default_sections=['rank', 'excluded'] rows=   0 valued=   0 distinct_cells=   0 by_section={}
+
+  P5.a detail: which rows carry the counterevidence
+    selected rows 321; rows with n_wrong>0: 3
+    those rows' sections: {'excluded': 3}
+    rank rows in the selection: 306 (= 6 x 51 cells)
+    excluded rows in the selection: 15
+========================================================================
+M3  reports whose header floor_pattern is `none` or multi-valued
+  2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv  ->  floor_pattern: 'none'
+  2026-08-25-email-specimen-0.1-budu-ryzen1600.tsv  ->  floor_pattern: 'none'
+========================================================================
+M5  a one-token-apart arm pair where ONE arm is in did_not_compile
+  2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.tsv
+    level-context / large-subject-throughput / plain: ranked `pcrec_35e1ab1_vm-caps-simdna` vs REFUSED `pcrec_35e1ab1_auto-caps-simdna` (one token apart: mode 'vm' vs 'auto')
+  2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.tsv
+    level-context / large-subject-throughput / plain: ranked `pcrec_35e1ab1_vm-in-caps-simdna` vs REFUSED `pcrec_35e1ab1_auto-caps-simdna` (one token apart: mode 'vm-in' vs 'auto')
+  2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.tsv
+    level-context / short-subject-search / plain: ranked `pcrec_35e1ab1_vm-caps-simdna` vs REFUSED `pcrec_35e1ab1_auto-caps-simdna` (one token apart: mode 'vm' vs 'auto')
+  2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.tsv
+    level-context / short-subject-search / plain: ranked `pcrec_35e1ab1_vm-in-caps-simdna` vs REFUSED `pcrec_35e1ab1_auto-caps-simdna` (one token apart: mode 'vm-in' vs 'auto')
+  2026-08-29-loglines-0.1-budu-ryzen1600-repin-36d5963.tsv
+    level-context / large-subject-throughput / plain: ranked `pcrec_35e1ab1_vm-caps-simdna` vs REFUSED `pcrec_35e1ab1_auto-caps-simdna` (one token apart: mode 'vm' vs 'auto')
+  2026-08-29-loglines-0.1-budu-ryzen1600-repin-36d5963.tsv
+    level-context / large-subject-throughput / plain: ranked `pcrec_35e1ab1_vm-in-caps-simdna` vs REFUSED `pcrec_35e1ab1_auto-caps-simdna` (one token apart: mode 'vm-in' vs 'auto')
+  total such (cell, ranked arm, refused arm) triples: 532
+========================================================================
+M6  one pin RANKS a cell while the same config at another pin is
+    EXCLUDED or REFUSED in the same report (no delta_verdict exists)
+  2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv
+    factored / large-subject-throughput / cfg auto-caps-simdna: 692c2e8 RANKS (`pcrec_692c2e8_auto-caps-simdna`) but 8da6120 is in excluded (`pcrec_8da6120_auto-caps-simdna`)
+  2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv
+    factored / large-subject-throughput / cfg auto-nocaps-simdna: 692c2e8 RANKS (`pcrec_692c2e8_auto-nocaps-simdna`) but 8da6120 is in excluded (`pcrec_8da6120_auto-nocaps-simdna`)
+  2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv
+    factored / match-compliance / cfg auto-caps-simdna: 692c2e8 RANKS (`pcrec_692c2e8_auto-caps-simdna`) but 8da6120 is in excluded (`pcrec_8da6120_auto-caps-simdna`)
+  2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv
+    factored / match-compliance / cfg auto-nocaps-simdna: 692c2e8 RANKS (`pcrec_692c2e8_auto-nocaps-simdna`) but 8da6120 is in excluded (`pcrec_8da6120_auto-nocaps-simdna`)
+  2026-08-29-loglines-0.1-budu-ryzen1600-repin-36d5963.tsv
+    level-context / large-subject-throughput / cfg auto-caps-simdna: 36d5963 RANKS (`pcrec_36d5963_auto-caps-simdna`) but 35e1ab1 is in did_not_compile (`pcrec_35e1ab1_auto-caps-simdna`)
+  2026-08-29-loglines-0.1-budu-ryzen1600-repin-36d5963.tsv
+    level-context / large-subject-throughput / cfg auto-nocaps-simdna: 36d5963 RANKS (`pcrec_36d5963_auto-nocaps-simdna`) but 35e1ab1 is in did_not_compile (`pcrec_35e1ab1_auto-nocaps-simdna`)
+  2026-08-29-loglines-0.1-budu-ryzen1600-repin-36d5963.tsv
+    level-context / short-subject-search / cfg auto-caps-simdna: 36d5963 RANKS (`pcrec_36d5963_auto-caps-simdna`) but 35e1ab1 is in did_not_compile (`pcrec_35e1ab1_auto-caps-simdna`)
+  2026-08-29-loglines-0.1-budu-ryzen1600-repin-36d5963.tsv
+    level-context / short-subject-search / cfg auto-nocaps-simdna: 36d5963 RANKS (`pcrec_36d5963_auto-nocaps-simdna`) but 35e1ab1 is in did_not_compile (`pcrec_35e1ab1_auto-nocaps-simdna`)
+  total such pairs: 38
+========================================================================
+M8  `not_ranked` and `scratch` section rows in the whole corpus
+  0 rows
+
+########## probe3.py ##########
+
+### 2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv
+  P2.a  op=gt hi='0'  rows=4 reduced=4 violations=0
+     TRUE min=5.000  max=5.000
+     RENDERED: P2.a: worst rec-r-uc/(set)/match-compliance/whole-subject/pcrec_d34c9131_auto-caps-simdna = 5.000 over 4 value(s)
+  P4.a  op=lte hi='1.0'  rows=6 reduced=6 violations=3
+     TRUE min=0.507  max=2.056
+     RENDERED: P4.a: worst qnt-poss-plus/(set)/short-subject-search/plain/libpcre2_10.46_interp-caps-simdna = 2.056 over 6 value(s)
+     violators: min=2.013 max=2.056  -> the rule labels max-by-|v| 'worst'
+  P6.c  op=lte hi='1.5'  rows=4 reduced=4 violations=1
+     TRUE min=0.678  max=1.722
+     RENDERED: P6.c: worst lkb-neg/(set)/large-subject-throughput/plain/libpcre2_10.46_interp-caps-simdna = 1.722 over 4 value(s)
+     violators: min=1.722 max=1.722  -> the rule labels max-by-|v| 'worst'
+  P7.a  op=gte hi='90'  rows=24 reduced=24 violations=22
+     TRUE min=61.000  max=92.000
+     RENDERED: P7.a: worst unp-p-lc/(set)/large-subject-throughput/plain/libpcre2_10.46_jit-caps-simdna = 89.000 over 24 value(s)
+     violators: min=61.000 max=89.000  -> the rule labels max-by-|v| 'worst'
+  P7.b  op=lte hi='2'  rows=2 reduced=2 violations=0
+     TRUE min=1.206  max=1.648
+     RENDERED: P7.b: worst unp-p-lc/(set)/large-subject-throughput/plain/libpcre2_10.46_interp-caps-simdna = 1.648 over 2 value(s)
+  P13  op=lte hi='10'  rows=834 reduced=834 violations=0
+     TRUE min=0.333  max=2.543
+     RENDERED: P13: worst mod-j-uc///plain/libpcre2_10.46_interp-caps-simdna = 2.543 over 834 value(s)
+
+### 2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.tsv
+  P1.a  op=eq hi='0'  rows=18 reduced=18 violations=0
+     TRUE min=0.000  max=0.000
+     RENDERED: P1.a: worst wild-waf-crs-942140-dbnames/(set)/short-subject-search/plain/libpcre2_10.46_jit-caps-simdna = 0.000 over 18 value(s)
+  P5.a  op=eq hi='0'  rows=321 reduced=321 violations=3
+     TRUE min=0.000  max=10.000
+     RENDERED: P5.a: worst evil-alt-nested/(set)/short-subject-search/plain/libpcre2_10.46_dfa-nocaps-simdna = 10.000 over 321 value(s)
+     violators: min=10.000 max=10.000  -> the rule labels max-by-|v| 'worst'
+
+### the `metric` disambiguation hazard (no `metric` selector key)
+  explicit `section=excluded`, quantity=n_gave_up: 34 rows, by metric {'pass_rate': 25, 'giveup_smallest': 9}
+  the values it reduces over (metric -> n_gave_up):
+    metric=pass_rate        n_gave_up=     0  email-nested-plus/(set)/pcrec_a770139e_vm-caps-simdna
+    metric=pass_rate        n_gave_up=     0  email-nested-plus/(set)/pcrec_a770139e_vm-in-caps-simdna
+    metric=pass_rate        n_gave_up=    25  email-nested-plus/(set)/pcrec_cf0962e3_vm-caps-simdna
+    metric=giveup_smallest  n_gave_up=     5  email-nested-plus/v-uuid-badnibble/pcrec_cf0962e3_vm-caps-simdna
+    metric=pass_rate        n_gave_up=    25  email-nested-plus/(set)/pcrec_cf0962e3_vm-in-caps-simdna
+    metric=giveup_smallest  n_gave_up=     5  email-nested-plus/v-uuid-badnibble/pcrec_cf0962e3_vm-in-caps-simdna
+    metric=pass_rate        n_gave_up=     0  evil-alt-nested/(set)/libpcre2_10.46_dfa-nocaps-simdna
+    metric=pass_rate        n_gave_up=    10  evil-alt-nested/(set)/libpcre2_10.46_interp-caps-simdna
+    metric=giveup_smallest  n_gave_up=     2  evil-alt-nested/rd-evil-alt-near-miss/libpcre2_10.46_interp-caps-simdna
+    metric=pass_rate        n_gave_up=    10  evil-alt-nested/(set)/libpcre2_10.46_jit-caps-simdna
+    metric=giveup_smallest  n_gave_up=     2  evil-alt-nested/rd-evil-alt-near-miss/libpcre2_10.46_jit-caps-simdna
+    metric=pass_rate        n_gave_up=     0  evil-alt-nested/(set)/pcrec_a770139e_auto-caps-simdna
+    metric=pass_rate        n_gave_up=     0  evil-alt-nested/(set)/pcrec_a770139e_auto-nocaps-simdna
+    metric=pass_rate        n_gave_up=     0  evil-alt-nested/(set)/pcrec_a770139e_vm-caps-simdna
+    metric=pass_rate        n_gave_up=     0  evil-alt-nested/(set)/pcrec_a770139e_vm-in-caps-simdna
+    metric=pass_rate        n_gave_up=    10  evil-alt-nested/(set)/pcrec_cf0962e3_auto-caps-simdna
+    metric=giveup_smallest  n_gave_up=     2  evil-alt-nested/rd-evil-alt-near-miss/pcrec_cf0962e3_auto-caps-simdna
+    metric=pass_rate        n_gave_up=     0  evil-alt-nested/(set)/pcrec_cf0962e3_auto-nocaps-simdna
+    metric=pass_rate        n_gave_up=    10  evil-alt-nested/(set)/pcrec_cf0962e3_vm-caps-simdna
+    metric=giveup_smallest  n_gave_up=     2  evil-alt-nested/rd-evil-alt-near-miss/pcrec_cf0962e3_vm-caps-simdna
+    metric=pass_rate        n_gave_up=    10  evil-alt-nested/(set)/pcrec_cf0962e3_vm-in-caps-simdna
+    metric=giveup_smallest  n_gave_up=     2  evil-alt-nested/rd-evil-alt-near-miss/pcrec_cf0962e3_vm-in-caps-simdna
+    metric=pass_rate        n_gave_up=     0  file-ext-order/(set)/libpcre2_10.46_dfa-nocaps-simdna
+    metric=pass_rate        n_gave_up=     0  keyword-prefix-order/(set)/libpcre2_10.46_dfa-nocaps-simdna
+    metric=pass_rate        n_gave_up=     0  mojibake-curly-quote/(set)/pcrec_a770139e_auto-caps-simdna
+    metric=pass_rate        n_gave_up=     0  mojibake-curly-quote/(set)/pcrec_a770139e_auto-nocaps-simdna
+    metric=pass_rate        n_gave_up=     0  mojibake-curly-quote/(set)/pcrec_a770139e_vm-caps-simdna
+    metric=pass_rate        n_gave_up=     0  mojibake-curly-quote/(set)/pcrec_a770139e_vm-in-caps-simdna
+    metric=pass_rate        n_gave_up=    75  negation-scope-lookbehind-var/(set)/libpcre2_10.46_dfa-nocaps-simdna
+    metric=giveup_smallest  n_gave_up=    15  negation-scope-lookbehind-var/sd-fileext-short/libpcre2_10.46_dfa-nocaps-simdna
+    metric=pass_rate        n_gave_up=     0  router-prefix-order/(set)/libpcre2_10.46_dfa-nocaps-simdna
+    metric=pass_rate        n_gave_up=    15  tag-depth3-bound/(set)/libpcre2_10.46_dfa-nocaps-simdna
+    metric=giveup_smallest  n_gave_up=     3  tag-depth3-bound/br-tag-pair/libpcre2_10.46_dfa-nocaps-simdna
+    metric=pass_rate        n_gave_up=     0  wild-logparse-quotedstring-grok/(set)/libpcre2_10.46_dfa-nocaps-simdna
+  same clause with NO explicit section (alpha default): 3973 rows, by metric {'median_ns': 658, 'min_ns': 658, 'max_ns': 658, 'stddev_ns': 658, 'ratio_vs_baseline': 658, 'ratio_vs_best': 658, 'pass_rate': 25}
+
+########## probe4.py ##########
+========================================================================
+R-FLOOR-1/3: the jitter POPULATION vs all compile cells
+  compile cells: 12,741; with a jitter row: 11,475; WITHOUT: 1,266 (9.9%)
+  compile median rows whose value is EMPTY (a refusal): 1,266
+========================================================================
+R-STATUS-12: giveup_smallest rows are ONE per (cell, code) --
+  the subject named is the SMALLEST firing one, not every one
+  giveup_smallest rows corpus-wide: 76
+  distinct (cell) keys: 76; rows per cell: {1: 76}
+  (testee,regime,subject) keys with 2+ codes on 2+ patterns (R-STATUS-12's firing population): 20
+========================================================================
+R-ARM-1: the ratio distribution of its firings
+  2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.tsv
+    573 firings; ratio min=1.002 median=4.866 max=244116.650
+    bands: {'<1.02': 55, '1.02-1.10': 58, '1.10-2.0': 85, '>=2.0': 375}
+  2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.tsv
+    432 firings; ratio min=1.002 median=1.435 max=10695.605
+    bands: {'<1.02': 33, '1.02-1.10': 49, '1.10-2.0': 207, '>=2.0': 143}
+========================================================================
+R-DELTA-1: the template names no comparand pin; how many older
+  same-config siblings exist per firing cell?
+  2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.tsv: firings by number of other-pin siblings in the cell: {0: 4, 1: 484}
+  2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.tsv: firings by number of other-pin siblings in the cell: {1: 384}
+========================================================================
+R-BUCKET-DOMINATED: firings whose SET cell is not ranked, and the
+  subjects its denominator omits
+    evil-alt-nested / short-subject-search / libpcre2_10.46_interp-caps-simdna: share 94.6% of a total over 73 ranked subject(s); 2 subject(s) of the same cell are in the subject-grain `excluded` section and are NOT in the denominator. The SET cell is EXCLUDED from ranking.
+    evil-alt-nested / short-subject-search / libpcre2_10.46_jit-caps-simdna: share 94.5% of a total over 73 ranked subject(s); 2 subject(s) of the same cell are in the subject-grain `excluded` section and are NOT in the denominator. The SET cell is EXCLUDED from ranking.
+    evil-alt-nested / short-subject-search / pcrec_a770139e_auto-caps-simdna: share 94.7% of a total over 73 ranked subject(s); 2 subject(s) of the same cell are in the subject-grain `excluded` section and are NOT in the denominator. The SET cell is EXCLUDED from ranking.
+    evil-alt-nested / short-subject-search / pcrec_a770139e_vm-caps-simdna: share 94.6% of a total over 73 ranked subject(s); 2 subject(s) of the same cell are in the subject-grain `excluded` section and are NOT in the denominator. The SET cell is EXCLUDED from ranking.
+    evil-alt-nested / short-subject-search / pcrec_a770139e_vm-in-caps-simdna: share 94.6% of a total over 73 ranked subject(s); 2 subject(s) of the same cell are in the subject-grain `excluded` section and are NOT in the denominator. The SET cell is EXCLUDED from ranking.
+  firings: 33; on a set cell the report EXCLUDED: 8; on a ranked set cell: 25
+
+########## probe5.py ##########
+== the 4 R-DELTA-1 firings with NO other-pin sibling rank row in the cell
+  mojibake-curly-quote / short-subject-search / plain / pcrec_cf0962e3_auto-caps-simdna
+     delta_verdict='now measured (was: wrong)'
+     the same config at another pin appears as: {('excluded', 'plain', 'short-subject-search'): 1}
+  mojibake-curly-quote / short-subject-search / plain / pcrec_cf0962e3_auto-nocaps-simdna
+     delta_verdict='now measured (was: wrong)'
+     the same config at another pin appears as: {('excluded', 'plain', 'short-subject-search'): 1}
+  mojibake-curly-quote / short-subject-search / plain / pcrec_cf0962e3_vm-in-caps-simdna
+     delta_verdict='now measured (was: wrong)'
+     the same config at another pin appears as: {('excluded', 'plain', 'short-subject-search'): 1}
+  mojibake-curly-quote / short-subject-search / plain / pcrec_cf0962e3_vm-caps-simdna
+     delta_verdict='now measured (was: wrong)'
+     the same config at another pin appears as: {('excluded', 'plain', 'short-subject-search'): 1}
+
+== R-STATUS-12 / R-STATUS-3: subjects that gave up vs subjects NAMED
+  subjects that gave up (sum of the base rows' ×N): 188
+  subjects NAMED by a giveup_smallest row: 76
+
+########## probe6.py ##########
+clauses: 19
+
+(a) would an (alpha)-dependent clause be NOT-EVALUABLE under the
+    pre-(alpha) rank-only default?  [resolved against the pcrec-arm
+    report that exists today, substituting a MEASURED testee glob so
+    the population is non-empty -- the ext testees have no records yet]
+  P2.a  n_wrong    alpha=  6 {'rank': 6}  rank-only=  6
+  P2.b  n_wrong    alpha=  6 {'rank': 6}  rank-only=  6
+  P2.d  n_wrong    alpha=  6 {'rank': 6}  rank-only=  6
+  P2.e  n_wrong    alpha=  6 {'rank': 6}  rank-only=  6
+  P3.a  n_wrong    alpha=  3 {'excluded': 3}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P3.b  n_wrong    alpha=  3 {'excluded': 3}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P4.a  n_wrong    alpha=  3 {'excluded': 3}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P4.b  n_wrong    alpha=  3 {'excluded': 3}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P5.a  n_wrong    alpha=  3 {'excluded': 3}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P7.a  n_gave_up  alpha=  1 {'excluded': 1}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P7.b  n_wrong    alpha=  1 {'excluded': 1}  rank-only=  0   <-- (alpha) is what makes it evaluable
+
+(b) does `subject_or_na=(set)` exclude the P-2 giveup_smallest rows?
+  subject_or_na=(set)  ->  26 rows, {'pass_rate': 26}
+  subject_or_na=*      ->  36 rows, {'pass_rate': 26, 'giveup_smallest': 10}
+
+(c) does the base/detail mixing change a `set_of(pattern)` answer?
+  P1.a  base=[] detail-only-additions=[]
+
+(d) check_stated_utc / the Q6 testee-glob check: are the ext-roster
+    testees measured anywhere in store/index.tsv yet?
+  oniguruma_*_default-caps-simdna                      matches 1 index testee(s)
+  re2_*_default-caps-simdna                            matches 1 index testee(s)
+  re2_*_longest-caps-simdna                            matches 1 index testee(s)
+  tre_*_default-caps-simdna                            matches 1 index testee(s)
+  vectorscan_*_block-nosom-nocaps-simd                 matches 1 index testee(s)
+
+########## probe7.py ##########
+  2026-09-03-bounded-0.3-budu-ryzen1600-cc-rerun-1989c62.tsv
+    1 pattern(s) whose every compile cell is a refusal AND which have NO did_not_compile row:
+      cls-upto-65535  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+  2026-09-05-altwide-0.2-budu-ryzen1600-island-334fd10e.tsv
+    14 pattern(s) whose every compile cell is a refusal AND which have NO did_not_compile row:
+      ci-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      nar4-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      pfx3-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      s-2048  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      s-4096  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      sfx-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      sh1-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      srt-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-1024  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-2048  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-384  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      wb-256  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      wb-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+  2026-09-05-bounded-0.3-budu-ryzen1600-ccboth-288d505.tsv
+    1 pattern(s) whose every compile cell is a refusal AND which have NO did_not_compile row:
+      cls-upto-65535  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+  2026-09-06-altwide-0.2-budu-ryzen1600-clsfold-d34c9131.tsv
+    11 pattern(s) whose every compile cell is a refusal AND which have NO did_not_compile row:
+      ci-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      nar4-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      s-2048  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      s-4096  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      sfx-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      sh1-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      srt-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-1024  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-2048  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      wb-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+  2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.tsv
+    2 pattern(s) whose every compile cell is a refusal AND which have NO did_not_compile row:
+      balanced-parens-rec  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      negation-scope-lookbehind-var  (5 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+
+  total (report, pattern) pairs invisible to R-STATUS-4: 29
