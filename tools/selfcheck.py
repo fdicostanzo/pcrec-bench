@@ -2682,6 +2682,29 @@ B39_VM_STAMP_LINE = 26
 B42_STARTPOS_GUARD_LINES = 161
 B42_PORTFIX_SEMI_PER_MACHINE = 2
 
+# [B42]-tail re-pin (2026-09-17, inbox I-73) -- the dial+K59 checkpoint pin
+# a770139e -> cf0962e3 (rx_info.abi 25 -> 26). pcrec's OWN corpus-wide
+# byte-identity sweep (docs/dev/dialtrain_byteid.md, read-only, 1,500 of
+# 3,938 pattern lines moving, EVERY ONE by exactly +27 bytes with zero
+# exceptions) already proved this is a single flat, prefix-length-scaled
+# constant -- one new unconditional stamp line,
+# `#define RX_TUNE "balanced"\n` (27 bytes with its newline, at the
+# adapter's own `-p rx` prefix; pcrec's own emit_dfa.c comment states the
+# delta is the TUNE token's length under the caller's prefix), plus the
+# `.abi` digit moving 25 -> 26 (SAME character count, 0 net bytes). Zero
+# residue independently confirmed here on FOUR witnesses spanning every
+# kind this file's own tables cover -- a forced-VM non-hybrid (`foo|bar`),
+# a plain DFA (`floor`'s own witness pattern), a VM HYBRID
+# (`a(b|c)+d`), and a scan-edge-BEARING DFA with TWO scan-edge machines
+# (`[a-z]{0,64}`, pinned): all four read exactly +27 B on the `.c`, +0 on
+# the `.h`, and a byte diff shows only the RX_TUNE line and the `.abi`
+# digit moving -- UNLIKE B42_PORTFIX_SEMI_PER_MACHINE, this constant is
+# NOT per-scan-edge-machine (it is a single file-scope `#define`, emitted
+# once regardless of how many machines the artifact contains), so it is
+# added EXACTLY ONCE per artifact, always, both engines, every route --
+# simpler than the previous re-pin's two-term decomposition.
+B45_RX_TUNE_STAMP_LINE = 27
+
 
 class _Draft:
     """[B39] DRAFT: a predicted value, compared exactly. See above."""
@@ -2942,7 +2965,7 @@ STAMP_CASES = (
       "scan_edges": 1,
       # [B42]: two scan-edge machines (forward + anchored; pinned, so no
       # reverse one) -- 161 flat + 2*2 (each machine's two labels) = 165.
-      "emit_bytes": 16558 + B42_STARTPOS_GUARD_LINES
+      "emit_bytes": 16558 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 2 * B42_PORTFIX_SEMI_PER_MACHINE, **_CAPS_DFA}),
     # ... and its ONE-CHARACTER CONTROL. `{4096,}` is a LOWER bound, so
     # the start state does not accept and the predicate declines: the same
@@ -2985,7 +3008,7 @@ STAMP_CASES = (
       # alternation, so the fold count reads 0.
       "vm_cls_folds": 0,
       # [B42]: non-hybrid VM, no DFA scan machine at all -- flat 161.
-      "emit_bytes": 18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
+      "emit_bytes": 18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
       **_CAPS_VM}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE HAND-CHOSEN
     # FOLD WITNESS AND ITS ONE-CHARACTER CONTROLS (predicted from source
@@ -3007,7 +3030,7 @@ STAMP_CASES = (
       "vm_entry_shape": "forward", "vm_program_bytes": 634,
       "vm_cls_folds": 3,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 18045 + B42_STARTPOS_GUARD_LINES, **_CAPS_VM}),
+      "emit_bytes": 18045 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE, **_CAPS_VM}),
     # CONTROL 1 (tuning.md 2.22's own decline table, row 2): `[ac]` is a
     # two-member set NOT differing only in bit 0x20 -- the or-mask would
     # admit `b`/`B` -- so it stays a BITMAP class: folds 0 on a class-
@@ -3018,7 +3041,7 @@ STAMP_CASES = (
      {"engine": "vm", "engine_sel": "forced",
       "vm_cls_folds": 0,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES, **_CAPS_VM}),
+      "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE, **_CAPS_VM}),
     # CONTROL 2 (row 3): `[@\x60]` IS a 0x20 pair (0x40 / 0x60) but of
     # NON-letters -- the compare would be exact, yet the recognizer names
     # what caseless folding PRODUCES and a wider two-member-compare form
@@ -3029,7 +3052,7 @@ STAMP_CASES = (
       "vm_cls_folds": 0,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161. MEASURED:
       # the two controls are still the same size (one bitmap each).
-      "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES, **_CAPS_VM}),
+      "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE, **_CAPS_VM}),
     # CONTROL 3 (the scope's other side): the same three caseless letters
     # under `auto` select the DFA, and the DFA route never consults
     # `vm_cls_shape` -- NO pair (asserted after the loop by the scope
@@ -3249,8 +3272,8 @@ LEDGER_STAMP_CASES = (
       "vm_program_bytes": 653,
       "vm_cls_folds": 0,   # [B39] MEASURED: `[a-z]` is a RANGE, not a pair
       # [B42]: declined-nullable VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
-      "emit_code_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
+      "emit_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
+      "emit_code_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
       **_CAPS_VM}),
     # [B19] (e) -> [B25]: until a7e0bdf the 16384 rung was THE DFA THAT
     # WARNS (724,699 B of source, over `--warn-emit-bytes` 250,000 --
@@ -3298,9 +3321,9 @@ LEDGER_STAMP_CASES = (
       "warned_emit_bytes": None,
       # [B42]: `search-filter` + pinned = exactly ONE scan-edge machine
       # (the forward search; no anchored, no reverse) -- 161 flat + 2*1.
-      "emit_bytes": 13305 + B42_STARTPOS_GUARD_LINES
+      "emit_bytes": 13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B42_PORTFIX_SEMI_PER_MACHINE,
-      "emit_code_bytes": 11828 + B42_STARTPOS_GUARD_LINES
+      "emit_code_bytes": 11828 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B42_PORTFIX_SEMI_PER_MACHINE, **_CAPS_DFA}),
     # ------ [B22] THE DECLINE/KEEP SETS at 263b013 (the I-21 CORRECTION's
     # code-derived minw analysis, stamped 11/11 as predicted -- inbox
@@ -3333,8 +3356,8 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 0, "vm_entry_shape": "forward",
       "vm_program_bytes": 756,
       # [B42]: declined-nullable VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES,
-      "emit_code_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES,  # +4: the N1 _WHY prose
+      "emit_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
+      "emit_code_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,  # +4: the N1 _WHY prose
       **_CAPS_VM}, "whole-subject"),
     ("bounded cls-upto-16384 whole: declined", "pcrec-auto",
      "bounded", "cls-upto-16384",
@@ -3444,13 +3467,13 @@ LEDGER_STAMP_CASES = (
      "altwide", "w-256",
      {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 11,
       "dfa_uniform_folds": 0,
-      "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES
+      "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE}),
     ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)",
      "pcrec-auto", "altwide", "srt-256",
      {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 57,
       "dfa_uniform_folds": 0,
-      "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES
+      "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE}),
     # ------ [B37] / pcrec abi 18 ([ENG-ISL] STEP 1) -- THE ORDER PAIR ON
     # THE VM ROUTE, where the x8.87 (256) / x20.1 (512) branch-ORDER
@@ -3474,7 +3497,7 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 305686,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
+      "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
       "vm_cls_folds": 0,   # [B39] MEASURED: lowercase words, no class
       "altcls_merges": 0, "altcls_factored": 11}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE CORPUS FOLD
@@ -3503,7 +3526,7 @@ LEDGER_STAMP_CASES = (
       "vm_entry_shape": "plain", "vm_program_bytes": 351053,
       "vm_cls_folds": 26,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 359502 + B42_STARTPOS_GUARD_LINES}),
+      "emit_bytes": 359502 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE}),
     # ... and under `auto` the same pattern is a DFA (989,963 B at
     # 334fd10e, `edge=bitmap` -- the `(?i)` scan class is two ranges): no
     # `vm_cls_folds` pair at all (the scope check), which is why the
@@ -3519,7 +3542,7 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 305686,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
+      "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
       "altcls_merges": 0, "altcls_factored": 57}),
     # The prefix-3 and suffix arms island too (the shared literal is
     # factored OUT by [OPT-ALTCLS] stage 2 first, and the island asks
@@ -3533,14 +3556,14 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 244735,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 231659 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES}),
+      "emit_bytes": 231659 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE}),
     ("altwide s-256 under --engine=vm: the island before a shared suffix",
      "pcrec-vm", "altwide", "s-256",
      {"engine": "vm", "engine_sel": "forced", "vm_frameless": 1,
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 199152,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 185044 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES}),
+      "emit_bytes": 185044 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE}),
     # THE VM REFUSAL WALL MOVED: `w-384`'s forced-VM form REFUSED at
     # 288d505 (508,607 B of emitted code > the 500,000 code cap) and
     # COMPILES at this pin as an island at 427,824 B -- I-43's "the wall
@@ -3554,7 +3577,7 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 456975,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 427824 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
+      "emit_bytes": 427824 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
       "altcls_merges": 0, "altcls_factored": 17}),
     # ... and the floor: a single literal byte, no alternation, so
     # islands 0 -- the VM route's zero control -- and `forward` at 236
@@ -3565,7 +3588,7 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 0, "vm_entry_shape": "forward",
       "vm_program_bytes": 236,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 17623 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
+      "emit_bytes": 17623 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
       "altcls_merges": 0, "altcls_factored": 0}),
     # `sh1-64`: every one of its 64 branches starts with the byte `k` --
     # factoring IS expected (bench/altwide/NOTES.md), and MEASURED it
@@ -3604,7 +3627,7 @@ LEDGER_STAMP_CASES = (
       "dfa_uniform_folds": 4,
       # [B42]: TWO scan-edge machines (forward + anchored, pinned so no
       # reverse) -- 161 + 2*2 = 165.
-      "emit_bytes": 16553 + B42_STARTPOS_GUARD_LINES
+      "emit_bytes": 16553 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE}),
     # `dig-upto-16` forced VM: the [B33] (3) .text witness -- a
     # frameless program with no capture write, so the abi-17
@@ -3617,7 +3640,7 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 0, "vm_entry_shape": "forward",
       "vm_program_bytes": 646,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 18157 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES}),
+      "emit_bytes": 18157 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE}),
     # ... and its `auto` form is the fold witness's CONTROL: a
     # reverse-pass DFA (a lower-bounded digit run's accept column
     # varies), folds 0, whose -O2 object DOES carry a .rodata section.
@@ -3629,7 +3652,7 @@ LEDGER_STAMP_CASES = (
       # pattern's scan carries NO scan_edge label at all -- only
       # `_scan_views:` moves on each, +1 B x 3 = +3 (MEASURED directly:
       # `\d{1,16}` has no dfa_scan_edge on any machine) -- 161 + 3 = 164.
-      "emit_bytes": 22654 + B42_STARTPOS_GUARD_LINES + 3}),
+      "emit_bytes": 22654 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE + 3}),
 )
 
 
@@ -5004,10 +5027,10 @@ DENY_CONTROLS = (
       # [B42]: default arm has ONE scan-edge machine (search-filter, no
       # anchored, pinned -> no reverse) -- 161 + 2*1 = 163. Denied arm has
       # NO scan-edge machinery at all (the axis itself is off) -- flat 161.
-      "emit_bytes": (13305 + B42_STARTPOS_GUARD_LINES
+      "emit_bytes": (13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE,
-                     252587 + B42_STARTPOS_GUARD_LINES),
-      "warned_emit_bytes": (None, 252587 + B42_STARTPOS_GUARD_LINES)}, "deny"),
+                     252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE),
+      "warned_emit_bytes": (None, 252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE)}, "deny"),
     # [B34] (abi 16, [OPT-5] STEP 2): -fno-start-pinned (bit 22) denies the
     # `search-start` axis's order-1 candidate, and the flag's registry row
     # DOES carry a stamp_value (`pinned`), so this is the ordinary deny
@@ -5046,9 +5069,9 @@ DENY_CONTROLS = (
       # no reverse) -- 161 + 2*2 = 165. Denied (reverse-pass) arm has
       # THREE (forward + reverse + anchored, all real edges) -- 161 + 2*3
       # = 167.
-      "emit_bytes": (16568 + B42_STARTPOS_GUARD_LINES
+      "emit_bytes": (16568 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE,
-                     20206 + B42_STARTPOS_GUARD_LINES
+                     20206 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 3 * B42_PORTFIX_SEMI_PER_MACHINE),
       "scan_edges": (1, 2), "scan_edges_match": (1, 1)}, "deny"),
     # [B37] (abi 18, [ENG-ISL] STEP 1): -fno-alt-island (bit 23) denies
@@ -5077,8 +5100,8 @@ DENY_CONTROLS = (
       "vm_program_bytes": (1532, 1233),
       # [B42]: non-hybrid VM either arm, no DFA scan machine -- flat 161
       # on both the island and the chain.
-      "emit_bytes": (18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES,
-                     18881 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES)}, "deny"),
+      "emit_bytes": (18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
+                     18881 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE)}, "deny"),
     # [B39] DRAFT -- values to be confirmed at the build. (abi 23,
     # [FORM-CHAR] STEP 1): -fno-cls-fold (bit 24) denies the `cls-fold`
     # axis's order-1 row -- a `predicate` row with NO stamp_value (the
@@ -5862,12 +5885,27 @@ def _committed_at_any_pin(committed, block):
 #: refused at 1,089,110 B at d34c9131 -- exactly the control's own premise
 #: check catches ("it compiled -- pick a wider rung"). Re-derived from a
 #: direct sweep of the [B31] census at cd371441 (the altwide refusal-
-#: boundary check above has the same finding, by ROUTE): `wb-512` is the
-#: cheapest auto-route refusal still standing at this pin (1,514,697 B,
+#: boundary check above has the same finding, by ROUTE): `wb-512` was the
+#: cheapest auto-route refusal still standing at that pin (1,514,697 B,
 #: refuses even after the drop rung -- the [K53-SELRETRY] rescue is not
 #: always enough), 1.58 s either way in the same census's terms.
+#:
+#: THE AUTO ARM MOVED AGAIN AT cf0962e3, `wb-512` -> `w-1024` ([B42]-tail
+#: re-pin, 2026-09-17, the manager's landing-bar fix on lane b45repin --
+#: this check's own premise arm caught it, exactly as designed). pcrec K59
+#: (inbox I-73's pin) added the PREMULTIPLIED-TABLE DROP to the size
+#: drop-ladder, and the two rungs TOGETHER now land `wb-512` under the
+#: default cap where [K53-SELRETRY] alone could not: MEASURED at the pin,
+#: `wb-512` under `pcrec-auto` compiles at 905,834 emit-measure bytes
+#: (917,086 file bytes, 2.3 s) with pcrec's own two rescue notes -- the
+#: anchored match-here machine dropped ([K53]) AND the premultiplied DFA
+#: table dropped ([K59]) -- plus the 250,000 advisory warning. Re-swept
+#: at cf0962e3: `w-1024` is the cheapest auto-route refusal still
+#: standing ("pattern too large: 1243275 bytes ... (limit 1000000)",
+#: 5.6 s) and compiles under the 8 MiB raise (1,263,319 B, 2.8 s) -- both
+#: of the control's premises, measured.
 _CAP_PAIRS = (("pcrec-vm-bigcap", "pcrec-vm", "w-512"),
-              ("pcrec-auto-bigcap", "pcrec-auto", "wb-512"))
+              ("pcrec-auto-bigcap", "pcrec-auto", "w-1024"))
 
 
 class _ArgvSpy:

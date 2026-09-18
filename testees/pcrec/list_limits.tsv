@@ -3,15 +3,17 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-a770139e/build/pcrec --list-limits
+#     build/pcrec-cf0962e3/build/pcrec --list-limits
 #
-# pcrec commit a770139e7d7acf3a7c0c459bff667cf37e7b74bb (rx_info.abi 25 --
-# see list_axes.tsv's header), archived 2026-09-16 by the manager ([B42]
-# runbook step 4: the re-pin cd371441 -> a770139e, the O-29 fix pin, inbox
-# I-71). 57 data rows / 7 columns (name, value, unit, kind, override,
+# pcrec commit cf0962e3e455bc55587c238ec92aab9e7e82177b (rx_info.abi 26 --
+# see list_axes.tsv's header), archived 2026-09-17 by the manager
+# ([B42]-tail re-pin, inbox I-73: the dial+K59 checkpoint pin a770139e ->
+# cf0962e3). 57 data rows / 7 columns (name, value, unit, kind, override,
 # anchor, desc) -- one row per numeric limit in pcrec src/core/limits.def,
-# in the table's own order. BYTE-IDENTICAL to the cd371441 copy below the
-# header (diffed line for line): no limit moved at this pin. The cd371441
+# in the table's own order. BYTE-IDENTICAL to the a770139e copy below the
+# header (diffed line for line): no limit moved at this pin -- the
+# [OPT-DIAL] dial and K59's premul rung introduced no new numeric limit
+# (the dial's own knees, if any, are not in limits.def). The a770139e
 # copy's header (git history) carries the last delta narrative
 # (PCREC_STARTPOS_GUARD_TEXT_MAX, [K50]).
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the

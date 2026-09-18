@@ -1776,3 +1776,60 @@ repro 3/3, the 64-block corpus dump 64/64 provenance rows, all four
 #section kinds present per block, the NUL refusal unchanged, and the
 K57 positive witness refusing with its control loading. Catalogue 1.3
 (`[[pin_order]]` append). Sixteen pinned configs, unchanged.
+
+**[B42]-tail re-pin at cf0962e3 (abi 26) — 2026-09-17, lane b45repin
+(inbox I-73, the dial+K59 checkpoint pin).** The pin advances
+a770139e → cf0962e3 carrying pcrec's `lane/k59rung` merge (which itself
+carries `lane/dialimpl`): [OPT-DIAL] `--tune` end-to-end (the ratified
+five-position table, the `RX_TUNE` stamp, the file-wins-over-CLI
+diagnostic, abi 25→26) plus K59 FIXED by the premul drop-ladder rung
+with its ladder-wide verbose rescue note. Certified by pcrec's own solo
+battery (`battery_20260917_102334`, 10:23–16:53 EDT: strict/axes/san/
+lint/mech all rc=0, mech 261 rows with 0 unexpected/0 anomalies). rx_info
+abi reads 26 on the plain `abc` witness (`#define RX_TUNE "balanced"`
+present); the shim floor STAYS 16 (no `rx_info` field moved — [OPT-DIAL]
+and K59 are a stamp macro plus a compile-time selection rung, neither a
+struct member). THREE of the four registry surfaces are BYTE-IDENTICAL
+below their re-stamped source headers to the a770139e archives:
+`list_axes.tsv` (78/27, unchanged), `list_definitions.tsv` (50 rows, the
+ninth pin running), `list_limits.tsv` (57 rows — the dial's knees, if
+any, are not in `limits.def`). **`list_schema.tsv` gained ONE row**, 70
+→ 71 data rows (`# schema-rows: 66` → `67`): `config tune <position>`, a
+config-scoped `.rxt` directive at wave 1 — [OPT-DIAL]'s OWN grammar
+addition (docs/spec/rxt_format.md's "tune <position>" section, D93's
+file-wins rule), landing in the same train as the stamp. This is the
+ONE registry delta this re-pin found beyond the stamp+abi-digit movers
+I-73 predicted, and it is EXPLAINED (verified against pcrec's own
+read-only `docs/spec/rxt_format.md`), not absorbed silently.
+
+**Corpus-wide byte identity, confirmed twice.** pcrec's own sweep
+(`docs/dev/dialtrain_byteid.md`, read-only: 1,500 of 3,938 pattern lines
+built at both the branch point and the merge move, every one by exactly
++27 bytes, zero exceptions, zero newly-fixed/newly-broken patterns) is
+corroborated here on four bench-representative witnesses spanning every
+artifact kind this file's tables track — a forced-VM non-hybrid
+(`foo|bar`), a plain DFA, a VM HYBRID (`a(b|c)+d`), and a scan-edge-
+bearing DFA with TWO scan-edge machines (`[a-z]{0,64}`, pinned): all
+four read +27 B on the `.c`, +0 on the `.h`, and a byte diff shows only
+the `RX_TUNE` macro line and the `.abi` digit (25→26, same character
+count) moving. **The size books move by a SINGLE flat constant,
+`B45_RX_TUNE_STAMP_LINE = 27`** (`tools/selfcheck.py`), added exactly
+once per artifact regardless of engine, route or scan-edge-machine
+count — simpler than the previous re-pin's two-term decomposition
+(`B42_STARTPOS_GUARD_LINES` + `B42_PORTFIX_SEMI_PER_MACHINE`), because
+this stamp is a single file-scope `#define` rather than a per-machine
+label edit. The cap-adjacent size-drop rescue I-73 promised WAS
+observed — by the full `make check`'s own [B31] premise arm, not by
+the four witnesses (none sits near a cap): altwide `wb-512` under
+`pcrec-auto`, the cap control's refusal witness since cd371441, now
+COMPILES at the default cap (905,834 emit-measure bytes, 917,086 file
+bytes, 2.3 s) under BOTH drop-ladder rungs — the [K53-SELRETRY]
+anchored match-here machine drop AND K59's new premultiplied-table
+drop, each with its own `pcrec: note:` line, plus the 250,000
+advisory warning. The control's auto arm moved `wb-512` → `w-1024`
+(refuses at 1,243,275 B in 5.6 s; compiles under the 8 MiB raise at
+1,263,319 B in 2.8 s — both premises re-measured at the pin;
+`tools/selfcheck.py` `_CAP_PAIRS`). The wider altwide
+refusal-boundary re-derivation belongs to the next altwide window,
+not this re-pin. Catalogue **1.4** (`[[pin_order]]` append:
+`cf0962e3`). Sixteen pinned configs, unchanged.

@@ -2,21 +2,25 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-a770139e/build/pcrec --list-axes
+#     build/pcrec-cf0962e3/build/pcrec --list-axes
 #
-# pcrec commit a770139e7d7acf3a7c0c459bff667cf37e7b74bb (rx_info.abi 25,
-# read off a plain `abc` witness at this build), archived 2026-09-16 by
-# the manager ([B42] runbook step 4: the re-pin cd371441 -> a770139e, the
-# O-29 fix pin, inbox I-71). 78 data rows / 27 axes / 12 columns -- the
-# FOURTH registry surface (pcrec docs/spec/registry.md 6, [CHK-2]).
+# pcrec commit cf0962e3e455bc55587c238ec92aab9e7e82177b (rx_info.abi 26,
+# read off a plain `abc` witness at this build), archived 2026-09-17 by
+# the manager ([B42]-tail
+# re-pin, inbox I-73: the dial+K59 checkpoint pin a770139e -> cf0962e3).
+# 78 data rows / 27 axes / 12 columns -- the FOURTH registry surface
+# (pcrec docs/spec/registry.md 6, [CHK-2]).
 #
-# BYTE-IDENTICAL to the cd371441 copy below the header (diffed line for
-# line, pcrec's own comments included): the pin carries the O-29
-# `--list-source` S0 close-frame parser fix and the K57 block-scalar
-# dedent refusal only -- no axis, no row, no column moved. The cd371441
-# copy's header (git history) carries the last delta narrative (the
-# `startpos-guard` axis, [K50]) and the abi-25-vs-I-68's-"23" flag, since
-# resolved (O-28 / I-71 era; abi 25 is confirmed unchanged here).
+# BYTE-IDENTICAL to the a770139e copy below the header (diffed line for
+# line, pcrec's own comments included): the pin carries the [OPT-DIAL]
+# `--tune` dial end-to-end (RX_TUNE stamp, abi 25->26, the `.rxt` config
+# `tune` line, the file-wins diagnostic) and the K59 premul drop-ladder
+# rung, and corpus-wide byte-identity confirms both moved no axis, no
+# row, no column here (pcrec docs/dev/dialtrain_byteid.md: the only
+# corpus-wide movers on any artifact are the +27-byte RX_TUNE stamp and
+# the .abi digit). The a770139e copy's header (git history) carries the
+# last delta narrative (the O-29 `--list-source` S0 close-frame parser
+# fix, the K57 dedent refusal).
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).

@@ -431,11 +431,21 @@ bindings) live here, vendored or system, pinned either way.
   altwide) — and `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
   (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
   denied at the same pin, the fold's BEFORE) — at a pinned commit —
-  **a770139e, abi 25** (re-pinned from cd371441 at [B42] runbook step 4,
-  2026-09-16 evening, inbox I-71: the O-29 `--list-source` S0
-  close-frame parser fix + the K57 block-scalar dedent refusal; abi 25
-  UNCHANGED, all four registry surfaces BYTE-IDENTICAL to cd371441's
-  archives, shim floor stays 16, catalogue 1.3. Before it, cd371441:
+  **cf0962e3, abi 26** (re-pinned from a770139e at the [B42]-tail runbook,
+  2026-09-17, lane b45repin, inbox I-73: the dial+K59 checkpoint pin —
+  [OPT-DIAL] `--tune` end-to-end + K59's premul drop-ladder rung, abi
+  25→26; three registry surfaces BYTE-IDENTICAL to a770139e's archives
+  (axes 78/27, definitions 50, limits 57), `list_schema.tsv` gains ONE
+  row (70→71: the `config tune` `.rxt` directive, [OPT-DIAL]'s own
+  grammar addition — explained, not a surprise), shim floor stays 16,
+  catalogue 1.4; the size books move by one flat constant,
+  `B45_RX_TUNE_STAMP_LINE = 27`, confirmed on four artifact kinds with
+  zero residue. Before it, a770139e (re-pinned from cd371441 at [B42]
+  runbook step 4, 2026-09-16 evening, inbox I-71: the O-29
+  `--list-source` S0 close-frame parser fix + the K57 block-scalar
+  dedent refusal; abi 25 UNCHANGED, all four registry surfaces
+  BYTE-IDENTICAL to cd371441's archives, shim floor stays 16, catalogue
+  1.3). Before it, cd371441:
   re-pinned from d34c9131/abi 23 at [B42] restart
   step (4)/b42repin, 2026-09-16: registries 78/27 · 50 · 57, plus the
   new `list_schema.tsv` archive — the SEVENTH registry surface,
