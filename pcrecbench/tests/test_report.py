@@ -3020,6 +3020,10 @@ _V9_ALLOWED_ADDED = (
     # permanent addition against the pre-[B32] golden, same footing as
     # the two v1.4 legend lines above.
     "- worst other-core busy: ",
+    # [B52] charter item 3 (the O-33 addendum): the per-group
+    # baseline-identity bullet is UNCONDITIONAL on every rankable group,
+    # same footing as the line above.
+    "- baseline: ",
 )
 
 
@@ -4242,6 +4246,92 @@ def test_matrix_ratio_arithmetic():
     _check(rows[key]["best_ns"] == "40.0", rows[key])
 
 
+# --------------------------------------------- [B52] the baseline-identity fact
+
+def test_baseline_identity_interp_present():
+    """[B52] charter item 3, the O-33 addendum (docs/dev/dev_journal.md,
+    2026-09-18 close): a group whose roster DOES include the interp
+    reference (`_is_reference`) must STATE that the baseline is the
+    interp row, by name, in both renderings. `TESTEE_B` (the module's own
+    `libpcre2_10.46_interp-caps-simdna` constant) is the interp testee;
+    a faster non-interp testee sits beside it so the fact under test is
+    "the ratio baseline is the SLOWER interp row, not the fastest row"
+    -- the case `_resolve_baseline`'s fallback branch would get wrong if
+    it fired here."""
+    setup_fast = _mini_setup("engine-fast_1.0.0_cfg-caps-simdna")
+    rows_fast = [_mini_row("p1", "s1", "short-subject-search", t, t, 10) for t in (1, 2, 3)]
+    loaded_fast = [_mk_loaded("fast.jsonl", setup_fast, rows_fast)]
+
+    setup_interp = _mini_setup(TESTEE_B)
+    rows_interp = [_mini_row("p1", "s1", "short-subject-search", t, t, 50) for t in (1, 2, 3)]
+    loaded_interp = [_mk_loaded("interp.jsonl", setup_interp, rows_interp)]
+
+    rd, err = report.build_report(loaded_fast + loaded_interp,
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+
+    md = report.render_markdown(rd)
+    _check(f"- baseline: {TESTEE_B} (interp, present in this group)" in md,
+           f"expected the interp-present baseline bullet naming {TESTEE_B}:\n{md}")
+    _check("row-best fallback" not in md, "no fallback wording when interp is present")
+
+    tsv = report.render_tsv(rd)
+    baseline_rows = [ln for ln in tsv.splitlines() if ln.startswith("baseline\t")]
+    _check(len(baseline_rows) == 1, f"expected exactly one baseline row: {baseline_rows}")
+    cols = baseline_rows[0].split("\t")
+    header = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
+              "testee", "status", "tier", "rank_or_na", "metric", "value", "n", "pass_rate",
+              "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
+    row = dict(zip(header, cols))
+    _check(row["testee"] == TESTEE_B, f"expected testee={TESTEE_B}: {row}")
+    _check(row["value"] == "interp", f"expected value=interp: {row}")
+    _check(f"{TESTEE_B} (interp, present in this group)" == row["gave_up_summary"],
+           f"the TSV free-text slot must state the SAME sentence the markdown "
+           f"bullet does: {row}")
+
+
+def test_baseline_identity_row_best_fallback():
+    """[B52] charter item 3, the O-33 addendum: a group with NO interp
+    testee must state the FALLBACK explicitly and name the row-best
+    testee that stood in for it -- never silently reusing
+    `ratio_vs_baseline`'s old un-stated behaviour. Two non-interp
+    testees, `engine-mid` (60 ns) and `engine-fast` (40 ns): the
+    fallback must name `engine-fast` (the row's OWN best), never
+    `engine-mid` and never the query's predicted
+    `libpcre2 engine_mode=interp` (which the title line states
+    unconditionally and is not this bullet's job to contradict)."""
+    setup_mid = _mini_setup("engine-mid_1.0.0_cfg-caps-simdna")
+    rows_mid = [_mini_row("p1", "s1", "short-subject-search", t, t, 60) for t in (1, 2, 3)]
+    loaded_mid = [_mk_loaded("mid.jsonl", setup_mid, rows_mid)]
+
+    setup_fast = _mini_setup("engine-fast_1.0.0_cfg-caps-simdna")
+    rows_fast = [_mini_row("p1", "s1", "short-subject-search", t, t, 40) for t in (1, 2, 3)]
+    loaded_fast = [_mk_loaded("fast.jsonl", setup_fast, rows_fast)]
+
+    rd, err = report.build_report(loaded_mid + loaded_fast,
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+
+    md = report.render_markdown(rd)
+    fast_id = "engine-fast_1.0.0_cfg-caps-simdna"
+    _check(f"- baseline: {fast_id} (row-best fallback -- interp absent "
+           f"from this group)" in md,
+           f"expected the fallback bullet naming the row-best {fast_id}:\n{md}")
+    _check("engine-mid" not in md.split("- baseline:", 1)[1].split("\n", 1)[0],
+           "the fallback must name the FASTEST testee, not the slower one")
+
+    tsv = report.render_tsv(rd)
+    baseline_rows = [ln for ln in tsv.splitlines() if ln.startswith("baseline\t")]
+    _check(len(baseline_rows) == 1, f"expected exactly one baseline row: {baseline_rows}")
+    cols = baseline_rows[0].split("\t")
+    header = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
+              "testee", "status", "tier", "rank_or_na", "metric", "value", "n", "pass_rate",
+              "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
+    row = dict(zip(header, cols))
+    _check(row["testee"] == fast_id, f"expected testee={fast_id}: {row}")
+    _check(row["value"] == "row-best-fallback", f"expected value=row-best-fallback: {row}")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -4333,6 +4423,14 @@ TESTS = [
     # CB2 ([B42] L5)
     test_variant_kind_rendering_cb2,
     test_diagnostic_full_kb18,
+    # [B52] the matrix report surface
+    test_matrix_all_refused_pattern_f26,
+    test_matrix_status_tokens,
+    test_matrix_no_empty_cells,
+    test_matrix_ratio_arithmetic,
+    # [B52] the baseline-identity fact (O-33 addendum, charter item 3)
+    test_baseline_identity_interp_present,
+    test_baseline_identity_row_best_fallback,
 ]
 
 

@@ -1139,7 +1139,62 @@ matrix_ratio_arithmetic` (a hand-computed ratio against three testees'
 medians, the fastest reading exactly `1.000000`); `test_reporter_
 version_pin` pins v18 and gains the matrix-format smoke (the new format
 carries the same version line; `--format matrix --grain subject` is
-refused BY NAME).
+refused BY NAME). A LATER resumption of this same lane found these four
+tests had been WRITTEN but never added to the module's `TESTS` list --
+the plain runner (`__main__`'s `main()`) walks exactly that list, so
+they had never actually been exercised; wired in and confirmed passing
+before anything else in this section was built on top.
+
+THE BASELINE-IDENTITY FACT (the O-33 addendum, charter item 3; found
+investigating outbox O-32's ×102-vs-×2.24 mislabel, docs/dev/
+dev_journal.md 2026-09-18). `ratio_vs_baseline` (`render_markdown`'s
+`vs baseline` column, `render_tsv`'s `ratio_vs_baseline` metric) reads a
+group's INTERP reference testee's median when one is rankable in the
+group, and SILENTLY FALLS BACK to the group's own row-best median
+otherwise -- with nothing in either rendering stating which one applied.
+`_resolve_baseline(pairs)` is the one function both renderings now call
+(so they can never name two different baselines for the same group):
+given `rankable`'s own `(testee_id, median_ns)` pairs in ascending
+order, it returns `(baseline_ns, baseline_testee, is_interp)` -- the
+interp row's own reading when `_is_reference` finds one, else
+`pairs[0]` (the row's own best) with `is_interp=False`. Rendered as an
+UNCONDITIONAL bullet on every rankable group -- `render_markdown` prints
+`- baseline: <testee> (interp, present in this group)` or `(row-best
+fallback -- interp absent from this group)` right under the group's
+title (which still states the QUERY's own PREDICTED baseline
+unconditionally, via `reference_testee_pred`; the bullet states what
+THIS GROUP actually used, which the title's static string cannot); the
+same sentence lands in `render_tsv` as a `baseline` section row
+(`metric=baseline_identity`, `value=interp`/`row-best-fallback`, the
+sentence itself in the `gave_up_summary` free-text slot -- the only
+column shape that fits it, same technique [B13.2] P-2's give-up-smallest
+rows already use). `render_matrix_tsv` needed NO change here: its
+`best_ns`/`best_testee` are ALREADY always row-best by construction and
+ALREADY documented as such in its own header comment, so the matrix
+surface was immune to the ambiguity by design -- only the two ratio
+renderings that silently mean "baseline" as "the interp reference,
+usually" needed the fix. Tests, BOTH ARMS:
+`test_baseline_identity_interp_present` (a slower interp testee beside a
+faster non-interp one -- the case a naive "just use row-best" reading
+would get wrong) and `test_baseline_identity_row_best_fallback` (no
+interp testee at all; asserts the FASTEST of the two non-interp testees
+is named, never the slower one and never `reference_testee_pred`'s
+static string). `_V9_ALLOWED_ADDED` (`test_v13_record_still_renders`'s
+classifier) gains the `"- baseline: "` prefix, same footing as the
+`"- worst other-core busy: "` line [B32] added before it -- the bullet
+is unconditional, so it is a permanent addition against every older
+golden.
+
+`scripts/matrix_page.py` (new, committed, stdlib-only -- see
+`scripts/CLAUDE.md`) renders any `.matrix.tsv` into a self-contained
+interactive HTML page: a sticky matrix table, a log-scale colour ramp
+from 1x to 10^7 (clamped, not extrapolated, past the ceiling), one chip
+style per status token, a hover tooltip with the cell's absolute median
+(`ns`, recovered from `best_ns x` the printed ratio) and testee id, the
+provenance comment rendered verbatim, and both a light and a dark
+theme. Tested by `pcrecbench/tests/test_matrix_page.py` (8 tests, no
+engine or store -- loaded by file path since `scripts/` carries no
+`__init__.py`). See its own module docstring and `scripts/CLAUDE.md`.
 """
 
 from __future__ import annotations
@@ -3577,6 +3632,41 @@ def _is_reference(testee_setup_by_id, testee_id):
     return base.startswith("libpcre2_") and "_interp-" in base
 
 
+def _resolve_baseline(pairs):
+    """[B52] the O-33 addendum (docs/dev/dev_journal.md, 2026-09-18
+    close, charter item 3): `ratio_vs_baseline`'s own baseline SILENTLY
+    fell back to the group's row-best when no testee in it is the interp
+    reference (`_is_reference`) -- nothing stated which one applied.
+    `pairs` is `rankable`'s own `(testee_id, median_ns)` view, in
+    rankable's sorted-ascending order (so `pairs[0]` IS the row's best
+    when no reference is present). Returns `(baseline_ns, baseline_testee,
+    is_interp)`: the interp reference's own reading when one exists in
+    this group, else `pairs[0]` with `is_interp=False`; `(None, None,
+    False)` for an empty group. ONE function, called by both
+    `render_markdown` and `render_tsv`, so the two renderings can never
+    name two different baselines for the same group."""
+    pairs = list(pairs)
+    for t, ns in pairs:
+        if _is_reference(None, t):
+            return ns, t, True
+    if pairs:
+        return pairs[0][1], pairs[0][0], False
+    return None, None, False
+
+
+def _baseline_identity_note(ref_t, ref_is_interp):
+    """The human sentence `_resolve_baseline`'s two outcomes render as --
+    shared so `render_markdown`'s bullet and `render_tsv`'s `baseline`
+    row state the identical fact in the identical words. Plain text (no
+    markdown backticks): `render_markdown` wraps the testee id itself
+    where it wants the code-span, `render_tsv` never does."""
+    if ref_t is None:
+        return "n/a (no rankable rows)"
+    if ref_is_interp:
+        return f"{ref_t} (interp, present in this group)"
+    return f"{ref_t} (row-best fallback -- interp absent from this group)"
+
+
 def _ranking_groups(rd: ReportData, grain):
     """grain='subject': keys are (sb, pattern, subject, regime), values
     are [(testee_id, form, MatchCellReduction)]. grain='set': keys are
@@ -3937,9 +4027,17 @@ def render_markdown(rd: ReportData):
 
         if rankable:
             rankable.sort(key=lambda tfr: tfr[2].median_ns)
-            ref = next((r for t, form, r in rankable if _is_reference(None, t)), None)
-            ref_ns = ref.median_ns if ref else rankable[0][2].median_ns
+            ref_ns, ref_t, ref_is_interp = _resolve_baseline(
+                (t, r.median_ns) for t, _f, r in rankable)
             best_ns = rankable[0][2].median_ns
+
+            # [B52] the O-33 addendum (charter item 3): STATE which
+            # baseline this group actually used -- the title's own
+            # "baseline: {rd.reference_testee_pred}" names what the
+            # QUERY predicts, unconditionally; this bullet names what
+            # `_resolve_baseline` actually found IN THIS GROUP, which a
+            # group with no interp row silently was not the same thing.
+            out.append(f"- baseline: {_baseline_identity_note(ref_t, ref_is_interp)}")
 
             facts_present = {_form_fact(form) for _t, form, _r in rankable}
             if len(facts_present) > 1:
@@ -4624,9 +4722,21 @@ def render_tsv(rd: ReportData):
                 continue
             rankable.append((t, form, r, _status_cell(rd, sb, t, status), tier))
         rankable.sort(key=lambda x: x[2].median_ns)
-        ref = next((r for t, form, r, _s, _ti in rankable if _is_reference(None, t)), None)
-        ref_ns = ref.median_ns if ref else (rankable[0][2].median_ns if rankable else None)
+        ref_ns, ref_t, ref_is_interp = _resolve_baseline(
+            (t, r.median_ns) for t, _f, r, _s, _ti in rankable)
         best_ns = rankable[0][2].median_ns if rankable else None
+        if rankable:
+            # [B52] the O-33 addendum (charter item 3): one `baseline`
+            # row per group, same shape as the `record`/`excluded` rows
+            # above -- `value` carries `interp`/`row-best-fallback` (a
+            # closed two-token fact a reader can grep for across every
+            # group), `gave_up_summary`'s free-text slot carries the
+            # human sentence `render_markdown`'s bullet also prints, so
+            # the two renderings can never disagree.
+            lines.append("\t".join([
+                "baseline", pattern_id, subject_id, regime, "", "", ref_t or "",
+                "", "", "", "baseline_identity", "interp" if ref_is_interp else "row-best-fallback",
+                "", "", "", "", _baseline_identity_note(ref_t, ref_is_interp), ""]))
         for i, (t, form, r, status, tier) in enumerate(rankable, start=1):
             ratio_b = (r.median_ns / ref_ns) if ref_ns else float("nan")
             ratio_best = (r.median_ns / best_ns) if best_ns else float("nan")
