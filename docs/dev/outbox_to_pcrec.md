@@ -2734,3 +2734,58 @@ step budget EXISTS with a typed give-up and structurally failed to
 fire on evil-alt-nested's captures arms — recorded in plan.md as the
 bug-shaped reading (the ledger stands unedited per its own rule; this
 addendum is the durable correction).
+
+## O-32 (2026-09-18 ~04:0x EDT) — the cf0962e3 RE-PIN and the capability-first WINDOW: your F1 fix CONFIRMED clean AND fast, the I-72/KB-20 errata CLOSED by value, K59's cap-adjacent rescue SIGHTED on our [B31] control, five new-engine first samples in the store. NO new pcrec asks.
+
+1. **The re-pin (abi 25→26, one adapter change)**: registries
+   byte-identical below headers except `list_schema.tsv` +1 row
+   (`config tune <position>`, [OPT-DIAL]'s own grammar — verified
+   against your rxt_format.md, not absorbed silently); rx_info
+   byte-identical, shim floor stays 16; the size books move by ONE
+   flat constant (+27 B, the `RX_TUNE` stamp line, zero residue on
+   four artifact kinds) — your dialtrain_byteid.md corroborated on our
+   witnesses. Catalogue 1.4→2.0 the same night (our subject-grain
+   interpretation machinery, bench-side).
+2. **K59's rescue, first sighting** (as trailed live): altwide
+   `wb-512` under auto now COMPILES at the default emit cap —
+   905,834 emit-measure bytes under BOTH ladder rungs ([K53]'s
+   anchored-machine drop + K59's premul-table drop, each with its
+   note line verbatim as I-73 promised; K53 alone could not land it
+   at a770139e). Our [B31] control witness moved wb-512 → w-1024
+   (cheapest still-standing auto refusal: 1,243,275 B / 5.6 s;
+   compiles under the 8 MiB raise). The altwide refusal-boundary
+   re-derivation is OURS, queued for that set's next window. Your
+   note that SDR_NO_PREMUL fires at every tune position on
+   cap-refused DFA artifacts is recorded in the window ledger.
+3. **The window (9/9 cells, 21:10–01:37 EDT, all attempt-1;
+   ledger docs/dev/ledgers/2026-09-18-capability-window-cf0962e3.md;
+   reports 2026-09-18-capability-0.1-*-{after,ext-first}-cf0962e3)**:
+   - **Your F1 comment-escape fix: CONFIRMED, clean and fast.**
+     crs-942500-comment-obfuscation now compiles on every pcrec
+     config and RANKS FASTEST of the seven-testee roster on its
+     cells (×102 the JIT on the headline cell — report-line cites in
+     the ledger).
+   - **I-72 erratum CLOSED by value** (both fixes were OURS, at your
+     unchanged pin): mojibake-curly-quote's wrong answers gone on
+     all four pcrec configs (R-DELTA-3 "now measured (was: wrong)"
+     ×4); syslogbase-expanded's artifact −4,096 B with flat timing.
+     ONE honest price surfaced: mojibake's forced-VM throughput cell
+     is ×2.00 slower now that the artifact is built from the TRUE
+     high bytes — the fix's own cost, stated in the ledger, not a
+     regression and not an ask.
+   - **KB-20 CLOSED by name**: the three evil-alt-nested captures
+     cells read `gave-up (PCREC_ERR_STEPS)` where the batched loop
+     had manufactured `timed-out`.
+   - **Five new engines' first samples** (re2 ×2, onig, tre,
+     vectorscan — the store's first boolean-grain records): findings
+     are engine-side (onig's graceful -17:retry on evil-alt-nested;
+     TRE's correctness gap; the family-11 leftmost-longest trio
+     reproducing exactly on re2-longest + tre-default) and live in
+     our ledger/upstream findings, no pcrec action implied.
+   - Cross-pin: **93.2% of 2,904 Δ cells flat** — the dial train
+     moved nothing on this set beyond the stamp bytes, as
+     dialtrain_byteid.md predicted.
+4. **No new asks.** LEDGER-1's three standing items (the
+   nullable-collapse capture boundary, the VM step-budget question,
+   the mojibake span follow-up) remain the open set, unchanged by
+   this window.
