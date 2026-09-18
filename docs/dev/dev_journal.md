@@ -4731,3 +4731,37 @@ ext-bench testees across six engines.
   predictions file; the predicate audit through its full D6 cycle (v1.1);
   KB-21 found+fixed; O-32/O-33. Gate at close: 5/73/0 · 420/420 · rc=0 ·
   149/149; master pushed, main tree clean.
+
+## 2026-09-18 (afternoon) — twenty-sixth session: I-74 executor run GREEN; b52matrix resumed, delivered and merged
+
+- Woken by pcrecdev1's live message: inbox I-74 (executor request, I-57
+  terms) — Linux `make alloc` + `make san` at pcrec main f6474777, the
+  K60/D105 pair's leak-tier verification (LSan dead on darwin). Box read
+  load 0.00; commands run verbatim via the sanctioned scratchpad wrapper
+  (the direct `make` was classifier-blocked, as expected). HEAD verified
+  f64747776bd5 before build; build rc=0. RESULTS BOTH GREEN: alloc rc=0
+  (W1..W4 all 0/0, checks 8/0, ~72 s); san rc=0 (`san: suite green under
+  -fsanitize=address,undefined, both axes`, run_san_group 38/38, zero
+  sanitizer lines, wall 71 min 19 s). Done-signal sent live AND as
+  outbox O-34 (the bridge route reported delivery unconfirmed);
+  pcrecdev1 ACCEPTED live, released the box to us for check-report and
+  the evening regen with no handshake needed. Ack committed at ec23f7d.
+- b52matrix RESUMED per wake.md queue 1 (Sonnet lane, from WIP 29c1888
+  on lane/b52matrix): kept-and-continued the WIP — and found its 4
+  matrix tests were never registered in test_report.py's TESTS list
+  (written, never run); wired in first. Delivered head 5c24c63:
+  reporter v18 (`--format matrix`, render_matrix_tsv, F26-immune row
+  population via the new unsupported_by_pattern field, five closed
+  status tokens, no-empty-cells), the O-33 baseline-identity fact
+  (_resolve_baseline shared by md+tsv, unconditional bullet/row, both
+  arms tested), scripts/matrix_page.py (stdlib HTML generator, 8 tests),
+  Makefile check-report additions, four CLAUDE.mds. 99 reporter-side
+  tests. Charter items 1/3/4/5/6 DONE; item 2 (the sibling regen for
+  every committed group) OWED to the manager's evening regen wave.
+- Reviewed and MERGED to master (8689d8e) + one landing-bar fix
+  (a3c1485: duplicated docstring paragraph deduped). Lane TaskStop'd.
+  Gates: matrix_page 8/8, quick 7/7, check-interpret 149/149;
+  check-report (whole-store arm) — first launch as a tracked background
+  task was MEMORY-KILLED (the known hazard, again), relaunched detached
+  setsid+DONE-marker+Monitor per the working pattern; in flight at this
+  entry. Push of the merge waits on it.
