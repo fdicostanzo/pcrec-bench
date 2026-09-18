@@ -4648,3 +4648,41 @@ ext-bench testees across six engines.
 - Frank ruled (live): COMPLETE THE CAPABILITY SET — priority axis. Lane b46tags audited all 64 members' requires-* tags mechanically + by eye: six under-tags fixed (incl. the two l6btre finds), zero over-tags, behavioral witnesses both directions. Merged 52f8c0e.
 - The memory heuristic killed a tracked make check AGAIN (during check-report's store load, 8.6 GB free at inspection) — detached setsid+marker recovered it, twice green: check-harness 420/420 seen at both runs.
 - Master pushed through 52f8c0e; merged-master gate running detached; b47subgrain open (catalogue 2.0 per the eleven ratified rulings). Next: the capability-first window handshake (erratum ×2, KB-20 ×3, crs-942500, then re2 ×2 / onig / tre / vectorscan first samples).
+
+## 2026-09-18 (~04:1x EDT) — twenty-fifth session (part 2): the capability window MEASURED, READ, LANDED
+
+- THE WINDOW RAN 9/9 (21:10–01:37 EDT, all attempt-1 under the quiet
+  gate): four pcrec configs re-measured at cf0962e3 + FIVE new-engine
+  first samples (re2 ×2, onig, tre, vectorscan — the store's first
+  boolean-grain records). Store 178. ONE mid-window incident, KB-21:
+  the re2-longest cell measured fully then was REFUSED at store.write
+  (runtime_options entries were bare strings, not named_value objects
+  — the never-write-invalid rule exactly as designed); fixed, filed
+  with a recommended describe()-vs-schema smoke follow-up, cell re-run
+  clean in 15 min inside the same grant.
+- b47subgrain MERGED the same night (catalogue 2.0, the eleven
+  rulings, interpreter_v1.md v1.4; P5's confirmed→refuted mechanical
+  flip on the unchanged predictions file is the machinery's first
+  real-data proof). Sidecar merge resolved by regeneration: all four
+  verify fresh-unchanged at 2.0 against the live index.
+- b48read READ the window (merged 6238230): the I-72 erratum CLOSED by
+  value (R-DELTA-3 ×4 on mojibake; syslogbase −4,096 B flat) with the
+  fix's own price stated (mojibake forced-VM throughput ×2.00); KB-20
+  CLOSED by name (gave-up: PCREC_ERR_STEPS); pcrec's F1 fix CONFIRMED
+  clean AND fastest-of-roster on crs-942500 (×102 the JIT); 93.2% of
+  2,904 Δ cells flat; b46tags' corrections confirmed live on the real
+  corpus; evil-alt-nested's FOURTH response shape (onig -17:retry);
+  family-11's divergence trio reproduces exactly on both
+  leftmost-longest engines; TRE's wider correctness gap (re-check next
+  sample). No predictions file existed for the ext roster — stated,
+  not back-written.
+- O-32 SENT (no new pcrec asks — F1/erratum/KB-20 all confirmations;
+  the K59 wb-512 rescue + w-1024 control move recorded durably).
+  Window closure confirmed to pcrecdev1; their ~6.5h battery has the
+  box daytime.
+- Gates: post-merge master 5/73/0 · 420/420 · rc=0 · 149/149 (grew:
+  the two new sidecars). Four lane worktrees/branches cleaned.
+  b49docs open (ledger §7 items 1–3). REMAINING on the capability
+  queue: the ext-roster predictions file (author BEFORE the next
+  sample), the predicate-audit lane (queue 4), Rust adapter (Frank's
+  cargo line), vectorscan NMATCHES gap.
