@@ -155,6 +155,113 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   against — the format simply has no vocabulary for a schema-presence
   claim).
 
+- `capability-0.1-ext-roster.tsv` — lane `b51preds`, 2026-09-18: the
+  predictions for the NEXT sample of the five new [B7]/L6b engines
+  (`re2-default`, `re2-longest`, `onig-default`, `tre-default`,
+  `vectorscan-block-nosom`) on `bench/capability@0.1`, so that sample is
+  machine-scored instead of reading `not-evaluable` on every clause the
+  way `docs/dev/ledgers/2026-09-18-capability-window-cf0962e3.md` §5.5
+  found for the FIRST ext-roster sample (P1-P10 there were authored
+  against the original seven-testee roster and name no testee_id this
+  five-engine population contains). **19 clause rows over 9 parents**:
+  P1 (the did-not-compile SET stability for tre-default/vectorscan-
+  block-nosom -- the two engines whose refusal population survived a
+  ranking-group check, see below), P2 (TRE's `high-byte-run` correctness
+  gap reproducibility, plus three related raw-high-byte/no-unusual-
+  construct patterns, each stating what a reproduction vs. a one-off box
+  artifact would read), P3/P4 (the family-11 semantics-divergence trio
+  wrong on both leftmost-longest engines, clean on both non-boolean-
+  grain leftmost-first engines), P5 (vectorscan's boolean-grain
+  rendering: structurally clean on the trio, and its entire
+  excluded-pattern census staying a strict subset of what the
+  non-boolean engines' census shows), P6 (re2-longest's full wrong-
+  answer population as an exhaustive four-pattern set), P7 (onig's
+  `-17:retry` give-up on `evil-alt-nested` reproducing by its NUMERIC
+  facts -- `n_gave_up`/`n_wrong` -- with the specific code text named as
+  inexpressible, the same class of limit as an answer/span claim), P8/P9
+  (tre-default's and the two clean engines' full excluded-pattern census
+  as exhaustive sets). Dry-run verified (bypassing check_stated_utc
+  below, via `interpret.evaluate_predictions` called directly): **19/19
+  clauses evaluate against the committed
+  `reports/2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.tsv`**
+  -- all CONFIRMED today (expected and correct for a stability/
+  reproducibility claim scored against the exact report it describes;
+  the real test is the NEXT sample), zero `not-evaluable`.
+
+  **TWO STRUCTURAL FINDINGS this lane made while authoring against real
+  data, both left as findings rather than worked around:**
+
+  1. **`check_stated_utc` (interpret.py:1700) cannot pass for ANY
+     prediction about a population that has ever been measured before,
+     which is every population this project could plausibly write a
+     SECOND predictions file for.** It anchors to the EARLIEST
+     `store/index.tsv` timestamp ever recorded for `(subbench,
+     version)`, a fixed point in the past; `capability@0.1`'s is
+     `2026-09-17T00:50:53Z` (`bench/capability`'s own first sample). Any
+     `stated_utc` honestly dated after that -- which an honest re-sample
+     prediction always is, by definition, since the population already
+     exists -- fails `check_stated_utc` and aborts the WHOLE
+     `pcrecbench interpret --predictions <file> <report>` call before a
+     single clause is scored (reproduced live against a one-line scratch
+     predictions file dated 2026-09-18, `PredictionError`, exit before
+     `evaluate_predictions` runs). This file's own `stated_utc` values
+     are the honest authoring date and WILL trip this check the same
+     way -- the clause-level evaluability above was verified by calling
+     `interpret.evaluate_predictions` directly (skipping only
+     `check_stated_utc`, not the selector/reducer/op machinery), which is
+     the only way to see this file's clauses resolve today. The check's
+     own design note (`interpreter_v1.md` §6.5) already names its
+     "residual limit" honestly ("it cannot see a prediction informed by
+     ... outside knowledge... it has no anchor for a population never
+     measured before") but does not name THIS consequence: a population
+     measured even ONCE can never again receive a scorable predictions
+     file through the CLI's default path, full stop, regardless of how
+     genuinely pre-run the new file is. Filed for a ruling, not fixed
+     here (a docs-only predictions-authoring lane is not the place to
+     change `interpret.py`'s semantics); candidates a ruling could pick:
+     anchor per-testee/per-selector-population instead of per-
+     `(subbench, version)`, add an explicit CLI acknowledgment flag for
+     "this file is about a population that already exists", or accept
+     that `check_stated_utc` is a first-sample-only instrument and score
+     later files with it disabled by convention.
+  2. **`render_tsv`'s `did_not_compile` section only lists a refusal for
+     a (pattern, regime) RANKING GROUP that already exists** -- i.e. at
+     least one OTHER testee in the same query ranks a match row for that
+     pattern (`report.py`'s `did_not_compile_by_pattern` loop is nested
+     inside the per-ranking-group loop, `report.py:4555-4564`). A
+     pattern where EVERY testee in the query's own roster fails to
+     compile (a real `did-not-compile`, or the pre-compile
+     `unsupported-by-declaration` policy intercepting it first) has NO
+     ranking group at all, so it is invisible to any `section=
+     did_not_compile` selector -- even though the record's own JSONL
+     carries `compile_outcome: did-not-compile` in full (confirmed by a
+     direct read of the record). This is what happened to
+     `balanced-parens-rec` (onig-default's only real did-not-compile
+     pattern, `requires-recursion`'s `(?R)` spelling gap): every OTHER
+     engine in the five-engine ext-roster query either declines it by
+     declaration or (onig) also fails to compile it, so no ranking group
+     for this pattern exists in `reports/2026-09-18-capability-0.1-*-
+     ext-first-cf0962e3.tsv` at all, and a `section=did_not_compile;
+     testee=oniguruma_*` selector reads "no row in this report matches
+     the selector" -- not a defect in the selector, a genuine gap this
+     file's original P1.a clause hit live. The SAME shape blocks a
+     "RE2's did-not-compile set is EMPTY" claim for a different reason
+     (`set-subset` of a target the population never populates any row
+     for is indistinguishable from "never checked", the identical
+     residual gap `docs/dev/lanes/b42predhyg_report.md` already named for
+     the original P8 mechanism -- now independently reproduced against
+     real all-engines-refuse data rather than argued from the empty-set
+     case alone). **Three originally-drafted clauses (onig's
+     `balanced-parens-rec` did-not-compile stability; RE2-default's and
+     RE2-longest's "did-not-compile stays empty" claims) were DROPPED
+     from the committed file for this reason** rather than committed as
+     clauses fated to always read `not-evaluable` -- per this project's
+     own "must not happen" rule for a predictions file (the same
+     posture `docs/dev/predictions/CLAUDE.md`'s own P9/P12 precedent
+     takes for an inexpressible claim). `docs/dev/lanes/b51preds_report.md`
+     has the exact selectors that were tried and the specific rows they
+     failed to find.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before
