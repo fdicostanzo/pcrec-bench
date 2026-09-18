@@ -1,4 +1,5 @@
-# ARCHIVED PROBE OUTPUT -- the PREDICATE AUDIT ([B50], lane b50predaudit)
+# ARCHIVED PROBE OUTPUT -- the PREDICATE AUDIT (docs/dev/plan.md [B42]'s
+# tail charter (i), 2026-09-17; lane b50predaudit)
 #
 # Question: for every catalogue rule and every prediction-scoring
 # quantity, what population does the predicate actually read, and can
@@ -18,8 +19,8 @@
 # probe 5 only, as interpret itself reads it.
 #
 # Scripts: 2026-09-18-predicate-audit-probe{1..5}.py, beside this file.
-# Reproduce: python3 <script>  (each takes seconds; ROOT is a constant at
-# the top of each and must be repointed at a checkout).
+# Reproduce: PCRECBENCH_ROOT=<checkout> python3 <script> -- seconds each;
+# ROOT defaults to the cwd.
 # Source revision: pcrec-bench 4eb413a, catalogue 2.0, reporter v17,
 # interpreter_v1.md v1.4. Run 2026-09-18.
 

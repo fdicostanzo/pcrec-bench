@@ -458,6 +458,71 @@ docs/dev/'s append-only records.
   recommended HELD behind a trigger, not built. No served database: Frank
   ruled that posture out.
 
+- `predicate_audit_v1.md` — **THE PREDICATE AUDIT, v1, 2026-09-18
+  (lane `b50predaudit`, `[B42]`'s tail charter (i)). PROPOSED, D6-panel
+  input; NO code and NO catalogue change — nothing under `pcrecbench/`,
+  `catalogue/`, `reports/`, `schema/` or `store/` touched.** Executes
+  the wider half of `interpret_subject_grain_v1.md` §6 Q7's ruling —
+  Frank's directive to *"audit the other predicates/queries for the same
+  class of structurally-incomplete answer, and make results carry the
+  context around their numbers, especially where a Claude session is the
+  consumer"* — over all **31 catalogue rules** and all **17
+  prediction-scoring quantities**, each against four questions: what
+  population does the predicate actually READ (by code path, not by the
+  catalogue's prose); what counterevidence would refute the verdict it
+  renders (its `no_fire` sentence included, since nobody double-checks a
+  negative); can that counterevidence APPEAR there; and if not, the
+  failure shape with a witness, a severity and a fix. Five archived
+  read-only probes (`../dev/measurements/2026-09-18-predicate-audit-
+  probes.txt` + five scripts, each importing `interpret`'s OWN functions
+  rather than reimplementing the predicate it audits) supply every
+  number. **Eight defects are LIVE on committed sidecars**, three
+  sharply: R-FLOOR-2 renders *"no ranked cell is at or below its set's
+  own floor pattern"* on a report whose header reads `floor_pattern:
+  none` and where the rule returned early without comparing anything —
+  and `interpreter_v1.md` §4.5 specifies a DIFFERENT rendering
+  (`no-matching-rows (floor_pattern: none)`), so it is a build
+  deviation, not a design gap; R-DELTA-4 renders *"no prediction …
+  selects that cell"* about `codegrammar-flat / large-subject-throughput`
+  while capability P3's selector names that pattern and regime by name
+  (a not-evaluable clause contributes zero to `ctx.prediction_coverage`,
+  and 6 of 10 capability predictions are not-evaluable); and
+  R-BUCKET-DOMINATED reports a dominance share *"of this cell's total"*
+  for **8 of its 33 firings** on set cells the same report EXCLUDED from
+  ranking, over a denominator that omits the failing subjects (94.6% over
+  73 ranked subjects with 2 excluded ones unseen). Fourteen further
+  findings are silent omissions or latent, the largest two being
+  structural rather than textual: **R-ARM-1 cannot see an arm pair one
+  of whose arms REFUSED to compile** — the strongest possible arm
+  difference, and exactly what the deny-flag testees exist to measure
+  (532 such triples in the corpus; a new rule R-ARM-2 is the MINOR fix)
+  — and **the reporter has no "was measured, now failing" verdict at
+  all**, so the whole R-DELTA class is blind to a regression that removed
+  a cell from the ranking (R-DELTA-3 covers only the improvement
+  direction; all 38 corpus instances are improvements, which is luck).
+  Three quantifications carry the rest: a `rank` cell is exactly SIX
+  metric rows, so *"over N value(s)"* is 6× the cells for a rank quantity
+  and 1× for a compile one **in the same sidecar**, and ruling (α)'s
+  widened population is **0.6-4.7%** of the rows it reduces over (sound
+  under `identity`, outweighed 100-158:1 under `median`/`count`/`max`);
+  `metric` is not a selector key, so an explicit `section=excluded`
+  clause reduces TRIAL counts and SUBJECT counts together under one
+  column name (MEASURED: 25 + 9 rows); and a `partial` parent — the
+  catalogue's own modal outcome — discards the `claim`, the `measured`
+  value AND the not-evaluable reason, all three computed. §5 is the
+  separate RENDERED-SENTENCE audit Frank's directive asks for, naming
+  three templates as the models to copy (R-ARM-1, R-STATUS-3,
+  R-FLOOR-2's own firing sentence) and eight as incomplete. §6 groups
+  the fixes by cost (code-only / MINOR+regeneration / MAJOR / a reporter
+  PRECONDITION on §2.5's P-1/P-2 precedent) with a recommended order;
+  §7 puts seven questions to the panel, including the one that will
+  recur — when the code and the catalogue's own `predicate` prose
+  disagree and the PROSE is right, is the code fix MINOR or MAJOR? Two
+  narrowings audited CLEAN and are recorded as clean (R-FLOOR-1/3's
+  jitter population is exactly the compiled cells — all 1,266 omitted
+  ones are refusals with no compile time to have jitter about;
+  R-BUCKET-FORM's rankable-only read is deliberate and stated).
+
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in

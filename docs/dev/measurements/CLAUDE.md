@@ -362,3 +362,28 @@ Maintenance: update this file when files are added/removed or change role.
   `\p{L}` (a real Unicode category) compiles and `\p{Alpha}` (POSIX
   ctype name) does not — the reverse of onig's ASCII-encoding
   narrowing.
+
+- `2026-09-18-predicate-audit-probes.txt` + `…-probe1.py` …
+  `…-probe5.py` — THE PREDICATE AUDIT's five probes (`[B42]` tail
+  charter (i), lane `b50predaudit`; the derivation is
+  `../../design/predicate_audit_v1.md`). Read-only, store-light (only
+  probe 5 opens `store/index.tsv`, as `interpret` itself does), and
+  every probe imports `pcrecbench.interpret`'s OWN functions
+  (`parse_selector`, `_select`, `_sections_for`, `_keyed_values`,
+  `_reduce`, `_op_holds`, `_measured_text`, `_elsewhere`,
+  `r_arm_1`, `r_bucket_dominated`, `evaluate_predictions`, …) rather
+  than reimplementing a predicate it is auditing. What they establish,
+  over the 45 committed set-grain report TSVs + 3 `.subject-grain.tsv`
+  slices + 2 predictions files: the (section × column × metric) census
+  that every "can the counterevidence appear here?" answer rests on
+  (`rank` 103,488 rows with ZERO `n_wrong>0`/`n_gave_up>0`, against 211
+  of `excluded`'s 229; `not_ranked` and `scratch` EMPTY corpus-wide;
+  each section's always-empty columns); that a `rank` cell is exactly
+  SIX metric rows (17,248 cells, no exceptions) — the ×6 inflation
+  behind "over N value(s)" and ruling (α)'s 100-158:1 dilution; the
+  per-clause population of all 50 committed prediction clauses; 532
+  arm pairs one config token apart with a REFUSED arm (R-ARM-1 cannot
+  see them) and 38 cross-pin pairs with an unranked side; the two
+  reports whose `floor_pattern` is `none`; and the four Δ rows whose
+  partner R-BUCKET-SPAN cannot reach. Reproduce with
+  `PCRECBENCH_ROOT=<checkout> python3 <probe>` (seconds each).
