@@ -970,3 +970,25 @@ exact command `make check-harness` from the repo root after `pin.sh`'s
 build is in place; `check_giveup_not_batched` is verified standalone
 above and is included in `main()`'s check list so it runs as part of
 that target once granted.
+
+## KB-21 (2026-09-18, FIXED same night by the manager) — the re2 adapter's `runtime_options` entries were BARE STRINGS (`'longest_match=true'`), not the schema's `named_value` objects; the re2-longest capability first-sample cell measured in full and was then refused at `store.write`
+
+The overnight capability window's sixth cell (`re2-longest`, 2026-09-18
+00:02 EDT) ran every trial and then failed validation at the write
+(`testee.runtime_options.0: 'longest_match=true' is not of type
+'object' [SCHEMA]`) — the never-write-invalid rule working exactly as
+stated (harness contract §4 step 5): nothing invalid reached the store,
+the rejected record is preserved under the cell's `.staging-*` directory,
+and the window recorded `attempt 1 rc=1` and moved on. Why it survived
+until the first real cell: `pcre2`'s and `pcrec`'s `describe()` blocks
+emit `[]`/object-shaped entries here, so no prior testee ever exercised
+a NON-EMPTY entry's shape, and no smoke check validates a new adapter's
+`describe()` block against the schema before its first canonical write
+(`re2-default` carries `[]` and wrote clean in the same window). Fix:
+the entry is now `{"name": "longest_match", "value": true}`
+(`testees/re2/adapter.py`). FOLLOW-UP worth a lane's time: a
+`check-harness` arm that validates EVERY discovered testee's
+`describe()` block against the schema's `testee` definition (one quick
+synthetic record per config would have caught this at merge time, not
+in a window) — the same class of gap KB-12 closed for pattern/subject
+ids.

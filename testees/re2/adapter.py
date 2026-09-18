@@ -184,8 +184,13 @@ class Adapter(_ad.Adapter):
             "engine_mode": cfg["engine_mode"],
             "simd": "n-a",
             "build_flags": build_note,
-            "runtime_options": (["longest_match=true"] if cfg.get("longest")
-                                else []),
+            # schema named_value objects, never bare strings (KB-21: the
+            # re2-longest first sample's whole cell measured, then the
+            # record was refused at store.write -- 'longest_match=true'
+            # is not of type 'object'. pcre2/pcrec emit [] here, so no
+            # prior testee ever exercised a non-empty entry's shape).
+            "runtime_options": ([{"name": "longest_match", "value": True}]
+                                if cfg.get("longest") else []),
             "compile_cost_definition": (
                 "eager-jit-adjacent (capability_set_v1.md 7.1/7.2): the "
                 "explicit RE2(pattern, options) CONSTRUCTOR call, timed "
