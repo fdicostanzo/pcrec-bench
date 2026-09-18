@@ -4695,3 +4695,39 @@ ext-bench testees across six engines.
 - THE R7 PANEL (three read-only critics: popsem/versioning/code) CONFIRMED every defect (probes byte-identical; two foundational claims re-derived via independent code paths) and took the audit's FIX designs apart: 5 BLOCKING — the §6 cost model missing two regen surfaces and the INTERPRET_VERSION stamp (never bumped since introduction), F7 mis-bucketed against its own witness, Q4's uncited MEASURED claim refuted by hand computation, F11's widening reproducing the P5 class via the form join key, F27's cited join unable to recover supersession (the correct anchor is OD-B15's dedup key + a signature change).
 - r7consol applied all 13 accept-and-apply dispositions (note at v1.1, by-id 17/17, zero escalations); step-2 spot-check of the applied edits run at merge. Merged ab66e5e after a recovered mis-sequence: the merge failed on untracked critic-file collisions and the compound command deleted the branch anyway — recovered from the delivered head SHA, untracked copies diffed identical and removed. LESSON: never chain a branch delete after a merge in one compound command; sequence merge → verify → delete as separate steps.
 - Gate: check-interpret 149/149 at every merge; full gate unchanged (docs-only morning). PENDING FOR FRANK: the predicate audit's §7 questions (Q2 first — the 2.0 precedent grounds MAJOR; and the F27 ruling with its two stated risks); then the fix lanes charter with a plan row.
+
+## 2026-09-18 (afternoon) — twenty-fifth session close (Frank's reset)
+
+- Frank read the window ledger ("very interesting, some good findings"), asked
+  for a tests-×-engines ratio matrix view: built ad hoc from the two committed
+  report TSVs + the 12 records' compile outcomes (1,524 cells, ZERO blanks —
+  1,282 ratios / 204 unsup / 18 refused / 15 wrong / 5 gave-up), published as
+  the Capability Ratio Matrix artifact. Frank RULED IT STANDARD: the matrix
+  becomes a committed reporter surface, Claude-readable TSV canonical, HTML
+  derived — lane b52matrix chartered (reporter v18: .matrix.tsv sibling per
+  group, built from the FULL record population (F26-immune by construction),
+  best_ns/best_testee columns, no-empty-cells invariant; scripts/matrix_page.py
+  as the committed HTML generator; the four-surface regen; PLUS the addendum
+  below).
+- pcrecdev1 CAUGHT A NUMBER: O-32's "crs-942500 ×102 the JIT" is ×102 vs the
+  INTERPRETER; ×2.24 vs JIT (search: ×3.82 vs JIT). Verified at the TSV rows;
+  the REPORTER is consistent (interp = ratio_vs_baseline's reference in both
+  regimes); the error was ONE ledger §3 prose cell mixing baselines under one
+  label. O-33 is the correction of record (ledger stands unedited per rule;
+  the ×102-the-JIT wording in this journal's part-2 entry is CORRECTED HERE).
+  The investigation surfaced a latent trap — the baseline silently falls back
+  to row-best when interp is absent from a group (report.py:4511/3823),
+  nothing stating which applied — added to b52matrix's charter as a per-group
+  baseline-identity fact with both-arm tests.
+- SESSION RESET at Frank's word: b52matrix TaskStop'd mid-work, its
+  uncommitted report.py/test_report.py edits preserved as WIP 29c1888 on
+  lane/b52matrix (worktree worktrees/b52matrix kept) — next session resumes
+  or restarts from the brief (in this journal + wake.md). No other lanes,
+  monitors, or detached jobs. pcrecdev1's ~6.5h battery still holds the box
+  (their own run; nothing of ours on it).
+- Session totals (the 36-hour arc): re-pin cf0962e3 landed with 3 review
+  fixes; tag wave; the capability window 9/9 measured+read (store 178, all
+  12 roster testees covered); catalogue 2.0 + subject-grain; the ext-roster
+  predictions file; the predicate audit through its full D6 cycle (v1.1);
+  KB-21 found+fixed; O-32/O-33. Gate at close: 5/73/0 · 420/420 · rc=0 ·
+  149/149; master pushed, main tree clean.
