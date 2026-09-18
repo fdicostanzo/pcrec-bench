@@ -364,7 +364,7 @@ Maintenance: update this file when files are added/removed or change role.
   narrowing.
 
 - `2026-09-18-predicate-audit-probes.txt` + `…-probe1.py` …
-  `…-probe5.py` — THE PREDICATE AUDIT's five probes (`[B42]` tail
+  `…-probe7.py` — THE PREDICATE AUDIT's seven probes (`[B42]` tail
   charter (i), lane `b50predaudit`; the derivation is
   `../../design/predicate_audit_v1.md`). Read-only, store-light (only
   probe 5 opens `store/index.tsv`, as `interpret` itself does), and
@@ -385,5 +385,16 @@ Maintenance: update this file when files are added/removed or change role.
   arm pairs one config token apart with a REFUSED arm (R-ARM-1 cannot
   see them) and 38 cross-pin pairs with an unranked side; the two
   reports whose `floor_pattern` is `none`; and the four Δ rows whose
-  partner R-BUCKET-SPAN cannot reach. Reproduce with
+  partner R-BUCKET-SPAN cannot reach. Probe 6 adds the THIRD predictions
+  file (`capability-0.1-ext-roster.tsv`, merged mid-lane): seven of its
+  eleven failure-quantity clauses are evaluable ONLY under ruling (α),
+  and `subject_or_na=(set)` is measured as the one (undocumented) way to
+  keep the P-2 detail rows out of an explicit `section=excluded` read.
+  Probe 7 measures the R-STATUS-4 consequence of `render_tsv` emitting
+  the `did_not_compile` section only INSIDE a ranking group (lane
+  `b51preds`' finding 2, re-asked as a rule-population question): **29**
+  (report, pattern) pairs whose every compile cell is a refusal and which
+  carry NO `did_not_compile` row anywhere — incl. `bench/bounded`'s own
+  65535-cap refusal in a report R-STATUS-4 would call clean.
+  Reproduce with
   `PCRECBENCH_ROOT=<checkout> python3 <probe>` (seconds each).

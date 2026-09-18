@@ -472,11 +472,11 @@ docs/dev/'s append-only records.
   catalogue's prose); what counterevidence would refute the verdict it
   renders (its `no_fire` sentence included, since nobody double-checks a
   negative); can that counterevidence APPEAR there; and if not, the
-  failure shape with a witness, a severity and a fix. Five archived
+  failure shape with a witness, a severity and a fix. Seven archived
   read-only probes (`../dev/measurements/2026-09-18-predicate-audit-
-  probes.txt` + five scripts, each importing `interpret`'s OWN functions
+  probes.txt` + seven scripts, each importing `interpret`'s OWN functions
   rather than reimplementing the predicate it audits) supply every
-  number. **Ten defects are LIVE on committed sidecars**, three
+  number. **Eleven defects are LIVE**, four
   sharply: R-FLOOR-2 renders *"no ranked cell is at or below its set's
   own floor pattern"* on a report whose header reads `floor_pattern:
   none` and where the rule returned early without comparing anything —
@@ -490,7 +490,13 @@ docs/dev/'s append-only records.
   R-BUCKET-DOMINATED reports a dominance share *"of this cell's total"*
   for **8 of its 33 firings** on set cells the same report EXCLUDED from
   ranking, over a denominator that omits the failing subjects (94.6% over
-  73 ranked subjects with 2 excluded ones unseen). Twelve further
+  73 ranked subjects with 2 excluded ones unseen); and R-STATUS-4 cannot
+  see a pattern NO testee compiled at all, because `render_tsv` emits the
+  `did_not_compile` section only inside an existing ranking group (29
+  (report, pattern) pairs MEASURED — the committed ext sidecar's
+  R-STATUS-4 understates its refusals by eleven cells, and
+  `bench/bounded`'s own headline 65535-cap refusal sits in a report that
+  would render *"every pattern compiled on every testee"*). Thirteen further
   findings are silent omissions or latent, the largest two being
   structural rather than textual: **R-ARM-1 cannot see an arm pair one
   of whose arms REFUSED to compile** — the strongest possible arm
@@ -515,7 +521,7 @@ docs/dev/'s append-only records.
   R-FLOOR-2's own firing sentence) and eight as incomplete. §6 groups
   the fixes by cost (code-only / MINOR+regeneration / MAJOR / a reporter
   PRECONDITION on §2.5's P-1/P-2 precedent) with a recommended order;
-  §7 puts seven questions to the panel, including the one that will
+  §7 puts the questions to the panel, including the one that will
   recur — when the code and the catalogue's own `predicate` prose
   disagree and the PROSE is right, is the code fix MINOR or MAJOR? Two
   narrowings audited CLEAN and are recorded as clean (R-FLOOR-1/3's

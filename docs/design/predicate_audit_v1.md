@@ -31,7 +31,7 @@ four questions, and it audits the **rendered sentences** separately, because
 a sound predicate rendered as a sentence that omits its population is the
 same failure one step later.
 
-**What it found, in one paragraph.** **Ten** defects are LIVE — a committed
+**What it found, in one paragraph.** **Eleven** defects are LIVE — a committed
 sidecar renders a structurally unsound verdict or an uninterpretable number
 today — of which the sharpest three are: R-FLOOR-2 renders *"no ranked
 cell is at or below its set's own
@@ -42,7 +42,7 @@ design gap); R-DELTA-4 renders *"no prediction … selects that cell"* about
 cells a prediction names **by name** but could not evaluate; and
 R-BUCKET-DOMINATED renders a dominance share *"of this cell's total"* for
 eight cells the same report **excluded from ranking**, over a denominator
-that silently omits the subjects that failed. Twelve further findings are
+that silently omits the subjects that failed. Thirteen further findings are
 silent omissions or latent, the two largest structural rather than textual:
 **R-ARM-1 cannot see an arm pair one of whose arms refused to compile** (532
 such triples in the corpus — the strongest possible arm difference, and
@@ -57,9 +57,9 @@ rather than sound.
 
 ## §0. What was measured in this lane, and how
 
-Five read-only probes, archived with their scripts and verbatim output at
-`docs/dev/measurements/2026-09-18-predicate-audit-probes.txt` +
-`…-probe{1..5}.py`. Every probe imports `pcrecbench.interpret`'s **own**
+**Seven** read-only probes, archived with their scripts and verbatim output
+at `docs/dev/measurements/2026-09-18-predicate-audit-probes.txt` +
+`…-probe{1..7}.py`. Every probe imports `pcrecbench.interpret`'s **own**
 functions (`parse_selector`, `_glob_match`, `_select`, `_sections_for`,
 `_keyed_values`, `_reduce`, `_op_holds`, `_measured_text`, `_elsewhere`,
 `split_testee`, `config_of`, `is_reference`, `r_arm_1`,
@@ -75,11 +75,17 @@ own reimplementation.
 | **M3** | `_reduce` + `_op_holds` + `_measured_text` replayed per clause against the true min/max | what the rendered "worst … over N value(s)" sentence says against what the population actually holds |
 | **M4** | the per-rule blind-spot search (arm pairs with a refused arm; cross-pin pairs with an unranked side; `floor_pattern` header values; non-finite numerics; `not_ranked`/`scratch` occupancy) | whether each at-risk population has a real witness in the corpus, and how many |
 | **M5** | the Δ-partner divergence and the give-up subject coverage | R-BUCKET-SPAN's partner population against the reporter's own; R-STATUS-12's subject population against the subjects that gave up |
+| **M7** | the consequence of `render_tsv` emitting the `did_not_compile` section only INSIDE an existing ranking group — lane `b51preds`' finding 2, re-asked as a RULE-population question | 29 (report, pattern) pairs whose every compile cell is a refusal and which have NO `did_not_compile` row anywhere, so R-STATUS-4 cannot see them |
+| **M6** | the THIRD predictions file (`capability-0.1-ext-roster.tsv`, merged to master mid-lane) re-resolved clause by clause, each also forced through the PRE-(α) `rank`-only default | whether the authoring lessons landed, which clauses ruling (α) is load-bearing for, and how exposed F14 is in freshly authored work |
 
 **The corpus, as of this lane** (`HEAD` = `4eb413a`, catalogue 2.0,
-reporter v17, `interpreter_v1.md` v1.4): 45 committed set-grain report
-TSVs, 3 committed `.subject-grain.tsv` slices, 2 committed predictions
-files (50 clause rows), 6 committed `.interpretation.md` sidecars.
+reporter v17, `interpreter_v1.md` v1.4, plus `a5018f8` merged in
+mid-lane): 45 committed set-grain report TSVs, 3 committed
+`.subject-grain.tsv` slices, **3** committed predictions files (**69**
+clause rows — the third, `capability-0.1-ext-roster.tsv`, landed from
+lane `b51preds` while this audit was running and is stated BEFORE its
+sample, so no report scores it yet), 6 committed `.interpretation.md`
+sidecars.
 
 **The four structural facts the whole audit rests on** (M1, all MEASURED):
 
@@ -140,7 +146,7 @@ sand it off (`interpreter_v1.md` §13's own rule).
 | R-STATUS-1 | `record` rows joined to `index` by `record_id_of`; `interpret.py:558-571` | an included record whose index status is not `measured` — **or whose id joins to no index row at all** | **partially**: `hit is None → continue` treats an unjoined record as measured; the `no_fire` asserts the join succeeded | **O** F12 |
 | R-STATUS-2 | `index` rows filtered by the header's own `subbench_versions` × `machines`; `:574-601` | a non-measured index row in the population | yes — the index is the whole store's | S |
 | R-STATUS-3 | `excluded?metric=pass_rate`; `:604-614` | an excluded cell not reported | yes — every excluded base row fires | S |
-| R-STATUS-4 | `did_not_compile`, deduped to (pattern, testee); `:617-626` | a refusal not reported | yes | S |
+| R-STATUS-4 | `did_not_compile`, deduped to (pattern, testee); `:617-626` | **a pattern NO testee in the roster compiled** | **no**: `render_tsv` emits the section INSIDE the per-ranking-group loop (`report.py:4555-4564`), and a pattern nothing compiled has no ranking group, so no row exists for it anywhere. MEASURED: **29** (report, pattern) pairs | **D** F26 |
 | R-STATUS-5 | three header integers; `:629-638` | a candidate dropped for a fourth reason | **partially**: the header carries only these three classes; a reason the reporter does not count is invisible to any rule | L |
 | R-STATUS-6 | `header.schema_versions` + `record` agreement strings; `:648-656` | a mixed population | yes | S |
 | R-STATUS-7 | `header.mixed_x13`; `:659-662` | a mixed X13 population | yes (the reporter's own boolean) | S |
@@ -181,6 +187,7 @@ The scoring path is `_sections_for` → `_select` → `_value_of` /
 | `median_ns`, `min_ns`, `max_ns`, `stddev_ns`, `ratio_vs_baseline`, `ratio_vs_best`, `rank_in_group` (7) | `rank` | **partially.** A cell that regressed out of the ranking is absent; (β) now names the section it went to, which is the honest answer — but only when the selector can MATCH there (F7b). |
 | `n_wrong`, `n_gave_up`, `pass_rate`, `status` (4) | `rank` ∪ `excluded` (base rows) — ruling (α) | **yes, but diluted 100-158:1** (F13), and still omitting `not_ranked` (inert, §0 fact 4) and `did_not_compile` (where all four columns are EMPTY, §0 fact 3 — so widening there would add rows and no values; (β)'s annotation is the only honest route, and this note does not propose widening). |
 | `compile:median_total_ns`, `compile:artifact_bytes`, `compile:emit_bytes`, `compile:emit_code_bytes` (4) | `compile` | **no for refusals** — a refused pattern has no compile metric row. (β) annotates `did_not_compile`, correctly; it also annotates `excluded`, which for a compile claim is a **different population entirely** (F7). |
+| `section` read against `did_not_compile` (either as a quantity or a `section=` clause) | the section as emitted | **partially** — a pattern NO testee compiled has no row there at all (F26) |
 | `delta_verdict` (1) | `rank` | yes at set grain; **structurally empty at `grain=subject`** — 0 of 202,794 subject-grain rank rows carry one (`interpret_subject_grain_v1.md` §2.3) (F15). |
 | `section` (1) | `rank` | **no**: with no explicit `section=` clause the only value readable is the literal `rank`, so the claim is decided before any measurement (F15). Both committed `section` clauses name `section=` explicitly and so escape it. |
 
@@ -205,6 +212,12 @@ The scoring path is `_sections_for` → `_select` → `_value_of` /
 Severity is the product of *how wrong the sentence is* and *how likely a
 reader acts on it*. Frank's directive makes a Claude session the reader of
 record, and a Claude session does not double-check a negative.
+
+**On the ids.** F1-F25 were assigned in the first pass and are stable
+(the §2/§3 tables cite them). F26 and F27 were added after lane
+`b51preds` merged mid-audit and are filed by KIND, with the defects, not
+by number — so the closing F23/F24/F25 block (the narrowings that audited
+CLEAN) stays last, where it belongs.
 
 ### F1 — LIVE, HIGH. R-FLOOR-2 renders a verdict it never evaluated
 
@@ -504,7 +517,15 @@ MEASURED on the capability AFTER report:
 
 With `identity` + a per-row op this is sound: `_op_holds` runs per row and
 one violator refutes, which is why P5 now correctly reads **refuted** (the
-verdict the ledger reached by hand). With `median`, `count`, `max` or `min`
+verdict the ledger reached by hand). **And (α) is load-bearing
+prospectively, not only retrospectively** — MEASURED (M6) over the
+ext-roster file authored after the ruling: of its eleven
+failure-quantity clauses, **seven** (P3.a/b, P4.a/b, P5.a, P7.a/b)
+resolve entirely to `excluded` rows with ZERO rank rows, so under the
+pre-(α) `rank`-only default every one of them would have scored
+`not-evaluable`. (The probe substitutes a MEASURED testee glob for the
+as-yet-unsampled ext-roster one, so this is a fact about the clause
+SHAPE, not a score of P3-P7.) With `median`, `count`, `max` or `min`
 the clean rank rows outweigh the counterevidence **100-158:1** and a real
 failure can be arithmetically invisible. **Fix shape.** Collapse the six
 identical rank metric rows to one per cell for the four failure quantities
@@ -535,7 +556,21 @@ rows. The mixing fires the first time such a clause lands on a cell that
 does. It is not a hazard waiting on a new authoring habit; it is waiting on
 a give-up.
 
-And the author has no way out: **`metric` is not a selector key**
+**One accidental protection, and it is the interim fix.** MEASURED (M6):
+`subject_or_na=(set)` excludes the detail rows, because a
+`giveup_smallest` row carries a REAL subject id where the base row carries
+the literal `(set)` — an explicit `section=excluded` read selects 26 rows
+with that clause and 36 (26 base + 10 detail) without it. Every numeric
+clause in the ext-roster file writes `subject_or_na=(set)` and is
+therefore protected; its six `section=excluded` clauses that do NOT write
+it all use `set_of(pattern)`, whose answer a detail row cannot change (a
+detail row's `pattern` equals its base row's). So the hazard is contained
+in today's authored work **by convention nobody wrote down**. Until
+`metric` becomes a key, `docs/dev/predictions/CLAUDE.md` should state
+`subject_or_na=(set)` as the base-row idiom, and say why.
+
+And the author has no way out for the general case: **`metric` is not a
+selector key**
 (`SELECTOR_KEYS` is `pattern`, `subject_or_na`, `regime_or_na`, `form`,
 `testee`, `section`, `grain`). Fix: either add `metric` to the closed key
 set (MAJOR — a new member of a closed set, and the right answer, because it
@@ -570,6 +605,13 @@ Each is a one-line, store-free load check on Q6's own precedent:
    {eq-token, neq-token, set-eq, set-subset, present, absent}`.
 
 All three are `load_predictions` additions, no catalogue change.
+
+**A note on Q6's OWED check (ii)** (every `testee=` glob must match ≥1
+index testee for its own `(subbench, version)`, vacuous when unmeasured):
+MEASURED (M6), each of the five ext-roster globs matches exactly one
+`store/index.tsv` testee today, so the check would run NON-vacuously and
+PASS on the newest predictions file. It would also have caught capability
+P4's `pcrec_*-auto-*` — the defect it was designed for.
 
 ### F16 — SILENT OMISSION, LOW-MEDIUM. "worst" is the wrong extreme for a lower-bound op
 
@@ -655,6 +697,94 @@ concludes the window was not quiet. It was: the gate passed. Fix: a
 `legend` line, exactly the mechanism catalogue 1.1 added for R-ARM-1's own
 misreadable ×1.00. MINOR + §8(6).
 
+### F26 — LIVE, HIGH. A pattern nothing compiled has no refusal row at all
+
+`render_tsv` emits the `did_not_compile` section from INSIDE the
+per-ranking-group loop (`report.py:4555-4564`), and a ranking group exists
+only where some testee produced match rows. So a pattern that **no testee
+in the query's roster compiled** has no ranking group, and therefore no
+`did_not_compile` row anywhere in the TSV — even though every one of its
+records carries `compile_outcome: did-not-compile` in full.
+
+Found by lane `b51preds` (its finding 2, about the `section=did_not_compile`
+selector, where it cost that file three planned clauses); audited here as
+the RULE-population question it also is. **R-STATUS-4's entire population
+is that section**, so it cannot see these patterns, and its `no_fire`
+sentence — *"every pattern compiled on every testee in this report"* —
+is asserted over reports where eleven patterns compiled on nobody.
+
+MEASURED (M7): **29 (report, pattern) pairs** across the committed corpus,
+in two live shapes.
+
+- **The understated firing.** The committed ext sidecar
+  (`reports/2026-09-18-capability-0.1-…-ext-first-cf0962e3.interpretation.md:44`)
+  renders *"R-STATUS-4 — a pattern that did not compile (5 firing(s),
+  aggregated to 2 by testee)"* — while `balanced-parens-rec` (6 refused
+  compile cells) and `negation-scope-lookbehind-var` (5) appear in no
+  firing at all. The section is present and understates the refusals by
+  eleven (pattern, testee) cells.
+- **The flatly false negative, waiting to be rendered.**
+  `reports/2026-09-05-bounded-0.3-…-ccboth-288d505.tsv` carries **zero**
+  `did_not_compile` rows, so R-STATUS-4 would render its `no_fire` —
+  while `cls-upto-65535` refused on all six testees. That is
+  `bench/bounded`'s own headline refusal, the 65535 NFA cap [B11.4] built
+  the count ladder to reach. No sidecar exists for that report yet; the
+  sentence fires the first time anyone interprets it.
+- Worst single case: `reports/2026-09-06-altwide-0.2-…-clsfold-d34c9131.tsv`,
+  **11** such patterns (`ci-512`, `w-512`, `w-1024`, `w-2048`, `s-2048`,
+  `s-4096`, `sfx-512`, `sh1-512`, `srt-512`, `nar4-512`, `wb-512`) — the
+  whole refusal wall above `bench/altwide`'s ladder, invisible.
+
+**Fix shape.** This is a REPORTER fix, and it is a small one: emit the
+`did_not_compile` rows for a (sb, pattern) whose testee set intersects no
+ranking group in a pass of their own, after the group loop, with
+`regime_or_na` empty (there is no regime to name — nothing ran). Then
+R-STATUS-4's population becomes the refusals, full stop, and a
+`section=did_not_compile` clause can express the whole refusal set.
+`REPORTER_VERSION` bump + full regeneration; the rule's predicate and
+`inputs` do not move, so the catalogue side is at most the `example`
+field. It belongs with F10's reporter wave.
+
+### F27 — LIVE BLOCKER, HIGH (found by lane `b51preds`, audited here). `check_stated_utc`'s population is the wrong "before"
+
+`check_stated_utc` anchors a prediction's `stated_utc` against the
+**earliest** `store/index.tsv` timestamp for its `(subbench, version)`,
+superseded rows included (`interpret.py:1700-1725`). That population is the
+set's first-ever measurement, and it never moves forward — so a
+predictions file about a LATER sample of an already-sampled set can never
+pass, however honestly it was stated before its own run. Reproduced live
+by that lane and re-verified here against the just-merged file:
+
+> `interpret: docs/dev/predictions/capability-0.1-ext-roster.tsv:2 (P1.a):
+> stated_utc 2026-09-18T00:00:00Z does not precede the earliest
+> store/index.tsv timestamp for capability@0.1 (2026-09-17T00:50:53Z),
+> superseded rows included (§6.5)`
+
+The check raises before a single clause is scored, so the whole
+`interpret` call aborts: **the newest committed predictions file cannot be
+used through the CLI's default path at all.**
+
+It belongs in this audit because it is the same class one layer up — a
+GATE whose population cannot distinguish the thing it is checking
+("stated before the population it predicts") from an unrelated fact
+("stated after some earlier population of the same set"). `interpreter_v1.md`
+§6.5's own honesty paragraph names what the check cannot PROVE; it does
+not name that the check makes a whole legitimate class mechanically
+unscoreable.
+
+**Fix shape**, and the population is the answer: anchor against the
+earliest index timestamp of **the records this report actually includes**
+(the report's own `record` rows joined to the index — the join
+R-STATUS-1 and R-BUCKET-SPAN already use), with the supersession window
+closed by including any index row superseded by one of them. That is
+strictly what §6.5 wants to prove, it moves forward with each sample, and
+it is still store-free. Code only, no catalogue change — but it changes
+what the check REFUSES, so it wants the panel's word and a fixture on
+both sides. The interim, if the panel prefers to wait: nothing in the
+tool, and a `--no-check-utc` style escape is NOT recommended, because an
+escape hatch on the one check that keeps a prediction honest is the wrong
+default to add.
+
 ### F23 / F24 / F25 — audited CLEAN, recorded so a later pass does not "fix" them
 
 - **F23, R-FLOOR-1 and R-FLOOR-3.** MEASURED: 1,266 of 12,741 compile
@@ -735,15 +865,24 @@ rule on the label), F4 (read the slice's `excluded` rows), F6/F13 (collapse
 the six identical rank rows before reducing), F11 (widen R-BUCKET-SPAN's
 partner search), F14 (`metric` as a selector key).
 
-**Group 4 — a reporter PRECONDITION, on §2.5's P-1/P-2 precedent.**
-F10 alone: a `now failing (was: measured)` clause on the excluded /
-refused row, after which a rule reads it as R-DELTA-3 reads its mirror.
-`REPORTER_VERSION` bump + full regeneration + a MINOR rule.
+**Group 4 — reporter changes, on §2.5's P-1/P-2 precedent.** Two, and
+they belong in one wave because both are `render_tsv` row-emission
+changes with one regeneration between them: **F26** (emit the
+`did_not_compile` rows for a pattern that reached no ranking group — the
+smaller and strictly-additive of the two) and **F10** (a
+`now failing (was: measured)` clause on the excluded / refused row,
+after which a rule reads it as R-DELTA-3 reads its mirror).
+`REPORTER_VERSION` bump + full regeneration + one MINOR rule.
 
-**Recommended order**, if the panel wants one: Group 2's F8 and F1/F2
-first (they make every existing sidecar honest and cost no predicate),
-then Group 1 entire, then F9, then Group 3's F3 and F4 (the two remaining
-live defects), then F10.
+**Group 5 — the one gate.** F27, `check_stated_utc`'s population. Code
+only, no catalogue change, but it changes what the tool REFUSES and it
+is blocking a committed file today.
+
+**Recommended order**, if the panel wants one: **F27 first** — it is the
+only finding blocking work that is already committed. Then Group 2's F8
+and F1/F2 (they make every existing sidecar honest and cost no
+predicate), then Group 1 entire, then F9, then Group 3's F3 and F4, then
+Group 4's F26 + F10 as one reporter wave.
 
 ---
 
@@ -781,13 +920,31 @@ additive half. It fixes the base-row/detail-row mixing, and it also lets a
 clause target `jitter` or `artifact_bytes` explicitly, which no committed
 prediction can express today.
 
-**Q6. F10's reporter precondition — now, or filed?** *Recommend filed with
+**Q6. F10's reporter clause — now, or filed?** *Recommend filed with
 a named trigger*: the first AFTER window whose ledger reports a cell that
 left the ranking. All 38 corpus instances are improvements, so the hole has
 not cost us anything yet; it will cost us exactly once, in the report where
 it matters most.
 
-**Q7. Does this audit want a standing `check-interpret` section?** A
+**Q7. F27 — re-anchor `check_stated_utc` to the report's OWN records?**
+*Recommend YES, and first.* The check today anchors to the set's
+first-ever measurement, which never moves, so no predictions file about a
+second sample of an already-sampled set can pass — and one is committed
+and unusable right now. Anchoring to the earliest index timestamp of the
+records THIS report includes (with the supersession window closed the way
+§6.5's own correction closed it) is strictly what the check wants to
+prove, moves forward with each sample, and stays store-free. No escape
+hatch: a `--no-check-utc` flag on the one check that keeps a prediction
+honest is the wrong thing to add.
+
+**Q8. F26 — emit the `did_not_compile` rows for a pattern that reached no
+ranking group?** *Recommend YES*, in the same reporter wave as F10. It is
+strictly additive to the TSV, it does not move R-STATUS-4's predicate or
+`inputs`, and without it the rule's `no_fire` is a false sentence on any
+report whose refusals are total — including the one carrying
+`bench/bounded`'s own 65535-cap refusal.
+
+**Q9. Does this audit want a standing `check-interpret` section?** A
 seventh section asserting the invariants the audit turned up — no prose
 names a catalogue version (F5); every rule that can decline has a reason
 distinct from its `no_fire` (F1); every quantity/op pair is in the declared
@@ -819,10 +976,10 @@ as gating, and a gate written before the fixes would encode today's shape.
 ## Source header
 
 Derived from committed artefacts at `HEAD` = `4eb413a` (catalogue 2.0,
-reporter v17, `interpreter_v1.md` v1.4, record schema v1.6) plus five
+reporter v17, `interpreter_v1.md` v1.4, record schema v1.6) plus seven
 read-only probes run in this lane, archived with their scripts at
 `docs/dev/measurements/2026-09-18-predicate-audit-probes.txt` and
-`…-probe{1..5}.py`. Code citations are `pcrecbench/interpret.py`,
+`…-probe{1..7}.py`. Code citations are `pcrecbench/interpret.py`,
 `pcrecbench/report.py`, `catalogue/rules.toml` and
 `catalogue/check_interpret.py` as committed at that revision; document
 citations are `docs/design/interpreter_v1.md` (v1.4),

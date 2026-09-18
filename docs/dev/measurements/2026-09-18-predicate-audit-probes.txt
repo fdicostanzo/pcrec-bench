@@ -7,18 +7,19 @@
 # (Frank's standing directive 2026-09-17, interpret_subject_grain_v1.md
 # 6 Q7's wider ruling; the derivation is docs/design/predicate_audit_v1.md.)
 #
-# Method: five read-only python probes over the 45 committed set-grain
-# report TSVs, the 3 committed .subject-grain.tsv slices, the 2 committed
-# predictions files and the 6 committed .interpretation.md sidecars,
+# Method: seven read-only python probes over the 45 committed set-grain
+# report TSVs, the 3 committed .subject-grain.tsv slices, the 3 committed
+# predictions files (the third, capability-0.1-ext-roster.tsv, merged from
+# lane b51preds mid-audit) and the 6 committed .interpretation.md sidecars,
 # importing pcrecbench.interpret's OWN functions (parse_selector,
 # _glob_match, _select, _sections_for, _keyed_values, _reduce, _op_holds,
 # _measured_text, _elsewhere, split_testee, config_of, is_reference,
 # r_arm_1, r_bucket_dominated, evaluate_predictions) rather than
 # reimplementing any of them. Nothing under store/, reports/, catalogue/
 # or ~/pcrec was written. No engine ran; store/index.tsv is read by
-# probe 5 only, as interpret itself reads it.
+# probes 5 and 6 only, as interpret itself reads it.
 #
-# Scripts: 2026-09-18-predicate-audit-probe{1..5}.py, beside this file.
+# Scripts: 2026-09-18-predicate-audit-probe{1..7}.py, beside this file.
 # Reproduce: PCRECBENCH_ROOT=<checkout> python3 <script> -- seconds each;
 # ROOT defaults to the cwd.
 # Source revision: pcrec-bench 4eb413a, catalogue 2.0, reporter v17,
@@ -258,3 +259,80 @@ R-BUCKET-DOMINATED: firings whose SET cell is not ranked, and the
 == R-STATUS-12 / R-STATUS-3: subjects that gave up vs subjects NAMED
   subjects that gave up (sum of the base rows' ×N): 188
   subjects NAMED by a giveup_smallest row: 76
+
+########## probe6.py ##########
+clauses: 19
+
+(a) would an (alpha)-dependent clause be NOT-EVALUABLE under the
+    pre-(alpha) rank-only default?  [resolved against the pcrec-arm
+    report that exists today, substituting a MEASURED testee glob so
+    the population is non-empty -- the ext testees have no records yet]
+  P2.a  n_wrong    alpha=  6 {'rank': 6}  rank-only=  6
+  P2.b  n_wrong    alpha=  6 {'rank': 6}  rank-only=  6
+  P2.d  n_wrong    alpha=  6 {'rank': 6}  rank-only=  6
+  P2.e  n_wrong    alpha=  6 {'rank': 6}  rank-only=  6
+  P3.a  n_wrong    alpha=  3 {'excluded': 3}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P3.b  n_wrong    alpha=  3 {'excluded': 3}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P4.a  n_wrong    alpha=  3 {'excluded': 3}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P4.b  n_wrong    alpha=  3 {'excluded': 3}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P5.a  n_wrong    alpha=  3 {'excluded': 3}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P7.a  n_gave_up  alpha=  1 {'excluded': 1}  rank-only=  0   <-- (alpha) is what makes it evaluable
+  P7.b  n_wrong    alpha=  1 {'excluded': 1}  rank-only=  0   <-- (alpha) is what makes it evaluable
+
+(b) does `subject_or_na=(set)` exclude the P-2 giveup_smallest rows?
+  subject_or_na=(set)  ->  26 rows, {'pass_rate': 26}
+  subject_or_na=*      ->  36 rows, {'pass_rate': 26, 'giveup_smallest': 10}
+
+(c) does the base/detail mixing change a `set_of(pattern)` answer?
+  P1.a  base=[] detail-only-additions=[]
+
+(d) check_stated_utc / the Q6 testee-glob check: are the ext-roster
+    testees measured anywhere in store/index.tsv yet?
+  oniguruma_*_default-caps-simdna                      matches 1 index testee(s)
+  re2_*_default-caps-simdna                            matches 1 index testee(s)
+  re2_*_longest-caps-simdna                            matches 1 index testee(s)
+  tre_*_default-caps-simdna                            matches 1 index testee(s)
+  vectorscan_*_block-nosom-nocaps-simd                 matches 1 index testee(s)
+
+########## probe7.py ##########
+  2026-09-03-bounded-0.3-budu-ryzen1600-cc-rerun-1989c62.tsv
+    1 pattern(s) whose every compile cell is a refusal AND which have NO did_not_compile row:
+      cls-upto-65535  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+  2026-09-05-altwide-0.2-budu-ryzen1600-island-334fd10e.tsv
+    14 pattern(s) whose every compile cell is a refusal AND which have NO did_not_compile row:
+      ci-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      nar4-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      pfx3-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      s-2048  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      s-4096  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      sfx-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      sh1-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      srt-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-1024  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-2048  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-384  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      wb-256  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      wb-512  (4 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+  2026-09-05-bounded-0.3-budu-ryzen1600-ccboth-288d505.tsv
+    1 pattern(s) whose every compile cell is a refusal AND which have NO did_not_compile row:
+      cls-upto-65535  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+  2026-09-06-altwide-0.2-budu-ryzen1600-clsfold-d34c9131.tsv
+    11 pattern(s) whose every compile cell is a refusal AND which have NO did_not_compile row:
+      ci-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      nar4-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      s-2048  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      s-4096  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      sfx-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      sh1-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      srt-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-1024  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-2048  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      w-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      wb-512  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+  2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.tsv
+    2 pattern(s) whose every compile cell is a refusal AND which have NO did_not_compile row:
+      balanced-parens-rec  (6 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+      negation-scope-lookbehind-var  (5 refused compile cell(s), 0 rows in any ranking-family or did_not_compile section)
+
+  total (report, pattern) pairs invisible to R-STATUS-4: 29
