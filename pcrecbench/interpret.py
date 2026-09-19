@@ -1419,6 +1419,12 @@ class Context:
         self.subject_grain = subject_grain
         self.firings = {}
         self.prediction_verdicts = []
+        # F27/r7code-1: the RE-ANCHORED §6.5 population, set by
+        # `interpret()` right after construction (or left empty -- the
+        # anchor-identity line renders nothing when there is nothing to
+        # say, exactly like an absent predictions file).
+        self.utc_anchor = {}
+        self.utc_anchor_tuples = {}
         self._pin_pos = {}
         for entry in cat["pin_order"]:
             for i, pin in enumerate(entry["pins"]):
@@ -1693,6 +1699,39 @@ def results_from_facts(cat, facts_text):
     return results
 
 
+def _anchor_identity_lines(ctx):
+    """F27/r7code-1's fold-in: an UNCONDITIONAL line, on every
+    predictions-scoring run, naming the anchor `check_stated_utc`
+    actually used -- which (subbench, version) pairs, how many
+    (testee_id, machine_id) tuples contributed, and the resulting
+    timestamp -- so a reader is told what the check did and did not
+    prove rather than having to trust it silently. Empty (no lines) when
+    there is nothing to anchor, exactly like an absent predictions file."""
+    if not ctx.utc_anchor:
+        return []
+    out = [
+        "**Predictions anchor (§6.5, r7code-1).** `stated_utc` is "
+        "checked against the earliest `store/index.tsv` timestamp among "
+        "the (subbench, version, testee_id, machine_id) tuples THIS "
+        "report's own included records carry -- not the whole store's "
+        "history for the set. This proves a prediction predates this "
+        "report's own population; it does not restrain an author "
+        "already informed by a differently-scoped report of the same "
+        "(subbench, version) (r7pop-4), and a report's own "
+        "`--since`/`--until`/`--where` filters can move the anchor "
+        "forward (r7ver-7).",
+        "",
+    ]
+    for key in sorted(ctx.utc_anchor):
+        sb, ver = key
+        n = len(ctx.utc_anchor_tuples.get(key, ()))
+        out.append(f"- `{sb}@{ver}`: anchor {ctx.utc_anchor[key]}, over "
+                   f"{n} (testee_id, machine_id) tuple(s) this report "
+                   f"includes.")
+    out.append("")
+    return out
+
+
 def render_markdown(results, ctx, stamp):
     out = ["<!-- pcrecbench interpret"]
     for k, v in stamp:
@@ -1708,6 +1747,7 @@ def render_markdown(results, ctx, stamp):
                f"{ctx.catalogue['catalogue_version']}. Every sentence below "
                f"is a rule template. No sentence is generated.")
     out.append("")
+    out.extend(_anchor_identity_lines(ctx))
     not_fired = []
     for rule, res in results:
         if isinstance(res, (str, tuple)):
@@ -1877,32 +1917,76 @@ def load_predictions(path):
     return rows
 
 
-def check_stated_utc(predictions, index, where="predictions"):
-    """§6.5, corrected by cross-review I-58: `stated_utc` must precede the
-    EARLIEST index timestamp for this (subbench, version) population
-    INCLUDING superseded rows -- not the report's own earliest, which a
-    supersession window leaves open. The residual limit is stated in the
-    note: it proves only that a prediction predates this population's
-    first-ever measurement."""
-    if index is None:
-        return
-    earliest = {}
-    for r in index.rows:
-        key = (r["subbench"], r["version"])
-        ts = r["timestamp"]
-        if key not in earliest or ts < earliest[key]:
-            earliest[key] = ts
+def _utc_anchor(index, report):
+    """F27/r7code-1 (docs/design/predicate_audit_v1.md, ratified
+    2026-09-19): the RE-ANCHORED §6.5 population -- the OD-B15 dedup
+    key, not the R-STATUS-1/R-BUCKET-SPAN join the audit's first draft
+    cited (that join recovers only the included records' OWN index
+    rows, never what they superseded).
+
+    For each of `report`'s own included records, its `(subbench,
+    version, testee_id, machine_id)` tuple, via the record-id->index-row
+    join; then the MINIMUM `store/index.tsv` timestamp over EVERY index
+    row sharing that exact tuple -- recovering whatever that same
+    testee/machine/version's own kept row superseded, store-free (no
+    read beyond `index` and `report`'s own `record` rows).
+
+    Returns (anchor: {(subbench, version): earliest timestamp},
+    tuples_by_sv: {(subbench, version): {(testee_id, machine_id)}}) --
+    the second dict is what the unconditional anchor-identity line
+    counts."""
+    if index is None or report is None:
+        return {}, {}
+    included_ids = {r["testee"] for r in report.by_section.get("record", ())
+                    if r["metric"] == "agreement"}
+    idx_by_rid = {record_id_of(ir): ir for ir in index.rows}
+    tuples_by_sv = defaultdict(set)
+    for rid in included_ids:
+        ir = idx_by_rid.get(rid)
+        if ir is None:
+            continue
+        tuples_by_sv[(ir["subbench"], ir["version"])].add(
+            (ir["testee_id"], ir["machine_id"]))
+    anchor = {}
+    for ir in index.rows:
+        key = (ir["subbench"], ir["version"])
+        tup = (ir["testee_id"], ir["machine_id"])
+        if tup not in tuples_by_sv.get(key, ()):
+            continue
+        ts = ir["timestamp"]
+        if key not in anchor or ts < anchor[key]:
+            anchor[key] = ts
+    return anchor, dict(tuples_by_sv)
+
+
+def check_stated_utc(predictions, index, report, where="predictions"):
+    """§6.5, RE-ANCHORED 2026-09-19 (F27/r7code-1): `stated_utc` must
+    precede the earliest index timestamp among the (subbench, version,
+    testee_id, machine_id) tuples THIS REPORT actually includes -- not
+    the whole store's history for the set (the RETIRED global anchor,
+    which never moves forward and so refuses every predictions file
+    about a second sample of an already-sampled set). Two residual
+    limits are stated in the note (r7ver-7 gameability, r7pop-4 the
+    cross-testee/cross-config half of the window that stays open) --
+    this is a trade against the old anchor, not a strict improvement.
+
+    Returns the (anchor, tuples_by_sv) pair `_utc_anchor` computed, so
+    the caller can render the unconditional anchor-identity line
+    whether or not this raises."""
+    anchor, tuples_by_sv = _utc_anchor(index, report)
     for p in predictions:
         key = (p["subbench"], p["version"])
-        first = earliest.get(key)
+        first = anchor.get(key)
         if first is None:
             continue                    # never measured: the check is vacuous
         if p["stated_utc"] >= first:
             raise PredictionError(
                 f"{p['_where']}: stated_utc {p['stated_utc']} does not precede "
                 f"the earliest store/index.tsv timestamp for "
-                f"{key[0]}@{key[1]} ({first}), superseded rows included "
-                f"(§6.5)")
+                f"{key[0]}@{key[1]} ({first}) among this report's own "
+                f"included (subbench, version, testee_id, machine_id) "
+                f"tuples (§6.5, r7code-1)")
+    return anchor, tuples_by_sv
 
 
 _QUANT_COLUMN = {"pass_rate": "pass_rate", "n_gave_up": "n_gave_up",
@@ -2348,13 +2432,15 @@ def interpret(report_path, index_path, catalogue_path, predictions_path=None,
     subject_grain = (ReportTsv(subject_grain_path, known)
                      if subject_grain_path else None)
     predictions = None
+    utc_anchor = ({}, {})
     if predictions_path:
         predictions = load_predictions(predictions_path)
-        if check_utc:
-            check_stated_utc(predictions, index)
+        utc_anchor = (check_stated_utc(predictions, index, report)
+                     if check_utc else _utc_anchor(index, report))
     ctx = Context(cat, report, index, predictions,
                   display_path(predictions_path, root) if predictions_path
                   else "(none)", subject_grain)
+    ctx.utc_anchor, ctx.utc_anchor_tuples = utc_anchor
     if predictions is not None:
         evaluate_predictions(cat, report, index, predictions, ctx)
     results = run_rules(cat, report, index, ctx)
