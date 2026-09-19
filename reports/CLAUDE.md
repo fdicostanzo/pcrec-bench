@@ -70,17 +70,53 @@ generated on demand only is a call for whichever window/manager session
 first regenerates the full `reports/` set under reporter v18 — this
 lane ships the capability, not the regen (see the note below).
 
-**NOT YET BACK-FILLED.** [B52] landed the CAPABILITY (`--format matrix`,
-the baseline-identity fact on every EXISTING `.tsv`/`.md` rendering,
-`scripts/matrix_page.py`) without running the whole-store regeneration
-every prior `REPORTER_VERSION` bump has triggered (KB-18's, [B13.2]'s,
-etc., logged below) — lane b52matrix's own brief keeps that regen out
-of scope (a sanitizer suite held the box; the four-surface regen is the
-manager's, gated separately). No `<name>.matrix.tsv` is committed yet;
-every existing `.tsv`/`.md` under `reports/` still renders under
-`v17`'s bytes plus the version-line stamp and the new unconditional
-`- baseline: ...` bullet/row until the next regeneration wave runs it
-through `v18`.
+**BACKED-FILLED 2026-09-18 (lane b53regen)** — [B52]'s own regen wave,
+charter item 2 of Frank's matrix-standard ruling. All 45 committed
+report groups (138 `.tsv`/`.md`/`.subject-grain.md`/`.subject-grain.tsv`
+files) re-rendered from each file's own committed query (parsed from its
+header line — KB-16 is closed, so every render is a narrow CLI
+invocation, seconds to tens of minutes depending on the group's own
+subject-grain size, never a whole-store load) and diff-classified
+against the last commit. **Two expected classes only, on every changed
+line, zero exceptions**: the `reporter: v17` → `v18` version-line
+replace, and the new unconditional `baseline` bullet (`.md`) / row
+(`.tsv`) — item 3's baseline-identity fact — on every rankable group.
+Zero anomalies, zero subprocess failures, zero unexplained deltas. New:
+one `.matrix.tsv` + `.matrix.html` sibling per group (45 + 45,
+`scripts/matrix_page.py`, all rendered clean). The six committed
+`reports/*.interpretation.md` sidecars were also regenerated
+(`scripts/regen_sidecars.py`, 0 failures, all determinism-checked) and
+the 65-fixture `catalogue/fixtures/` corpus re-derived against the moved
+report content (same precedent as commit b6ee4e4's v17-bump fixture
+regen; `gen.py --check` clean); `make check-interpret` 149/149.
+
+**Two things a reader of this wave should know:**
+- **The classifier itself was the wave's own incident.** The first pass
+  used `difflib.SequenceMatcher` (an O(n²) worst case) and hung for ~4 h
+  inside one group's multi-million-line `.subject-grain.md` diff before
+  the manager caught it from outside (CPU/no-child-process forensics) and
+  the lane replaced it with a linear two-pointer classifier (the two
+  expected delta shapes are both locally resolvable by looking at only
+  the current pair of lines — no alignment search is needed) and resumed
+  from the stuck group, skipping the two sub-renders it had already
+  landed correctly before the hang. KB-18's own lesson two waves ago was
+  "a legitimate class the classifier missed"; this wave's is classifier
+  *complexity* — a correct classifier that could not finish.
+- **`scripts/regen_sidecars.py` had a real, separate, second-order bug**
+  (KB-22, `docs/dev/known_issues.md`): it recovered a sidecar's
+  `report`/`index`/`predictions` inputs from the sidecar's own stamp but
+  never `subject_grain`, so regenerating either of the two
+  `.subject-grain.tsv`-backed capability sidecars silently DROPPED
+  R-BUCKET-DOMINATED's whole section (33 firings) while still passing
+  its own determinism check — self-consistent, just wrong, and invisible
+  until this wave was the first time the script ever ran against a
+  subject-grain-stamped sidecar. Fixed in the same lane; both sidecars
+  confirmed restored byte-identical below the stamp to their pre-regen
+  content.
+
+No committed report's TIMING NUMBERS moved — this wave changes only the
+reporter's own rendering surface (the version stamp and the new
+baseline fact), never a record, a query result, or a ranking.
 
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
