@@ -805,16 +805,38 @@ def r_delta_3(view, ctx):
     return _delta_clause_rule(view, "now measured (was: ")
 
 
+def _selector_covers_cell(pred, cell):
+    """F3 (docs/design/predicate_audit_v1.md): whether a prediction
+    clause's own selector NAMES this (pattern, regime, form, testee)
+    cell BY ITS GLOB -- independent of whether the clause was
+    evaluable. The catalogue's own `threshold_src` already states this
+    predicate ("the coverage test is a prediction selector's own glob
+    match", §6.3); the code previously computed coverage from the ROWS
+    a clause happened to match, which is empty for a not-evaluable
+    clause even when its selector names the cell by name (MEASURED: 6 of
+    10 capability predictions are not-evaluable and contributed zero
+    coverage against 777 R-DELTA-4 firings)."""
+    pattern, regime, form, testee = cell
+    sel = pred["_selector"]
+    checks = {"pattern": pattern, "regime_or_na": regime, "form": form,
+              "testee": testee}
+    for key, value in checks.items():
+        glob = sel.get(key)
+        if glob is not None and not _glob_match(glob, value):
+            return False
+    return True
+
+
 def r_delta_4(view, ctx):
     if ctx.predictions is None:
-        return "input-absent"
-    covered = ctx.prediction_coverage
+        return ("input-absent", "no predictions file was supplied, so "
+                                "coverage cannot be evaluated")
     out = []
     for rid in ("R-DELTA-1", "R-RANK-1", "R-ARM-1", "R-FLOOR-2"):
         for f in ctx.firings.get(rid, ()):
             cell = (f.keys["pattern"], f.keys["regime"], f.keys["form"],
                     f.keys["testee"])
-            if cell in covered:
+            if any(_selector_covers_cell(p, cell) for p in ctx.predictions):
                 continue
             out.append(fire({"rule_id": rid, "pattern": cell[0],
                              "regime": cell[1], "form": cell[2],
@@ -1048,7 +1070,21 @@ def r_bucket_span(view, ctx):
     by_cell = defaultdict(list)
     for r in rows:
         by_cell[(r["pattern"], r["regime_or_na"], r["form"])].append(r)
+    # F11 (docs/design/predicate_audit_v1.md, r7pop-3): the reporter's
+    # own partner choice is not scoped to rankable rows -- it reads
+    # `record_ts_by_testee` x `set_cells`, every reduction cell,
+    # rankable or not (report.py:2729-2752) -- so the partner search
+    # widens to `excluded` rows here too, which carry `form` and so join
+    # on the SAME (pattern, regime, form) key `rank` rows do. The
+    # `did_not_compile` half of the widening is NOT implemented: a
+    # `did_not_compile` row's `form` is unconditionally empty (§0 fact
+    # 3), so it cannot join on this key at all, and its own re-keyed
+    # join is undecided at implementation time (r7pop-3 leaves it TBD).
+    excluded_by_cell = defaultdict(list)
+    for r in view.rows("excluded", metric="pass_rate"):
+        excluded_by_cell[(r["pattern"], r["regime_or_na"], r["form"])].append(r)
     for cell, cell_rows in sorted(by_cell.items()):
+        candidates = cell_rows + excluded_by_cell.get(cell, [])
         for r in sorted(cell_rows, key=lambda x: x["testee"]):
             if not r["delta_verdict"]:
                 continue
@@ -1059,7 +1095,7 @@ def r_bucket_span(view, ctx):
             cfg = config_of(r["testee"])
             mine = ts_by_testee.get(r["testee"])
             older = []
-            for other in cell_rows:
+            for other in candidates:
                 if other["testee"] == r["testee"]:
                     continue
                 p2 = split_testee(other["testee"])
@@ -1295,7 +1331,6 @@ class Context:
         self.subject_grain = subject_grain
         self.firings = {}
         self.prediction_verdicts = []
-        self.prediction_coverage = set()
         self._pin_pos = {}
         for entry in cat["pin_order"]:
             for i, pin in enumerate(entry["pins"]):
@@ -2019,7 +2054,6 @@ def evaluate_predictions(cat, report, index, predictions, ctx):
     for p in predictions:
         by_parent[p["prediction_id"]].append(p)
     verdicts = []
-    coverage = set()
     for pid in sorted(by_parent):
         clauses = sorted(by_parent[pid], key=lambda p: p["clause"])
         per = []
@@ -2033,9 +2067,6 @@ def evaluate_predictions(cat, report, index, predictions, ctx):
                 continue
             view = subject_view if wants_subject else set_view
             rows = _select(view, p)
-            for r in rows:
-                coverage.add((r["pattern"], r["regime_or_na"], r["form"],
-                              r["testee"]))
             if not rows:
                 other = _elsewhere(view, p)
                 if other:
@@ -2092,7 +2123,6 @@ def evaluate_predictions(cat, report, index, predictions, ctx):
             entry["verdict"] = "partial"
         verdicts.append(entry)
     ctx.prediction_verdicts = verdicts
-    ctx.prediction_coverage = coverage
     return verdicts
 
 

@@ -1207,6 +1207,7 @@ grain         = ["set"]
 aggregate     = ["config"]
 inputs        = [
   "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,value,delta_verdict}",
+  "report:excluded?metric=pass_rate.{pattern,regime_or_na,form,testee}",
   "report:record.{testee,metric}",
   "index.{path,testee_id,timestamp}",
 ]
