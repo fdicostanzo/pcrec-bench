@@ -48,6 +48,30 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CARGO_TOML = os.path.join(HERE, "Cargo.toml")
 CARGO_LOCK = os.path.join(HERE, "Cargo.lock")
 
+
+def _rust_tool(name):
+    """Resolve `cargo`/`rustc` robustly: rustup's standard install puts
+    them in ~/.cargo/bin and reaches PATH only through the user's shell
+    profile, so a bare name works interactively but FAILS in any shell
+    that skipped the profile (a detached setsid runner, cron, a
+    stranger's `make check` -- MEASURED: the first post-merge full
+    `make check`'s check-harness died on FileNotFoundError: 'cargo'
+    from exactly this, 2026-09-19). PATH first (an explicitly chosen
+    toolchain wins), then the rustup home location, then a NAMED
+    refusal pointing at the install step -- never a bare
+    FileNotFoundError from deep inside subprocess."""
+    import shutil
+    found = shutil.which(name)
+    if found:
+        return name
+    rustup_bin = os.path.join(os.path.expanduser("~"), ".cargo", "bin", name)
+    if os.path.exists(rustup_bin):
+        return rustup_bin
+    raise _ad.AdapterError(
+        f"{name} not found on PATH or in ~/.cargo/bin -- install the "
+        f"pinned toolchain with rustup (testees/rust/CLAUDE.md, inbox "
+        f"I-76) before running this testee")
+
 # RegexBuilder's own documented defaults, mirrored from src/main.rs's own
 # constants (the driver's compiled-in fallback if these flags are ever
 # omitted) -- kept here too so configs.toml never has to repeat the raw
@@ -157,7 +181,8 @@ def _probe_rustc_version():
     toolchain pin inbox I-76 asks this file to record (`rustup`'s
     `stable` channel AS IT RESOLVED at charter/build time)."""
     try:
-        out = subprocess.run(["rustc", "--version"], capture_output=True,
+        out = subprocess.run([_rust_tool("rustc"), "--version"],
+                             capture_output=True,
                              text=True, check=True).stdout.strip()
     except (subprocess.CalledProcessError, FileNotFoundError) as e:
         raise _ad.AdapterError("rustc --version failed: %s -- is rustup "
@@ -247,7 +272,7 @@ class Adapter(_ad.Adapter):
         --locked` enforces this at the tool level rather than trusting
         convention."""
         out_dir = os.path.join(workdir, "rust_target")
-        argv = ["cargo", "build", "--release", "--locked",
+        argv = [_rust_tool("cargo"), "build", "--release", "--locked",
                "--manifest-path", CARGO_TOML, "--target-dir", out_dir]
         # Registered even on the cached path (pcrecbench.driverrun.
         # build_driver's own discipline, quoted by testees/re2/
@@ -257,7 +282,7 @@ class Adapter(_ad.Adapter):
         drv = os.path.join(out_dir, "release", "rust_regex_driver")
         _dr.DRIVER_BUILDS[os.path.abspath(drv)] = {
             "command_line": list(argv),
-            "compiler": _env.canon_compiler(_env.compiler_raw("rustc")),
+            "compiler": _env.canon_compiler(_env.compiler_raw(_rust_tool("rustc"))),
         }
         src_mtime = max(
             os.path.getmtime(os.path.join(HERE, "src", "main.rs")),
