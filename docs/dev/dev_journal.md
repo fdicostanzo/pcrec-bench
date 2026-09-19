@@ -4765,3 +4765,35 @@ ext-bench testees across six engines.
   task was MEMORY-KILLED (the known hazard, again), relaunched detached
   setsid+DONE-marker+Monitor per the working pattern; in flight at this
   entry. Push of the merge waits on it.
+
+## 2026-09-18 (evening) — twenty-sixth session (part 2): the v18 regen wave landed; two lane incidents, both fixed in-lane
+
+- b53regen MERGED (c3b7b39; branch head 5d1040c, five commits): all 45
+  committed report groups re-rendered at v18 from their own queries
+  (138 renders; final tally 138 "expected" — every diff exactly the two
+  charter classes, version line + baseline bullet/row; 0 anomalies),
+  45 `.matrix.tsv` + 45 `.matrix.html` siblings back-filled (charter
+  item 2 CLOSED), six sidecars regenerated determinism-checked,
+  catalogue fixture corpus regenerated (precedented knock-on).
+- INCIDENT 1: the lane's diff classifier (difflib.SequenceMatcher,
+  autojunk=False) went quadratic on bounded-0.3's multi-million-line
+  subject-grain file — ~4 h of CPU on one group before the manager's
+  external probe (no children, parent 84% CPU, log silent) diagnosed
+  it; fixed as a linear two-pointer walk (the expected classes are
+  closed, so no alignment search is needed), resumed from group 18.
+  The 2026-09-17 wave's lesson was classifier blind spots; this wave's
+  is classifier COMPLEXITY.
+- INCIDENT 2 (KB-22, the real catch): scripts/regen_sidecars.py never
+  read a sidecar stamp's `subject_grain:` line — regenerating a
+  subject-grain-backed sidecar silently dropped R-BUCKET-DOMINATED's
+  33 firings while still passing its own determinism check
+  (self-consistent, just wrong). Invisible until this wave was the
+  first ever run against such a sidecar. Fixed with a named-failure
+  arm for a missing stamped input.
+- Gates at the merge: check-schema 5/73/0 · fixture gen 211/65 ok ·
+  check-interpret 149/149 (check-harness untouched by a
+  reports/scripts-only wave). Master pushed; worktree+branch cleaned,
+  sequenced (merge → verify → push → delete).
+- The [B52] matrix-standard arc is COMPLETE end to end: ruling →
+  reporter v18 → HTML generator → baseline-identity fact → full
+  back-fill, all in one session.
