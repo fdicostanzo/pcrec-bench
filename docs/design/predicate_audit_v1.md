@@ -1279,6 +1279,14 @@ r7pop-2) — that needs the separate load check F13's own fix-shape
 paragraph proposes (refusing an averaging reducer on a failure quantity),
 landed together with the collapse, not instead of it.
 
+**RULED 2026-09-19 (Frank, live): YES AS RECOMMENDED** — the collapse
+(one row per cell for the four failure quantities) AND F13's companion
+check (an averaging reducer refused on a failure quantity) land
+TOGETHER. MAJOR class under the Q2 ruling (counts move on unchanged
+inputs; the hand-derived no-verdict-flip stands as the identity
+evidence, not as the class). Joins the held fix wave — one catalogue
+bump with F3/F11 (and F27 when revisited).
+
 **Q5. `metric` as a seventh selector key (F14)?** *Recommend yes* — the
 additive half. It fixes the base-row/detail-row mixing, and it also lets a
 clause target `jitter` or `artifact_bytes` explicitly, which no committed
