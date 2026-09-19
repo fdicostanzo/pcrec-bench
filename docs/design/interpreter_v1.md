@@ -727,15 +727,41 @@ check, not a proof. §3.2 says "checked", not "guaranteed".
 `catalogue_version` is `MAJOR.MINOR`, the same discipline as the record
 schema (docs/design/record_schema.md §4) and for the same reason.
 
-- **MINOR** — a rule added; a template's wording changed under §8(6)'s
-  review gate; a link added; an `example` refreshed; a `[[pin_order]]`
-  entry appended at a re-pin. Old inputs still produce the same *facts*;
-  only the rendering moves.
-- **MAJOR** — a rule's PREDICATE or THRESHOLD changes, a rule is
-  removed, `inputs` change in a way that reads a different column, **or a
-  signature is registered with R-BUCKET-KB**. A sidecar stamped at an
+**AMENDED 2026-09-19 (Frank, live; `docs/design/predicate_audit_v1.md`
+§7 Q2, the fix wave's first commit).** The unit of compatibility is not
+the catalogue FILE FORMAT — it is whether the FACTS AND VERDICTS a
+sidecar emits are comparable across the version boundary. Read
+literally against field text alone, a fix that corrects a shared
+helper's population (F3, F11 below) edits zero characters of any
+individual rule's `predicate`/`threshold`/`threshold_src`/`inputs`
+field, because the catalogue's declared PROSE was already right and
+only the python was wrong — so a bump rule worded purely as "a field
+changed" has nothing to diff. The 2.0 bump already set this precedent
+without naming it: `_select`'s default section widened for four
+quantities, no individual R-PRED rule's own field text moved, and the
+bump was MAJOR because a real sidecar's real verdict (P5, `confirmed` →
+`refuted`) moved on the SAME report and the SAME inputs. This
+amendment states that rule explicitly:
+
+- **MAJOR** — facts or verdicts move on UNCHANGED inputs: a pre-fix and
+  a post-fix sidecar, run over the identical report and index, disagree
+  about what fired or what a firing's numbers say. A rule's predicate or
+  threshold changes, a rule is removed, `inputs` read a different
+  column, a SHARED HELPER's population changes what several rules can
+  see (the 2.0 precedent; F3/F11 below are the same shape), or a
+  signature is registered with R-BUCKET-KB. A sidecar stamped at an
   earlier MAJOR is no longer derivable from its inputs under the current
   catalogue.
+- **MINOR** — additive: every fact a prior version emitted still
+  stands. A rule added; a template's wording changed under §8(6)'s
+  review gate; a link added; an `example` refreshed; a `[[pin_order]]`
+  entry appended at a re-pin; a column appended to a row shape a reader
+  already knows how to read past. A field-text edit is typically an
+  INSTANCE of this (most wording changes are additive, because they
+  change how an unchanged fact is WORDED), never the definition of
+  MINOR — the definition is comparability of what is emitted, and a
+  field-text edit that happens to move a verdict is MAJOR regardless of
+  how few characters it touches.
 
 *(Signature registration is MAJOR, corrected from v1, panel B4: v1 made
 it MINOR — "adding a newly-filed KB is a MINOR catalogue bump and no code

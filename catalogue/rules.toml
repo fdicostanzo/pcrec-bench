@@ -17,10 +17,17 @@
 
 catalogue_version = "2.0"
 # Every bump regenerates every committed sidecar in the same commit
-# (§3.3). MINOR: a rule added, a template's wording, a link, a `legend`
-# line, an `example`, a `[[pin_order]]` append. MAJOR: a predicate or
+# (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
+# §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
+# are comparable across the boundary, not whether a field's TEXT moved.
+# MAJOR: a fact or verdict moves on UNCHANGED inputs -- a predicate or
 # threshold changes, a rule is removed, `inputs` read a different
-# column, or a `[[signature]]` is registered.
+# column, a SHARED HELPER's population changes what several rules see
+# (the 2.0 bump below is this shape: zero individual rule fields moved),
+# or a `[[signature]]` is registered. MINOR: additive -- a rule added, a
+# template's wording, a link, a `legend` line, an `example`, a
+# `[[pin_order]]` append, an appended column. A field-text edit is an
+# INSTANCE of MINOR, not its definition.
 #
 # 2.0 (2026-09-17, lane b47subgrain, Frank's ELEVEN §6 rulings on
 # docs/design/interpret_subject_grain_v1.md, ratified in full):

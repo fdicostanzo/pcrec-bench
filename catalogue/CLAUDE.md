@@ -64,10 +64,18 @@ catalogue 1.1 still registers none, and says so.
 ## Versioning
 
 `catalogue_version` is MAJOR.MINOR, the record schema's own discipline
-(§3.3). MINOR: a rule added, a template's wording, a link, a `legend`
-line, an `example`, a `[[pin_order]]` append at a re-pin. MAJOR: a
-predicate or threshold changes, a rule is removed, `inputs` read a
-different column, or a signature is registered. A retired rule keeps its block with
+(§3.3). **AMENDED 2026-09-19** (Frank, `docs/design/predicate_audit_v1.md`
+§7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS are
+comparable across the boundary, not whether a catalogue field's text
+moved. MAJOR: a fact or verdict moves on UNCHANGED inputs — a predicate
+or threshold changes, a rule is removed, `inputs` read a different
+column, a SHARED HELPER's population changes what several rules can see
+(the 2.0 bump's own shape), or a signature is registered. MINOR:
+additive — a rule added, a template's wording, a link, a `legend` line,
+an `example`, a `[[pin_order]]` append at a re-pin, an appended column.
+A field-text edit is an INSTANCE of MINOR, never its definition — a
+wording change that happens to move a verdict is MAJOR regardless of
+its size. A retired rule keeps its block with
 `retired_in` and its id is never reused.
 
 **Every bump regenerates every committed sidecar in the same commit** —
