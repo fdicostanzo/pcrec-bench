@@ -1001,6 +1001,10 @@ record should behave the same way: the reporter names it and stops, and
 small ruling with a large blast radius, which is why it is separate from
 Q6.
 
+**RULED 2026-09-19 (Frank, live): AGREE** — an archived record's
+absence REFUSES the render, by name; independent of Q6's held-open
+form.
+
 ---
 
 **Q8. Is the store's failed-gate cohort — 9 `inconclusive-load` and 2
