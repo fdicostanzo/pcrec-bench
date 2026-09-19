@@ -556,7 +556,7 @@ def _first_diff(a, b):
 
 # ------------------------------------------------------------ section 6
 
-PROSE_FIELDS = ("template", "no_fire", "legend", "links")
+PROSE_FIELDS = ("template", "no_fire", "legend", "links", "no_fire_reasons")
 
 
 def section_6():
@@ -590,10 +590,12 @@ def section_6():
         ok(6, "no previous commit: the template-diff gate is inert")
         return
     touched = [ln for ln in diff.stdout.split("\n")
-               if re.match(r"^[+-]\s*(template|no_fire|legend|links)\s*=", ln)
+               if re.match(r"^[+-]\s*(template|no_fire_reasons|no_fire|legend"
+                           r"|links)\s*=", ln)
                or re.match(r"^\+\s*\[\[signature\]\]", ln)]
     if not touched:
-        ok(6, "HEAD touches no template, no_fire, legend or links field")
+        ok(6, "HEAD touches no template, no_fire, no_fire_reasons, legend "
+              "or links field")
         return
     msg = subprocess.run(["git", "-C", ROOT, "log", "-1", "--format=%B"],
                          capture_output=True, text=True, timeout=30).stdout

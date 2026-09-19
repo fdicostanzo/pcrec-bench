@@ -698,6 +698,12 @@ slots         = ["rule_id", "pattern", "regime", "form", "testee", "predictions_
 arith         = []
 template      = "{rule_id} fired on {pattern} / {regime} / {form} / `{testee}` and no prediction in {predictions_file} selects that cell."
 no_fire       = "every finding of R-DELTA-1, R-RANK-1, R-ARM-1 and R-FLOOR-2 is covered by a prediction selector"
+# Q1/F2: with no predictions file supplied, the static no_fire sentence
+# above reads as a claim of complete coverage -- it is not one; the
+# named reason says so instead.
+no_fire_reasons = [
+  "no predictions file was supplied, so coverage cannot be evaluated",
+]
 links         = []
 example       = """
 No committed report is interpreted with a predictions file today, so
@@ -871,6 +877,18 @@ arith         = [
 extremal      = "ratio"
 template      = "{pattern} / {regime} / {form} / `{testee}`: {cell_mean} ns per subject against the floor pattern `{floor_pattern}`'s {floor_mean} ns per subject on the same testee and regime — ×{ratio}, at or below the set's own per-call control."
 no_fire       = "no ranked cell is at or below its set's own floor pattern on the same testee and regime"
+# Q1/F1 (docs/design/predicate_audit_v1.md, ratified 2026-09-19): the
+# early return had ONE token covering THREE distinct causes; each now
+# carries its own reason (interpreter_v1.md §4.5's own worked
+# rendering for the "none" case). r7pop-5: the multi-value case has NO
+# corpus witness today, so its wording is a first cut, not a re-use of
+# the "none" wording (a materially different population -- an
+# AMBIGUITY about which comparison to make, not an absence of one).
+no_fire_reasons = [
+  "no `floor_pattern` header key was present on this report",
+  "floor_pattern: none",
+  "floor_pattern names more than one pattern, so no single floor comparison is defined",
+]
 links         = []
 example       = """
 reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv:

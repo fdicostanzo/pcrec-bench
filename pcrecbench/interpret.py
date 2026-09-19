@@ -831,12 +831,20 @@ def r_delta_4(view, ctx):
     if ctx.predictions is None:
         return ("input-absent", "no predictions file was supplied, so "
                                 "coverage cannot be evaluated")
+    # F3's own coverage population is `rank?metric=median_ns` (this
+    # rule's declared `inputs`) -- a `compile:` quantity's clause reads
+    # a STRUCTURALLY DIFFERENT section with no regime dimension at all
+    # (§0 fact 3) and cannot speak to a match-timing finding, so it is
+    # excluded from the glob-match population rather than matching every
+    # cell by accident of an unconstrained `regime_or_na`.
+    coverers = [p for p in ctx.predictions
+               if p["quantity"] not in _COMPILE_METRIC]
     out = []
     for rid in ("R-DELTA-1", "R-RANK-1", "R-ARM-1", "R-FLOOR-2"):
         for f in ctx.firings.get(rid, ()):
             cell = (f.keys["pattern"], f.keys["regime"], f.keys["form"],
                     f.keys["testee"])
-            if any(_selector_covers_cell(p, cell) for p in ctx.predictions):
+            if any(_selector_covers_cell(p, cell) for p in coverers):
                 continue
             out.append(fire({"rule_id": rid, "pattern": cell[0],
                              "regime": cell[1], "form": cell[2],
@@ -965,9 +973,22 @@ def r_floor_1(view, ctx):
 
 
 def r_floor_2(view, ctx):
+    # F1 (docs/design/predicate_audit_v1.md, r7pop-5): the early return
+    # conflated THREE distinct causes into one `no-matching-rows` token
+    # -- the header key absent, the literal "none", and a comma-joined
+    # multi-value `floor_pattern` (a materially DIFFERENT population: an
+    # ambiguity about WHICH comparison to make, not an absence of one to
+    # make). Each now carries its own declared reason.
     floor_pattern = view.header("floor_pattern").strip()
-    if not floor_pattern or floor_pattern == "none" or "," in floor_pattern:
-        return "no-matching-rows"
+    if not floor_pattern:
+        return ("no-matching-rows", "no `floor_pattern` header key was "
+                                    "present on this report")
+    if floor_pattern == "none":
+        return ("no-matching-rows", "floor_pattern: none")
+    if "," in floor_pattern:
+        return ("no-matching-rows",
+                "floor_pattern names more than one pattern, so no single "
+                "floor comparison is defined")
     rows = view.rows("rank", metric="median_ns")
     means = {}
     for r in rows:
@@ -1281,6 +1302,18 @@ def load_catalogue(path):
             raise InterpretError(f"{path}: {rid}'s legend sentence carries a "
                                  f"slot; it must be slot-free, same rule as "
                                  f"no_fire (§7.1)")
+        # Q1/F1/F2 (docs/design/predicate_audit_v1.md, ratified
+        # 2026-09-19): a rule may OPTIONALLY declare `no_fire_reasons`,
+        # a closed, slot-free set of per-instance reasons a did-not-fire
+        # token may carry (§4.5's own worked rendering,
+        # `no-matching-rows (floor_pattern: none)`) -- each entry is
+        # reviewed prose under §8(6), same discipline as `no_fire`.
+        for reason in rule.get("no_fire_reasons", ()):
+            if re.search(r"\{[a-z_0-9]+\}", reason):
+                raise InterpretError(
+                    f"{path}: {rid}'s no_fire_reasons entry {reason!r} "
+                    f"carries a slot; it must be slot-free, same rule as "
+                    f"no_fire (§7.1)")
     # ... and every rule FUNCTION has a [[rule]] (§8(1)'s other
     # direction): a rule function is exactly a module-level callable
     # whose name round-trips to a rule id shape.
@@ -1351,6 +1384,29 @@ class Context:
 DEFERRED_RULES = ("R-DELTA-4",)
 
 
+def _normalize_not_fired(rule, out):
+    """Q1/F1/F2: a rule function may return a bare did-not-fire TOKEN
+    (as before) or a `(token, reason)` pair -- `reason` MUST be one of
+    the rule's own declared `no_fire_reasons` (a closed, slot-free set,
+    the same discipline as `no_fire` itself). Raises on anything else,
+    so a rule cannot invent a reason on the fly."""
+    if isinstance(out, tuple):
+        token, reason = out
+        if token not in DID_NOT_FIRE_TOKENS:
+            raise InterpretError(f"{rule['id']}: unknown did-not-fire token "
+                                 f"{token!r}")
+        if reason not in rule.get("no_fire_reasons", ()):
+            raise InterpretError(
+                f"{rule['id']}: did-not-fire reason {reason!r} is not one "
+                f"of its declared no_fire_reasons "
+                f"{list(rule.get('no_fire_reasons', ()))}")
+        return (token, reason)
+    if out not in DID_NOT_FIRE_TOKENS:
+        raise InterpretError(f"{rule['id']}: unknown did-not-fire token "
+                             f"{out!r}")
+    return out
+
+
 def run_rules(cat, report, index, ctx):
     """Run every rule in catalogue declaration order. Returns
     [(rule, firings_or_token)]."""
@@ -1371,12 +1427,10 @@ def run_rules(cat, report, index, ctx):
             continue
         view = RuleView(rule, report, index)
         out = rule_function(rid)(view, ctx)
-        if isinstance(out, str):
-            if out not in DID_NOT_FIRE_TOKENS:
-                raise InterpretError(f"{rid}: unknown did-not-fire token "
-                                     f"{out!r}")
+        if isinstance(out, (str, tuple)):
+            normalized = _normalize_not_fired(rule, out)
             ctx.firings[rid] = []
-            results.append((rule, out))
+            results.append((rule, normalized))
             continue
         for f in out:
             missing = set(rule["slots"]) - set(f.slots)
@@ -1404,11 +1458,10 @@ def _run_one(rule, report, index, ctx):
         ctx.firings[rid] = []
         return "grain"
     out = rule_function(rid)(RuleView(rule, report, index), ctx)
-    if isinstance(out, str):
-        if out not in DID_NOT_FIRE_TOKENS:
-            raise InterpretError(f"{rid}: unknown did-not-fire token {out!r}")
+    if isinstance(out, (str, tuple)):
+        normalized = _normalize_not_fired(rule, out)
         ctx.firings[rid] = []
-        return out
+        return normalized
     for f in out:
         missing = set(rule["slots"]) - set(f.slots)
         extra = set(f.slots) - set(rule["slots"])
@@ -1428,6 +1481,15 @@ def render_facts_tsv(results):
     lines = ["\t".join(FACTS_COLUMNS)]
     for rule, out in results:
         rid = rule["id"]
+        if isinstance(out, tuple):
+            # Q1/F1/F2: a per-instance did-not-fire REASON rides the
+            # `slot` column, otherwise unused on a not-fired row -- the
+            # `value` column stays the bare token, so `_tokens()`-style
+            # readers (check_interpret.py's `expect_token`) are unaffected.
+            token, reason = out
+            lines.append("\t".join([rid, "0", "0", "", "", "", "", "", "", "",
+                                    reason, token]))
+            continue
         if isinstance(out, str):
             lines.append("\t".join([rid, "0", "0", "", "", "", "", "", "", "",
                                     "", out]))
@@ -1548,7 +1610,11 @@ def results_from_facts(cat, facts_text):
         row = dict(zip(FACTS_COLUMNS, f))
         rid = row["rule_id"]
         if row["fired"] == "0":
-            tokens[rid] = row["value"]
+            # Q1/F1/F2: a reason, if any, rides the otherwise-unused
+            # `slot` column of a not-fired row (render_facts_tsv's own
+            # encoding).
+            tokens[rid] = (row["value"], row["slot"]) if row["slot"] \
+                else row["value"]
             continue
         firing = by_rule.setdefault(rid, {}).get(row["firing_seq"])
         if firing is None:
@@ -1589,7 +1655,7 @@ def render_markdown(results, ctx, stamp):
     out.append("")
     not_fired = []
     for rule, res in results:
-        if isinstance(res, str):
+        if isinstance(res, (str, tuple)):
             not_fired.append((rule, res))
             continue
         bullets = render_bullets(rule, res)
@@ -1612,8 +1678,16 @@ def render_markdown(results, ctx, stamp):
     out.append("")
     out.append("| rule | reason |")
     out.append("|---|---|")
-    for rule, token in not_fired:
-        out.append(f"| {rule['id']} | {token} ({rule['no_fire']}) |")
+    for rule, res in not_fired:
+        # Q1/F1/F2: a per-instance reason (declared in the rule's own
+        # `no_fire_reasons`) replaces the rule's STATIC `no_fire`
+        # sentence when one is given -- the rule DECLINED for a
+        # specific, named cause, not "the population is clean".
+        if isinstance(res, tuple):
+            token, reason = res
+        else:
+            token, reason = res, rule["no_fire"]
+        out.append(f"| {rule['id']} | {token} ({reason}) |")
     out.append("")
     return "\n".join(out)
 
