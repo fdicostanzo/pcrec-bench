@@ -1034,7 +1034,13 @@ regeneration, self-consistent but wrong) is exactly what KB-18's
 warns a next wave to check for, and this KB is that warning's second
 instance in as many waves.
 
-## KB-23 (2026-09-19, OPEN) — `scripts/run_window.sh` prints `WINDOW_RUN_COMPLETE` after every cell failed at setup; the sentinel means "control flow reached the end", not "cells succeeded"
+## KB-23 (2026-09-19, FIXED same day — Frank ruled shape (a) live) — `scripts/run_window.sh` prints `WINDOW_RUN_COMPLETE` after every cell failed at setup; the sentinel means "control flow reached the end", not "cells succeeded"
+
+FIX (Frank's ruling: shape (a)): the sentinel is now
+`WINDOW_RUN_COMPLETE cells=<written>/<attempted>` — "written" counts
+cells whose run exited 0 or 4 (both write a record) — and a window with
+`cells=0/N` exits 5, its own named code, instead of the sidecar path's
+rc. The bare-prefix grep still matches. Original entry:
 
 Found on b54extwindow's first launch (2026-09-19 ~02:40Z, the worktree
 missing its gitignored subject trees): all three cells exited rc=1

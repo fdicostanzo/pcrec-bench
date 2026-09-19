@@ -192,12 +192,16 @@ echo "== window run start $(date -Is) subbench=$SUBBENCH store=$STORE dry_run=$D
 gnutimeout 120 python3 -m pcrecbench quiet --samples 6 --pin "$PIN" 2>&1 | tail -6 | tee -a "$LOG"
 
 first=1
+cells_attempted=0
+cells_written=0
 for t in $TESTEES; do
   if [ "$first" -eq 0 ]; then
     sleep 15
   fi
   first=0
   echo "-- cell $SUBBENCH x $t $(date -Is) load=$(cut -d' ' -f1-3 /proc/loadavg)" | tee -a "$LOG"
+  cells_attempted=$((cells_attempted + 1))
+  cell_wrote=0
   spread_retried=0
   for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
     gnutimeout "$CELL_CAP" python3 -m pcrecbench run --subbench "$SUBBENCH" --testee "$t" \
@@ -205,6 +209,12 @@ for t in $TESTEES; do
         --store "$STORE" $EXTRA --note "$NOTE" >> "$LOG" 2>&1
     rc=$?
     echo "   attempt $attempt rc=$rc cell_cap=${CELL_CAP}s $(date -Is)" | tee -a "$LOG"
+    # KB-23: rc 0 (measured) and rc 4 (inconclusive-spread) both WROTE a
+    # record; every other rc left nothing. The sentinel's cells= count
+    # below is "cells that wrote a record", not "cells the loop visited".
+    if [ "$rc" -eq 0 ] || [ "$rc" -eq 4 ]; then
+      cell_wrote=1
+    fi
     if [ "$rc" -eq 124 ]; then
       # A cap firing is a LOST cell with no record, and the suite summary
       # cannot tell one from a clean set (the set's rc is the index's).
@@ -226,6 +236,9 @@ for t in $TESTEES; do
     [ "$rc" -eq 3 ] || break
     sleep 30
   done
+  if [ "$cell_wrote" -eq 1 ]; then
+    cells_written=$((cells_written + 1))
+  fi
 done
 
 gnutimeout 120 python3 -m pcrecbench index --store "$STORE" 2>&1 | tail -3 | tee -a "$LOG"
@@ -257,5 +270,17 @@ else
 fi
 
 echo "== window run end $(date -Is) load=$(cat /proc/loadavg)" | tee -a "$LOG"
-echo "WINDOW_RUN_COMPLETE" >> "$LOG"
+# KB-23 (Frank's shape ruling, 2026-09-19): the sentinel carries the
+# written/attempted count, and a window that wrote NOTHING exits nonzero
+# (5, its own named code -- distinct from a cell's 3/4 and the sidecar
+# path's rc) instead of masquerading as done. The bare-prefix grep
+# (`grep WINDOW_RUN_COMPLETE`) still matches; a watcher keying on the
+# sentinel alone now at least sees cells=0/N in the same line, and a
+# script keying on exit status sees the failure. Found the hard way:
+# 2026-09-19's ext-second first launch printed the bare sentinel after
+# three instant setup refusals (76 s "complete", nothing measured).
+echo "WINDOW_RUN_COMPLETE cells=$cells_written/$cells_attempted" >> "$LOG"
+if [ "$cells_written" -eq 0 ] && [ "$cells_attempted" -gt 0 ]; then
+  exit 5
+fi
 exit "$sidecar_rc"
