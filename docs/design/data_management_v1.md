@@ -1020,6 +1020,9 @@ the argument that culling is not worth mechanising yet — the safe set is
 this small. If you rule the other way, they are the cohort to start
 with.
 
+**RULED 2026-09-19 (Frank, live): YES** — the failed-gate cohort is
+kept indefinitely; no cull exists as policy.
+
 ---
 
 **Q9. Charter a lane to examine SQLite-as-derived-cache (§5.3) — a
