@@ -520,6 +520,12 @@ the ranked median, the refused arm and its diagnostic. A new rule is
 **MINOR** (§3.3's own list) and introduces no threshold — it is an
 existence rule. This is the highest-value single addition the audit found.
 
+**RULED 2026-09-19 (Frank, live): YES** — R-ARM-2 adopted with both
+panel conditions: its own control/sabotage fixture pair (r7ver-4), and
+the goldens-may-move fact stated as UNMEASURED until implementation.
+MINOR class under the reframed §3.3 (additive; both definitions agree
+here); rides the held wave's single bump.
+
 ### F10 — SILENT OMISSION, HIGH. There is no "was measured, now failing"
 
 R-DELTA-3 reports the improvement direction (`now measured (was: …)`).
