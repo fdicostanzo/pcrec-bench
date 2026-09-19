@@ -261,7 +261,7 @@ R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps
 R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			rank	1
 R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			verdict	now measured (was: gave-up)
 R-DELTA-3	1	4	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-nocaps-simdna			config	auto-nocaps-simdna
-R-DELTA-4	0	0									input-absent
+R-DELTA-4	0	0								no predictions file was supplied, so coverage cannot be evaluated	input-absent
 R-RANK-1	0	0									no-matching-rows
 R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			pattern	factored
 R-ARM-1	1	1	factored		match-compliance	whole-subject	pcrec_692c2e8_auto-caps-simdna			regime	match-compliance
@@ -459,13 +459,14 @@ R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			t
 R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			token_a	auto
 R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			token_b	vm
 R-ARM-1	1	14	orig		short-subject-search	plain	pcrec_8da6120_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-caps-simdna
+R-ARM-2	0	0									no-matching-rows
 R-FLOOR-1	1	1	factored			plain	libpcre2_10.46_interp-caps-simdna			pattern	factored
 R-FLOOR-1	1	1	factored			plain	libpcre2_10.46_interp-caps-simdna			form	plain
 R-FLOOR-1	1	1	factored			plain	libpcre2_10.46_interp-caps-simdna			testee	libpcre2_10.46_interp-caps-simdna
 R-FLOOR-1	1	2	orig			plain	libpcre2_10.46_interp-caps-simdna			pattern	orig
 R-FLOOR-1	1	2	orig			plain	libpcre2_10.46_interp-caps-simdna			form	plain
 R-FLOOR-1	1	2	orig			plain	libpcre2_10.46_interp-caps-simdna			testee	libpcre2_10.46_interp-caps-simdna
-R-FLOOR-2	0	0									no-matching-rows
+R-FLOOR-2	0	0								floor_pattern: none	no-matching-rows
 R-FLOOR-3	0	0									no-matching-rows
 R-PRED-1	0	0									input-absent
 R-PRED-2	0	0									input-absent

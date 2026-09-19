@@ -377,7 +377,7 @@ R-STATUS-13	0	0									no-matching-rows
 R-DELTA-1	0	0									no-matching-rows
 R-DELTA-2	0	0									no-matching-rows
 R-DELTA-3	0	0									no-matching-rows
-R-DELTA-4	0	0									input-absent
+R-DELTA-4	0	0								no predictions file was supplied, so coverage cannot be evaluated	input-absent
 R-RANK-1	0	0									no-matching-rows
 R-ARM-1	1	1	alt-nested		large-subject-throughput	plain	pcrec_d34c9131_auto-caps-simdna			pattern	alt-nested
 R-ARM-1	1	1	alt-nested		large-subject-throughput	plain	pcrec_d34c9131_auto-caps-simdna			regime	large-subject-throughput
@@ -9269,6 +9269,7 @@ R-ARM-1	1	635	rec-r-uc		short-subject-search	plain	pcrec_d34c9131_auto-caps-simd
 R-ARM-1	1	635	rec-r-uc		short-subject-search	plain	pcrec_d34c9131_auto-caps-simdna			token_a	auto
 R-ARM-1	1	635	rec-r-uc		short-subject-search	plain	pcrec_d34c9131_auto-caps-simdna			token_b	vm-in
 R-ARM-1	1	635	rec-r-uc		short-subject-search	plain	pcrec_d34c9131_auto-caps-simdna			arm_pair	auto-caps-simdna vs vm-in-caps-simdna
+R-ARM-2	0	0									no-matching-rows
 R-FLOOR-1	1	1	alt-nested			plain	libpcre2_10.46_interp-caps-simdna			pattern	alt-nested
 R-FLOOR-1	1	1	alt-nested			plain	libpcre2_10.46_interp-caps-simdna			form	plain
 R-FLOOR-1	1	1	alt-nested			plain	libpcre2_10.46_interp-caps-simdna			testee	libpcre2_10.46_interp-caps-simdna
