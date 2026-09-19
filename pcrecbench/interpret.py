@@ -1725,6 +1725,22 @@ def load_predictions(path):
         if head not in REDUCERS:
             raise PredictionError(f"{where}: reducer {reducer!r} is not in the "
                                   f"closed set {sorted(REDUCERS)}")
+        # F13's companion check (ratified with Q4's collapse, landed
+        # together): `median` is an AVERAGING reducer -- a real
+        # violation's value can sit at a sorted index the surrounding
+        # clean rows swamp (HAND-DERIVED, P5.a: 321 rows collapse to 66,
+        # 63 zero + 3 at 10.000, index 33 still lands inside the zeros --
+        # `max` (the single worst row) or `identity`/`count` do not have
+        # this hazard). Refused at load, on the quantity ALONE -- the
+        # collapse above makes the reduced population's SIZE honest; it
+        # does not make `median`'s picked VALUE safe.
+        if head == "median" and row["quantity"] in _FAILURE_QUANTITIES:
+            raise PredictionError(
+                f"{where}: reducer 'median' is refused on the "
+                f"failure-population quantity {row['quantity']!r} -- an "
+                f"averaging reducer can hide a real violation behind a "
+                f"clean majority (predicate_audit_v1.md F13); use `max` "
+                f"(the single worst row), `identity` or `count` instead")
         row["_selector"] = parse_selector(row["selector"], where)
         row["_reducer"] = reducer
         row["_where"] = where
@@ -1876,14 +1892,34 @@ def _float_or_none(text):
 
 
 def _keyed_values(view, pred):
-    """[(key tuple, value)] for the prediction's selected rows."""
+    """[(key tuple, value)] for the prediction's selected rows.
+
+    Q4/F6/F13 (docs/design/predicate_audit_v1.md, ratified 2026-09-19):
+    for the four FAILURE-POPULATION quantities, a `rank` cell is exactly
+    SIX metric rows carrying the IDENTICAL `n_wrong`/`n_gave_up`/
+    `pass_rate`/`status` value (§0 fact 2) -- so reading every row
+    inflates the reduced population 6x for these quantities alone (the
+    same "over N value(s)" phrase then means two different things in one
+    sidecar, F6) and, worse, dilutes a real violation's weight against a
+    `median`/`count`/`min` reducer (F13). Collapsed here to ONE value
+    per (pattern, subject_or_na, regime_or_na, form, testee) cell, before
+    any reducer runs -- the six rows are literal duplicates for these
+    quantities, so no information is lost. A non-failure quantity is
+    unaffected (its rows are already one per cell)."""
+    dedupe = pred["quantity"] in _FAILURE_QUANTITIES
+    seen = set() if dedupe else None
     out = []
     for r in _select(view, pred):
         v = _value_of(r, pred["quantity"])
         if v is None:
             continue
-        out.append(((r["pattern"], r["subject_or_na"], r["regime_or_na"],
-                     r["form"], r["testee"]), v, r))
+        key = (r["pattern"], r["subject_or_na"], r["regime_or_na"],
+               r["form"], r["testee"])
+        if seen is not None:
+            if key in seen:
+                continue
+            seen.add(key)
+        out.append((key, v, r))
     return out
 
 
