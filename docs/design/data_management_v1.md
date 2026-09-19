@@ -942,6 +942,9 @@ larger `git clone`, a Python floor raised from 3.11 to 3.14 (zstd is
 stdlib only from 3.14), and a loader change. The trade flips only if
 checkout size becomes the constraint; it is not today, at 843 MB total.
 
+**RULED 2026-09-19 (Frank, live): YES** — off the table; revisit only
+on a binding checkout-size constraint.
+
 ---
 
 **Q5. Are §4.3's four growth triggers the right ones — and is a
