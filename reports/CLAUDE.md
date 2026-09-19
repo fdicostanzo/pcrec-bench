@@ -435,6 +435,59 @@ TWO THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS:
   `.subject-grain.tsv` and `.tsv` the same query.
   Ledger for both groups: `docs/dev/ledgers/2026-09-18-capability-window-cf0962e3.md`.
 
+**[B54] reports (2026-09-19, lane b54extwindow) ADDED one file group —
+the ext-bench roster's SECOND SAMPLE on `re2-default`/`tre-default`/
+`vectorscan-block-nosom`**, the [B48] ledger's own next-sample checklist
+item 2 (does TRE's `high-byte-run` correctness gap reproduce, or was it a
+one-off box artifact) — and changed NOTHING else here: the reporter is
+unchanged at `v18 (2026-09-18)`, no other committed report was
+regenerated. Carries an explicit `--since`/`--until` pair *and* an
+explicit `--testee` roster (the 2026-08-30 rule and KB-5), narrowed to
+these three testee_ids only (no pcre2/pcrec baseline arms — the same
+no-reference-arm shape the ext-first group used). Window:
+`build/windows/window_capability_ext2_20260919T032134Z.log` (23:21:34 EDT
+2026-09-18 → 00:16:31 EDT 2026-09-19, three cells, ALL `measured` at
+attempt 1 rc=0 — re2-default 23:22:04-23:35:52, tre-default
+23:36:07-23:55:32, vectorscan-block-nosom 23:55:47-00:16:16), store
+178 → 181 (180 record(s) by the index's own count, header excluded).
+A FIRST LAUNCH ATTEMPT the same evening (not committed, no store
+change) refused all three cells instantly: the worktree had never run
+`bench/capability/gen_subjects.py` / `gen_throughput_subjects.py` (the
+gitignored subject trees), fixed by generating them before relaunch
+(manifests reproduced byte-identical). `worst_other_core_busy: 33.33%`
+(`re2_11.0.0_default-caps-simdna` / `logparse-atomic-removed` /
+large-subject-throughput). All three records read `agree` (0 disagreeing
+groups on 77+79+80). **`high-byte-run`'s TRE pass rate REPRODUCES
+BYTE-IDENTICAL**: throughput `pass_rate 0.0000` (15/15 wrong — n=3
+subjects × 5 trials, was 3/3 subjects wrong on the first sample), search
+`pass_rate 0.4800` (195/375 wrong, unchanged); `tag-pair-match` and
+`wild-waf-crs-942360-concat-sqli` also reproduce at `0.9867` (5/75
+wrong) each, and the `did_not_compile` set for `tre-default` is the
+SAME three patterns (`wild-datetime-datefinder-alternation`,
+`wild-secrets-username-password-pair`,
+`wild-waf-crs-942500-comment-obfuscation`). `re2-default` and
+`vectorscan-block-nosom` both stay `pass_rate 1.0000` clean on
+`high-byte-run`, unchanged from the first sample. Interpretation sidecar
+generated against `docs/dev/predictions/capability-0.1-first.tsv`
+ONLY — the newer `docs/dev/predictions/capability-0.1-ext-roster.tsv`
+(lane b51preds) is deliberately NOT passed: it cannot be CLI-scored
+until pcrec's F27 fix lands (`docs/dev/wake.md` standing fact, not a
+file bug), so scoring it here would either silently mis-score or exit
+on the known gate defect.
+
+- `2026-09-19-capability-0.1-budu-ryzen1600-ext-second-cf0962e3.md` —
+  the ext-bench roster's SECOND SAMPLE, `re2-default`/`tre-default`/
+  `vectorscan-block-nosom` only. Query: `report --subbench capability
+  --version 0.1 --since 2026-09-18T06:00:00Z --until
+  2026-09-19T05:00:00Z --testee re2_11.0.0_default-caps-simdna --testee
+  tre_0.9.0_default-caps-simdna --testee
+  vectorscan_5.4.11_block-nosom-nocaps-simd` — **3 record(s) matching
+  this query, 3 included, 0 superseded**. `.tsv`/`.subject-grain.md`/
+  `.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html` siblings all
+  rendered the same query; `.interpretation.md` as described above.
+  No ledger was written for this group (owed to the morning read lane
+  per this lane's brief).
+
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
 CLS-FOLD AFTER** — and changed NOTHING else here: the reporter is
