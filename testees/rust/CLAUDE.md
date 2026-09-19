@@ -10,21 +10,20 @@ documented defaults). `rust-smallsize` (a LOW `size_limit`, exercising
 `rust-default` first, "more only if the census motivates and the roster
 doc's composition rule covers it" — no census has run yet (below).
 
-**STATUS AT HANDBACK: AUTHORED, NOT YET BUILT OR CENSUSED.** Every file
-here compiles against my own reading of the `regex` crate's public API,
-cross-checked as carefully as I could manage without a running compiler,
-but pcrec's I-75 battery held the box for the whole of this lane's
-session (BOILERPLATE.md's HARD RULE: no `rustup`/`cargo` while it runs).
-**Nothing in this directory has been built, and no capability claim below
-is a witnessed one** — every "SATISFIED"/"REFUSED" line is a PREDICTION,
-marked as such, to be replaced by `docs/dev/measurements/probe_rust_
-capability_census.py`'s real output the moment the box frees. Treat this
-file as a design note until that census's archive exists beside it.
+**STATUS: BUILT AND CENSUSED** (lane `l6brustfin`, 2026-09-19, the
+detached post-battery pipeline that ran the moment pcrec's I-75 battery
+cleared — `docs/dev/lanes/l6brust_report.md` is the authoring half's own
+account; `l6brustfin`'s own report has the finishing half). `Cargo.lock`
+is committed (regex 1.13.1); every "SATISFIED"/"REFUSED"/"WITHHELD" line
+below is a WITNESSED finding, cited to
+`docs/dev/measurements/2026-09-19-rust-capability-census-r1131.txt`
+(the real compile/match census through the real adapter), never a
+prediction.
 
 | file | role |
 |---|---|
-| `Cargo.toml` | the driver crate manifest; `regex = "1"` (a semver requirement — the PIN is `Cargo.lock`, generated at the first build, OWED) |
-| `Cargo.lock` | **NOT YET GENERATED/COMMITTED** — OWED, the first `cargo build` |
+| `Cargo.toml` | the driver crate manifest; `regex = "1"` (a semver requirement — the PIN is `Cargo.lock`, generated at the first build and committed) |
+| `Cargo.lock` | GENERATED and COMMITTED (the first `cargo build --release`, 2026-09-19): `regex 1.13.1`, `regex-automata 0.4.18`, `regex-syntax 0.8.11`, `aho-corasick 1.1.5`, `memchr 2.8.3` |
 | `src/main.rs` | the native Rust driver (the protocol is in `pcrecbench/adapters.py`) |
 | `adapter.py` | `describe`/`prepare`/`compile`/`measure`; version probing from the committed `Cargo.lock` + a live `rustc --version`; the `\A(?:...)\z` whole-subject wrap |
 | `configs.toml` | the one config id, `rust-default` |
@@ -55,39 +54,46 @@ composition rule keys on `engine_name`, not on the crate name), so a
 **pcrec has no stake in this decision** (I-76's own opening line) — Rust
 dependencies live entirely on the bench side; pcrec is C + gcc only.
 
-**Exact versions: OWED, to be filled in at the first build.** Recorded
-here as placeholders until then:
+**Exact versions, PROBED live at the first (and every subsequent) build,
+never typed:**
 
-- `rustc --version`: **TBD** (probed live by `adapter.py`'s
-  `_probe_rustc_version()` at every `describe()` call — never hand-typed,
-  same discipline `testees/CLAUDE.md`'s "one rule that is not obvious"
-  states for every other engine)
-- `cargo --version`: **TBD**
-- `regex` crate version: **TBD** — read from the committed `Cargo.lock`
-  by `adapter.py`'s `_read_cargo_lock_regex_version()`, never typed here
-  either (this file states the MECHANISM, not a number that could drift
-  out of sync with the lockfile)
+- `rustc --version`: **`rustc 1.98.1 (48a229cea 2026-09-01)`** (probed
+  live by `adapter.py`'s `_probe_rustc_version()` at every `describe()`
+  call — never hand-typed, same discipline `testees/CLAUDE.md`'s "one
+  rule that is not obvious" states for every other engine)
+- `cargo --version`: **`cargo 1.98.1 (797e8a9bc 2026-08-05)`**
+- `regex` crate version: **`1.13.1`** — read from the committed
+  `Cargo.lock` by `adapter.py`'s `_read_cargo_lock_regex_version()`,
+  never typed here either (this file states the MECHANISM, not a number
+  that could drift out of sync with the lockfile; the lockfile also pins
+  `regex-automata 0.4.18`, `regex-syntax 0.8.11`, `aho-corasick 1.1.5`,
+  `memchr 2.8.3` — the crate's own dependency tree, unpinned by us)
 
-**Install plan** (OWED, HELD until pcrec's battery trailer at
-`/home/duxevents/pcrec/build/battery_923a5a58/trailer.log` prints `==
-BATTERY DONE`):
+**Install plan, RUN 2026-09-19** (HELD until pcrec's battery trailer at
+`/home/duxevents/pcrec/build/battery_923a5a58/trailer.log` printed `==
+BATTERY DONE` at 15:34:36 EDT; the detached pipeline `l6brust`'s own
+session launched picked it up within 60 s):
 
     df -h /                                          # BEFORE
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
         | sh -s -- -y --default-toolchain stable --profile minimal
     source "$HOME/.cargo/env"
-    rustc --version; cargo --version                 # record above
-    cd testees/rust && cargo build --release          # generates Cargo.lock
+    rustc --version; cargo --version                 # recorded above
+    cd testees/rust && cargo build --release          # generated Cargo.lock
     df -h /                                           # AFTER first build
-    git add Cargo.lock                                # commit the pin
+    git add Cargo.lock                                # committed the pin
 
 No sudo anywhere (rustup installs entirely under `$HOME/.cargo` /
 `$HOME/.rustup`); `--profile minimal` (no docs/clippy/rustfmt components)
-to keep the install small per I-76's disk-watch instruction.
-`df -h /` **before install**: `30G avail, 69% used` (this lane, 2026-09-19
-11:09 EDT — matches I-76's own "69% at 08:41 today" figure).
-**`df -h /` after the first build is OWED** (a real number here would be
-one this lane never measured — not fabricated).
+kept the install small per I-76's disk-watch instruction. `df -h /`
+**before install** (this lane, 2026-09-19 11:09 EDT): `30G avail, 69%
+used` — matches I-76's own "69% at 08:41 today" figure. **`df -h /`
+after the first build** (15:35 EDT, ~26 min later — the wait was pcrec's
+battery, not the install): `28G avail, 71% used` — rustup + the release
+build together cost ~1 GB. The first build (no `--locked`, which
+GENERATED `Cargo.lock`) finished in 6.93 s release-optimized; every
+subsequent `prepare_driver()` call passes `--locked` and enforces the
+committed pin.
 
 ## (a) The compile-cost definition
 
@@ -137,25 +143,37 @@ Unicode mode is left at its default (**on**) — needed for
 implicit, so a future `rust-smallsize` config needs only a new
 `configs.toml` row, no driver change.
 
-**The two numbers above are STATED FROM THIS LANE'S OWN MEMORY OF THE
-CRATE'S PUBLISHED DOCUMENTATION, not yet reconfirmed against the exact
-version `Cargo.lock` will pin.** OWED: once built, run
-`cargo doc --no-deps -p regex --open` (or read the docs.rs page for the
-resolved version) and confirm `RegexBuilder::size_limit`/
-`dfa_size_limit`'s documented defaults still read 10 MiB / 2 MiB; if the
-crate has changed them, `src/main.rs`'s `DEFAULT_SIZE_LIMIT`/
-`DEFAULT_DFA_SIZE_LIMIT` constants and this section both need updating
-before any record is measured.
+**CONFIRMED against the actual pinned crate SOURCE** (never memory,
+never docs.rs — the downloaded source at
+`~/.cargo/registry/src/index.crates.io-*/regex-1.13.1/src/builders.rs`,
+`impl Default for Builder`):
+
+    let metac = meta::Config::new()
+        .nfa_size_limit(Some(10 * (1 << 20)))      // 10,485,760 = 10 MiB
+        .hybrid_cache_capacity(2 * (1 << 20));     // 2,097,152  = 2 MiB
+
+Both numbers match `src/main.rs`'s `DEFAULT_SIZE_LIMIT`/
+`DEFAULT_DFA_SIZE_LIMIT` constants exactly, and the built driver's own
+`info size_limit 10485760` / `info dfa_size_limit 2097152` lines confirm
+the same at runtime. The SAME `Default for Builder` block also settles
+(d) below structurally: `build_one_bytes()` (the `regex::bytes` path this
+driver uses) hardcodes `.match_kind(MatchKind::LeftmostFirst)` — not a
+configurable default a future crate version could silently change out
+from under this adapter without a source diff showing it.
 
 ## (d) The match convention, and the whole-subject form's own derivation
 
 **`perl-leftmost-first`** — capability_set_v1.md §7.6's own table
 (line 852): "the crate's documented claim; N2 flags it as not
-independently reproduced." **STILL NOT independently reproduced by this
-lane** (no build yet) — OWED: once built, run the textbook witness
-(`foo|foobar` over `"foobar"`) directly against the driver and confirm
-`[0,3)`, the same confirmation `testees/re2/CLAUDE.md` already carries
-for `re2-default`.
+independently reproduced." **NOW INDEPENDENTLY REPRODUCED** (lane
+`l6brustfin`, 2026-09-19): the textbook witness (`foo|foobar` over
+`"foobar"`) run directly against the built driver answers
+`match [0,3)` — the FIRST alternative wins, not the longer one — the
+same confirmation `testees/re2/CLAUDE.md` already carries for
+`re2-default`. Structurally backed too: `MatchKind::LeftmostFirst` is
+hardcoded (not merely defaulted) in the pinned crate's own
+`Builder::build_one_bytes()`, so this is not a config a future version
+bump could flip silently.
 
 **TWO forms, but no dual match-invocation.** Unlike Oniguruma (which
 calls `onig_match` at a fixed position for `whole-subject`, supplying the
@@ -214,52 +232,86 @@ byte), so `std::str::from_utf8` on this pattern's raw bytes FAILS —
 the exact byte offset (`pattern is not valid UTF-8 at byte 0: invalid
 utf-8 sequence of 1 bytes from index 0`), never a panic.
 
-**This is predicted, not yet witnessed** (OWED, the census run). If
-confirmed, the finding is: `non-utf8-subject`'s own token definition
-("the subject bytes are not valid UTF-8") is about SUBJECTS, and this
-adapter satisfies it there (`regex::bytes` haystacks need not be valid
-UTF-8, witnessed on `high-byte-run`'s pattern `[\x80-\xff]{2,4}` — see
-below); but a SEPARATE, sharper constraint — the PATTERN source must
-itself be valid UTF-8 — is real and has no token of its own in
-capability_set_v1.md §5.1's vocabulary. The single corpus pattern this
-hits (`mojibake-curly-quote`, the only `bench/capability` pattern whose
-OWN `.rx` file carries a literal non-UTF-8 byte, not merely an escape
-sequence) is predicted to refuse for this reason alone, exactly the
-"documented SPELLING gap, not a capability gap" shape `testees/onig/
-CLAUDE.md`'s own `balanced-parens-rec` finding sets precedent for — left
-to fail HONESTLY as its own real `did-not-compile` (`refusal_class:
-syntax`) rather than hidden behind a wholesale `non-utf8-subject`
-withhold that would misrepresent the rest of the corpus's non-UTF-8-
-SUBJECT patterns, which do not carry this problem.
+**CONFIRMED** (lane `l6brustfin`, 2026-09-19 census —
+`docs/dev/measurements/2026-09-19-rust-capability-census-r1131.txt`):
+`mojibake-curly-quote` refuses with exactly the predicted diagnostic,
+`[syntax/InvalidUtf8Pattern] pattern is not valid UTF-8 at byte 0:
+invalid utf-8 sequence of 1 bytes from index 0` — the driver's own
+pre-regex-crate UTF-8 validation, not a crash, not the `regex` crate's
+own error type. The finding stands as predicted: `non-utf8-subject`'s
+own token definition ("the subject bytes are not valid UTF-8",
+capability_set_v1.md §5.1's table) is about SUBJECTS, and this adapter
+satisfies it there (`regex::bytes` haystacks need not be valid UTF-8,
+witnessed on `high-byte-run`'s pattern `[\x80-\xff]{2,4}`, which
+COMPILES clean — see the discrimination section below for what it
+actually MATCHES); but a SEPARATE, sharper constraint — the PATTERN
+source must itself be valid UTF-8 — is real and has no token of its own
+in capability_set_v1.md §5.1's vocabulary. `mojibake-curly-quote` (the
+only `bench/capability` pattern whose OWN `.rx` file carries a literal
+non-UTF-8 byte, not merely an escape sequence) is the single corpus
+pattern this hits, exactly the "documented SPELLING gap, not a
+capability gap" shape `testees/onig/CLAUDE.md`'s own
+`balanced-parens-rec` finding sets precedent for — left to fail HONESTLY
+as its own real `did-not-compile` (`refusal_class: syntax`) rather than
+hidden behind a wholesale `non-utf8-subject` withhold that would
+misrepresent the rest of the corpus's non-UTF-8-SUBJECT patterns, which
+do not carry this problem. (Cross-checked against every OTHER refused
+corpus pattern too: all 21 remaining `bench/capability` refusals tie to
+a withheld `REQUIRES_VOCAB` token by name — see the capability
+declaration below — so `mojibake-curly-quote` is the ONE, explained
+exception, never an unexplained refusal.)
 
-## `non-utf8-subject`: TWO WITNESSES, ONE GENUINELY UNRESOLVED QUESTION
+## `non-utf8-subject`: RESOLVED — the class matches the UTF-8 ENCODING, not the raw byte, under this config's default unicode mode
 
-A second, independent open question this lane found by REASONING about
-the crate's documented semantics (not yet resolved by a witness — the
-census script below is built specifically to settle it):
-`RegexBuilder::unicode(bool)` defaults to **true** for `rust-default`
-(needed for `unicode-properties`). Under unicode mode, an escape like
-`\x93` or a class like `[\x80-\xff]` is documented (as this lane recalls
-it, UNCONFIRMED against the actual pinned version) to denote the Unicode
-SCALAR VALUE at that code point, matched against its UTF-8 ENCODING in a
-byte haystack — e.g. `\x93` would match the TWO-BYTE sequence `C2 93`
-(U+0093's UTF-8 encoding), **not** the single raw byte `0x93`. If true,
-`bench/capability`'s own `high-byte-run` pattern (`[\x80-\xff]{2,4}`) and
-`mojibake-curly-quote`'s intended SEMANTIC (match a raw legacy-encoding
-high byte) would not actually exercise raw-byte matching under
-`rust-default` the way they do under RE2's `EncodingLatin1` or
-Oniguruma's `ONIG_ENCODING_ASCII` — a real, load-bearing difference this
-census must read from an actual MATCH run, not a compile check alone
-(compiling proves nothing here; both readings compile fine). The `regex`
-crate's own escape hatch, if this reading is correct, is the
-per-expression flag `(?-u:...)` (Unicode OFF for just that
-sub-expression, coexisting with `\p{L}` elsewhere in the SAME pattern) —
-`probe_rust_capability_census.py`'s `census_nonutf8_discrimination()`
-tests BOTH the plain class and the `(?-u:...)`-wrapped one against BOTH a
-raw-byte subject and a UTF-8-encoded-codepoint subject, so the answer is
-read, not assumed. **`non-utf8-subject`'s declaration for `rust-default`
-is left OPEN until that census runs** — no line in `bench/capability/
-gen_patterns.py`'s `EXT_BENCH_ROSTER` exists for this testee yet (below).
+This lane's own open question, found by REASONING about the crate's
+documented semantics before any build existed, is now SETTLED by a real
+MATCH-grain witness (`probe_rust_capability_census.py`'s
+`census_nonutf8_discrimination()`,
+`docs/dev/measurements/2026-09-19-rust-capability-census-r1131.txt`):
+
+    class \x80-\xff  vs raw high byte (0x93...0x94)             nomatch
+    class \x80-\xff  vs UTF-8-encoded codepoint (C2 93...C2 94)  match  [0,2)
+    (?-u:...) class  vs raw high byte (0x93...0x94)              match  [0,1)
+    (?-u:...) class  vs UTF-8-encoded codepoint (C2 93...C2 94)  match  [0,2)
+
+The reasoned hypothesis was RIGHT: `RegexBuilder::unicode(bool)` defaults
+to **true** for `rust-default` (needed for `unicode-properties`), and
+under that default a byte-range class like `[\x80-\xff]` matches the
+Unicode SCALAR VALUE at that code point against its UTF-8 ENCODING in the
+haystack, **not** the raw byte — `[\x80-\xff]` genuinely does NOT match a
+lone raw byte `0x93` (nomatch), only that codepoint's two-byte UTF-8
+encoding `C2 93` (match). The escape hatch is exactly the predicted one:
+`(?-u:...)` (Unicode OFF for just that sub-expression) DOES match the raw
+byte, and — expected, checked as the fourth row above — also still
+matches the two-byte encoded form (both are legal single- or
+double-byte-at-a-time matches for a byte class with unicode off).
+
+**Disposition: `non-utf8-subject` stays SATISFIED for `rust-default`, at
+the STRUCTURAL/API level the token's own definition names**
+("the subject bytes are not valid UTF-8", capability_set_v1.md §5.1) —
+the driver's `regex::bytes` API never refuses or panics on a genuinely
+invalid-UTF-8 haystack (the raw-byte row above answers a clean
+`nomatch`, not an error; `regex::bytes::Regex::find()` takes `&[u8]`
+with no UTF-8 requirement at all). **But this is a real, load-bearing
+SEMANTIC caveat, documented here so nobody mistakes a future outlier for
+an adapter bug**: `bench/capability`'s `high-byte-run` pattern
+(`[\x80-\xff]{2,4}`) COMPILES under `rust-default` and is attempted
+against the corpus's real subjects, but — UNLIKE under RE2's
+`EncodingLatin1` or Oniguruma's `ONIG_ENCODING_ASCII`, both of which
+treat every byte-range class as literal bytes unconditionally — it will
+NOT match a genuine raw high byte the way the oracle expectation (derived
+from libpcre2, itself byte-oriented by default) predicts. Any resulting
+mismatch on `high-byte-run` under `rust-default` is expected to surface
+HONESTLY as a real wrong-answer/outlier in the reporter's scoreboard,
+never silently — exactly the "a real corpus failure under a satisfied
+token is a documented, honest outcome, never a re-litigation of the
+declaration" precedent `testees/vectorscan/CLAUDE.md`'s `free-spacing`
+finding and `testees/onig/CLAUDE.md`'s `recursion`-spelling gap both set.
+A future `rust-smallsize`-style config that instead wraps its patterns in
+`(?-u:...)` (or calls `RegexBuilder::unicode(false)` wholesale) would
+close this gap and match raw bytes literally, the same way the other
+byte-oriented engines do by default — not built here (no census evidence
+motivates a second config yet, per this lane's own brief).
 
 ## Refusals, first-class
 
@@ -284,10 +336,27 @@ refusal code — the SAME structural fact `testees/re2/CLAUDE.md` states
 for RE2's `Match()` API (capability_set_v1.md §5.4). `handle["giveup_
 codes"]` is the empty set, by construction, not merely by omission.
 
-A construct the (not-yet-written) `EXT_BENCH_ROSTER` row will declare
-missing never reaches this adapter's own refusal path — `pcrecbench.
-capability`'s pre-compile policy intercepts it first
-(`unsupported-by-declaration`).
+A construct the `EXT_BENCH_ROSTER` row below declares missing never
+reaches this adapter's own refusal path — `pcrecbench.capability`'s
+pre-compile policy intercepts it first (`unsupported-by-declaration`).
+
+**`possessive-quantifier` PARSES but is not WITHHELD-for-refusal — it is
+WITHHELD for a different, subtler reason, first-class in its own right:
+the syntax COMPILES clean (no `did-not-compile` row ever fires on it),
+but its SEMANTICS are not possessive.** Witnessed 2026-09-19 (lane
+`l6brustfin`): `(?:a++)a` run directly against the built driver MATCHES
+subject "aaa" at `[0,3)` — the whole string. Under PCRE's true possessive
+semantics `a++` would consume all three `a`s with NO backtracking
+available to release one for the trailing `a`, so the match would FAIL
+outright (no other start offset has enough `a`s either). It did not fail:
+the crate's automaton-based engine has no backtracking to forbid in the
+first place, so `a++` behaves exactly like `a+`. The capability
+declaration below WITHHOLDS this token on that finding — capability is
+about SEMANTICS, not syntax acceptance (the same standard this project
+already applies to TRE's `k-reset`/`control-verbs`/`recursion` SILENT
+MISPARSE hazards, `testees/tre/CLAUDE.md`) — even though, unlike a TRE
+misparse, `a++` here compiles to something semantically IDENTICAL to a
+plain `a+`, never a wrong construct.
 
 ## The per-subject timeout: a thread, not a signal/longjmp pair
 
@@ -307,33 +376,60 @@ blowup — capability_set_v1.md §5's own "redos-nested" family finding:
 RE2/Rust/Vectorscan/TRE are IMMUNE by construction). The clock discipline
 (one `Instant::now()` before the `iters` loop, one after) happens INSIDE
 the timed thread, so thread-spawn latency is never part of a reported
-number. **Not yet exercised against a real long-running subject** — OWED,
-a smoke item once built.
+number. **Exercised 2026-09-19** (lane `l6brustfin`): a no-match subject
+(100,000 `b`s against pattern `a`) driven at `--iters 200000000
+--subject-timeout 1` reports `subject sbig timedout - - 0 - 200000000
+1.000000000 - -` cleanly at the 1-second boundary — no crash, no hang,
+the process exits 0 with every other protocol column intact (`-` for the
+unset span/consumed/caps fields, matching every other driver's
+`timedout` row shape).
 
-## The capability declaration — NOT YET WRITTEN, OWED
+## The capability declaration — WITNESSED, WIRED
 
-`bench/capability/gen_patterns.py`'s `EXT_BENCH_ROSTER` carries **no
-`rust-default` row yet**. Every other L6b lane's own precedent (and this
-project's L5 discipline) forbids writing one from documentation or memory
-alone — `docs/dev/measurements/probe_rust_capability_census.py` is
-authored and ready (see its own header) but has not been run: it needs a
-built driver, which needs `cargo`, which is HELD until pcrec's battery
-trailer shows `BATTERY DONE`. **This is the single largest OWED item in
-this lane's delivery** — see the lane report for the exact resumption
-steps.
+`bench/capability/gen_patterns.py`'s `EXT_BENCH_ROSTER` carries a
+`rust-default` row (lane `l6brustfin`, 2026-09-19), derived from the real
+witness census — `docs/dev/measurements/probe_rust_capability_census.py`,
+archived at
+`docs/dev/measurements/2026-09-19-rust-capability-census-r1131.txt` — the
+same L5 discipline ("witnessed compiles/refusals, never documentation")
+every other L6b lane followed, never from N2's earlier prediction alone.
 
-**Predicted, from `docs/design/capability_set_v1.md` §5.1's own per-token
-table (N2's research, not this lane's independent witness) — TO BE
-CONFIRMED, not to be trusted as-is:**
+**8 of 17 tokens SATISFIED** (one isolated witness each, corpus-confirmed
+below): `unicode-properties`, `named-groups`, `free-spacing`,
+`span-reporting`, `non-utf8-subject` (at the API/structural level — see
+the discrimination finding above for the semantic caveat), `captures`,
+`true-end-anchor`.
 
-- **REFUSED** (the crate structurally lacks these constructs, per N2's
-  survey): `backrefs`, `lookaround`, `lookbehind-variable`,
-  `possessive-quantifier`, `atomic-group`, `recursion`, `conditionals`,
-  `k-reset`, `control-verbs`, `callouts`.
-- **SATISFIED**: `unicode-properties`, `named-groups`, `free-spacing`,
-  `span-reporting`, `captures`, `true-end-anchor`.
-- **OPEN** (this lane's own finding, above, neither predicted by N2 nor
-  resolved): `non-utf8-subject`.
+**9 tokens REFUSED**, every one `[syntax/Syntax]` at the isolated witness
+(N2's prediction HELD for all nine): `backrefs`, `lookaround`,
+`lookbehind-variable`, `atomic-group`, `recursion`, `conditionals`,
+`k-reset`, `control-verbs`, `callouts`.
+
+**1 token WITHHELD on a semantic finding, not a refusal** (N2's
+prediction did NOT hold — corrected by this lane's own witness, see
+above): `possessive-quantifier` COMPILES but is not semantically
+possessive (`(?:a++)a` matches "aaa" where true possessive semantics
+would refuse), so it is excluded from the roster row below exactly like
+a refused token, on different evidence.
+
+    ("rust-default", [t for t in REQUIRES_VOCAB
+                      if t not in ("backrefs", "lookaround",
+                                   "lookbehind-variable",
+                                   "possessive-quantifier",
+                                   "atomic-group", "recursion",
+                                   "conditionals", "k-reset",
+                                   "control-verbs", "callouts")]),
+
+**Corpus confirmation** (`bench/capability@0.1`, 64 patterns): 42/64
+compiled, 22 refused. Every refusal ties to a withheld token by name
+EXCEPT `mojibake-curly-quote` (`requires=non-utf8-subject` alone), which
+refuses for the documented, SEPARATE I-72 pattern-source-UTF-8 reason
+above, under a token this row keeps SATISFIED — the same
+"real corpus failure under a satisfied token is a documented, honest
+outcome, never a re-litigation of the declaration" shape RE2/Oniguruma/
+TRE/Vectorscan's own rows all follow. `bench/syntax@0.1` (95 patterns,
+informational cross-check, not capability-gated): 50/95 compiled, 45
+`Syntax` refusals.
 
 ## Version: PROBED, never typed — but by TWO different mechanisms for TWO different facts
 
@@ -350,24 +446,17 @@ fact (`rustc --version`) rides in `build_flags` for provenance, probed
 live at every `describe()` call, exactly like `re2`'s Debian package
 version does for RE2.
 
-## Smoke coverage — OWED
+## Smoke coverage — LANDED
 
-No `tools/selfcheck.py` section exists yet for this adapter (mirrors
-`testees/re2/CLAUDE.md`'s own stated choice: the capability census IS
-this adapter's structural smoke, once it runs). A `check_high_byte_
-pattern_argv` THIRD-SHAPE arm (neither "compiles and matches" like
-pcrec/pcre2/onig/tre, nor silently absent) is DESIGNED but not yet
-added — assert the driver reports `did-not-compile` with a diagnostic
-naming byte offset 0 on the raw witness (proving the bytes arrived
-UNCORRUPTED: a genuinely corrupted argv-mojibake spelling, `C2 93 ... C2
+`tools/selfcheck.py`'s `check_high_byte_pattern_argv` (the I-72 guard,
+`make check-harness`) gained arm **1e** (lane `l6brustfin`, 2026-09-19):
+a FOURTH shape, neither "compiles and matches" like pcrec/pcre2/onig/tre
+nor "matches at boolean grain" like vectorscan — a clean `did-not-compile`
+naming byte offset 0 on the raw `\x93`/`\x94` witness (proving the bytes
+arrived UNCORRUPTED: a genuinely argv-mangled spelling, `C2 93 ... C2
 94`, IS valid UTF-8 and would have compiled instead — the discrimination
 this project's other arms get from a SUCCESSFUL match, this one gets from
-a SPECIFIC, byte-exact FAILURE). Exact arm to add, OWED to `tools/
-selfcheck.py`'s `check_high_byte_pattern_argv`:
-
-    r, err = one("rust", "rust-default", PAT, "hib-raw")
-    # expect: err is not None, and the adapter's own did-not-compile
-    # diagnostic contains "not valid UTF-8 at byte 0" -- NOT "matched" and
-    # NOT a crash. A control run of PAT_CORRUPT (C2 93 ... C2 94) SHOULD
-    # compile (valid UTF-8) and should NOT match the clean raw-byte
-    # subject -- the discrimination.
+a SPECIFIC, byte-exact FAILURE), plus the corrupted-spelling control
+(compiles, does not match the clean subject). Gated on `"rust" in
+_ad.discover()`, same as every other L6b arm — a box without a Rust
+toolchain skips it by name rather than failing.

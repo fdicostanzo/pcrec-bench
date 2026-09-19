@@ -344,25 +344,61 @@ Maintenance: update this file when files are added/removed or change role.
   cross-referenced against each pattern's own `requires-*` tags. Runs
   from the repo root; needs the `vectorscan` adapter (built on demand,
   needs `libvectorscan-dev`).
-- `probe_rust_capability_census.py` — ([B7]/L6b, lane `l6brust`,
-  2026-09-19) the rust-regex ADAPTER'S capability witness census,
-  mandatory before `bench/capability/gen_patterns.py`'s
-  `EXT_BENCH_ROSTER` declares anything for `rust-default` — AUTHORED,
-  **NOT YET RUN** (pcrec's I-75 battery held the box for cargo/rustup
-  the whole of this lane's session; see `testees/rust/CLAUDE.md` and
-  `docs/dev/lanes/l6brust_report.md`). Same shape as the other three L6b
-  censuses (one witness per `REQUIRES_VOCAB` token, all 64
-  `bench/capability` + 95 `bench/syntax` corpus patterns through the
-  real adapter) plus a fourth pass this lane's own reasoning motivated:
-  `census_nonutf8_discrimination()`, a real MATCH (not compile-only) run
-  of two candidate high-byte patterns against a raw-byte subject and a
-  UTF-8-encoded-codepoint subject, to settle whether `regex::bytes`'s
-  default `unicode(true)` mode makes `\xHH`/`[\x80-\xff]` match a raw
-  byte or that byte's UTF-8 ENCODING — an open question no prior L6b
-  census needed to ask (RE2/Oniguruma both have an unconditional
-  byte-vs-Unicode encoding SWITCH; the `regex` crate's is scoped
-  per-expression via `(?-u:...)`, coexisting with `\p{L}` elsewhere in
-  the same pattern, which the two probed spellings test for).
+- `probe_rust_capability_census.py` — ([B7]/L6b, lane `l6brust`/
+  `l6brustfin`, 2026-09-19) the rust-regex ADAPTER'S capability witness
+  census, mandatory before `bench/capability/gen_patterns.py`'s
+  `EXT_BENCH_ROSTER` declares anything for `rust-default`. Same shape as
+  the other three L6b censuses (one witness per `REQUIRES_VOCAB` token,
+  all 64 `bench/capability` + 95 `bench/syntax` corpus patterns through
+  the real adapter) plus a fourth pass this lane's own reasoning
+  motivated: `census_nonutf8_discrimination()`, a real MATCH (not
+  compile-only) run of two candidate high-byte patterns against a
+  raw-byte subject and a UTF-8-encoded-codepoint subject, to settle
+  whether `regex::bytes`'s default `unicode(true)` mode makes
+  `\xHH`/`[\x80-\xff]` match a raw byte or that byte's UTF-8 ENCODING —
+  an open question no prior L6b census needed to ask (RE2/Oniguruma both
+  have an unconditional byte-vs-Unicode encoding SWITCH; the `regex`
+  crate's is scoped per-expression via `(?-u:...)`, coexisting with
+  `\p{L}` elsewhere in the same pattern, which the two probed spellings
+  test for). RUN 2026-09-19 (lane `l6brustfin`, the detached
+  post-battery pipeline, pcrec's I-75 battery having held the box for
+  `l6brust`'s whole session) — see
+  `2026-09-19-rust-capability-census-r1131.txt` below.
+- `2026-09-19-rust-capability-census-r1131.txt` — its archive (regex
+  1.13.1, rustc 1.98.1): 8 of 17 REQUIRES tokens SATISFIED
+  (`unicode-properties`, `named-groups`, `free-spacing`,
+  `span-reporting`, `non-utf8-subject`, `captures`, `true-end-anchor`,
+  plus the 9 syntax refusals below); `possessive-quantifier` COMPILES
+  but is WITHHELD on a real match-grain finding this file appends after
+  the verbatim block: `(?:a++)a` MATCHES "aaa" at `[0,3)` end to end,
+  which true PCRE possessive semantics would refuse (no backtracking
+  left for the trailing `a`) — the crate's automaton has no backtracking
+  to prevent, so the syntax parses for PCRE-pattern portability with no
+  operational effect; 9 REFUSED (`backrefs`, `lookaround`,
+  `lookbehind-variable`, `atomic-group`, `recursion`, `conditionals`,
+  `k-reset`, `control-verbs`, `callouts`, all `[syntax/Syntax]`). The
+  `non-utf8-subject`-DISCRIMINATION pass resolves the open question
+  live: under `rust-default`'s actual (unmodified) unicode-mode-ON
+  config, `[\x80-\xff]` matches the UTF-8 ENCODING of a codepoint, NOT a
+  raw byte (nomatch against the raw byte, match against its two-byte
+  UTF-8 form); only `(?-u:...)`-wrapped does raw-byte matching — kept
+  SATISFIED at the structural API level (the driver never refuses/panics
+  on a non-UTF-8 subject: the raw-byte case above answers a clean
+  `nomatch`, not an error), with the semantic caveat documented
+  prominently in `testees/rust/CLAUDE.md` so a future `high-byte-run`
+  outlier under this config is read correctly. Also appends: the
+  `foo|foobar` vs "foobar" witness confirming `perl-leftmost-first`
+  (`[0,3)`, matching `MatchKind::LeftmostFirst` hardcoded in the pinned
+  crate's own `Builder::build_one_bytes()`), and `size_limit`/
+  `dfa_size_limit`'s 10 MiB/2 MiB defaults confirmed against
+  regex-1.13.1's actual source (`nfa_size_limit`/`hybrid_cache_capacity`
+  in `builders.rs`), not memory. Corpus totals: `bench/capability`
+  42/64 compiled (every one of the 22 refusals ties to a withheld token
+  by name except `mojibake-curly-quote`, the documented I-72
+  pattern-source-UTF-8 exception under a satisfied token — the same
+  "documented, not a surprise" shape the other three L6b censuses set);
+  `bench/syntax` 50/95 compiled (45 `Syntax` refusals, unexamined against
+  a per-token gate since `bench/syntax` is not capability-gated).
 - `2026-09-17-vectorscan-capability-witness-census-5.4.11.txt` — its
   archive: 5 of 17 REQUIRES tokens SATISFIED (the narrowest on the
   roster) — `unicode-properties`, `named-groups`, `free-spacing`,

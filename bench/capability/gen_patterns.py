@@ -723,6 +723,72 @@ EXT_BENCH_ROSTER = [
     # end-anchor control -- testees/tre/CLAUDE.md).
     ("tre-default", ["backrefs", "span-reporting", "non-utf8-subject",
                      "captures", "true-end-anchor"]),
+    # rust-default ([B7]/L6b, lane l6brust/l6brustfin, 2026-09-19): the
+    # `regex` crate 1.13.1, `regex::bytes::RegexBuilder` at its own
+    # documented defaults (`testees/rust/`). WITNESSED before declaring
+    # (CS5's own rule), docs/dev/measurements/2026-09-19-rust-capability-
+    # census-r1131.txt, `probe_rust_capability_census.py` beside it): a
+    # real compile through the real adapter for all 17 REQUIRES_VOCAB
+    # tokens PLUS all 64 bench/capability@0.1 corpus patterns (42/64
+    # compiled) and all 95 bench/syntax@0.1 patterns (50/95, informational
+    # cross-check). Nine tokens REFUSED, every one `[syntax/Syntax]`,
+    # matching N2's prediction exactly: `backrefs`, `lookaround`,
+    # `lookbehind-variable`, `atomic-group`, `recursion`, `conditionals`,
+    # `k-reset`, `control-verbs`, `callouts`.
+    #   possessive-quantifier -- WITHHELD on a SEMANTIC finding, not a
+    #                          refusal (N2's prediction did NOT hold
+    #                          here): `a++` COMPILES clean, but a direct
+    #                          match witness (`(?:a++)a` against "aaa",
+    #                          run through the built driver) MATCHES at
+    #                          [0,3) end to end -- true PCRE possessive
+    #                          semantics would REFUSE this (a++ consumes
+    #                          all three a's with no backtracking left
+    #                          for the trailing `a`). The crate's
+    #                          automaton-based engine has no backtracking
+    #                          to forbid in the first place, so `a++`
+    #                          behaves exactly like `a+` -- the syntax is
+    #                          accepted for PCRE-pattern portability with
+    #                          NO operational effect. Capability is about
+    #                          SEMANTICS, not parse-acceptance (the same
+    #                          standard TRE's own silent-misparse-hazard
+    #                          tokens are held to, testees/tre/CLAUDE.md).
+    # SATISFIED (8): `unicode-properties`, `named-groups`, `free-spacing`,
+    # `span-reporting`, `captures`, `true-end-anchor` -- all witnessed
+    # clean; and:
+    #   non-utf8-subject -- SATISFIED at the STRUCTURAL/API level the
+    #                       token's own definition names ("the subject
+    #                       bytes are not valid UTF-8"): `regex::bytes`
+    #                       never refuses or panics on a genuinely
+    #                       invalid-UTF-8 haystack. A real MATCH-grain
+    #                       discrimination witness
+    #                       (`census_nonutf8_discrimination()`) found a
+    #                       genuine SEMANTIC caveat, documented in
+    #                       testees/rust/CLAUDE.md, not a second token:
+    #                       under this config's default unicode(true)
+    #                       mode, `[\x80-\xff]`-style classes match the
+    #                       UTF-8 ENCODING of a codepoint, NOT a raw byte
+    #                       (only `(?-u:...)`-wrapped classes do) -- so
+    #                       `high-byte-run` compiles but any resulting
+    #                       mismatch against the oracle's byte-oriented
+    #                       expectation is left to surface HONESTLY as a
+    #                       real wrong-answer/outlier, never hidden.
+    # Corpus totals (compile-only, no ranking claim): bench/capability
+    # 42/64 compiled, 22 refused -- every refusal ties to a withheld
+    # token by name EXCEPT `mojibake-curly-quote`
+    # (requires=non-utf8-subject alone), which refuses for the SEPARATE,
+    # documented I-72 pattern-source-UTF-8 reason (the PATTERN source,
+    # unlike the haystack, must itself be valid UTF-8 --
+    # `regex::bytes::RegexBuilder::new` takes `&str`, never `&[u8]`, for
+    # the pattern) under a token this row keeps SATISFIED -- the same
+    # "documented, not a surprise" shape RE2/Oniguruma/TRE/Vectorscan's
+    # own rows set for a real corpus refusal under a satisfied token.
+    ("rust-default", [t for t in REQUIRES_VOCAB
+                      if t not in ("backrefs", "lookaround",
+                                   "lookbehind-variable",
+                                   "possessive-quantifier",
+                                   "atomic-group", "recursion",
+                                   "conditionals", "k-reset",
+                                   "control-verbs", "callouts")]),
 ]
 
 
