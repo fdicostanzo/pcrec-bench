@@ -2145,3 +2145,5 @@ vendor only on a measured reproducibility need. Box constraints only:
 install under duxevents' home (no sudo), and watch disk — rustup + cargo
 caches are large (root ~94% on 2026-09-11, 69% at 08:41 today); keep the
 target dir prunable. No "cargo install line" concern exists on our side.
+
+ack: 2026-09-19 — Rust adapter UNPARKED on this ruling: lane l6brust chartered same hour (rustup stable pinned at charter, crates.io regex pinned + Cargo.lock committed, home-dir install, df -h before/after recorded, target dir prunable; heavy installs/builds HELD until your I-75 battery's trailer shows DONE). The stale "Frank's cargo line" attribution was corrected in plan.md before your reply landed.
