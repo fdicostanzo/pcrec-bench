@@ -1231,6 +1231,21 @@ precedent rather than asserted as a first-time call; see §6.05 for the
 moving at the header level is not, by itself, a signal a reader can trace
 to `interpret.py`'s actual code.
 
+**RULED 2026-09-19 (Frank, live): MAJOR, under a reframed §3.3.** Frank's
+framing: MAJOR means incompatibility, MINOR means (compatible) change —
+an appended column is MINOR. Applied to this artifact, the unit of
+compatibility is not the file format but **whether emitted facts/verdicts
+are comparable across the version boundary**: MAJOR = facts move on
+unchanged inputs (a pre-fix and post-fix sidecar for the same report
+disagree — the 2.0/P5 flip is the precedent instance); MINOR = additive,
+every previously emitted fact stands. §3.3 is to be AMENDED to this
+definition by the fix wave's first commit (field-text edits become one
+instance of incompatibility, not the definition). The wave ships as ONE
+catalogue bump at the highest class it contains (MAJOR: F3/F11/F27/Q4's
+collapse move facts on unchanged inputs; Q1's reason channel and other
+additive items ride the same bump), and `INTERPRET_VERSION` takes its
+first bump alongside (r7ver-3).
+
 **Q3. F4's fix: the full one (read the slice's `excluded` rows, MAJOR) or
 the interim (state the denominator's subject count, MINOR)?**
 *Recommend the full one.* Half the sentence's problem is the omitted
