@@ -895,6 +895,13 @@ reversible in the sense that nothing is lost. Not run by this lane: it
 mutates a `.git` shared with live worktrees and is CPU-bound, and
 pcrec's battery owned the box.
 
+**RULED 2026-09-19 (Frank, live): YES — "only because making it
+periodic would be more work."** The manual-at-boundaries shape (after a
+regen wave, at session close, never mid-lane) is adopted as the
+low-effort option, not as hygiene enthusiasm: if this ever grows into
+automation proposals, that is more work than Frank wanted, and the
+ruling does not cover it.
+
 ---
 
 **Q3. Adopt the no-history-rewrite position formally — history is never
