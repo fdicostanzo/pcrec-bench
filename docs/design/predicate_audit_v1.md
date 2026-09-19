@@ -1313,6 +1313,14 @@ the panel should rule with both stated, per the full argument in F27's
 §4 entry. No escape hatch: a `--no-check-utc` flag on the one check that
 keeps a prediction honest is the wrong thing to add.
 
+**DEFERRED 2026-09-19 (Frank, live): "I'll revisit this question later."**
+Presented with both risks and the manager's fold-in (an unconditional
+rendered line naming the anchor actually used, whichever anchor is
+ruled). Until ruled: CLI prediction scoring stays blocked (the ext-roster
+file's clauses stay hand-scored in ledgers, stated as such), and the fix
+wave HOLDS rather than splitting into two MAJOR bumps — one catalogue
+bump, one sidecar regen, when F27's ruling lands.
+
 **Q8. F26 — emit the `did_not_compile` rows for a pattern that reached no
 ranking group?** *Recommend YES*, in the same reporter wave as F10. It is
 strictly additive to the TSV, it does not move R-STATUS-4's predicate or
