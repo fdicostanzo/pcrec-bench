@@ -4896,3 +4896,36 @@ ext-bench testees across six engines.
   dispositioned), KB-23 (fixed), Rust (unparked). Remaining work is
   execution: the battery done-signal, l6brust's build half, the owed
   full make check, and the parked small items.
+
+## 2026-09-19 (afternoon) — twenty-seventh session (part 3): I-75 battery GREEN and signalled; the rust-regex adapter LANDED; the gate grows to 423
+
+- I-75 CLOSED: the full battery at pcrec main 923a5a58 GREEN, 7/7
+  stages rc=0, 6h48m54s wall (mech 3:47:01 — 268 rows, unexpected 0,
+  undetected 10 = the documented-expected set, unreached 1 = S121,
+  anomalies 0); the seven test.log "FAIL" substrings inspected line by
+  line, all benign. Done-signal live + O-35.
+- THE RUST-REGEX ADAPTER MERGED (54de520 + the d4123a7 landing-bar
+  fix): the thirteenth roster engine, completing L6b. rustc/cargo
+  1.98.1 (rustup stable at charter, I-76), regex 1.13.1, Cargo.lock
+  committed; capability 42/64 · syntax 50/95; 8 tokens satisfied /
+  9 refused as predicted / possessive-quantifier WITHHELD on a real
+  match witness ((?:a++)a matches "aaa" — a+ semantics, nothing
+  possessive to declare); the I-72 witness refuses at the
+  pattern-source-UTF-8 constraint (documented exception, distinct
+  from byte-haystack freedom); [\x80-\xff] matches encodings not
+  bytes under unicode-ON (caveat documented); leftmost-first + the
+  10 MiB/2 MiB size caps confirmed from the pinned source.
+- THE DISCOVERY PASS EARNED ITS NAME: the first full make check died
+  in check-harness on FileNotFoundError: 'cargo' — rustup's tools
+  reach PATH only via the profile, so any profile-skipping shell
+  (detached setsid, cron, a stranger's make) failed by environment.
+  Fixed as _rust_tool() (PATH → ~/.cargo/bin → a NAMED refusal),
+  verified with a stripped-PATH probe. Retry GREEN:
+  **5/73/0 · 423/423 · check-report OK · 155/155** — the new gate of
+  record ([B56]'s owed harness/report/schema verification discharged
+  in the same run).
+- The first ROUTINE git gc under Q2's fresh ruling: .git 141 MB →
+  74 MB (67 MB — above the white paper's ~30 MB projection; loose
+  objects had accrued since its measurement).
+- Lanes l6brust/l6brustfin closed; worktrees/branches cleaned; master
+  pushed at d4123a7.
