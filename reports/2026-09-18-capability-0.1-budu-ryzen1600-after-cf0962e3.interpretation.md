@@ -1,15 +1,15 @@
 <!-- pcrecbench interpret
 report:          reports/2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.tsv
-report_sha256:   2ce0c77ca8749f0b7680373977f95d20071fb8e711828e25aa6a03d6015985ba
+report_sha256:   c9f7012e4f4d53b12ec0dcbc6640c3e139226dfbdbe1ad29c38aca9a3ec78520
 index:           store/index.tsv
 index_sha256:    98a24fed668b7d4024e3211ff3bb9aef4ba36562bb604e2d40d46088dd94d985
 predictions:     docs/dev/predictions/capability-0.1-first.tsv
 predictions_sha256:915b42f5a8f6ec3dfdc552b8ba080e546c0ca02c26a067796495761dc228155d
 subject_grain:   reports/2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.subject-grain.tsv
-subject_grain_sha256:81bce301414fb35f753401f22020232c7e980f07f3da33ea70059fe31b929b43
+subject_grain_sha256:5e5fa2020a45e32b0d00e6020a335861ac1ed6fee4049332944fa6aa17bb504e
 catalogue:       2.0
 interpret:       v1
-reporter:        v17 (2026-09-17)
+reporter:        v18 (2026-09-18)
 query:           subbench=capability, version=0.1, since=2026-09-17T00:00:00Z, until=2026-09-18T03:00:00Z, testee=libpcre2_10.46_interp-caps-simdna, testee=libpcre2_10.46_jit-caps-simdna, testee=libpcre2_10.46_dfa-nocaps-simdna, testee=pcrec_a770139e_auto-caps-simdna, testee=pcrec_a770139e_auto-nocaps-simdna, testee=pcrec_a770139e_vm-caps-simdna, testee=pcrec_a770139e_vm-in-caps-simdna, testee=pcrec_cf0962e3_auto-caps-simdna, testee=pcrec_cf0962e3_auto-nocaps-simdna, testee=pcrec_cf0962e3_vm-caps-simdna, testee=pcrec_cf0962e3_vm-in-caps-simdna
 -->
 

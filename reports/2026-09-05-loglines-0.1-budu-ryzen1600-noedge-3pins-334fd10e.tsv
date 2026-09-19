@@ -1,4 +1,4 @@
-# reporter: v17 (2026-09-17); filters: subbench=loglines, version=0.1, since=2026-09-03T03:50:00Z, until=2026-09-05T09:00:00Z, testee=pcrec_334fd10e_auto-caps-simdna, testee=pcrec_334fd10e_auto-caps-simdna_noedge, testee=pcrec_288d505_auto-caps-simdna, testee=pcrec_288d505_auto-caps-simdna_noedge, testee=pcrec_1989c62_auto-caps-simdna, testee=pcrec_1989c62_auto-caps-simdna_noedge; source: store/index.tsv (6 record(s) matching this query); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 6; mixed_x13: False; include_provenance: False; worst_other_core_busy: 5.71% (pcrec_1989c62_auto-caps-simdna_noedge / hex32-id / large-subject-throughput); floor_pattern: floor
+# reporter: v18 (2026-09-18); filters: subbench=loglines, version=0.1, since=2026-09-03T03:50:00Z, until=2026-09-05T09:00:00Z, testee=pcrec_334fd10e_auto-caps-simdna, testee=pcrec_334fd10e_auto-caps-simdna_noedge, testee=pcrec_288d505_auto-caps-simdna, testee=pcrec_288d505_auto-caps-simdna_noedge, testee=pcrec_1989c62_auto-caps-simdna, testee=pcrec_1989c62_auto-caps-simdna_noedge; source: store/index.tsv (6 record(s) matching this query); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 6; mixed_x13: False; include_provenance: False; worst_other_core_busy: 5.71% (pcrec_1989c62_auto-caps-simdna_noedge / hex32-id / large-subject-throughput); floor_pattern: floor
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 record						loglines@0.1__pcrec_1989c62_auto-caps-simdna__budu-ryzen1600__20260903T091145Z				agreement	agree (0 of 22 groups; 0 of 1364 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
 record						loglines@0.1__pcrec_1989c62_auto-caps-simdna_noedge__budu-ryzen1600__20260903T092014Z				agreement	agree (0 of 22 groups; 0 of 1364 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
@@ -6,6 +6,7 @@ record						loglines@0.1__pcrec_288d505_auto-caps-simdna__budu-ryzen1600__202609
 record						loglines@0.1__pcrec_288d505_auto-caps-simdna_noedge__budu-ryzen1600__20260905T035640Z				agreement	agree (0 of 22 groups; 0 of 1364 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
 record						loglines@0.1__pcrec_334fd10e_auto-caps-simdna__budu-ryzen1600__20260905T084611Z				agreement	agree (0 of 22 groups; 0 of 1364 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
 record						loglines@0.1__pcrec_334fd10e_auto-caps-simdna_noedge__budu-ryzen1600__20260905T085420Z				agreement	agree (0 of 22 groups; 0 of 1364 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+baseline	bignum	(set)	large-subject-throughput			pcrec_1989c62_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_1989c62_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna_noedge	measured	pinned	1	median_ns	13102237.075758	12	1.0000	0	0		
 rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna_noedge	measured	pinned	1	min_ns	13016723.075758	12	1.0000	0	0		
 rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna_noedge	measured	pinned	1	max_ns	13215196.969697	12	1.0000	0	0		
@@ -42,6 +43,7 @@ rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto
 rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	stddev_ns	11167.754151	12	1.0000	0	0		
 rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.007809	12	1.0000	0	0		
 rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.007809	12	1.0000	0	0		
+baseline	bignum	(set)	short-subject-search			pcrec_1989c62_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_1989c62_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	bignum	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	median_ns	424041.053146	112	1.0000	0	0		
 rank	bignum	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	min_ns	423879.921677	112	1.0000	0	0		
 rank	bignum	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	max_ns	427944.003436	112	1.0000	0	0		
@@ -78,6 +80,7 @@ rank	bignum	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-cap
 rank	bignum	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	2936.152275	112	1.0000	0	0		slower ×1.01
 rank	bignum	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.014959	112	1.0000	0	0		slower ×1.01
 rank	bignum	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.014959	112	1.0000	0	0		slower ×1.01
+baseline	floor	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	2902358.865169	12	1.0000	0	0		unchanged (within spread)
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	2899777.913858	12	1.0000	0	0		unchanged (within spread)
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	2910497.265918	12	1.0000	0	0		unchanged (within spread)
@@ -114,6 +117,7 @@ rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	6	stddev_ns	3359.425140	12	1.0000	0	0		unchanged (within spread)
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_baseline	1.001914	12	1.0000	0	0		unchanged (within spread)
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_best	1.001914	12	1.0000	0	0		unchanged (within spread)
+baseline	floor	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	median_ns	2037.876286	112	1.0000	0	0		unchanged (within spread)
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	min_ns	2035.579876	112	1.0000	0	0		unchanged (within spread)
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	max_ns	2165.116664	112	1.0000	0	0		unchanged (within spread)
@@ -150,6 +154,7 @@ rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-cap
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	6	stddev_ns	3.512599	112	1.0000	0	0		unchanged (within spread)
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.003284	112	1.0000	0	0		unchanged (within spread)
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.003284	112	1.0000	0	0		unchanged (within spread)
+baseline	hex32-id	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	median_ns	13071679.701493	12	1.0000	0	0		faster ×1.01
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	min_ns	13057087.417910	12	1.0000	0	0		faster ×1.01
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	max_ns	13171204.850746	12	1.0000	0	0		faster ×1.01
@@ -186,6 +191,7 @@ rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_au
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna_noedge	measured	pinned	6	stddev_ns	55460.112214	12	1.0000	0	0		
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_baseline	1.010522	12	1.0000	0	0		
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_best	1.010522	12	1.0000	0	0		
+baseline	hex32-id	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	431239.218302	112	1.0000	0	0		unchanged (within spread)
 rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	429041.824123	112	1.0000	0	0		unchanged (within spread)
 rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	433836.550615	112	1.0000	0	0		unchanged (within spread)
@@ -222,6 +228,7 @@ rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-
 rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	6	stddev_ns	2136.098704	112	1.0000	0	0		unchanged (within spread)
 rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_baseline	1.008682	112	1.0000	0	0		unchanged (within spread)
 rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_best	1.008682	112	1.0000	0	0		unchanged (within spread)
+baseline	http-5xx	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	median_ns	251965.479425	12	1.0000	0	0		unchanged (within spread)
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	min_ns	251724.233834	12	1.0000	0	0		unchanged (within spread)
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	max_ns	253491.609406	12	1.0000	0	0		unchanged (within spread)
@@ -258,6 +265,7 @@ rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_au
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	stddev_ns	1294.440065	12	1.0000	0	0		
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.034302	12	1.0000	0	0		
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.034302	12	1.0000	0	0		
+baseline	http-5xx	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	median_ns	7032.576974	112	1.0000	0	0		unchanged (within spread)
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	min_ns	7010.279304	112	1.0000	0	0		unchanged (within spread)
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	max_ns	7049.565769	112	1.0000	0	0		unchanged (within spread)
@@ -294,6 +302,7 @@ rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-c
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	stddev_ns	20.582511	112	1.0000	0	0		
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.034335	112	1.0000	0	0		
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.034335	112	1.0000	0	0		
+baseline	ipv4	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	6882753.594203	12	1.0000	0	0		unchanged (within spread)
 rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	6875828.543478	12	1.0000	0	0		unchanged (within spread)
 rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	6915392.920290	12	1.0000	0	0		unchanged (within spread)
@@ -330,6 +339,7 @@ rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-
 rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	6	stddev_ns	12080.011788	12	1.0000	0	0		slower ×1.00
 rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.004520	12	1.0000	0	0		slower ×1.00
 rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.004520	12	1.0000	0	0		slower ×1.00
+baseline	ipv4	(set)	short-subject-search			pcrec_1989c62_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_1989c62_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	median_ns	204265.659392	112	1.0000	0	0		
 rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	min_ns	203720.576928	112	1.0000	0	0		
 rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	max_ns	204930.607195	112	1.0000	0	0		
@@ -366,6 +376,7 @@ rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps
 rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	6	stddev_ns	419.350205	112	1.0000	0	0		unchanged (within spread)
 rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_baseline	1.002879	112	1.0000	0	0		unchanged (within spread)
 rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_best	1.002879	112	1.0000	0	0		unchanged (within spread)
+baseline	ipv6	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	median_ns	10313542.127907	12	1.0000	0	0		unchanged (within spread)
 rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	min_ns	10273045.581395	12	1.0000	0	0		unchanged (within spread)
 rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	max_ns	10325784.302326	12	1.0000	0	0		unchanged (within spread)
@@ -402,6 +413,7 @@ rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-c
 rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	stddev_ns	27793.279335	12	1.0000	0	0		
 rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.026350	12	1.0000	0	0		
 rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.026350	12	1.0000	0	0		
+baseline	ipv6	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	1	median_ns	258090.415277	112	1.0000	0	0		unchanged (within spread)
 rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	1	min_ns	257744.196172	112	1.0000	0	0		unchanged (within spread)
 rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	1	max_ns	258617.758885	112	1.0000	0	0		unchanged (within spread)
@@ -438,6 +450,7 @@ rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-
 rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	707.416680	112	1.0000	0	0		unchanged (within spread)
 rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.026589	112	1.0000	0	0		unchanged (within spread)
 rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.026589	112	1.0000	0	0		unchanged (within spread)
+baseline	iso-ts	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	1	median_ns	1142263.073903	12	1.0000	0	0		unchanged (within spread)
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	1	min_ns	1140699.612009	12	1.0000	0	0		unchanged (within spread)
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	1	max_ns	1142551.237875	12	1.0000	0	0		unchanged (within spread)
@@ -474,6 +487,7 @@ rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	stddev_ns	3131.566455	12	1.0000	0	0		
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.067489	12	1.0000	0	0		
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.067489	12	1.0000	0	0		
+baseline	iso-ts	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	median_ns	20437.944992	112	1.0000	0	0		unchanged (within spread)
 rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	min_ns	20416.994945	112	1.0000	0	0		unchanged (within spread)
 rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	max_ns	20482.654951	112	1.0000	0	0		unchanged (within spread)
@@ -510,6 +524,7 @@ rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-cap
 rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	stddev_ns	40.137845	112	1.0000	0	0		
 rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.092201	112	1.0000	0	0		
 rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.092201	112	1.0000	0	0		
+baseline	kv-quoted	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	median_ns	14435127.413793	12	1.0000	0	0		unchanged (within spread)
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	min_ns	14326271.396552	12	1.0000	0	0		unchanged (within spread)
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	max_ns	14679329.982759	12	1.0000	0	0		unchanged (within spread)
@@ -546,6 +561,7 @@ rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_288d505_a
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	64518.435042	12	1.0000	0	0		unchanged (within spread)
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.016400	12	1.0000	0	0		unchanged (within spread)
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.016400	12	1.0000	0	0		unchanged (within spread)
+baseline	kv-quoted	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	504295.849589	112	1.0000	0	0		unchanged (within spread)
 rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	500575.674861	112	1.0000	0	0		unchanged (within spread)
 rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	511052.954280	112	1.0000	0	0		unchanged (within spread)
@@ -582,6 +598,7 @@ rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-
 rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	6	stddev_ns	4723.376577	112	1.0000	0	0		unchanged (within spread)
 rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_baseline	1.015991	112	1.0000	0	0		unchanged (within spread)
 rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_best	1.015991	112	1.0000	0	0		unchanged (within spread)
+baseline	level-context	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	11021826.987179	12	1.0000	0	0		unchanged (within spread)
 rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	11015716.948718	12	1.0000	0	0		unchanged (within spread)
 rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	11135804.307692	12	1.0000	0	0		unchanged (within spread)
@@ -618,6 +635,7 @@ rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_1989c
 rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	stddev_ns	20593.994776	12	1.0000	0	0		
 rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.007484	12	1.0000	0	0		
 rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.007484	12	1.0000	0	0		
+baseline	level-context	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	level-context	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	1	median_ns	333787.723107	112	1.0000	0	0		faster ×1.00
 rank	level-context	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	1	min_ns	333544.374736	112	1.0000	0	0		faster ×1.00
 rank	level-context	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noedge	measured	pinned	1	max_ns	334285.063863	112	1.0000	0	0		faster ×1.00
@@ -654,6 +672,7 @@ rank	level-context	(set)	short-subject-search	plain	same program	pcrec_1989c62_a
 rank	level-context	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna_noedge	measured	pinned	6	stddev_ns	496.013418	112	1.0000	0	0		
 rank	level-context	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_baseline	1.004240	112	1.0000	0	0		
 rank	level-context	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna_noedge	measured	pinned	6	ratio_vs_best	1.004240	112	1.0000	0	0		
+baseline	stack-frame	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_noedge				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_noedge (row-best fallback -- interp absent from this group)	
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	median_ns	1844477.674468	12	1.0000	0	0		unchanged (within spread)
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	min_ns	1841369.334043	12	1.0000	0	0		unchanged (within spread)
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_noedge	measured	pinned	1	max_ns	1846307.940426	12	1.0000	0	0		unchanged (within spread)
@@ -690,6 +709,7 @@ rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_1989c62
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	stddev_ns	1121.147580	12	1.0000	0	0		
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.001430	12	1.0000	0	0		
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.001430	12	1.0000	0	0		
+baseline	stack-frame	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	31752.457304	112	1.0000	0	0		unchanged (within spread)
 rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	31701.181447	112	1.0000	0	0		unchanged (within spread)
 rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	32443.110463	112	1.0000	0	0		unchanged (within spread)
@@ -726,6 +746,7 @@ rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_1989c62_aut
 rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	stddev_ns	189.503309	112	1.0000	0	0		
 rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.003405	112	1.0000	0	0		
 rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.003405	112	1.0000	0	0		
+baseline	uuid	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	1077059.146341	12	1.0000	0	0		unchanged (within spread)
 rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	1074949.119734	12	1.0000	0	0		unchanged (within spread)
 rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	1082933.978936	12	1.0000	0	0		unchanged (within spread)
@@ -762,6 +783,7 @@ rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-c
 rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	stddev_ns	1494.507437	12	1.0000	0	0		
 rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.004740	12	1.0000	0	0		
 rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.004740	12	1.0000	0	0		
+baseline	uuid	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	uuid	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	21185.008681	112	1.0000	0	0		faster ×1.01
 rank	uuid	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	21158.437083	112	1.0000	0	0		faster ×1.01
 rank	uuid	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	21255.082395	112	1.0000	0	0		faster ×1.01

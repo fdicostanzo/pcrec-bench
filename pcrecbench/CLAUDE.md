@@ -1212,3 +1212,18 @@ wired them in and confirmed all pass), plus the new
 matrix_page.py`'s parser and renderer, no engine/store). 99
 reporter-side tests total across the three files
 (`pcrecbench/tests/CLAUDE.md`).
+
+**The regeneration wave RAN 2026-09-18 (lane b53regen)** -- all 45
+report groups, the `.matrix.tsv`/`.matrix.html` back-fill, the six
+sidecars and the fixture corpus; full detail in `reports/CLAUDE.md`'s
+own `[B52]` back-fill paragraph. Two things worth a reader of THIS file
+knowing, since neither is about the reporter's rendering rules
+themselves: the wave's own classifier (a scratch tool, never part of
+this package) hung for ~4 h under `difflib.SequenceMatcher`'s worst case
+on one group's multi-million-line diff before being replaced with a
+linear one -- a lesson about regen TOOLING, not about `report.py`; and
+`scripts/regen_sidecars.py` (KB-22, `docs/dev/known_issues.md`) had been
+silently dropping a sidecar's `--subject-grain` input on every
+regeneration since [B47] shipped it, invisible until this wave was the
+first to run the script against one of the two subject-grain-stamped
+sidecars -- fixed in the same lane, `scripts/CLAUDE.md` updated.

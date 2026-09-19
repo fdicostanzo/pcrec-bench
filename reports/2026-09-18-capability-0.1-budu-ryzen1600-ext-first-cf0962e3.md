@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v17 (2026-09-17)
+reporter: v18 (2026-09-18)
 
 ## Query
 
@@ -29,6 +29,7 @@ reporter: v17 (2026-09-17)
 
 ### `base10num-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 98.6 | 0.0001 | 96.2 | 99.6 | 1.4 | 1.000x | 1.000x |
@@ -59,6 +60,7 @@ reporter: v17 (2026-09-17)
 
 ### `base10num-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,045.9 | 2,044.8 | 2,051.3 | 2.5 | 1.000x | 1.000x | 75 | 27.3 | 27.2 | 100% |
@@ -69,6 +71,7 @@ reporter: v17 (2026-09-17)
 
 ### `bracket-array-define` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 93.6 | 0.0001 | 93.5 | 94.0 | 0.2 | 1.000x | 1.000x |
@@ -83,12 +86,14 @@ reporter: v17 (2026-09-17)
 
 ### `bracket-array-define` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,915.5 | 2,905.9 | 2,938.8 | 11.4 | 1.000x | 1.000x | 75 | 38.9 | 58.6 | 100% |
 
 ### `codegrammar-flat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 121,417.2 | 0.0882 | 121,195.4 | 121,618.5 | 137.5 | 1.000x | 1.000x |
@@ -119,6 +124,7 @@ reporter: v17 (2026-09-17)
 
 ### `codegrammar-flat` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,464.5 | 2,458.8 | 2,467.1 | 3.3 | 1.000x | 1.000x | 75 | 32.9 | 27.2 | 100% |
@@ -129,6 +135,7 @@ reporter: v17 (2026-09-17)
 
 ### `codegrammar-xflag` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 121,260.2 | 0.0881 | 120,894.5 | 121,657.3 | 251.3 | 1.000x | 1.000x |
@@ -147,6 +154,7 @@ reporter: v17 (2026-09-17)
 
 ### `codegrammar-xflag` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,463.2 | 2,453.8 | 2,563.5 | 41.3 | 1.000x | 1.000x | 75 | 32.8 | 27.2 | 100% |
@@ -154,6 +162,7 @@ reporter: v17 (2026-09-17)
 
 ### `currency-lookbehind-fixed` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 9,600,379.3 | 6.9757 | 9,582,038.1 | 9,607,703.2 | 8,643.7 | 1.000x | 1.000x |
@@ -168,12 +177,14 @@ reporter: v17 (2026-09-17)
 
 ### `currency-lookbehind-fixed` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 17,465.4 | 17,375.1 | 18,436.9 | 400.6 | 1.000x | 1.000x | 75 | 232.9 | 58.6 | 100% |
 
 ### `date-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.8 | 0.0001 | 93.9 | 95.0 | 0.4 | 1.000x | 1.000x |
@@ -204,6 +215,7 @@ reporter: v17 (2026-09-17)
 
 ### `date-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,865.0 | 1,861.9 | 1,867.7 | 1.9 | 1.000x | 1.000x | 75 | 24.9 | 27.2 | 100% |
@@ -214,6 +226,7 @@ reporter: v17 (2026-09-17)
 
 ### `doubled-word` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 80,036,131.5 | 58.1550 | 79,688,787.0 | 80,380,958.5 | 232,715.3 | 1.000x | 1.000x |
@@ -232,6 +245,7 @@ reporter: v17 (2026-09-17)
 
 ### `doubled-word` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 89,010.3 | 88,938.4 | 89,450.5 | 207.9 | 1.000x | 1.000x | 75 | 1,186.8 | 58.6 | 100% |
@@ -239,6 +253,7 @@ reporter: v17 (2026-09-17)
 
 ### `dup-param-detect` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,228,794.5 | 1.6195 | 2,227,479.4 | 2,233,759.4 | 2,266.2 | 1.000x | 1.000x |
@@ -257,6 +272,7 @@ reporter: v17 (2026-09-17)
 
 ### `dup-param-detect` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 8,896.5 | 8,839.2 | 8,934.6 | 35.8 | 1.000x | 1.000x | 75 | 118.6 | 58.6 | 100% |
@@ -264,6 +280,7 @@ reporter: v17 (2026-09-17)
 
 ### `email-local-nodup` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,381.0 | 0.0010 | 1,373.7 | 1,398.2 | 8.7 | 1.000x | 1.000x |
@@ -278,12 +295,14 @@ reporter: v17 (2026-09-17)
 
 ### `email-local-nodup` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 18,596.6 | 18,446.5 | 18,750.3 | 99.5 | 1.000x | 1.000x | 75 | 248.0 | 58.6 | 100% |
 
 ### `email-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: re2_11.0.0_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `re2_11.0.0_default-caps-simdna` | measured | `plain` | same program | 342.5 | 0.0002 | 337.1 | 347.8 | 3.9 | 1.000x | 1.000x |
@@ -314,6 +333,7 @@ reporter: v17 (2026-09-17)
 
 ### `email-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,847.5 | 1,843.3 | 1,959.4 | 46.1 | 1.000x | 1.000x | 75 | 24.6 | 27.2 | 100% |
@@ -324,6 +344,7 @@ reporter: v17 (2026-09-17)
 
 ### `evil-alt-nested` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 170.2 | 0.0001 | 169.8 | 174.3 | 1.8 | 1.000x | 1.000x |
@@ -354,6 +375,7 @@ reporter: v17 (2026-09-17)
 
 ### `file-ext-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 84,638.6 | 0.0615 | 84,550.5 | 84,788.7 | 78.2 | 1.000x | 1.000x |
@@ -384,6 +406,7 @@ reporter: v17 (2026-09-17)
 
 ### `file-ext-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,478.9 | 2,477.8 | 2,605.1 | 50.6 | 1.000x | 1.000x | 75 | 33.1 | 27.2 | 100% |
@@ -392,6 +415,7 @@ reporter: v17 (2026-09-17)
 
 ### `float-literal-bound` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 13,300,527.7 | 9.6643 | 13,268,289.0 | 13,388,146.2 | 42,996.0 | 1.000x | 1.000x |
@@ -406,12 +430,14 @@ reporter: v17 (2026-09-17)
 
 ### `float-literal-bound` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 20,462.7 | 20,445.9 | 20,744.0 | 111.6 | 1.000x | 1.000x | 75 | 272.8 | 58.6 | 100% |
 
 ### `floor-byte` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: tre_0.9.0_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `tre_0.9.0_default-caps-simdna` | measured | `plain` | same program | 23,199.2 | 0.0169 | 23,191.3 | 23,318.0 | 47.4 | 1.000x | 1.000x |
@@ -442,6 +468,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor-byte` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp (floor control — per-call overhead, not a ranking of engines)
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,042.0 | 2,039.4 | 2,073.1 | 12.8 | 1.000x | 1.000x | 75 | 27.2 | 100% |
@@ -452,6 +479,7 @@ reporter: v17 (2026-09-17)
 
 ### `high-byte-run` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | n subjects | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 64,081.2 | 0.0466 | 63,973.2 | 64,143.2 | 58.5 | 1.000x | 1.000x | 3 | 100% |
@@ -478,6 +506,7 @@ reporter: v17 (2026-09-17)
 
 ### `high-byte-run` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,639.7 | 2,637.5 | 2,643.7 | 2.6 | 1.000x | 1.000x | 75 | 35.2 | 27.2 | 100% |
@@ -487,6 +516,7 @@ reporter: v17 (2026-09-17)
 
 ### `ipv4-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.5 | 0.0000 | 30.3 | 30.8 | 0.2 | 1.000x | 1.000x |
@@ -517,6 +547,7 @@ reporter: v17 (2026-09-17)
 
 ### `ipv4-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 949.6 | 948.7 | 950.9 | 0.7 | 1.000x | 1.000x | 75 | 12.7 | 27.2 | 100% |
@@ -527,6 +558,7 @@ reporter: v17 (2026-09-17)
 
 ### `keyword-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 292.4 | 0.0002 | 292.4 | 293.1 | 0.3 | 1.000x | 1.000x |
@@ -557,6 +589,7 @@ reporter: v17 (2026-09-17)
 
 ### `keyword-prefix-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,687.9 | 2,664.0 | 2,755.3 | 31.8 | 1.000x | 1.000x | 75 | 35.8 | 27.2 | 100% |
@@ -565,6 +598,7 @@ reporter: v17 (2026-09-17)
 
 ### `logparse-atomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 97.7 | 0.0001 | 97.3 | 104.2 | 2.7 | 1.000x | 1.000x |
@@ -579,12 +613,14 @@ reporter: v17 (2026-09-17)
 
 ### `logparse-atomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,029.4 | 4,984.7 | 5,092.2 | 38.0 | 1.000x | 1.000x | 75 | 67.1 | 58.6 | 100% |
 
 ### `logparse-atomic-removed` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 97.4 | 0.0001 | 97.1 | 104.2 | 2.7 | 1.000x | 1.000x |
@@ -615,6 +651,7 @@ reporter: v17 (2026-09-17)
 
 ### `logparse-atomic-removed` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,149.8 | 1,144.9 | 1,155.2 | 3.5 | 1.000x | 1.000x | 75 | 15.3 | 27.2 | 100% |
@@ -625,6 +662,7 @@ reporter: v17 (2026-09-17)
 
 ### `mojibake-curly-quote` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: re2_11.0.0_longest-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `re2_11.0.0_longest-caps-simdna` | measured | `plain` | same program | 23,764.4 | 0.0173 | 23,749.0 | 23,788.5 | 13.7 | 1.000x | 1.000x |
@@ -655,6 +693,7 @@ reporter: v17 (2026-09-17)
 
 ### `mojibake-curly-quote` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,048.9 | 2,044.5 | 2,053.2 | 3.0 | 1.000x | 1.000x | 75 | 27.3 | 27.2 | 100% |
@@ -664,6 +703,7 @@ reporter: v17 (2026-09-17)
 
 ### `nested-comment-rec` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,498,679.7 | 1.0890 | 1,498,478.1 | 1,499,819.6 | 503.0 | 1.000x | 1.000x |
@@ -678,12 +718,14 @@ reporter: v17 (2026-09-17)
 
 ### `nested-comment-rec` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,461.8 | 4,452.7 | 4,474.4 | 7.4 | 1.000x | 1.000x | 75 | 59.5 | 58.6 | 100% |
 
 ### `numeric-id-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 95.3 | 0.0001 | 93.7 | 101.3 | 3.2 | 1.000x | 1.000x |
@@ -714,6 +756,7 @@ reporter: v17 (2026-09-17)
 
 ### `numeric-id-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,958.2 | 1,957.7 | 1,975.6 | 6.9 | 1.000x | 1.000x | spread | 75 | 26.1 | 27.2 | 100% |
@@ -728,6 +771,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `phone-list-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.7 | 0.0001 | 93.7 | 95.4 | 0.7 | 1.000x | 1.000x |
@@ -758,6 +802,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `phone-list-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,983.0 | 1,981.7 | 1,983.6 | 0.7 | 1.000x | 1.000x | spread | 75 | 26.4 | 27.2 | 100% |
@@ -772,6 +817,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `phone-palindrome-6` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 14,477,787.7 | 10.5197 | 14,410,840.5 | 16,677,678.8 | 885,794.3 | 1.000x | 1.000x |
@@ -790,6 +836,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `phone-palindrome-6` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 22,750.7 | 22,734.3 | 22,863.2 | 55.8 | 1.000x | 1.000x | 75 | 303.3 | 58.6 | 100% |
@@ -797,6 +844,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `pwd-strength-chain` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,048.4 | 0.0029 | 4,037.1 | 4,824.4 | 310.2 | 1.000x | 1.000x |
@@ -811,12 +859,14 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `pwd-strength-chain` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 36,028.0 | 36,023.7 | 38,607.8 | 1,014.2 | 1.000x | 1.000x | 75 | 480.4 | 58.6 | 100% |
 
 ### `quoted-delim-match` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,837,824.3 | 2.7886 | 3,817,923.8 | 3,870,074.1 | 18,863.8 | 1.000x | 1.000x |
@@ -831,12 +881,14 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `quoted-delim-match` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 7,095.2 | 7,081.4 | 7,134.8 | 18.7 | 1.000x | 1.000x | 75 | 94.6 | 58.6 | 100% |
 
 ### `router-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,247.3 | 0.0009 | 1,246.8 | 1,251.7 | 2.0 | 1.000x | 1.000x |
@@ -867,6 +919,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `router-prefix-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,296.8 | 2,295.7 | 2,534.7 | 94.7 | 1.000x | 1.000x | 75 | 30.6 | 27.2 | 100% |
@@ -875,6 +928,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `tag-depth3-bound` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,230,556.5 | 1.6207 | 2,228,823.6 | 2,233,826.7 | 1,803.9 | 1.000x | 1.000x |
@@ -893,6 +947,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `tag-depth3-bound` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 6,552.2 | 6,546.6 | 6,588.6 | 15.0 | 1.000x | 1.000x | 75 | 87.4 | 58.6 | 100% |
@@ -900,6 +955,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `tag-pair-match` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,229,027.8 | 1.6196 | 2,228,591.7 | 2,240,708.9 | 4,690.7 | 1.000x | 1.000x |
@@ -918,12 +974,14 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `tag-pair-match` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,951.1 | 5,937.2 | 5,964.9 | 11.6 | 1.000x | 1.000x | 75 | 79.3 | 58.6 | 100% |
 
 ### `trim-nested-star` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 167.0 | 0.0001 | 166.9 | 169.6 | 1.0 | 1.000x | 1.000x |
@@ -954,6 +1012,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `trim-nested-star` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,861.8 | 1,860.9 | 1,864.0 | 1.1 | 1.000x | 1.000x | spread | 75 | 24.8 | 27.2 | 100% |
@@ -968,6 +1027,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `utf8-lead-no-cont` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,036,374.5 | 1.4796 | 2,035,108.2 | 2,045,770.6 | 3,993.6 | 1.000x | 1.000x |
@@ -982,12 +1042,14 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `utf8-lead-no-cont` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,932.3 | 4,926.4 | 5,678.1 | 298.7 | 1.000x | 1.000x | 75 | 65.8 | 58.6 | 100% |
 
 ### `uuid-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.4 | 0.0000 | 30.2 | 30.4 | 0.1 | 1.000x | 1.000x |
@@ -1018,6 +1080,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `uuid-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 571.2 | 570.6 | 573.4 | 1.2 | 1.000x | 1.000x | 75 | 7.6 | 27.2 | 100% |
@@ -1028,6 +1091,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-array-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 123.7 | 0.0001 | 123.3 | 130.7 | 2.8 | 1.000x | 1.000x |
@@ -1058,6 +1122,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-array-begin` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,070.7 | 2,070.5 | 2,091.5 | 8.2 | 1.000x | 1.000x | 75 | 27.6 | 27.2 | 100% |
@@ -1068,6 +1133,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-constant` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 182,372.3 | 0.1325 | 182,184.6 | 182,847.2 | 228.4 | 1.000x | 1.000x |
@@ -1098,6 +1164,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-constant` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,001.9 | 2,988.6 | 3,184.7 | 75.8 | 1.000x | 1.000x | 75 | 40.0 | 27.2 | 100% |
@@ -1108,6 +1175,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-number-extended` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 23,494,350.5 | 17.0712 | 23,280,290.1 | 23,604,505.3 | 127,658.2 | 1.000x | 1.000x |
@@ -1124,6 +1192,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-number-extended` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 11,694.2 | 11,660.0 | 11,771.9 | 39.3 | 1.000x | 1.000x | 75 | 155.9 | 58.6 | 100% |
@@ -1132,6 +1201,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-object-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: tre_0.9.0_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `tre_0.9.0_default-caps-simdna` | measured | `plain` | same program | 23,248.6 | 0.0169 | 23,221.9 | 23,297.5 | 25.3 | 1.000x | 1.000x |
@@ -1162,6 +1232,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-object-begin` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,039.2 | 2,039.1 | 2,110.8 | 28.5 | 1.000x | 1.000x | 75 | 27.2 | 27.2 | 100% |
@@ -1172,6 +1243,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-stringcontent-escape` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,229,854.5 | 1.6202 | 2,228,571.0 | 2,231,481.9 | 1,163.2 | 1.000x | 1.000x |
@@ -1188,6 +1260,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-stringcontent-escape` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,047.9 | 5,034.5 | 5,145.9 | 43.2 | 1.000x | 1.000x | 75 | 67.3 | 58.6 | 100% |
@@ -1196,6 +1269,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-datetime-datefinder-alternation` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 651.5 | 0.0005 | 650.6 | 688.1 | 14.7 | 1.000x | 1.000x |
@@ -1224,6 +1298,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-datetime-datefinder-alternation` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,750.1 | 3,746.0 | 3,768.4 | 7.9 | 1.000x | 1.000x | 75 | 50.0 | 27.2 | 100% |
@@ -1235,6 +1310,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-datetime-moment-iso8601` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 147.8 | 0.0001 | 146.9 | 149.4 | 0.8 | 1.000x | 1.000x |
@@ -1265,6 +1341,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-datetime-moment-iso8601` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,619.0 | 1,618.0 | 1,627.6 | 4.1 | 1.000x | 1.000x | 75 | 21.6 | 27.2 | 100% |
@@ -1275,6 +1352,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-base10num-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 27,178,784.8 | 19.7483 | 27,101,937.3 | 27,960,581.0 | 351,977.7 | 1.000x | 1.000x |
@@ -1289,12 +1367,14 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-base10num-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 15,893.4 | 15,772.3 | 16,188.7 | 147.3 | 1.000x | 1.000x | 75 | 211.9 | 58.6 | 100% |
 
 ### `wild-logparse-base10num-noatomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 25,776,438.6 | 18.7294 | 25,756,114.0 | 26,331,673.2 | 219,154.1 | 1.000x | 1.000x |
@@ -1309,12 +1389,14 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-base10num-noatomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 15,951.5 | 15,869.6 | 16,015.9 | 51.1 | 1.000x | 1.000x | 75 | 212.7 | 58.6 | 100% |
 
 ### `wild-logparse-quotedstring-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,461,960.6 | 2.5155 | 3,446,127.4 | 3,504,453.5 | 20,710.8 | 1.000x | 1.000x |
@@ -1329,12 +1411,14 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-quotedstring-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 6,263.0 | 6,260.9 | 6,298.7 | 14.1 | 1.000x | 1.000x | 75 | 83.5 | 58.6 | 100% |
 
 ### `wild-logparse-quotedstring-noatomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,273,987.7 | 2.3789 | 3,251,490.0 | 3,319,012.3 | 27,398.1 | 1.000x | 1.000x |
@@ -1349,6 +1433,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-quotedstring-noatomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 290,745.7 | 290,281.8 | 291,145.7 | 305.9 | 1.000x | 1.000x | **dominated**: `waf-sleep` is 98.1% of this set | 75 | 3,876.6 | 58.6 | 100% |
@@ -1359,6 +1444,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-syslogbase-expanded` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 69,561,405.2 | 50.5439 | 69,299,673.5 | 69,819,311.8 | 176,101.9 | 1.000x | 1.000x |
@@ -1373,12 +1459,14 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-syslogbase-expanded` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 23,531.8 | 23,414.9 | 29,466.6 | 2,388.1 | 1.000x | 1.000x | 75 | 313.8 | 58.6 | 100% |
 
 ### `wild-logparse-winpath-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,227,676.0 | 1.6186 | 2,226,582.6 | 2,229,305.0 | 889.6 | 1.000x | 1.000x |
@@ -1393,12 +1481,14 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-winpath-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,334.2 | 5,319.0 | 5,343.5 | 9.4 | 1.000x | 1.000x | 75 | 71.1 | 58.6 | 100% |
 
 ### `wild-secrets-aws-access-key-id` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 292,470.2 | 0.2125 | 292,421.7 | 293,292.6 | 326.1 | 1.000x | 1.000x |
@@ -1429,6 +1519,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-aws-access-key-id` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,103.2 | 2,101.5 | 2,103.9 | 0.8 | 1.000x | 1.000x | 75 | 28.0 | 27.2 | 100% |
@@ -1439,6 +1530,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-github-pat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 60,324.7 | 0.0438 | 60,289.3 | 60,386.9 | 32.2 | 1.000x | 1.000x |
@@ -1469,6 +1561,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-github-pat` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 829.8 | 827.8 | 830.7 | 1.2 | 1.000x | 1.000x | 75 | 11.1 | 27.2 | 100% |
@@ -1479,6 +1572,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-slack-webhook-url` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 111,983.2 | 0.0814 | 111,928.7 | 112,443.5 | 193.7 | 1.000x | 1.000x |
@@ -1509,6 +1603,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-slack-webhook-url` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 694.3 | 692.5 | 695.1 | 0.9 | 1.000x | 1.000x | 75 | 9.3 | 27.2 | 100% |
@@ -1519,6 +1614,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-username-password-pair` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 475,056.4 | 0.3452 | 474,924.7 | 476,086.8 | 498.4 | 1.000x | 1.000x |
@@ -1547,6 +1643,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-username-password-pair` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,647.4 | 1,645.7 | 1,683.2 | 14.6 | 1.000x | 1.000x | 75 | 22.0 | 27.2 | 100% |
@@ -1558,6 +1655,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-semdiv-altorder-foo-foobar-rustregex` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 153,409.3 | 0.1115 | 153,382.2 | 153,915.9 | 228.1 | 1.000x | 1.000x |
@@ -1588,6 +1686,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-semdiv-altorder-foo-foobar-rustregex` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,402.5 | 2,399.7 | 2,406.6 | 2.5 | 1.000x | 1.000x | 75 | 32.0 | 27.2 | 100% |
@@ -1598,6 +1697,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-semdiv-dollar-trailing-newline-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 151.3 | 0.0001 | 151.1 | 151.4 | 0.1 | 1.000x | 1.000x |
@@ -1628,6 +1728,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-semdiv-dollar-trailing-newline-pcre2` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,760.9 | 2,757.8 | 2,771.5 | 4.9 | 1.000x | 1.000x | 75 | 36.8 | 27.2 | 100% |
@@ -1638,6 +1739,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-semdiv-empty-alt-repeat-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 241.4 | 0.0002 | 241.2 | 242.3 | 0.4 | 1.000x | 1.000x |
@@ -1668,6 +1770,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-semdiv-empty-alt-repeat-pcre2` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,892.4 | 3,886.7 | 4,064.4 | 69.3 | 1.000x | 1.000x | 75 | 51.9 | 27.2 | 100% |
@@ -1678,6 +1781,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-validator-email-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 199.8 | 0.0001 | 195.6 | 202.2 | 2.3 | 1.000x | 1.000x |
@@ -1708,6 +1812,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-validator-email-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,247.0 | 2,244.2 | 2,268.6 | 9.0 | 1.000x | 1.000x | 75 | 30.0 | 27.2 | 100% |
@@ -1718,6 +1823,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-validator-ipv4-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.4 | 0.0000 | 30.3 | 36.4 | 2.9 | 1.000x | 1.000x |
@@ -1748,6 +1854,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-validator-ipv4-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 950.7 | 949.6 | 952.6 | 1.1 | 1.000x | 1.000x | 75 | 12.7 | 27.2 | 100% |
@@ -1758,6 +1865,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-validator-us-zip-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.3 | 0.0000 | 30.3 | 30.4 | 0.1 | 1.000x | 1.000x |
@@ -1788,6 +1896,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-validator-us-zip-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 986.3 | 984.0 | 1,176.3 | 76.2 | 1.000x | 1.000x | 75 | 13.2 | 27.2 | 100% |
@@ -1798,6 +1907,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-validator-uuid-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 243,490.9 | 0.1769 | 243,334.2 | 245,883.2 | 970.7 | 1.000x | 1.000x |
@@ -1828,6 +1938,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-validator-uuid-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,625.9 | 1,623.3 | 1,676.5 | 20.6 | 1.000x | 1.000x | 75 | 21.7 | 27.2 | 100% |
@@ -1838,6 +1949,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942140-dbnames` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 600,337.0 | 0.4362 | 600,029.2 | 600,994.4 | 346.0 | 1.000x | 1.000x |
@@ -1868,6 +1980,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942140-dbnames` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,412.9 | 3,406.4 | 3,884.5 | 185.7 | 1.000x | 1.000x | 75 | 45.5 | 27.2 | 100% |
@@ -1878,6 +1991,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942160-sleep-benchmark` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 160,217.0 | 0.1164 | 160,176.6 | 160,496.2 | 119.3 | 1.000x | 1.000x |
@@ -1908,6 +2022,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942160-sleep-benchmark` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,420.3 | 2,418.3 | 2,429.3 | 4.3 | 1.000x | 1.000x | 75 | 32.3 | 27.2 | 100% |
@@ -1918,6 +2033,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942270-union-select` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 86,366.8 | 0.0628 | 86,279.7 | 86,983.2 | 253.6 | 1.000x | 1.000x |
@@ -1948,6 +2064,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942270-union-select` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,914.2 | 1,910.3 | 1,918.6 | 3.2 | 1.000x | 1.000x | 75 | 25.5 | 27.2 | 100% |
@@ -1958,6 +2075,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942360-concat-sqli` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 878,263.5 | 0.6382 | 875,941.9 | 880,883.5 | 1,594.2 | 1.000x | 1.000x |
@@ -1988,6 +2106,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942360-concat-sqli` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 4,575.5 | 4,558.2 | 4,581.3 | 9.6 | 1.000x | 1.000x | 75 | 61.0 | 27.2 | 100% |
@@ -1997,6 +2116,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942500-comment-obfuscation` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 60,231.1 | 0.0438 | 60,206.6 | 60,404.6 | 71.4 | 1.000x | 1.000x |
@@ -2025,6 +2145,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942500-comment-obfuscation` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,358.9 | 2,352.4 | 2,360.9 | 3.5 | 1.000x | 1.000x | 75 | 31.5 | 27.2 | 100% |
@@ -2036,6 +2157,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `winpath-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.2 | 0.0001 | 93.4 | 111.8 | 7.1 | 1.000x | 1.000x |
@@ -2066,6 +2188,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `winpath-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,463.5 | 1,462.9 | 1,468.1 | 1.9 | 1.000x | 1.000x | 75 | 19.5 | 27.2 | 100% |

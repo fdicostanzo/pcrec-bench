@@ -1,4 +1,4 @@
-# reporter: v17 (2026-09-17); filters: subbench=bounded, version=0.3, since=2026-09-05T02:00:00Z, until=2026-09-05T11:00:00Z, testee=pcrec_288d505_auto-caps-simdna, testee=pcrec_288d505_vm-caps-simdna, testee=pcrec_288d505_auto-caps-simdna_cc-clang, testee=pcrec_334fd10e_auto-caps-simdna, testee=pcrec_334fd10e_vm-caps-simdna, testee=pcrec_334fd10e_auto-caps-simdna_cc-clang; source: store/index.tsv (6 record(s) matching this query); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: bounded@0.3; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 6; mixed_x13: False; include_provenance: False; worst_other_core_busy: 57.14% (pcrec_334fd10e_auto-caps-simdna_cc-clang / hex32 / large-subject-throughput); floor_pattern: floor
+# reporter: v18 (2026-09-18); filters: subbench=bounded, version=0.3, since=2026-09-05T02:00:00Z, until=2026-09-05T11:00:00Z, testee=pcrec_288d505_auto-caps-simdna, testee=pcrec_288d505_vm-caps-simdna, testee=pcrec_288d505_auto-caps-simdna_cc-clang, testee=pcrec_334fd10e_auto-caps-simdna, testee=pcrec_334fd10e_vm-caps-simdna, testee=pcrec_334fd10e_auto-caps-simdna_cc-clang; source: store/index.tsv (6 record(s) matching this query); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: bounded@0.3; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 6; mixed_x13: False; include_provenance: False; worst_other_core_busy: 57.14% (pcrec_334fd10e_auto-caps-simdna_cc-clang / hex32 / large-subject-throughput); floor_pattern: floor
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 record						bounded@0.3__pcrec_288d505_auto-caps-simdna__budu-ryzen1600__20260905T041050Z				agreement	agree (0 of 126 groups; 1 of 4200 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
 record						bounded@0.3__pcrec_288d505_auto-caps-simdna_cc-clang__budu-ryzen1600__20260905T045054Z				agreement	agree (0 of 126 groups; 0 of 4200 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
@@ -6,6 +6,7 @@ record						bounded@0.3__pcrec_288d505_vm-caps-simdna__budu-ryzen1600__20260905T
 record						bounded@0.3__pcrec_334fd10e_auto-caps-simdna__budu-ryzen1600__20260905T090305Z				agreement	agree (0 of 126 groups; 0 of 4200 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
 record						bounded@0.3__pcrec_334fd10e_auto-caps-simdna_cc-clang__budu-ryzen1600__20260905T103407Z				agreement	agree (0 of 126 groups; 0 of 4200 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
 record						bounded@0.3__pcrec_334fd10e_vm-caps-simdna__budu-ryzen1600__20260905T094810Z				agreement	agree (0 of 129 groups; 0 of 4300 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+baseline	cls-atleast-4096	(set)	large-subject-throughput			pcrec_288d505_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-atleast-4096	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	1	median_ns	72647.046071	5	1.0000	0	0		
 rank	cls-atleast-4096	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	1	min_ns	72051.072168	5	1.0000	0	0		
 rank	cls-atleast-4096	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	1	max_ns	73392.128590	5	1.0000	0	0		
@@ -42,6 +43,7 @@ rank	cls-atleast-4096	(set)	large-subject-throughput	plain	same program	pcrec_33
 rank	cls-atleast-4096	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	1092.935294	5	1.0000	0	0		unchanged (within spread)
 rank	cls-atleast-4096	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	1.408766	5	1.0000	0	0		unchanged (within spread)
 rank	cls-atleast-4096	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	1.408766	5	1.0000	0	0		unchanged (within spread)
+baseline	cls-atleast-4096	(set)	match-compliance			pcrec_288d505_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-atleast-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	1	median_ns	1558.898674	49	1.0000	0	0		
 rank	cls-atleast-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	1	min_ns	1556.656327	49	1.0000	0	0		
 rank	cls-atleast-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	1	max_ns	1569.871971	49	1.0000	0	0		
@@ -78,6 +80,7 @@ rank	cls-atleast-4096	(set)	match-compliance	whole-subject	separate artifact	pcr
 rank	cls-atleast-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	4.169309	49	1.0000	0	0		slower ×1.00
 rank	cls-atleast-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	5.221048	49	1.0000	0	0		slower ×1.00
 rank	cls-atleast-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	5.221048	49	1.0000	0	0		slower ×1.00
+baseline	cls-atleast-4096	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-atleast-4096	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	2314.311963	46	1.0000	0	0		faster ×1.14
 rank	cls-atleast-4096	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	2296.356702	46	1.0000	0	0		faster ×1.14
 rank	cls-atleast-4096	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	2332.345621	46	1.0000	0	0		faster ×1.14
@@ -114,6 +117,7 @@ rank	cls-atleast-4096	(set)	short-subject-search	plain	same program	pcrec_334fd1
 rank	cls-atleast-4096	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	23.146472	46	1.0000	0	0		slower ×1.02
 rank	cls-atleast-4096	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	22.604783	46	1.0000	0	0		slower ×1.02
 rank	cls-atleast-4096	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	22.604783	46	1.0000	0	0		slower ×1.02
+baseline	cls-lazy-16384	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-lazy-16384	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	331892.214518	5	1.0000	0	0		
 rank	cls-lazy-16384	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	331733.774648	5	1.0000	0	0		
 rank	cls-lazy-16384	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	332361.958830	5	1.0000	0	0		
@@ -150,6 +154,7 @@ rank	cls-lazy-16384	(set)	large-subject-throughput	plain	same program	pcrec_334f
 rank	cls-lazy-16384	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	753.013947	5	1.0000	0	0		unchanged (within spread)
 rank	cls-lazy-16384	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.086974	5	1.0000	0	0		unchanged (within spread)
 rank	cls-lazy-16384	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.086974	5	1.0000	0	0		unchanged (within spread)
+baseline	cls-lazy-16384	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-lazy-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	8663.412741	49	1.0000	0	0		unchanged (within spread)
 rank	cls-lazy-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	8660.649974	49	1.0000	0	0		unchanged (within spread)
 rank	cls-lazy-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	8666.198747	49	1.0000	0	0		unchanged (within spread)
@@ -186,6 +191,7 @@ rank	cls-lazy-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec
 rank	cls-lazy-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	24.394036	49	1.0000	0	0		
 rank	cls-lazy-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	1.037977	49	1.0000	0	0		
 rank	cls-lazy-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	1.037977	49	1.0000	0	0		
+baseline	cls-lazy-16384	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-lazy-16384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	326.293971	46	1.0000	0	0		faster ×1.37
 rank	cls-lazy-16384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	326.124619	46	1.0000	0	0		faster ×1.37
 rank	cls-lazy-16384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	326.404408	46	1.0000	0	0		faster ×1.37
@@ -222,6 +228,7 @@ rank	cls-lazy-16384	(set)	short-subject-search	plain	same program	pcrec_334fd10e
 rank	cls-lazy-16384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	9.990100	46	1.0000	0	0		unchanged (within spread)
 rank	cls-lazy-16384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.418150	46	1.0000	0	0		unchanged (within spread)
 rank	cls-lazy-16384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.418150	46	1.0000	0	0		unchanged (within spread)
+baseline	cls-upto-1024	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	109502.479883	5	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	109251.702855	5	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	109690.700832	5	1.0000	0	0		unchanged (within spread)
@@ -258,6 +265,7 @@ rank	cls-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d5
 rank	cls-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	146.834365	5	1.0000	0	0		
 rank	cls-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.258654	5	1.0000	0	0		
 rank	cls-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.258654	5	1.0000	0	0		
+baseline	cls-upto-1024	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	1922.971945	49	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	1893.262904	49	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	2082.146481	49	1.0000	0	0		unchanged (within spread)
@@ -294,6 +302,7 @@ rank	cls-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_
 rank	cls-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	41.399697	49	1.0000	0	0		
 rank	cls-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.513489	49	1.0000	0	0		
 rank	cls-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	2.513489	49	1.0000	0	0		
+baseline	cls-upto-1024	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	943.183610	46	1.0000	0	0		
 rank	cls-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	942.384575	46	1.0000	0	0		
 rank	cls-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	949.571529	46	1.0000	0	0		
@@ -330,6 +339,7 @@ rank	cls-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_v
 rank	cls-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	2.224260	46	1.0000	0	0		
 rank	cls-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.375674	46	1.0000	0	0		
 rank	cls-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.375674	46	1.0000	0	0		
+baseline	cls-upto-128	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	119598.145556	5	1.0000	0	0		faster ×1.20
 rank	cls-upto-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	119583.434730	5	1.0000	0	0		faster ×1.20
 rank	cls-upto-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	119689.117462	5	1.0000	0	0		faster ×1.20
@@ -366,6 +376,7 @@ rank	cls-upto-128	(set)	large-subject-throughput	plain	same program	pcrec_288d50
 rank	cls-upto-128	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	416.870103	5	1.0000	0	0		
 rank	cls-upto-128	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.198836	5	1.0000	0	0		
 rank	cls-upto-128	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.198836	5	1.0000	0	0		
+baseline	cls-upto-128	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	987.734508	49	1.0000	0	0		faster ×1.13
 rank	cls-upto-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	952.145914	49	1.0000	0	0		faster ×1.13
 rank	cls-upto-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	1022.044800	49	1.0000	0	0		faster ×1.13
@@ -402,6 +413,7 @@ rank	cls-upto-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_2
 rank	cls-upto-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	2.747740	49	1.0000	0	0		
 rank	cls-upto-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.082562	49	1.0000	0	0		
 rank	cls-upto-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	2.082562	49	1.0000	0	0		
+baseline	cls-upto-128	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	761.486666	46	1.0000	0	0		faster ×1.21
 rank	cls-upto-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	756.604946	46	1.0000	0	0		faster ×1.21
 rank	cls-upto-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	763.877433	46	1.0000	0	0		faster ×1.21
@@ -438,6 +450,7 @@ rank	cls-upto-128	(set)	short-subject-search	plain	same program	pcrec_288d505_vm
 rank	cls-upto-128	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	0.882136	46	1.0000	0	0		
 rank	cls-upto-128	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.500917	46	1.0000	0	0		
 rank	cls-upto-128	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.500917	46	1.0000	0	0		
+baseline	cls-upto-16	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	125528.247844	5	1.0000	0	0		faster ×1.18
 rank	cls-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	125348.564425	5	1.0000	0	0		faster ×1.18
 rank	cls-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	125612.988421	5	1.0000	0	0		faster ×1.18
@@ -474,6 +487,7 @@ rank	cls-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505
 rank	cls-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1889.346828	5	1.0000	0	0		
 rank	cls-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.732935	5	1.0000	0	0		
 rank	cls-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.732935	5	1.0000	0	0		
+baseline	cls-upto-16	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	438.645373	49	1.0000	0	0		faster ×1.02
 rank	cls-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	438.357203	49	1.0000	0	0		faster ×1.02
 rank	cls-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	441.518548	49	1.0000	0	0		faster ×1.02
@@ -510,6 +524,7 @@ rank	cls-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_28
 rank	cls-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	3.245827	49	1.0000	0	0		
 rank	cls-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.599202	49	1.0000	0	0		
 rank	cls-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.599202	49	1.0000	0	0		
+baseline	cls-upto-16	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	466.058418	46	1.0000	0	0		faster ×1.08
 rank	cls-upto-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	462.342884	46	1.0000	0	0		faster ×1.08
 rank	cls-upto-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	469.958731	46	1.0000	0	0		faster ×1.08
@@ -546,6 +561,7 @@ rank	cls-upto-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-
 rank	cls-upto-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	0.680164	46	1.0000	0	0		
 rank	cls-upto-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.784144	46	1.0000	0	0		
 rank	cls-upto-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.784144	46	1.0000	0	0		
+baseline	cls-upto-16384	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-16384	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	111585.085860	5	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-16384	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	111512.674509	5	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-16384	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	111661.988843	5	1.0000	0	0		unchanged (within spread)
@@ -582,6 +598,7 @@ rank	cls-upto-16384	(set)	large-subject-throughput	plain	same program	pcrec_288d
 rank	cls-upto-16384	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	751.397275	5	1.0000	0	0		
 rank	cls-upto-16384	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.199070	5	1.0000	0	0		
 rank	cls-upto-16384	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.199070	5	1.0000	0	0		
+baseline	cls-upto-16384	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	1832.195108	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	1831.592074	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	1833.857899	49	1.0000	0	0		faster ×1.11
@@ -618,6 +635,7 @@ rank	cls-upto-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec
 rank	cls-upto-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	2.031833	49	1.0000	0	0		
 rank	cls-upto-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.108484	49	1.0000	0	0		
 rank	cls-upto-16384	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.108484	49	1.0000	0	0		
+baseline	cls-upto-16384	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-16384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	915.177126	46	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-16384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	913.920006	46	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-16384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1050.640356	46	1.0000	0	0		unchanged (within spread)
@@ -654,6 +672,7 @@ rank	cls-upto-16384	(set)	short-subject-search	plain	same program	pcrec_288d505_
 rank	cls-upto-16384	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1.527038	46	1.0000	0	0		
 rank	cls-upto-16384	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.409457	46	1.0000	0	0		
 rank	cls-upto-16384	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.409457	46	1.0000	0	0		
+baseline	cls-upto-2048	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-2048	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	108490.971357	5	1.0000	0	0		
 rank	cls-upto-2048	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	108403.649633	5	1.0000	0	0		
 rank	cls-upto-2048	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	109052.835472	5	1.0000	0	0		
@@ -690,6 +709,7 @@ rank	cls-upto-2048	(set)	large-subject-throughput	plain	same program	pcrec_288d5
 rank	cls-upto-2048	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	252.466213	5	1.0000	0	0		
 rank	cls-upto-2048	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.269793	5	1.0000	0	0		
 rank	cls-upto-2048	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.269793	5	1.0000	0	0		
+baseline	cls-upto-2048	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-2048	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	1833.970543	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-2048	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	1831.665183	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-2048	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	1839.982636	49	1.0000	0	0		faster ×1.11
@@ -726,6 +746,7 @@ rank	cls-upto-2048	(set)	match-compliance	whole-subject	separate artifact	pcrec_
 rank	cls-upto-2048	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	6.951491	49	1.0000	0	0		
 rank	cls-upto-2048	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	7.077546	49	1.0000	0	0		
 rank	cls-upto-2048	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	7.077546	49	1.0000	0	0		
+baseline	cls-upto-2048	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-2048	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	943.966515	46	1.0000	0	0		
 rank	cls-upto-2048	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	943.087296	46	1.0000	0	0		
 rank	cls-upto-2048	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	946.497131	46	1.0000	0	0		
@@ -762,6 +783,7 @@ rank	cls-upto-2048	(set)	short-subject-search	plain	same program	pcrec_288d505_v
 rank	cls-upto-2048	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	0.941639	46	1.0000	0	0		
 rank	cls-upto-2048	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.370876	46	1.0000	0	0		
 rank	cls-upto-2048	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.370876	46	1.0000	0	0		
+baseline	cls-upto-256	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	113047.984404	5	1.0000	0	0		
 rank	cls-upto-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	113008.647018	5	1.0000	0	0		
 rank	cls-upto-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	113280.203899	5	1.0000	0	0		
@@ -798,6 +820,7 @@ rank	cls-upto-256	(set)	large-subject-throughput	plain	same program	pcrec_288d50
 rank	cls-upto-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	219.609677	5	1.0000	0	0		
 rank	cls-upto-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.245490	5	1.0000	0	0		
 rank	cls-upto-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.245490	5	1.0000	0	0		
+baseline	cls-upto-256	(set)	match-compliance			pcrec_288d505_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	1	median_ns	1417.440768	49	1.0000	0	0		
 rank	cls-upto-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	1	min_ns	1416.173951	49	1.0000	0	0		
 rank	cls-upto-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	1	max_ns	1424.411018	49	1.0000	0	0		
@@ -834,6 +857,7 @@ rank	cls-upto-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_2
 rank	cls-upto-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	3.971681	49	1.0000	0	0		
 rank	cls-upto-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.112293	49	1.0000	0	0		
 rank	cls-upto-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	2.112293	49	1.0000	0	0		
+baseline	cls-upto-256	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-256	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	943.137538	46	1.0000	0	0		
 rank	cls-upto-256	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	941.897154	46	1.0000	0	0		
 rank	cls-upto-256	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	944.061889	46	1.0000	0	0		
@@ -870,6 +894,7 @@ rank	cls-upto-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm
 rank	cls-upto-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1.219944	46	1.0000	0	0		
 rank	cls-upto-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.371620	46	1.0000	0	0		
 rank	cls-upto-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.371620	46	1.0000	0	0		
+baseline	cls-upto-32	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	120187.320659	5	1.0000	0	0		faster ×1.33
 rank	cls-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	119873.591426	5	1.0000	0	0		faster ×1.33
 rank	cls-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	120302.426738	5	1.0000	0	0		faster ×1.33
@@ -906,6 +931,7 @@ rank	cls-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505
 rank	cls-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1148.166441	5	1.0000	0	0		
 rank	cls-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.258752	5	1.0000	0	0		
 rank	cls-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.258752	5	1.0000	0	0		
+baseline	cls-upto-32	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	582.582794	49	1.0000	0	0		faster ×1.22
 rank	cls-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	582.037153	49	1.0000	0	0		faster ×1.22
 rank	cls-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	583.217508	49	1.0000	0	0		faster ×1.22
@@ -942,6 +968,7 @@ rank	cls-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_28
 rank	cls-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	3.475552	49	1.0000	0	0		
 rank	cls-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.652709	49	1.0000	0	0		
 rank	cls-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.652709	49	1.0000	0	0		
+baseline	cls-upto-32	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-32	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	536.131435	46	1.0000	0	0		faster ×1.12
 rank	cls-upto-32	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	533.394806	46	1.0000	0	0		faster ×1.12
 rank	cls-upto-32	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	536.708516	46	1.0000	0	0		faster ×1.12
@@ -978,6 +1005,7 @@ rank	cls-upto-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-
 rank	cls-upto-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1.755971	46	1.0000	0	0		
 rank	cls-upto-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.656237	46	1.0000	0	0		
 rank	cls-upto-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.656237	46	1.0000	0	0		
+baseline	cls-upto-32768	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-32768	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	154699.141418	5	1.0000	0	0		
 rank	cls-upto-32768	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	153772.963739	5	1.0000	0	0		
 rank	cls-upto-32768	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	156032.759871	5	1.0000	0	0		
@@ -1014,6 +1042,7 @@ rank	cls-upto-32768	(set)	large-subject-throughput	plain	same program	pcrec_288d
 rank	cls-upto-32768	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	133.070638	5	1.0000	0	0		
 rank	cls-upto-32768	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.587471	5	1.0000	0	0		
 rank	cls-upto-32768	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.587471	5	1.0000	0	0		
+baseline	cls-upto-32768	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-32768	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	1832.476718	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-32768	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	1831.325450	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-32768	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	1838.074474	49	1.0000	0	0		faster ×1.11
@@ -1050,6 +1079,7 @@ rank	cls-upto-32768	(set)	match-compliance	whole-subject	separate artifact	pcrec
 rank	cls-upto-32768	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	1.612504	49	1.0000	0	0		
 rank	cls-upto-32768	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.106603	49	1.0000	0	0		
 rank	cls-upto-32768	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.106603	49	1.0000	0	0		
+baseline	cls-upto-32768	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-32768	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1045.379989	46	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-32768	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1043.426434	46	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-32768	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1077.313116	46	1.0000	0	0		unchanged (within spread)
@@ -1086,6 +1116,7 @@ rank	cls-upto-32768	(set)	short-subject-search	plain	same program	pcrec_288d505_
 rank	cls-upto-32768	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1.022009	46	1.0000	0	0		
 rank	cls-upto-32768	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.237557	46	1.0000	0	0		
 rank	cls-upto-32768	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.237557	46	1.0000	0	0		
+baseline	cls-upto-4	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	150264.515431	5	1.0000	0	0		faster ×1.02
 rank	cls-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	150145.429585	5	1.0000	0	0		faster ×1.02
 rank	cls-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	150608.784675	5	1.0000	0	0		faster ×1.02
@@ -1122,6 +1153,7 @@ rank	cls-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_
 rank	cls-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	4210.719473	5	1.0000	0	0		
 rank	cls-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.983737	5	1.0000	0	0		
 rank	cls-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.983737	5	1.0000	0	0		
+baseline	cls-upto-4	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	263.385731	49	1.0000	0	0		faster ×1.04
 rank	cls-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	262.962209	49	1.0000	0	0		faster ×1.04
 rank	cls-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	264.364434	49	1.0000	0	0		faster ×1.04
@@ -1158,6 +1190,7 @@ rank	cls-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288
 rank	cls-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	4.542746	49	1.0000	0	0		
 rank	cls-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.071323	49	1.0000	0	0		
 rank	cls-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	2.071323	49	1.0000	0	0		
+baseline	cls-upto-4	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	427.855603	46	1.0000	0	0		
 rank	cls-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	427.455008	46	1.0000	0	0		
 rank	cls-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	428.808576	46	1.0000	0	0		
@@ -1194,6 +1227,7 @@ rank	cls-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-c
 rank	cls-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1.348565	46	1.0000	0	0		
 rank	cls-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.679314	46	1.0000	0	0		
 rank	cls-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.679314	46	1.0000	0	0		
+baseline	cls-upto-4096	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-4096	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	111899.012109	5	1.0000	0	0		faster ×1.00
 rank	cls-upto-4096	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	111842.092274	5	1.0000	0	0		faster ×1.00
 rank	cls-upto-4096	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	111916.922015	5	1.0000	0	0		faster ×1.00
@@ -1230,6 +1264,7 @@ rank	cls-upto-4096	(set)	large-subject-throughput	plain	same program	pcrec_288d5
 rank	cls-upto-4096	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	198.521032	5	1.0000	0	0		
 rank	cls-upto-4096	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.195774	5	1.0000	0	0		
 rank	cls-upto-4096	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.195774	5	1.0000	0	0		
+baseline	cls-upto-4096	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	1832.688277	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	1831.420885	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	1833.944111	49	1.0000	0	0		faster ×1.11
@@ -1266,6 +1301,7 @@ rank	cls-upto-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_
 rank	cls-upto-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	9.429047	49	1.0000	0	0		
 rank	cls-upto-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	7.076425	49	1.0000	0	0		
 rank	cls-upto-4096	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	7.076425	49	1.0000	0	0		
+baseline	cls-upto-4096	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-4096	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	916.946473	46	1.0000	0	0		faster ×1.05
 rank	cls-upto-4096	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	914.722678	46	1.0000	0	0		faster ×1.05
 rank	cls-upto-4096	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	931.413009	46	1.0000	0	0		faster ×1.05
@@ -1302,6 +1338,7 @@ rank	cls-upto-4096	(set)	short-subject-search	plain	same program	pcrec_288d505_v
 rank	cls-upto-4096	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1.164906	46	1.0000	0	0		
 rank	cls-upto-4096	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.408790	46	1.0000	0	0		
 rank	cls-upto-4096	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.408790	46	1.0000	0	0		
+baseline	cls-upto-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	111007.908861	5	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	110837.051423	5	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-512	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	111067.681818	5	1.0000	0	0		unchanged (within spread)
@@ -1338,6 +1375,7 @@ rank	cls-upto-512	(set)	large-subject-throughput	plain	same program	pcrec_288d50
 rank	cls-upto-512	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	291.788997	5	1.0000	0	0		
 rank	cls-upto-512	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.247457	5	1.0000	0	0		
 rank	cls-upto-512	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.247457	5	1.0000	0	0		
+baseline	cls-upto-512	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	1676.250964	49	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	1576.215195	49	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	1709.127554	49	1.0000	0	0		unchanged (within spread)
@@ -1374,6 +1412,7 @@ rank	cls-upto-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_2
 rank	cls-upto-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	313.385490	49	1.0000	0	0		
 rank	cls-upto-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.327920	49	1.0000	0	0		
 rank	cls-upto-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	2.327920	49	1.0000	0	0		
+baseline	cls-upto-512	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	953.107427	46	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	951.077078	46	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-512	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	953.734181	46	1.0000	0	0		unchanged (within spread)
@@ -1410,6 +1449,7 @@ rank	cls-upto-512	(set)	short-subject-search	plain	same program	pcrec_288d505_vm
 rank	cls-upto-512	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1.149826	46	1.0000	0	0		
 rank	cls-upto-512	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.356125	46	1.0000	0	0		
 rank	cls-upto-512	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.356125	46	1.0000	0	0		
+baseline	cls-upto-64	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	126367.563595	5	1.0000	0	0		faster ×1.17
 rank	cls-upto-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	126262.878317	5	1.0000	0	0		faster ×1.17
 rank	cls-upto-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	126835.425638	5	1.0000	0	0		faster ×1.17
@@ -1446,6 +1486,7 @@ rank	cls-upto-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505
 rank	cls-upto-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	206.168510	5	1.0000	0	0		
 rank	cls-upto-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.165913	5	1.0000	0	0		
 rank	cls-upto-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.165913	5	1.0000	0	0		
+baseline	cls-upto-64	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	810.340071	49	1.0000	0	0		faster ×1.14
 rank	cls-upto-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	809.648543	49	1.0000	0	0		faster ×1.14
 rank	cls-upto-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	814.716156	49	1.0000	0	0		faster ×1.14
@@ -1482,6 +1523,7 @@ rank	cls-upto-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_28
 rank	cls-upto-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	1.501549	49	1.0000	0	0		
 rank	cls-upto-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.830912	49	1.0000	0	0		
 rank	cls-upto-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.830912	49	1.0000	0	0		
+baseline	cls-upto-64	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	648.996118	46	1.0000	0	0		faster ×1.16
 rank	cls-upto-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	647.987845	46	1.0000	0	0		faster ×1.16
 rank	cls-upto-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	664.750151	46	1.0000	0	0		faster ×1.16
@@ -1518,6 +1560,7 @@ rank	cls-upto-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-
 rank	cls-upto-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1.017436	46	1.0000	0	0		
 rank	cls-upto-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.584212	46	1.0000	0	0		
 rank	cls-upto-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.584212	46	1.0000	0	0		
+baseline	cls-upto-65535	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-65535	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	172331.339921	5	1.0000	0	0		faster ×1.44
 rank	cls-upto-65535	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	172191.193017	5	1.0000	0	0		faster ×1.44
 rank	cls-upto-65535	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	172846.164690	5	1.0000	0	0		faster ×1.44
@@ -1534,6 +1577,7 @@ did_not_compile	cls-upto-65535	(set)	large-subject-throughput			pcrec_288d505_au
 did_not_compile	cls-upto-65535	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_cc-clang	did-not-compile									pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)	
 did_not_compile	cls-upto-65535	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)	
 did_not_compile	cls-upto-65535	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang	did-not-compile									pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)	
+baseline	cls-upto-65535	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-65535	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	1833.951576	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-65535	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	1833.256287	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-65535	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	1837.745686	49	1.0000	0	0		faster ×1.11
@@ -1550,6 +1594,7 @@ did_not_compile	cls-upto-65535	(set)	match-compliance			pcrec_288d505_auto-caps-
 did_not_compile	cls-upto-65535	(set)	match-compliance			pcrec_288d505_auto-caps-simdna_cc-clang	did-not-compile									pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)	
 did_not_compile	cls-upto-65535	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)	
 did_not_compile	cls-upto-65535	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang	did-not-compile									pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)	
+baseline	cls-upto-65535	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-65535	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	1107.104129	46	1.0000	0	0		faster ×1.17
 rank	cls-upto-65535	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	1102.713378	46	1.0000	0	0		faster ×1.17
 rank	cls-upto-65535	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	1109.388668	46	1.0000	0	0		faster ×1.17
@@ -1566,6 +1611,7 @@ did_not_compile	cls-upto-65535	(set)	short-subject-search			pcrec_288d505_auto-c
 did_not_compile	cls-upto-65535	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_cc-clang	did-not-compile									pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)	
 did_not_compile	cls-upto-65535	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)	
 did_not_compile	cls-upto-65535	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang	did-not-compile									pcrec: pattern too large (NFA exceeds 131072 states) (pattern offset 0)	
+baseline	cls-upto-8	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	120725.958773	5	1.0000	0	0		faster ×1.03
 rank	cls-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	120482.506994	5	1.0000	0	0		faster ×1.03
 rank	cls-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	120876.239018	5	1.0000	0	0		faster ×1.03
@@ -1602,6 +1648,7 @@ rank	cls-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_
 rank	cls-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	273.167673	5	1.0000	0	0		
 rank	cls-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.197867	5	1.0000	0	0		
 rank	cls-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.197867	5	1.0000	0	0		
+baseline	cls-upto-8	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	322.173935	49	1.0000	0	0		faster ×1.03
 rank	cls-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	322.094571	49	1.0000	0	0		faster ×1.03
 rank	cls-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	324.861137	49	1.0000	0	0		faster ×1.03
@@ -1638,6 +1685,7 @@ rank	cls-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288
 rank	cls-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	2.653016	49	1.0000	0	0		
 rank	cls-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.829258	49	1.0000	0	0		
 rank	cls-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.829258	49	1.0000	0	0		
+baseline	cls-upto-8	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	432.167417	46	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	421.083708	46	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	432.586493	46	1.0000	0	0		unchanged (within spread)
@@ -1674,6 +1722,7 @@ rank	cls-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-c
 rank	cls-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	0.906940	46	1.0000	0	0		
 rank	cls-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.807927	46	1.0000	0	0		
 rank	cls-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.807927	46	1.0000	0	0		
+baseline	cls-upto-8192	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-8192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	111677.836769	5	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-8192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	111617.567305	5	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-8192	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	111693.146253	5	1.0000	0	0		unchanged (within spread)
@@ -1710,6 +1759,7 @@ rank	cls-upto-8192	(set)	large-subject-throughput	plain	same program	pcrec_288d5
 rank	cls-upto-8192	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	720.579846	5	1.0000	0	0		
 rank	cls-upto-8192	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.200436	5	1.0000	0	0		
 rank	cls-upto-8192	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.200436	5	1.0000	0	0		
+baseline	cls-upto-8192	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	cls-upto-8192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	1833.397425	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-8192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	1832.148812	49	1.0000	0	0		faster ×1.11
 rank	cls-upto-8192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	1834.131638	49	1.0000	0	0		faster ×1.11
@@ -1746,6 +1796,7 @@ rank	cls-upto-8192	(set)	match-compliance	whole-subject	separate artifact	pcrec_
 rank	cls-upto-8192	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	25.483801	49	1.0000	0	0		
 rank	cls-upto-8192	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	7.081895	49	1.0000	0	0		
 rank	cls-upto-8192	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	7.081895	49	1.0000	0	0		
+baseline	cls-upto-8192	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	cls-upto-8192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	913.535291	46	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-8192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	910.244342	46	1.0000	0	0		unchanged (within spread)
 rank	cls-upto-8192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1039.847907	46	1.0000	0	0		unchanged (within spread)
@@ -1782,6 +1833,7 @@ rank	cls-upto-8192	(set)	short-subject-search	plain	same program	pcrec_288d505_v
 rank	cls-upto-8192	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	3.303424	46	1.0000	0	0		
 rank	cls-upto-8192	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.415160	46	1.0000	0	0		
 rank	cls-upto-8192	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.415160	46	1.0000	0	0		
+baseline	csv5	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	csv5	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1667.722977	5	1.0000	0	0		unchanged (within spread)
 rank	csv5	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1666.959624	5	1.0000	0	0		unchanged (within spread)
 rank	csv5	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1710.350950	5	1.0000	0	0		unchanged (within spread)
@@ -1818,6 +1870,7 @@ rank	csv5	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-ca
 rank	csv5	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	23709.500447	5	1.0000	0	0		unchanged (within spread)
 rank	csv5	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	10724.073127	5	1.0000	0	0		unchanged (within spread)
 rank	csv5	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	10724.073127	5	1.0000	0	0		unchanged (within spread)
+baseline	csv5	(set)	match-compliance			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	csv5	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1773.266096	49	1.0000	0	0		
 rank	csv5	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1772.435351	49	1.0000	0	0		
 rank	csv5	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1773.643710	49	1.0000	0	0		
@@ -1854,6 +1907,7 @@ rank	csv5	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_v
 rank	csv5	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	11.171745	49	1.0000	0	0		
 rank	csv5	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.213033	49	1.0000	0	0		
 rank	csv5	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.213033	49	1.0000	0	0		
+baseline	csv5	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	csv5	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	947.395027	46	1.0000	0	0		
 rank	csv5	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	944.553231	46	1.0000	0	0		
 rank	csv5	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	952.952105	46	1.0000	0	0		
@@ -1890,6 +1944,7 @@ rank	csv5	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-s
 rank	csv5	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	266.244528	46	1.0000	0	0		unchanged (within spread)
 rank	csv5	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	379.573590	46	1.0000	0	0		unchanged (within spread)
 rank	csv5	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	379.573590	46	1.0000	0	0		unchanged (within spread)
+baseline	ctx-greedy-256	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	ctx-greedy-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	198665.379831	5	1.0000	0	0		faster ×1.01
 rank	ctx-greedy-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	197111.740942	5	1.0000	0	0		faster ×1.01
 rank	ctx-greedy-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	199527.009662	5	1.0000	0	0		faster ×1.01
@@ -1926,6 +1981,7 @@ rank	ctx-greedy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d
 rank	ctx-greedy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	2967.789631	5	1.0000	0	0		
 rank	ctx-greedy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.386616	5	1.0000	0	0		
 rank	ctx-greedy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.386616	5	1.0000	0	0		
+baseline	ctx-greedy-256	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	ctx-greedy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	626.775067	49	1.0000	0	0		unchanged (within spread)
 rank	ctx-greedy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	609.271002	49	1.0000	0	0		unchanged (within spread)
 rank	ctx-greedy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	633.457586	49	1.0000	0	0		unchanged (within spread)
@@ -1962,6 +2018,7 @@ rank	ctx-greedy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec
 rank	ctx-greedy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	8.951852	49	1.0000	0	0		
 rank	ctx-greedy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.576408	49	1.0000	0	0		
 rank	ctx-greedy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.576408	49	1.0000	0	0		
+baseline	ctx-greedy-256	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	ctx-greedy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	7182.353773	46	1.0000	0	0		
 rank	ctx-greedy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	7169.080063	46	1.0000	0	0		
 rank	ctx-greedy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	7205.895574	46	1.0000	0	0		
@@ -1998,6 +2055,7 @@ rank	ctx-greedy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_
 rank	ctx-greedy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	243.582839	46	1.0000	0	0		
 rank	ctx-greedy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.030231	46	1.0000	0	0		
 rank	ctx-greedy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.030231	46	1.0000	0	0		
+baseline	ctx-lazy-1024	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	ctx-lazy-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	197322.815487	5	1.0000	0	0		
 rank	ctx-lazy-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	197272.621295	5	1.0000	0	0		
 rank	ctx-lazy-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	197483.911071	5	1.0000	0	0		
@@ -2034,6 +2092,7 @@ rank	ctx-lazy-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d5
 rank	ctx-lazy-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	218.373542	5	1.0000	0	0		
 rank	ctx-lazy-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.235915	5	1.0000	0	0		
 rank	ctx-lazy-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.235915	5	1.0000	0	0		
+baseline	ctx-lazy-1024	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	ctx-lazy-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1409.516312	49	1.0000	0	0		faster ×1.72
 rank	ctx-lazy-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1407.577427	49	1.0000	0	0		faster ×1.72
 rank	ctx-lazy-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1419.527407	49	1.0000	0	0		faster ×1.72
@@ -2070,6 +2129,7 @@ rank	ctx-lazy-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_
 rank	ctx-lazy-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	3.713583	49	1.0000	0	0		
 rank	ctx-lazy-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	1.716795	49	1.0000	0	0		
 rank	ctx-lazy-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	1.716795	49	1.0000	0	0		
+baseline	ctx-lazy-1024	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	ctx-lazy-1024	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	8821.869807	46	1.0000	0	0		faster ×1.09
 rank	ctx-lazy-1024	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	8816.307567	46	1.0000	0	0		faster ×1.09
 rank	ctx-lazy-1024	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	8857.533725	46	1.0000	0	0		faster ×1.09
@@ -2106,6 +2166,7 @@ rank	ctx-lazy-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_v
 rank	ctx-lazy-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	58.493578	46	1.0000	0	0		
 rank	ctx-lazy-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.702544	46	1.0000	0	0		
 rank	ctx-lazy-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.702544	46	1.0000	0	0		
+baseline	ctx-lazy-256	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	ctx-lazy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	197405.937931	5	1.0000	0	0		
 rank	ctx-lazy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	197282.106583	5	1.0000	0	0		
 rank	ctx-lazy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	197519.342947	5	1.0000	0	0		
@@ -2142,6 +2203,7 @@ rank	ctx-lazy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d50
 rank	ctx-lazy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	221.257414	5	1.0000	0	0		
 rank	ctx-lazy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.235153	5	1.0000	0	0		
 rank	ctx-lazy-256	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.235153	5	1.0000	0	0		
+baseline	ctx-lazy-256	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	ctx-lazy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1409.464889	49	1.0000	0	0		faster ×1.72
 rank	ctx-lazy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1408.974024	49	1.0000	0	0		faster ×1.72
 rank	ctx-lazy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1419.829379	49	1.0000	0	0		faster ×1.72
@@ -2178,6 +2240,7 @@ rank	ctx-lazy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_2
 rank	ctx-lazy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	4.535023	49	1.0000	0	0		
 rank	ctx-lazy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	1.717795	49	1.0000	0	0		
 rank	ctx-lazy-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	1.717795	49	1.0000	0	0		
+baseline	ctx-lazy-256	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	ctx-lazy-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	8809.157643	46	1.0000	0	0		faster ×1.09
 rank	ctx-lazy-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	8803.383762	46	1.0000	0	0		faster ×1.09
 rank	ctx-lazy-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	8840.584902	46	1.0000	0	0		faster ×1.09
@@ -2214,6 +2277,7 @@ rank	ctx-lazy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm
 rank	ctx-lazy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	34.035515	46	1.0000	0	0		
 rank	ctx-lazy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.703411	46	1.0000	0	0		
 rank	ctx-lazy-256	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.703411	46	1.0000	0	0		
+baseline	ctx-lazy-64	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	ctx-lazy-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	197403.225827	5	1.0000	0	0		
 rank	ctx-lazy-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	197345.053649	5	1.0000	0	0		
 rank	ctx-lazy-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	197463.064255	5	1.0000	0	0		
@@ -2250,6 +2314,7 @@ rank	ctx-lazy-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505
 rank	ctx-lazy-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	489.125480	5	1.0000	0	0		
 rank	ctx-lazy-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.239934	5	1.0000	0	0		
 rank	ctx-lazy-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.239934	5	1.0000	0	0		
+baseline	ctx-lazy-64	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	ctx-lazy-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1151.940167	49	1.0000	0	0		faster ×1.79
 rank	ctx-lazy-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1144.076883	49	1.0000	0	0		faster ×1.79
 rank	ctx-lazy-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1155.164729	49	1.0000	0	0		faster ×1.79
@@ -2286,6 +2351,7 @@ rank	ctx-lazy-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_28
 rank	ctx-lazy-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	1.702744	49	1.0000	0	0		
 rank	ctx-lazy-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	1.788847	49	1.0000	0	0		
 rank	ctx-lazy-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	1.788847	49	1.0000	0	0		
+baseline	ctx-lazy-64	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	ctx-lazy-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	8377.733335	46	1.0000	0	0		faster ×1.06
 rank	ctx-lazy-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	8356.034536	46	1.0000	0	0		faster ×1.06
 rank	ctx-lazy-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	8383.155166	46	1.0000	0	0		faster ×1.06
@@ -2322,6 +2388,7 @@ rank	ctx-lazy-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-
 rank	ctx-lazy-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	36.602716	46	1.0000	0	0		
 rank	ctx-lazy-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.902840	46	1.0000	0	0		
 rank	ctx-lazy-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.902840	46	1.0000	0	0		
+baseline	dig-exact-16	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dig-exact-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	62685.526451	5	1.0000	0	0		faster ×1.20
 rank	dig-exact-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	62603.194482	5	1.0000	0	0		faster ×1.20
 rank	dig-exact-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	63841.830074	5	1.0000	0	0		faster ×1.20
@@ -2358,6 +2425,7 @@ rank	dig-exact-16	(set)	large-subject-throughput	plain	same program	pcrec_288d50
 rank	dig-exact-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1354.689475	5	1.0000	0	0		
 rank	dig-exact-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	5.303974	5	1.0000	0	0		
 rank	dig-exact-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	5.303974	5	1.0000	0	0		
+baseline	dig-exact-16	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-exact-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	463.443573	49	1.0000	0	0		faster ×1.03
 rank	dig-exact-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	462.322639	49	1.0000	0	0		faster ×1.03
 rank	dig-exact-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	464.944577	49	1.0000	0	0		faster ×1.03
@@ -2394,6 +2462,7 @@ rank	dig-exact-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_2
 rank	dig-exact-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	6.065005	49	1.0000	0	0		
 rank	dig-exact-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.546054	49	1.0000	0	0		
 rank	dig-exact-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.546054	49	1.0000	0	0		
+baseline	dig-exact-16	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-exact-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	2092.321473	46	1.0000	0	0		faster ×1.15
 rank	dig-exact-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	2085.680546	46	1.0000	0	0		faster ×1.15
 rank	dig-exact-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	2113.049359	46	1.0000	0	0		faster ×1.15
@@ -2430,6 +2499,7 @@ rank	dig-exact-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm
 rank	dig-exact-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	311.342090	46	1.0000	0	0		
 rank	dig-exact-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	5.841226	46	1.0000	0	0		
 rank	dig-exact-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	5.841226	46	1.0000	0	0		
+baseline	dig-exact-2	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dig-exact-2	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	100073.281965	5	1.0000	0	0		faster ×1.50
 rank	dig-exact-2	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	99763.780011	5	1.0000	0	0		faster ×1.50
 rank	dig-exact-2	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	102960.881630	5	1.0000	0	0		faster ×1.50
@@ -2466,6 +2536,7 @@ rank	dig-exact-2	(set)	large-subject-throughput	plain	same program	pcrec_288d505
 rank	dig-exact-2	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	2145.507324	5	1.0000	0	0		
 rank	dig-exact-2	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.785514	5	1.0000	0	0		
 rank	dig-exact-2	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.785514	5	1.0000	0	0		
+baseline	dig-exact-2	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-exact-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	260.384680	49	1.0000	0	0		faster ×1.06
 rank	dig-exact-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	259.855287	49	1.0000	0	0		faster ×1.06
 rank	dig-exact-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	261.149335	49	1.0000	0	0		faster ×1.06
@@ -2502,6 +2573,7 @@ rank	dig-exact-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_28
 rank	dig-exact-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	4.097091	49	1.0000	0	0		
 rank	dig-exact-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.093301	49	1.0000	0	0		
 rank	dig-exact-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	2.093301	49	1.0000	0	0		
+baseline	dig-exact-2	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dig-exact-2	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	935.280445	46	1.0000	0	0		faster ×1.18
 rank	dig-exact-2	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	923.332465	46	1.0000	0	0		faster ×1.18
 rank	dig-exact-2	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	937.126149	46	1.0000	0	0		faster ×1.18
@@ -2538,6 +2610,7 @@ rank	dig-exact-2	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-
 rank	dig-exact-2	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	91.448168	46	1.0000	0	0		
 rank	dig-exact-2	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	4.244720	46	1.0000	0	0		
 rank	dig-exact-2	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	4.244720	46	1.0000	0	0		
+baseline	dig-exact-32	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-exact-32	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	62939.556345	5	1.0000	0	0		faster ×1.41
 rank	dig-exact-32	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	62802.357328	5	1.0000	0	0		faster ×1.41
 rank	dig-exact-32	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	63057.385466	5	1.0000	0	0		faster ×1.41
@@ -2574,6 +2647,7 @@ rank	dig-exact-32	(set)	large-subject-throughput	plain	same program	pcrec_288d50
 rank	dig-exact-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	256.850084	5	1.0000	0	0		
 rank	dig-exact-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	4.361651	5	1.0000	0	0		
 rank	dig-exact-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	4.361651	5	1.0000	0	0		
+baseline	dig-exact-32	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-exact-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	635.597008	49	1.0000	0	0		faster ×1.02
 rank	dig-exact-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	635.274279	49	1.0000	0	0		faster ×1.02
 rank	dig-exact-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	635.645655	49	1.0000	0	0		faster ×1.02
@@ -2610,6 +2684,7 @@ rank	dig-exact-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_2
 rank	dig-exact-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	3.321096	49	1.0000	0	0		
 rank	dig-exact-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.414487	49	1.0000	0	0		
 rank	dig-exact-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.414487	49	1.0000	0	0		
+baseline	dig-exact-32	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-exact-32	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	2102.799551	46	1.0000	0	0		faster ×1.17
 rank	dig-exact-32	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	2070.579621	46	1.0000	0	0		faster ×1.17
 rank	dig-exact-32	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	2142.182575	46	1.0000	0	0		faster ×1.17
@@ -2646,6 +2721,7 @@ rank	dig-exact-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm
 rank	dig-exact-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	16.920733	46	1.0000	0	0		
 rank	dig-exact-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	6.093538	46	1.0000	0	0		
 rank	dig-exact-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	6.093538	46	1.0000	0	0		
+baseline	dig-exact-8	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dig-exact-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	73027.555926	5	1.0000	0	0		faster ×1.23
 rank	dig-exact-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	72574.156852	5	1.0000	0	0		faster ×1.23
 rank	dig-exact-8	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	73684.017222	5	1.0000	0	0		faster ×1.23
@@ -2682,6 +2758,7 @@ rank	dig-exact-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505
 rank	dig-exact-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	4341.039247	5	1.0000	0	0		
 rank	dig-exact-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	4.684055	5	1.0000	0	0		
 rank	dig-exact-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	4.684055	5	1.0000	0	0		
+baseline	dig-exact-8	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-exact-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	348.483682	49	1.0000	0	0		faster ×1.03
 rank	dig-exact-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	348.268086	49	1.0000	0	0		faster ×1.03
 rank	dig-exact-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	349.248352	49	1.0000	0	0		faster ×1.03
@@ -2718,6 +2795,7 @@ rank	dig-exact-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_28
 rank	dig-exact-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	2.260654	49	1.0000	0	0		
 rank	dig-exact-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.739448	49	1.0000	0	0		
 rank	dig-exact-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.739448	49	1.0000	0	0		
+baseline	dig-exact-8	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dig-exact-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	1946.591296	46	1.0000	0	0		faster ×1.08
 rank	dig-exact-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	1938.188648	46	1.0000	0	0		faster ×1.08
 rank	dig-exact-8	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	1958.522824	46	1.0000	0	0		faster ×1.08
@@ -2754,6 +2832,7 @@ rank	dig-exact-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-
 rank	dig-exact-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	398.781716	46	1.0000	0	0		
 rank	dig-exact-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	5.564432	46	1.0000	0	0		
 rank	dig-exact-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	5.564432	46	1.0000	0	0		
+baseline	dig-upto-16	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	65177.057532	5	1.0000	0	0		faster ×1.38
 rank	dig-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	64935.615283	5	1.0000	0	0		faster ×1.38
 rank	dig-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	65267.532133	5	1.0000	0	0		faster ×1.38
@@ -2790,6 +2869,7 @@ rank	dig-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505
 rank	dig-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	2462.417789	5	1.0000	0	0		
 rank	dig-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	5.111635	5	1.0000	0	0		
 rank	dig-upto-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	5.111635	5	1.0000	0	0		
+baseline	dig-upto-16	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	498.829682	49	1.0000	0	0		faster ×1.02
 rank	dig-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	498.368510	49	1.0000	0	0		faster ×1.02
 rank	dig-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	501.111541	49	1.0000	0	0		faster ×1.02
@@ -2826,6 +2906,7 @@ rank	dig-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_28
 rank	dig-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	28.086351	49	1.0000	0	0		
 rank	dig-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.495193	49	1.0000	0	0		
 rank	dig-upto-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.495193	49	1.0000	0	0		
+baseline	dig-upto-16	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1181.183864	46	1.0000	0	0		faster ×1.24
 rank	dig-upto-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1168.815262	46	1.0000	0	0		faster ×1.24
 rank	dig-upto-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1324.258301	46	1.0000	0	0		faster ×1.24
@@ -2862,6 +2943,7 @@ rank	dig-upto-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-
 rank	dig-upto-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	116.406336	46	1.0000	0	0		
 rank	dig-upto-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.395289	46	1.0000	0	0		
 rank	dig-upto-16	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.395289	46	1.0000	0	0		
+baseline	dig-upto-2	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dig-upto-2	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	147662.286289	5	1.0000	0	0		unchanged (within spread)
 rank	dig-upto-2	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	147472.848146	5	1.0000	0	0		unchanged (within spread)
 rank	dig-upto-2	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	149924.676195	5	1.0000	0	0		unchanged (within spread)
@@ -2898,6 +2980,7 @@ rank	dig-upto-2	(set)	large-subject-throughput	plain	same program	pcrec_288d505_
 rank	dig-upto-2	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	4050.634204	5	1.0000	0	0		
 rank	dig-upto-2	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.583350	5	1.0000	0	0		
 rank	dig-upto-2	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.583350	5	1.0000	0	0		
+baseline	dig-upto-2	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	264.800067	49	1.0000	0	0		faster ×1.05
 rank	dig-upto-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	264.018793	49	1.0000	0	0		faster ×1.05
 rank	dig-upto-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	265.124718	49	1.0000	0	0		faster ×1.05
@@ -2934,6 +3017,7 @@ rank	dig-upto-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_288
 rank	dig-upto-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	3.975452	49	1.0000	0	0		
 rank	dig-upto-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.061879	49	1.0000	0	0		
 rank	dig-upto-2	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	2.061879	49	1.0000	0	0		
+baseline	dig-upto-2	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-2	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	944.167814	46	1.0000	0	0		unchanged (within spread)
 rank	dig-upto-2	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	937.141217	46	1.0000	0	0		unchanged (within spread)
 rank	dig-upto-2	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	944.531173	46	1.0000	0	0		unchanged (within spread)
@@ -2970,6 +3054,7 @@ rank	dig-upto-2	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-c
 rank	dig-upto-2	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	80.896979	46	1.0000	0	0		
 rank	dig-upto-2	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.828056	46	1.0000	0	0		
 rank	dig-upto-2	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.828056	46	1.0000	0	0		
+baseline	dig-upto-32	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	60861.954334	5	1.0000	0	0		faster ×1.40
 rank	dig-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	60817.492002	5	1.0000	0	0		faster ×1.40
 rank	dig-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	60907.360939	5	1.0000	0	0		faster ×1.40
@@ -3006,6 +3091,7 @@ rank	dig-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505
 rank	dig-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	311.176179	5	1.0000	0	0		
 rank	dig-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	4.504479	5	1.0000	0	0		
 rank	dig-upto-32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	4.504479	5	1.0000	0	0		
+baseline	dig-upto-32	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dig-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	596.422679	49	1.0000	0	0		faster ×1.24
 rank	dig-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	593.431674	49	1.0000	0	0		faster ×1.24
 rank	dig-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	598.347938	49	1.0000	0	0		faster ×1.24
@@ -3042,6 +3128,7 @@ rank	dig-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_28
 rank	dig-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	2.932438	49	1.0000	0	0		
 rank	dig-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.584875	49	1.0000	0	0		
 rank	dig-upto-32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.584875	49	1.0000	0	0		
+baseline	dig-upto-32	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-32	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1315.836081	46	1.0000	0	0		faster ×1.21
 rank	dig-upto-32	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1295.633326	46	1.0000	0	0		faster ×1.21
 rank	dig-upto-32	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1342.898808	46	1.0000	0	0		faster ×1.21
@@ -3078,6 +3165,7 @@ rank	dig-upto-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-
 rank	dig-upto-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	4.031333	46	1.0000	0	0		
 rank	dig-upto-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.759290	46	1.0000	0	0		
 rank	dig-upto-32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.759290	46	1.0000	0	0		
+baseline	dig-upto-4	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	106956.471275	5	1.0000	0	0		
 rank	dig-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	106887.651013	5	1.0000	0	0		
 rank	dig-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	107647.939452	5	1.0000	0	0		
@@ -3114,6 +3202,7 @@ rank	dig-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_
 rank	dig-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	441.917803	5	1.0000	0	0		
 rank	dig-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.175257	5	1.0000	0	0		
 rank	dig-upto-4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.175257	5	1.0000	0	0		
+baseline	dig-upto-4	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	297.113033	49	1.0000	0	0		faster ×1.03
 rank	dig-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	296.135167	49	1.0000	0	0		faster ×1.03
 rank	dig-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	297.864020	49	1.0000	0	0		faster ×1.03
@@ -3150,6 +3239,7 @@ rank	dig-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288
 rank	dig-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	4.944821	49	1.0000	0	0		
 rank	dig-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.875861	49	1.0000	0	0		
 rank	dig-upto-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.875861	49	1.0000	0	0		
+baseline	dig-upto-4	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dig-upto-4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	1179.264052	46	1.0000	0	0		faster ×1.05
 rank	dig-upto-4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	1170.870618	46	1.0000	0	0		faster ×1.05
 rank	dig-upto-4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	1201.474972	46	1.0000	0	0		faster ×1.05
@@ -3186,6 +3276,7 @@ rank	dig-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-c
 rank	dig-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	91.073342	46	1.0000	0	0		
 rank	dig-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.103191	46	1.0000	0	0		
 rank	dig-upto-4	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.103191	46	1.0000	0	0		
+baseline	dig-upto-8	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	64247.830081	5	1.0000	0	0		
 rank	dig-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	64235.456370	5	1.0000	0	0		
 rank	dig-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	64573.428771	5	1.0000	0	0		
@@ -3222,6 +3313,7 @@ rank	dig-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_
 rank	dig-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	278.436411	5	1.0000	0	0		
 rank	dig-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	5.354587	5	1.0000	0	0		
 rank	dig-upto-8	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	5.354587	5	1.0000	0	0		
+baseline	dig-upto-8	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	371.703569	49	1.0000	0	0		faster ×1.03
 rank	dig-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	371.612726	49	1.0000	0	0		faster ×1.03
 rank	dig-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	372.529285	49	1.0000	0	0		faster ×1.03
@@ -3258,6 +3350,7 @@ rank	dig-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288
 rank	dig-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	0.727955	49	1.0000	0	0		
 rank	dig-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.707458	49	1.0000	0	0		
 rank	dig-upto-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.707458	49	1.0000	0	0		
+baseline	dig-upto-8	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dig-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1061.927256	46	1.0000	0	0		
 rank	dig-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1056.886619	46	1.0000	0	0		
 rank	dig-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1091.108477	46	1.0000	0	0		
@@ -3294,6 +3387,7 @@ rank	dig-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-c
 rank	dig-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	65.310379	46	1.0000	0	0		
 rank	dig-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.691035	46	1.0000	0	0		
 rank	dig-upto-8	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.691035	46	1.0000	0	0		
+baseline	dotted4	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dotted4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	66389.252009	5	1.0000	0	0		
 rank	dotted4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	66333.310210	5	1.0000	0	0		
 rank	dotted4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	66456.038605	5	1.0000	0	0		
@@ -3330,6 +3424,7 @@ rank	dotted4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm
 rank	dotted4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	8329.928943	5	1.0000	0	0		unchanged (within spread)
 rank	dotted4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	13.910095	5	1.0000	0	0		unchanged (within spread)
 rank	dotted4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	13.910095	5	1.0000	0	0		unchanged (within spread)
+baseline	dotted4	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	dotted4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	313.290655	49	1.0000	0	0		unchanged (within spread)
 rank	dotted4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	312.317544	49	1.0000	0	0		unchanged (within spread)
 rank	dotted4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	389.104527	49	1.0000	0	0		unchanged (within spread)
@@ -3366,6 +3461,7 @@ rank	dotted4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d50
 rank	dotted4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1.543573	49	1.0000	0	0		
 rank	dotted4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.429091	49	1.0000	0	0		
 rank	dotted4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.429091	49	1.0000	0	0		
+baseline	dotted4	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dotted4	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	median_ns	3106.165284	46	1.0000	0	0		
 rank	dotted4	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	min_ns	3098.184589	46	1.0000	0	0		
 rank	dotted4	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	1	max_ns	3113.952381	46	1.0000	0	0		
@@ -3402,6 +3498,7 @@ rank	dotted4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-cap
 rank	dotted4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	403.777835	46	1.0000	0	0		unchanged (within spread)
 rank	dotted4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	8.279517	46	1.0000	0	0		unchanged (within spread)
 rank	dotted4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	8.279517	46	1.0000	0	0		unchanged (within spread)
+baseline	floor	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1667.077796	5	1.0000	0	0		unchanged (within spread)
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1666.186725	5	1.0000	0	0		unchanged (within spread)
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1680.800207	5	1.0000	0	0		unchanged (within spread)
@@ -3438,6 +3535,7 @@ rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-c
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	31.804926	5	1.0000	0	0		slower ×2.00
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	37.874859	5	1.0000	0	0		slower ×2.00
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	37.874859	5	1.0000	0	0		slower ×2.00
+baseline	floor	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	217.138547	49	1.0000	0	0		faster ×1.07
 rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	217.118764	49	1.0000	0	0		faster ×1.07
 rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	217.170499	49	1.0000	0	0		faster ×1.07
@@ -3474,6 +3572,7 @@ rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_
 rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	4.682566	49	1.0000	0	0		
 rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.266709	49	1.0000	0	0		
 rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	2.266709	49	1.0000	0	0		
+baseline	floor	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	438.343119	46	1.0000	0	0		
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	438.089594	46	1.0000	0	0		
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	440.032894	46	1.0000	0	0		
@@ -3510,6 +3609,7 @@ rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	2.193134	46	1.0000	0	0		slower ×1.41
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.413763	46	1.0000	0	0		slower ×1.41
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.413763	46	1.0000	0	0		slower ×1.41
+baseline	grp-upto-1024	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	grp-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	109588.779774	5	1.0000	0	0		unchanged (within spread)
 rank	grp-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	109100.456072	5	1.0000	0	0		unchanged (within spread)
 rank	grp-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	109793.873096	5	1.0000	0	0		unchanged (within spread)
@@ -3546,6 +3646,7 @@ rank	grp-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d5
 rank	grp-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1174.471670	5	1.0000	0	0		
 rank	grp-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.256727	5	1.0000	0	0		
 rank	grp-upto-1024	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.256727	5	1.0000	0	0		
+baseline	grp-upto-1024	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	grp-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	1874.746302	49	1.0000	0	0		faster ×1.08
 rank	grp-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	1835.281635	49	1.0000	0	0		faster ×1.08
 rank	grp-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	1996.084987	49	1.0000	0	0		faster ×1.08
@@ -3582,6 +3683,7 @@ rank	grp-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_
 rank	grp-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	2.563109	49	1.0000	0	0		
 rank	grp-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.577087	49	1.0000	0	0		
 rank	grp-upto-1024	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	2.577087	49	1.0000	0	0		
+baseline	grp-upto-1024	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	grp-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	943.105962	46	1.0000	0	0		
 rank	grp-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	940.205017	46	1.0000	0	0		
 rank	grp-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	944.280116	46	1.0000	0	0		
@@ -3618,6 +3720,7 @@ rank	grp-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_v
 rank	grp-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	0.670989	46	1.0000	0	0		
 rank	grp-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.369837	46	1.0000	0	0		
 rank	grp-upto-1024	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.369837	46	1.0000	0	0		
+baseline	hex32	(set)	large-subject-throughput			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	hex32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	254301.507051	5	1.0000	0	0		
 rank	hex32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	251806.235897	5	1.0000	0	0		
 rank	hex32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	255844.722436	5	1.0000	0	0		
@@ -3654,6 +3757,7 @@ rank	hex32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-ca
 rank	hex32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	3304.797764	5	1.0000	0	0		
 rank	hex32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.212598	5	1.0000	0	0		
 rank	hex32	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.212598	5	1.0000	0	0		
+baseline	hex32	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	hex32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	696.962108	49	1.0000	0	0		faster ×1.15
 rank	hex32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	696.591876	49	1.0000	0	0		faster ×1.15
 rank	hex32	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	702.162832	49	1.0000	0	0		faster ×1.15
@@ -3690,6 +3794,7 @@ rank	hex32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_
 rank	hex32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	5.375644	49	1.0000	0	0		
 rank	hex32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.422220	49	1.0000	0	0		
 rank	hex32	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.422220	49	1.0000	0	0		
+baseline	hex32	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	hex32	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	2566.461130	46	1.0000	0	0		
 rank	hex32	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	2474.968502	46	1.0000	0	0		
 rank	hex32	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	2599.366474	46	1.0000	0	0		
@@ -3726,6 +3831,7 @@ rank	hex32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-s
 rank	hex32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	79.245939	46	1.0000	0	0		
 rank	hex32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	6.887421	46	1.0000	0	0		
 rank	hex32	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	6.887421	46	1.0000	0	0		
+baseline	line-80	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	line-80	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	75437.840431	5	1.0000	0	0		unchanged (within spread)
 rank	line-80	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	75364.180627	5	1.0000	0	0		unchanged (within spread)
 rank	line-80	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	75511.504679	5	1.0000	0	0		unchanged (within spread)
@@ -3762,6 +3868,7 @@ rank	line-80	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_au
 rank	line-80	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	112.464905	5	1.0000	0	0		unchanged (within spread)
 rank	line-80	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	1.178644	5	1.0000	0	0		unchanged (within spread)
 rank	line-80	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	1.178644	5	1.0000	0	0		unchanged (within spread)
+baseline	line-80	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	line-80	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	4643.799253	49	1.0000	0	0		faster ×1.02
 rank	line-80	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	4643.293126	49	1.0000	0	0		faster ×1.02
 rank	line-80	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	4715.244548	49	1.0000	0	0		faster ×1.02
@@ -3798,6 +3905,7 @@ rank	line-80	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d50
 rank	line-80	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	40.647785	49	1.0000	0	0		
 rank	line-80	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	1.260205	49	1.0000	0	0		
 rank	line-80	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	1.260205	49	1.0000	0	0		
+baseline	line-80	(set)	short-subject-search			pcrec_288d505_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_288d505_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	line-80	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	3421.626776	46	1.0000	0	0		
 rank	line-80	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	3418.202906	46	1.0000	0	0		
 rank	line-80	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	3426.740309	46	1.0000	0	0		
@@ -3834,6 +3942,7 @@ rank	line-80	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps
 rank	line-80	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	18.551482	46	1.0000	0	0		
 rank	line-80	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	5.339467	46	1.0000	0	0		
 rank	line-80	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	5.339467	46	1.0000	0	0		
+baseline	nest2-4	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	nest2-4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	65320.446760	5	1.0000	0	0		faster ×1.37
 rank	nest2-4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	65186.302220	5	1.0000	0	0		faster ×1.37
 rank	nest2-4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	65393.856593	5	1.0000	0	0		faster ×1.37
@@ -3870,6 +3979,7 @@ rank	nest2-4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm
 rank	nest2-4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	68309.878776	5	1.0000	0	0		slower ×1.36
 rank	nest2-4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	9.696246	5	1.0000	0	0		slower ×1.36
 rank	nest2-4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	9.696246	5	1.0000	0	0		slower ×1.36
+baseline	nest2-4	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	nest2-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	498.906738	49	1.0000	0	0		faster ×1.02
 rank	nest2-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	498.530775	49	1.0000	0	0		faster ×1.02
 rank	nest2-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	499.012560	49	1.0000	0	0		faster ×1.02
@@ -3906,6 +4016,7 @@ rank	nest2-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d50
 rank	nest2-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	16.822789	49	1.0000	0	0		
 rank	nest2-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	37.198994	49	1.0000	0	0		
 rank	nest2-4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	37.198994	49	1.0000	0	0		
+baseline	nest2-4	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	nest2-4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1170.309507	46	1.0000	0	0		faster ×1.24
 rank	nest2-4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1165.905037	46	1.0000	0	0		faster ×1.24
 rank	nest2-4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1188.118896	46	1.0000	0	0		faster ×1.24
@@ -3942,6 +4053,7 @@ rank	nest2-4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-cap
 rank	nest2-4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	76.014866	46	1.0000	0	0		unchanged (within spread)
 rank	nest2-4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	4.780418	46	1.0000	0	0		unchanged (within spread)
 rank	nest2-4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	4.780418	46	1.0000	0	0		unchanged (within spread)
+baseline	nest2-64	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	nest2-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	62469.798811	5	1.0000	0	0		unchanged (within spread)
 rank	nest2-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	62425.112036	5	1.0000	0	0		unchanged (within spread)
 rank	nest2-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	62546.921100	5	1.0000	0	0		unchanged (within spread)
@@ -3978,6 +4090,7 @@ rank	nest2-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_v
 rank	nest2-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	4772.769847	5	1.0000	0	0		unchanged (within spread)
 rank	nest2-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	7.653110	5	1.0000	0	0		unchanged (within spread)
 rank	nest2-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	7.653110	5	1.0000	0	0		unchanged (within spread)
+baseline	nest2-64	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	nest2-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	2102.030034	49	1.0000	0	0		unchanged (within spread)
 rank	nest2-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	2086.736330	49	1.0000	0	0		unchanged (within spread)
 rank	nest2-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	2108.633340	49	1.0000	0	0		unchanged (within spread)
@@ -4014,6 +4127,7 @@ rank	nest2-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd
 rank	nest2-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	stddev_ns	14.997558	49	1.0000	0	0		unchanged (within spread)
 rank	nest2-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_baseline	1.054653	49	1.0000	0	0		unchanged (within spread)
 rank	nest2-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	6	ratio_vs_best	1.054653	49	1.0000	0	0		unchanged (within spread)
+baseline	nest2-64	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	nest2-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	1697.116561	46	1.0000	0	0		faster ×1.05
 rank	nest2-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	1684.239481	46	1.0000	0	0		faster ×1.05
 rank	nest2-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	1708.705003	46	1.0000	0	0		faster ×1.05
@@ -4050,6 +4164,7 @@ rank	nest2-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-ca
 rank	nest2-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	9.622666	46	1.0000	0	0		unchanged (within spread)
 rank	nest2-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.608688	46	1.0000	0	0		unchanged (within spread)
 rank	nest2-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.608688	46	1.0000	0	0		unchanged (within spread)
+baseline	nest2-letters-6	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	nest2-letters-6	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	132748.332914	5	1.0000	0	0		faster ×1.47
 rank	nest2-letters-6	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	132360.713612	5	1.0000	0	0		faster ×1.47
 rank	nest2-letters-6	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	132970.589909	5	1.0000	0	0		faster ×1.47
@@ -4086,6 +4201,7 @@ rank	nest2-letters-6	(set)	large-subject-throughput	plain	same program	pcrec_288
 rank	nest2-letters-6	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1341.199912	5	1.0000	0	0		
 rank	nest2-letters-6	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.978387	5	1.0000	0	0		
 rank	nest2-letters-6	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.978387	5	1.0000	0	0		
+baseline	nest2-letters-6	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	nest2-letters-6	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	914.590246	49	1.0000	0	0		faster ×1.02
 rank	nest2-letters-6	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	912.113166	49	1.0000	0	0		faster ×1.02
 rank	nest2-letters-6	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	916.704643	49	1.0000	0	0		faster ×1.02
@@ -4122,6 +4238,7 @@ rank	nest2-letters-6	(set)	match-compliance	whole-subject	separate artifact	pcre
 rank	nest2-letters-6	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	3007.978478	49	1.0000	0	0		
 rank	nest2-letters-6	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2607.296824	49	1.0000	0	0		
 rank	nest2-letters-6	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2607.296824	49	1.0000	0	0		
+baseline	nest2-letters-6	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	nest2-letters-6	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1094.275902	46	1.0000	0	0		faster ×1.18
 rank	nest2-letters-6	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1088.023891	46	1.0000	0	0		faster ×1.18
 rank	nest2-letters-6	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1172.950188	46	1.0000	0	0		faster ×1.18
@@ -4158,6 +4275,7 @@ rank	nest2-letters-6	(set)	short-subject-search	plain	same program	pcrec_288d505
 rank	nest2-letters-6	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	374.929185	46	1.0000	0	0		
 rank	nest2-letters-6	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	4.421642	46	1.0000	0	0		
 rank	nest2-letters-6	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	4.421642	46	1.0000	0	0		
+baseline	nest3-16	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	nest3-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	62420.059505	5	1.0000	0	0		unchanged (within spread)
 rank	nest3-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	62376.645287	5	1.0000	0	0		unchanged (within spread)
 rank	nest3-16	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	62495.995946	5	1.0000	0	0		unchanged (within spread)
@@ -4194,6 +4312,7 @@ rank	nest3-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm
 rank	nest3-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	5495.641404	5	1.0000	0	0		
 rank	nest3-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	12.962090	5	1.0000	0	0		
 rank	nest3-16	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	12.962090	5	1.0000	0	0		
+baseline	nest3-16	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	nest3-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	3573.038636	49	1.0000	0	0		faster ×1.07
 rank	nest3-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	3565.773489	49	1.0000	0	0		faster ×1.07
 rank	nest3-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	3587.686285	49	1.0000	0	0		faster ×1.07
@@ -4230,6 +4349,7 @@ rank	nest3-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d5
 rank	nest3-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	10.667846	49	1.0000	0	0		
 rank	nest3-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.116035	49	1.0000	0	0		
 rank	nest3-16	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.116035	49	1.0000	0	0		
+baseline	nest3-16	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	nest3-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	1699.203593	46	1.0000	0	0		faster ×1.05
 rank	nest3-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	1693.669101	46	1.0000	0	0		faster ×1.05
 rank	nest3-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	1713.047429	46	1.0000	0	0		faster ×1.05
@@ -4266,6 +4386,7 @@ rank	nest3-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-ca
 rank	nest3-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	stddev_ns	6.381341	46	1.0000	0	0		unchanged (within spread)
 rank	nest3-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	5.947406	46	1.0000	0	0		unchanged (within spread)
 rank	nest3-16	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	6	ratio_vs_best	5.947406	46	1.0000	0	0		unchanged (within spread)
+baseline	nest3-3	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	nest3-3	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	61685.419454	5	1.0000	0	0		faster ×1.40
 rank	nest3-3	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	61407.553117	5	1.0000	0	0		faster ×1.40
 rank	nest3-3	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	61703.864865	5	1.0000	0	0		faster ×1.40
@@ -4302,6 +4423,7 @@ rank	nest3-3	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-
 rank	nest3-3	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	710.876649	5	1.0000	0	0		
 rank	nest3-3	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	10.272637	5	1.0000	0	0		
 rank	nest3-3	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	10.272637	5	1.0000	0	0		
+baseline	nest3-3	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	nest3-3	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	635.361971	49	1.0000	0	0		unchanged (within spread)
 rank	nest3-3	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	635.213873	49	1.0000	0	0		unchanged (within spread)
 rank	nest3-3	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	635.659299	49	1.0000	0	0		unchanged (within spread)
@@ -4338,6 +4460,7 @@ rank	nest3-3	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d50
 rank	nest3-3	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	9059.309305	49	1.0000	0	0		
 rank	nest3-3	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	4548.284835	49	1.0000	0	0		
 rank	nest3-3	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	4548.284835	49	1.0000	0	0		
+baseline	nest3-3	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	nest3-3	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	1268.167479	46	1.0000	0	0		faster ×1.24
 rank	nest3-3	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	1253.721977	46	1.0000	0	0		faster ×1.24
 rank	nest3-3	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	1295.443728	46	1.0000	0	0		faster ×1.24
@@ -4374,6 +4497,7 @@ rank	nest3-3	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps
 rank	nest3-3	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	595.323052	46	1.0000	0	0		
 rank	nest3-3	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	5.932732	46	1.0000	0	0		
 rank	nest3-3	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	5.932732	46	1.0000	0	0		
+baseline	pw-8-64	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	pw-8-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	118252.129972	5	1.0000	0	0		faster ×1.08
 rank	pw-8-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	117743.299006	5	1.0000	0	0		faster ×1.08
 rank	pw-8-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	119289.768111	5	1.0000	0	0		faster ×1.08
@@ -4410,6 +4534,7 @@ rank	pw-8-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_aut
 rank	pw-8-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	506.708366	5	1.0000	0	0		
 rank	pw-8-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.773438	5	1.0000	0	0		
 rank	pw-8-64	(set)	large-subject-throughput	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.773438	5	1.0000	0	0		
+baseline	pw-8-64	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	pw-8-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	2090.978748	49	1.0000	0	0		faster ×1.05
 rank	pw-8-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	2086.525371	49	1.0000	0	0		faster ×1.05
 rank	pw-8-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	2100.900983	49	1.0000	0	0		faster ×1.05
@@ -4446,6 +4571,7 @@ rank	pw-8-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd1
 rank	pw-8-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	6	stddev_ns	6.044070	49	1.0000	0	0		unchanged (within spread)
 rank	pw-8-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.688820	49	1.0000	0	0		unchanged (within spread)
 rank	pw-8-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.688820	49	1.0000	0	0		unchanged (within spread)
+baseline	pw-8-64	(set)	short-subject-search			pcrec_288d505_vm-caps-simdna				baseline_identity	row-best-fallback					pcrec_288d505_vm-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	pw-8-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	1	median_ns	2262.899245	46	1.0000	0	0		
 rank	pw-8-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	1	min_ns	2259.850882	46	1.0000	0	0		
 rank	pw-8-64	(set)	short-subject-search	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	1	max_ns	2271.630390	46	1.0000	0	0		
@@ -4482,6 +4608,7 @@ rank	pw-8-64	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-ca
 rank	pw-8-64	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	53.933265	46	1.0000	0	0		
 rank	pw-8-64	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.347629	46	1.0000	0	0		
 rank	pw-8-64	(set)	short-subject-search	plain	same program	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.347629	46	1.0000	0	0		
+baseline	year4	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	year4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	90085.167070	5	1.0000	0	0		faster ×1.40
 rank	year4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	90012.117988	5	1.0000	0	0		faster ×1.40
 rank	year4	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	90183.927224	5	1.0000	0	0		faster ×1.40
@@ -4518,6 +4645,7 @@ rank	year4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-ca
 rank	year4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	stddev_ns	1261.201086	5	1.0000	0	0		
 rank	year4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.750661	5	1.0000	0	0		
 rank	year4	(set)	large-subject-throughput	plain	same program	pcrec_288d505_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.750661	5	1.0000	0	0		
+baseline	year4	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_cc-clang				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna_cc-clang (row-best fallback -- interp absent from this group)	
 rank	year4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	median_ns	282.681068	49	1.0000	0	0		faster ×1.05
 rank	year4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	min_ns	282.462975	49	1.0000	0	0		faster ×1.05
 rank	year4	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_auto-caps-simdna_cc-clang	measured	pinned	1	max_ns	284.262009	49	1.0000	0	0		faster ×1.05
@@ -4554,6 +4682,7 @@ rank	year4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_
 rank	year4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	stddev_ns	8.596732	49	1.0000	0	0		
 rank	year4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.953210	49	1.0000	0	0		
 rank	year4	(set)	match-compliance	whole-subject	separate artifact	pcrec_288d505_auto-caps-simdna	measured	pinned	6	ratio_vs_best	1.953210	49	1.0000	0	0		
+baseline	year4	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_334fd10e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	year4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	1772.772398	46	1.0000	0	0		faster ×1.10
 rank	year4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	1769.702168	46	1.0000	0	0		faster ×1.10
 rank	year4	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	1778.874210	46	1.0000	0	0		faster ×1.10

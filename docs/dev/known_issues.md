@@ -992,3 +992,44 @@ the entry is now `{"name": "longest_match", "value": true}`
 synthetic record per config would have caught this at merge time, not
 in a window) — the same class of gap KB-12 closed for pattern/subject
 ids.
+
+## KB-22 (2026-09-18, FIXED same lane) — `scripts/regen_sidecars.py` recovered `report`/`index`/`predictions` from a sidecar's own stamp but not `subject_grain`, silently dropping R-BUCKET-DOMINATED's input on every regeneration
+
+Found by lane `b53regen` mid-wave, the v18 full-report regen's own
+sidecar-refresh step: `regen_one()` parsed `stamp.get("report")`,
+`stamp.get("index")` and `stamp.get("predictions")` to rebuild the exact
+`pcrecbench interpret` invocation a committed sidecar was generated
+with, but never read `stamp.get("subject_grain")` — so a sidecar whose
+ORIGINAL stamp named a `.subject-grain.tsv` input (R-BUCKET-DOMINATED's
+own second file, [B47]) regenerated WITHOUT `--subject-grain`, and
+R-BUCKET-DOMINATED's whole section (33 firings on the capability-after
+sidecar, 8 aggregated by testee) silently disappeared — the rendered
+file still passed the skill's own determinism check (it agreed with
+itself, just not with the ORIGINAL), so nothing failed loudly. Invisible
+until now because only ONE sidecar carried a `subject_grain` stamp
+before 2026-09-17 ([B47]'s own email-specimen witness, which itself was
+generated WITHOUT `--subject-grain` from the start — a separate,
+pre-existing gap this KB does not claim to explain) and this script was
+never run against a `subject_grain`-stamped sidecar until this lane's
+own regen wave hit the two capability sidecars ([B48], 2026-09-18).
+
+Fix: `regen_one()` now also reads `stamp.get("subject_grain")` (absent
+or `(none)` handled exactly like `predictions`; a stamped path that no
+longer exists on disk is a NAMED failure, `... its stamped subject_grain
+input is missing: ...`, never a silent narrowing) and passes
+`--subject-grain <path>` when present. Verified: both affected sidecars
+(`2026-09-18-capability-0.1-...-after-cf0962e3`,
+`...-ext-first-cf0962e3`) regenerate with R-BUCKET-DOMINATED's section
+restored, `subject_grain`/`subject_grain_sha256` stamped correctly, and
+every line below the stamp byte-identical to the pre-regen committed
+content but for the expected reporter-version/hash movement; `make
+check-interpret` 149/149 after the fix (was 143/149 — section 3's
+sha256 re-derive check catches a sidecar that silently lost content just
+as reliably as one that never regenerated at all). FOLLOW-UP worth a
+lane's time: a `make check-interpret` control that plants a synthetic
+`subject_grain`-stamped sidecar and asserts `regen_sidecars.py`
+round-trips it — this class of gap (an input silently dropped on
+regeneration, self-consistent but wrong) is exactly what KB-18's
+`reports/CLAUDE.md` lesson ("a legitimate class the classifier missed")
+warns a next wave to check for, and this KB is that warning's second
+instance in as many waves.

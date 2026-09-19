@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v17 (2026-09-17)
+reporter: v18 (2026-09-18)
 
 ## Query
 
@@ -32,6 +32,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -45,6 +46,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-000` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 58.7 | 58.6 | 59.9 | 0.5 | 0.068x | 1.000x |
@@ -58,6 +60,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -71,6 +74,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-001` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 77.8 | 77.7 | 78.3 | 0.2 | 0.064x | 1.000x |
@@ -84,6 +88,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -97,6 +102,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-002` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.4 | 26.1 | 26.6 | 0.2 | 0.035x | 1.000x |
@@ -110,6 +116,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -123,6 +130,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-003` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 86.5 | 86.3 | 87.3 | 0.4 | 0.066x | 1.000x |
@@ -136,6 +144,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -149,6 +158,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-004` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 120.5 | 120.3 | 120.9 | 0.2 | 0.138x | 1.000x |
@@ -162,6 +172,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -175,6 +186,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-005` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.6 | 26.1 | 27.2 | 0.4 | 0.036x | 1.000x |
@@ -188,6 +200,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -201,6 +214,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-006` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 55.8 | 55.8 | 57.8 | 0.8 | 0.042x | 1.000x |
@@ -214,6 +228,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -227,6 +242,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-007` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 92.1 | 91.9 | 92.6 | 0.2 | 0.094x | 1.000x |
@@ -240,6 +256,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -253,6 +270,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-008` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 69.6 | 69.5 | 69.7 | 0.1 | 0.081x | 1.000x |
@@ -266,6 +284,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -279,6 +298,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-009` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 51.5 | 51.3 | 52.1 | 0.3 | 0.060x | 1.000x |
@@ -292,6 +312,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -305,6 +326,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-010` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 51.5 | 51.5 | 51.9 | 0.2 | 0.072x | 1.000x |
@@ -318,6 +340,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -331,6 +354,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-011` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 34.7 | 34.5 | 35.1 | 0.2 | 0.007x | 1.000x |
@@ -344,6 +368,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -357,6 +382,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-012` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 65.9 | 65.6 | 67.8 | 0.8 | 0.060x | 1.000x |
@@ -370,6 +396,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -383,6 +410,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-013` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 65.8 | 65.8 | 66.9 | 0.4 | 0.060x | 1.000x |
@@ -396,6 +424,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -409,6 +438,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-014` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 51.5 | 51.4 | 52.1 | 0.3 | 0.059x | 1.000x |
@@ -422,6 +452,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -435,6 +466,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-015` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 62.6 | 62.6 | 62.8 | 0.1 | 0.059x | 1.000x |
@@ -448,6 +480,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -461,6 +494,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-016` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 26.1 | 25.8 | 26.3 | 0.2 | 0.011x | 1.000x |
@@ -474,6 +508,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -487,6 +522,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-017` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 65.7 | 65.3 | 65.9 | 0.2 | 0.060x | 1.000x |
@@ -500,6 +536,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -513,6 +550,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-018` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 62.6 | 62.5 | 63.1 | 0.2 | 0.059x | 1.000x |
@@ -526,6 +564,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -539,6 +578,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-019` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 27.7 | 27.6 | 28.0 | 0.1 | 0.011x | 1.000x |
@@ -552,6 +592,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -565,6 +606,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-020` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 73.0 | 72.8 | 74.0 | 0.5 | 0.066x | 1.000x |
@@ -578,6 +620,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -591,6 +634,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-021` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 51.6 | 51.3 | 52.7 | 0.5 | 0.045x | 1.000x |
@@ -604,6 +648,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -617,6 +662,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-022` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 80.4 | 79.4 | 80.9 | 0.5 | 0.119x | 1.000x |
@@ -630,6 +676,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -643,6 +690,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-023` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 65.8 | 65.5 | 65.9 | 0.1 | 0.058x | 1.000x |
@@ -656,6 +704,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -669,6 +718,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-024` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 51.7 | 51.4 | 51.8 | 0.1 | 0.045x | 1.000x |
@@ -682,6 +732,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -695,6 +746,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-025` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 65.8 | 65.6 | 65.9 | 0.1 | 0.058x | 1.000x |
@@ -708,6 +760,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -721,6 +774,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-026` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 80.4 | 80.2 | 81.4 | 0.4 | 0.119x | 1.000x |
@@ -734,6 +788,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -747,6 +802,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-027` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 80.6 | 80.1 | 80.8 | 0.2 | 0.075x | 1.000x |
@@ -760,6 +816,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -773,6 +830,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-028` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 22.1 | 22.1 | 22.3 | 0.1 | 0.008x | 1.000x |
@@ -786,6 +844,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -799,6 +858,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-029` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 45.5 | 45.1 | 45.6 | 0.2 | 0.017x | 1.000x |
@@ -812,6 +872,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -825,6 +886,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-030` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 22.1 | 22.0 | 22.6 | 0.2 | 0.008x | 1.000x |
@@ -838,6 +900,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -851,6 +914,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-031` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 29.6 | 29.4 | 29.9 | 0.2 | 0.011x | 1.000x |
@@ -864,6 +928,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -877,6 +942,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-032` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 26.2 | 26.1 | 26.5 | 0.1 | 0.008x | 1.000x |
@@ -890,6 +956,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -903,6 +970,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-033` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 26.0 | 25.9 | 26.8 | 0.4 | 0.009x | 1.000x |
@@ -916,6 +984,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -929,6 +998,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-034` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.9 | 18.9 | 19.3 | 0.2 | 0.004x | 1.000x |
@@ -942,6 +1012,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -955,6 +1026,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-035` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 25.3 | 25.3 | 25.4 | 0.0 | 0.004x | 1.000x |
@@ -968,6 +1040,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -981,6 +1054,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-036` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.9 | 26.8 | 27.3 | 0.2 | 0.013x | 1.000x |
@@ -994,6 +1068,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1007,6 +1082,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-037` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 21.0 | 20.7 | 21.4 | 0.2 | 0.007x | 1.000x |
@@ -1020,6 +1096,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1033,6 +1110,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-038` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.8 | 26.7 | 27.3 | 0.2 | 0.007x | 1.000x |
@@ -1046,6 +1124,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1059,6 +1138,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-039` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 59.1 | 58.9 | 59.2 | 0.1 | 0.038x | 1.000x |
@@ -1072,6 +1152,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1085,6 +1166,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-040` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 23.7 | 23.6 | 23.9 | 0.1 | 0.666x | 1.000x |
@@ -1098,6 +1180,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1111,6 +1194,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-041` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.8 | 18.8 | 18.8 | 0.0 | 0.104x | 1.000x |
@@ -1124,6 +1208,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1137,6 +1222,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-042` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 12.1 | 11.9 | 12.2 | 0.1 | 0.020x | 1.000x |
@@ -1150,6 +1236,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1163,6 +1250,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-043` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 71.2 | 71.2 | 71.3 | 0.0 | 0.025x | 1.000x |
@@ -1176,6 +1264,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1189,6 +1278,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-044` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 61.8 | 61.8 | 62.1 | 0.1 | 0.061x | 1.000x |
@@ -1202,6 +1292,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1215,6 +1306,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-045` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 25.5 | 25.5 | 26.0 | 0.2 | 0.013x | 1.000x |
@@ -1228,6 +1320,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1241,6 +1334,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-046` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 19.3 | 18.9 | 19.6 | 0.3 | 0.006x | 1.000x |
@@ -1254,6 +1348,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1267,6 +1362,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-047` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 20.5 | 20.4 | 20.7 | 0.1 | 0.003x | 1.000x |
@@ -1280,6 +1376,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1293,6 +1390,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-048` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 12.6 | 12.1 | 12.7 | 0.2 | 0.006x | 1.000x |
@@ -1306,6 +1404,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1319,6 +1418,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-049` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 68.9 | 68.6 | 69.4 | 0.3 | 0.027x | 1.000x |
@@ -1332,6 +1432,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1345,6 +1446,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-050` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 54.0 | 53.8 | 54.2 | 0.2 | 0.015x | 1.000x |
@@ -1358,6 +1460,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1371,6 +1474,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-051` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 68.6 | 68.5 | 68.9 | 0.1 | 0.027x | 1.000x |
@@ -1384,6 +1488,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1397,6 +1502,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-052` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 19.6 | 19.5 | 19.8 | 0.1 | 0.007x | 1.000x |
@@ -1410,6 +1516,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1423,6 +1530,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-053` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 14.4 | 14.4 | 14.6 | 0.1 | 0.005x | 1.000x |
@@ -1436,6 +1544,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1449,6 +1558,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-054` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 14.4 | 14.4 | 14.8 | 0.1 | 0.005x | 1.000x |
@@ -1462,6 +1572,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1475,6 +1586,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-055` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 14.5 | 14.4 | 14.6 | 0.1 | 0.005x | 1.000x |
@@ -1488,6 +1600,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1501,6 +1614,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-056` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 16.5 | 16.2 | 16.6 | 0.1 | 0.006x | 1.000x |
@@ -1514,6 +1628,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1529,6 +1644,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
@@ -1543,6 +1659,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
@@ -1557,6 +1674,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1572,6 +1690,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
@@ -1586,6 +1705,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1601,6 +1721,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
@@ -1615,6 +1736,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
@@ -1629,6 +1751,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1642,6 +1765,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-065` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 21.2 | 21.1 | 21.3 | 0.1 | 0.013x | 1.000x |
@@ -1655,6 +1779,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1668,6 +1793,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-066` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 62.6 | 62.6 | 62.7 | 0.1 | 0.059x | 1.000x |
@@ -1681,6 +1807,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1694,6 +1821,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-067` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 58.3 | 58.3 | 58.5 | 0.1 | 0.058x | 1.000x |
@@ -1707,6 +1835,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1720,6 +1849,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-068` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 23.1 | 23.0 | 23.1 | 0.0 | 0.033x | 1.000x |
@@ -1733,6 +1863,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1746,6 +1877,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-069` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 27.3 | 27.0 | 27.3 | 0.1 | 0.012x | 1.000x |
@@ -1759,6 +1891,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1772,6 +1905,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-070` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 48.6 | 48.4 | 48.8 | 0.1 | 0.057x | 1.000x |
@@ -1785,6 +1919,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1798,6 +1933,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-071` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 110.0 | 109.6 | 121.0 | 4.5 | 0.125x | 1.000x |
@@ -1811,6 +1947,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1824,6 +1961,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-072` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 89.4 | 89.2 | 89.5 | 0.1 | 0.029x | 1.000x |
@@ -1837,6 +1975,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1850,6 +1989,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-073` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 20.4 | 20.4 | 20.6 | 0.1 | 0.008x | 1.000x |
@@ -1863,6 +2003,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1876,6 +2017,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-074` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.6 | 26.6 | 26.9 | 0.1 | 0.010x | 1.000x |
@@ -1889,6 +2031,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1902,6 +2045,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-075` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 58.4 | 58.2 | 58.6 | 0.1 | 0.056x | 1.000x |
@@ -1915,6 +2059,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1928,6 +2073,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-076` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 58.4 | 58.3 | 58.5 | 0.1 | 0.057x | 1.000x |
@@ -1941,6 +2087,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1954,6 +2101,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-077` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 58.5 | 58.4 | 59.3 | 0.3 | 0.051x | 1.000x |
@@ -1967,6 +2115,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -1980,6 +2129,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-078` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 58.6 | 58.4 | 58.7 | 0.1 | 0.055x | 1.000x |
@@ -1993,6 +2143,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2006,6 +2157,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-079` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 58.4 | 58.3 | 58.9 | 0.3 | 0.054x | 1.000x |
@@ -2019,6 +2171,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2032,6 +2185,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-080` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 26.0 | 26.0 | 26.3 | 0.2 | 0.008x | 1.000x |
@@ -2045,6 +2199,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2058,6 +2213,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-081` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 5.4 | 5.3 | 5.4 | 0.0 | 0.163x | 1.000x |
@@ -2071,6 +2227,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2084,6 +2241,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-082` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 5.9 | 5.9 | 6.5 | 0.2 | 0.177x | 1.000x |
@@ -2097,6 +2255,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2110,6 +2269,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-083` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 36.1 | 34.7 | 48.6 | 5.2 | 1.000x | 1.000x |
@@ -2123,6 +2283,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2136,6 +2297,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `s-084` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 16.3 | 16.3 | 16.6 | 0.1 | 0.457x | 1.000x |
@@ -2147,6 +2309,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `t-a-valid-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 3,578,231.1 | 3,576,317.9 | 3,602,224.3 | 11,669.5 | 0.069x | 1.000x |
@@ -2158,6 +2321,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `t-b-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 19,035.0 | 18,870.4 | 19,710.6 | 297.7 | 1.000x | 1.000x |
@@ -2169,6 +2333,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `t-c-long-atom-run` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 18,766.5 | 18,660.6 | 18,864.7 | 73.4 | 1.000x | 1.000x | 5 | 100% |
@@ -2177,6 +2342,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `t-d-prose-sparse-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 3,143,556.6 | 3,128,195.2 | 3,210,853.9 | 29,187.7 | 0.007x | 1.000x |
@@ -2188,6 +2354,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `t-e-prose-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 19,000.4 | 18,794.0 | 19,040.4 | 102.2 | 1.000x | 1.000x |
@@ -2201,6 +2368,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2214,6 +2382,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-000` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.6 | 18.4 | 19.1 | 0.2 | 0.185x | 1.000x |
@@ -2227,6 +2396,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2240,6 +2410,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-001` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.4 | 0.1 | 0.181x | 1.000x |
@@ -2253,6 +2424,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2266,6 +2438,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-002` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 17.8 | 17.7 | 21.6 | 1.8 | 0.176x | 1.000x |
@@ -2279,6 +2452,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2292,6 +2466,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-003` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.184x | 1.000x |
@@ -2305,6 +2480,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2318,6 +2494,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-004` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.3 | 0.1 | 0.181x | 1.000x |
@@ -2331,6 +2508,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2344,6 +2522,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-005` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 17.8 | 17.7 | 21.6 | 1.9 | 0.177x | 1.000x |
@@ -2357,6 +2536,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2370,6 +2550,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-006` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 17.7 | 17.7 | 21.6 | 1.9 | 0.176x | 1.000x |
@@ -2383,6 +2564,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2396,6 +2578,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-007` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -2409,6 +2592,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2422,6 +2606,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-008` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 22.9 | 1.9 | 0.181x | 1.000x |
@@ -2435,6 +2620,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2448,6 +2634,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-009` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.180x | 1.000x |
@@ -2461,6 +2648,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2474,6 +2662,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-010` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.3 | 0.0 | 0.181x | 1.000x |
@@ -2487,6 +2676,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2500,6 +2690,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-011` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.5 | 0.1 | 0.181x | 1.000x |
@@ -2513,6 +2704,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2526,6 +2718,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-012` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.5 | 0.1 | 0.180x | 1.000x |
@@ -2539,6 +2732,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2552,6 +2746,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-013` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.3 | 0.0 | 0.181x | 1.000x |
@@ -2565,6 +2760,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2578,6 +2774,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-014` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -2591,6 +2788,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2604,6 +2802,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-015` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.7 | 0.2 | 0.182x | 1.000x |
@@ -2617,6 +2816,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2630,6 +2830,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-016` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.8 | 0.2 | 0.182x | 1.000x |
@@ -2643,6 +2844,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2656,6 +2858,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-017` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.182x | 1.000x |
@@ -2669,6 +2872,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2682,6 +2886,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-018` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.182x | 1.000x |
@@ -2695,6 +2900,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2708,6 +2914,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-019` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.2 | 0.0 | 0.182x | 1.000x |
@@ -2721,6 +2928,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2734,6 +2942,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-020` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 19.3 | 0.4 | 0.181x | 1.000x |
@@ -2747,6 +2956,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2760,6 +2970,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-021` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.7 | 0.2 | 0.182x | 1.000x |
@@ -2773,6 +2984,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2786,6 +2998,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-022` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.5 | 0.1 | 0.182x | 1.000x |
@@ -2799,6 +3012,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2812,6 +3026,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-023` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.182x | 1.000x |
@@ -2825,6 +3040,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2838,6 +3054,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-024` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 19.0 | 0.3 | 0.182x | 1.000x |
@@ -2851,6 +3068,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2864,6 +3082,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-025` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -2877,6 +3096,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2890,6 +3110,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-026` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.182x | 1.000x |
@@ -2903,6 +3124,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2916,6 +3138,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-027` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.4 | 0.1 | 0.182x | 1.000x |
@@ -2929,6 +3152,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2942,6 +3166,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-028` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.4 | 0.1 | 0.182x | 1.000x |
@@ -2955,6 +3180,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2968,6 +3194,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-029` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.182x | 1.000x |
@@ -2981,6 +3208,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -2994,6 +3222,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-030` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.4 | 0.1 | 0.182x | 1.000x |
@@ -3007,6 +3236,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3020,6 +3250,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-031` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.9 | 0.3 | 0.182x | 1.000x |
@@ -3033,6 +3264,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3046,6 +3278,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-032` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.6 | 0.2 | 0.182x | 1.000x |
@@ -3059,6 +3292,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3072,6 +3306,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-033` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.3 | 0.1 | 0.182x | 1.000x |
@@ -3085,6 +3320,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3098,6 +3334,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-034` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3111,6 +3348,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3124,6 +3362,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-035` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3137,6 +3376,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3150,6 +3390,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-036` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3163,6 +3404,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3176,6 +3418,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-037` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.5 | 0.1 | 0.181x | 1.000x |
@@ -3189,6 +3432,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3202,6 +3446,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-038` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3215,6 +3460,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3228,6 +3474,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-039` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3241,6 +3488,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3254,6 +3502,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-040` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 8.9 | 8.9 | 8.9 | 0.0 | 0.273x | 1.000x |
@@ -3267,6 +3516,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3280,6 +3530,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-041` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 14.2 | 14.2 | 16.9 | 1.3 | 0.143x | 1.000x |
@@ -3293,6 +3544,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3306,6 +3558,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-042` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 17.6 | 17.5 | 18.0 | 0.2 | 0.176x | 1.000x |
@@ -3319,6 +3572,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3332,6 +3586,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-043` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.3 | 18.1 | 18.6 | 0.2 | 0.182x | 1.000x |
@@ -3345,6 +3600,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3358,6 +3614,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-044` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.9 | 0.3 | 0.182x | 1.000x |
@@ -3371,6 +3628,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3384,6 +3642,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-045` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3397,6 +3656,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3410,6 +3670,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-046` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.4 | 0.1 | 0.180x | 1.000x |
@@ -3423,6 +3684,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3436,6 +3698,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-047` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3449,6 +3712,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3462,6 +3726,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-048` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3475,6 +3740,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3488,6 +3754,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-049` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.6 | 0.2 | 0.181x | 1.000x |
@@ -3501,6 +3768,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3514,6 +3782,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-050` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.182x | 1.000x |
@@ -3527,6 +3796,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3540,6 +3810,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-051` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.3 | 0.0 | 0.182x | 1.000x |
@@ -3553,6 +3824,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3566,6 +3838,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-052` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3579,6 +3852,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3592,6 +3866,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-053` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.4 | 0.1 | 0.181x | 1.000x |
@@ -3605,6 +3880,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3618,6 +3894,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-054` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.2 | 0.0 | 0.179x | 1.000x |
@@ -3631,6 +3908,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3644,6 +3922,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-055` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.3 | 0.0 | 0.181x | 1.000x |
@@ -3657,6 +3936,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3670,6 +3950,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-056` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.2 | 0.0 | 0.183x | 1.000x |
@@ -3683,6 +3964,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3698,6 +3980,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3713,6 +3996,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3728,6 +4012,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3743,6 +4028,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3758,6 +4044,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3773,6 +4060,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3788,6 +4076,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3803,6 +4092,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3816,6 +4106,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-065` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3829,6 +4120,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3842,6 +4134,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-066` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.1 | 18.1 | 18.2 | 0.0 | 0.182x | 1.000x |
@@ -3855,6 +4148,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3868,6 +4162,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-067` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.3 | 0.1 | 0.182x | 1.000x |
@@ -3881,6 +4176,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3894,6 +4190,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-068` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.2 | 0.0 | 0.182x | 1.000x |
@@ -3907,6 +4204,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3920,6 +4218,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-069` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.180x | 1.000x |
@@ -3933,6 +4232,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3946,6 +4246,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-070` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3959,6 +4260,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3972,6 +4274,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-071` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.2 | 0.0 | 0.181x | 1.000x |
@@ -3985,6 +4288,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -3998,6 +4302,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-072` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.3 | 0.0 | 0.183x | 1.000x |
@@ -4011,6 +4316,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4024,6 +4330,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-073` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.3 | 0.0 | 0.180x | 1.000x |
@@ -4037,6 +4344,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4050,6 +4358,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-074` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.2 | 0.0 | 0.180x | 1.000x |
@@ -4063,6 +4372,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4076,6 +4386,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-075` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.3 | 0.1 | 0.181x | 1.000x |
@@ -4089,6 +4400,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4102,6 +4414,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-076` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.3 | 0.0 | 0.182x | 1.000x |
@@ -4115,6 +4428,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4128,6 +4442,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-077` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.3 | 0.0 | 0.181x | 1.000x |
@@ -4141,6 +4456,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4154,6 +4470,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-078` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.2 | 0.0 | 0.180x | 1.000x |
@@ -4167,6 +4484,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4180,6 +4498,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-079` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.2 | 18.2 | 0.0 | 0.182x | 1.000x |
@@ -4193,6 +4512,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4206,6 +4526,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-080` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 18.2 | 18.1 | 18.3 | 0.0 | 0.181x | 1.000x |
@@ -4219,6 +4540,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4232,6 +4554,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-081` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 6.3 | 6.3 | 6.5 | 0.1 | 0.197x | 1.000x |
@@ -4245,6 +4568,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4258,6 +4582,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-082` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 14.2 | 14.2 | 16.9 | 1.3 | 0.142x | 1.000x |
@@ -4271,6 +4596,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4284,6 +4610,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-083` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 9.9 | 9.7 | 10.1 | 0.1 | 0.295x | 1.000x |
@@ -4297,6 +4624,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4310,6 +4638,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `s-084` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 8.9 | 8.9 | 9.0 | 0.1 | 0.273x | 1.000x |
@@ -4321,6 +4650,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `t-a-valid-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 627,186.7 | 627,062.8 | 630,211.1 | 1,203.0 | 0.175x | 1.000x |
@@ -4332,6 +4662,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `t-b-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 17,705.1 | 17,661.1 | 17,974.2 | 113.6 | 0.997x | 1.000x |
@@ -4343,6 +4674,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `t-c-long-atom-run` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 17,705.9 | 17,663.6 | 17,910.7 | 89.5 | 0.996x | 1.000x |
@@ -4354,6 +4686,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `t-d-prose-sparse-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 30,813.1 | 30,673.5 | 30,904.7 | 75.0 | 0.440x | 1.000x |
@@ -4365,6 +4698,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `t-e-prose-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 17,686.9 | 17,632.4 | 17,694.7 | 23.5 | 0.998x | 1.000x |
@@ -4378,6 +4712,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4391,6 +4726,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-000` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 53.2 | 52.9 | 54.1 | 0.4 | 0.097x | 1.000x |
@@ -4404,6 +4740,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4417,6 +4754,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-001` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 77.7 | 77.6 | 77.7 | 0.1 | 0.103x | 1.000x |
@@ -4430,6 +4768,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4443,6 +4782,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-002` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.0 | 25.9 | 26.2 | 0.1 | 0.054x | 1.000x |
@@ -4456,6 +4796,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4469,6 +4810,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-003` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 65.9 | 63.6 | 66.8 | 1.2 | 0.086x | 1.000x |
@@ -4482,6 +4824,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4495,6 +4838,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-004` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 66.2 | 64.4 | 66.4 | 0.8 | 0.117x | 1.000x |
@@ -4508,6 +4852,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4521,6 +4866,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-005` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.0 | 25.9 | 26.6 | 0.2 | 0.054x | 1.000x |
@@ -4534,6 +4880,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4547,6 +4894,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-006` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 55.5 | 55.2 | 55.8 | 0.2 | 0.071x | 1.000x |
@@ -4560,6 +4908,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4573,6 +4922,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-007` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 61.8 | 61.6 | 62.4 | 0.3 | 0.100x | 1.000x |
@@ -4586,6 +4936,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4599,6 +4950,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-008` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 55.6 | 54.0 | 56.4 | 0.8 | 0.102x | 1.000x |
@@ -4612,6 +4964,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4625,6 +4978,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-009` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 50.9 | 49.0 | 51.3 | 0.8 | 0.095x | 1.000x |
@@ -4638,6 +4992,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4651,6 +5006,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-010` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 36.3 | 35.8 | 38.6 | 1.0 | 0.082x | 1.000x |
@@ -4664,6 +5020,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4677,6 +5034,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-011` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 34.6 | 34.5 | 34.9 | 0.1 | 0.020x | 1.000x |
@@ -4690,6 +5048,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4703,6 +5062,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-012` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 64.9 | 62.9 | 67.2 | 1.4 | 0.096x | 1.000x |
@@ -4716,6 +5076,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4729,6 +5090,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-013` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 65.0 | 64.2 | 65.2 | 0.4 | 0.095x | 1.000x |
@@ -4742,6 +5104,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4755,6 +5118,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-014` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 51.3 | 51.3 | 51.7 | 0.1 | 0.096x | 1.000x |
@@ -4768,6 +5132,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4781,6 +5146,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-015` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 62.0 | 61.4 | 62.7 | 0.4 | 0.095x | 1.000x |
@@ -4794,6 +5160,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4807,6 +5174,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-016` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.1 | 25.9 | 26.2 | 0.1 | 0.024x | 1.000x |
@@ -4820,6 +5188,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4833,6 +5202,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-017` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 64.8 | 63.9 | 67.2 | 1.1 | 0.095x | 1.000x |
@@ -4846,6 +5216,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4859,6 +5230,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-018` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 62.3 | 61.7 | 63.0 | 0.5 | 0.095x | 1.000x |
@@ -4872,6 +5244,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4885,6 +5258,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-019` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 27.6 | 27.3 | 27.8 | 0.2 | 0.025x | 1.000x |
@@ -4898,6 +5272,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4911,6 +5286,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-020` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 70.5 | 68.5 | 73.8 | 1.9 | 0.102x | 1.000x |
@@ -4924,6 +5300,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4937,6 +5314,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-021` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 51.4 | 51.3 | 51.7 | 0.2 | 0.073x | 1.000x |
@@ -4950,6 +5328,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4963,6 +5342,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-022` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 41.0 | 39.7 | 41.3 | 0.7 | 0.091x | 1.000x |
@@ -4976,6 +5356,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -4989,6 +5370,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-023` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 65.7 | 65.3 | 65.9 | 0.2 | 0.098x | 1.000x |
@@ -5002,6 +5384,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5015,6 +5398,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-024` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 51.4 | 51.3 | 51.8 | 0.2 | 0.072x | 1.000x |
@@ -5028,6 +5412,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5041,6 +5426,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-025` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 65.7 | 65.4 | 65.8 | 0.1 | 0.090x | 1.000x |
@@ -5054,6 +5440,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5067,6 +5454,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-026` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 41.0 | 39.7 | 41.2 | 0.6 | 0.091x | 1.000x |
@@ -5080,6 +5468,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5093,6 +5482,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-027` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 76.6 | 76.3 | 77.3 | 0.4 | 0.122x | 1.000x |
@@ -5106,6 +5496,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5119,6 +5510,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-028` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 22.2 | 22.1 | 22.5 | 0.1 | 0.021x | 1.000x |
@@ -5132,6 +5524,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5145,6 +5538,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-029` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 45.5 | 45.3 | 45.8 | 0.2 | 0.043x | 1.000x |
@@ -5158,6 +5552,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5171,6 +5566,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-030` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 22.1 | 22.0 | 22.1 | 0.0 | 0.021x | 1.000x |
@@ -5184,6 +5580,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5197,6 +5594,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-031` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 29.6 | 29.5 | 31.3 | 0.8 | 0.028x | 1.000x |
@@ -5210,6 +5608,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5223,6 +5622,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-032` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 26.2 | 26.0 | 26.4 | 0.1 | 0.020x | 1.000x |
@@ -5236,6 +5636,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5249,6 +5650,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-033` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.2 | 26.0 | 26.6 | 0.2 | 0.023x | 1.000x |
@@ -5262,6 +5664,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5275,6 +5678,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-034` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 19.0 | 19.0 | 19.6 | 0.3 | 0.009x | 1.000x |
@@ -5288,6 +5692,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5301,6 +5706,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-035` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 25.3 | 25.2 | 25.8 | 0.2 | 0.008x | 1.000x |
@@ -5314,6 +5720,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5327,6 +5734,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-036` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.8 | 26.7 | 27.1 | 0.2 | 0.037x | 1.000x |
@@ -5340,6 +5748,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5353,6 +5762,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-037` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 21.0 | 20.7 | 21.2 | 0.2 | 0.017x | 1.000x |
@@ -5366,6 +5776,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5379,6 +5790,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-038` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 26.8 | 26.7 | 26.9 | 0.1 | 0.015x | 1.000x |
@@ -5392,6 +5804,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5405,6 +5818,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-039` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 59.0 | 58.9 | 59.0 | 0.0 | 0.062x | 1.000x |
@@ -5418,6 +5832,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5431,6 +5846,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-040` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 24.0 | 23.7 | 24.0 | 0.1 | 0.669x | 1.000x |
@@ -5444,6 +5860,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5457,6 +5874,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-041` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 19.0 | 18.5 | 19.3 | 0.3 | 0.507x | 1.000x |
@@ -5470,6 +5888,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5483,6 +5902,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-042` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 12.4 | 12.4 | 13.2 | 0.3 | 0.057x | 1.000x |
@@ -5496,6 +5916,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5509,6 +5930,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-043` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 71.2 | 70.9 | 71.8 | 0.3 | 0.066x | 1.000x |
@@ -5522,6 +5944,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5535,6 +5958,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-044` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 61.8 | 61.7 | 62.0 | 0.1 | 0.114x | 1.000x |
@@ -5548,6 +5972,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5561,6 +5986,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-045` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 25.6 | 25.5 | 26.0 | 0.2 | 0.051x | 1.000x |
@@ -5574,6 +6000,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5587,6 +6014,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-046` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 19.2 | 18.9 | 19.7 | 0.2 | 0.011x | 1.000x |
@@ -5600,6 +6028,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5613,6 +6042,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-047` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 20.7 | 20.4 | 21.0 | 0.2 | 0.007x | 1.000x |
@@ -5626,6 +6056,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5639,6 +6070,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-048` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 12.5 | 12.5 | 13.2 | 0.3 | 0.016x | 1.000x |
@@ -5652,6 +6084,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5665,6 +6098,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-049` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 68.7 | 68.2 | 69.1 | 0.3 | 0.067x | 1.000x |
@@ -5678,6 +6112,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5691,6 +6126,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-050` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 53.7 | 53.7 | 53.9 | 0.1 | 0.033x | 1.000x |
@@ -5704,6 +6140,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5717,6 +6154,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-051` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 68.7 | 68.6 | 69.1 | 0.2 | 0.067x | 1.000x |
@@ -5730,6 +6168,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5743,6 +6182,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-052` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 19.5 | 19.4 | 20.2 | 0.3 | 0.018x | 1.000x |
@@ -5756,6 +6196,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5769,6 +6210,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-053` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 14.7 | 14.6 | 14.9 | 0.1 | 0.014x | 1.000x |
@@ -5782,6 +6224,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5795,6 +6238,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-054` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 14.6 | 14.5 | 14.9 | 0.1 | 0.014x | 1.000x |
@@ -5808,6 +6252,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5821,6 +6266,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-055` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 14.7 | 14.5 | 15.2 | 0.3 | 0.014x | 1.000x |
@@ -5834,6 +6280,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5847,6 +6294,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-056` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 16.3 | 16.2 | 16.9 | 0.3 | 0.015x | 1.000x |
@@ -5860,6 +6308,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5875,6 +6324,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5890,6 +6340,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5905,6 +6356,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5920,6 +6372,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5935,6 +6388,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5950,6 +6404,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5965,6 +6420,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5980,6 +6436,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -5993,6 +6450,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-065` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 21.4 | 21.1 | 22.0 | 0.3 | 0.038x | 1.000x |
@@ -6006,6 +6464,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6019,6 +6478,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-066` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 62.1 | 61.6 | 62.4 | 0.3 | 0.093x | 1.000x |
@@ -6032,6 +6492,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6045,6 +6506,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-067` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 58.3 | 58.2 | 58.4 | 0.1 | 0.091x | 1.000x |
@@ -6058,6 +6520,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6071,6 +6534,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-068` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 23.2 | 23.0 | 23.8 | 0.3 | 0.056x | 1.000x |
@@ -6084,6 +6548,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6097,6 +6562,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-069` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 27.2 | 27.1 | 28.6 | 0.6 | 0.037x | 1.000x |
@@ -6110,6 +6576,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6123,6 +6590,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-070` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 48.4 | 48.3 | 48.8 | 0.2 | 0.088x | 1.000x |
@@ -6136,6 +6604,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6149,6 +6618,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-071` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_vm-caps-simdna` | measured | `plain` | same program | 64.7 | 63.5 | 65.0 | 0.6 | 0.114x | 1.000x |
@@ -6162,6 +6632,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6175,6 +6646,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-072` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 89.4 | 89.3 | 93.0 | 1.5 | 0.051x | 1.000x |
@@ -6188,6 +6660,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6201,6 +6674,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-073` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 20.5 | 20.4 | 21.1 | 0.3 | 0.019x | 1.000x |
@@ -6214,6 +6688,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6227,6 +6702,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-074` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 26.8 | 26.7 | 27.4 | 0.2 | 0.025x | 1.000x |
@@ -6240,6 +6716,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6253,6 +6730,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-075` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 58.5 | 58.2 | 58.8 | 0.2 | 0.092x | 1.000x |
@@ -6266,6 +6744,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6279,6 +6758,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-076` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 58.3 | 58.2 | 58.4 | 0.1 | 0.092x | 1.000x |
@@ -6292,6 +6772,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6305,6 +6786,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-077` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 58.3 | 58.2 | 58.6 | 0.1 | 0.083x | 1.000x |
@@ -6318,6 +6800,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6331,6 +6814,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-078` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 58.4 | 58.2 | 58.5 | 0.1 | 0.080x | 1.000x |
@@ -6344,6 +6828,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6357,6 +6842,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-079` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 58.3 | 58.3 | 58.9 | 0.3 | 0.081x | 1.000x |
@@ -6370,6 +6856,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6383,6 +6870,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-080` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 26.1 | 25.9 | 26.8 | 0.3 | 0.020x | 1.000x |
@@ -6396,6 +6884,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6409,6 +6898,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-081` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 6.1 | 5.6 | 6.8 | 0.5 | 0.200x | 1.000x |
@@ -6422,6 +6912,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6435,6 +6926,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-082` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-caps-simdna` | measured | `plain` | same program | 5.9 | 5.9 | 6.5 | 0.2 | 0.191x | 1.000x |
@@ -6448,6 +6940,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6461,6 +6954,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-083` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 36.0 | 35.4 | 38.2 | 1.0 | 1.000x | 1.000x |
@@ -6474,6 +6968,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -6487,6 +6982,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `s-084` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 16.3 | 16.2 | 17.1 | 0.3 | 0.462x | 1.000x |
@@ -6498,6 +6994,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `t-a-valid-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 3,579,415.8 | 3,575,433.9 | 3,603,762.4 | 10,110.6 | 0.125x | 1.000x |
@@ -6509,6 +7006,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `t-b-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 17,985.3 | 17,934.0 | 18,072.1 | 52.9 | 1.000x | 1.000x |
@@ -6520,6 +7018,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `t-c-long-atom-run` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 17,957.3 | 17,948.3 | 18,730.2 | 306.8 | 1.000x | 1.000x | 5 | 100% |
@@ -6529,6 +7028,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `t-d-prose-sparse-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_35e1ab1_auto-nocaps-simdna` | measured | `plain` | same program | 3,133,275.5 | 3,115,636.0 | 3,185,429.9 | 24,613.2 | 0.033x | 1.000x |
@@ -6540,6 +7040,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `t-e-prose-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 18,076.5 | 18,019.0 | 18,087.4 | 25.3 | 1.000x | 1.000x |

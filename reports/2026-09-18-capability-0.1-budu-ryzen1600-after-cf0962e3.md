@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v17 (2026-09-17)
+reporter: v18 (2026-09-18)
 
 ## Query
 
@@ -36,6 +36,7 @@ reporter: v17 (2026-09-17)
 
 ### `balanced-parens-rec` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 562,266.0 | 0.4085 | 557,095.6 | 568,518.6 | 3,824.2 | 0.194x | 1.000x | - |
@@ -95,6 +96,7 @@ reporter: v17 (2026-09-17)
 
 ### `balanced-parens-rec` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 2,959.0 | 2,846.1 | 3,284.2 | 159.3 | 0.765x | 1.000x | - | 75 | 39.5 | 40.4 | 100% |
@@ -116,6 +118,7 @@ reporter: v17 (2026-09-17)
 
 ### `base10num-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-caps-simdna` | measured | `plain` | same program | 16.9 | 0.0000 | 16.8 | 17.3 | 0.2 | 0.182x | 1.000x | - |
@@ -175,6 +178,7 @@ reporter: v17 (2026-09-17)
 
 ### `base10num-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 544.5 | 540.4 | 561.0 | 7.6 | 0.120x | 1.000x | unchanged (within spread) | 75 | 7.3 | 8.9 | 100% |
@@ -196,6 +200,7 @@ reporter: v17 (2026-09-17)
 
 ### `bracket-array-define` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 128.3 | 0.0001 | 122.2 | 132.0 | 4.1 | 0.387x | 1.000x | - |
@@ -255,6 +260,7 @@ reporter: v17 (2026-09-17)
 
 ### `bracket-array-define` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 3,233.6 | 3,109.3 | 3,400.1 | 106.3 | 0.366x | 1.000x | - | 75 | 43.1 | 40.4 | 100% |
@@ -276,6 +282,7 @@ reporter: v17 (2026-09-17)
 
 ### `codegrammar-flat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 604,250.7 | 0.4391 | 598,290.1 | 605,099.0 | 2,937.2 | 0.286x | 1.000x | unchanged (within spread) |
@@ -335,6 +342,7 @@ reporter: v17 (2026-09-17)
 
 ### `codegrammar-flat` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 726.1 | 724.0 | 871.5 | 58.0 | 0.266x | 1.000x | unchanged (within spread) | 75 | 9.7 | 8.9 | 100% |
@@ -356,6 +364,7 @@ reporter: v17 (2026-09-17)
 
 ### `codegrammar-xflag` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 604,949.3 | 0.4396 | 598,195.0 | 616,210.9 | 5,912.4 | 0.285x | 1.000x | unchanged (within spread) |
@@ -415,6 +424,7 @@ reporter: v17 (2026-09-17)
 
 ### `codegrammar-xflag` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 726.2 | 724.0 | 732.4 | 2.9 | 0.262x | 1.000x | - | 75 | 9.7 | 8.9 | 100% |
@@ -436,6 +446,7 @@ reporter: v17 (2026-09-17)
 
 ### `currency-lookbehind-fixed` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 1,723,358.9 | 1.2522 | 1,722,608.4 | 1,727,284.7 | 1,688.1 | 0.152x | 1.000x | - |
@@ -495,6 +506,7 @@ reporter: v17 (2026-09-17)
 
 ### `currency-lookbehind-fixed` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 4,033.4 | 4,026.7 | 4,335.2 | 149.7 | 0.253x | 1.000x | - | 75 | 53.8 | 40.4 | 100% |
@@ -516,6 +528,7 @@ reporter: v17 (2026-09-17)
 
 ### `date-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 16.0 | 0.0000 | 16.0 | 16.1 | 0.0 | 0.164x | 1.000x | unchanged (within spread) |
@@ -575,6 +588,7 @@ reporter: v17 (2026-09-17)
 
 ### `date-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 489.7 | 488.0 | 490.6 | 0.9 | 0.113x | 1.000x | unchanged (within spread) | 75 | 6.5 | 8.9 | 100% |
@@ -596,6 +610,7 @@ reporter: v17 (2026-09-17)
 
 ### `doubled-word` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 13,111,656.5 | 9.5270 | 13,083,420.8 | 13,188,114.4 | 36,229.7 | 0.146x | 1.000x | - |
@@ -651,6 +666,7 @@ reporter: v17 (2026-09-17)
 
 ### `doubled-word` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 13,186.3 | 13,148.2 | 13,216.7 | 27.3 | 0.158x | 1.000x | - | 75 | 175.8 | 40.4 | 100% |
@@ -671,6 +687,7 @@ reporter: v17 (2026-09-17)
 
 ### `dup-param-detect` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 23,240.8 | 0.0169 | 23,212.8 | 23,259.9 | 15.5 | 1.000x | 1.000x | spread | - |
@@ -728,6 +745,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `dup-param-detect` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 3,338.5 | 3,286.2 | 3,449.9 | 64.2 | 0.575x | 1.000x | - | 75 | 44.5 | 40.4 | 100% |
@@ -748,6 +766,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `email-local-nodup` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 258.8 | 0.0002 | 258.1 | 262.6 | 1.7 | 0.094x | 1.000x | - |
@@ -807,6 +826,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `email-local-nodup` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 5,321.7 | 5,132.7 | 5,597.3 | 163.0 | 0.159x | 1.000x | - | 75 | 71.0 | 40.4 | 100% |
@@ -828,6 +848,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `email-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 33.3 | 0.0000 | 31.4 | 33.8 | 1.0 | 0.001x | 1.000x | - |
@@ -887,6 +908,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `email-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 974.9 | 971.6 | 980.2 | 3.2 | 0.307x | 1.000x | - | 75 | 13.0 | 8.9 | 100% |
@@ -902,6 +924,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `evil-alt-nested` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 27.0 | 0.0000 | 26.9 | 28.3 | 0.5 | 0.001x | 1.000x | - |
@@ -961,6 +984,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `file-ext-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 76,758.0 | 0.0558 | 76,711.6 | 76,820.3 | 37.7 | 0.063x | 1.000x | - |
@@ -1020,6 +1044,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `file-ext-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 833.5 | 817.8 | 867.7 | 16.7 | 0.205x | 1.000x | - | 75 | 11.1 | 8.9 | 100% |
@@ -1040,6 +1065,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `float-literal-bound` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 1,789,624.2 | 1.3004 | 1,787,196.2 | 1,793,163.1 | 2,214.9 | 0.118x | 1.000x | - |
@@ -1099,6 +1125,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `float-literal-bound` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 2,482.0 | 2,475.3 | 2,500.2 | 8.7 | 0.452x | 1.000x | unchanged (within spread) | 75 | 33.1 | 8.9 | 100% |
@@ -1120,6 +1147,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `floor-byte` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 23,130.1 | 0.0168 | 23,108.9 | 23,182.4 | 26.7 | 0.995x | 1.000x | unchanged (within spread) |
@@ -1179,6 +1207,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `floor-byte` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp (floor control — per-call overhead, not a ranking of engines)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 666.0 | 665.6 | 670.2 | 1.9 | 0.258x | 1.000x | unchanged (within spread) | 75 | 8.9 | 100% |
@@ -1200,6 +1229,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `high-byte-run` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 407,488.7 | 0.2961 | 407,448.7 | 408,044.4 | 224.4 | 0.400x | 1.000x | - |
@@ -1259,6 +1289,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `high-byte-run` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 1,106.5 | 1,105.6 | 1,108.2 | 1.0 | 0.314x | 1.000x | unchanged (within spread) | 75 | 14.8 | 8.9 | 100% |
@@ -1280,6 +1311,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `ipv4-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-caps-simdna` | measured | `plain` | same program | 18.7 | 0.0000 | 18.7 | 18.8 | 0.0 | 0.203x | 1.000x | - |
@@ -1339,6 +1371,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `ipv4-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 492.0 | 491.2 | 494.1 | 1.0 | 0.166x | 1.000x | unchanged (within spread) | 75 | 6.6 | 8.9 | 100% |
@@ -1360,6 +1393,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `keyword-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 511,780.6 | 0.3719 | 502,082.3 | 518,020.7 | 5,713.5 | 0.154x | 1.000x | - |
@@ -1419,6 +1453,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `keyword-prefix-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 774.3 | 769.9 | 778.0 | 2.8 | 0.193x | 1.000x | unchanged (within spread) | 75 | 10.3 | 8.9 | 100% |
@@ -1439,6 +1474,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `logparse-atomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 30.0 | 0.0000 | 29.9 | 32.1 | 0.9 | 0.115x | 1.000x | unchanged (within spread) |
@@ -1498,6 +1534,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `logparse-atomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 839.4 | 837.4 | 841.6 | 1.4 | 0.169x | 1.000x | - | 75 | 11.2 | 8.9 | 100% |
@@ -1519,6 +1556,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `logparse-atomic-removed` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 18.7 | 0.0000 | 18.7 | 18.8 | 0.0 | 0.075x | 1.000x | - |
@@ -1578,6 +1616,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `logparse-atomic-removed` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 493.6 | 492.4 | 496.5 | 1.5 | 0.102x | 1.000x | - | 75 | 6.6 | 8.9 | 100% |
@@ -1599,6 +1638,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `mojibake-curly-quote` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 23,150.8 | 0.0168 | 23,125.1 | 23,158.0 | 14.1 | 0.996x | 1.000x | unchanged (within spread) |
@@ -1658,6 +1698,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `mojibake-curly-quote` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 689.0 | 685.1 | 692.0 | 2.4 | 0.244x | 1.000x | now measured (was: wrong) | 75 | 9.2 | 8.9 | 100% |
@@ -1675,6 +1716,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `negation-scope-lookbehind-var` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | n subjects | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 51,588.5 | 0.0375 | 51,453.5 | 51,633.3 | 65.0 | 0.001x | 1.000x | 3 | 100% |
@@ -1693,6 +1735,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `negation-scope-lookbehind-var` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 3,119.1 | 2,903.3 | 3,338.9 | 168.9 | 0.340x | 1.000x | 75 | 41.6 | 40.4 | 100% |
@@ -1700,6 +1743,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `nested-comment-rec` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 52,006.5 | 0.0378 | 51,639.2 | 52,337.3 | 269.0 | 0.019x | 1.000x | - |
@@ -1759,6 +1803,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `nested-comment-rec` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 3,232.4 | 3,102.1 | 3,324.3 | 85.7 | 0.618x | 1.000x | - | 75 | 43.1 | 40.4 | 100% |
@@ -1780,6 +1825,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `numeric-id-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 15.2 | 0.0000 | 15.1 | 15.7 | 0.2 | 0.161x | 1.000x | - |
@@ -1839,6 +1885,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `numeric-id-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 470.6 | 469.3 | 474.2 | 1.8 | 0.000x | 1.000x | spread | - | 75 | 6.3 | 8.9 | 100% |
@@ -1864,6 +1911,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `phone-list-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 15.1 | 0.0000 | 15.1 | 15.2 | 0.0 | 0.161x | 1.000x | unchanged (within spread) |
@@ -1923,6 +1971,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `phone-list-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 481.2 | 479.9 | 481.2 | 0.6 | 0.000x | 1.000x | spread | - | 75 | 6.4 | 8.9 | 100% |
@@ -1948,6 +1997,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `phone-palindrome-6` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 2,212,527.9 | 1.6076 | 2,209,209.6 | 2,232,888.8 | 10,232.8 | 0.109x | 1.000x | - |
@@ -2003,6 +2053,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `phone-palindrome-6` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 4,545.7 | 4,519.9 | 4,704.0 | 68.3 | 0.259x | 1.000x | - | 75 | 60.6 | 40.4 | 100% |
@@ -2023,6 +2074,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `pwd-strength-chain` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 221.5 | 0.0002 | 220.4 | 222.9 | 1.0 | 0.043x | 1.000x | unchanged (within spread) |
@@ -2082,6 +2134,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `pwd-strength-chain` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 8,323.2 | 8,289.4 | 8,370.7 | 30.8 | 0.231x | 1.000x | - | 75 | 111.0 | 40.4 | 100% |
@@ -2103,6 +2156,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `quoted-delim-match` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 460,903.3 | 0.3349 | 458,315.3 | 467,298.6 | 2,981.1 | 0.110x | 1.000x | - |
@@ -2158,6 +2212,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `quoted-delim-match` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 3,317.1 | 3,229.2 | 3,490.4 | 106.7 | 0.396x | 1.000x | - | 75 | 44.2 | 40.4 | 100% |
@@ -2178,6 +2233,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `router-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 91,706.5 | 0.0666 | 91,687.8 | 92,376.7 | 268.9 | 0.041x | 1.000x | - |
@@ -2237,6 +2293,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `router-prefix-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 779.5 | 772.5 | 794.6 | 7.3 | 0.211x | 1.000x | - | 75 | 10.4 | 8.9 | 100% |
@@ -2257,6 +2314,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `tag-depth3-bound` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 23,238.0 | 0.0169 | 23,223.2 | 23,268.6 | 17.1 | 1.000x | 1.000x | - |
@@ -2316,6 +2374,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `tag-depth3-bound` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 3,585.2 | 3,504.7 | 3,840.9 | 116.1 | 0.501x | 1.000x | - | 75 | 47.8 | 40.4 | 100% |
@@ -2336,6 +2395,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `tag-pair-match` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 23,229.8 | 0.0169 | 23,196.0 | 23,251.0 | 19.5 | 1.000x | 1.000x | - |
@@ -2391,6 +2451,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `tag-pair-match` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 3,274.2 | 3,177.9 | 3,313.0 | 57.3 | 0.754x | 1.000x | - | 75 | 43.7 | 40.4 | 100% |
@@ -2411,6 +2472,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `trim-nested-star` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 15.2 | 0.0000 | 15.2 | 15.2 | 0.0 | 0.043x | 1.000x | unchanged (within spread) |
@@ -2470,6 +2532,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `trim-nested-star` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 427.0 | 426.4 | 428.8 | 0.9 | 0.000x | 1.000x | spread | unchanged (within spread) | 75 | 5.7 | 8.9 | 100% |
@@ -2495,6 +2558,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `utf8-lead-no-cont` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 479,321.9 | 0.3483 | 479,281.3 | 481,324.9 | 968.7 | 0.471x | 1.000x | unchanged (within spread) |
@@ -2554,6 +2618,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `utf8-lead-no-cont` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 1,250.8 | 1,249.4 | 1,266.9 | 6.7 | 0.362x | 1.000x | unchanged (within spread) | 75 | 16.7 | 8.9 | 100% |
@@ -2575,6 +2640,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `uuid-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 19.9 | 0.0000 | 19.8 | 19.9 | 0.0 | 0.129x | 1.000x | unchanged (within spread) |
@@ -2634,6 +2700,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `uuid-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 560.7 | 560.5 | 565.2 | 1.8 | 0.198x | 1.000x | - | 75 | 7.5 | 8.9 | 100% |
@@ -2655,6 +2722,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-array-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 263,393.7 | 0.1914 | 263,271.7 | 264,194.2 | 354.0 | 0.309x | 1.000x | unchanged (within spread) |
@@ -2714,6 +2782,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-array-begin` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 689.8 | 683.2 | 705.2 | 8.2 | 0.245x | 1.000x | - | 75 | 9.2 | 8.9 | 100% |
@@ -2735,6 +2804,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-constant` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 1,983,449.3 | 1.4412 | 1,981,109.6 | 1,983,924.2 | 1,069.8 | 0.278x | 1.000x | - |
@@ -2794,6 +2864,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-constant` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 2,446.4 | 2,442.4 | 2,453.0 | 3.6 | 0.319x | 1.000x | unchanged (within spread) | 75 | 32.6 | 8.9 | 100% |
@@ -2815,6 +2886,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-number-extended` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 2,444,234.0 | 1.7760 | 2,439,087.5 | 2,450,941.7 | 4,719.5 | 0.130x | 1.000x | unchanged (within spread) |
@@ -2874,6 +2946,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-number-extended` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 1,407.9 | 1,401.3 | 1,416.8 | 5.0 | 0.142x | 1.000x | unchanged (within spread) | 75 | 18.8 | 8.9 | 100% |
@@ -2895,6 +2968,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-object-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 23,138.9 | 0.0168 | 23,105.1 | 23,180.5 | 27.6 | 0.996x | 1.000x | unchanged (within spread) |
@@ -2954,6 +3028,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-object-begin` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 662.8 | 661.2 | 689.4 | 10.9 | 0.244x | 1.000x | - | 75 | 8.8 | 8.9 | 100% |
@@ -2975,6 +3050,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-stringcontent-escape` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 23,126.3 | 0.0168 | 23,113.8 | 23,192.9 | 27.9 | 0.996x | 1.000x | unchanged (within spread) |
@@ -3034,6 +3110,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-stringcontent-escape` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-caps-simdna` | measured | `plain` | same program | 727.5 | 722.4 | 738.4 | 6.1 | 0.231x | 1.000x | - | 75 | 9.7 | 8.9 | 100% |
@@ -3055,6 +3132,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-datetime-datefinder-alternation` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 10,425,108.0 | 7.5750 | 10,415,343.2 | 10,527,435.4 | 42,536.1 | 0.002x | 1.000x | - |
@@ -3094,6 +3172,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-datetime-datefinder-alternation` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 2,018.8 | 2,012.1 | 2,033.2 | 7.0 | 0.001x | 1.000x | - | 75 | 26.9 | 8.9 | 100% |
@@ -3113,6 +3192,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-datetime-moment-iso8601` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 19.6 | 0.0000 | 19.6 | 19.7 | 0.0 | 0.201x | 1.000x | unchanged (within spread) |
@@ -3172,6 +3252,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-datetime-moment-iso8601` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 590.8 | 588.5 | 591.5 | 1.1 | 0.167x | 1.000x | unchanged (within spread) | 75 | 7.9 | 8.9 | 100% |
@@ -3193,6 +3274,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-base10num-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 4,022,098.6 | 2.9225 | 4,020,812.9 | 4,038,906.7 | 6,793.4 | 0.203x | 1.000x | - |
@@ -3252,6 +3334,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-base10num-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 2,498.5 | 2,489.2 | 2,613.6 | 46.5 | 0.209x | 1.000x | unchanged (within spread) | 75 | 33.3 | 8.9 | 100% |
@@ -3273,6 +3356,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-base10num-noatomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 3,984,108.3 | 2.8949 | 3,977,056.0 | 3,992,583.6 | 5,911.9 | 0.193x | 1.000x | - |
@@ -3332,6 +3416,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-base10num-noatomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-caps-simdna` | measured | `plain` | same program | 2,476.4 | 2,468.7 | 2,557.5 | 38.4 | 0.203x | 1.000x | - | 75 | 33.0 | 8.9 | 100% |
@@ -3353,6 +3438,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-quotedstring-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 1,008,666.8 | 0.7329 | 1,008,318.1 | 1,011,529.7 | 1,203.4 | 0.487x | 1.000x | unchanged (within spread) |
@@ -3412,6 +3498,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-quotedstring-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-caps-simdna` | measured | `plain` | same program | 1,954.2 | 1,952.7 | 1,966.4 | 5.5 | 0.396x | 1.000x | - | 75 | 26.1 | 8.9 | 100% |
@@ -3432,6 +3519,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-quotedstring-noatomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 928,957.6 | 0.6750 | 927,913.5 | 931,480.5 | 1,189.8 | 0.440x | 1.000x | - |
@@ -3491,6 +3579,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-quotedstring-noatomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-caps-simdna` | measured | `plain` | same program | 1,850.7 | 1,846.9 | 1,855.4 | 3.1 | 0.002x | 1.000x | spread | - | 75 | 24.7 | 8.9 | 100% |
@@ -3516,6 +3605,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-syslogbase-expanded` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 3,987,494.3 | 2.8973 | 3,987,045.3 | 3,994,479.6 | 3,009.5 | 0.054x | 1.000x | - |
@@ -3575,6 +3665,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-syslogbase-expanded` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 3,578.3 | 3,571.3 | 3,682.1 | 42.1 | 0.392x | 1.000x | unchanged (within spread) | 75 | 47.7 | 8.9 | 100% |
@@ -3596,6 +3687,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-logparse-winpath-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 23,249.3 | 0.0169 | 23,242.5 | 23,277.4 | 13.2 | 1.000x | 1.000x | spread | - |
@@ -3657,6 +3749,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-logparse-winpath-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 2,638.7 | 2,637.1 | 2,645.9 | 3.1 | 0.661x | 1.000x | unchanged (within spread) | 75 | 35.2 | 8.9 | 100% |
@@ -3678,6 +3771,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-secrets-aws-access-key-id` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 91,325.3 | 0.0664 | 91,282.2 | 91,632.8 | 156.5 | 0.419x | 1.000x | - |
@@ -3737,6 +3831,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-secrets-aws-access-key-id` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 2,470.7 | 2,450.3 | 2,472.6 | 8.3 | 0.543x | 1.000x | - | 75 | 32.9 | 8.9 | 100% |
@@ -3758,6 +3853,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-secrets-github-pat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 98,609.1 | 0.0717 | 97,923.4 | 98,734.9 | 291.8 | 0.092x | 1.000x | - |
@@ -3817,6 +3913,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-secrets-github-pat` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 1,375.2 | 1,372.1 | 1,379.1 | 2.3 | 0.458x | 1.000x | unchanged (within spread) | 75 | 18.3 | 8.9 | 100% |
@@ -3838,6 +3935,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-secrets-slack-webhook-url` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 51,806.5 | 0.0376 | 51,762.3 | 52,848.7 | 416.8 | 0.029x | 1.000x | - |
@@ -3897,6 +3995,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-secrets-slack-webhook-url` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 927.7 | 927.2 | 969.7 | 16.7 | 0.193x | 1.000x | - | 75 | 12.4 | 8.9 | 100% |
@@ -3918,6 +4017,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-secrets-username-password-pair` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 23,276.3 | 0.0169 | 23,260.8 | 23,309.7 | 16.6 | 1.000x | 1.000x | spread | - |
@@ -3979,6 +4079,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-secrets-username-password-pair` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 1,364.9 | 1,362.1 | 1,370.3 | 3.1 | 0.282x | 1.000x | unchanged (within spread) | 75 | 18.2 | 8.9 | 100% |
@@ -4000,6 +4101,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-semdiv-altorder-foo-foobar-rustregex` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 128,335.2 | 0.0932 | 128,118.9 | 128,514.9 | 145.2 | 0.078x | 1.000x | - |
@@ -4059,6 +4161,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-semdiv-altorder-foo-foobar-rustregex` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 708.0 | 705.4 | 711.6 | 2.0 | 0.231x | 1.000x | unchanged (within spread) | 75 | 9.4 | 8.9 | 100% |
@@ -4080,6 +4183,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-semdiv-dollar-trailing-newline-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 51,579.8 | 0.0375 | 51,399.1 | 51,870.1 | 169.2 | 0.019x | 1.000x | - |
@@ -4139,6 +4243,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-semdiv-dollar-trailing-newline-pcre2` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 1,184.0 | 1,178.8 | 1,218.0 | 14.3 | 0.314x | 1.000x | unchanged (within spread) | 75 | 15.8 | 8.9 | 100% |
@@ -4160,6 +4265,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-semdiv-empty-alt-repeat-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 3,803,399.2 | 2.7636 | 3,793,866.4 | 3,817,143.3 | 8,062.5 | 0.081x | 1.000x | - |
@@ -4219,6 +4325,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-semdiv-empty-alt-repeat-pcre2` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 1,235.2 | 1,227.2 | 1,245.7 | 6.8 | 0.006x | 1.000x | - | 75 | 16.5 | 8.9 | 100% |
@@ -4240,6 +4347,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-validator-email-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 38.2 | 0.0000 | 36.7 | 38.4 | 0.6 | 0.075x | 1.000x | unchanged (within spread) |
@@ -4299,6 +4407,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-validator-email-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 1,058.6 | 1,052.5 | 1,072.1 | 7.4 | 0.175x | 1.000x | - | 75 | 14.1 | 8.9 | 100% |
@@ -4320,6 +4429,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-validator-ipv4-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 18.7 | 0.0000 | 18.7 | 18.8 | 0.0 | 0.191x | 1.000x | unchanged (within spread) |
@@ -4379,6 +4489,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-validator-ipv4-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 499.9 | 498.1 | 502.7 | 1.7 | 0.156x | 1.000x | unchanged (within spread) | 75 | 6.7 | 8.9 | 100% |
@@ -4400,6 +4511,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-validator-us-zip-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 17.9 | 0.0000 | 17.8 | 18.1 | 0.1 | 0.191x | 1.000x | unchanged (within spread) |
@@ -4459,6 +4571,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-validator-us-zip-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 484.7 | 484.0 | 485.0 | 0.4 | 0.153x | 1.000x | unchanged (within spread) | 75 | 6.5 | 8.9 | 100% |
@@ -4480,6 +4593,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-validator-uuid-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 82,442.8 | 0.0599 | 82,404.3 | 82,779.8 | 143.3 | 0.003x | 1.000x | - |
@@ -4539,6 +4653,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-validator-uuid-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 712.6 | 711.6 | 715.9 | 1.6 | 0.242x | 1.000x | - | 75 | 9.5 | 8.9 | 100% |
@@ -4560,6 +4675,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-waf-crs-942140-dbnames` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 4,079,780.6 | 2.9644 | 4,075,637.0 | 4,097,592.4 | 7,623.7 | 0.136x | 1.000x | unchanged (within spread) |
@@ -4619,6 +4735,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-waf-crs-942140-dbnames` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 2,699.6 | 2,695.9 | 2,702.5 | 2.3 | 0.133x | 1.000x | unchanged (within spread) | 75 | 36.0 | 8.9 | 100% |
@@ -4640,6 +4757,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-waf-crs-942160-sleep-benchmark` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 1,051,200.3 | 0.7638 | 1,050,835.9 | 1,053,165.3 | 888.4 | 0.157x | 1.000x | - |
@@ -4699,6 +4817,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-waf-crs-942160-sleep-benchmark` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 1,303.3 | 1,293.5 | 1,325.4 | 12.1 | 0.359x | 1.000x | - | 75 | 17.4 | 8.9 | 100% |
@@ -4720,6 +4839,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-waf-crs-942270-union-select` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 60,156.2 | 0.0437 | 59,831.1 | 60,764.7 | 306.2 | 0.021x | 1.000x | - |
@@ -4779,6 +4899,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-waf-crs-942270-union-select` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 1,142.8 | 1,140.4 | 1,146.3 | 2.2 | 0.219x | 1.000x | unchanged (within spread) | 75 | 15.2 | 8.9 | 100% |
@@ -4800,6 +4921,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-waf-crs-942360-concat-sqli` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-nocaps-simdna` | measured | `plain` | same program | 12,110,526.0 | 8.7996 | 12,105,147.0 | 13,002,819.7 | 405,608.2 | 0.043x | 1.000x | - |
@@ -4859,6 +4981,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-waf-crs-942360-concat-sqli` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 7,374.4 | 7,359.9 | 7,385.4 | 9.2 | 0.033x | 1.000x | unchanged (within spread) | 75 | 98.3 | 8.9 | 100% |
@@ -4880,6 +5003,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-waf-crs-942500-comment-obfuscation` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 23,126.1 | 0.0168 | 23,103.8 | 23,142.9 | 14.2 | 0.010x | 1.000x | - |
@@ -4932,6 +5056,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `wild-waf-crs-942500-comment-obfuscation` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-caps-simdna` | measured | `plain` | same program | 735.0 | 732.8 | 736.0 | 1.3 | 0.220x | 1.000x | - | 75 | 9.8 | 8.9 | 100% |
@@ -4952,6 +5077,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `winpath-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_cf0962e3_auto-nocaps-simdna` | measured | `plain` | same program | 20.0 | 0.0000 | 19.9 | 20.5 | 0.2 | 0.075x | 1.000x | unchanged (within spread) |
@@ -5011,6 +5137,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `winpath-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_a770139e_auto-caps-simdna` | measured | `plain` | same program | 498.9 | 498.6 | 499.7 | 0.4 | 0.108x | 1.000x | - | 75 | 6.7 | 8.9 | 100% |

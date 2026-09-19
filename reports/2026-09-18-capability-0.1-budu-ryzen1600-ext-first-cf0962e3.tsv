@@ -1,10 +1,11 @@
-# reporter: v17 (2026-09-17); filters: subbench=capability, version=0.1, since=2026-09-18T03:00:00Z, until=2026-09-18T06:00:00Z, testee=re2_11.0.0_default-caps-simdna, testee=re2_11.0.0_longest-caps-simdna, testee=oniguruma_6.9.10_default-caps-simdna, testee=tre_0.9.0_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd; source: store/index.tsv (5 record(s) matching this query); records: 5; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 5; mixed_x13: False; include_provenance: False; worst_other_core_busy: 76.52% (vectorscan_5.4.11_block-nosom-nocaps-simd / wild-semdiv-altorder-foo-foobar-rustregex / large-subject-throughput); floor_pattern: floor-byte
+# reporter: v18 (2026-09-18); filters: subbench=capability, version=0.1, since=2026-09-18T03:00:00Z, until=2026-09-18T06:00:00Z, testee=re2_11.0.0_default-caps-simdna, testee=re2_11.0.0_longest-caps-simdna, testee=oniguruma_6.9.10_default-caps-simdna, testee=tre_0.9.0_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd; source: store/index.tsv (5 record(s) matching this query); records: 5; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 5; mixed_x13: False; include_provenance: False; worst_other_core_busy: 76.52% (vectorscan_5.4.11_block-nosom-nocaps-simd / wild-semdiv-altorder-foo-foobar-rustregex / large-subject-throughput); floor_pattern: floor-byte
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 record						capability@0.1__oniguruma_6.9.10_default-caps-simdna__budu-ryzen1600__20260918T040233Z				agreement	agree (0 of 123 groups; 0 of 4831 rows; 5 unjudged; k=1.5, 2/3; 5 trials)						
 record						capability@0.1__re2_11.0.0_default-caps-simdna__budu-ryzen1600__20260918T033345Z				agreement	agree (0 of 77 groups; 0 of 3037 rows; 5 unjudged; k=1.5, 2/3; 5 trials)						
 record						capability@0.1__re2_11.0.0_longest-caps-simdna__budu-ryzen1600__20260918T052217Z				agreement	agree (0 of 77 groups; 0 of 3034 rows; 8 unjudged; k=1.5, 2/3; 5 trials)						
 record						capability@0.1__tre_0.9.0_default-caps-simdna__budu-ryzen1600__20260918T043931Z				agreement	agree (0 of 79 groups; 0 of 3142 rows; 56 unjudged; k=1.5, 2/3; 5 trials)						
 record						capability@0.1__vectorscan_5.4.11_block-nosom-nocaps-simd__budu-ryzen1600__20260918T045924Z				agreement	agree (0 of 80 groups; 1 of 3118 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+baseline	base10num-near-miss	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	base10num-near-miss	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	98.645688	3	1.0000	0	0		
 rank	base10num-near-miss	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	96.165794	3	1.0000	0	0		
 rank	base10num-near-miss	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	99.620299	3	1.0000	0	0		
@@ -35,6 +36,7 @@ rank	base10num-near-miss	(set)	large-subject-throughput	plain	same program	tre_0
 rank	base10num-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	17777.935433	3	1.0000	0	0		
 rank	base10num-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	120079.004623	3	1.0000	0	0		
 rank	base10num-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	120079.004623	3	1.0000	0	0		
+baseline	base10num-near-miss	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	base10num-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2045.892942	75	1.0000	0	0		
 rank	base10num-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2044.800367	75	1.0000	0	0		
 rank	base10num-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2051.335865	75	1.0000	0	0		
@@ -65,18 +67,21 @@ rank	base10num-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0
 rank	base10num-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	153.292869	75	1.0000	0	0		
 rank	base10num-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	9.165987	75	1.0000	0	0		
 rank	base10num-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	9.165987	75	1.0000	0	0		
+baseline	bracket-array-define	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	bracket-array-define	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	93.612381	3	1.0000	0	0		
 rank	bracket-array-define	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	93.481178	3	1.0000	0	0		
 rank	bracket-array-define	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	94.037949	3	1.0000	0	0		
 rank	bracket-array-define	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	0.196090	3	1.0000	0	0		
 rank	bracket-array-define	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	bracket-array-define	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	bracket-array-define	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	bracket-array-define	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	2915.489615	75	1.0000	0	0		
 rank	bracket-array-define	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	2905.899974	75	1.0000	0	0		
 rank	bracket-array-define	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	2938.817256	75	1.0000	0	0		
 rank	bracket-array-define	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	11.423958	75	1.0000	0	0		
 rank	bracket-array-define	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	bracket-array-define	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	codegrammar-flat	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	121417.224128	3	1.0000	0	0		
 rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	121195.358052	3	1.0000	0	0		
 rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	121618.514665	3	1.0000	0	0		
@@ -107,6 +112,7 @@ rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	tre_0.9.
 rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	406183.904210	3	1.0000	0	0		
 rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	525.283007	3	1.0000	0	0		
 rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	525.283007	3	1.0000	0	0		
+baseline	codegrammar-flat	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2464.479629	75	1.0000	0	0		
 rank	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2458.824446	75	1.0000	0	0		
 rank	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2467.139055	75	1.0000	0	0		
@@ -137,6 +143,7 @@ rank	codegrammar-flat	(set)	short-subject-search	plain	same program	tre_0.9.0_de
 rank	codegrammar-flat	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	166.812741	75	1.0000	0	0		
 rank	codegrammar-flat	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	9.715995	75	1.0000	0	0		
 rank	codegrammar-flat	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	9.715995	75	1.0000	0	0		
+baseline	codegrammar-xflag	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	codegrammar-xflag	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	121260.206068	3	1.0000	0	0		
 rank	codegrammar-xflag	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	120894.463080	3	1.0000	0	0		
 rank	codegrammar-xflag	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	121657.282770	3	1.0000	0	0		
@@ -149,6 +156,7 @@ rank	codegrammar-xflag	(set)	large-subject-throughput	plain	same program	oniguru
 rank	codegrammar-xflag	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	2	stddev_ns	67491.821347	3	1.0000	0	0		
 rank	codegrammar-xflag	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	80.230325	3	1.0000	0	0		
 rank	codegrammar-xflag	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	2	ratio_vs_best	80.230325	3	1.0000	0	0		
+baseline	codegrammar-xflag	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	codegrammar-xflag	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2463.187979	75	1.0000	0	0		
 rank	codegrammar-xflag	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2453.775886	75	1.0000	0	0		
 rank	codegrammar-xflag	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2563.491090	75	1.0000	0	0		
@@ -161,18 +169,21 @@ rank	codegrammar-xflag	(set)	short-subject-search	plain	same program	oniguruma_6
 rank	codegrammar-xflag	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	2	stddev_ns	15.674432	75	1.0000	0	0		
 rank	codegrammar-xflag	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	2.288993	75	1.0000	0	0		
 rank	codegrammar-xflag	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	2	ratio_vs_best	2.288993	75	1.0000	0	0		
+baseline	currency-lookbehind-fixed	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	currency-lookbehind-fixed	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	9600379.285714	3	1.0000	0	0		
 rank	currency-lookbehind-fixed	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	9582038.107143	3	1.0000	0	0		
 rank	currency-lookbehind-fixed	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	9607703.250000	3	1.0000	0	0		
 rank	currency-lookbehind-fixed	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	8643.701666	3	1.0000	0	0		
 rank	currency-lookbehind-fixed	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	currency-lookbehind-fixed	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	currency-lookbehind-fixed	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	currency-lookbehind-fixed	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	17465.384069	75	1.0000	0	0		
 rank	currency-lookbehind-fixed	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	17375.086287	75	1.0000	0	0		
 rank	currency-lookbehind-fixed	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	18436.943064	75	1.0000	0	0		
 rank	currency-lookbehind-fixed	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	400.583448	75	1.0000	0	0		
 rank	currency-lookbehind-fixed	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	currency-lookbehind-fixed	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	date-nested-plus	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	94.771526	3	1.0000	0	0		
 rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	93.884062	3	1.0000	0	0		
 rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	95.011769	3	1.0000	0	0		
@@ -203,6 +214,7 @@ rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.
 rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	12994.946178	3	1.0000	0	0		
 rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	91655.052765	3	1.0000	0	0		
 rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	91655.052765	3	1.0000	0	0		
+baseline	date-nested-plus	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1865.032372	75	1.0000	0	0		
 rank	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1861.864999	75	1.0000	0	0		
 rank	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1867.706225	75	1.0000	0	0		
@@ -233,6 +245,7 @@ rank	date-nested-plus	(set)	short-subject-search	plain	same program	tre_0.9.0_de
 rank	date-nested-plus	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	61.353112	75	1.0000	0	0		
 rank	date-nested-plus	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	7.359975	75	1.0000	0	0		
 rank	date-nested-plus	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	7.359975	75	1.0000	0	0		
+baseline	doubled-word	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	doubled-word	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	80036131.500000	3	1.0000	0	0		
 rank	doubled-word	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	79688787.000000	3	1.0000	0	0		
 rank	doubled-word	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	80380958.500000	3	1.0000	0	0		
@@ -245,6 +258,7 @@ rank	doubled-word	(set)	large-subject-throughput	plain	same program	tre_0.9.0_de
 rank	doubled-word	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	stddev_ns	2159864.290226	3	1.0000	0	0		
 rank	doubled-word	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	2.705157	3	1.0000	0	0		
 rank	doubled-word	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_best	2.705157	3	1.0000	0	0		
+baseline	doubled-word	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	doubled-word	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	89010.272879	75	1.0000	0	0		
 rank	doubled-word	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	88938.393066	75	1.0000	0	0		
 rank	doubled-word	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	89450.523461	75	1.0000	0	0		
@@ -257,6 +271,7 @@ rank	doubled-word	(set)	short-subject-search	plain	same program	tre_0.9.0_defaul
 rank	doubled-word	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	stddev_ns	10916.402056	75	1.0000	0	0		
 rank	doubled-word	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	2.368529	75	1.0000	0	0		
 rank	doubled-word	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_best	2.368529	75	1.0000	0	0		
+baseline	dup-param-detect	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dup-param-detect	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	2228794.504348	3	1.0000	0	0		
 rank	dup-param-detect	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	2227479.365217	3	1.0000	0	0		
 rank	dup-param-detect	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	2233759.400000	3	1.0000	0	0		
@@ -269,6 +284,7 @@ rank	dup-param-detect	(set)	large-subject-throughput	plain	same program	tre_0.9.
 rank	dup-param-detect	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	stddev_ns	1063804.125972	3	1.0000	0	0		
 rank	dup-param-detect	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	82.619844	3	1.0000	0	0		
 rank	dup-param-detect	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_best	82.619844	3	1.0000	0	0		
+baseline	dup-param-detect	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	dup-param-detect	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	8896.504413	75	1.0000	0	0		
 rank	dup-param-detect	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	8839.190865	75	1.0000	0	0		
 rank	dup-param-detect	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	8934.622940	75	1.0000	0	0		
@@ -281,18 +297,21 @@ rank	dup-param-detect	(set)	short-subject-search	plain	same program	tre_0.9.0_de
 rank	dup-param-detect	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	stddev_ns	636.806422	75	1.0000	0	0		
 rank	dup-param-detect	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	22.007136	75	1.0000	0	0		
 rank	dup-param-detect	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_best	22.007136	75	1.0000	0	0		
+baseline	email-local-nodup	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	email-local-nodup	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	1381.043506	3	1.0000	0	0		
 rank	email-local-nodup	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	1373.712140	3	1.0000	0	0		
 rank	email-local-nodup	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	1398.218792	3	1.0000	0	0		
 rank	email-local-nodup	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	8.716805	3	1.0000	0	0		
 rank	email-local-nodup	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	email-local-nodup	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	email-local-nodup	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	email-local-nodup	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	18596.559222	75	1.0000	0	0		
 rank	email-local-nodup	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	18446.486789	75	1.0000	0	0		
 rank	email-local-nodup	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	18750.262216	75	1.0000	0	0		
 rank	email-local-nodup	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	99.496456	75	1.0000	0	0		
 rank	email-local-nodup	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	email-local-nodup	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	email-nested-plus	(set)	large-subject-throughput			re2_11.0.0_default-caps-simdna				baseline_identity	row-best-fallback					re2_11.0.0_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	email-nested-plus	(set)	large-subject-throughput	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	1	median_ns	342.478542	3	1.0000	0	0		
 rank	email-nested-plus	(set)	large-subject-throughput	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	1	min_ns	337.063206	3	1.0000	0	0		
 rank	email-nested-plus	(set)	large-subject-throughput	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	1	max_ns	347.827903	3	1.0000	0	0		
@@ -323,6 +342,7 @@ rank	email-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9
 rank	email-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	325440.698320	3	1.0000	0	0		
 rank	email-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	64855.063426	3	1.0000	0	0		
 rank	email-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	64855.063426	3	1.0000	0	0		
+baseline	email-nested-plus	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	email-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1847.460161	75	1.0000	0	0		
 rank	email-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1843.341476	75	1.0000	0	0		
 rank	email-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1959.379404	75	1.0000	0	0		
@@ -353,6 +373,7 @@ rank	email-nested-plus	(set)	short-subject-search	plain	same program	tre_0.9.0_d
 rank	email-nested-plus	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	2401.227206	75	1.0000	0	0		
 rank	email-nested-plus	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	111.108722	75	1.0000	0	0		
 rank	email-nested-plus	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	111.108722	75	1.0000	0	0		
+baseline	evil-alt-nested	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	evil-alt-nested	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	170.184409	3	1.0000	0	0		
 rank	evil-alt-nested	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	169.844103	3	1.0000	0	0		
 rank	evil-alt-nested	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	174.346405	3	1.0000	0	0		
@@ -389,6 +410,7 @@ excluded	evil-alt-nested	(set)	short-subject-search	plain	same program	re2_11.0.
 excluded	evil-alt-nested	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned		pass_rate	0.9733	75	0.9733	0	10	0	
 excluded	evil-alt-nested	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned		pass_rate	0.9733	75	0.9733	0	10	0	
 excluded	evil-alt-nested	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned		pass_rate	0.9733	75	0.9733	0	10	0	
+baseline	file-ext-order	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	file-ext-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	84638.613208	3	1.0000	0	0		
 rank	file-ext-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	84550.490976	3	1.0000	0	0		
 rank	file-ext-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	84788.720673	3	1.0000	0	0		
@@ -419,6 +441,7 @@ rank	file-ext-order	(set)	large-subject-throughput	plain	same program	tre_0.9.0_
 rank	file-ext-order	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	14816.658086	3	1.0000	0	0		
 rank	file-ext-order	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	302.997791	3	1.0000	0	0		
 rank	file-ext-order	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	302.997791	3	1.0000	0	0		
+baseline	file-ext-order	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	file-ext-order	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2478.888133	75	1.0000	0	0		
 rank	file-ext-order	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2477.775574	75	1.0000	0	0		
 rank	file-ext-order	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2605.076888	75	1.0000	0	0		
@@ -439,18 +462,21 @@ rank	file-ext-order	(set)	short-subject-search	plain	same program	re2_11.0.0_def
 rank	file-ext-order	(set)	short-subject-search	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	3	ratio_vs_best	3.086374	75	1.0000	0	0		
 excluded	file-ext-order	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned		pass_rate	0.9867	75	0.9867	0	5	0	
 excluded	file-ext-order	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned		pass_rate	0.9867	75	0.9867	0	5	0	
+baseline	float-literal-bound	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	float-literal-bound	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	13300527.700000	3	1.0000	0	0		
 rank	float-literal-bound	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	13268289.000000	3	1.0000	0	0		
 rank	float-literal-bound	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	13388146.200000	3	1.0000	0	0		
 rank	float-literal-bound	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	42995.964313	3	1.0000	0	0		
 rank	float-literal-bound	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	float-literal-bound	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	float-literal-bound	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	float-literal-bound	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	20462.682955	75	1.0000	0	0		
 rank	float-literal-bound	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	20445.881186	75	1.0000	0	0		
 rank	float-literal-bound	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	20744.035761	75	1.0000	0	0		
 rank	float-literal-bound	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	111.614375	75	1.0000	0	0		
 rank	float-literal-bound	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	float-literal-bound	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	floor-byte	(set)	large-subject-throughput			tre_0.9.0_default-caps-simdna				baseline_identity	row-best-fallback					tre_0.9.0_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	floor-byte	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	1	median_ns	23199.247182	3	1.0000	0	0		
 rank	floor-byte	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	1	min_ns	23191.295260	3	1.0000	0	0		
 rank	floor-byte	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	1	max_ns	23318.005025	3	1.0000	0	0		
@@ -481,6 +507,7 @@ rank	floor-byte	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.
 rank	floor-byte	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	stddev_ns	1613659.522107	3	1.0000	0	0		
 rank	floor-byte	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	96.061582	3	1.0000	0	0		
 rank	floor-byte	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_best	96.061582	3	1.0000	0	0		
+baseline	floor-byte	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	floor-byte	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2042.008778	75	1.0000	0	0		
 rank	floor-byte	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2039.414443	75	1.0000	0	0		
 rank	floor-byte	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2073.100077	75	1.0000	0	0		
@@ -511,6 +538,7 @@ rank	floor-byte	(set)	short-subject-search	plain	same program	re2_11.0.0_longest
 rank	floor-byte	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	5	stddev_ns	6.869470	75	1.0000	0	0		
 rank	floor-byte	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	5	ratio_vs_baseline	3.678974	75	1.0000	0	0		
 rank	floor-byte	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	5	ratio_vs_best	3.678974	75	1.0000	0	0		
+baseline	high-byte-run	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	high-byte-run	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	64081.237525	3	1.0000	0	0		
 rank	high-byte-run	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	63973.212575	3	1.0000	0	0		
 rank	high-byte-run	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	64143.204092	3	1.0000	0	0		
@@ -536,6 +564,7 @@ rank	high-byte-run	(set)	large-subject-throughput	plain	same program	re2_11.0.0_
 rank	high-byte-run	(set)	large-subject-throughput	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	4	ratio_vs_baseline	35.013951	3	1.0000	0	0		
 rank	high-byte-run	(set)	large-subject-throughput	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	4	ratio_vs_best	35.013951	3	1.0000	0	0		
 excluded	high-byte-run	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned		pass_rate	0.0000	3	0.0000	0	15	0	
+baseline	high-byte-run	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	high-byte-run	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2639.733941	75	1.0000	0	0		
 rank	high-byte-run	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2637.481690	75	1.0000	0	0		
 rank	high-byte-run	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2643.672866	75	1.0000	0	0		
@@ -561,6 +590,7 @@ rank	high-byte-run	(set)	short-subject-search	plain	same program	re2_11.0.0_long
 rank	high-byte-run	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	4	ratio_vs_baseline	3.686297	75	1.0000	0	0		
 rank	high-byte-run	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	4	ratio_vs_best	3.686297	75	1.0000	0	0		
 excluded	high-byte-run	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned		pass_rate	0.4800	75	0.4800	0	195	0	
+baseline	ipv4-near-miss	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	ipv4-near-miss	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	30.466672	3	1.0000	0	0		
 rank	ipv4-near-miss	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	30.285231	3	1.0000	0	0		
 rank	ipv4-near-miss	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	30.774698	3	1.0000	0	0		
@@ -591,6 +621,7 @@ rank	ipv4-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_
 rank	ipv4-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	120366.535002	3	1.0000	0	0		
 rank	ipv4-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	506778.981308	3	1.0000	0	0		
 rank	ipv4-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	506778.981308	3	1.0000	0	0		
+baseline	ipv4-near-miss	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	949.625613	75	1.0000	0	0		
 rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	948.714849	75	1.0000	0	0		
 rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	950.850234	75	1.0000	0	0		
@@ -621,6 +652,7 @@ rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_defa
 rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	267.796090	75	1.0000	0	0		
 rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	32.167668	75	1.0000	0	0		
 rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	32.167668	75	1.0000	0	0		
+baseline	keyword-prefix-order	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	keyword-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	292.437523	3	1.0000	0	0		
 rank	keyword-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	292.365980	3	1.0000	0	0		
 rank	keyword-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	293.116111	3	1.0000	0	0		
@@ -651,6 +683,7 @@ rank	keyword-prefix-order	(set)	large-subject-throughput	plain	same program	tre_
 rank	keyword-prefix-order	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	41323.078409	3	1.0000	0	0		
 rank	keyword-prefix-order	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	101021.728837	3	1.0000	0	0		
 rank	keyword-prefix-order	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	101021.728837	3	1.0000	0	0		
+baseline	keyword-prefix-order	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2687.949982	75	1.0000	0	0		
 rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2663.980711	75	1.0000	0	0		
 rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2755.278627	75	1.0000	0	0		
@@ -671,18 +704,21 @@ rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	re2_11.0
 rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	3	ratio_vs_best	2.972821	75	1.0000	0	0		
 excluded	keyword-prefix-order	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned		pass_rate	0.9867	75	0.9867	0	5	0	
 excluded	keyword-prefix-order	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned		pass_rate	0.9867	75	0.9867	0	5	0	
+baseline	logparse-atomic	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	logparse-atomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	97.689151	3	1.0000	0	0		
 rank	logparse-atomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	97.265028	3	1.0000	0	0		
 rank	logparse-atomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	104.151712	3	1.0000	0	0		
 rank	logparse-atomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	2.657102	3	1.0000	0	0		
 rank	logparse-atomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	logparse-atomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	logparse-atomic	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	logparse-atomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	5029.401414	75	1.0000	0	0		
 rank	logparse-atomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	4984.704240	75	1.0000	0	0		
 rank	logparse-atomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	5092.169936	75	1.0000	0	0		
 rank	logparse-atomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	37.952626	75	1.0000	0	0		
 rank	logparse-atomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	logparse-atomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	logparse-atomic-removed	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	logparse-atomic-removed	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	97.445118	3	1.0000	0	0		
 rank	logparse-atomic-removed	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	97.080385	3	1.0000	0	0		
 rank	logparse-atomic-removed	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	104.181479	3	1.0000	0	0		
@@ -713,6 +749,7 @@ rank	logparse-atomic-removed	(set)	large-subject-throughput	plain	same program	t
 rank	logparse-atomic-removed	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	520105.011710	3	1.0000	0	0		
 rank	logparse-atomic-removed	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	196620.777545	3	1.0000	0	0		
 rank	logparse-atomic-removed	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	196620.777545	3	1.0000	0	0		
+baseline	logparse-atomic-removed	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	logparse-atomic-removed	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1149.783465	75	1.0000	0	0		
 rank	logparse-atomic-removed	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1144.928433	75	1.0000	0	0		
 rank	logparse-atomic-removed	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1155.207353	75	1.0000	0	0		
@@ -743,6 +780,7 @@ rank	logparse-atomic-removed	(set)	short-subject-search	plain	same program	tre_0
 rank	logparse-atomic-removed	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	443.978932	75	1.0000	0	0		
 rank	logparse-atomic-removed	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	36.345186	75	1.0000	0	0		
 rank	logparse-atomic-removed	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	36.345186	75	1.0000	0	0		
+baseline	mojibake-curly-quote	(set)	large-subject-throughput			re2_11.0.0_longest-caps-simdna				baseline_identity	row-best-fallback					re2_11.0.0_longest-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	mojibake-curly-quote	(set)	large-subject-throughput	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	1	median_ns	23764.372957	3	1.0000	0	0		
 rank	mojibake-curly-quote	(set)	large-subject-throughput	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	1	min_ns	23748.960996	3	1.0000	0	0		
 rank	mojibake-curly-quote	(set)	large-subject-throughput	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	1	max_ns	23788.471025	3	1.0000	0	0		
@@ -773,6 +811,7 @@ rank	mojibake-curly-quote	(set)	large-subject-throughput	plain	same program	tre_
 rank	mojibake-curly-quote	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	1175032.081728	3	1.0000	0	0		
 rank	mojibake-curly-quote	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	910.042873	3	1.0000	0	0		
 rank	mojibake-curly-quote	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	910.042873	3	1.0000	0	0		
+baseline	mojibake-curly-quote	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	mojibake-curly-quote	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2048.866353	75	1.0000	0	0		
 rank	mojibake-curly-quote	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2044.487783	75	1.0000	0	0		
 rank	mojibake-curly-quote	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2053.155269	75	1.0000	0	0		
@@ -798,18 +837,21 @@ rank	mojibake-curly-quote	(set)	short-subject-search	plain	same program	re2_11.0
 rank	mojibake-curly-quote	(set)	short-subject-search	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	4	ratio_vs_baseline	3.681460	75	1.0000	0	0		
 rank	mojibake-curly-quote	(set)	short-subject-search	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	4	ratio_vs_best	3.681460	75	1.0000	0	0		
 excluded	mojibake-curly-quote	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned		pass_rate	0.9867	75	0.9867	0	5	0	
+baseline	nested-comment-rec	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	nested-comment-rec	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	1498679.664773	3	1.0000	0	0		
 rank	nested-comment-rec	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	1498478.130682	3	1.0000	0	0		
 rank	nested-comment-rec	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	1499819.613636	3	1.0000	0	0		
 rank	nested-comment-rec	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	503.040314	3	1.0000	0	0		
 rank	nested-comment-rec	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	nested-comment-rec	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	nested-comment-rec	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	nested-comment-rec	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	4461.816470	75	1.0000	0	0		
 rank	nested-comment-rec	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	4452.726339	75	1.0000	0	0		
 rank	nested-comment-rec	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	4474.392660	75	1.0000	0	0		
 rank	nested-comment-rec	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	7.442289	75	1.0000	0	0		
 rank	nested-comment-rec	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	nested-comment-rec	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	numeric-id-nested-plus	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	numeric-id-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	95.321420	3	1.0000	0	0		
 rank	numeric-id-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	93.664857	3	1.0000	0	0		
 rank	numeric-id-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	101.261839	3	1.0000	0	0		
@@ -840,6 +882,7 @@ rank	numeric-id-nested-plus	(set)	large-subject-throughput	plain	same program	tr
 rank	numeric-id-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	14626.062131	3	1.0000	0	0		
 rank	numeric-id-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	91156.047000	3	1.0000	0	0		
 rank	numeric-id-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	91156.047000	3	1.0000	0	0		
+baseline	numeric-id-nested-plus	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1958.206197	75	1.0000	0	0		
 rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1957.668734	75	1.0000	0	0		
 rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1975.561294	75	1.0000	0	0		
@@ -870,6 +913,7 @@ rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	onigur
 rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	stddev_ns	149711.239565	75	1.0000	0	0		
 rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	6429.601526	75	1.0000	0	0		
 rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_best	6429.601526	75	1.0000	0	0		
+baseline	phone-list-nested-plus	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	phone-list-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	94.747395	3	1.0000	0	0		
 rank	phone-list-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	93.677405	3	1.0000	0	0		
 rank	phone-list-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	95.447078	3	1.0000	0	0		
@@ -900,6 +944,7 @@ rank	phone-list-nested-plus	(set)	large-subject-throughput	plain	same program	tr
 rank	phone-list-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	13275.638178	3	1.0000	0	0		
 rank	phone-list-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	91685.062374	3	1.0000	0	0		
 rank	phone-list-nested-plus	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	91685.062374	3	1.0000	0	0		
+baseline	phone-list-nested-plus	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1983.030032	75	1.0000	0	0		
 rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1981.728553	75	1.0000	0	0		
 rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1983.649415	75	1.0000	0	0		
@@ -930,6 +975,7 @@ rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	onigur
 rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	stddev_ns	238230.989602	75	1.0000	0	0		
 rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	8418.019875	75	1.0000	0	0		
 rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_best	8418.019875	75	1.0000	0	0		
+baseline	phone-palindrome-6	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	phone-palindrome-6	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	14477787.684211	3	1.0000	0	0		
 rank	phone-palindrome-6	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	14410840.473684	3	1.0000	0	0		
 rank	phone-palindrome-6	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	16677678.789474	3	1.0000	0	0		
@@ -942,6 +988,7 @@ rank	phone-palindrome-6	(set)	large-subject-throughput	plain	same program	tre_0.
 rank	phone-palindrome-6	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	stddev_ns	67087.170685	3	1.0000	0	0		
 rank	phone-palindrome-6	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.984948	3	1.0000	0	0		
 rank	phone-palindrome-6	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_best	1.984948	3	1.0000	0	0		
+baseline	phone-palindrome-6	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	phone-palindrome-6	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	22750.748558	75	1.0000	0	0		
 rank	phone-palindrome-6	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	22734.330834	75	1.0000	0	0		
 rank	phone-palindrome-6	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	22863.195896	75	1.0000	0	0		
@@ -954,30 +1001,35 @@ rank	phone-palindrome-6	(set)	short-subject-search	plain	same program	tre_0.9.0_
 rank	phone-palindrome-6	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	stddev_ns	187.125374	75	1.0000	0	0		
 rank	phone-palindrome-6	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.334080	75	1.0000	0	0		
 rank	phone-palindrome-6	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_best	1.334080	75	1.0000	0	0		
+baseline	pwd-strength-chain	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	pwd-strength-chain	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	4048.433106	3	1.0000	0	0		
 rank	pwd-strength-chain	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	4037.078881	3	1.0000	0	0		
 rank	pwd-strength-chain	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	4824.395146	3	1.0000	0	0		
 rank	pwd-strength-chain	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	310.154342	3	1.0000	0	0		
 rank	pwd-strength-chain	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	pwd-strength-chain	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	pwd-strength-chain	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	pwd-strength-chain	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	36027.959735	75	1.0000	0	0		
 rank	pwd-strength-chain	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	36023.700437	75	1.0000	0	0		
 rank	pwd-strength-chain	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	38607.809953	75	1.0000	0	0		
 rank	pwd-strength-chain	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	1014.246734	75	1.0000	0	0		
 rank	pwd-strength-chain	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	pwd-strength-chain	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	quoted-delim-match	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	quoted-delim-match	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	3837824.338235	3	1.0000	0	0		
 rank	quoted-delim-match	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	3817923.764706	3	1.0000	0	0		
 rank	quoted-delim-match	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	3870074.073529	3	1.0000	0	0		
 rank	quoted-delim-match	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	18863.766070	3	1.0000	0	0		
 rank	quoted-delim-match	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	quoted-delim-match	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	quoted-delim-match	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	quoted-delim-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	7095.180428	75	1.0000	0	0		
 rank	quoted-delim-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	7081.384184	75	1.0000	0	0		
 rank	quoted-delim-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	7134.797458	75	1.0000	0	0		
 rank	quoted-delim-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	18.701815	75	1.0000	0	0		
 rank	quoted-delim-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	quoted-delim-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	router-prefix-order	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1247.319026	3	1.0000	0	0		
 rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1246.798422	3	1.0000	0	0		
 rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1251.671019	3	1.0000	0	0		
@@ -1008,6 +1060,7 @@ rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	tre_0
 rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	37809.249068	3	1.0000	0	0		
 rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	21223.757950	3	1.0000	0	0		
 rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	21223.757950	3	1.0000	0	0		
+baseline	router-prefix-order	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	router-prefix-order	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2296.805673	75	1.0000	0	0		
 rank	router-prefix-order	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2295.742804	75	1.0000	0	0		
 rank	router-prefix-order	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2534.669144	75	1.0000	0	0		
@@ -1028,6 +1081,7 @@ rank	router-prefix-order	(set)	short-subject-search	plain	same program	re2_11.0.
 rank	router-prefix-order	(set)	short-subject-search	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	3	ratio_vs_best	3.314522	75	1.0000	0	0		
 excluded	router-prefix-order	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned		pass_rate	0.9867	75	0.9867	0	5	0	
 excluded	router-prefix-order	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned		pass_rate	0.9867	75	0.9867	0	5	0	
+baseline	tag-depth3-bound	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	tag-depth3-bound	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	2230556.482759	3	1.0000	0	0		
 rank	tag-depth3-bound	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	2228823.629310	3	1.0000	0	0		
 rank	tag-depth3-bound	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	2233826.672414	3	1.0000	0	0		
@@ -1040,6 +1094,7 @@ rank	tag-depth3-bound	(set)	large-subject-throughput	plain	same program	tre_0.9.
 rank	tag-depth3-bound	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	stddev_ns	140472.259074	3	1.0000	0	0		
 rank	tag-depth3-bound	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	15.475396	3	1.0000	0	0		
 rank	tag-depth3-bound	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_best	15.475396	3	1.0000	0	0		
+baseline	tag-depth3-bound	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	tag-depth3-bound	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	6552.182689	75	1.0000	0	0		
 rank	tag-depth3-bound	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	6546.608204	75	1.0000	0	0		
 rank	tag-depth3-bound	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	6588.587579	75	1.0000	0	0		
@@ -1052,6 +1107,7 @@ rank	tag-depth3-bound	(set)	short-subject-search	plain	same program	tre_0.9.0_de
 rank	tag-depth3-bound	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	stddev_ns	81.486341	75	1.0000	0	0		
 rank	tag-depth3-bound	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	7.233881	75	1.0000	0	0		
 rank	tag-depth3-bound	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_best	7.233881	75	1.0000	0	0		
+baseline	tag-pair-match	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	tag-pair-match	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	2229027.815126	3	1.0000	0	0		
 rank	tag-pair-match	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	2228591.672269	3	1.0000	0	0		
 rank	tag-pair-match	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	2240708.890756	3	1.0000	0	0		
@@ -1064,6 +1120,7 @@ rank	tag-pair-match	(set)	large-subject-throughput	plain	same program	tre_0.9.0_
 rank	tag-pair-match	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	stddev_ns	38966.636900	3	1.0000	0	0		
 rank	tag-pair-match	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	12.462842	3	1.0000	0	0		
 rank	tag-pair-match	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	2	ratio_vs_best	12.462842	3	1.0000	0	0		
+baseline	tag-pair-match	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	tag-pair-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	5951.135766	75	1.0000	0	0		
 rank	tag-pair-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	5937.195754	75	1.0000	0	0		
 rank	tag-pair-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	5964.903354	75	1.0000	0	0		
@@ -1071,6 +1128,7 @@ rank	tag-pair-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.
 rank	tag-pair-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	tag-pair-match	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
 excluded	tag-pair-match	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned		pass_rate	0.9867	75	0.9867	0	5	0	
+baseline	trim-nested-star	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	trim-nested-star	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	167.039249	3	1.0000	0	0		
 rank	trim-nested-star	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	166.909496	3	1.0000	0	0		
 rank	trim-nested-star	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	169.576716	3	1.0000	0	0		
@@ -1101,6 +1159,7 @@ rank	trim-nested-star	(set)	large-subject-throughput	plain	same program	tre_0.9.
 rank	trim-nested-star	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	3958306.273019	3	1.0000	0	0		
 rank	trim-nested-star	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	70940.967144	3	1.0000	0	0		
 rank	trim-nested-star	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	70940.967144	3	1.0000	0	0		
+baseline	trim-nested-star	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	trim-nested-star	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1861.753157	75	1.0000	0	0		
 rank	trim-nested-star	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1860.902117	75	1.0000	0	0		
 rank	trim-nested-star	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1864.012770	75	1.0000	0	0		
@@ -1131,18 +1190,21 @@ rank	trim-nested-star	(set)	short-subject-search	plain	same program	oniguruma_6.
 rank	trim-nested-star	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	stddev_ns	12607.052430	75	1.0000	0	0		
 rank	trim-nested-star	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	6733.806294	75	1.0000	0	0		
 rank	trim-nested-star	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_best	6733.806294	75	1.0000	0	0		
+baseline	utf8-lead-no-cont	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	utf8-lead-no-cont	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	2036374.476562	3	1.0000	0	0		
 rank	utf8-lead-no-cont	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	2035108.218750	3	1.0000	0	0		
 rank	utf8-lead-no-cont	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	2045770.625000	3	1.0000	0	0		
 rank	utf8-lead-no-cont	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	3993.644067	3	1.0000	0	0		
 rank	utf8-lead-no-cont	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	utf8-lead-no-cont	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	utf8-lead-no-cont	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	utf8-lead-no-cont	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	4932.324700	75	1.0000	0	0		
 rank	utf8-lead-no-cont	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	4926.414483	75	1.0000	0	0		
 rank	utf8-lead-no-cont	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	5678.107658	75	1.0000	0	0		
 rank	utf8-lead-no-cont	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	298.692717	75	1.0000	0	0		
 rank	utf8-lead-no-cont	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	utf8-lead-no-cont	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	uuid-near-miss	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	uuid-near-miss	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	30.366399	3	1.0000	0	0		
 rank	uuid-near-miss	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	30.185102	3	1.0000	0	0		
 rank	uuid-near-miss	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	30.442160	3	1.0000	0	0		
@@ -1173,6 +1235,7 @@ rank	uuid-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_
 rank	uuid-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	126587.281916	3	1.0000	0	0		
 rank	uuid-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	390308.738236	3	1.0000	0	0		
 rank	uuid-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	390308.738236	3	1.0000	0	0		
+baseline	uuid-near-miss	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	uuid-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	571.249713	75	1.0000	0	0		
 rank	uuid-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	570.590098	75	1.0000	0	0		
 rank	uuid-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	573.402590	75	1.0000	0	0		
@@ -1203,6 +1266,7 @@ rank	uuid-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_defa
 rank	uuid-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	123.355932	75	1.0000	0	0		
 rank	uuid-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	61.825067	75	1.0000	0	0		
 rank	uuid-near-miss	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	61.825067	75	1.0000	0	0		
+baseline	wild-codegrammar-json-array-begin	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-codegrammar-json-array-begin	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	123.694952	3	1.0000	0	0		
 rank	wild-codegrammar-json-array-begin	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	123.348672	3	1.0000	0	0		
 rank	wild-codegrammar-json-array-begin	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	130.671272	3	1.0000	0	0		
@@ -1233,6 +1297,7 @@ rank	wild-codegrammar-json-array-begin	(set)	large-subject-throughput	plain	same
 rank	wild-codegrammar-json-array-begin	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	stddev_ns	18735.482448	3	1.0000	0	0		
 rank	wild-codegrammar-json-array-begin	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	32171.121897	3	1.0000	0	0		
 rank	wild-codegrammar-json-array-begin	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_best	32171.121897	3	1.0000	0	0		
+baseline	wild-codegrammar-json-array-begin	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-codegrammar-json-array-begin	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2070.723864	75	1.0000	0	0		
 rank	wild-codegrammar-json-array-begin	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2070.477616	75	1.0000	0	0		
 rank	wild-codegrammar-json-array-begin	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2091.520330	75	1.0000	0	0		
@@ -1263,6 +1328,7 @@ rank	wild-codegrammar-json-array-begin	(set)	short-subject-search	plain	same pro
 rank	wild-codegrammar-json-array-begin	(set)	short-subject-search	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	5	stddev_ns	34.121361	75	1.0000	0	0		
 rank	wild-codegrammar-json-array-begin	(set)	short-subject-search	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	3.748834	75	1.0000	0	0		
 rank	wild-codegrammar-json-array-begin	(set)	short-subject-search	plain	same program	re2_11.0.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	3.748834	75	1.0000	0	0		
+baseline	wild-codegrammar-json-constant	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-codegrammar-json-constant	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	182372.261564	3	1.0000	0	0		
 rank	wild-codegrammar-json-constant	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	182184.615643	3	1.0000	0	0		
 rank	wild-codegrammar-json-constant	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	182847.167368	3	1.0000	0	0		
@@ -1293,6 +1359,7 @@ rank	wild-codegrammar-json-constant	(set)	large-subject-throughput	plain	same pr
 rank	wild-codegrammar-json-constant	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	427935.988759	3	1.0000	0	0		
 rank	wild-codegrammar-json-constant	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	360.721580	3	1.0000	0	0		
 rank	wild-codegrammar-json-constant	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	360.721580	3	1.0000	0	0		
+baseline	wild-codegrammar-json-constant	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-codegrammar-json-constant	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	3001.917261	75	1.0000	0	0		
 rank	wild-codegrammar-json-constant	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2988.612344	75	1.0000	0	0		
 rank	wild-codegrammar-json-constant	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	3184.716662	75	1.0000	0	0		
@@ -1323,6 +1390,7 @@ rank	wild-codegrammar-json-constant	(set)	short-subject-search	plain	same progra
 rank	wild-codegrammar-json-constant	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	321.594850	75	1.0000	0	0		
 rank	wild-codegrammar-json-constant	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	21.195438	75	1.0000	0	0		
 rank	wild-codegrammar-json-constant	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	21.195438	75	1.0000	0	0		
+baseline	wild-codegrammar-json-number-extended	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-codegrammar-json-number-extended	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	23494350.500000	3	1.0000	0	0		
 rank	wild-codegrammar-json-number-extended	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	23280290.083333	3	1.0000	0	0		
 rank	wild-codegrammar-json-number-extended	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	23604505.333333	3	1.0000	0	0		
@@ -1330,6 +1398,7 @@ rank	wild-codegrammar-json-number-extended	(set)	large-subject-throughput	plain	
 rank	wild-codegrammar-json-number-extended	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	wild-codegrammar-json-number-extended	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
 did_not_compile	wild-codegrammar-json-number-extended	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd	did-not-compile									hs_compile failed (code -4, expression 0): Unterminated comment.	
+baseline	wild-codegrammar-json-number-extended	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-codegrammar-json-number-extended	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	11694.242080	75	1.0000	0	0		
 rank	wild-codegrammar-json-number-extended	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	11660.028890	75	1.0000	0	0		
 rank	wild-codegrammar-json-number-extended	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	11771.878396	75	1.0000	0	0		
@@ -1337,6 +1406,7 @@ rank	wild-codegrammar-json-number-extended	(set)	short-subject-search	plain	same
 rank	wild-codegrammar-json-number-extended	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	wild-codegrammar-json-number-extended	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
 did_not_compile	wild-codegrammar-json-number-extended	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd	did-not-compile									hs_compile failed (code -4, expression 0): Unterminated comment.	
+baseline	wild-codegrammar-json-object-begin	(set)	large-subject-throughput			tre_0.9.0_default-caps-simdna				baseline_identity	row-best-fallback					tre_0.9.0_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-codegrammar-json-object-begin	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	1	median_ns	23248.579070	3	1.0000	0	0		
 rank	wild-codegrammar-json-object-begin	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	1	min_ns	23221.926129	3	1.0000	0	0		
 rank	wild-codegrammar-json-object-begin	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	1	max_ns	23297.456088	3	1.0000	0	0		
@@ -1367,6 +1437,7 @@ rank	wild-codegrammar-json-object-begin	(set)	large-subject-throughput	plain	sam
 rank	wild-codegrammar-json-object-begin	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	stddev_ns	2111.788279	3	1.0000	0	0		
 rank	wild-codegrammar-json-object-begin	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	95.912068	3	1.0000	0	0		
 rank	wild-codegrammar-json-object-begin	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_best	95.912068	3	1.0000	0	0		
+baseline	wild-codegrammar-json-object-begin	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-codegrammar-json-object-begin	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2039.225078	75	1.0000	0	0		
 rank	wild-codegrammar-json-object-begin	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2039.059758	75	1.0000	0	0		
 rank	wild-codegrammar-json-object-begin	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2110.771418	75	1.0000	0	0		
@@ -1397,6 +1468,7 @@ rank	wild-codegrammar-json-object-begin	(set)	short-subject-search	plain	same pr
 rank	wild-codegrammar-json-object-begin	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	5	stddev_ns	34.194445	75	1.0000	0	0		
 rank	wild-codegrammar-json-object-begin	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	5	ratio_vs_baseline	3.696359	75	1.0000	0	0		
 rank	wild-codegrammar-json-object-begin	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	5	ratio_vs_best	3.696359	75	1.0000	0	0		
+baseline	wild-codegrammar-json-stringcontent-escape	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-codegrammar-json-stringcontent-escape	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	2229854.537815	3	1.0000	0	0		
 rank	wild-codegrammar-json-stringcontent-escape	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	2228571.000000	3	1.0000	0	0		
 rank	wild-codegrammar-json-stringcontent-escape	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	2231481.865546	3	1.0000	0	0		
@@ -1404,6 +1476,7 @@ rank	wild-codegrammar-json-stringcontent-escape	(set)	large-subject-throughput	p
 rank	wild-codegrammar-json-stringcontent-escape	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	wild-codegrammar-json-stringcontent-escape	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
 did_not_compile	wild-codegrammar-json-stringcontent-escape	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd	did-not-compile									hs_compile failed (code -4, expression 0): Unterminated comment.	
+baseline	wild-codegrammar-json-stringcontent-escape	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-codegrammar-json-stringcontent-escape	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	5047.908887	75	1.0000	0	0		
 rank	wild-codegrammar-json-stringcontent-escape	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	5034.483891	75	1.0000	0	0		
 rank	wild-codegrammar-json-stringcontent-escape	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	5145.898781	75	1.0000	0	0		
@@ -1411,6 +1484,7 @@ rank	wild-codegrammar-json-stringcontent-escape	(set)	short-subject-search	plain
 rank	wild-codegrammar-json-stringcontent-escape	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	wild-codegrammar-json-stringcontent-escape	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
 did_not_compile	wild-codegrammar-json-stringcontent-escape	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd	did-not-compile									hs_compile failed (code -4, expression 0): Unterminated comment.	
+baseline	wild-datetime-datefinder-alternation	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-datetime-datefinder-alternation	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	651.498860	3	1.0000	0	0		
 rank	wild-datetime-datefinder-alternation	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	650.637217	3	1.0000	0	0		
 rank	wild-datetime-datefinder-alternation	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	688.134576	3	1.0000	0	0		
@@ -1436,6 +1510,7 @@ rank	wild-datetime-datefinder-alternation	(set)	large-subject-throughput	plain	s
 rank	wild-datetime-datefinder-alternation	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	4	ratio_vs_baseline	3281223.767560	3	1.0000	0	0		
 rank	wild-datetime-datefinder-alternation	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	4	ratio_vs_best	3281223.767560	3	1.0000	0	0		
 did_not_compile	wild-datetime-datefinder-alternation	(set)	large-subject-throughput			tre_0.9.0_default-caps-simdna	did-not-compile									tre_regncompb failed (code 11): Invalid character range	
+baseline	wild-datetime-datefinder-alternation	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-datetime-datefinder-alternation	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	3750.091700	75	1.0000	0	0		
 rank	wild-datetime-datefinder-alternation	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	3745.969384	75	1.0000	0	0		
 rank	wild-datetime-datefinder-alternation	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	3768.449960	75	1.0000	0	0		
@@ -1461,6 +1536,7 @@ rank	wild-datetime-datefinder-alternation	(set)	short-subject-search	plain	same 
 rank	wild-datetime-datefinder-alternation	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	4	ratio_vs_baseline	204.114423	75	1.0000	0	0		
 rank	wild-datetime-datefinder-alternation	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	4	ratio_vs_best	204.114423	75	1.0000	0	0		
 did_not_compile	wild-datetime-datefinder-alternation	(set)	short-subject-search			tre_0.9.0_default-caps-simdna	did-not-compile									tre_regncompb failed (code 11): Invalid character range	
+baseline	wild-datetime-moment-iso8601	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-datetime-moment-iso8601	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	147.812035	3	1.0000	0	0		
 rank	wild-datetime-moment-iso8601	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	146.852484	3	1.0000	0	0		
 rank	wild-datetime-moment-iso8601	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	149.434591	3	1.0000	0	0		
@@ -1491,6 +1567,7 @@ rank	wild-datetime-moment-iso8601	(set)	large-subject-throughput	plain	same prog
 rank	wild-datetime-moment-iso8601	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	50750.488387	3	1.0000	0	0		
 rank	wild-datetime-moment-iso8601	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	104180.714943	3	1.0000	0	0		
 rank	wild-datetime-moment-iso8601	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	104180.714943	3	1.0000	0	0		
+baseline	wild-datetime-moment-iso8601	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-datetime-moment-iso8601	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1618.964545	75	1.0000	0	0		
 rank	wild-datetime-moment-iso8601	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1618.045472	75	1.0000	0	0		
 rank	wild-datetime-moment-iso8601	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1627.561031	75	1.0000	0	0		
@@ -1521,78 +1598,91 @@ rank	wild-datetime-moment-iso8601	(set)	short-subject-search	plain	same program	
 rank	wild-datetime-moment-iso8601	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	37.373335	75	1.0000	0	0		
 rank	wild-datetime-moment-iso8601	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	26.200228	75	1.0000	0	0		
 rank	wild-datetime-moment-iso8601	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	26.200228	75	1.0000	0	0		
+baseline	wild-logparse-base10num-grok	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-base10num-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	27178784.800000	3	1.0000	0	0		
 rank	wild-logparse-base10num-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	27101937.300000	3	1.0000	0	0		
 rank	wild-logparse-base10num-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	27960581.000000	3	1.0000	0	0		
 rank	wild-logparse-base10num-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	351977.695716	3	1.0000	0	0		
 rank	wild-logparse-base10num-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	wild-logparse-base10num-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	wild-logparse-base10num-grok	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-base10num-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	15893.396086	75	1.0000	0	0		
 rank	wild-logparse-base10num-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	15772.302631	75	1.0000	0	0		
 rank	wild-logparse-base10num-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	16188.660964	75	1.0000	0	0		
 rank	wild-logparse-base10num-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	147.281096	75	1.0000	0	0		
 rank	wild-logparse-base10num-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	wild-logparse-base10num-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	wild-logparse-base10num-noatomic	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-base10num-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	25776438.636364	3	1.0000	0	0		
 rank	wild-logparse-base10num-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	25756114.000000	3	1.0000	0	0		
 rank	wild-logparse-base10num-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	26331673.181818	3	1.0000	0	0		
 rank	wild-logparse-base10num-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	219154.067590	3	1.0000	0	0		
 rank	wild-logparse-base10num-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	wild-logparse-base10num-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	wild-logparse-base10num-noatomic	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-base10num-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	15951.521350	75	1.0000	0	0		
 rank	wild-logparse-base10num-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	15869.610653	75	1.0000	0	0		
 rank	wild-logparse-base10num-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	16015.869245	75	1.0000	0	0		
 rank	wild-logparse-base10num-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	51.112994	75	1.0000	0	0		
 rank	wild-logparse-base10num-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	wild-logparse-base10num-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	wild-logparse-quotedstring-grok	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-quotedstring-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	3461960.571429	3	1.0000	0	0		
 rank	wild-logparse-quotedstring-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	3446127.350649	3	1.0000	0	0		
 rank	wild-logparse-quotedstring-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	3504453.454545	3	1.0000	0	0		
 rank	wild-logparse-quotedstring-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	20710.779356	3	1.0000	0	0		
 rank	wild-logparse-quotedstring-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	wild-logparse-quotedstring-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	wild-logparse-quotedstring-grok	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-quotedstring-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	6263.037503	75	1.0000	0	0		
 rank	wild-logparse-quotedstring-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	6260.949914	75	1.0000	0	0		
 rank	wild-logparse-quotedstring-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	6298.662948	75	1.0000	0	0		
 rank	wild-logparse-quotedstring-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	14.105170	75	1.0000	0	0		
 rank	wild-logparse-quotedstring-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	wild-logparse-quotedstring-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	wild-logparse-quotedstring-noatomic	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-quotedstring-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	3273987.716049	3	1.0000	0	0		
 rank	wild-logparse-quotedstring-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	3251490.037037	3	1.0000	0	0		
 rank	wild-logparse-quotedstring-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	3319012.333333	3	1.0000	0	0		
 rank	wild-logparse-quotedstring-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	27398.137992	3	1.0000	0	0		
 rank	wild-logparse-quotedstring-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	wild-logparse-quotedstring-noatomic	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	wild-logparse-quotedstring-noatomic	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-quotedstring-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	290745.677931	75	1.0000	0	0		
 rank	wild-logparse-quotedstring-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	290281.791039	75	1.0000	0	0		
 rank	wild-logparse-quotedstring-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	291145.693970	75	1.0000	0	0		
 rank	wild-logparse-quotedstring-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	305.910485	75	1.0000	0	0		
 rank	wild-logparse-quotedstring-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	wild-logparse-quotedstring-noatomic	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	wild-logparse-syslogbase-expanded	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-syslogbase-expanded	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	69561405.250000	3	1.0000	0	0		
 rank	wild-logparse-syslogbase-expanded	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	69299673.500000	3	1.0000	0	0		
 rank	wild-logparse-syslogbase-expanded	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	69819311.750000	3	1.0000	0	0		
 rank	wild-logparse-syslogbase-expanded	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	176101.934719	3	1.0000	0	0		
 rank	wild-logparse-syslogbase-expanded	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	wild-logparse-syslogbase-expanded	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	wild-logparse-syslogbase-expanded	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-syslogbase-expanded	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	23531.826373	75	1.0000	0	0		
 rank	wild-logparse-syslogbase-expanded	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	23414.852145	75	1.0000	0	0		
 rank	wild-logparse-syslogbase-expanded	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	29466.620284	75	1.0000	0	0		
 rank	wild-logparse-syslogbase-expanded	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	2388.096702	75	1.0000	0	0		
 rank	wild-logparse-syslogbase-expanded	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	wild-logparse-syslogbase-expanded	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	wild-logparse-winpath-grok	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-winpath-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	2227676.000000	3	1.0000	0	0		
 rank	wild-logparse-winpath-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	2226582.554622	3	1.0000	0	0		
 rank	wild-logparse-winpath-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	2229305.008403	3	1.0000	0	0		
 rank	wild-logparse-winpath-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	889.603647	3	1.0000	0	0		
 rank	wild-logparse-winpath-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	wild-logparse-winpath-grok	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+baseline	wild-logparse-winpath-grok	(set)	short-subject-search			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-logparse-winpath-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	5334.172376	75	1.0000	0	0		
 rank	wild-logparse-winpath-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	5319.039701	75	1.0000	0	0		
 rank	wild-logparse-winpath-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	5343.462807	75	1.0000	0	0		
 rank	wild-logparse-winpath-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	stddev_ns	9.421771	75	1.0000	0	0		
 rank	wild-logparse-winpath-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	wild-logparse-winpath-grok	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	wild-secrets-aws-access-key-id	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	292470.243902	3	1.0000	0	0		
 rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	292421.672949	3	1.0000	0	0		
 rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	293292.630820	3	1.0000	0	0		
@@ -1623,6 +1713,7 @@ rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same pr
 rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	1713375.283901	3	1.0000	0	0		
 rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	587.011023	3	1.0000	0	0		
 rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	587.011023	3	1.0000	0	0		
+baseline	wild-secrets-aws-access-key-id	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2103.187678	75	1.0000	0	0		
 rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2101.543534	75	1.0000	0	0		
 rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2103.859416	75	1.0000	0	0		
@@ -1653,6 +1744,7 @@ rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same progra
 rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	670.703210	75	1.0000	0	0		
 rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	83.408737	75	1.0000	0	0		
 rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	83.408737	75	1.0000	0	0		
+baseline	wild-secrets-github-pat	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	60324.674938	3	1.0000	0	0		
 rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	60289.260546	3	1.0000	0	0		
 rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	60386.938462	3	1.0000	0	0		
@@ -1683,6 +1775,7 @@ rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	t
 rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	22316.487524	3	1.0000	0	0		
 rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	415.449707	3	1.0000	0	0		
 rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	415.449707	3	1.0000	0	0		
+baseline	wild-secrets-github-pat	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	829.763469	75	1.0000	0	0		
 rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	827.807113	75	1.0000	0	0		
 rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	830.677846	75	1.0000	0	0		
@@ -1713,6 +1806,7 @@ rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	tre_0
 rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	46.588314	75	1.0000	0	0		
 rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	68.350837	75	1.0000	0	0		
 rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	68.350837	75	1.0000	0	0		
+baseline	wild-secrets-slack-webhook-url	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-secrets-slack-webhook-url	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	111983.205752	3	1.0000	0	0		
 rank	wild-secrets-slack-webhook-url	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	111928.720133	3	1.0000	0	0		
 rank	wild-secrets-slack-webhook-url	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	112443.451881	3	1.0000	0	0		
@@ -1743,6 +1837,7 @@ rank	wild-secrets-slack-webhook-url	(set)	large-subject-throughput	plain	same pr
 rank	wild-secrets-slack-webhook-url	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	90841.446059	3	1.0000	0	0		
 rank	wild-secrets-slack-webhook-url	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	315.393836	3	1.0000	0	0		
 rank	wild-secrets-slack-webhook-url	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	315.393836	3	1.0000	0	0		
+baseline	wild-secrets-slack-webhook-url	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-secrets-slack-webhook-url	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	694.297118	75	1.0000	0	0		
 rank	wild-secrets-slack-webhook-url	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	692.509314	75	1.0000	0	0		
 rank	wild-secrets-slack-webhook-url	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	695.127228	75	1.0000	0	0		
@@ -1773,6 +1868,7 @@ rank	wild-secrets-slack-webhook-url	(set)	short-subject-search	plain	same progra
 rank	wild-secrets-slack-webhook-url	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	46.386045	75	1.0000	0	0		
 rank	wild-secrets-slack-webhook-url	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	107.653928	75	1.0000	0	0		
 rank	wild-secrets-slack-webhook-url	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	107.653928	75	1.0000	0	0		
+baseline	wild-secrets-username-password-pair	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-secrets-username-password-pair	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	475056.431871	3	1.0000	0	0		
 rank	wild-secrets-username-password-pair	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	474924.699769	3	1.0000	0	0		
 rank	wild-secrets-username-password-pair	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	476086.759815	3	1.0000	0	0		
@@ -1798,6 +1894,7 @@ rank	wild-secrets-username-password-pair	(set)	large-subject-throughput	plain	sa
 rank	wild-secrets-username-password-pair	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	4	ratio_vs_baseline	10.176556	3	1.0000	0	0		
 rank	wild-secrets-username-password-pair	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	4	ratio_vs_best	10.176556	3	1.0000	0	0		
 did_not_compile	wild-secrets-username-password-pair	(set)	large-subject-throughput			tre_0.9.0_default-caps-simdna	did-not-compile									tre_regncompb failed (code 11): Invalid character range	
+baseline	wild-secrets-username-password-pair	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-secrets-username-password-pair	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1647.385086	75	1.0000	0	0		
 rank	wild-secrets-username-password-pair	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1645.709258	75	1.0000	0	0		
 rank	wild-secrets-username-password-pair	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1683.179388	75	1.0000	0	0		
@@ -1823,6 +1920,7 @@ rank	wild-secrets-username-password-pair	(set)	short-subject-search	plain	same p
 rank	wild-secrets-username-password-pair	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	4	ratio_vs_baseline	6.283641	75	1.0000	0	0		
 rank	wild-secrets-username-password-pair	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	4	ratio_vs_best	6.283641	75	1.0000	0	0		
 did_not_compile	wild-secrets-username-password-pair	(set)	short-subject-search			tre_0.9.0_default-caps-simdna	did-not-compile									tre_regncompb failed (code 11): Invalid character range	
+baseline	wild-semdiv-altorder-foo-foobar-rustregex	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	153409.333920	3	1.0000	0	0		
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	153382.227113	3	1.0000	0	0		
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	153915.880282	3	1.0000	0	0		
@@ -1853,6 +1951,7 @@ rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	large-subject-throughput	pl
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	33751.215219	3	1.0000	0	0		
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	186.417427	3	1.0000	0	0		
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	186.417427	3	1.0000	0	0		
+baseline	wild-semdiv-altorder-foo-foobar-rustregex	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2402.506209	75	1.0000	0	0		
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2399.710972	75	1.0000	0	0		
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2406.647358	75	1.0000	0	0		
@@ -1883,6 +1982,7 @@ rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	short-subject-search	plain	
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	128.952025	75	1.0000	0	0		
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	12.866666	75	1.0000	0	0		
 rank	wild-semdiv-altorder-foo-foobar-rustregex	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	12.866666	75	1.0000	0	0		
+baseline	wild-semdiv-dollar-trailing-newline-pcre2	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	151.281246	3	1.0000	0	0		
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	151.070862	3	1.0000	0	0		
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	151.406494	3	1.0000	0	0		
@@ -1913,6 +2013,7 @@ rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	large-subject-throughput	pl
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	27681.420283	3	1.0000	0	0		
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	122732.599950	3	1.0000	0	0		
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	122732.599950	3	1.0000	0	0		
+baseline	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2760.884753	75	1.0000	0	0		
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2757.819677	75	1.0000	0	0		
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2771.465146	75	1.0000	0	0		
@@ -1943,6 +2044,7 @@ rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	14.482060	75	1.0000	0	0		
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	4.598192	75	1.0000	0	0		
 rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	4.598192	75	1.0000	0	0		
+baseline	wild-semdiv-empty-alt-repeat-pcre2	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	241.418502	3	1.0000	0	0		
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	241.216165	3	1.0000	0	0		
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	242.320942	3	1.0000	0	0		
@@ -1973,6 +2075,7 @@ rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	large-subject-throughput	plain	sam
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	stddev_ns	801474.678635	3	1.0000	0	0		
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	413858.846018	3	1.0000	0	0		
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	5	ratio_vs_best	413858.846018	3	1.0000	0	0		
+baseline	wild-semdiv-empty-alt-repeat-pcre2	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	3892.375766	75	1.0000	0	0		
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	3886.719503	75	1.0000	0	0		
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	4064.363396	75	1.0000	0	0		
@@ -2003,6 +2106,7 @@ rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	short-subject-search	plain	same pr
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	63.756249	75	1.0000	0	0		
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	8.052483	75	1.0000	0	0		
 rank	wild-semdiv-empty-alt-repeat-pcre2	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	8.052483	75	1.0000	0	0		
+baseline	wild-validator-email-owasp	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-validator-email-owasp	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	199.767984	3	1.0000	0	0		
 rank	wild-validator-email-owasp	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	195.617349	3	1.0000	0	0		
 rank	wild-validator-email-owasp	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	202.168590	3	1.0000	0	0		
@@ -2033,6 +2137,7 @@ rank	wild-validator-email-owasp	(set)	large-subject-throughput	plain	same progra
 rank	wild-validator-email-owasp	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	561505.509058	3	1.0000	0	0		
 rank	wild-validator-email-owasp	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	109367.008567	3	1.0000	0	0		
 rank	wild-validator-email-owasp	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	109367.008567	3	1.0000	0	0		
+baseline	wild-validator-email-owasp	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2247.023444	75	1.0000	0	0		
 rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2244.196874	75	1.0000	0	0		
 rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2268.570796	75	1.0000	0	0		
@@ -2063,6 +2168,7 @@ rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	tr
 rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	216.855414	75	1.0000	0	0		
 rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	53.592223	75	1.0000	0	0		
 rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	53.592223	75	1.0000	0	0		
+baseline	wild-validator-ipv4-owasp	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-validator-ipv4-owasp	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	30.380584	3	1.0000	0	0		
 rank	wild-validator-ipv4-owasp	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	30.331079	3	1.0000	0	0		
 rank	wild-validator-ipv4-owasp	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	36.441482	3	1.0000	0	0		
@@ -2093,6 +2199,7 @@ rank	wild-validator-ipv4-owasp	(set)	large-subject-throughput	plain	same program
 rank	wild-validator-ipv4-owasp	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	16185.842196	3	1.0000	0	0		
 rank	wild-validator-ipv4-owasp	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	506887.114334	3	1.0000	0	0		
 rank	wild-validator-ipv4-owasp	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	506887.114334	3	1.0000	0	0		
+baseline	wild-validator-ipv4-owasp	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-validator-ipv4-owasp	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	950.672722	75	1.0000	0	0		
 rank	wild-validator-ipv4-owasp	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	949.581065	75	1.0000	0	0		
 rank	wild-validator-ipv4-owasp	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	952.573199	75	1.0000	0	0		
@@ -2123,6 +2230,7 @@ rank	wild-validator-ipv4-owasp	(set)	short-subject-search	plain	same program	tre
 rank	wild-validator-ipv4-owasp	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	152.554450	75	1.0000	0	0		
 rank	wild-validator-ipv4-owasp	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	40.842169	75	1.0000	0	0		
 rank	wild-validator-ipv4-owasp	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	40.842169	75	1.0000	0	0		
+baseline	wild-validator-us-zip-owasp	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-validator-us-zip-owasp	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	30.298327	3	1.0000	0	0		
 rank	wild-validator-us-zip-owasp	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	30.274495	3	1.0000	0	0		
 rank	wild-validator-us-zip-owasp	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	30.431856	3	1.0000	0	0		
@@ -2153,6 +2261,7 @@ rank	wild-validator-us-zip-owasp	(set)	large-subject-throughput	plain	same progr
 rank	wild-validator-us-zip-owasp	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	15746.660857	3	1.0000	0	0		
 rank	wild-validator-us-zip-owasp	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	286943.036248	3	1.0000	0	0		
 rank	wild-validator-us-zip-owasp	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	286943.036248	3	1.0000	0	0		
+baseline	wild-validator-us-zip-owasp	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	986.333768	75	1.0000	0	0		
 rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	983.956179	75	1.0000	0	0		
 rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1176.260809	75	1.0000	0	0		
@@ -2183,6 +2292,7 @@ rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	t
 rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	7.168122	75	1.0000	0	0		
 rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	14.114115	75	1.0000	0	0		
 rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	14.114115	75	1.0000	0	0		
+baseline	wild-validator-uuid-grok	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-validator-uuid-grok	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	243490.945766	3	1.0000	0	0		
 rank	wild-validator-uuid-grok	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	243334.189343	3	1.0000	0	0		
 rank	wild-validator-uuid-grok	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	245883.195052	3	1.0000	0	0		
@@ -2213,6 +2323,7 @@ rank	wild-validator-uuid-grok	(set)	large-subject-throughput	plain	same program	
 rank	wild-validator-uuid-grok	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	1072793.813502	3	1.0000	0	0		
 rank	wild-validator-uuid-grok	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	297.708043	3	1.0000	0	0		
 rank	wild-validator-uuid-grok	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	297.708043	3	1.0000	0	0		
+baseline	wild-validator-uuid-grok	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-validator-uuid-grok	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1625.909498	75	1.0000	0	0		
 rank	wild-validator-uuid-grok	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1623.290335	75	1.0000	0	0		
 rank	wild-validator-uuid-grok	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1676.530151	75	1.0000	0	0		
@@ -2243,6 +2354,7 @@ rank	wild-validator-uuid-grok	(set)	short-subject-search	plain	same program	tre_
 rank	wild-validator-uuid-grok	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	1004.784295	75	1.0000	0	0		
 rank	wild-validator-uuid-grok	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	74.985409	75	1.0000	0	0		
 rank	wild-validator-uuid-grok	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	74.985409	75	1.0000	0	0		
+baseline	wild-waf-crs-942140-dbnames	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-waf-crs-942140-dbnames	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	600337.045802	3	1.0000	0	0		
 rank	wild-waf-crs-942140-dbnames	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	600029.180662	3	1.0000	0	0		
 rank	wild-waf-crs-942140-dbnames	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	600994.353690	3	1.0000	0	0		
@@ -2273,6 +2385,7 @@ rank	wild-waf-crs-942140-dbnames	(set)	large-subject-throughput	plain	same progr
 rank	wild-waf-crs-942140-dbnames	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	4023104.293411	3	1.0000	0	0		
 rank	wild-waf-crs-942140-dbnames	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	475.274844	3	1.0000	0	0		
 rank	wild-waf-crs-942140-dbnames	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	475.274844	3	1.0000	0	0		
+baseline	wild-waf-crs-942140-dbnames	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-waf-crs-942140-dbnames	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	3412.864288	75	1.0000	0	0		
 rank	wild-waf-crs-942140-dbnames	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	3406.426935	75	1.0000	0	0		
 rank	wild-waf-crs-942140-dbnames	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	3884.503480	75	1.0000	0	0		
@@ -2303,6 +2416,7 @@ rank	wild-waf-crs-942140-dbnames	(set)	short-subject-search	plain	same program	t
 rank	wild-waf-crs-942140-dbnames	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	3126.028838	75	1.0000	0	0		
 rank	wild-waf-crs-942140-dbnames	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	93.692307	75	1.0000	0	0		
 rank	wild-waf-crs-942140-dbnames	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	93.692307	75	1.0000	0	0		
+baseline	wild-waf-crs-942160-sleep-benchmark	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	160217.044741	3	1.0000	0	0		
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	160176.565934	3	1.0000	0	0		
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	160496.152276	3	1.0000	0	0		
@@ -2333,6 +2447,7 @@ rank	wild-waf-crs-942160-sleep-benchmark	(set)	large-subject-throughput	plain	sa
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	44431.706180	3	1.0000	0	0		
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	374.985074	3	1.0000	0	0		
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	374.985074	3	1.0000	0	0		
+baseline	wild-waf-crs-942160-sleep-benchmark	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2420.253060	75	1.0000	0	0		
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2418.306920	75	1.0000	0	0		
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2429.281505	75	1.0000	0	0		
@@ -2363,6 +2478,7 @@ rank	wild-waf-crs-942160-sleep-benchmark	(set)	short-subject-search	plain	same p
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	18.466065	75	1.0000	0	0		
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	29.376990	75	1.0000	0	0		
 rank	wild-waf-crs-942160-sleep-benchmark	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	29.376990	75	1.0000	0	0		
+baseline	wild-waf-crs-942270-union-select	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-waf-crs-942270-union-select	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	86366.813805	3	1.0000	0	0		
 rank	wild-waf-crs-942270-union-select	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	86279.725638	3	1.0000	0	0		
 rank	wild-waf-crs-942270-union-select	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	86983.175174	3	1.0000	0	0		
@@ -2393,6 +2509,7 @@ rank	wild-waf-crs-942270-union-select	(set)	large-subject-throughput	plain	same 
 rank	wild-waf-crs-942270-union-select	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	42965.384291	3	1.0000	0	0		
 rank	wild-waf-crs-942270-union-select	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	358.197725	3	1.0000	0	0		
 rank	wild-waf-crs-942270-union-select	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	358.197725	3	1.0000	0	0		
+baseline	wild-waf-crs-942270-union-select	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-waf-crs-942270-union-select	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1914.239660	75	1.0000	0	0		
 rank	wild-waf-crs-942270-union-select	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1910.294888	75	1.0000	0	0		
 rank	wild-waf-crs-942270-union-select	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1918.606779	75	1.0000	0	0		
@@ -2423,6 +2540,7 @@ rank	wild-waf-crs-942270-union-select	(set)	short-subject-search	plain	same prog
 rank	wild-waf-crs-942270-union-select	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	48.694430	75	1.0000	0	0		
 rank	wild-waf-crs-942270-union-select	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	20.498947	75	1.0000	0	0		
 rank	wild-waf-crs-942270-union-select	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	20.498947	75	1.0000	0	0		
+baseline	wild-waf-crs-942360-concat-sqli	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-waf-crs-942360-concat-sqli	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	878263.512195	3	1.0000	0	0		
 rank	wild-waf-crs-942360-concat-sqli	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	875941.914634	3	1.0000	0	0		
 rank	wild-waf-crs-942360-concat-sqli	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	880883.487805	3	1.0000	0	0		
@@ -2453,6 +2571,7 @@ rank	wild-waf-crs-942360-concat-sqli	(set)	large-subject-throughput	plain	same p
 rank	wild-waf-crs-942360-concat-sqli	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	7268394.175822	3	1.0000	0	0		
 rank	wild-waf-crs-942360-concat-sqli	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	1331.625025	3	1.0000	0	0		
 rank	wild-waf-crs-942360-concat-sqli	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	1331.625025	3	1.0000	0	0		
+baseline	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	4575.468441	75	1.0000	0	0		
 rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	4558.223595	75	1.0000	0	0		
 rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	4581.261744	75	1.0000	0	0		
@@ -2478,6 +2597,7 @@ rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same progr
 rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	4	ratio_vs_baseline	31.190549	75	1.0000	0	0		
 rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	4	ratio_vs_best	31.190549	75	1.0000	0	0		
 excluded	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned		pass_rate	0.9867	75	0.9867	0	5	0	
+baseline	wild-waf-crs-942500-comment-obfuscation	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-waf-crs-942500-comment-obfuscation	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	60231.062325	3	1.0000	0	0		
 rank	wild-waf-crs-942500-comment-obfuscation	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	60206.567319	3	1.0000	0	0		
 rank	wild-waf-crs-942500-comment-obfuscation	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	60404.634838	3	1.0000	0	0		
@@ -2503,6 +2623,7 @@ rank	wild-waf-crs-942500-comment-obfuscation	(set)	large-subject-throughput	plai
 rank	wild-waf-crs-942500-comment-obfuscation	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	4	ratio_vs_baseline	24.873057	3	1.0000	0	0		
 rank	wild-waf-crs-942500-comment-obfuscation	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	4	ratio_vs_best	24.873057	3	1.0000	0	0		
 did_not_compile	wild-waf-crs-942500-comment-obfuscation	(set)	large-subject-throughput			tre_0.9.0_default-caps-simdna	did-not-compile									tre_regncompb failed (code 11): Invalid character range	
+baseline	wild-waf-crs-942500-comment-obfuscation	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	wild-waf-crs-942500-comment-obfuscation	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	2358.914958	75	1.0000	0	0		
 rank	wild-waf-crs-942500-comment-obfuscation	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	2352.435322	75	1.0000	0	0		
 rank	wild-waf-crs-942500-comment-obfuscation	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	2360.900358	75	1.0000	0	0		
@@ -2528,6 +2649,7 @@ rank	wild-waf-crs-942500-comment-obfuscation	(set)	short-subject-search	plain	sa
 rank	wild-waf-crs-942500-comment-obfuscation	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	4	ratio_vs_baseline	3.516962	75	1.0000	0	0		
 rank	wild-waf-crs-942500-comment-obfuscation	(set)	short-subject-search	plain	same program	re2_11.0.0_longest-caps-simdna	measured	pinned	4	ratio_vs_best	3.516962	75	1.0000	0	0		
 did_not_compile	wild-waf-crs-942500-comment-obfuscation	(set)	short-subject-search			tre_0.9.0_default-caps-simdna	did-not-compile									tre_regncompb failed (code 11): Invalid character range	
+baseline	winpath-near-miss	(set)	large-subject-throughput			oniguruma_6.9.10_default-caps-simdna				baseline_identity	row-best-fallback					oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	winpath-near-miss	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	median_ns	94.227941	3	1.0000	0	0		
 rank	winpath-near-miss	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	min_ns	93.425490	3	1.0000	0	0		
 rank	winpath-near-miss	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	1	max_ns	111.838965	3	1.0000	0	0		
@@ -2558,6 +2680,7 @@ rank	winpath-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9
 rank	winpath-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	stddev_ns	6911.603411	3	1.0000	0	0		
 rank	winpath-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_baseline	108123.957602	3	1.0000	0	0		
 rank	winpath-near-miss	(set)	large-subject-throughput	plain	same program	tre_0.9.0_default-caps-simdna	measured	pinned	5	ratio_vs_best	108123.957602	3	1.0000	0	0		
+baseline	winpath-near-miss	(set)	short-subject-search			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
 rank	winpath-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1463.549018	75	1.0000	0	0		
 rank	winpath-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1462.863337	75	1.0000	0	0		
 rank	winpath-near-miss	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1468.149681	75	1.0000	0	0		

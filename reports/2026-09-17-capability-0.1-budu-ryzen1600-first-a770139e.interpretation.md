@@ -1,6 +1,6 @@
 <!-- pcrecbench interpret
 report:          reports/2026-09-17-capability-0.1-budu-ryzen1600-first-a770139e.tsv
-report_sha256:   03253953d5a5f281ad52bc789b2ac04b086cf629d8eb58b798becb3572672da2
+report_sha256:   e42ae860ef33011bc0c1d0375eba0f1611cb75ce6a2cae17b35a9777f1f9e109
 index:           store/index.tsv
 index_sha256:    98a24fed668b7d4024e3211ff3bb9aef4ba36562bb604e2d40d46088dd94d985
 predictions:     docs/dev/predictions/capability-0.1-first.tsv
@@ -9,7 +9,7 @@ subject_grain:   (none)
 subject_grain_sha256:(none)
 catalogue:       2.0
 interpret:       v1
-reporter:        v17 (2026-09-17)
+reporter:        v18 (2026-09-18)
 query:           subbench=capability, version=0.1, machine=budu-ryzen1600, since=2026-09-17T00:00:00Z, until=2026-09-17T08:00:00Z, testee=libpcre2_10.46_interp-caps-simdna, testee=libpcre2_10.46_jit-caps-simdna, testee=libpcre2_10.46_dfa-nocaps-simdna, testee=pcrec_a770139e_auto-caps-simdna, testee=pcrec_a770139e_auto-nocaps-simdna, testee=pcrec_a770139e_vm-caps-simdna, testee=pcrec_a770139e_vm-in-caps-simdna
 -->
 

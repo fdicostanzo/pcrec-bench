@@ -1,4 +1,4 @@
-# reporter: v17 (2026-09-17); filters: subbench=altwide, version=0.2, since=2026-09-03T03:50:00Z, until=2026-09-05T08:40:00Z, testee=libpcre2_10.46_interp-caps-simdna, testee=libpcre2_10.46_jit-caps-simdna, testee=pcrec_334fd10e_auto-caps-simdna, testee=pcrec_334fd10e_auto-caps-simdna_noisland, testee=pcrec_334fd10e_auto-nocaps-simdna, testee=pcrec_334fd10e_vm-caps-simdna, testee=pcrec_334fd10e_vm-in-caps-simdna, testee=pcrec_1989c62_auto-caps-simdna, testee=pcrec_1989c62_auto-nocaps-simdna, testee=pcrec_1989c62_vm-caps-simdna, testee=pcrec_1989c62_vm-in-caps-simdna; source: store/index.tsv (11 record(s) matching this query); records: 11; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: altwide@0.2; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 11; mixed_x13: False; include_provenance: False; worst_other_core_busy: 29.22% (pcrec_334fd10e_auto-caps-simdna / srt-256 / large-subject-throughput); floor_pattern: floor
+# reporter: v18 (2026-09-18); filters: subbench=altwide, version=0.2, since=2026-09-03T03:50:00Z, until=2026-09-05T08:40:00Z, testee=libpcre2_10.46_interp-caps-simdna, testee=libpcre2_10.46_jit-caps-simdna, testee=pcrec_334fd10e_auto-caps-simdna, testee=pcrec_334fd10e_auto-caps-simdna_noisland, testee=pcrec_334fd10e_auto-nocaps-simdna, testee=pcrec_334fd10e_vm-caps-simdna, testee=pcrec_334fd10e_vm-in-caps-simdna, testee=pcrec_1989c62_auto-caps-simdna, testee=pcrec_1989c62_auto-nocaps-simdna, testee=pcrec_1989c62_vm-caps-simdna, testee=pcrec_1989c62_vm-in-caps-simdna; source: store/index.tsv (11 record(s) matching this query); records: 11; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: altwide@0.2; machines: budu-ryzen1600; schema_versions: 1.5; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 11; mixed_x13: False; include_provenance: False; worst_other_core_busy: 29.22% (pcrec_334fd10e_auto-caps-simdna / srt-256 / large-subject-throughput); floor_pattern: floor
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 record						altwide@0.2__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260903T035908Z				agreement	agree (0 of 74 groups; 1 of 2672 rows; 100 unjudged; k=1.5, 2/3; 5 trials)						
 record						altwide@0.2__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260903T050103Z				agreement	agree (0 of 89 groups; 3 of 2732 rows; 40 unjudged; k=1.5, 2/3; 5 trials)						
@@ -11,6 +11,7 @@ record						altwide@0.2__pcrec_334fd10e_auto-caps-simdna_noisland__budu-ryzen160
 record						altwide@0.2__pcrec_334fd10e_auto-nocaps-simdna__budu-ryzen1600__20260905T080736Z				agreement	agree (0 of 53 groups; 0 of 1436 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
 record						altwide@0.2__pcrec_334fd10e_vm-caps-simdna__budu-ryzen1600__20260905T081626Z				agreement	agree (0 of 65 groups; 0 of 1844 rows; 4 unjudged; k=1.5, 2/3; 5 trials)						
 record						altwide@0.2__pcrec_334fd10e_vm-in-caps-simdna__budu-ryzen1600__20260905T083109Z				agreement	agree (0 of 65 groups; 0 of 1844 rows; 4 unjudged; k=1.5, 2/3; 5 trials)						
+baseline	ci-256	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	median_ns	2893915.289474	4	1.0000	0	0		
 rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	min_ns	2892979.052632	4	1.0000	0	0		
 rank	ci-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	max_ns	2918256.833333	4	1.0000	0	0		
@@ -77,6 +78,7 @@ rank	ci-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_int
 rank	ci-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	11535053.538928	4	1.0000	0	0		
 rank	ci-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	ci-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	1167.840886	4	1.0000	0	0		
+baseline	ci-256	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	ci-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	median_ns	76116.386224	40	1.0000	0	0		
 rank	ci-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	min_ns	75928.303687	40	1.0000	0	0		
 rank	ci-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	max_ns	77330.513622	40	1.0000	0	0		
@@ -118,6 +120,7 @@ did_not_compile	ci-256	(set)	match-compliance			pcrec_1989c62_auto-nocaps-simdna
 did_not_compile	ci-256	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1045834 bytes of emitted C source (limit 1000000, ~173 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	ci-256	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1045834 bytes of emitted C source (limit 1000000, ~173 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	ci-256	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1045834 bytes of emitted C source (limit 1000000, ~173 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	ci-256	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	7390.483562	40	1.0000	0	0		
 rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	7384.817517	40	1.0000	0	0		
 rank	ci-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	7410.389575	40	1.0000	0	0		
@@ -184,6 +187,7 @@ rank	ci-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-
 rank	ci-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	178204.302481	40	1.0000	0	0		
 rank	ci-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	ci-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	2021.493963	40	1.0000	0	0		
+baseline	ci-512	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	ci-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	596452925.000000	4	1.0000	0	0		
 rank	ci-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	594153921.000000	4	1.0000	0	0		
 rank	ci-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	597502962.000000	4	1.0000	0	0		
@@ -205,6 +209,7 @@ did_not_compile	ci-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps
 did_not_compile	ci-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1590488 bytes of emitted C source (limit 1000000, ~264 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	ci-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 901048 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	ci-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 901048 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	ci-512	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	ci-512	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	145836.551507	40	1.0000	0	0		
 rank	ci-512	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	145727.669486	40	1.0000	0	0		
 rank	ci-512	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	148031.145551	40	1.0000	0	0		
@@ -226,6 +231,7 @@ did_not_compile	ci-512	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_
 did_not_compile	ci-512	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1590488 bytes of emitted C source (limit 1000000, ~264 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	ci-512	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 901048 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	ci-512	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 901048 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	ci-512	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	ci-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	2626904.707108	40	1.0000	0	0		
 rank	ci-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	2624248.073529	40	1.0000	0	0		
 rank	ci-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	2631149.927696	40	1.0000	0	0		
@@ -247,6 +253,7 @@ did_not_compile	ci-512	(set)	short-subject-search			pcrec_334fd10e_auto-caps-sim
 did_not_compile	ci-512	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1590488 bytes of emitted C source (limit 1000000, ~264 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	ci-512	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 901048 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	ci-512	(set)	short-subject-search			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 901048 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	cnt-64	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	median_ns	3487446.515464	4	1.0000	0	0		faster ×1.37
 rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	min_ns	3486324.855670	4	1.0000	0	0		faster ×1.37
 rank	cnt-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	max_ns	3504008.577320	4	1.0000	0	0		faster ×1.37
@@ -313,6 +320,7 @@ rank	cnt-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_int
 rank	cnt-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	8494089.009437	4	1.0000	0	0		
 rank	cnt-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	cnt-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	163.790723	4	1.0000	0	0		
+baseline	cnt-64	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	cnt-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	406.994645	40	1.0000	0	0		faster ×32.35
 rank	cnt-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	405.804245	40	1.0000	0	0		faster ×32.35
 rank	cnt-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	408.389420	40	1.0000	0	0		faster ×32.35
@@ -354,6 +362,7 @@ did_not_compile	cnt-64	(set)	match-compliance			pcrec_1989c62_auto-nocaps-simdna
 did_not_compile	cnt-64	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1108228 bytes of emitted C source (limit 1000000, ~183 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	cnt-64	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1108228 bytes of emitted C source (limit 1000000, ~183 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	cnt-64	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1108228 bytes of emitted C source (limit 1000000, ~183 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	cnt-64	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	11719.018015	40	1.0000	0	0		
 rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	11683.301506	40	1.0000	0	0		
 rank	cnt-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	11733.520757	40	1.0000	0	0		
@@ -420,6 +429,7 @@ rank	cnt-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-
 rank	cnt-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	189391.537280	40	1.0000	0	0		
 rank	cnt-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	cnt-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	227.798045	40	1.0000	0	0		
+baseline	floor	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	median_ns	15338.143068	4	1.0000	0	0		
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	min_ns	15336.127431	4	1.0000	0	0		
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	max_ns	15355.656916	4	1.0000	0	0		
@@ -486,6 +496,7 @@ rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-c
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	11	stddev_ns	411.674638	4	1.0000	0	0		slower ×2.00
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	35.017394	4	1.0000	0	0		slower ×2.00
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	11	ratio_vs_best	35.448130	4	1.0000	0	0		slower ×2.00
+baseline	floor	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	1	median_ns	214.178406	40	1.0000	0	0		
 rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	1	min_ns	214.056160	40	1.0000	0	0		
 rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	1	max_ns	214.667918	40	1.0000	0	0		
@@ -552,6 +563,7 @@ rank	floor	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-sim
 rank	floor	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	11	stddev_ns	36.206462	40	1.0000	0	0		
 rank	floor	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.012177	40	1.0000	0	0		
 rank	floor	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	11	ratio_vs_best	11.531200	40	1.0000	0	0		
+baseline	floor	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	388.215907	40	1.0000	0	0		faster ×1.12
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	387.094130	40	1.0000	0	0		faster ×1.12
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	389.194022	40	1.0000	0	0		faster ×1.12
@@ -618,6 +630,7 @@ rank	floor	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-c
 rank	floor	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	43.394686	40	1.0000	0	0		
 rank	floor	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	floor	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	7.197365	40	1.0000	0	0		
+baseline	nar4-256	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	median_ns	1767943.901163	4	1.0000	0	0		
 rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	min_ns	1766255.982558	4	1.0000	0	0		
 rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	max_ns	1775635.110465	4	1.0000	0	0		
@@ -684,6 +697,7 @@ rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm
 rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	27113466.918308	4	1.0000	0	0		
 rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	3.918440	4	1.0000	0	0		
 rank	nar4-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	1025.183400	4	1.0000	0	0		
+baseline	nar4-256	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	median_ns	367.937324	40	1.0000	0	0		faster ×208.75
 rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	min_ns	367.793190	40	1.0000	0	0		faster ×208.75
 rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	max_ns	368.364905	40	1.0000	0	0		faster ×208.75
@@ -750,6 +764,7 @@ rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c
 rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	132.219828	40	1.0000	0	0		
 rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	40.876677	40	1.0000	0	0		
 rank	nar4-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	208.861874	40	1.0000	0	0		
+baseline	nar4-256	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	4411.845446	40	1.0000	0	0		
 rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	4363.131817	40	1.0000	0	0		
 rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	4419.764991	40	1.0000	0	0		
@@ -816,6 +831,7 @@ rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-
 rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	stddev_ns	10384.253080	40	1.0000	0	0		
 rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	ratio_vs_baseline	4.632144	40	1.0000	0	0		
 rank	nar4-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	ratio_vs_best	2294.463548	40	1.0000	0	0		
+baseline	nar4-512	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	nar4-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	92376211.750000	4	1.0000	0	0		
 rank	nar4-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	92210453.500000	4	1.0000	0	0		
 rank	nar4-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	92447712.250000	4	1.0000	0	0		
@@ -837,6 +853,7 @@ did_not_compile	nar4-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-ca
 did_not_compile	nar4-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1608641 bytes of emitted C source (limit 1000000, ~267 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	nar4-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 544925 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	nar4-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 544925 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	nar4-512	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	nar4-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	median_ns	2403.363273	40	1.0000	0	0		
 rank	nar4-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	min_ns	2398.436238	40	1.0000	0	0		
 rank	nar4-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	max_ns	2435.308497	40	1.0000	0	0		
@@ -858,6 +875,7 @@ did_not_compile	nar4-512	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdn
 did_not_compile	nar4-512	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1608641 bytes of emitted C source (limit 1000000, ~267 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	nar4-512	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 544925 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	nar4-512	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 544925 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	nar4-512	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	nar4-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	439049.633192	40	1.0000	0	0		
 rank	nar4-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	437020.522451	40	1.0000	0	0		
 rank	nar4-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	440708.918083	40	1.0000	0	0		
@@ -879,6 +897,7 @@ did_not_compile	nar4-512	(set)	short-subject-search			pcrec_334fd10e_auto-caps-s
 did_not_compile	nar4-512	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1608641 bytes of emitted C source (limit 1000000, ~267 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	nar4-512	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 544925 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	nar4-512	(set)	short-subject-search			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 544925 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	nar4-64	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	median_ns	1862239.660714	4	1.0000	0	0		
 rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	min_ns	1859425.059524	4	1.0000	0	0		
 rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	max_ns	1868939.815476	4	1.0000	0	0		
@@ -945,6 +964,7 @@ rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-
 rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	2541280.555314	4	1.0000	0	0		
 rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.243265	4	1.0000	0	0		
 rank	nar4-64	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	81.907298	4	1.0000	0	0		
+baseline	nar4-64	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	355.078393	40	1.0000	0	0		faster ×20.54
 rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	354.817220	40	1.0000	0	0		faster ×20.54
 rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	717.337730	40	1.0000	0	0		faster ×20.54
@@ -1011,6 +1031,7 @@ rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c6
 rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	50.001335	40	1.0000	0	0		
 rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	5.005011	40	1.0000	0	0		
 rank	nar4-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	20.540092	40	1.0000	0	0		
+baseline	nar4-64	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	4551.223753	40	1.0000	0	0		faster ×1.01
 rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	4534.178199	40	1.0000	0	0		faster ×1.01
 rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	4554.988112	40	1.0000	0	0		faster ×1.01
@@ -1077,6 +1098,7 @@ rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-caps
 rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	2215.424200	40	1.0000	0	0		
 rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.496048	40	1.0000	0	0		
 rank	nar4-64	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	187.066102	40	1.0000	0	0		
+baseline	pfx3-256	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	pfx3-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	352675.887615	4	1.0000	0	0		
 rank	pfx3-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	348174.336009	4	1.0000	0	0		
 rank	pfx3-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	377563.533257	4	1.0000	0	0		
@@ -1143,6 +1165,7 @@ rank	pfx3-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_i
 rank	pfx3-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	4385857.076021	4	1.0000	0	0		
 rank	pfx3-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	pfx3-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	391.024560	4	1.0000	0	0		
+baseline	pfx3-256	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	338.087939	40	1.0000	0	0		faster ×1.10
 rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	337.817735	40	1.0000	0	0		faster ×1.10
 rank	pfx3-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	349.961114	40	1.0000	0	0		faster ×1.10
@@ -1209,6 +1232,7 @@ rank	pfx3-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-ca
 rank	pfx3-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	165.154155	40	1.0000	0	0		
 rank	pfx3-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	pfx3-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	19.191098	40	1.0000	0	0		
+baseline	pfx3-256	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	1219.927515	40	1.0000	0	0		
 rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	1219.629901	40	1.0000	0	0		
 rank	pfx3-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	1222.972708	40	1.0000	0	0		
@@ -1275,6 +1299,7 @@ rank	pfx3-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_inter
 rank	pfx3-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	12200.848706	40	1.0000	0	0		
 rank	pfx3-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	pfx3-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	463.792931	40	1.0000	0	0		
+baseline	pfx3-512	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	pfx3-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	815003.779449	4	1.0000	0	0		
 rank	pfx3-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	807336.819549	4	1.0000	0	0		
 rank	pfx3-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	821824.774436	4	1.0000	0	0		
@@ -1306,6 +1331,7 @@ did_not_compile	pfx3-512	(set)	large-subject-throughput			pcrec_1989c62_vm-in-ca
 did_not_compile	pfx3-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	pfx3-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	pfx3-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	pfx3-512	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	pfx3-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	327.538782	40	1.0000	0	0		
 rank	pfx3-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	327.391255	40	1.0000	0	0		
 rank	pfx3-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	330.045771	40	1.0000	0	0		
@@ -1337,6 +1363,7 @@ did_not_compile	pfx3-512	(set)	match-compliance			pcrec_1989c62_vm-in-caps-simdn
 did_not_compile	pfx3-512	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	pfx3-512	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	pfx3-512	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	pfx3-512	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	pfx3-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	7507.027787	40	1.0000	0	0		
 rank	pfx3-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	7400.731720	40	1.0000	0	0		
 rank	pfx3-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	8886.046371	40	1.0000	0	0		
@@ -1368,6 +1395,7 @@ did_not_compile	pfx3-512	(set)	short-subject-search			pcrec_1989c62_vm-in-caps-s
 did_not_compile	pfx3-512	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	pfx3-512	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	pfx3-512	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	s-2048	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-2048	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	2640548102.000000	4	1.0000	0	0		
 rank	s-2048	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	2563505537.000000	4	1.0000	0	0		
 rank	s-2048	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	2669076431.000000	4	1.0000	0	0		
@@ -1389,6 +1417,7 @@ did_not_compile	s-2048	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps
 did_not_compile	s-2048	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1260724 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	s-2048	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 1188227 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	s-2048	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 1188227 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	s-2048	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-2048	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	median_ns	403778.080819	40	1.0000	0	0		
 rank	s-2048	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	min_ns	403541.820919	40	1.0000	0	0		
 rank	s-2048	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	max_ns	416383.819915	40	1.0000	0	0		
@@ -1410,6 +1439,7 @@ did_not_compile	s-2048	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_
 did_not_compile	s-2048	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1260724 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	s-2048	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 1188227 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	s-2048	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 1188227 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	s-2048	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-2048	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	13326644.590361	40	1.0000	0	0		
 rank	s-2048	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	13302786.698795	40	1.0000	0	0		
 rank	s-2048	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	14049112.240964	40	1.0000	0	0		
@@ -1431,6 +1461,7 @@ did_not_compile	s-2048	(set)	short-subject-search			pcrec_334fd10e_auto-caps-sim
 did_not_compile	s-2048	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1260724 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	s-2048	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 1188227 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	s-2048	(set)	short-subject-search			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 1188227 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	s-256	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	median_ns	2843492.068966	4	1.0000	0	0		
 rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	min_ns	2838864.456897	4	1.0000	0	0		
 rank	s-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	max_ns	2859509.663793	4	1.0000	0	0		
@@ -1497,6 +1528,7 @@ rank	s-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_inte
 rank	s-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	26374672.032505	4	1.0000	0	0		
 rank	s-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	s-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	828.921585	4	1.0000	0	0		
+baseline	s-256	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	371.520507	40	1.0000	0	0		faster ×318.72
 rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	371.406369	40	1.0000	0	0		faster ×318.72
 rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	373.478546	40	1.0000	0	0		faster ×318.72
@@ -1563,6 +1595,7 @@ rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_
 rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	319.338210	40	1.0000	0	0		
 rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	2.120419	40	1.0000	0	0		
 rank	s-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	318.723478	40	1.0000	0	0		
+baseline	s-256	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	median_ns	8095.370626	40	1.0000	0	0		
 rank	s-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	min_ns	8084.929966	40	1.0000	0	0		
 rank	s-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	max_ns	8126.529514	40	1.0000	0	0		
@@ -1629,6 +1662,7 @@ rank	s-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-c
 rank	s-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	945941.799681	40	1.0000	0	0		
 rank	s-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	s-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	1509.405619	40	1.0000	0	0		
+baseline	s-4096	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-4096	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	18640475931.000000	4	1.0000	0	0		
 rank	s-4096	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	18594188618.000000	4	1.0000	0	0		
 rank	s-4096	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	18905290607.000000	4	1.0000	0	0		
@@ -1650,6 +1684,7 @@ did_not_compile	s-4096	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps
 did_not_compile	s-4096	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1621608 bytes of emitted C source (limit 1000000, ~269 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	s-4096	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 2236549 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	s-4096	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 2236549 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	s-4096	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-4096	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	810287.265083	40	1.0000	0	0		
 rank	s-4096	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	810006.798092	40	1.0000	0	0		
 rank	s-4096	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	811310.889931	40	1.0000	0	0		
@@ -1671,6 +1706,7 @@ did_not_compile	s-4096	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_
 did_not_compile	s-4096	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1621608 bytes of emitted C source (limit 1000000, ~269 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	s-4096	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 2236549 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	s-4096	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 2236549 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	s-4096	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-4096	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	99118069.846154	40	1.0000	0	0		
 rank	s-4096	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	95957127.461538	40	1.0000	0	0		
 rank	s-4096	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	100966679.384615	40	1.0000	0	0		
@@ -1692,6 +1728,7 @@ did_not_compile	s-4096	(set)	short-subject-search			pcrec_334fd10e_auto-caps-sim
 did_not_compile	s-4096	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1621608 bytes of emitted C source (limit 1000000, ~269 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	s-4096	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 2236549 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	s-4096	(set)	short-subject-search			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 2236549 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	s-512	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	median_ns	3157362.088235	4	1.0000	0	0		
 rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	min_ns	3150958.725490	4	1.0000	0	0		
 rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	max_ns	3199780.882353	4	1.0000	0	0		
@@ -1758,6 +1795,7 @@ rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-in
 rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	stddev_ns	50499111.935340	4	1.0000	0	0		
 rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.186818	4	1.0000	0	0		
 rank	s-512	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	ratio_vs_best	1749.532704	4	1.0000	0	0		
+baseline	s-512	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	median_ns	387.205243	40	1.0000	0	0		faster ×701.55
 rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	min_ns	386.936772	40	1.0000	0	0		faster ×701.55
 rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	max_ns	387.978376	40	1.0000	0	0		faster ×701.55
@@ -1824,6 +1862,7 @@ rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_
 rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	337.884802	40	1.0000	0	0		
 rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	2.554526	40	1.0000	0	0		
 rank	s-512	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	702.135898	40	1.0000	0	0		
+baseline	s-512	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	s-512	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	median_ns	8056.511196	40	1.0000	0	0		
 rank	s-512	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	min_ns	8046.214631	40	1.0000	0	0		
 rank	s-512	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	max_ns	8065.829841	40	1.0000	0	0		
@@ -1890,6 +1929,7 @@ rank	s-512	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-cap
 rank	s-512	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	stddev_ns	2902578.300766	40	1.0000	0	0		
 rank	s-512	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.453641	40	1.0000	0	0		
 rank	s-512	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	ratio_vs_best	4361.580517	40	1.0000	0	0		
+baseline	sfx-256	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	median_ns	2875254.371681	4	1.0000	0	0		
 rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	min_ns	2864866.247788	4	1.0000	0	0		
 rank	sfx-256	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	max_ns	2916997.805310	4	1.0000	0	0		
@@ -1956,6 +1996,7 @@ rank	sfx-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_in
 rank	sfx-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	24223333.304279	4	1.0000	0	0		
 rank	sfx-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	sfx-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	814.633754	4	1.0000	0	0		
+baseline	sfx-256	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	366.931796	40	1.0000	0	0		faster ×315.56
 rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	363.883659	40	1.0000	0	0		faster ×315.56
 rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	380.754951	40	1.0000	0	0		faster ×315.56
@@ -2022,6 +2063,7 @@ rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c6
 rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	445.497674	40	1.0000	0	0		
 rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	13.783692	40	1.0000	0	0		
 rank	sfx-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	315.564006	40	1.0000	0	0		
+baseline	sfx-256	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	median_ns	8031.860175	40	1.0000	0	0		
 rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	min_ns	8020.184661	40	1.0000	0	0		
 rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	max_ns	8043.909101	40	1.0000	0	0		
@@ -2088,6 +2130,7 @@ rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-c
 rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	stddev_ns	352440.914201	40	1.0000	0	0		
 rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.158334	40	1.0000	0	0		
 rank	sfx-256	(set)	short-subject-search	plain	same program	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	ratio_vs_best	1432.344273	40	1.0000	0	0		
+baseline	sfx-512	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sfx-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	586414037.000000	4	1.0000	0	0		
 rank	sfx-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	579033274.000000	4	1.0000	0	0		
 rank	sfx-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	591272537.000000	4	1.0000	0	0		
@@ -2109,6 +2152,7 @@ did_not_compile	sfx-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-cap
 did_not_compile	sfx-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1332391 bytes of emitted C source (limit 1000000, ~221 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	sfx-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 699715 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	sfx-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 699715 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	sfx-512	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sfx-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	median_ns	15487.376474	40	1.0000	0	0		
 rank	sfx-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	min_ns	15381.303031	40	1.0000	0	0		
 rank	sfx-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	max_ns	15497.231703	40	1.0000	0	0		
@@ -2130,6 +2174,7 @@ did_not_compile	sfx-512	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna
 did_not_compile	sfx-512	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1332391 bytes of emitted C source (limit 1000000, ~221 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	sfx-512	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 699715 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	sfx-512	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 699715 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	sfx-512	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sfx-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	2474779.178284	40	1.0000	0	0		
 rank	sfx-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	2472881.404826	40	1.0000	0	0		
 rank	sfx-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	2490334.233244	40	1.0000	0	0		
@@ -2151,6 +2196,7 @@ did_not_compile	sfx-512	(set)	short-subject-search			pcrec_334fd10e_auto-caps-si
 did_not_compile	sfx-512	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1332391 bytes of emitted C source (limit 1000000, ~221 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	sfx-512	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 699715 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	sfx-512	(set)	short-subject-search			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 699715 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	sfx-64	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	median_ns	3108951.247706	4	1.0000	0	0		
 rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	min_ns	3099754.394495	4	1.0000	0	0		
 rank	sfx-64	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	max_ns	3112838.146789	4	1.0000	0	0		
@@ -2217,6 +2263,7 @@ rank	sfx-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_int
 rank	sfx-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	90742844.363649	4	1.0000	0	0		
 rank	sfx-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	sfx-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	196.619475	4	1.0000	0	0		
+baseline	sfx-64	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	359.660890	40	1.0000	0	0		faster ×37.71
 rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	357.200871	40	1.0000	0	0		faster ×37.71
 rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	361.767469	40	1.0000	0	0		faster ×37.71
@@ -2283,6 +2330,7 @@ rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62
 rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	stddev_ns	33.540071	40	1.0000	0	0		
 rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	ratio_vs_baseline	5.727643	40	1.0000	0	0		
 rank	sfx-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-in-caps-simdna	measured	pinned	11	ratio_vs_best	37.731302	40	1.0000	0	0		
+baseline	sfx-64	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	median_ns	7929.877360	40	1.0000	0	0		
 rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	min_ns	7923.244058	40	1.0000	0	0		
 rank	sfx-64	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	max_ns	7944.606282	40	1.0000	0	0		
@@ -2349,6 +2397,7 @@ rank	sfx-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-
 rank	sfx-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	11474.416993	40	1.0000	0	0		
 rank	sfx-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	sfx-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	313.834059	40	1.0000	0	0		
+baseline	sh1-256	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	501133.994819	4	1.0000	0	0		
 rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	500757.119171	4	1.0000	0	0		
 rank	sh1-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	502135.193437	4	1.0000	0	0		
@@ -2415,6 +2464,7 @@ rank	sh1-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_in
 rank	sh1-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	6271964.990532	4	1.0000	0	0		
 rank	sh1-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	sh1-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	245.101389	4	1.0000	0	0		
+baseline	sh1-256	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	350.186907	40	1.0000	0	0		faster ×7.21
 rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	349.944249	40	1.0000	0	0		faster ×7.21
 rank	sh1-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	350.305185	40	1.0000	0	0		faster ×7.21
@@ -2481,6 +2531,7 @@ rank	sh1-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-cap
 rank	sh1-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	56.552132	40	1.0000	0	0		
 rank	sh1-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	sh1-256	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	18.163449	40	1.0000	0	0		
+baseline	sh1-256	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	1501.141712	40	1.0000	0	0		
 rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	1495.425049	40	1.0000	0	0		
 rank	sh1-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	1694.495893	40	1.0000	0	0		
@@ -2547,6 +2598,7 @@ rank	sh1-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp
 rank	sh1-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	36466.007032	40	1.0000	0	0		
 rank	sh1-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	sh1-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	458.575812	40	1.0000	0	0		
+baseline	sh1-512	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sh1-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	22849239.466667	4	1.0000	0	0		
 rank	sh1-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	22800007.866667	4	1.0000	0	0		
 rank	sh1-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	22907893.200000	4	1.0000	0	0		
@@ -2568,6 +2620,7 @@ did_not_compile	sh1-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-cap
 did_not_compile	sh1-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1525451 bytes of emitted C source (limit 1000000, ~253 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	sh1-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 538083 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	sh1-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 538083 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	sh1-512	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sh1-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	median_ns	11146.764364	40	1.0000	0	0		
 rank	sh1-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	min_ns	11122.993365	40	1.0000	0	0		
 rank	sh1-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	max_ns	11188.454856	40	1.0000	0	0		
@@ -2589,6 +2642,7 @@ did_not_compile	sh1-512	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna
 did_not_compile	sh1-512	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1525451 bytes of emitted C source (limit 1000000, ~253 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	sh1-512	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 538083 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	sh1-512	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 538083 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	sh1-512	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sh1-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	127326.716546	40	1.0000	0	0		
 rank	sh1-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	126971.690007	40	1.0000	0	0		
 rank	sh1-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	127849.919669	40	1.0000	0	0		
@@ -2610,6 +2664,7 @@ did_not_compile	sh1-512	(set)	short-subject-search			pcrec_334fd10e_auto-caps-si
 did_not_compile	sh1-512	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1525451 bytes of emitted C source (limit 1000000, ~253 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	sh1-512	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 538083 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	sh1-512	(set)	short-subject-search			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 538083 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	sh1-64	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	455687.247376	4	1.0000	0	0		unchanged (within spread)
 rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	455341.728636	4	1.0000	0	0		unchanged (within spread)
 rank	sh1-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	456483.743628	4	1.0000	0	0		unchanged (within spread)
@@ -2676,6 +2731,7 @@ rank	sh1-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_int
 rank	sh1-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	165857.489453	4	1.0000	0	0		
 rank	sh1-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	sh1-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	71.722357	4	1.0000	0	0		
+baseline	sh1-64	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	327.479795	40	1.0000	0	0		faster ×2.03
 rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	327.471092	40	1.0000	0	0		faster ×2.03
 rank	sh1-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	328.659154	40	1.0000	0	0		faster ×2.03
@@ -2742,6 +2798,7 @@ rank	sh1-64	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps
 rank	sh1-64	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	4.746571	40	1.0000	0	0		
 rank	sh1-64	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	sh1-64	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	8.037619	40	1.0000	0	0		
+baseline	sh1-64	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	1467.770232	40	1.0000	0	0		
 rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	1465.130459	40	1.0000	0	0		
 rank	sh1-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	1472.305385	40	1.0000	0	0		
@@ -2808,6 +2865,7 @@ rank	sh1-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-
 rank	sh1-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	418.122994	40	1.0000	0	0		
 rank	sh1-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	sh1-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	125.277356	40	1.0000	0	0		
+baseline	srt-256	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	2905532.126126	4	1.0000	0	0		
 rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	2894567.927928	4	1.0000	0	0		
 rank	srt-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	2912300.000000	4	1.0000	0	0		
@@ -2874,6 +2932,7 @@ rank	srt-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_in
 rank	srt-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	11396169.491337	4	1.0000	0	0		
 rank	srt-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	srt-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	789.117444	4	1.0000	0	0		
+baseline	srt-256	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	srt-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	382.859253	40	1.0000	0	0		faster ×19.53
 rank	srt-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	382.398182	40	1.0000	0	0		faster ×19.53
 rank	srt-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	384.940640	40	1.0000	0	0		faster ×19.53
@@ -2915,6 +2974,7 @@ did_not_compile	srt-256	(set)	match-compliance			pcrec_1989c62_auto-nocaps-simdn
 did_not_compile	srt-256	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	srt-256	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	srt-256	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	srt-256	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	7616.281300	40	1.0000	0	0		faster ×1.04
 rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	7609.184470	40	1.0000	0	0		faster ×1.04
 rank	srt-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	7697.317892	40	1.0000	0	0		faster ×1.04
@@ -2981,6 +3041,7 @@ rank	srt-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp
 rank	srt-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	18835.889465	40	1.0000	0	0		
 rank	srt-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	srt-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	1373.795565	40	1.0000	0	0		
+baseline	srt-512	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	srt-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	585377928.000000	4	1.0000	0	0		
 rank	srt-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	578547868.000000	4	1.0000	0	0		
 rank	srt-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	588934360.000000	4	1.0000	0	0		
@@ -3002,6 +3063,7 @@ did_not_compile	srt-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-cap
 did_not_compile	srt-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1578446 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	srt-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 563824 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	srt-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 563824 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	srt-512	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	srt-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	median_ns	112185.337786	40	1.0000	0	0		
 rank	srt-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	min_ns	110894.877125	40	1.0000	0	0		
 rank	srt-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	max_ns	149578.283323	40	1.0000	0	0		
@@ -3023,6 +3085,7 @@ did_not_compile	srt-512	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna
 did_not_compile	srt-512	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1578446 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	srt-512	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 563824 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	srt-512	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 563824 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	srt-512	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	srt-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	2672883.784238	40	1.0000	0	0		
 rank	srt-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	2637975.887597	40	1.0000	0	0		
 rank	srt-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	2698397.401809	40	1.0000	0	0		
@@ -3044,6 +3107,7 @@ did_not_compile	srt-512	(set)	short-subject-search			pcrec_334fd10e_auto-caps-si
 did_not_compile	srt-512	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1578446 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	srt-512	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 563824 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	srt-512	(set)	short-subject-search			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 563824 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	w-1024	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-1024	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1193710872.000000	4	1.0000	0	0		
 rank	w-1024	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1187019370.000000	4	1.0000	0	0		
 rank	w-1024	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1200020050.000000	4	1.0000	0	0		
@@ -3065,6 +3129,7 @@ did_not_compile	w-1024	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps
 did_not_compile	w-1024	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1243069 bytes of emitted C source (limit 1000000, ~206 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-1024	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 1102539 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	w-1024	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 1102539 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	w-1024	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-1024	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	median_ns	194477.251068	40	1.0000	0	0		
 rank	w-1024	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	min_ns	194309.995965	40	1.0000	0	0		
 rank	w-1024	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	max_ns	218605.429503	40	1.0000	0	0		
@@ -3086,6 +3151,7 @@ did_not_compile	w-1024	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_
 did_not_compile	w-1024	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1243069 bytes of emitted C source (limit 1000000, ~206 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-1024	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 1102539 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	w-1024	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 1102539 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	w-1024	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-1024	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	5097629.159737	40	1.0000	0	0		
 rank	w-1024	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	5074948.422319	40	1.0000	0	0		
 rank	w-1024	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	5635139.892779	40	1.0000	0	0		
@@ -3107,6 +3173,7 @@ did_not_compile	w-1024	(set)	short-subject-search			pcrec_334fd10e_auto-caps-sim
 did_not_compile	w-1024	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1243069 bytes of emitted C source (limit 1000000, ~206 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-1024	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 1102539 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	w-1024	(set)	short-subject-search			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 1102539 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	w-128	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	3115332.317308	4	1.0000	0	0		unchanged (within spread)
 rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	3105315.903846	4	1.0000	0	0		unchanged (within spread)
 rank	w-128	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	3143399.692308	4	1.0000	0	0		unchanged (within spread)
@@ -3173,6 +3240,7 @@ rank	w-128	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_inte
 rank	w-128	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	78530758.486220	4	1.0000	0	0		
 rank	w-128	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	w-128	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	369.998642	4	1.0000	0	0		
+baseline	w-128	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	380.148790	40	1.0000	0	0		faster ×118.42
 rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	379.972202	40	1.0000	0	0		faster ×118.42
 rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	390.622892	40	1.0000	0	0		faster ×118.42
@@ -3239,6 +3307,7 @@ rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_
 rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	51.390632	40	1.0000	0	0		
 rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.625176	40	1.0000	0	0		
 rank	w-128	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	118.420934	40	1.0000	0	0		
+baseline	w-128	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	7583.028977	40	1.0000	0	0		faster ×1.04
 rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	7580.897663	40	1.0000	0	0		faster ×1.04
 rank	w-128	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	7588.275099	40	1.0000	0	0		faster ×1.04
@@ -3305,6 +3374,7 @@ rank	w-128	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-c
 rank	w-128	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	201754.457828	40	1.0000	0	0		
 rank	w-128	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	w-128	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	704.123111	40	1.0000	0	0		
+baseline	w-192	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	median_ns	3112107.086538	4	1.0000	0	0		
 rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	min_ns	3108158.788462	4	1.0000	0	0		
 rank	w-192	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-caps-simdna	measured	pinned	1	max_ns	3161876.971154	4	1.0000	0	0		
@@ -3371,6 +3441,7 @@ rank	w-192	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_inte
 rank	w-192	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	130653190.741578	4	1.0000	0	0		
 rank	w-192	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	w-192	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	553.318969	4	1.0000	0	0		
+baseline	w-192	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	377.618168	40	1.0000	0	0		faster ×197.06
 rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	377.440859	40	1.0000	0	0		faster ×197.06
 rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	382.534460	40	1.0000	0	0		faster ×197.06
@@ -3437,6 +3508,7 @@ rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_
 rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	81.404862	40	1.0000	0	0		
 rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.855238	40	1.0000	0	0		
 rank	w-192	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	197.060088	40	1.0000	0	0		
+baseline	w-192	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	7594.387240	40	1.0000	0	0		
 rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	7586.694070	40	1.0000	0	0		
 rank	w-192	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	7601.603755	40	1.0000	0	0		
@@ -3503,6 +3575,7 @@ rank	w-192	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-c
 rank	w-192	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	657322.345646	40	1.0000	0	0		
 rank	w-192	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	w-192	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	1044.640283	40	1.0000	0	0		
+baseline	w-2048	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-2048	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	3096624395.000000	4	1.0000	0	0		
 rank	w-2048	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	3086336261.000000	4	1.0000	0	0		
 rank	w-2048	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	3188042389.000000	4	1.0000	0	0		
@@ -3524,6 +3597,7 @@ did_not_compile	w-2048	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps
 did_not_compile	w-2048	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 2379413 bytes of emitted C source (limit 1000000, ~395 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-2048	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 2124737 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	w-2048	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 2124737 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	w-2048	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-2048	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	377102.151946	40	1.0000	0	0		
 rank	w-2048	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	376692.190040	40	1.0000	0	0		
 rank	w-2048	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	383322.984249	40	1.0000	0	0		
@@ -3545,6 +3619,7 @@ did_not_compile	w-2048	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_
 did_not_compile	w-2048	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 2379413 bytes of emitted C source (limit 1000000, ~395 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-2048	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 2124737 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	w-2048	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 2124737 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	w-2048	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-2048	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	11547658.022222	40	1.0000	0	0		
 rank	w-2048	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	11367439.642512	40	1.0000	0	0		
 rank	w-2048	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	11697069.771014	40	1.0000	0	0		
@@ -3566,6 +3641,7 @@ did_not_compile	w-2048	(set)	short-subject-search			pcrec_334fd10e_auto-caps-sim
 did_not_compile	w-2048	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 2379413 bytes of emitted C source (limit 1000000, ~395 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-2048	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 2124737 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	w-2048	(set)	short-subject-search			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 2124737 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	w-256	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	median_ns	2899328.584071	4	1.0000	0	0		unchanged (within spread)
 rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	min_ns	2893690.513274	4	1.0000	0	0		unchanged (within spread)
 rank	w-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-caps-simdna	measured	pinned	1	max_ns	2911999.460177	4	1.0000	0	0		unchanged (within spread)
@@ -3632,6 +3708,7 @@ rank	w-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_inte
 rank	w-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	408008157.358330	4	1.0000	0	0		
 rank	w-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	w-256	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	809.411790	4	1.0000	0	0		
+baseline	w-256	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	384.850410	40	1.0000	0	0		faster ×281.19
 rank	w-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	381.920860	40	1.0000	0	0		faster ×281.19
 rank	w-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	390.892605	40	1.0000	0	0		faster ×281.19
@@ -3673,6 +3750,7 @@ did_not_compile	w-256	(set)	match-compliance			pcrec_1989c62_auto-nocaps-simdna	
 did_not_compile	w-256	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-256	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-256	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	w-256	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	7617.821654	40	1.0000	0	0		
 rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	7615.491816	40	1.0000	0	0		
 rank	w-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	7691.296063	40	1.0000	0	0		
@@ -3739,6 +3817,7 @@ rank	w-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-c
 rank	w-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	41881.430031	40	1.0000	0	0		
 rank	w-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	w-256	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	1399.154676	40	1.0000	0	0		
+baseline	w-384	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-384	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	16542968.333333	4	1.0000	0	0		
 rank	w-384	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	16521154.000000	4	1.0000	0	0		
 rank	w-384	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	16807271.380952	4	1.0000	0	0		
@@ -3770,6 +3849,7 @@ did_not_compile	w-384	(set)	large-subject-throughput			pcrec_1989c62_vm-in-caps-
 did_not_compile	w-384	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-384	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-384	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	w-384	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-384	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	401.651707	40	1.0000	0	0		
 rank	w-384	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	400.124498	40	1.0000	0	0		
 rank	w-384	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	404.562205	40	1.0000	0	0		
@@ -3801,6 +3881,7 @@ did_not_compile	w-384	(set)	match-compliance			pcrec_1989c62_vm-in-caps-simdna	d
 did_not_compile	w-384	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-384	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-384	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	w-384	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	median_ns	52614.843493	40	1.0000	0	0		
 rank	w-384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	min_ns	52273.712865	40	1.0000	0	0		
 rank	w-384	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	max_ns	52976.699466	40	1.0000	0	0		
@@ -3832,6 +3913,7 @@ did_not_compile	w-384	(set)	short-subject-search			pcrec_1989c62_vm-in-caps-simd
 did_not_compile	w-384	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-384	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-384	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	w-512	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	588053816.000000	4	1.0000	0	0		
 rank	w-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	584718716.000000	4	1.0000	0	0		
 rank	w-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	594075492.000000	4	1.0000	0	0		
@@ -3853,6 +3935,7 @@ did_not_compile	w-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-
 did_not_compile	w-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1578445 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 563823 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	w-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 563823 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	w-512	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	median_ns	102346.796994	40	1.0000	0	0		
 rank	w-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	min_ns	102275.315577	40	1.0000	0	0		
 rank	w-512	(set)	match-compliance	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	1	max_ns	102372.879496	40	1.0000	0	0		
@@ -3874,6 +3957,7 @@ did_not_compile	w-512	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_n
 did_not_compile	w-512	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1578445 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-512	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 563823 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	w-512	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 563823 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	w-512	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	2687414.011628	40	1.0000	0	0		
 rank	w-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	2678059.754522	40	1.0000	0	0		
 rank	w-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	3068453.200258	40	1.0000	0	0		
@@ -3895,6 +3979,7 @@ did_not_compile	w-512	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simd
 did_not_compile	w-512	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1578445 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	w-512	(set)	short-subject-search			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 563823 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	w-512	(set)	short-subject-search			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 563823 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	w-64	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	median_ns	3407831.277228	4	1.0000	0	0		unchanged (within spread)
 rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	min_ns	3388872.455446	4	1.0000	0	0		unchanged (within spread)
 rank	w-64	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	max_ns	3420328.465347	4	1.0000	0	0		unchanged (within spread)
@@ -3961,6 +4046,7 @@ rank	w-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_inter
 rank	w-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	95082491.139719	4	1.0000	0	0		
 rank	w-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	w-64	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	166.352872	4	1.0000	0	0		
+baseline	w-64	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	median_ns	419.567851	40	1.0000	0	0		faster ×38.63
 rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	min_ns	418.502910	40	1.0000	0	0		faster ×38.63
 rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	max_ns	420.107941	40	1.0000	0	0		faster ×38.63
@@ -4027,6 +4113,7 @@ rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_v
 rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	40.370808	40	1.0000	0	0		
 rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.089948	40	1.0000	0	0		
 rank	w-64	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	39.561861	40	1.0000	0	0		
+baseline	w-64	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	median_ns	7420.350951	40	1.0000	0	0		
 rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	min_ns	7416.960416	40	1.0000	0	0		
 rank	w-64	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-caps-simdna_noisland	measured	pinned	1	max_ns	7426.255424	40	1.0000	0	0		
@@ -4093,6 +4180,7 @@ rank	w-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-ca
 rank	w-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	2971.064826	40	1.0000	0	0		
 rank	w-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	w-64	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	357.249082	40	1.0000	0	0		
+baseline	w-8	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	median_ns	2236472.584416	4	1.0000	0	0		
 rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	min_ns	2225562.974026	4	1.0000	0	0		
 rank	w-8	(set)	large-subject-throughput	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	max_ns	2238721.363636	4	1.0000	0	0		
@@ -4159,6 +4247,7 @@ rank	w-8	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp
 rank	w-8	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	140008.849454	4	1.0000	0	0		
 rank	w-8	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	w-8	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	12.856805	4	1.0000	0	0		
+baseline	w-8	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	386.785172	40	1.0000	0	0		faster ×2.81
 rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	386.392806	40	1.0000	0	0		faster ×2.81
 rank	w-8	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	388.324161	40	1.0000	0	0		faster ×2.81
@@ -4225,6 +4314,7 @@ rank	w-8	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdn
 rank	w-8	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	11	stddev_ns	162.998257	40	1.0000	0	0		
 rank	w-8	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.004107	40	1.0000	0	0		
 rank	w-8	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	11	ratio_vs_best	7.765211	40	1.0000	0	0		
+baseline	w-8	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-8	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	median_ns	4638.936589	40	1.0000	0	0		
 rank	w-8	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	min_ns	4618.005014	40	1.0000	0	0		
 rank	w-8	(set)	short-subject-search	plain	same program	pcrec_1989c62_auto-nocaps-simdna	measured	pinned	1	max_ns	4764.181093	40	1.0000	0	0		
@@ -4291,6 +4381,7 @@ rank	w-8	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-cap
 rank	w-8	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	610.754577	40	1.0000	0	0		
 rank	w-8	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	w-8	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	29.189493	40	1.0000	0	0		
+baseline	w-96	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	median_ns	3127119.971698	4	1.0000	0	0		faster ×1.02
 rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	min_ns	3121874.660377	4	1.0000	0	0		faster ×1.02
 rank	w-96	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	max_ns	3131815.179245	4	1.0000	0	0		faster ×1.02
@@ -4357,6 +4448,7 @@ rank	w-96	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_inter
 rank	w-96	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	56036542.447307	4	1.0000	0	0		
 rank	w-96	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	4	1.0000	0	0		
 rank	w-96	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	276.734046	4	1.0000	0	0		
+baseline	w-96	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	396.887625	40	1.0000	0	0		faster ×56.39
 rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	395.430826	40	1.0000	0	0		faster ×56.39
 rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	397.369888	40	1.0000	0	0		faster ×56.39
@@ -4423,6 +4515,7 @@ rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_v
 rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	stddev_ns	78.523058	40	1.0000	0	0		
 rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.041224	40	1.0000	0	0		
 rank	w-96	(set)	match-compliance	whole-subject	separate artifact	pcrec_1989c62_vm-caps-simdna	measured	pinned	11	ratio_vs_best	56.392777	40	1.0000	0	0		
+baseline	w-96	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	median_ns	7575.526889	40	1.0000	0	0		faster ×1.04
 rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	min_ns	7570.438573	40	1.0000	0	0		faster ×1.04
 rank	w-96	(set)	short-subject-search	plain	same program	pcrec_334fd10e_auto-nocaps-simdna	measured	pinned	1	max_ns	7598.892782	40	1.0000	0	0		faster ×1.04
@@ -4489,6 +4582,7 @@ rank	w-96	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-ca
 rank	w-96	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	stddev_ns	8091.322052	40	1.0000	0	0		
 rank	w-96	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_baseline	1.000000	40	1.0000	0	0		
 rank	w-96	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	11	ratio_vs_best	532.305563	40	1.0000	0	0		
+baseline	wb-256	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	wb-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	7175094.897959	4	1.0000	0	0		faster ×77.74
 rank	wb-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	7167172.632653	4	1.0000	0	0		faster ×77.74
 rank	wb-256	(set)	large-subject-throughput	plain	same program	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	7223416.632653	4	1.0000	0	0		faster ×77.74
@@ -4530,6 +4624,7 @@ did_not_compile	wb-256	(set)	large-subject-throughput			pcrec_1989c62_auto-nocap
 did_not_compile	wb-256	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	wb-256	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	wb-256	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	wb-256	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	wb-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	median_ns	417.501036	40	1.0000	0	0		faster ×80.39
 rank	wb-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	min_ns	415.406349	40	1.0000	0	0		faster ×80.39
 rank	wb-256	(set)	match-compliance	whole-subject	separate artifact	pcrec_334fd10e_vm-caps-simdna	measured	pinned	1	max_ns	418.520087	40	1.0000	0	0		faster ×80.39
@@ -4571,6 +4666,7 @@ did_not_compile	wb-256	(set)	match-compliance			pcrec_1989c62_auto-nocaps-simdna
 did_not_compile	wb-256	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	wb-256	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	wb-256	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	wb-256	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	wb-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	median_ns	33261.688520	40	1.0000	0	0		faster ×96.28
 rank	wb-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	min_ns	33203.445518	40	1.0000	0	0		faster ×96.28
 rank	wb-256	(set)	short-subject-search	plain	same program	pcrec_334fd10e_vm-in-caps-simdna	measured	pinned	1	max_ns	33336.516985	40	1.0000	0	0		faster ×96.28
@@ -4612,6 +4708,7 @@ did_not_compile	wb-256	(set)	short-subject-search			pcrec_1989c62_auto-nocaps-si
 did_not_compile	wb-256	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna	did-not-compile									pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	wb-256	(set)	short-subject-search			pcrec_334fd10e_auto-caps-simdna_noisland	did-not-compile									pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	wb-256	(set)	short-subject-search			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
+baseline	wb-512	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	wb-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	88537138.333333	4	1.0000	0	0		
 rank	wb-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	88341997.000000	4	1.0000	0	0		
 rank	wb-512	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	90199231.000000	4	1.0000	0	0		
@@ -4633,6 +4730,7 @@ did_not_compile	wb-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-caps
 did_not_compile	wb-512	(set)	large-subject-throughput			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 2345817 bytes of emitted C source (limit 1000000, ~389 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	wb-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 564480 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	wb-512	(set)	large-subject-throughput			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 564480 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	wb-512	(set)	match-compliance			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	wb-512	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	102631.906160	40	1.0000	0	0		
 rank	wb-512	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	102417.370275	40	1.0000	0	0		
 rank	wb-512	(set)	match-compliance	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	111289.357505	40	1.0000	0	0		
@@ -4654,6 +4752,7 @@ did_not_compile	wb-512	(set)	match-compliance			pcrec_334fd10e_auto-caps-simdna_
 did_not_compile	wb-512	(set)	match-compliance			pcrec_334fd10e_auto-nocaps-simdna	did-not-compile									pcrec: pattern too large: 2345817 bytes of emitted C source (limit 1000000, ~389 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)	
 did_not_compile	wb-512	(set)	match-compliance			pcrec_334fd10e_vm-caps-simdna	did-not-compile									pcrec: pattern too large: 564480 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
 did_not_compile	wb-512	(set)	match-compliance			pcrec_334fd10e_vm-in-caps-simdna	did-not-compile									pcrec: pattern too large: 564480 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)	
+baseline	wb-512	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	wb-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	479750.941123	40	1.0000	0	0		
 rank	wb-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	478573.316890	40	1.0000	0	0		
 rank	wb-512	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	483313.746306	40	1.0000	0	0		

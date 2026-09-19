@@ -1,0 +1,25 @@
+# reporter: v18 (2026-09-18); surface: matrix; filters: subbench=loglines, version=0.1, since=2026-09-05T08:40:00Z, until=2026-09-05T09:00:00Z, testee=pcrec_334fd10e_auto-caps-simdna, testee=pcrec_334fd10e_auto-caps-simdna_noedge; source: store/index.tsv (2 record(s) matching this query); records: 2; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.5; superseded: 0; newer_not_measured: 0; testees: pcrec_334fd10e_auto-caps-simdna,pcrec_334fd10e_auto-caps-simdna_noedge
+# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee/best_ns recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
+subbench	pattern	regime_or_na	form	best_testee	best_ns	pcrec_334fd10e_auto-caps-simdna	pcrec_334fd10e_auto-caps-simdna_noedge
+loglines@0.1	bignum	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna	13191284.3	1.000000	1.000823
+loglines@0.1	bignum	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna	426810.1	1.000000	1.003179
+loglines@0.1	floor	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna	2902358.9	1.000000	1.000860
+loglines@0.1	floor	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna_noedge	2039.8	1.002347	1.000000
+loglines@0.1	hex32-id	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna	13136284.0	1.000000	1.003489
+loglines@0.1	hex32-id	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna	431239.2	1.000000	1.008682
+loglines@0.1	http-5xx	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna_noedge	252754.0	1.001463	1.000000
+loglines@0.1	http-5xx	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna_noedge	7056.5	1.019279	1.000000
+loglines@0.1	ipv4	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna_noedge	6903106.3	1.001558	1.000000
+loglines@0.1	ipv4	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna	204592.4	1.000000	1.001277
+loglines@0.1	ipv6	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna_noedge	10318053.8	1.017435	1.000000
+loglines@0.1	ipv6	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna_noedge	258090.4	1.007444	1.000000
+loglines@0.1	iso-ts	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna_noedge	1142263.1	1.005494	1.000000
+loglines@0.1	iso-ts	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna_noedge	20461.9	1.015602	1.000000
+loglines@0.1	kv-quoted	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna	14567251.0	1.000000	1.002924
+loglines@0.1	kv-quoted	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna	504295.8	1.000000	1.010804
+loglines@0.1	level-context	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna	11021827.0	1.000000	1.000755
+loglines@0.1	level-context	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna_noedge	333787.7	1.000628	1.000000
+loglines@0.1	stack-frame	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna_noedge	1845521.6	1.000465	1.000000
+loglines@0.1	stack-frame	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna	31783.2	1.000000	1.000086
+loglines@0.1	uuid	large-subject-throughput	plain	pcrec_334fd10e_auto-caps-simdna	1077150.1	1.000000	1.000297
+loglines@0.1	uuid	short-subject-search	plain	pcrec_334fd10e_auto-caps-simdna	21207.3	1.000000	1.000604

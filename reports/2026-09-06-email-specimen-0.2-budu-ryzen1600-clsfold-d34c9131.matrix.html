@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Capability ratio matrix -- 2026-09-06-email-specimen-0.2-budu-ryzen1600-clsfold-d34c9131.matrix.tsv</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --bg: #f7f7f9; --fg: #1a1a1a; --border: #d8d8de; --head-bg: #eceef2;
+  --sticky-bg: #ffffff; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #14151a; --fg: #e8e8ea; --border: #34363f; --head-bg: #1d1f26; --sticky-bg: #191a20; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; padding: 1.25rem; background: var(--bg); color: var(--fg);
+       font: 14px/1.4 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+h1 { font-size: 1.1rem; margin: 0 0 0.5rem; }
+pre.provenance { font-family: var(--mono); font-size: 11.5px; white-space: pre-wrap;
+                  background: var(--head-bg); border: 1px solid var(--border);
+                  border-radius: 6px; padding: 0.6rem 0.8rem; margin: 0 0 1rem;
+                  max-height: 14rem; overflow: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin: 0 0 1rem; font-size: 12px; }
+.legend span.swatch { display: inline-block; width: 0.85em; height: 0.85em;
+                       border-radius: 2px; margin-right: 0.35em; vertical-align: -0.1em; }
+.tablewrap { overflow: auto; max-height: 80vh; border: 1px solid var(--border);
+             border-radius: 6px; }
+table { border-collapse: collapse; font-family: var(--mono); font-size: 12px; min-width: 100%; }
+th, td { padding: 0.3rem 0.55rem; border-bottom: 1px solid var(--border);
+         border-right: 1px solid var(--border); white-space: nowrap; text-align: left; }
+thead th { position: sticky; top: 0; background: var(--head-bg); z-index: 2; }
+tbody th, td.rowhead { position: sticky; left: 0; background: var(--sticky-bg); z-index: 1; }
+td.cell { text-align: right; }
+.chip-unsup    { background: #8b8b8b; color: #fff; text-align: center; }
+.chip-refused  { background: #7c3aed; color: #fff; text-align: center; }
+.chip-wrong    { background: #b91c1c; color: #fff; text-align: center; }
+.chip-gaveup   { background: #d97706; color: #fff; text-align: center; }
+.chip-excluded { background: #4b5563; color: #fff; text-align: center; }
+footer { margin-top: 0.75rem; font-size: 11px; opacity: 0.7; }
+</style>
+</head>
+<body>
+<h1>Capability ratio matrix -- 2026-09-06-email-specimen-0.2-budu-ryzen1600-clsfold-d34c9131.matrix.tsv</h1>
+<pre class="provenance"># reporter: v18 (2026-09-18); surface: matrix; filters: subbench=email-specimen, version=0.2, since=2026-09-06T19:00:00Z, until=2026-09-06T19:15:00Z, testee=pcrec_d34c9131_auto-caps-simdna, testee=pcrec_d34c9131_auto-caps-simdna_noclsfold; source: store/index.tsv (2 record(s) matching this query); records: 2; subbench_versions: email-specimen@0.2; machines: budu-ryzen1600; schema_versions: 1.5; superseded: 0; newer_not_measured: 0; testees: pcrec_d34c9131_auto-caps-simdna,pcrec_d34c9131_auto-caps-simdna_noclsfold
+# matrix: a data cell is testee median_ns / this ROW&#x27;s best measured median_ns (best = lowest median_ns among the row&#x27;s measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee/best_ns recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee&#x27;s own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong &gt; 0; gave-up = excluded, n_gave_up &gt; 0 and no wrong answer; excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form&#x27;s own row, or this testee never ran this pattern under this row&#x27;s form at all). A row with regime_or_na=&quot;&quot; and form=&quot;&quot; is F26&#x27;s own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.</pre>
+<div class="legend">
+  <span><span class="swatch" style="background:rgb(56,161,255)"></span>1.0x (at par)</span>
+  <span><span class="swatch" style="background:rgb(220,38,38)"></span>&ge;10<sup>7</sup>x (far behind)</span>
+  <span><span class="swatch chip-unsup" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">unsup</span> unsupported-by-declaration (the testee&#x27;s own advance capability declaration, not an engine failure)</span><span><span class="swatch chip-refused" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">refused</span> did-not-compile</span><span><span class="swatch chip-wrong" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">wrong</span> excluded: n_wrong &gt; 0 (a wrong answer)</span><span><span class="swatch chip-gaveup" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">gave-up</span> excluded: n_gave_up &gt; 0, no wrong answer</span><span><span class="swatch chip-excluded" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">excluded</span> excluded for any other reason (a non-measured status, a scratch-tier row not included, a different form&#x27;s own row, or this testee never ran this pattern under this row&#x27;s form at all)</span>
+</div>
+<div class="tablewrap">
+<table>
+<thead><tr><th>subbench</th><th>pattern</th><th>regime</th><th>form</th><th>best_testee</th><th>best_ns</th><th>pcrec_d34c9131_auto-caps-simdna</th><th>pcrec_d34c9131_auto-caps-simdna_noclsfold</th></tr></thead>
+<tbody>
+<tr><th class="rowhead">email-specimen@0.2</th><td>factored</td><td>large-subject-throughput</td><td>plain</td><td>pcrec_d34c9131_auto-caps-simdna</td><td>13676206.1</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~13,676,206.1 ns/call (pcrec_d34c9131_auto-caps-simdna)">1.000x</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.003x this row&#x27;s best -- ~13,713,501.1 ns/call (pcrec_d34c9131_auto-caps-simdna_noclsfold)">1.003x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>factored</td><td>match-compliance</td><td>whole-subject</td><td>pcrec_d34c9131_auto-caps-simdna</td><td>73303.5</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~73,303.5 ns/call (pcrec_d34c9131_auto-caps-simdna)">1.000x</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~73,309.1 ns/call (pcrec_d34c9131_auto-caps-simdna_noclsfold)">1.000x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>factored</td><td>short-subject-search</td><td>plain</td><td>pcrec_d34c9131_auto-caps-simdna</td><td>3662.4</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~3,662.4 ns/call (pcrec_d34c9131_auto-caps-simdna)">1.000x</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.002x this row&#x27;s best -- ~3,669.2 ns/call (pcrec_d34c9131_auto-caps-simdna_noclsfold)">1.002x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>floor</td><td>large-subject-throughput</td><td>plain</td><td>pcrec_d34c9131_auto-caps-simdna_noclsfold</td><td>711558.5</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.003x this row&#x27;s best -- ~713,690.3 ns/call (pcrec_d34c9131_auto-caps-simdna)">1.003x</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~711,558.5 ns/call (pcrec_d34c9131_auto-caps-simdna_noclsfold)">1.000x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>floor</td><td>match-compliance</td><td>whole-subject</td><td>pcrec_d34c9131_auto-caps-simdna</td><td>870.5</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~870.5 ns/call (pcrec_d34c9131_auto-caps-simdna)">1.000x</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.006x this row&#x27;s best -- ~875.6 ns/call (pcrec_d34c9131_auto-caps-simdna_noclsfold)">1.006x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>floor</td><td>short-subject-search</td><td>plain</td><td>pcrec_d34c9131_auto-caps-simdna</td><td>1338.1</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~1,338.1 ns/call (pcrec_d34c9131_auto-caps-simdna)">1.000x</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.005x this row&#x27;s best -- ~1,344.5 ns/call (pcrec_d34c9131_auto-caps-simdna_noclsfold)">1.005x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>orig</td><td>large-subject-throughput</td><td>plain</td><td>pcrec_d34c9131_auto-caps-simdna</td><td>13596186.2</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~13,596,186.2 ns/call (pcrec_d34c9131_auto-caps-simdna)">1.000x</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~13,600,754.5 ns/call (pcrec_d34c9131_auto-caps-simdna_noclsfold)">1.000x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>orig</td><td>match-compliance</td><td>whole-subject</td><td>pcrec_d34c9131_auto-caps-simdna</td><td>73208.6</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~73,208.6 ns/call (pcrec_d34c9131_auto-caps-simdna)">1.000x</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~73,222.4 ns/call (pcrec_d34c9131_auto-caps-simdna_noclsfold)">1.000x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>orig</td><td>short-subject-search</td><td>plain</td><td>pcrec_d34c9131_auto-caps-simdna_noclsfold</td><td>3524.6</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.001x this row&#x27;s best -- ~3,527.0 ns/call (pcrec_d34c9131_auto-caps-simdna)">1.001x</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~3,524.6 ns/call (pcrec_d34c9131_auto-caps-simdna_noclsfold)">1.000x</td></tr>
+</tbody>
+</table>
+</div>
+<footer>Generated by scripts/matrix_page.py from /home/duxevents/pcrec-bench/worktrees/b53regen/reports/2026-09-06-email-specimen-0.2-budu-ryzen1600-clsfold-d34c9131.matrix.tsv -- dependency-free, regenerate on demand.</footer>
+</body>
+</html>

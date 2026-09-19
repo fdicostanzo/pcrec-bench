@@ -1,4 +1,4 @@
-# reporter: v17 (2026-09-17); filters: subbench=loglines, version=0.1, until=2026-08-29T00:00:00Z; source: store/index.tsv (6 record(s) matching this query); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.3; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.1-1.3 X13 (both samples quiet) on 6; mixed_x13: False; include_provenance: False; worst_other_core_busy: n/a; floor_pattern: floor
+# reporter: v18 (2026-09-18); filters: subbench=loglines, version=0.1, until=2026-08-29T00:00:00Z; source: store/index.tsv (6 record(s) matching this query); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.3; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.1-1.3 X13 (both samples quiet) on 6; mixed_x13: False; include_provenance: False; worst_other_core_busy: n/a; floor_pattern: floor
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 record						loglines@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260828T150051Z				agreement	n/a (v1.3)						
 record						loglines@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260828T150950Z				agreement	n/a (v1.3)						
@@ -6,6 +6,7 @@ record						loglines@0.1__pcrec_35e1ab1_auto-caps-simdna__budu-ryzen1600__202608
 record						loglines@0.1__pcrec_35e1ab1_auto-nocaps-simdna__budu-ryzen1600__20260828T152628Z				agreement	n/a (v1.3)						
 record						loglines@0.1__pcrec_35e1ab1_vm-caps-simdna__budu-ryzen1600__20260828T153358Z				agreement	n/a (v1.3)						
 record						loglines@0.1__pcrec_35e1ab1_vm-in-caps-simdna__budu-ryzen1600__20260828T154234Z				agreement	n/a (v1.3)						
+baseline	bignum	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	bignum	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	11362573.160494	12	1.0000	0	0		
 rank	bignum	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	11344060.358025	12	1.0000	0	0		
 rank	bignum	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	11367505.790123	12	1.0000	0	0		
@@ -42,6 +43,7 @@ rank	bignum	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_int
 rank	bignum	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	325884.198365	12	1.0000	0	0		
 rank	bignum	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	12	1.0000	0	0		
 rank	bignum	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	5.100877	12	1.0000	0	0		
+baseline	bignum	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	bignum	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	394926.865389	112	1.0000	0	0		
 rank	bignum	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	394156.961708	112	1.0000	0	0		
 rank	bignum	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	395824.000206	112	1.0000	0	0		
@@ -78,6 +80,7 @@ rank	bignum	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-
 rank	bignum	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	3980.580850	112	1.0000	0	0		
 rank	bignum	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	112	1.0000	0	0		
 rank	bignum	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	5.701687	112	1.0000	0	0		
+baseline	floor	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	median_ns	2910847.846429	12	1.0000	0	0		
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	min_ns	2905211.671429	12	1.0000	0	0		
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	max_ns	2933817.335714	12	1.0000	0	0		
@@ -114,6 +117,7 @@ rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	stddev_ns	34920.575867	12	1.0000	0	0		
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.113473	12	1.0000	0	0		
 rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	ratio_vs_best	5.551609	12	1.0000	0	0		
+baseline	floor	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	median_ns	2036.851937	112	1.0000	0	0		
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	min_ns	2032.113712	112	1.0000	0	0		
 rank	floor	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	max_ns	2052.487070	112	1.0000	0	0		
@@ -150,6 +154,7 @@ rank	floor	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-c
 rank	floor	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	207.621180	112	1.0000	0	0		
 rank	floor	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	112	1.0000	0	0		
 rank	floor	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	5.537236	112	1.0000	0	0		
+baseline	hex32-id	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	median_ns	12962618.895522	12	1.0000	0	0		
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	min_ns	12949288.970149	12	1.0000	0	0		
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	max_ns	12971152.402985	12	1.0000	0	0		
@@ -186,6 +191,7 @@ rank	hex32-id	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_i
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	50324.120861	12	1.0000	0	0		
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	12	1.0000	0	0		
 rank	hex32-id	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	7.473080	12	1.0000	0	0		
+baseline	hex32-id	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	median_ns	430198.706637	112	1.0000	0	0		
 rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	min_ns	429762.433096	112	1.0000	0	0		
 rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	max_ns	430490.076600	112	1.0000	0	0		
@@ -222,6 +228,7 @@ rank	hex32-id	(set)	short-subject-search	plain	same program	libpcre2_10.46_inter
 rank	hex32-id	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	3178.723022	112	1.0000	0	0		
 rank	hex32-id	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	112	1.0000	0	0		
 rank	hex32-id	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	8.524446	112	1.0000	0	0		
+baseline	http-5xx	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	median_ns	252593.608562	12	1.0000	0	0		
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	min_ns	251895.692331	12	1.0000	0	0		
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	max_ns	253367.237758	12	1.0000	0	0		
@@ -258,6 +265,7 @@ rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	stddev_ns	66001.787516	12	1.0000	0	0		
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	ratio_vs_baseline	6.883529	12	1.0000	0	0		
 rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	ratio_vs_best	52.506887	12	1.0000	0	0		
+baseline	http-5xx	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	median_ns	7012.649637	112	1.0000	0	0		
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	min_ns	7007.760231	112	1.0000	0	0		
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	max_ns	7045.671913	112	1.0000	0	0		
@@ -294,6 +302,7 @@ rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-in-
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	stddev_ns	489.280087	112	1.0000	0	0		
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	ratio_vs_baseline	8.781410	112	1.0000	0	0		
 rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	ratio_vs_best	71.784996	112	1.0000	0	0		
+baseline	ipv4	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	median_ns	6912530.319444	12	1.0000	0	0		
 rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	min_ns	6895599.805556	12	1.0000	0	0		
 rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-caps-simdna	measured	pinned	1	max_ns	6919251.250000	12	1.0000	0	0		
@@ -330,6 +339,7 @@ rank	ipv4	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_inter
 rank	ipv4	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	2952601.904536	12	1.0000	0	0		
 rank	ipv4	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	12	1.0000	0	0		
 rank	ipv4	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	28.884479	12	1.0000	0	0		
+baseline	ipv4	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	median_ns	203601.800648	112	1.0000	0	0		
 rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	min_ns	203455.086094	112	1.0000	0	0		
 rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	max_ns	204725.866362	112	1.0000	0	0		
@@ -366,6 +376,7 @@ rank	ipv4	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-ca
 rank	ipv4	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	74328.596903	112	1.0000	0	0		
 rank	ipv4	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	112	1.0000	0	0		
 rank	ipv4	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	38.365778	112	1.0000	0	0		
+baseline	ipv6	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	median_ns	10287202.941860	12	1.0000	0	0		
 rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	min_ns	10280352.534884	12	1.0000	0	0		
 rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	max_ns	10291025.058140	12	1.0000	0	0		
@@ -402,6 +413,7 @@ rank	ipv6	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_inter
 rank	ipv6	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	324431.441782	12	1.0000	0	0		
 rank	ipv6	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	12	1.0000	0	0		
 rank	ipv6	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	21.253121	12	1.0000	0	0		
+baseline	ipv6	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	median_ns	258264.341402	112	1.0000	0	0		
 rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	min_ns	257594.681362	112	1.0000	0	0		
 rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	max_ns	258321.838309	112	1.0000	0	0		
@@ -438,6 +450,7 @@ rank	ipv6	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-ca
 rank	ipv6	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	23165.547871	112	1.0000	0	0		
 rank	ipv6	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	112	1.0000	0	0		
 rank	ipv6	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	32.153286	112	1.0000	0	0		
+baseline	iso-ts	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	962270.834656	12	1.0000	0	0		
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	961219.070106	12	1.0000	0	0		
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	962905.851852	12	1.0000	0	0		
@@ -474,6 +487,7 @@ rank	iso-ts	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_int
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	82616.539421	12	1.0000	0	0		
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	12	1.0000	0	0		
 rank	iso-ts	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	63.347165	12	1.0000	0	0		
+baseline	iso-ts	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	iso-ts	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	21013.400267	112	1.0000	0	0		
 rank	iso-ts	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	20663.467087	112	1.0000	0	0		
 rank	iso-ts	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	21581.348979	112	1.0000	0	0		
@@ -510,6 +524,7 @@ rank	iso-ts	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-
 rank	iso-ts	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	6151.004774	112	1.0000	0	0		
 rank	iso-ts	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	112	1.0000	0	0		
 rank	iso-ts	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	113.739230	112	1.0000	0	0		
+baseline	kv-quoted	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	median_ns	14183179.677966	12	1.0000	0	0		
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	min_ns	14064331.220339	12	1.0000	0	0		
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_auto-nocaps-simdna	measured	pinned	1	max_ns	14231890.508475	12	1.0000	0	0		
@@ -546,6 +561,7 @@ rank	kv-quoted	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	97665.345544	12	1.0000	0	0		
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	12	1.0000	0	0		
 rank	kv-quoted	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	4.627818	12	1.0000	0	0		
+baseline	kv-quoted	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	kv-quoted	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	335288.612740	112	1.0000	0	0		
 rank	kv-quoted	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	334654.818406	112	1.0000	0	0		
 rank	kv-quoted	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	336496.752243	112	1.0000	0	0		
@@ -582,6 +598,7 @@ rank	kv-quoted	(set)	short-subject-search	plain	same program	libpcre2_10.46_inte
 rank	kv-quoted	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	3400.226773	112	1.0000	0	0		
 rank	kv-quoted	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	112	1.0000	0	0		
 rank	kv-quoted	(set)	short-subject-search	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	5.548319	112	1.0000	0	0		
+baseline	level-context	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	3007462.035461	12	1.0000	0	0		
 rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	3005594.684397	12	1.0000	0	0		
 rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	3008854.953901	12	1.0000	0	0		
@@ -608,6 +625,7 @@ rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1a
 rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	4	ratio_vs_best	13.612720	12	1.0000	0	0		
 did_not_compile	level-context	(set)	large-subject-throughput			pcrec_35e1ab1_auto-caps-simdna	did-not-compile									pcrec: pattern too complex for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0)	
 did_not_compile	level-context	(set)	large-subject-throughput			pcrec_35e1ab1_auto-nocaps-simdna	did-not-compile									pcrec: pattern too complex for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0)	
+baseline	level-context	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	level-context	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	115353.704610	112	1.0000	0	0		
 rank	level-context	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	115275.772115	112	1.0000	0	0		
 rank	level-context	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	115948.938222	112	1.0000	0	0		
@@ -634,6 +652,7 @@ rank	level-context	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_v
 rank	level-context	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	4	ratio_vs_best	13.395562	112	1.0000	0	0		
 did_not_compile	level-context	(set)	short-subject-search			pcrec_35e1ab1_auto-caps-simdna	did-not-compile									pcrec: pattern too complex for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0)	
 did_not_compile	level-context	(set)	short-subject-search			pcrec_35e1ab1_auto-nocaps-simdna	did-not-compile									pcrec: pattern too complex for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0)	
+baseline	stack-frame	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	476245.748886	12	1.0000	0	0		
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	476007.883730	12	1.0000	0	0		
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	477275.617385	12	1.0000	0	0		
@@ -670,6 +689,7 @@ rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	stddev_ns	10574.045960	12	1.0000	0	0		
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	ratio_vs_baseline	5.807649	12	1.0000	0	0		
 rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	6	ratio_vs_best	61.260988	12	1.0000	0	0		
+baseline	stack-frame	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	stack-frame	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	17573.900518	112	1.0000	0	0		
 rank	stack-frame	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	17563.953765	112	1.0000	0	0		
 rank	stack-frame	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	17694.743234	112	1.0000	0	0		
@@ -706,6 +726,7 @@ rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-
 rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	6	stddev_ns	2465.508885	112	1.0000	0	0		
 rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	5.408242	112	1.0000	0	0		
 rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	6	ratio_vs_best	63.675925	112	1.0000	0	0		
+baseline	uuid	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	uuid	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	1740289.904867	12	1.0000	0	0		
 rank	uuid	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	1737971.219027	12	1.0000	0	0		
 rank	uuid	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	1741586.592920	12	1.0000	0	0		
@@ -742,6 +763,7 @@ rank	uuid	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_inter
 rank	uuid	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	28578.007051	12	1.0000	0	0		
 rank	uuid	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	12	1.0000	0	0		
 rank	uuid	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	56.596316	12	1.0000	0	0		
+baseline	uuid	(set)	short-subject-search			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	uuid	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	35766.264118	112	1.0000	0	0		
 rank	uuid	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	35661.725259	112	1.0000	0	0		
 rank	uuid	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	35987.548711	112	1.0000	0	0		
