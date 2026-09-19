@@ -1,9 +1,33 @@
 # THE PREDICATE AUDIT — a design note (v1.1, 2026-09-18)
 
-**Status: PROPOSED, not adopted. D6-panel input. NO code and NO catalogue
-change in this lane** — nothing under `pcrecbench/`, `catalogue/`,
-`reports/`, `schema/` or `store/` is touched. The note proposes; fixes
-land on a ruling.
+**Status: RULED, IMPLEMENTED 2026-09-19 (lane `b56fixwave`, `[B56]`, THE
+FIX WAVE).** Frank's live rulings (§7 Q1/Q2/Q4/Q7, F9/R-ARM-2, this
+same day) are BUILT: catalogue **3.0** (F3, F11, Q4's collapse + F13's
+companion check, R-ARM-2, Q1's `no_fire_reasons` channel, F27's
+re-anchored `check_stated_utc` + the unconditional anchor-identity
+line, one MAJOR bump under the Q2-reframed `interpreter_v1.md` §3.3),
+`INTERPRET_VERSION` v1 → v2 (its first bump, §6.05), every golden fact
+and committed sidecar regenerated, `make check-interpret` 150 → 155
+(0 failed both before and after), `catalogue/acceptance_10.py` 25/25.
+The witness §7 Q7's ruling exists to unblock — CLI-scoring
+`docs/dev/predictions/capability-0.1-ext-roster.tsv` against
+`reports/2026-09-19-capability-0.1-budu-ryzen1600-ext-second-cf0962e3.tsv`
+— now runs clean and reproduces `docs/dev/ledgers/2026-09-19-capability-
+0.1-ext-second-cf0962e3.md`'s hand-derived P2.a/P2.b `confirmed`
+verdicts by machine. Findings NOT in this wave's charter (F4, F6/F6b,
+F7/F7b, F8, F10, F14-F26 except F9, and Q3/Q5/Q6/Q8/Q9) are UNCHANGED,
+still PROPOSED — this status line covers only what plan.md's `[B56]`
+row charters. Below this line the note is preserved AS RULED, not
+rewritten to read as if it always described the built shape; §6.05 and
+the historical "PROPOSED"/"NO code" framing that follows are the
+record of what was true before this wave, kept for the same reason
+`interpreter_v1.md`'s own panel-outcome blocks are kept inline rather
+than edited away.
+
+**Original status (superseded above): PROPOSED, not adopted. D6-panel
+input. NO code and NO catalogue change in this lane** — nothing under
+`pcrecbench/`, `catalogue/`, `reports/`, `schema/` or `store/` is
+touched. The note proposes; fixes land on a ruling.
 
 **v1.1** (2026-09-18, lane `lane/r7consol`): applies the R7 D6 panel's
 accepted findings (`docs/dev/reviews/2026-09-18-r7-predicate-audit.md`,
@@ -1090,7 +1114,10 @@ the table, not from the original two-cost framing.
 | **F27** (`check_stated_utc`'s anchor, rewritten — r7code-1) | none | **yes (r7ver-3)** | fixture on both sides; no existing sidecar moves (the check currently REFUSES, it does not mis-render) | new pair | none | plus `interpreter_v1.md` §6.5 revision (r7ver-8) |
 
 **§6.05 — `INTERPRET_VERSION`, a second stamp this note originally never
-named (r7ver-3).** Every rendered sidecar's stamp block carries TWO
+named (r7ver-3). IMPLEMENTED 2026-09-19 (lane `b56fixwave`): the rule
+below is BUILT — `INTERPRET_VERSION` moved v1 → v2 in the same commit
+as catalogue 3.0, `interpret.py:54`'s own comment now states the rule
+in place of this note.** Every rendered sidecar's stamp block carries TWO
 version fields, built in one place (`build_stamp`, `interpret.py:2173-2204`):
 `("catalogue", cat["catalogue_version"])` and `("interpret",
 INTERPRET_VERSION)`. `INTERPRET_VERSION = "v1"` (`interpret.py:54`) has

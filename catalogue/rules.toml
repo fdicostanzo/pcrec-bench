@@ -11,16 +11,57 @@
 # `pcrecbench/report.py` / `pcrecbench/reduce.py` the threshold comes
 # from — no rule introduces a constant of its own (§4, §13).
 #
-# EVERY diff that touches a `template`, `no_fire`, `legend` or `links`
-# field, or adds a `[[signature]]`, must carry a reviewer's approval line
-# in the commit message naming the rule ids reviewed (§8(6)).
+# EVERY diff that touches a `template`, `no_fire`, `no_fire_reasons`,
+# `legend` or `links` field, or adds a `[[signature]]`, must carry a
+# reviewer's approval line in the commit message naming the rule ids
+# reviewed (§8(6)).
 
-catalogue_version = "2.0"
+catalogue_version = "3.0"
 # Every bump regenerates every committed sidecar in the same commit
-# (§3.3). MINOR: a rule added, a template's wording, a link, a `legend`
-# line, an `example`, a `[[pin_order]]` append. MAJOR: a predicate or
+# (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
+# §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
+# are comparable across the boundary, not whether a field's TEXT moved.
+# MAJOR: a fact or verdict moves on UNCHANGED inputs -- a predicate or
 # threshold changes, a rule is removed, `inputs` read a different
-# column, or a `[[signature]]` is registered.
+# column, a SHARED HELPER's population changes what several rules see
+# (the 2.0 bump below is this shape: zero individual rule fields moved),
+# or a `[[signature]]` is registered. MINOR: additive -- a rule added, a
+# template's wording, a link, a `legend` line, an `example`, a
+# `[[pin_order]]` append, an appended column. A field-text edit is an
+# INSTANCE of MINOR, not its definition.
+#
+# 3.0 (2026-09-19, lane b56fixwave, Frank's live rulings on
+# docs/design/predicate_audit_v1.md's fix wave -- Q2/Q4/R-ARM-2/F27,
+# the one bump the whole wave rides): MAJOR, per the Q2-reframed §3.3
+# above (its own precedent, cited by name). F3 (R-DELTA-4's coverage
+# reads the SELECTOR's own glob match, not the rows a clause happened
+# to match -- a not-evaluable clause that still NAMES a cell now
+# counts) and F11 (R-BUCKET-SPAN's partner search widens to `excluded`
+# rows, which carry `form` unlike `did_not_compile`) are shared-code
+# fixes: zero individual rule PREDICATE/THRESHOLD/THRESHOLD_SRC field
+# characters move (the declared prose already read the corrected
+# population), the same shape as the 2.0 bump's own (α)/(β) widening --
+# R-BUCKET-SPAN's `inputs` gains one `excluded` entry. Q4's collapse
+# (six duplicate `rank` metric rows -> one per cell, for the four
+# failure-population quantities, before any reducer runs) moves a
+# verdict's "over N value(s)" population on unchanged inputs (MEASURED
+# identity check: P5.a's median would still read 0 either way -- the
+# collapse does not itself change a verdict, but the REDUCED POPULATION
+# a reader is told about does, which is the Q2 bar). F13's companion
+# check refuses the `median` reducer on a failure quantity at load
+# time. R-ARM-2 is a new rule (MINOR on its own -- additive, F9's
+# existence rule over an arm pair one of whose arms refused to
+# compile). Q1's did-not-fire REASON channel (F1/F2, `no_fire_reasons`,
+# optional, §8(6)-reviewed) is additive. F27 re-anchors
+# `check_stated_utc` to the report's own included population (code
+# only, no rule field moves, but it changes what the check REFUSES) and
+# adds the unconditional anchor-identity line. `INTERPRET_VERSION`
+# takes its FIRST bump alongside (r7ver-3, interpret.py). 32 rules (was
+# 31); `catalogue/fixtures/fixtures.toml` gains report_d (the R-ARM-2
+# witness, pin 35e1ab1) and the F27 fixture pair
+# (predictions-utc-{before,after}.tsv, checked directly in
+# check_interpret.py section 1 on the inexpressible-quantities
+# precedent). Every committed sidecar regenerated in this wave.
 #
 # 2.0 (2026-09-17, lane b47subgrain, Frank's ELEVEN §6 rulings on
 # docs/design/interpret_subject_grain_v1.md, ratified in full):
@@ -691,6 +732,12 @@ slots         = ["rule_id", "pattern", "regime", "form", "testee", "predictions_
 arith         = []
 template      = "{rule_id} fired on {pattern} / {regime} / {form} / `{testee}` and no prediction in {predictions_file} selects that cell."
 no_fire       = "every finding of R-DELTA-1, R-RANK-1, R-ARM-1 and R-FLOOR-2 is covered by a prediction selector"
+# Q1/F2: with no predictions file supplied, the static no_fire sentence
+# above reads as a claim of complete coverage -- it is not one; the
+# named reason says so instead.
+no_fire_reasons = [
+  "no predictions file was supplied, so coverage cannot be evaluated",
+]
 links         = []
 example       = """
 No committed report is interpreted with a predictions file today, so
@@ -792,6 +839,52 @@ pin 692c2e8: orig / short-subject-search / plain, `vm-in-caps-simdna`
 12,546.2 ns vs `vm-caps-simdna` 28,996.9 ns -- ×2.31, spread 862.2 ns.
 """
 
+[[rule]]
+id            = "R-ARM-2"
+title         = "two arms one config token apart, one refused"
+class         = "arm"
+since         = "3.0"
+grain         = ["set"]
+aggregate     = []
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,value}",
+  "report:did_not_compile.{pattern,regime_or_na,testee,gave_up_summary}",
+]
+predicate     = """
+A testee ranked on a pattern/regime, and a second testee -- neither the
+reference arm, both at the same engine and pin, config decomposing to
+four tokens differing in exactly ONE -- that did NOT compile the SAME
+pattern at all. The strongest possible arm difference: R-ARM-1 requires
+both arms to have a `rank` row, so it cannot see this shape, and it is
+exactly what the deny-flag testees ([B32]/[B37]/[B39]) exist to
+measure.
+"""
+threshold     = "none of this rule's own -- an EXISTENCE rule"
+threshold_src = """
+The testee-id decomposition is R-ARM-1's own (record_schema.md §6.4),
+applied to a `rank` row and a `did_not_compile` row instead of two
+`rank` rows. A `did_not_compile` row carries no `form` (§0 fact 3 of
+docs/design/predicate_audit_v1.md), so the join key is (pattern,
+regime) only -- narrower than R-ARM-1's (pattern, regime, form), which
+this rule cannot avoid without inventing a form the refused artifact
+never had.
+"""
+slots         = ["pattern", "regime", "form", "pin", "config_ranked", "median", "config_refused", "diagnostic", "token_name", "token_ranked", "token_refused", "arm_pair"]
+arith         = [
+  "testee_id -> (engine, version_slug, mode, caps, simd, extra): the SAME decomposition R-ARM-1 uses",
+  "arm_pair: the two config slugs sorted and joined with ' vs ' -- an aggregation key, not a rendered slot",
+]
+template      = "{pattern} / {regime} / {form}, pin {pin}: `{config_ranked}` ranks (median {median} ns) while `{config_refused}` — one config token apart ({token_name}: {token_ranked} vs {token_refused}) — did not compile: {diagnostic}"
+no_fire       = "no two arms one config token apart, at the same engine and pin, have one ranked and the other refused to compile"
+links         = []
+example       = """
+reports/2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.tsv,
+pin 35e1ab1: level-context / large-subject-throughput, `vm-caps-simdna`
+ranks (median 40,904,695.6 ns) while `auto-caps-simdna` -- one token
+apart (mode: vm vs auto) -- did not compile: pcrec: pattern too complex
+for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0).
+"""
+
 # ====================================================== class R-FLOOR ==
 
 [[rule]]
@@ -864,6 +957,18 @@ arith         = [
 extremal      = "ratio"
 template      = "{pattern} / {regime} / {form} / `{testee}`: {cell_mean} ns per subject against the floor pattern `{floor_pattern}`'s {floor_mean} ns per subject on the same testee and regime — ×{ratio}, at or below the set's own per-call control."
 no_fire       = "no ranked cell is at or below its set's own floor pattern on the same testee and regime"
+# Q1/F1 (docs/design/predicate_audit_v1.md, ratified 2026-09-19): the
+# early return had ONE token covering THREE distinct causes; each now
+# carries its own reason (interpreter_v1.md §4.5's own worked
+# rendering for the "none" case). r7pop-5: the multi-value case has NO
+# corpus witness today, so its wording is a first cut, not a re-use of
+# the "none" wording (a materially different population -- an
+# AMBIGUITY about which comparison to make, not an absence of one).
+no_fire_reasons = [
+  "no `floor_pattern` header key was present on this report",
+  "floor_pattern: none",
+  "floor_pattern names more than one pattern, so no single floor comparison is defined",
+]
 links         = []
 example       = """
 reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv:
@@ -1200,6 +1305,7 @@ grain         = ["set"]
 aggregate     = ["config"]
 inputs        = [
   "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,value,delta_verdict}",
+  "report:excluded?metric=pass_rate.{pattern,regime_or_na,form,testee}",
   "report:record.{testee,metric}",
   "index.{path,testee_id,timestamp}",
 ]

@@ -79,11 +79,11 @@ def section_1(cat):
     ok(1, f"catalogue {cat['catalogue_version']} loads with "
           f"{len(cat['rule'])} rules and every load-time check green")
 
-    if len(cat["rule"]) != 31:
-        bad(1, "the catalogue carries 31 rules",
+    if len(cat["rule"]) != 32:
+        bad(1, "the catalogue carries 32 rules",
             f"found {len(cat['rule'])}")
     else:
-        ok(1, "31 rules in 7 classes")
+        ok(1, "32 rules in 7 classes")
     classes = {r["class"] for r in cat["rule"]}
     if classes != {"status", "delta", "rank", "arm", "floor", "pred",
                    "bucket"}:
@@ -177,6 +177,39 @@ def section_1(cat):
                    "set", str(exc))
         else:
             ok(1, "P9.a's span quantity fails at load, naming the closed set")
+
+    # F27/r7code-1 (docs/design/predicate_audit_v1.md, ratified
+    # 2026-09-19): check_stated_utc is RE-ANCHORED to the report's own
+    # included (subbench, version, testee_id, machine_id) population.
+    # Fixture pair, both sides -- same precedent as the inexpressible
+    # check just above (a dedicated predictions file, checked directly,
+    # since a load-time raise is not a rendered firing `expect`/
+    # `expect_not` can assert on).
+    syntax_report_path = os.path.join(
+        ROOT, "reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv")
+    syntax_report = I.ReportTsv(syntax_report_path, I.header_keys_from_source())
+    syntax_index = I.IndexTsv(INDEX_SNAPSHOT)
+    try:
+        preds = I.load_predictions(os.path.join(FIXTURES,
+                                                 "predictions-utc-before.tsv"))
+        I.check_stated_utc(preds, syntax_index, syntax_report)
+        ok(1, "a stated_utc legitimately BEFORE this report's own "
+              "population passes check_stated_utc (§6.5, r7code-1)")
+    except I.InterpretError as exc:
+        bad(1, "a stated_utc before the report's own population passes",
+            str(exc))
+    try:
+        preds = I.load_predictions(os.path.join(FIXTURES,
+                                                 "predictions-utc-after.tsv"))
+        I.check_stated_utc(preds, syntax_index, syntax_report)
+        bad(1, "a stated_utc after the report's own population is refused "
+               "BY NAME", "loaded without error")
+    except I.PredictionError as exc:
+        if "r7code-1" not in str(exc):
+            bad(1, "the refusal names §6.5/r7code-1", str(exc))
+        else:
+            ok(1, "a stated_utc AFTER this report's own population is "
+                  "refused BY NAME (§6.5, r7code-1)")
 
     # every rule has at least one fixture and one negative control
     specs = fixture_specs()
@@ -425,22 +458,22 @@ def section_4(cat):
               f"compound `selection changed (vm → dfa); now measured (was: "
               f"gave-up)` verdict")
 
-    # the NULL CONTROL: all 31 rules quiet on the synthetic clean report
+    # the NULL CONTROL: all 32 rules quiet on the synthetic clean report
     clean = facts_by_name.get("CLEAN__all-measured")
     if clean is None:
         bad(4, "the null control runs")
     else:
         fired = {rid for rid, seqs in _fired(clean).items() if seqs}
         if fired:
-            bad(4, "Report D (the null control): all 31 rules report fired=0",
+            bad(4, "Report D (the null control): all 32 rules report fired=0",
                 f"{sorted(fired)} fired")
         else:
             n = len(_tokens(clean))
-            if n != 31:
-                bad(4, "Report D names all 31 rules", f"named {n}")
+            if n != 32:
+                bad(4, "Report D names all 32 rules", f"named {n}")
             else:
-                ok(4, "Report D (the null control): all 31 rules report "
-                      "fired=0, and all 31 are named")
+                ok(4, "Report D (the null control): all 32 rules report "
+                      "fired=0, and all 32 are named")
 
 
 _FILE_COLUMNS = {"report.tsv": I.REPORT_COLUMNS,
@@ -538,6 +571,12 @@ def _render_from_facts(cat, report_path, pred_path, facts):
     index = I.IndexTsv(INDEX_SNAPSHOT)
     ctx = I.Context(cat, report, index, [] if pred_path else None,
                     I.display_path(pred_path, ROOT) if pred_path else "(none)")
+    # F27/r7code-1: the anchor-identity line's population is (index,
+    # report) alone -- independent of what the predictions actually
+    # say -- so the re-render-from-facts path computes the SAME anchor
+    # the direct render did, one call, no re-derivation of its own.
+    if pred_path:
+        ctx.utc_anchor, ctx.utc_anchor_tuples = I._utc_anchor(index, report)
     results = I.results_from_facts(cat, facts)
     # ONE stamp builder, shared with the CLI render (interpret.build_stamp):
     # the check must not carry its own copy of the stamp -- it did, and
@@ -556,7 +595,7 @@ def _first_diff(a, b):
 
 # ------------------------------------------------------------ section 6
 
-PROSE_FIELDS = ("template", "no_fire", "legend", "links")
+PROSE_FIELDS = ("template", "no_fire", "legend", "links", "no_fire_reasons")
 
 
 def section_6():
@@ -590,10 +629,12 @@ def section_6():
         ok(6, "no previous commit: the template-diff gate is inert")
         return
     touched = [ln for ln in diff.stdout.split("\n")
-               if re.match(r"^[+-]\s*(template|no_fire|legend|links)\s*=", ln)
+               if re.match(r"^[+-]\s*(template|no_fire_reasons|no_fire|legend"
+                           r"|links)\s*=", ln)
                or re.match(r"^\+\s*\[\[signature\]\]", ln)]
     if not touched:
-        ok(6, "HEAD touches no template, no_fire, legend or links field")
+        ok(6, "HEAD touches no template, no_fire, no_fire_reasons, legend "
+              "or links field")
         return
     msg = subprocess.run(["git", "-C", ROOT, "log", "-1", "--format=%B"],
                          capture_output=True, text=True, timeout=30).stdout

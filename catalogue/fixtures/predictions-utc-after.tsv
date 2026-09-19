@@ -1,0 +1,2 @@
+prediction_id	clause	source	source_ref	stated_utc	subbench	version	selector	quantity	reducer	op	lo	hi	unit	note
+UTC1		catalogue/fixtures/fixtures.toml	F27	2026-09-07T01:00:00Z	syntax	0.1	testee=*	compile:median_total_ns	ratio_to_median_over(pattern)	lte		10	x	F27/r7code-1 fixture: stated_utc AFTER this report's own (subbench, version, testee_id, machine_id) anchor (2026-09-07T00:32:11Z) -- refused BY NAME

@@ -727,15 +727,41 @@ check, not a proof. §3.2 says "checked", not "guaranteed".
 `catalogue_version` is `MAJOR.MINOR`, the same discipline as the record
 schema (docs/design/record_schema.md §4) and for the same reason.
 
-- **MINOR** — a rule added; a template's wording changed under §8(6)'s
-  review gate; a link added; an `example` refreshed; a `[[pin_order]]`
-  entry appended at a re-pin. Old inputs still produce the same *facts*;
-  only the rendering moves.
-- **MAJOR** — a rule's PREDICATE or THRESHOLD changes, a rule is
-  removed, `inputs` change in a way that reads a different column, **or a
-  signature is registered with R-BUCKET-KB**. A sidecar stamped at an
+**AMENDED 2026-09-19 (Frank, live; `docs/design/predicate_audit_v1.md`
+§7 Q2, the fix wave's first commit).** The unit of compatibility is not
+the catalogue FILE FORMAT — it is whether the FACTS AND VERDICTS a
+sidecar emits are comparable across the version boundary. Read
+literally against field text alone, a fix that corrects a shared
+helper's population (F3, F11 below) edits zero characters of any
+individual rule's `predicate`/`threshold`/`threshold_src`/`inputs`
+field, because the catalogue's declared PROSE was already right and
+only the python was wrong — so a bump rule worded purely as "a field
+changed" has nothing to diff. The 2.0 bump already set this precedent
+without naming it: `_select`'s default section widened for four
+quantities, no individual R-PRED rule's own field text moved, and the
+bump was MAJOR because a real sidecar's real verdict (P5, `confirmed` →
+`refuted`) moved on the SAME report and the SAME inputs. This
+amendment states that rule explicitly:
+
+- **MAJOR** — facts or verdicts move on UNCHANGED inputs: a pre-fix and
+  a post-fix sidecar, run over the identical report and index, disagree
+  about what fired or what a firing's numbers say. A rule's predicate or
+  threshold changes, a rule is removed, `inputs` read a different
+  column, a SHARED HELPER's population changes what several rules can
+  see (the 2.0 precedent; F3/F11 below are the same shape), or a
+  signature is registered with R-BUCKET-KB. A sidecar stamped at an
   earlier MAJOR is no longer derivable from its inputs under the current
   catalogue.
+- **MINOR** — additive: every fact a prior version emitted still
+  stands. A rule added; a template's wording changed under §8(6)'s
+  review gate; a link added; an `example` refreshed; a `[[pin_order]]`
+  entry appended at a re-pin; a column appended to a row shape a reader
+  already knows how to read past. A field-text edit is typically an
+  INSTANCE of this (most wording changes are additive, because they
+  change how an unchanged fact is WORDED), never the definition of
+  MINOR — the definition is comparability of what is emitted, and a
+  field-text edit that happens to move a verdict is MAJOR regardless of
+  how few characters it touches.
 
 *(Signature registration is MAJOR, corrected from v1, panel B4: v1 made
 it MINOR — "adding a newly-filed KB is a MINOR catalogue bump and no code
@@ -1888,36 +1914,80 @@ population, the earliest timestamp it sees is the LATER re-measure's, so
 a `stated_utc` stated after reading run 1 (and therefore not a
 prediction at all) passes as if it predated everything.
 
-**The fix that closes the window is checking against the EARLIEST
-`timestamp`-comparable value across ALL rows of `store/index.tsv` for
-this (subbench, version, machine) — including SUPERSEDED ones — not just
-the rows the report's own query included.** Run 1's record, even
-superseded and absent from every later report, is still a row in the
-index (§2.2: `index.{subbench,version,machine_id,timestamp,status}`, all
-four columns already declared there — no new column is needed for this
-check). Anchoring on that earliest index timestamp instead of the
-report's own earliest one closes exactly the case above: a `stated_utc`
-after run 1 fails the check even when the report being interpreted is
-run 2's re-measure. This is a check `make check-interpret` runs against
-`index.*` directly (§2.2), not a declared `inputs` entry of any one rule
-— no R-PRED rule's `inputs` needs a column beyond what §2.2 already
-lists.
+**The fix that closed the window (2026-09-08) checked against the
+EARLIEST `timestamp`-comparable value across ALL rows of
+`store/index.tsv` for this (subbench, version) — including SUPERSEDED
+ones — not just the rows the report's own query included.** Run 1's
+record, even superseded and absent from every later report, is still a
+row in the index (§2.2: `index.{subbench,version,machine_id,timestamp,
+status}`, all four columns already declared there). Anchoring on that
+earliest index timestamp instead of the report's own earliest one
+closed exactly the case above: a `stated_utc` after run 1 failed the
+check even when the report being interpreted was run 2's re-measure.
 
-**The residual limit, stated honestly rather than left implied.** Even
-this fix does not make post-hoc prediction impossible in the fullest
-sense: it can only prove a `stated_utc` precedes the FIRST time this
-project ever measured this (subbench, version, machine) population, by
-any pin, at any point in `store/index.tsv`'s history. It cannot see a
-prediction informed by reading pcrec's own source or commit history
-(someone could know an optimization already shipped and predict its
-effect without ever having read a bench run), and it has no anchor at
-all for a population that has never been measured before (the check is
-vacuous, not restrictive, on a first-ever sample). **A prediction stated
-before the first record of a population was ever measured is the only
-thing the check can prove — not that no other channel informed it.**
-Still the design's best single idea for the part it does close, which is
-the part that bites in practice (a person re-reading THIS project's own
-committed reports before writing a prediction down).
+**RE-ANCHORED 2026-09-19 (Frank, live; `docs/design/predicate_audit_v1.md`
+F27/§7 Q7, the corrected join r7code-1 supplies).** The GLOBAL anchor
+above never moves forward — it is the (subbench, version)'s first-ever
+measurement, full stop — so a predictions file about a SECOND sample of
+an already-sampled set can never pass, however honestly it was stated
+before its own run: found live on the committed
+`capability-0.1-ext-roster.tsv`, which the CLI could not score at all
+under the global anchor. The check now anchors to THIS REPORT'S OWN
+included population instead: for each of the report's included
+records, its `(subbench, version, testee_id, machine_id)` tuple — the
+OD-B15 dedup key, recovered via the record-id→index-row join
+`check_stated_utc` needs a `report` argument for, its one signature
+change (`interpret.py`'s single call site) — then the MINIMUM
+`store/index.tsv` timestamp over EVERY index row sharing that exact
+tuple (recovering whatever that same testee/machine/version's OWN
+kept row superseded, the identical supersession window the 2026-09-08
+fix closed for the global anchor, just scoped to the report's own
+population rather than the whole store). `stated_utc` must precede
+that minimum, per (subbench, version) the report includes. **Every
+scoring run also renders an UNCONDITIONAL line** naming the anchor
+actually used — which (subbench, version) pairs, how many (testee_id,
+machine_id) tuples contributed, and the resulting timestamp — so a
+reader is told what the check did and did not prove without having to
+trust it silently.
+
+**Two residual limits, stated honestly — a trade against the global
+anchor, not a strict improvement (r7ver-7, r7pop-4).**
+
+1. **Gameability.** The retired global anchor could not be gamed by a
+   report's own `--since`/`--until`/`--where` filters, because it never
+   read them. The report-scoped anchor IS a function of a scope
+   decision made AFTER the predictions were authored: an author who
+   already knows a later sample's numbers could construct or select a
+   report whose filters exclude the early records that would make
+   `stated_utc` fail, and pass a `stated_utc` the global anchor would
+   have refused. `--since`/`--until`/`--where` queries are this
+   project's ORDINARY way of building a report (`reports/CLAUDE.md`'s
+   own convention), so this is an everyday act available to misuse, not
+   a contrived edge case invented for the argument.
+2. **The fix closes only the SAME-testee half of the residual.** Even
+   with the supersession window closed the same way, the anchor is
+   still only as recent as the report's OWN testee/config selection: a
+   report scoped (by filter, not by the store's real state) to exclude
+   an older baseline moves the anchor forward to the newest pin's own
+   earliest record, and would then accept a `stated_utc` authored after
+   the analyst had already seen results from OTHER, differently
+   configured testees of the SAME (subbench, version) that the report's
+   filters simply chose not to include — the cross-testee/cross-config
+   half of the residual this section already named for the global
+   anchor, unclosed by either version.
+
+**Neither risk disqualifies the fix. Frank's observation of record: the
+check guards against its own author** — it was never going to restrain
+a determined author acting in bad faith, under EITHER anchor; what it
+does is make honesty checkable and drift detectable across sessions,
+which is the whole of what a pre-registration discipline can promise.
+A prediction stated before the anchor it is checked against is the
+only thing the check can prove — not that no other channel informed
+it, and not now, either. A predictions-file-selector-derived anchor (an
+alternative considered and not built) stays in the design space,
+unruled, should a future session want it. No escape hatch: a
+`--no-check-utc`-style flag on the one check that keeps a prediction
+honest is the wrong thing to add.
 
 Predictions stated in an inbox item are transcribed by the manager
 session at ack time — the same motion that already moves an inbox item

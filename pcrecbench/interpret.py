@@ -51,7 +51,16 @@ import sys
 import tomllib
 from collections import defaultdict
 
-INTERPRET_VERSION = "v1"
+# r7ver-3 (docs/design/predicate_audit_v1.md §6.05, ratified 2026-09-19):
+# this stamp's FIRST bump since it was introduced -- it never moved
+# across catalogue 1.0 through 2.0, even though several of those
+# changes (F7's future fix, this wave's F3/F11/F27) are CODE-ONLY and
+# move what a sidecar renders with no catalogue field text changing at
+# all, so `catalogue_version` moving is not, by itself, a signal a
+# reader can trace to interpret.py's actual code. Bump this whenever a
+# pure code change alters what a sidecar renders, independent of
+# whether catalogue_version also moves.
+INTERPRET_VERSION = "v2"
 
 # The report TSV's 18 data columns (report.py `render_tsv`'s own
 # `header` list). Read from the source at load time by
@@ -805,16 +814,46 @@ def r_delta_3(view, ctx):
     return _delta_clause_rule(view, "now measured (was: ")
 
 
+def _selector_covers_cell(pred, cell):
+    """F3 (docs/design/predicate_audit_v1.md): whether a prediction
+    clause's own selector NAMES this (pattern, regime, form, testee)
+    cell BY ITS GLOB -- independent of whether the clause was
+    evaluable. The catalogue's own `threshold_src` already states this
+    predicate ("the coverage test is a prediction selector's own glob
+    match", §6.3); the code previously computed coverage from the ROWS
+    a clause happened to match, which is empty for a not-evaluable
+    clause even when its selector names the cell by name (MEASURED: 6 of
+    10 capability predictions are not-evaluable and contributed zero
+    coverage against 777 R-DELTA-4 firings)."""
+    pattern, regime, form, testee = cell
+    sel = pred["_selector"]
+    checks = {"pattern": pattern, "regime_or_na": regime, "form": form,
+              "testee": testee}
+    for key, value in checks.items():
+        glob = sel.get(key)
+        if glob is not None and not _glob_match(glob, value):
+            return False
+    return True
+
+
 def r_delta_4(view, ctx):
     if ctx.predictions is None:
-        return "input-absent"
-    covered = ctx.prediction_coverage
+        return ("input-absent", "no predictions file was supplied, so "
+                                "coverage cannot be evaluated")
+    # F3's own coverage population is `rank?metric=median_ns` (this
+    # rule's declared `inputs`) -- a `compile:` quantity's clause reads
+    # a STRUCTURALLY DIFFERENT section with no regime dimension at all
+    # (§0 fact 3) and cannot speak to a match-timing finding, so it is
+    # excluded from the glob-match population rather than matching every
+    # cell by accident of an unconstrained `regime_or_na`.
+    coverers = [p for p in ctx.predictions
+               if p["quantity"] not in _COMPILE_METRIC]
     out = []
     for rid in ("R-DELTA-1", "R-RANK-1", "R-ARM-1", "R-FLOOR-2"):
         for f in ctx.firings.get(rid, ()):
             cell = (f.keys["pattern"], f.keys["regime"], f.keys["form"],
                     f.keys["testee"])
-            if cell in covered:
+            if any(_selector_covers_cell(p, cell) for p in coverers):
                 continue
             out.append(fire({"rule_id": rid, "pattern": cell[0],
                              "regime": cell[1], "form": cell[2],
@@ -928,6 +967,61 @@ def r_arm_1(view, ctx):
     return out
 
 
+def r_arm_2(view, ctx):
+    """F9 (docs/design/predicate_audit_v1.md, ratified 2026-09-19 as
+    R-ARM-2): the strongest possible arm difference R-ARM-1 cannot see
+    -- one arm ranked, its one-config-token-apart sibling refused to
+    compile the SAME pattern outright. Exactly what the deny-flag
+    testees ([B32]'s -fno-scan-edge, [B37]'s -fno-alt-island, [B39]'s
+    -fno-cls-fold) exist to measure. A `did_not_compile` row carries no
+    `form` (§0 fact 3), so the join key is (pattern, regime) only."""
+    median = {}
+    groups_rank = defaultdict(list)
+    for r in view.rows("rank", metric="median_ns"):
+        k = (r["pattern"], r["regime_or_na"], r["form"], r["testee"])
+        median[k] = float(r["value"])
+        groups_rank[(r["pattern"], r["regime_or_na"])].append(k)
+    refused = defaultdict(list)
+    for r in view.rows("did_not_compile"):
+        refused[(r["pattern"], r["regime_or_na"])].append(
+            (r["testee"], r["gave_up_summary"]))
+    token_names = ("mode", "caps", "simd", "extra")
+    out = []
+    for (pattern, regime), cells in sorted(groups_rank.items()):
+        for k in sorted(cells):
+            form, t_ranked = k[2], k[3]
+            if is_reference(t_ranked):
+                continue
+            p_ranked = split_testee(t_ranked)
+            if not p_ranked:
+                continue
+            for t_refused, diag in sorted(refused.get((pattern, regime), [])):
+                if t_refused == t_ranked or is_reference(t_refused):
+                    continue
+                p_refused = split_testee(t_refused)
+                if not p_refused:
+                    continue
+                if p_ranked[0] != p_refused[0] or p_ranked[1] != p_refused[1]:
+                    continue                   # same engine and pin
+                diff = [i for i in range(4) if p_ranked[2 + i] != p_refused[2 + i]]
+                if len(diff) != 1:
+                    continue
+                i = diff[0]
+                c_ranked, c_refused = config_of(t_ranked), config_of(t_refused)
+                out.append(fire(
+                    {"pattern": pattern, "regime": regime, "form": form,
+                     "pin": p_ranked[1], "config_ranked": c_ranked,
+                     "median": fmt_ns(median[k]), "config_refused": c_refused,
+                     "diagnostic": diag,
+                     "token_name": token_names[i],
+                     "token_ranked": p_ranked[2 + i],
+                     "token_refused": p_refused[2 + i],
+                     "arm_pair": " vs ".join(sorted([c_ranked, c_refused]))},
+                    pattern=pattern, regime=regime, form=form,
+                    testee=t_ranked))
+    return out
+
+
 # ---- R-FLOOR ---------------------------------------------------------
 
 def r_floor_1(view, ctx):
@@ -943,9 +1037,22 @@ def r_floor_1(view, ctx):
 
 
 def r_floor_2(view, ctx):
+    # F1 (docs/design/predicate_audit_v1.md, r7pop-5): the early return
+    # conflated THREE distinct causes into one `no-matching-rows` token
+    # -- the header key absent, the literal "none", and a comma-joined
+    # multi-value `floor_pattern` (a materially DIFFERENT population: an
+    # ambiguity about WHICH comparison to make, not an absence of one to
+    # make). Each now carries its own declared reason.
     floor_pattern = view.header("floor_pattern").strip()
-    if not floor_pattern or floor_pattern == "none" or "," in floor_pattern:
-        return "no-matching-rows"
+    if not floor_pattern:
+        return ("no-matching-rows", "no `floor_pattern` header key was "
+                                    "present on this report")
+    if floor_pattern == "none":
+        return ("no-matching-rows", "floor_pattern: none")
+    if "," in floor_pattern:
+        return ("no-matching-rows",
+                "floor_pattern names more than one pattern, so no single "
+                "floor comparison is defined")
     rows = view.rows("rank", metric="median_ns")
     means = {}
     for r in rows:
@@ -1048,7 +1155,21 @@ def r_bucket_span(view, ctx):
     by_cell = defaultdict(list)
     for r in rows:
         by_cell[(r["pattern"], r["regime_or_na"], r["form"])].append(r)
+    # F11 (docs/design/predicate_audit_v1.md, r7pop-3): the reporter's
+    # own partner choice is not scoped to rankable rows -- it reads
+    # `record_ts_by_testee` x `set_cells`, every reduction cell,
+    # rankable or not (report.py:2729-2752) -- so the partner search
+    # widens to `excluded` rows here too, which carry `form` and so join
+    # on the SAME (pattern, regime, form) key `rank` rows do. The
+    # `did_not_compile` half of the widening is NOT implemented: a
+    # `did_not_compile` row's `form` is unconditionally empty (§0 fact
+    # 3), so it cannot join on this key at all, and its own re-keyed
+    # join is undecided at implementation time (r7pop-3 leaves it TBD).
+    excluded_by_cell = defaultdict(list)
+    for r in view.rows("excluded", metric="pass_rate"):
+        excluded_by_cell[(r["pattern"], r["regime_or_na"], r["form"])].append(r)
     for cell, cell_rows in sorted(by_cell.items()):
+        candidates = cell_rows + excluded_by_cell.get(cell, [])
         for r in sorted(cell_rows, key=lambda x: x["testee"]):
             if not r["delta_verdict"]:
                 continue
@@ -1059,7 +1180,7 @@ def r_bucket_span(view, ctx):
             cfg = config_of(r["testee"])
             mine = ts_by_testee.get(r["testee"])
             older = []
-            for other in cell_rows:
+            for other in candidates:
                 if other["testee"] == r["testee"]:
                     continue
                 p2 = split_testee(other["testee"])
@@ -1245,6 +1366,18 @@ def load_catalogue(path):
             raise InterpretError(f"{path}: {rid}'s legend sentence carries a "
                                  f"slot; it must be slot-free, same rule as "
                                  f"no_fire (§7.1)")
+        # Q1/F1/F2 (docs/design/predicate_audit_v1.md, ratified
+        # 2026-09-19): a rule may OPTIONALLY declare `no_fire_reasons`,
+        # a closed, slot-free set of per-instance reasons a did-not-fire
+        # token may carry (§4.5's own worked rendering,
+        # `no-matching-rows (floor_pattern: none)`) -- each entry is
+        # reviewed prose under §8(6), same discipline as `no_fire`.
+        for reason in rule.get("no_fire_reasons", ()):
+            if re.search(r"\{[a-z_0-9]+\}", reason):
+                raise InterpretError(
+                    f"{path}: {rid}'s no_fire_reasons entry {reason!r} "
+                    f"carries a slot; it must be slot-free, same rule as "
+                    f"no_fire (§7.1)")
     # ... and every rule FUNCTION has a [[rule]] (§8(1)'s other
     # direction): a rule function is exactly a module-level callable
     # whose name round-trips to a rule id shape.
@@ -1295,7 +1428,12 @@ class Context:
         self.subject_grain = subject_grain
         self.firings = {}
         self.prediction_verdicts = []
-        self.prediction_coverage = set()
+        # F27/r7code-1: the RE-ANCHORED §6.5 population, set by
+        # `interpret()` right after construction (or left empty -- the
+        # anchor-identity line renders nothing when there is nothing to
+        # say, exactly like an absent predictions file).
+        self.utc_anchor = {}
+        self.utc_anchor_tuples = {}
         self._pin_pos = {}
         for entry in cat["pin_order"]:
             for i, pin in enumerate(entry["pins"]):
@@ -1314,6 +1452,29 @@ class Context:
 # firings (§4.2), so it is evaluated after all of them and then put back
 # in its declaration position, which is what the output order is.
 DEFERRED_RULES = ("R-DELTA-4",)
+
+
+def _normalize_not_fired(rule, out):
+    """Q1/F1/F2: a rule function may return a bare did-not-fire TOKEN
+    (as before) or a `(token, reason)` pair -- `reason` MUST be one of
+    the rule's own declared `no_fire_reasons` (a closed, slot-free set,
+    the same discipline as `no_fire` itself). Raises on anything else,
+    so a rule cannot invent a reason on the fly."""
+    if isinstance(out, tuple):
+        token, reason = out
+        if token not in DID_NOT_FIRE_TOKENS:
+            raise InterpretError(f"{rule['id']}: unknown did-not-fire token "
+                                 f"{token!r}")
+        if reason not in rule.get("no_fire_reasons", ()):
+            raise InterpretError(
+                f"{rule['id']}: did-not-fire reason {reason!r} is not one "
+                f"of its declared no_fire_reasons "
+                f"{list(rule.get('no_fire_reasons', ()))}")
+        return (token, reason)
+    if out not in DID_NOT_FIRE_TOKENS:
+        raise InterpretError(f"{rule['id']}: unknown did-not-fire token "
+                             f"{out!r}")
+    return out
 
 
 def run_rules(cat, report, index, ctx):
@@ -1336,12 +1497,10 @@ def run_rules(cat, report, index, ctx):
             continue
         view = RuleView(rule, report, index)
         out = rule_function(rid)(view, ctx)
-        if isinstance(out, str):
-            if out not in DID_NOT_FIRE_TOKENS:
-                raise InterpretError(f"{rid}: unknown did-not-fire token "
-                                     f"{out!r}")
+        if isinstance(out, (str, tuple)):
+            normalized = _normalize_not_fired(rule, out)
             ctx.firings[rid] = []
-            results.append((rule, out))
+            results.append((rule, normalized))
             continue
         for f in out:
             missing = set(rule["slots"]) - set(f.slots)
@@ -1369,11 +1528,10 @@ def _run_one(rule, report, index, ctx):
         ctx.firings[rid] = []
         return "grain"
     out = rule_function(rid)(RuleView(rule, report, index), ctx)
-    if isinstance(out, str):
-        if out not in DID_NOT_FIRE_TOKENS:
-            raise InterpretError(f"{rid}: unknown did-not-fire token {out!r}")
+    if isinstance(out, (str, tuple)):
+        normalized = _normalize_not_fired(rule, out)
         ctx.firings[rid] = []
-        return out
+        return normalized
     for f in out:
         missing = set(rule["slots"]) - set(f.slots)
         extra = set(f.slots) - set(rule["slots"])
@@ -1393,6 +1551,15 @@ def render_facts_tsv(results):
     lines = ["\t".join(FACTS_COLUMNS)]
     for rule, out in results:
         rid = rule["id"]
+        if isinstance(out, tuple):
+            # Q1/F1/F2: a per-instance did-not-fire REASON rides the
+            # `slot` column, otherwise unused on a not-fired row -- the
+            # `value` column stays the bare token, so `_tokens()`-style
+            # readers (check_interpret.py's `expect_token`) are unaffected.
+            token, reason = out
+            lines.append("\t".join([rid, "0", "0", "", "", "", "", "", "", "",
+                                    reason, token]))
+            continue
         if isinstance(out, str):
             lines.append("\t".join([rid, "0", "0", "", "", "", "", "", "", "",
                                     "", out]))
@@ -1513,7 +1680,11 @@ def results_from_facts(cat, facts_text):
         row = dict(zip(FACTS_COLUMNS, f))
         rid = row["rule_id"]
         if row["fired"] == "0":
-            tokens[rid] = row["value"]
+            # Q1/F1/F2: a reason, if any, rides the otherwise-unused
+            # `slot` column of a not-fired row (render_facts_tsv's own
+            # encoding).
+            tokens[rid] = (row["value"], row["slot"]) if row["slot"] \
+                else row["value"]
             continue
         firing = by_rule.setdefault(rid, {}).get(row["firing_seq"])
         if firing is None:
@@ -1537,6 +1708,39 @@ def results_from_facts(cat, facts_text):
     return results
 
 
+def _anchor_identity_lines(ctx):
+    """F27/r7code-1's fold-in: an UNCONDITIONAL line, on every
+    predictions-scoring run, naming the anchor `check_stated_utc`
+    actually used -- which (subbench, version) pairs, how many
+    (testee_id, machine_id) tuples contributed, and the resulting
+    timestamp -- so a reader is told what the check did and did not
+    prove rather than having to trust it silently. Empty (no lines) when
+    there is nothing to anchor, exactly like an absent predictions file."""
+    if not ctx.utc_anchor:
+        return []
+    out = [
+        "**Predictions anchor (§6.5, r7code-1).** `stated_utc` is "
+        "checked against the earliest `store/index.tsv` timestamp among "
+        "the (subbench, version, testee_id, machine_id) tuples THIS "
+        "report's own included records carry -- not the whole store's "
+        "history for the set. This proves a prediction predates this "
+        "report's own population; it does not restrain an author "
+        "already informed by a differently-scoped report of the same "
+        "(subbench, version) (r7pop-4), and a report's own "
+        "`--since`/`--until`/`--where` filters can move the anchor "
+        "forward (r7ver-7).",
+        "",
+    ]
+    for key in sorted(ctx.utc_anchor):
+        sb, ver = key
+        n = len(ctx.utc_anchor_tuples.get(key, ()))
+        out.append(f"- `{sb}@{ver}`: anchor {ctx.utc_anchor[key]}, over "
+                   f"{n} (testee_id, machine_id) tuple(s) this report "
+                   f"includes.")
+    out.append("")
+    return out
+
+
 def render_markdown(results, ctx, stamp):
     out = ["<!-- pcrecbench interpret"]
     for k, v in stamp:
@@ -1552,9 +1756,10 @@ def render_markdown(results, ctx, stamp):
                f"{ctx.catalogue['catalogue_version']}. Every sentence below "
                f"is a rule template. No sentence is generated.")
     out.append("")
+    out.extend(_anchor_identity_lines(ctx))
     not_fired = []
     for rule, res in results:
-        if isinstance(res, str):
+        if isinstance(res, (str, tuple)):
             not_fired.append((rule, res))
             continue
         bullets = render_bullets(rule, res)
@@ -1577,8 +1782,16 @@ def render_markdown(results, ctx, stamp):
     out.append("")
     out.append("| rule | reason |")
     out.append("|---|---|")
-    for rule, token in not_fired:
-        out.append(f"| {rule['id']} | {token} ({rule['no_fire']}) |")
+    for rule, res in not_fired:
+        # Q1/F1/F2: a per-instance reason (declared in the rule's own
+        # `no_fire_reasons`) replaces the rule's STATIC `no_fire`
+        # sentence when one is given -- the rule DECLINED for a
+        # specific, named cause, not "the population is clean".
+        if isinstance(res, tuple):
+            token, reason = res
+        else:
+            token, reason = res, rule["no_fire"]
+        out.append(f"| {rule['id']} | {token} ({reason}) |")
     out.append("")
     return "\n".join(out)
 
@@ -1690,6 +1903,22 @@ def load_predictions(path):
         if head not in REDUCERS:
             raise PredictionError(f"{where}: reducer {reducer!r} is not in the "
                                   f"closed set {sorted(REDUCERS)}")
+        # F13's companion check (ratified with Q4's collapse, landed
+        # together): `median` is an AVERAGING reducer -- a real
+        # violation's value can sit at a sorted index the surrounding
+        # clean rows swamp (HAND-DERIVED, P5.a: 321 rows collapse to 66,
+        # 63 zero + 3 at 10.000, index 33 still lands inside the zeros --
+        # `max` (the single worst row) or `identity`/`count` do not have
+        # this hazard). Refused at load, on the quantity ALONE -- the
+        # collapse above makes the reduced population's SIZE honest; it
+        # does not make `median`'s picked VALUE safe.
+        if head == "median" and row["quantity"] in _FAILURE_QUANTITIES:
+            raise PredictionError(
+                f"{where}: reducer 'median' is refused on the "
+                f"failure-population quantity {row['quantity']!r} -- an "
+                f"averaging reducer can hide a real violation behind a "
+                f"clean majority (predicate_audit_v1.md F13); use `max` "
+                f"(the single worst row), `identity` or `count` instead")
         row["_selector"] = parse_selector(row["selector"], where)
         row["_reducer"] = reducer
         row["_where"] = where
@@ -1697,32 +1926,76 @@ def load_predictions(path):
     return rows
 
 
-def check_stated_utc(predictions, index, where="predictions"):
-    """§6.5, corrected by cross-review I-58: `stated_utc` must precede the
-    EARLIEST index timestamp for this (subbench, version) population
-    INCLUDING superseded rows -- not the report's own earliest, which a
-    supersession window leaves open. The residual limit is stated in the
-    note: it proves only that a prediction predates this population's
-    first-ever measurement."""
-    if index is None:
-        return
-    earliest = {}
-    for r in index.rows:
-        key = (r["subbench"], r["version"])
-        ts = r["timestamp"]
-        if key not in earliest or ts < earliest[key]:
-            earliest[key] = ts
+def _utc_anchor(index, report):
+    """F27/r7code-1 (docs/design/predicate_audit_v1.md, ratified
+    2026-09-19): the RE-ANCHORED §6.5 population -- the OD-B15 dedup
+    key, not the R-STATUS-1/R-BUCKET-SPAN join the audit's first draft
+    cited (that join recovers only the included records' OWN index
+    rows, never what they superseded).
+
+    For each of `report`'s own included records, its `(subbench,
+    version, testee_id, machine_id)` tuple, via the record-id->index-row
+    join; then the MINIMUM `store/index.tsv` timestamp over EVERY index
+    row sharing that exact tuple -- recovering whatever that same
+    testee/machine/version's own kept row superseded, store-free (no
+    read beyond `index` and `report`'s own `record` rows).
+
+    Returns (anchor: {(subbench, version): earliest timestamp},
+    tuples_by_sv: {(subbench, version): {(testee_id, machine_id)}}) --
+    the second dict is what the unconditional anchor-identity line
+    counts."""
+    if index is None or report is None:
+        return {}, {}
+    included_ids = {r["testee"] for r in report.by_section.get("record", ())
+                    if r["metric"] == "agreement"}
+    idx_by_rid = {record_id_of(ir): ir for ir in index.rows}
+    tuples_by_sv = defaultdict(set)
+    for rid in included_ids:
+        ir = idx_by_rid.get(rid)
+        if ir is None:
+            continue
+        tuples_by_sv[(ir["subbench"], ir["version"])].add(
+            (ir["testee_id"], ir["machine_id"]))
+    anchor = {}
+    for ir in index.rows:
+        key = (ir["subbench"], ir["version"])
+        tup = (ir["testee_id"], ir["machine_id"])
+        if tup not in tuples_by_sv.get(key, ()):
+            continue
+        ts = ir["timestamp"]
+        if key not in anchor or ts < anchor[key]:
+            anchor[key] = ts
+    return anchor, dict(tuples_by_sv)
+
+
+def check_stated_utc(predictions, index, report, where="predictions"):
+    """§6.5, RE-ANCHORED 2026-09-19 (F27/r7code-1): `stated_utc` must
+    precede the earliest index timestamp among the (subbench, version,
+    testee_id, machine_id) tuples THIS REPORT actually includes -- not
+    the whole store's history for the set (the RETIRED global anchor,
+    which never moves forward and so refuses every predictions file
+    about a second sample of an already-sampled set). Two residual
+    limits are stated in the note (r7ver-7 gameability, r7pop-4 the
+    cross-testee/cross-config half of the window that stays open) --
+    this is a trade against the old anchor, not a strict improvement.
+
+    Returns the (anchor, tuples_by_sv) pair `_utc_anchor` computed, so
+    the caller can render the unconditional anchor-identity line
+    whether or not this raises."""
+    anchor, tuples_by_sv = _utc_anchor(index, report)
     for p in predictions:
         key = (p["subbench"], p["version"])
-        first = earliest.get(key)
+        first = anchor.get(key)
         if first is None:
             continue                    # never measured: the check is vacuous
         if p["stated_utc"] >= first:
             raise PredictionError(
                 f"{p['_where']}: stated_utc {p['stated_utc']} does not precede "
                 f"the earliest store/index.tsv timestamp for "
-                f"{key[0]}@{key[1]} ({first}), superseded rows included "
-                f"(§6.5)")
+                f"{key[0]}@{key[1]} ({first}) among this report's own "
+                f"included (subbench, version, testee_id, machine_id) "
+                f"tuples (§6.5, r7code-1)")
+    return anchor, tuples_by_sv
 
 
 _QUANT_COLUMN = {"pass_rate": "pass_rate", "n_gave_up": "n_gave_up",
@@ -1841,14 +2114,34 @@ def _float_or_none(text):
 
 
 def _keyed_values(view, pred):
-    """[(key tuple, value)] for the prediction's selected rows."""
+    """[(key tuple, value)] for the prediction's selected rows.
+
+    Q4/F6/F13 (docs/design/predicate_audit_v1.md, ratified 2026-09-19):
+    for the four FAILURE-POPULATION quantities, a `rank` cell is exactly
+    SIX metric rows carrying the IDENTICAL `n_wrong`/`n_gave_up`/
+    `pass_rate`/`status` value (§0 fact 2) -- so reading every row
+    inflates the reduced population 6x for these quantities alone (the
+    same "over N value(s)" phrase then means two different things in one
+    sidecar, F6) and, worse, dilutes a real violation's weight against a
+    `median`/`count`/`min` reducer (F13). Collapsed here to ONE value
+    per (pattern, subject_or_na, regime_or_na, form, testee) cell, before
+    any reducer runs -- the six rows are literal duplicates for these
+    quantities, so no information is lost. A non-failure quantity is
+    unaffected (its rows are already one per cell)."""
+    dedupe = pred["quantity"] in _FAILURE_QUANTITIES
+    seen = set() if dedupe else None
     out = []
     for r in _select(view, pred):
         v = _value_of(r, pred["quantity"])
         if v is None:
             continue
-        out.append(((r["pattern"], r["subject_or_na"], r["regime_or_na"],
-                     r["form"], r["testee"]), v, r))
+        key = (r["pattern"], r["subject_or_na"], r["regime_or_na"],
+               r["form"], r["testee"])
+        if seen is not None:
+            if key in seen:
+                continue
+            seen.add(key)
+        out.append((key, v, r))
     return out
 
 
@@ -2019,7 +2312,6 @@ def evaluate_predictions(cat, report, index, predictions, ctx):
     for p in predictions:
         by_parent[p["prediction_id"]].append(p)
     verdicts = []
-    coverage = set()
     for pid in sorted(by_parent):
         clauses = sorted(by_parent[pid], key=lambda p: p["clause"])
         per = []
@@ -2033,9 +2325,6 @@ def evaluate_predictions(cat, report, index, predictions, ctx):
                 continue
             view = subject_view if wants_subject else set_view
             rows = _select(view, p)
-            for r in rows:
-                coverage.add((r["pattern"], r["regime_or_na"], r["form"],
-                              r["testee"]))
             if not rows:
                 other = _elsewhere(view, p)
                 if other:
@@ -2092,7 +2381,6 @@ def evaluate_predictions(cat, report, index, predictions, ctx):
             entry["verdict"] = "partial"
         verdicts.append(entry)
     ctx.prediction_verdicts = verdicts
-    ctx.prediction_coverage = coverage
     return verdicts
 
 
@@ -2153,13 +2441,15 @@ def interpret(report_path, index_path, catalogue_path, predictions_path=None,
     subject_grain = (ReportTsv(subject_grain_path, known)
                      if subject_grain_path else None)
     predictions = None
+    utc_anchor = ({}, {})
     if predictions_path:
         predictions = load_predictions(predictions_path)
-        if check_utc:
-            check_stated_utc(predictions, index)
+        utc_anchor = (check_stated_utc(predictions, index, report)
+                     if check_utc else _utc_anchor(index, report))
     ctx = Context(cat, report, index, predictions,
                   display_path(predictions_path, root) if predictions_path
                   else "(none)", subject_grain)
+    ctx.utc_anchor, ctx.utc_anchor_tuples = utc_anchor
     if predictions is not None:
         evaluate_predictions(cat, report, index, predictions, ctx)
     results = run_rules(cat, report, index, ctx)
