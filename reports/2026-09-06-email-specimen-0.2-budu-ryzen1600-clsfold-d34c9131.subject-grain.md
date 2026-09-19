@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v17 (2026-09-17)
+reporter: v18 (2026-09-18)
 
 ## Query
 
@@ -28,6 +28,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 34.7 | 34.5 | 34.8 | 0.1 | 1.000x | 1.000x |
@@ -35,6 +36,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-000` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 62.6 | 62.3 | 62.7 | 0.2 | 1.000x | 1.000x |
@@ -44,6 +46,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 43.1 | 43.0 | 43.7 | 0.3 | 1.000x | 1.000x |
@@ -51,6 +54,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-001` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 80.1 | 79.9 | 80.4 | 0.2 | 1.000x | 1.000x |
@@ -60,6 +64,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 20.6 | 20.3 | 20.6 | 0.1 | 1.000x | 1.000x |
@@ -67,6 +72,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-002` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 28.3 | 28.1 | 31.9 | 1.4 | 1.000x | 1.000x |
@@ -76,6 +82,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 46.3 | 46.2 | 46.5 | 0.1 | 1.000x | 1.000x |
@@ -83,6 +90,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-003` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 87.7 | 87.2 | 102.3 | 5.8 | 1.000x | 1.000x |
@@ -92,6 +100,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 64.9 | 64.8 | 67.2 | 0.9 | 1.000x | 1.000x |
@@ -99,6 +108,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-004` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 123.5 | 123.3 | 123.8 | 0.2 | 1.000x | 1.000x |
@@ -108,6 +118,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 20.5 | 20.5 | 20.6 | 0.0 | 1.000x | 1.000x |
@@ -115,6 +126,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-005` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 28.2 | 28.2 | 28.3 | 0.0 | 1.000x | 1.000x |
@@ -124,6 +136,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 33.0 | 32.8 | 33.2 | 0.2 | 1.000x | 1.000x |
@@ -131,6 +144,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-006` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 58.9 | 58.8 | 59.0 | 0.1 | 1.000x | 1.000x |
@@ -140,6 +154,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 50.2 | 50.1 | 50.4 | 0.1 | 1.000x | 1.000x |
@@ -147,6 +162,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-007` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 94.4 | 94.3 | 95.1 | 0.3 | 1.000x | 1.000x |
@@ -156,6 +172,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 39.2 | 39.2 | 40.0 | 0.3 | 1.000x | 1.000x |
@@ -163,6 +180,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-008` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 73.7 | 73.5 | 73.9 | 0.1 | 1.000x | 1.000x |
@@ -172,6 +190,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 31.6 | 31.5 | 31.7 | 0.1 | 1.000x | 1.000x |
@@ -179,6 +198,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-009` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 55.5 | 55.4 | 56.2 | 0.3 | 1.000x | 1.000x |
@@ -188,6 +208,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 31.6 | 31.5 | 31.7 | 0.1 | 1.000x | 1.000x |
@@ -195,6 +216,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-010` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 55.6 | 54.9 | 56.1 | 0.4 | 1.000x | 1.000x |
@@ -204,6 +226,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 12.1 | 12.1 | 12.2 | 0.1 | 1.000x | 1.000x |
@@ -211,6 +234,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-011` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 34.6 | 34.4 | 35.2 | 0.3 | 1.000x | 1.000x |
@@ -220,6 +244,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 37.6 | 37.2 | 37.8 | 0.2 | 1.000x | 1.000x |
@@ -227,6 +252,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-012` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 68.9 | 68.8 | 69.2 | 0.1 | 1.000x | 1.000x |
@@ -236,6 +262,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 37.4 | 37.2 | 38.8 | 0.6 | 1.000x | 1.000x |
@@ -243,6 +270,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-013` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 68.9 | 68.9 | 69.3 | 0.2 | 1.000x | 1.000x |
@@ -252,6 +280,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 31.6 | 31.5 | 31.8 | 0.1 | 1.000x | 1.000x |
@@ -259,6 +288,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-014` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 55.3 | 55.2 | 55.7 | 0.2 | 1.000x | 1.000x |
@@ -268,6 +298,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 35.8 | 35.8 | 36.0 | 0.1 | 1.000x | 1.000x |
@@ -275,6 +306,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-015` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 66.0 | 65.9 | 66.6 | 0.3 | 1.000x | 1.000x |
@@ -284,6 +316,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 11.1 | 10.9 | 13.1 | 0.8 | 1.000x | 1.000x |
@@ -291,6 +324,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-016` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 26.2 | 26.0 | 26.3 | 0.1 | 1.000x | 1.000x |
@@ -300,6 +334,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 37.5 | 37.3 | 37.6 | 0.1 | 1.000x | 1.000x |
@@ -307,6 +342,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-017` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 68.8 | 68.8 | 69.2 | 0.2 | 1.000x | 1.000x |
@@ -316,6 +352,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 35.9 | 35.7 | 36.3 | 0.2 | 1.000x | 1.000x |
@@ -323,6 +360,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-018` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 65.9 | 65.9 | 66.1 | 0.1 | 1.000x | 1.000x |
@@ -332,6 +370,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 11.4 | 11.2 | 12.6 | 0.5 | 1.000x | 1.000x |
@@ -339,6 +378,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-019` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 27.9 | 27.8 | 28.0 | 0.1 | 1.000x | 1.000x |
@@ -348,6 +388,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 41.1 | 41.0 | 41.5 | 0.2 | 1.000x | 1.000x |
@@ -355,6 +396,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-020` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 76.8 | 76.7 | 77.0 | 0.1 | 1.000x | 1.000x |
@@ -364,6 +406,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 31.6 | 31.5 | 31.7 | 0.1 | 1.000x | 1.000x |
@@ -371,6 +414,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-021` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 55.5 | 55.3 | 56.0 | 0.2 | 1.000x | 1.000x |
@@ -380,6 +424,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 44.7 | 44.6 | 45.9 | 0.5 | 1.000x | 1.000x |
@@ -387,6 +432,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-022` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 83.6 | 83.2 | 84.0 | 0.3 | 1.000x | 1.000x |
@@ -396,6 +442,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 37.3 | 37.3 | 37.4 | 0.0 | 1.000x | 1.000x |
@@ -403,6 +450,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-023` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 69.0 | 68.8 | 69.4 | 0.2 | 1.000x | 1.000x |
@@ -412,6 +460,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 31.6 | 31.5 | 31.7 | 0.1 | 1.000x | 1.000x |
@@ -419,6 +468,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-024` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 55.4 | 55.2 | 55.5 | 0.1 | 1.000x | 1.000x |
@@ -428,6 +478,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 37.3 | 37.2 | 37.3 | 0.1 | 1.000x | 1.000x |
@@ -435,6 +486,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-025` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 68.8 | 68.8 | 69.3 | 0.2 | 1.000x | 1.000x |
@@ -444,6 +496,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 44.7 | 44.6 | 45.1 | 0.2 | 1.000x | 1.000x |
@@ -451,6 +504,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-026` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 83.4 | 83.3 | 84.0 | 0.2 | 1.000x | 1.000x |
@@ -460,6 +514,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 44.6 | 44.5 | 44.7 | 0.0 | 1.000x | 1.000x |
@@ -467,6 +522,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-027` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 83.5 | 83.3 | 84.8 | 0.6 | 1.000x | 1.000x |
@@ -476,6 +532,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.2 | 13.2 | 13.7 | 0.2 | 1.000x | 1.000x |
@@ -483,6 +540,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-028` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 22.3 | 22.0 | 22.6 | 0.2 | 1.000x | 1.000x |
@@ -492,6 +550,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.2 | 13.2 | 13.9 | 0.3 | 1.000x | 1.000x |
@@ -499,6 +558,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-029` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 45.6 | 45.5 | 45.7 | 0.1 | 1.000x | 1.000x |
@@ -508,6 +568,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 13.2 | 13.2 | 13.3 | 0.0 | 1.000x | 1.000x |
@@ -515,6 +576,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-030` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 22.4 | 22.3 | 22.7 | 0.1 | 1.000x | 1.000x |
@@ -524,6 +586,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 13.3 | 13.2 | 13.4 | 0.1 | 1.000x | 1.000x |
@@ -531,6 +594,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-031` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 29.7 | 29.6 | 30.1 | 0.2 | 1.000x | 1.000x |
@@ -540,6 +604,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 16.1 | 16.0 | 16.3 | 0.1 | 1.000x | 1.000x |
@@ -547,6 +612,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-032` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 26.3 | 26.1 | 26.6 | 0.2 | 1.000x | 1.000x |
@@ -556,6 +622,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 16.1 | 16.0 | 16.1 | 0.0 | 1.000x | 1.000x |
@@ -563,6 +630,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-033` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 26.1 | 25.9 | 26.3 | 0.2 | 1.000x | 1.000x |
@@ -572,6 +640,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 20.2 | 20.2 | 20.3 | 0.0 | 1.000x | 1.000x |
@@ -579,6 +648,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-034` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 19.2 | 19.1 | 19.2 | 0.0 | 1.000x | 1.000x |
@@ -588,6 +658,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 23.0 | 23.0 | 23.1 | 0.0 | 1.000x | 1.000x |
@@ -595,6 +666,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-035` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 25.3 | 25.1 | 25.4 | 0.1 | 1.000x | 1.000x |
@@ -604,6 +676,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 12.2 | 11.9 | 13.0 | 0.4 | 1.000x | 1.000x |
@@ -611,6 +684,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-036` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 27.0 | 27.0 | 27.2 | 0.1 | 1.000x | 1.000x |
@@ -620,6 +694,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 14.6 | 14.4 | 14.7 | 0.1 | 1.000x | 1.000x |
@@ -627,6 +702,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-037` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 20.8 | 20.7 | 20.9 | 0.0 | 1.000x | 1.000x |
@@ -636,6 +712,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 23.1 | 23.0 | 23.9 | 0.3 | 1.000x | 1.000x |
@@ -643,6 +720,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-038` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 27.0 | 26.9 | 27.4 | 0.2 | 1.000x | 1.000x |
@@ -652,6 +730,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 11.4 | 11.2 | 11.5 | 0.1 | 1.000x | 1.000x |
@@ -659,6 +738,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-039` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 62.3 | 62.1 | 62.5 | 0.1 | 1.000x | 1.000x |
@@ -668,6 +748,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 26.0 | 26.0 | 26.1 | 0.1 | 1.000x | 1.000x |
@@ -675,6 +756,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-040` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 23.7 | 23.7 | 23.8 | 0.1 | 1.000x | 1.000x |
@@ -684,6 +766,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 9.9 | 9.8 | 10.0 | 0.1 | 1.000x | 1.000x |
@@ -691,6 +774,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-041` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 18.7 | 18.6 | 19.0 | 0.1 | 1.000x | 1.000x |
@@ -700,6 +784,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.2 | 13.0 | 13.5 | 0.2 | 1.000x | 1.000x |
@@ -707,6 +792,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-042` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 11.5 | 11.5 | 11.5 | 0.0 | 1.000x | 1.000x |
@@ -716,6 +802,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 12.2 | 12.1 | 12.5 | 0.2 | 1.000x | 1.000x |
@@ -723,6 +810,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-043` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 73.7 | 73.3 | 73.8 | 0.2 | 1.000x | 1.000x |
@@ -732,6 +820,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 10.0 | 9.8 | 10.0 | 0.1 | 1.000x | 1.000x |
@@ -739,6 +828,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-044` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 64.1 | 64.1 | 64.4 | 0.1 | 1.000x | 1.000x |
@@ -748,6 +838,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 12.1 | 12.1 | 12.3 | 0.1 | 1.000x | 1.000x |
@@ -755,6 +846,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-045` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 25.6 | 25.5 | 25.7 | 0.1 | 1.000x | 1.000x |
@@ -764,6 +856,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 21.7 | 21.7 | 21.8 | 0.0 | 1.000x | 1.000x |
@@ -771,6 +864,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-046` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 20.0 | 19.9 | 20.3 | 0.2 | 1.000x | 1.000x |
@@ -780,6 +874,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 23.0 | 23.0 | 23.1 | 0.0 | 1.000x | 1.000x |
@@ -787,6 +882,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-047` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 20.5 | 20.5 | 20.7 | 0.1 | 1.000x | 1.000x |
@@ -796,6 +892,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 13.2 | 13.1 | 13.2 | 0.0 | 1.000x | 1.000x |
@@ -803,6 +900,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-048` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 12.1 | 12.1 | 12.4 | 0.1 | 1.000x | 1.000x |
@@ -812,6 +910,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 11.6 | 11.5 | 11.7 | 0.1 | 1.000x | 1.000x |
@@ -819,6 +918,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-049` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 72.0 | 71.8 | 72.4 | 0.2 | 1.000x | 1.000x |
@@ -828,6 +928,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 14.5 | 14.4 | 14.7 | 0.1 | 1.000x | 1.000x |
@@ -835,6 +936,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-050` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 56.8 | 56.7 | 57.0 | 0.1 | 1.000x | 1.000x |
@@ -844,6 +946,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 11.7 | 11.5 | 11.8 | 0.1 | 1.000x | 1.000x |
@@ -851,6 +954,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-051` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 72.0 | 71.9 | 72.3 | 0.2 | 1.000x | 1.000x |
@@ -860,6 +964,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.3 | 13.2 | 14.2 | 0.4 | 1.000x | 1.000x |
@@ -867,6 +972,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-052` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 19.8 | 19.8 | 20.1 | 0.2 | 1.000x | 1.000x |
@@ -876,6 +982,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 13.2 | 13.2 | 13.3 | 0.0 | 1.000x | 1.000x |
@@ -883,6 +990,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-053` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 14.4 | 14.3 | 14.5 | 0.1 | 1.000x | 1.000x |
@@ -892,6 +1000,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 13.2 | 13.2 | 13.2 | 0.0 | 1.000x | 1.000x |
@@ -899,6 +1008,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-054` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 14.4 | 14.3 | 14.9 | 0.2 | 1.000x | 1.000x |
@@ -908,6 +1018,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.2 | 13.2 | 13.3 | 0.0 | 1.000x | 1.000x |
@@ -915,6 +1026,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-055` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 14.4 | 14.2 | 14.4 | 0.1 | 1.000x | 1.000x |
@@ -924,6 +1036,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 13.2 | 13.2 | 13.3 | 0.0 | 1.000x | 1.000x |
@@ -931,6 +1044,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-056` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 16.5 | 16.4 | 16.7 | 0.1 | 1.000x | 1.000x |
@@ -940,6 +1054,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 19,081.1 | 19,078.9 | 19,086.9 | 2.9 | 1.000x | 1.000x |
@@ -949,6 +1064,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 7,466.4 | 7,465.9 | 7,468.5 | 1.1 | 1.000x | 1.000x |
@@ -958,6 +1074,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 9,556.6 | 9,555.2 | 9,578.7 | 8.9 | 1.000x | 1.000x |
@@ -967,6 +1084,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 19,058.2 | 19,052.9 | 19,058.7 | 2.3 | 1.000x | 1.000x |
@@ -976,6 +1094,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 3,741.6 | 3,739.5 | 3,751.7 | 4.5 | 1.000x | 1.000x |
@@ -985,6 +1104,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 16.1 | 16.1 | 17.1 | 0.4 | 1.000x | 1.000x |
@@ -994,6 +1114,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 4,789.6 | 4,788.2 | 4,791.2 | 1.1 | 1.000x | 1.000x |
@@ -1003,6 +1124,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 7,651.0 | 7,649.2 | 7,651.8 | 0.9 | 1.000x | 1.000x |
@@ -1012,6 +1134,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 9.8 | 9.7 | 10.1 | 0.1 | 1.000x | 1.000x |
@@ -1019,6 +1142,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-065` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 21.3 | 21.1 | 21.4 | 0.1 | 1.000x | 1.000x |
@@ -1028,6 +1152,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 36.3 | 36.0 | 36.8 | 0.3 | 1.000x | 1.000x |
@@ -1035,6 +1160,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-066` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 66.0 | 65.1 | 66.2 | 0.4 | 1.000x | 1.000x |
@@ -1044,6 +1170,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 34.4 | 34.3 | 34.8 | 0.2 | 1.000x | 1.000x |
@@ -1051,6 +1178,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-067` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 62.7 | 62.0 | 63.0 | 0.4 | 1.000x | 1.000x |
@@ -1060,6 +1188,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 19.1 | 19.0 | 19.3 | 0.1 | 1.000x | 1.000x |
@@ -1067,6 +1196,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-068` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 25.4 | 25.4 | 26.6 | 0.5 | 1.000x | 1.000x |
@@ -1076,6 +1206,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 12.2 | 11.9 | 12.3 | 0.1 | 1.000x | 1.000x |
@@ -1083,6 +1214,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-069` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 27.1 | 27.1 | 27.6 | 0.2 | 1.000x | 1.000x |
@@ -1092,6 +1224,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 30.2 | 30.1 | 30.5 | 0.2 | 1.000x | 1.000x |
@@ -1099,6 +1232,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-070` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 51.9 | 51.8 | 52.1 | 0.1 | 1.000x | 1.000x |
@@ -1108,6 +1242,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 59.8 | 59.7 | 61.3 | 0.6 | 1.000x | 1.000x |
@@ -1115,6 +1250,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-071` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 112.9 | 112.8 | 113.3 | 0.2 | 1.000x | 1.000x |
@@ -1124,6 +1260,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 42.8 | 42.5 | 43.0 | 0.1 | 1.000x | 1.000x |
@@ -1131,6 +1268,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-072` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 93.0 | 92.9 | 93.2 | 0.1 | 1.000x | 1.000x |
@@ -1140,6 +1278,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.2 | 13.2 | 13.3 | 0.0 | 1.000x | 1.000x |
@@ -1147,6 +1286,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-073` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 20.6 | 20.5 | 20.8 | 0.1 | 1.000x | 1.000x |
@@ -1156,6 +1296,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 13.2 | 13.2 | 13.3 | 0.0 | 1.000x | 1.000x |
@@ -1163,6 +1304,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-074` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 27.0 | 26.9 | 27.7 | 0.3 | 1.000x | 1.000x |
@@ -1172,6 +1314,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 34.7 | 34.1 | 35.8 | 0.5 | 1.000x | 1.000x |
@@ -1179,6 +1322,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-075` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 62.7 | 62.5 | 62.8 | 0.1 | 1.000x | 1.000x |
@@ -1188,6 +1332,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 34.5 | 34.4 | 34.7 | 0.1 | 1.000x | 1.000x |
@@ -1195,6 +1340,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-076` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 62.4 | 62.1 | 63.0 | 0.3 | 1.000x | 1.000x |
@@ -1204,6 +1350,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 34.6 | 34.4 | 34.8 | 0.1 | 1.000x | 1.000x |
@@ -1211,6 +1358,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-077` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 62.3 | 62.2 | 63.4 | 0.5 | 1.000x | 1.000x |
@@ -1220,6 +1368,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 34.5 | 34.4 | 35.0 | 0.2 | 1.000x | 1.000x |
@@ -1227,6 +1376,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-078` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 62.2 | 62.1 | 62.5 | 0.2 | 1.000x | 1.000x |
@@ -1236,6 +1386,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 34.6 | 34.2 | 35.3 | 0.4 | 1.000x | 1.000x |
@@ -1243,6 +1394,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-079` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 62.4 | 62.0 | 62.6 | 0.2 | 1.000x | 1.000x |
@@ -1252,6 +1404,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 16.1 | 16.0 | 16.1 | 0.0 | 1.000x | 1.000x |
@@ -1259,6 +1412,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-080` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 26.3 | 26.1 | 26.9 | 0.3 | 1.000x | 1.000x |
@@ -1268,6 +1422,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 11.5 | 10.6 | 12.2 | 0.5 | 1.000x | 1.000x |
@@ -1275,6 +1430,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-081` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 5.4 | 5.3 | 5.4 | 0.0 | 1.000x | 1.000x |
@@ -1284,6 +1440,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 10.0 | 9.8 | 10.0 | 0.1 | 1.000x | 1.000x |
@@ -1291,6 +1448,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-082` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 6.0 | 5.9 | 6.4 | 0.2 | 1.000x | 1.000x |
@@ -1300,6 +1458,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 11.2 | 11.2 | 11.7 | 0.2 | 1.000x | 1.000x |
@@ -1307,6 +1466,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-083` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 72.7 | 72.5 | 73.3 | 0.3 | 1.000x | 1.000x |
@@ -1316,6 +1476,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 19.1 | 19.1 | 19.3 | 0.1 | 1.000x | 1.000x |
@@ -1323,6 +1484,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `s-084` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 16.4 | 16.3 | 16.7 | 0.1 | 1.000x | 1.000x |
@@ -1330,6 +1492,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `t-a-valid-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 3,586,692.1 | 3,581,227.7 | 3,590,651.5 | 3,558.7 | 1.000x | 1.000x |
@@ -1337,6 +1500,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `t-b-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 1,875,111.5 | 1,874,451.5 | 1,896,341.1 | 8,570.1 | 1.000x | 1.000x |
@@ -1344,6 +1508,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `t-c-long-atom-run` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 1,875,174.1 | 1,874,561.6 | 1,889,879.8 | 5,897.2 | 1.000x | 1.000x |
@@ -1351,6 +1516,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `t-d-prose-sparse-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 3,192,965.9 | 3,172,183.3 | 3,218,576.7 | 15,379.2 | 1.000x | 1.000x |
@@ -1358,6 +1524,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `t-e-prose-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 3,152,957.6 | 3,125,188.6 | 3,209,869.2 | 29,061.8 | 1.000x | 1.000x |
@@ -1367,6 +1534,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.1 | 10.1 | 10.5 | 0.2 | 1.000x | 1.000x |
@@ -1374,6 +1542,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-000` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 18.3 | 17.9 | 20.3 | 0.9 | 1.000x | 1.000x |
@@ -1383,6 +1552,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.5 | 0.1 | 1.000x | 1.000x |
@@ -1390,6 +1560,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-001` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -1399,6 +1570,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1406,6 +1578,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-002` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.0 | 1.000x | 1.000x |
@@ -1415,6 +1588,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -1422,6 +1596,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-003` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1431,6 +1606,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1438,6 +1614,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-004` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 18.2 | 18.1 | 18.9 | 0.3 | 1.000x | 1.000x |
@@ -1447,6 +1624,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1454,6 +1632,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-005` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1463,6 +1642,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1470,6 +1650,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-006` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -1479,6 +1660,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -1486,6 +1668,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-007` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.1 | 0.1 | 1.000x | 1.000x |
@@ -1495,6 +1678,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1502,6 +1686,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-008` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 18.1 | 0.1 | 1.000x | 1.000x |
@@ -1511,6 +1696,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1518,6 +1704,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-009` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.0 | 1.000x | 1.000x |
@@ -1527,6 +1714,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.6 | 0.2 | 1.000x | 1.000x |
@@ -1534,6 +1722,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-010` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1543,6 +1732,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.5 | 0.2 | 1.000x | 1.000x |
@@ -1550,6 +1740,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-011` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1559,6 +1750,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1566,6 +1758,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-012` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1575,6 +1768,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.5 | 0.1 | 1.000x | 1.000x |
@@ -1582,6 +1776,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-013` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1591,6 +1786,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1598,6 +1794,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-014` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.0 | 1.000x | 1.000x |
@@ -1607,6 +1804,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1614,6 +1812,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-015` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -1623,6 +1822,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -1630,6 +1830,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-016` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -1639,6 +1840,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1646,6 +1848,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-017` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1655,6 +1858,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.3 | 10.1 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -1662,6 +1866,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-018` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -1671,6 +1876,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -1678,6 +1884,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-019` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -1687,6 +1894,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1694,6 +1902,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-020` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1703,6 +1912,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1710,6 +1920,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-021` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.7 | 0.3 | 1.000x | 1.000x |
@@ -1719,6 +1930,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1726,6 +1938,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-022` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1735,6 +1948,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1742,6 +1956,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-023` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.8 | 17.8 | 18.2 | 0.1 | 1.000x | 1.000x |
@@ -1751,6 +1966,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -1758,6 +1974,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-024` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1767,6 +1984,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -1774,6 +1992,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-025` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1783,6 +2002,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1790,6 +2010,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-026` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -1799,6 +2020,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -1806,6 +2028,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-027` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -1815,6 +2038,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1822,6 +2046,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-028` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 17.9 | 17.9 | 21.5 | 1.5 | 1.000x | 1.000x |
@@ -1831,6 +2056,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1838,6 +2064,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-029` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1847,6 +2074,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1854,6 +2082,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-030` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 17.9 | 17.9 | 18.0 | 0.0 | 1.000x | 1.000x |
@@ -1863,6 +2092,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -1870,6 +2100,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-031` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -1879,6 +2110,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1886,6 +2118,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-032` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.5 | 0.2 | 1.000x | 1.000x |
@@ -1895,6 +2128,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1902,6 +2136,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-033` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.3 | 0.2 | 1.000x | 1.000x |
@@ -1911,6 +2146,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1918,6 +2154,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-034` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.6 | 0.3 | 1.000x | 1.000x |
@@ -1927,6 +2164,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1934,6 +2172,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-035` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.6 | 0.3 | 1.000x | 1.000x |
@@ -1943,6 +2182,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -1950,6 +2190,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-036` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1959,6 +2200,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1966,6 +2208,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-037` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -1975,6 +2218,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1982,6 +2226,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-038` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 17.8 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -1991,6 +2236,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -1998,6 +2244,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-039` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2007,6 +2254,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2014,6 +2262,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-040` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 8.6 | 8.6 | 9.0 | 0.2 | 1.000x | 1.000x |
@@ -2023,6 +2272,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.6 | 10.5 | 11.0 | 0.2 | 1.000x | 1.000x |
@@ -2030,6 +2280,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-041` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.3 | 17.2 | 21.3 | 1.6 | 1.000x | 1.000x |
@@ -2039,6 +2290,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2046,6 +2298,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-042` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.5 | 17.5 | 17.7 | 0.1 | 1.000x | 1.000x |
@@ -2055,6 +2308,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2062,6 +2316,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-043` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.8 | 17.8 | 19.3 | 0.6 | 1.000x | 1.000x |
@@ -2071,6 +2326,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2078,6 +2334,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-044` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2087,6 +2344,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2094,6 +2352,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-045` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2103,6 +2362,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2110,6 +2370,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-046` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2119,6 +2380,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.1 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2126,6 +2388,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-047` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.8 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2135,6 +2398,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2142,6 +2406,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-048` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2151,6 +2416,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.1 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2158,6 +2424,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-049` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2167,6 +2434,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2174,6 +2442,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-050` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -2183,6 +2452,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -2190,6 +2460,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-051` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 18.5 | 0.3 | 1.000x | 1.000x |
@@ -2199,6 +2470,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.1 | 10.0 | 10.5 | 0.2 | 1.000x | 1.000x |
@@ -2206,6 +2478,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-052` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.1 | 0.1 | 1.000x | 1.000x |
@@ -2215,6 +2488,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.6 | 0.2 | 1.000x | 1.000x |
@@ -2222,6 +2496,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-053` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2231,6 +2506,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.5 | 0.2 | 1.000x | 1.000x |
@@ -2238,6 +2514,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-054` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2247,6 +2524,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2254,6 +2532,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-055` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 18.3 | 0.2 | 1.000x | 1.000x |
@@ -2263,6 +2542,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2270,6 +2550,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-056` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2279,6 +2560,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2288,6 +2570,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.3 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2297,6 +2580,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2306,6 +2590,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -2315,6 +2600,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.5 | 0.2 | 1.000x | 1.000x |
@@ -2324,6 +2610,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.5 | 0.2 | 1.000x | 1.000x |
@@ -2333,6 +2620,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2342,6 +2630,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2351,6 +2640,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2358,6 +2648,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-065` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2367,6 +2658,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.3 | 0.1 | 1.000x | 1.000x |
@@ -2374,6 +2666,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-066` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2383,6 +2676,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2390,6 +2684,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-067` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2399,6 +2694,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2406,6 +2702,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-068` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -2415,6 +2712,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2422,6 +2720,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-069` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 18.0 | 0.0 | 1.000x | 1.000x |
@@ -2431,6 +2730,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2438,6 +2738,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-070` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.1 | 0.1 | 1.000x | 1.000x |
@@ -2447,6 +2748,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2454,6 +2756,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-071` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -2463,6 +2766,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.5 | 0.1 | 1.000x | 1.000x |
@@ -2470,6 +2774,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-072` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 17.9 | 17.9 | 18.6 | 0.3 | 1.000x | 1.000x |
@@ -2479,6 +2784,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2486,6 +2792,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-073` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 18.6 | 0.3 | 1.000x | 1.000x |
@@ -2495,6 +2802,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.1 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2502,6 +2810,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-074` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2511,6 +2820,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2518,6 +2828,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-075` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2527,6 +2838,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2534,6 +2846,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-076` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2543,6 +2856,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2550,6 +2864,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-077` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.8 | 18.0 | 0.0 | 1.000x | 1.000x |
@@ -2559,6 +2874,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.3 | 10.0 | 10.5 | 0.2 | 1.000x | 1.000x |
@@ -2566,6 +2882,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-078` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 17.9 | 0.0 | 1.000x | 1.000x |
@@ -2575,6 +2892,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.0 | 10.6 | 0.2 | 1.000x | 1.000x |
@@ -2582,6 +2900,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-079` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17.9 | 17.9 | 18.0 | 0.1 | 1.000x | 1.000x |
@@ -2591,6 +2910,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.5 | 0.1 | 1.000x | 1.000x |
@@ -2598,6 +2918,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-080` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 17.9 | 17.9 | 18.7 | 0.3 | 1.000x | 1.000x |
@@ -2607,6 +2928,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.6 | 10.4 | 10.8 | 0.1 | 1.000x | 1.000x |
@@ -2614,6 +2936,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-081` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 5.9 | 5.9 | 5.9 | 0.0 | 1.000x | 1.000x |
@@ -2623,6 +2946,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 12.4 | 12.4 | 12.5 | 0.0 | 1.000x | 1.000x |
@@ -2630,6 +2954,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-082` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 16.9 | 16.9 | 17.0 | 0.0 | 1.000x | 1.000x |
@@ -2639,6 +2964,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2646,6 +2972,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-083` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 9.8 | 9.4 | 9.9 | 0.2 | 1.000x | 1.000x |
@@ -2655,6 +2982,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.2 | 10.1 | 10.4 | 0.1 | 1.000x | 1.000x |
@@ -2662,6 +2990,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `s-084` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 9.2 | 8.6 | 9.2 | 0.2 | 1.000x | 1.000x |
@@ -2669,6 +2998,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `t-a-valid-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 627,608.5 | 627,494.9 | 628,420.6 | 393.4 | 1.000x | 1.000x |
@@ -2676,6 +3006,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `t-b-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17,667.6 | 17,660.5 | 17,692.6 | 13.4 | 1.000x | 1.000x |
@@ -2683,6 +3014,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `t-c-long-atom-run` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17,649.3 | 17,628.2 | 17,659.4 | 11.7 | 1.000x | 1.000x |
@@ -2690,6 +3022,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `t-d-prose-sparse-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 30,716.9 | 30,589.5 | 31,048.0 | 158.3 | 1.000x | 1.000x |
@@ -2697,6 +3030,7 @@ reporter: v17 (2026-09-17)
 
 ### `floor` / `t-e-prose-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 17,671.8 | 17,651.3 | 18,368.4 | 281.8 | 1.000x | 1.000x |
@@ -2706,6 +3040,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 32.5 | 32.4 | 32.6 | 0.1 | 1.000x | 1.000x |
@@ -2713,6 +3048,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-000` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 58.6 | 58.4 | 58.7 | 0.1 | 1.000x | 1.000x |
@@ -2722,6 +3058,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 39.9 | 39.8 | 40.0 | 0.1 | 1.000x | 1.000x |
@@ -2729,6 +3066,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-001` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 77.7 | 77.6 | 78.0 | 0.1 | 1.000x | 1.000x |
@@ -2738,6 +3076,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 18.2 | 18.2 | 18.3 | 0.0 | 1.000x | 1.000x |
@@ -2745,6 +3084,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-002` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 26.0 | 25.7 | 26.5 | 0.3 | 1.000x | 1.000x |
@@ -2754,6 +3094,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 43.3 | 43.1 | 43.7 | 0.2 | 1.000x | 1.000x |
@@ -2761,6 +3102,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-003` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 86.3 | 85.9 | 86.8 | 0.3 | 1.000x | 1.000x |
@@ -2770,6 +3112,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 61.0 | 60.9 | 61.1 | 0.1 | 1.000x | 1.000x |
@@ -2777,6 +3120,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-004` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 120.1 | 120.1 | 120.5 | 0.1 | 1.000x | 1.000x |
@@ -2786,6 +3130,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 18.2 | 18.2 | 18.2 | 0.0 | 1.000x | 1.000x |
@@ -2793,6 +3138,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-005` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 26.0 | 26.0 | 26.6 | 0.2 | 1.000x | 1.000x |
@@ -2802,6 +3148,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 30.9 | 30.9 | 31.0 | 0.1 | 1.000x | 1.000x |
@@ -2809,6 +3156,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-006` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 55.7 | 55.5 | 56.0 | 0.2 | 1.000x | 1.000x |
@@ -2818,6 +3166,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 46.7 | 46.6 | 46.9 | 0.1 | 1.000x | 1.000x |
@@ -2825,6 +3174,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-007` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 91.9 | 91.8 | 92.0 | 0.1 | 1.000x | 1.000x |
@@ -2834,6 +3184,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 36.6 | 36.6 | 36.8 | 0.1 | 1.000x | 1.000x |
@@ -2841,6 +3192,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-008` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 69.6 | 69.5 | 69.7 | 0.1 | 1.000x | 1.000x |
@@ -2850,6 +3202,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 29.6 | 29.5 | 29.6 | 0.0 | 1.000x | 1.000x |
@@ -2857,6 +3210,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-009` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 51.3 | 51.2 | 51.7 | 0.2 | 1.000x | 1.000x |
@@ -2866,6 +3220,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 29.6 | 29.5 | 29.7 | 0.1 | 1.000x | 1.000x |
@@ -2873,6 +3228,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-010` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 51.7 | 51.5 | 52.0 | 0.2 | 1.000x | 1.000x |
@@ -2882,6 +3238,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 12.7 | 12.6 | 12.9 | 0.1 | 1.000x | 1.000x |
@@ -2889,6 +3246,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-011` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 34.7 | 34.6 | 34.7 | 0.1 | 1.000x | 1.000x |
@@ -2898,6 +3256,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 35.3 | 35.2 | 35.4 | 0.1 | 1.000x | 1.000x |
@@ -2905,6 +3264,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-012` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 65.6 | 65.3 | 65.7 | 0.1 | 1.000x | 1.000x |
@@ -2914,6 +3274,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 35.3 | 35.3 | 35.4 | 0.0 | 1.000x | 1.000x |
@@ -2921,6 +3282,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-013` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 65.6 | 65.3 | 65.8 | 0.2 | 1.000x | 1.000x |
@@ -2930,6 +3292,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 29.6 | 29.5 | 29.6 | 0.0 | 1.000x | 1.000x |
@@ -2937,6 +3300,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-014` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 51.4 | 51.2 | 52.4 | 0.4 | 1.000x | 1.000x |
@@ -2946,6 +3310,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 33.7 | 33.7 | 33.9 | 0.1 | 1.000x | 1.000x |
@@ -2953,6 +3318,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-015` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 62.5 | 62.5 | 62.6 | 0.1 | 1.000x | 1.000x |
@@ -2962,6 +3328,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 11.8 | 11.7 | 12.0 | 0.1 | 1.000x | 1.000x |
@@ -2969,6 +3336,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-016` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 26.2 | 26.0 | 26.5 | 0.2 | 1.000x | 1.000x |
@@ -2978,6 +3346,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 35.3 | 35.2 | 35.4 | 0.1 | 1.000x | 1.000x |
@@ -2985,6 +3354,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-017` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 65.8 | 65.5 | 66.0 | 0.2 | 1.000x | 1.000x |
@@ -2994,6 +3364,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 33.8 | 33.8 | 33.8 | 0.0 | 1.000x | 1.000x |
@@ -3001,6 +3372,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-018` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 62.7 | 62.5 | 63.0 | 0.2 | 1.000x | 1.000x |
@@ -3010,6 +3382,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 11.9 | 11.8 | 12.1 | 0.1 | 1.000x | 1.000x |
@@ -3017,6 +3390,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-019` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 27.6 | 27.6 | 27.7 | 0.1 | 1.000x | 1.000x |
@@ -3026,6 +3400,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 38.4 | 38.3 | 38.8 | 0.2 | 1.000x | 1.000x |
@@ -3033,6 +3408,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-020` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 72.9 | 72.7 | 73.3 | 0.2 | 1.000x | 1.000x |
@@ -3042,6 +3418,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 29.6 | 29.5 | 29.6 | 0.0 | 1.000x | 1.000x |
@@ -3049,6 +3426,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-021` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 51.4 | 51.3 | 51.5 | 0.1 | 1.000x | 1.000x |
@@ -3058,6 +3436,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 41.6 | 41.5 | 41.8 | 0.1 | 1.000x | 1.000x |
@@ -3065,6 +3444,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-022` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 80.5 | 79.9 | 80.6 | 0.2 | 1.000x | 1.000x |
@@ -3074,6 +3454,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 35.3 | 35.3 | 35.4 | 0.0 | 1.000x | 1.000x |
@@ -3081,6 +3462,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-023` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 65.7 | 65.6 | 65.8 | 0.1 | 1.000x | 1.000x |
@@ -3090,6 +3472,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 29.6 | 29.5 | 29.6 | 0.0 | 1.000x | 1.000x |
@@ -3097,6 +3480,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-024` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 51.4 | 51.2 | 51.6 | 0.2 | 1.000x | 1.000x |
@@ -3106,6 +3490,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 35.3 | 35.3 | 36.6 | 0.5 | 1.000x | 1.000x |
@@ -3113,6 +3498,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-025` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 65.7 | 65.5 | 65.9 | 0.1 | 1.000x | 1.000x |
@@ -3122,6 +3508,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 41.6 | 41.5 | 41.8 | 0.1 | 1.000x | 1.000x |
@@ -3129,6 +3516,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-026` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 80.6 | 80.2 | 80.6 | 0.1 | 1.000x | 1.000x |
@@ -3138,6 +3526,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 41.5 | 41.4 | 41.9 | 0.2 | 1.000x | 1.000x |
@@ -3145,6 +3534,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-027` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 80.6 | 80.3 | 80.8 | 0.2 | 1.000x | 1.000x |
@@ -3154,6 +3544,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.2 | 13.2 | 14.1 | 0.4 | 1.000x | 1.000x |
@@ -3161,6 +3552,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-028` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 22.1 | 22.0 | 22.2 | 0.1 | 1.000x | 1.000x |
@@ -3170,6 +3562,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 13.3 | 13.3 | 13.4 | 0.1 | 1.000x | 1.000x |
@@ -3177,6 +3570,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-029` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 45.4 | 45.3 | 45.6 | 0.1 | 1.000x | 1.000x |
@@ -3186,6 +3580,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 13.3 | 13.2 | 13.4 | 0.1 | 1.000x | 1.000x |
@@ -3193,6 +3588,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-030` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 22.3 | 22.1 | 22.6 | 0.2 | 1.000x | 1.000x |
@@ -3202,6 +3598,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.3 | 13.3 | 14.1 | 0.3 | 1.000x | 1.000x |
@@ -3209,6 +3606,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-031` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 29.7 | 29.3 | 30.1 | 0.2 | 1.000x | 1.000x |
@@ -3218,6 +3616,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 16.2 | 16.1 | 16.2 | 0.0 | 1.000x | 1.000x |
@@ -3225,6 +3624,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-032` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 26.3 | 26.0 | 26.8 | 0.3 | 1.000x | 1.000x |
@@ -3234,6 +3634,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 16.1 | 16.1 | 16.1 | 0.0 | 1.000x | 1.000x |
@@ -3241,6 +3642,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-033` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 26.3 | 26.2 | 26.7 | 0.2 | 1.000x | 1.000x |
@@ -3250,6 +3652,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 20.3 | 20.2 | 20.3 | 0.0 | 1.000x | 1.000x |
@@ -3257,6 +3660,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-034` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 19.1 | 19.0 | 19.5 | 0.2 | 1.000x | 1.000x |
@@ -3266,6 +3670,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 23.1 | 23.1 | 23.1 | 0.0 | 1.000x | 1.000x |
@@ -3273,6 +3678,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-035` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 25.4 | 25.2 | 25.5 | 0.1 | 1.000x | 1.000x |
@@ -3282,6 +3688,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 12.4 | 12.4 | 12.7 | 0.1 | 1.000x | 1.000x |
@@ -3289,6 +3696,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-036` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 26.8 | 26.8 | 27.1 | 0.1 | 1.000x | 1.000x |
@@ -3298,6 +3706,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 14.7 | 14.5 | 14.7 | 0.1 | 1.000x | 1.000x |
@@ -3305,6 +3714,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-037` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 20.8 | 20.6 | 21.0 | 0.2 | 1.000x | 1.000x |
@@ -3314,6 +3724,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 23.0 | 23.0 | 23.3 | 0.1 | 1.000x | 1.000x |
@@ -3321,6 +3732,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-038` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 26.7 | 26.7 | 27.1 | 0.1 | 1.000x | 1.000x |
@@ -3330,6 +3742,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 12.0 | 11.9 | 12.1 | 0.1 | 1.000x | 1.000x |
@@ -3337,6 +3750,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-039` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 58.9 | 58.9 | 59.1 | 0.1 | 1.000x | 1.000x |
@@ -3346,6 +3760,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 26.0 | 26.0 | 27.7 | 0.7 | 1.000x | 1.000x |
@@ -3353,6 +3768,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-040` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 23.9 | 23.8 | 24.3 | 0.2 | 1.000x | 1.000x |
@@ -3362,6 +3778,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 10.5 | 10.3 | 10.8 | 0.1 | 1.000x | 1.000x |
@@ -3369,6 +3786,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-041` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 18.8 | 18.8 | 19.4 | 0.2 | 1.000x | 1.000x |
@@ -3378,6 +3796,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 13.7 | 13.6 | 13.8 | 0.1 | 1.000x | 1.000x |
@@ -3385,6 +3804,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-042` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 12.0 | 12.0 | 12.1 | 0.0 | 1.000x | 1.000x |
@@ -3394,6 +3814,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 12.7 | 12.5 | 13.1 | 0.2 | 1.000x | 1.000x |
@@ -3401,6 +3822,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-043` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 71.1 | 71.0 | 71.3 | 0.1 | 1.000x | 1.000x |
@@ -3410,6 +3832,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 10.5 | 10.4 | 10.6 | 0.1 | 1.000x | 1.000x |
@@ -3417,6 +3840,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-044` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 61.8 | 61.7 | 62.1 | 0.1 | 1.000x | 1.000x |
@@ -3426,6 +3850,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 12.6 | 12.6 | 12.8 | 0.1 | 1.000x | 1.000x |
@@ -3433,6 +3858,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-045` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 25.9 | 25.6 | 26.3 | 0.2 | 1.000x | 1.000x |
@@ -3442,6 +3868,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 21.7 | 21.7 | 21.8 | 0.0 | 1.000x | 1.000x |
@@ -3449,6 +3876,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-046` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 18.9 | 18.8 | 19.4 | 0.2 | 1.000x | 1.000x |
@@ -3458,6 +3886,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 23.1 | 23.0 | 23.3 | 0.1 | 1.000x | 1.000x |
@@ -3465,6 +3894,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-047` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 20.4 | 20.3 | 20.5 | 0.1 | 1.000x | 1.000x |
@@ -3474,6 +3904,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.3 | 13.2 | 13.3 | 0.0 | 1.000x | 1.000x |
@@ -3481,6 +3912,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-048` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 12.6 | 12.6 | 12.8 | 0.1 | 1.000x | 1.000x |
@@ -3490,6 +3922,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 12.3 | 12.3 | 12.6 | 0.1 | 1.000x | 1.000x |
@@ -3497,6 +3930,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-049` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 68.5 | 68.4 | 68.7 | 0.1 | 1.000x | 1.000x |
@@ -3506,6 +3940,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 14.6 | 14.5 | 15.0 | 0.2 | 1.000x | 1.000x |
@@ -3513,6 +3948,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-050` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 53.7 | 53.7 | 54.3 | 0.2 | 1.000x | 1.000x |
@@ -3522,6 +3958,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 12.4 | 12.3 | 12.8 | 0.2 | 1.000x | 1.000x |
@@ -3529,6 +3966,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-051` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 68.7 | 68.4 | 69.0 | 0.2 | 1.000x | 1.000x |
@@ -3538,6 +3976,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.4 | 13.3 | 13.5 | 0.1 | 1.000x | 1.000x |
@@ -3545,6 +3984,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-052` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 19.9 | 19.7 | 19.9 | 0.1 | 1.000x | 1.000x |
@@ -3554,6 +3994,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.3 | 13.3 | 13.4 | 0.1 | 1.000x | 1.000x |
@@ -3561,6 +4002,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-053` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 14.7 | 14.4 | 14.9 | 0.2 | 1.000x | 1.000x |
@@ -3570,6 +4012,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.3 | 13.2 | 13.8 | 0.2 | 1.000x | 1.000x |
@@ -3577,6 +4020,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-054` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 14.5 | 14.4 | 14.8 | 0.1 | 1.000x | 1.000x |
@@ -3586,6 +4030,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.3 | 13.2 | 13.5 | 0.1 | 1.000x | 1.000x |
@@ -3593,6 +4038,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-055` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 14.6 | 14.6 | 15.5 | 0.4 | 1.000x | 1.000x |
@@ -3602,6 +4048,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.3 | 13.2 | 13.3 | 0.0 | 1.000x | 1.000x |
@@ -3609,6 +4056,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-056` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 16.4 | 16.3 | 16.7 | 0.2 | 1.000x | 1.000x |
@@ -3618,6 +4066,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 19,079.8 | 19,077.0 | 19,143.2 | 25.7 | 1.000x | 1.000x |
@@ -3627,6 +4076,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 7,464.5 | 7,464.1 | 7,483.6 | 7.6 | 1.000x | 1.000x |
@@ -3636,6 +4086,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 9,553.7 | 9,553.5 | 9,557.7 | 1.6 | 1.000x | 1.000x |
@@ -3645,6 +4096,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 19,055.3 | 19,053.8 | 19,057.1 | 1.3 | 1.000x | 1.000x |
@@ -3654,6 +4106,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 3,737.9 | 3,737.4 | 3,740.2 | 1.0 | 1.000x | 1.000x |
@@ -3663,6 +4116,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 16.1 | 16.0 | 16.2 | 0.1 | 1.000x | 1.000x |
@@ -3672,6 +4126,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 4,788.9 | 4,788.0 | 4,790.6 | 1.0 | 1.000x | 1.000x |
@@ -3681,6 +4136,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 7,650.2 | 7,648.0 | 7,651.8 | 1.4 | 1.000x | 1.000x |
@@ -3690,6 +4146,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.5 | 10.3 | 10.9 | 0.2 | 1.000x | 1.000x |
@@ -3697,6 +4154,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-065` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 21.3 | 21.2 | 21.9 | 0.2 | 1.000x | 1.000x |
@@ -3706,6 +4164,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 33.8 | 33.7 | 33.8 | 0.0 | 1.000x | 1.000x |
@@ -3713,6 +4172,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-066` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 62.6 | 62.4 | 63.2 | 0.3 | 1.000x | 1.000x |
@@ -3722,6 +4182,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 32.3 | 32.2 | 32.5 | 0.1 | 1.000x | 1.000x |
@@ -3729,6 +4190,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-067` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 58.2 | 58.2 | 60.3 | 0.8 | 1.000x | 1.000x |
@@ -3738,6 +4200,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 16.8 | 16.8 | 16.8 | 0.0 | 1.000x | 1.000x |
@@ -3745,6 +4208,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-068` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 23.2 | 23.0 | 23.4 | 0.1 | 1.000x | 1.000x |
@@ -3754,6 +4218,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 12.9 | 12.5 | 14.7 | 0.8 | 1.000x | 1.000x |
@@ -3761,6 +4226,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-069` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 27.1 | 27.0 | 28.6 | 0.6 | 1.000x | 1.000x |
@@ -3770,6 +4236,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 28.0 | 27.9 | 28.2 | 0.1 | 1.000x | 1.000x |
@@ -3777,6 +4244,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-070` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 48.4 | 48.2 | 48.4 | 0.1 | 1.000x | 1.000x |
@@ -3786,6 +4254,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 55.7 | 55.6 | 55.8 | 0.1 | 1.000x | 1.000x |
@@ -3793,6 +4262,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-071` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 109.7 | 109.5 | 110.2 | 0.2 | 1.000x | 1.000x |
@@ -3802,6 +4272,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 42.7 | 42.7 | 43.4 | 0.3 | 1.000x | 1.000x |
@@ -3809,6 +4280,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-072` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 89.3 | 89.1 | 89.4 | 0.1 | 1.000x | 1.000x |
@@ -3818,6 +4290,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.3 | 13.2 | 13.4 | 0.1 | 1.000x | 1.000x |
@@ -3825,6 +4298,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-073` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 20.6 | 20.4 | 21.4 | 0.4 | 1.000x | 1.000x |
@@ -3834,6 +4308,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 13.3 | 13.3 | 13.4 | 0.0 | 1.000x | 1.000x |
@@ -3841,6 +4316,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-074` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 26.7 | 26.6 | 27.3 | 0.3 | 1.000x | 1.000x |
@@ -3850,6 +4326,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 32.4 | 32.2 | 33.6 | 0.5 | 1.000x | 1.000x |
@@ -3857,6 +4334,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-075` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 58.5 | 58.4 | 58.7 | 0.1 | 1.000x | 1.000x |
@@ -3866,6 +4344,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 32.3 | 32.2 | 32.4 | 0.1 | 1.000x | 1.000x |
@@ -3873,6 +4352,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-076` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 58.4 | 58.1 | 60.4 | 0.9 | 1.000x | 1.000x |
@@ -3882,6 +4362,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 32.3 | 32.3 | 32.4 | 0.0 | 1.000x | 1.000x |
@@ -3889,6 +4370,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-077` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 58.4 | 58.2 | 60.3 | 0.8 | 1.000x | 1.000x |
@@ -3898,6 +4380,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 32.3 | 32.2 | 32.3 | 0.0 | 1.000x | 1.000x |
@@ -3905,6 +4388,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-078` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 58.3 | 58.2 | 58.5 | 0.1 | 1.000x | 1.000x |
@@ -3914,6 +4398,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 32.3 | 32.3 | 32.4 | 0.0 | 1.000x | 1.000x |
@@ -3921,6 +4406,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-079` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 58.3 | 58.2 | 58.3 | 0.0 | 1.000x | 1.000x |
@@ -3930,6 +4416,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `whole-subject` | separate artifact | 16.1 | 16.1 | 16.2 | 0.0 | 1.000x | 1.000x |
@@ -3937,6 +4424,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-080` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 26.3 | 26.1 | 26.8 | 0.3 | 1.000x | 1.000x |
@@ -3946,6 +4434,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 11.2 | 11.2 | 11.4 | 0.1 | 1.000x | 1.000x |
@@ -3953,6 +4442,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-081` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 5.1 | 5.0 | 5.4 | 0.1 | 1.000x | 1.000x |
@@ -3962,6 +4452,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 10.5 | 10.4 | 11.7 | 0.5 | 1.000x | 1.000x |
@@ -3969,6 +4460,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-082` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 5.6 | 5.6 | 6.0 | 0.2 | 1.000x | 1.000x |
@@ -3978,6 +4470,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 11.9 | 11.9 | 13.2 | 0.5 | 1.000x | 1.000x |
@@ -3985,6 +4478,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-083` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 73.4 | 73.0 | 73.8 | 0.3 | 1.000x | 1.000x |
@@ -3994,6 +4488,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `whole-subject` | separate artifact | 19.2 | 19.1 | 19.3 | 0.1 | 1.000x | 1.000x |
@@ -4001,6 +4496,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `s-084` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 16.3 | 16.2 | 18.4 | 0.8 | 1.000x | 1.000x |
@@ -4008,6 +4504,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `t-a-valid-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 3,578,393.8 | 3,576,939.1 | 3,579,998.5 | 1,246.8 | 1.000x | 1.000x |
@@ -4015,6 +4512,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `t-b-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 1,885,944.5 | 1,884,012.8 | 1,890,252.9 | 2,131.6 | 1.000x | 1.000x |
@@ -4022,6 +4520,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `t-c-long-atom-run` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 1,874,971.6 | 1,874,566.2 | 1,890,593.4 | 6,177.8 | 1.000x | 1.000x |
@@ -4029,6 +4528,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `t-d-prose-sparse-addrs` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna_noclsfold (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 3,142,869.4 | 3,124,428.1 | 3,160,206.5 | 11,464.4 | 1.000x | 1.000x |
@@ -4036,6 +4536,7 @@ reporter: v17 (2026-09-17)
 
 ### `orig` / `t-e-prose-no-at` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: pcrec_d34c9131_auto-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 3,095,320.2 | 3,087,598.5 | 3,100,842.1 | 4,652.3 | 1.000x | 1.000x |

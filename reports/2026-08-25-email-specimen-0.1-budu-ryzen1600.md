@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v17 (2026-09-17)
+reporter: v18 (2026-09-18)
 
 ## Query
 
@@ -29,6 +29,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `large-subject-throughput` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | set composition | n subjects | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_interp-caps-simdna` | measured | `plain` | same program | 51,887,584.9 | 16.4946 | 51,715,536.7 | 52,400,309.6 | 237,758.7 | 1.000x | 1.000x | **dominated**: `t-a-valid-addrs` is 99.9% of this set | 3 | 100% |
@@ -47,6 +48,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 1,838,131.4 | 1,834,292.9 | 1,867,343.0 | 12,430.8 | 0.993x | 1.000x | 85 | 100% |
@@ -54,6 +56,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 ### `factored` / `short-subject-search` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 15,356.9 | 15,283.3 | 15,555.6 | 93.0 | 0.110x | 1.000x | 77 | 199.4 | 100% |
@@ -66,6 +69,7 @@ _floor: n/a (no floor pattern in this set yet -- pcrecdev1 feedback 1d/repin-2)_
 
 ### `orig` / `large-subject-throughput` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | set composition | n subjects | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `libpcre2_10.46_jit-caps-simdna` | measured | `plain` | same program | 9,080,736.7 | 2.8867 | 9,007,571.8 | 9,110,169.7 | 36,680.6 | 0.315x | 1.000x | spread | 3 | 100% |
@@ -96,6 +100,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best |
@@ -108,6 +113,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `short-subject-search` (email-specimen@0.1) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_8da6120_auto-caps-simdna` | measured | `plain` | same program | 6,131.1 | 6,118.3 | 6,148.6 | 11.8 | 0.093x | 1.000x | 77 | 79.6 | 100% |

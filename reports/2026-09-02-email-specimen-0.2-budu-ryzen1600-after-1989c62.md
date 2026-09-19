@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v17 (2026-09-17)
+reporter: v18 (2026-09-18)
 
 ## Query
 
@@ -35,6 +35,7 @@ reporter: v17 (2026-09-17)
 
 ### `factored` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_1989c62_auto-nocaps-simdna` | measured@1.4 | `plain` | same program | 13,583,640.9 | 2.5909 | 13,563,234.4 | 13,588,319.8 | 9,475.1 | 0.027x | 1.000x | unchanged (within spread) | 5 | 100% |
@@ -80,6 +81,7 @@ reporter: v17 (2026-09-17)
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | pass-rate |
@@ -99,6 +101,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `factored` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_1989c62_auto-nocaps-simdna` | measured@1.4 | `plain` | same program | 3,524.4 | 3,519.8 | 3,602.1 | 31.7 | 0.026x | 1.000x | unchanged (within spread) | 77 | 45.8 | 17.6 | 100% |
@@ -119,6 +122,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_1989c62_auto-caps-simdna` | measured@1.4 | `plain` | same program | 710,901.6 | 0.1356 | 710,333.3 | 711,068.1 | 307.0 | 0.192x | 1.000x | spread | unchanged (within spread) |
@@ -198,6 +202,7 @@ _**dominated**: for the flagged testee(s), one subject is more than 90 % of the 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version |
@@ -220,6 +225,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `floor` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp (floor control — per-call overhead, not a ranking of engines)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_1989c62_vm-in-caps-simdna` | measured@1.4 | `plain` | same program | 1,045.1 | 1,043.2 | 1,047.9 | 1.6 | 0.141x | 1.000x | faster ×2.33 | 77 | 13.6 | 100% |
@@ -240,6 +246,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `large-subject-throughput` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_1989c62_auto-caps-simdna` | measured@1.4 | `plain` | same program | 13,578,816.8 | 2.5900 | 13,567,353.8 | 13,595,411.6 | 9,073.4 | 0.111x | 1.000x | unchanged (within spread) | 5 | 100% |
@@ -291,6 +298,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 - matches: n/s (the record carries no expected-answer field for its common `matched-as-expected` rows -- KB-2, docs/dev/known_issues.md)
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 _rows compare different programs answering the same regime; rank order is real, the ratio between forms is a regime artifact until an end-anchored entry exists (pcrec [OS-4])._
 
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version |
@@ -313,6 +321,7 @@ _rows compare different programs answering the same regime; rank order is real, 
 
 ### `orig` / `short-subject-search` (email-specimen@0.2) — baseline: libpcre2 engine_mode=interp
 
+- baseline: libpcre2_10.46_interp-caps-simdna (interp, present in this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_96e44c2_auto-caps-simdna` | measured@1.3 | `plain` | same program | 3,523.0 | 3,519.3 | 4,256.5 | 293.9 | 0.054x | 1.000x | - | 77 | 45.8 | 17.2 | 100% |
