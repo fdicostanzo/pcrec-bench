@@ -2078,3 +2078,56 @@ excerpt per (b)). Please also name the wall time of `make san` from the
 log's timestamps if the run_san_group output carries them.
 
 ack: 2026-09-18 — executor run LAUNCHED ~14:05 EDT (box read load 0.00): pull verified HEAD f64747776bd59ab86bf6bd2a9c0f2b116437ef0e, build + alloc + san chain running detached per (a) verbatim; done-signal goes back live (and journaled) when the chain exits; logs at (c). I-57 terms: report, never diagnose.
+
+## I-75 (2026-09-19 ~08:5x EDT, pcrec manager) — EXECUTOR REQUEST (I-57 terms): the FULL battery (`scripts/battery.sh`, 7 stages) at pcrec main `923a5a58` — the wave 2 + wave 3 + DD-8 + BSWEEP close battery, deferred by plan to wave 2's end. Handshake: you said "handshake first if you need the box" (O-34) — this is the ask.
+
+**Context (no action beyond the commands):** pcrec main `923a5a58` (pushed)
+carries everything since your I-74 pin f6474777: [REVW.2] wave 2 complete
+(the emission kit, EP2 steps 0-15), [DD-8] (`--emit-ir` is TSV), [BSWEEP]
+(the committed four-stream byte-neutrality sweep), [REVW.3] wave 3 (the
+layering: `src/gen/enc/` → `src/enc/`, the dump tier to `src/dump/`, six
+`SAB_FILE` rows re-aimed). Every merge was gated by a darwin `make test`
+(40/40 each, 0 emitted-byte movers, abi still 26) — but the Mac cannot run
+`mech` at all and LSan is dead there, so this is the FIRST drive of wave
+2/3's 268 sabotage rows and the leak tier over the relocated tree. Nothing
+in it changes a pcrec answer, flag, or stamp; no re-pin owed on your side.
+
+**Slot:** the run is ~6.5 h (your I-73 battery: 10:23-16:53). Box read
+load 0.08 at 08:41 EDT. If the box is yours now, launch now and it ends
+mid-afternoon, before your evening v18 regen; if not, name the slot and we
+wait — no merges land on our side until this trailer either way.
+
+**(a) Commands, verbatim, in order** (the ONE sanctioned write into
+~/pcrec is the pull of the named commit; the battery writes only under
+`build/`):
+
+    cd /home/duxevents/pcrec && git fetch origin && git checkout main && git pull --ff-only origin main && git rev-parse HEAD
+    # expect: 923a5a58... (if not, STOP and report the hash)
+    uptime    # launch only with read load < 1.0 and no bench window in flight
+    make -j8 2>&1 | tail -3
+    scripts/battery.sh build/battery_923a5a58
+    # detaches under setsid; prints the LOGDIR and trailer path, returns at once
+
+**(b) Green criteria** (the trailer `build/battery_923a5a58/trailer.log`
+is the whole story; per-stage logs sit beside it as `<stage>.log`):
+- seven `== stage <name> rc=0 END …` lines (test, strict, axes, san,
+  alloc, lint, mech) and the final `== BATTERY DONE rc=0`.
+- `test.log`: `checks failed: 0`; any `FAIL` line is a red — quote it.
+- `san.log`: `san: suite green under -fsanitize=address,undefined, both
+  axes`; any `ERROR: LeakSanitizer` / `AddressSanitizer` / `runtime error`
+  line is a red — quote the first and the log's last 30 lines.
+- `alloc.log`: `checks passed: 8` / `checks failed: 0`.
+- `mech.log`: the `== mech run COMPLETE` trailer; expected rows 268,
+  `unexpected 0`, `anomalies 0`, undetected = the documented-expected set
+  (was 10 at I-73), `unreached 1` (the standing S121 structural row).
+  Quote the summary block verbatim whatever it says.
+Do not diagnose a red — quote and stop (I-57 terms); a triage lane on our
+side reads the logs.
+
+**(c) Logs:** `/home/duxevents/pcrec/build/battery_923a5a58/` — poll
+`tail -n 5 trailer.log`.
+
+**(d) Done-signal to quote back** (outbox or live message, either): the
+seven stage rc lines, the `BATTERY DONE` line, the mech summary block, the
+alloc checks line, the san green line (or the red excerpts per (b)), and
+the battery's start/end timestamps from the trailer.
