@@ -1,15 +1,15 @@
 <!-- pcrecbench interpret
 report:          reports/2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.tsv
-report_sha256:   ea5315e4cdb1df4a5f3c61cc0a990015c1df53829db6e0833580f781daab9567
+report_sha256:   cc46b228d4754d7ace6599b30443f160f0719819fbbbca5bf1d49c889cdd308a
 index:           store/index.tsv
 index_sha256:    98a24fed668b7d4024e3211ff3bb9aef4ba36562bb604e2d40d46088dd94d985
 predictions:     docs/dev/predictions/capability-0.1-first.tsv
 predictions_sha256:915b42f5a8f6ec3dfdc552b8ba080e546c0ca02c26a067796495761dc228155d
 subject_grain:   reports/2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.subject-grain.tsv
-subject_grain_sha256:1dd4d465a7682cc68fc463f52d01228a5098609038cd4f8749c2bb80e98a7a32
+subject_grain_sha256:54d2fc47eca5df843a90f41df29576e3ce4b5c2ad8b9c7be1fb163c65ffc8310
 catalogue:       2.0
 interpret:       v1
-reporter:        v17 (2026-09-17)
+reporter:        v18 (2026-09-18)
 query:           subbench=capability, version=0.1, since=2026-09-18T03:00:00Z, until=2026-09-18T06:00:00Z, testee=re2_11.0.0_default-caps-simdna, testee=re2_11.0.0_longest-caps-simdna, testee=oniguruma_6.9.10_default-caps-simdna, testee=tre_0.9.0_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd
 -->
 

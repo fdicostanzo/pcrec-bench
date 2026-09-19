@@ -14,19 +14,23 @@ step (the `/pcrec-bench-interpret` skill, run by hand, once per sidecar)
 that a window closing script never reached for.
 
 WHAT IT DOES, and nothing else. For every `reports/*.interpretation.md`
-already committed, it reads that file's OWN stamp (the same six lines
+already committed, it reads that file's OWN stamp (the same lines
 `catalogue/check_interpret.py`'s section 3 already parses) to recover
-the `report`, `index` and `predictions` paths the sidecar was generated
-against -- so this script never re-derives the report<->predictions
-match itself (that matching logic lives in exactly one place, the
-`/pcrec-bench-interpret` skill's step 2, `.claude/skills/
-pcrec-bench-interpret/SKILL.md`); it only re-runs the SAME inputs a
-fresh index can move the answer for. For each one it runs the EXACT
-invocation the skill documents (step 3), from the repository root, with
-repo-relative paths:
+the `report`, `index`, `predictions` AND `subject_grain` paths the
+sidecar was generated against (KB-22, 2026-09-18: `subject_grain` was
+missing from this recovery for the script's first seven months -- silent
+until the first sidecar carrying one was ever regenerated here, since
+none existed before [B47], 2026-09-17) -- so this script never
+re-derives the report<->predictions match itself (that matching logic
+lives in exactly one place, the `/pcrec-bench-interpret` skill's step 2,
+`.claude/skills/pcrec-bench-interpret/SKILL.md`); it only re-runs the
+SAME inputs a fresh index (or a fresh subject-grain slice) can move the
+answer for. For each one it runs the EXACT invocation the skill
+documents (step 3), from the repository root, with repo-relative paths:
 
     python3 -m pcrecbench interpret <report> --index <index> \\
-        [--predictions <predictions>] --render --out <sidecar>
+        [--predictions <predictions>] [--subject-grain <subject_grain>] \\
+        --render --out <sidecar>
 
 then re-runs the same command WITHOUT --out (to stdout) and byte-compares
 it against the file just written -- the skill's own step 4 determinism
@@ -92,12 +96,27 @@ def regen_one(sidecar_name):
     index_rel = index_rel if index_rel and index_rel != "(none)" else "store/index.tsv"
     pred_rel = stamp.get("predictions")
     pred_rel = pred_rel if pred_rel and pred_rel != "(none)" else None
+    # KB-22 (2026-09-18, lane b53regen): the stamp's `subject_grain:` line
+    # was never read here -- every prior regen silently DROPPED a
+    # sidecar's --subject-grain input (R-BUCKET-DOMINATED's own firings
+    # among the casualties), invisible until this script was first run
+    # against a subject-grain-carrying sidecar (only 3 exist, all added
+    # after this script was written). Same absent-vs-missing handling as
+    # `predictions` above; a stamped path that no longer exists on disk
+    # is a NAMED failure, not a silent narrowing.
+    sg_rel = stamp.get("subject_grain")
+    sg_rel = sg_rel if sg_rel and sg_rel != "(none)" else None
+    if sg_rel and not os.path.exists(os.path.join(ROOT, sg_rel)):
+        return False, (f"{sidecar_name}: its stamped subject_grain input "
+                        f"is missing: {sg_rel}")
 
     out_rel = os.path.join("reports", sidecar_name)
     base_cmd = [sys.executable, "-m", "pcrecbench", "interpret", report_rel,
                 "--index", index_rel]
     if pred_rel:
         base_cmd += ["--predictions", pred_rel]
+    if sg_rel:
+        base_cmd += ["--subject-grain", sg_rel]
 
     # Step 3 (the skill): render straight to the committed path.
     rc = subprocess.call(base_cmd + ["--render", "--out", out_rel], cwd=ROOT)
