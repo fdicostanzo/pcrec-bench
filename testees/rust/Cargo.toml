@@ -1,0 +1,60 @@
+# testees/rust/Cargo.toml -- the rust-regex driver crate.
+#
+# [B7]/L6b, lane l6brust, 2026-09-19: the last unchartered engine on
+# capability_set_v1.md's roster. This is a NATIVE Rust binary speaking the
+# DRIVER PROTOCOL (pcrecbench/adapters.py's docstring, read that first) --
+# not a C/C++ driver linked against a C ABI wrapper (unlike RE2, which
+# went that route only because `libre2-dev` is a C++ library with no FFI
+# story pcrec-bench needs to invent; the `regex` crate has no C ABI at
+# all -- `regex-capi`/`rure` exists but is UNMAINTAINED tooling this
+# project does not need, since the driver protocol imposes no language
+# constraint on the DRIVER ITSELF, only on its argv/stdout shape). Built
+# with `cargo build --release`; `prepare_driver()` in adapter.py runs
+# this, never `pcrecbench.driverrun.build_driver()` (a C-compiler
+# assumption, same reasoning testees/re2/adapter.py states for its own
+# g++ step).
+#
+# TOOLCHAIN PIN (inbox I-76, pcrecdev1's ruling, 2026-09-19): rustup, the
+# `stable` channel AS IT RESOLVES AT CHARTER TIME, pinned by the exact
+# rustc/cargo version this adapter's describe() probes live and records
+# in testees/rust/CLAUDE.md -- never hand-typed here. The `regex` crate
+# is pinned by CARGO.LOCK (committed alongside this file), not by an
+# exact version string in this manifest -- I-76's own words: "pin what
+# rustup stable resolves to... the regex crate from crates.io at a
+# pinned version with Cargo.lock committed; vendor only on a measured
+# reproducibility need." `regex = "1"` below is a semver REQUIREMENT
+# (any 1.x), not the pin itself -- Cargo.lock, generated and committed at
+# the first `cargo build` once the box is quiet (BOILERPLATE.md's HARD
+# RULE: no cargo build while pcrec's battery owns the box), is the actual
+# pin, exactly as rustup's own `stable` resolves to whatever is current
+# and gets recorded, never chased to a specific number in advance.
+
+[package]
+name = "rust-regex-driver"
+version = "0.1.0"
+edition = "2021"
+# This crate is a DRIVER, never published; no license field needed
+# (cargo would warn on `cargo publish` only, which never happens here).
+publish = false
+
+[[bin]]
+name = "rust_regex_driver"
+path = "src/main.rs"
+
+[dependencies]
+# The version bound is a REQUIREMENT, not the pin -- see the header above.
+# No other dependency: this driver reads argv/files with std only (the
+# same minimalism testees/re2/driver.cc and testees/onig/driver.c hold
+# to -- no JSON/TOML crate, no clap; the protocol's own TSV/argv shape
+# needs none of them).
+regex = "1"
+
+[profile.release]
+# opt-level 3 is cargo's own release default; stated explicitly so a
+# reader does not have to know that. No LTO/codegen-units tuning: this
+# driver's own code is a thin loop around the `regex` crate's compiled
+# matcher, and this project's `pcrec` testees never tune the DRIVER's own
+# codegen either (only pcrec's OWN generated C, a completely different
+# axis) -- tuning the harness's driver binary would be a confound, not a
+# finding.
+opt-level = 3

@@ -1285,6 +1285,59 @@ def check_high_byte_pattern_argv():
                     "MATCHES (boolean grain) on vectorscan-block-nosom",
                     "matched=%s span=[%s,%s)" % (r.matched, r.start,
                                                  r.end))
+        # 1e. a THIRD SHAPE on rust-default (lane l6brustfin, [B7]/L6b,
+        # 2026-09-19): neither "compiles and matches" (1/1b/1c) nor
+        # "matches at boolean grain" (1d) -- this adapter is I-72-immune
+        # BY THE SAME file-based-transport CONSTRUCTION as every other
+        # L6b driver, but PAT's raw 0x93/0x94 bytes are a DIFFERENT,
+        # genuine structural limitation here: `regex::bytes::
+        # RegexBuilder::new` takes `&str` for the PATTERN SOURCE (never
+        # `&[u8]`, unlike the haystack), so a lone raw byte 0x93 is
+        # invalid UTF-8 and the driver's own pre-regex-crate validation
+        # refuses it BEFORE ever reaching the `regex` crate --
+        # `testees/rust/CLAUDE.md`'s I-72 section has the full account.
+        # This arm proves the bytes arrived on the wire UNCORRUPTED (the
+        # discrimination this project's other arms get from a
+        # SUCCESSFUL match, this one gets from a SPECIFIC, byte-exact
+        # FAILURE): the raw witness must refuse naming byte offset 0,
+        # and the CONTROL -- the corrupted C2 93 ... C2 94 spelling,
+        # itself valid UTF-8 -- must compile AND must NOT match the
+        # clean raw-byte subject (proving the two spellings really are
+        # distinguishable, not merely "both refuse" or "both match").
+        if "rust" in _ad.discover():
+            r, err = one("rust", "rust-default", PAT, "hib-raw-rust")
+            if err is None:
+                bad("high-byte argv: raw \\x93 pattern REFUSES (invalid "
+                    "UTF-8 pattern source) on rust-default",
+                    "compiled and matched=%s -- rust-default should "
+                    "refuse a raw non-UTF-8 pattern byte" % (r.matched,))
+            elif "not valid utf-8 at byte 0" in err.lower():
+                ok("high-byte argv: raw \\x93 pattern REFUSES (invalid "
+                   "UTF-8 pattern source) on rust-default", err)
+            else:
+                bad("high-byte argv: raw \\x93 pattern REFUSES (invalid "
+                    "UTF-8 pattern source) on rust-default",
+                    "refused, but not with the expected byte-0 UTF-8 "
+                    "diagnostic: %s" % (err,))
+            r, err = one("rust", "rust-default", PAT_CORRUPT,
+                         "hib-corrupt-rust")
+            if err:
+                bad("high-byte argv CONTROL: the UTF-8-corrupted "
+                    "spelling compiles but does NOT match on "
+                    "rust-default", err)
+            elif not r.matched:
+                ok("high-byte argv CONTROL: the UTF-8-corrupted "
+                   "spelling compiles but does NOT match on "
+                   "rust-default",
+                   "C2 93 ... C2 94 compiled (valid UTF-8 pattern "
+                   "source), nomatch on \\x93hello\\x94 -- the raw and "
+                   "corrupted spellings are distinguishable")
+            else:
+                bad("high-byte argv CONTROL: the UTF-8-corrupted "
+                    "spelling compiles but does NOT match on "
+                    "rust-default",
+                    "matched span=[%s,%s) -- the control cannot see "
+                    "the bug" % (r.start, r.end))
         # 2. the pcre2 reference agrees
         r, err = one("pcre2", "pcre2-interp", PAT, "hib-ref")
         if err:

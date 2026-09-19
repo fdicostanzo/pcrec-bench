@@ -1,0 +1,29 @@
+# testees/rust/configs.toml -- the testees this adapter provides.
+#
+# capability_set_v1.md 8's roster names this `regex-default`; this
+# directory follows testees/CLAUDE.md's own per-directory naming
+# convention instead (`re2-default`, `onig-default`, `tre-default`,
+# `vectorscan-block-nosom` all prefix with their DIRECTORY name, not the
+# design note's placeholder), and this lane's brief says so explicitly
+# ("One config `rust-default` first"). `rust-smallsize` (capability_set_
+# v1.md 8's `regex-smallsize`: a LOW `size_limit`, exercising
+# `CompiledTooBig` as a first-class refusal) is NOT built here -- the
+# brief's own instruction: wire a second config "only if the census
+# motivates and the roster doc's composition rule covers it". The
+# defaults below are RegexBuilder's own documented values (`src/main.rs`'s
+# `DEFAULT_SIZE_LIMIT`/`DEFAULT_DFA_SIZE_LIMIT`), stated here explicitly
+# rather than left implicit, so a future `rust-smallsize` row states its
+# override relative to a named baseline.
+#
+# No version is written here (testees/CLAUDE.md's "one rule that is not
+# obvious"): the `regex` crate has no runtime version API (confirmed
+# absent by this lane, same finding class as testees/re2/adapter.py's own
+# `_probe_version` docstring), so `engine_version` is read from the
+# COMMITTED testees/rust/Cargo.lock on every run instead
+# (`adapter.py`'s `_read_cargo_lock_regex_version`).
+
+[testees.rust-default]
+engine_mode = "default"
+size_limit = 10485760    # 10 MiB, RegexBuilder::size_limit's own default
+dfa_size_limit = 2097152 # 2 MiB, RegexBuilder::dfa_size_limit's own default
+description = "rust-regex (the `regex` crate) at RegexBuilder's own documented defaults: perl-leftmost-first selection, byte-haystack matching (regex::bytes), unicode mode on (default)"

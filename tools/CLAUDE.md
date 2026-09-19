@@ -518,3 +518,16 @@ the shared spelling would test that gap, not the transport property),
 with `start`/`end` None -- X34's own shape -- never a span). Each arm
 is gated on its adapter discovering, so a box without that engine's dev
 package skips it by name rather than failing.
+
+[B7]/L6b, lane `l6brustfin` (2026-09-19): a FOURTH shape, 1e
+`rust-default` -- neither "compiles and matches" nor "matches at
+boolean grain": this adapter is I-72-immune by the same file-based
+transport construction as every other driver here, but the SHARED
+raw-`\x93`/`\x94` witness hits a genuine, DIFFERENT structural limit
+(`regex::bytes::RegexBuilder::new` takes `&str` for the pattern source,
+never `&[u8]`, so a lone raw byte is invalid UTF-8) -- the arm asserts a
+clean `did-not-compile` naming byte offset 0 (proving the bytes arrived
+UNCORRUPTED: a genuinely argv-mangled spelling would instead be valid
+UTF-8 and compile), with the corrupted-spelling control compiling but
+not matching, the same distinguishability check every other arm here
+carries.
