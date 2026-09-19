@@ -1,6 +1,17 @@
 # data_management_v1.md — the data-management white paper
 
-**Status: DESIGN NOTE, v1.0, 2026-09-17 (lane `b45datamgmt`). Nothing
+**Status: RULED 2026-09-19 (Frank, live, one question at a time; the
+rulings are recorded inline under each §6 question).** Q1-Q5, Q7, Q8,
+Q10, Q11 ruled as recommended (Q2 with Frank's own reasoning: yes
+because automating would be more work; Q3 with the clone-mechanics
+answer recorded); Q6 (archive-tier form) and Q9 (SQLite cache) HELD
+OPEN at their Q5 triggers, each with a D6 panel attached for when it
+fires. IN FORCE from this date: the §4 retention taxonomy, routine
+`git gc` at boundaries, no-history-rewrite, store compression off the
+table, the four growth triggers, refuse-by-name on archived-record
+absence, the failed-gate cohort kept, no slice-specific ruling. The
+paragraph below is the note's original v1.0 status, kept for the
+record. **v1.0, 2026-09-17 (lane `b45datamgmt`). Nothing
 here is enacted.** No policy is in force, no file is moved, no loader is
 changed, no threshold binds anything. §6 ends with eleven numbered
 questions for Frank, each self-contained and each carrying this lane's
@@ -1072,6 +1083,10 @@ unchanged. The parts that would benefit from a panel are §1.4's archive
 tier and §5.3's cache — both of which are Phase 1, behind triggers, and
 both of which should be paneled *when their trigger fires*, against the
 numbers that fired it rather than today's.
+
+**RULED 2026-09-19 (Frank, live): AGREE** — right home, no retroactive
+panel; Q6's archive tier and Q9's cache get their D6 panels when their
+triggers fire, against the numbers that fired them.
 
 ---
 
