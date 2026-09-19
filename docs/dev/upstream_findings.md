@@ -126,3 +126,67 @@ records (`store/records/syntax@0.1/*/*.jsonl`, commit 28cb034) via
 `pcrecbench.reduce`'s own reduction, cross-checked against the rendered
 report at the cited lines; not re-measured independently outside the
 store.
+
+## U6 — TRE 0.9.0's `high-byte-run` correctness gap is a REAL, REPRODUCIBLE property of `tre_regncompb`'s byte-mode matching, not a one-off — CONFIRMED across two independent samples one day apart (OBSERVED 2026-09-18, REPRODUCED 2026-09-19, `bench/capability@0.1`; lane b48read's ledger §5.4, lane b55extread's ledger)
+
+**First sample** (2026-09-18, pcrec pin cf0962e3's window, record
+`capability@0.1__tre_0.9.0_default-caps-simdna__budu-ryzen1600__
+20260918T043931Z`): pattern `high-byte-run`, `large-subject-throughput`
+regime, 3 subjects × 5 trials — `pass_rate 0.0000`, all 15 trials wrong
+(`reports/2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.tsv`,
+`excluded` section). `short-subject-search` regime, 75 subjects × 5
+trials — `pass_rate 0.4800`, 195 of 375 trials wrong (same file). Two
+further patterns wrong at the family-11-typical rate on the SAME
+sample: `tag-pair-match` (`n_wrong=5`) and
+`wild-waf-crs-942360-concat-sqli` (`n_wrong=5`), both
+`short-subject-search`, both patterns TRE declares fully SATISFIED by
+capability (neither is `unsupported-by-declaration` or
+`did-not-compile`). First read in
+`docs/dev/ledgers/2026-09-18-capability-window-cf0962e3.md` §5.4: "the
+widest correctness gap of anything measured in this bench's history for
+a capability-declared-satisfied pattern."
+
+**Second sample** (2026-09-19, lane `b54extwindow`'s window, record
+`capability@0.1__tre_0.9.0_default-caps-simdna__budu-ryzen1600__
+20260919T033612Z` — the SAME testee_id, a fresh compile and match run a
+day later): every number above reproduces to the exact trial count —
+`high-byte-run` throughput `pass_rate 0.0000`, `n_wrong=15`;
+`high-byte-run` search `pass_rate 0.4800`, `n_wrong=195`; `tag-pair-
+match` search `n_wrong=5`; `wild-waf-crs-942360-concat-sqli` search
+`n_wrong=5`
+(`reports/2026-09-19-capability-0.1-budu-ryzen1600-ext-second-cf0962e3.tsv`,
+lines 306/320/607/1418). The three-pattern `did_not_compile` set
+(`wild-datetime-datefinder-alternation`,
+`wild-secrets-username-password-pair`,
+`wild-waf-crs-942500-comment-obfuscation`) is UNCHANGED, same
+diagnostic verbatim both dates: `tre_regncompb failed (code 11):
+Invalid character range`. `re2-default` and `vectorscan-block-nosom`
+both stay `pass_rate 1.0000` clean on `high-byte-run` in BOTH samples —
+the two engines sharing the same box and the same window infrastructure
+show no analogous gap, ruling out a shared harness or box cause.
+
+**Exact pass-rate table** (both samples, D35 archived-transcript
+style):
+
+| pattern | regime | first sample (2026-09-18) | second sample (2026-09-19) |
+|---|---|---|---|
+| `high-byte-run` | large-subject-throughput | 0.0000 (15/15 trials wrong) | 0.0000 (15/15 trials wrong) |
+| `high-byte-run` | short-subject-search | 0.4800 (195/375 trials wrong) | 0.4800 (195/375 trials wrong) |
+| `tag-pair-match` | short-subject-search | 0.9867 (5/75 wrong) | 0.9867 (5/75 wrong) |
+| `wild-waf-crs-942360-concat-sqli` | short-subject-search | 0.9867 (5/75 wrong) | 0.9867 (5/75 wrong) |
+
+Reading (unverified against the source — no `src/tre_regncompb`/
+`tre_regnexecb` code was read for this finding, only the driver's
+observed behavior): a SYSTEMATIC raw-high-byte handling gap in TRE's
+byte-mode matcher (`tre_regncompb`/`tre_regnexecb`, `testees/tre/
+CLAUDE.md`'s own convention), not confined to non-UTF-8 bytes
+specifically (`tag-pair-match` and `crs-942360-concat-sqli` carry no
+unusual byte content) — three independent patterns, two independent
+samples, one consistent shape. Status: OBSERVED, now REPRODUCED; not
+yet UNDERSTOOD (no TRE source read) or REPORTED upstream. Next: a
+`testees/tre/CLAUDE.md` addendum recording the gap as confirmed
+reproducible (owed, `docs/dev/ledgers/2026-09-18-capability-window-
+cf0962e3.md` §7 ask 2 and `docs/dev/ledgers/2026-09-19-capability-0.1-
+ext-second-cf0962e3.md` §6); a direct read of TRE 0.9.0's
+`tre_regncompb`/byte-mode matching source, if this gap is ever chased
+past reproduction into a cause.
