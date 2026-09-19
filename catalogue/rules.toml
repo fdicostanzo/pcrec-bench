@@ -11,11 +11,12 @@
 # `pcrecbench/report.py` / `pcrecbench/reduce.py` the threshold comes
 # from — no rule introduces a constant of its own (§4, §13).
 #
-# EVERY diff that touches a `template`, `no_fire`, `legend` or `links`
-# field, or adds a `[[signature]]`, must carry a reviewer's approval line
-# in the commit message naming the rule ids reviewed (§8(6)).
+# EVERY diff that touches a `template`, `no_fire`, `no_fire_reasons`,
+# `legend` or `links` field, or adds a `[[signature]]`, must carry a
+# reviewer's approval line in the commit message naming the rule ids
+# reviewed (§8(6)).
 
-catalogue_version = "2.0"
+catalogue_version = "3.0"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -28,6 +29,39 @@ catalogue_version = "2.0"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.0 (2026-09-19, lane b56fixwave, Frank's live rulings on
+# docs/design/predicate_audit_v1.md's fix wave -- Q2/Q4/R-ARM-2/F27,
+# the one bump the whole wave rides): MAJOR, per the Q2-reframed §3.3
+# above (its own precedent, cited by name). F3 (R-DELTA-4's coverage
+# reads the SELECTOR's own glob match, not the rows a clause happened
+# to match -- a not-evaluable clause that still NAMES a cell now
+# counts) and F11 (R-BUCKET-SPAN's partner search widens to `excluded`
+# rows, which carry `form` unlike `did_not_compile`) are shared-code
+# fixes: zero individual rule PREDICATE/THRESHOLD/THRESHOLD_SRC field
+# characters move (the declared prose already read the corrected
+# population), the same shape as the 2.0 bump's own (α)/(β) widening --
+# R-BUCKET-SPAN's `inputs` gains one `excluded` entry. Q4's collapse
+# (six duplicate `rank` metric rows -> one per cell, for the four
+# failure-population quantities, before any reducer runs) moves a
+# verdict's "over N value(s)" population on unchanged inputs (MEASURED
+# identity check: P5.a's median would still read 0 either way -- the
+# collapse does not itself change a verdict, but the REDUCED POPULATION
+# a reader is told about does, which is the Q2 bar). F13's companion
+# check refuses the `median` reducer on a failure quantity at load
+# time. R-ARM-2 is a new rule (MINOR on its own -- additive, F9's
+# existence rule over an arm pair one of whose arms refused to
+# compile). Q1's did-not-fire REASON channel (F1/F2, `no_fire_reasons`,
+# optional, §8(6)-reviewed) is additive. F27 re-anchors
+# `check_stated_utc` to the report's own included population (code
+# only, no rule field moves, but it changes what the check REFUSES) and
+# adds the unconditional anchor-identity line. `INTERPRET_VERSION`
+# takes its FIRST bump alongside (r7ver-3, interpret.py). 32 rules (was
+# 31); `catalogue/fixtures/fixtures.toml` gains report_d (the R-ARM-2
+# witness, pin 35e1ab1) and the F27 fixture pair
+# (predictions-utc-{before,after}.tsv, checked directly in
+# check_interpret.py section 1 on the inexpressible-quantities
+# precedent). Every committed sidecar regenerated in this wave.
 #
 # 2.0 (2026-09-17, lane b47subgrain, Frank's ELEVEN §6 rulings on
 # docs/design/interpret_subject_grain_v1.md, ratified in full):

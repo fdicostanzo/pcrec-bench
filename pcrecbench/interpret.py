@@ -51,7 +51,16 @@ import sys
 import tomllib
 from collections import defaultdict
 
-INTERPRET_VERSION = "v1"
+# r7ver-3 (docs/design/predicate_audit_v1.md §6.05, ratified 2026-09-19):
+# this stamp's FIRST bump since it was introduced -- it never moved
+# across catalogue 1.0 through 2.0, even though several of those
+# changes (F7's future fix, this wave's F3/F11/F27) are CODE-ONLY and
+# move what a sidecar renders with no catalogue field text changing at
+# all, so `catalogue_version` moving is not, by itself, a signal a
+# reader can trace to interpret.py's actual code. Bump this whenever a
+# pure code change alters what a sidecar renders, independent of
+# whether catalogue_version also moves.
+INTERPRET_VERSION = "v2"
 
 # The report TSV's 18 data columns (report.py `render_tsv`'s own
 # `header` list). Read from the source at load time by
