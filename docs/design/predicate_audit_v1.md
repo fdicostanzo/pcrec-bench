@@ -1327,13 +1327,23 @@ the panel should rule with both stated, per the full argument in F27's
 §4 entry. No escape hatch: a `--no-check-utc` flag on the one check that
 keeps a prediction honest is the wrong thing to add.
 
-**DEFERRED 2026-09-19 (Frank, live): "I'll revisit this question later."**
-Presented with both risks and the manager's fold-in (an unconditional
-rendered line naming the anchor actually used, whichever anchor is
-ruled). Until ruled: CLI prediction scoring stays blocked (the ext-roster
-file's clauses stay hand-scored in ledgers, stated as such), and the fix
-wave HOLDS rather than splitting into two MAJOR bumps — one catalogue
-bump, one sidecar regen, when F27's ruling lands.
+**DEFERRED 2026-09-19 (Frank, live), then RULED YES the same morning**
+after a background walkthrough (the §6.5 history: the global anchor was
+itself the I-58 honesty fix; F27 is what it broke). Ruling: the
+OD-B15-scoped anchor as recommended (r7code-1's corrected join, the
+signature change), PLUS the manager's fold-in adopted — an
+UNCONDITIONAL rendered line naming the anchor actually used (which
+records, which timestamp), so every scoring run states what the check
+did and did not prove. Both risks (r7ver-7, r7pop-4) stand recorded as
+bounds on what the check proves, not as blockers; Frank's observation
+of record: the check guards against its own author — accepted as the
+design's shape (pre-registration discipline: it makes honesty checkable
+and drift detectable across sessions; it never claimed to restrain a
+determined author, per §6.5's own residual paragraph). The
+predictions-file-selector-derived anchor alternative stays in the
+design space, unruled, needing its own fix-shape pass if ever wanted.
+[B56] UNBLOCKS with this ruling; `interpreter_v1.md` §6.5's revision
+(r7ver-8) rides the wave.
 
 **Q8. F26 — emit the `did_not_compile` rows for a pattern that reached no
 ranking group?** *Recommend YES*, in the same reporter wave as F10. It is
