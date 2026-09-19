@@ -488,6 +488,99 @@ on the known gate defect.
   No ledger was written for this group (owed to the morning read lane
   per this lane's brief).
 
+**[B57] reports (2026-09-19, lane b57rustwindow) ADDED one file group —
+`rust-default`'s (the twelfth [B7] roster engine, `testees/rust/`) FIRST
+PINNED SAMPLE on `bench/capability@0.1`** — and changed NOTHING else
+here: the reporter is unchanged at `v18 (2026-09-18)`, no other
+committed report was regenerated. `rust-default` is this report's ONLY
+roster member (`--testee rust_1.13.1_default-caps-simdna` alone, no
+pcre2/pcrec baseline arm) — DELIBERATE, not an oversight: F27's
+re-anchored `check_stated_utc` (`docs/design/predicate_audit_v1.md`)
+scopes its anchor to the (subbench, version, testee_id, machine_id)
+tuples the report actually INCLUDES, so a second, already-measured
+testee in the roster would pull an OLDER anchor in and refuse this
+report's own pre-run predictions file. Window:
+`build/windows/window_capability_rustfirst_20260919T173348Z.log`
+(17:33:48-17:49:34 EDT, one cell, `measured` at attempt 1 rc=0), store
+180 → 181. A duplicate `run_window.sh` launch (this lane's own retry
+after a shell-output display glitch made a real first launch look
+failed) was caught running concurrently within seconds — killed by
+verified PID/cwd before it wrote anything (it was still in its
+quiet-gate retry backoff, having read the FIRST launch's own CPU usage
+on the target core as `NOT QUIET`) — so exactly one record exists for
+this cell, not two.
+
+The MATRIX surface is where this window's compile-outcome split is
+actually legible: `render_tsv`'s own `did_not_compile` section is
+STRUCTURALLY BLIND here (documented in `docs/dev/predictions/CLAUDE.md`'s
+own entry for this window's predictions file) — with `rust-default` as
+the sole roster member, none of its refused patterns has another testee
+ranking it, so no ranking group exists for that section to attach a
+bullet to. The `--format matrix` surface has no such gap (F26-immune by
+construction): it reads **22 `unsup` + 1 `refused` + 2 `wrong` + 39
+compiled-and-clean** across the 64-pattern corpus — the pre-compile
+capability policy (`pcrecbench/capability.py`) intercepts 22 patterns
+BEFORE the driver ever sees them (`unsupported-by-declaration`, never a
+raw compiler refusal), and only `mojibake-curly-quote` (the one
+requires-tag rust-default declares SATISFIED, per `testees/rust/
+CLAUDE.md`'s I-72-adjacent finding) reaches the driver and refuses for
+real. This 22+1=23 split does NOT match the r1131 census's raw
+"22 refused" count one-for-one by SET — the census bypasses the
+capability policy and calls the driver directly, so a pattern whose
+compile-time policy withholds a token the driver would otherwise accept
+syntactically (the same shape `possessive-quantifier`'s `a++` finding
+already names) can show `unsup` here while reading `COMPILED` in the raw
+census; not re-derived by this lane beyond the count, flagged as a
+finding for the next reader who wants the exact set difference.
+
+Predictions (`docs/dev/predictions/capability-0.1-rust-first.tsv`,
+committed BEFORE the run): **3 parents / 5 clauses, 3/3 CONFIRMED, 0
+refuted, 0 not-evaluable** — the first sidecar ever scored through F27's
+re-anchored `check_stated_utc` on a population with no prior sample at
+all (`docs/dev/predictions/capability-0.1-ext-roster.tsv`'s own
+second-sample case exercised the SAME fix; this is the "population
+literally never measured before" case the fix's own design note names
+as still vacuous-anchor territory, and it scores clean here on the
+non-vacuous branch instead — the anchor read `capability@0.1: anchor
+2026-09-19T21:34:23Z, over 1 (testee_id, machine_id) tuple(s)`, this
+record's own timestamp, safely after the file's `2026-09-19T21:32:08Z`
+`stated_utc`). P1 (`high-byte-run`'s exact wrong-count, `n_wrong eq 10`)
+confirmed exactly: the crate's default Unicode mode makes `\x80-\xff` a
+Unicode-scalar-value class matched against its UTF-8 ENCODING (the
+r1131 census's own discrimination witness), so of the pattern's two
+should-match subjects, `nu-high-byte` (two raw bytes that never decode)
+and `nu-lead-with-cont` (one valid codepoint, short of the pattern's
+`{2,4}` repeat minimum) both read NOMATCH against the oracle's MATCH —
+2 subjects × 5 trials. P2.a/.b/.c (the family-11 semantics-divergence
+trio, `n_wrong eq 0` each) confirmed: rust-regex's `MatchKind::
+LeftmostFirst` is hardcoded, not merely defaulted, so the convention
+matches the oracle's own. P3 (`evil-alt-nested`, `n_wrong gt 0`)
+confirmed at `n_wrong = 10`: the SAME family-10 non-backtracking-
+automaton shape `docs/dev/predictions/capability-0.1-ext-roster.tsv`'s
+P9.a documents `re2-default` independently wrong on — and, since this
+driver structurally never emits a `giveup:` code
+(`testees/rust/CLAUDE.md`), the disagreement could only ever render as
+`n_wrong`, never `n_gave_up`. Sidecar determinism-checked (a second,
+independent `interpret --render` invocation diffs byte-identical against
+the committed file).
+
+- `2026-09-19-capability-0.1-budu-ryzen1600-rust-first-cf0962e3.md` —
+  `rust-default`'s first pinned sample on `bench/capability@0.1`. Query:
+  `report --subbench capability --version 0.1 --testee
+  rust_1.13.1_default-caps-simdna --format md` — **1 record(s) matching
+  this query, 1 included, 0 superseded**. `worst_other_core_busy: 42.61%`
+  (`rust_1.13.1_default-caps-simdna` / `keyword-prefix-order` /
+  `large-subject-throughput`). `.tsv`/`.subject-grain.tsv`/`.matrix.tsv`/
+  `.matrix.html` siblings all rendered the same query;
+  `.interpretation.md` scored against
+  `docs/dev/predictions/capability-0.1-rust-first.tsv` as described
+  above. `cf0962e3` in the filename names the bench's own pcrec-pin
+  checkpoint at authoring time, per this directory's own precedent for a
+  non-pcrec-roster window (the ext-first/ext-second groups above) — no
+  pcrec testee appears in this report's roster. No ledger was written for
+  this single-cell group (the predictions file above and this entry carry
+  the reading).
+
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
 CLS-FOLD AFTER** — and changed NOTHING else here: the reporter is
