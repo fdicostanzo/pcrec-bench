@@ -4831,3 +4831,29 @@ ext-bench testees across six engines.
 - Gate: check-interpret 150/150 at the window merge (grew by the new
   sidecar). All three of the session's lanes merged, worktrees and
   branches cleaned, no agents live.
+
+## 2026-09-19 (morning) — twenty-seventh session: Frank's ruling morning — the predicate-audit wave chartered, built and merged in hours; I-75 battery running
+
+- Frank live, one question at a time: Q2 RULED as MAJOR under his own
+  reframing (§3.3 amended: MAJOR = emitted facts not comparable across
+  the boundary; MINOR = additive — an appended column the canonical
+  case); F27 first DEFERRED, then RULED YES after a full §6.5-history
+  background walkthrough (the global anchor was itself the I-58 honesty
+  fix; F27 is what it broke) — the OD-B15-scoped anchor + the
+  unconditional anchor-identity line; his cookie-jar observation (the
+  check guards against its own author) answered as pre-registration
+  discipline and recorded in the note; Q4 RULED yes-as-recommended
+  (collapse + F13's reducer refusal together); R-ARM-2 RULED yes with
+  both panel conditions. [B56] chartered → lane b56fixwave → all ten
+  items delivered → reviewed (prose fields read, R-ARM-2's form-less
+  join key honest) → MERGED b5a63a7 with the section-6 approval line.
+  Catalogue 3.0, INTERPRET_VERSION v2, 155/155 · 25/25 · 217/67.
+- The acceptance witness closed the loop the audit opened: the
+  ext-roster predictions file — refused by the old anchor on every
+  second sample — now CLI-scores clean, and the machine reproduces the
+  ext-second ledger's hand-derived P2.a/P2.b CONFIRMED exactly.
+- Meanwhile I-75 (pcrecdev1's full-battery executor request) runs:
+  launched 08:45:42 EDT at pcrec main 923a5a58 after the handshake
+  (their "before your evening regen" note was stale — regen done
+  overnight); test/strict green, axes stage grinding at last poll.
+  Done-signal owed at the trailer.
