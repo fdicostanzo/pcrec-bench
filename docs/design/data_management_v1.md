@@ -1058,6 +1058,9 @@ demand, no back-fill" ruling declined ~240 MiB of committed TSV *and*
 for the newest group's slice, §4.3's trigger 4 (any group > 25 MB) is
 the one to watch.
 
+**RULED 2026-09-19 (Frank, live): OK** — no separate growth ruling;
+trigger 4 covers the slice.
+
 ---
 
 **Q11. Is `docs/design/data_management_v1.md` the right home for this,
