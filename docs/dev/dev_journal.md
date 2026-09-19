@@ -4929,3 +4929,33 @@ ext-bench testees across six engines.
   objects had accrued since its measurement).
 - Lanes l6brust/l6brustfin closed; worktrees/branches cleaned; master
   pushed at d4123a7.
+
+## 2026-09-19 (night) — twenty-seventh session close: rust-default's first pinned sample — today's whole ruling stack exercised end to end, 5/5 confirmed
+
+- b57rustwindow MERGED (afc90f0): one cell, capability@0.1 ×
+  rust-default, attempt-1 measured, agree, store 181 records. THE
+  FIRST WINDOW THROUGH EVERYTHING RULED TODAY, all firing correctly in
+  production: the predictions file committed BEFORE the run
+  (stated_utc 21:32:08Z, before the 21:33:48Z launch), KB-23's
+  sentinel's first real line (`WINDOW_RUN_COMPLETE cells=1/1`), F27's
+  anchor-identity line printed and quoted ("anchor 2026-09-19T21:34:23Z,
+  over 1 (testee_id, machine_id) tuple(s) this report includes"), and
+  the CLI scoring 5/5 clauses CONFIRMED — including high-byte-run at
+  n_wrong=10 EXACTLY as derived in advance from the
+  encodings-not-bytes caveat, the pre-registration discipline doing
+  what it exists to do. Gates at merge: check-interpret 156/156 (grew
+  by the new sidecar), check-schema 5/73/0, index 181 verified.
+- Lane incidents, both honestly named in its report: a duplicate
+  window launch self-caught within seconds (the second still inside
+  its quiet-gate backoff, killed by verified PID, one record exists),
+  and its own ~30-min monitoring gap (the recurring
+  background-wait-without-foreground-fallback lane failure mode —
+  third instance in two nights; a candidate BOILERPLATE.md rule for
+  the next session: lanes foreground short post-run steps).
+- OWED (recorded in reports/CLAUDE.md by the lane): the matrix
+  compile-census decomposition vs the raw r1131 census at
+  pattern-name level (the pre-compile capability policy intercepts
+  patterns the driver-only census never reaches).
+- Worktree/branch cleaned; master pushed at afc90f0. SESSION ENDS
+  HERE at Frank's word ("end naturally") — close-out routine run,
+  wake.md rewritten, heartbeat deleted, no agents live.
