@@ -878,6 +878,9 @@ sidecars stamp its sha256) and `bench/*/` (authored-and-checked, so an
 old `@0.1` set is kept forever as the BEFORE of every cross-version
 reading).
 
+**RULED 2026-09-19 (Frank, live): YES** — §4.1-4.2's taxonomy is
+declared project policy, both judgment calls as stated.
+
 ---
 
 **Q2. Make `git gc` routine — after every report-regeneration wave and
