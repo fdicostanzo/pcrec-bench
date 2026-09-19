@@ -958,6 +958,61 @@ def r_arm_1(view, ctx):
     return out
 
 
+def r_arm_2(view, ctx):
+    """F9 (docs/design/predicate_audit_v1.md, ratified 2026-09-19 as
+    R-ARM-2): the strongest possible arm difference R-ARM-1 cannot see
+    -- one arm ranked, its one-config-token-apart sibling refused to
+    compile the SAME pattern outright. Exactly what the deny-flag
+    testees ([B32]'s -fno-scan-edge, [B37]'s -fno-alt-island, [B39]'s
+    -fno-cls-fold) exist to measure. A `did_not_compile` row carries no
+    `form` (§0 fact 3), so the join key is (pattern, regime) only."""
+    median = {}
+    groups_rank = defaultdict(list)
+    for r in view.rows("rank", metric="median_ns"):
+        k = (r["pattern"], r["regime_or_na"], r["form"], r["testee"])
+        median[k] = float(r["value"])
+        groups_rank[(r["pattern"], r["regime_or_na"])].append(k)
+    refused = defaultdict(list)
+    for r in view.rows("did_not_compile"):
+        refused[(r["pattern"], r["regime_or_na"])].append(
+            (r["testee"], r["gave_up_summary"]))
+    token_names = ("mode", "caps", "simd", "extra")
+    out = []
+    for (pattern, regime), cells in sorted(groups_rank.items()):
+        for k in sorted(cells):
+            form, t_ranked = k[2], k[3]
+            if is_reference(t_ranked):
+                continue
+            p_ranked = split_testee(t_ranked)
+            if not p_ranked:
+                continue
+            for t_refused, diag in sorted(refused.get((pattern, regime), [])):
+                if t_refused == t_ranked or is_reference(t_refused):
+                    continue
+                p_refused = split_testee(t_refused)
+                if not p_refused:
+                    continue
+                if p_ranked[0] != p_refused[0] or p_ranked[1] != p_refused[1]:
+                    continue                   # same engine and pin
+                diff = [i for i in range(4) if p_ranked[2 + i] != p_refused[2 + i]]
+                if len(diff) != 1:
+                    continue
+                i = diff[0]
+                c_ranked, c_refused = config_of(t_ranked), config_of(t_refused)
+                out.append(fire(
+                    {"pattern": pattern, "regime": regime, "form": form,
+                     "pin": p_ranked[1], "config_ranked": c_ranked,
+                     "median": fmt_ns(median[k]), "config_refused": c_refused,
+                     "diagnostic": diag,
+                     "token_name": token_names[i],
+                     "token_ranked": p_ranked[2 + i],
+                     "token_refused": p_refused[2 + i],
+                     "arm_pair": " vs ".join(sorted([c_ranked, c_refused]))},
+                    pattern=pattern, regime=regime, form=form,
+                    testee=t_ranked))
+    return out
+
+
 # ---- R-FLOOR ---------------------------------------------------------
 
 def r_floor_1(view, ctx):

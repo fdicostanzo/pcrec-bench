@@ -1,0 +1,93 @@
+# reporter: v18 (2026-09-18); filters: subbench=loglines, version=0.1, until=2026-08-29T00:00:00Z; source: store/index.tsv (6 record(s) matching this query); records: 6; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.3; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.1-1.3 X13 (both samples quiet) on 6; mixed_x13: False; include_provenance: False; worst_other_core_busy: n/a; floor_pattern: floor
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						loglines@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260828T150051Z				agreement	n/a (v1.3)						
+record						loglines@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260828T150950Z				agreement	n/a (v1.3)						
+record						loglines@0.1__pcrec_35e1ab1_auto-caps-simdna__budu-ryzen1600__20260828T151853Z				agreement	n/a (v1.3)						
+record						loglines@0.1__pcrec_35e1ab1_auto-nocaps-simdna__budu-ryzen1600__20260828T152628Z				agreement	n/a (v1.3)						
+record						loglines@0.1__pcrec_35e1ab1_vm-caps-simdna__budu-ryzen1600__20260828T153358Z				agreement	n/a (v1.3)						
+record						loglines@0.1__pcrec_35e1ab1_vm-in-caps-simdna__budu-ryzen1600__20260828T154234Z				agreement	n/a (v1.3)						
+baseline	level-context	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	3007462.035461	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	3005594.684397	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	3008854.953901	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	stddev_ns	1126.090127	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	ratio_vs_baseline	0.503337	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	median_ns	5975042.250000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	min_ns	5956976.901163	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	max_ns	6029793.686047	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	stddev_ns	29563.454170	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	2	ratio_vs_best	1.986739	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	3	median_ns	40904695.550000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	3	min_ns	40835680.650000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	3	max_ns	41100963.750000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	3	stddev_ns	93277.140244	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	3	ratio_vs_baseline	6.845926	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-caps-simdna	measured	pinned	3	ratio_vs_best	13.601068	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	4	median_ns	40939738.450000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	4	min_ns	40844702.850000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	4	max_ns	41000054.900000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	4	stddev_ns	53596.339153	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	4	ratio_vs_baseline	6.851791	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_35e1ab1_vm-in-caps-simdna	measured	pinned	4	ratio_vs_best	13.612720	12	1.0000	0	0		
+not_ranked	level-context	(set)	large-subject-throughput			pcrec_35e1ab1_auto-caps-simdna	did-not-compile									pcrec: pattern too complex for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0)	
+did_not_compile	level-context	(set)	large-subject-throughput			pcrec_35e1ab1_auto-nocaps-simdna	did-not-compile									pcrec: pattern too complex for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0)	
+compile_stamp						libpcre2_10.46_interp-caps-simdna				engine	-						
+compile_stamp						libpcre2_10.46_interp-caps-simdna				entry	plain entry						
+compile_stamp						libpcre2_10.46_interp-caps-simdna				prefilter	-						
+compile_stamp						libpcre2_10.46_interp-caps-simdna				vm_rungs	-						
+compile_stamp						libpcre2_10.46_interp-caps-simdna				buffers	n/s						
+compile_stamp						libpcre2_10.46_interp-caps-simdna				frame	n/s						
+compile	level-context			plain	same program	libpcre2_10.46_interp-caps-simdna				median_total_ns	11240.000000	5					
+compile	level-context			plain	same program	libpcre2_10.46_interp-caps-simdna				jitter	timer-floor						
+compile	level-context			plain	same program	libpcre2_10.46_interp-caps-simdna				artifact_bytes	305						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				engine	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				entry	plain entry						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				prefilter	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				vm_rungs	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				buffers	n/s						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				frame	n/s						
+compile	level-context			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	21960.000000	5					
+compile	level-context			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	level-context			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	305						
+compile_stamp						pcrec_35e1ab1_auto-caps-simdna				engine	dfa						
+compile_stamp						pcrec_35e1ab1_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_35e1ab1_auto-caps-simdna				prefilter	-						
+compile_stamp						pcrec_35e1ab1_auto-caps-simdna				vm_rungs	-						
+compile_stamp						pcrec_35e1ab1_auto-caps-simdna				buffers	0 (DFA)						
+compile_stamp						pcrec_35e1ab1_auto-caps-simdna				frame	0 (DFA)						
+compile	level-context			plain	same program	pcrec_35e1ab1_auto-caps-simdna				median_total_ns		1					
+compile	level-context			whole-subject	separate artifact	pcrec_35e1ab1_auto-caps-simdna				median_total_ns		1					
+compile_stamp						pcrec_35e1ab1_auto-nocaps-simdna				engine	dfa						
+compile_stamp						pcrec_35e1ab1_auto-nocaps-simdna				entry	plain entry						
+compile_stamp						pcrec_35e1ab1_auto-nocaps-simdna				prefilter	-						
+compile_stamp						pcrec_35e1ab1_auto-nocaps-simdna				vm_rungs	-						
+compile_stamp						pcrec_35e1ab1_auto-nocaps-simdna				buffers	0 (DFA)						
+compile_stamp						pcrec_35e1ab1_auto-nocaps-simdna				frame	0 (DFA)						
+compile	level-context			plain	same program	pcrec_35e1ab1_auto-nocaps-simdna				median_total_ns		1					
+compile	level-context			whole-subject	separate artifact	pcrec_35e1ab1_auto-nocaps-simdna				median_total_ns		1					
+compile_stamp						pcrec_35e1ab1_vm-caps-simdna				engine	vm						
+compile_stamp						pcrec_35e1ab1_vm-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_35e1ab1_vm-caps-simdna				prefilter	none						
+compile_stamp						pcrec_35e1ab1_vm-caps-simdna				vm_rungs	PCREC_VM_RUNG_CURSOR						
+compile_stamp						pcrec_35e1ab1_vm-caps-simdna				buffers	2/2 (stamped default)						
+compile_stamp						pcrec_35e1ab1_vm-caps-simdna				frame	24						
+compile	level-context			plain	same program	pcrec_35e1ab1_vm-caps-simdna				median_total_ns	209997479.000000	5					
+compile	level-context			plain	same program	pcrec_35e1ab1_vm-caps-simdna				jitter	0.034						
+compile	level-context			plain	same program	pcrec_35e1ab1_vm-caps-simdna				artifact_bytes	21728						
+compile	level-context			whole-subject	separate artifact	pcrec_35e1ab1_vm-caps-simdna				median_total_ns	221348044.000000	5					
+compile	level-context			whole-subject	separate artifact	pcrec_35e1ab1_vm-caps-simdna				jitter	0.022						
+compile	level-context			whole-subject	separate artifact	pcrec_35e1ab1_vm-caps-simdna				artifact_bytes	21728						
+compile_stamp						pcrec_35e1ab1_vm-in-caps-simdna				engine	vm						
+compile_stamp						pcrec_35e1ab1_vm-in-caps-simdna				entry	_in						
+compile_stamp						pcrec_35e1ab1_vm-in-caps-simdna				prefilter	none						
+compile_stamp						pcrec_35e1ab1_vm-in-caps-simdna				vm_rungs	PCREC_VM_RUNG_CURSOR						
+compile_stamp						pcrec_35e1ab1_vm-in-caps-simdna				buffers	32768/131072 (caller-provided)						
+compile_stamp						pcrec_35e1ab1_vm-in-caps-simdna				frame	24						
+compile	level-context			plain	same program	pcrec_35e1ab1_vm-in-caps-simdna				median_total_ns	218592385.000000	5					
+compile	level-context			plain	same program	pcrec_35e1ab1_vm-in-caps-simdna				jitter	0.020						
+compile	level-context			plain	same program	pcrec_35e1ab1_vm-in-caps-simdna				artifact_bytes	21728						
+compile	level-context			whole-subject	separate artifact	pcrec_35e1ab1_vm-in-caps-simdna				median_total_ns	218846727.000000	5					
+compile	level-context			whole-subject	separate artifact	pcrec_35e1ab1_vm-in-caps-simdna				jitter	0.023						
+compile	level-context			whole-subject	separate artifact	pcrec_35e1ab1_vm-in-caps-simdna				artifact_bytes	21728						

@@ -22,6 +22,10 @@
 report_a = "reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.tsv"
 report_b = "reports/2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.tsv"
 report_c = "reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv"
+# R-ARM-2 (F9)'s own real witness: the pin 35e1ab1 first sample, where
+# `level-context` ranks under `vm-caps-simdna` and did-not-compile under
+# `auto-caps-simdna` -- one config token apart, at large-subject-throughput.
+report_d = "reports/2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.tsv"
 index    = "catalogue/golden/index@2026-09-09.tsv"
 predictions = "docs/dev/predictions/syntax-0.1-first.tsv"
 
@@ -305,6 +309,20 @@ report = "a"
 select = { pattern = "orig", regime_or_na = "short-subject-search", testee = ["pcrec_692c2e8_vm-caps-simdna", "pcrec_692c2e8_vm-in-caps-simdna"] }
 mutate = { column = "value", value = "28996.905722", where = { section = "rank", metric = "median_ns", testee = "pcrec_692c2e8_vm-in-caps-simdna" } }
 expect_not = ["R-ARM-1"]
+
+[[fixture]]
+name   = "R-ARM-2__vm-ranked-auto-refused"
+report = "d"
+select = { pattern = "level-context", regime_or_na = "large-subject-throughput" }
+expect = ["R-ARM-2"]
+
+[[fixture]]
+name   = "R-ARM-2__control-refusal-elsewhere"
+base   = "R-ARM-2__vm-ranked-auto-refused"
+report = "d"
+select = { pattern = "level-context", regime_or_na = "large-subject-throughput" }
+mutate = { column = "section", value = "not_ranked", where = { testee = "pcrec_35e1ab1_auto-caps-simdna", section = "did_not_compile" } }
+expect_not = ["R-ARM-2"]
 
 # ----------------------------------------------------------- R-FLOOR --
 

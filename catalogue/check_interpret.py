@@ -79,11 +79,11 @@ def section_1(cat):
     ok(1, f"catalogue {cat['catalogue_version']} loads with "
           f"{len(cat['rule'])} rules and every load-time check green")
 
-    if len(cat["rule"]) != 31:
-        bad(1, "the catalogue carries 31 rules",
+    if len(cat["rule"]) != 32:
+        bad(1, "the catalogue carries 32 rules",
             f"found {len(cat['rule'])}")
     else:
-        ok(1, "31 rules in 7 classes")
+        ok(1, "32 rules in 7 classes")
     classes = {r["class"] for r in cat["rule"]}
     if classes != {"status", "delta", "rank", "arm", "floor", "pred",
                    "bucket"}:
@@ -425,22 +425,22 @@ def section_4(cat):
               f"compound `selection changed (vm → dfa); now measured (was: "
               f"gave-up)` verdict")
 
-    # the NULL CONTROL: all 31 rules quiet on the synthetic clean report
+    # the NULL CONTROL: all 32 rules quiet on the synthetic clean report
     clean = facts_by_name.get("CLEAN__all-measured")
     if clean is None:
         bad(4, "the null control runs")
     else:
         fired = {rid for rid, seqs in _fired(clean).items() if seqs}
         if fired:
-            bad(4, "Report D (the null control): all 31 rules report fired=0",
+            bad(4, "Report D (the null control): all 32 rules report fired=0",
                 f"{sorted(fired)} fired")
         else:
             n = len(_tokens(clean))
-            if n != 31:
-                bad(4, "Report D names all 31 rules", f"named {n}")
+            if n != 32:
+                bad(4, "Report D names all 32 rules", f"named {n}")
             else:
-                ok(4, "Report D (the null control): all 31 rules report "
-                      "fired=0, and all 31 are named")
+                ok(4, "Report D (the null control): all 32 rules report "
+                      "fired=0, and all 32 are named")
 
 
 _FILE_COLUMNS = {"report.tsv": I.REPORT_COLUMNS,

@@ -805,6 +805,52 @@ pin 692c2e8: orig / short-subject-search / plain, `vm-in-caps-simdna`
 12,546.2 ns vs `vm-caps-simdna` 28,996.9 ns -- ×2.31, spread 862.2 ns.
 """
 
+[[rule]]
+id            = "R-ARM-2"
+title         = "two arms one config token apart, one refused"
+class         = "arm"
+since         = "3.0"
+grain         = ["set"]
+aggregate     = []
+inputs        = [
+  "report:rank?metric=median_ns.{pattern,regime_or_na,form,testee,value}",
+  "report:did_not_compile.{pattern,regime_or_na,testee,gave_up_summary}",
+]
+predicate     = """
+A testee ranked on a pattern/regime, and a second testee -- neither the
+reference arm, both at the same engine and pin, config decomposing to
+four tokens differing in exactly ONE -- that did NOT compile the SAME
+pattern at all. The strongest possible arm difference: R-ARM-1 requires
+both arms to have a `rank` row, so it cannot see this shape, and it is
+exactly what the deny-flag testees ([B32]/[B37]/[B39]) exist to
+measure.
+"""
+threshold     = "none of this rule's own -- an EXISTENCE rule"
+threshold_src = """
+The testee-id decomposition is R-ARM-1's own (record_schema.md §6.4),
+applied to a `rank` row and a `did_not_compile` row instead of two
+`rank` rows. A `did_not_compile` row carries no `form` (§0 fact 3 of
+docs/design/predicate_audit_v1.md), so the join key is (pattern,
+regime) only -- narrower than R-ARM-1's (pattern, regime, form), which
+this rule cannot avoid without inventing a form the refused artifact
+never had.
+"""
+slots         = ["pattern", "regime", "form", "pin", "config_ranked", "median", "config_refused", "diagnostic", "token_name", "token_ranked", "token_refused", "arm_pair"]
+arith         = [
+  "testee_id -> (engine, version_slug, mode, caps, simd, extra): the SAME decomposition R-ARM-1 uses",
+  "arm_pair: the two config slugs sorted and joined with ' vs ' -- an aggregation key, not a rendered slot",
+]
+template      = "{pattern} / {regime} / {form}, pin {pin}: `{config_ranked}` ranks (median {median} ns) while `{config_refused}` — one config token apart ({token_name}: {token_ranked} vs {token_refused}) — did not compile: {diagnostic}"
+no_fire       = "no two arms one config token apart, at the same engine and pin, have one ranked and the other refused to compile"
+links         = []
+example       = """
+reports/2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.tsv,
+pin 35e1ab1: level-context / large-subject-throughput, `vm-caps-simdna`
+ranks (median 40,904,695.6 ns) while `auto-caps-simdna` -- one token
+apart (mode: vm vs auto) -- did not compile: pcrec: pattern too complex
+for the DFA engine (>32000 states; try --engine=vm) (pattern offset 0).
+"""
+
 # ====================================================== class R-FLOOR ==
 
 [[rule]]
