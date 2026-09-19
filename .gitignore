@@ -7,6 +7,14 @@ worktrees/
 # Build products of testee adapters and vendored engines.
 build/
 testees/pcrec/build/
+# rust-regex adapter ([B7]/L6b, lane l6brust): cargo's own default output
+# dir, hit only by the ONE-TIME manual `cargo build --release` that
+# generates Cargo.lock (testees/rust/CLAUDE.md's install plan) -- every
+# OTHER build the adapter itself runs already passes --target-dir into
+# the harness's own workdir (already gitignored via build/ above).
+# Cargo.lock ITSELF is NOT ignored -- it is the crate's committed pin
+# (inbox I-76).
+testees/rust/target/
 # GENERATED sub-bench subject trees: reproduced byte for byte by the
 # generators next to them, pinned by the COMMITTED manifests (harness
 # contract 2). Committing a megabyte of 'a' would be committing a

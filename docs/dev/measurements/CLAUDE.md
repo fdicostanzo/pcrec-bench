@@ -344,6 +344,25 @@ Maintenance: update this file when files are added/removed or change role.
   cross-referenced against each pattern's own `requires-*` tags. Runs
   from the repo root; needs the `vectorscan` adapter (built on demand,
   needs `libvectorscan-dev`).
+- `probe_rust_capability_census.py` — ([B7]/L6b, lane `l6brust`,
+  2026-09-19) the rust-regex ADAPTER'S capability witness census,
+  mandatory before `bench/capability/gen_patterns.py`'s
+  `EXT_BENCH_ROSTER` declares anything for `rust-default` — AUTHORED,
+  **NOT YET RUN** (pcrec's I-75 battery held the box for cargo/rustup
+  the whole of this lane's session; see `testees/rust/CLAUDE.md` and
+  `docs/dev/lanes/l6brust_report.md`). Same shape as the other three L6b
+  censuses (one witness per `REQUIRES_VOCAB` token, all 64
+  `bench/capability` + 95 `bench/syntax` corpus patterns through the
+  real adapter) plus a fourth pass this lane's own reasoning motivated:
+  `census_nonutf8_discrimination()`, a real MATCH (not compile-only) run
+  of two candidate high-byte patterns against a raw-byte subject and a
+  UTF-8-encoded-codepoint subject, to settle whether `regex::bytes`'s
+  default `unicode(true)` mode makes `\xHH`/`[\x80-\xff]` match a raw
+  byte or that byte's UTF-8 ENCODING — an open question no prior L6b
+  census needed to ask (RE2/Oniguruma both have an unconditional
+  byte-vs-Unicode encoding SWITCH; the `regex` crate's is scoped
+  per-expression via `(?-u:...)`, coexisting with `\p{L}` elsewhere in
+  the same pattern, which the two probed spellings test for).
 - `2026-09-17-vectorscan-capability-witness-census-5.4.11.txt` — its
   archive: 5 of 17 REQUIRES tokens SATISFIED (the narrowest on the
   roster) — `unicode-properties`, `named-groups`, `free-spacing`,
