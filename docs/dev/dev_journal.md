@@ -4797,3 +4797,37 @@ ext-bench testees across six engines.
 - The [B52] matrix-standard arc is COMPLETE end to end: ruling →
   reporter v18 → HTML generator → baseline-identity fact → full
   back-fill, all in one session.
+
+## 2026-09-19 (overnight) — twenty-sixth session (part 3): the ext-second window MEASURED and READ; TRE's gap is settled behavior
+
+- b54extwindow ran the ledger §8 item-2 window (re2-default /
+  tre-default / vectorscan-block-nosom × capability@0.1, pinned tier):
+  3/3 cells attempt-1 rc=0 (14/19/20 min), store 178→181, the
+  ext-second report group at v18 with matrix siblings, sidecar
+  determinism-checked. Merged adef560.
+- THE ANSWER: TRE 0.9.0's high-byte-run correctness gap REPRODUCES
+  BYTE-IDENTICAL one day apart — throughput pass_rate 0.0000 /
+  search 0.4800 in both samples, the same n_wrong to the trial, the
+  same three-pattern did-not-compile set; re2/vectorscan clean both
+  samples. Settled TRE behavior, filed as upstream_findings.md U6
+  (never a pcrec inbox item — other-engine findings stay here).
+- b55extread wrote the ledger
+  (docs/dev/ledgers/2026-09-19-capability-0.1-ext-second-cf0962e3.md,
+  merged db3f52c): every number re-verified against the TSVs, the
+  predictions section explicitly UNSCORED pending F27 (the ext-roster
+  file's P2.a/P2.b would score CONFIRMED by hand — shown, not
+  back-written), and §8 item 3 closed by doc check: -17:retry IS
+  Oniguruma's ONIGERR_RETRY_LIMIT_IN_MATCH_OVER, cited from the
+  committed testees/onig sources. No new outbox item.
+- Window incidents, all resolved in-lane: the fresh worktree's
+  missing gitignored subject trees (first launch: 3× rc=1 in 76 s;
+  the sanctioned generator bootstrap fixed it), KB-23 FILED (the
+  WINDOW_RUN_COMPLETE sentinel fires over all-refused cells — a
+  shape ruling wanted before patching), and the lane's repeated
+  background-wait stalls (three manager nudges; the lane also caught
+  and reverted its own accidental main-checkout edit). Wake queue
+  item 3's reproduction half is CLOSED; the scoring half stays open
+  on F27.
+- Gate: check-interpret 150/150 at the window merge (grew by the new
+  sidecar). All three of the session's lanes merged, worktrees and
+  branches cleaned, no agents live.
