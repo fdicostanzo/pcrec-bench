@@ -1033,3 +1033,21 @@ regeneration, self-consistent but wrong) is exactly what KB-18's
 `reports/CLAUDE.md` lesson ("a legitimate class the classifier missed")
 warns a next wave to check for, and this KB is that warning's second
 instance in as many waves.
+
+## KB-23 (2026-09-19, OPEN) — `scripts/run_window.sh` prints `WINDOW_RUN_COMPLETE` after every cell failed at setup; the sentinel means "control flow reached the end", not "cells succeeded"
+
+Found on b54extwindow's first launch (2026-09-19 ~02:40Z, the worktree
+missing its gitignored subject trees): all three cells exited rc=1
+inside one second each — a setup refusal, nothing measured — and the
+script still ran its end-of-window sidecar regeneration and printed
+`WINDOW_RUN_COMPLETE`, the same sentinel a fully-measured window
+prints. A watcher (human, lane, or script) keying on the sentinel alone
+reads a totally-failed window as done; the truth was only in the
+per-cell `attempt 1 rc=1` lines. The manager caught it from outside by
+the 76-second wall time.
+
+The fix wants a ruling on shape, not just a patch: either a distinct
+terminal line (`WINDOW_RUN_COMPLETE cells=<measured>/<attempted>` with
+a nonzero exit when measured=0), or refusing to print the sentinel at
+all when no cell wrote a record. Until then: never judge a window by
+its sentinel; read the per-cell rc lines.
