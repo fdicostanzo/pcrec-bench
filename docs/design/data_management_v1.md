@@ -916,6 +916,16 @@ a rewrite would invalidate citations we could not then repair. §3.4's
 shallow/partial clone gets the same benefit with none of the cost, if a
 trigger ever fires.
 
+**RULED 2026-09-19 (Frank, live): YES** — history is never rewritten,
+for any reason including size. Frank's follow-up question answered for
+the record: a committed-then-deleted large file DOES remain in local
+history forever (the blob stays reachable from every historical commit;
+gc never touches reachable objects) and IS copied into every ordinary
+clone; only shallow (`--depth`) or partial (`--filter=blob:none`)
+clones avoid transferring it, clone-side, and only the now-forbidden
+history rewrite removes it at origin. Hence pre-commit size discipline
+(Q4) is the one cheap point of control.
+
 ---
 
 **Q4. Confirm that compressing the committed store is OFF the table —
