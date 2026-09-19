@@ -262,6 +262,45 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
      has the exact selectors that were tried and the specific rows they
      failed to find.
 
+- `capability-0.1-rust-first.tsv` — lane `b57rustwindow`, 2026-09-19: the
+  predictions for `rust-default`'s (the twelfth [B7] roster engine,
+  `testees/rust/`) FIRST SAMPLE on `bench/capability@0.1`, authored
+  before the window from committed knowledge only: the r1131 witness
+  census (`docs/dev/measurements/2026-09-19-rust-capability-census-
+  r1131.txt`), `testees/rust/CLAUDE.md`'s semantic findings (the
+  non-utf8-subject Unicode-scalar-vs-raw-byte discrimination, the
+  independently-reproduced hardcoded `MatchKind::LeftmostFirst`, the
+  structural "`giveup:<code>` never fires" guarantee), and a direct read
+  of `bench/capability/expectations.tsv` for `high-byte-run`'s two
+  should-match subjects. **5 clause rows over 3 parents**: P1
+  (`high-byte-run`'s exact wrong-count, derived from which of its two
+  should-match subjects fail to produce a valid Unicode-scalar decode
+  under the crate's default unicode mode — `nu-high-byte`'s two raw
+  bytes never decode at all, `nu-lead-with-cont`'s one valid codepoint
+  can't satisfy the pattern's `{2,4}` repeat minimum), P2.a/.b/.c (the
+  family-11 semantics-divergence trio staying CLEAN, since rust-regex's
+  leftmost-first convention is hardcoded rather than merely configured,
+  matching the oracle's own convention), P3 (`evil-alt-nested` disagrees
+  on at least one subject, the family-10 non-backtracking-automaton
+  shape `docs/dev/predictions/capability-0.1-ext-roster.tsv`'s P9.a
+  documents for `re2-default` — and, since this adapter's own CLAUDE.md
+  states plainly that this driver never emits a `giveup:` code, the
+  disagreement, if any, can ONLY be a wrong answer, never a give-up).
+  **Deliberately DROPPED, same "must not happen" reasoning as
+  `capability-0.1-ext-roster.tsv`'s three dropped clauses above**: any
+  `section=did_not_compile` exhaustive-set clause for the 22-pattern
+  refusal population the r1131 census names — with `--testee
+  rust-default` as the report's ONLY roster member (required to keep
+  `check_stated_utc`'s F27 re-anchor scoped to `rust-default`'s own
+  first-ever timestamp rather than an older testee's history, since this
+  IS the first-ever sample for this testee), every one of those 22
+  patterns has NO OTHER testee ranking it in the query, so no ranking
+  group exists and `render_tsv`'s `did_not_compile` section is
+  structurally blind to all of them (the exact gap b51preds's finding 2
+  names) — the `--format matrix` sibling (F26-immune by construction)
+  is the one surface that shows this census, but `interpret` does not
+  read the matrix format, so it carries no scorable clause here.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before
