@@ -1038,6 +1038,12 @@ the one risk in this note that can put a wrong number in a report. §5.3
 writes the five invariants down now so that if the trigger fires, the
 lane starts from them rather than inventing them under pressure.
 
+**HELD OPEN 2026-09-19 (Frank, live): "same as previous question —
+decide when we get there"** — same posture as Q6: deliberately unruled
+until Q5's >100-record-query trigger fires; §5.3's five invariants and
+the prototype numbers stand as that future decision's inputs. Nothing
+is chartered now.
+
 ---
 
 **Q10. Does the subject-grain slice need a growth ruling of its own?**
