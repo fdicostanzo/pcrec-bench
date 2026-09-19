@@ -961,6 +961,9 @@ cache; pack > 500 MB (48.39 MiB today) → examine clone options; any
 single report group > 25 MB (8.11 MB today) → revisit the subject-grain
 slice.
 
+**RULED 2026-09-19 (Frank, live): YES** — the four consequence-shaped
+triggers stand as stated.
+
 ---
 
 **Q6. When the archive tier is eventually built, which form — an
