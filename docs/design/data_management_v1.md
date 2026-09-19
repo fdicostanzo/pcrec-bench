@@ -980,6 +980,13 @@ and every addition to a cohort re-blobs the whole thing (§2.2's trap in
 its worst form). The tarball's one advantage is that a reviewer can see
 one file rather than a branch, which does not outweigh it.
 
+**HELD OPEN 2026-09-19 (Frank, live): "let's hold this question open
+and review when we get there"** — deliberately unruled until Q5's
+working-tree trigger (> 5 GB) actually fires; the recommendation above
+(and the clone caveat stated at presentation: the branch form still
+rides in every full clone — it shrinks the checkout and master's tree,
+not the pack) stand as the inputs to that future review.
+
 ---
 
 **Q7. Does an archived record's absence from a report's query REFUSE the
