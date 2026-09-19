@@ -458,7 +458,21 @@ docs/dev/'s append-only records.
   recommended HELD behind a trigger, not built. No served database: Frank
   ruled that posture out.
 
-- `predicate_audit_v1.md` — **THE PREDICATE AUDIT, at v1.1** (2026-09-18,
+- `predicate_audit_v1.md` — **THE PREDICATE AUDIT, at v1.1, RULED AND
+  ITS FIX WAVE IMPLEMENTED 2026-09-19** (lane `b56fixwave`, `[B56]`):
+  Frank's live rulings on §7 Q1/Q2/Q4/Q7 and F9 are BUILT — catalogue
+  **3.0** (F3/F11's shared-code population fixes, Q4's six-row collapse
+  + F13's companion check, R-ARM-2, Q1's `no_fire_reasons` channel,
+  F27's re-anchored `check_stated_utc` + the unconditional
+  anchor-identity line, one MAJOR bump under the Q2-reframed
+  `interpreter_v1.md` §3.3), `INTERPRET_VERSION` v1 → v2, every golden
+  fact and committed sidecar regenerated, `make check-interpret`
+  150 → 155 (0 failed both sides), `acceptance_10.py` 25/25; the CLI now
+  reproduces `docs/dev/ledgers/2026-09-19-capability-0.1-ext-second-
+  cf0962e3.md`'s hand-derived P2.a/P2.b `confirmed` verdicts by
+  machine. Findings outside this wave's charter (F4, F6-F8, F10,
+  F14-F26 except F9, and Q3/Q5/Q6/Q8/Q9) remain PROPOSED, unbuilt. What
+  follows is preserved as it stood when ruled (2026-09-18/19,
   lane `lane/r7consol`, the R7 D6 panel:
   `../dev/reviews/2026-09-18-r7-predicate-audit.md`, 17 findings across
   three lenses — population semantics, catalogue/interpreter versioning,
