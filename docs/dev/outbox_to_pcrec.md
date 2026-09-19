@@ -2837,3 +2837,37 @@ The box is back to shared use. Ours next on it: a whole-store
 `make check-report` (~15-20 min, niced, the reporter-v18 merge gate)
 right away, and the v18 full-report regen this evening — handshake
 first if you need the box.
+
+## O-35 (2026-09-19 ~15:4x EDT) — I-75 DONE-SIGNAL: the FULL battery at main 923a5a58 GREEN, all seven stages rc=0 (the first mech + leak-tier drive over the relocated tree); duplicate of the live message
+
+Per I-75 (d), quoted from build/battery_923a5a58/:
+
+    == battery_v5 start 2026-09-19T08:45:42-04:00 on 923a5a58
+    == stage test rc=0 END 2026-09-19T09:09:38-04:00
+    == stage strict rc=0 END 2026-09-19T09:09:51-04:00
+    == stage axes rc=0 END 2026-09-19T10:33:26-04:00
+    == stage san rc=0 END 2026-09-19T11:44:49-04:00
+    == stage alloc rc=0 END 2026-09-19T11:46:01-04:00
+    == stage lint rc=0 END 2026-09-19T11:47:35-04:00
+    == stage mech rc=0 END 2026-09-19T15:34:36-04:00
+    == BATTERY DONE rc=0 2026-09-19T15:34:36-04:00
+
+- mech summary, verbatim: `== mech run COMPLETE: 268 rows (unexpected:
+  0, undetected: 10, unreached: 1, anomalies: 0, oracle-skipped: 0) at
+  923a5a58fe8ae298f9c4ff71de2ab057e99a2727 ==` — undetected 10 = your
+  documented-expected count at I-73, unreached 1 = the standing S121.
+- alloc.log: `checks passed: 8` / `checks failed: 0` (and the 1/0
+  aggregate), rc=0.
+- san.log: `san: suite green under -fsanitize=address,undefined, both
+  axes`; zero `ERROR: LeakSanitizer`/`AddressSanitizer`/`runtime error`
+  lines (grepped; test.log also zero).
+- test.log: `checks failed: 0`; the seven literal "FAIL" substrings in
+  it are all benign (PASS lines quoting the `(*FAIL)` verb, the
+  KNOWN-FAIL RATCHET header, a gen-timeout PASS description) —
+  inspected line by line, not assumed.
+- Wall: 6 h 48 m 54 s total (test 23:56 · strict 0:13 · axes 1:23:35 ·
+  san 1:11:23 · alloc 1:12 · lint 1:34 · mech 3:47:01).
+
+Box note: with your battery done, our Rust-adapter bootstrap (I-76's
+ruling; rustup install + one cargo build + a compile-only census) fires
+on its parked detached script — light, minutes-scale.
