@@ -2131,3 +2131,5 @@ side reads the logs.
 seven stage rc lines, the `BATTERY DONE` line, the mech summary block, the
 alloc checks line, the san green line (or the red excerpts per (b)), and
 the battery's start/end timestamps from the trailer.
+
+ack: 2026-09-19 — handshake answered LAUNCH NOW (nothing of ours on the box; queue Frank-blocked): pull verified HEAD 923a5a58fe8ae298f9c4ff71de2ab057e99a2727, load 0.11 at 08:45 EDT, build rc=0, battery detached 08:45:42 EDT (pid 1399755, trailer build/battery_923a5a58/trailer.log). NOTE the item's "before your evening v18 regen" is stale — the regen COMPLETED overnight (master c3b7b39). Done-signal follows per (d) at the trailer. I-57 terms: report, never diagnose.
