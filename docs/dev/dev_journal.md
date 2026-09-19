@@ -4857,3 +4857,42 @@ ext-bench testees across six engines.
   (their "before your evening regen" note was stale — regen done
   overnight); test/strict green, axes stage grinding at last poll.
   Done-signal owed at the trailer.
+
+## 2026-09-19 (midday) — twenty-seventh session (part 2): the ruling backlog CLEARED — data management dispositioned, KB-23 fixed, Rust unparked
+
+- The eleven data-management rulings, one at a time (Frank live; each
+  recorded inline in docs/design/data_management_v1.md under its
+  question, the status header rewritten): Q1 taxonomy YES; Q2 routine
+  gc YES ("only because making it periodic would be more work" — his
+  reasoning kept verbatim); Q3 no-history-rewrite YES, with his
+  clone-mechanics question answered for the record (a deleted large
+  file persists in history and every full clone; only shallow/partial
+  clones avoid the transfer; only the now-forbidden rewrite removes
+  it); Q4 store compression OFF THE TABLE; Q5 the four
+  consequence-shaped triggers YES; Q6 archive-tier form HELD OPEN at
+  its trigger; Q7 archived-absence REFUSES by name; Q8 failed-gate
+  cohort KEPT (no cull exists as policy); Q9 SQLite cache HELD OPEN at
+  its trigger; Q10 no slice-specific ruling (trigger 4 covers it); Q11
+  right home, no retroactive panel — Q6/Q9 get D6 panels when their
+  triggers fire.
+- KB-23 FIXED at Frank's shape (a): WINDOW_RUN_COMPLETE
+  cells=<written>/<attempted>, exit 5 on 0/N (run_window.sh; bash -n
+  clean; no consumer keyed on the bare sentinel).
+- The Rust adapter's "Frank's cargo line" blocker was MIS-ATTRIBUTED
+  (Frank: "I've never held such a concern") — corrected in plan.md;
+  pcrecdev1 ruled the toolchain within the hour (I-76: rustup stable
+  pinned at charter, crates.io + committed Cargo.lock, home-only,
+  watch disk). Lane l6brust AUTHORED the full adapter same session
+  (native Rust driver, regex::bytes, \A..\z wrap argued over the
+  shared helper, thread-timeout over signal; the I-72 witness
+  PREDICTED to refuse — pattern-vs-haystack UTF-8 constraints differ);
+  build/census runs via its detached post-battery script; branch held
+  UNMERGED deliberately (check-harness red until the driver builds); a
+  follow-up lane finishes from the census.
+- I-75 battery meanwhile: test/strict/axes green, san running since
+  10:33. Done-signal owed at the trailer.
+- NOTHING NOW AWAITS FRANK — the queue's blocked list emptied today:
+  predicate audit (all ruled, [B56] shipped), data management (all
+  dispositioned), KB-23 (fixed), Rust (unparked). Remaining work is
+  execution: the battery done-signal, l6brust's build half, the owed
+  full make check, and the parked small items.
