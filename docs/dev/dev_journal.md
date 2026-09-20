@@ -5014,3 +5014,15 @@ ext-bench testees across six engines.
   (the BOILERPLATE foreground-fallback rule) closed earlier tonight.
 - Battery meanwhile: stage test running since 21:38:52, load ~7-8 as
   expected; watcher armed.
+
+## 2026-09-19 (late night) — I-77 battery interim: axes stage RED (rc=2), reported
+
+- Battery at 25b1984f: test rc=0 (24 min), strict rc=0, axes rc=2 at
+  23:26 EDT (4987s wall). The six failing lines, all one axis and one
+  file: `--engine=dfa` (§2.11) UNDOCUMENTED refusal ">32000 states"
+  at tests/base/opt41_rung_nullable_decline.rxt:41-46 — the witness
+  corpus NEW in this pin (named in I-77 itself). Everything else in
+  the tail OK (all five --tune positions, all four vm-entry-shape
+  rungs, DIAL-S3, oracle cross-check 0-failure). Reported verbatim to
+  pcrecdev1 live per I-57 (report, never diagnose); battery left
+  running (san in progress); full done-signal owed at the trailer.
