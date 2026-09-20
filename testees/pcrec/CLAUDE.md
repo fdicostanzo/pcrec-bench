@@ -1864,3 +1864,105 @@ advisory warning. The control's auto arm moved `wb-512` → `w-1024`
 refusal-boundary re-derivation belongs to the next altwide window,
 not this re-pin. Catalogue **1.4** (`[[pin_order]]` append:
 `cf0962e3`). Sixteen pinned configs, unchanged.
+
+**Re-pin at 25b1984f (abi 27) — 2026-09-20, lane b58repin (inbox I-77
+(1), the [EMIT-VERB]/D112 pin).** The pin advances cf0962e3 → 25b1984f
+carrying pcrec's [EMIT-VERB] change: emitted comments are OFF BY
+DEFAULT (only the provenance line, now naming the abi, and the
+`rx_info` ABI-block doc-comments survive); `-fcomments` restores the
+full set, `-fno-comments` is the explicit default spelling, both
+ordinary `axes.def` rows (D111: `axes.def` is now the ONE source
+`--list-axes` reads). Also in this pin, landing in the same 332-commit
+range: [REVW.4] (a CLI/config refactor pcrec states carries "no
+surface change" for CLI diagnostics — true of wording, not of every
+registry surface, below) and a new witness corpus
+(`tests/base/opt41_rung_nullable_decline.rxt`).
+
+**Registries.** `struct rx_info` is BYTE-IDENTICAL (diffed field for
+field on the plain `abc` witness): the shim floor STAYS 16. Three of
+the four surfaces move, all EXPLAINED by name, none silently absorbed:
+
+- `list_axes.tsv`: 78/27 → **80/28**. TWO rows added, a new `comments`
+  axis exactly matching I-77's own description — order 1
+  `essential-only` (`PCREC_NO_COMMENTS`, deny bit 26, `-fno-comments`,
+  THE DEFAULT) and order 2 `full` (`PCREC_FORCE_COMMENTS`, force bit
+  27, `-fcomments`). Every other row byte-identical (one PROSE-ONLY
+  edit inside pcrec's own header comment, `src/parse/axes_dump.c` →
+  `src/dump/axes_dump.c` — the unrelated [REVW.3] dump-tier file move,
+  not a machine-read column).
+- `list_limits.tsv`: 57 → **58**. ONE row added, `PCREC_SIZE_TERM_BAR`
+  (75, unit `percent`, kind `selection knee`, override `none`) —
+  traced to pcrec commit `0b16b98c` ([REVW.4] item 1/F2), NOT
+  [EMIT-VERB]: an already-live `#define SIZE_TERM_BAR_DEFAULT 75`
+  (beside its one reader in `src/core/compile.c`) given a `limits.def`
+  row so `--list-limits` reports it — pcrec's own commit message: "no
+  value moved, no compile behaves differently, and what changed is
+  that `--list-limits` now reports it," corroborated by its own
+  `emit_sweep.py` self-check (0 movers at full corpus reach). `percent`
+  also joins `limits.def`'s unit vocabulary as its first ratio-shaped
+  unit.
+- `list_definitions.tsv`: 50 rows, BYTE-IDENTICAL — the tenth pin
+  running.
+- `list_schema.tsv`: 71 rows, BYTE-IDENTICAL (the `config tune`
+  directive [B45] added at cf0962e3 is unmoved).
+
+**Size books: PROVEN UNCHANGED, not merely re-derived.** `emit_bytes` /
+`emit_code_bytes` (`adapter.emit_size()`, the port of pcrec's own
+comment-EXCLUDED `emit_size_measure`) were ALREADY a comment-excluded
+metric at every prior pin, so the ~36% raw-source shrink [EMIT-VERB]
+makes corpus-wide does not reach this project's size books at all —
+MEASURED directly on four witness kinds (`foo|bar` forced-VM, `@`
+plain DFA, `a(b|c)+d` VM hybrid, `[a-z]{0,64}` two-scan-edge-machine
+DFA): `emit_size()` reads IDENTICAL totals at cf0962e3 and 25b1984f on
+every one, while the RAW `.c`+`.h` byte count drops 34-38% (consistent
+with pcrec's own -36.3% corpus figure). The compiled OBJECT is
+byte-identical too: a `gcc -O2 -std=gnu11 -fPIC -shared` build of
+`shim.c` over both comment styles of the `foo|bar` forced-VM witness
+produces `.so` files that agree on every section (`.rodata`, `.data`,
+`.symtab`, `.strtab`, `.dynsym`, `.dynstr`, `.comment`) with the SOLE
+difference being one byte inside `.text` — the `abi` literal embedded
+in a returned constant (`b81a000000` → `b81b000000`, 26 → 27, same
+instruction length), which is the ordinary, expected consequence of
+ANY re-pin and orthogonal to [EMIT-VERB]. `tools/selfcheck.py`'s
+existing size-book constants (`B42_STARTPOS_GUARD_LINES`,
+`B45_RX_TUNE_STAMP_LINE`, `B42_PORTFIX_SEMI_PER_MACHINE`) therefore
+need NO new term at this pin — confirmed live: `bounded/cls-upto-64`'s
+plain form (a witness with exactly this shape) measured
+`emit_bytes=16750` through the real harness, matching
+`16558 + B42_STARTPOS_GUARD_LINES(161) + B45_RX_TUNE_STAMP_LINE(27) +
+2*B42_PORTFIX_SEMI_PER_MACHINE(2)` to the byte.
+
+**The comment-text-grep hit list, and the fix.** Two probes in this
+project read emitted COMMENT TEXT pcrec no longer writes by default,
+neither with a stamp replacement: `adapter.py`'s `SCAN_EDGE_MARKER`
+(`b"[OPT-5] SCAN EDGE:"`, the [B32] `scan_edges`/`scan_edges_match`
+covariate — MEASURED: 2 → 0 occurrences on the `[a-z]{0,64}` witness
+under the new default) and `tools/selfcheck.py`'s `"NO RESUME FRAME AT
+ALL"` grep control on `RX_VM_FRAMELESS` (MEASURED: present → absent on
+a forced-VM `foo|bar` witness). Neither has a pcrec integer-count
+stamp to move to (`RX_DFA_SCAN_EDGE` is one SHAPE token per artifact,
+not a count — see `scan_edge_counts()`'s own docstring for why that
+matters). **Fix**: `EMIT_COMMENTS_FLAG = "-fcomments"` is now a FIXED
+PROTOCOL TOKEN on every phase-1 `pcrec` exec (`adapter.py`, beside
+`-p`/`rx`, never inside `cfg["flags"]`), restoring exactly the prior
+comment behaviour. Proven inert on every measured quantity (the object
+and size-book identity above), and invisible in testee identity by
+construction: `build_flags`'s "pcrec flags" clause renders
+`cfg["flags"]` only (the same reason `-p`/`-o`/`--` never appear
+there), so `-fcomments` never reaches `config_extra`, `testee_id` or
+`runtime_options`. Verified end to end via `quick` on
+`bounded/cls-upto-64`: `scan_edges=1`, `scan_edges_match=1` (the
+pre-pin value), `build_flags` carries no `-fcomments` clause.
+
+**Grep census (the full hit list, step 5 of the ritual).** Searched
+`pcrecbench/`, `testees/`, `tools/`, `catalogue/`, `schema/`, `bench/`
+for emitted-comment-text dependence: the two hits above are the
+COMPLETE set — no other check, probe or generator in this project
+greps pcrec's emitted `.c`/`.h` for comment prose (`RX_ENGINE`-style
+`#define` stamps and `rx_info` field reads, which this project depends
+on far more heavily, are CODE, not comments, and are untouched by
+[EMIT-VERB] by construction).
+
+Catalogue **3.1** (`[[pin_order]]` append: `25b1984f`, MINOR — no
+rule predicate/threshold/inputs/slots moved). Sixteen pinned configs,
+unchanged.

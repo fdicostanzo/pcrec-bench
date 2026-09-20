@@ -3,19 +3,33 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-cf0962e3/build/pcrec --list-limits
+#     build/pcrec-25b1984f/build/pcrec --list-limits
 #
-# pcrec commit cf0962e3e455bc55587c238ec92aab9e7e82177b (rx_info.abi 26 --
-# see list_axes.tsv's header), archived 2026-09-17 by the manager
-# ([B42]-tail re-pin, inbox I-73: the dial+K59 checkpoint pin a770139e ->
-# cf0962e3). 57 data rows / 7 columns (name, value, unit, kind, override,
-# anchor, desc) -- one row per numeric limit in pcrec src/core/limits.def,
-# in the table's own order. BYTE-IDENTICAL to the a770139e copy below the
-# header (diffed line for line): no limit moved at this pin -- the
-# [OPT-DIAL] dial and K59's premul rung introduced no new numeric limit
-# (the dial's own knees, if any, are not in limits.def). The a770139e
-# copy's header (git history) carries the last delta narrative
-# (PCREC_STARTPOS_GUARD_TEXT_MAX, [K50]).
+# pcrec commit 25b1984f5f4a491471a91fe1b09cbcd60a42980f (rx_info.abi 27 --
+# see list_axes.tsv's header), archived 2026-09-20 by lane b58repin
+# ([B58], inbox I-77 (1): the [EMIT-VERB]/D112 pin cf0962e3 -> 25b1984f).
+# 58 data rows / 7 columns (name, value, unit, kind, override, anchor,
+# desc) -- one row per numeric limit in pcrec src/core/limits.def, in
+# the table's own order. ONE ROW ADDED vs the cf0962e3 copy (57 -> 58):
+# PCREC_SIZE_TERM_BAR (75, unit "percent", kind "selection knee",
+# override "none"), inserted immediately after PCREC_SIZE_TERM_THRESHOLD.
+# This is NOT part of [EMIT-VERB]/D112 -- it is [REVW.4] item 1 (F2,
+# pcrec commit 0b16b98c, landing in the same 332-commit pin range),
+# a pure REGISTRY-SURFACE move: the materiality bar was already a live
+# `#define SIZE_TERM_BAR_DEFAULT 75` beside its one reader in
+# src/core/compile.c, now given a limits.def row so `--list-limits`
+# reports it. Verified directly against pcrec's own commit message
+# ("no value moved, no compile behaves differently, and what changed is
+# that `--list-limits` now reports it") and its own emit_sweep.py
+# self-check (0 movers, 0 asymmetric over the full corpus at both
+# points) -- EXPLAINED, not absorbed silently; "percent" also joins
+# limits.def's unit vocabulary as the table's first ratio-shaped unit
+# (this dump's own header comment, below, is UNCHANGED: the CLI's
+# prose predates the vocabulary extension and does not enumerate units).
+# Every OTHER row is BYTE-IDENTICAL to the cf0962e3 copy below the
+# header (diffed line for line). The cf0962e3 copy's header (git
+# history) carries the last delta narrative (no limit moved at that
+# pin).
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.
@@ -67,6 +81,7 @@ PCREC_MAX_VM_EMIT_CODE_BYTES	500000	bytes	size cap	-D	8	[ART-SIZE]/D84: emitted 
 PCREC_DEFAULT_WARN_EMIT_BYTES	250000	bytes	size cap	-D	8	[OPT-4]: the advisory --warn-emit-bytes default (never refuses, 0 disables) ALSO settable per-compile; -D moves the built-in default
 PCREC_MAX_EMIT_BYTES	1000000	bytes	size cap	-D	8	[ART-SIZE]/D84: the whole comment-excluded artifact; --max-emit-bytes ALSO raises it per-compile (raise-only); -D moves the built-in default
 PCREC_SIZE_TERM_THRESHOLD	120000	bytes	selection knee	-D		[ART-SIZE]: the emitted-size knee above which the unroll-K size term evaluates the ladder at all
+PCREC_SIZE_TERM_BAR	75	percent	selection knee	none		[ART-SIZE]: the unroll-K ladder's MATERIALITY BAR -- a smaller K ships only if its artifact is at most this percent of the default K's bytes
 VM_DEFAULT_STEP_BUDGET	500000000	steps	runtime capacity	flag	3.1	D51: default backtrack-resumption budget; --step-budget=N overrides per compile
 VM_DEFAULT_WORK_BUDGET	1000000000	work-units	runtime capacity	flag	3.1	D49: default forward-only-work budget, a separate counter from steps; --work-budget=N overrides
 VM_DEFAULT_RESUME_FRAMES	2048	frames	runtime capacity	flag	3.2	D73: default resume-stack capacity for the UNBOUNDED-depth class; --backtrack-frames=N overrides

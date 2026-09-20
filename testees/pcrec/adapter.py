@@ -1785,6 +1785,31 @@ def emit_size(paths):
     return tot, (tot - tables if tot > tables else 0)
 
 
+#: [B58] EMIT_COMMENTS_FLAG. Since pcrec 25b1984f (abi 27, [EMIT-VERB]/
+#: D112) emitted comments are OFF BY DEFAULT -- only the essential
+#: provenance line and the rx_info ABI block survive; `-fcomments`
+#: restores the full set. This adapter passes it as a FIXED PROTOCOL
+#: TOKEN on every phase-1 exec (alongside `-p rx`, never inside
+#: `cfg["flags"]`), for one reason: SCAN_EDGE_MARKER below and
+#: tools/selfcheck.py's `NO RESUME FRAME AT ALL` grep both read comment
+#: TEXT pcrec no longer emits by default, and pcrec has no integer-count
+#: stamp that would let scan_edge_counts() count `iso-ts`'s edges apart
+#: from `ipv6`'s (RX_DFA_SCAN_EDGE is one SHAPE token per artifact, not
+#: a count -- see that function's own docstring). MEASURED at the
+#: re-pin: `-fcomments` changes no answer, no object byte (a `foo|bar`
+#: forced-VM witness: identical .so, sha256-verified) and no
+#: comment-excluded `emit_bytes`/`emit_code_bytes` (both are already a
+#: comment-EXCLUDED measure, at this pin as at every earlier one -- I-77
+#: (1)'s own claim, reproduced here on four artifact kinds) -- so
+#: forcing it on is provably a no-op on every quantity this project
+#: measures, and keeps `build_flags`'s "pcrec flags" clause (which
+#: renders `cfg["flags"]` only, never the fixed protocol tokens `-p`/
+#: `-o`/`--`) exactly as it read before this pin. Omitted from
+#: `cfg["flags"]`/`config_extra`/`runtime_options` on purpose: it is
+#: harness instrumentation, not a testee-identity axis, and giving it
+#: one would falsely suggest two artifacts differ.
+EMIT_COMMENTS_FLAG = "-fcomments"
+
 #: [B32] THE SCAN-EDGE MARKER. pcrec's emitter writes one comment block
 #: beside every scan edge it emits -- once per edge per MACHINE, which its
 #: own comment bounds at twelve per artifact (src/gen/emit_dfa.c,
@@ -2966,7 +2991,8 @@ class Adapter(_ad.Adapter):
             # 0x93). pcrec then correctly matched the corrupted pattern,
             # which read as a wrong answer on the bench's raw-high-byte
             # witnesses (the capability first sample's F4, O-31).
-            argv = ([pcrec, "-p", "rx"] + list(cfg.get("flags", []))
+            argv = ([pcrec, "-p", "rx", EMIT_COMMENTS_FLAG]
+                    + list(cfg.get("flags", []))
                     + ["-o", art_c, "--"] + [bytes(pattern)])
             t0 = time.monotonic()
             proc = subprocess.run(argv, capture_output=True, env=C_ENV,
