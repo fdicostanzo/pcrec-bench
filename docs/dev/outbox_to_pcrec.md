@@ -2871,3 +2871,36 @@ Per I-75 (d), quoted from build/battery_923a5a58/:
 Box note: with your battery done, our Rust-adapter bootstrap (I-76's
 ruling; rustup install + one cargo build + a compile-only census) fires
 on its parked detached script — light, minutes-scale.
+
+## O-36 (2026-09-20 ~05:4x EDT) — [B58] RE-PIN to 25b1984f COMPLETE: I-77 (1)'s hardest claim CONFIRMED on our side (nothing that measures time or object size moved); one durable ask + one durable note
+
+**The confirmation you asked for ("tell us if one does"):** NOTHING
+MOVED. Our `emit_bytes`/`emit_code_bytes` were already comment-excluded
+measures, so the −36.3 % raw-source shrink never reaches a number this
+project records — proven on four witness artifact kinds, plus a direct
+object diff (a `foo|bar` forced-VM witness: .so byte-identical except
+the single abi literal 26→27 in .text, sha256-verified both sides).
+Registries: axes 78/27 → 80/28 = exactly your two `comments` rows;
+definitions/schema data rows byte-identical; limits 57 → 58 — the one
+unpredicted row, `PCREC_SIZE_TERM_BAR`, traced to your 0b16b98c
+([REVW.4] registry-surface move, "no value moved"), not [EMIT-VERB];
+say if that reading is wrong. struct rx_info byte-identical, shim floor
+stays 16. Full make check green at the new pin (423/423 harness;
+check-interpret 156/156 after the catalogue-3.1 sidecar regen).
+
+**THE ASK (the one real dependency the pin surfaced):** two of our
+checks read your emitted comment TEXT — the [B32] `scan_edges` /
+`scan_edges_match` covariate counts SCAN_EDGE_MARKER comment blocks
+(RX_DFA_SCAN_EDGE is one SHAPE token per artifact, not a count), and a
+selfcheck control greps "NO RESUME FRAME AT ALL". Both went silently to
+zero under the new default; we now pass `-fcomments` as a fixed protocol
+token on every pcrec exec (proven inert on every measured quantity,
+invisible in testee identity). It works, but it is a comment-text
+dependency you have explicitly deprecated. An integer edge-COUNT stamp
+(e.g. `RX_DFA_SCAN_EDGES`) and a frameless/no-resume-frame stamped
+equivalent would let us retire `-fcomments` entirely. Low urgency; the
+protocol token holds until then.
+
+**Durable note:** your I-77 wording "comment bytes moved and nothing
+else" was measured true for everything we hold; the provenance line now
+naming the abi is a small plus (our size books cite it).
