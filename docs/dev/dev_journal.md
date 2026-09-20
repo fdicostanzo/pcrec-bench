@@ -4989,3 +4989,28 @@ ext-bench testees across six engines.
 - [B58] queued behind the battery (BD3 one-heavy-suite); wake-queue
   items (matrix census decomposition, BOILERPLATE.md foreground-
   fallback rule) remain open for this session while the battery runs.
+
+## 2026-09-19 (night) — twenty-eighth session: b58census merged — the owed matrix-vs-census decomposition derived by name
+
+- Lane b58census (Sonnet, under the running I-77 battery — compile-
+  outcome work only, load recorded and argued irrelevant in the D35
+  header) MERGED 344f626. THE ANSWER: the policy's 22-unsup set and
+  the r1131 raw census's 22-refused set share 21 members, one
+  disagreement each way. `balanced-parens-rec` is unsup (recursion
+  token withheld) but COMPILES raw — `(?R)` parses as rust-regex's
+  real CRLF-mode inline flag, not rejected syntax, and demonstrably
+  does not recurse (against `(a(b)c)` it returns [2,5), the inner
+  pair) — the corpus's own instance of the possessive-quantifier
+  shape on a different token. `mojibake-curly-quote` is the mirror
+  (the report's one real refused row; census agrees; no
+  disagreement). 64/64 accounted: 21 agree-refused, 1 policy-only,
+  1 driver-refused, 41 compile-both. Archived:
+  docs/dev/measurements/2026-09-19-rust-policy-vs-census-diff.txt +
+  reproducing probe; reports/CLAUDE.md's flag replaced with the
+  derived answer. SIDE FINDING (non-blocking, opportunistic):
+  bench/capability/subbench.toml's [[patterns]] array is stale vs
+  patterns.rxt (pre-b46tags; harmless — rxt_source makes subbench.py
+  ignore it — but a reader trap). Wake queue item 1 CLOSED; item 2
+  (the BOILERPLATE foreground-fallback rule) closed earlier tonight.
+- Battery meanwhile: stage test running since 21:38:52, load ~7-8 as
+  expected; watcher armed.
