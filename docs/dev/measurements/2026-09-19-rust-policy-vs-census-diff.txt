@@ -1,0 +1,256 @@
+# 2026-09-19-rust-policy-vs-census-diff.txt
+#
+# probe_rust_policy_vs_census_diff.py -- ([B58], lane b58census) THE
+# PATTERN-NAME-LEVEL RECONCILIATION of rust-default's capability@0.1
+# compile-outcome split, owed by reports/CLAUDE.md (~lines 505-535) and
+# wake queue item 1.
+#
+# WHAT THIS ANSWERS: the 2026-09-19 rust-first report's `--format matrix`
+# reads 22 unsup + 1 refused + 2 wrong + 39 compiled-and-clean over
+# capability@0.1's 64 patterns. The 22 "unsup" come from
+# `pcrecbench.capability`'s PRE-COMPILE policy (a pattern's REQUIRES
+# tokens not a subset of rust-default's declared capabilities ->
+# `unsupported-by-declaration`, decided BEFORE any compile -- the
+# pattern never reaches the driver). The SAME-DAY r1131 census
+# (`docs/dev/measurements/2026-09-19-rust-capability-census-r1131.txt`,
+# `probe_rust_capability_census.py`) calls the driver DIRECTLY on every
+# one of the 64 patterns, bypassing the policy entirely, and separately
+# reads "22/64 refused". The prior lane (b57rustwindow, reports/
+# CLAUDE.md) flagged that these two "22"s are not proof the two SETS
+# are the same and left the exact difference undetermined. This script
+# derives it BY NAME.
+#
+# Bench commit at run time: 83ecadcbc31112e5dc5a8b6c5d2d1959a190ef5e
+#   (lane b58census, worktree worktrees/b58census, branch lane/b58census)
+# Toolchain (already installed under $HOME/.cargo by lane l6brust/
+#   l6brustfin, 2026-09-19; this lane sourced $HOME/.cargo/env and
+#   rebuilt testees/rust/ with `cargo build --release --locked`, 8.67s,
+#   no source change from the committed Cargo.lock):
+#   rustc 1.98.1 (48a229cea 2026-09-01)
+#   cargo 1.98.1 (797e8a9bc 2026-08-05)
+#   regex 1.13.1 (Cargo.lock-pinned, unchanged)
+# Box: ubuntubudu, Linux 7.0.0-29-generic x86_64. Load at run time:
+#   loadavg 7.18 8.24 5.55 -- HIGH: pcrec's I-77 full-battery re-pin
+#   validation is running on this box tonight (~7h, per this lane's own
+#   brief). NOT GATED, and load does not matter here: this script is
+#   compile-outcome reconciliation over an ALREADY-ARCHIVED census file
+#   plus ONE live re-compile-and-match of a single small pattern
+#   (sub-millisecond regardless of box contention) -- no timing number
+#   in this file is a ranking input, and none is reported as a duration
+#   claim beyond the driver's own printed compile-time lines, kept for
+#   completeness of the verbatim block only.
+# Command: `python3 docs/dev/measurements/probe_rust_policy_vs_census_diff.py`
+#   from the repo root (this worktree).
+# Reproducible: the script is committed beside this file; deterministic
+#   except for the driver's own printed wall-clock compile durations
+#   (never compared against a threshold here). Needs the pinned rustc/
+#   cargo toolchain (testees/rust/CLAUDE.md) and the archived census file
+#   this script reads as its `census` input (parsed, not re-run).
+# NEVER a ranking input: no schema, no store/, no reporter. Scratch tier
+#   by construction (same discipline the r1131 census file states).
+#
+# ---------------------------------------------------------------------
+# HEADLINE FINDING
+# ---------------------------------------------------------------------
+# The two "22"s are ALMOST the same set, but not exactly: there is
+# exactly ONE pattern on each side that the other does not have.
+#
+#   - `balanced-parens-rec` is in the POLICY's 22-unsup set (its sole
+#     REQUIRES token, `recursion`, is withheld by rust-default's
+#     declaration) but the RAW CENSUS shows it COMPILES. Confirmed live
+#     below through the real `testees/rust/adapter.py` compile() path
+#     (not just re-reading the archived census's COMPILED/REFUSED
+#     line): the pattern is `\((?:[^()]|(?R))*\)`, and the mechanism is
+#     a genuine rust-regex GRAMMAR FACT, not a fluke or a driver bug --
+#     `(?R)` is not rejected syntax at all in this crate; `R` is one of
+#     the crate's OWN real inline flag letters (CRLF mode), so `(?R)`
+#     parses as an ordinary, valid, EMPTY flag-setting group (a
+#     zero-width atom that can legally appear as one alternative inside
+#     `(?:...)*`), and the pattern compiles clean. It does NOT implement
+#     recursion: matched against the nested subject `(a(b)c)`, a real
+#     recursive engine would match the WHOLE string [0,7); this driver's
+#     compiled regex instead matches ONLY the inner pair, `(b)` at
+#     [2,5) -- proof `(?R)` contributes nothing but a silent flag
+#     toggle. The WITNESS pattern the capability census uses to test the
+#     `recursion` token, `a(?R)?b`, happens to hit a DIFFERENT, genuinely
+#     refused shape for an unrelated reason: `(?R)?` directly quantifies
+#     the bare flag group with `?`, and a flag-only group is not a
+#     quantifiable atom in this grammar ("repetition operator missing
+#     expression") -- confirmed separately below: `(?R)` and `a(?R)`
+#     alone both compile; `(?R)*` and `(?R)?` both refuse with the same
+#     message, REGARDLESS of whether `(?R)` would otherwise do anything
+#     useful. `balanced-parens-rec`'s own quantifier is applied to the
+#     ENCLOSING `(?:...)*` group, never to `(?R)` directly, so it avoids
+#     the one shape the isolated witness happens to hit. Net: this is
+#     the corpus-level instance of the "syntax accepted but semantics
+#     wrong" class the task brief's `possessive-quantifier` precedent
+#     names -- a REAL corpus disagreement between "the token-level
+#     witness pattern refuses" and "the corpus pattern that motivated
+#     the token compiles to something silently unrelated to what its
+#     REQUIRES tag claims it needs" -- not a bug in the policy, the
+#     census, or the adapter; each is behaving exactly as designed on
+#     its own one-witness-per-token model, which cannot see a second
+#     spelling of the same construct behaving differently.
+#
+#   - `mojibake-curly-quote` is in the CENSUS's 22-refused set but NOT
+#     in the policy's 22-unsup set, because its sole REQUIRES token
+#     (`non-utf8-subject`) IS satisfied by rust-default's declaration --
+#     it reaches the driver in BOTH the policy path and the raw census,
+#     and refuses in both, for the SEPARATE, already-fully-documented
+#     I-72 pattern-source-UTF-8 reason (`testees/rust/CLAUDE.md`'s own
+#     "mojibake-curly-quote refuses ... the driver's own pre-regex-crate
+#     UTF-8 validation" section): a lone raw byte 0x93/0x94 in the
+#     PATTERN TEXT itself is not valid UTF-8, and `regex::bytes::
+#     RegexBuilder::new` takes `&str` for the pattern source (never
+#     `&[u8]`, unlike the haystack). This is the report's own "refused"
+#     row (matrix.tsv), not a second unsup row -- so it is not actually
+#     a set MISMATCH in the sense of an unexplained finding; it is the
+#     matrix correctly keeping this one pattern OUT of "unsup" (because
+#     its token is satisfied) while the raw census correctly marks it
+#     refused (because it fails for a real, different, off-vocabulary
+#     reason). No new finding here beyond confirming the accounting
+#     closes with zero unexplained patterns.
+#
+# Every one of the OTHER 21 policy-unsup patterns is corroborated
+# one-for-one by the raw census's own refused set (bucket 1 below) --
+# the two independently-computed 22-item sets share 21 members and
+# disagree on exactly one each.
+#
+# ---------------------------------------------------------------------
+# A SIDE FINDING, not asked for but load-bearing enough to record:
+# `bench/capability/subbench.toml`'s `[[patterns]]` array (the TOML
+# `tags` field) is STALE relative to `patterns.rxt` -- it predates the
+# b46tags "REQUIRES-tag correction wave" (bench/capability/NOTES.md,
+# 2026-09-17) and is missing `requires-backrefs` on `tag-depth3-bound`
+# entirely, plus five other `requires-*` tokens elsewhere (diffed
+# against a fresh `gen_patterns.py --sidecar` run, not shown here to
+# keep this file corpus-focused; reproducible with `python3
+# bench/capability/gen_patterns.py --sidecar | diff bench/capability/
+# subbench.toml -`). This is HARMLESS at runtime: `subbench.toml` sets
+# `rxt_source = "patterns.rxt"`, and `pcrecbench/subbench.py`'s loader
+# IGNORES THE `[[patterns]]` ARRAY OUTRIGHT once `rxt_source` is set
+# (confirmed by reading `Subbench.__init__` and by this script's own
+# `sb.rxt loaded: True` line below) -- so the real harness, and this
+# script, both read the CORRECT, CORRECTED tags from `patterns.rxt`.
+# It is a real trap for a HUMAN reader, though: reading `subbench.toml`
+# directly (as this lane's own first pass at this task did, with a bare
+# `tomllib.load`, before noticing the drift) gives a WRONG REQUIRES set
+# for six patterns, including wrongly concluding `tag-depth3-bound` is
+# never intercepted by the policy at all. Not filed as a bug (the
+# generator's own comment already documents the fix; only the
+# already-committed `subbench.toml` snapshot lags it) -- flagged here so
+# the next reader of `subbench.toml` does not repeat the mistake.
+#
+# ---------------------------------------------------------------------
+# VERBATIM STDOUT (rc=0)
+# ---------------------------------------------------------------------
+# sb.rxt loaded: True (rxt_source='patterns.rxt')
+# capabilities_for(rust-default) = captures, free-spacing, named-groups, non-utf8-subject, span-reporting, true-end-anchor, unicode-properties
+
+# parsed 64 rows from the archived r1131 corpus-census block
+
+# per-pattern classification (64 rows)
+pattern                                       REQUIRES(pattern)                             missing (withheld tokens)      census     bucket
+bracket-array-define                          free-spacing,named-groups,recursion           recursion                      REFUSED    1-intercepted+census-refused (agree)
+currency-lookbehind-fixed                     lookaround                                    lookaround                     REFUSED    1-intercepted+census-refused (agree)
+doubled-word                                  backrefs                                      backrefs                       REFUSED    1-intercepted+census-refused (agree)
+dup-param-detect                              backrefs                                      backrefs                       REFUSED    1-intercepted+census-refused (agree)
+email-local-nodup                             lookaround                                    lookaround                     REFUSED    1-intercepted+census-refused (agree)
+float-literal-bound                           lookaround                                    lookaround                     REFUSED    1-intercepted+census-refused (agree)
+logparse-atomic                               atomic-group                                  atomic-group                   REFUSED    1-intercepted+census-refused (agree)
+negation-scope-lookbehind-var                 lookaround,lookbehind-variable                lookaround,lookbehind-variable REFUSED    1-intercepted+census-refused (agree)
+nested-comment-rec                            lookaround,recursion                          lookaround,recursion           REFUSED    1-intercepted+census-refused (agree)
+phone-palindrome-6                            backrefs                                      backrefs                       REFUSED    1-intercepted+census-refused (agree)
+pwd-strength-chain                            lookaround                                    lookaround                     REFUSED    1-intercepted+census-refused (agree)
+quoted-delim-match                            backrefs,lookaround                           backrefs,lookaround            REFUSED    1-intercepted+census-refused (agree)
+tag-depth3-bound                              backrefs                                      backrefs                       REFUSED    1-intercepted+census-refused (agree)
+tag-pair-match                                backrefs                                      backrefs                       REFUSED    1-intercepted+census-refused (agree)
+utf8-lead-no-cont                             lookaround,non-utf8-subject                   lookaround                     REFUSED    1-intercepted+census-refused (agree)
+wild-logparse-base10num-grok                  atomic-group,lookaround                       atomic-group,lookaround        REFUSED    1-intercepted+census-refused (agree)
+wild-logparse-base10num-noatomic              lookaround                                    lookaround                     REFUSED    1-intercepted+census-refused (agree)
+wild-logparse-quotedstring-grok               atomic-group,lookaround                       atomic-group,lookaround        REFUSED    1-intercepted+census-refused (agree)
+wild-logparse-quotedstring-noatomic           lookaround                                    lookaround                     REFUSED    1-intercepted+census-refused (agree)
+wild-logparse-syslogbase-expanded             lookaround,named-groups                       lookaround                     REFUSED    1-intercepted+census-refused (agree)
+wild-logparse-winpath-grok                    atomic-group                                  atomic-group                   REFUSED    1-intercepted+census-refused (agree)
+balanced-parens-rec                           recursion                                     recursion                      COMPILED   2-intercepted BUT census-COMPILES (disagree)
+mojibake-curly-quote                          non-utf8-subject                              -                              REFUSED    3-reaches-driver-and-refuses
+base10num-near-miss                           -                                             -                              COMPILED   4-compiles-both
+codegrammar-flat                              -                                             -                              COMPILED   4-compiles-both
+codegrammar-xflag                             free-spacing,named-groups                     -                              COMPILED   4-compiles-both
+date-nested-plus                              -                                             -                              COMPILED   4-compiles-both
+email-nested-plus                             -                                             -                              COMPILED   4-compiles-both
+evil-alt-nested                               -                                             -                              COMPILED   4-compiles-both
+file-ext-order                                -                                             -                              COMPILED   4-compiles-both
+floor-byte                                    -                                             -                              COMPILED   4-compiles-both
+high-byte-run                                 non-utf8-subject                              -                              COMPILED   4-compiles-both
+ipv4-near-miss                                -                                             -                              COMPILED   4-compiles-both
+keyword-prefix-order                          -                                             -                              COMPILED   4-compiles-both
+logparse-atomic-removed                       -                                             -                              COMPILED   4-compiles-both
+numeric-id-nested-plus                        -                                             -                              COMPILED   4-compiles-both
+phone-list-nested-plus                        -                                             -                              COMPILED   4-compiles-both
+router-prefix-order                           -                                             -                              COMPILED   4-compiles-both
+trim-nested-star                              -                                             -                              COMPILED   4-compiles-both
+uuid-near-miss                                -                                             -                              COMPILED   4-compiles-both
+wild-codegrammar-json-array-begin             -                                             -                              COMPILED   4-compiles-both
+wild-codegrammar-json-constant                -                                             -                              COMPILED   4-compiles-both
+wild-codegrammar-json-number-extended         free-spacing                                  -                              COMPILED   4-compiles-both
+wild-codegrammar-json-object-begin            -                                             -                              COMPILED   4-compiles-both
+wild-codegrammar-json-stringcontent-escape    free-spacing                                  -                              COMPILED   4-compiles-both
+wild-datetime-datefinder-alternation          -                                             -                              COMPILED   4-compiles-both
+wild-datetime-moment-iso8601                  -                                             -                              COMPILED   4-compiles-both
+wild-secrets-aws-access-key-id                -                                             -                              COMPILED   4-compiles-both
+wild-secrets-github-pat                       -                                             -                              COMPILED   4-compiles-both
+wild-secrets-slack-webhook-url                -                                             -                              COMPILED   4-compiles-both
+wild-secrets-username-password-pair           -                                             -                              COMPILED   4-compiles-both
+wild-semdiv-altorder-foo-foobar-rustregex     -                                             -                              COMPILED   4-compiles-both
+wild-semdiv-dollar-trailing-newline-pcre2     -                                             -                              COMPILED   4-compiles-both
+wild-semdiv-empty-alt-repeat-pcre2            -                                             -                              COMPILED   4-compiles-both
+wild-validator-email-owasp                    -                                             -                              COMPILED   4-compiles-both
+wild-validator-ipv4-owasp                     -                                             -                              COMPILED   4-compiles-both
+wild-validator-us-zip-owasp                   -                                             -                              COMPILED   4-compiles-both
+wild-validator-uuid-grok                      -                                             -                              COMPILED   4-compiles-both
+wild-waf-crs-942140-dbnames                   -                                             -                              COMPILED   4-compiles-both
+wild-waf-crs-942160-sleep-benchmark           -                                             -                              COMPILED   4-compiles-both
+wild-waf-crs-942270-union-select              -                                             -                              COMPILED   4-compiles-both
+wild-waf-crs-942360-concat-sqli               -                                             -                              COMPILED   4-compiles-both
+wild-waf-crs-942500-comment-obfuscation       -                                             -                              COMPILED   4-compiles-both
+winpath-near-miss                             -                                             -                              COMPILED   4-compiles-both
+
+# bucket counts
+  1-intercepted+census-refused (agree)          21
+  2-intercepted BUT census-COMPILES (disagree)  1
+  3-reaches-driver-and-refuses                  1
+  4-compiles-both                               41
+  TOTAL                                         64
+
+# intercepted-by-policy set (22): balanced-parens-rec, bracket-array-define, currency-lookbehind-fixed, doubled-word, dup-param-detect, email-local-nodup, float-literal-bound, logparse-atomic, negation-scope-lookbehind-var, nested-comment-rec, phone-palindrome-6, pwd-strength-chain, quoted-delim-match, tag-depth3-bound, tag-pair-match, utf8-lead-no-cont, wild-logparse-base10num-grok, wild-logparse-base10num-noatomic, wild-logparse-quotedstring-grok, wild-logparse-quotedstring-noatomic, wild-logparse-syslogbase-expanded, wild-logparse-winpath-grok
+# census-refused set (22): bracket-array-define, currency-lookbehind-fixed, doubled-word, dup-param-detect, email-local-nodup, float-literal-bound, logparse-atomic, mojibake-curly-quote, negation-scope-lookbehind-var, nested-comment-rec, phone-palindrome-6, pwd-strength-chain, quoted-delim-match, tag-depth3-bound, tag-pair-match, utf8-lead-no-cont, wild-logparse-base10num-grok, wild-logparse-base10num-noatomic, wild-logparse-quotedstring-grok, wild-logparse-quotedstring-noatomic, wild-logparse-syslogbase-expanded, wild-logparse-winpath-grok
+
+# SET DIFFERENCE, by name:
+#   in policy's unsup set but NOT in census's refused set (1): balanced-parens-rec
+#   in census's refused set but NOT in policy's unsup set (1): mojibake-curly-quote
+
+== live re-run: balanced-parens-rec, through testees/rust/adapter.py ==
+pattern bytes: b'\\((?:[^()]|(?R))*\\)'
+outcome: compiled
+
+-- witness match grain (is (?R) doing recursion, or nothing?) --
+  flat "(abc)" -- one pair, no nesting                    match    start=0 end=5
+  nested "(a(b)c)" -- a REAL recursive engine matches [0,7) match    start=2 end=5
+  unbalanced "("                                          nomatch  start=None end=None
+
+VERDICT: if the nested-subject match starts at 0 and ends at 7, (?R) performs real recursion; if it starts/ends anywhere else (e.g. matching only the INNER "(b)" pair), (?R) is a no-op here and the pattern is NOT actually testing recursion despite compiling -- the syntax-accepted/semantics-wrong shape the task brief's possessive-quantifier precedent describes, found instead on this corpus pattern.
+
+== isolated (?R) shape witnesses, via the raw driver binary (never through the harness compile row) ==
+  (?R) alone                                    rc=0  ['compile\t1\tcompile\t0.000292922']
+  (?R)* -- quantified directly                  rc=3  ['error\tregex build failed [Syntax]: regex parse error:', 'error: repetition operator missing expression']
+  (?R)? -- quantified directly                  rc=3  ['error\tregex build failed [Syntax]: regex parse error:', 'error: repetition operator missing expression']
+  a(?R) -- unquantified, in sequence            rc=0  ['compile\t1\tcompile\t0.000187771']
+  a(?R)?b -- the REQUIRES_VOCAB witness pattern rc=3  ['error\tregex build failed [Syntax]: regex parse error:', 'error: repetition operator missing expression']
+#
+# READING: `(a(?R))` alone and `a(?R)` compile clean; `(?R)*`/`(?R)?`
+# (direct quantification of the bare flag group) and the census's own
+# `a(?R)?b` witness all refuse with the IDENTICAL "repetition operator
+# missing expression" message -- confirming the mechanism is about
+# WHERE the quantifier attaches, not about whether `(?R)` itself is
+# recognized (it always is, as the crate's own CRLF-mode flag).
