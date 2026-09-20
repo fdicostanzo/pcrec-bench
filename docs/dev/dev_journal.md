@@ -5096,3 +5096,18 @@ ext-bench testees across six engines.
 - Box free from 12:23; nothing of ours scheduled until tonight's
   window discretion (rust-default's remaining first samples are the
   standing candidates).
+
+## 2026-09-20 (midday) — pcrecdev1's nltriage §7 CPU probe run: 24.46/22.44 s user, and the expected refusal DID NOT HAPPEN
+
+- Executor-style light probe on the idle box (load1 0.10), exact
+  commands as given (git archive of 05499cba into /tmp, -O1 build
+  with PCREC_MAX_EMIT_BYTES=500000, the timed
+  '(a|b){0,30000}' -fprefilter cell). User time 24.46 s (run 1) /
+  22.44 s (run 2) vs the 11.29 s Mac reference and their ~22 s
+  under-water threshold. THE DEVIATION, reported verbatim and not
+  diagnosed: pcrec rc=0 both runs, no diagnostic, /tmp/o.c WRITTEN at
+  18,151 B — the cell COMPILED rather than refusing at the cap. (For
+  the record: the same pattern is the I-78 battery's test-stage
+  ratchet red under different flags — theirs to reconcile.) Windows
+  lane b59rustwave held during the probe and released after; temp
+  files cleaned.
