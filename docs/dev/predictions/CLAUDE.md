@@ -301,6 +301,64 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   is the one surface that shows this census, but `interpret` does not
   read the matrix format, so it carries no scorable clause here.
 
+- `email-specimen-0.2-rust-first.tsv`, `loglines-0.1-rust-first.tsv`,
+  `bounded-0.3-rust-first.tsv`, `altwide-0.2-rust-first.tsv`,
+  `syntax-0.1-rust-first.tsv` — lane `b59rustwave`, 2026-09-20:
+  `rust-default`'s REMAINING first-pinned-sample predictions (wake queue
+  item 3, after `capability-0.1-rust-first.tsv`'s own first sample,
+  [B57]), one file per set, all authored from `testees/rust/CLAUDE.md`'s
+  already-committed findings plus a direct grep of each set's own
+  pattern files — no new census was run for this lane; grounding is
+  entirely committed knowledge (the 9-token REQUIRES-refused-construct
+  list, the possessive-quantifier semantic gap, the hardcoded
+  leftmost-first convention, the non-utf8-subject byte-range-vs-
+  UTF-8-encoding discrimination, the structural no-giveup guarantee).
+
+  **THE SAME STRUCTURAL GAP `capability-0.1-rust-first.tsv`'s own entry
+  above documents applies to all five, and for the same reason** (F27's
+  own re-anchored `check_stated_utc` requires `--testee rust-default`
+  alone in each report's roster, so a `did_not_compile` ranking group
+  for any pattern that only rust-default refuses never exists — the
+  same "must not happen" rule the ext-roster and rust-first capability
+  files already apply): **every candidate did-not-compile clause was
+  DROPPED from all five files**, deliberately, rather than committed as
+  a clause fated to always read `not-evaluable`. This is a LARGE
+  deliberate omission for `bench/syntax@0.1` specifically — 26 of its
+  95 patterns are grounded, construct-level-confirmed refusals under
+  `rust-default` (five backreference forms, six lookaround/lookbehind
+  forms, two atomic-group forms, one conditional, `\K`, two control
+  verbs, one callout, eight recursion/subroutine-call forms — every
+  construct `testees/rust/CLAUDE.md`'s own 9-token refused list names,
+  found by direct grep of `bench/syntax/patterns/*.rx` against each
+  construct's exact spelling) — none of which is expressible as a
+  scorable clause in a solo-roster report, so none is committed here.
+  What each file scores instead is the CORRECTNESS of patterns that DO
+  compile: a clean control-vs-witness pair on `bench/syntax`'s four
+  possessive-quantifier forms (`qnt-poss-plus` WRONG — the same
+  `a++`-behaves-like-`a+` finding `testees/rust/CLAUDE.md` already
+  documents, worked out here to the exact subject, `f-aaab`, that
+  creates the possessive-vs-backtrack ambiguity; `qnt-poss-star`/
+  `qnt-poss-quest`/`qnt-poss-brace` CLEAN, each with a worked structural
+  proof for why THIS pattern's own anchored shape cannot reach the
+  ambiguity at all, not merely "no hazard was found"), the two Unicode
+  property patterns (`unp-p-lc`/`unp-p-uc`, the SATISFIED
+  `unicode-properties` token exercised directly), and — for
+  `bench/email`, `bench/loglines`, `bench/bounded`, `bench/altwide`,
+  none of which contains ANY refused construct, possessive quantifier or
+  non-UTF8 byte-range class at all (confirmed by direct grep of every
+  real pattern in each set) — a representative sample of clean-control
+  claims (`n_wrong eq 0`) rather than one clause per pattern: the
+  underlying grounding is the SAME fact (hardcoded leftmost-first
+  matching the oracle's own convention, no hazard construct present) for
+  every pattern in each of these four sets, so scoring every single one
+  would multiply clause count without multiplying grounding. `bounded`'s
+  42 patterns and `altwide`'s 32 are the ones this applies to most
+  visibly; 4-7 representative witnesses were chosen per set instead,
+  spanning the set's own distinctive shapes (`bounded`: the widest
+  count-ladder rung `cls-upto-32768`, an exact-count repeat, a nested
+  repeat, a password shape; `altwide`: the `w-256`/`srt-256` order pair,
+  the one `(?i)` witness `ci-256`, one throughput-regime rung).
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before
