@@ -5155,3 +5155,8 @@ ext-bench testees across six engines.
   check-interpret 161/161 (13 sidecars regenerated). The OWED
   check-harness/check-report halves running now as a post-merge
   detached full make check.
+- Post-merge full make check DONE rc=0: 5/73/0 · 423/423 ·
+  check-report OK · 161/161 — [B59]'s OWED harness/report halves
+  discharged; THE GATE OF RECORD is now 5/73/0 · 423/423 · OK ·
+  161/161 at c26dbb7 (check-interpret grew 156 → 161 with the five
+  new sidecars).
