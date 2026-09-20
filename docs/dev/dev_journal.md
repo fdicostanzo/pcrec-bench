@@ -5043,3 +5043,31 @@ ext-bench testees across six engines.
 - Asked pcrecdev1 one pin-choice question before starting [B58]:
   25b1984f as stated, or the coming triage pin (test-side only, so
   read as not touching the shim surface — their call). Box free.
+
+## 2026-09-20 (morning) — twenty-eighth session: [B58] CLOSED end to end; the I-78 wave-5 battery launched
+
+- [B58] COMPLETE (lane b58repin merged aa70b35; close 52e9f1a): pin
+  cf0962e3 → 25b1984f (abi 27), shim floor stays 16. Registries: axes
+  78/27 → 80/28 = exactly I-77's two comments rows; limits 57 → 58 —
+  the one unpredicted row (PCREC_SIZE_TERM_BAR) traced to pcrec
+  0b16b98c ([REVW.4] registry-surface move), NOT absorbed silently;
+  definitions/schema data rows byte-identical. Size books PROVEN
+  unmoved: emit_bytes/emit_code_bytes were already comment-excluded,
+  object .so byte-identical except the abi literal 26→27 —
+  I-77's hardest claim confirmed, nothing measuring time or object
+  size moved. THE REAL CATCH: two of our checks grep emitted comment
+  TEXT (the [B32] SCAN_EDGE_MARKER covariate, selfcheck's "NO RESUME
+  FRAME AT ALL" control) and went silently to zero under the new
+  default — fixed as EMIT_COMMENTS_FLAG (-fcomments), a fixed
+  protocol token on every pcrec exec, proven inert on every measured
+  quantity, invisible in testee identity. catalogue 3.0 → 3.1
+  (pin_order), the 8 stale sidecars regenerated (regen_sidecars.py,
+  determinism-checked). make check at the pin: 5/73/0 · 423/423 ·
+  check-report OK · 156/156 (the 8 section-3 fails pre-regen were
+  exactly the predicted staleness class). O-36 sent: the confirmation
+  + the integer edge-count-stamp ask that would retire -fcomments.
+- I-78 (wave-5 close, abi stays 27, nothing to re-pin): battery at
+  05499cba LAUNCHED 05:30:21 EDT (pid 3839051, load 0.79; the (a)
+  size-log checkout line ran first as the item now specifies).
+  Watcher armed; done-signal owed at the trailer; mech expects
+  269/0/0/10/1. Report, never diagnose.
