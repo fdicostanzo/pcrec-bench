@@ -1,35 +1,23 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# third archiving of this surface (first: cd371441, the W23 delivery pin
-# that shipped `--list-schema` itself; second: a770139e, byte-identical).
+# fourth archiving of this surface (first: cd371441, the W23 delivery pin
+# that shipped `--list-schema` itself; second: a770139e, byte-identical;
+# third: cf0962e3, +1 row for the `config tune` directive).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-cf0962e3/build/pcrec --list-schema
+#     build/pcrec-25b1984f/build/pcrec --list-schema
 #
-# pcrec commit cf0962e3e455bc55587c238ec92aab9e7e82177b (rx_info.abi 26 --
-# see list_axes.tsv's header), archived 2026-09-17 by the manager
-# ([B42]-tail re-pin, inbox I-73: the dial+K59 checkpoint pin a770139e ->
-# cf0962e3). 71 data rows across two sections (`#section schema`,
-# `#section surface`) -- ONE ROW ADDED vs the a770139e copy (70 -> 71
-# total data rows; the `schema` section's own footer count, "# schema-
-# rows: 66" -> "# schema-rows: 67"): `config tune <position>`, a
-# config-scoped line (value token, cardinality at-most-one, source
-# format, validated_by pcrec, wave 1) -- [OPT-DIAL]'s own `.rxt` grammar
-# addition (docs/spec/rxt_format.md's "tune <position>" config-scoped
-# directive, the file-wins-over-CLI rule, D93), landing in the SAME
-# train as the corpus-wide +27-byte RX_TUNE stamp. This is the ONE
-# registry delta this re-pin found beyond the stamp+abi-digit movers
-# the brief predicted, and it is EXPLAINED, not absorbed silently:
-# verified against pcrec's own docs/spec/rxt_format.md (the
-# "tune <position>" config-scoped directive's own paragraph, and its
-# `--list-source` column 20, "the `tune` position AS WRITTEN"). Every
-# OTHER row is BYTE-IDENTICAL to the a770139e copy (diffed line for
-# line) -- NOTE this includes the S3 prose/block-scalar rows: the K57
-# dedent fix landed as spec text (rxt_format.md S3's decode rule made
-# normative) and parser behaviour, not as a schema-table change.
-# Nothing in this project's adapters or checks reads this file yet
-# (declared for a future `.rxt`-format check, per
+# pcrec commit 25b1984f5f4a491471a91fe1b09cbcd60a42980f (rx_info.abi 27 --
+# see list_axes.tsv's header), archived 2026-09-20 by lane b58repin
+# ([B58], inbox I-77 (1): the [EMIT-VERB]/D112 pin cf0962e3 -> 25b1984f).
+# 71 data rows across two sections (`#section schema`, `#section
+# surface`) -- BYTE-IDENTICAL to the cf0962e3 copy below the header
+# (diffed line for line): [EMIT-VERB]'s comment-default change and the
+# [REVW.4] CLI/config refactor added no new `.rxt` grammar line -- the
+# `config tune <position>` row [OPT-DIAL] added at cf0962e3 is
+# unmoved. Nothing in this project's adapters or checks reads this file
+# yet (declared for a future `.rxt`-format check, per
 # docs/design/rxt_needs_v1.md); archived so the registry-surface census
 # stays complete at this pin.
 # pcrec .rxt FORMAT SCHEMA (docs/spec/rxt_format.md,

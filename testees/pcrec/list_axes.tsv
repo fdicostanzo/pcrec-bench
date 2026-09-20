@@ -2,25 +2,29 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-cf0962e3/build/pcrec --list-axes
+#     build/pcrec-25b1984f/build/pcrec --list-axes
 #
-# pcrec commit cf0962e3e455bc55587c238ec92aab9e7e82177b (rx_info.abi 26,
-# read off a plain `abc` witness at this build), archived 2026-09-17 by
-# the manager ([B42]-tail
-# re-pin, inbox I-73: the dial+K59 checkpoint pin a770139e -> cf0962e3).
-# 78 data rows / 27 axes / 12 columns -- the FOURTH registry surface
-# (pcrec docs/spec/registry.md 6, [CHK-2]).
+# pcrec commit 25b1984f5f4a491471a91fe1b09cbcd60a42980f (rx_info.abi 27,
+# read off a plain `abc` witness at this build), archived 2026-09-20 by
+# lane b58repin ([B58], inbox I-77 (1): the [EMIT-VERB]/D112 pin --
+# emitted comments OFF by default -- cf0962e3 -> 25b1984f). 80 data rows
+# / 28 axes / 12 columns -- the FOURTH registry surface (pcrec
+# docs/spec/registry.md 6, [CHK-2]).
 #
-# BYTE-IDENTICAL to the a770139e copy below the header (diffed line for
-# line, pcrec's own comments included): the pin carries the [OPT-DIAL]
-# `--tune` dial end-to-end (RX_TUNE stamp, abi 25->26, the `.rxt` config
-# `tune` line, the file-wins diagnostic) and the K59 premul drop-ladder
-# rung, and corpus-wide byte-identity confirms both moved no axis, no
-# row, no column here (pcrec docs/dev/dialtrain_byteid.md: the only
-# corpus-wide movers on any artifact are the +27-byte RX_TUNE stamp and
-# the .abi digit). The a770139e copy's header (git history) carries the
-# last delta narrative (the O-29 `--list-source` S0 close-frame parser
-# fix, the K57 dedent refusal).
+# TWO ROWS ADDED vs the cf0962e3 copy (78/27 -> 80/28): a new axis
+# `comments`, order 1 `essential-only` (stamp PCREC_NO_COMMENTS, deny
+# bit 26, cli -fno-comments -- THE DEFAULT) and order 2 `full` (force
+# PCREC_FORCE_COMMENTS, force bit 27, cli -fcomments), exactly I-77 (1)'s
+# own description of [EMIT-VERB]/D112: emitted comments are OFF by
+# default, `-fcomments` restores the full set, `-fno-comments` is the
+# explicit default spelling, both ordinary axes.def rows (D111: axes.def
+# is now the ONE source `--list-axes` reads). Every OTHER row is
+# BYTE-IDENTICAL to the cf0962e3 copy below the header (diffed line for
+# line, pcrec's own comments included) EXCEPT one PROSE-ONLY edit inside
+# pcrec's own header block: "src/parse/axes_dump.c" -> "src/dump/
+# axes_dump.c" (the [REVW.3] item 1 dump-tier file move, a path
+# reference in pcrec's own comment text, not a machine-read column).
+#
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).
@@ -32,7 +36,7 @@
 #   "predicate" — no candidate-list-as-data exists yet for this axis
 #   ([ENG-FORM] relayered emit_dfa.c only); name/deny are hand-stated
 #   from lib/pcrec.h's own enum symbols and docs/spec/tuning.md's
-#   prose. See this file's (src/parse/axes_dump.c) own header comment
+#   prose. See this file's (src/dump/axes_dump.c) own header comment
 #   for the full boundary this dump does and does not prove.
 #
 # stamp_macro/stamp_value: the emitted #define this candidate is
@@ -108,6 +112,8 @@ cls-fold	1	fold	predicate	RX_VM_CLS_FOLDS		PCREC_NO_CLS_FOLD	24			-fno-cls-fold	
 cls-fold	2	denied	predicate	RX_VM_CLS_FOLDS							always (fallback) — the class keeps its singleton/range/bitmap shape
 startpos-guard	1	guarded	predicate	RX_STARTPOS_GUARD	guarded	PCREC_NO_STARTPOS_GUARD	25			-fno-startpos-guard	per artifact: this encoding has positions that are not character boundaries (PcrecEnc.start_cls), so the entries refuse a mid-character caller startpos with PCREC_ERR_STARTPOS — libpcre2's own PCRE2_UTF behaviour (BADUTFOFFSET)
 startpos-guard	2	permissive	predicate	RX_STARTPOS_GUARD	permissive						always (fallback) — the artifact answers at whatever position the caller named (utf8_design.md §2.6.1.1's ruled semantics), and on a byte artifact this row is the ONLY one reachable: every position is a boundary there and neither setting emits a guard
+comments	1	essential-only	predicate			PCREC_NO_COMMENTS	26			-fno-comments	THE DEFAULT (D112): the artifact keeps only its ESSENTIAL comments — the generated-by/pattern-echo provenance line and the emitted rx_ctx/rx_matchfn/rx_info ABI block docs/spec/match_api.md names as the embedder's contract — and drops the rest; -fno-comments states it explicitly and overrides a config/target row that asked for the full set
+comments	2	full	predicate					PCREC_FORCE_COMMENTS	27	-fcomments	-fcomments: every comment the emitter has to offer (the orientation block, the table legends, the per-label role text). Changes no answer and no object byte — the C compiler discards comments — so it is a SOURCE-readability axis and never a performance one ([ART-SIZE]: comments vs .o size r=0.43)
 atomic-discharge	1	discharged	predicate			PCREC_NO_ATOMIC_DISCHARGE	12			-fno-atomic-discharge	possessify's own verdict proves the A_ATOMIC node's cut is a no-op (docs/design/atomic_groups_design.md §5.3)
 atomic-discharge	2	denied	predicate								always (fallback) — ENGINE-SELECTING: the A_ATOMIC node stays, which is DFA-excluding, so RX_ENGINE can move to "vm"
 splice-calls	1	spliced	predicate	RX_VM_CALL_SPLICED		PCREC_NO_SPLICE_CALLS	13			-fno-splice-calls	the callee is not in a call-graph cycle and its expansion fits the splice size budget (PCREC_MAX_SPLICE_NODES/_TOTAL)
