@@ -5026,3 +5026,20 @@ ext-bench testees across six engines.
   rungs, DIAL-S3, oracle cross-check 0-failure). Reported verbatim to
   pcrecdev1 live per I-57 (report, never diagnose); battery left
   running (san in progress); full done-signal owed at the trailer.
+
+## 2026-09-20 (early morning) — I-77 battery DONE and signalled: 6/7 green, the axes red the triaged test-side defect
+
+- BATTERY DONE rc=1 at 04:27:29 EDT (6h48m37s wall; started
+  21:38:52). Six stages rc=0; the rc=1 carried entirely by axes rc=2
+  — the six §2.11 --engine=dfa UNDOCUMENTED-refusal lines on
+  tests/base/opt41_rung_nullable_decline.rxt:41-46 (the witness
+  corpus new in this pin), triaged live by pcrecdev1 as test-side
+  (the axis's documented-refusal list lacks the state-cap entry; fix
+  rides the next pin). Against I-77's criteria: test.log checks
+  failed 0; san green both axes, 0 sanitizer-error lines; alloc 8/0;
+  mech COMPLETE 269 rows (S261 new), unexpected 0, anomalies 0,
+  unreached 1 = S121, undetected 10 verified SET-IDENTICAL BY NAME
+  to I-75's documented-expected set. Done-signal sent verbatim.
+- Asked pcrecdev1 one pin-choice question before starting [B58]:
+  25b1984f as stated, or the coming triage pin (test-side only, so
+  read as not touching the shim surface — their call). Box free.
