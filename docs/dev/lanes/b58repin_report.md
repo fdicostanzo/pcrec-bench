@@ -190,7 +190,7 @@ explained below — not silently absorbed.
    `[B58]` row and the STATUS narrative are the manager's, per the
    brief.
 
-8. **Full `make check` at the new pin.** **LAUNCHED, OWED.** Box was
+8. **Full `make check` at the new pin.** **DONE.** Box was
    quiet at launch (`uptime`: load average 0.09, 0.21, 1.22, 04:45 EDT)
    and ours (per the brief's box-facts). Launched via the harness's
    own `run_in_background` (tracked, notifies on completion) rather
@@ -202,41 +202,57 @@ explained below — not silently absorbed.
        echo "DONE rc=$?" >> build/b58repin_check.log
 
    **Marker/log**: `worktrees/b58repin/build/b58repin_check.log`
-   (gitignored). The line `DONE rc=<N>` appended to that file is the
-   only evidence of completion — `tail -20
-   worktrees/b58repin/build/b58repin_check.log`. Gate of record to
-   beat (from the brief): `check-schema` 5/73/0 · `check-harness`
-   423/423 · `check-report` rc=0 · `check-interpret` 156/156. **This
-   lane's own expectation, given items 1-7 above**: `check-harness`
-   should read 423/423 UNCHANGED (no stamp, no axis-registration
-   check, no deny/force control moved — the registry diffs are
-   explained additions the harness's own registry-diff checks should
-   absorb cleanly; the adapter fix changes NOTHING any check asserts
-   on, since every quantity it touches was proven identical above);
-   `check-interpret` **may print a STALE-SIDECAR failure** the brief
-   did not anticipate — `catalogue_version` moved 3.0 → 3.1, and
-   `interpret.py`'s render path stamps the catalogue version into
-   every committed `.interpretation.md` sidecar's text
-   (`pcrecbench/interpret.py:1756`), so a MINOR bump that changes no
-   fact still changes that one rendered line, and "every bump
-   regenerates every committed sidecar in the same commit" is the
-   catalogue's own stated rule. **This was NOT done in this lane** (no
-   sidecar was touched) — flagged here as OWED-2, not silently
-   deferred: if `make check-interpret` section 3 (sidecar freshness)
-   fails on this, the fix is `/pcrec-bench-interpret` on every
-   committed report, a mechanical follow-up this lane did not run
-   because it falls outside "re-pin the testees" and belongs with
-   whoever reviews the `make check` numbers below.
+   (gitignored). `DONE rc=2` landed. **Numbers**:
+
+   | check | result | vs. gate of record |
+   |---|---|---|
+   | `check-schema` | 5 example(s) accepted, 73 sabotage(s) rejected for the intended rule, 0 WRONG | **matches 5/73/0** |
+   | `check-harness` | 423 check(s) passed, 0 FAILED | **matches 423/423** |
+   | `check-report` | OK | **matches** |
+   | `check-interpret` | 148 passed, 8 FAILED | gate 156/156; **8 short, classified below** |
+
+   `make` exits 2 overall (the `check-interpret` target's own exit),
+   solely because of the 8 `check-interpret` failures.
+
+   **The 8 failures, named verbatim, and their classification.** Every
+   one is section 3 ("sidecar freshness": a committed
+   `reports/*.interpretation.md` must re-render byte-identical from its
+   own stamped inputs) and every one reads `re-renders byte-identical`
+   as its message (a MISLEADING label for what actually fired — the
+   check's assertion is that the sidecar's *committed* bytes match a
+   *fresh* render, and it is the fresh render that changed, not the
+   check restating "identical" incorrectly; the fixture/section
+   plumbing prints the assertion's name, not its outcome):
+
+       FAIL [3] 2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.interpretation.md: re-renders byte-identical
+       FAIL [3] 2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.interpretation.md: re-renders byte-identical
+       FAIL [3] 2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.interpretation.md: re-renders byte-identical
+       FAIL [3] 2026-09-17-capability-0.1-budu-ryzen1600-first-a770139e.interpretation.md: re-renders byte-identical
+       FAIL [3] 2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.interpretation.md: re-renders byte-identical
+       FAIL [3] 2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.interpretation.md: re-renders byte-identical
+       FAIL [3] 2026-09-19-capability-0.1-budu-ryzen1600-ext-second-cf0962e3.interpretation.md: re-renders byte-identical
+       FAIL [3] 2026-09-19-capability-0.1-budu-ryzen1600-rust-first-cf0962e3.interpretation.md: re-renders byte-identical
+
+   **This is EXACTLY the predicted OWED-2 class, and nothing else** —
+   the manager confirmed the same read against the log independently.
+   `catalogue_version` moved 3.0 → 3.1 in this lane (item 6); the
+   catalogue's own rule ("every bump regenerates every committed
+   sidecar in the same commit") was deliberately NOT actioned here —
+   per the manager's explicit instruction, sidecar regeneration is the
+   manager's step at merge, not this lane's. All 148 OTHER
+   `check-interpret` checks passed (sections 1/2/4/5/6, and the one
+   section-3 check that DID pass — `gen.py: checked 217 file(s) in 67
+   fixture(s) -- ok`, a different section-3 assertion than the 8
+   byte-identity ones). No check-schema, check-harness or check-report
+   number deviated from the gate of record — the STOP-and-report bar
+   the manager set was not crossed.
 
 ## Not done / OWED
 
-- **OWED-1**: the `make check` numbers themselves (item 8) — launched,
-  not yet returned as of this report.
-- **OWED-2**: sidecar regeneration for the catalogue 3.0 → 3.1 bump, if
-  `make check-interpret` section 3 flags it (see item 8's note). Not
-  attempted in this lane; a one-command follow-up
-  (`/pcrec-bench-interpret` per report) once `make check`'s own read is
-  in hand.
+- **OWED-2 (unchanged, now the log's own confirmation)**: sidecar
+  regeneration for the catalogue 3.0 → 3.1 bump. The 8 failures above
+  ARE that gap surfacing, exactly as predicted; per the manager's
+  instruction this lane does NOT regenerate them — that runs at merge.
 - No committed `store/` record needed re-deriving (this lane touches
   no `store/` record; the re-pin itself never runs a measurement
   window).
@@ -245,10 +261,17 @@ explained below — not silently absorbed.
 
 ## For the manager, on review
 
-- Please `tail -40 worktrees/b58repin/build/b58repin_check.log` (or
-  wait for the `DONE rc=` line) before merging, and fold the actual
-  tallies into your own delivery note — this report states the
-  *expectation*, not the *result*, for item 8.
+- `make check` tallies: check-schema 5/73/0, check-harness 423/423 ·
+  0 FAILED, check-report OK, check-interpret 148/156 (8 FAILED, all
+  section 3, all the eight sidecars named above, all the
+  catalogue-3.0→3.1 staleness class) — `make`'s own exit code is 2,
+  entirely attributable to those 8.
+- Regenerate the 8 named sidecars at merge
+  (`/pcrec-bench-interpret <report>` per file, or however the manager's
+  batch tooling does it) — that closes OWED-2 and should bring
+  check-interpret back to 156/156 with `catalogue_version: "3.1"`
+  stamped into each, no fact or verdict moving (this bump is additive
+  only).
 - The `list_limits.tsv` +1 row (item 2) and the comment-text-grep fix
   (item 5) are both worth a line in whatever goes back through the
   inbox ack: the registry delta is new-but-explained (like
@@ -258,5 +281,3 @@ explained below — not silently absorbed.
   `RX_VM_FRAMELESS` control — worth pcrec knowing this project depends
   on a comment marker for a quantity ([OPT-5] scan-edge COUNT) it has
   no stamp for, in case a future [OPT-5] step wants to add one.
-- If `check-interpret` flags stale sidecars (OWED-2), that is a
-  known, explained gap, not a new finding to investigate.
