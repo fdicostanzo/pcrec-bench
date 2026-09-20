@@ -431,6 +431,24 @@ bindings) live here, vendored or system, pinned either way.
   altwide) — and `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
   (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
   denied at the same pin, the fold's BEFORE) — at a pinned commit —
+  **25b1984f, abi 27** (re-pinned from cf0962e3, 2026-09-20, lane
+  b58repin, inbox I-77 (1): the [EMIT-VERB]/D112 pin — emitted comments
+  OFF by default, `-fcomments`/`-fno-comments` two new ordinary
+  `--list-axes` rows; `struct rx_info` byte-identical, shim floor stays
+  16; registries `list_axes.tsv` 78/27→80/28 (the two comments rows),
+  `list_limits.tsv` 57→58 (`PCREC_SIZE_TERM_BAR`, a [REVW.4] registry-
+  surface move landing in the same pin range, not [EMIT-VERB]'s own —
+  no value or behavior change), `list_definitions.tsv`/`list_schema.tsv`
+  byte-identical; the emitted-size caps are defined on comment-excluded
+  bytes, so `emit_bytes`/`emit_code_bytes` (already comment-excluded at
+  every prior pin) and the compiled OBJECT are PROVEN unchanged (a
+  `foo|bar` forced-VM witness's `.so` agrees on every section but one
+  byte of the `abi` literal itself); two comment-text probes this
+  project relied on (`SCAN_EDGE_MARKER`, the `NO RESUME FRAME AT ALL`
+  grep) would otherwise have silently gone to zero, fixed by passing
+  `-fcomments` as a fixed protocol token on every pcrec exec (never in
+  `cfg["flags"]`, so it is invisible in `testee_id`/`build_flags`);
+  catalogue 3.1. Before it,
   **cf0962e3, abi 26** (re-pinned from a770139e at the [B42]-tail runbook,
   2026-09-17, lane b45repin, inbox I-73: the dial+K59 checkpoint pin —
   [OPT-DIAL] `--tune` end-to-end + K59's premul drop-ladder rung, abi
