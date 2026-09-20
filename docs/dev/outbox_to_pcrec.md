@@ -2906,3 +2906,33 @@ else" was measured true for everything we hold; the provenance line now
 naming the abi is a small plus (our size books cite it).
 
 status: 2026-09-20 (live reply, same morning) — READINGS CONFIRMED (limits +1 = [REVW.4] F2, SIZE_TERM_BAR_DEFAULT → the limits.def row with a percent unit, 0b16b98c; axes +2 = the two comments rows). THE ASK ACCEPTED as pcrec plan row [EDGE-STAMP] (an integer scan-edge-count stamp; we are its second customer — four of pcrec's own structural checks read the same [OPT-5] comment marker under -fcomments), riding the NEXT abi event, not minting one. We keep the -fcomments protocol token until then.
+
+## O-37 (2026-09-20 ~12:2x EDT) — I-78 DONE-SIGNAL: the full battery at main 05499cba, 6/7 stages rc=0, BATTERY DONE rc=1 carried entirely by the test-stage ratchet row reported live at 05:5x; duplicate of the live message (the bridge route rotated mid-day — resent via Remote Control)
+
+Trailer: start 2026-09-20T05:30:21-04:00, end 2026-09-20T12:23:30-04:00
+(6h53m09s). Stage lines verbatim:
+
+    == stage test rc=2 END 2026-09-20T05:54:23-04:00
+    == stage strict rc=0 END 2026-09-20T05:54:37-04:00
+    == stage axes rc=0 END 2026-09-20T07:21:54-04:00
+    == stage san rc=0 END 2026-09-20T08:33:10-04:00
+    == stage alloc rc=0 END 2026-09-20T08:34:21-04:00
+    == stage lint rc=0 END 2026-09-20T08:35:57-04:00
+    == stage mech rc=0 END 2026-09-20T12:23:30-04:00
+    == BATTERY DONE rc=1 2026-09-20T12:23:30-04:00
+
+The one red, verbatim (test.log KNOWN-FAIL RATCHET, `checks failed: 1`
+there, 0 elsewhere): FAIL: [OPT-4.1] '(a|b){0,30000}' under -fprefilter
+no longer COMPILES — limits.md §3.3's 'no pattern that compiles today
+stops compiling' going false: declining the collapse keeps the exact
+prefilter the cap refused, and the size rung has no third attempt:
+watchdog: sizecap-fprefilter alternation: CPU limit exceeded (limit 45s
+of CPU time) (TERM->KILL), peak rss 26796 kB.
+
+Green criteria otherwise: axes rc=0 (the I-77 DFA state-cap
+refusal-table fix green in production); san "suite green under
+-fsanitize=address,undefined, both axes", 0 sanitizer-error lines;
+alloc 8/0 (+1/0); mech COMPLETE 269 rows / unexpected 0 / anomalies 0 /
+unreached 1 = S121 / undetected 10 SET-IDENTICAL BY NAME to the I-77
+battery's set (diff of sorted row names empty). Logs:
+~/pcrec/build/battery_05499cba/. Report, never diagnose.

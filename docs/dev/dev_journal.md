@@ -5081,3 +5081,18 @@ ext-bench testees across six engines.
   stops compiling" going false; watchdog CPU limit 45s TERM->KILL,
   peak rss 26796 kB). strict rc=0; battery left running (axes in
   progress). Reported live per I-57 — report, never diagnose.
+
+## 2026-09-20 (midday) — I-78 battery DONE and signalled: 6/7 green; the test ratchet red stands as reported
+
+- BATTERY DONE rc=1 at 12:23:30 EDT (6h53m09s). Six stages rc=0; the
+  rc=1 is the test-stage [OPT-4.1] ratchet row reported live at
+  05:5x (nothing new at the trailer). axes rc=0 — the I-77 axes fix
+  confirmed green in production. mech 269/0/0/10/1 with the
+  undetected set verified identical by name to I-77's. Done-signal
+  sent live AND duplicated as outbox O-37: the bridge route rotated
+  mid-day (HTTP 409 on the old session id; pcrecdev1 now reachable as
+  a Remote Control session via ListAgents) — the durable-channel
+  rationale doing its job.
+- Box free from 12:23; nothing of ours scheduled until tonight's
+  window discretion (rust-default's remaining first samples are the
+  standing candidates).
