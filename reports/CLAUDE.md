@@ -739,6 +739,50 @@ unscorable in this shape).
   five of this lane's files, which were correct from authoring). No
   ledger was written for this single-cell group (this entry and
   `testees/rust/CLAUDE.md`'s two updated sections carry the reading).
+- `2026-09-20-bounded-0.3-budu-ryzen1600-rust-first-25b1984f.md` — the
+  LAST of `rust-default`'s five remaining first pinned samples ([B59]
+  complete): `bench/bounded@0.3`. Query: `report --subbench bounded
+  --version 0.3 --testee rust_1.13.1_default-caps-simdna --format md` —
+  **1 record(s) matching this query, 1 included, 0 superseded** (20,914
+  rows: 414 compile, 20,500 match). `worst_other_core_busy: 14.81%`
+  (`rust_1.13.1_default-caps-simdna` / `ctx-greedy-256` /
+  `large-subject-throughput`). `.tsv`/`.subject-grain.md`/
+  `.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html` siblings all
+  rendered the same query; `.interpretation.md` scored against
+  `docs/dev/predictions/bounded-0.3-rust-first.tsv`: **2 parents / 6
+  clauses, 5 CONFIRMED, 1 NOT-EVALUABLE** (P1.c, `nest3-16` — see
+  below; P1 rolls up `partial` on the arithmetic, but this is a witness
+  choice landing on a real refusal, not a wrong prediction).
+
+  **A genuine, unpredicted finding: TWO of the 42 real bounded patterns
+  refuse to compile under `rust-default`** — `nest3-16`
+  (`(?:(?:\d{1,16}){1,16}){1,16}`, P1.c's own selector) and `nest2-64`
+  (`(?:\d{1,64}){1,64}`), both `[size-limit] CompiledTooBig: Compiled
+  regex exceeds size limit of 10485760 bytes` on BOTH forms (plain and
+  whole-subject) — visible in the compile-cost table and the matrix
+  surface (F26-immune), invisible to `render_tsv`'s own `did_not_compile`
+  section for the same solo-roster structural reason stated throughout
+  this window. Neither refusal was in this lane's grounding (the grep
+  that found "zero refused constructs" checked SYNTAX only — backrefs,
+  lookaround, atomic groups etc. — never compiled SIZE, which is a
+  property of the pattern's combinatorial expansion, not any single
+  construct). The mechanism reads coherently against the rest of the
+  set: the FLAT count-ladder (`cls-upto-*`, single-level bounded repeat)
+  compiles clean all the way to `cls-upto-65535` — the exact rung
+  libpcre2/pcrec's own NFA-cap history refuses at, per this project's
+  earlier bounded samples, a boundary rust-regex's more permissive
+  10 MiB default does not share — while the two NESTED bounded-repeat
+  patterns (multiplicative combinatorics: `nest3-16`'s worst case is
+  16^3 = 4,096 repeats of a compiled subexpression) hit the SAME 10 MiB
+  ceiling from the opposite direction, at far smaller nominal counts.
+  The three smaller nested-repeat patterns (`nest2-4`, `nest2-letters-6`,
+  `nest3-3`) compile clean, consistent with the combinatorial-not-
+  syntactic explanation. No ledger was written for this single-cell
+  group. **[B59] itself is now COMPLETE**: five sets (email/loglines/
+  altwide/syntax/bounded) sampled in one lane, three genuine unpredicted
+  findings across two of them, one predictions-format bug found and
+  fixed, `docs/dev/lanes/b59rustwave_report.md` has the full lane
+  account.
 
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
