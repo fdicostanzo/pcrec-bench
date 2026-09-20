@@ -98,6 +98,18 @@ session_discipline.md` §2, inbox I-60)
   to a FRESH agent resuming from your committed report, never to you
   kept warm (your cache is cold again in 5 minutes regardless). Runs
   ≤4 minutes may be polled by you directly.
+- **FOREGROUND SHORT POST-RUN STEPS, with a fallback check** (rule added
+  2026-09-19 after THREE background-wait stalls in two nights:
+  b54extwindow ×2, b57rustwindow ×1 — each a lane sitting silent on a
+  background job's completion notice that never woke it, caught only by
+  the manager's external probe). A step that takes seconds-to-~4-minutes
+  (indexing, scoring, a sentinel check, a report regen) is run in the
+  FOREGROUND after the run completes — never left riding a background
+  notification. If you must wait on a background job at all, pair the
+  wait with a foreground fallback: a bounded `until`-loop poll of the
+  job's own completion line (gnutimeout'd), so a lost notification
+  costs seconds, not a manager rescue. A wait with no fallback probe is
+  the named failure mode.
 - WHEN DONE: commit everything, write your report (docs/dev/lanes/
   <lane>_report.md, committed), send the manager a handback whose text is
   complete on its own (numbers inline, log paths, OWED items named), and
