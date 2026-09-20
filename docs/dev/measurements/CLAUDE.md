@@ -453,3 +453,23 @@ Maintenance: update this file when files are added/removed or change role.
   65535-cap refusal in a report R-STATUS-4 would call clean.
   Reproduce with
   `PCRECBENCH_ROOT=<checkout> python3 <probe>` (seconds each).
+- `probe_rust_policy_vs_census_diff.py` / `2026-09-19-rust-policy-vs-census-diff.txt`
+  — ([B58], lane `b58census`) the OWED reconciliation of the 2026-09-19
+  rust-first report's two 22-item counts (`reports/CLAUDE.md`): the
+  pre-compile capability policy's 22 `unsup` patterns vs the r1131
+  census's raw 22 refused patterns. Read-only over the real
+  `pcrecbench.subbench`/`pcrecbench.capability` functions (never a
+  re-typed REQUIRES_VOCAB or roster copy) plus one live re-compile of
+  the single pattern the derivation flags. FINDING: the two sets share
+  21 members and disagree on exactly one each — `balanced-parens-rec`
+  (`unsup`, but genuinely COMPILES: `(?R)` is a real rust-regex CRLF-mode
+  flag, not rejected syntax, and is shown NOT to implement recursion —
+  matched against `(a(b)c)` it returns the inner pair `[2,5)`, not the
+  real-recursion span `[0,7)`) and `mojibake-curly-quote` (the report's
+  own `refused` row, not a disagreement). SIDE FINDING: `bench/
+  capability/subbench.toml`'s `[[patterns]]` array is stale relative to
+  `patterns.rxt` (predates the b46tags REQUIRES-tag correction wave,
+  missing `requires-backrefs` on `tag-depth3-bound` and five other
+  tokens) but harmless at runtime since `rxt_source = "patterns.rxt"`
+  makes `subbench.py` ignore that array outright — a trap for a human
+  reader of `subbench.toml` directly, not a harness bug.

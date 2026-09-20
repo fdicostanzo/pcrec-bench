@@ -530,8 +530,21 @@ capability policy and calls the driver directly, so a pattern whose
 compile-time policy withholds a token the driver would otherwise accept
 syntactically (the same shape `possessive-quantifier`'s `a++` finding
 already names) can show `unsup` here while reading `COMPILED` in the raw
-census; not re-derived by this lane beyond the count, flagged as a
-finding for the next reader who wants the exact set difference.
+census. **RE-DERIVED BY NAME** (lane `b58census`, 2026-09-19,
+`docs/dev/measurements/2026-09-19-rust-policy-vs-census-diff.txt`): the
+two 22-item sets share 21 members and differ by exactly one pattern
+each way. `balanced-parens-rec` (`\((?:[^()]|(?R))*\)`) is `unsup` here
+(its `recursion` token is withheld) but genuinely COMPILES in the raw
+census — confirmed live through the real adapter, and shown NOT to
+implement recursion at all (`(?R)` is a real rust-regex CRLF-mode inline
+flag, not rejected syntax; matched against `(a(b)c)` it returns the
+inner pair `[2,5)`, not the whole nested span `[0,7)` a real recursive
+engine would give) — the corpus's own instance of the
+`possessive-quantifier` shape, on a different token. `mojibake-curly-
+quote` is the mirror case, already accounted for above: it is this
+report's one `refused` row, not `unsup`, precisely because its token
+(`non-utf8-subject`) is satisfied — the raw census's matching "refused"
+entry for it is not a disagreement.
 
 Predictions (`docs/dev/predictions/capability-0.1-rust-first.tsv`,
 committed BEFORE the run): **3 parents / 5 clauses, 3/3 CONFIRMED, 0
