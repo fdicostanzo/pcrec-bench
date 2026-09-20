@@ -594,6 +594,196 @@ the committed file).
   this single-cell group (the predictions file above and this entry carry
   the reading).
 
+**[B59] reports (2026-09-20, lane b59rustwave) ADDING `rust-default`'s
+REMAINING first-pinned-sample report groups** (wake queue item 3, after
+`capability-0.1-rust-first.tsv`'s own [B57] first sample) — one set at a
+time as each window completes; this entry is extended in place as later
+sets land. Each group is `rust-default`'s SOLE roster member, for the
+same F27 anchor reason `2026-09-19-capability-0.1-*-rust-first-cf0962e3.md`'s
+own entry above states (a second, already-measured testee's own history
+would pull an older anchor in and refuse the file's `check_stated_utc`);
+no pcrec testee rides any of these cells, and the filename's pin suffix
+(`25b1984f`) names the bench's own pcrec-pin checkpoint at authoring
+time only, per the same non-pcrec-roster precedent. Predictions
+(`docs/dev/predictions/<set>-<version>-rust-first.tsv`, all five
+committed 2026-09-20 BEFORE any window, `442ebdd`) carry NO
+did-not-compile clause for any of the five sets — the same solo-roster
+`render_tsv` blindness the capability rust-first file's own entry
+documents applies here too, spelled out in full in
+`docs/dev/predictions/CLAUDE.md`'s own entry for these five files
+(most visibly for `bench/syntax@0.1`, where 26 of 95 patterns are
+grounded, construct-level-confirmed refusals that are nonetheless
+unscorable in this shape).
+
+- `2026-09-20-email-specimen-0.2-budu-ryzen1600-rust-first-25b1984f.md` —
+  `rust-default`'s first pinned sample on `bench/email-specimen@0.2`.
+  Query: `report --subbench email-specimen --version 0.2 --testee
+  rust_1.13.1_default-caps-simdna --format md` — **1 record(s) matching
+  this query, 1 included, 0 superseded**. `worst_other_core_busy: 10.81%`
+  (`rust_1.13.1_default-caps-simdna` / `orig` / `large-subject-throughput`).
+  `.tsv`/`.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/
+  `.matrix.html` siblings all rendered the same query; `.interpretation.md`
+  scored against `docs/dev/predictions/email-specimen-0.2-rust-first.tsv`:
+  **1 parent / 3 clauses, all CONFIRMED** — `orig` (the hand-inlined RFC
+  5322 pattern) reads `n_wrong = 0` on all three regimes exactly as
+  predicted (no refused construct, no possessive quantifier, no byte
+  ≥0x80 anywhere in the file; the hardcoded leftmost-first convention
+  matches the oracle's own). `factored` (the subroutine-call form,
+  `(?&atom)`/`(?&qchar)`/`(?&label)`/`(?&octet)`) refuses to compile on
+  BOTH forms exactly as the (unscored) recursion-family finding
+  predicts — visible in the compile-cost table's `did-not-compile=1`
+  rows and the matrix surface's `refused` cells (F26-immune), invisible
+  to `render_tsv`'s own `did_not_compile` ranking-group section for the
+  stated structural reason. No ledger was written for this single-cell
+  group (the predictions file and this entry carry the reading).
+- `2026-09-20-loglines-0.1-budu-ryzen1600-rust-first-25b1984f.md` —
+  `rust-default`'s first pinned sample on `bench/loglines@0.1`. Query:
+  `report --subbench loglines --version 0.1 --testee
+  rust_1.13.1_default-caps-simdna --format md` — **1 record(s) matching
+  this query, 1 included, 0 superseded** (6,930 rows: 110 compile, 6,820
+  match). `worst_other_core_busy: 13.75%` (`rust_1.13.1_default-caps-simdna`
+  / `iso-ts` / `large-subject-throughput`). `.tsv`/`.subject-grain.md`/
+  `.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html` siblings all rendered
+  the same query; `.interpretation.md` scored against
+  `docs/dev/predictions/loglines-0.1-rust-first.tsv`: **2 parents / 7
+  clauses, all CONFIRMED** — five short-subject-search witnesses
+  (`ipv4`, `ipv6`, `uuid`, `level-context`, `kv-quoted`) and two
+  large-subject-throughput ones (`level-context`, `ipv4`) all read
+  `n_wrong = 0` exactly as predicted: grep of all ten real loglines
+  patterns found zero refused constructs, zero possessive quantifiers
+  and zero byte-range classes over 0x80 anywhere in the set, and
+  rust-regex's hardcoded leftmost-first convention matches the oracle's
+  own. No ledger was written for this single-cell group.
+- `2026-09-20-altwide-0.2-budu-ryzen1600-rust-first-25b1984f.md` —
+  `rust-default`'s first pinned sample on `bench/altwide@0.2`. Query:
+  `report --subbench altwide --version 0.2 --testee
+  rust_1.13.1_default-caps-simdna --format md` — **1 record(s) matching
+  this query, 1 included, 0 superseded** (14,190 rows). `worst_other_core_busy:
+  40.71%` (`rust_1.13.1_default-caps-simdna` / `w-8` / `short-subject-search`
+  — an AFTER-sample provenance reading, not a gate verdict; the record's
+  own pre-flight passed and `status: measured`). `.tsv`/`.subject-grain.md`/
+  `.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html` siblings all rendered
+  the same query; `.interpretation.md` scored against
+  `docs/dev/predictions/altwide-0.2-rust-first.tsv`: **2 parents / 5
+  clauses, all CONFIRMED** — `w-256`, `srt-256`, `ci-256` clean on
+  match-compliance; `s-256` and `w-64` clean on their own regimes.
+  **A genuine finding beyond the predictions file**: the matrix surface
+  shows ALL 33 patterns x 3 regimes ranked at 1.000000 (self-only,
+  `1.0` in every cell) — rust-regex compiles and measures the FULL
+  altwide corpus with zero refusals, including `ci-512`, `s-4096` and
+  `w-2048`, the exact widest rungs this project's own libpcre2/pcrec
+  history refuses at (the DFA wall at `w-384`, the VM wall at
+  `384 < w <= 512`, `ci-512` refusing both routes). rust-regex's default
+  size limits (10 MiB compiled-program, 2 MiB lazy-DFA cache) are far
+  more permissive than libpcre2's own compiled-size ceiling for this
+  corpus's widest alternations — not probed for an exact boundary by
+  this lane (no witnessed refusal exists to derive one from), stated
+  here as an observation for a future census. No ledger was written for
+  this single-cell group.
+- `2026-09-20-syntax-0.1-budu-ryzen1600-rust-first-25b1984f.md` —
+  `rust-default`'s first pinned sample on `bench/syntax@0.1`. Query:
+  `report --subbench syntax --version 0.1 --testee
+  rust_1.13.1_default-caps-simdna --format md` — **1 record(s) matching
+  this query, 1 included, 0 superseded** (22,126 rows: 586 compile,
+  21,540 match). `worst_other_core_busy: 33.33%`
+  (`rust_1.13.1_default-caps-simdna` / `anc-dollar` /
+  `large-subject-throughput`, an AFTER-sample provenance reading; the
+  record's own pre-flight passed, `status: measured`). `.tsv`/
+  `.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`
+  siblings all rendered the same query; `.interpretation.md` scored
+  against `docs/dev/predictions/syntax-0.1-rust-first.tsv` (one load-time
+  bug found and fixed in the same commit — see below): **6 parents / 7
+  clauses, 4 CONFIRMED (P1/P2/P3/P5), 1 REFUTED (P4), 1 PARTIAL (P6: .a
+  refuted, .b confirmed)**.
+
+  **TWO GENUINE, UNPREDICTED FINDINGS, both traced to a specific record
+  and both now documented in `testees/rust/CLAUDE.md`** (not merely
+  "the prediction was wrong" — each has a worked mechanism):
+
+  1. **P4 refuted: `qnt-poss-brace` (`a{1,2}+b`) answers MATCH `[0,4)`
+     on subject `f-aaab` ("aaab"), where BOTH the oracle (true PCRE
+     possessive semantics) AND this lane's own "possessive suffix is a
+     no-op" hypothesis (extrapolated from `testees/rust/CLAUDE.md`'s
+     `a++`≡`a+` witness) predicted NOMATCH.** The only construction that
+     fits the observed span is `X{n,m}+` parsing as `(X{n,m})+` —
+     UNBOUNDED repetition of the BOUNDED group, not "the possessive `+`
+     is dropped" — a distinction the plain `X+`/`X*`/`X?` witnesses
+     (P2/P3, both CONFIRMED clean) structurally cannot make, because
+     `(X+)+` / `(X*)+` / `(X?)+` are language-EQUIVALENT to their
+     unsuffixed forms while `(X{1,2})+` is not. Full derivation:
+     `testees/rust/CLAUDE.md`'s possessive-quantifier section,
+     "CORRECTED/SHARPENED 2026-09-20" paragraph.
+  2. **P6.a refuted: `unp-p-lc` (`\p{L}+`, the SATISFIED
+     `unicode-properties` token) disagrees with the oracle on `f-cafe`
+     (bytes `caf` + raw `0xE9`, Latin-1-encoded, NOT valid UTF-8) and
+     `l-latin1`/`t-1m`/`t-256k`/`t-64k` (longer Latin-1 prose) — the
+     SAME non-utf8-subject byte-vs-UTF-8-encoding mechanism the
+     `capability@0.1` `high-byte-run` finding already documents for a
+     raw BYTE-RANGE class, now shown to reach a Unicode PROPERTY class
+     too: `\p{L}` needs a valid Unicode scalar value to test, and a
+     lone invalid byte never decodes to one. `unicode-properties` stays
+     SATISFIED (the mechanism is not new, only its reach); `unp-p-uc`
+     (`\P{L}+`, P6.b) stayed clean on the same subjects, an asymmetry
+     stated as an open observation, not derived. Full write-up:
+     `testees/rust/CLAUDE.md`'s `non-utf8-subject` section.
+
+  **A predictions-format BUG was found and fixed in the same commit**
+  (`docs/dev/predictions/CLAUDE.md`'s own `op`/`lo`/`hi` column
+  documentation): `interpret.py`'s `_op_holds` reads its threshold from
+  `hi` for EVERY comparison op except `between` (never from `lo`, which
+  `between` alone uses) — this file's original P1 clause (`op=gt`) put
+  the threshold in `lo` by mistake, which crashes `_op_holds` with
+  `ValueError: could not convert string to float: ''` rather than
+  scoring anything. Fixed before the first successful score (swapped to
+  `lo=""`/`hi="0"`, matching every other op=`eq`/`gt` clause across all
+  five of this lane's files, which were correct from authoring). No
+  ledger was written for this single-cell group (this entry and
+  `testees/rust/CLAUDE.md`'s two updated sections carry the reading).
+- `2026-09-20-bounded-0.3-budu-ryzen1600-rust-first-25b1984f.md` — the
+  LAST of `rust-default`'s five remaining first pinned samples ([B59]
+  complete): `bench/bounded@0.3`. Query: `report --subbench bounded
+  --version 0.3 --testee rust_1.13.1_default-caps-simdna --format md` —
+  **1 record(s) matching this query, 1 included, 0 superseded** (20,914
+  rows: 414 compile, 20,500 match). `worst_other_core_busy: 14.81%`
+  (`rust_1.13.1_default-caps-simdna` / `ctx-greedy-256` /
+  `large-subject-throughput`). `.tsv`/`.subject-grain.md`/
+  `.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html` siblings all
+  rendered the same query; `.interpretation.md` scored against
+  `docs/dev/predictions/bounded-0.3-rust-first.tsv`: **2 parents / 6
+  clauses, 5 CONFIRMED, 1 NOT-EVALUABLE** (P1.c, `nest3-16` — see
+  below; P1 rolls up `partial` on the arithmetic, but this is a witness
+  choice landing on a real refusal, not a wrong prediction).
+
+  **A genuine, unpredicted finding: TWO of the 42 real bounded patterns
+  refuse to compile under `rust-default`** — `nest3-16`
+  (`(?:(?:\d{1,16}){1,16}){1,16}`, P1.c's own selector) and `nest2-64`
+  (`(?:\d{1,64}){1,64}`), both `[size-limit] CompiledTooBig: Compiled
+  regex exceeds size limit of 10485760 bytes` on BOTH forms (plain and
+  whole-subject) — visible in the compile-cost table and the matrix
+  surface (F26-immune), invisible to `render_tsv`'s own `did_not_compile`
+  section for the same solo-roster structural reason stated throughout
+  this window. Neither refusal was in this lane's grounding (the grep
+  that found "zero refused constructs" checked SYNTAX only — backrefs,
+  lookaround, atomic groups etc. — never compiled SIZE, which is a
+  property of the pattern's combinatorial expansion, not any single
+  construct). The mechanism reads coherently against the rest of the
+  set: the FLAT count-ladder (`cls-upto-*`, single-level bounded repeat)
+  compiles clean all the way to `cls-upto-65535` — the exact rung
+  libpcre2/pcrec's own NFA-cap history refuses at, per this project's
+  earlier bounded samples, a boundary rust-regex's more permissive
+  10 MiB default does not share — while the two NESTED bounded-repeat
+  patterns (multiplicative combinatorics: `nest3-16`'s worst case is
+  16^3 = 4,096 repeats of a compiled subexpression) hit the SAME 10 MiB
+  ceiling from the opposite direction, at far smaller nominal counts.
+  The three smaller nested-repeat patterns (`nest2-4`, `nest2-letters-6`,
+  `nest3-3`) compile clean, consistent with the combinatorial-not-
+  syntactic explanation. No ledger was written for this single-cell
+  group. **[B59] itself is now COMPLETE**: five sets (email/loglines/
+  altwide/syntax/bounded) sampled in one lane, three genuine unpredicted
+  findings across two of them, one predictions-format bug found and
+  fixed, `docs/dev/lanes/b59rustwave_report.md` has the full lane
+  account.
+
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
 CLS-FOLD AFTER** — and changed NOTHING else here: the reporter is

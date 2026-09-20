@@ -313,6 +313,30 @@ close this gap and match raw bytes literally, the same way the other
 byte-oriented engines do by default — not built here (no census evidence
 motivates a second config yet, per this lane's own brief).
 
+**THE SAME GAP ALSO REACHES `\p{L}`/`\P{L}` (Unicode PROPERTY classes,
+the SATISFIED `unicode-properties` token), not only raw byte-range
+classes — witnessed 2026-09-20 (lane `b59rustwave`, `bench/syntax@0.1`'s
+first sample, pattern `unp-p-lc` = `\p{L}+`).** Subject `f-cafe` (bytes
+`caf` + raw `0xE9`, a lone invalid-UTF-8 lead byte — the Latin-1
+encoding of "café", NOT the UTF-8 one) and `l-latin1` (a longer
+Latin-1-encoded prose subject, "café naïve résumé à la carte") both read
+MATCH under the oracle (libpcre2, presumably reading a high byte as a
+Latin-1 letter outside full UTF mode) and NOMATCH under `rust-default`
+(`\p{L}` requires a valid Unicode scalar value to test the property
+against; a lone `0xE9` never decodes to one, so nothing there can ever
+satisfy a Unicode-property class, exactly the same "no codepoint ever
+decodes" mechanism `high-byte-run`'s own `nu-high-byte` witness states
+above for a raw byte-range class). This is NOT a new capability gap —
+`unicode-properties` stays SATISFIED, and the underlying mechanism is
+identical to the byte-range-class caveat already documented — but it
+widens WHERE the caveat is reachable: any Unicode-property class
+(`\p{...}`/`\P{...}`), not only an explicit `[\x80-\xff]`-style range,
+mismatches the oracle on a genuinely non-UTF-8 subject. `\P{L}+`
+(`unp-p-uc`, the negated class) stayed CLEAN on the same window's
+subjects — not deeply re-derived here, plausibly because a non-letter
+test is less sensitive to a byte that fails to decode at all, but this
+asymmetry is stated as an open observation, not explained.
+
 ## Refusals, first-class
 
 `RegexBuilder::build()` failure → `did-not-compile`, `diagnostic`
@@ -357,6 +381,38 @@ already applies to TRE's `k-reset`/`control-verbs`/`recursion` SILENT
 MISPARSE hazards, `testees/tre/CLAUDE.md`) — even though, unlike a TRE
 misparse, `a++` here compiles to something semantically IDENTICAL to a
 plain `a+`, never a wrong construct.
+
+**CORRECTED/SHARPENED 2026-09-20 (lane `b59rustwave`, `bench/syntax@0.1`'s
+first sample, pattern `qnt-poss-brace` = `a{1,2}+b`): "possessive ignored,
+behaves like the plain quantifier" does NOT generalize from `X+`/`X*`/`X?`
+to the BOUNDED form `X{n,m}+`.** `a{1,2}+b` against subject `f-aaab`
+(bytes `aaab`), whole-subject anchored (`\A(?:a{1,2}+b)\z`): true PCRE
+possessive semantics read NOMATCH (`a{1,2}+` greedily takes its max, 2
+a's, with no backtrack available, leaving "ab" — 2 bytes — where only one
+literal `b` remains to match, so the match cannot reach the string's end);
+the simple "treat the possessive suffix as a no-op" hypothesis this
+section's `a++`≡`a+` witness suggested would ALSO read NOMATCH (`a{1,2}`
+alone has the identical problem: max total consumed length 3, subject
+length 4). **Witnessed instead: rust-default answers MATCH, span `[0,4)`
+— the WHOLE 4-byte subject** (`docs/dev/lanes/b59rustwave_report.md`, the
+`syntax-0.1-rust-first.tsv` P4 REFUTATION). The only construction that
+explains this is `X{n,m}+` parsing as `(X{n,m})+` — UNBOUNDED repetition
+of the bounded-repeat GROUP, not "X{n,m} with an ignored trailing `+`":
+`(a{1,2})+` against "aaab" can take two repetitions (`aa` then `a`,
+three a's total across two group-instances) and then match the trailing
+literal `b`, reaching the full 4 bytes. This is INDISTINGUISHABLE from
+"the possessive suffix is a no-op" for the plain `X+`/`X*`/`X?` witness
+above ONLY because `(X+)+` ≡ `X+` as a matched LANGUAGE (repeating an
+already-unbounded quantifier changes nothing) — the bounded form is the
+first construct in this family whose two candidate parses are genuinely
+different languages, and it discriminates them cleanly. `qnt-poss-star`/
+`qnt-poss-quest` (`a*+b`/`a?+a`) do NOT discriminate the two hypotheses
+either, for the same "already unbounded or too narrow to matter" reason
+`(X*)+` ≡ `X*` and `(X?)+` ≡ `X*` ⊇ what those two patterns' own subject
+sets happen to probe — confirmed CLEAN in the same window, consistent
+with both hypotheses. Capability disposition UNCHANGED (`possessive-
+quantifier` stays WITHHELD — this finding sharpens WHY the syntax's
+semantics diverge from PCRE, it does not soften the divergence).
 
 ## The per-subject timeout: a thread, not a signal/longjmp pair
 

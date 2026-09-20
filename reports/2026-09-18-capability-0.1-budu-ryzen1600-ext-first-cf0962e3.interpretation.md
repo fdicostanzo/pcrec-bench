@@ -2,7 +2,7 @@
 report:          reports/2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.tsv
 report_sha256:   cc46b228d4754d7ace6599b30443f160f0719819fbbbca5bf1d49c889cdd308a
 index:           store/index.tsv
-index_sha256:    b7b66e1dc9358736fcab40be76bf829de6ae05d1e555917209ee477d0ea601b6
+index_sha256:    551978f8424eb19716ec9cda0a4497ec3bdcb6ca3d97d47d79339c997f6f41ed
 predictions:     docs/dev/predictions/capability-0.1-first.tsv
 predictions_sha256:915b42f5a8f6ec3dfdc552b8ba080e546c0ca02c26a067796495761dc228155d
 subject_grain:   reports/2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.subject-grain.tsv

@@ -1,0 +1,197 @@
+# reporter: v18 (2026-09-18); surface: matrix; filters: subbench=syntax, version=0.1, testee=rust_1.13.1_default-caps-simdna; source: store/index.tsv (1 record(s) matching this query); records: 1; subbench_versions: syntax@0.1; machines: budu-ryzen1600; schema_versions: 1.6; superseded: 0; newer_not_measured: 0; testees: rust_1.13.1_default-caps-simdna
+# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee/best_ns recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
+subbench	pattern	regime_or_na	form	best_testee	best_ns	rust_1.13.1_default-caps-simdna
+syntax@0.1	alt-nested	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	890038.8	1.000000
+syntax@0.1	alt-nested	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	424.3	1.000000
+syntax@0.1	alt-nested	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1456.1	1.000000
+syntax@0.1	alt-two	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	870225.0	1.000000
+syntax@0.1	alt-two	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	424.5	1.000000
+syntax@0.1	alt-two	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1430.1	1.000000
+syntax@0.1	anc-a-uc	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	82.2	1.000000
+syntax@0.1	anc-a-uc	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	460.3	1.000000
+syntax@0.1	anc-a-uc	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1592.3	1.000000
+syntax@0.1	anc-caret	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	80.8	1.000000
+syntax@0.1	anc-caret	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	460.3	1.000000
+syntax@0.1	anc-caret	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1594.5	1.000000
+syntax@0.1	anc-dollar	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	80.8	1.000000
+syntax@0.1	anc-dollar	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	460.7	1.000000
+syntax@0.1	anc-dollar	short-subject-search	plain			wrong
+syntax@0.1	anc-g-uc					refused
+syntax@0.1	anc-m-caret	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	240471.6	1.000000
+syntax@0.1	anc-m-caret	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	461.9	1.000000
+syntax@0.1	anc-m-caret	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2703.2	1.000000
+syntax@0.1	anc-m-dollar	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	237373.6	1.000000
+syntax@0.1	anc-m-dollar	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	461.1	1.000000
+syntax@0.1	anc-m-dollar	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2372.5	1.000000
+syntax@0.1	anc-z-lc	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	79.9	1.000000
+syntax@0.1	anc-z-lc	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	460.5	1.000000
+syntax@0.1	anc-z-lc	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1210.2	1.000000
+syntax@0.1	anc-z-uc					refused
+syntax@0.1	asr-k-uc					refused
+syntax@0.1	asr-nwb	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	586666.5	1.000000
+syntax@0.1	asr-nwb	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	322.2	1.000000
+syntax@0.1	asr-nwb	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1785.1	1.000000
+syntax@0.1	asr-wb	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	605608.9	1.000000
+syntax@0.1	asr-wb	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	424.0	1.000000
+syntax@0.1	asr-wb	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2072.4	1.000000
+syntax@0.1	bak-1					refused
+syntax@0.1	bak-2					refused
+syntax@0.1	bak-g-rel					refused
+syntax@0.1	bak-k-named					refused
+syntax@0.1	bak-py					refused
+syntax@0.1	cls-d	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	5382336.7	1.000000
+syntax@0.1	cls-d	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	1170.9	1.000000
+syntax@0.1	cls-d	short-subject-search	plain	rust_1.13.1_default-caps-simdna	3241.2	1.000000
+syntax@0.1	cls-dot	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	1687732.2	1.000000
+syntax@0.1	cls-dot	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	580.2	1.000000
+syntax@0.1	cls-dot	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2308.4	1.000000
+syntax@0.1	cls-fold-pair	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	670495.0	1.000000
+syntax@0.1	cls-fold-pair	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	424.9	1.000000
+syntax@0.1	cls-fold-pair	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1448.6	1.000000
+syntax@0.1	cls-h					refused
+syntax@0.1	cls-i-class	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	926051.9	1.000000
+syntax@0.1	cls-i-class	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	628.1	1.000000
+syntax@0.1	cls-i-class	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1949.5	1.000000
+syntax@0.1	cls-mixed-case	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	1699289.8	1.000000
+syntax@0.1	cls-mixed-case	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	425.2	1.000000
+syntax@0.1	cls-mixed-case	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2289.7	1.000000
+syntax@0.1	cls-n-uc					refused
+syntax@0.1	cls-negset	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	1254983.6	1.000000
+syntax@0.1	cls-negset	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	479.4	1.000000
+syntax@0.1	cls-negset	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1736.2	1.000000
+syntax@0.1	cls-pair-ctl	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	647727.5	1.000000
+syntax@0.1	cls-pair-ctl	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	424.6	1.000000
+syntax@0.1	cls-pair-ctl	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1442.8	1.000000
+syntax@0.1	cls-posix	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	22986169.3	1.000000
+syntax@0.1	cls-posix	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	2158.3	1.000000
+syntax@0.1	cls-posix	short-subject-search	plain	rust_1.13.1_default-caps-simdna	8006.7	1.000000
+syntax@0.1	cls-range	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	490857.5	1.000000
+syntax@0.1	cls-range	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	926.5	1.000000
+syntax@0.1	cls-range	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1432.7	1.000000
+syntax@0.1	cls-s-lc	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	344760.5	1.000000
+syntax@0.1	cls-s-lc	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	686.7	1.000000
+syntax@0.1	cls-s-lc	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1252.9	1.000000
+syntax@0.1	cls-s-uc	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2871149.2	1.000000
+syntax@0.1	cls-s-uc	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	1268.1	1.000000
+syntax@0.1	cls-s-uc	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2470.7	1.000000
+syntax@0.1	cls-v	large-subject-throughput	plain			wrong
+syntax@0.1	cls-v	match-compliance	whole-subject			wrong
+syntax@0.1	cls-v	short-subject-search	plain			wrong
+syntax@0.1	cls-w	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	25135137.0	1.000000
+syntax@0.1	cls-w	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	2477.6	1.000000
+syntax@0.1	cls-w	short-subject-search	plain	rust_1.13.1_default-caps-simdna	8899.9	1.000000
+syntax@0.1	cnd-group					refused
+syntax@0.1	esc-cr	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	49841.2	1.000000
+syntax@0.1	esc-cr	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	417.5	1.000000
+syntax@0.1	esc-cr	short-subject-search	plain	rust_1.13.1_default-caps-simdna	517.0	1.000000
+syntax@0.1	esc-ctrl					refused
+syntax@0.1	esc-hex	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	345567.2	1.000000
+syntax@0.1	esc-hex	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	423.3	1.000000
+syntax@0.1	esc-hex	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1021.0	1.000000
+syntax@0.1	esc-hex-braced	large-subject-throughput	plain			wrong
+syntax@0.1	esc-hex-braced	match-compliance	whole-subject			wrong
+syntax@0.1	esc-hex-braced	short-subject-search	plain			wrong
+syntax@0.1	esc-nl	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	71370.7	1.000000
+syntax@0.1	esc-nl	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	429.5	1.000000
+syntax@0.1	esc-nl	short-subject-search	plain	rust_1.13.1_default-caps-simdna	567.0	1.000000
+syntax@0.1	esc-octal-0					refused
+syntax@0.1	esc-octal-o					refused
+syntax@0.1	esc-quote					refused
+syntax@0.1	esc-tab	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	56460.4	1.000000
+syntax@0.1	esc-tab	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	428.6	1.000000
+syntax@0.1	esc-tab	short-subject-search	plain	rust_1.13.1_default-caps-simdna	565.4	1.000000
+syntax@0.1	floor	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	23469.3	1.000000
+syntax@0.1	floor	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	239.4	1.000000
+syntax@0.1	floor	short-subject-search	plain	rust_1.13.1_default-caps-simdna	766.8	1.000000
+syntax@0.1	grp-atomic-alt					refused
+syntax@0.1	grp-atomic-rep					refused
+syntax@0.1	grp-branch-reset					refused
+syntax@0.1	grp-callout					refused
+syntax@0.1	grp-cap	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	848822.7	1.000000
+syntax@0.1	grp-cap	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	453.5	1.000000
+syntax@0.1	grp-cap	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2360.7	1.000000
+syntax@0.1	grp-comment					refused
+syntax@0.1	grp-named	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	857062.4	1.000000
+syntax@0.1	grp-named	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	453.8	1.000000
+syntax@0.1	grp-named	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2360.4	1.000000
+syntax@0.1	grp-named-quote					refused
+syntax@0.1	grp-noncap	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	226665.0	1.000000
+syntax@0.1	grp-noncap	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	969.8	1.000000
+syntax@0.1	grp-noncap	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2389.9	1.000000
+syntax@0.1	lit-cat	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	345109.4	1.000000
+syntax@0.1	lit-cat	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	423.6	1.000000
+syntax@0.1	lit-cat	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1022.3	1.000000
+syntax@0.1	lka-neg					refused
+syntax@0.1	lka-nonatomic					refused
+syntax@0.1	lka-pos					refused
+syntax@0.1	lka-verb					refused
+syntax@0.1	lkb-neg					refused
+syntax@0.1	lkb-pos					refused
+syntax@0.1	mod-a					refused
+syntax@0.1	mod-i	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	827015.0	1.000000
+syntax@0.1	mod-i	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	627.7	1.000000
+syntax@0.1	mod-i	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1661.0	1.000000
+syntax@0.1	mod-j-uc					refused
+syntax@0.1	mod-n					refused
+syntax@0.1	mod-r					refused
+syntax@0.1	mod-reset					refused
+syntax@0.1	mod-s	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	175868.3	1.000000
+syntax@0.1	mod-s	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	650.5	1.000000
+syntax@0.1	mod-s	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1610.1	1.000000
+syntax@0.1	mod-u-uc	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	325615.9	1.000000
+syntax@0.1	mod-u-uc	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	1041.5	1.000000
+syntax@0.1	mod-u-uc	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1618.7	1.000000
+syntax@0.1	mod-unset	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	696464.6	1.000000
+syntax@0.1	mod-unset	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	528.6	1.000000
+syntax@0.1	mod-unset	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1512.0	1.000000
+syntax@0.1	mod-x	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	346777.8	1.000000
+syntax@0.1	mod-x	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1022.1	1.000000
+syntax@0.1	msc-c-uc					refused
+syntax@0.1	msc-r-uc					refused
+syntax@0.1	msc-x-uc					refused
+syntax@0.1	qnt-lazy	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	327121.4	1.000000
+syntax@0.1	qnt-lazy	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	1074.1	1.000000
+syntax@0.1	qnt-lazy	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1658.4	1.000000
+syntax@0.1	qnt-plus	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	1747302.1	1.000000
+syntax@0.1	qnt-plus	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	1075.4	1.000000
+syntax@0.1	qnt-plus	short-subject-search	plain	rust_1.13.1_default-caps-simdna	3624.4	1.000000
+syntax@0.1	qnt-plus-ctl	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	1543039.2	1.000000
+syntax@0.1	qnt-plus-ctl	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	1032.3	1.000000
+syntax@0.1	qnt-plus-ctl	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2854.4	1.000000
+syntax@0.1	qnt-poss-brace	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	1716416.4	1.000000
+syntax@0.1	qnt-poss-brace	match-compliance	whole-subject			wrong
+syntax@0.1	qnt-poss-brace	short-subject-search	plain			wrong
+syntax@0.1	qnt-poss-plus	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	1542581.7	1.000000
+syntax@0.1	qnt-poss-plus	match-compliance	whole-subject			wrong
+syntax@0.1	qnt-poss-plus	short-subject-search	plain			wrong
+syntax@0.1	qnt-poss-quest	large-subject-throughput	plain			wrong
+syntax@0.1	qnt-poss-quest	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	968.1	1.000000
+syntax@0.1	qnt-poss-quest	short-subject-search	plain			wrong
+syntax@0.1	qnt-poss-star	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	1030193.4	1.000000
+syntax@0.1	qnt-poss-star	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	1106.2	1.000000
+syntax@0.1	qnt-poss-star	short-subject-search	plain	rust_1.13.1_default-caps-simdna	3696.1	1.000000
+syntax@0.1	qnt-quest	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	436014.1	1.000000
+syntax@0.1	qnt-quest	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	271.5	1.000000
+syntax@0.1	qnt-quest	short-subject-search	plain	rust_1.13.1_default-caps-simdna	955.4	1.000000
+syntax@0.1	qnt-star	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2706044.6	1.000000
+syntax@0.1	qnt-star	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	1067.8	1.000000
+syntax@0.1	qnt-star	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2668.5	1.000000
+syntax@0.1	rec-1					refused
+syntax@0.1	rec-back					refused
+syntax@0.1	rec-define					refused
+syntax@0.1	rec-fwd					refused
+syntax@0.1	rec-g-angle					refused
+syntax@0.1	rec-name					refused
+syntax@0.1	rec-py					refused
+syntax@0.1	rec-r-uc	large-subject-throughput	plain			wrong
+syntax@0.1	rec-r-uc	match-compliance	whole-subject			wrong
+syntax@0.1	rec-r-uc	short-subject-search	plain			wrong
+syntax@0.1	unp-p-lc	large-subject-throughput	plain			wrong
+syntax@0.1	unp-p-lc	match-compliance	whole-subject			wrong
+syntax@0.1	unp-p-lc	short-subject-search	plain			wrong
+syntax@0.1	unp-p-uc	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	19929857.1	1.000000
+syntax@0.1	unp-p-uc	match-compliance	whole-subject	rust_1.13.1_default-caps-simdna	1498.2	1.000000
+syntax@0.1	unp-p-uc	short-subject-search	plain	rust_1.13.1_default-caps-simdna	5973.8	1.000000
+syntax@0.1	vrb-accept					refused
+syntax@0.1	vrb-skip					refused
+syntax@0.1	xcl-minus					refused
