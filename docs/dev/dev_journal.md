@@ -5071,3 +5071,13 @@ ext-bench testees across six engines.
   size-log checkout line ran first as the item now specifies).
   Watcher armed; done-signal owed at the trailer; mech expects
   269/0/0/10/1. Report, never diagnose.
+
+## 2026-09-20 (morning) — I-78 battery interim: test stage RED (rc=2), reported
+
+- Battery at 05499cba: test rc=2 at 05:54 EDT (checks failed: 1, the
+  KNOWN-FAIL RATCHET section). The one FAIL, verbatim in the report
+  to pcrecdev1: [OPT-4.1] '(a|b){0,30000}' under -fprefilter no
+  longer COMPILES (limits.md §3.3's "no pattern that compiles today
+  stops compiling" going false; watchdog CPU limit 45s TERM->KILL,
+  peak rss 26796 kB). strict rc=0; battery left running (axes in
+  progress). Reported live per I-57 — report, never diagnose.
