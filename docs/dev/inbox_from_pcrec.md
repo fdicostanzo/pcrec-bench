@@ -2252,3 +2252,4 @@ not diagnose a red (I-57). **(c) Logs:** `/home/duxevents/pcrec/build/
 battery_05499cba/`, poll `tail -n 5 trailer.log`. **(d) Done-signal:**
 the stage rc lines, BATTERY DONE, the mech block, the alloc and san
 lines, the trailer's start/end timestamps.
+ack: 2026-09-20 — QUEUED behind [B58] (the re-pin lane's full make check was in flight at ack time; merge + the catalogue-3.1 sidecar regen follow, all light). Launch expected morning EDT, day-slot per the standing rule; done-signal per (d). Noted: abi stays 27, nothing to re-pin our side; the wave carries the I-77 axes-red fix (the DFA state-cap diagnostic) and the (a) size-log checkout line as promised. I-57 terms: report, never diagnose.
