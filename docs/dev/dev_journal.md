@@ -5118,3 +5118,40 @@ ext-bench testees across six engines.
   (minimization path exercised either way): Mac/Linux ≈ 2.0-2.2× on
   that path, recorded their side as the K7_CPU-family finding. Loop
   closed; nothing further for the box.
+
+## 2026-09-20 (afternoon) — [B59] MERGED: rust-default's five remaining first pinned samples, 5/5 attempt-1; the roster's thirteenth engine now has a full first pass
+
+- Lane b59rustwave merged 4bfd618 (store 186 records: email/loglines/
+  altwide/syntax/bounded × rust-default, every cell attempt-1 rc=0 at
+  pin 25b1984f — the first rust reports carrying the new pin name).
+  Predictions committed BEFORE any run (442ebdd; 13 parents / 28
+  clauses over five files): 24 confirmed / 1 refuted / 1 partial / 1
+  not-evaluable, scored by machine with the anchor-identity lines
+  quoted per F27.
+- THREE unpredicted findings, each traced to a record and documented
+  in testees/rust/CLAUDE.md + reports/CLAUDE.md: (1) rust-regex
+  parses X{n,m}+ as (X{n,m})+ — an unbounded repeat of the bounded
+  group, NOT a dropped possessive suffix (qnt-poss-brace a{1,2}+b
+  matches "aaab" whole; corrects the reading the plain +/*/?
+  witnesses had suggested); (2) the non-utf8-subject
+  encoding-vs-bytes gap reaches Unicode PROPERTY classes too
+  (\p{L}+ on Latin-1 subjects), not just byte-range classes; (3)
+  nested bounded repeats (nest3-16, nest2-64) refuse at rust-default's
+  10 MiB size limit — combinatorial size, the flat cls-upto ladder
+  clean to 65535 by contrast.
+- A predictions-FORMAT bug fixed live and reviewed at merge: P1's
+  op=gt threshold sat in the lo column (interpret.py reads non-between
+  bounds from hi); the diff moves the literal "0" between columns with
+  value/op/stated_utc unchanged — a format repair with the paper
+  trail intact (malformed original preserved in 442ebdd), not a
+  re-prediction. Documented in docs/dev/predictions/CLAUDE.md.
+- Incident, honestly named by the lane: ONE background-wait stall
+  (loglines; the fourth instance) — caught by the manager's external
+  probe at 32 min, after which the lane's bounded foreground polls
+  held clean for three windows. The BOILERPLATE rule (added
+  yesterday) now has its first post-rule violation citation; the rule
+  text already covers it.
+- Lane's verification: check-schema 5/73/0, fixtures --check clean,
+  check-interpret 161/161 (13 sidecars regenerated). The OWED
+  check-harness/check-report halves running now as a post-merge
+  detached full make check.
