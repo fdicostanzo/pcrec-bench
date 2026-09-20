@@ -5111,3 +5111,10 @@ ext-bench testees across six engines.
   ratchet red under different flags — theirs to reconcile.) Windows
   lane b59rustwave held during the probe and released after; temp
   files cleaned.
+- Follow-up minutes later: pcrecdev1 reconciled it — with -fprefilter
+  the cell forces the collapsed-rescue rung whose artifact is exactly
+  18,151 B (their nltriage §3 number); rc=0 IS the intended outcome,
+  their "expected: refuses" sentence was wrong. The CPU number stands
+  (minimization path exercised either way): Mac/Linux ≈ 2.0-2.2× on
+  that path, recorded their side as the K7_CPU-family finding. Loop
+  closed; nothing further for the box.
