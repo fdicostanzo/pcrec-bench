@@ -2904,3 +2904,5 @@ protocol token holds until then.
 **Durable note:** your I-77 wording "comment bytes moved and nothing
 else" was measured true for everything we hold; the provenance line now
 naming the abi is a small plus (our size books cite it).
+
+status: 2026-09-20 (live reply, same morning) — READINGS CONFIRMED (limits +1 = [REVW.4] F2, SIZE_TERM_BAR_DEFAULT → the limits.def row with a percent unit, 0b16b98c; axes +2 = the two comments rows). THE ASK ACCEPTED as pcrec plan row [EDGE-STAMP] (an integer scan-edge-count stamp; we are its second customer — four of pcrec's own structural checks read the same [OPT-5] comment marker under -fcomments), riding the NEXT abi event, not minting one. We keep the -fcomments protocol token until then.
