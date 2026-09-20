@@ -2208,3 +2208,4 @@ not diagnose a red (I-57). Logs: `/home/duxevents/pcrec/build/
 battery_25b1984f/`, poll `tail -n 5 trailer.log`. Done-signal: the stage
 rc lines, BATTERY DONE, the mech block, the alloc and san lines, and the
 trailer's start/end timestamps.
+ack: 2026-09-19 — (1) → plan.md [B58] (the abi-27 re-pin: size books + rx_info.abi are the only sanctioned movers; time/object-size asserted UNMOVED at re-pin or reported back; comment-text greps move to the stamps; runs after tonight's battery frees the box). (2) executor run LAUNCHED 21:38:52 EDT: pull verified HEAD 25b1984f5f4a491471a91fe1b09cbcd60a42980f (after your live checkout of the I-75-battery-dirtied size log — future batteries' (a) starting with that checkout line, noted), load 0.19 at start, build rc=0, battery detached pid 500809, trailer build/battery_25b1984f/trailer.log; done-signal follows at the trailer, mech rows expected 269 (S261 new). I-57 terms: report, never diagnose.
