@@ -654,6 +654,32 @@ unscorable in this shape).
   and zero byte-range classes over 0x80 anywhere in the set, and
   rust-regex's hardcoded leftmost-first convention matches the oracle's
   own. No ledger was written for this single-cell group.
+- `2026-09-20-altwide-0.2-budu-ryzen1600-rust-first-25b1984f.md` —
+  `rust-default`'s first pinned sample on `bench/altwide@0.2`. Query:
+  `report --subbench altwide --version 0.2 --testee
+  rust_1.13.1_default-caps-simdna --format md` — **1 record(s) matching
+  this query, 1 included, 0 superseded** (14,190 rows). `worst_other_core_busy:
+  40.71%` (`rust_1.13.1_default-caps-simdna` / `w-8` / `short-subject-search`
+  — an AFTER-sample provenance reading, not a gate verdict; the record's
+  own pre-flight passed and `status: measured`). `.tsv`/`.subject-grain.md`/
+  `.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html` siblings all rendered
+  the same query; `.interpretation.md` scored against
+  `docs/dev/predictions/altwide-0.2-rust-first.tsv`: **2 parents / 5
+  clauses, all CONFIRMED** — `w-256`, `srt-256`, `ci-256` clean on
+  match-compliance; `s-256` and `w-64` clean on their own regimes.
+  **A genuine finding beyond the predictions file**: the matrix surface
+  shows ALL 33 patterns x 3 regimes ranked at 1.000000 (self-only,
+  `1.0` in every cell) — rust-regex compiles and measures the FULL
+  altwide corpus with zero refusals, including `ci-512`, `s-4096` and
+  `w-2048`, the exact widest rungs this project's own libpcre2/pcrec
+  history refuses at (the DFA wall at `w-384`, the VM wall at
+  `384 < w <= 512`, `ci-512` refusing both routes). rust-regex's default
+  size limits (10 MiB compiled-program, 2 MiB lazy-DFA cache) are far
+  more permissive than libpcre2's own compiled-size ceiling for this
+  corpus's widest alternations — not probed for an exact boundary by
+  this lane (no witnessed refusal exists to derive one from), stated
+  here as an observation for a future census. No ledger was written for
+  this single-cell group.
 
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
