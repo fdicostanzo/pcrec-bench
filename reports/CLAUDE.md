@@ -594,6 +594,49 @@ the committed file).
   this single-cell group (the predictions file above and this entry carry
   the reading).
 
+**[B59] reports (2026-09-20, lane b59rustwave) ADDING `rust-default`'s
+REMAINING first-pinned-sample report groups** (wake queue item 3, after
+`capability-0.1-rust-first.tsv`'s own [B57] first sample) — one set at a
+time as each window completes; this entry is extended in place as later
+sets land. Each group is `rust-default`'s SOLE roster member, for the
+same F27 anchor reason `2026-09-19-capability-0.1-*-rust-first-cf0962e3.md`'s
+own entry above states (a second, already-measured testee's own history
+would pull an older anchor in and refuse the file's `check_stated_utc`);
+no pcrec testee rides any of these cells, and the filename's pin suffix
+(`25b1984f`) names the bench's own pcrec-pin checkpoint at authoring
+time only, per the same non-pcrec-roster precedent. Predictions
+(`docs/dev/predictions/<set>-<version>-rust-first.tsv`, all five
+committed 2026-09-20 BEFORE any window, `442ebdd`) carry NO
+did-not-compile clause for any of the five sets — the same solo-roster
+`render_tsv` blindness the capability rust-first file's own entry
+documents applies here too, spelled out in full in
+`docs/dev/predictions/CLAUDE.md`'s own entry for these five files
+(most visibly for `bench/syntax@0.1`, where 26 of 95 patterns are
+grounded, construct-level-confirmed refusals that are nonetheless
+unscorable in this shape).
+
+- `2026-09-20-email-specimen-0.2-budu-ryzen1600-rust-first-25b1984f.md` —
+  `rust-default`'s first pinned sample on `bench/email-specimen@0.2`.
+  Query: `report --subbench email-specimen --version 0.2 --testee
+  rust_1.13.1_default-caps-simdna --format md` — **1 record(s) matching
+  this query, 1 included, 0 superseded**. `worst_other_core_busy: 10.81%`
+  (`rust_1.13.1_default-caps-simdna` / `orig` / `large-subject-throughput`).
+  `.tsv`/`.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/
+  `.matrix.html` siblings all rendered the same query; `.interpretation.md`
+  scored against `docs/dev/predictions/email-specimen-0.2-rust-first.tsv`:
+  **1 parent / 3 clauses, all CONFIRMED** — `orig` (the hand-inlined RFC
+  5322 pattern) reads `n_wrong = 0` on all three regimes exactly as
+  predicted (no refused construct, no possessive quantifier, no byte
+  ≥0x80 anywhere in the file; the hardcoded leftmost-first convention
+  matches the oracle's own). `factored` (the subroutine-call form,
+  `(?&atom)`/`(?&qchar)`/`(?&label)`/`(?&octet)`) refuses to compile on
+  BOTH forms exactly as the (unscored) recursion-family finding
+  predicts — visible in the compile-cost table's `did-not-compile=1`
+  rows and the matrix surface's `refused` cells (F26-immune), invisible
+  to `render_tsv`'s own `did_not_compile` ranking-group section for the
+  stated structural reason. No ledger was written for this single-cell
+  group (the predictions file and this entry carry the reading).
+
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
 CLS-FOLD AFTER** — and changed NOTHING else here: the reporter is
