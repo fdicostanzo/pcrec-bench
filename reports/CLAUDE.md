@@ -636,6 +636,24 @@ unscorable in this shape).
   to `render_tsv`'s own `did_not_compile` ranking-group section for the
   stated structural reason. No ledger was written for this single-cell
   group (the predictions file and this entry carry the reading).
+- `2026-09-20-loglines-0.1-budu-ryzen1600-rust-first-25b1984f.md` —
+  `rust-default`'s first pinned sample on `bench/loglines@0.1`. Query:
+  `report --subbench loglines --version 0.1 --testee
+  rust_1.13.1_default-caps-simdna --format md` — **1 record(s) matching
+  this query, 1 included, 0 superseded** (6,930 rows: 110 compile, 6,820
+  match). `worst_other_core_busy: 13.75%` (`rust_1.13.1_default-caps-simdna`
+  / `iso-ts` / `large-subject-throughput`). `.tsv`/`.subject-grain.md`/
+  `.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html` siblings all rendered
+  the same query; `.interpretation.md` scored against
+  `docs/dev/predictions/loglines-0.1-rust-first.tsv`: **2 parents / 7
+  clauses, all CONFIRMED** — five short-subject-search witnesses
+  (`ipv4`, `ipv6`, `uuid`, `level-context`, `kv-quoted`) and two
+  large-subject-throughput ones (`level-context`, `ipv4`) all read
+  `n_wrong = 0` exactly as predicted: grep of all ten real loglines
+  patterns found zero refused constructs, zero possessive quantifiers
+  and zero byte-range classes over 0x80 anywhere in the set, and
+  rust-regex's hardcoded leftmost-first convention matches the oracle's
+  own. No ledger was written for this single-cell group.
 
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]

@@ -1,0 +1,207 @@
+# reporter: v18 (2026-09-18); filters: subbench=loglines, version=0.1, testee=rust_1.13.1_default-caps-simdna; source: store/index.tsv (1 record(s) matching this query); records: 1; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.6; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 1; mixed_x13: False; include_provenance: False; worst_other_core_busy: 13.75% (rust_1.13.1_default-caps-simdna / iso-ts / large-subject-throughput); floor_pattern: floor
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						loglines@0.1__rust_1.13.1_default-caps-simdna__budu-ryzen1600__20260920T164630Z				agreement	agree (0 of 22 groups; 0 of 1364 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+baseline	bignum	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	bignum	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	17744002.254237	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	17718973.355932	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	19010549.474576	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	509059.555189	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	bignum	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	bignum	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	725435.508311	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	723907.880791	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	726985.269204	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	1103.994901	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+baseline	floor	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	floor	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	4168307.092683	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	4164827.429268	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	4171492.287805	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	2221.689318	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	floor	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	floor	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	8061.097033	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	8046.198197	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	8068.164077	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	7.925818	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+baseline	hex32-id	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	7465417.411765	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	7461275.019608	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	7467243.607843	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	2132.534818	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	hex32-id	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	hex32-id	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	294679.269714	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	294642.410188	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	294821.023150	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	71.066432	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+baseline	http-5xx	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	443901.317308	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	443025.739183	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	445923.493990	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	1018.219165	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	http-5xx	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	http-5xx	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	15746.826814	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	15714.869236	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	15967.946153	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	92.211053	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+baseline	ipv4	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	ipv4	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	7507131.516484	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	7504841.043956	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	7510410.879121	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	2063.961946	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	ipv4	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	ipv4	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	294105.310308	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	294054.191436	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	386500.732467	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	36931.604354	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+baseline	ipv6	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	ipv6	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	7477277.203883	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	7470821.145631	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	7480194.388350	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	3531.829640	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	ipv6	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	ipv6	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	291467.667681	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	291249.055094	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	291766.341744	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	185.999017	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+baseline	iso-ts	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	5841273.894309	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	5833590.430894	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	5848617.252033	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	5465.222919	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	iso-ts	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	iso-ts	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	207150.243881	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	206491.684656	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	213145.909123	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	2491.664210	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+baseline	kv-quoted	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	210692.918991	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	210432.051793	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	212132.466135	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	626.230644	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	kv-quoted	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	kv-quoted	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	9141.666360	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	9125.371546	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	9174.087032	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	16.053138	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+baseline	level-context	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	level-context	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	1098534.995434	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	1097866.191781	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	1101854.662100	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	1450.539185	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	level-context	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	level-context	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	42982.552681	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	42917.888536	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	43158.004577	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	99.815462	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+baseline	stack-frame	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	550473.075163	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	550151.607843	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	668377.326797	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	47080.086587	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	stack-frame	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	stack-frame	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	12891.368093	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	12860.390388	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	13161.090349	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	112.318253	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+baseline	uuid	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	uuid	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	6148513.377358	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	6132788.647799	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	6180453.515723	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	16032.148330	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+baseline	uuid	(set)	short-subject-search			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	uuid	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	292934.195827	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	292840.792111	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	max_ns	293640.190379	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	289.881822	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+compile	bignum			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	200222.000000	5					
+compile	bignum			plain	same program	rust_1.13.1_default-caps-simdna				jitter	0.467						
+compile_stamp						rust_1.13.1_default-caps-simdna				engine	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				entry	plain entry						
+compile_stamp						rust_1.13.1_default-caps-simdna				prefilter	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				vm_rungs	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				buffers	n/s						
+compile_stamp						rust_1.13.1_default-caps-simdna				frame	n/s						
+compile	bignum			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	78610.000000	5					
+compile	bignum			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	2.389						
+compile	floor			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	5020.000000	5					
+compile	floor			plain	same program	rust_1.13.1_default-caps-simdna				jitter	timer-floor						
+compile	floor			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	11370.000000	5					
+compile	floor			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	timer-floor						
+compile	hex32-id			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	40310.000000	5					
+compile	hex32-id			plain	same program	rust_1.13.1_default-caps-simdna				jitter	2.169						
+compile	hex32-id			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	92590.000000	5					
+compile	hex32-id			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	2.047						
+compile	http-5xx			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	119631.000000	5					
+compile	http-5xx			plain	same program	rust_1.13.1_default-caps-simdna				jitter	1.546						
+compile	http-5xx			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	142791.000000	5					
+compile	http-5xx			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	1.458						
+compile	ipv4			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	424813.000000	5					
+compile	ipv4			plain	same program	rust_1.13.1_default-caps-simdna				jitter	0.519						
+compile	ipv4			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	69761.000000	5					
+compile	ipv4			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	1.319						
+compile	ipv6			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	74641.000000	5					
+compile	ipv6			plain	same program	rust_1.13.1_default-caps-simdna				jitter	1.256						
+compile	ipv6			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	76371.000000	5					
+compile	ipv6			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	1.269						
+compile	iso-ts			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	845666.000000	5					
+compile	iso-ts			plain	same program	rust_1.13.1_default-caps-simdna				jitter	0.277						
+compile	iso-ts			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	2105934.000000	5					
+compile	iso-ts			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	0.257						
+compile	kv-quoted			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	345952.000000	5					
+compile	kv-quoted			plain	same program	rust_1.13.1_default-caps-simdna				jitter	1.150						
+compile	kv-quoted			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	112041.000000	5					
+compile	kv-quoted			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	1.648						
+compile	level-context			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	1118007.000000	5					
+compile	level-context			plain	same program	rust_1.13.1_default-caps-simdna				jitter	0.301						
+compile	level-context			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	1090737.000000	5					
+compile	level-context			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	0.283						
+compile	stack-frame			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	68181.000000	5					
+compile	stack-frame			plain	same program	rust_1.13.1_default-caps-simdna				jitter	1.367						
+compile	stack-frame			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	151841.000000	5					
+compile	stack-frame			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	1.253						
+compile	uuid			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	172121.000000	5					
+compile	uuid			plain	same program	rust_1.13.1_default-caps-simdna				jitter	1.082						
+compile	uuid			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	55521.000000	5					
+compile	uuid			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	1.628						
