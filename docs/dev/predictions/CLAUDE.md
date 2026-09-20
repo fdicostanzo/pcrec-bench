@@ -359,6 +359,19 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   repeat, a password shape; `altwide`: the `w-256`/`srt-256` order pair,
   the one `(?i)` witness `ci-256`, one throughput-regime rung).
 
+  **`syntax-0.1-rust-first.tsv`'s P1 (`op=gt`) shipped with a column
+  swap** (fixed in the same commit as the window that first tried to
+  score it, before any score was reported): `interpret.py`'s
+  `_op_holds` reads its numeric threshold from `hi` for every op except
+  `between` (never `lo`), and P1's originally-committed row put the `0`
+  in `lo` with `hi` empty — `float('')` raises, aborting the WHOLE
+  `interpret --predictions` call before any clause scores. Fixed to
+  `lo=""`/`hi="0"`, matching this file's own P2-P6 rows and every other
+  op=`eq` clause across the other four files, all of which were correct
+  from authoring. `reports/CLAUDE.md`'s syntax entry has the two real
+  findings the corrected file went on to score (P4 refuted, P6.a
+  refuted) — this bug delayed neither.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before

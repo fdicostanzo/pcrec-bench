@@ -680,6 +680,65 @@ unscorable in this shape).
   this lane (no witnessed refusal exists to derive one from), stated
   here as an observation for a future census. No ledger was written for
   this single-cell group.
+- `2026-09-20-syntax-0.1-budu-ryzen1600-rust-first-25b1984f.md` —
+  `rust-default`'s first pinned sample on `bench/syntax@0.1`. Query:
+  `report --subbench syntax --version 0.1 --testee
+  rust_1.13.1_default-caps-simdna --format md` — **1 record(s) matching
+  this query, 1 included, 0 superseded** (22,126 rows: 586 compile,
+  21,540 match). `worst_other_core_busy: 33.33%`
+  (`rust_1.13.1_default-caps-simdna` / `anc-dollar` /
+  `large-subject-throughput`, an AFTER-sample provenance reading; the
+  record's own pre-flight passed, `status: measured`). `.tsv`/
+  `.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`
+  siblings all rendered the same query; `.interpretation.md` scored
+  against `docs/dev/predictions/syntax-0.1-rust-first.tsv` (one load-time
+  bug found and fixed in the same commit — see below): **6 parents / 7
+  clauses, 4 CONFIRMED (P1/P2/P3/P5), 1 REFUTED (P4), 1 PARTIAL (P6: .a
+  refuted, .b confirmed)**.
+
+  **TWO GENUINE, UNPREDICTED FINDINGS, both traced to a specific record
+  and both now documented in `testees/rust/CLAUDE.md`** (not merely
+  "the prediction was wrong" — each has a worked mechanism):
+
+  1. **P4 refuted: `qnt-poss-brace` (`a{1,2}+b`) answers MATCH `[0,4)`
+     on subject `f-aaab` ("aaab"), where BOTH the oracle (true PCRE
+     possessive semantics) AND this lane's own "possessive suffix is a
+     no-op" hypothesis (extrapolated from `testees/rust/CLAUDE.md`'s
+     `a++`≡`a+` witness) predicted NOMATCH.** The only construction that
+     fits the observed span is `X{n,m}+` parsing as `(X{n,m})+` —
+     UNBOUNDED repetition of the BOUNDED group, not "the possessive `+`
+     is dropped" — a distinction the plain `X+`/`X*`/`X?` witnesses
+     (P2/P3, both CONFIRMED clean) structurally cannot make, because
+     `(X+)+` / `(X*)+` / `(X?)+` are language-EQUIVALENT to their
+     unsuffixed forms while `(X{1,2})+` is not. Full derivation:
+     `testees/rust/CLAUDE.md`'s possessive-quantifier section,
+     "CORRECTED/SHARPENED 2026-09-20" paragraph.
+  2. **P6.a refuted: `unp-p-lc` (`\p{L}+`, the SATISFIED
+     `unicode-properties` token) disagrees with the oracle on `f-cafe`
+     (bytes `caf` + raw `0xE9`, Latin-1-encoded, NOT valid UTF-8) and
+     `l-latin1`/`t-1m`/`t-256k`/`t-64k` (longer Latin-1 prose) — the
+     SAME non-utf8-subject byte-vs-UTF-8-encoding mechanism the
+     `capability@0.1` `high-byte-run` finding already documents for a
+     raw BYTE-RANGE class, now shown to reach a Unicode PROPERTY class
+     too: `\p{L}` needs a valid Unicode scalar value to test, and a
+     lone invalid byte never decodes to one. `unicode-properties` stays
+     SATISFIED (the mechanism is not new, only its reach); `unp-p-uc`
+     (`\P{L}+`, P6.b) stayed clean on the same subjects, an asymmetry
+     stated as an open observation, not derived. Full write-up:
+     `testees/rust/CLAUDE.md`'s `non-utf8-subject` section.
+
+  **A predictions-format BUG was found and fixed in the same commit**
+  (`docs/dev/predictions/CLAUDE.md`'s own `op`/`lo`/`hi` column
+  documentation): `interpret.py`'s `_op_holds` reads its threshold from
+  `hi` for EVERY comparison op except `between` (never from `lo`, which
+  `between` alone uses) — this file's original P1 clause (`op=gt`) put
+  the threshold in `lo` by mistake, which crashes `_op_holds` with
+  `ValueError: could not convert string to float: ''` rather than
+  scoring anything. Fixed before the first successful score (swapped to
+  `lo=""`/`hi="0"`, matching every other op=`eq`/`gt` clause across all
+  five of this lane's files, which were correct from authoring). No
+  ledger was written for this single-cell group (this entry and
+  `testees/rust/CLAUDE.md`'s two updated sections carry the reading).
 
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
