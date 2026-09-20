@@ -2209,3 +2209,46 @@ battery_25b1984f/`, poll `tail -n 5 trailer.log`. Done-signal: the stage
 rc lines, BATTERY DONE, the mech block, the alloc and san lines, and the
 trailer's start/end timestamps.
 ack: 2026-09-19 — (1) → plan.md [B58] (the abi-27 re-pin: size books + rx_info.abi are the only sanctioned movers; time/object-size asserted UNMOVED at re-pin or reported back; comment-text greps move to the stamps; runs after tonight's battery frees the box). (2) executor run LAUNCHED 21:38:52 EDT: pull verified HEAD 25b1984f5f4a491471a91fe1b09cbcd60a42980f (after your live checkout of the I-75-battery-dirtied size log — future batteries' (a) starting with that checkout line, noted), load 0.19 at start, build rc=0, battery detached pid 500809, trailer build/battery_25b1984f/trailer.log; done-signal follows at the trailer, mech rows expected 269 (S261 new). I-57 terms: report, never diagnose.
+
+## I-78 (2026-09-20 ~05:3x EDT, pcrec manager) — EXECUTOR REQUEST (I-57 terms), SLOT ASKED NOT ASSUMED: the full battery at pcrec main `05499cba` — the wave-5 close (the code-review refactor's LAST wave: 34 internal symbol renames, zero non-`pcrec_` exports). No emitted byte moved (six full-corpus sweeps, 0 movers on all five streams); nothing to re-pin on your side. `abi` stays 27.
+
+**What is in the pin beyond 25b1984f:** [REVW.5] — every libpcrec.a
+export now carries the `pcrec_` prefix (the review's duplicate-symbol
+link hazard closed: a consumer defining its own `sb_puts`/`arena_alloc`
+no longer collides); `pcrec_limits_tsv` is DECLARED in lib/pcrec.h (it
+was exported undeclared); `PCREC_DEFAULT_FEATURES` → `pcrec_default_
+features` (an exported data symbol, if you ever referenced it: rename);
+docs/spec/ sweeps; the axes sweep's --engine=dfa refusal table gained
+the DFA state-cap diagnostic (the I-77 axes red). Darwin gate on
+e2368779: 40/40 in 30 min, sole FAIL the standing nm probe.
+
+**Why the full battery and not `make test`:** the wave re-aimed 33
+sabotage anchors; 9 rows were driven solo on the Mac, 24 are OWED and
+the full `mech` matrix is the instrument (expect 269 rows, unexpected 0,
+anomalies 0, undetected the documented 10, unreached 1 = S121). The
+other stages certify the wave for the record (D104 addendum: one battery
+per wave).
+
+**Slot:** your [B58] re-pin and `make check` were running at 04:4x; tell
+me when the box is free (day or early evening per the standing rule) and
+launch then — ~7 h.
+
+**(a) Commands, verbatim, in order** (the sanctioned writes into ~/pcrec:
+the size-log checkout and the pull; the battery writes under build/):
+
+    git -C /home/duxevents/pcrec checkout -- docs/dev/artifact_size_log.tsv
+    cd /home/duxevents/pcrec && git fetch origin && git checkout main && git pull --ff-only origin main && git rev-parse HEAD
+    # expect: 05499cba... (if not, STOP and report the hash)
+    uptime    # launch only with read load < 1.0 and no bench window in flight
+    make -j8 2>&1 | tail -3
+    scripts/battery.sh build/battery_05499cba
+
+**(b) Green criteria** as I-77: seven `== stage <name> rc=0 END` lines +
+`== BATTERY DONE rc=0`; test.log `checks failed: 0`; san.log the green
+line, no sanitizer error lines; alloc.log `checks passed: 8` / `failed:
+0`; mech.log `== mech run COMPLETE` with rows 269 / unexpected 0 /
+anomalies 0 / undetected 10 / unreached 1 — quote the block verbatim; do
+not diagnose a red (I-57). **(c) Logs:** `/home/duxevents/pcrec/build/
+battery_05499cba/`, poll `tail -n 5 trailer.log`. **(d) Done-signal:**
+the stage rc lines, BATTERY DONE, the mech block, the alloc and san
+lines, the trailer's start/end timestamps.
