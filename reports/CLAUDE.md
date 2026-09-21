@@ -2852,12 +2852,14 @@ whole-subject form 24,049 B — byte-IDENTICAL between the two patterns,
 consistent with one shared property-class table differing only in
 accept/reject polarity). None of this wave's own re-pin history reading
 (the [EMIT-VERB]/D112 comments-off pin, [OPT-DIAL]/K59's premul-drop
-rung) named Unicode-property support as a change — this is a genuinely
-NEW, unpredicted capability gain somewhere in the cd371441 ->
-a770139e -> cf0962e3 -> 25b1984f span, stated here as a finding for
-pcrec to confirm (an outbox candidate, not filed by this lane — scope is
-measure and report, per [B63]'s own precedent), not diagnosed to a
-mechanism.
+rung) named Unicode-property support as a change — this was a genuinely
+unpredicted capability gain at authoring time, since ATTRIBUTED
+(2026-09-21, pcrecdev1's live reply to the O-41 message): pcrec
+[M5.0] stage 5, the uprops module (Unicode property classes, PC-3
+1,053 names swept against the live oracle), merged inside the
+d34c9131..25b1984f span — their plan_completed.md [M5.0] row and
+docs/pcre2_compliance.md are the records; closed by attribution, no
+O-item (see the b64window report's dated addendum).
 
 **P5/P6 (same-pin structural, `compile:emit_bytes` `eq 1`) BOTH REFUTE
 for real, on witnesses this file deliberately chose to be
