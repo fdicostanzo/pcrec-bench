@@ -253,7 +253,11 @@ class Adapter(_ad.Adapter):
     # -------------------------------------------------------------- compile
 
     def compile(self, testee_id, pattern_id, pattern, options, trials,
-                workdir):
+                workdir, requires_free_spacing=False):
+        # [B70]: unused -- libpcre2 anchors the `match` regime with
+        # runtime PCRE2_ANCHORED|PCRE2_ENDANCHORED flags on the SAME
+        # artifact, so it builds no `whole-subject` wrap to fix.
+        del requires_free_spacing
         cfg = self.config(testee_id)
         drv = self.prepare_driver(workdir)
         # per-PATTERN scratch: see Adapter.compile's docstring.

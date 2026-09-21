@@ -224,6 +224,14 @@ int main(int argc, char **argv) {
     volatile long iters = 1, subject_timeout = 0, skip = 0;
     long compile_trials = 1;
     volatile int find_all = 0;
+    /* [B70] docs/design/capability_set_v1.md 14: whether the harness has
+     * read `requires=free-spacing` off THIS pattern's own tags -- decided
+     * in pcrecbench/harness.py (the one place a Pattern's tags are
+     * visible), forwarded through testees/vectorscan/adapter.py as this
+     * flag, taken only on `--form whole-subject` (the adapter never sets
+     * it for `plain`). See the whole-subject expr build below for what
+     * it changes. */
+    volatile int free_spacing = 0;
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -236,6 +244,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--subject-timeout") && i + 1 < argc) subject_timeout = strtol(argv[++i], NULL, 10);
         else if (!strcmp(a, "--skip") && i + 1 < argc)      skip = strtol(argv[++i], NULL, 10);
         else if (!strcmp(a, "--find-all"))                  find_all = 1;
+        else if (!strcmp(a, "--free-spacing"))               free_spacing = 1;
         else { printf("error\tunknown argument %s\n", a); return 2; }
     }
     (void)find_all;  /* accepted for protocol compliance; see header */
@@ -260,21 +269,33 @@ int main(int argc, char **argv) {
 
     /* Build the actual expression text this driver compiles. `plain`: the
      * pattern bytes verbatim. `whole-subject`: this driver's OWN wider
-     * wrapper (see header) -- `^(?:` + pattern + `)\z`. Requires a
-     * NUL-terminated C string either way: hs_compile()/hs_expression_info()
-     * take `const char *expression`, not a length-delimited buffer, the
-     * same constraint pcre2's ZERO_TERMINATED convention and onig's
-     * `pat + patlen`-bounded call both avoid in their own ways -- this
-     * bench's patterns are text regexes with no embedded NUL, so a
-     * NUL-terminated copy is lossless here. */
+     * wrapper (see header) -- `^(?:` + pattern + `)\z`, or, when
+     * `free_spacing` ([B70], docs/design/capability_set_v1.md 14), `^(?:`
+     * + pattern + `\n)\z` -- a `(?x)` pattern may end its raw text on a
+     * line comment with no trailing newline, and appending `)\z` directly
+     * would land ON that comment (the [B69] census's finding); a `\n`
+     * ends a free-spacing comment and is unsafe everywhere else (a
+     * literal newline ATOM under the default syntax) -- the SAME
+     * conditional rule `pcrecbench.record.whole_subject_text`'s own
+     * docstring states in full, applied here in C because this driver
+     * builds its own wider wrapper rather than reusing that function.
+     * Requires a NUL-terminated C string either way:
+     * hs_compile()/hs_expression_info() take `const char *expression`,
+     * not a length-delimited buffer, the same constraint pcre2's
+     * ZERO_TERMINATED convention and onig's `pat + patlen`-bounded call
+     * both avoid in their own ways -- this bench's patterns are text
+     * regexes with no embedded NUL, so a NUL-terminated copy is lossless
+     * here. */
     char *expr;
     if (whole_subject) {
-        size_t n = 4 + patlen + 3 + 1;
+        size_t nl = free_spacing ? 1 : 0;
+        size_t n = 4 + patlen + nl + 3 + 1;
         expr = malloc(n);
         memcpy(expr, "^(?:", 4);
         memcpy(expr + 4, pat, patlen);
-        memcpy(expr + 4 + patlen, ")\\z", 3);
-        expr[4 + patlen + 3] = 0;
+        if (free_spacing) expr[4 + patlen] = '\n';
+        memcpy(expr + 4 + patlen + nl, ")\\z", 3);
+        expr[4 + patlen + nl + 3] = 0;
     } else {
         expr = malloc(patlen + 1);
         memcpy(expr, pat, patlen);

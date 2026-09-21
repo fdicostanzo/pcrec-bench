@@ -164,6 +164,7 @@ R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-ca
 R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-caps-simdna			testee	pcrec_8da6120_vm-caps-simdna
 R-STATUS-12	1	3		t-c-long-atom-run	large-subject-throughput		pcrec_8da6120_vm-caps-simdna			regime	large-subject-throughput
 R-STATUS-13	0	0									no-matching-rows
+R-STATUS-14	0	0									no-matching-rows
 R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			pattern	factored
 R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			regime	short-subject-search
 R-DELTA-1	1	1	factored		short-subject-search	plain	pcrec_692c2e8_vm-caps-simdna			form	plain

@@ -293,7 +293,8 @@ class Adapter:
         """Build the driver / resolve the pin. Idempotent."""
         raise NotImplementedError
 
-    def compile(self, testee_id, pattern_id, pattern, options, trials, workdir):
+    def compile(self, testee_id, pattern_id, pattern, options, trials, workdir,
+                requires_free_spacing=False):
         """-> CompiledPattern (one CompileResult per form).
 
         `pattern_id` is passed so each pattern gets its OWN scratch under
@@ -303,7 +304,22 @@ class Adapter:
         last pattern's artifact under the first pattern's handle. That bug
         was written, and it was invisible on this sub-bench because its two
         patterns agree on every subject -- so the interface makes it
-        unwriteable instead of relying on an adapter author to remember."""
+        unwriteable instead of relying on an adapter author to remember.
+
+        `requires_free_spacing` ([B70], `docs/design/capability_set_v1.md`
+        14; DEFAULT `False`, so every pre-existing caller and every
+        adapter that does not build a `whole-subject` wrap at all is
+        unaffected): the harness's own reading of THIS pattern's declared
+        `requires=free-spacing` tag (`pcrecbench.capability.
+        pattern_requires`), computed once in `harness.run_cell` (the ONE
+        place a Pattern object with `.tags` is visible -- an adapter sees
+        only `pattern_id` and raw bytes) and handed down so a
+        `whole-subject` wrap that appends `)\\z` after the pattern text
+        can insert a newline FIRST when, and only when, doing so is safe
+        (see `record.whole_subject_text`'s own docstring for the full
+        argument). An adapter with no such wrap -- libpcre2/RE2's
+        runtime-flag anchoring, needing no second artifact at all --
+        ignores this parameter entirely."""
         raise NotImplementedError
 
     def measure(self, handle, regime, subjects, iters, trials, timeout=None):

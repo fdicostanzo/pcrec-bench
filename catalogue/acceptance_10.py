@@ -318,8 +318,8 @@ def main():
         named.add(f[0])
         if f[1] == "1":
             fired.add(f[0])
-    item("D  the synthetic clean report: all 32 rules report fired=0",
-         not fired and len(named) == 32,
+    item("D  the synthetic clean report: all 33 rules report fired=0",
+         not fired and len(named) == 33,
          f"{len(named)} rules named, {len(fired)} fired")
 
     # --------------------------------------- the MUST-NOT items, checked --

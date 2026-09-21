@@ -17,6 +17,7 @@ R-STATUS-10	0	0									no-matching-rows
 R-STATUS-11	0	0									no-matching-rows
 R-STATUS-12	0	0									no-matching-rows
 R-STATUS-13	0	0									no-matching-rows
+R-STATUS-14	0	0									no-matching-rows
 R-DELTA-1	1	1	cls-atleast-4096		large-subject-throughput	plain	pcrec_d34c9131_vm-in-caps-simdna			pattern	cls-atleast-4096
 R-DELTA-1	1	1	cls-atleast-4096		large-subject-throughput	plain	pcrec_d34c9131_vm-in-caps-simdna			regime	large-subject-throughput
 R-DELTA-1	1	1	cls-atleast-4096		large-subject-throughput	plain	pcrec_d34c9131_vm-in-caps-simdna			form	plain

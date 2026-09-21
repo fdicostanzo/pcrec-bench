@@ -225,16 +225,18 @@ class Adapter(_ad.Adapter):
     # -------------------------------------------------------------- compile
 
     def compile(self, testee_id, pattern_id, pattern, options, trials,
-                workdir):
+                workdir, requires_free_spacing=False):
         r"""TWO artifacts per pattern: `plain` and `whole-subject` -- same
         reasoning as testees/pcrec/adapter.py's own `compile()` docstring:
         Oniguruma has no end-anchored runtime option, so "does the WHOLE
-        subject match" needs its own artifact, `(?:<pattern>)\z`, timed and
-        recorded separately (rule X27)."""
+        subject match" needs its own artifact, `(?:<pattern>)\z` (or
+        `(?:<pattern>\n)\z` when `requires_free_spacing` -- [B70],
+        `record.whole_subject_text`'s own docstring), timed and recorded
+        separately (rule X27)."""
         forms = {}
         for form, text in ((_ad.FORM_PLAIN, pattern),
                            (_ad.FORM_WHOLE_SUBJECT,
-                            _rec.whole_subject_text(pattern))):
+                            _rec.whole_subject_text(pattern, requires_free_spacing))):
             forms[form] = self._compile_one(testee_id, pattern_id, form,
                                             text, trials, workdir)
         return _ad.CompiledPattern(forms)

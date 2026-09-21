@@ -837,8 +837,19 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                             % (", ".join(sorted(missing)), testee_id)),
                 declaration_ref=_cap.declaration_ref(sb, testee_id, p, missing))})
         else:
+            # [B70] the wrap-spelling fix (capability_set_v1.md 14): the
+            # ONE place a pattern's own declared tags are visible to a
+            # `compile()` call at all (an adapter sees only `p.name` and
+            # raw bytes) -- so the free-spacing signal is computed HERE,
+            # once, and handed down as an explicit parameter rather than
+            # re-derived per adapter. `False` for every set that
+            # declares no `requires-*` tags (every set but
+            # bench/capability today), same no-op-elsewhere shape as
+            # `missing_capabilities` above.
+            requires_free_spacing = "free-spacing" in _cap.pattern_requires(p)
             cp = adapter.compile(testee_id, p.name, sb.pattern_bytes(p.name),
-                                 options, trials, workdir)
+                                 options, trials, workdir,
+                                 requires_free_spacing=requires_free_spacing)
         compiled[p.name] = cp
         phases = testee_block["compile_phases"]
         for form, cr in cp.forms.items():
