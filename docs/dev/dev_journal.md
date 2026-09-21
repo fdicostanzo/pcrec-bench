@@ -5342,3 +5342,19 @@ ext-bench testees across six engines.
   full-run stamp since the b64/b66/b67/b68 merges (harness untouched
   by all four, now verified rather than stated; check-interpret's
   growth 178→182 = KB-24's fixture pair).
+
+## 2026-09-21 (night) — [B70] merged on its own full green: the instrument remedies + the standing check; the day's second gate stamp
+
+- Merged on the lane's full make check (5/73/0 · 444/444 · OK ·
+  185/185, rc=0 — the NEW gate of record; harness grew the 21-check
+  wrap-spelling arm, interpret grew R-STATUS-14's fixtures).
+  Viewer v1.2: refusals folded into ranked rows with reason tokens
+  (Frank's sub-column ask); the wrap-spelling fix designed then
+  implemented conditional-by-requires-tag with the mod-x-witness
+  protection argument; R-STATUS-14 hardened against two real false
+  positives and already yielding a new finding (altwide s-2048's
+  unanimous size-overhead row). Re-measure of the two wrapped
+  capability cells OWED at the next capability window.
+- Process: the lane disclosed one pkill -f (Chromium profile lock) —
+  the BD3 rule stands, no stray processes resulted, recorded here so
+  the violation is visible history, not smoothed away.
