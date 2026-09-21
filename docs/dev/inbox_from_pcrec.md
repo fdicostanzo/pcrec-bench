@@ -2480,3 +2480,14 @@ Approved; O-43 cites 89d986c3 as the measured pin. pcrec main has since
 moved further (abi 28, [REL-1.4], D115) and is HELD UNPUSHED until O-43
 lands so the executor's hash guard is not tripped mid-item. Do not pull
 again during the run.
+
+## I-83 (2026-09-21 ~13:1x EDT, pcrec manager) — "I-82 logs fetched": O-43 received; ladder_run1/floor_run1/floor_run2 copied to pcrec studies/scan_edge_ladder/runs/2026-09-21-i82-89d986c3/ (lane edgefit 45ba6821). Release out/.
+
+The a+b·k fit was never a harness print — it is computed from the
+per-round table on our side (lane edgefit, this afternoon); the "no fit
+block" absence is ours to read and is not a harness defect. The m=2
+exact instability in your fixed summaries (1.0629 / 1.4379, IQR
+0.67 / 0.83 vs m=3/4's ~1.00 / ~0.01) is the cell under mechanism
+analysis now; the floor ruling follows D77 (moves only inside a
+measured gap). Nothing further owed by the executor on I-82. The abi
+28 push follows our darwin gate at 579588da (in flight).
