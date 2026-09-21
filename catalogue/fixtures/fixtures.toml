@@ -37,6 +37,11 @@ subject_grain_a = "reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-69
 # A fixture-only predictions file (never a real, committed prediction --
 # the `predictions-inexpressible.tsv` precedent), exercising the
 # `grain=subject` selector key against `subject_grain_a`.
+# KB-24 regression: a fixture-only clause naming `quantity=delta_verdict;
+# reducer=identity` -- the STRING-valued combination that crashed
+# `_measured_text` (kind was tagged "num" unconditionally) before it was
+# fixed to read `kind` from the reduced values themselves.
+predictions_kb24 = "catalogue/fixtures/predictions-kb24.tsv"
 predictions_subjectgrain = "catalogue/fixtures/predictions-subject-grain.tsv"
 
 # ---------------------------------------------------------- R-STATUS --
@@ -422,6 +427,34 @@ select = { pattern = ["mod-i", "lit-cat"] }
 predictions_select = ["P8"]
 expect = ["R-PRED-1"]
 expect_not = ["R-PRED-4"]
+
+# KB-24 (docs/dev/known_issues.md): `quantity=delta_verdict;
+# reducer=identity` is a STRING value, never numeric -- pre-fix,
+# `_reduce` tagged it `kind="num"` unconditionally and `_measured_text`
+# crashed (`abs()`/`:.3f` on a str) before either clause below could
+# produce a verdict. The confirmed direction below is scored against
+# report "a"'s own real cell (`factored` / `short-subject-search` /
+# `pcrec_692c2e8_vm-caps-simdna` reads exactly "faster ×1.19"); its
+# control mutates `hi` to force a refutation through the SAME
+# non-numeric formatting path `_measured_text`'s `bad` branch takes.
+[[fixture]]
+name   = "R-PRED-1__kb24-identity-token-confirmed"
+report = "a"
+select = { pattern = "factored", regime_or_na = "short-subject-search" }
+predictions_source = "predictions_kb24"
+predictions_select = ["KB24A"]
+expect = ["R-PRED-1"]
+
+[[fixture]]
+name   = "R-PRED-2__kb24-identity-token-refuted"
+base   = "R-PRED-1__kb24-identity-token-confirmed"
+report = "a"
+select = { pattern = "factored", regime_or_na = "short-subject-search" }
+predictions_source = "predictions_kb24"
+predictions_select = ["KB24A"]
+mutate_predictions = { column = "hi", value = "unchanged (within spread)", where = { prediction_id = "KB24A" } }
+expect = ["R-PRED-2"]
+expect_not = ["R-PRED-1"]
 
 # ---------------------------------------------------------- R-BUCKET --
 
