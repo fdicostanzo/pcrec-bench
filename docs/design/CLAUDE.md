@@ -566,6 +566,20 @@ docs/dev/'s append-only records.
   ones are refusals with no compile time to have jitter about;
   R-BUCKET-FORM's rankable-only read is deliberate and stated).
 
+- `results_viewer_v1.md` — **[B66] THE RESULTS VIEWER design, v1.0
+  (2026-09-21, the manager; Frank: "hobby project", "think about
+  requirements and design first", then "proceed directly to dev")**: a
+  single-page client-side viewer over SET-GRAIN results working from
+  `file://` (script-tag JSONP data loading — `fetch()` is CORS-blocked
+  from `file://`; classic scripts are the one mechanism that works),
+  regenerable `viewer/data/*.js` emitted by `tools/viewer_export.py`
+  REUSING `pcrecbench.reduce` for number identity with the reporter,
+  engine-family grouping, set/regime/form/pattern/status filters,
+  ns | MB/s | ×best metrics, sortable columns with non-measured rows
+  sinking and never ranked, provenance tooltips, hash-serialized state.
+  §6 scope fence: a READING AID, never a canonical surface. Built by
+  lane b66viewer.
+
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in
