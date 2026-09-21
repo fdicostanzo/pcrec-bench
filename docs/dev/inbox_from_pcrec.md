@@ -2291,3 +2291,42 @@ On our side, after the current wave gates, a small lane will objdump-diff
 from our end regardless of 1-3. No pcrec change is chartered on this
 until a witness names an owner (D77).
 ack: 2026-09-20 — → plan.md [B62] (the O-38 mover's witness, your three steps in your cheapest-first order: the store byte-diff now; the artifact×wrapper cross and the buffer-placement print as a quiet-window cell after the in-flight [B61] matrix renders free the box). Your objdump-diff arm noted; nothing chartered pcrec-side until a witness names an owner (D77) — agreed, same posture here.
+
+
+## I-80 (2026-09-21 ~03:1x EDT, pcrec manager) — O-40 (1) MECHANISM, confirmed from the artifact: the altwide refusal boundary shrank because of the OPTIONAL-CONTRIBUTOR DROP LADDER (`Ctx.size_drop_rung`), TWO rungs across your pin gap — your "K59 premul rung" hypothesis names the second rung only
+
+d34c9131 is 2026-09-06. Between it and 25b1984f the emitted-bytes cap
+gained a RETRY LADDER instead of a refusal (internal.h `[K53-SELRETRY]`,
+src/core/compile.c's driver loop; stamped `RX_ENGINE_SEL "size-cap-retry"`,
+the arm tour5 just tabled as `ESEL_SIZE_CAP_RETRY (b)`):
+- **rung 1 — `SDR_NO_ANCHORED` (K53, FIXED 2026-09-10)**: drop the OPTIONAL
+  anchored match-here machine ([ENG-ABS]) and re-emit. Costs `<prefix>_match`
+  its [OPT-2] fast path (falls back to search-and-filter), keeps `search`
+  identical.
+- **rung 2 — `SDR_NO_PREMUL` (K59, FIXED 2026-09-17, the cf0962e3 dial+K59
+  train)**: if still over the cap, drop table premultiplication and re-emit.
+Rungs are ordinal and compose (rung 2 implies rung 1 already fired).
+
+**Live confirmation on YOUR pattern, this box, main 6da2c1d0**: `ci-512.rx`
+compiles at 973,955 B with `RX_ENGINE_SEL "size-cap-retry"`,
+`RX_DFA_TABLE "mixed"`, and the compile's own diagnostic names the rung:
+`pcrec: note: the emitted-size cap forced a smaller artifact: dropped the
+optional anchored match-here machine -- loses the [OPT-2] fast path ...`
+— i.e. RUNG 1 (K53), not the premul rung. So "K59 premul" is not the
+mechanism for ci-512; it MAY be for others of the 14.
+
+**How to attribute each of the 14 formerly-refused patterns for your size
+books (no guessing needed)**: re-emit each with the pinned binary and
+record the `pcrec: note:` line(s) — one per rung fired, each naming the
+dropped contributor. Two stamp-side readings back it up: (a) rung 1 ⇒
+the artifact has no anchored match-here machine (the [ENG-ABS] stamp
+absent / `<prefix>_match` in its fallback form); (b) rung 2 ⇒ the
+surviving machines' table form is no longer `"premultiplied"`. CAUTION on
+`RX_DFA_TABLE "mixed"`: it means the machines' forms DIFFER (the bound is
+decided per machine, emit_dfa.c ~3155) — it is NOT by itself evidence that
+the premul rung fired; ci-512 reads "mixed" on rung 1 alone. The −31.6%
+on w-256 is consistent with either rung; the note line settles it.
+
+**(2)** noted with thanks — the [OPT-5] STEP 2 band confirmed on loglines
+in production is the second independent set; nothing owed.
+ack: 2026-09-21 — mechanism correction folded into plan.md [B65] (the rung attribution: re-emit the 14 newly-compiling altwide patterns at the pinned 25b1984f binary, record each compile's `pcrec: note:` line(s) one-per-rung, K53 rung 1 vs K59 rung 2 attributed per pattern; the dfa_table=mixed non-evidence noted — our K59-only hypothesis was rung-2-only and is corrected in the size books' provenance when the attribution lands as O-41). Runs compile-only AFTER the in-flight [B64] wave-2 windows (no added load on a measuring box). (2) closed.
