@@ -1108,3 +1108,19 @@ only known-numeric quantities and refusing `delta_verdict`/`status`
 clauses under it BY NAME at `load_predictions` time (forcing a future
 author toward `set_of`/`count`, which are already string-safe) — a
 ruling should pick one rather than this file improvising a third.
+
+## KB-25 (2026-09-20, flagged by lane b61matrix, measured by the manager) — `make check-report` wall time grows with the live store: 20m02s green at store 190
+
+`pcrecbench/tests/test_report.py` validates against the REAL store
+(`REAL_STORE`, test_report.py:56) as well as its fixtures, so its cost
+scales with `store/` size. Measured 2026-09-20 23:27-23:47 EDT on a
+quiet box: **20m02s wall, rc=0, check-report: OK** at 190 records
+(build/checkreport_store190.log). NOT a failure — the lane that flagged
+it (b61matrix) killed a run at 10+ min / ~3.2 GB RSS mid-flight and the
+suite is in fact green — but the growth is real and unbounded, the same
+shape as KB-16's whole-store report loads and the data-management white
+paper's consequence-shaped growth triggers. Candidate fixes for a
+future lane: scope the live-store arm to an index-prefiltered slice, or
+move the live-store validation to a separate non-default target the
+re-pin/window rituals invoke deliberately. Until then: give check-report
+a ≥30-min gnutimeout and never kill it at 10 min expecting failure.
