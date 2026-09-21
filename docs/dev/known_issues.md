@@ -1109,6 +1109,59 @@ clauses under it BY NAME at `load_predictions` time (forcing a future
 author toward `set_of`/`count`, which are already string-safe) — a
 ruling should pick one rather than this file improvising a third.
 
+**STATUS: FIXED** (2026-09-21, lane `b68kb24`) — candidate (a), chosen
+over (b) because §6.5's own file (KB-24's `capability-0.1-pin-25b1984f-
+confirm.tsv`) is a REAL, already-committed prediction using
+`identity`+`delta_verdict`, and by the time this lane started five MORE
+committed files had landed the identical combination (`altwide-0.2-`,
+`bounded-0.3-`, `email-specimen-0.2-`, `loglines-0.1-` and
+`syntax-0.1-pin-25b1984f-confirm.tsv`, all `[B63]`/`[B64]`, all still
+unscored via the CLI as of this fix) — restricting `identity` to numeric
+quantities (b) would have made all six a LOAD ERROR, not a fix, the day
+after they were authored. `pcrecbench/interpret.py`: `_reduce`'s
+`identity`/`""` branch now tags `kind` from the REDUCED VALUES
+themselves (`"num"` iff every value is `int`/`float`, else `"token"`,
+matching what `_op_holds`'s `eq-token` path already did correctly);
+`_measured_text` gained a genuine `kind == "token"` branch (no
+`abs()`/`:.3f`, a `{distinct value(s)}` rendering scoped to the
+bad rows on refutation, matching what `_measured_text_stringsafe`'s
+scratch workaround improvised, but as the tool's own code rather than a
+lane's monkeypatch). `_op_holds` (the actual confirm/refute predicate)
+is UNCHANGED — verdicts cannot move by construction.
+**Versioning (interpreter_v1.md §3.3 as amended by [B56]): CODE-ONLY, no
+`catalogue_version` bump, no `INTERPRET_VERSION` bump.** No catalogue
+field moved (`rules.toml` is untouched); every committed
+`reports/*.interpretation.md` sidecar (30 of them) was regenerated via
+`scripts/regen_sidecars.py` and diffed byte-identical against the fix —
+none of them names a predictions file with this quantity/reducer
+combination yet (none rendered a `--predictions` section at all for
+these six files, all still owed a fresh scoring run), so there was
+nothing for the crash OR the fix to move. **Regression coverage**:
+`catalogue/fixtures/predictions-kb24.tsv` (a fixture-only clause, never
+a real prediction, same precedent as `predictions-subject-grain.tsv`)
++ two new fixtures, `R-PRED-1__kb24-identity-token-confirmed` /
+`R-PRED-2__kb24-identity-token-refuted`, on report "a"'s real
+`factored`/`short-subject-search`/`pcrec_692c2e8_vm-caps-simdna` cell
+(`delta_verdict` = "faster ×1.19"): the base fixture confirms as
+written, the control mutates `hi` to force a refutation through the
+same non-numeric formatting path — both directions exercise the
+`kind="token"` branch. The pre-fix crash was reproduced once by hand
+(`TypeError: bad operand type for abs(): 'str'`, identical to this
+entry's original finding) before the fix landed, then confirmed gone.
+`make check-interpret`: 178→182 (67→69 fixtures; unchanged sections
+1/2/3/5/6, +4 in section 4). `make check-schema`: unchanged, green (73
+sabotage rejections, 0 wrong). §10 acceptance: 25/25 unchanged.
+**Real-world verification**: `capability-0.1-pin-25b1984f-confirm.tsv`
+scored through the fixed code by a direct `interpret.evaluate_predictions`
+call (the same F27 bypass `docs/dev/lanes/b60pinconfirm_report.md` used,
+required because this population is a second sample of an
+already-measured one — `check_stated_utc`'s re-anchor refuses the normal
+CLI `--predictions` path for it, unrelated to this bug): P1-P4 **all
+`refuted`**, ranked-value counts 738/750/732/732 and every distinct
+non-"unchanged" token, BYTE-IDENTICAL to the table in
+`docs/dev/lanes/b60pinconfirm_report.md` §3 (the monkeypatched
+original). Full derivation: `docs/dev/lanes/b68kb24_report.md`.
+
 ## KB-25 (2026-09-20, flagged by lane b61matrix, measured by the manager) — `make check-report` wall time grows with the live store: 20m02s green at store 190
 
 `pcrecbench/tests/test_report.py` validates against the REAL store

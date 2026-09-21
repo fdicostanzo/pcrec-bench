@@ -2157,12 +2157,29 @@ def _drop(key_tuple, name):
 
 def _reduce(view, pred, values):
     """Apply the prediction's declared reducer. Returns
-    (list of (label, value), kind) where kind is 'num' or 'set'."""
+    (list of (label, value), kind) where kind is 'num', 'set' or
+    'token'.
+
+    KB-24: `identity` does not itself produce a number — it passes each
+    selected row's own value through unreduced, and a quantity's value
+    is only numeric for SOME of `_QUANT_COLUMN`'s entries
+    (`pass_rate`/`n_gave_up`/`n_wrong`/`rank_in_group`, via
+    `_float_or_none`) and never for others (`delta_verdict`/`status`/
+    `section`, raw string tokens straight from the row — see
+    `_value_of`). Tagging `identity`'s output `kind='num'`
+    unconditionally lied about the second group; `kind` is read from
+    the VALUES THEMSELVES (what `_op_holds` already does correctly for
+    `eq-token`/`neq-token`), not reasserted from the reducer name, so a
+    quantity added later that is sometimes numeric and sometimes not
+    still tells the truth."""
     reducer = pred["_reducer"]
     head, _, arg = reducer.partition("(")
     arg = arg.rstrip(")")
     if head in ("identity", ""):
-        return [("/".join(k), v) for k, v, _r in values], "num"
+        out = [("/".join(k), v) for k, v, _r in values]
+        kind = "num" if all(isinstance(v, (int, float)) for _l, v in out) \
+            else "token"
+        return out, kind
     if head == "count":
         return [("count", float(len(values)))], "num"
     if head == "set_of":
@@ -2397,6 +2414,17 @@ def _measured_text(p, reduced, bad, kind):
     label = f"{p['prediction_id']}{p['clause'] or ''}"
     if kind == "set":
         return f"{label}: {{{', '.join(reduced[0][1])}}}"
+    if kind == "token":
+        # KB-24: an `identity`-reduced STRING quantity (`delta_verdict`,
+        # `status`, `section`) has no numeric "worst" — `abs()`/`:.3f`
+        # do not apply. Report the distinct token(s) seen instead, same
+        # shape `set` already uses, scoped to the offending rows when
+        # the clause refuted.
+        pool = bad if bad else reduced
+        seen = sorted({v for _l, v in pool})
+        count_word = "mismatching" if bad else "matching"
+        return (f"{label}: {len(pool)} {count_word} value(s) over "
+                f"{len(reduced)}, seen: {{{', '.join(seen)}}}")
     if bad:
         worst = max(bad, key=lambda lv: abs(lv[1]))
         return (f"{label}: worst {worst[0]} = {worst[1]:.3f} over "
