@@ -2759,3 +2759,52 @@ table: `docs/dev/lanes/b63window_report.md`.
   gap); predictions scored separately via a direct
   `interpret.evaluate_predictions` call with the same KB-24 workaround
   as the loglines group above.
+
+**[B64] reports (2026-09-21, lane b64window) ADDED one file group — the
+[B61] staleness burn-down's WAVE 2, `bench/email-specimen@0.2`'s pcrec
+canonical roster (auto, auto-nocaps, vm, vm-in) re-measured at 25b1984f**,
+same `after-<pin>` naming and query shape as [B63]'s two groups above
+(cross-pin against each testee's own most recent prior record: d34c9131
+for `pcrec-auto` (single-variable), 1989c62 for `pcrec-auto-nocaps`/
+`pcrec-vm`/`pcrec-vm-in`, same six-pin-stale gap [B63]'s loglines group
+carried). Window:
+`build/windows/window_email_20260921T065851Z.log` (02:58:51-03:22:48 EDT,
+4/4 cells attempt 1 rc=0, all `agree`); store 198 -> 202. Predictions
+`docs/dev/predictions/email-specimen-0.2-pin-25b1984f-confirm.tsv`
+committed BEFORE the window (commit `78d5aa6`); scored the same way as
+[B63]'s files (`interpret.evaluate_predictions` direct call, the F27
+`check_stated_utc` bypass, the KB-24 `_measured_text` string-value
+workaround).
+
+**Real cross-pin `delta_verdict` values, read directly from the TSV**
+(the mechanical P1-P4 clauses REFUTE for the SAME structural reason
+[B63]'s files hit: a bare `pcrec_*_<mode>-caps-simdna` glob also matches
+the OLDER testee's own rank rows, which carry NO `delta_verdict` at all
+— `''` — and trivially fail an `eq-token` check against them; the
+lane-report reading below is from the report's own 25b1984f rows
+directly, not from the tool's auto-picked "worst" row): **auto** and
+**auto-nocaps** (single-variable and five-pin-stale respectively) both
+read ×1.00-1.04 on `orig`/`factored` (`unchanged` or a flat ×1.04 on the
+throughput regime only) with `floor` the one outlier at ×1.02-×1.36 --
+the SAME route-independent near-zero-cost-pattern noise [B63]'s own
+loglines reading already named, not a route-specific regression. **vm**
+and **vm-in** (both five-pin-stale, crossing the SAME [OPT-5] STEP 2 /
+island / cls-fold gap [B63]'s loglines P2/P4 found REAL movers on) read
+×1.00-1.09 here — `floor` again the outlier (×1.74-1.81) — i.e. **email
+does NOT reproduce loglines' ×1.29-1.57 vm/vm-in win**: no cell here
+moved by more than ×1.09, a genuine (non-)finding worth stating plainly
+rather than assuming the same OPT-5-era win generalises across sets.
+
+**P5/P6 (same-pin structural, compile:emit_bytes), read directly from
+the two fresh records rather than the tool's refuted verdict**: **P5
+(vm-in vs vm, `eq 1`) CONFIRMS on BOTH witnesses, exactly** — `orig`
+47,591 B / `factored` 58,762 B, byte-identical between `pcrec-vm-in` and
+`pcrec-vm` — the OPPOSITE of [B63]'s own loglines P6 precedent (×1.13-1.16
+there), stated in this file's own note as an expected-likely-refute; it
+did not refute here. **P6 (nocaps vs auto, direction-only `lt 1`) is
+MIXED**: `orig` (82,236 B both) is EXACTLY EQUAL — captures present in
+the pattern (real named groups, unlike loglines/altwide) yet
+`--no-captures` saved nothing at all on this witness; `factored` (82,460
+vs 82,643 B) is barely smaller, ×0.9978, a rounding-scale save, not the
+meaningful strip P6's own hypothesis predicted. Full verdict table and
+the P7-style direction discussion: `docs/dev/lanes/b64window_report.md`.
