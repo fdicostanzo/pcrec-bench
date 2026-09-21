@@ -9101,6 +9101,183 @@ def check_capability_policy_noop_elsewhere():
                 "found requires-* on: %r" % offenders)
 
 
+def check_wrap_spelling_fix():
+    """[B70] THE WRAP-SPELLING FIX (docs/design/capability_set_v1.md 14,
+    the [B69] census's `wild-codegrammar-json-number-extended` finding):
+    the harness's `whole-subject` wrap now inserts a newline before the
+    closing `)\\z` -- `(?:<pattern>\\n)\\z` -- for exactly the patterns
+    whose sub-bench declares `requires=free-spacing`, so a `(?x)` pattern
+    that ends its raw text on an un-newline-terminated `#` comment no
+    longer has its `)\\z` silently swallowed into that comment.
+
+    Four arms, each with the house rule's own control:
+
+      1. UNIT LEVEL, no engine: `record.whole_subject_text(pattern,
+         False)` is BYTE-IDENTICAL to the pre-[B70] formula
+         (`b"(?:" + pattern + rb")\\z"`) for BOTH a free-spacing pattern
+         and an ordinary one -- the DEFAULT changes nothing, on every
+         input, which is what makes every pre-existing call site (every
+         one that does not pass the new parameter) provably unaffected.
+         `requires_free_spacing=True` differs from that BYTE-IDENTICAL
+         baseline by exactly one inserted `\\n`, nothing else.
+      2. THE WIRING: `pcrecbench.capability.pattern_requires` on the two
+         real `bench/capability@0.1` CASE-1 patterns
+         (`wild-codegrammar-json-number-extended`,
+         `wild-codegrammar-json-stringcontent-escape`) contains
+         `free-spacing` -- the harness computes the flag from the
+         pattern's OWN declared tag, never a hand-typed True.
+      3. THE BEFORE/AFTER, on every real engine that reaches this
+         defect and is built on this box (oniguruma, `pcrec-auto`, rust,
+         vectorscan -- the [B69] census's own attempter list, minus tre,
+         which never attempts either pattern at all, already
+         `unsupported-by-declaration` on `free-spacing`): the SAME
+         pattern's `whole-subject` form compiled with
+         `requires_free_spacing=False` (the OLD default) still REFUSES
+         -- proving the bug is real and this check would have caught it
+         pre-fix -- and compiled with `requires_free_spacing=True`
+         (what `harness.run_cell` now computes and passes) COMPILES
+         CLEAN. `plain` is unaffected by construction (the harness never
+         wraps that form) and is checked against `EXPECTED_PLAIN` --
+         `compiled` for onig/pcrec/rust, but `did-not-compile` for
+         vectorscan: this census's own `_fold_and_classify` docstring
+         finding (`tools/viewer_export.py`) that vectorscan's `plain`
+         form of BOTH CASE-1 patterns independently refuses with the
+         IDENTICAL "Unterminated comment." diagnostic, an unrelated,
+         genuine vectorscan limitation this fix does not and should not
+         touch (the wrap only ever applies to `whole-subject`).
+      4. THE NEGATIVE CONTROL, corrected in scope: `requires_free_spacing`
+         is never a caller's free choice, it is `harness.run_cell`'s OWN
+         READING of `pcrecbench.capability.pattern_requires(p)` -- so the
+         honest control is that a pattern which does NOT declare
+         `requires=free-spacing` computes `free-spacing` ABSENT from that
+         set (`bench/capability`'s own `doubled-word`, `requires=
+         atomic-group` only), the same wiring proof as arm 2 in the
+         other direction. Passing `requires_free_spacing=True` BY HAND on
+         a pattern that does not need it is NOT a no-op and is not
+         claimed to be one -- inserting `\\n` into an ordinary pattern is
+         a real, INTENDED semantic change under the default (non-free-
+         spacing) syntax (record.whole_subject_text's own docstring,
+         capability_set_v1.md 14.2); a "control" that forced True there
+         would be testing a call shape `harness.run_cell` never
+         produces, not testing the fix. Arm 1 already gives the true
+         byte-identity guarantee (every call that does not opt in is
+         provably unaffected)."""
+    print("-- the wrap-spelling fix (whole-subject, free-spacing) [B70] --")
+    from pcrecbench import capability as _cap
+
+    NORMAL = b"a(b|c)+d"
+    FREESPACE = b"(?x) a  b  c  # trailing comment, no newline"
+
+    old_formula = lambda p: b"(?:" + p + rb")\z"
+    got_normal_false = _rec.whole_subject_text(NORMAL, False)
+    got_fs_false = _rec.whole_subject_text(FREESPACE, False)
+    if got_normal_false == old_formula(NORMAL) and got_fs_false == old_formula(FREESPACE):
+        ok("whole_subject_text(p, False) byte-identical to the pre-[B70] formula",
+           "%r, %r" % (got_normal_false, got_fs_false))
+    else:
+        bad("whole_subject_text(p, False) byte-identical to the pre-[B70] formula",
+            "got %r / %r" % (got_normal_false, got_fs_false))
+
+    got_fs_true = _rec.whole_subject_text(FREESPACE, True)
+    want_fs_true = b"(?:" + FREESPACE + b"\n)\\z"
+    if got_fs_true == want_fs_true:
+        ok("whole_subject_text(p, True) inserts exactly one \\n before )\\z",
+           repr(got_fs_true))
+    else:
+        bad("whole_subject_text(p, True) inserts exactly one \\n before )\\z",
+            "got %r, want %r" % (got_fs_true, want_fs_true))
+
+    # 2. the wiring: the real corpus patterns' own declared tags.
+    sb = Subbench(os.path.join(ROOT, "bench", "capability"))
+    CASE1 = ["wild-codegrammar-json-number-extended",
+             "wild-codegrammar-json-stringcontent-escape"]
+    for pid in CASE1:
+        p = next((p for p in sb.patterns if p.name == pid), None)
+        if p is None:
+            bad("capability@0.1 still declares %s" % pid, "pattern not found")
+            continue
+        requires = _cap.pattern_requires(p)
+        if "free-spacing" in requires:
+            ok("%s declares requires=free-spacing" % pid, sorted(requires))
+        else:
+            bad("%s declares requires=free-spacing" % pid, sorted(requires))
+
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-wrapfix-")
+    try:
+        def compile_ws(engine, tid, pattern, free_spacing, label):
+            adapter = _ad.discover()[engine]
+            adapter.prepare(tid, tmp)
+            cp = adapter.compile(tid, label, pattern, {}, 1, tmp,
+                                 requires_free_spacing=free_spacing)
+            return cp.get(_ad.FORM_PLAIN), cp.get(_ad.FORM_WHOLE_SUBJECT)
+
+        # 3. before/after, per attempting engine, on the real CASE-1 text.
+        WITNESS_ENGINES = [
+            ("onig", "onig-default"),
+            ("pcrec", "pcrec-auto"),
+            ("rust", "rust-default"),
+            ("vectorscan", "vectorscan-block-nosom"),
+        ]
+        # tools/viewer_export.py's own `_fold_and_classify` docstring
+        # finding: vectorscan cannot parse EITHER CASE-1 pattern's plain
+        # (unwrapped) form at all -- a real, separate vectorscan
+        # limitation this fix does not touch.
+        EXPECTED_PLAIN = {"vectorscan": "did-not-compile"}
+        for pid in CASE1:
+            p = next((p for p in sb.patterns if p.name == pid), None)
+            if p is None:
+                continue
+            pattern = sb.pattern_bytes(pid)
+            for engine, tid in WITNESS_ENGINES:
+                if engine not in _ad.discover():
+                    continue
+                label = "wrapfix-%s-%s" % (engine, pid[:20])
+                plain_b, ws_before = compile_ws(engine, tid, pattern, False,
+                                                label + "-before")
+                if ws_before.outcome == "did-not-compile":
+                    ok("%s / %s: whole-subject still refuses under the OLD "
+                       "spelling (requires_free_spacing=False)" % (tid, pid),
+                       ws_before.diagnostic)
+                else:
+                    bad("%s / %s: whole-subject still refuses under the OLD "
+                        "spelling (requires_free_spacing=False)" % (tid, pid),
+                        "outcome=%s -- either the [B69] defect regressed or "
+                        "this witness stopped reproducing it" % ws_before.outcome)
+                plain_a, ws_after = compile_ws(engine, tid, pattern, True,
+                                               label + "-after")
+                want_plain = EXPECTED_PLAIN.get(engine, "compiled")
+                if ws_after.outcome == "compiled" and plain_a.outcome == want_plain:
+                    ok("%s / %s: whole-subject compiles under the NEW spelling "
+                       "(requires_free_spacing=True)" % (tid, pid),
+                       "whole-subject compiled, plain=%s (expected)" % plain_a.outcome)
+                else:
+                    bad("%s / %s: whole-subject compiles under the NEW spelling "
+                        "(requires_free_spacing=True)" % (tid, pid),
+                        "plain=%s (want %s) whole-subject=%s (%s)"
+                        % (plain_a.outcome, want_plain, ws_after.outcome,
+                           ws_after.diagnostic))
+
+        # 4. the negative control: a pattern this set does NOT tag
+        # `requires=free-spacing` reads that ABSENCE from the real
+        # `pattern_requires` wiring -- the same proof as arm 2, in the
+        # other direction (`harness.run_cell` would compute False for
+        # it, never True; see the docstring for why forcing True by hand
+        # here would not be a meaningful control).
+        untagged = next((p for p in sb.patterns if p.name == "doubled-word"), None)
+        if untagged is not None:
+            requires = _cap.pattern_requires(untagged)
+            if "free-spacing" not in requires:
+                ok("doubled-word does NOT declare requires=free-spacing "
+                   "(the flag harness.run_cell computes for it is False)",
+                   sorted(requires))
+            else:
+                bad("doubled-word does NOT declare requires=free-spacing "
+                    "(the flag harness.run_cell computes for it is False)",
+                    sorted(requires))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_pcre2_dfa():
     """THE `pcre2-dfa` TESTEE ([B42] L6a, testees/pcre2/adapter.py +
     driver.c): a THIRD execution model on the existing pcre2 driver file
@@ -9532,6 +9709,7 @@ def main():
     check_convention_scoring()
     check_boolean_grain_scoring()
     check_pcre2_dfa()
+    check_wrap_spelling_fix()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))

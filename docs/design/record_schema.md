@@ -458,6 +458,45 @@ The enums, in full:
    X14 requires a `plain` compile row for every pattern and treats
    `whole-subject` as optional; and X27 is new — a `whole-subject`
    match row must have a `whole-subject` compile row for its pattern.
+
+   **AMENDED 2026-09-21 ([B70], the [B69] census's finding): the idiom
+   is `(?:<pattern>)\z`, or `(?:<pattern>\n)\z` when the pattern
+   REQUIRES free-spacing.** `bench/capability@0.1`'s own
+   `wild-codegrammar-json-number-extended` / `-stringcontent-escape`
+   end on a `(?x)` line comment with no trailing newline; appending
+   `)\z` directly lands it ON that comment line, so every attempting
+   engine's parser silently reads `...comment text)\z` as one
+   unterminated comment (`docs/dev/measurements/2026-09-21-capability-
+   refusal-census.txt` §4, `docs/dev/lanes/b69census_report.md` §4). The
+   fix and its reasoning are argued in full in
+   `capability_set_v1.md`'s own 2026-09-21 amendment (the wrap-spelling
+   fix is a HARNESS-side decision about capability-tagged patterns, so
+   it lives there, not here); this schema note states only what changed
+   about the RECORD: nothing. The wrapped TEXT was never pinned by the
+   schema before this fix (see item 15 of the "for the panel" list,
+   §11.1) and still is not — the fix changes what byte string an
+   adapter builds, not what the record carries about it, so no field,
+   no rule and no schema version moves. `pcrecbench.record.
+   whole_subject_text` gains an optional second parameter
+   (`requires_free_spacing`, default `False` — every existing call site
+   that does not pass it produces the BYTE-IDENTICAL wrap it always
+   did); the two capability@0.1 patterns above are the only ones in the
+   corpus that DECLARE `requires=free-spacing` AND end their text on an
+   un-newline-terminated `(?x)` comment, so they are the only two whose
+   wrapped bytes move. `bench/syntax@0.1`'s `mod-x`
+   (`(?x) c a t # comment`) hits the SAME underlying defect and is
+   DELIBERATELY LEFT UNFIXED: it is an authored witness pattern whose
+   whole-subject refusal is already a named, expected finding in that
+   set's own record (`docs/dev/ledgers/2026-09-07-b36-syntax-first-
+   d34c9131.md` §2.3, "13/15... mod-x refuses on the whole-subject form
+   only... as NOTES foresaw") — `bench/syntax` carries no `requires=`
+   tags at all (a plain per-pattern `.rx` file, no capability model),
+   so the REQUIRES-tag gate leaves it untouched by construction, which
+   is the correct outcome here: a textual heuristic that inferred
+   free-spacing from the pattern bytes themselves would have silently
+   "fixed" this designed witness out from under the set that exists to
+   demonstrate it. See `capability_set_v1.md`'s amendment for this as
+   an argument FOR the tag-gated spelling over a text-sniffing one.
 4. **`truncation_check` gains `not-applicable`.** §4.4 gives
    `unverified-for-truncation` for a large-subject cell whose API does
    not expose the consumed length; the third state is a cell where the

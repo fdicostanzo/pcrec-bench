@@ -305,7 +305,7 @@ class Adapter(_ad.Adapter):
     # -------------------------------------------------------------- compile
 
     def compile(self, testee_id, pattern_id, pattern, options, trials,
-               workdir):
+               workdir, requires_free_spacing=False):
         r"""TWO artifacts per pattern, `plain` and `whole-subject` -- same
         two-artifact shape testees/onig/adapter.py's own compile()
         docstring states, for a DIFFERENT structural reason: the `regex`
@@ -316,15 +316,20 @@ class Adapter(_ad.Adapter):
         -- that wrap alone would UNDER-anchor here, matching a SUFFIX of
         the subject rather than the whole thing, since `find()` always
         scans unanchored from position 0 forward. This adapter bakes
-        BOTH anchors into the compiled text itself: `\A(?:pattern)\z`.
-        See testees/rust/CLAUDE.md and src/main.rs's own header for the
-        full derivation; TRE's own lane set the precedent for building an
-        adapter-specific wrap rather than reusing the shared helper, for
-        its own different reason (no `\z` spelling at all)."""
+        BOTH anchors into the compiled text itself: `\A(?:pattern)\z`
+        (or `\A(?:pattern\n)\z` when `requires_free_spacing` -- [B70],
+        the SAME conditional rule `record.whole_subject_text` states in
+        full, applied here because this wrap is NOT built through that
+        shared function). See testees/rust/CLAUDE.md and src/main.rs's
+        own header for the full derivation; TRE's own lane set the
+        precedent for building an adapter-specific wrap rather than
+        reusing the shared helper, for its own different reason (no `\z`
+        spelling at all)."""
+        ws_pattern = pattern + b"\n" if requires_free_spacing else pattern
         forms = {}
         for form, text in (
                 (_ad.FORM_PLAIN, pattern),
-                (_ad.FORM_WHOLE_SUBJECT, rb"\A(?:" + pattern + rb")\z")):
+                (_ad.FORM_WHOLE_SUBJECT, rb"\A(?:" + ws_pattern + rb")\z")):
             forms[form] = self._compile_one(testee_id, pattern_id, form,
                                             text, trials, workdir)
         return _ad.CompiledPattern(forms)

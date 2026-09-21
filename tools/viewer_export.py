@@ -199,7 +199,7 @@ def _classify_refusal_reason(diagnostic):
     return "other"
 
 
-def _fold_and_classify(rows):
+def _fold_and_classify(rows, compiled_by_testee=None):
     """[B70] `docs/design/results_viewer_v1.md` 10, items 1-3: fold every
     compile-refusal/unsup row (`regime == ""`) into the ranked rows, and
     classify every `refused` row's mechanism.
@@ -250,6 +250,20 @@ def _fold_and_classify(rows):
     census report's own per-pattern table is real and worth a reader
     knowing). Everything else (including every `wrap-artifact`-eligible
     row that fails the structural test) falls to `_classify_refusal_reason`.
+
+    `compiled_by_testee` ({testee_id: {(pattern_id, form)}}, from
+    `export_rows_for_record`'s own `compiled_forms` return) supplies the
+    ONE fact `rows` alone cannot: a (pattern, form) this testee compiled
+    CLEANLY but which left no row at all (a set-wide regime exclusion
+    like `bench/capability@0.1`'s `match` means a clean `whole-subject`
+    compile is never matched, so it produces neither a compile-refusal
+    row nor a match row). Without it, `attempted`/`plain_compiled` can
+    only see testees that left SOME row behind, silently narrowing
+    "attempted" to "refused or matched" and turning a genuine SPLIT
+    refusal into a false `wrap-artifact` the moment every OTHER
+    attempter's success happens to be row-less -- MEASURED live on
+    `wild-datetime-datefinder-alternation` before this parameter existed
+    (see `export_rows_for_record`'s own docstring for the full account).
     """
     regimes_by_pf = defaultdict(set)
     for r in rows:
@@ -268,6 +282,11 @@ def _fold_and_classify(rows):
             refused_by[key].add(r["testee_id"])
         elif r["form"] == "plain":
             plain_compiled[r["pattern"]].add(r["testee_id"])
+    for testee_id, forms in (compiled_by_testee or {}).items():
+        for (pattern_id, form) in forms:
+            attempted[(pattern_id, form)].add(testee_id)
+            if form == "plain":
+                plain_compiled[pattern_id].add(testee_id)
 
     def is_wrap_artifact(row):
         if row["form"] != FORM_WHOLE_SUBJECT:
@@ -471,19 +490,40 @@ def _failing_kind(red):
 def export_rows_for_record(path, rv):
     """Load ONE record (`report.load_record`, the reporter's own loader:
     JSON parse + schema validation in one pass), reduce it, and return
-    (rows, patterns_meta) -- then the caller drops `loaded`/`rows` before
-    opening the next file. `patterns_meta` is `{pattern_id:
-    _pattern_text_entry(...)}` for every pattern this ONE record's own
-    `setup.patterns[]` declares ([B67] 9.8) -- small (a handful of
-    strings, each capped at PATTERN_TEXT_MAX_BYTES), so it is fine for
-    this little a fragment to survive past this call the same way `rows`
-    already does; the record's raw `rec.rows`/`rec.setup` themselves still
-    do not. Returns `([], {})` for an invalid/unreadable record (never
+    (rows, patterns_meta, compiled_forms) -- then the caller drops
+    `loaded`/`rows` before opening the next file. `patterns_meta` is
+    `{pattern_id: _pattern_text_entry(...)}` for every pattern this ONE
+    record's own `setup.patterns[]` declares ([B67] 9.8) -- small (a
+    handful of strings, each capped at PATTERN_TEXT_MAX_BYTES), so it is
+    fine for this little a fragment to survive past this call the same
+    way `rows` already does; the record's raw `rec.rows`/`rec.setup`
+    themselves still do not.
+
+    `compiled_forms` ([B70], the wrap-artifact structural detector's own
+    need): `{(pattern_id, form)}` for every compile row this record
+    carries with outcome `compiled` -- a fact `rows` alone CANNOT answer.
+    `bench/capability@0.1` excludes the `match` regime SET-WIDE
+    (`docs/design/capability_set_v1.md` 3.5), so a testee whose
+    `whole-subject` artifact compiled CLEANLY but was never matched
+    against (oniguruma/rust/vectorscan on most patterns) leaves ZERO
+    trace anywhere in `rows` -- no compile row (only refusals are kept
+    there) and no match row (the regime never ran). Without this set,
+    `_fold_and_classify`'s "every ATTEMPTING testee refused" unanimity
+    test can only see testees that left SOME row behind, which silently
+    narrows "attempted" to "refused or matched" -- confirmed live on
+    `wild-datetime-datefinder-alternation`'s `whole-subject` form: three
+    of its five genuine attempters (oniguruma, rust, vectorscan) compile
+    it fine and are invisible to a `rows`-only read, so a `rows`-only
+    unanimity check misclassifies the pcrec/tre split refusal as
+    `wrap-artifact` -- caught in this lane's own real-data verification,
+    not a hypothetical.
+
+    Returns `([], {}, set())` for an invalid/unreadable record (never
     raises: the same "excluded, not fatal" posture `build_report` takes
     for `excluded_invalid`)."""
     rec = load_record(path, rv, check_filename=True)
     if rec.setup is None or rec.problems:
-        return [], {}
+        return [], {}, set()
     setup = rec.setup
     patterns_meta = {
         p["pattern_id"]: _pattern_text_entry(p.get("canonical_text"))
@@ -518,14 +558,18 @@ def export_rows_for_record(path, rv):
     # did_not_compile_by_pattern/unsupported_by_pattern logic, applied to
     # this one record's raw compile rows.
     compile_diag = {}  # (pattern_id, form) -> (status, diagnostic)
+    compiled_forms = set()  # [B70]: (pattern_id, form) this testee compiled CLEANLY
     for row in rec.rows:
         if row.get("kind") != "compile":
             continue
         outcome = row.get("compile_outcome")
+        form = row.get("form") or "plain"
+        if outcome == "compiled":
+            compiled_forms.add((row["pattern_id"], form))
+            continue
         status = _COMPILE_STATUS.get(outcome)
         if status is None:
             continue
-        form = row.get("form") or "plain"
         key = (row["pattern_id"], form)
         if key not in compile_diag:
             compile_diag[key] = (status, row.get("diagnostic"))
@@ -563,7 +607,7 @@ def export_rows_for_record(path, rv):
         row["diagnostic"] = diagnostic
         out.append(row)
 
-    return out, patterns_meta
+    return out, patterns_meta, compiled_forms
 
 
 # -------------------------------------------------------------- rendering
@@ -671,16 +715,19 @@ def main(argv=None):
     for sb in sorted(by_set):
         rows = []
         patterns_meta = {}  # pattern_id -> entry, FIRST record wins (canonical per sub-bench)
+        compiled_by_testee = {}  # testee_id -> {(pattern_id, form)}, [B70]
         for idx_row in sorted(by_set[sb], key=lambda r: r["testee_id"]):
             path = os.path.join(args.store, idx_row["path"])
-            record_rows, record_patterns_meta = export_rows_for_record(path, rv)
+            record_rows, record_patterns_meta, compiled_forms = export_rows_for_record(path, rv)
             rows.extend(record_rows)
             for pattern_id, entry in record_patterns_meta.items():
                 patterns_meta.setdefault(pattern_id, entry)
+            if compiled_forms:
+                compiled_by_testee[idx_row["testee_id"]] = compiled_forms
             # MEMORY: nothing from this record's raw rows/setup survives
             # past export_rows_for_record's return -- `rec`/`rec.rows`
             # went out of scope with that call.
-        rows = _fold_and_classify(rows)  # [B70] 10 items 1-3
+        rows = _fold_and_classify(rows, compiled_by_testee)  # [B70] 10 items 1-3
         subbench, version = sb.split("@", 1)
         text = render_set_file(sb, subbench, version, rows, patterns_meta, generated_utc, index_rows_n)
         out_path = os.path.join(args.out, f"{sb}.js")

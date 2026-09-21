@@ -236,7 +236,7 @@ class Adapter(_ad.Adapter):
     # -------------------------------------------------------------- compile
 
     def compile(self, testee_id, pattern_id, pattern, options, trials,
-                workdir):
+                workdir, requires_free_spacing=False):
         r"""TWO artifacts per pattern: `plain` and `whole-subject`.
 
         Vectorscan block mode has NO runtime anchoring dial at all (unlike
@@ -250,15 +250,24 @@ class Adapter(_ad.Adapter):
         SAME plain pattern bytes for both forms and lets the driver do the
         wrapping, rather than pre-building `^(?:...)\z` here, so there is
         exactly one place (driver.c) that knows what the whole-subject
-        artifact's real expression text is."""
+        artifact's real expression text is.
+
+        `requires_free_spacing` ([B70], `docs/design/capability_set_v1.md`
+        14): forwarded to the driver as a `--free-spacing` flag, taken
+        ONLY on `--form whole-subject` (a `plain` compile is unaffected --
+        the harness never wraps that form at all). See `driver.c`'s own
+        header for the identical conditional-newline rule
+        `record.whole_subject_text` states in Python."""
         forms = {}
         for form in (_ad.FORM_PLAIN, _ad.FORM_WHOLE_SUBJECT):
+            free_spacing = requires_free_spacing and form == _ad.FORM_WHOLE_SUBJECT
             forms[form] = self._compile_one(testee_id, pattern_id, form,
-                                            pattern, trials, workdir)
+                                            pattern, trials, workdir,
+                                            free_spacing)
         return _ad.CompiledPattern(forms)
 
     def _compile_one(self, testee_id, pattern_id, form, pattern, trials,
-                     workdir):
+                     workdir, free_spacing=False):
         drv = self.prepare_driver(workdir)
         # per-PATTERN, per-FORM scratch: see Adapter.compile's docstring
         # and testees/onig/adapter.py's own identical note.
@@ -269,6 +278,8 @@ class Adapter(_ad.Adapter):
             f.write(pattern)
         argv = [drv, "--pattern", patfile, "--form", form,
                 "--compile-trials", str(trials)]
+        if free_spacing:
+            argv.append("--free-spacing")
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
 
         if out.timed_out:

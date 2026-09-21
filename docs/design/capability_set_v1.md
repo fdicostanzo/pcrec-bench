@@ -1589,6 +1589,172 @@ and one new item takes its place:
 
 ---
 
+## 14. [B70] amendment (2026-09-21) — the whole-subject wrap-spelling fix
+
+Frank's ruling on the `wild-codegrammar-json-number-extended` finding
+(the [B69] census, `docs/dev/lanes/b69census_report.md`): the wrap-
+artifact defect this section documents needs a DESIGN decision, argued
+here, before any code changes — this project's own convention (`docs/
+dev/lanes/BOILERPLATE.md`, and every prior schema/harness change in
+this note's own history) is a design amendment before an implementation
+lane, not the other way round.
+
+### 14.1 The problem, stated precisely
+
+`pcrecbench.record.whole_subject_text(pattern)` builds the second,
+end-anchored artifact every testee with no runtime anchoring flag needs
+(§3.3's own idiom, `record_schema.md` §5 ADDITIONS 3): `(?:<pattern>)\z`.
+Two of `bench/capability@0.1`'s own patterns —
+`wild-codegrammar-json-number-extended` and
+`wild-codegrammar-json-stringcontent-escape`, both tagged
+`requires=free-spacing` (`bench/capability/patterns.rxt` lines 491,
+524) — end their raw text on a `(?x)` line comment with NO trailing
+newline (`...)?      # make decimal portion optional"` and
+`...4} #  and four hex digits"` respectively, both truncated at the
+closing quote of the `.rxt` `pattern-esc` line, i.e. the LAST byte of
+the pattern is a comment character). Appended directly, `)\z` lands ON
+that comment line: every attempting engine's parser reads
+`...comment text)\z` as one unterminated comment or unbalanced
+parenthesis and refuses to compile the whole-subject form —
+oniguruma, all four pcrec configs, rust and vectorscan (7 of 7
+attempters; `docs/dev/measurements/2026-09-21-capability-refusal-
+census.txt` §4 quotes every diagnostic). This is not a corpus-authoring
+mistake to route around by rewriting the two patterns: they are
+imported wild text (VS Code's `JSON.tmLanguage.json`, `capability_set_
+v1.md` §3.1 family 6 — the free-spacing TOKEN pattern style is the
+family's own stress mechanism, not an accident), and the census's own
+negative control (the corpus's other two `free-spacing`-tagged
+patterns, `codegrammar-xflag` and `bracket-array-define`, whose raw
+text ends on a trailing newline or no comment at all) proves the
+trigger is narrow and mechanical: an `(?x)` pattern whose raw text ends
+on an un-newline-terminated `#` comment, nothing broader. It is an
+INSTRUMENT defect — the harness's own wrap construction — not a fact
+about any engine's capability, which is why it belongs in this design
+note (the harness-facing half of the capability model) rather than in
+a pattern-authoring fix.
+
+### 14.2 Why a raw newline is the only real fix, and why it is
+conditional
+
+A free-spacing `#` comment runs to end of line or end of pattern —
+whatever text follows it on the SAME line, appended or not, is
+swallowed into the identical comment. `(?#...)` (PCRE's explicit
+comment syntax, valid in ANY mode) does not help: the parser is already
+INSIDE the trailing `#` comment when the appended bytes arrive, so
+anything not preceded by a real newline joins that same comment
+regardless of what it spells. The only byte that ends a free-spacing
+line comment is a literal `\n` (or end of input, which is what breaks
+today). So the fix is mechanical and singular: `(?:<pattern>\n)\z`
+instead of `(?:<pattern>)\z`, for exactly the patterns where inserting
+it is SAFE.
+
+It is not safe everywhere. Under the DEFAULT (non-free-spacing) syntax,
+`\n` inside a pattern is a literal newline ATOM — it requires an actual
+newline byte in the subject at that position to match. Appending one
+unconditionally would silently require every ordinary pattern's
+whole-subject artifact to match a subject ending `...\n`, which is
+false for the overwhelming majority of this project's corpus and would
+be exactly the kind of silent semantic drift `record_schema.md` §5
+ADDITIONS 3 already refuses to accept for `$` vs `\z` (a wrong-but-
+plausible spelling that "introduces a silent one-subject-class
+disagreement that looks like an engine difference and is not one").
+So the insertion must be CONDITIONAL on the pattern actually running in
+free-spacing mode at the point the appended text lands.
+
+**Two candidate ways to decide that condition:**
+
+**(a) The conditional-by-requires-tag rule (ADOPTED).** Insert the
+newline iff the pattern DECLARES `requires=free-spacing`
+(`pcrecbench.capability.pattern_requires`, the closed REQUIRES_VOCAB
+this project already uses to gate the capability policy, §5.1/§6.2).
+This is a DECLARED fact about the pattern, authored once, the same
+idiom this whole design already relies on for the pre-compile
+capability policy — never inferred by re-parsing the pattern text at
+wrap time.
+
+**(b) A textual heuristic: scan the pattern for an ACTIVE `(?x)` at
+end-of-text.** Track `(?x`/`(?-x` occurrences (and inline `(?x:...)`
+scoping) through the pattern and insert the newline only when the scan
+concludes free-spacing is live at the last byte. REJECTED. Three
+reasons, the third decisive: (1) it duplicates a real regex-syntax
+parser inside the wrap builder for one narrow question, a maintenance
+liability disproportionate to what it buys; (2) it would silently
+change behavior for ANY pattern matching the textual shape, including
+ones nobody has reviewed for this specific risk; (3) **it would
+"fix" `bench/syntax@0.1`'s own `mod-x` witness pattern**
+(`(?x) c a t # comment`) out from under the set that exists to
+demonstrate this exact defect. `mod-x`'s whole-subject refusal is
+already a NAMED, EXPECTED finding in that set's own record
+(`docs/dev/ledgers/2026-09-07-b36-syntax-first-d34c9131.md` §2.3,
+`13/15... mod-x refuses on the whole-subject form only... as NOTES
+foresaw`) — `bench/syntax` carries no `requires=` tags at all (a plain
+per-pattern `.rx` file with no capability model), so rule (a) leaves it
+untouched by construction, and rule (b) would not. A fix that reaches
+farther than the declared capability model is reaching into a witness
+it was never asked to touch.
+
+**Decision: (a), the conditional-by-requires-tag rule.** It fixes
+exactly the population this design already tracks by declaration,
+touches nothing this project has not explicitly tagged, and its
+negative case (a pattern that needs the fix but was never tagged) is a
+CORPUS-AUTHORING gap the capability policy already has a name for
+(an under-declared REQUIRES set), not a new failure mode this fix
+introduces.
+
+### 14.3 Residual risk, stated plainly
+
+**A pattern whose free-spacing mode turns on MID-PATTERN via an inline
+`(?x)` (or `(?x:...)`) construct, without the sub-bench declaring
+`requires=free-spacing` at the top level, is NOT fixed by this rule.**
+If such a pattern also happens to end its text on an un-newline-
+terminated comment, its whole-subject artifact still breaks exactly as
+today. This is a real, named gap, not a claim of completeness: the fix
+is scoped to what this project's OWN capability model already declares,
+and a pattern's tags are authored, not derived — the same trust
+boundary the pre-compile capability policy already rests on (§5.3: "a
+testee/token absent from the matrix satisfies nothing", the fail-closed
+rule's mirror image here is "a pattern that does not declare the tag
+gets no rescue"). The mitigation is the same one that already exists
+for every other REQUIRES tag: a pattern's authors declare it, and
+`bench/capability`'s own coverage review (§3, the family taxonomy) is
+where a missing declaration would be caught. No corpus pattern today
+is known to hit this residual case (checked: the only two patterns
+whose raw text ends on an un-newline-terminated `(?x)` comment anywhere
+in the corpus — `bench/capability`'s two CASE-1 patterns — both DO
+declare the tag at the top level).
+
+### 14.4 What is implemented, and what is OWED
+
+`pcrecbench.record.whole_subject_text` gains an optional
+`requires_free_spacing` parameter (default `False`, so every existing
+call site that does not pass it is byte-identical to before); the two
+adapters that call it directly (`testees/pcrec/adapter.py`,
+`testees/onig/adapter.py`) now compute it once per pattern from
+`pcrecbench.capability.pattern_requires` and pass it through.
+`testees/rust/adapter.py` (its own inline `\A(?:pattern)\z` wrap, never
+routed through the shared function — the crate has no runtime anchor,
+§3.3's own rust note) and `testees/vectorscan/driver.c` (its own C-side
+`^(?:pattern)\z` builder) apply the IDENTICAL conditional rule at their
+own wrap sites, each with its own control (a non-free-spacing pattern's
+wrapped artifact BYTE-IDENTICAL to before). `make check-harness` gains
+one arm: the two CASE-1 patterns wrap-compile clean under the new
+spelling on every engine that compiles the plain form (oniguruma, all
+four pcrec configs, rust, vectorscan), and a non-free-spacing control
+pattern's wrapped bytes are asserted UNCHANGED on every adapter.
+
+**OWED, not measured in this lane**: the affected cells' RE-MEASURE.
+This design/implementation lane changes what an adapter BUILDS; it does
+not run a window. The two CASE-1 patterns' `whole-subject` compile rows
+(and, where a `match`-regime testee reaches them — none does in
+`bench/capability@0.1` today, per §3.5's set-wide exclusion, so this is
+provenance for a future set rather than an immediate re-measure) move
+from `did-not-compile` to `compiled` on every one of the 7 previously-
+refusing testees; the OWNER is the next window that touches
+`bench/capability@0.1`, TRIGGERED by this section landing (grep this
+file's own name, or `[B70]`, in the next window's own plan).
+
+---
+
 ## Appendix A — source-fetch status of every family's wild source
 
 Carried forward from N1 so the build lane does not re-derive it. "Fetched"

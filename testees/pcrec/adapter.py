@@ -2929,7 +2929,7 @@ class Adapter(_ad.Adapter):
     # -------------------------------------------------------------- compile
 
     def compile(self, testee_id, pattern_id, pattern, options, trials,
-                workdir):
+                workdir, requires_free_spacing=False):
         r"""TWO artifacts per pattern: `plain` and `whole-subject`.
 
         pcrec has no end-anchored generation axis (a ratified but unbuilt
@@ -2940,14 +2940,16 @@ class Adapter(_ad.Adapter):
         `== n` says NO where PCRE2 under ANCHORED|ENDANCHORED says YES.
 
         So the match/compliance regime gets its own artifact compiled from
-        `(?:<pattern>)\z`, and BOTH are timed and given their own compile
-        rows -- they are different compiles of different text, and folding
-        their costs together would report a compile cost for an artifact the
-        record does not witness (rule X27)."""
+        `(?:<pattern>)\z` (or `(?:<pattern>\n)\z` when `requires_free_spacing`
+        -- [B70], `record.whole_subject_text`'s own docstring), and BOTH are
+        timed and given their own compile rows -- they are different
+        compiles of different text, and folding their costs together would
+        report a compile cost for an artifact the record does not witness
+        (rule X27)."""
         forms = {}
         for form, text in ((_ad.FORM_PLAIN, pattern),
                            (_ad.FORM_WHOLE_SUBJECT,
-                            _rec.whole_subject_text(pattern))):
+                            _rec.whole_subject_text(pattern, requires_free_spacing))):
             forms[form] = self._compile_one(testee_id, pattern_id, form, text,
                                             trials, workdir)
         return _ad.CompiledPattern(forms)

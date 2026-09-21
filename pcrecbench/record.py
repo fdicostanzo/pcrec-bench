@@ -160,14 +160,34 @@ FORM_PLAIN = "plain"
 FORM_WHOLE_SUBJECT = "whole-subject"
 
 
-def whole_subject_text(pattern):
+def whole_subject_text(pattern, requires_free_spacing=False):
     r"""The `whole-subject` artifact's pattern text, as bytes.
 
     `\z` and not `$`: at `options = 0` PCRE2's `$` also matches before a
     final newline, so `$` would silently accept a subject with a trailing
     newline that the oracle rejects. `(?:...)` and not bare concatenation: a
     top-level alternation would otherwise bind the anchor to its last branch
-    only -- `a|ab\z` is not `(?:a|ab)\z`."""
+    only -- `a|ab\z` is not `(?:a|ab)\z`.
+
+    `requires_free_spacing` ([B70], `capability_set_v1.md` 14, ADOPTED
+    2026-09-21 -- the conditional-by-requires-tag rule): DEFAULT `False`,
+    so every call site that does not pass it produces the BYTE-IDENTICAL
+    wrap it always did. A pattern whose sub-bench DECLARES
+    `requires=free-spacing` (`pcrecbench.capability.pattern_requires`,
+    the closed REQUIRES_VOCAB) may end its raw text on a `(?x)` line
+    comment with no trailing newline -- appending `)\z` directly lands ON
+    that comment, and every engine's parser reads the rest as one
+    unterminated comment (the [B69] census's
+    `wild-codegrammar-json-number-extended` finding). A `\n` ends a
+    free-spacing line comment; it is unsafe everywhere else (a literal
+    newline ATOM under the default syntax, requiring a real newline byte
+    in the subject) -- see `capability_set_v1.md` 14.2 for why this is
+    the ONLY safe fix and why it must be conditional, and 14.3 for the
+    residual risk this parameter does not close (a pattern whose
+    free-spacing mode turns on MID-pattern via an inline `(?x)` without
+    the sub-bench declaring the tag at all)."""
+    if requires_free_spacing:
+        return b"(?:" + pattern + b"\n)\\z"
     return b"(?:" + pattern + rb")\z"
 
 

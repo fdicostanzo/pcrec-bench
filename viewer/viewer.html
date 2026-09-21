@@ -1086,9 +1086,22 @@ var App = (function () {
 
   // ------------------------------------------------------------ render: table
 
-  function statusChipHtml(st) {
+  // [B70] 10.2: a `refused` cell shows its mechanism token in-cell,
+  // `refused · <token>` (`cellRow.refusal_reason`, exported by
+  // `tools/viewer_export.py`'s `_fold_and_classify` -- one of
+  // `too-large`/`too-complex`/`syntax`/`unsupported`/`wrap-artifact`/
+  // `other`); every other status renders exactly as before (bare word).
+  // The raw diagnostic stays in the tooltip (`tooltipText`), never
+  // in-cell -- a matrix cell must stay a fixed-width chip, not a
+  // variable-length sentence.
+  function statusChipHtml(cellRow) {
+    var st = cellRow.status;
     var cls = "chip chip-" + st;
-    return '<span class="' + cls + '">' + escapeHtml(st) + "</span>";
+    var label = st;
+    if (st === "refused" && cellRow.refusal_reason) {
+      label = "refused · " + cellRow.refusal_reason;
+    }
+    return '<span class="' + cls + '">' + escapeHtml(label) + "</span>";
   }
 
   // 9.4: one line per DISPLAYED metric, in `METRIC_ORDER`'s fixed order,
@@ -1112,7 +1125,7 @@ var App = (function () {
 
   function cellDisplay(cellRow, bestNs) {
     if (!cellRow) return { html: '<span class="dash">&ndash;</span>', best: false };
-    if (cellRow.status !== "measured") return { html: statusChipHtml(cellRow.status), best: false };
+    if (cellRow.status !== "measured") return { html: statusChipHtml(cellRow), best: false };
     var metrics = state.metrics.length ? state.metrics : ["ns"];
     var isBest = bestNs !== null && bestNs !== undefined && cellRow.median_ns === bestNs;
     if (metrics.length === 1) {
@@ -1173,6 +1186,11 @@ var App = (function () {
       lines.push(["spread", fmtNs(cellRow.spread_lo_ns) + " – " + fmtNs(cellRow.spread_hi_ns)]);
       lines.push(["n_subjects", cellRow.n_subjects]);
     } else if (cellRow.diagnostic) {
+      // [B70] 10.2: the classified token first (matches the in-cell
+      // chip), the verbatim diagnostic always beside it -- the token
+      // is a bench-side READING of the diagnostic, never a replacement
+      // for it.
+      if (cellRow.refusal_reason) lines.push(["refusal reason", cellRow.refusal_reason]);
       lines.push(["diagnostic", cellRow.diagnostic]);
     }
     lines.push(["record_id", cellRow.record_id]);

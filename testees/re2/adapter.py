@@ -279,7 +279,10 @@ class Adapter(_ad.Adapter):
     # -------------------------------------------------------------- compile
 
     def compile(self, testee_id, pattern_id, pattern, options, trials,
-               workdir):
+               workdir, requires_free_spacing=False):
+        # [B70]: unused -- RE2's `FullMatch` anchors the `match` regime
+        # against the SAME artifact, no `whole-subject` wrap to fix.
+        del requires_free_spacing
         cfg = self.config(testee_id)
         drv = self.prepare_driver(workdir)
         # per-PATTERN scratch: see Adapter.compile's docstring -- the same

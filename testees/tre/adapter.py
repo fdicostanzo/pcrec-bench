@@ -263,12 +263,21 @@ class Adapter(_ad.Adapter):
     # -------------------------------------------------------------- compile
 
     def compile(self, testee_id, pattern_id, pattern, options, trials,
-                workdir):
+                workdir, requires_free_spacing=False):
         r"""TWO artifacts per pattern: `plain` and `whole-subject` -- same
         reasoning as testees/onig/adapter.py's own `compile()` docstring:
         TRE has no end-anchored runtime option, so "does the WHOLE subject
         match" needs its own artifact -- `^(?:<pattern>)$`, NOT the shared
-        `pcrecbench.record.whole_subject_text()` (TRE has no `\z`)."""
+        `pcrecbench.record.whole_subject_text()` (TRE has no `\z`).
+
+        `requires_free_spacing` ([B70]) is UNUSED and unreachable in
+        practice: `tre-default` never declares the `free-spacing`
+        capability (`REQUIRES_VOCAB`), so the pre-compile capability
+        policy (`harness.run_cell`) already turns any free-spacing
+        pattern into an `unsupported-by-declaration` row before this
+        method is ever called -- confirmed on the [B69] census's own two
+        CASE-1 patterns, which `tre-default` never attempts at all."""
+        del requires_free_spacing
         forms = {}
         for form, text in ((_ad.FORM_PLAIN, pattern),
                            (_ad.FORM_WHOLE_SUBJECT, pattern)):
