@@ -131,6 +131,16 @@ Frank's five 2026-09-21 review notes, all IMPLEMENTED:
    `"… truncated, full N bytes"`; an omitted one says so plainly, never
    silently blank.
 
+**v1.2 follow-up (2026-09-21, the manager, on Frank's residual-duplicates
+note):** the `""` regime — the RESIDUE class after [B70]'s fold, i.e.
+whole-subject-form refusals no engine measured anywhere, so no ranked
+row existed to absorb them (32 rows corpus-wide; only the two
+wrap-artifact ones disappear at the next re-measure) — now defaults
+**OFF** on a fresh load (`defaultRegimes()` in `viewer.html`), and its
+checkbox is labeled `(unranked-form refusals)`. Reachable, never
+default noise. A persisted hash/localStorage state is honored as
+saved.
+
 **A named, out-of-scope finding from building this wave's DevTools
 verification (not fixed, not one of the five asks):** Chromium does not
 scope `localStorage` per `file://` PATH — two different `viewer.html`
