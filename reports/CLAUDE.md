@@ -2611,3 +2611,71 @@ an older measured one) restores it.
   on every compiled DFA artifact but the floor's. What the three readable
   rungs do show is P2's headline, cleanly. `.subject-grain.md` and `.tsv`
   the same query.
+
+**[B63] reports (2026-09-21, lane b63window) ADDED one file group — the
+pcrec re-measure wave 1, `bench/loglines@0.1`'s pcrec canonical roster
+(auto/nocaps/vm/vm-in) at pin 25b1984f** — the [B61] staleness
+burn-down's first set. Changed NOTHING else here: the reporter is
+unchanged at v18 (2026-09-18). Carries an explicit `--since`/`--until`
+pair *and* an explicit `--testee` roster (the 2026-08-30 rule and KB-5),
+ten testees: the two pcre2 baselines (newest 2026-09-02), pcrec-auto's
+own d34c9131 record (2026-09-06, already the single-variable
+comparator [EMIT-VERB] predicts), pcrec-nocaps/vm/vm-in's own 1989c62
+records (2026-09-02, five pins stale — see the predictions file's own
+entry above for exactly which intervening pcrec steps this gap
+crosses), and the four fresh 25b1984f records this window wrote.
+Window: `build/windows/window_loglines_20260921T041451Z.log`
+(2026-09-21 00:14:51-00:49:28 EDT, 4/4 cells attempt 1 rc=0), store
+190 -> 194. Query: `report --subbench loglines --version 0.1 --since
+2026-09-01T00:00:00Z --until 2026-09-21T05:00:00Z` plus the ten
+`--testee` values — **10 record(s) matching this query, 10 included, 0
+superseded**. `worst_other_core_busy: 13.83%`.
+
+**THE FINDING**: R-DELTA-1 (34 firings) shows a clean split by route
+that matches the predictions file's own stated grounding exactly —
+`pcrec-auto`/`pcrec-nocaps` (already at or within one pin of d34c9131,
+[EMIT-VERB]'s own single-variable claim) move only ×1.00-1.08 in either
+direction, while `pcrec-vm`/`pcrec-vm-in` (the five-pin-stale pair,
+crossing [OPT-5] STEP 2 among other VM-route work) read a real,
+substantial **×1.29-1.57 FASTER** on every large-subject-throughput and
+short-subject-search cell but one (`floor`, which reads **slower
+×1.03-1.32 on ALL FOUR routes** — a flat, route-independent move,
+read as measurement/box-state noise on the trivial baseline pattern
+rather than a route-specific regression, stated here rather than
+explained away). Predictions P1-P4 (`delta_verdict` eq-token
+"unchanged (within spread)") all REFUTED, exactly as the strict-op
+construction predicts for P1/P3 (small ordinary jitter) and as the
+file's own honest-null framing anticipated for P2/P4 (a real,
+documented-possible mover, now confirmed real and large). P5/P6 (the
+same-pin structural "byte-identical artifact" claims, nocaps-vs-auto
+and vm-in-vs-vm) were ALSO refuted — a genuine, unpredicted finding:
+`--no-captures` moves `level-context`'s emit_bytes by ×2.425 (nocaps
+LARGER) while shrinking `ipv4`'s whole-subject form by ×0.825 (a
+real per-pattern route/selection effect, not the flat "nothing to
+strip" null this lane predicted from the corpus's own capture-free
+grammar), and `pcrec-vm-in` carries genuinely more emitted bytes than
+`pcrec-vm` (×1.13-1.16, not ×1.00) — plausibly the caller-provided
+buffer's own static sizing reaching the emitted source, not a pure
+runtime parameter as predicted. P7 (a vm-in-vs-vm TIME clause) scored
+against the WRONG pin by a selector-glob artifact (the bare
+`testee=pcrec_*_vm-in-caps-simdna` selector matched the report's OLDER
+1989c62 record instead of the fresh 25b1984f one) — a lesson for the
+next same-pin structural clause, not a re-run (predictions are frozen
+pre-run artifacts, per convention): pin the OUTER selector's testee_id
+to the pin actually being measured when the report's roster spans more
+than one pin for that config family. Full verdict table and the
+selector-glob lesson: `docs/dev/lanes/b63window_report.md`.
+
+- `2026-09-21-loglines-0.1-budu-ryzen1600-after-25b1984f.md` — pcrec's
+  canonical loglines roster at 25b1984f, cross-pin against each
+  testee's own most recent prior record (d34c9131 for auto, 1989c62 for
+  nocaps/vm/vm-in). `.tsv`/`.subject-grain.md`/`.subject-grain.tsv`/
+  `.matrix.tsv`/`.matrix.html` siblings all rendered the same query;
+  `.interpretation.md` generated WITHOUT `--predictions` (the same F27
+  gap `capability-0.1-pin-25b1984f-confirm.tsv`'s own entry documents:
+  this population necessarily includes already-measured older-pin
+  records) — predictions scored separately via a direct
+  `interpret.evaluate_predictions` call, same precedent, worked around
+  the same KB-24 `_measured_text` crash on `delta_verdict`'s string-kind
+  values (a local monkeypatch of the formatting helper only; `_op_holds`
+  untouched).
