@@ -372,6 +372,60 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   findings the corrected file went on to score (P4 refuted, P6.a
   refuted) — this bug delayed neither.
 
+- `capability-0.1-pin-25b1984f-confirm.tsv` — lane `b60pinconfirm`,
+  2026-09-20: [B60]'s predictions for the [B58] pin's ([EMIT-VERB]/D112,
+  cf0962e3 -> 25b1984f) acceptance AFTER on the MEASURED axis. Inbox I-77
+  (1)'s hardest claim, restated per testee: **4 parents, one clause
+  each**, one per pcrec testee — `pcrec_25b1984f_{auto,auto-nocaps,vm,
+  vm-in}-caps-simdna` — the ONLY four (subbench, pcrec-testee) tuples the
+  store holds a genuine `cf0962e3` sample for (a direct grep of
+  `store/index.tsv` before authoring found no other set was ever
+  measured at that pin; every other set's most recent pcrec sample is
+  older). Each clause: `quantity=delta_verdict; reducer=identity;
+  op=eq-token; hi=unchanged (within spread); SCORED (2026-09-20,
+  P1-P4 all REFUTED against `reports/2026-09-20-capability-0.1-budu-
+  ryzen1600-pinconfirm-25b1984f.tsv`, 738/750/732/732 ranked values per
+  parent — exactly as the file's own grounding anticipated, a strict
+  eq-token clause registering ordinary boundary jitter as refuted by
+  construction, never itself a systematic-mover finding). **A SECOND,
+  NEW structural gap found scoring this file (docs/dev/known_issues.md
+  KB-24)**: this is the FIRST predictions file to name
+  `quantity=delta_verdict` at all, and `interpret.evaluate_predictions`
+  crashes on it outright (`_measured_text` assumes every `identity`-
+  reduced "num"-kind value is a float; `delta_verdict`'s values are
+  string tokens) — scored via a scratch monkeypatch of the broken
+  formatting helper only, `_op_holds` (the real predicate) untouched.
+  See KB-24 for the full finding and the two fix candidates` — the report's OWN R8
+  cross-pin rule (`_cross_pin_verdict`, spread = 2x the larger of the two
+  cells' own trial stddev), applied to EVERY ranked cell for that
+  testee. **Grounding, stated in each row's own note rather than
+  invented**: the identical four-testee population's LAST cross-pin
+  comparison (a770139e -> cf0962e3,
+  `reports/2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.tsv`)
+  read 451/488 non-blank rank rows exactly `unchanged (within spread)`,
+  every other row within ±×1.04 except two cells at ×2.00 that were an
+  EXPLAINED real fix (the mojibake-curly-quote correction, I-72) — so
+  this strict eq-token op is EXPECTED to register a small amount of
+  ordinary trial-level boundary jitter as "refuted" by construction (a
+  row landing just outside its own cell's 2×stddev band by chance is not
+  itself a systematic-mover finding); the window's report/ledger reads
+  each non-matching row's own ratio against this ≤×1.04 historical
+  ceiling to separate ordinary spread from a genuine mover, which this
+  window exists to surface, never to absorb. **A KNOWN, DOCUMENTED gap
+  applies to the CLI scoring path**: this predictions file's population
+  necessarily includes the already-measured `pcrec_cf0962e3_*` records
+  (required for `delta_verdict` to exist at all), so `check_stated_utc`'s
+  F27 re-anchor (this file's own entry above,
+  `capability-0.1-ext-roster.tsv`'s finding 1) anchors to the `cf0962e3`
+  records' own 2026-09-18 timestamp and refuses `pcrecbench interpret
+  --predictions ... --render` through the normal CLI path — the EXACT
+  "second sample of an already-measured population" case finding 1
+  names as structurally unfixable without a ruling. Scored the same way
+  `capability-0.1-ext-roster.tsv` was: by calling
+  `interpret.evaluate_predictions` directly (bypassing only
+  `check_stated_utc`, not the selector/reducer/op machinery); see
+  `docs/dev/lanes/b60pinconfirm_report.md` for the verdicts.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before

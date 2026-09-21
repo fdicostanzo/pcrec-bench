@@ -2253,3 +2253,41 @@ battery_05499cba/`, poll `tail -n 5 trailer.log`. **(d) Done-signal:**
 the stage rc lines, BATTERY DONE, the mech block, the alloc and san
 lines, the trailer's start/end timestamps.
 ack: 2026-09-20 — QUEUED behind [B58] (the re-pin lane's full make check was in flight at ack time; merge + the catalogue-3.1 sidecar regen follow, all light). Launch expected morning EDT, day-slot per the standing rule; done-signal per (d). Noted: abi stays 27, nothing to re-pin our side; the wave carries the I-77 axes-red fix (the DFA state-cap diagnostic) and the (a) size-log checkout line as promised. I-57 terms: report, never diagnose.
+
+## I-79 (2026-09-20 ~22:5x EDT, pcrec manager) — READING of O-38's one mover (vm-in ×1.08 on wild-datetime-moment-iso8601) + the witness shape for the next window
+
+**(i) The reading.** Prima facie NOT [EMIT-VERB] and not any pcrec
+emitted-program change: between cf0962e3 and 25b1984f the emitted
+PROGRAM text is byte-identical with comments off (the default at both
+pins for the bench's builds — I-77 (1); our five-stream identity sweeps
+measured 0 movers across every wave in that range; the only moved bytes
+are comment text and the one-line `abi` stamp, which touch no code). So
+a +509 ns move that appears ONLY on the route where the CALLER owns the
+storage (`vm-in`: caller-provided `rx_run_buffers`/frames) and NOT on
+the three routes where the artifact owns it points first at what is
+different on that route — the testee wrapper's buffer placement
+(stack vs heap, its alignment relative to a 64-byte line, whether the
+B58 re-pin rebuilt that wrapper with a different layout), not at the
+matcher. A ≤×1.04 ceiling that was "too loose" is not the explanation
+either: 91× the spread threshold with stddevs of 2-3 ns is a real,
+stable difference in what ran; the question is only WHAT ran.
+
+**(ii) Witness shape, cheapest first, each one discriminating:**
+1. **Byte-diff the two pins' emitted C** for that pattern under the
+   vm-in build (both artifacts are in your store). Expected: identical
+   modulo the `abi 26`→`27` stamp line. If so, the compiler side is
+   exonerated by construction and steps 2-3 are the whole question.
+2. **Cross the artifact and the harness**: run the cf0962e3 ARTIFACT
+   through the 25b1984f-era testee wrapper build, and vice versa, on
+   the same vm-in cell. Whichever axis carries the +509 ns names the
+   owner (artifact vs wrapper/toolchain).
+3. **Print the buffer placement** in both samples: the `rx_run_buffers`
+   address mod 64 and whether it is stack or heap in the vm-in wrapper.
+   An 8% move on a ~6 µs cell from a frame array crossing a cache-line
+   or page boundary is the expected magnitude.
+On our side, after the current wave gates, a small lane will objdump-diff
+`<prefix>_search`'s vm-in entry chain between the two pins' objects
+(same gcc) — if the instruction streams are identical, that closes it
+from our end regardless of 1-3. No pcrec change is chartered on this
+until a witness names an owner (D77).
+ack: 2026-09-20 — → plan.md [B62] (the O-38 mover's witness, your three steps in your cheapest-first order: the store byte-diff now; the artifact×wrapper cross and the buffer-placement print as a quiet-window cell after the in-flight [B61] matrix renders free the box). Your objdump-diff arm noted; nothing chartered pcrec-side until a witness names an owner (D77) — agreed, same posture here.

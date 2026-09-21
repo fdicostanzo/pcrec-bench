@@ -1057,3 +1057,54 @@ terminal line (`WINDOW_RUN_COMPLETE cells=<measured>/<attempted>` with
 a nonzero exit when measured=0), or refusing to print the sentinel at
 all when no cell wrote a record. Until then: never judge a window by
 its sentinel; read the per-cell rc lines.
+
+## KB-24 (2026-09-20, found by lane b60pinconfirm scoring `capability-0.1-pin-25b1984f-confirm.tsv`) — `interpret.evaluate_predictions` crashes on any `quantity=delta_verdict` clause under the `identity` reducer: `_measured_text` assumes every "num"-kind reduced value is a float
+
+`pcrecbench/interpret.py`'s `_reduce()` tags the `identity` reducer's
+output `kind="num"` unconditionally (line ~2165), regardless of whether
+the selected quantity's own values are actually numeric.
+`delta_verdict` (a legal quantity, in `_QUANT_COLUMN`) is a STRING
+token — `"unchanged (within spread)"`, `"slower ×1.08"`, etc. — never a
+float. `evaluate_predictions` -> `_measured_text` (line ~2396) then
+runs `abs(lv[1])` (on the `bad` branch) or the f-string `{extreme[1]
+:.3f}` (on the all-confirmed branch) against these strings and raises
+`TypeError: bad operand type for abs(): 'str'` before a SINGLE clause's
+verdict is produced — the whole `evaluate_predictions` call aborts, not
+just the one clause. `_op_holds` itself (the actual confirm/refute
+predicate: `str(value) == hi` for `eq-token`) is string-safe and
+unaffected — only the free-text "measured:" annotation's formatting
+path is broken.
+
+**Why nobody hit this before**: `docs/dev/predictions/
+capability-0.1-pin-25b1984f-confirm.tsv` is the FIRST predictions file
+in the repository to name `quantity=delta_verdict` at all (confirmed:
+`grep -l delta_verdict docs/dev/predictions/*.tsv` matches only this
+one file). Every prior file's clauses use a numeric quantity
+(`n_wrong`, `pass_rate`, `median_ns`, …) or the `set_of`/`count`
+reducers, whose `kind` is genuinely `"num"`/`"set"` respectively — this
+is the first clause combination where `kind` lies.
+
+**Workaround used** (lane b60pinconfirm, scratch-only, never committed):
+a local monkeypatch of `_measured_text` that checks `all(isinstance(v,
+(int, float)) for _, v in reduced)` before taking the numeric-format
+branch, falling back to a `{distinct string values}` rendering
+otherwise — verifies the crash reproduces unpatched, then re-runs with
+the patch to recover the real verdicts (`_op_holds` untouched, so the
+confirmed/refuted verdicts are the tool's own, only the annotation text
+is substituted). Result: P1-P4 all `refuted` (738/750/732/732 ranked
+values each; every non-"unchanged" token is one `eq-token` mismatch;
+expected per the predictions file's own grounding — a strict
+`delta_verdict eq-token "unchanged (within spread)"` clause is stated
+to register ordinary boundary jitter as refuted by construction). See
+`docs/dev/lanes/b60pinconfirm_report.md` for the full scoring output.
+
+**Not fixed here** (a report/scoring lane is not the place to change
+`interpret.py`'s semantics without a ruling): the fix wants either (a)
+`_reduce`'s `identity` branch to inspect the actual value type and tag
+`kind="token"` for non-numeric quantities, with `_measured_text` given
+a genuine third branch (not the `_measured_text_stringsafe` workaround's
+ad hoc fallback), or (b) a load-time restriction pairing `identity` with
+only known-numeric quantities and refusing `delta_verdict`/`status`
+clauses under it BY NAME at `load_predictions` time (forcing a future
+author toward `set_of`/`count`, which are already string-safe) — a
+ruling should pick one rather than this file improvising a third.

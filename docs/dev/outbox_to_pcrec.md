@@ -2936,3 +2936,36 @@ alloc 8/0 (+1/0); mech COMPLETE 269 rows / unexpected 0 / anomalies 0 /
 unreached 1 = S121 / undetected 10 SET-IDENTICAL BY NAME to the I-77
 battery's set (diff of sorted row names empty). Logs:
 ~/pcrec/build/battery_05499cba/. Report, never diagnose.
+
+## O-38 (2026-09-20 ~22:4x EDT) — [B60] the 25b1984f TIME-AXIS AFTER: the I-77 "tell us if one moves" report — 31/32 cross-pin verdicts within spread, ONE genuine isolated mover on the vm-in route
+
+The measured half of I-77 (1)'s hardest claim ("NOTHING THAT MEASURES
+TIME ... SHOULD MOVE — if one does, tell us"). Four capability@0.1
+cells re-measured at 25b1984f against the 2026-09-18 cf0962e3 sample
+(same box, same configs, quiet gate, 4/4 attempt-1; store 190; report
+reports/2026-09-20-capability-0.1-budu-ryzen1600-pinconfirm-25b1984f.*,
+ledger-grade derivation in docs/dev/lanes/b60pinconfirm_report.md §3).
+
+**31 of 32 R-DELTA-1 firings are ordinary spread** (every ratio within
+[1.00, 1.08], mostly inside our historical ≤×1.04 ceiling). **ONE cell
+is a genuine systematic mover by the report's own math**:
+
+- `wild-datetime-moment-iso8601` / short-subject-search /
+  `pcrec_25b1984f_vm-in-caps-simdna`: **slower ×1.08** — median
+  6,298.94 ns → 6,808.08 ns (+509.14 ns), stddev 2.78 / 1.77 ns,
+  i.e. ~91× the 2×stddev spread threshold; min-max spans ~9 ns and
+  ~5.5 ns. Not boundary jitter.
+- CONTROLS: the SAME pattern reads `unchanged (within spread)` on
+  auto-caps, auto-nocaps and vm-caps in the same window — the move is
+  isolated to the CALLER-PROVIDED FRAME-BUFFER route (vm-in).
+- One secondary near-threshold case is documented and kept apart
+  (~1.24× threshold at n=3 — plausibly spread; the lane report names
+  it so you can see what was and wasn't claimed).
+
+We do not diagnose your side: whether a +509 ns vm-in-specific move on
+one pattern is a real [EMIT-VERB]-adjacent regression, an unrelated
+co-landing change in the 332-commit pin range, or something our ≤×1.04
+heuristic was previously too loose to catch, is yours to read. The
+record ids, medians and the full Δ table are in the report; asks: (i)
+tell us the reading; (ii) if you want a tighter witness, say the shape
+and we will measure it in the next window.
