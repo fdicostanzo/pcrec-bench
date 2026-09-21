@@ -2759,3 +2759,238 @@ table: `docs/dev/lanes/b63window_report.md`.
   gap); predictions scored separately via a direct
   `interpret.evaluate_predictions` call with the same KB-24 workaround
   as the loglines group above.
+
+**[B64] reports (2026-09-21, lane b64window) ADDED one file group — the
+[B61] staleness burn-down's WAVE 2, `bench/email-specimen@0.2`'s pcrec
+canonical roster (auto, auto-nocaps, vm, vm-in) re-measured at 25b1984f**,
+same `after-<pin>` naming and query shape as [B63]'s two groups above
+(cross-pin against each testee's own most recent prior record: d34c9131
+for `pcrec-auto` (single-variable), 1989c62 for `pcrec-auto-nocaps`/
+`pcrec-vm`/`pcrec-vm-in`, same six-pin-stale gap [B63]'s loglines group
+carried). Window:
+`build/windows/window_email_20260921T065851Z.log` (02:58:51-03:22:48 EDT,
+4/4 cells attempt 1 rc=0, all `agree`); store 198 -> 202. Predictions
+`docs/dev/predictions/email-specimen-0.2-pin-25b1984f-confirm.tsv`
+committed BEFORE the window (commit `78d5aa6`); scored the same way as
+[B63]'s files (`interpret.evaluate_predictions` direct call, the F27
+`check_stated_utc` bypass, the KB-24 `_measured_text` string-value
+workaround).
+
+**Real cross-pin `delta_verdict` values, read directly from the TSV**
+(the mechanical P1-P4 clauses REFUTE for the SAME structural reason
+[B63]'s files hit: a bare `pcrec_*_<mode>-caps-simdna` glob also matches
+the OLDER testee's own rank rows, which carry NO `delta_verdict` at all
+— `''` — and trivially fail an `eq-token` check against them; the
+lane-report reading below is from the report's own 25b1984f rows
+directly, not from the tool's auto-picked "worst" row): **auto** and
+**auto-nocaps** (single-variable and five-pin-stale respectively) both
+read ×1.00-1.04 on `orig`/`factored` (`unchanged` or a flat ×1.04 on the
+throughput regime only) with `floor` the one outlier at ×1.02-×1.36 --
+the SAME route-independent near-zero-cost-pattern noise [B63]'s own
+loglines reading already named, not a route-specific regression. **vm**
+and **vm-in** (both five-pin-stale, crossing the SAME [OPT-5] STEP 2 /
+island / cls-fold gap [B63]'s loglines P2/P4 found REAL movers on) read
+×1.00-1.09 here — `floor` again the outlier (×1.74-1.81) — i.e. **email
+does NOT reproduce loglines' ×1.29-1.57 vm/vm-in win**: no cell here
+moved by more than ×1.09, a genuine (non-)finding worth stating plainly
+rather than assuming the same OPT-5-era win generalises across sets.
+
+**P5/P6 (same-pin structural, compile:emit_bytes), read directly from
+the two fresh records rather than the tool's refuted verdict**: **P5
+(vm-in vs vm, `eq 1`) CONFIRMS on BOTH witnesses, exactly** — `orig`
+47,591 B / `factored` 58,762 B, byte-identical between `pcrec-vm-in` and
+`pcrec-vm` — the OPPOSITE of [B63]'s own loglines P6 precedent (×1.13-1.16
+there), stated in this file's own note as an expected-likely-refute; it
+did not refute here. **P6 (nocaps vs auto, direction-only `lt 1`) is
+MIXED**: `orig` (82,236 B both) is EXACTLY EQUAL — captures present in
+the pattern (real named groups, unlike loglines/altwide) yet
+`--no-captures` saved nothing at all on this witness; `factored` (82,460
+vs 82,643 B) is barely smaller, ×0.9978, a rounding-scale save, not the
+meaningful strip P6's own hypothesis predicted. Full verdict table and
+the P7-style direction discussion: `docs/dev/lanes/b64window_report.md`.
+
+**[B64] reports (2026-09-21, lane b64window) ADDED a second file group —
+`bench/syntax@0.1`'s pcrec canonical roster re-measured at 25b1984f**, the
+ONE PIN-UNIFORM set in this whole wave (all four canonical testees were
+already at d34c9131, so all four `delta_verdict` clauses are
+single-variable per [EMIT-VERB]). Window:
+`build/windows/window_syntax_20260921T072836Z.log` (03:29:06-06:13:50
+EDT, ~2h45m, 4/4 cells attempt 1 rc=0, all `agree`); store 202 -> 206.
+Predictions `docs/dev/predictions/syntax-0.1-pin-25b1984f-confirm.tsv`
+committed BEFORE the window (commit `78d5aa6`); scored via the same F27
+bypass + KB-24 workaround. `.tsv`/`.md`/`.subject-grain.md`/
+`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/`.interpretation.md`
+all rendered from the same ten-testee query (10 records, 0 superseded);
+the report/subject-grain renders on this 95-pattern corpus ran 2-5
+minutes each (well past KB-16's usual 15-46s for a narrow roster on a
+smaller set, still nowhere near the whole-store cost KB-16 warns about)
+— run DETACHED with a completion marker, foreground-polled, per the
+boilerplate's rule for a step that genuinely exceeds the two-minute
+single-command window.
+
+**THE HEADLINE FINDING: pcrec's compile-time REFUSAL SET on this
+census SHRANK from 15 patterns to 13, on ALL FOUR canonical routes,
+between d34c9131 and 25b1984f** — `unp-p-lc` (`\p{L}+`) and `unp-p-uc`
+(`\P{L}+`), the set's two Unicode-property-class witnesses, now COMPILE
+where they refused at d34c9131 (P7.a/.b's own predicted-stable 15-pattern
+set REFUTED on exactly these two names, confirmed independently by a
+direct `did_not_compile` read of this window's own TSV on all four
+testee ids). Read from the fresh records directly: both compile to a
+REAL `dfa` engine artifact (`unp-p-lc`/`unp-p-uc` plain form 26,266 B,
+whole-subject form 24,049 B — byte-IDENTICAL between the two patterns,
+consistent with one shared property-class table differing only in
+accept/reject polarity). None of this wave's own re-pin history reading
+(the [EMIT-VERB]/D112 comments-off pin, [OPT-DIAL]/K59's premul-drop
+rung) named Unicode-property support as a change — this is a genuinely
+NEW, unpredicted capability gain somewhere in the cd371441 ->
+a770139e -> cf0962e3 -> 25b1984f span, stated here as a finding for
+pcrec to confirm (an outbox candidate, not filed by this lane — scope is
+measure and report, per [B63]'s own precedent), not diagnosed to a
+mechanism.
+
+**P5/P6 (same-pin structural, `compile:emit_bytes` `eq 1`) BOTH REFUTE
+for real, on witnesses this file deliberately chose to be
+captureless** — unlike email-specimen's P5 above, this is not the
+mechanical blank-row artifact: `lit-cat`/`anc-caret` genuinely have no
+capturing group (direct read of the `.rx` files), yet **P5 (nocaps vs
+auto)** reads `lit-cat` ×0.916 and `anc-caret` ×0.629 — nocaps
+SUBSTANTIALLY smaller on both, up to -37.1% on the anchor witness, the
+SAME direction (though larger magnitude) as [B63]'s own captureless
+loglines/altwide findings. **P6 (vm-in vs vm)** reads `lit-cat` ×0.961 and
+`anc-caret` ×0.975 — vm-in SMALLER here, the OPPOSITE direction from
+[B63]'s loglines P6 (vm-in ×1.13-1.16 LARGER there) and from this same
+window's own email-specimen P5 (byte-identical). Three sets, three
+different vm-in-vs-vm relationships (larger / identical / smaller) on
+the identical structural claim — stated as an open finding, not
+resolved here.
+
+**[B64] reports (2026-09-21, lane b64window) ADDED a third file group —
+`bench/bounded@0.3`'s pcrec canonical roster re-measured at 25b1984f**,
+the LONGEST and LAST window of this wave, run in daylight rather than
+overnight (the "windows-at-night" restriction was lifted 2026-09-04;
+continuous benches run at the bench's own discretion, quiet gate still
+binding — box read `quiet` immediately before launch). Window:
+`build/windows/window_bounded_20260921T104216Z.log` (06:42:47-09:39:39
+EDT, ~2h57m, 4/4 cells attempt 1 rc=0, all `agree`); store 206 -> 210.
+Predictions `docs/dev/predictions/bounded-0.3-pin-25b1984f-confirm.tsv`
+committed BEFORE the window (commit `78d5aa6`); scored via the same F27
+bypass + KB-24 workaround. Roster: `pcrec-auto`/`pcrec-vm`/`pcrec-vm-in`
+single-variable (d34c9131 -> 25b1984f); `pcrec-auto-nocaps` the WIDEST
+gap in either wave (288d505, seven pins back — [B61]'s own "one holdout"
+finding, never re-measured since [OPT-5] STEP 2). `.tsv`/`.md`/
+`.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/
+`.interpretation.md` all rendered from the same ten-testee query (10
+records, 0 superseded); every render step run DETACHED with a
+completion marker, foreground-polled, same as the syntax group above.
+
+**THE TEAM LEAD'S OWN DIRECTION-ONLY SIZE-CAP HYPOTHESIS (P6.a/.b) IS
+REFUTED, IN THE OPPOSITE DIRECTION FROM WHAT IT PREDICTED** — read
+directly from the fresh records, confirmed against `interpret`'s own
+mechanical read (`compile:emit_bytes lt <d34c9131 value>`, both refuted):
+`cls-upto-4096`'s whole-subject form (the K59/[OPT-4.1] hypothesis's own
+witness, chosen for being bounded's largest `premultiplied`-table DFA
+artifact) reads **471,735 B at 25b1984f against 471,547 B at
+d34c9131 — GREW by 188 B (+0.04%), not shrunk**; `cls-upto-2048`
+whole-subject reads **240,310 B against 240,122 B — also GREW by
+exactly 188 B**. The `dfa_table` stamp stays `premultiplied` on BOTH,
+at BOTH pins — unlike altwide's `w-256`/`ci-512` witnesses, which O-40
+found moving to `mixed`/`indexed` with a real double-digit-percent
+shrink, **the K59 premul-drop-ladder mechanism that rescued altwide's
+compiled size does NOT reach bounded's own class-ladder DFA tables at
+all** — a clean, informative NEGATIVE result the direction-only framing
+was built to surface. The flat, identical +188 B on both witnesses
+(also +190/+192 B on their much-smaller PLAIN forms) reads like an
+ordinary small stamp-line-style constant from one of the four
+intervening pins (cd371441/a770139e/cf0962e3/25b1984f), not investigated
+further here (measure-and-report scope, per [B63]'s own precedent) —
+stated as an observation, not diagnosed to a specific pin's own change.
+
+**P7 (the structural refusal-boundary stability clause) reads exactly as
+predicted, resolving [B61]'s own open question about WHICH route the
+`cls-upto-65535` NFA-state-cap refusal applies to**: `pcrec-auto`'s
+did-not-compile set is UNCHANGED at `{cls-upto-65535}` (P7.a CONFIRMED —
+the state cap, `PCREC_MAX_DFA_STATES_TABLE`, "NOT RAISABLE" per its own
+registry description, mechanically distinct from P6's emitted-bytes
+cap); `pcrec-vm` compiles `cls-upto-65535` cleanly (18,381/18,492 B,
+`engine_sel=forced`) — CONFIRMED by direct record read, though P7.b's
+own empty-target `set-eq` clause mechanically reads `not-evaluable` (the
+same "checked-clean vs never-checked" residual gap
+`docs/dev/predictions/CLAUDE.md`'s `capability-0.1-ext-roster.tsv` entry
+already documents for this exact mechanism) — confirming the abi-11-era
+prediction text's original "both engines" refusal never held for VM,
+only for the two AUTO arms, exactly as [B61]'s fullroster reading found.
+
+**A DISCREPANCY BETWEEN THE MECHANICAL TOOL AND A DIRECT RECORD READ ON
+P5, noted rather than chased down**: `interpret` reads P5 as `partial`
+(P5.a refuted, P5.b confirmed), but a direct read of both fresh records
+finds `cls-upto-1024` BYTE-IDENTICAL between `pcrec-auto`/`pcrec-nocaps`
+(16,760 B plain, 187,559 B whole-subject) AND between `pcrec-vm`/
+`pcrec-vm-in` (18,379 B plain, 18,490 B whole-subject) — both clauses
+should read confirmed by this arithmetic. Not fixed or traced into
+`interpret.py` here (a docs-only report-building lane is not the place);
+flagged as a possible new tool residual alongside KB-24, worth a
+follow-up read. The DIRECT finding stands regardless: on this
+genuinely-captureless witness, nocaps and captures-on are byte-for-byte
+identical, and so are vm and vm-in — the cleanest of this wave's three
+same-pin structural readings (email: mixed; syntax: real, substantial
+differences on both directions; bounded: exact identity).
+
+- `2026-09-21-bounded-0.3-budu-ryzen1600-after-25b1984f.md` — the report
+  group described above. `worst_other_core_busy` and the exact
+  per-testee cross-pin gap table are in the file's own header; full
+  verdict table and the P6/P7 derivation: `docs/dev/lanes/
+  b64window_report.md`.
+
+**[B64] PART B (2026-09-21, lane b64window) RE-RENDERED ALL FIVE
+`fullroster-<pin>` groups as NEW `fullroster-25b1984f` groups** — the
+[B61] `d34c9131`-suffixed ones (four sets) and `334fd10e`/`1989c62`-mixed
+ones stand as HISTORY, unchanged, per this lane's own charter text; every
+set's full-roster matrix now reads current-pin pcrec (all four canonical
+modes pin-uniform at 25b1984f, the FIRST time that has been true for
+`email-specimen@0.2`, `loglines@0.1`, `bounded@0.3` and `altwide@0.2` —
+only `syntax@0.1` was ever pin-uniform before, at d34c9131) plus
+`rust-default`. Same ROSTER-SELECTION RULE as [B61] (the newest record
+of each of the seven canonical identities, never every distinct
+`testee_id` the store has ever recorded); no `--since`/`--until` bound
+needed (KB-5's roster convention narrows to exactly these seven ids by
+name). Rendered one query, one format, one `gnutimeout` at a time per
+this lane's own delivery discipline (`email-specimen`/`loglines`/
+`altwide` foreground, 15-90s each; `syntax`/`bounded` — the two 95- and
+43-pattern corpora — detached with a completion marker, foreground-
+polled, same as Part A's own report renders); every `.interpretation.md`
+sidecar is a FRESH file, determinism-checked (a second, independent
+`interpret --render` invocation diffs byte-identical against all five).
+
+**THE FULLROSTER MATRIX ITSELF INDEPENDENTLY CONFIRMS Part A's two
+headline findings, read a second way (F26-immune, no ranking-group
+gap):** `altwide@0.2`'s `pcrec-auto`/`pcrec-auto-nocaps` columns each
+read exactly **4** `refused` patterns (`s-2048`, `s-4096`, `w-1024`,
+`w-2048`) against `pcrec-vm`/`pcrec-vm-in`'s **11** (`ci-512`, `nar4-512`,
+`s-2048`, `s-4096`, `sfx-512`, `sh1-512`, `srt-512`, `w-1024`, `w-2048`,
+`w-512`, `wb-512`) — the same 4-vs-18-at-d34c9131 auto-route shrink
+[B63]'s O-40 finding already named, and `rust-default` refuses NOTHING
+on this set (all 33 patterns × 3 regimes ranked, matching [B59]'s own
+finding); `bounded@0.3`'s `pcrec-auto`/`pcrec-auto-nocaps` columns each
+refuse exactly `{cls-upto-65535}`, `pcrec-vm`/`pcrec-vm-in` refuse
+NOTHING, and `rust-default` refuses `{nest2-64, nest3-16}` (matching
+[B59]'s own `CompiledTooBig` finding) — independently confirming Part
+A's own bounded P7 reading (the state-cap refusal is auto-route-only) a
+second way, from the matrix's own closed-token columns rather than a
+`did_not_compile` section read.
+
+- `2026-09-21-email-specimen-0.2-budu-ryzen1600-fullroster-25b1984f.md`,
+  `2026-09-21-loglines-0.1-budu-ryzen1600-fullroster-25b1984f.md`,
+  `2026-09-21-bounded-0.3-budu-ryzen1600-fullroster-25b1984f.md`,
+  `2026-09-21-altwide-0.2-budu-ryzen1600-fullroster-25b1984f.md`,
+  `2026-09-21-syntax-0.1-budu-ryzen1600-fullroster-25b1984f.md` — full
+  roster: `libpcre2_10.46_{interp,jit}-caps-simdna`,
+  `pcrec_25b1984f_{auto,auto-nocaps,vm,vm-in}-caps-simdna` (pin-uniform
+  on every set now), `rust_1.13.1_default-caps-simdna`. `worst_other_
+  core_busy` per file: email 10.81%, loglines 13.83%, bounded 22.68%,
+  altwide 40.71%, syntax 64.93% (all AFTER-sample provenance readings,
+  not gate verdicts — every record's own pre-flight passed,
+  `status: measured`). `.tsv`/`.subject-grain.md`/`.subject-grain.tsv`/
+  `.matrix.tsv`/`.matrix.html`/`.interpretation.md` all rendered/
+  generated as described above. Full per-set matrix reading (rust wins,
+  new refusal boundaries, any other cross-engine finding beyond the two
+  confirmations above): `docs/dev/lanes/b64window_report.md`.

@@ -472,6 +472,51 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   were scored the same way for a single consistent verdict table. See
   `docs/dev/lanes/b63window_report.md` for the scored verdicts.
 
+- `email-specimen-0.2-pin-25b1984f-confirm.tsv`,
+  `syntax-0.1-pin-25b1984f-confirm.tsv`,
+  `bounded-0.3-pin-25b1984f-confirm.tsv` — lane `b64window`, 2026-09-21:
+  [B64]'s wave-2 predictions for the pcrec re-measure at 25b1984f on the
+  three sets [B63] left for a later night (the [B61] staleness burn-down's
+  remaining sets). Explicitly applies BOTH of [B63]'s own two authoring
+  lessons (`docs/dev/lanes/b63window_report.md` SS5): every same-pin
+  structural clause (compile:emit_bytes ratio_to) names a PIN-SPECIFIC
+  testee id (`pcrec_25b1984f_<mode>-caps-simdna`) on both sides, never a
+  bare `pcrec_*_<mode>` glob, so a stale older-pin record of the same
+  testee_id can never be matched by accident; every `section=
+  did_not_compile` clause carries NO `form=` key, reading the section's
+  whole (pattern-level) refusal set instead. **Per-testee grounding, read
+  from `store/index.tsv` before authoring, differs per set**:
+  `syntax@0.1` is PIN-UNIFORM (all four canonical pcrec testees already
+  at d34c9131, [B61]'s own finding) so all four `delta_verdict` parents
+  are single-variable; `email-specimen@0.2` and `bounded@0.3` split
+  auto/vm/vm-in (d34c9131, single-variable) from auto-nocaps (1989c62 for
+  email, six pins back; **288d505 for bounded, SEVEN pins back — the
+  widest gap in either wave**, one pin further than [B61]'s own fullroster
+  note already flagged as bounded's "one holdout"). Every multi-pin parent
+  is INCLUDED as the honest null (not dropped), same posture as [B63].
+  `bounded-0.3-pin-25b1984f-confirm.tsv`'s **P6.a/.b are the direction-only
+  size-cap clauses the team lead's own brief asked for**: given [B63]'s
+  O-40 finding that the DFA/auto route's compiled-size refusal boundary on
+  `bench/altwide` shrank dramatically at 25b1984f (hypothesized K59
+  premul-drop-ladder mechanism, `dfa_table` moving `premultiplied` →
+  `mixed`/`indexed`), these two clauses predict `cls-upto-4096` and
+  `cls-upto-2048`'s whole-subject forms — bounded's own largest
+  `premultiplied`-table DFA artifacts at d34c9131 (471,547 B and 240,122 B
+  respectively, read directly from the d34c9131 record) — SHRINK
+  (`op=lt`, `hi=` the literal d34c9131 byte count), stated explicitly as a
+  direction/hypothesis this set's own count-ladder table shape was never
+  independently probed for, not a certainty; P7.a/.b separately predict
+  the STRUCTURAL refusal boundary itself (`cls-upto-65535`, the NFA-state
+  cap, mechanically distinct from the emitted-bytes cap P6 tests) stays
+  unchanged on `auto`, and is EMPTY on `vm` (testing [B61]'s newer finding
+  — VM compiles every rung — against the abi-11-era prediction text's
+  older "both engines" claim). All three files load clean under
+  `interpret.load_predictions` (8/10/10 clause rows respectively, zero
+  closed-set errors) as a pre-commit check; like every cross-pin file in
+  this directory, scoring requires the `check_stated_utc` bypass once the
+  window's own report exists. See `docs/dev/lanes/b64window_report.md`
+  for the scored verdicts.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before
