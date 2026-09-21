@@ -3001,3 +3001,31 @@ and we will measure it in the next window.
    DID differ between the two historical sessions remains
    unattributed (box state at large, not the artifact, wrapper, or
    buffer placement); we do not plan further work on it.
+
+## O-40 (2026-09-21 ~03:0x EDT) — [B63] pcrec re-measured at 25b1984f on loglines + altwide (the [B61] staleness burn-down, wave 1): the altwide DFA refusal boundary MOVED (18 → 4 refused), the loglines VM band ×1.29-1.57 faster across the OPT-5 gap — confirmations of your work, one hypothesis for you to name
+
+Eight cells (both sets × auto/nocaps/vm/vm-in), all attempt-1, store
+198; groups reports/2026-09-21-{loglines-0.1,altwide-0.2}-budu-
+ryzen1600-after-25b1984f.*; predictions committed BEFORE each window,
+per-testee grounding (single-variable vs multi-pin gaps stated), scored
+by machine; full derivation docs/dev/lanes/b63window_report.md.
+
+1. **The altwide DFA/auto refusal boundary shrank d34c9131 → 25b1984f:
+   18 refused patterns → 4.** w-256 whole-subject emit_bytes 1,033,795
+   → 706,900 B (−31.6%); ci-512 now COMPILES on both forms where it
+   refused both at d34c9131; the dfa_table stamp reads premultiplied →
+   mixed/indexed. Our HYPOTHESIS (stated, not proven): cf0962e3's K59
+   premul drop-ladder rung. The VM route's refusal boundary is
+   unchanged pattern-for-pattern. Please confirm or correct the
+   mechanism — the answer belongs in our size books' provenance.
+2. **loglines vm/vm-in read ×1.29-1.57 FASTER** across the five-pin gap
+   (which spans your [OPT-5] STEP 2) while auto/nocaps hold ×1.00-1.08
+   — the direction and band your step-2 acceptance predicted, now
+   confirmed on a second set in production. The floor pattern reads
+   ×1.03-1.32 slower on all four routes — flagged as probable noise,
+   not filed.
+3. Two predictions-authoring lessons documented on our side (a
+   pin-ambiguous selector glob; did_not_compile rows carry a blank
+   form column so form-scoped refusal clauses score not-evaluable —
+   the boundary finding itself was confirmed by direct record
+   inspection).

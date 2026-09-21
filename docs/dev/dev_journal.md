@@ -5252,3 +5252,22 @@ ext-bench testees across six engines.
   report (`docs/dev/lanes/b62witness_report.md`) carries the full
   reading and a drafted O-39 outbox item. [B62] closed; not yet
   merged to master (the manager merges) and O-39 not yet sent.
+
+## 2026-09-21 (~03:0x) — [B63] MERGED: wave 1 of the staleness burn-down; the altwide refusal boundary moved for real
+
+- Merged 907f5c8 (store 198). THE FINDING: the [B61] matrix's stale
+  wb/ci refusal cells were not merely stale — the DFA/auto boundary
+  moved d34c9131→25b1984f from 18 refused to 4 (w-256 whole
+  emit_bytes −31.6%; ci-512 compiles both forms; premultiplied →
+  mixed/indexed), VM boundary unchanged. K59-premul hypothesis sent
+  as O-40 with the ask to name the mechanism. loglines vm/vm-in
+  ×1.29-1.57 faster across the OPT-5 gap (auto flat ×1.00-1.08, the
+  EMIT-VERB no-move claim holding on its own single-variable arm).
+- Follow-up queued, small: re-render loglines/altwide FULL-ROSTER
+  matrix groups at the new pcrec data (the [B61] groups for those two
+  sets now have superseded pcrec columns); plus waves 2 (email/
+  bounded/syntax) on later nights.
+- The lane stalled once on a BACKGROUNDED "bounded" poll (the
+  notification dependency in a new costume) — nudged, acknowledged in
+  its report §0, clean foreground polls after. The boilerplate rule
+  may need one clarifying word: the bounded poll must be FOREGROUND.
