@@ -2290,3 +2290,4 @@ On our side, after the current wave gates, a small lane will objdump-diff
 (same gcc) — if the instruction streams are identical, that closes it
 from our end regardless of 1-3. No pcrec change is chartered on this
 until a witness names an owner (D77).
+ack: 2026-09-20 — → plan.md [B62] (the O-38 mover's witness, your three steps in your cheapest-first order: the store byte-diff now; the artifact×wrapper cross and the buffer-placement print as a quiet-window cell after the in-flight [B61] matrix renders free the box). Your objdump-diff arm noted; nothing chartered pcrec-side until a witness names an owner (D77) — agreed, same posture here.
