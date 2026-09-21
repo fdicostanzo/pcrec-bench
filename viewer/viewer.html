@@ -212,6 +212,12 @@ td.cell .metric-lbl { color: var(--fg-faint); font-size: 10px; font-weight: 600;
 .metric-check-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; user-select: none; font-size: 12.5px; }
 .sort-metric-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--fg-muted); }
 .sort-metric-row button.active { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+#engine-picker-toggle { width: 100%; text-align: left; display: flex; justify-content: space-between; }
+.engine-dropdown-panel { margin-top: 6px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-inset); max-height: 60vh; overflow-y: auto; }
+.pattern-inline { color: var(--fg-muted); font-size: 11.5px; margin-left: 6px; }
+.pattern-popover-text { white-space: pre-wrap; word-break: break-word; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; max-width: 360px; }
+.pattern-popover-note { color: color-mix(in srgb, var(--bg) 65%, transparent); margin-top: 4px; }
+th.rowhead { cursor: default; }
 table.matrix tbody th.rowhead { text-align: left; font-weight: 400; position: sticky; left: 0; background: var(--bg-panel); z-index: 2; max-width: 360px; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid var(--border); }
 table.matrix tbody tr:nth-child(even) td, table.matrix tbody tr:nth-child(even) th.rowhead { background: var(--row-stripe); }
 table.matrix tbody tr:hover td, table.matrix tbody tr:hover th.rowhead { background: var(--row-hover); }
@@ -341,6 +347,11 @@ var App = (function () {
   var allRows = [];      // every row across every loaded set, flattened
   var testeeIndex = Object.create(null); // testee_id -> {family, variant, pin} (built ONCE per
                                           // data load in buildDomain -- see renderTable's perf note)
+  // 9.7: the engine picker's open/closed state -- transient UI, never
+  // part of `state` (not persisted, not hashed): #filters is rebuilt
+  // from scratch on every render, so a plain DOM attribute would not
+  // survive a re-render; this module-level flag is what does.
+  var engineDropdownOpen = false;
 
   // ---------------------------------------------------------- utilities
 
@@ -415,6 +426,7 @@ var App = (function () {
     var sets = Object.create(null);     // setKey -> {subbench, version, n_rows}
     var regimes = Object.create(null);
     var forms = Object.create(null);
+    var patternText = Object.create(null); // setKey -> {pattern_id -> {text,omitted,truncated,full_bytes}}
     allRows = [];
     testeeIndex = Object.create(null);
 
@@ -422,6 +434,10 @@ var App = (function () {
     setKeys.forEach(function (sk) {
       var payload = window.BENCH._sets[sk];
       sets[sk] = { subbench: payload.subbench, version: payload.version, n_rows: payload.rows.length };
+      // 9.8: an older data/*.js predating this field simply has none --
+      // `patternPopoverLines`/`patternInlineHtml` already treat a missing
+      // lookup as "n/s", never a crash.
+      patternText[sk] = payload.patterns || Object.create(null);
       payload.rows.forEach(function (r) {
         r._set = sk;
         allRows.push(r);
@@ -453,11 +469,47 @@ var App = (function () {
         sets[e.set] = { subbench: e.subbench, version: e.version, n_rows: 0, missing: true };
       }
     });
-    return { families: families, sets: sets, regimes: regimes, forms: forms };
+    return { families: families, sets: sets, regimes: regimes, forms: forms, patternText: patternText };
   }
 
   function allTesteeIds() {
     return Object.keys(testeeIndex);
+  }
+
+  // 9.6: "each engine's NEWEST identity" -- an ABLATION/DENY-FLAG/
+  // TOOLCHAIN arm is any testee whose `engine_variant` carries a
+  // `config_extra` suffix (record_schema.md 6.4: config_slug joins
+  // `_<config_extra>` -- `-cc-clang`, `-noedge`, `-bigcap`, `-align64`,
+  // `-noisland`, `-noclsfold` and any future one, engine-neutral, never
+  // a hard-coded pcrec list): those are NEVER default-selected,
+  // regardless of pin. A CANONICAL variant (no such suffix -- plain
+  // `<mode>-<caps>-<simd>`, e.g. `auto-caps-simdna`, `interp-caps-
+  // simdna`, `jit-caps-simdna`) contributes only its OWN newest pin;
+  // an older pin of that same canonical variant is excluded here but
+  // stays reachable through the pin sub-picker (9.2). Domain-wide (not
+  // filter-dependent), same posture as `newestDate`.
+  function isAblationArm(variant) {
+    return variant.indexOf("_") !== -1;
+  }
+
+  function computeDefaultTesteeIds() {
+    var byCanonical = Object.create(null); // "family|variant" -> [testee_id...]
+    Object.keys(testeeIndex).forEach(function (id) {
+      var info = testeeIndex[id];
+      if (isAblationArm(info.variant)) return;
+      var key = info.family + "|" + info.variant;
+      (byCanonical[key] = byCanonical[key] || []).push(id);
+    });
+    var out = Object.create(null);
+    Object.keys(byCanonical).forEach(function (key) {
+      var ids = byCanonical[key];
+      var best = ids[0];
+      ids.forEach(function (id) {
+        if ((testeeIndex[id].newestDate || "") > (testeeIndex[best].newestDate || "")) best = id;
+      });
+      out[best] = true;
+    });
+    return out;
   }
 
   // -------------------------------------------------------------- state
@@ -763,15 +815,34 @@ var App = (function () {
     });
   }
 
-  function renderFilters(groups) {
-    var host = document.getElementById("filters");
-    host.innerHTML = "";
+  // 9.7: the engine picker as a DROPDOWN -- a compact toggle button that
+  // opens the grouped tree as a panel, instead of v1.0's always-visible
+  // list. `engineDropdownOpen` is read/written here only.
+  function renderEnginePicker(host, groups) {
+    var visible = visibleTestees().length, total = allTesteeIds().length;
+    var toggle = document.createElement("button");
+    toggle.type = "button"; toggle.id = "engine-picker-toggle"; toggle.className = "small-btn";
+    toggle.setAttribute("aria-expanded", engineDropdownOpen ? "true" : "false");
+    toggle.textContent = "Engines: " + visible + "/" + total + " selected " + (engineDropdownOpen ? "▴" : "▾");
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      engineDropdownOpen = !engineDropdownOpen;
+      rerenderAll();
+    });
+    host.appendChild(toggle);
 
-    var h2e = document.createElement("h2"); h2e.textContent = "Engines"; host.appendChild(h2e);
+    var panel = document.createElement("div");
+    panel.id = "engine-picker-panel";
+    panel.className = "engine-dropdown-panel";
+    if (!engineDropdownOpen) { panel.hidden = true; return; }
+    panel.addEventListener("click", function (e) { e.stopPropagation(); });
+    host.appendChild(panel);
+
     var engBtns = document.createElement("div"); engBtns.className = "btn-row";
     engBtns.appendChild(mkSmallBtn("all", function () { state.testees = null; rerenderAll(); }));
     engBtns.appendChild(mkSmallBtn("none", function () { state.testees = {}; rerenderAll(); }));
-    host.appendChild(engBtns);
+    engBtns.appendChild(mkSmallBtn("latest only", function () { state.testees = computeDefaultTesteeIds(); rerenderAll(); }));
+    panel.appendChild(engBtns);
 
     var famNames = Object.keys(domain.families).sort();
     famNames.forEach(function (fam) {
@@ -845,8 +916,15 @@ var App = (function () {
         kids.appendChild(vnode);
       });
       node.appendChild(kids);
-      host.appendChild(node);
+      panel.appendChild(node);
     });
+  }
+
+  function renderFilters(groups) {
+    var host = document.getElementById("filters");
+    host.innerHTML = "";
+
+    renderEnginePicker(host, groups);
 
     // -------- areas (sets)
     var h2s = document.createElement("h2"); h2s.textContent = "Sets"; host.appendChild(h2s);
@@ -994,7 +1072,11 @@ var App = (function () {
     renderMetricChecks(host);
 
     var resetBtn = mkSmallBtn("reset view", function () {
+      // 9.6: "reset" goes back to the same sensible default a fresh
+      // load gets -- latest-canonical-only -- not v1.0's "everything",
+      // which is exactly the 45-column default this amendment retires.
       state = defaultState();
+      state.testees = computeDefaultTesteeIds();
       applyTheme();
       persist();
       rerenderAll();
@@ -1042,6 +1124,47 @@ var App = (function () {
     }).join("");
     return { html: html, best: isBest };
   }
+
+  // 9.8: pattern text, looked up by (set, pattern_id) -- pattern_id is
+  // only unique WITHIN a set (tools/CLAUDE.md: "floor" already collides
+  // ACROSS five sets), so the lookup is always scoped, never global.
+  function patternTextInfo(setKey, patternId) {
+    var bySet = domain.patternText[setKey];
+    return bySet ? bySet[patternId] : undefined;
+  }
+
+  // Inline only when short enough not to wrap the column (~<=32 chars,
+  // the design note's own bound) -- a truncated entry is always ~2000
+  // chars long by construction, so it can never qualify here; that is
+  // itself the correct behavior (a form-fitting inline read never shows
+  // truncated text), not a special case.
+  function patternInlineHtml(info) {
+    if (!info || info.omitted || !info.text || info.text.length > 32) return "";
+    return ' <code class="pattern-inline">' + escapeHtml(info.text) + "</code>";
+  }
+
+  function patternPopoverHtml(info) {
+    if (!info) return '<div class="pattern-popover-note">pattern text: n/s (exporter predates this field)</div>';
+    if (info.omitted) return '<div class="pattern-popover-note">pattern text omitted — over the schema’s free_text cap</div>';
+    var html = '<div class="pattern-popover-text">' + escapeHtml(info.text) + "</div>";
+    if (info.truncated) {
+      html += '<div class="pattern-popover-note">… truncated, full ' + fmtInt(info.full_bytes) + " bytes</div>";
+    }
+    return html;
+  }
+
+  function showPatternPopover(evt, setKey, patternId) {
+    var tt = document.getElementById("tooltip");
+    tt.innerHTML = patternPopoverHtml(patternTextInfo(setKey, patternId));
+    tt.style.display = "block";
+    positionTooltip(evt);
+  }
+
+  // 9.8: "hover/click" -- a click PINS the popover open (ignoring further
+  // hover elsewhere) until the same rowhead is clicked again or a click
+  // lands outside it; `init()`'s document-level click listener (added
+  // for 9.7's dropdown) clears this the same way it closes that panel.
+  var pinnedPattern = null; // {set, pattern} | null
 
   function tooltipText(cellRow) {
     if (!cellRow) return null;
@@ -1111,13 +1234,31 @@ var App = (function () {
     tableListenersBound = true;
     var scroll = document.getElementById("table-scroll");
     scroll.addEventListener("mousemove", function (e) {
+      if (pinnedPattern) return; // a pinned popover ignores hover elsewhere (9.8)
       var td = e.target.closest && e.target.closest("td.cell[data-cid]");
-      if (!td) { hideTooltip(); return; }
-      var c = cellRegistry[Number(td.getAttribute("data-cid"))];
-      if (c) showTooltip(e, c); else hideTooltip();
+      if (td) {
+        var c = cellRegistry[Number(td.getAttribute("data-cid"))];
+        if (c) showTooltip(e, c); else hideTooltip();
+        return;
+      }
+      var rh = e.target.closest && e.target.closest("th.rowhead[data-pattern]");
+      if (rh) { showPatternPopover(e, rh.getAttribute("data-set"), rh.getAttribute("data-pattern")); return; }
+      hideTooltip();
     });
-    scroll.addEventListener("mouseleave", hideTooltip, true);
+    scroll.addEventListener("mouseleave", function () { if (!pinnedPattern) hideTooltip(); }, true);
     scroll.addEventListener("click", function (e) {
+      var rh = e.target.closest && e.target.closest("th.rowhead[data-pattern]");
+      if (rh) {
+        e.stopPropagation(); // 9.8: never let this reach the document-level close listener
+        var sk = rh.getAttribute("data-set"), pid = rh.getAttribute("data-pattern");
+        if (pinnedPattern && pinnedPattern.set === sk && pinnedPattern.pattern === pid) {
+          pinnedPattern = null; hideTooltip();
+        } else {
+          pinnedPattern = { set: sk, pattern: pid };
+          showPatternPopover(e, sk, pid);
+        }
+        return;
+      }
       var th = e.target.closest && e.target.closest("th[data-sort]");
       if (!th) return;
       var kind = th.getAttribute("data-sort");
@@ -1192,8 +1333,11 @@ var App = (function () {
     var bodyHtml = [];
     groups.forEach(function (g) {
       var best = computeBest(g, testees);
-      bodyHtml.push('<tr><th class="rowhead"><span class="pattern">' + escapeHtml(g.pattern) +
-        '</span><span class="meta">' + escapeHtml(g.set) +
+      var patInfo = patternTextInfo(g.set, g.pattern);
+      bodyHtml.push('<tr><th class="rowhead" data-set="' + escapeHtml(g.set) +
+        '" data-pattern="' + escapeHtml(g.pattern) + '"><span class="pattern">' + escapeHtml(g.pattern) +
+        "</span>" + patternInlineHtml(patInfo) +
+        '<span class="meta">' + escapeHtml(g.set) +
         (g.regime ? " · " + escapeHtml(g.regime) : " · (no regime)") +
         (g.form !== "plain" ? " · " + escapeHtml(g.form) : "") + "</span></th>");
       testees.forEach(function (t) {
@@ -1249,12 +1393,53 @@ var App = (function () {
   function init() {
     domain = buildDomain();
     var persisted = loadPersisted();
-    state = persisted || defaultState();
+    // 9.6: "on first load (no saved state)" is the literal condition --
+    // a hash OR a localStorage restore is a RETURNING state and is used
+    // in full, untouched; only the true first-ever visit gets the
+    // latest-canonical default.
+    if (persisted) {
+      state = persisted;
+    } else {
+      state = defaultState();
+      state.testees = computeDefaultTesteeIds();
+    }
     applyTheme();
     document.getElementById("theme-btn").addEventListener("click", cycleTheme);
     window.addEventListener("hashchange", function () {
       var st = hashToState();
       if (st) { state = st; applyTheme(); rerenderAll(); }
+    });
+    // 9.7: a click anywhere OUTSIDE the open dropdown panel closes it --
+    // the toggle button and the panel itself both stopPropagation() so
+    // this never fires for a click that is actually inside either.
+    //
+    // DEFERRED via setTimeout(0), and this is load-bearing, not
+    // stylistic: a checkbox's own "change" event fires AFTER "click"
+    // finishes bubbling to document (measured directly: click -> this
+    // document listener -> input -> change, in that order -- NOT
+    // change-before-bubble as the DOM's synchronous feel suggests). A
+    // metric/sets/regime/form/status checkbox lives OUTSIDE the engine
+    // panel, so clicking one bubbles here too; calling `rerenderAll()`
+    // SYNCHRONOUSLY at that point rebuilds `#controls-row`/`#filters` and
+    // detaches the checkbox the user just clicked BEFORE its own
+    // "change" handler ever runs -- and Chromium (confirmed empirically)
+    // never fires "change" for an input already removed from the
+    // document, so that click's own effect is silently lost entirely
+    // (found via exactly this bug: the MB/s-in-multi-metric checks kept
+    // reporting the click never took). Deferring to a macrotask lets the
+    // clicked control's OWN handler (and its OWN rerenderAll()) finish
+    // completely first; by the time this runs, nothing is mid-dispatch.
+    document.addEventListener("click", function () {
+      if (!engineDropdownOpen && !pinnedPattern) return;
+      setTimeout(function () {
+        if (engineDropdownOpen) { engineDropdownOpen = false; rerenderAll(); }
+        if (pinnedPattern) { pinnedPattern = null; hideTooltip(); }
+      }, 0);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      if (engineDropdownOpen) { engineDropdownOpen = false; rerenderAll(); }
+      if (pinnedPattern) { pinnedPattern = null; hideTooltip(); }
     });
     renderFooter();
     rerenderAll();

@@ -36,6 +36,19 @@ WHICH RECORDS ARE INCLUDED (mirrors `report.py`'s R2/OD-B15 dedup, and
      distinct testee_id (and therefore every pin) that survives step 1
      becomes its own column.
 
+PATTERN TEXT ([B67] 9.8): each set's payload also carries `patterns`, a
+`{pattern_id: {text, omitted, truncated, full_bytes}}` map -- ONE entry
+per pattern (factored out of the per-row data; a pattern's text is
+invariant across every row that shares it). `text` is the record's own
+`patterns[].canonical_text` (record_schema.md), truncated to
+`PATTERN_TEXT_MAX_BYTES` (~2 KB) with `truncated`/`full_bytes` naming
+the cut honestly; `omitted` is true when the RECORD itself carries no
+`canonical_text` at all (the schema's own free_text-cap fallback, KB-7 --
+`full_bytes` is `None` in that case, since nothing anywhere states the
+true length of an omitted field). First record processed for a set wins
+each pattern_id (canonical per sub-bench, so every record that reaches
+it should agree).
+
 STATUS PER ROW, in priority order (design note 2's vocabulary: measured |
 refused | unsup | wrong | gave-up | timed-out | inconclusive-*):
 
@@ -227,6 +240,42 @@ def engine_variant_for(testee_id, testee_block):
     return parsed[2]
 
 
+# [B67] 9.8: the viewer's own export bound on ONE pattern's canonical
+# text, independent of (and much tighter than) the record schema's own
+# free_text cap (1,048,576 chars, v1.5/KB-7). The design note states
+# "~2 KB" for the popover; this is where that number lives. A pattern
+# longer than this is TRUNCATED here, on a byte boundary, with the
+# viewer told the TRUE original length so it can render "truncated,
+# full N bytes" honestly rather than silently.
+PATTERN_TEXT_MAX_BYTES = 2000
+
+
+def _pattern_text_entry(canonical_text):
+    """-> {"text", "omitted", "truncated", "full_bytes"} for one pattern's
+    `canonical_text` (record_schema.md's `patterns[].canonical_text`,
+    OPTIONAL -- a record may OMIT it under the schema's own free_text cap,
+    KB-7's fallback; `full_bytes` is `None` in exactly that case, since an
+    omitted field carries no length to report -- there is no second field
+    anywhere in the schema that would give us one). `canonical_text is
+    None` is the omission case; anything else is a real (possibly empty)
+    string this bench further truncates to `PATTERN_TEXT_MAX_BYTES`."""
+    if canonical_text is None:
+        return {"text": None, "omitted": True, "truncated": False, "full_bytes": None}
+    encoded = canonical_text.encode("utf-8")
+    full_bytes = len(encoded)
+    if full_bytes <= PATTERN_TEXT_MAX_BYTES:
+        return {"text": canonical_text, "omitted": False, "truncated": False,
+                "full_bytes": full_bytes}
+    # Cut on a byte boundary (patterns are typically ASCII regex syntax,
+    # but never assume it) -- errors="ignore" silently drops a partial
+    # trailing multi-byte character rather than raising or corrupting the
+    # cut; the `truncated`/`full_bytes` pair is what keeps this honest,
+    # not the decode itself.
+    truncated_text = encoded[:PATTERN_TEXT_MAX_BYTES].decode("utf-8", errors="ignore")
+    return {"text": truncated_text, "omitted": False, "truncated": True,
+            "full_bytes": full_bytes}
+
+
 def _failing_kind(red):
     """The dominant status word for one FAILING SetCellReduction (its own
     `expectation_failing` already True): `wrong` ahead of `gave-up` (a
@@ -252,15 +301,25 @@ def _failing_kind(red):
 
 def export_rows_for_record(path, rv):
     """Load ONE record (`report.load_record`, the reporter's own loader:
-    JSON parse + schema validation in one pass), reduce it, and return a
-    list of viewer row dicts -- then the caller drops `loaded`/`rows`
-    before opening the next file. Returns `[]` for an invalid/unreadable
-    record (never raises: the same "excluded, not fatal" posture
-    `build_report` takes for `excluded_invalid`)."""
+    JSON parse + schema validation in one pass), reduce it, and return
+    (rows, patterns_meta) -- then the caller drops `loaded`/`rows` before
+    opening the next file. `patterns_meta` is `{pattern_id:
+    _pattern_text_entry(...)}` for every pattern this ONE record's own
+    `setup.patterns[]` declares ([B67] 9.8) -- small (a handful of
+    strings, each capped at PATTERN_TEXT_MAX_BYTES), so it is fine for
+    this little a fragment to survive past this call the same way `rows`
+    already does; the record's raw `rec.rows`/`rec.setup` themselves still
+    do not. Returns `([], {})` for an invalid/unreadable record (never
+    raises: the same "excluded, not fatal" posture `build_report` takes
+    for `excluded_invalid`)."""
     rec = load_record(path, rv, check_filename=True)
     if rec.setup is None or rec.problems:
-        return []
+        return [], {}
     setup = rec.setup
+    patterns_meta = {
+        p["pattern_id"]: _pattern_text_entry(p.get("canonical_text"))
+        for p in (setup.get("patterns") or [])
+    }
     sb = f"{setup['subbench']['id']}@{setup['subbench']['version']}"
     testee = setup["testee"]
     testee_id = testee["testee_id"]
@@ -335,7 +394,7 @@ def export_rows_for_record(path, rv):
         row["diagnostic"] = diagnostic
         out.append(row)
 
-    return out
+    return out, patterns_meta
 
 
 # -------------------------------------------------------------- rendering
@@ -362,7 +421,7 @@ def atomic_write(path, text):
         raise
 
 
-def render_set_file(sb, subbench, version, rows, generated_utc, index_rows_n):
+def render_set_file(sb, subbench, version, rows, patterns_meta, generated_utc, index_rows_n):
     rows_sorted = sorted(rows, key=lambda r: (
         r["pattern"], r["regime"], r["form"], r["testee_id"]))
     payload = {
@@ -374,6 +433,13 @@ def render_set_file(sb, subbench, version, rows, generated_utc, index_rows_n):
         },
         "set": sb, "subbench": subbench, "version": version,
         "rows": rows_sorted,
+        # [B67] 9.8: ONE entry per pattern_id, factored out of the rows
+        # (a pattern's text is invariant across every testee/regime/form
+        # row that shares it -- carrying it per row would multiply a
+        # ~2 KB string by every row sharing that pattern, which on
+        # bench/altwide's kB-scale corpus is a real size cost for no
+        # reason). `viewer.html` looks this up by (set, pattern_id).
+        "patterns": patterns_meta,
     }
     return "BENCH.load(" + _json_for_js(payload) + ");\n"
 
@@ -435,14 +501,18 @@ def main(argv=None):
     set_entries = []
     for sb in sorted(by_set):
         rows = []
+        patterns_meta = {}  # pattern_id -> entry, FIRST record wins (canonical per sub-bench)
         for idx_row in sorted(by_set[sb], key=lambda r: r["testee_id"]):
             path = os.path.join(args.store, idx_row["path"])
-            rows.extend(export_rows_for_record(path, rv))
+            record_rows, record_patterns_meta = export_rows_for_record(path, rv)
+            rows.extend(record_rows)
+            for pattern_id, entry in record_patterns_meta.items():
+                patterns_meta.setdefault(pattern_id, entry)
             # MEMORY: nothing from this record's raw rows/setup survives
             # past export_rows_for_record's return -- `rec`/`rec.rows`
             # went out of scope with that call.
         subbench, version = sb.split("@", 1)
-        text = render_set_file(sb, subbench, version, rows, generated_utc, index_rows_n)
+        text = render_set_file(sb, subbench, version, rows, patterns_meta, generated_utc, index_rows_n)
         out_path = os.path.join(args.out, f"{sb}.js")
         atomic_write(out_path, text)
         set_entries.append({"set": sb, "subbench": subbench, "version": version,
