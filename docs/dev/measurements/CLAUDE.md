@@ -473,3 +473,46 @@ Maintenance: update this file when files are added/removed or change role.
   tokens) but harmless at runtime since `rxt_source = "patterns.rxt"`
   makes `subbench.py` ignore that array outright — a trap for a human
   reader of `subbench.toml` directly, not a harness bug.
+- `probe_o38_movertime_emit_diff.py` /
+  `2026-09-20-o38-movertime-emit-diff-cf0962e3-vs-25b1984f.txt` — ([B62],
+  lane `b62witness`, inbox I-79) STEP 1 of the witness for O-38's one
+  isolated `vm-in` time mover (`wild-datetime-moment-iso8601`,
+  +509.14 ns / x1.08, b60pinconfirm_report.md Section 3): re-emits the
+  pattern at both pinned binaries already on this box (build/pcrec-
+  cf0962e3, build/pcrec-25b1984f) under `pcrec-vm-in`'s real build flags,
+  the pattern text checked against the store record's own
+  `canonical_sha256` first. THE FLAG STORY, checked live: `-fcomments`
+  is a 25b1984f/abi-27 axis that does not exist at cf0962e3 at all
+  (live-verified refusal); cf0962e3 emits full comments
+  UNCONDITIONALLY, matching what `EMIT_COMMENTS_FLAG` restores at
+  25b1984f — so the comparison that matches the two real
+  record-producing execs is cf0962e3's only mode vs. 25b1984f WITH
+  `-fcomments`. FINDING: byte-identical MODULO the abi stamp line(s)
+  (the provenance comment and the `.abi=` field) — checked structurally,
+  not by eyeballing — exonerating the emitted program by construction.
+  `emit_size()`'s comment-excluded totals (33,723/32,799) agree across
+  all three emissions (both pins, both comment-flag states).
+- `probe_o38_movertime_step23_prep.py` — ([B62]) STEPS 2-3 HARNESS PREP,
+  NOT the timed measurement (blocked on the manager confirming the box
+  is clear of lane b61matrix's renders — ambiguous from this lane's own
+  checks). Reuses the REAL harness code path
+  (`pcrecbench.harness.run_cell`, `testees.pcrec.adapter.Adapter`) by
+  injecting two synthetic, in-memory-only `local: True` (scratch-tier-
+  by-construction) testee entries pointed at the two pinned binaries via
+  `$PCREC_BIN_*`, with `pcrec-vm-in`'s own buffer capacities, and
+  monkeypatching `pcrecbench.adapters.discover` so the injection
+  persists — since `pcrec-vm-in` is a PINNED testee (one committed pin)
+  this is the only way to reach the historical cf0962e3 binary through
+  the current code path at all. `--smoke` proven end to end (both pins
+  compile, build and run through the real code path). Also builds and
+  `gcc -fsyntax-only`-checks a SCRATCH-ONLY patched copy of
+  testees/pcrec/driver.c (two `fprintf` lines after the `alloc_region()`
+  calls, printing each caller-provided buffer's pointer and `% 64`) for
+  step 3's placement question — the real driver.c is never touched. A
+  companion static finding (in the lane report, not a separate archive):
+  `git log` shows testees/pcrec/shim.c and driver.c last changed
+  2026-09-16, BEFORE the cf0962e3 window even ran, and the one
+  intervening adapter.py change ([B58]) touches only the phase-1 argv —
+  so there is no "wrapper era" to literally cross, only a same-session
+  reproduction question left to answer once the box clears. See
+  `docs/dev/lanes/b62witness_report.md`.
