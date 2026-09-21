@@ -185,3 +185,18 @@ Frank's five notes, verbatim-mapped; [B67] implements:
    column-header sort control targets one of the displayed metrics —
    default the first displayed; a small per-header affordance (or a
    global "sort by" tied to the metric checkboxes) picks which.
+6. DEFAULT SELECTION = latest engines only: on first load (no saved
+   state), select only each engine's NEWEST identity (newest-pin
+   canonical variant per family; ablation/deny-flag arms and older
+   pins deselected by default, still selectable). This also retires
+   the 45-column default the v1.0 report flagged.
+7. Engine selection lives in a DROPDOWN (a compact button opening the
+   grouped tree as a panel) rather than an always-visible list.
+8. PATTERN TEXT in the pattern column: the exporter adds the pattern's
+   canonical_text (from the record's patterns[] block; where a record
+   omits it — the free_text cap — say so). Inline display after the
+   name when SHORT (fits without wrapping the column, ~≤32 chars, in a
+   muted code face); ALWAYS available as a popover (hover/click) on
+   the pattern cell. Big patterns (altwide's kB-scale alternations)
+   export TRUNCATED to a stated bound (~2 KB) with an explicit
+   "… truncated, full N bytes" tail in the popover — never silently.
