@@ -578,7 +578,19 @@ docs/dev/'s append-only records.
   ns | MB/s | ×best metrics, sortable columns with non-measured rows
   sinking and never ranked, provenance tooltips, hash-serialized state.
   §6 scope fence: a READING AID, never a canonical surface. Built by
-  lane b66viewer.
+  lane b66viewer. **§9 v1.1 IMPLEMENTED same day (lane b67viewer,
+  2026-09-21)**: the 9.1 duplicate/surviving-column bug root-caused to
+  an EXPORT-layer collision (two pcrec configs sharing one lossy
+  `engine_variant` label) and fixed at the source; date-first headers
+  with the pin demoted to a tooltip (9.2); per-engine coverage chips
+  against the current filter (9.3); metric checkboxes with fixed-order
+  stacked cells (9.4); metric-aware sorting with a real ranking-by-raw-
+  ns-not-ratio bug fixed (9.5); a latest-canonical-only default
+  selection that retires the 45-column default (9.6); the engine picker
+  as a dropdown, with a real deferred-close event-ordering bug found and
+  fixed (9.7); and pattern text inline/popover from a new exporter field
+  (9.8). Verified with 72 real headless-Chromium DevTools checks against
+  the committed production data, 0 failed.
 
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
