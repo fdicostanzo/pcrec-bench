@@ -3029,3 +3029,45 @@ by machine; full derivation docs/dev/lanes/b63window_report.md.
    form column so form-scoped refusal clauses score not-evaluable —
    the boundary finding itself was confirmed by direct record
    inspection).
+
+## O-42 (2026-09-21 ~10:5x EDT) — I-81 DONE-SIGNAL at pin eaab0d4a: floor ×2 GREEN on retry with the m=2 signature visible raw; the LADDER PRODUCED NO FIT (every arm "COMPILE FAILED", every rung "SUBJECT NEVER ENTERED THE CHAIN"); every floor cell stamps "forward edges = 0" yet run_floor.sh still measures. Report, never diagnose. (O-41 stays reserved for [B65]'s rung attribution, as promised in I-80's ack.)
+
+Pin: eaab0d4a (= 476892de + 4 commits verified EMPTY under
+src/lib/cli/tests before building; option (a) per your live addendum).
+
+TIMELINE. First sequence 10:35:14-10:36:08 EDT, load at start 0.11:
+refs rc=0, rungs rc=0, ladder rc=0, floorcells rc=0, floor rc=2 TWICE —
+verbatim: "REFUSED: load1 0.56 >= 0.5" — the 1-min average carried the
+sequence's own back-to-back prior stages PLUS our concurrent git
+merge/push work (ours; we then cleared the box). RETRY per the item's
+own wait rule: gate load1 < 0.30, floor run 1 rc=0 (start 10:38-39),
+90 s settle, floor run 2 rc=0 (end 10:42:17, load 0.54 0.50 0.97 after).
+out/ kept until your ack: ladder_run1.log, floor_run1.log,
+floor_run2.log (+ fwork/, work/, c_before/, c_after/).
+
+1. THE LADDER HAS NO FIT TABLE. Verbatim structure of ladder_run1.log:
+   the edge-count checks pass ("rung 1..4 forward edges = 1..4 OK"),
+   then EVERY rung prints "rung N arm before: COMPILE FAILED" and
+   "rung N arm after: COMPILE FAILED", then every round × rung prints
+   "SUBJECT NEVER ENTERED THE CHAIN (? ns/byte < 0.15) — rung dropped"
+   (all 15 rounds), with 2 rounds discarded mid-run for load (0.670,
+   0.548 core-equivalents — the run's own work; nothing else ran).
+   `make ladder` nonetheless exited rc=0.
+2. EVERY FLOOR CELL stamps "forward edges = 0 *** TAKES NO EDGE, cell
+   measures nothing ***" (all m ∈ {2,3,4,8} × {exact,nullable}, both
+   floorcells and both floor runs' preambles) — yet run_floor.sh then
+   prints full per-round raw tables anyway (15 rounds × 8 cells:
+   before, after, ratio), 0 rounds discarded in either retry, and NO
+   median/IQR summary block appears in either log (the (b) tables you
+   asked for do not exist in this output; the raw rounds do).
+3. THE m=2 SIGNATURE IS VISIBLE RAW, both runs. floor_run1 m=2 exact
+   ratios rounds 12-15: 1.1868 (m=8 row adjacent), 1.8141, 1.8185,
+   0.9990; m=2 nullable round 15: 1.8123. floor_run2 m=2 rows mix
+   ~0.90-1.00 with the same ~1.8 spikes. m=3/4/8 hold ~0.92-1.02
+   throughout. (Stated as what the columns read; yours to interpret
+   against the 2026-09-04 bimodality.)
+4. For your reading, not ours: "COMPILE FAILED" arms + "edges = 0"
+   cells + a NUL fit at a pin whose delta over the item's named
+   476892de is doc-only suggests the harness's premises meet a
+   different compiler than 2026-09-04's — but that is diagnosis
+   territory and we stop here.
