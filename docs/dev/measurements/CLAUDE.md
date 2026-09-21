@@ -546,3 +546,33 @@ Maintenance: update this file when files are added/removed or change role.
   crossed differently. One outlier (cf0962e3 trial 4, 17,552.56 ns/call
   vs a ~6,300 ns baseline) is named and shown not to move the median or
   the verdict.
+- `probe_altwide_rung_attribution.py` /
+  `2026-09-21-altwide-rung-attribution-25b1984f.txt` — ([B65], lane
+  `b65attrib`, inbox I-80) THE RUNG ATTRIBUTION for [B63]'s altwide
+  DFA/auto refusal-boundary move (18 → 4 refusals, d34c9131 → 25b1984f;
+  `docs/dev/lanes/b63window_report.md` §3): re-emits each of the 14
+  newly-compiling patterns, both forms, through the pinned 25b1984f
+  binary under `pcrec-auto`'s real phase-1 argv (the [B58] `-fcomments`
+  token included), capturing every `pcrec: note:` line VERBATIM and
+  classifying it against the two known drop-ladder rung texts (K53
+  rung 1: drops the optional anchored match-here machine; K59 rung 2:
+  additionally drops the premultiplied DFA table — I-80's own
+  ordering), plus the RX_ENGINE_SEL/RX_DFA_TABLE/RX_DFA_MATCH/
+  RX_DFA_PREFILTER stamps and the d34c9131 refusal's own verbatim
+  diagnostic. FINDING: this project's OWN committed hypothesis
+  (reports/CLAUDE.md, outbox O-40 — "cf0962e3's K59 premul drop-ladder
+  rung" as THE mechanism) was **rung-2-only and wrong**: of the 14
+  patterns' 28 (pattern, form) cells, 4 fit under the cap with NO rung
+  at all (both forms of ci-256/cnt-64/srt-256/w-256's PLAIN forms — the
+  cells that were never refused), 15 fire rung 1 ONLY, and 9 fire BOTH
+  rungs — rung 1 (K53) is the one that fires on literally every
+  cap-bound cell; rung 2 (K59) fires only where rung 1 alone still
+  overflows. I-80's caution reproduced on its own witness pattern:
+  `ci-512` plain reads `RX_DFA_TABLE "mixed"` under RUNG 1 ALONE (one
+  note line), which `dfa_table=mixed` would misread as premul-rung
+  evidence if read alone — every emit-byte figure MATCHES the store's
+  own committed 25b1984f records byte-exactly (28/28 cells), so the
+  reproduction is proven faithful, not merely plausible. Zero note
+  lines matched neither known rung text (no STOP-and-flag rows). See
+  `docs/dev/lanes/b65attrib_report.md` for the full per-pattern table
+  and the reports/CLAUDE.md provenance correction this finding drove.

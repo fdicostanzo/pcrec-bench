@@ -1,0 +1,421 @@
+# [B65] -- THE RUNG ATTRIBUTION for [B63]'s altwide DFA/auto refusal-boundary move (inbox I-80)
+# ARCHIVED DRIVER PROBE (pcrec D35 style): stable name, verbatim probe output, source header. SCRATCH TIER by construction:
+# not a record, not in store/, never a ranking input. Numbers only; the reading is the manager's / the lane report's.
+#
+# date (UTC)        2026-09-21T14:5x:xx .. 2026-09-21T15:0x:xx (see docs/dev/lanes/b65attrib_report.md for the launch window)
+# bench commit      e07d89d772f591ebf0547c4c7e575ca4b2a668e8 (lane worktree HEAD at run time; branch lane/b65attrib)
+# pcrec pin         25b1984f; binary /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec sha256 9a0a969b2bc226ea52221eb07f5a0fe665681d254577d829495adaaaec4bee93
+# compiler           (compile-only via pcrec's own phase-1 emit-c; no gcc/clang phase-2 build, no dlopen, no driver, no quiet-box gate -- see rule below)
+# box               budu-ryzen1600 (ubuntubudu); COMPILE-ONLY, no timing, box load irrelevant (rule 3's one stated exception, same posture as probe_rxt_format.py)
+# script            docs/dev/measurements/probe_altwide_rung_attribution.py
+# invocation        python3 docs/dev/measurements/probe_altwide_rung_attribution.py   (no arguments; run from the worktree root)
+#
+# WHY: [B63]'s window (docs/dev/lanes/b63window_report.md section 3) found the DFA/auto refusal set on
+# bench/altwide@0.2 shrank from 18 patterns at pcrec d34c9131 to 4 at 25b1984f -- 14 newly-compiling
+# patterns. This project's OWN committed prose (reports/CLAUDE.md, outbox O-40) named the mechanism as a
+# stated-unproven HYPOTHESIS: cf0962e3's [OPT-DIAL]/K59 "premul drop-ladder rung" ALONE. pcrec's own
+# reading, inbox I-80, CORRECTS this: the mechanism is `Ctx.size_drop_rung`, a TWO-RUNG retry ladder
+# (`RX_ENGINE_SEL "size-cap-retry"`) -- rung 1 (K53-SELRETRY, fixed 2026-09-10: drops the optional
+# anchored match-here machine) fires FIRST on every cap-bound artifact; rung 2 (K59, fixed 2026-09-17:
+# additionally drops the premultiplied DFA table) fires ONLY where rung 1 alone still overflows.
+# `RX_DFA_TABLE "mixed"` is NOT evidence rung 2 fired (I-80's live ci-512 witness on pcrec's box: compiles
+# at 974 KB on rung 1 alone) -- only the artifact's OWN `pcrec: note:` line(s), one per rung, settle it.
+#
+# WHAT THIS PROBE DOES: re-emits each of the 14 rescued patterns, BOTH forms (plain, whole-subject
+# `(?:<pattern>)\z`), through the PINNED 25b1984f binary, under testees/pcrec/adapter.py's REAL phase-1
+# argv shape (`pcrec -p rx -fcomments --features all -o artifact.c -- <pattern>` -- the [B58] `-fcomments`
+# protocol token included, per-pattern-per-form `artifact.c` basename so emitted-byte counts compare
+# directly against the store's own committed records -- CONFIRMED byte-identical below on every row that
+# has a same-basename store counterpart), verifies the pattern text's sha256 against the pattern's own
+# `canonical_sha256` in the d34c9131 store record before emitting anything, captures pcrec's stderr
+# VERBATIM and extracts every `pcrec: note:` (rung fired) and `pcrec: warning:` (size) line, reads
+# RX_ENGINE_SEL / RX_DFA_TABLE / RX_DFA_MATCH / RX_DFA_PREFILTER / RX_ENGINE off the emitted .c, classifies
+# each note line against the two known rung texts (FLAGGING, never silently absorbing, anything matching
+# neither), and cross-cites the OLD (d34c9131) refusal evidence -- the pattern's compile row(s) in the
+# d34c9131 store record and their verbatim `diagnostic` ("pattern too large: N bytes ... (limit M)").
+#
+# THE 14 PATTERNS (independently reconciled against b63window_report.md's own list, by reading BOTH
+# altwide pcrec-auto store records' compile-row outcomes -- every pattern whose d34c9131 rows are ALL
+# `did-not-compile` and whose 25b1984f rows are ALL `compiled`; 18 - 4 = 14, matching the report):
+# ci-256, ci-512, cnt-64, nar4-512, pfx3-512, sfx-512, sh1-512, srt-256, srt-512, w-256, w-384, w-512,
+# wb-256, wb-512.
+#
+# ============================================================================
+# VERBATIM PROBE OUTPUT BELOW
+# ============================================================================
+# bench commit: e07d89d772f591ebf0547c4c7e575ca4b2a668e8
+# bench worktree: /home/duxevents/pcrec-bench/worktrees/b65attrib
+# pcrec pin: 25b1984f  binary: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec
+# pcrec binary sha256: 9a0a969b2bc226ea52221eb07f5a0fe665681d254577d829495adaaaec4bee93
+# old (d34c9131) record: /home/duxevents/pcrec-bench/worktrees/b65attrib/store/records/altwide@0.2/pcrec_d34c9131_auto-caps-simdna/altwide@0.2__pcrec_d34c9131_auto-caps-simdna__budu-ryzen1600__20260906T162430Z.jsonl
+
+========================================================================
+== ci-256 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): 3544592b177446d78afde05be71eed506284501da53af226c3640d67ca3fa309
+d34c9131 refused forms: 1 of 6 compile row(s)
+  seq 180: pcrec: pattern too large: 1045834 bytes of emitted C source (limit 1000000, ~173 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- ci-256 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/ci-256/plain/artifact.c -- <pattern: 2105 bytes, sha256 3544592b177446d78afde05be71eed506284501da53af226c3640d67ca3fa309>
+returncode: 0
+emitted .c size: 1002370 B
+WARNING: pcrec: warning: large artifact: 990153 bytes of emitted C source (20123 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+stamps: {'RX_ENGINE_SEL': 'selected', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'unwrapped', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+rungs fired: (none -- fits under the cap without a retry)
+
+-- ci-256 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/ci-256/whole_subject/artifact.c -- <pattern: 2111 bytes, sha256 838c88c93c4cb34703120705736b93a3939c5bfdc10c08ee73c7a1b5cb7f35c6>
+returncode: 0
+emitted .c size: 720874 B
+WARNING: pcrec: warning: large artifact: 712917 bytes of emitted C source (18162 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+========================================================================
+== ci-512 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): b73a8c9472787453be312e72a16e09fac1806dff1cbc9010257f5314dbc031b2
+d34c9131 refused forms: 2 of 2 compile row(s)
+  seq 181: pcrec: pattern too large: 1590488 bytes of emitted C source (limit 1000000, ~264 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+  seq 182: pcrec: pattern too large: 1668864 bytes of emitted C source (limit 1000000, ~277 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- ci-512 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/ci-512/plain/artifact.c -- <pattern: 4268 bytes, sha256 b73a8c9472787453be312e72a16e09fac1806dff1cbc9010257f5314dbc031b2>
+returncode: 0
+emitted .c size: 988289 B
+WARNING: pcrec: warning: large artifact: 976275 bytes of emitted C source (19156 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'mixed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+-- ci-512 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/ci-512/whole_subject/artifact.c -- <pattern: 4274 bytes, sha256 ecf28c5f67e44dc0dc57cee74be0ed490ca62027b90571fb1f74be62e9a2f769>
+returncode: 0
+emitted .c size: 697349 B
+WARNING: pcrec: warning: large artifact: 686048 bytes of emitted C source (20244 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the premultiplied DFA transition table -- slower per-byte scan dispatch, measured ~1.27x on scan-bound subjects (docs/dev/opt3_dfa_scan_measurement.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1, 2]
+
+========================================================================
+== cnt-64 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): f018773068ca4e375893444e5e02dfbe37e01e41cd075cdcaa88b84d4244216a
+d34c9131 refused forms: 1 of 6 compile row(s)
+  seq 188: pcrec: pattern too large: 1108228 bytes of emitted C source (limit 1000000, ~183 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- cnt-64 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/cnt-64/plain/artifact.c -- <pattern: 531 bytes, sha256 f018773068ca4e375893444e5e02dfbe37e01e41cd075cdcaa88b84d4244216a>
+returncode: 0
+emitted .c size: 849717 B
+WARNING: pcrec: warning: large artifact: 839877 bytes of emitted C source (20473 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+stamps: {'RX_ENGINE_SEL': 'selected', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'unwrapped', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+rungs fired: (none -- fits under the cap without a retry)
+
+-- cnt-64 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/cnt-64/whole_subject/artifact.c -- <pattern: 537 bytes, sha256 59e3bf8a40eafae1144da6a6beca1b742c3789fc581100ba5865ab9b04e7fd96>
+returncode: 0
+emitted .c size: 827181 B
+WARNING: pcrec: warning: large artifact: 821464 bytes of emitted C source (18525 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+========================================================================
+== nar4-512 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): ef5a9f1a54c48d061e0a46462bcb1d14937de8e5c73340b6f02d194c0c46ddbf
+d34c9131 refused forms: 2 of 2 compile row(s)
+  seq 165: pcrec: pattern too large: 1608641 bytes of emitted C source (limit 1000000, ~267 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+  seq 166: pcrec: pattern too large: 1673397 bytes of emitted C source (limit 1000000, ~277 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- nar4-512 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/nar4-512/plain/artifact.c -- <pattern: 4483 bytes, sha256 ef5a9f1a54c48d061e0a46462bcb1d14937de8e5c73340b6f02d194c0c46ddbf>
+returncode: 0
+emitted .c size: 503354 B
+WARNING: pcrec: warning: large artifact: 491738 bytes of emitted C source (19236 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the premultiplied DFA transition table -- slower per-byte scan dispatch, measured ~1.27x on scan-bound subjects (docs/dev/opt3_dfa_scan_measurement.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+rungs fired: [1, 2]
+
+-- nar4-512 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/nar4-512/whole_subject/artifact.c -- <pattern: 4489 bytes, sha256 791837d576e8cc840fa6ef88bceccb7a4b3d31bd95c00be61a865bb07cf31d53>
+returncode: 0
+emitted .c size: 531881 B
+WARNING: pcrec: warning: large artifact: 520407 bytes of emitted C source (20347 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the premultiplied DFA transition table -- slower per-byte scan dispatch, measured ~1.27x on scan-bound subjects (docs/dev/opt3_dfa_scan_measurement.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1, 2]
+
+========================================================================
+== pfx3-512 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): 12d5d13590699a224db54b93e496b96ae1859da32d975f9b48862f86756fcf6a
+d34c9131 refused forms: 2 of 2 compile row(s)
+  seq 121: pcrec: pattern too large: 1089110 bytes of emitted C source (limit 1000000, ~180 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+  seq 122: pcrec: pattern too large: 1122863 bytes of emitted C source (limit 1000000, ~186 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- pfx3-512 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/pfx3-512/plain/artifact.c -- <pattern: 5093 bytes, sha256 12d5d13590699a224db54b93e496b96ae1859da32d975f9b48862f86756fcf6a>
+returncode: 0
+emitted .c size: 701046 B
+WARNING: pcrec: warning: large artifact: 687458 bytes of emitted C source (19968 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'memchr', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+-- pfx3-512 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/pfx3-512/whole_subject/artifact.c -- <pattern: 5099 bytes, sha256 fd3c528120d3ed369315dd1b427e2f77aafcab53a2ba2b19df77a2c824cf027b>
+returncode: 0
+emitted .c size: 723701 B
+WARNING: pcrec: warning: large artifact: 710255 bytes of emitted C source (21219 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'memchr-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+========================================================================
+== sfx-512 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): e09c9c0dcb48ab28c7258a2901a883161104983c49b1bc7a56dc41249f8066c6
+d34c9131 refused forms: 2 of 2 compile row(s)
+  seq 143: pcrec: pattern too large: 1332391 bytes of emitted C source (limit 1000000, ~221 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+  seq 144: pcrec: pattern too large: 1370237 bytes of emitted C source (limit 1000000, ~227 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- sfx-512 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/sfx-512/plain/artifact.c -- <pattern: 5058 bytes, sha256 e09c9c0dcb48ab28c7258a2901a883161104983c49b1bc7a56dc41249f8066c6>
+returncode: 0
+emitted .c size: 954305 B
+WARNING: pcrec: warning: large artifact: 940558 bytes of emitted C source (19853 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+-- sfx-512 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/sfx-512/whole_subject/artifact.c -- <pattern: 5064 bytes, sha256 4a84533732478af5d866414e8314d326fdfdf7f01d5ccfe3c92afa8bd0cf2596>
+returncode: 0
+emitted .c size: 981284 B
+WARNING: pcrec: warning: large artifact: 967679 bytes of emitted C source (20999 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+========================================================================
+== sh1-512 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): 20cc1c82040271f019e51f12b949bef2ef7a818ce33a63cea6edb627eb5a0fcd
+d34c9131 refused forms: 2 of 2 compile row(s)
+  seq 109: pcrec: pattern too large: 1525451 bytes of emitted C source (limit 1000000, ~253 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+  seq 110: pcrec: pattern too large: 1577014 bytes of emitted C source (limit 1000000, ~261 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- sh1-512 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/sh1-512/plain/artifact.c -- <pattern: 4641 bytes, sha256 20cc1c82040271f019e51f12b949bef2ef7a818ce33a63cea6edb627eb5a0fcd>
+returncode: 0
+emitted .c size: 977534 B
+WARNING: pcrec: warning: large artifact: 964848 bytes of emitted C source (19518 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'memchr', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+-- sh1-512 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/sh1-512/whole_subject/artifact.c -- <pattern: 4647 bytes, sha256 fa2993b8f33a820303230b6f6ab25e806427d84881081d35ef0928b61111c0c5>
+returncode: 0
+emitted .c size: 493461 B
+WARNING: pcrec: warning: large artifact: 481898 bytes of emitted C source (20689 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the premultiplied DFA transition table -- slower per-byte scan dispatch, measured ~1.27x on scan-bound subjects (docs/dev/opt3_dfa_scan_measurement.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'memchr-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1, 2]
+
+========================================================================
+== srt-256 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): 0db7d68da80bb3a1ce32a3c7bfa8c82bbe6bc1bb7077efcf5f214d26cf4260c1
+d34c9131 refused forms: 1 of 6 compile row(s)
+  seq 172: pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- srt-256 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/srt-256/plain/artifact.c -- <pattern: 2101 bytes, sha256 0db7d68da80bb3a1ce32a3c7bfa8c82bbe6bc1bb7077efcf5f214d26cf4260c1>
+returncode: 0
+emitted .c size: 989931 B
+WARNING: pcrec: warning: large artifact: 978112 bytes of emitted C source (19886 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+stamps: {'RX_ENGINE_SEL': 'selected', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'unwrapped', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+rungs fired: (none -- fits under the cap without a retry)
+
+-- srt-256 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/srt-256/whole_subject/artifact.c -- <pattern: 2107 bytes, sha256 45c74502949d61641194a709e97b5faadc6dca719df1f0ba3bf129bcb60f555f>
+returncode: 0
+emitted .c size: 714589 B
+WARNING: pcrec: warning: large artifact: 706900 bytes of emitted C source (18045 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+========================================================================
+== srt-512 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): 693362a298dc4cc3c05d69ce20b8c5110d74a72728223fdf8e1056c301da6df1
+d34c9131 refused forms: 2 of 2 compile row(s)
+  seq 173: pcrec: pattern too large: 1578446 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+  seq 174: pcrec: pattern too large: 1656822 bytes of emitted C source (limit 1000000, ~275 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- srt-512 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/srt-512/plain/artifact.c -- <pattern: 4264 bytes, sha256 693362a298dc4cc3c05d69ce20b8c5110d74a72728223fdf8e1056c301da6df1>
+returncode: 0
+emitted .c size: 982003 B
+WARNING: pcrec: warning: large artifact: 970257 bytes of emitted C source (19038 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'mixed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+-- srt-512 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/srt-512/whole_subject/artifact.c -- <pattern: 4270 bytes, sha256 c97937f4585e541500a2c71045e2252d95322c2712e41b9303b2f2618f48f739>
+returncode: 0
+emitted .c size: 691063 B
+WARNING: pcrec: warning: large artifact: 680030 bytes of emitted C source (20126 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the premultiplied DFA transition table -- slower per-byte scan dispatch, measured ~1.27x on scan-bound subjects (docs/dev/opt3_dfa_scan_measurement.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1, 2]
+
+========================================================================
+== w-256 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): 5975416f0c730638f2e5056da84b640649e09d418d5e8e301bd40850f5864712
+d34c9131 refused forms: 1 of 6 compile row(s)
+  seq 56: pcrec: pattern too large: 1033793 bytes of emitted C source (limit 1000000, ~171 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- w-256 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/w-256/plain/artifact.c -- <pattern: 2101 bytes, sha256 5975416f0c730638f2e5056da84b640649e09d418d5e8e301bd40850f5864712>
+returncode: 0
+emitted .c size: 989931 B
+WARNING: pcrec: warning: large artifact: 978112 bytes of emitted C source (19886 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+stamps: {'RX_ENGINE_SEL': 'selected', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'unwrapped', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+rungs fired: (none -- fits under the cap without a retry)
+
+-- w-256 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/w-256/whole_subject/artifact.c -- <pattern: 2107 bytes, sha256 384caef66648309b2438a77ca62282369a74644aac425739e0bbc1753443deb6>
+returncode: 0
+emitted .c size: 714589 B
+WARNING: pcrec: warning: large artifact: 706900 bytes of emitted C source (18045 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+========================================================================
+== w-384 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): 3de088564352637fed1a7811d6320af0cc17e9a744461972ac37822ff3c86ea4
+d34c9131 refused forms: 2 of 2 compile row(s)
+  seq 57: pcrec: pattern too large: 1432392 bytes of emitted C source (limit 1000000, ~237 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+  seq 58: pcrec: pattern too large: 1514859 bytes of emitted C source (limit 1000000, ~251 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- w-384 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/w-384/plain/artifact.c -- <pattern: 3177 bytes, sha256 3de088564352637fed1a7811d6320af0cc17e9a744461972ac37822ff3c86ea4>
+returncode: 0
+emitted .c size: 979464 B
+WARNING: pcrec: warning: large artifact: 969481 bytes of emitted C source (17971 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+-- w-384 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/w-384/whole_subject/artifact.c -- <pattern: 3183 bytes, sha256 52e46f3e87fa63801f64e27363a62f4dac6c126ca55d59fe8e814a33a790e339>
+returncode: 0
+emitted .c size: 515540 B
+WARNING: pcrec: warning: large artifact: 506680 bytes of emitted C source (19038 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the premultiplied DFA transition table -- slower per-byte scan dispatch, measured ~1.27x on scan-bound subjects (docs/dev/opt3_dfa_scan_measurement.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1, 2]
+
+========================================================================
+== w-512 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): 3f8b5a935ce91b6f4b12fb2e343af2b116ad0615fd6cb41e4afaf00e84369469
+d34c9131 refused forms: 2 of 2 compile row(s)
+  seq 59: pcrec: pattern too large: 1578445 bytes of emitted C source (limit 1000000, ~262 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+  seq 60: pcrec: pattern too large: 1656821 bytes of emitted C source (limit 1000000, ~275 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- w-512 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/w-512/plain/artifact.c -- <pattern: 4264 bytes, sha256 3f8b5a935ce91b6f4b12fb2e343af2b116ad0615fd6cb41e4afaf00e84369469>
+returncode: 0
+emitted .c size: 982002 B
+WARNING: pcrec: warning: large artifact: 970256 bytes of emitted C source (19037 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'mixed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+-- w-512 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/w-512/whole_subject/artifact.c -- <pattern: 4270 bytes, sha256 26433cdff9ff37815c2a4281e3c3041adeb60cd0d705d0e553bebc3ec6acdbb9>
+returncode: 0
+emitted .c size: 691062 B
+WARNING: pcrec: warning: large artifact: 680029 bytes of emitted C source (20125 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the premultiplied DFA transition table -- slower per-byte scan dispatch, measured ~1.27x on scan-bound subjects (docs/dev/opt3_dfa_scan_measurement.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1, 2]
+
+========================================================================
+== wb-256 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): 51c7b4b26c6afd5b2c466e11aad0af3d852c1ba558301f8ee31a180533337f95
+d34c9131 refused forms: 2 of 2 compile row(s)
+  seq 189: pcrec: pattern too large: 1233146 bytes of emitted C source (limit 1000000, ~204 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+  seq 190: pcrec: pattern too large: 1260385 bytes of emitted C source (limit 1000000, ~209 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- wb-256 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/wb-256/plain/artifact.c -- <pattern: 2105 bytes, sha256 51c7b4b26c6afd5b2c466e11aad0af3d852c1ba558301f8ee31a180533337f95>
+returncode: 0
+emitted .c size: 806588 B
+WARNING: pcrec: warning: large artifact: 798679 bytes of emitted C source (18019 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+-- wb-256 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/wb-256/whole_subject/artifact.c -- <pattern: 2111 bytes, sha256 7f8f1f3424fa792f8d113e3ec54a88859c3e4e28e8c59f658d194c2bb1dab65e>
+returncode: 0
+emitted .c size: 824612 B
+WARNING: pcrec: warning: large artifact: 816845 bytes of emitted C source (19335 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1]
+
+========================================================================
+== wb-512 ==
+pattern bytes sha256 (verified against d34c9131 record's canonical_sha256): 5f9d6808fb5454c7dfa9630f6e226af251422cb2b2688a859410d544625b130a
+d34c9131 refused forms: 2 of 2 compile row(s)
+  seq 191: pcrec: pattern too large: 2345817 bytes of emitted C source (limit 1000000, ~389 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+  seq 192: pcrec: pattern too large: 2395032 bytes of emitted C source (limit 1000000, ~397 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0)
+-- wb-512 / plain --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/wb-512/plain/artifact.c -- <pattern: 4268 bytes, sha256 5f9d6808fb5454c7dfa9630f6e226af251422cb2b2688a859410d544625b130a>
+returncode: 0
+emitted .c size: 917084 B
+WARNING: pcrec: warning: large artifact: 905831 bytes of emitted C source (20144 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the premultiplied DFA transition table -- slower per-byte scan dispatch, measured ~1.27x on scan-bound subjects (docs/dev/opt3_dfa_scan_measurement.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1, 2]
+
+-- wb-512 / whole-subject --
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all -o /home/duxevents/pcrec-bench/build/b65attrib-scratch/rung-attribution/wb-512/whole_subject/artifact.c -- <pattern: 4274 bytes, sha256 b166c0fe2de42a7b6bece95d624a8daa153f671fd1ccc5d7728f5563cd7f3fe8>
+returncode: 0
+emitted .c size: 937141 B
+WARNING: pcrec: warning: large artifact: 926030 bytes of emitted C source (21425 of code), over --warn-emit-bytes=250000. Unroll factor K=8 (default); prefilter language n/a (no VM prefilter). See docs/spec/tuning.md for the levers, or raise/disable the warning with --warn-emit-bytes.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the optional anchored match-here machine -- loses the [OPT-2] fast path -- <prefix>_match falls back to search-and-filter, which the anchored machine exists specifically to avoid (docs/design/anchored_match_unwrapped.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+NOTE: pcrec: note: the emitted-size cap forced a smaller artifact: dropped the premultiplied DFA transition table -- slower per-byte scan dispatch, measured ~1.27x on scan-bound subjects (docs/dev/opt3_dfa_scan_measurement.md). Raise --max-emit-bytes/--max-emit-code-bytes to keep the faster form, or accept the fit.
+stamps: {'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+rungs fired: [1, 2]
+
+========================================================================
+SUMMARY (pattern, form, outcome, rungs, stamps)
+========================================================================
+ci-256     plain          compiled  rungs=-      {'size': 1002370, 'RX_ENGINE_SEL': 'selected', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'unwrapped', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+ci-256     whole-subject  compiled  rungs=[1]    {'size': 720874, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+ci-512     plain          compiled  rungs=[1]    {'size': 988289, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'mixed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+ci-512     whole-subject  compiled  rungs=[1, 2] {'size': 697349, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+cnt-64     plain          compiled  rungs=-      {'size': 849717, 'RX_ENGINE_SEL': 'selected', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'unwrapped', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+cnt-64     whole-subject  compiled  rungs=[1]    {'size': 827181, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+nar4-512   plain          compiled  rungs=[1, 2] {'size': 503354, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+nar4-512   whole-subject  compiled  rungs=[1, 2] {'size': 531881, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+pfx3-512   plain          compiled  rungs=[1]    {'size': 701046, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'memchr', 'RX_ENGINE': 'dfa'}
+pfx3-512   whole-subject  compiled  rungs=[1]    {'size': 723701, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'memchr-bounded', 'RX_ENGINE': 'dfa'}
+sfx-512    plain          compiled  rungs=[1]    {'size': 954305, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+sfx-512    whole-subject  compiled  rungs=[1]    {'size': 981284, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+sh1-512    plain          compiled  rungs=[1]    {'size': 977534, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'memchr', 'RX_ENGINE': 'dfa'}
+sh1-512    whole-subject  compiled  rungs=[1, 2] {'size': 493461, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'memchr-bounded', 'RX_ENGINE': 'dfa'}
+srt-256    plain          compiled  rungs=-      {'size': 989931, 'RX_ENGINE_SEL': 'selected', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'unwrapped', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+srt-256    whole-subject  compiled  rungs=[1]    {'size': 714589, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+srt-512    plain          compiled  rungs=[1]    {'size': 982003, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'mixed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+srt-512    whole-subject  compiled  rungs=[1, 2] {'size': 691063, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+w-256      plain          compiled  rungs=-      {'size': 989931, 'RX_ENGINE_SEL': 'selected', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'unwrapped', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+w-256      whole-subject  compiled  rungs=[1]    {'size': 714589, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+w-384      plain          compiled  rungs=[1]    {'size': 979464, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+w-384      whole-subject  compiled  rungs=[1, 2] {'size': 515540, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+w-512      plain          compiled  rungs=[1]    {'size': 982002, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'mixed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class', 'RX_ENGINE': 'dfa'}
+w-512      whole-subject  compiled  rungs=[1, 2] {'size': 691062, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+wb-256     plain          compiled  rungs=[1]    {'size': 806588, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+wb-256     whole-subject  compiled  rungs=[1]    {'size': 824612, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'premultiplied', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+wb-512     plain          compiled  rungs=[1, 2] {'size': 917084, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+wb-512     whole-subject  compiled  rungs=[1, 2] {'size': 937141, 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_TABLE': 'indexed', 'RX_DFA_MATCH': 'search-filter', 'RX_DFA_PREFILTER': 'byte-class-bounded', 'RX_ENGINE': 'dfa'}
+
+any note line unrecognised by the two known rung texts: False

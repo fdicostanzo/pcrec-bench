@@ -2709,13 +2709,24 @@ fresh record's own `engine_metadata`: `w-256` whole-subject's
 `ci-512`'s `dfa_table` stamp reads **`mixed`** (plain form,
 emit_bytes 976,275) and **`indexed`** (whole-subject, emit_bytes
 686,048) at 25b1984f, where it refused outright (over cap on BOTH
-forms) at d34c9131. The mechanism this points to is cf0962e3's own
-`[OPT-DIAL]`/K59 "premul drop-ladder rung" (landed between d34c9131 and
-25b1984f, in the gap this window's `pcrec-auto` single-variable
-comparator does NOT cross for the TIME axis but the `dfa_table` stamp
-clearly does for SIZE) — a real, substantial, GOOD-NEWS rescue on the
-DFA route's compiled-size ceiling, stated here as a finding for pcrec
-to confirm or correct, not asserted as proven mechanism. The VM route's
+forms) at d34c9131. **CORRECTED** (inbox I-80, 2026-09-21; the K59-only
+hypothesis below was ours, stated as unproven, and pcrec's own reading
+of the artifact corrects it): the mechanism is `Ctx.size_drop_rung`, a
+TWO-RUNG retry ladder (`RX_ENGINE_SEL "size-cap-retry"`), not K59
+alone — rung 1 (K53-SELRETRY, fixed 2026-09-10: drops the OPTIONAL
+anchored match-here machine, `RX_DFA_MATCH` falls back to
+`search-filter`) fires on EVERY one of these 14 rescued patterns' cap-
+bound forms, and rung 2 (K59, fixed 2026-09-17: drops the premultiplied
+DFA table) fires ADDITIONALLY only where rung 1 alone still would not
+fit. **`dfa_table=mixed` is NOT evidence rung 2 fired** — `ci-512`'s
+plain form reads `mixed` under RUNG 1 ALONE (one `pcrec: note:` line,
+the K53 text; confirmed by re-emitting with the pinned 25b1984f binary
+and reading the diagnostic verbatim) where its whole-subject form reads
+`indexed` under BOTH rungs (two `pcrec: note:` lines). The full
+per-pattern rung attribution (all 14 patterns × both forms, note lines
+verbatim) is
+`docs/dev/measurements/2026-09-21-altwide-rung-attribution-25b1984f.txt`
+(lane b65attrib). The VM route's
 refusal boundary is, by contrast, EXACTLY UNCHANGED — `pcrec_25b1984f_
 vm-caps-simdna`/`vm-in-caps-simdna` refuse the identical 11-pattern set
 d34c9131 (`vm`) and 334fd10e (`vm-in`) already refused, byte for byte
@@ -2895,10 +2906,14 @@ whole-subject reads **240,310 B against 240,122 B — also GREW by
 exactly 188 B**. The `dfa_table` stamp stays `premultiplied` on BOTH,
 at BOTH pins — unlike altwide's `w-256`/`ci-512` witnesses, which O-40
 found moving to `mixed`/`indexed` with a real double-digit-percent
-shrink, **the K59 premul-drop-ladder mechanism that rescued altwide's
-compiled size does NOT reach bounded's own class-ladder DFA tables at
-all** — a clean, informative NEGATIVE result the direction-only framing
-was built to surface. The flat, identical +188 B on both witnesses
+shrink, **the `Ctx.size_drop_rung` retry ladder that rescued altwide's
+compiled size (I-80: K53's rung 1 always, K59's rung 2 only where rung 1
+alone still overflows — CORRECTED from this paragraph's original
+"K59 premul-drop-ladder" naming, which credited rung 2 alone) does NOT
+fire at all on bounded's own class-ladder DFA tables** — neither
+witness ever refused at d34c9131 in the first place, so neither rung
+had a cap to retry against — a clean, informative NEGATIVE result the
+direction-only framing was built to surface. The flat, identical +188 B on both witnesses
 (also +190/+192 B on their much-smaller PLAIN forms) reads like an
 ordinary small stamp-line-style constant from one of the four
 intervening pins (cd371441/a770139e/cf0962e3/25b1984f), not investigated
