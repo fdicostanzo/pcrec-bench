@@ -243,3 +243,15 @@ across the three windows).
   `bench/altwide`'s wide-alternation DFA tables and does not touch
   `bench/bounded`'s count-ladder ones. Worth a note in whatever ledger
   next reads O-40, if one is written.
+
+---
+ATTRIBUTION ADDENDUM (2026-09-21, the manager, from pcrecdev1's live
+reply to the O-41 message): the syntax@0.1 refusal shrink 15→13
+(\p{L}+/\P{L}+ now compiling on all four routes) IS a documented pcrec
+landing — [M5.0] stage 5, the uprops module (Unicode property classes,
+PC-3 1,053 names swept against the live oracle), merged inside the
+d34c9131..25b1984f span; pcrec plan_completed.md's [M5.0] row, their
+2026-09-12 journal, and docs/pcre2_compliance.md carry it. This
+report's "not named by any documented re-pin" was written from OUR
+re-pin notes, which track abi/adapter deltas, not pcrec's full
+milestone landings. No O-item; closed by attribution.
