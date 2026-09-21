@@ -426,6 +426,52 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   `check_stated_utc`, not the selector/reducer/op machinery); see
   `docs/dev/lanes/b60pinconfirm_report.md` for the verdicts.
 
+- `loglines-0.1-pin-25b1984f-confirm.tsv`, `altwide-0.2-pin-25b1984f-confirm.tsv`
+  — lane `b63window`, 2026-09-21: [B63]'s wave-1 predictions for the
+  pcrec re-measure at 25b1984f on the two sets whose stale-pin matrix
+  columns ([B61]) carry the hottest findings. **Unlike the
+  `capability-0.1-pin-25b1984f-confirm.tsv` precedent, the four
+  pcrec-testee "config families" do NOT share one baseline pin per
+  set**: `store/index.tsv` shows loglines' `pcrec-auto` newest record is
+  already d34c9131 (single-variable, matching [EMIT-VERB]'s own
+  grounding) while `pcrec-nocaps`/`pcrec-vm`/`pcrec-vm-in` are still at
+  1989c62 (five pins back, crossing real optimization work — [OPT-5]
+  STEP 2 among it); altwide's `pcrec-auto`/`pcrec-vm` are at d34c9131
+  (single-variable) while `pcrec-nocaps`/`pcrec-vm-in` are at 334fd10e
+  (one pin short of d34c9131's own [FORM-CHAR] cls-fold step). Each
+  file's `delta_verdict` clauses are annotated per-parent with which
+  case applies rather than asserting a blanket "unchanged" the way the
+  capability file could: single-variable parents cite [EMIT-VERB]/
+  [B60]/[B62] directly; multi-pin parents are INCLUDED as the honest
+  null (not dropped) where no intervening step is documented as
+  route-affecting for that set, and where one IS documented
+  (altwide vm-in's ci-256/ci-512 fold-driven -20.3% emit_bytes drop,
+  already landed at d34c9131 itself, before vm-in's own 334fd10e
+  baseline) the file states the clause is EXPECTED to refute, isolated
+  to those two patterns (P4/P7 in the altwide file). Both files also
+  carry SAME-PIN structural clauses (`compile:emit_bytes` ratio_to
+  another testee at 25b1984f only, op eq, hi 1) that sidestep the
+  stale-baseline gap entirely: nocaps vs auto (both corpora carry zero
+  capturing groups, so `--no-captures` has nothing to strip) and vm-in
+  vs vm (the caller-provided frame buffer is a runtime parameter, never
+  a compile-time one). altwide additionally carries eight
+  `section=did_not_compile;form=<plain|whole-subject>` set-eq clauses
+  per route (P8-P13), the refused-pattern sets read directly from
+  `docs/dev/measurements/2026-09-06-altwide-size-census-d34c9131.txt`
+  (the exact default-cap probe at d34c9131) — nocaps/vm-in's sets are
+  DERIVED (not independently probed) from auto/vm's under the same
+  captures-free / runtime-buffer-only reasoning as the structural
+  clauses above. Like the capability file, this population necessarily
+  includes already-measured older-pin records, so `check_stated_utc`'s
+  F27 re-anchor refuses the normal CLI `--predictions` path for the
+  cross-pin `delta_verdict` clauses; scored via a direct
+  `interpret.evaluate_predictions` call, same precedent. The
+  same-pin/same-report structural and refusal-boundary clauses (P5/P6
+  and P8-P13 in altwide, P5/P6 in loglines) do NOT need the bypass —
+  their population is entirely within the new 25b1984f records — but
+  were scored the same way for a single consistent verdict table. See
+  `docs/dev/lanes/b63window_report.md` for the scored verdicts.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before
