@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pcrec-bench results viewer</title>
+<meta name="description" content="A reading aid over the pcrec-bench canonical record store's set-grain results. Never a canonical surface, never a ranking input.">
+<style>
+/* ---------------------------------------------------------------- theme
+   tokens on :root; redefined for dark under prefers-color-scheme, and
+   again under an explicit [data-theme] override -- the standard
+   three-state pattern (system default, explicit light, explicit dark). */
+:root {
+  --bg: #f7f7f5;
+  --bg-panel: #ffffff;
+  --bg-inset: #f0f0ee;
+  --fg: #1b1c1d;
+  --fg-muted: #5b5f66;
+  --fg-faint: #8a8f98;
+  --border: #d8dade;
+  --border-strong: #b7bac1;
+  --accent: #1656c9;
+  --accent-fg: #ffffff;
+  --link: #1656c9;
+  --row-stripe: #fbfbfa;
+  --row-hover: #eef2fb;
+  --chip-bg: #eceef1;
+  --chip-fg: #4b4f57;
+  --status-wrong-bg: #fbe0e0;
+  --status-wrong-fg: #8a1f1f;
+  --status-refused-bg: #f3e3c8;
+  --status-refused-fg: #7a5410;
+  --status-unsup-bg: #e6e6ea;
+  --status-unsup-fg: #45484f;
+  --status-gaveup-bg: #fdeccb;
+  --status-gaveup-fg: #7a4d05;
+  --status-timedout-bg: #e6d9f7;
+  --status-timedout-fg: #4a2680;
+  --status-crashed-bg: #f6d3e6;
+  --status-crashed-fg: #7d1450;
+  --status-inconclusive-bg: #dce8f5;
+  --status-inconclusive-fg: #234b73;
+  --best-bg: #e3f3e6;
+  --best-fg: #17631f;
+  --shadow: 0 1px 3px rgba(20, 20, 25, 0.08), 0 1px 2px rgba(20, 20, 25, 0.06);
+  --focus-ring: #1656c9;
+  --code-bg: #eef0f3;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161a;
+    --bg-panel: #1b1e23;
+    --bg-inset: #21242a;
+    --fg: #e8e9eb;
+    --fg-muted: #a3a8b1;
+    --fg-faint: #767c87;
+    --border: #33373f;
+    --border-strong: #464b55;
+    --accent: #6fa3ff;
+    --accent-fg: #0b1320;
+    --link: #6fa3ff;
+    --row-stripe: #191c21;
+    --row-hover: #23293a;
+    --chip-bg: #262a32;
+    --chip-fg: #c2c6cf;
+    --status-wrong-bg: #3d1f22;
+    --status-wrong-fg: #ff9b9b;
+    --status-refused-bg: #3a2f18;
+    --status-refused-fg: #e8b96a;
+    --status-unsup-bg: #2a2c31;
+    --status-unsup-fg: #b7bbc3;
+    --status-gaveup-bg: #3a2c10;
+    --status-gaveup-fg: #f0b95c;
+    --status-timedout-bg: #2c2140;
+    --status-timedout-fg: #c4a4f7;
+    --status-crashed-bg: #3a1c2c;
+    --status-crashed-fg: #f4a0cf;
+    --status-inconclusive-bg: #182a3a;
+    --status-inconclusive-fg: #8fc0ec;
+    --best-bg: #163a1e;
+    --best-fg: #7fdb8c;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+    --focus-ring: #6fa3ff;
+    --code-bg: #20242b;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161a;
+  --bg-panel: #1b1e23;
+  --bg-inset: #21242a;
+  --fg: #e8e9eb;
+  --fg-muted: #a3a8b1;
+  --fg-faint: #767c87;
+  --border: #33373f;
+  --border-strong: #464b55;
+  --accent: #6fa3ff;
+  --accent-fg: #0b1320;
+  --link: #6fa3ff;
+  --row-stripe: #191c21;
+  --row-hover: #23293a;
+  --chip-bg: #262a32;
+  --chip-fg: #c2c6cf;
+  --status-wrong-bg: #3d1f22;
+  --status-wrong-fg: #ff9b9b;
+  --status-refused-bg: #3a2f18;
+  --status-refused-fg: #e8b96a;
+  --status-unsup-bg: #2a2c31;
+  --status-unsup-fg: #b7bbc3;
+  --status-gaveup-bg: #3a2c10;
+  --status-gaveup-fg: #f0b95c;
+  --status-timedout-bg: #2c2140;
+  --status-timedout-fg: #c4a4f7;
+  --status-crashed-bg: #3a1c2c;
+  --status-crashed-fg: #f4a0cf;
+  --status-inconclusive-bg: #182a3a;
+  --status-inconclusive-fg: #8fc0ec;
+  --best-bg: #163a1e;
+  --best-fg: #7fdb8c;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --focus-ring: #6fa3ff;
+  --code-bg: #20242b;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.45 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.num, .mono, td.cell, th.cell-head { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+a { color: var(--link); }
+button, select, input[type="text"], input[type="search"] {
+  font: inherit;
+  color: var(--fg);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 5px 9px;
+}
+button { cursor: pointer; }
+button:hover { border-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+
+#topbar {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  flex-wrap: wrap;
+}
+#topbar h1 { font-size: 15px; margin: 0 12px 0 0; white-space: nowrap; }
+#topbar .fence { color: var(--fg-faint); font-size: 12px; }
+#topbar .spacer { flex: 1 1 auto; }
+
+#layout { display: flex; align-items: flex-start; min-height: calc(100vh - 52px); }
+#filters {
+  width: 300px; flex: 0 0 300px;
+  padding: 14px;
+  border-right: 1px solid var(--border);
+  background: var(--bg-panel);
+  position: sticky; top: 53px;
+  max-height: calc(100vh - 53px);
+  overflow-y: auto;
+}
+#filters h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-muted); margin: 18px 0 6px; }
+#filters h2:first-child { margin-top: 0; }
+.filter-block { margin-bottom: 4px; }
+.tree-node { margin: 1px 0; }
+.tree-row { display: flex; align-items: center; gap: 6px; padding: 2px 2px; border-radius: 4px; }
+.tree-row:hover { background: var(--row-hover); }
+.tree-row label { cursor: pointer; user-select: none; flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tree-children { margin-left: 20px; }
+.tree-count { color: var(--fg-faint); font-size: 11px; }
+.tree-toggle { width: 14px; height: 14px; flex: none; border: none; background: none; color: var(--fg-muted); padding: 0; cursor: pointer; }
+input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; flex: none; }
+input[type="text"], input[type="search"] { width: 100%; }
+.chk-row { display: flex; align-items: center; gap: 6px; padding: 2px 0; }
+.chk-row label { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.small-btn { font-size: 11px; padding: 2px 7px; border-radius: 5px; }
+.btn-row { display: flex; gap: 6px; margin: 4px 0 8px; }
+
+#main { flex: 1 1 auto; min-width: 0; padding: 14px 16px 60px; }
+#controls-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-bottom: 10px; }
+.metric-group { display: flex; gap: 2px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: 7px; padding: 2px; }
+.metric-group button { border: none; background: transparent; border-radius: 5px; padding: 5px 10px; }
+.metric-group button.active { background: var(--accent); color: var(--accent-fg); }
+#summary-line { color: var(--fg-muted); font-size: 12.5px; }
+
+#table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-panel); box-shadow: var(--shadow); }
+table.matrix { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 700px; }
+table.matrix thead th { position: sticky; top: 0; background: var(--bg-panel); z-index: 5; border-bottom: 1px solid var(--border); }
+table.matrix th.fam-band { text-align: center; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--fg-muted); background: var(--bg-inset); border-left: 1px solid var(--border); padding: 4px 6px; }
+table.matrix th.rowhead-band { background: var(--bg-inset); }
+table.matrix thead tr.col-labels th { padding: 6px 10px; font-weight: 600; border-left: 1px solid var(--border); white-space: nowrap; }
+table.matrix thead tr.col-labels th.sortable { cursor: pointer; }
+table.matrix thead tr.col-labels th.sortable:hover { color: var(--accent); }
+table.matrix thead tr.col-labels th .variant { display: block; font-weight: 400; color: var(--fg-muted); font-size: 11px; }
+table.matrix thead tr.col-labels th .sort-ind { margin-left: 3px; }
+table.matrix tbody td, table.matrix tbody th { padding: 5px 10px; border-top: 1px solid var(--border); white-space: nowrap; }
+table.matrix tbody th.rowhead { text-align: left; font-weight: 400; position: sticky; left: 0; background: var(--bg-panel); z-index: 2; max-width: 360px; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid var(--border); }
+table.matrix tbody tr:nth-child(even) td, table.matrix tbody tr:nth-child(even) th.rowhead { background: var(--row-stripe); }
+table.matrix tbody tr:hover td, table.matrix tbody tr:hover th.rowhead { background: var(--row-hover); }
+table.matrix td.cell { text-align: right; border-left: 1px solid var(--border); cursor: default; }
+table.matrix td.cell.best { background: var(--best-bg); color: var(--best-fg); font-weight: 600; border-radius: 4px; }
+.rowhead .pattern { font-weight: 600; }
+.rowhead .meta { display: block; color: var(--fg-muted); font-size: 11px; margin-top: 1px; }
+.chip { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 600; background: var(--chip-bg); color: var(--chip-fg); }
+.chip-wrong { background: var(--status-wrong-bg); color: var(--status-wrong-fg); }
+.chip-refused { background: var(--status-refused-bg); color: var(--status-refused-fg); }
+.chip-unsup { background: var(--status-unsup-bg); color: var(--status-unsup-fg); }
+.chip-gave-up { background: var(--status-gaveup-bg); color: var(--status-gaveup-fg); }
+.chip-timed-out { background: var(--status-timedout-bg); color: var(--status-timedout-fg); }
+.chip-crashed { background: var(--status-crashed-bg); color: var(--status-crashed-fg); }
+.chip-inconclusive-load, .chip-inconclusive-spread, .chip-harness-failure { background: var(--status-inconclusive-bg); color: var(--status-inconclusive-fg); }
+.chip-excluded { background: var(--chip-bg); color: var(--fg-faint); }
+.dash { color: var(--fg-faint); }
+
+#tooltip {
+  position: fixed; z-index: 100; max-width: 340px;
+  background: var(--fg); color: var(--bg);
+  padding: 8px 10px; border-radius: 7px; font-size: 12px; line-height: 1.5;
+  box-shadow: var(--shadow); pointer-events: none; display: none;
+}
+:root[data-theme="dark"] #tooltip, @media (prefers-color-scheme: dark) { }
+#tooltip .tt-row { white-space: nowrap; }
+#tooltip .tt-k { color: color-mix(in srgb, var(--bg) 60%, transparent); margin-right: 6px; }
+
+#empty-state, #fatal { padding: 40px 20px; text-align: center; color: var(--fg-muted); }
+#fatal { color: var(--status-wrong-fg); }
+.set-error-note { color: var(--status-refused-fg); font-size: 12px; margin: 2px 0; }
+footer#pagefoot { padding: 16px; color: var(--fg-faint); font-size: 11.5px; text-align: center; }
+
+@media (max-width: 820px) {
+  #layout { flex-direction: column; }
+  #filters { width: 100%; flex-basis: auto; position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
+  #main { padding: 12px; }
+  body { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <h1>pcrec-bench results viewer</h1>
+  <span class="fence">reading aid &mdash; not canonical; numbers match <code>reports/</code> or show nothing</span>
+  <span class="spacer"></span>
+  <button id="theme-btn" class="small-btn" type="button" title="Toggle theme">theme: auto</button>
+</div>
+
+<div id="layout">
+  <nav id="filters" aria-label="Filters"></nav>
+  <main id="main">
+    <div id="controls-row"></div>
+    <div id="summary-line"></div>
+    <div id="table-scroll"><div id="empty-state">Loading&hellip;</div></div>
+  </main>
+</div>
+
+<footer id="pagefoot"></footer>
+<div id="tooltip" role="tooltip"></div>
+
+<script>
+"use strict";
+
+/* ============================================================ BENCH
+   The classic-script data-loading contract (docs/design/
+   results_viewer_v1.md 1): `file://` cannot fetch() a sibling file
+   (null-origin CORS) and cannot load ES modules, so a data file is a
+   plain <script src> whose body is one call into this object,
+   registered BEFORE any data script tag runs. */
+window.BENCH = {
+  _manifest: null,
+  _sets: Object.create(null),     // setKey -> {set,subbench,version,rows}
+  _setError: Object.create(null), // setKey -> true if its script tag failed
+  manifest: function (m) { window.BENCH._manifest = m; },
+  load: function (payload) { window.BENCH._sets[payload.set] = payload; }
+};
+
+function loadScriptTag(src, cb) {
+  var s = document.createElement("script");
+  s.src = src;
+  s.onload = function () { cb(true); };
+  s.onerror = function () { cb(false); };
+  document.head.appendChild(s);
+}
+
+function boot() {
+  loadScriptTag("data/manifest.js", function (ok) {
+    if (!ok || !window.BENCH._manifest) {
+      fatal("data/manifest.js did not load. Run `make viewer-data` " +
+            "(tools/viewer_export.py) to generate viewer/data/, then open " +
+            "this page again.");
+      return;
+    }
+    var files = window.BENCH._manifest.files || [];
+    if (!files.length) { App.init(); return; }
+    var remaining = files.length;
+    files.forEach(function (f) {
+      var setKeyGuess = f.replace(/\.js$/, "");
+      loadScriptTag("data/" + f, function (ok2) {
+        if (!ok2) { window.BENCH._setError[setKeyGuess] = true; }
+        remaining--;
+        if (remaining === 0) { App.init(); }
+      });
+    });
+  });
+}
+
+function fatal(msg) {
+  var el = document.getElementById("table-scroll");
+  el.innerHTML = "";
+  var d = document.createElement("div");
+  d.id = "fatal";
+  d.textContent = msg;
+  el.appendChild(d);
+}
+
+/* ============================================================== App */
+var App = (function () {
+  var STATUS_SINK_ORDER = ["measured", "wrong", "refused", "unsup", "gave-up",
+    "timed-out", "crashed", "inconclusive-load", "inconclusive-spread",
+    "harness-failure", "excluded"];
+
+  var state = null;      // filled by defaultState() / hash parse
+  var domain = null;     // derived from loaded data: families, sets, regimes, forms
+  var allRows = [];      // every row across every loaded set, flattened
+  var testeeIndex = Object.create(null); // testee_id -> {family, variant, pin} (built ONCE per
+                                          // data load in buildDomain -- see renderTable's perf note)
+
+  // ---------------------------------------------------------- utilities
+
+  function statusRank(st) {
+    var i = STATUS_SINK_ORDER.indexOf(st);
+    return i === -1 ? STATUS_SINK_ORDER.length : i;
+  }
+
+  function fmtNs(ns) {
+    if (ns === null || ns === undefined) return null;
+    if (ns < 1000) return ns.toFixed(1) + " ns";
+    var us = ns / 1000;
+    if (us < 1000) return us.toFixed(2) + " µs";
+    var ms = us / 1000;
+    if (ms < 1000) return ms.toFixed(2) + " ms";
+    return (ms / 1000).toFixed(3) + " s";
+  }
+
+  function fmtInt(n) {
+    if (n === null || n === undefined) return null;
+    return Math.round(n).toLocaleString("en-US");
+  }
+
+  function fmtMbps(row) {
+    if (row.status !== "measured" || row.subject_bytes_total === null ||
+        row.subject_bytes_total === undefined || !row.median_ns) return null;
+    return (row.subject_bytes_total / row.median_ns) * 1000;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function debounce(fn, ms) {
+    var t = null;
+    return function () {
+      var args = arguments;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(null, args); }, ms);
+    };
+  }
+
+  // ------------------------------------------------------ domain / rows
+
+  function buildDomain() {
+    var families = Object.create(null); // fam -> {variants: {variant -> {pins:Set, n}}, n}
+    var sets = Object.create(null);     // setKey -> {subbench, version, n_rows}
+    var regimes = Object.create(null);
+    var forms = Object.create(null);
+    allRows = [];
+    testeeIndex = Object.create(null);
+
+    var setKeys = Object.keys(window.BENCH._sets).sort();
+    setKeys.forEach(function (sk) {
+      var payload = window.BENCH._sets[sk];
+      sets[sk] = { subbench: payload.subbench, version: payload.version, n_rows: payload.rows.length };
+      payload.rows.forEach(function (r) {
+        r._set = sk;
+        allRows.push(r);
+        var fam = families[r.engine_family] || (families[r.engine_family] = { variants: Object.create(null) });
+        var vv = fam.variants[r.engine_variant] || (fam.variants[r.engine_variant] = { pins: Object.create(null) });
+        vv.pins[r.pin || ""] = true;
+        regimes[r.regime || ""] = true;
+        forms[r.form || "plain"] = true;
+        if (!testeeIndex[r.testee_id]) {
+          testeeIndex[r.testee_id] = { family: r.engine_family, variant: r.engine_variant, pin: r.pin || "" };
+        }
+      });
+    });
+    // sets with a failed script tag: present in the manifest, absent from
+    // window.BENCH._sets -- named, not silently missing (design note 1).
+    (window.BENCH._manifest.sets || []).forEach(function (e) {
+      if (!sets[e.set]) {
+        sets[e.set] = { subbench: e.subbench, version: e.version, n_rows: 0, missing: true };
+      }
+    });
+    return { families: families, sets: sets, regimes: regimes, forms: forms };
+  }
+
+  function allTesteeIds() {
+    return Object.keys(testeeIndex);
+  }
+
+  // -------------------------------------------------------------- state
+
+  function defaultState() {
+    return {
+      testees: null,   // null = "all" (every testee_id seen)
+      sets: null,       // null = "all"
+      regimes: null,    // null = "all"
+      forms: null,      // null = "all"
+      q: "",
+      showNonMeasured: true,
+      metric: "ns",      // ns | mbps | best
+      sortKind: null,    // null (natural: set,pattern,regime,form) | "testee" | "pattern" | "set" | "best"
+      sortTestee: null,
+      sortDir: 1,
+      theme: "auto"
+    };
+  }
+
+  function isSelected(setOrNull, value) {
+    return setOrNull === null || Object.prototype.hasOwnProperty.call(setOrNull, value);
+  }
+
+  // ---------------------------------------------------------- hash <-> state
+
+  function encodeSet(setOrNull, allValues) {
+    if (setOrNull === null) return "*";
+    var keys = Object.keys(setOrNull);
+    if (keys.length === allValues.length) return "*";
+    return keys.map(encodeURIComponent).join(",");
+  }
+
+  function decodeSet(str, allValues) {
+    if (str === undefined || str === "*") return null;
+    if (str === "") return {};
+    var out = Object.create(null);
+    str.split(",").forEach(function (s) { out[decodeURIComponent(s)] = true; });
+    return out;
+  }
+
+  function stateToHash(st) {
+    var parts = [];
+    parts.push("testees=" + encodeSet(st.testees, allTesteeIds()));
+    parts.push("sets=" + encodeSet(st.sets, Object.keys(domain.sets)));
+    parts.push("regimes=" + encodeSet(st.regimes, Object.keys(domain.regimes)));
+    parts.push("forms=" + encodeSet(st.forms, Object.keys(domain.forms)));
+    if (st.q) parts.push("q=" + encodeURIComponent(st.q));
+    parts.push("nm=" + (st.showNonMeasured ? 1 : 0));
+    parts.push("metric=" + st.metric);
+    if (st.sortKind) {
+      parts.push("sort=" + st.sortKind + (st.sortTestee ? (":" + encodeURIComponent(st.sortTestee)) : ""));
+      parts.push("dir=" + st.sortDir);
+    }
+    if (st.theme !== "auto") parts.push("theme=" + st.theme);
+    return parts.join("&");
+  }
+
+  function hashToState() {
+    var h = location.hash.replace(/^#/, "");
+    if (!h) return null;
+    var q = {};
+    h.split("&").forEach(function (kv) {
+      var i = kv.indexOf("=");
+      if (i === -1) return;
+      q[kv.slice(0, i)] = kv.slice(i + 1);
+    });
+    if (!Object.keys(q).length) return null;
+    var st = defaultState();
+    st.testees = decodeSet(q.testees, allTesteeIds());
+    st.sets = decodeSet(q.sets, Object.keys(domain.sets));
+    st.regimes = decodeSet(q.regimes, Object.keys(domain.regimes));
+    st.forms = decodeSet(q.forms, Object.keys(domain.forms));
+    st.q = q.q ? decodeURIComponent(q.q) : "";
+    st.showNonMeasured = q.nm === undefined ? true : q.nm === "1";
+    st.metric = q.metric || "ns";
+    if (q.sort) {
+      var sp = q.sort.split(":");
+      st.sortKind = sp[0];
+      st.sortTestee = sp[1] ? decodeURIComponent(sp[1]) : null;
+      st.sortDir = q.dir === "-1" ? -1 : 1;
+    }
+    st.theme = q.theme || "auto";
+    return st;
+  }
+
+  function persist() {
+    var hash = "#" + stateToHash(state);
+    if (location.hash !== hash) history.replaceState(null, "", hash);
+    try { localStorage.setItem("pcrecbench-viewer-state", hash); } catch (e) { /* private window etc. */ }
+  }
+
+  function loadPersisted() {
+    var fromHash = hashToState();
+    if (fromHash) return fromHash;
+    try {
+      var saved = localStorage.getItem("pcrecbench-viewer-state");
+      if (saved) {
+        location.hash = saved;
+        return hashToState();
+      }
+    } catch (e) { /* ignore */ }
+    return null;
+  }
+
+  // -------------------------------------------------------------- theme
+
+  function applyTheme() {
+    var root = document.documentElement;
+    if (state.theme === "auto") root.removeAttribute("data-theme");
+    else root.setAttribute("data-theme", state.theme);
+    document.getElementById("theme-btn").textContent = "theme: " + state.theme;
+  }
+
+  function cycleTheme() {
+    state.theme = state.theme === "auto" ? "light" : state.theme === "light" ? "dark" : "auto";
+    applyTheme();
+    persist();
+  }
+
+  // ------------------------------------------------------------- filters
+
+  function filteredRows() {
+    var q = state.q.trim().toLowerCase();
+    return allRows.filter(function (r) {
+      if (!isSelected(state.sets, r._set)) return false;
+      if (!isSelected(state.regimes, r.regime || "")) return false;
+      if (!isSelected(state.forms, r.form || "plain")) return false;
+      if (q && r.pattern.toLowerCase().indexOf(q) === -1) return false;
+      if (!state.showNonMeasured && r.status !== "measured") return false;
+      return true;
+    });
+  }
+
+  function visibleTestees() {
+    return allTesteeIds().filter(function (t) { return isSelected(state.testees, t); }).sort();
+  }
+
+  // --------------------------------------------------------------- rows
+
+  function rowKey(r) { return r._set + "" + r.pattern + "" + (r.regime || "") + "" + (r.form || "plain"); }
+
+  function buildMatrixRows(rows) {
+    var byKey = Object.create(null);
+    var order = [];
+    rows.forEach(function (r) {
+      var k = rowKey(r);
+      var g = byKey[k];
+      if (!g) {
+        g = { key: k, set: r._set, pattern: r.pattern, regime: r.regime || "", form: r.form || "plain", cells: Object.create(null) };
+        byKey[k] = g;
+        order.push(g);
+      }
+      g.cells[r.testee_id] = r;
+    });
+    order.sort(function (a, b) {
+      return a.set < b.set ? -1 : a.set > b.set ? 1 :
+             a.pattern < b.pattern ? -1 : a.pattern > b.pattern ? 1 :
+             a.regime < b.regime ? -1 : a.regime > b.regime ? 1 :
+             a.form < b.form ? -1 : a.form > b.form ? 1 : 0;
+    });
+    return order;
+  }
+
+  function metricValue(cellRow) {
+    if (!cellRow || cellRow.status !== "measured") return null;
+    if (state.metric === "ns") return cellRow.median_ns;
+    if (state.metric === "mbps") return fmtMbps(cellRow);
+    return cellRow.median_ns; // "best" metric still ranks by ns; ratio is a display transform
+  }
+
+  function computeBest(group, testees) {
+    var bestNs = null, bestTestee = null;
+    testees.forEach(function (t) {
+      var c = group.cells[t];
+      if (c && c.status === "measured" && c.median_ns !== null) {
+        if (bestNs === null || c.median_ns < bestNs) { bestNs = c.median_ns; bestTestee = t; }
+      }
+    });
+    return { ns: bestNs, testee: bestTestee };
+  }
+
+  function sortGroups(groups, testees) {
+    if (!state.sortKind) return groups; // natural order already applied
+
+    function rankFor(g) {
+      if (state.sortKind === "pattern") return [0, g.pattern, g.set, g.regime, g.form];
+      if (state.sortKind === "set") return [0, g.set, g.pattern, g.regime, g.form];
+      if (state.sortKind === "best") {
+        var b = computeBest(g, testees);
+        return b.ns === null ? [1, 0] : [0, b.ns];
+      }
+      if (state.sortKind === "testee") {
+        var c = g.cells[state.sortTestee];
+        if (!c) return [2, statusRank("excluded")];
+        if (c.status !== "measured") return [1, statusRank(c.status)];
+        var v = metricValue(c);
+        return [0, v === null ? Infinity : v];
+      }
+      return [0, 0];
+    }
+    var withRank = groups.map(function (g) { return { g: g, r: rankFor(g) }; });
+    withRank.sort(function (a, b) {
+      var ra = a.r, rb = b.r;
+      for (var i = 0; i < Math.max(ra.length, rb.length); i++) {
+        var va = ra[i] === undefined ? 0 : ra[i], vb = rb[i] === undefined ? 0 : rb[i];
+        if (va < vb) return -1 * (i === 0 ? 1 : state.sortDir);
+        if (va > vb) return 1 * (i === 0 ? 1 : state.sortDir);
+      }
+      return 0;
+    });
+    return withRank.map(function (x) { return x.g; });
+  }
+
+  // ------------------------------------------------------------ render: filters
+
+  function familyLabel(fam) { return fam; }
+
+  function renderFilters() {
+    var host = document.getElementById("filters");
+    host.innerHTML = "";
+
+    var h2e = document.createElement("h2"); h2e.textContent = "Engines"; host.appendChild(h2e);
+    var engBtns = document.createElement("div"); engBtns.className = "btn-row";
+    engBtns.appendChild(mkSmallBtn("all", function () { state.testees = null; rerenderAll(); }));
+    engBtns.appendChild(mkSmallBtn("none", function () { state.testees = {}; rerenderAll(); }));
+    host.appendChild(engBtns);
+
+    var famNames = Object.keys(domain.families).sort();
+    famNames.forEach(function (fam) {
+      var variants = domain.families[fam].variants;
+      var varNames = Object.keys(variants).sort();
+      var allTesteesOfFam = [];
+      varNames.forEach(function (v) { Object.keys(variants[v].pins).forEach(function (p) {
+        allTesteesOfFam.push(testeeIdOf(fam, v, p));
+      }); });
+      var famChecked = allTesteesOfFam.filter(function (t) { return isSelected(state.testees, t); });
+      var famState = famChecked.length === 0 ? "unchecked" : famChecked.length === allTesteesOfFam.length ? "checked" : "indeterminate";
+
+      var node = document.createElement("div"); node.className = "tree-node";
+      var row = document.createElement("div"); row.className = "tree-row";
+      var cb = document.createElement("input"); cb.type = "checkbox";
+      cb.checked = famState === "checked";
+      cb.indeterminate = famState === "indeterminate";
+      cb.addEventListener("change", function () {
+        setTesteesSelected(allTesteesOfFam, cb.checked);
+        rerenderAll();
+      });
+      var lbl = document.createElement("label"); lbl.textContent = familyLabel(fam);
+      lbl.addEventListener("click", function () { cb.click(); });
+      row.appendChild(cb); row.appendChild(lbl);
+      var cnt = document.createElement("span"); cnt.className = "tree-count"; cnt.textContent = allTesteesOfFam.length;
+      row.appendChild(cnt);
+      node.appendChild(row);
+
+      var kids = document.createElement("div"); kids.className = "tree-children";
+      varNames.forEach(function (v) {
+        var pins = Object.keys(variants[v].pins).sort();
+        var varTestees = pins.map(function (p) { return testeeIdOf(fam, v, p); });
+        var vChecked = varTestees.filter(function (t) { return isSelected(state.testees, t); });
+        var vState = vChecked.length === 0 ? "unchecked" : vChecked.length === varTestees.length ? "checked" : "indeterminate";
+
+        var vnode = document.createElement("div"); vnode.className = "tree-node";
+        var vrow = document.createElement("div"); vrow.className = "tree-row";
+        var vcb = document.createElement("input"); vcb.type = "checkbox";
+        vcb.checked = vState === "checked"; vcb.indeterminate = vState === "indeterminate";
+        vcb.addEventListener("change", function () { setTesteesSelected(varTestees, vcb.checked); rerenderAll(); });
+        var vlbl = document.createElement("label"); vlbl.textContent = v;
+        vlbl.addEventListener("click", function () { vcb.click(); });
+        vrow.appendChild(vcb); vrow.appendChild(vlbl);
+        vnode.appendChild(vrow);
+
+        if (pins.length > 1) {
+          var pkids = document.createElement("div"); pkids.className = "tree-children";
+          pins.forEach(function (p) {
+            var tid = testeeIdOf(fam, v, p);
+            var prow = document.createElement("div"); prow.className = "chk-row";
+            var pcb = document.createElement("input"); pcb.type = "checkbox";
+            pcb.checked = isSelected(state.testees, tid);
+            pcb.addEventListener("change", function () { setTesteesSelected([tid], pcb.checked); rerenderAll(); });
+            var plbl = document.createElement("label"); plbl.textContent = p || "(no pin)"; plbl.title = tid;
+            plbl.addEventListener("click", function () { pcb.click(); });
+            prow.appendChild(pcb); prow.appendChild(plbl);
+            pkids.appendChild(prow);
+          });
+          vnode.appendChild(pkids);
+        }
+        kids.appendChild(vnode);
+      });
+      node.appendChild(kids);
+      host.appendChild(node);
+    });
+
+    // -------- areas (sets)
+    var h2s = document.createElement("h2"); h2s.textContent = "Sets"; host.appendChild(h2s);
+    Object.keys(domain.sets).sort().forEach(function (sk) {
+      var info = domain.sets[sk];
+      var row = document.createElement("div"); row.className = "chk-row";
+      var cb = document.createElement("input"); cb.type = "checkbox";
+      cb.checked = isSelected(state.sets, sk);
+      cb.addEventListener("change", function () {
+        state.sets = toggleInSet(state.sets, Object.keys(domain.sets), sk, cb.checked);
+        rerenderAll();
+      });
+      var lbl = document.createElement("label");
+      lbl.textContent = sk + (info.missing ? " (data file missing)" : "");
+      if (info.missing) lbl.style.color = "var(--status-refused-fg)";
+      lbl.addEventListener("click", function () { cb.click(); });
+      row.appendChild(cb); row.appendChild(lbl);
+      host.appendChild(row);
+    });
+
+    // -------- regime
+    var h2r = document.createElement("h2"); h2r.textContent = "Regime"; host.appendChild(h2r);
+    Object.keys(domain.regimes).sort().forEach(function (rg) {
+      var row = document.createElement("div"); row.className = "chk-row";
+      var cb = document.createElement("input"); cb.type = "checkbox";
+      cb.checked = isSelected(state.regimes, rg);
+      cb.addEventListener("change", function () {
+        state.regimes = toggleInSet(state.regimes, Object.keys(domain.regimes), rg, cb.checked);
+        rerenderAll();
+      });
+      var lbl = document.createElement("label"); lbl.textContent = rg || "(none / did-not-compile)";
+      lbl.addEventListener("click", function () { cb.click(); });
+      row.appendChild(cb); row.appendChild(lbl);
+      host.appendChild(row);
+    });
+
+    // -------- form
+    var h2f = document.createElement("h2"); h2f.textContent = "Form"; host.appendChild(h2f);
+    Object.keys(domain.forms).sort().forEach(function (f) {
+      var row = document.createElement("div"); row.className = "chk-row";
+      var cb = document.createElement("input"); cb.type = "checkbox";
+      cb.checked = isSelected(state.forms, f);
+      cb.addEventListener("change", function () {
+        state.forms = toggleInSet(state.forms, Object.keys(domain.forms), f, cb.checked);
+        rerenderAll();
+      });
+      var lbl = document.createElement("label"); lbl.textContent = f;
+      lbl.addEventListener("click", function () { cb.click(); });
+      row.appendChild(cb); row.appendChild(lbl);
+      host.appendChild(row);
+    });
+
+    // -------- pattern search
+    var h2p = document.createElement("h2"); h2p.textContent = "Pattern"; host.appendChild(h2p);
+    var search = document.createElement("input");
+    search.type = "search"; search.placeholder = "substring…"; search.value = state.q;
+    var debounced = debounce(function (v) { state.q = v; rerenderAll(); }, 120);
+    search.addEventListener("input", function () { debounced(search.value); });
+    host.appendChild(search);
+
+    // -------- status
+    var h2st = document.createElement("h2"); h2st.textContent = "Status"; host.appendChild(h2st);
+    var srow = document.createElement("div"); srow.className = "chk-row";
+    var scb = document.createElement("input"); scb.type = "checkbox"; scb.checked = state.showNonMeasured;
+    scb.addEventListener("change", function () { state.showNonMeasured = scb.checked; rerenderAll(); });
+    var slbl = document.createElement("label"); slbl.textContent = "show refusals / failures";
+    slbl.addEventListener("click", function () { scb.click(); });
+    srow.appendChild(scb); srow.appendChild(slbl);
+    host.appendChild(srow);
+  }
+
+  function mkSmallBtn(text, onClick) {
+    var b = document.createElement("button"); b.type = "button"; b.className = "small-btn";
+    b.textContent = text; b.addEventListener("click", onClick);
+    return b;
+  }
+
+  function toggleInSet(setOrNull, allValues, value, checked) {
+    var cur = setOrNull === null ? Object.create(null) : Object.assign(Object.create(null), setOrNull);
+    if (setOrNull === null) allValues.forEach(function (v) { cur[v] = true; });
+    if (checked) cur[value] = true; else delete cur[value];
+    if (Object.keys(cur).length === allValues.length) return null;
+    return cur;
+  }
+
+  function setTesteesSelected(ids, checked) {
+    var cur = state.testees === null ? Object.create(null) : Object.assign(Object.create(null), state.testees);
+    if (state.testees === null) allTesteeIds().forEach(function (t) { cur[t] = true; });
+    ids.forEach(function (id) { if (checked) cur[id] = true; else delete cur[id]; });
+    if (Object.keys(cur).length === allTesteeIds().length) state.testees = null;
+    else state.testees = cur;
+  }
+
+  function testeeIdOf(fam, variant, pin) {
+    // Recovers the real testee_id for a (family, variant, pin) leaf from
+    // `testeeIndex` (built once per data load) -- the exported testee_id
+    // is each row's own field, never reconstructed by string-pasting (a
+    // pcrec config_extra token can itself contain "_", so pasting would
+    // not round-trip). O(testees), not O(rows): this used to scan
+    // `allRows` per leaf per render, the same class of cost renderTable's
+    // perf note fixes.
+    var ids = Object.keys(testeeIndex);
+    for (var i = 0; i < ids.length; i++) {
+      var info = testeeIndex[ids[i]];
+      if (info.family === fam && info.variant === variant && info.pin === pin) return ids[i];
+    }
+    return fam + "_" + pin + "_" + variant; // unreachable in practice
+  }
+
+  // --------------------------------------------------------- render: controls
+
+  function renderControls() {
+    var host = document.getElementById("controls-row");
+    host.innerHTML = "";
+    var mg = document.createElement("div"); mg.className = "metric-group";
+    [["ns", "median ns"], ["mbps", "MB/s"], ["best", "× best-in-row"]].forEach(function (pair) {
+      var b = document.createElement("button"); b.type = "button";
+      b.textContent = pair[1];
+      if (state.metric === pair[0]) b.className = "active";
+      b.addEventListener("click", function () { state.metric = pair[0]; rerenderAll(); });
+      mg.appendChild(b);
+    });
+    host.appendChild(mg);
+
+    var resetBtn = mkSmallBtn("reset view", function () {
+      state = defaultState();
+      applyTheme();
+      persist();
+      rerenderAll();
+    });
+    host.appendChild(resetBtn);
+  }
+
+  // ------------------------------------------------------------ render: table
+
+  function statusChipHtml(st) {
+    var cls = "chip chip-" + st;
+    return '<span class="' + cls + '">' + escapeHtml(st) + "</span>";
+  }
+
+  function cellDisplay(cellRow, bestNs) {
+    if (!cellRow) return { html: '<span class="dash">&ndash;</span>', best: false };
+    if (cellRow.status !== "measured") return { html: statusChipHtml(cellRow.status), best: false };
+    if (state.metric === "ns") {
+      return { html: escapeHtml(fmtNs(cellRow.median_ns)), best: bestNs !== null && cellRow.median_ns === bestNs };
+    }
+    if (state.metric === "mbps") {
+      var m = fmtMbps(cellRow);
+      return { html: m === null ? '<span class="dash">n/a (no size)</span>' : (m).toFixed(1) + " MB/s", best: false };
+    }
+    // best
+    if (bestNs === null || !bestNs) return { html: '<span class="dash">&ndash;</span>', best: false };
+    var ratio = cellRow.median_ns / bestNs;
+    return { html: ratio.toFixed(3) + "×", best: ratio === 1 };
+  }
+
+  function tooltipText(cellRow) {
+    if (!cellRow) return null;
+    var lines = [];
+    if (cellRow.status === "measured") {
+      lines.push(["spread", fmtNs(cellRow.spread_lo_ns) + " – " + fmtNs(cellRow.spread_hi_ns)]);
+      lines.push(["n_subjects", cellRow.n_subjects]);
+    } else if (cellRow.diagnostic) {
+      lines.push(["diagnostic", cellRow.diagnostic]);
+    }
+    lines.push(["record_id", cellRow.record_id]);
+    lines.push(["pin", cellRow.pin]);
+    lines.push(["measured_utc", cellRow.measured_utc]);
+    return lines;
+  }
+
+  function showTooltip(evt, cellRow) {
+    var lines = tooltipText(cellRow);
+    if (!lines) return;
+    var tt = document.getElementById("tooltip");
+    tt.innerHTML = lines.map(function (kv) {
+      return '<div class="tt-row"><span class="tt-k">' + escapeHtml(kv[0]) + ':</span>' + escapeHtml(String(kv[1])) + "</div>";
+    }).join("");
+    tt.style.display = "block";
+    positionTooltip(evt);
+  }
+  function positionTooltip(evt) {
+    var tt = document.getElementById("tooltip");
+    var x = evt.clientX + 14, y = evt.clientY + 14;
+    var vw = window.innerWidth, vh = window.innerHeight;
+    tt.style.left = Math.min(x, vw - 350) + "px";
+    tt.style.top = Math.min(y, vh - 120) + "px";
+  }
+  function hideTooltip() { document.getElementById("tooltip").style.display = "none"; }
+
+  function sortIndicatorFor(kind, testeeId) {
+    if (state.sortKind !== kind) return "";
+    if (kind === "testee" && state.sortTestee !== testeeId) return "";
+    return state.sortDir === 1 ? " ▲" : " ▼";
+  }
+
+  function applySortClick(kind, testeeId) {
+    if (state.sortKind === kind && (kind !== "testee" || state.sortTestee === testeeId)) {
+      state.sortDir = -state.sortDir;
+    } else {
+      state.sortKind = kind; state.sortTestee = testeeId || null; state.sortDir = 1;
+    }
+    rerenderAll();
+  }
+
+  // Perf: at production scale (a full default export, no canonical-roster
+  // narrowing -- every ablation testee is its own column, ~45 columns x
+  // ~1300 rows measured on the real store) a per-cell createElement +
+  // addEventListener re-render measured ~965 ms, ~20x the design note's
+  // <50 ms budget (which assumed a ~16-column roster). Two fixes, both
+  // applied here: (1) the table body is built as ONE html string and set
+  // via innerHTML once, instead of ~60,000 individual DOM-API calls; (2)
+  // tooltip/click handling is DELEGATED -- one listener on #table-scroll,
+  // not two per cell -- reading a small per-render registry
+  // (`cellRegistry`) indexed by a `data-cid` the row html carries, so the
+  // handler never needs to re-parse the DOM to recover a cell's data.
+  var cellRegistry = [];
+  var tableListenersBound = false;
+
+  function bindTableDelegation() {
+    if (tableListenersBound) return;
+    tableListenersBound = true;
+    var scroll = document.getElementById("table-scroll");
+    scroll.addEventListener("mousemove", function (e) {
+      var td = e.target.closest && e.target.closest("td.cell[data-cid]");
+      if (!td) { hideTooltip(); return; }
+      var c = cellRegistry[Number(td.getAttribute("data-cid"))];
+      if (c) showTooltip(e, c); else hideTooltip();
+    });
+    scroll.addEventListener("mouseleave", hideTooltip, true);
+    scroll.addEventListener("click", function (e) {
+      var th = e.target.closest && e.target.closest("th[data-sort]");
+      if (!th) return;
+      var kind = th.getAttribute("data-sort");
+      var testeeId = th.getAttribute("data-testee") || null;
+      applySortClick(kind === "pattern" && e.shiftKey ? "set" : kind, testeeId);
+    });
+  }
+
+  function renderTable() {
+    var scroll = document.getElementById("table-scroll");
+    var rows = filteredRows();
+    var testees = visibleTestees();
+    cellRegistry = [];
+
+    if (!rows.length || !testees.length) {
+      scroll.innerHTML = "";
+      var d = document.createElement("div"); d.id = "empty-state";
+      d.textContent = !testees.length ? "No engines selected." : "No rows match the current filters.";
+      scroll.appendChild(d);
+      updateSummary(0, testees.length);
+      return;
+    }
+
+    var groups = buildMatrixRows(rows);
+    groups = sortGroups(groups, testees);
+
+    // family bands over the visible testee columns, in family/variant/pin
+    // order -- ONE pass over `testees` (not one `allRows.find` scan PER
+    // testee PER render, the earlier version's real cost) using the
+    // domain-wide index `buildDomain()` already computed.
+    var famOrder = [];
+    var famOf = Object.create(null);
+    var pinOf = Object.create(null);
+    var variantOf = Object.create(null);
+    testees.forEach(function (t) {
+      var info = testeeIndex[t];
+      var fam = info ? info.family : "?";
+      famOf[t] = fam; pinOf[t] = info ? info.pin : ""; variantOf[t] = info ? info.variant : t;
+      if (famOrder.indexOf(fam) === -1) famOrder.push(fam);
+    });
+    testees.sort(function (a, b) {
+      var fa = famOrder.indexOf(famOf[a]), fb = famOrder.indexOf(famOf[b]);
+      if (fa !== fb) return fa - fb;
+      return a < b ? -1 : a > b ? 1 : 0;
+    });
+    var bandCounts = Object.create(null);
+    testees.forEach(function (t) { bandCounts[famOf[t]] = (bandCounts[famOf[t]] || 0) + 1; });
+
+    var bandHtml = ['<tr><th class="rowhead-band"></th>'];
+    famOrder.forEach(function (fam) {
+      bandHtml.push('<th class="fam-band" colspan="' + bandCounts[fam] + '">' + escapeHtml(fam) + "</th>");
+    });
+    bandHtml.push("</tr>");
+
+    var labelHtml = ['<tr class="col-labels"><th class="sortable" data-sort="pattern" ' +
+      'title="click: sort by pattern name (shift-click: sort by set)">set / pattern' +
+      sortIndicatorFor("pattern", null) + "</th>"];
+    testees.forEach(function (t) {
+      labelHtml.push('<th class="cell-head sortable" data-sort="testee" data-testee="' +
+        escapeHtml(t) + '" title="' + escapeHtml(t) + '">' + escapeHtml(variantOf[t]) +
+        sortIndicatorFor("testee", t) + '<span class="variant">' + escapeHtml(pinOf[t]) + "</span></th>");
+    });
+    labelHtml.push("</tr>");
+
+    var bodyHtml = [];
+    groups.forEach(function (g) {
+      var best = computeBest(g, testees);
+      bodyHtml.push('<tr><th class="rowhead"><span class="pattern">' + escapeHtml(g.pattern) +
+        '</span><span class="meta">' + escapeHtml(g.set) +
+        (g.regime ? " · " + escapeHtml(g.regime) : " · (no regime)") +
+        (g.form !== "plain" ? " · " + escapeHtml(g.form) : "") + "</span></th>");
+      testees.forEach(function (t) {
+        var c = g.cells[t];
+        var disp = cellDisplay(c, best.ns);
+        var cidAttr = "";
+        if (c) { cidAttr = ' data-cid="' + cellRegistry.length + '"'; cellRegistry.push(c); }
+        bodyHtml.push('<td class="cell num' + (disp.best ? " best" : "") + '"' + cidAttr + ">" + disp.html + "</td>");
+      });
+      bodyHtml.push("</tr>");
+    });
+
+    scroll.innerHTML =
+      '<table class="matrix"><thead>' + bandHtml.join("") + labelHtml.join("") +
+      "</thead><tbody>" + bodyHtml.join("") + "</tbody></table>";
+    bindTableDelegation();
+    updateSummary(groups.length, testees.length);
+  }
+
+  function updateSummary(nRows, nTestees) {
+    var el = document.getElementById("summary-line");
+    var missing = Object.keys(domain.sets).filter(function (s) { return domain.sets[s].missing; });
+    var bits = [nRows + " row(s)", nTestees + " engine column(s)"];
+    if (missing.length) bits.push(missing.length + " set data file missing: " + missing.join(", "));
+    el.textContent = bits.join(" · ");
+  }
+
+  // ------------------------------------------------------------ footer
+
+  function renderFooter() {
+    var m = window.BENCH._manifest;
+    var el = document.getElementById("pagefoot");
+    el.textContent = "generated " + m.generated_utc + " from " + m.store_rows +
+      " store/index.tsv row(s)" + (m.all_pins ? " (all pins)" : " (newest pin per canonical identity)") +
+      " · regenerate with `make viewer-data` · never a ranking input";
+  }
+
+  // -------------------------------------------------------------- glue
+
+  function rerenderAll() {
+    renderFilters();
+    renderControls();
+    renderTable();
+    persist();
+  }
+
+  function init() {
+    domain = buildDomain();
+    var persisted = loadPersisted();
+    state = persisted || defaultState();
+    applyTheme();
+    document.getElementById("theme-btn").addEventListener("click", cycleTheme);
+    window.addEventListener("hashchange", function () {
+      var st = hashToState();
+      if (st) { state = st; applyTheme(); rerenderAll(); }
+    });
+    renderFooter();
+    rerenderAll();
+  }
+
+  return { init: init };
+})();
+
+document.addEventListener("DOMContentLoaded", boot);
+</script>
+</body>
+</html>

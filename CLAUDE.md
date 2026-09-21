@@ -499,7 +499,13 @@ bindings) live here, vendored or system, pinned either way.
   `schema/` deliberately: a format with a version, a validator and a
   fixture corpus. **Append the new pin to `[[pin_order]]` at every
   re-pin.** See its CLAUDE.md.
-- `tools/` — `selfcheck.py`, the harness half of `make check`.
+- `tools/` — `selfcheck.py`, the harness half of `make check`;
+  `viewer_export.py` ([B66]), the results viewer's data exporter.
+- `viewer/` — THE RESULTS VIEWER ([B66], docs/design/results_viewer_v1.md):
+  a single self-contained `viewer.html` (no server, no build step, works
+  from `file://`) over `data/*.js` (generated, committed, `make
+  viewer-data`) — a READING AID over the canonical store's set-grain
+  results, never a canonical surface. See its CLAUDE.md.
 - `.claude/skills/pcrec-bench-manager/` — the manager-session skill.
 - Planned (not yet created): `pcrecbench/report.py` ([B5]).
 
@@ -714,6 +720,11 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # box); a re-pin-time sweep, NOT part of `make
                         # check`'s smoke budget. Exits 0 on refusal-set
                         # parity, 1 on a divergence.
+    make viewer-data     # [B66] regenerate viewer/data/*.js from store/
+                        # (tools/viewer_export.py; not part of `make
+                        # check` -- the viewer is a reading aid, never a
+                        # gate). `make viewer-data ARGS="--sets loglines"`
+                        # for a development slice.
     make help           # list the targets
 
 `make check` is a SMOKE SUITE, never a measurement: `--trials 1 --iters 1`,

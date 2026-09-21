@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check check-schema check-harness check-report check-interpret deps help archive-inbox cc-gate-census
+.PHONY: check check-schema check-harness check-report check-interpret deps help archive-inbox cc-gate-census viewer-data
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -225,6 +225,16 @@ cc-gate-census:
 ## to preview.
 archive-inbox:
 	$(PYTHON) tools/archive_inbox.py $(ARGS)
+
+## viewer-data: regenerate viewer/data/*.js from store/ ([B66],
+## docs/design/results_viewer_v1.md). Reduces via the SAME
+## pcrecbench.reduce code path the reporter uses (number identity, R11)
+## -- never a build step for viewer.html itself, which is static and
+## self-contained. `make viewer-data ARGS="--sets loglines --all-pins"`
+## passes extra flags through (a development slice, or every pin's own
+## column instead of the newest-per-canonical-identity default).
+viewer-data:
+	$(PYTHON) tools/viewer_export.py $(ARGS)
 
 ## help: list the targets
 help:
