@@ -5324,3 +5324,16 @@ ext-bench testees across six engines.
 - Board: no lanes, no crons but the heartbeat, box free, master
   synced at 861f22d. Store 210. Nothing owed anywhere; next
   discretionary work = the parked smalls or Frank's next word.
+
+## 2026-09-21 (late afternoon) — KB-24 fixed properly (lane b68kb24 merged)
+
+- interpret.py's identity reducer now tags kind from the values
+  ("token" for non-numeric), _measured_text gained a real token
+  branch; _op_holds untouched so no verdict can move — proven:
+  P1-P4 re-scored byte-identical to b60's monkeypatched originals,
+  30/30 sidecars regenerate unchanged (code-only, no bump). Candidate
+  (a) over (b) for a live reason: SIX committed predictions files now
+  carry identity+delta_verdict; (b)'s load-time refusal would have
+  broken them all. check-interpret 178→182 (the crash-reproducing
+  fixture pair, both directions). The b60-era scratch monkeypatch is
+  retired.
