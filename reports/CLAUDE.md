@@ -784,6 +784,66 @@ unscorable in this shape).
   fixed, `docs/dev/lanes/b59rustwave_report.md` has the full lane
   account.
 
+**[B60] report (2026-09-20, lane b60pinconfirm) ADDED one file group —
+the [B58] pin's (cf0962e3 -> 25b1984f, [EMIT-VERB]/D112) acceptance
+AFTER on the MEASURED (time) axis, `bench/capability@0.1`'s only
+genuine cf0962e3 sample.** Reporter unchanged at `v18 (2026-09-18)`; no
+other committed report regenerated.
+
+- `2026-09-20-capability-0.1-budu-ryzen1600-pinconfirm-25b1984f.md` —
+  the pcrec CROSS-PIN acceptance AFTER, cf0962e3 vs 25b1984f, plus the
+  three pcre2 baselines: eleven testees, four cells fresh
+  (`pcrec_25b1984f_{auto,auto-nocaps,vm,vm-in}-caps-simdna`,
+  22:34:10Z-2026-09-21T00:18:07Z), same KB-5 `--testee` roster shape as
+  the [B48] AFTER precedent (`2026-09-18-*-after-cf0962e3.md`). Query:
+  `report --subbench capability --version 0.1 --since
+  2026-09-17T00:00:00Z --until 2026-09-21T01:10:00Z` plus the eleven
+  `--testee` values (three pcre2 + four pcrec_cf0962e3_* + four
+  pcrec_25b1984f_*) — **12 record(s) matching this query, 11 included,
+  1 superseded** (the same pcre2-dfa `inconclusive-spread` history row
+  the precedent superseded; the since/until bracket also spans the
+  a770139e records from 2026-09-17, excluded by the explicit roster, not
+  by date). `worst_other_core_busy: 58.96%`
+  (`pcrec_25b1984f_auto-nocaps-simdna` / `wild-waf-crs-942140-dbnames` /
+  `large-subject-throughput`). `.subject-grain.md`/`.subject-grain.tsv`
+  (the catalogue-2.0 slice) and `.matrix.tsv`/`.matrix.html` (128 rows,
+  11 testees) the same query.
+
+  **Predictions (`docs/dev/predictions/capability-0.1-pin-25b1984f-
+  confirm.tsv`, P1-P4, one per pcrec testee, each `delta_verdict
+  eq-token unchanged (within spread)` over every ranked cell): all four
+  REFUTED**, scored 2026-09-20 via a direct `interpret.evaluate_
+  predictions` call (the documented F27 CLI gap — this population
+  necessarily includes the already-measured cf0962e3 records) —
+  738/750/732/732 ranked values per parent, every refutation a single
+  `eq-token` mismatch on a non-"unchanged" delta_verdict token, exactly
+  as the file's own grounding anticipated (a strict eq-token clause
+  registers ordinary trial-level boundary jitter as refuted by
+  construction; refutation alone is not a systematic-mover finding).
+  **Scoring this file also found a NEW interpreter bug**
+  (`docs/dev/known_issues.md` KB-24): `evaluate_predictions` crashes
+  outright on any `quantity=delta_verdict` clause (the first ever
+  authored) — `_measured_text` assumes every `identity`-reduced
+  "num"-kind value is numeric, and `delta_verdict`'s values are string
+  tokens; scored via a scratch monkeypatch of the broken formatting
+  helper only, `_op_holds` (the real predicate) untouched.
+
+  **R-DELTA-1 fired 32 times** (aggregated to 14 by regime × config ×
+  direction in the sidecar), every ratio in [1.00, 1.08] — consistent
+  with the historical ≤×1.04 ordinary-jitter ceiling except ONE
+  genuine, tight, isolated mover: `wild-datetime-moment-iso8601` /
+  `short-subject-search` / `pcrec_25b1984f_vm-in-caps-simdna` reads
+  **slower ×1.08** (median 6,298.94ns cf0962e3 -> 6,808.08ns 25b1984f;
+  stddev 2.78ns/1.77ns respectively — the delta is ~91× the rule's own
+  2×stddev spread threshold) while the SAME pattern on
+  auto-caps/auto-nocaps/vm-caps all read `unchanged (within spread)` —
+  isolated to the caller-provided frame-buffer route
+  (`pcrec-vm-in`). **FLAGGED for the manager's outbox, not absorbed**:
+  this is the one cell in the whole cross-pin comparison too tight and
+  too reproducible to be ordinary spread, and [EMIT-VERB]/D112's claim
+  was that NOTHING measuring time moves. `docs/dev/lanes/
+  b60pinconfirm_report.md` has the full derivation.
+
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
 CLS-FOLD AFTER** — and changed NOTHING else here: the reporter is

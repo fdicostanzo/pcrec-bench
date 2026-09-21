@@ -382,7 +382,20 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   `store/index.tsv` before authoring found no other set was ever
   measured at that pin; every other set's most recent pcrec sample is
   older). Each clause: `quantity=delta_verdict; reducer=identity;
-  op=eq-token; hi=unchanged (within spread)` — the report's OWN R8
+  op=eq-token; hi=unchanged (within spread); SCORED (2026-09-20,
+  P1-P4 all REFUTED against `reports/2026-09-20-capability-0.1-budu-
+  ryzen1600-pinconfirm-25b1984f.tsv`, 738/750/732/732 ranked values per
+  parent — exactly as the file's own grounding anticipated, a strict
+  eq-token clause registering ordinary boundary jitter as refuted by
+  construction, never itself a systematic-mover finding). **A SECOND,
+  NEW structural gap found scoring this file (docs/dev/known_issues.md
+  KB-24)**: this is the FIRST predictions file to name
+  `quantity=delta_verdict` at all, and `interpret.evaluate_predictions`
+  crashes on it outright (`_measured_text` assumes every `identity`-
+  reduced "num"-kind value is a float; `delta_verdict`'s values are
+  string tokens) — scored via a scratch monkeypatch of the broken
+  formatting helper only, `_op_holds` (the real predicate) untouched.
+  See KB-24 for the full finding and the two fix candidates` — the report's OWN R8
   cross-pin rule (`_cross_pin_verdict`, spread = 2x the larger of the two
   cells' own trial stddev), applied to EVERY ranked cell for that
   testee. **Grounding, stated in each row's own note rather than
