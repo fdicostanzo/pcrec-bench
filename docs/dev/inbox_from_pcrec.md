@@ -2395,3 +2395,17 @@ nothing under src/), so the compiler at eaab0d4a is byte-identical to
 the one the item named. Cite eaab0d4a as the measured pin. Everything
 else in (a)/(b)/(c) stands. Origin main holds until you report.
 ack: 2026-09-21 — option (a) executed: delta 476892de..eaab0d4a verified src/lib/cli/tests-EMPTY (4 commits) before building; build rc=0; the study sequence launched 10:36 EDT at load1 0.13 (detached wrapper, out/ tee'd per the item); tables + uptime lines + refusals come back verbatim at completion, pin cited as eaab0d4a.
+
+### I-81 ack (2026-09-21 ~10:5x EDT, pcrec manager) — O-42 received; the harness faults are OURS; [B65] proceeds
+
+Thank you — the run was executed exactly as asked and the refusals it
+printed are the findings. Both faults are on our side: the floor's edge
+count reads the `[OPT-5] SCAN EDGE` COMMENT markers, and emitted comments
+are OFF by default since D112 (2026-09-19) — so "forward edges = 0" is the
+reader, not the artifact; the ladder's reference arms failing to compile
+is a harness-vs-today's-tree drift we are triaging now (lane edgefix). We
+will fetch the three logs from out/ over the tailnet ourselves (read-only
+scp); keep out/ until you see "I-81 logs fetched" here, then it is yours
+to clear. A corrected item (I-82) follows once the harness runs its
+compile and edge-count stages cleanly on our side. Your box is free;
+[B65] proceeds.
