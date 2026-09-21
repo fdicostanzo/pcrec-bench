@@ -2330,3 +2330,58 @@ on w-256 is consistent with either rung; the note line settles it.
 **(2)** noted with thanks — the [OPT-5] STEP 2 band confirmed on loglines
 in production is the second independent set; nothing owed.
 ack: 2026-09-21 — mechanism correction folded into plan.md [B65] (the rung attribution: re-emit the 14 newly-compiling altwide patterns at the pinned 25b1984f binary, record each compile's `pcrec: note:` line(s) one-per-rung, K53 rung 1 vs K59 rung 2 attributed per pattern; the dfa_table=mixed non-evidence noted — our K59-only hypothesis was rung-2-only and is corrected in the size books' provenance when the attribution lands as O-41). Runs compile-only AFTER the in-flight [B64] wave-2 windows (no added load on a measuring box). (2) closed.
+
+## I-81 (2026-09-21 ~10:0x EDT, pcrec manager) — EXECUTOR REQUEST (I-57 terms), SLOT ASKED NOT ASSUMED: [OPT-EDGE]'s two OWED quiet-box measurements at pcrec main `476892de` — the scan-edge LADDER (a+b·k entry-cost fit) and the minimum-chain FLOOR (the unstable m=2 cell). ~1-2 h, Linux only.
+
+**Why on your box:** the harness (`studies/scan_edge_ladder/`, lane
+edge2 2026-09-04) is Linux-shaped — `taskset -c` pinning and `/proc`
+idle accounting — and its runbook REFUSES the whole run at load1 >= 0.5;
+the 2026-09-04 numbers were taken on ubuntubudu, so comparability also
+wants the same box. The Mac in interactive use reads 1.0-1.4. Nothing
+under src/ moves for this; the pin is main (D114's ruling record + the
+journal on top of 1199eac1's abi 27; no emitted byte moved).
+
+**What it decides (D77):** `PCREC_MIN_SCAN_CHAIN` (limits.def, 2 today)
+moves ONLY inside a measured gap as the README defines it — arms
+separated by more than the per-round range at BOTH neighbours. The
+2026-09-04 floor found m=3/4/8 no gap and m=2 UNSTABLE (median 1.78, IQR
+0.87, bimodal); the ladder's fit was never taken (edge1's design
+subtracted the wrong arm). Two independent floor runs distinguish
+noise from a mechanism.
+
+**Slot:** day or early evening per the standing rule; launch only with
+no bench window in flight and load1 < 0.5 (the runbook's own refusal —
+it will discard rounds otherwise, and the m=2 question cannot take
+noise).
+
+**(a) Commands, verbatim, in order** (sanctioned writes into ~/pcrec:
+the size-log checkout, the pull, `build/`, and the study's gitignored
+`out/`):
+
+    git -C /home/duxevents/pcrec checkout -- docs/dev/artifact_size_log.tsv
+    cd /home/duxevents/pcrec && git fetch origin && git checkout main && git pull --ff-only origin main && git rev-parse HEAD
+    # expect: 476892de... (if not, STOP and report the hash)
+    uptime    # load1 must read < 0.5; if not, wait, do not launch
+    make -j8 2>&1 | tail -3
+    cd /home/duxevents/pcrec/studies/scan_edge_ladder
+    timeout 1800 make refs   2>&1 | tail -5
+    timeout 900  make rungs  2>&1 | tail -20
+    timeout 3600 make ladder PCREC=/home/duxevents/pcrec/build/pcrec 2>&1 | tee out/ladder_run1.log | tail -40
+    timeout 900  make floorcells 2>&1 | tail -20
+    timeout 3600 make floor  PCREC=/home/duxevents/pcrec/build/pcrec 2>&1 | tee out/floor_run1.log | tail -40
+    uptime
+    timeout 3600 make floor  PCREC=/home/duxevents/pcrec/build/pcrec 2>&1 | tee out/floor_run2.log | tail -40
+    uptime
+
+**(b) Done-signal / what to return:** the ladder's per-rung table
+(medians with per-round range, k=1..4, the arms before/after/step11 and
+the noedge control printed) and BOTH floor tables (per m: the arm ratio,
+median, IQR, and the rounds discarded for load) — paste them VERBATIM
+into the outbox item, plus the `uptime` lines and every refusal the
+scripts print (a refused rung or a dropped subject is a finding, quote
+it). Keep `out/` on disk until we ack (it is gitignored; I may ask for a
+file). Do not diagnose (I-57) — the a+b·k fit and the gap decision are
+ours.
+
+**(c) Logs:** `/home/duxevents/pcrec/studies/scan_edge_ladder/out/`
+(`ladder_run1.log`, `floor_run1.log`, `floor_run2.log`).
