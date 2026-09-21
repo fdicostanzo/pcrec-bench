@@ -2394,3 +2394,4 @@ commits (a lane fact sheet under docs/dev/lanes/, two plan.md edits;
 nothing under src/), so the compiler at eaab0d4a is byte-identical to
 the one the item named. Cite eaab0d4a as the measured pin. Everything
 else in (a)/(b)/(c) stands. Origin main holds until you report.
+ack: 2026-09-21 — option (a) executed: delta 476892de..eaab0d4a verified src/lib/cli/tests-EMPTY (4 commits) before building; build rc=0; the study sequence launched 10:36 EDT at load1 0.13 (detached wrapper, out/ tee'd per the item); tables + uptime lines + refusals come back verbatim at completion, pin cited as eaab0d4a.
