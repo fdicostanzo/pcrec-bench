@@ -1,0 +1,784 @@
+# 2026-09-20-o38-movertime-emit-diff-cf0962e3-vs-25b1984f.txt
+#
+# probe_o38_movertime_emit_diff.py -- [B62] STEP 1, inbox I-79 (ii).1: the
+# cheapest, static-only arm of the witness for O-38's one isolated `vm-in`
+# time mover (docs/dev/lanes/b60pinconfirm_report.md Section 3:
+# wild-datetime-moment-iso8601 / short-subject-search / pcrec vm-in-caps
+# +509.14 ns / x1.08 slower between the cf0962e3 sample (2026-09-18) and
+# the 25b1984f sample (2026-09-20/21), ~91x the v1.4 spread rule's own
+# 2x-stddev threshold, isolated to the vm-in route -- the three routes
+# where the artifact owns its own storage read unchanged on the SAME
+# pattern in the SAME window).
+#
+# WHAT THIS ANSWERS: pcrec's own reading (I-79 (i)) is that the emitted
+# PROGRAM text is byte-identical between the two pins with comments off,
+# so a compiler-side (emitted-code) explanation is unlikely and the
+# question is what runs differently on the vm-in route specifically. This
+# probe checks that claim DIRECTLY on the one pattern the mover fired on,
+# re-emitting it at both pinned pcrec binaries already built on this box
+# (build/pcrec-cf0962e3, build/pcrec-25b1984f) under the EXACT flags
+# testees/pcrec/adapter.py's `pcrec-vm-in` config sends (`--features all
+# --engine=vm`), with the comments-flag story gotten exactly right (see
+# the file's own header/verdict): `-fcomments` is a 25b1984f/abi-27 axis
+# ([EMIT-VERB]/D112) that does not exist at cf0962e3/abi 26 at all
+# (verified live: cf0962e3 refuses it by name) -- cf0962e3 emits full
+# comments UNCONDITIONALLY (there was nothing to toggle before [EMIT-VERB]
+# shipped), which is exactly what the adapter's own EMIT_COMMENTS_FLAG
+# protocol token (fixed on every phase-1 exec since [B58]) restores at
+# 25b1984f. Comparison A pairs cf0962e3's only mode against 25b1984f WITH
+# -fcomments -- the shape that matches what the real record-producing
+# execs at both pins actually sent. Comparison B isolates -fcomments' own
+# effect at one pin (25b1984f with vs without it) for completeness.
+#
+# Bench commit at run time: b31d3d118190d5e965a9f6157aedd53597dab814
+#   (lane b62witness, worktree worktrees/b62witness, branch lane/b62witness)
+# pcrec pins (both already built via pin.sh, reused -- no rebuild):
+#   cf0962e3  build/pcrec-cf0962e3/build/pcrec
+#             sha256 5dc1ad34cc0a2c6944c0b747bb7f998ae0cdef72ff16923732fd3e9f73df1c32
+#   25b1984f  build/pcrec-25b1984f/build/pcrec
+#             sha256 9a0a969b2bc226ea52221eb07f5a0fe665681d254577d829495adaaaec4bee93
+# Compiler: n/a -- this probe emits C only (pcrec's own `-p rx` CLI), never
+#   builds a .so or runs a driver, so no `$CC` is invoked.
+# Box: ubuntubudu, Linux 7.0.0-29-generic x86_64. Load at run time:
+#   loadavg ~0.05-0.6 (uptime, 2026-09-20 22:32 EDT) -- irrelevant either
+#   way: this is a compile-only, no-timing probe (docs/dev/measurements/
+#   CLAUDE.md rule 3's own exception, same footing as probe_rxt_format.py
+#   and probe_o29_verify.py). Lane b61matrix's report-render worktree
+#   (worktrees/b61matrix, branch lane/b61matrix) was present but showed no
+#   live process at run time; this probe's own compile-only nature makes
+#   that irrelevant too.
+# Command: `python3 docs/dev/measurements/probe_o38_movertime_emit_diff.py`
+#   from the repo root (this worktree).
+# Reproducible: the script is committed beside this file; deterministic
+#   given the same two pinned binaries (pcrec's own emit is a pure
+#   function of pattern text + flags; no randomness, no timing).
+
+# bench commit: b31d3d118190d5e965a9f6157aedd53597dab814
+# bench worktree: /home/duxevents/pcrec-bench/worktrees/b62witness
+# build root: /home/duxevents/pcrec-bench/build
+
+# pattern_id: wild-datetime-moment-iso8601
+# canonical_sha256 (verified against both records): 498a5df9aae2552bcc9344099d8fc633ef27bc3c3c76f18b062716c0f0911165
+# canonical_text: ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$
+
+# pin cf0962e3 binary: /home/duxevents/pcrec-bench/build/pcrec-cf0962e3/build/pcrec (sha256 5dc1ad34cc0a2c6944c0b747bb7f998ae0cdef72ff16923732fd3e9f73df1c32)
+# pin 25b1984f binary: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec (sha256 9a0a969b2bc226ea52221eb07f5a0fe665681d254577d829495adaaaec4bee93)
+
+# pin cf0962e3 --list-axes carries a `comments` axis: False
+# pin 25b1984f --list-axes carries a `comments` axis: True
+
+# live witness: cf0962e3 given -fcomments -> 1
+# stderr[0]: pcrec: unknown option '-fcomments' in the command line (use -- before a pattern that starts with '-')
+
+== pin cf0962e3 / no-flag-only-mode ==
+argv: /home/duxevents/pcrec-bench/build/pcrec-cf0962e3/build/pcrec -p rx --features all --engine=vm -o /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/cf0962e3/no-flag-only-mode/artifact.c -- ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$
+returncode: 0
+raw .c bytes: 38496  raw .h bytes: 12861  raw total: 51357
+emit_size() total (comment-excluded): 33723  code: 32799
+sha256 .c: e4cc27e4ab51be0db6bb0cb365f1ea0b1d376b1089313190cbd2a79397511e96
+sha256 .h: 5e585d430148bfa3034f1fbd8d7800d5085f44d7369cb1ac3782722ffaa45057
+
+== pin 25b1984f / fcomments ==
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fcomments --features all --engine=vm -o /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/25b1984f/fcomments/artifact.c -- ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$
+returncode: 0
+raw .c bytes: 38505  raw .h bytes: 12870  raw total: 51375
+emit_size() total (comment-excluded): 33723  code: 32799
+sha256 .c: 6799e82c6553a0f5567014df3dcf7f7e8822a43e1d9025fb1943094ff31d572c
+sha256 .h: 0ad873dde6680a9ad289d13dd74f65610598e7a2c8a791784b2fbc7d49830d5b
+
+== pin 25b1984f / fno-comments-default ==
+argv: /home/duxevents/pcrec-bench/build/pcrec-25b1984f/build/pcrec -p rx -fno-comments --features all --engine=vm -o /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/25b1984f/fno-comments-default/artifact.c -- ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$
+returncode: 0
+raw .c bytes: 27276  raw .h bytes: 9872  raw total: 37148
+emit_size() total (comment-excluded): 33723  code: 32799
+sha256 .c: be39852667181c8a858d21c91fbaa4fb709578d4a5e6d84a75d54819e58e5d45
+sha256 .h: db91f7353afea985f1e240c414792d0363f3b85abeebfc2a021624f419999cac
+
+############################################################
+# COMPARISON A -- THE ONE THAT MATTERS: cf0962e3's only mode
+# (no comments flag exists there; full comments unconditionally)
+# vs. 25b1984f WITH -fcomments -- this IS what
+# testees/pcrec/adapter.py actually sent on the real record-
+# producing execs at both pins (EMIT_COMMENTS_FLAG is a fixed
+# protocol token on every phase-1 exec since [B58])
+############################################################
+== diff: cf0962e3 (no flag) .c  vs  25b1984f -fcomments .c ==
+--- /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/cf0962e3/no-flag-only-mode/artifact.c	2026-09-20 22:40:51.198219568 -0400
++++ /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/25b1984f/fcomments/artifact.c	2026-09-20 22:40:51.202909721 -0400
+@@ -1,4 +1,4 @@
+-/* Generated by pcrec. Pattern: ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$ */
++/* Generated by pcrec (abi 27). Pattern: ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$ */
+ /* Feature set: all (modules: classes,unicode-props,assertions,backrefs,recursion,quoting,misc,lookaround,named-groups,atomic-groups,comments,callouts,branch-reset,conditionals,extended-classes,modifiers,verbs) */
+ #define PCREC_FEATURE_SET "all"
+ #define PCREC_FEATURE_MODULES "classes,unicode-props,assertions,backrefs,recursion,quoting,misc,lookaround,named-groups,atomic-groups,comments,callouts,branch-reset,conditionals,extended-classes,modifiers,verbs"
+@@ -821,7 +821,7 @@
+ }
+ 
+ const struct rx_info rx_info = {
+-    .abi = 26,
++    .abi = 27,
+     .flags = 0ULL,
+     .encoding = 0,
+     .ncaps = RX_NCAPS,
+
+
+== diff: cf0962e3 (no flag) .h  vs  25b1984f -fcomments .h ==
+--- /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/cf0962e3/no-flag-only-mode/artifact.h	2026-09-20 22:40:51.198527240 -0400
++++ /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/25b1984f/fcomments/artifact.h	2026-09-20 22:40:51.203107562 -0400
+@@ -1,4 +1,4 @@
+-/* Generated by pcrec. Pattern: ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$ */
++/* Generated by pcrec (abi 27). Pattern: ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$ */
+ /* Feature set: all (modules: classes,unicode-props,assertions,backrefs,recursion,quoting,misc,lookaround,named-groups,atomic-groups,comments,callouts,branch-reset,conditionals,extended-classes,modifiers,verbs) */
+ #ifndef PCREC_GEN_RX_H
+ #define PCREC_GEN_RX_H
+
+
+== classified: identical MODULO the abi-stamp lines? ==
+.c  identical-modulo-abi-stamp: True
+.h  identical-modulo-abi-stamp: True
+
+############################################################
+# COMPARISON B -- for the record only, NOT the adapter's real
+# argv: 25b1984f WITH -fcomments vs. 25b1984f WITHOUT it (its
+# new bare default). Isolates the -fcomments flag's OWN effect
+# at one pin, so a mover in comparison A could be told apart
+# from a mover the flag itself introduces (match_api.md /
+# testees/pcrec/CLAUDE.md's own claim: 'changes no answer and
+# no object byte').
+############################################################
+== diff: 25b1984f -fcomments .c  vs  25b1984f -fno-comments .c ==
+--- /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/25b1984f/fcomments/artifact.c	2026-09-20 22:40:51.202909721 -0400
++++ /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/25b1984f/fno-comments-default/artifact.c	2026-09-20 22:40:51.207308323 -0400
+@@ -1,5 +1,4 @@
+ /* Generated by pcrec (abi 27). Pattern: ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$ */
+-/* Feature set: all (modules: classes,unicode-props,assertions,backrefs,recursion,quoting,misc,lookaround,named-groups,atomic-groups,comments,callouts,branch-reset,conditionals,extended-classes,modifiers,verbs) */
+ #define PCREC_FEATURE_SET "all"
+ #define PCREC_FEATURE_MODULES "classes,unicode-props,assertions,backrefs,recursion,quoting,misc,lookaround,named-groups,atomic-groups,comments,callouts,branch-reset,conditionals,extended-classes,modifiers,verbs"
+ #define RX_ALTCLS_MERGES 1
+@@ -8,38 +7,7 @@
+ #define RX_TUNE "balanced"
+ #include "artifact.h"
+ 
+-/* =====================================================================
+- * HOW THIS MATCHER WORKS -- a map of this file
+- *
+- * This is a complete, self-contained matcher for ONE pattern:
+- *
+- *     ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$
+- *
+- * There is no pattern parser here and nothing to configure. The
+- * pattern was compiled away ahead of time; what is left is the
+- * machinery below and the entry points that drive it.
+- *
+- * This pattern reports where its capture groups matched, so the
+- * matcher is built in two halves that run one after the other:
+- *
+- *   HALF 2 -- the compiled program. One label per position in the
+- *     pattern, walked by goto, recording each group's start and end
+- *     as it passes them. Where the pattern offers a choice it pushes
+- *     a RESUME FRAME and takes the preferred branch; when a label
+- *     finds the subject does not match it jumps to the one place
+- *     that goes backwards, restoring the position and undoing the
+- *     group writes made since. Running out of frames, trail, steps
+- *     or work budget returns a distinct "gave up" code, which is
+- *     NOT the same answer as "no match".
+- *
+- * rx_search does the work. rx_match and rx_match_caps are
+- * anchored entry points, rx_next_pos is caller-facing encoding
+- * residue, and rx_info describes what this artifact is. Each is
+- * documented at its definition.
+- * ===================================================================== */
+ 
+-/* Engine: vm (forced by: capture group at pattern offset 4) */
+-/* Step steps_left: 500000000 backtrack resumptions; backtrack frames: 14 */
+ #define RX_ENGINE "vm"
+ #define RX_ENGINE_SEL "forced"
+ #define RX_ENGINE_WHY "capture group at pattern offset 4"
+@@ -59,11 +27,6 @@
+ #define RX_VM_PRUNE_CEILING "subject-end"
+ #define RX_NSLOTS 13
+ 
+-/* SLOT LEGEND -- names for the numbered cells of the slot
+- * array. A capture group occupies a PAIR of slots, its start and
+- * its end. The whole-match pair is listed for completeness: the
+- * VM does not write it unless the pattern has a \K, because the
+- * entry already knows where the attempt began. */
+ #define RX_SLOT_WHOLE_START         0
+ #define RX_SLOT_WHOLE_END           1
+ #define RX_SLOT_GROUP1_START        2
+@@ -83,14 +46,7 @@
+ #define RX_FAST_FRAMES 14
+ #define RX_FAST_TRAIL 11
+ 
+-/* One entry of the resume stack: "if you get stuck, come back to
+- * HERE". PRIVATE TO THIS FILE — the layout differs between
+- * artifacts (a call-bearing one carries two more members), which is
+- * why <prefix>_buffers takes void* and a CAPACITY rather than a
+- * typed pointer. Use <PREFIX>_RESUME_FRAME_SIZE to size storage. */
+ typedef struct { const void *resume_label; size_t resume_position; size_t trail_mark; } rx_frame;
+-/* One entry of the undo log: a slot's index and the value it held
+- * before the write being logged. Same privacy, same reason. */
+ typedef struct { unsigned slot_index; ptrdiff_t saved_value; } rx_trail_entry;
+ 
+ _Static_assert(sizeof(rx_frame) == RX_RESUME_FRAME_SIZE,
+@@ -104,22 +60,6 @@
+                && _Alignof(rx_trail_entry) <= RX_BUFFER_ALIGN,
+     "RX_BUFFER_ALIGN understates what this artifact's buffers require.");
+ 
+-/* Everything one match attempt can change, in one struct, so that no
+- * state lives in globals and two attempts can never interfere.
+- * Allocated by the caller on the stack; this file never allocates.
+- *
+- *   slot_values   the group boundaries recorded so far, by slot number
+- *   resume_stack  alternatives not yet tried, most recent last; each
+- *                 frame is "if you get stuck, come back to HERE"
+- *   trail         an undo log of slot_values writes, so popping a
+- *                 resume frame restores the groups exactly as they were
+- *   *_cap         how many entries each of those two POINTS AT. The
+- *                 storage is the stamped default on its entry's own
+- *                 stack frame, or the caller's, and this struct is
+- *                 the same either way -- which is what lets one
+- *                 matching loop serve both entries.
+- *   *_depth       how many entries of each are currently live
+- */
+ typedef struct {
+     ptrdiff_t slot_values[RX_NSLOTS];
+     rx_frame       *resume_stack;
+@@ -131,11 +71,6 @@
+     long long work_left;    /* forward work units remaining */
+ } rx_run_state;
+ 
+-/* This artifact's own working storage, at the stamped default
+- * capacities. Declared by each un-suffixed entry as an ordinary
+- * local -- which is why those entries have large stack frames on a
+- * pattern whose depth is unbounded, and why <prefix>_search_in with a
+- * caller's buffer does not. */
+ typedef struct {
+     rx_frame       frames[RX_RESUME_FRAMES];
+     rx_trail_entry trail[RX_TRAIL_FRAMES];
+@@ -147,9 +82,6 @@
+ #define RX_R_RECURSE ((ptrdiff_t)PCREC_ERR_RECURSE)
+ #define RX_R_INTERNAL ((ptrdiff_t)PCREC_ERR_INTERNAL)
+ 
+-/* Charge forward work the backtracker never sees. A scan that
+- * races over a megabyte costs no STEPS -- it never backtracks --
+- * so without this meter a slow attempt would look costless. */
+ #define RX_CHARGE_WORK(n_) do {                                    \
+         ptrdiff_t nw_ = (ptrdiff_t)(n_);                     \
+         if (nw_ > 0) {                                       \
+@@ -158,14 +90,6 @@
+         }                                                    \
+     } while (0)
+ 
+-/* MINIMUM-REMAINING-LENGTH pruning. At each point the compiler
+- * knows the fewest bytes any successful continuation must still
+- * consume. If fewer than that remain before the window ends, this
+- * position cannot lead to a match and the program fails now
+- * instead of exploring from it. _CLAMP_SPAN is the same fact used
+- * to SHORTEN a scan rather than abandon it, rounded down to a
+- * whole number of iterations so the cursor stays on a position
+- * the loop could actually have stopped at. */
+ #define RX_PRUNE_TOO_SHORT(p_, mr_) \
+     ((rx_window_end) < (size_t)(mr_) || (rx_window_end) - (size_t)(mr_) < (p_))
+ #define RX_PRUNE_CLAMP_SPAN(p_, mr_, w_) \
+@@ -191,9 +115,6 @@
+         run->resume_depth = (size_t)slot_values[(slot_)];                      \
+     } while (0)
+ 
+-/* Point a run state at its working storage. Called BEFORE
+- * <prefix>_run_state_init, which must not disturb these four
+- * fields -- see its comment. */
+ static void rx_run_state_bind(rx_run_state *run,
+                         void *frames, size_t nframes,
+                         void *trail, size_t ntrail)
+@@ -204,13 +125,6 @@
+     run->trail_cap    = ntrail;
+ }
+ 
+-/* Start a fresh attempt: every group unset, nothing to undo, both
+- * budgets full. THE FOUR STORAGE FIELDS ARE NOT TOUCHED HERE and
+- * must never be: <prefix>_run_state_bind has already pointed them at
+- * the caller's buffers or at this artifact's default, and this
+- * function runs after it. Re-zeroing them would leave every buffered
+- * call matching against a NULL stack or a capacity of 0
+- * ([DD-14.FB] §11 item 4, sabotage row S-FB3). */
+ static void rx_run_state_init(rx_run_state *run)
+ {
+     int i;
+@@ -220,12 +134,6 @@
+     run->work_left = RX_WORK_BUDGET;
+ }
+ 
+-/* Roll the run state back to as-if-untouched WITHOUT resetting the
+- * budgets, so retrying at the next starting position cannot buy
+- * itself a fresh allowance. The four storage fields are untouched
+- * here too, for the same reason and one step further along: a
+- * bump-along to the next start position keeps the caller's buffers
+- * exactly as it keeps the budgets ([DD-14.FB] §11 item 5). */
+ static void rx_reset_for_next_attempt(rx_run_state *run)
+ {
+     while (run->trail_depth) { run->trail_depth--; run->slot_values[run->trail[run->trail_depth].slot_index] = run->trail[run->trail_depth].saved_value; }
+@@ -272,7 +180,6 @@
+ rx_L0: __attribute__((unused));
+     if (scan_position == 0) goto rx_L2;
+     goto rx_fail;
+-// span-loop cursor {0,}, stride 1, greedy, POSSESSIFIED (no frame, no giveback)
+ rx_L2: __attribute__((unused));
+     {
+         rx_span_cursor = scan_position;
+@@ -283,21 +190,17 @@
+     if (RX_PRUNE_TOO_SHORT(rx_span_cursor, 7)) goto rx_fail;
+     scan_position = rx_span_cursor;
+     goto rx_L3;
+-// group 1 opens
+ rx_L3: __attribute__((unused));
+     RX_SET(RX_SLOT_GROUP1_START, (ptrdiff_t)scan_position);
+     goto rx_L5;
+-// alternation entry (2 branches)
+ rx_L5: __attribute__((unused));
+     RX_PUSH(&&rx_L10, scan_position);
+     goto rx_L8;
+-// alternation resume: try branch 2 of 2
+ rx_L10: __attribute__((unused));
+     goto rx_L9;
+ rx_L8: __attribute__((unused));
+     if (scan_position < subject_length && ((rx_class_bitmap1[(subject[scan_position]) >> 3] >> ((subject[scan_position]) & 7)) & 1)) { scan_position++; goto rx_L11; }
+     goto rx_fail;
+-// span-loop cursor {6,6}, stride 1, greedy, POSSESSIFIED (no frame, no giveback)
+ rx_L11: __attribute__((unused));
+     {
+         unsigned long it_ = 0;
+@@ -309,7 +212,6 @@
+     if (RX_PRUNE_TOO_SHORT(rx_span_cursor, 3)) goto rx_fail;
+     scan_position = rx_span_cursor;
+     goto rx_L7;
+-// span-loop cursor {4,4}, stride 1, greedy, POSSESSIFIED (no frame, no giveback)
+ rx_L9: __attribute__((unused));
+     {
+         unsigned long it_ = 0;
+@@ -324,19 +226,15 @@
+ rx_L7: __attribute__((unused));
+     if (scan_position < subject_length && (subject[scan_position] == 45)) { scan_position++; goto rx_L12; }
+     goto rx_fail;
+-// alternation entry (4 branches)
+ rx_L12: __attribute__((unused));
+     RX_PUSH(&&rx_L17, scan_position);
+     goto rx_L13;
+-// alternation resume: try branch 2 of 4
+ rx_L17: __attribute__((unused));
+     RX_PUSH(&&rx_L18, scan_position);
+     goto rx_L14;
+-// alternation resume: try branch 3 of 4
+ rx_L18: __attribute__((unused));
+     RX_PUSH(&&rx_L19, scan_position);
+     goto rx_L15;
+-// alternation resume: try branch 4 of 4
+ rx_L19: __attribute__((unused));
+     goto rx_L16;
+ rx_L13: __attribute__((unused));
+@@ -357,11 +255,9 @@
+ rx_L14: __attribute__((unused));
+     if (scan_position < subject_length && (subject[scan_position] == 87)) { scan_position++; goto rx_L24; }
+     goto rx_fail;
+-// alternation entry (2 branches)
+ rx_L24: __attribute__((unused));
+     RX_PUSH(&&rx_L27, scan_position);
+     goto rx_L25;
+-// alternation resume: try branch 2 of 2
+ rx_L27: __attribute__((unused));
+     goto rx_L26;
+ rx_L25: __attribute__((unused));
+@@ -397,30 +293,24 @@
+ rx_L34: __attribute__((unused));
+     if (scan_position < subject_length && ((unsigned)(subject[scan_position] - 48) <= 9u)) { scan_position++; goto rx_L6; }
+     goto rx_fail;
+-// group 1 closes
+ rx_L6: __attribute__((unused));
+     RX_SET(RX_SLOT_GROUP1_END, (ptrdiff_t)scan_position);
+     goto rx_L4;
+-// optional copy (1 remaining), greedy
+ rx_L4: __attribute__((unused));
+     if (RX_PRUNE_TOO_SHORT(scan_position, 3)) goto rx_L35;
+     RX_PUSH(&&rx_L37, scan_position);
+     goto rx_L36;
+-// optional copy: the skip
+ rx_L37: __attribute__((unused));
+     goto rx_L35;
+-// group 2 opens
+ rx_L36: __attribute__((unused));
+     RX_SET(RX_SLOT_GROUP2_START, (ptrdiff_t)scan_position);
+     goto rx_L40;
+ rx_L40: __attribute__((unused));
+     if (scan_position < subject_length && ((rx_class_bitmap5[(subject[scan_position]) >> 3] >> ((subject[scan_position]) & 7)) & 1)) { scan_position++; goto rx_L41; }
+     goto rx_fail;
+-// group 2 closes
+ rx_L41: __attribute__((unused));
+     RX_SET(RX_SLOT_GROUP2_END, (ptrdiff_t)scan_position);
+     goto rx_L39;
+-// group 3 opens
+ rx_L39: __attribute__((unused));
+     RX_SET(RX_SLOT_GROUP3_START, (ptrdiff_t)scan_position);
+     goto rx_L43;
+@@ -430,12 +320,10 @@
+ rx_L45: __attribute__((unused));
+     if (scan_position < subject_length && ((unsigned)(subject[scan_position] - 48) <= 9u)) { scan_position++; goto rx_L46; }
+     goto rx_fail;
+-// optional copy (1 remaining), greedy
+ rx_L46: __attribute__((unused));
+     if (RX_PRUNE_TOO_SHORT(scan_position, 3)) goto rx_L44;
+     RX_PUSH(&&rx_L48, scan_position);
+     goto rx_L47;
+-// optional copy: the skip
+ rx_L48: __attribute__((unused));
+     goto rx_L44;
+ rx_L47: __attribute__((unused));
+@@ -447,12 +335,10 @@
+ rx_L51: __attribute__((unused));
+     if (scan_position < subject_length && ((unsigned)(subject[scan_position] - 48) <= 9u)) { scan_position++; goto rx_L52; }
+     goto rx_fail;
+-// optional copy (1 remaining), greedy
+ rx_L52: __attribute__((unused));
+     if (RX_PRUNE_TOO_SHORT(scan_position, 3)) goto rx_L49;
+     RX_PUSH(&&rx_L54, scan_position);
+     goto rx_L53;
+-// optional copy: the skip
+ rx_L54: __attribute__((unused));
+     goto rx_L49;
+ rx_L53: __attribute__((unused));
+@@ -464,18 +350,15 @@
+ rx_L57: __attribute__((unused));
+     if (scan_position < subject_length && ((unsigned)(subject[scan_position] - 48) <= 9u)) { scan_position++; goto rx_L58; }
+     goto rx_fail;
+-// optional copy (1 remaining), greedy
+ rx_L58: __attribute__((unused));
+     if (RX_PRUNE_TOO_SHORT(scan_position, 2)) goto rx_L55;
+     RX_PUSH(&&rx_L60, scan_position);
+     goto rx_L59;
+-// optional copy: the skip
+ rx_L60: __attribute__((unused));
+     goto rx_L55;
+ rx_L59: __attribute__((unused));
+     if (scan_position < subject_length && ((rx_class_bitmap7[(subject[scan_position]) >> 3] >> ((subject[scan_position]) & 7)) & 1)) { scan_position++; goto rx_L62; }
+     goto rx_fail;
+-// span-loop cursor {1,}, stride 1, greedy, POSSESSIFIED (no frame, no giveback)
+ rx_L62: __attribute__((unused));
+     {
+         rx_span_cursor = scan_position;
+@@ -485,36 +368,27 @@
+     if ((ptrdiff_t)rx_span_cursor < (ptrdiff_t)scan_position + 1) goto rx_fail;
+     scan_position = rx_span_cursor;
+     goto rx_L61;
+-// bounded repeat: all optional copies exhausted
+ rx_L61: __attribute__((unused));
+     goto rx_L55;
+-// bounded repeat: all optional copies exhausted
+ rx_L55: __attribute__((unused));
+     goto rx_L49;
+-// bounded repeat: all optional copies exhausted
+ rx_L49: __attribute__((unused));
+     goto rx_L44;
+-// group 3 closes
+ rx_L44: __attribute__((unused));
+     RX_SET(RX_SLOT_GROUP3_END, (ptrdiff_t)scan_position);
+     goto rx_L42;
+-// optional copy (1 remaining), greedy
+ rx_L42: __attribute__((unused));
+     if (RX_PRUNE_TOO_SHORT(scan_position, 1)) goto rx_L38;
+     RX_PUSH(&&rx_L64, scan_position);
+     goto rx_L63;
+-// optional copy: the skip
+ rx_L64: __attribute__((unused));
+     goto rx_L38;
+-// group 4 opens
+ rx_L63: __attribute__((unused));
+     RX_SET(RX_SLOT_GROUP4_START, (ptrdiff_t)scan_position);
+     goto rx_L66;
+-// alternation entry (2 branches)
+ rx_L66: __attribute__((unused));
+     RX_PUSH(&&rx_L70, scan_position);
+     goto rx_L68;
+-// alternation resume: try branch 2 of 2
+ rx_L70: __attribute__((unused));
+     goto rx_L69;
+ rx_L68: __attribute__((unused));
+@@ -526,18 +400,15 @@
+ rx_L72: __attribute__((unused));
+     if (scan_position < subject_length && ((unsigned)(subject[scan_position] - 48) <= 9u)) { scan_position++; goto rx_L73; }
+     goto rx_fail;
+-// possessified repeat: record the resume-stack depth to cut back to
+ rx_L73: __attribute__((unused));
+     RX_SET(RX_SLOT_CUT_MARK0, (ptrdiff_t)run->resume_depth);
+     goto rx_L74;
+-// possessified optional copy (1 remaining)
+ rx_L74: __attribute__((unused));
+     RX_CHARGE_WORK((ptrdiff_t)run->resume_depth - slot_values[12]);
+     RX_CUT(12);
+     if (RX_PRUNE_TOO_SHORT(scan_position, 2)) goto rx_L67;
+     RX_PUSH(&&rx_L75, scan_position);
+     goto rx_L76;
+-// span-loop cursor {0,1}, stride 1, greedy
+ rx_L76: __attribute__((unused));
+     RX_SET(RX_SLOT_SPAN_LOW0, (ptrdiff_t)scan_position);
+     if (RX_PRUNE_TOO_SHORT(scan_position, 2)) goto rx_fail;
+@@ -548,13 +419,11 @@
+         while (rx_span_cursor + 1 <= lim_ && it_ < 1UL && (subject[rx_span_cursor + 0] == 58)) { rx_span_cursor += 1; it_++; }
+     }
+     goto rx_L79;
+-// span-loop: take the continuation at the cursor
+ rx_L79: __attribute__((unused));
+     if ((ptrdiff_t)rx_span_cursor < slot_values[10] + 0) goto rx_fail;
+     RX_PUSH(&&rx_L80, rx_span_cursor);
+     scan_position = rx_span_cursor;
+     goto rx_L78;
+-// span-loop retreat (resumed from the frame)
+ rx_L80: __attribute__((unused));
+     rx_span_cursor = scan_position;
+     if ((ptrdiff_t)rx_span_cursor < slot_values[10] + 0 + 1) goto rx_fail;
+@@ -566,15 +435,12 @@
+ rx_L81: __attribute__((unused));
+     if (scan_position < subject_length && ((unsigned)(subject[scan_position] - 48) <= 9u)) { scan_position++; goto rx_L77; }
+     goto rx_fail;
+-// possessified repeat: every copy taken
+ rx_L77: __attribute__((unused));
+     RX_CHARGE_WORK((ptrdiff_t)run->resume_depth - slot_values[12]);
+     RX_CUT(12);
+     goto rx_L67;
+-// possessified repeat: a copy could not run -- exit with the iterations that did
+ rx_L75: __attribute__((unused));
+     goto rx_L67;
+-// span-loop cursor {0,}, stride 1, greedy
+ rx_L69: __attribute__((unused));
+     RX_SET(RX_SLOT_SPAN_LOW1, (ptrdiff_t)scan_position);
+     if (RX_PRUNE_TOO_SHORT(scan_position, 1)) goto rx_fail;
+@@ -584,13 +450,11 @@
+         while (rx_span_cursor + 1 <= lim_ && ((rx_class_bitmap0[(subject[rx_span_cursor + 0]) >> 3] >> ((subject[rx_span_cursor + 0]) & 7)) & 1)) { rx_span_cursor += 1; }
+     }
+     goto rx_L83;
+-// span-loop: take the continuation at the cursor
+ rx_L83: __attribute__((unused));
+     if ((ptrdiff_t)rx_span_cursor < slot_values[11] + 0) goto rx_fail;
+     RX_PUSH(&&rx_L84, rx_span_cursor);
+     scan_position = rx_span_cursor;
+     goto rx_L82;
+-// span-loop retreat (resumed from the frame)
+ rx_L84: __attribute__((unused));
+     rx_span_cursor = scan_position;
+     if ((ptrdiff_t)rx_span_cursor < slot_values[11] + 0 + 1) goto rx_fail;
+@@ -599,39 +463,23 @@
+ rx_L82: __attribute__((unused));
+     if (scan_position < subject_length && (subject[scan_position] == 90)) { scan_position++; goto rx_L67; }
+     goto rx_fail;
+-// group 4 closes
+ rx_L67: __attribute__((unused));
+     RX_SET(RX_SLOT_GROUP4_END, (ptrdiff_t)scan_position);
+     goto rx_L65;
+-// bounded repeat: all optional copies exhausted
+ rx_L65: __attribute__((unused));
+     goto rx_L38;
+-// bounded repeat: all optional copies exhausted
+ rx_L38: __attribute__((unused));
+     goto rx_L35;
+ rx_L35: __attribute__((unused));
+     if (scan_position == subject_length || (scan_position + 1 == subject_length && subject[scan_position] == '\n')) goto rx_L1;
+     goto rx_fail;
+-// the pattern is complete
+ rx_L1: __attribute__((unused));
+     goto rx_accept;
+ 
+ rx_accept: __attribute__((unused));
+-    /* 3.1: leftmost-first is FIRST COMPLETE MATCH WINS, not compare
+-     * candidates. The VM returns here immediately and the capture
+-     * slots at this instant are the answer — no candidate comparison,
+-     * no longest-wins, no second pass. The caller's capture_spans array is
+-     * filled by the ENTRY, not here (3.4). */
+     return (ptrdiff_t)(scan_position - ctx->pos);
+ 
+ rx_fail: __attribute__((unused));
+-    /* THE ONLY BACKTRACKER AND THE ONLY INDIRECT JUMP.
+-     * A step is one backtrack resumption (4.2), counted at exactly
+-     * this place — so forward progress is FREE (a linear match over
+-     * 100 MB costs zero steps), the steps_left is subject-length-
+-     * independent, and the counter measures precisely the thing it is
+-     * meant to bound. D22: DD-2 is ROBUSTNESS, not a security
+-     * boundary, and it must not be traded against execution speed. */
+     if (run->resume_depth == 0) return -1;
+     if (--run->steps_left < 0) return RX_R_STEPS;
+     {
+@@ -649,10 +497,6 @@
+ #undef RX_SET
+ #undef RX_PUSH
+ 
+-/* Copy the run's slot values out into the caller's caps array. The
+- * whole-match pair is not written by the VM at all -- the entry knows
+- * where the attempt began and how long it ran. Group g lives in the
+- * slot PAIR (2g, 2g+1), which is why this indexes arithmetically. */
+ static void rx_report_captures(const rx_run_state *run, ptrdiff_t (*capture_spans)[2],
+                         size_t match_start, ptrdiff_t match_length)
+ {
+@@ -665,8 +509,6 @@
+     }
+ }
+ 
+-/* The search loop. Called by both entries below with a run state
+- * already pointed at its working storage. */
+ static int rx_search_run(const unsigned char *subject, size_t subject_length,
+        size_t search_from, ptrdiff_t (*capture_spans)[2], rx_run_state *run)
+ {
+@@ -707,11 +549,6 @@
+     return rx_search_run(subject, subject_length, search_from, capture_spans, &run);
+ }
+ 
+-/* Same search, with the working storage the CALLER supplies. A NULL
+- * descriptor is exactly the call above; a non-NULL one must name two
+- * regions, both of them scratch, sized in FRAMES and ENTRIES rather
+- * than bytes. A give-up still reports PCREC_ERR_FRAMES and does not
+- * say whose buffer ran out; retrying with a larger one is defined. */
+ int rx_search_in(const unsigned char *subject, size_t subject_length, size_t search_from,
+           ptrdiff_t (*capture_spans)[2], const rx_buffers *buffers)
+ {
+@@ -722,47 +559,15 @@
+     return rx_search_run(subject, subject_length, search_from, capture_spans, &run);
+ }
+ 
+-/* F1's unconditional export, typed rx_matchfn.
+- *
+- * D49: THE GIVE-UP CODES ARE CARRIED HERE, not collapsed to -1. The
+- * return space is >= 0 matched length, -1 no match, and a distinct
+- * code in [PCREC_ERR_FLOOR, -2] for each way the engine can give up
+- * (PCREC_ERR_STEPS, PCREC_ERR_FRAMES, PCREC_ERR_WORK, PCREC_ERR_RECURSE
+- * -- [DD-14]: reserved, no producer yet, D71 item 1). Anything BELOW the floor
+- * stays reserved for the future abort semantic and is what a callout
+- * call site traps on.
+- *
+- * This SUPERSEDES D42.3, which collapsed every give-up to -1 because
+- * D38.4 had reserved the whole < -1 space. Three things moved: pcrec is
+- * pre-release, so a 'final' label reads as 'stable absent a reason';
+- * the typedef is BIDIRECTIONAL, so under the collapse an
+- * embedder-WRITTEN callout had no legal spelling for 'I gave up' at
+- * all (anything below -1 traps the process); and the collapse let an
+- * inner give-up read as a plain path failure, so an outer match could
+- * report an ANSWER where a bound had actually blown. A caller that
+- * only asks 'did it match' still writes `result < 0` and is unaffected. */
+ static ptrdiff_t rx_match_run(const rx_ctx *ctx, rx_run_state *run)
+ {
+     ptrdiff_t result;
+     if (ctx->pos > ctx->len) return -1;
+     rx_run_state_init(run);
+     result = rx_match_anchored(ctx, run, ctx->len);
+-    /* No translation and no clamp: the impl's return space IS this
+-     * contract's -- >= 0, -1, or one of the R_ sentinels, which are
+-     * the ERR_ codes (give-up or, [DD-14] wave A commit 2, the
+-     * below-the-floor PCREC_ERR_INTERNAL -- this entry propagates
+-     * it exactly like a give-up, for the same top-level-entry
+-     * reason <prefix>_search does). A defensive floor test here
+-     * would be dead code pretending to be a safeguard. */
+     return result;
+ }
+ 
+-/* The capture-delivering sibling. Same D49 return space as
+- * <prefix>_match above -- it always had room for the codes (it is not
+- * an rx_matchfn), and now the two agree instead of differing over a
+- * reservation only one of them was bound by. capture_spans_out is UNTOUCHED on
+- * every negative return, give-up included: a caller that gave up has
+- * no captures, and A-8's untouched-wins rule does not bend for it. */
+ static ptrdiff_t rx_match_caps_run(const rx_ctx *ctx, ptrdiff_t (*capture_spans_out)[2],
+                         rx_run_state *run)
+ {
+@@ -812,8 +617,6 @@
+     return rx_match_caps_run(ctx, capture_spans_out, &run);
+ }
+ 
+-/* byte encoding: one byte is one character, so the next boundary after pos
+- * is pos + 1 and the subject is never read. */
+ size_t rx_next_pos(const unsigned char *s, size_t n, size_t pos)
+ {
+     (void)s; (void)n;
+
+
+== diff: 25b1984f -fcomments .h  vs  25b1984f -fno-comments .h ==
+--- /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/25b1984f/fcomments/artifact.h	2026-09-20 22:40:51.203107562 -0400
++++ /home/duxevents/pcrec-bench/build/b62witness-scratch/o38-movertime-emit-diff/25b1984f/fno-comments-default/artifact.h	2026-09-20 22:40:51.207510604 -0400
+@@ -1,5 +1,4 @@
+ /* Generated by pcrec (abi 27). Pattern: ^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$ */
+-/* Feature set: all (modules: classes,unicode-props,assertions,backrefs,recursion,quoting,misc,lookaround,named-groups,atomic-groups,comments,callouts,branch-reset,conditionals,extended-classes,modifiers,verbs) */
+ #ifndef PCREC_GEN_RX_H
+ #define PCREC_GEN_RX_H
+ 
+@@ -171,42 +170,12 @@
+ 
+ #define RX_NCAPS 5
+ 
+-/* [DD-14.FB] The caller-provided working storage (spec §10).
+- *
+- *   RX_RESUME_FRAMES / _TRAIL_FRAMES   the capacities this artifact
+- *       uses when it supplies the storage itself -- a DEFAULT, not a
+- *       limit. 0 on a DFA artifact, which has neither array.
+- *   RX_RESUME_FRAME_SIZE / _TRAIL_FRAME_SIZE   bytes per frame and
+- *       per trail entry FOR THIS ARTIFACT. The layouts themselves are
+- *       private; this is the arithmetic that replaces them.
+- *   RX_BUFFER_ALIGN   the alignment both regions require. Storage
+- *       from any ordinary allocator, mapping or object declaration
+- *       already satisfies it; the macro is for a caller carving a
+- *       region out of an arena.
+- */
+ #define RX_RESUME_FRAMES 14
+ #define RX_TRAIL_FRAMES 11
+ #define RX_RESUME_FRAME_SIZE 24
+ #define RX_TRAIL_FRAME_SIZE 16
+ #define RX_BUFFER_ALIGN 8
+ 
+-/* Where one match attempt's working storage lives. Pass NULL to any
+- * <prefix>_*_in entry and it is EXACTLY a call to the un-suffixed
+- * sibling, with this artifact's own stamped default storage on that
+- * entry's stack frame.
+- *
+- * THE COUNTS ARE CAPACITIES, NOT BYTE SIZES: `nframes` is how many
+- * FRAMES the region holds, `ntrail` how many trail ENTRIES. A caller
+- * that reserved `bytes` gets `bytes / RX_RESUME_FRAME_SIZE` and
+- * `bytes / RX_TRAIL_FRAME_SIZE` -- BUT CHECK THE SIZE FIRST: a stamped
+- * size of 0 means this artifact's engine takes no buffers at all (every
+- * DFA artifact stamps 0), so dividing by it is a division by zero. Pass
+- * NULL on such an artifact; the _in entries accept a descriptor and
+- * ignore it either way. Both regions are required when the
+- * descriptor is non-NULL, and both are pure scratch: their contents
+- * after any call are unspecified and no call reads what a previous
+- * one left. Two concurrent calls must not share one region -- that is
+- * a race in the caller's code exactly as a shared caps array is. */
+ typedef struct {
+     void   *frames;    /* storage for resume frames */
+     size_t  nframes;   /* capacity in FRAMES, not bytes */
+@@ -222,24 +191,6 @@
+ ptrdiff_t rx_match_in(const rx_ctx *ctx, const rx_buffers *buffers);
+ ptrdiff_t rx_match_caps_in(const rx_ctx *ctx, ptrdiff_t (*capture_spans_out)[2], const rx_buffers *buffers);
+ 
+-/* rx_next_pos -- the ENCODING RESIDUAL entry (pcrec DD-12/D58).
+- *
+- * Returns the smallest position STRICTLY GREATER than pos that is a
+- * CHARACTER BOUNDARY of this artifact's encoding, counting every position
+- * >= n as a boundary. So the result is in (pos, n] whenever pos < n, and is
+- * pos + 1 whenever pos >= n -- which is what lets a find-all loop advance
+- * past a zero-length match and still terminate (see pcrec's
+- * docs/spec/match_api.md S3.1, which writes that loop out).
+- *
+- * This entry is the ONE place an artifact's byte-vs-character distinction
+- * lives. It reads s only at offsets in [pos, n), so the (s == NULL, n == 0)
+- * subject rx_search accepts is legal here too, and it is never called from
+- * this artifact's own engine: it is caller-facing residue, not hot-path
+- * code.
+- *
+- * THIS artifact was compiled for the `byte` encoding, where one byte is one
+- * character. An artifact compiled for another encoding exports this same
+- * entry with that encoding's body and no caller loop changes. */
+ size_t rx_next_pos(const unsigned char *s, size_t n, size_t pos);
+ 
+ #endif /* PCREC_GEN_RX_H */
+
+
+== emit_size() (comment-excluded) summary ==
+cf0962e3  no-flag-only-mode      raw=51357  emit_bytes=33723  emit_code_bytes=32799
+25b1984f  fcomments              raw=51375  emit_bytes=33723  emit_code_bytes=32799
+25b1984f  fno-comments-default   raw=37148  emit_bytes=33723  emit_code_bytes=32799
+
+== verdict ==
+A) cf0962e3 (only mode) vs 25b1984f -fcomments -- THE BENCH'S REAL BUILD, BOTH PINS: byte-identical modulo the abi stamp line(s) -- EXONERATES the compiler by construction
+B) 25b1984f -fcomments vs 25b1984f -fno-comments -- the flag's own isolated effect at one pin: differs (expected: comment text only)

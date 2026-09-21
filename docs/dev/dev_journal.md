@@ -5223,3 +5223,32 @@ ext-bench testees across six engines.
   in one matrix.
 - [B61] closed. The wave's standing caveat for next windows: pcrec
   four pins stale on email/loglines/bounded/altwide/syntax.
+
+## 2026-09-21 -- [B62] COMPLETE: the O-38 vm-in mover witness closes, decision rule branch A
+
+- Lane b62run resumed lane/b62witness (branch not new), merged master
+  first (one docs/dev/plan.md conflict: [B61] kept completed, the two
+  [B62] progress paragraphs combined, commit 2c8684a). Box confirmed
+  clear (no b61matrix worktree/branch, no live process, quiet gate
+  VERDICT quiet) and ran steps 2-3 in the foreground: a new script,
+  `probe_o38_movertime_step23_run.py`, reuses the real
+  compile/calibrate code path but bypasses `run_cell` (which would
+  have discarded the per-trial buffer address) via a direct
+  `driverrun.run_driver()` loop, 12 trials/pin interleaved at trial
+  granularity, ~48s wall time.
+- THE DECISION RULE FIRED BRANCH A: cf0962e3 and 25b1984f read
+  0.02-0.05% apart same-session (report.py's own R8 spread rule) --
+  the historical +509.14 ns / x1.08 does NOT reproduce. Per the rule
+  agreed with pcrec before the run, NOTHING is filed as a pcrec item;
+  the mover closes as a between-session/box effect.
+- An UNPLANNED second finding from step 3's own instrument: the
+  caller-provided buffer's cache-line offset (`addr % 64`) read
+  EXACTLY 16 on all 24 independent launches, both regions, both pins
+  -- constant despite visible ASLR on the addresses' higher bits,
+  the OPPOSITE of I-79's own working assumption and independent
+  support for branch A.
+- Archived `2026-09-21-o38-movertime-step23-interleave-buffer-placement.txt`
+  (source header, verbatim output, four-point derived summary); lane
+  report (`docs/dev/lanes/b62witness_report.md`) carries the full
+  reading and a drafted O-39 outbox item. [B62] closed; not yet
+  merged to master (the manager merges) and O-39 not yet sent.

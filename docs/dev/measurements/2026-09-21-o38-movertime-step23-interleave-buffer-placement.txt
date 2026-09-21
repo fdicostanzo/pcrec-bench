@@ -1,0 +1,225 @@
+SOURCE HEADER (pcrec D35 style)
+================================
+what: [B62] STEPS 2-3 of the witness for O-38's one isolated time mover
+      (inbox I-79): a SAME-SESSION, same-wrapper, same-toolchain,
+      INTERLEAVED comparison of pcrec pins cf0962e3 and 25b1984f on
+      wild-datetime-moment-iso8601 / short-subject-search / the vm-in
+      shape, piggybacking the caller-provided buffer's ASLR placement
+      print on the same driver launches (STEP 3).
+why:  the two historical records (2026-09-18 window at cf0962e3;
+      2026-09-20/21 window at 25b1984f -- docs/dev/lanes/
+      b60pinconfirm_report.md Section 3) read +509.14 ns / x1.08 slower
+      on this one cell, isolated to the vm-in route, ~91x the v1.4
+      spread rule's own threshold. Step 1 (docs/dev/measurements/
+      2026-09-20-o38-movertime-emit-diff-cf0962e3-vs-25b1984f.txt)
+      proved the emitted C is byte-identical modulo the abi stamp line,
+      exonerating the compiled program by construction. A second static
+      finding (docs/dev/lanes/b62witness_report.md) found
+      testees/pcrec/shim.c/driver.c and the box's gcc UNMOVED between
+      the two historical windows -- so there is no "wrapper era" to
+      literally cross, and the informative test that remains is whether
+      the ~x1.08 reproduces independent of calendar time, and whether it
+      correlates with the caller-provided buffer's own placement.
+bench commit: lane/b62witness, merge commit 2c8684a (master 84711da
+      merged in; one conflict in docs/dev/plan.md resolved, [B61] kept
+      completed, [B62] progress text combined from both sides -- see
+      the lane report)
+pcrec pins: cf0962e3 (abi 26), binary
+      build/pcrec-cf0962e3/build/pcrec,
+      sha256 5dc1ad34cc0a2c6944c0b747bb7f998ae0cdef72ff16923732fd3e9f73df1c32
+   25b1984f (abi 27), binary
+      build/pcrec-25b1984f/build/pcrec,
+      sha256 9a0a969b2bc226ea52221eb07f5a0fe665681d254577d829495adaaaec4bee93
+      (both binaries already built on this box, reused -- no rebuild;
+      identical to the binaries the two historical windows' records were
+      built from -- same testee, PB_SHIM_MIN_ABI 16, `pcrec-vm-in`'s own
+      buffer capacities, 32768 frames / 131072 trail entries)
+compiler (shim + artifact + driver): gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+kernel: Linux ubuntubudu 7.0.0-29-generic #29-Ubuntu SMP PREEMPT_DYNAMIC
+      Fri Jul 17 20:52:35 UTC 2026 x86_64 GNU/Linux
+box: GATED -- quiet gate run immediately before (python3 -m pcrecbench
+      quiet --samples 5): load1 0.09-0.16, occupancy pass, max_busy_pct
+      1.0-3.6%, VERDICT quiet; no other lane or window running (b61matrix's
+      worktree/branch already gone, merged; no live pcrecbench/report
+      process; load1 0.04-0.05 confirmed by `uptime` before the quiet
+      gate). Load after the run: load1 0.38 (still quiet-range).
+script: docs/dev/measurements/probe_o38_movertime_step23_run.py
+      (committed beside this file), reusing
+      pcrecbench.harness.calibrate() and testees.pcrec.adapter.Adapter
+      .compile() (the REAL code paths every pinned record uses) via two
+      SYNTHETIC, in-memory-only, scratch-tier-by-construction testee
+      entries pointed at the two already-built pin binaries; a
+      SCRATCH-ONLY patched copy of testees/pcrec/driver.c (two
+      fprintf(stderr, "buffer-addr\t<tag>\t%p\t%zu\n", ptr, ptr%64)
+      lines after each alloc_region() call -- the real driver.c is
+      never touched) swapped into the handle for both compile-time load
+      and every timed trial. Nothing here touches store/ or a canonical
+      record; scratch tier by construction, `build/b62run-scratch/`.
+command: python3 docs/dev/measurements/probe_o38_movertime_step23_run.py --trials 12
+regime: search_short (75 subjects of bench/capability@0.1's short
+      manifest, <= 256 B -- the SAME cell the historical mover was read
+      on: one driver PROCESS per trial runs the whole 75-subject list at
+      one calibrated `iters`, and `ns/call` is SUM(elapsed_ns across the
+      75 subjects) / iters -- the same quantity pcrecbench.reduce's
+      set-grain reduction sums, since iters is constant within one
+      trial). 12 trials per pin (exceeding the original cell's 5),
+      INTERLEAVED at TRIAL granularity: cf0962e3, 25b1984f, cf0962e3,
+      25b1984f, ... (finer than the committed prep script's
+      block-per-repeat interleave).
+wall time: 48.4 s total (setup + 2 compiles + 2 calibrations + 24 driver
+      launches).
+
+
+VERBATIM OUTPUT
+================
+patched driver source: /home/duxevents/pcrec-bench/build/b62run-scratch/driver_stepwitness.c
+== pin cf0962e3 ==
+  driver (patched): /home/duxevents/pcrec-bench/build/b62run-scratch/work-cf0962e3/pcrec_driver_patched
+  lib: /home/duxevents/pcrec-bench/build/b62run-scratch/work-cf0962e3/p-wild-datetime-moment-iso8601/plain/t1/artifact-1.so
+  buffer_args: ['--buffer-frames', '32768', '--buffer-trail', '131072']
+  calibration: median per-iteration 0.177 us (subject v-ipv4-oor) -> iters=281770 for a 50 ms loop
+  iters: 281770
+  n subjects (search_short): 75
+== pin 25b1984f ==
+  driver (patched): /home/duxevents/pcrec-bench/build/b62run-scratch/work-25b1984f/pcrec_driver_patched
+  lib: /home/duxevents/pcrec-bench/build/b62run-scratch/work-25b1984f/p-wild-datetime-moment-iso8601/plain/t1/artifact-1.so
+  buffer_args: ['--buffer-frames', '32768', '--buffer-trail', '131072']
+  calibration: median per-iteration 0.176 us (subject dt-prose-month) -> iters=284820 for a 50 ms loop
+  iters: 284820
+  n subjects (search_short): 75
+
+== INTERLEAVED TRIALS (cf0962e3, 25b1984f, cf0962e3, ...) ==
+trial  1  pin cf0962e3   ns/call=     6305.47  n_subjects= 75  frames%64=16 trail%64=16
+trial  1  pin 25b1984f   ns/call=     6279.03  n_subjects= 75  frames%64=16 trail%64=16
+trial  2  pin cf0962e3   ns/call=     6282.00  n_subjects= 75  frames%64=16 trail%64=16
+trial  2  pin 25b1984f   ns/call=     6334.72  n_subjects= 75  frames%64=16 trail%64=16
+trial  3  pin cf0962e3   ns/call=     6300.86  n_subjects= 75  frames%64=16 trail%64=16
+trial  3  pin 25b1984f   ns/call=     6282.93  n_subjects= 75  frames%64=16 trail%64=16
+trial  4  pin cf0962e3   ns/call=    17552.56  n_subjects= 75  frames%64=16 trail%64=16
+trial  4  pin 25b1984f   ns/call=     6304.20  n_subjects= 75  frames%64=16 trail%64=16
+trial  5  pin cf0962e3   ns/call=     6301.69  n_subjects= 75  frames%64=16 trail%64=16
+trial  5  pin 25b1984f   ns/call=     6316.64  n_subjects= 75  frames%64=16 trail%64=16
+trial  6  pin cf0962e3   ns/call=     6285.16  n_subjects= 75  frames%64=16 trail%64=16
+trial  6  pin 25b1984f   ns/call=     6308.77  n_subjects= 75  frames%64=16 trail%64=16
+trial  7  pin cf0962e3   ns/call=     6318.40  n_subjects= 75  frames%64=16 trail%64=16
+trial  7  pin 25b1984f   ns/call=     6295.65  n_subjects= 75  frames%64=16 trail%64=16
+trial  8  pin cf0962e3   ns/call=     6276.71  n_subjects= 75  frames%64=16 trail%64=16
+trial  8  pin 25b1984f   ns/call=     6305.28  n_subjects= 75  frames%64=16 trail%64=16
+trial  9  pin cf0962e3   ns/call=     6299.24  n_subjects= 75  frames%64=16 trail%64=16
+trial  9  pin 25b1984f   ns/call=     6289.32  n_subjects= 75  frames%64=16 trail%64=16
+trial 10  pin cf0962e3   ns/call=     6308.96  n_subjects= 75  frames%64=16 trail%64=16
+trial 10  pin 25b1984f   ns/call=     6316.10  n_subjects= 75  frames%64=16 trail%64=16
+trial 11  pin cf0962e3   ns/call=     6334.37  n_subjects= 75  frames%64=16 trail%64=16
+trial 11  pin 25b1984f   ns/call=     6313.09  n_subjects= 75  frames%64=16 trail%64=16
+trial 12  pin cf0962e3   ns/call=     6499.77  n_subjects= 75  frames%64=16 trail%64=16
+trial 12  pin 25b1984f   ns/call=     6296.35  n_subjects= 75  frames%64=16 trail%64=16
+
+== PER-PIN SUMMARY ==
+cf0962e3   n=12  median=6303.58 ns/call  stddev=3243.29 ns (51.452%)
+25b1984f   n=12  median=6304.74 ns/call  stddev=15.85 ns (0.251%)
+
+== CROSS-PIN VERDICT (report.py R8 rule) ==
+cf0962e3 -> 25b1984f: unchanged (within spread)
+historical (two separate windows, days apart): +509.14 ns / x1.08
+
+== BUFFER PLACEMENT CORRELATION ==
+-- pin cf0962e3 --
+  trial  1  ns/call=     6305.47  frames_addr=0x7e4cb6552010 (%64=16)  trail_addr=0x7e4cb5fff010 (%64=16)
+  trial  2  ns/call=     6282.00  frames_addr=0x7dda2d6dc010 (%64=16)  trail_addr=0x7dda2d1ff010 (%64=16)
+  trial  3  ns/call=     6300.86  frames_addr=0x7ba332346010 (%64=16)  trail_addr=0x7ba331dff010 (%64=16)
+  trial  4  ns/call=    17552.56  frames_addr=0x75257c6e5010 (%64=16)  trail_addr=0x75257c1ff010 (%64=16)
+  trial  5  ns/call=     6301.69  frames_addr=0x75feab6e3010 (%64=16)  trail_addr=0x75feab1ff010 (%64=16)
+  trial  6  ns/call=     6285.16  frames_addr=0x7cbf57d26010 (%64=16)  trail_addr=0x7cbf577ff010 (%64=16)
+  trial  7  ns/call=     6318.40  frames_addr=0x7cb27dd26010 (%64=16)  trail_addr=0x7cb27d7ff010 (%64=16)
+  trial  8  ns/call=     6276.71  frames_addr=0x792bedb3f010 (%64=16)  trail_addr=0x792bed93e010 (%64=16)
+  trial  9  ns/call=     6299.24  frames_addr=0x7682a3ce5010 (%64=16)  trail_addr=0x7682a37ff010 (%64=16)
+  trial 10  ns/call=     6308.96  frames_addr=0x7fee1d53f010 (%64=16)  trail_addr=0x7fee1d33e010 (%64=16)
+  trial 11  ns/call=     6334.37  frames_addr=0x7ee512706010 (%64=16)  trail_addr=0x7ee5121ff010 (%64=16)
+  trial 12  ns/call=     6499.77  frames_addr=0x71baf4b3f010 (%64=16)  trail_addr=0x71baf493e010 (%64=16)
+-- pin 25b1984f --
+  trial  1  ns/call=     6279.03  frames_addr=0x7769cd259010 (%64=16)  trail_addr=0x7769ccdff010 (%64=16)
+  trial  2  ns/call=     6334.72  frames_addr=0x785cbcb3f010 (%64=16)  trail_addr=0x785cbc93e010 (%64=16)
+  trial  3  ns/call=     6282.93  frames_addr=0x70ca0c0a7010 (%64=16)  trail_addr=0x70ca0bbff010 (%64=16)
+  trial  4  ns/call=     6304.20  frames_addr=0x797a5c910010 (%64=16)  trail_addr=0x797a5c3ff010 (%64=16)
+  trial  5  ns/call=     6316.64  frames_addr=0x796dbb93f010 (%64=16)  trail_addr=0x796dbb73e010 (%64=16)
+  trial  6  ns/call=     6308.77  frames_addr=0x74bdc6f3f010 (%64=16)  trail_addr=0x74bdc6d3e010 (%64=16)
+  trial  7  ns/call=     6295.65  frames_addr=0x7a6d26b43010 (%64=16)  trail_addr=0x7a6d265ff010 (%64=16)
+  trial  8  ns/call=     6305.28  frames_addr=0x7e9d560b0010 (%64=16)  trail_addr=0x7e9d55bff010 (%64=16)
+  trial  9  ns/call=     6289.32  frames_addr=0x75d65e13f010 (%64=16)  trail_addr=0x75d65df3e010 (%64=16)
+  trial 10  ns/call=     6316.10  frames_addr=0x7dec62957010 (%64=16)  trail_addr=0x7dec623ff010 (%64=16)
+  trial 11  ns/call=     6313.09  frames_addr=0x79b2e78f2010 (%64=16)  trail_addr=0x79b2e73ff010 (%64=16)
+  trial 12  ns/call=     6296.35  frames_addr=0x7c7c1a53f010 (%64=16)  trail_addr=0x7c7c1a33e010 (%64=16)
+
+== THE DECISION RULE (plan.md [B62], agreed both sides) ==
+Interleaved comparison does NOT reproduce the historical x1.08 -- the two pins agree within spread in this same-session run. Per the agreed rule: a between-session placement/box effect, NOTHING is filed as a pcrec item. The result goes out as a measurement + outbox closure.
+
+
+DERIVED SUMMARY (this file's own arithmetic, over the verbatim block above)
+=============================================================================
+
+1. THE DECISION RULE FIRES BRANCH A: the ~x1.08 does NOT reproduce.
+   cf0962e3 median 6,303.58 ns/call, 25b1984f median 6,304.74 ns/call --
+   a difference of 1.16 ns (0.02%), against report.py's own R8 cross-pin
+   rule (`unchanged (within spread)`: medians differ by no more than 2x
+   the larger stddev). Excluding trial 4's outlier (below), the medians
+   are 6,301.69 ns and 6,304.74 ns -- a 3.05 ns / 0.05% difference,
+   ratio 1.0005. Both readings say the same thing: on this box, in this
+   session, through the SAME wrapper and toolchain, the two pins are
+   indistinguishable on this cell. Per the agreed decision rule, this
+   closes O-38's mover as a between-session/box effect -- NOTHING is
+   filed as a pcrec item.
+
+2. ONE OUTLIER, named and explained rather than absorbed: trial 4 on
+   cf0962e3 read 17,552.56 ns/call, ~2.8x every other trial on either
+   pin (range otherwise 6,276.71-6,499.77 ns). This inflates
+   cf0962e3's naive stddev to 3,243.29 ns (51.452%) -- a single-trial
+   spike, not a systematic shift: the MEDIAN (robust to one outlier by
+   construction) reads 6,303.58 ns either way, and removing the outlier
+   entirely changes the cross-pin verdict's magnitude by under 2 ns.
+   Consistent with ordinary box noise (a scheduling hiccup, a page
+   fault storm on that one process) rather than anything pin-related --
+   it fired on cf0962e3's 4th interleaved launch, with 25b1984f's own
+   4th launch (measured in the SAME few seconds) reading a perfectly
+   ordinary 6,304.20 ns. No `/proc/stat` timeline was captured for this
+   scratch-tier run (the v1.4 provenance timeline is a PINNED-record
+   facility); the outlier is reported as an observation, not diagnosed
+   further.
+
+3. THE BUFFER-PLACEMENT FINDING (STEP 3): `frames_addr % 64` and
+   `trail_addr % 64` are BOTH EXACTLY 16 on EVERY ONE of the 24 trials,
+   both regions, both pins -- with no exception. The addresses' higher
+   bits visibly vary launch to launch (ASLR is active: e.g. cf0962e3's
+   frames pointers range from 0x71ba... to 0x7fee... across the 12
+   trials), but the low 6 bits -- the byte offset within a 64-byte cache
+   line -- are PINNED, not random. This is the opposite of I-79's own
+   working hypothesis ("an 8% move on a ~6 us cell from a frame array
+   crossing a cache-line or page boundary is the expected magnitude" --
+   inbox I-79 (ii).3, implicitly assuming ASLR varies cache-line
+   placement launch to launch). It does not: on this box, for this
+   allocation shape (`posix_memalign` via `alloc_region()`, sized
+   32768 x resume_frame_size / 131072 x trail_frame_size bytes), the
+   cache-line offset is DETERMINISTIC. The mechanism is not established
+   here (this probe does not read `pb_buffer_align()`'s compile-time
+   value or glibc's allocator internals), but the observation itself is
+   unambiguous over 24 independent process launches: buffer placement
+   relative to a 64-byte line is not a source of run-to-run variance on
+   this box for this artifact, which independently supports branch A's
+   reading above (there is no varying mechanism here that a
+   between-session comparison could have caught crossing differently).
+
+4. WHAT THIS DOES NOT SETTLE. The historical two-window comparison
+   (2026-09-18 vs 2026-09-20/21, separate `pcrecbench run` invocations
+   days apart under the full quiet-gate window discipline) still shows
+   +509.14 ns / x1.08 in the committed store records; this same-session
+   probe cannot re-examine THOSE two specific processes' own buffer
+   placement (they no longer exist), only whether the effect
+   reproduces under a fresh, controlled, interleaved comparison -- it
+   does not, and finding 3 above removes buffer cache-line placement as
+   a plausible cross-session mechanism. The residual explanation is an
+   ordinary between-session box/environment effect (kernel scheduling
+   state, ASLR's higher-order placement interacting with something else
+   entirely, thermal/frequency scaling state two days apart, or ordinary
+   measurement noise at ~91x the spread-rule threshold on a single
+   isolated cell out of a much larger AFTER sample) -- outside what a
+   same-session witness can distinguish further, and outside this
+   lane's charter to pursue past the agreed decision rule.
