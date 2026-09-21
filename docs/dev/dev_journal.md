@@ -5293,3 +5293,34 @@ ext-bench testees across six engines.
 - OUTBOX CANDIDATE still unsent: the syntax \p{L} capability gain
   (wave 2 finding 1) — holding until pcrecdev1 acks O-41/O-42 to
   avoid burying it; next session sends if not folded sooner.
+
+## 2026-09-21 (afternoon) — the twenty-eighth session's second day closes its slate: I-82 clean, the viewer at v1.1, every loop shut
+
+- I-82 at 89d986c3 (approved doc-only delta over the named pin,
+  verified before launch): all six stages rc=0, every I-81 failure
+  class GONE, 15/15 valid rounds per rung, both floor median/IQR
+  blocks real. The m=2-exact instability signature stands in the
+  fixed harness's own summaries (medians 1.0629/1.4379, IQRs
+  0.67/0.83 vs m=3/4's ~1.00/±0.01) — the exact question
+  PCREC_MIN_SCAN_CHAIN needed. O-43 verbatim; I-83 (logs fetched)
+  acked; out/ cleared; the no-fit-block absence resolved (their-side
+  computation, never a harness print). Their abi-28 push unblocked.
+- THE VIEWER at v1.1 ([B67] merged 185f0c3): all EIGHT of Frank's
+  review-from-results notes; 72/72 real-Chromium checks; three real
+  bugs found in the wave — the export-layer variant-label collision
+  (the deselect bug's true root: the captures axis dropped, two
+  configs one leaf), v1.0's ×best sort ranking by raw ns, and the
+  dropdown's synchronous outside-click close eating a just-clicked
+  checkbox's change event (bare-DOM event-order proof; deferred
+  close). Render 84.8 ms at the new latest-only 13-column default.
+  One process lesson for briefs: BOTH charter extensions crossed the
+  lane's work mid-flight and were initially closed-around — the
+  manager's completeness check (grep the branch for the extensions'
+  code before merging) caught it; extensions to a running lane need
+  an explicit "confirm receipt" ask.
+- Also today, earlier entries cover: [B64] wave 2 + the pin-uniform
+  fullroster matrices, [B65]/O-41 (rung attribution confirming I-80),
+  O-42 (I-81), the [M5.0] \p{L} attribution, KB-25.
+- Board: no lanes, no crons but the heartbeat, box free, master
+  synced at 861f22d. Store 210. Nothing owed anywhere; next
+  discretionary work = the parked smalls or Frank's next word.
