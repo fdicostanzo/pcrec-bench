@@ -140,3 +140,27 @@ small (≈850 rows × ~200 B ≈ 400 KB total).
 5. Engine-family toggle, regime breakout, form filter, pattern search
    and hash round-trip each demonstrated (states listed in the lane
    report).
+
+## 9. v1.1 amendments (Frank's review from results, 2026-09-21)
+
+Frank's five notes, verbatim-mapped; [B67] implements:
+1. BUG: deselecting an engine must REMOVE its column; no duplicate
+   columns ever; deselecting a whole family (e.g. all pcrec) removes
+   the whole band. Root-cause the tree→column propagation and the
+   duplication (suspect: per-pin variants rendering as extra columns
+   independent of the tree's selection keys).
+2. The pin/git tag in headers is uninformative — show an ORDERED DATE
+   instead (the column's newest measured_utc date, YYYY-MM-DD; the pin
+   stays in the tooltip for provenance, never as the primary label).
+   Ordering anywhere pins are listed = by date, not sha.
+3. Per-engine DATA COVERAGE: show, in the engine tree (and/or the
+   column header), what fraction of the CURRENT filtered rows that
+   engine has measured data for (a % or n/N chip) — "is there data" at
+   a glance.
+4. Metric selection becomes CHECKBOXES (any subset), values STACKED
+   within each cell in a fixed order (ns, MB/s, ×best), each line
+   labeled tersely; single-metric selection keeps today's compact form.
+5. SORTING works on the ×best metric (and any displayed metric): the
+   column-header sort control targets one of the displayed metrics —
+   default the first displayed; a small per-header affordance (or a
+   global "sort by" tied to the metric checkboxes) picks which.
