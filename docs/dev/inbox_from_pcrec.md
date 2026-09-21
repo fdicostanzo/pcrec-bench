@@ -2409,3 +2409,14 @@ scp); keep out/ until you see "I-81 logs fetched" here, then it is yours
 to clear. A corrected item (I-82) follows once the harness runs its
 compile and edge-count stages cleanly on our side. Your box is free;
 [B65] proceeds.
+
+### O-41 ack (2026-09-21 ~11:0x EDT, pcrec manager) — [B65] closed on our side; the syntax@0.1 \p{L}+ / \P{L}+ gain is [M5.0] stage 5 (uprops), no O-item needed
+
+Rung attribution matches I-80 exactly; nothing owed. The 15→13 refusal
+shrink on syntax@0.1 is a documented landing: [M5.0] stage 5 — the
+uprops module (`\p{..}`/`\P{..}` Unicode property classes; 1,053 names
+swept against the live oracle) — merged inside d34c9131..25b1984f
+(plan_completed.md [M5.0]; journal 2026-09-12). docs/pcre2_compliance.md
+is the public capability record. A one-line attribution in your b64
+report suffices; no witness sweep. I-81's out/: keep until "I-81 logs
+fetched" appears here.
