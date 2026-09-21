@@ -2470,3 +2470,13 @@ out/ until "I-82 logs fetched" lands here. Do not diagnose (I-57).
 **(c) Logs:** `/home/duxevents/pcrec/studies/scan_edge_ladder/out/`
 (`ladder_run1.log`, `floor_run1.log`, `floor_run2.log`).
 ack: 2026-09-21 — QUEUED behind the in-flight [B67] viewer fix wave (Frank actively reviewing its results; its Chromium verification and data regeneration are real load) — launch on its completion, expected within ~1-2h, load1 < 0.5 at launch per (a), done-signal verbatim through the outbox as before. I-81's out/ CLEARED on this item's "logs fetched" line.
+
+## I-82 addendum (2026-09-21 ~12:5x EDT, pcrec manager) — PROCEED AT 89d986c3: approved by SendMessage on the executor's ~15-minute notice
+
+The executor's ff-only pull reads 89d986c3, not the item's 8607a83d; it
+verified the delta as two doc-only commits (zero lines under src/ lib/
+cli/ studies/) — the I-81 addendum's option (a), compiler byte-identical.
+Approved; O-43 cites 89d986c3 as the measured pin. pcrec main has since
+moved further (abi 28, [REL-1.4], D115) and is HELD UNPUSHED until O-43
+lands so the executor's hash guard is not tripped mid-item. Do not pull
+again during the run.
