@@ -5186,3 +5186,22 @@ ext-bench testees across six engines.
   subject-grain full-shape mistake against the precedent's size. The
   doctrine (fresh agent from the committed report) worked exactly as
   written.
+
+## 2026-09-20 (night) — [B61] five-set merge; check-report timed green at 20 min (KB-25)
+
+- The five full-roster matrix groups MERGED e830671 (35 files; the
+  reports/CLAUDE.md conflict with [B60] was purely additive, both
+  entries kept). THE HEADLINE CAVEAT, stated by the lane per the
+  context rule: pcrec is FOUR PINS STALE on all five sets (newest
+  pcrec data d34c9131, 2026-09-06/07) — the matrix columns are
+  honest but old; re-measure windows at 25b1984f are the obvious
+  next nights. Cross-engine yields: rust fastest on 5/10 loglines
+  patterns; altwide wb-256/wb-512 refuse on all four pcrec roster
+  arms while pcre2+rust compile (rust 40-318× faster than pcre2
+  there); six MORE rust wrong-answer syntax patterns beyond [B59]'s
+  two. capability's sixth group in flight with the lane (post-merge,
+  25b1984f columns).
+- make check-report at store 190: GREEN in 20m02s (rc=0) — the
+  lane's 10-min kill was premature; the growth is real and filed as
+  KB-25 (REAL_STORE-scaled cost; candidate fixes named; ≥30-min
+  timeout guidance until fixed).
