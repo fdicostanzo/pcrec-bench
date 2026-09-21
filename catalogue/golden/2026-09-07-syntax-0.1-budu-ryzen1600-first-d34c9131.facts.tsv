@@ -374,6 +374,11 @@ R-STATUS-10	0	0									no-matching-rows
 R-STATUS-11	0	0									no-matching-rows
 R-STATUS-12	0	0									no-matching-rows
 R-STATUS-13	0	0									no-matching-rows
+R-STATUS-14	1	1	mod-x							pattern	mod-x
+R-STATUS-14	1	1	mod-x							n_engines	4
+R-STATUS-14	1	1	mod-x							testees	pcrec_d34c9131_auto-caps-simdna, pcrec_d34c9131_auto-nocaps-simdna, pcrec_d34c9131_vm-caps-simdna, pcrec_d34c9131_vm-in-caps-simdna
+R-STATUS-14	1	1	mod-x							diagnostic	pcrec: missing closing ) for group (pattern offset 0)
+R-STATUS-14	1	1	mod-x							n_diagnostics	1
 R-DELTA-1	0	0									no-matching-rows
 R-DELTA-2	0	0									no-matching-rows
 R-DELTA-3	0	0									no-matching-rows

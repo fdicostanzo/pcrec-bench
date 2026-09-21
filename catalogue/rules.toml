@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.1"
+catalogue_version = "3.2"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,20 @@ catalogue_version = "3.1"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.2 (2026-09-21, [B70], Frank's ruling on the [B69] census's
+# `wild-codegrammar-json-number-extended` finding): MINOR, a new rule --
+# R-STATUS-14, THE STANDING CHECK (`docs/design/capability_set_v1.md`
+# 14): a pattern refused by every ATTEMPTING engine in a report while
+# its `plain` form compiled somewhere renders `instrument-suspect`,
+# never an engine verdict -- the [B69] census's CASE-1-vs-CASE-2 rule,
+# re-derived here from the primary report TSV alone (no source shared
+# with `tools/viewer_export.py`'s own `_fold_and_classify`, the same
+# control this project's check-design rule always asks for). Additive
+# per this section's own precedent (R-ARM-2, 3.0's own entry below):
+# zero existing rule's predicate/threshold/inputs/slots moved; no
+# golden fact re-derives except the new rule's own presence in the
+# `[rule]`/`[function]` correspondence check.
 #
 # 3.1 (2026-09-20, lane b58repin, [B58]/inbox I-77 (1)): MINOR, a
 # `[[pin_order]]` append only -- `25b1984f` (abi 27, [EMIT-VERB]/D112:
@@ -596,6 +610,131 @@ reports/2026-09-05-altwide-0.2-budu-ryzen1600-after-334fd10e.tsv is
 where these concentrate: libpcre2 refuses the wide rungs at its own
 compiled-size ceiling, so a group above the wall ranks pcrec against
 pcrec.
+"""
+
+[[rule]]
+id            = "R-STATUS-14"
+title         = "instrument-suspect: unanimous refusal beside a live plain twin"
+class         = "status"
+since         = "3.2"
+grain         = ["set"]
+aggregate     = ["pattern"]
+inputs        = [
+  "report:did_not_compile.{pattern,testee,gave_up_summary}",
+  "report:rank?metric=median_ns.{pattern,form,testee}",
+  "report:excluded?metric=pass_rate.{pattern,form,testee}",
+  "report:not_ranked.{pattern,form,testee}",
+  "report:scratch.{pattern,form,testee}",
+]
+predicate     = """
+A pattern whose EVERY testee that could have hit a `whole-subject` wrap
+defect -- every testee with a `did_not_compile` row for it, unioned
+with every testee this report shows an OBSERVED `form=whole-subject`
+row for (`rank`/`excluded`/`not_ranked`/`scratch`) -- in fact refused to
+compile (at least two such testees, or the reading is not a consensus),
+AND at least one of those SAME refusing testees has its OWN `plain`
+form observed compiling in this report. This is the [B69] census's own
+CASE 1 (`docs/dev/lanes/b69census_report.md` §4): a whole-subject
+attempter refusing, on a construct its OWN plain compile of the
+identical pattern text handles fine, is the signature of a harness-side
+wrap or transcription defect for THAT testee, not an independent,
+corroborating finding across several engines' own parsers -- rendered
+as `instrument-suspect`, never as a verdict on any one engine. A testee
+with no runtime end-anchoring flag (libpcre2, RE2 -- `record_schema.md`
+§5 ADDITIONS 3's "same program" testees) never builds a
+`form=whole-subject` artifact for ANY pattern and is correctly OUTSIDE
+this predicate's population, whether it ranks the pattern's `plain`
+form or not -- and, just as deliberately, its `plain` success does NOT
+count as the "live twin" for some OTHER testee's own refusal, which is
+the second false positive this rule's own history (below) had to fix.
+"""
+threshold     = "none of this rule's own -- an EXISTENCE rule (attempted == refused, and a live plain twin owned by a refusing testee)"
+threshold_src = """
+`report.py`'s `did_not_compile` section row carries no `form` at all
+(R-ARM-2's own `threshold_src`; report.py:3498's own comment, "a testee
+failing on BOTH forms keeps its `plain` diagnostic, since `plain` is
+what the ranked regimes actually run on") -- a `did_not_compile` row is
+assumed worst-case relevant (it might be the whole-subject refusal;
+the TSV cannot say). `rank`/`excluded`/`not_ranked`/`scratch` rows DO
+carry `form` AND `testee` (unchanged since [B2]/record_schema.md's
+original design), which is what lets this rule ask two SEPARATE,
+per-testee questions instead of two report-wide ones -- pooling either
+question report-wide is a real false positive THIS RULE ACTUALLY SHIPPED
+and this lane's own real-data verification against committed reports
+caught, named below because a reader auditing this rule needs the
+counterexample, not just the final shape.
+
+FALSE POSITIVE 1 -- "attempted" pooled report-wide. Pooling every
+section regardless of form falsely counted libpcre2/RE2 as
+"attempters" the instant either ranked a pattern's `plain` form,
+breaking unanimity on every real report with a mixed roster; fixed by
+scoping `attempted` to testees with an OBSERVED `form=whole-subject`
+row (union `did_not_compile`, worst-case-assumed). This in turn exposed
+a KNOWN, NAMED GAP: a set excluding the `match` regime SET-WIDE
+(`bench/capability@0.1`, `capability_set_v1.md` §3.5) never emits a
+`form=whole-subject` row for ANY testee, compiled or refused, so
+`attempted == refused` becomes TRIVIALLY true for ANY pattern with >= 2
+ordinary, UNRELATED refusals there -- REPRODUCED live on
+`wild-datetime-datefinder-alternation`
+(`reports/2026-09-20-capability-0.1-budu-ryzen1600-fullroster-
+25b1984f.tsv`), a genuine SPLIT refusal (pcrec's own emit-size cap,
+already outboxed as O-31 item 5). Fixed with a REPORT-WIDE GUARD: this
+rule fires NOTHING at all unless at least one pattern, anywhere in the
+report, shows an OBSERVED whole-subject SUCCESS.
+
+FALSE POSITIVE 2 -- "a live plain twin" read report-wide ("ANY testee's
+plain form compiled ANYWHERE"). REPRODUCED live on `bench/syntax`'s own
+`cnd-group` (`reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-
+d34c9131.tsv`): pcrec's OWN parser genuinely does not implement
+conditionals ("pcrec: module 'conditionals' is enabled but (?(...) is
+not implemented yet") -- its `plain` form ALSO fails, so this is a real
+CAPABILITY GAP, not a wrap defect, and calling it `instrument-suspect`
+would tell a reader NOT to trust a finding that is in fact genuine. The
+report's own `plain_seen` was satisfied only by `libpcre2`, which never
+builds a whole-subject artifact at all and was already excluded from
+`attempted`/`refused`. Fixed by requiring the live twin be ONE OF THE
+REFUSING TESTEES' OWN plain success -- exactly
+`tools/viewer_export.py`'s own `is_wrap_artifact` per-row test
+(`testee_id in plain_compiled.get(pattern, ())`), re-derived
+independently here (no shared source, the standing control) rather
+than imported.
+"""
+slots         = ["pattern", "n_engines", "testees", "diagnostic", "n_diagnostics"]
+arith         = [
+  "report-wide guard: this rule fires NOTHING unless >= 1 pattern anywhere in the report shows an observed form=whole-subject row (rank/excluded/not_ranked/scratch)",
+  "attempted(pattern): {testee: has a did_not_compile row for this pattern} UNION {testee: has an OBSERVED form=whole-subject row for it, from rank/excluded/not_ranked/scratch}",
+  "refused(pattern): the set of testees with a did_not_compile row for this pattern",
+  "unanimous: len(attempted) >= 2 and attempted == refused",
+  "live twin: {testee: has its OWN form=plain row observed for this pattern} INTERSECTED with refused(pattern) is non-empty",
+]
+template      = "{pattern}: instrument-suspect -- every testee in this report that could have built a `whole-subject` artifact for it ({n_engines}: {testees}) refused to compile, while at least one of those SAME testees' `plain` form compiled in this report. This is the shape of a harness-side artifact (how the pattern is wrapped or transcribed for this engine's own second artifact), not an independent capability finding from {n_diagnostics} engine(s) -- read the [B69] census's own mechanism table before citing any one engine's diagnostic as a capability gap. First diagnostic: {diagnostic}"
+no_fire       = "no pattern in this report was refused by every whole-subject-attempting testee with at least one of them also compiling its own plain form"
+links         = ["docs/dev/lanes/b69census_report.md", "docs/design/capability_set_v1.md"]
+example       = """
+reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv (and
+every later syntax report at the same pin): `mod-x` (`(?x) c a t #
+comment`), `bench/syntax`'s OWN authored witness for this exact defect
+(`docs/dev/ledgers/2026-09-07-b36-syntax-first-d34c9131.md` §2.3) --
+this rule finds it independently, from the report alone, with the
+identical diagnostic ("pcrec: missing closing ) for group") already on
+record. reports/2026-09-21-altwide-0.2-budu-ryzen1600-after-25b1984f.tsv:
+`s-2048` fires too, on a DIFFERENT mechanism worth a reader knowing --
+not a syntax-swallowing wrap bug like `mod-x`/the [B69] census's own two
+CASE-1 patterns, but the wrap's own SIZE overhead (`(?:pattern\\n)\\z`)
+pushing an already-large altwide pattern over pcrec's emitted-code-size
+cap on every pin/config that builds a whole-subject artifact for it,
+where the identical PLAIN text stays under it -- still, correctly,
+"the shape of a harness-side artifact... not an independent capability
+finding", just a different one than the syntax-comment class. Both were
+CONFIRMED by direct read of the regenerated sidecars (this lane), not
+merely predicted. `bench/capability@0.1`'s own two CASE-1 patterns
+(`wild-codegrammar-json-number-extended`, `wild-codegrammar-json-
+stringcontent-escape`) do NOT fire on any committed capability report,
+for the KNOWN GAP stated above (that set excludes `match` set-wide) --
+the catalogue's own fixture, `R-STATUS-14__unanimous-refusal-plain-twin`
+(built from a `bench/email`-shaped slice, whose roster DOES run
+`match`), is what exercises that exact shape until a set without the
+gap carries it for real.
 """
 
 # ====================================================== class R-DELTA ==

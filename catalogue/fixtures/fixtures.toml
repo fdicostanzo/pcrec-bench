@@ -230,6 +230,42 @@ select = { pattern = "cls-upto-8192", regime_or_na = "match-compliance" }
 expect = ["R-RANK-1"]
 expect_not = ["R-STATUS-13"]
 
+# [B70] R-STATUS-14, THE STANDING CHECK: `orig` (report_a,
+# email-specimen@0.1) is a real pattern whose `whole-subject` form
+# genuinely ranks on seven testees across both pins (pcrec_692c2e8's
+# four caps/nocaps/vm/vm-in and pcrec_8da6120's three) while its
+# `plain` form also ranks on libpcre2-interp/-jit -- testees that never
+# build a whole-subject artifact at all, the population this rule's own
+# `attempted()` must exclude. Flipping EVERY `orig`/`whole-subject`
+# `rank` row's `section` to `did_not_compile` (one declared mutation,
+# `all = true`) simulates the census's own CASE 1 shape (every
+# whole-subject attempter refused, `plain` still compiles) without
+# inventing a diagnostic string the real reporter never wrote. `select`
+# ALSO keeps `factored` (report_a's other pattern with real
+# `form=whole-subject` rank rows, entirely untouched by the mutation's
+# `where`) -- the rule's own REPORT-WIDE GUARD (§0/threshold_src)
+# requires at least one OBSERVED whole-subject success ANYWHERE in the
+# report before it will fire at all, and a slice narrowed to `orig`
+# alone (where the mutation removes every such observation) would
+# starve the guard the same way `bench/capability@0.1` genuinely does --
+# this fixture is the POSITIVE case, not that gap's own witness. The
+# CONTROL flips only ONE testee's row -- a split refusal, six of seven
+# whole-subject attempters still ranking -- which must NOT fire.
+[[fixture]]
+name   = "R-STATUS-14__unanimous-refusal-plain-twin"
+report = "a"
+select = { pattern = ["orig", "factored"] }
+mutate = { column = "section", value = "did_not_compile", all = true, where = { section = "rank", pattern = "orig", form = "whole-subject" } }
+expect = ["R-STATUS-14"]
+
+[[fixture]]
+name   = "R-STATUS-14__control-split-refusal"
+base   = "R-STATUS-14__unanimous-refusal-plain-twin"
+report = "a"
+select = { pattern = ["orig", "factored"] }
+mutate = { column = "section", value = "did_not_compile", all = false, where = { section = "rank", pattern = "orig", form = "whole-subject", testee = "pcrec_692c2e8_auto-caps-simdna" } }
+expect_not = ["R-STATUS-14"]
+
 # ----------------------------------------------------------- R-DELTA --
 
 [[fixture]]

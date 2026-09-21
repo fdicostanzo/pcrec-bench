@@ -756,6 +756,149 @@ def r_status_13(view, ctx):
     return out
 
 
+def r_status_14(view, ctx):
+    """[B70] THE STANDING CHECK (`docs/design/capability_set_v1.md` 14,
+    the [B69] census's own CASE-1-vs-CASE-2 rule, re-derived here from
+    the REPORT alone -- no source shared with `tools/viewer_export.py`'s
+    `_fold_and_classify`, the check-design rule this project always
+    applies to a control). TWO real false positives, both caught by
+    this lane's own real-data verification against COMMITTED reports
+    (never merely against the fixtures), are fixed below and named at
+    their own guard: the REPORT-WIDE GUARD (a report with no visible
+    whole-subject population at all) and THE PLAIN TWIN MUST BE ONE OF
+    THE REFUSING TESTEES' OWN (a genuine pcrec capability gap, e.g.
+    unimplemented conditionals, where pcrec's OWN plain form ALSO
+    fails and only a structurally-unrelated testee like libpcre2
+    supplied a plain success). Neither was found by construction or by
+    the fixture corpus alone -- both needed a real committed report.
+
+    "ATTEMPTED" IS SCOPED TO `whole-subject`, NOT any row for the
+    pattern -- deliberately, and it is what makes this rule correct
+    rather than merely plausible. A `did_not_compile` row carries no
+    `form` at all (R-ARM-2's own `threshold_src`, `docs/design/
+    predicate_audit_v1.md` -- "a testee failing on BOTH forms keeps its
+    `plain` diagnostic", report.py:3498), so a refusal alone cannot say
+    which artifact it was about; but `rank`/`excluded`/`not_ranked`/
+    `scratch` rows DO carry `form`, and a testee with no runtime
+    anchoring flag (libpcre2, RE2 -- `record_schema.md` 5 ADDITIONS 3's
+    own "same program" testees) NEVER produces a `form=whole-subject`
+    row for ANY pattern, compiled or not: it answers the `match` regime
+    from the SAME `plain` artifact and never attempts a second compile
+    at all. Pooling "attempted" over every section regardless of form
+    (a first cut this rule does NOT use) would count such a testee as
+    an "attempter" the moment it ranks on the pattern's `plain` form,
+    breaking unanimity FALSELY the instant one is in the roster -- the
+    exact population the census's own CASE-1 table excludes by name
+    ("libpcre2... and RE2... never build a separate whole-subject
+    artifact... structurally outside this defect's reach"). So
+    `attempted(pattern)` here is: every testee with a `did_not_compile`
+    row for it (worst-case assumed relevant, since the row cannot say
+    otherwise) UNION every testee with an observed `form=whole-subject`
+    row for it (`rank`/`excluded`/`not_ranked`/`scratch`) -- exactly the
+    population that could have hit a whole-subject wrap defect.
+
+    THE REPORT-WIDE GUARD below is not a refinement, it is a
+    CORRECTNESS FIX this lane's own real-data verification against a
+    real committed report found necessary. A set that excludes the
+    `match` regime SET-WIDE (`bench/capability@0.1` itself,
+    `capability_set_v1.md` 3.5) never produces a `form=whole-subject`
+    row for ANY testee, compiled or refused -- the SAME R-STATUS-4-class
+    gap `docs/design/predicate_audit_v1.md` already documents
+    (`did_not_compile` rendering only inside an EXISTING ranking group).
+    Without a guard, `ws_seen` is then empty for EVERY pattern in such a
+    report, which makes `attempted == refused` a TAUTOLOGY: any pattern
+    with two or more ORDINARY, unrelated `did_not_compile` refusals
+    reads "unanimous" whether or not the refusal has anything to do with
+    `whole-subject` at all. Reproduced live against
+    `reports/2026-09-20-capability-0.1-budu-ryzen1600-fullroster-
+    25b1984f.tsv`: an earlier draft of this rule (no guard) fired
+    `instrument-suspect` on `wild-datetime-datefinder-alternation` --
+    a real, already-documented, genuinely SPLIT refusal (pcrec's own
+    500,000 B emit-code-size cap, outbox O-31 item 5; onig/rust/
+    vectorscan/re2/`pcrec-auto-nocaps` all compile it fine) -- because
+    its four `did_not_compile` testees happened to be >= 2 and `ws_seen`
+    could not disprove unanimity. The fix: this rule fires NOTHING AT
+    ALL unless at least one pattern, anywhere in the report, shows an
+    OBSERVED whole-subject SUCCESS -- the one fact that tells "this
+    report can see a live whole-subject population and every member of
+    it refused" apart from "this report cannot see whole-subject at
+    all". A set whose roster runs the `match` regime (`bench/email`,
+    `bench/loglines`, `bench/bounded`, `bench/altwide`, `bench/syntax`)
+    clears this guard; `bench/capability@0.1` never does, and this rule
+    is SILENT on it entirely -- it does not, and structurally cannot,
+    reproduce the census's own 7-engine finding from that report alone."""
+    refused = defaultdict(dict)  # pattern -> {testee: diagnostic}
+    for r in view.rows("did_not_compile"):
+        by_testee = refused[r["pattern"]]
+        by_testee.setdefault(r["testee"], r["gave_up_summary"])
+
+    ws_seen = defaultdict(set)     # pattern -> {testee} with an observed whole-subject row
+    plain_seen_by = defaultdict(set)  # pattern -> {testee} with its OWN plain form observed
+    for section, filt in (("rank", {"metric": "median_ns"}),
+                          ("excluded", {"metric": "pass_rate"}),
+                          ("not_ranked", {}), ("scratch", {})):
+        for r in view.rows(section, **filt):
+            if r["form"] == "whole-subject":
+                ws_seen[r["pattern"]].add(r["testee"])
+            elif r["form"] == "plain":
+                plain_seen_by[r["pattern"]].add(r["testee"])
+
+    # THE REPORT-WIDE GUARD, and the fix for a real false positive this
+    # lane's own real-data verification caught: on a report where NO
+    # pattern anywhere ever shows an OBSERVED `form=whole-subject` row
+    # (a set excluding the `match` regime set-wide, e.g.
+    # `bench/capability@0.1` -- the KNOWN GAP this rule's own
+    # `threshold_src` names), `ws_seen` is empty for EVERY pattern, so
+    # `attempted == refused` becomes TRIVIALLY true for ANY pattern with
+    # >= 2 ordinary, UNRELATED did_not_compile refusals -- reproduced
+    # live on `wild-datetime-datefinder-alternation`
+    # (reports/2026-09-20-capability-0.1-budu-ryzen1600-fullroster-
+    # 25b1984f.tsv), a genuine SPLIT refusal (pcrec's own emit-size cap,
+    # already outboxed as O-31 item 5) this rule rendered
+    # `instrument-suspect` before this guard existed -- exactly wrong.
+    # Requiring at least one whole-subject SUCCESS observed ANYWHERE in
+    # the report is what distinguishes "this report can see a live
+    # whole-subject population and every one of it refused" from "this
+    # report cannot see whole-subject at all, so an all-did-not-compile
+    # reading proves nothing".
+    if not any(ws_seen.values()):
+        return []
+
+    out = []
+    for pattern in sorted(refused):
+        refused_testees = set(refused[pattern])
+        attempted_testees = ws_seen.get(pattern, set()) | refused_testees
+        # An "unanimous" reading over a single attempter is not a
+        # consensus -- guard the degenerate population.
+        if len(attempted_testees) < 2 or attempted_testees != refused_testees:
+            continue
+        # THE PLAIN TWIN MUST BE ONE OF THE REFUSING TESTEES' OWN --
+        # never merely "some testee's plain form compiled somewhere",
+        # which is a SECOND real false positive this lane's own
+        # real-data verification caught (bench/syntax's own `cnd-group`:
+        # "pcrec: module 'conditionals' is enabled but (?(...) is not
+        # implemented yet" -- pcrec's PARSER genuinely does not support
+        # conditionals, so its OWN `plain` form fails too; only
+        # `libpcre2`, which never builds a whole-subject artifact at
+        # all, supplied `plain_seen`). Requiring the intersection with
+        # `refused_testees` is exactly `tools/viewer_export.py`'s own
+        # `is_wrap_artifact` per-row test (`testee_id in
+        # plain_compiled.get(pattern, ())`), re-derived independently
+        # here rather than imported.
+        live_twins = plain_seen_by.get(pattern, set()) & refused_testees
+        if not live_twins:
+            continue  # every refusing testee's OWN plain form ALSO failed
+                      # -- a capability gap, not a wrap-artifact signature
+        testees = sorted(refused_testees)
+        diagnostics = sorted(set(refused[pattern].values()))
+        out.append(fire({"pattern": pattern, "n_engines": str(len(testees)),
+                         "testees": ", ".join(testees),
+                         "diagnostic": diagnostics[0],
+                         "n_diagnostics": str(len(diagnostics))},
+                        pattern=pattern))
+    return out
+
+
 # ---- R-DELTA ---------------------------------------------------------
 
 def _delta_rows(view):
