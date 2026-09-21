@@ -5205,3 +5205,21 @@ ext-bench testees across six engines.
   lane's 10-min kill was premature; the growth is real and filed as
   KB-25 (REAL_STORE-scaled cost; candidate fixes named; ≥30-min
   timeout guidance until fixed).
+
+## 2026-09-21 (after midnight) — [B61] COMPLETE: the six-set full-roster matrix wave; Frank's ask delivered
+
+- capability@0.1's sixth group merged 6c94fe4 (13 testees — the wider
+  set carries dfa/re2-longest identities; the four pcrec modes
+  pin-uniform at 25b1984f for the first time on any set). The
+  pinconfirm-vs-fullroster distinction stated in reports/CLAUDE.md
+  (cross-pin AFTER vs roster snapshot). The lane also correctly
+  regenerated the five earlier sidecars whose index_sha256 moved with
+  the store growth (each diff verified stamp-only). check-interpret
+  168/168.
+- NEW matrix-only finding: evil-alt-nested / short-subject-search /
+  plain has NO winner — all thirteen roster testees wrong (7) or
+  gave-up (6), best_testee empty; the same pattern's throughput row
+  ranks cleanly. Regime-specific; only visible with the full roster
+  in one matrix.
+- [B61] closed. The wave's standing caveat for next windows: pcrec
+  four pins stale on email/loglines/bounded/altwide/syntax.
