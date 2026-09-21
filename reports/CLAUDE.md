@@ -2679,3 +2679,83 @@ selector-glob lesson: `docs/dev/lanes/b63window_report.md`.
   the same KB-24 `_measured_text` crash on `delta_verdict`'s string-kind
   values (a local monkeypatch of the formatting helper only; `_op_holds`
   untouched).
+
+**[B63] reports (2026-09-21, lane b63window) ADDED a second file group —
+`bench/altwide@0.2`'s pcrec canonical roster (auto/nocaps/vm/vm-in) at
+pin 25b1984f**, wave 1's second set. Changed NOTHING else here: reporter
+unchanged at v18. Ten testees: two pcre2 baselines, pcrec-auto/pcrec-vm's
+own d34c9131 records (single-variable, [EMIT-VERB]'s own comparator),
+pcrec-nocaps/pcrec-vm-in's own 334fd10e records (one pin short of
+d34c9131's [FORM-CHAR] cls-fold step), and the four fresh 25b1984f
+records. Window: `build/windows/window_altwide_20260921T053218Z.log`
+(2026-09-21 01:32:18-02:37:59 EDT, 4/4 cells attempt 1 rc=0), store
+194 -> 198. Query: `report --subbench altwide --version 0.2 --since
+2026-09-01T00:00:00Z --until 2026-09-21T07:00:00Z` plus the ten
+`--testee` values — **10 record(s) matching this query, 10 included, 0
+superseded**. `worst_other_core_busy: 32.82%`.
+
+**THE FINDING, NOT PREDICTED BY THIS LANE AND STATED PROMINENTLY**: the
+DFA/auto route's refusal boundary on this set SHRANK DRAMATICALLY
+between d34c9131 and 25b1984f — R-STATUS-4 (direct TSV grep confirms
+the interpreter's own count) shows `pcrec_25b1984f_auto-caps-simdna`/
+`auto-nocaps-simdna` refuse only **4 patterns** (`s-2048`, `s-4096`,
+`w-1024`, `w-2048`) where the SAME roster refused **18** at d34c9131 —
+`ci-256`, `ci-512`, `cnt-64`, `nar4-512`, `pfx3-512`, `sfx-512`,
+`sh1-512`, `srt-256`, `srt-512`, `w-256`, `w-384`, `w-512`, `wb-256`,
+`wb-512` all COMPILE now that did not before. Read directly from the
+fresh record's own `engine_metadata`: `w-256` whole-subject's
+`emit_bytes` dropped from 1,033,795 B (d34c9131, refused, over the
+1,000,000 B cap) to **706,900 B** (25b1984f, compiles, -31.6%);
+`ci-512`'s `dfa_table` stamp reads **`mixed`** (plain form,
+emit_bytes 976,275) and **`indexed`** (whole-subject, emit_bytes
+686,048) at 25b1984f, where it refused outright (over cap on BOTH
+forms) at d34c9131. The mechanism this points to is cf0962e3's own
+`[OPT-DIAL]`/K59 "premul drop-ladder rung" (landed between d34c9131 and
+25b1984f, in the gap this window's `pcrec-auto` single-variable
+comparator does NOT cross for the TIME axis but the `dfa_table` stamp
+clearly does for SIZE) — a real, substantial, GOOD-NEWS rescue on the
+DFA route's compiled-size ceiling, stated here as a finding for pcrec
+to confirm or correct, not asserted as proven mechanism. The VM route's
+refusal boundary is, by contrast, EXACTLY UNCHANGED — `pcrec_25b1984f_
+vm-caps-simdna`/`vm-in-caps-simdna` refuse the identical 11-pattern set
+d34c9131 (`vm`) and 334fd10e (`vm-in`) already refused, byte for byte
+the same pattern names. This directly UPDATES the [B61] staleness
+caveat's own "wb/ci refusal-boundary cells" headline: those cells are
+NOT stale-but-probably-similar, they moved for real, in a direction
+that increases the DFA route's usable ladder length.
+
+**Predictions P8-P13** (the refusal-boundary `section=did_not_compile`
+set-eq clauses) scored **not-evaluable**, not confirmed/refuted, for a
+SELECTOR-AUTHORING reason found while scoring: `report.py`'s
+`did_not_compile` rows carry a BLANK `form` column (confirmed by direct
+`awk` on the TSV) — the `plain`/`whole-subject` split this lane's
+grounding source (`docs/dev/measurements/2026-09-06-altwide-size-
+census-d34c9131.txt`) carries is that PROBE SCRIPT's own column shape,
+not `report.py`'s. Every P8-P13 selector named `form=plain`, which
+matches nothing in this section, so all six read "nothing measurable"
+rather than confirming or refuting — the finding above was read by
+DIRECT TSV inspection instead, not through the predictions mechanism.
+A lesson for the next refusal-boundary predictions file, not a
+re-scored one (predictions are frozen pre-run artifacts). Predictions
+P1-P4 (`delta_verdict`) refuted, all within ×1.00-×1.14 — the honest
+timing null holds on this set (unlike loglines' VM route, altwide's
+vm/vm-in gap is only one pin and does not cross [OPT-5] STEP 2).
+Predictions P5-P6 (same-pin structural `compile:emit_bytes` ratio
+claims) also refuted: `pcrec-nocaps` is NOT byte-identical to
+`pcrec-auto` here either (×1.426 on `w-256`/`srt-256`, the SAME
+direction and roughly the same magnitude loglines' P5 found), and
+`pcrec-vm-in` carries real extra bytes over `pcrec-vm` (×1.25-1.95,
+largest on `ci-256`) — the "nothing to strip"/"buffer is runtime-only"
+hypotheses this lane predicted from the corpus's own capture-free
+grammar do not hold at either testee pair, on either set. Full verdict
+table: `docs/dev/lanes/b63window_report.md`.
+
+- `2026-09-21-altwide-0.2-budu-ryzen1600-after-25b1984f.md` — pcrec's
+  canonical altwide roster at 25b1984f, cross-pin against each testee's
+  own most recent prior record (d34c9131 for auto/vm, 334fd10e for
+  nocaps/vm-in). `.tsv`/`.subject-grain.md`/`.subject-grain.tsv`/
+  `.matrix.tsv`/`.matrix.html` siblings all rendered the same query;
+  `.interpretation.md` generated WITHOUT `--predictions` (the same F27
+  gap); predictions scored separately via a direct
+  `interpret.evaluate_predictions` call with the same KB-24 workaround
+  as the loglines group above.
