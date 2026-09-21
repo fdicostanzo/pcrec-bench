@@ -228,3 +228,24 @@ Frank's five notes, verbatim-mapped; [B67] implements:
    row would have multiplied a ~2 KB string across bench/altwide's
    corpus of rows for nothing). Click PINS the popover open (ignores
    further hover) until the same cell, Escape, or an outside click.
+
+## 10. v1.2 amendments ([B70], Frank's rulings 2026-09-21 evening)
+
+1. REFUSAL ROWS FOLD INTO THE RANKED ROWS: a compile refusal is
+   regime-independent (no artifact exists), so the engine's cell reads
+   `refused` in every regime row for that (pattern, form) — the
+   separate `regime=''` rows (the duplicate-looking, mostly-blank rows)
+   disappear from the matrix view.
+2. REFUSAL REASON as a visible class (Frank: "why it refuses — syntax,
+   too large, etc as a subcolumn"): the exporter classifies every
+   refusal diagnostic into a small CLOSED token set seeded by the
+   [B69] census's mechanism table (first cut: `too-large` (emit-size
+   cap), `too-complex` (state/element caps), `syntax`, `unsupported`
+   (construct/module), `wrap-artifact` (the instrument class), `other`
+   — grown only from measured diagnostics, never invented), keeps the
+   verbatim diagnostic beside it, and the viewer renders the token in
+   the refused cell (e.g. `refused · too-large`) with the raw text in
+   the tooltip. Whether a sub-column or in-cell chip reads better is
+   the implementer's call at real data; Frank reviews from results.
+3. The wrap-artifact marker (§ ruling earlier today) becomes one token
+   of that same classifier rather than a separate mechanism.
