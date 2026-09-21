@@ -7,9 +7,15 @@ includes every roster engine with records for that set, with
 `rust_1.13.1_default-caps-simdna` ([B59]) among them for the first time
 — every existing committed matrix for these five sets either predates
 `rust-default` entirely or is scoped to `rust-default` alone (the
-[B57]/[B59] solo-roster shape). `capability@0.1` is out of charter (the
-manager's own read, pending an in-flight merge). Worktree
-`worktrees/b61matrix`, branch `lane/b61matrix`. Does not merge.
+[B57]/[B59] solo-roster shape). `capability@0.1` was initially out of
+charter, pending an in-flight merge. Worktree `worktrees/b61matrix`,
+branch `lane/b61matrix`. Does not merge.
+
+**CHARTER EXTENSION (manager message, after the five sets landed)**: the
+[B60] merge (8dde570) landed four fresh `pcrec_25b1984f_*` records on
+`capability@0.1`; add it as a SIXTH set under the same conventions, after
+merging `master` into this lane's branch first (not rebasing). Done: see
+"The sixth set" section below.
 
 ## Roster-selection rule (stated once, applied mechanically five times)
 
@@ -98,27 +104,94 @@ otherwise).
    [B59]'s own finding) both reproduce on the matrix surface — confirmed
    consistent with prior narrower reports, not new discoveries.
 
+## The sixth set: `capability@0.1`
+
+**Merge first**: `git merge master` in this worktree hit ONE conflict, in
+`reports/CLAUDE.md` — both `master` (the [B60] pinconfirm entry) and this
+lane's own uncommitted `[B61]` entry had been inserted at the identical
+point (immediately before the `[B39]` section). Not a semantic conflict:
+resolved by keeping BOTH blocks intact, `[B60]`'s entry first (it landed
+on master first), this lane's `[B61]` entry second — nothing dropped,
+nothing reworded. `git status` showed no other unmerged paths; the merge
+commit is `dca2ee1`. Side effect: `store/index.tsv` grew (187 → 191
+records, the four new `pcrec_25b1984f_*` capability rows), which made
+`make check-interpret`'s section-3 freshness check FAIL on all five
+already-committed sidecars (each one's stamped `index_sha256` no longer
+matched the live index) — fixed by regenerating all five in place
+(one-line diffs, `index_sha256` only, confirmed by hand before
+recommitting) before adding the sixth.
+
+Roster derivation for `capability@0.1` differs from the other five sets'
+mechanical rule because the set itself carries more than one canonical
+identity per engine family (`libpcre2-dfa` beside `-interp`/`-jit`,
+`re2-default` beside `re2-longest`) — this lane's rule generalizes to
+"newest record of every canonical identity `store/index.tsv` shows for
+this set," giving **thirteen** testees, not seven: `libpcre2-{interp,
+jit,dfa-nocaps}`, `pcrec_25b1984f_{auto,auto-nocaps,vm,vm-in}-caps-simdna`
+(now PIN-UNIFORM — the four [B60] records are the newest sample of every
+canonical pcrec mode on this set, the first time that has been true for
+`capability@0.1`), `oniguruma-default`, `re2-{default,longest}`,
+`rust-default`, `tre-default`, `vectorscan-block-nosom`. Query: `report
+--subbench capability --version 0.1` plus the thirteen `--testee` values
+— 13 records matching, 13 included, 4 superseded (each id's own retired
+history). Render wall (md → matrix.html): ~9m40s (the three
+`--grain subject` / matrix steps each took ~3 minutes on this set's
+15,000-25,000-row records — still an explicit-roster, index-prefiltered
+query, nowhere near KB-16's old whole-store cost). Interpretation sidecar
+regenerated the same way as the other five, determinism-checked
+byte-identical. `make check-interpret` after all six (five regenerated +
+one new): **168/168**.
+
+**Distinguished explicitly, in `reports/CLAUDE.md`'s own text, from
+`2026-09-20-capability-0.1-budu-ryzen1600-pinconfirm-25b1984f.md`** (the
+[B60] cross-pin acceptance AFTER already committed on master): that
+report answers "did anything measuring time move across the re-pin"
+(eleven testees, both `cf0962e3` and `25b1984f` pcrec arms side by side);
+this one answers "how does every engine compare right now" (thirteen
+testees, one pcrec pin). Per the manager's own instruction, the
+reports/CLAUDE.md entry states which is which so a reader does not
+conflate them.
+
+**Genuine finding, stated not diagnosed**: `evil-alt-nested` /
+`short-subject-search` / `plain` has NO winner in the whole matrix — all
+thirteen roster testees read `wrong` (7: `libpcre2-dfa`,
+`pcrec_25b1984f_auto-nocaps-simdna`, `re2-default`, `re2-longest`,
+`rust-default`, `tre-default`, `vectorscan`) or `gave-up` (6: the rest)
+on that one cell; `best_testee`/`best_ns` are both empty. The SAME
+pattern's `large-subject-throughput` row ranks cleanly. No prior
+committed report (all narrower-roster) could show this — it takes all
+thirteen testees in one row to see that nobody wins.
+
 ## Charter vs. committed
 
-- [x] Five full-roster report groups, one per named set, `rust-default`
-  in every roster: **COMMITTED** (35 files: 5 × `.md`/`.tsv`/
-  `.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/
-  `.interpretation.md`).
-- [x] `capability@0.1` excluded per charter: not touched.
+- [x] Six full-roster report groups, one per named set (five originally
+  chartered plus `capability@0.1` on extension), `rust-default` in every
+  one of the first five, the [B60] `25b1984f` records in the sixth:
+  **COMMITTED** (42 files: 6 × `.md`/`.tsv`/`.subject-grain.md`/
+  `.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/`.interpretation.md`).
+- [x] `master` merged into `lane/b61matrix` before rendering the sixth
+  set, not rebased, conflict resolved with both sides kept and reported
+  (see "The sixth set" above): merge commit `dca2ee1`.
+- [x] `capability@0.1` added as the sixth set per the charter extension,
+  its own roster-derivation rule and its distinction from the [B60]
+  pinconfirm group stated inline in `reports/CLAUDE.md`: done.
 - [x] Roster and pin-per-testee stated in `reports/CLAUDE.md`, inline,
   before the numbers (context-around-numbers rule): done in the `[B61]`
   entry and in each group's own bullet.
 - [x] `fullroster` naming slug, `<date>-<subbench>-<version>-<machine>-
   fullroster-<pin>` per the committed convention (matches the
   `-after-<pin>` / `-first-<pin>` precedent's own shape): done; pin
-  suffix is `d34c9131` on all five (the newest pcrec pin actually present
-  in each roster, not today's checkpoint — see the finding above).
+  suffix is `d34c9131` on the first five (the newest pcrec pin actually
+  present in each roster, not today's checkpoint) and `25b1984f` on the
+  sixth (genuinely pin-uniform there).
 - [x] Renders foreground, one at a time, `gnutimeout`-bounded: done (see
   per-set table; the one auto-background incident was polled to
   completion in the foreground, never left unattended).
 - [x] Interpretation sidecars, `--render --out`, determinism re-run
-  diffed byte-identical: done, all five.
-- [x] `make check-interpret` run after: **166/166**.
+  diffed byte-identical: done, all six (the first five were regenerated
+  once after the merge, since the growing live index moved their stamp —
+  see "The sixth set" above; content unaffected, confirmed by hand).
+- [x] `make check-interpret` run after: **168/168** (all six sidecars).
 - [ ] `make check-report` was STARTED and KILLED mid-run in this lane,
   not completed: `pcrecbench.tests.test_report` ran 10+ minutes and grew
   to ~3.2 GB RSS (killed by PID with cwd verified, box quiet at the time,
@@ -142,7 +215,10 @@ otherwise).
 
 One commit per set (five) plus the `reports/CLAUDE.md` entry and this
 report, incremental as each set finished (per BOILERPLATE's "commit age
-is your liveness signal" rule).
+is your liveness signal" rule); then the `master` merge commit; then the
+sixth set (`capability@0.1`) plus the five regenerated sidecars and this
+report's update, in one closing commit.
 
-Handback: five full-roster groups committed and named above; nothing
-OWED except the optional `make check-report` gate. The manager merges.
+Handback: six full-roster groups committed and named above; nothing OWED
+except the optional `make check-report` gate (unchanged from before the
+extension — not re-attempted). The manager merges.

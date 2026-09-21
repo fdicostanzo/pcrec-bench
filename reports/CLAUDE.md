@@ -843,19 +843,25 @@ other committed report regenerated.
   too reproducible to be ordinary spread, and [EMIT-VERB]/D112's claim
   was that NOTHING measuring time moves. `docs/dev/lanes/
   b60pinconfirm_report.md` has the full derivation.
-**[B61] reports (2026-09-20, lane b61matrix) ADDED five FULL-ROSTER file
+
+**[B61] reports (2026-09-20, lane b61matrix) ADDED six FULL-ROSTER file
 groups — one per set ([B59]'s new `rust-default` samples folded into the
 project's own standing cross-engine comparison for the first time)**:
 `email-specimen@0.2`, `loglines@0.1`, `bounded@0.3`, `altwide@0.2`,
-`syntax@0.1` (`capability@0.1` deliberately EXCLUDED from this lane's
-charter — the manager reads it separately once an in-flight merge lands
-new pcrec records). Frank's direct ask: build reports whose matrix
+`syntax@0.1`, and — added in a charter extension once the [B60] merge
+(8dde570) landed four fresh `pcrec_25b1984f_*` `capability@0.1` records —
+`capability@0.1` itself. Frank's direct ask: build reports whose matrix
 includes EVERY roster engine with records for each set, `rust-default`
-among them, where every prior committed matrix for these five sets either
+among them, where every prior committed matrix for these six sets either
 predates `rust-default` entirely or is scoped to `rust-default` ALONE (the
 [B57]/[B59] solo-roster shape, chosen for the F27 anchor reason those
 entries state). The reporter is unchanged at `v18 (2026-09-18)`; no
-existing committed report was regenerated.
+existing committed report was regenerated. This lane merged `master` into
+`lane/b61matrix` after its first five sets landed (one conflict, in this
+file — both sides had inserted a new wave paragraph at the same point;
+resolved by keeping both, `[B60]`'s pinconfirm entry first, this entry
+second, neither dropped) to pick up the [B60] records before rendering
+the sixth group.
 
 **ROSTER-SELECTION RULE STATED UP FRONT, because it is the one thing a
 reader must not assume**: "full roster" here means the newest record of
@@ -1038,7 +1044,71 @@ freshness, covers all five).
   `.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/
   `.interpretation.md` all rendered/generated as described above.
 
+**`capability@0.1`, THE SIXTH GROUP, IS A DIFFERENT SHAPE FROM THE OTHER
+FIVE — read this before its bullet.** This is the widest [B7] roster
+this project has ever put in one matrix: THIRTEEN testees, not seven,
+because `capability@0.1` itself carries more than one canonical
+identity per engine family — `libpcre2-dfa` alongside `-interp`/`-jit`,
+`re2-default` alongside `re2-longest` — and every one of them now has a
+record. This group is DISTINCT IN PURPOSE from
+`2026-09-20-capability-0.1-budu-ryzen1600-pinconfirm-25b1984f.md` two
+entries above ([B60], lane b60pinconfirm): that report is a CROSS-PIN
+acceptance AFTER, eleven testees, three pcre2 baselines plus BOTH
+`cf0962e3` and `25b1984f` pcrec arms side by side, built to answer
+"did anything measuring time move across the [EMIT-VERB]/D112 re-pin."
+This report is a FULL-ROSTER SNAPSHOT, thirteen testees, ONE pcrec pin
+(25b1984f, now uniform across all four canonical modes — the four
+[B60] records are also what makes every pcrec mode's newest sample
+line up on a single pin for the first time in this set's history),
+built to answer "how does every engine this project measures compare
+right now." A reader who wants the pin-confirm finding (the isolated
+`pcrec-vm-in` ×1.08 mover) should read that entry, not this one; a
+reader who wants the cross-engine picture should read this one, not
+that one.
+
+- `2026-09-20-capability-0.1-budu-ryzen1600-fullroster-25b1984f.md` —
+  full roster: `libpcre2_10.46_{interp,jit,dfa-nocaps}-*`,
+  `pcrec_25b1984f_{auto,auto-nocaps,vm,vm-in}-caps-simdna` (pin-uniform
+  — the [B60] merge's own four records), `oniguruma_6.9.10_default-caps-
+  simdna`, `re2_11.0.0_{default,longest}-caps-simdna`,
+  `rust_1.13.1_default-caps-simdna`, `tre_0.9.0_default-caps-simdna`,
+  `vectorscan_5.4.11_block-nosom-nocaps-simd`. Query: `report --subbench
+  capability --version 0.1` plus the thirteen `--testee` values —
+  **13 record(s) matching this query, 13 included, 4 superseded** (each
+  id's own retired history: the two older `libpcre2-dfa`/`re2-default`/
+  `tre-default`/`vectorscan` samples this lane's newest-record rule
+  already excludes by construction). `worst_other_core_busy: 58.96%`
+  (`pcrec_25b1984f_auto-nocaps-simdna` / `wild-waf-crs-942140-dbnames` /
+  `large-subject-throughput`).
+
+  **The matrix's starkest row: `evil-alt-nested` / `short-subject-search`
+  / `plain` has NO winner at all** — `best_testee`/`best_ns` are both
+  empty because every one of the thirteen roster testees reads either
+  `wrong` or `gave-up` on that exact cell (seven `wrong`: `libpcre2-dfa`,
+  `pcrec_25b1984f_auto-nocaps-simdna`, `re2-default`, `re2-longest`,
+  `rust-default`, `tre-default`, `vectorscan`; six `gave-up`:
+  `libpcre2-interp`/`-jit`, `oniguruma`, `pcrec_25b1984f_{auto-caps,
+  vm-caps,vm-in}-caps-simdna`). The same pattern's
+  `large-subject-throughput` row DOES rank cleanly
+  (`pcrec_25b1984f_auto-nocaps-simdna` wins at 27.3 ns), so the failure
+  is specific to the search regime, not the pattern's compile step. Not
+  diagnosed here — several of the individual engine failures behind
+  this row are already named in the [B48]/[B54] ledgers (RE2's own
+  family-11 trio, TRE's wider correctness gap); what is new here is
+  seeing all thirteen fail SIMULTANEOUSLY on one row, which no
+  narrower, single- or few-testee report could show.
+  `libpcre2-dfa` carries the roster's own second-worst correctness
+  count (5 `wrong` + 3 `gave-up` across 128 rows, `--dfa`'s documented
+  leftmost-ALTERNATIVE-not-leftmost-first semantics per `testees/pcre2/
+  CLAUDE.md`); `tre-default` the worst (9 `wrong` + 6 `refused`).
+  `pcrec_25b1984f_auto-nocaps-simdna` carries exactly one `wrong` cell
+  in the whole matrix (`evil-alt-nested`/search, named above) — not
+  independently traced to a cause in this lane. `.tsv`/
+  `.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/
+  `.interpretation.md` all rendered/generated as described above.
+
 Lane report: `docs/dev/lanes/b61matrix_report.md`.
+
 
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
