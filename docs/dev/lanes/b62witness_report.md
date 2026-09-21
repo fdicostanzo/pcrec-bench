@@ -184,18 +184,118 @@ provably unmoved between the two historical windows), this is the
 leading remaining hypothesis, not yet confirmed -- steps 2 and 3 are
 what would confirm or refute it, and neither has run.
 
+## STEPS 2-3, THE REAL RUN (lane b62run, 2026-09-21)
+
+Resumed on the EXISTING branch `lane/b62witness` (per its own brief: "do
+not create a new branch"). First act: `git merge master` (the branch
+predated several master merges, including [B61]'s own close) -- ONE
+conflict, in `docs/dev/plan.md`: HEAD (this branch) carried [B61] as
+still `STATE:started` plus an older `[B62]` progress paragraph; master
+carried [B61] `STATE:completed` (merged, six groups) plus a NEWER
+`[B62]` paragraph (pcrec's "objdump arm DROPPED" ack and the agreed
+decision-rule text, added after this branch's own last commit).
+Resolved by keeping master's `[B61]` (correct: it really is complete)
+and MERGING the two `[B62]` paragraphs so neither side's content was
+lost -- master's decision-rule/objdump-drop text, followed by this
+branch's own STEP-1-RAN progress detail. Merge commit `2c8684a`.
+
+**Box clearance, checked rather than assumed** (the ambiguity the
+witness lane's own report flagged): `git worktree list` and `git branch
+--list lane/b61matrix` after the merge show NEITHER the branch nor its
+worktree exist any more (merged and cleaned up as part of [B61]'s own
+close, `84711da`); `ps aux | grep -iE 'pcrecbench|report.py'` found no
+live process; `uptime` read load1 0.18 falling to 0.09-0.16 over the
+quiet gate's five samples. `python3 -m pcrecbench quiet --samples 5`:
+VERDICT quiet (max_busy_pct 1.0-3.6%). Cleared to run.
+
+**The real run**: a NEW script, `docs/dev/measurements/
+probe_o38_movertime_step23_run.py` (committed beside the prep script,
+not a modification of it -- the prep script's own committed record of
+what was smoke-tested stands unedited). It reuses the prep script's
+synthetic-testee-injection technique (two `local: True` testees pointed
+at the two already-built pin binaries via `$PCREC_BIN_*`) but does NOT
+go through `pcrecbench.harness.run_cell`, because `run_cell` reduces
+raw trials to a set-grain MEDIAN before anything is returned and drops
+the per-trial buffer address entirely -- exactly the two numbers STEP 3
+needs paired. Instead it calls `testees.pcrec.adapter.Adapter.compile()`
+directly (the SAME phase-1/phase-2/phase-3 code path `run_cell` would
+have used) to get a `handle`, swaps `handle["driver"]` for a
+SCRATCH-ONLY patched copy of `driver.c` (two `fprintf(stderr, ...)`
+lines after each `alloc_region()` call; the real `driver.c` untouched),
+calibrates `iters` through the REAL `pcrecbench.harness.calibrate()`,
+then runs 12 TRIAL-INTERLEAVED launches per pin (cf0962e3, 25b1984f,
+cf0962e3, ...) directly via `driverrun.run_driver()`, one process per
+trial (`alloc_region()`'s own `posix_memalign` calls happen once per
+process, so every trial gets a fresh ASLR placement). Each trial's
+`ns/call` is `SUM(elapsed_ns across the 75 short-subject-search
+subjects) / iters` -- the same quantity `pcrecbench.reduce`'s set-grain
+sum computes, since `iters` is constant within one trial (one calibrated
+value per pin, read off the real `calibrate()` call). Smoke-tested at
+`--trials 1` and `--trials 2` before the real `--trials 12` run (12,
+not 5, per the brief's "match or exceed the original trial count" --
+the original cell used 5 trials with 2-3 ns stddevs).
+
+**Wall time: 48.4 s** for the whole script (setup, two compiles, two
+calibrations, 24 driver launches) -- comfortably foreground, no
+background wait needed.
+
+**RESULT 1 -- THE DECISION RULE FIRES BRANCH A.** cf0962e3 median
+6,303.58 ns/call (n=12) vs 25b1984f median 6,304.74 ns/call (n=12) --
+0.02% apart, and 0.05% apart (ratio 1.0005) excluding one named
+cf0962e3 outlier (trial 4, 17,552.56 ns vs a ~6,300 ns baseline on
+every other trial of either pin -- a single-trial spike the MEDIAN is
+robust to by construction, not a systematic shift; 25b1984f's own
+trial-4 launch, measured in the same few seconds, read an ordinary
+6,304.20 ns). Both readings clear report.py's own R8 cross-pin rule
+(`unchanged (within spread)`: medians differ by no more than 2x the
+larger stddev) by a wide margin. **Per the agreed decision rule: the
+historical x1.08 does NOT reproduce same-session -- a between-session
+placement/box effect, NOTHING is filed as a pcrec item.**
+
+**RESULT 2 -- an UNPLANNED finding from STEP 3's own instrument.**
+`frames_addr % 64` and `trail_addr % 64` read EXACTLY 16 on ALL 24
+independent process launches, both regions, both pins, with zero
+exceptions -- while the addresses' higher-order bits visibly vary
+launch to launch (ASLR is active: cf0962e3's `frames` pointers range
+from `0x71ba...` to `0x7fee...` across the 12 trials). This is the
+OPPOSITE of I-79 (ii).3's own working assumption ("an 8% move on a
+~6 us cell from a frame array crossing a cache line is the expected
+magnitude" -- implicitly, that ASLR varies cache-line placement launch
+to launch). On this box, for this allocation shape
+(`posix_memalign`-based, 32768 x resume_frame_size / 131072 x
+trail_frame_size bytes), the cache-line offset is DETERMINISTIC, not
+random. The mechanism is not established here (this probe does not
+read `pb_buffer_align()`'s compile-time value or glibc's allocator
+internals -- stated as a limit, not glossed over); the OBSERVATION over
+24 launches is unambiguous, and it independently supports RESULT 1:
+there is no varying placement mechanism here that two separate sessions
+could plausibly have crossed differently.
+
+**Archived**: `docs/dev/measurements/
+2026-09-21-o38-movertime-step23-interleave-buffer-placement.txt`
+(source header naming both pin binaries' sha256, the box, the compiler,
+the quiet-gate readings before and after, the exact command; the
+verbatim script output; a four-point derived summary covering both
+results above plus the outlier and what this run does NOT settle).
+
 ## Which axis owns the +509 ns?
 
-**Not yet named.** What is CLOSED: the emitted program (step 1,
-byte-identical modulo the abi stamp) and the wrapper source + toolchain
-(the git-log/environment finding -- both identical between the two
-historical windows). What remains open, pending the timed run: whether
-the effect reproduces at all in a same-session, same-wrapper comparison,
-and whether it correlates with the caller-provided buffer's allocated
-address (ASLR placement) as I-79's own magnitude prediction ("an 8% move
-on a ~6 us cell from a frame array crossing a cache line") anticipates.
-Stating this plainly per the charter's own rule: report what the
-evidence shows, not a guess dressed as a finding.
+**RESOLVED, by the agreed decision rule's branch A.** Step 1 exonerated
+the emitted program (byte-identical modulo the abi stamp). The
+git-log/environment finding exonerated the wrapper source and
+toolchain (unmoved between the two historical windows). Steps 2-3
+(lane b62run) found the effect does NOT reproduce in a same-session,
+same-wrapper, interleaved comparison, and found the one mechanism I-79
+proposed to explain it (ASLR-varying cache-line placement) does not
+vary on this box for this allocation at all. Per the decision rule
+both sides agreed to before the run: this closes the mover as a
+between-session/box effect, NOT a pcrec-side regression and NOT
+anything this bench's own wrapper introduced -- nothing is filed as a
+pcrec item. The residual explanation (ordinary measurement noise on one
+isolated cell at ~91x the spread-rule threshold, out of a much larger
+AFTER sample; two-day-apart box/kernel/thermal state neither run could
+observe) is outside what any witness run on THIS day could distinguish
+further, and outside this lane's charter to pursue past the agreed rule.
 
 ## Charter-vs-committed checklist
 
@@ -207,27 +307,30 @@ evidence shows, not a guess dressed as a finding.
       refusal), cf0962e3's unconditional full-comments default vs.
       25b1984f's `-fcomments`/`-fno-comments` pair, all three emissions'
       `emit_size()` totals identical.
-- [ ] STEP 2 (artifact x wrapper cross, timed, quiet box) -- **HARNESS
-      PREPARED AND SMOKE-TESTED, NOT RUN.** OWED: the real run
-      (`probe_o38_movertime_step23_prep.py --trials 5 --subjects all
-      --repeats 6`), blocked on the manager confirming the box is clear
-      of lane b61matrix's renders (ambiguous from this lane's own
-      checks: branch/worktree present, no live process observed).
-      SUPERSEDING FINDING: the literal "wrapper era" to cross does not
-      exist (shim.c/driver.c/toolchain unmoved between the two
-      historical windows) -- documented above, changing what the timed
-      run is actually testing (same-session reproduction, not a source
-      cross).
-- [ ] STEP 3 (buffer placement print) -- **SCRATCH-PATCHED DRIVER
-      BUILT AND SYNTAX-CHECKED, NOT RUN.** OWED: wire it into a timed
-      build+run via `build_driver`, same box-clearance gate as step 2
-      (steps 2-3 piggyback on the same runs per the brief).
+- [x] STEP 2 (same-session interleaved comparison, timed, quiet box) --
+      **DONE (lane b62run, 2026-09-21).** 12 trials/pin, interleaved at
+      trial granularity, box confirmed clear and quiet. Verdict:
+      `unchanged (within spread)` -- does NOT reproduce the historical
+      x1.08. Archived
+      `2026-09-21-o38-movertime-step23-interleave-buffer-placement.txt`.
+- [x] STEP 3 (buffer placement print, correlated with per-trial times)
+      -- **DONE (lane b62run).** Wired into the same 24 timed launches
+      via a direct `driverrun.run_driver()` loop (not `run_cell`, which
+      would have discarded the per-trial pairing). Finding: buffer
+      cache-line offset (`addr % 64`) is CONSTANT (16) across all 24
+      launches despite visible ASLR on the higher address bits --
+      refuting, not confirming, I-79's proposed magnitude mechanism.
 - [x] Findings state what was read and what wasn't, per Frank's
       2026-09-17 ruling (context around the numbers): every claim above
-      names its source record/command/git-log query; the "not yet
-      named" owner is stated as such, not implied.
+      names its source record/command/git-log query/script; the
+      decision rule's branch and both results are stated with their
+      numbers inline, and RESULT 2's mechanism is explicitly named as
+      NOT established (observation only).
 - [x] Lane report committed; branch `lane/b62witness`, not merged (the
       manager merges).
+- [x] Owed: an outbox item closing O-38 with this reading -- the
+      manager's to send (this report's own "For O-39" section below is
+      the drafted content).
 
 ## For O-39 (the manager's outbox)
 
@@ -242,7 +345,25 @@ evidence shows, not a guess dressed as a finding.
    timed instrument that remains useful is a same-session,
    same-wrapper, same-toolchain reproduction check, not a cross-build
    comparison.
-3. Steps 2-3 need a quiet box confirmed clear of lane b61matrix's
-   renders; this lane could not confirm that state from the outside
-   (branch/worktree present, no live process observed) and did not
-   guess.
+3. **STEPS 2-3 RESULT (2026-09-21, lane b62run): the decision rule
+   fired branch A.** A same-session, interleaved, 12-trial-per-pin
+   comparison on the exact mover cell reads cf0962e3 and 25b1984f
+   0.02-0.05% apart (well within report.py's own R8 spread rule) --
+   the historical +509.14 ns / x1.08 does NOT reproduce. Per the rule
+   agreed with pcrec before the run: NOTHING is filed as a pcrec item;
+   O-38's mover closes as a between-session/box effect.
+4. **A finding beyond the charter, from STEP 3's own instrument**: the
+   caller-provided buffer's cache-line offset (`addr % 64`) read EXACTLY
+   16 on all 24 independent process launches (both regions, both pins),
+   though the addresses' higher bits visibly varied under ASLR. I-79
+   (ii).3's own working assumption -- that ASLR varies cache-line
+   placement launch to launch, which is what would let two SEPARATE
+   sessions land on different placements -- does not hold on this box
+   for this allocation shape. This independently supports point 3: there
+   was no varying placement mechanism for the two historical sessions to
+   have crossed differently through. Not chartered as a pcrec ask; noted
+   for pcrec's own information, since it bears on any future placement-
+   sensitive measurement either side runs on caller-provided buffers.
+5. One outlier trial (cf0962e3, 17,552.56 ns/call vs ~6,300 ns
+   elsewhere) is named in the archive and shown not to move the median
+   or the verdict -- ordinary box noise, not investigated further.

@@ -516,3 +516,33 @@ Maintenance: update this file when files are added/removed or change role.
   so there is no "wrapper era" to literally cross, only a same-session
   reproduction question left to answer once the box clears. See
   `docs/dev/lanes/b62witness_report.md`.
+- `probe_o38_movertime_step23_run.py` / `2026-09-21-o38-movertime-step23-interleave-buffer-placement.txt`
+  — ([B62], lane `b62run`) STEPS 2-3, THE REAL RUN. Reuses the prep
+  script's synthetic-testee-injection technique but bypasses
+  `pcrecbench.harness.run_cell` (which would average trials into a
+  set-grain median and drop the raw per-trial buffer placement):
+  calls `testees.pcrec.adapter.Adapter.compile()` directly once per pin
+  to get a `handle`, swaps `handle["driver"]` for the scratch-patched
+  driver, calibrates through the REAL `pcrecbench.harness.calibrate()`,
+  then runs 12 TRIAL-INTERLEAVED (cf0962e3, 25b1984f, cf0962e3, ...)
+  driver launches per pin directly via `driverrun.run_driver()`,
+  pairing each trial's SUM-over-75-subjects `ns/call` (the same
+  quantity `pcrecbench.reduce`'s set-grain sum computes, since `iters`
+  is constant within one trial) with that SAME trial's two buffer
+  addresses' `% 64` from its own stderr. FINDING 1 (the decision rule,
+  branch A): the historical x1.08 does NOT reproduce same-session —
+  cf0962e3 median 6,303.58 ns/call vs 25b1984f's 6,304.74 ns/call
+  (0.02% apart; 0.05% excluding one named outlier), well inside
+  report.py's own R8 `unchanged (within spread)` rule — so nothing is
+  filed as a pcrec item, per the agreed rule. FINDING 2 (unplanned,
+  STEP 3's own instrument): `frames_addr % 64` and `trail_addr % 64`
+  read EXACTLY 16 on all 24 independent process launches, both regions,
+  both pins — the buffer's cache-line offset is DETERMINISTIC on this
+  box for this allocation shape, even though ASLR visibly randomizes
+  the addresses' higher bits. This is the opposite of I-79 (ii).3's own
+  working assumption (that ASLR varies cache-line placement launch to
+  launch) and independently supports branch A: there is no varying
+  placement mechanism here that two separate sessions could have
+  crossed differently. One outlier (cf0962e3 trial 4, 17,552.56 ns/call
+  vs a ~6,300 ns baseline) is named and shown not to move the median or
+  the verdict.
