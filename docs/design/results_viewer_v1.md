@@ -1,8 +1,14 @@
 # results_viewer_v1 — the dynamic results viewer ([B66], Frank's ask 2026-09-21)
 
-STATUS: v1.0 DESIGN — written by the manager before any code (Frank:
-"think about requirements and design first"). Implementation lane
-builds to this note; deviations come back here first.
+STATUS: v1.0 BUILT (lane b66viewer). v1.1 (§9, Frank's five review notes
+2026-09-21) IMPLEMENTED (lane b67viewer) — the same day, against the
+merged v1.0: the §9.1 root-cause fix (a `tools/viewer_export.py` export
+bug, not only a `viewer.html` one — see §9.1's own note), the date-first
+header (§9.2), coverage chips (§9.3), stacked multi-metric cells (§9.4)
+and metric-aware sorting with a real ranking-by-ratio bug fixed along the
+way (§9.5). Verified with a real headless-Chromium DevTools session (39
+checks; see the lane report). Not merged by the lane itself; deviations
+come back here first.
 
 ## 0. What it is
 
@@ -143,12 +149,27 @@ small (≈850 rows × ~200 B ≈ 400 KB total).
 
 ## 9. v1.1 amendments (Frank's review from results, 2026-09-21)
 
+STATUS: IMPLEMENTED (lane b67viewer, 2026-09-21). See viewer/CLAUDE.md's
+own "v1.1 amendments" section for the as-built detail; this section is
+kept as the ORIGINAL ask, verbatim, per the note's own convention
+("deviations come back here first").
+
 Frank's five notes, verbatim-mapped; [B67] implements:
 1. BUG: deselecting an engine must REMOVE its column; no duplicate
    columns ever; deselecting a whole family (e.g. all pcrec) removes
    the whole band. Root-cause the tree→column propagation and the
    duplication (suspect: per-pin variants rendering as extra columns
-   independent of the tree's selection keys).
+   independent of the tree's selection keys). **ROOT CAUSE FOUND one
+   layer further down than the suspect named**: `tools/viewer_export.py`'s
+   `engine_variant` label was built from only `engine_mode` +
+   `config_extra`, silently dropping the `captures` axis, so
+   `pcrec-auto` (captures=on) and `pcrec-nocaps` (captures=off) both
+   produced the SAME variant label `"auto"` — two distinct testee_ids
+   sharing one tree leaf, which a deselect (reconstructing a testee_id
+   from the leaf) could only ever find one of. Fixed by reading
+   testee_id's own config_slug segment instead (unique by construction);
+   `viewer.html`'s tree also stopped reconstructing testee_ids
+   altogether, storing the real one from each row at every leaf.
 2. The pin/git tag in headers is uninformative — show an ORDERED DATE
    instead (the column's newest measured_utc date, YYYY-MM-DD; the pin
    stays in the tooltip for provenance, never as the primary label).
