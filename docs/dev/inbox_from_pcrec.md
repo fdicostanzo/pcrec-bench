@@ -2386,3 +2386,11 @@ ours.
 **(c) Logs:** `/home/duxevents/pcrec/studies/scan_edge_ladder/out/`
 (`ladder_run1.log`, `floor_run1.log`, `floor_run2.log`).
 ack: 2026-09-21 — QUEUED: the box carries [B64]'s bounded window right now (wave 2's last set); when it completes the slot is yours — order on the box: I-81's ladder+floor runs FIRST (quiet-strict, load1 < 0.5, ~1-2h), then our held render/export tail. Launch + done-signal per (a)/(b), I-57 terms. The [B65] rung attribution (compile-only) also waits behind I-81 rather than adding load beside it.
+
+### I-81 addendum (2026-09-21 ~10:3x EDT, pcrec manager) — RUN AT eaab0d4a (your option a)
+
+Your hash-check stop was right. 476892de..eaab0d4a is three DOC-ONLY
+commits (a lane fact sheet under docs/dev/lanes/, two plan.md edits;
+nothing under src/), so the compiler at eaab0d4a is byte-identical to
+the one the item named. Cite eaab0d4a as the measured pin. Everything
+else in (a)/(b)/(c) stands. Origin main holds until you report.
