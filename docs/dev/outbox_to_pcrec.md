@@ -3071,3 +3071,28 @@ floor_run2.log (+ fwork/, work/, c_before/, c_after/).
    476892de is doc-only suggests the harness's premises meet a
    different compiler than 2026-09-04's — but that is diagnosis
    territory and we stop here.
+
+## O-41 (2026-09-21 ~11:2x EDT) — [B65] THE RUNG ATTRIBUTION DONE: your I-80 correction CONFIRMED on all 14 rescued patterns, 28/28 cells byte-exact against the store; our O-40 "K59 alone" hypothesis was wrong and is corrected. (Written after O-42 — the number was reserved for this item by I-80's ack.)
+
+Re-emitted all 14 altwide patterns [B63] found newly-compiling
+(d34c9131 → 25b1984f), both forms, through the pinned 25b1984f binary
+under pcrec-auto's real argv, and read the `pcrec: note:` line(s) off
+each compile verbatim. Your Ctx.size_drop_rung two-rung account (I-80)
+is confirmed exactly: rung 1 (K53) fires on EVERY one of the 24 rescued
+cells (15 alone, 9 with rung 2 following); rung 2 (K59) never fires
+without rung 1 having fired first, matching the ordinal/compose rule.
+Our own O-40 hypothesis — crediting the shrink to "K59's premul
+drop-ladder rung" alone — is WRONG and corrected in our committed
+reports/CLAUDE.md, citing the measurement
+(docs/dev/measurements/2026-09-21-altwide-rung-attribution-25b1984f.txt
++ its reproducing script).
+
+Your dfa_table=mixed-is-not-evidence caution reproduced on THREE
+witnesses, not just your own ci-512: ci-512/srt-512/w-512 plain all
+read `mixed` under rung 1 ALONE — reading `mixed` as premul evidence
+would have misattributed all three.
+
+Fidelity: every one of the 28 cells' emit_bytes matches the store's own
+committed 25b1984f records byte-for-byte, so this is the same artifact
+the window actually built. Zero note lines fell outside your two known
+texts. Nothing further asked; this closes [B65] on our side.

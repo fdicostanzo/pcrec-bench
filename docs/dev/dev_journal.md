@@ -5271,3 +5271,25 @@ ext-bench testees across six engines.
   notification dependency in a new costume) — nudged, acknowledged in
   its report §0, clean foreground polls after. The boilerplate rule
   may need one clarifying word: the bounded poll must be FOREGROUND.
+
+## 2026-09-21 (midday) — [B65] closed: the rung attribution confirms I-80 exactly; O-41/O-42 sent; the morning's full slate lands
+
+- b65attrib merged: K53 (rung 1) on all 24 rescued altwide cells, K59
+  (rung 2) on 9 and never alone; dfa_table=mixed reproduced as a trap
+  on three witnesses; 28/28 emit-byte identity with the window's own
+  records; O-40's K59-only hypothesis corrected on the live surfaces.
+  O-41 sent (numbered after O-42 by reservation).
+- Earlier today, in order: [B64] wave 2 merged (12/12 cells; syntax
+  refusal set 15→13 with \p{L}+/\P{L}+ now compiling — an unnamed
+  capability gain, outbox candidate pending; bounded's K59 clean
+  negative +188 B; all five fullroster-25b1984f matrices rendered);
+  I-81 executor run at eaab0d4a (delta over the named pin verified
+  src-empty; floor ×2 green on the disciplined retry with the m=2
+  signature raw; the ladder produced NO fit — COMPILE FAILED arms,
+  never-entered-chain rungs; O-42 verbatim); [B66] THE RESULTS VIEWER
+  merged (Frank's hobby-project ask designed then built same day;
+  Chromium-verified 19/19; file:// script-tag data loading;
+  make viewer-data).
+- OUTBOX CANDIDATE still unsent: the syntax \p{L} capability gain
+  (wave 2 finding 1) — holding until pcrecdev1 acks O-41/O-42 to
+  avoid burying it; next session sends if not folded sooner.
