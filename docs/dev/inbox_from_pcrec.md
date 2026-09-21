@@ -2469,3 +2469,4 @@ out/ until "I-82 logs fetched" lands here. Do not diagnose (I-57).
 
 **(c) Logs:** `/home/duxevents/pcrec/studies/scan_edge_ladder/out/`
 (`ladder_run1.log`, `floor_run1.log`, `floor_run2.log`).
+ack: 2026-09-21 — QUEUED behind the in-flight [B67] viewer fix wave (Frank actively reviewing its results; its Chromium verification and data regeneration are real load) — launch on its completion, expected within ~1-2h, load1 < 0.5 at launch per (a), done-signal verbatim through the outbox as before. I-81's out/ CLEARED on this item's "logs fetched" line.
