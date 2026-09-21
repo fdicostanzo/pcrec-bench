@@ -2863,3 +2863,80 @@ window's own email-specimen P5 (byte-identical). Three sets, three
 different vm-in-vs-vm relationships (larger / identical / smaller) on
 the identical structural claim — stated as an open finding, not
 resolved here.
+
+**[B64] reports (2026-09-21, lane b64window) ADDED a third file group —
+`bench/bounded@0.3`'s pcrec canonical roster re-measured at 25b1984f**,
+the LONGEST and LAST window of this wave, run in daylight rather than
+overnight (the "windows-at-night" restriction was lifted 2026-09-04;
+continuous benches run at the bench's own discretion, quiet gate still
+binding — box read `quiet` immediately before launch). Window:
+`build/windows/window_bounded_20260921T104216Z.log` (06:42:47-09:39:39
+EDT, ~2h57m, 4/4 cells attempt 1 rc=0, all `agree`); store 206 -> 210.
+Predictions `docs/dev/predictions/bounded-0.3-pin-25b1984f-confirm.tsv`
+committed BEFORE the window (commit `78d5aa6`); scored via the same F27
+bypass + KB-24 workaround. Roster: `pcrec-auto`/`pcrec-vm`/`pcrec-vm-in`
+single-variable (d34c9131 -> 25b1984f); `pcrec-auto-nocaps` the WIDEST
+gap in either wave (288d505, seven pins back — [B61]'s own "one holdout"
+finding, never re-measured since [OPT-5] STEP 2). `.tsv`/`.md`/
+`.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/
+`.interpretation.md` all rendered from the same ten-testee query (10
+records, 0 superseded); every render step run DETACHED with a
+completion marker, foreground-polled, same as the syntax group above.
+
+**THE TEAM LEAD'S OWN DIRECTION-ONLY SIZE-CAP HYPOTHESIS (P6.a/.b) IS
+REFUTED, IN THE OPPOSITE DIRECTION FROM WHAT IT PREDICTED** — read
+directly from the fresh records, confirmed against `interpret`'s own
+mechanical read (`compile:emit_bytes lt <d34c9131 value>`, both refuted):
+`cls-upto-4096`'s whole-subject form (the K59/[OPT-4.1] hypothesis's own
+witness, chosen for being bounded's largest `premultiplied`-table DFA
+artifact) reads **471,735 B at 25b1984f against 471,547 B at
+d34c9131 — GREW by 188 B (+0.04%), not shrunk**; `cls-upto-2048`
+whole-subject reads **240,310 B against 240,122 B — also GREW by
+exactly 188 B**. The `dfa_table` stamp stays `premultiplied` on BOTH,
+at BOTH pins — unlike altwide's `w-256`/`ci-512` witnesses, which O-40
+found moving to `mixed`/`indexed` with a real double-digit-percent
+shrink, **the K59 premul-drop-ladder mechanism that rescued altwide's
+compiled size does NOT reach bounded's own class-ladder DFA tables at
+all** — a clean, informative NEGATIVE result the direction-only framing
+was built to surface. The flat, identical +188 B on both witnesses
+(also +190/+192 B on their much-smaller PLAIN forms) reads like an
+ordinary small stamp-line-style constant from one of the four
+intervening pins (cd371441/a770139e/cf0962e3/25b1984f), not investigated
+further here (measure-and-report scope, per [B63]'s own precedent) —
+stated as an observation, not diagnosed to a specific pin's own change.
+
+**P7 (the structural refusal-boundary stability clause) reads exactly as
+predicted, resolving [B61]'s own open question about WHICH route the
+`cls-upto-65535` NFA-state-cap refusal applies to**: `pcrec-auto`'s
+did-not-compile set is UNCHANGED at `{cls-upto-65535}` (P7.a CONFIRMED —
+the state cap, `PCREC_MAX_DFA_STATES_TABLE`, "NOT RAISABLE" per its own
+registry description, mechanically distinct from P6's emitted-bytes
+cap); `pcrec-vm` compiles `cls-upto-65535` cleanly (18,381/18,492 B,
+`engine_sel=forced`) — CONFIRMED by direct record read, though P7.b's
+own empty-target `set-eq` clause mechanically reads `not-evaluable` (the
+same "checked-clean vs never-checked" residual gap
+`docs/dev/predictions/CLAUDE.md`'s `capability-0.1-ext-roster.tsv` entry
+already documents for this exact mechanism) — confirming the abi-11-era
+prediction text's original "both engines" refusal never held for VM,
+only for the two AUTO arms, exactly as [B61]'s fullroster reading found.
+
+**A DISCREPANCY BETWEEN THE MECHANICAL TOOL AND A DIRECT RECORD READ ON
+P5, noted rather than chased down**: `interpret` reads P5 as `partial`
+(P5.a refuted, P5.b confirmed), but a direct read of both fresh records
+finds `cls-upto-1024` BYTE-IDENTICAL between `pcrec-auto`/`pcrec-nocaps`
+(16,760 B plain, 187,559 B whole-subject) AND between `pcrec-vm`/
+`pcrec-vm-in` (18,379 B plain, 18,490 B whole-subject) — both clauses
+should read confirmed by this arithmetic. Not fixed or traced into
+`interpret.py` here (a docs-only report-building lane is not the place);
+flagged as a possible new tool residual alongside KB-24, worth a
+follow-up read. The DIRECT finding stands regardless: on this
+genuinely-captureless witness, nocaps and captures-on are byte-for-byte
+identical, and so are vm and vm-in — the cleanest of this wave's three
+same-pin structural readings (email: mixed; syntax: real, substantial
+differences on both directions; bounded: exact identity).
+
+- `2026-09-21-bounded-0.3-budu-ryzen1600-after-25b1984f.md` — the report
+  group described above. `worst_other_core_busy` and the exact
+  per-testee cross-pin gap table are in the file's own header; full
+  verdict table and the P6/P7 derivation: `docs/dev/lanes/
+  b64window_report.md`.
