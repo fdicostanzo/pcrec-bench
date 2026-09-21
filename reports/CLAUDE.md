@@ -784,6 +784,203 @@ unscorable in this shape).
   fixed, `docs/dev/lanes/b59rustwave_report.md` has the full lane
   account.
 
+**[B61] reports (2026-09-20, lane b61matrix) ADDED five FULL-ROSTER file
+groups — one per set ([B59]'s new `rust-default` samples folded into the
+project's own standing cross-engine comparison for the first time)**:
+`email-specimen@0.2`, `loglines@0.1`, `bounded@0.3`, `altwide@0.2`,
+`syntax@0.1` (`capability@0.1` deliberately EXCLUDED from this lane's
+charter — the manager reads it separately once an in-flight merge lands
+new pcrec records). Frank's direct ask: build reports whose matrix
+includes EVERY roster engine with records for each set, `rust-default`
+among them, where every prior committed matrix for these five sets either
+predates `rust-default` entirely or is scoped to `rust-default` ALONE (the
+[B57]/[B59] solo-roster shape, chosen for the F27 anchor reason those
+entries state). The reporter is unchanged at `v18 (2026-09-18)`; no
+existing committed report was regenerated.
+
+**ROSTER-SELECTION RULE STATED UP FRONT, because it is the one thing a
+reader must not assume**: "full roster" here means the newest record of
+each CANONICAL engine identity — `libpcre2-interp`, `libpcre2-jit`,
+`pcrec-auto`, `pcrec-auto-nocaps`, `pcrec-vm`, `pcrec-vm-in`, and now
+`rust-default` — never every distinct `testee_id` `store/index.tsv` has
+ever recorded. The bench's own ablation testees (`-noedge`, `-noisland`,
+`-noclsfold`, `-cc-clang`, `-bigcap`, `-align64`) are investigation arms,
+not roster members, and are excluded here exactly as they are from every
+prior `-after-<pin>` cross-pin group this directory already carries (see
+e.g. the `2026-09-06-bounded-0.3-*-after-d34c9131` entry below, whose own
+roster mixes `pcrec_288d505_vm-in-caps-simdna` with two `334fd10e` arms
+and two `d34c9131` arms for the identical reason: the newest MEASURED pin
+per canonical mode, not the newest pin overall). This lane's own roster
+was derived by exactly that rule, mechanically, from `store/index.tsv`,
+picking the newest record of each of the six canonical `testee_id`
+suffixes (`auto-caps-simdna`, `auto-nocaps-simdna`, `vm-caps-simdna`,
+`vm-in-caps-simdna`, the two `libpcre2` ids) ACROSS ALL PCREC PINS, plus
+`rust_1.13.1_default-caps-simdna`'s own newest record.
+
+**THE FINDING EVERY GROUP SHARES, STATED BEFORE ANY NUMBER**: pcrec's
+canonical roster has NOT been re-measured on any of these five sets since
+pin **d34c9131** (abi 23, 2026-09-06/07) — FOUR re-pins ago
+(`cd371441` → `a770139e` → `cf0962e3` → **25b1984f**, today's abi-27
+checkpoint per `testees/pcrec/CLAUDE.md`). Every filename below is
+suffixed `d34c9131` because that is what the data actually is, not
+because this lane chose it as an authoring-time label (contrast the
+[B57]/[B59] solo-roster files, whose pin suffix names the bench's own
+checkpoint precisely because NO pcrec testee rides those rows at all).
+Three of the five groups mix PINS WITHIN THEIR OWN ROSTER, because not
+every canonical mode was re-measured at every pin: `email-specimen@0.2`
+and `loglines@0.1` carry `pcrec_d34c9131_auto-caps-simdna` alongside
+`pcrec_1989c62_{auto-nocaps,vm,vm-in}-caps-simdna` (nocaps/vm/vm-in
+untouched since 1989c62, five pcrec pins ago on this axis); `altwide@0.2`
+carries `pcrec_d34c9131_{auto,vm}-caps-simdna` alongside
+`pcrec_334fd10e_{auto-nocaps,vm-in}-caps-simdna` (one pin back);
+`bounded@0.3` carries `pcrec_d34c9131_{auto,vm,vm-in}-caps-simdna`
+alongside ONE holdout, `pcrec_288d505_auto-nocaps-simdna` (two pins
+back — `auto-nocaps` was never re-measured on `bounded@0.3` at either
+334fd10e or d34c9131). Only `syntax@0.1` is pin-uniform: all six pcrec
+arms are the set's own single `d34c9131` census window, so this is the
+one group where "the roster" and "the pin" say the same thing. Every
+group's own `.tsv` header line names its full `--testee` roster and its
+`--matrix.tsv` header restates it; no `--since`/`--until` bound was
+needed (KB-5's roster convention already narrows to these seven ids by
+name, and none of them has a second, unwanted record — the header's own
+`superseded:` count on the mixed-pin groups (7, 6, 2) is exactly the
+count of now-superseded OLDER records those seven ids' histories carry,
+confirmed against the per-testee newest-record table this lane derived
+from `store/index.tsv` before rendering, not a sign of drift).
+
+Rendered foreground, one render at a time (KB-16 is closed — an
+explicit-roster query loads only the matching records via the index
+prefilter, so every set-grain/matrix render finished in 15-46 s; the two
+subject-grain renders on the two largest sets, `loglines@0.1`'s
+`.subject-grain.md` and `syntax@0.1`'s `.subject-grain.md`, took the
+longest at 3 m 21 s and 2 m 13 s respectively — nowhere near KB-16's
+old whole-store cost, because no query here loads more than seven
+records). Every `.interpretation.md` sidecar is a FRESH file (these are
+roster snapshots, not first samples — no `docs/dev/predictions/*.tsv`
+file applies), rendered via `pcrecbench interpret ... --render --out`
+against the group's own `.tsv` + `.subject-grain.tsv`, and each was
+determinism-checked (a second, independent `interpret --render`
+invocation to stdout diffs BYTE-IDENTICAL against every one of the five
+committed sidecars). `make check-interpret` 166/166 (section 3, sidecar
+freshness, covers all five).
+
+**THREE THINGS A READER OF THIS WAVE SHOULD KNOW BEFORE THE NUMBERS**:
+
+- **`rust-default` wins several matrix rows outright, on more than one
+  set.** On `loglines@0.1` it is `best_testee` (fastest of the seven) on
+  BOTH regimes of `hex32-id`, `ipv6`, `kv-quoted`, `level-context`, and
+  the `short-subject-search` regime of `stack-frame` — five of ten
+  patterns, beating `pcre2-jit` and every pcrec arm in the roster, not
+  merely holding its own. On `altwide@0.2`'s `ci-256` /
+  `match-compliance` / `whole-subject` row it is fastest at 1,066.2 ns
+  against `pcrec_d34c9131_vm-caps-simdna`'s ×103.3 and
+  `pcrec_334fd10e_auto-nocaps-simdna`'s outright REFUSAL on that exact
+  (pattern, form) cell (both pcrec AUTO arms in the roster refuse the
+  whole-subject wrapped form of `ci-256`; only the VM route compiles it,
+  and rust-regex is ~94-103× faster than that VM artifact). On
+  `wb-512` (512 branches each individually `\b`-wrapped) ALL FOUR pcrec
+  roster arms refuse on EVERY regime and form — both pins, both routes —
+  while `pcre2-interp`/`pcre2-jit` compile but run 318×/40× slower than
+  `rust-default`, which is `best_testee` on all four of that pattern's
+  rows. `wb-256` (below the known `w`-family DFA/VM wall at
+  `w-384`/`384<w≤512`) ALSO refuses on all four pcrec arms — a smaller
+  branch count than the plain `w`-ladder's own refusal boundary, because
+  the per-branch `\b` wrapping is a different, apparently more expensive
+  structure than a bare alternation of the same width. None of this is
+  re-derived from source here (no pcrec diagnostic was traced); it is
+  read directly off the matrix's `refused` tokens and is stated as an
+  observation for a future census, per this lane's charter to report
+  rather than diagnose.
+- **`syntax@0.1`'s matrix surfaces SIX `rust-default` wrong-answer
+  patterns beyond the two the [B59] rust-first report already
+  documented by name.** That report's own predictions file (P4, P6.a)
+  found and explained `qnt-poss-brace` and `unp-p-lc` wrong; this
+  group's full roster, ranking `rust-default` against pcre2/pcrec on
+  every pattern rather than the seven witnesses that file selected,
+  reads `n_wrong > 0` (`wrong` token) on six more: `anc-dollar`,
+  `cls-v`, `esc-hex-braced`, `qnt-poss-plus`, `qnt-poss-quest`, and
+  `rec-r-uc` — eight patterns total, 19 matrix rows. None of these six
+  is diagnosed here (no mechanism is claimed); they are named because
+  the matrix is where they first became visible in a committed report,
+  not because this lane traced any of them to a cause. `syntax@0.1` also
+  shows `rust-default` REFUSED (compile-time, not wrong-answer) on 42
+  patterns (169 rows) — consistent in COUNT with `testees/rust/CLAUDE.md`'s
+  own capability-declaration census, not re-verified pattern-by-pattern
+  here.
+- **`bounded@0.3`'s and `altwide@0.2`'s pcrec-side refusals in this
+  roster are the project's OWN known ones, not new**: `cls-upto-65535`
+  refuses on both pcrec AUTO arms (the NFA-state cap, O-9's history);
+  `nest2-64`/`nest3-16` refuse on `rust-default` alone, matching [B59]'s
+  own bounded finding (`CompiledTooBig`, 10 MiB default) exactly. Read
+  those cells as confirmation the matrix surface agrees with the
+  narrower reports, not as this wave's own discovery.
+
+- `2026-09-20-email-specimen-0.2-budu-ryzen1600-fullroster-d34c9131.md` —
+  full roster: `libpcre2_10.46_{interp,jit}-caps-simdna`,
+  `pcrec_d34c9131_auto-caps-simdna`,
+  `pcrec_1989c62_{auto-nocaps,vm,vm-in}-caps-simdna`,
+  `rust_1.13.1_default-caps-simdna`. Query: `report --subbench
+  email-specimen --version 0.2` plus the seven `--testee` values —
+  **7 record(s) matching this query, 7 included, 0 superseded** (the
+  header's `superseded: 7` counts each id's own retired history, not a
+  drift in this query's own result set). `worst_other_core_busy: 10.81%`
+  (`rust_1.13.1_default-caps-simdna` / `orig` / `large-subject-throughput`).
+  `factored` (the subroutine-call form) refuses on `rust-default` on all
+  four regime/form rows, matching [B59]'s own email-specimen finding.
+  `.tsv`/`.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/
+  `.matrix.html`/`.interpretation.md` all rendered/generated as described
+  above.
+- `2026-09-20-loglines-0.1-budu-ryzen1600-fullroster-d34c9131.md` — full
+  roster: the same seven-id shape (pcrec nocaps/vm/vm-in at 1989c62,
+  auto at d34c9131). Query: `report --subbench loglines --version 0.1`
+  plus the seven `--testee` values — **7 record(s) matching this query,
+  7 included, 0 superseded**. `worst_other_core_busy: 13.83%`
+  (`libpcre2_10.46_jit-caps-simdna` / `stack-frame` /
+  `short-subject-search`). See the `rust-default`-wins-five-of-ten
+  finding above. `.tsv`/`.subject-grain.md`/`.subject-grain.tsv`/
+  `.matrix.tsv`/`.matrix.html`/`.interpretation.md` all rendered/generated
+  as described above.
+- `2026-09-20-bounded-0.3-budu-ryzen1600-fullroster-d34c9131.md` — full
+  roster: `pcrec_d34c9131_{auto,vm,vm-in}-caps-simdna` plus the one
+  holdout `pcrec_288d505_auto-nocaps-simdna` (never re-measured on this
+  set since 288d505), the two pcre2 baselines, `rust-default`. Query:
+  `report --subbench bounded --version 0.3` plus the seven `--testee`
+  values — **7 record(s) matching this query, 7 included, 0
+  superseded**. `worst_other_core_busy: 100.0%`
+  (`pcrec_288d505_auto-nocaps-simdna` / `dig-upto-32` /
+  `large-subject-throughput` — an AFTER-sample provenance reading on a
+  record measured 2026-09-05, not a gate verdict on this render; the
+  record's own pre-flight passed, `status: measured`). `.tsv`/
+  `.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/
+  `.interpretation.md` all rendered/generated as described above.
+- `2026-09-20-altwide-0.2-budu-ryzen1600-fullroster-d34c9131.md` — full
+  roster: `pcrec_d34c9131_{auto,vm}-caps-simdna` plus
+  `pcrec_334fd10e_{auto-nocaps,vm-in}-caps-simdna` (one pin back), the
+  two pcre2 baselines, `rust-default`. Query: `report --subbench altwide
+  --version 0.2` plus the seven `--testee` values — **7 record(s)
+  matching this query, 7 included, 0 superseded**. `worst_other_core_busy:
+  40.71%` (`rust_1.13.1_default-caps-simdna` / `w-8` /
+  `short-subject-search` — an AFTER-sample provenance reading, not a
+  gate verdict; the record's own pre-flight passed, `status: measured`).
+  See the `ci-256`/`wb-256`/`wb-512` findings above. `.tsv`/
+  `.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/
+  `.interpretation.md` all rendered/generated as described above.
+- `2026-09-20-syntax-0.1-budu-ryzen1600-fullroster-d34c9131.md` — full
+  roster: all six pcrec arms at the set's own single census pin,
+  `pcrec_d34c9131_{auto,auto-nocaps,vm,vm-in}-caps-simdna`, the two
+  pcre2 baselines, `rust-default` — the one PIN-UNIFORM group in this
+  wave. Query: `report --subbench syntax --version 0.1` plus the seven
+  `--testee` values — **7 record(s) matching this query, 7 included, 0
+  superseded**. `worst_other_core_busy: 33.33%`
+  (`rust_1.13.1_default-caps-simdna` / `anc-dollar` /
+  `large-subject-throughput` — an AFTER-sample provenance reading, not a
+  gate verdict; the record's own pre-flight passed, `status: measured`).
+  See the six-unpredicted-wrong-answers finding above. `.tsv`/
+  `.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/
+  `.interpretation.md` all rendered/generated as described above.
+
+Lane report: `docs/dev/lanes/b61matrix_report.md`.
+
 **[B39] reports (2026-09-06, lane b39read) ADDED five file groups — the
 2026-09-06 DAYTIME window at pcrec pin d34c9131 (abi 23), the [B39]
 CLS-FOLD AFTER** — and changed NOTHING else here: the reporter is
