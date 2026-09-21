@@ -181,9 +181,50 @@ def collapse_to_newest_pin(rows):
 # ---------------------------------------------------------- per-record cut
 
 def _engine_variant(testee_block):
+    """FALLBACK ONLY (a testee_id that does not parse into the standard
+    three `_`-separated segments, record_schema.md 6.4) -- see
+    `engine_variant_for` below for the real derivation, [B67] 9.1's fix.
+    Kept lossy on purpose (mode + config_extra, no captures/simd) since
+    it is never reached for a real record; a real one always parses."""
     mode = testee_block.get("engine_mode") or ""
     extra = testee_block.get("config_extra")
     return f"{mode}-{extra}" if extra else mode
+
+
+def engine_variant_for(testee_id, testee_block):
+    """THE testee_id's OWN config identity ([B67] 9.1's root-cause fix).
+
+    `derive_testee_id` (schema/validate.py 175) builds testee_id as
+    `<engine>_<version_slug>_<engine_mode>-<caps>-<simd>[_<config_extra>]`
+    -- everything after the SECOND underscore (`parse_testee_id`'s third
+    segment) is already the engine's own unique configuration identity,
+    by construction: two testees with the same engine_mode but different
+    captures (`pcrec-auto` engine_mode=auto captures=on vs `pcrec-nocaps`
+    engine_mode=auto captures=off) get DIFFERENT config_slugs
+    (`auto-caps-simdna` vs `auto-nocaps-simdna`) because `caps` is baked
+    into config_slug, not into `config_extra` at all.
+
+    The OLD `_engine_variant()` reconstructed a "variant" label from only
+    `engine_mode` + `config_extra`, silently DROPPING the caps/simd
+    component -- so `pcrec-auto` and `pcrec-nocaps` (same engine_mode
+    "auto", both with no config_extra) BOTH produced the label "auto".
+    Two distinct testee_ids sharing one viewer-side "variant" string is
+    exactly the bug `viewer.html`'s tree->column code could not survive
+    (docs/design/results_viewer_v1.md 9.1): a family-checkbox toggle (or
+    any tree leaf) that reconstructs a testee_id from
+    (family, variant, pin) finds only ONE of the two real testee_ids for
+    that collided label, so the OTHER testee's column never gets
+    reachable through the tree at all -- it renders as a same-labelled
+    "duplicate" column and, worse, survives a "deselect this family"
+    click untouched, which is precisely what Frank saw.
+
+    Using the config_slug segment directly is not just a label fix: it
+    is testee_id's OWN identity component, so two testees can never
+    collide on it (they would be the SAME testee_id if they did)."""
+    parsed = parse_testee_id(testee_id)
+    if parsed is None:
+        return _engine_variant(testee_block)
+    return parsed[2]
 
 
 def _failing_kind(red):
@@ -224,7 +265,7 @@ def export_rows_for_record(path, rv):
     testee = setup["testee"]
     testee_id = testee["testee_id"]
     engine_family = testee.get("engine_name") or (parse_testee_id(testee_id) or (None,))[0]
-    engine_variant = _engine_variant(testee)
+    engine_variant = engine_variant_for(testee_id, testee)
     pin = testee.get("engine_version")
     record_id = setup["record_id"]
     measured_utc = setup.get("run", {}).get("timestamp")

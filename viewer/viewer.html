@@ -204,6 +204,14 @@ table.matrix thead tr.col-labels th.sortable:hover { color: var(--accent); }
 table.matrix thead tr.col-labels th .variant { display: block; font-weight: 400; color: var(--fg-muted); font-size: 11px; }
 table.matrix thead tr.col-labels th .sort-ind { margin-left: 3px; }
 table.matrix tbody td, table.matrix tbody th { padding: 5px 10px; border-top: 1px solid var(--border); white-space: nowrap; }
+td.cell .metric-line { display: flex; justify-content: flex-end; gap: 5px; }
+td.cell .metric-line + .metric-line { margin-top: 1px; }
+td.cell .metric-lbl { color: var(--fg-faint); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; align-self: center; }
+.cov-chip { color: var(--fg-faint); font-weight: 400; }
+.metric-check-group { display: flex; align-items: center; gap: 8px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: 7px; padding: 4px 10px; }
+.metric-check-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; user-select: none; font-size: 12.5px; }
+.sort-metric-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--fg-muted); }
+.sort-metric-row button.active { border-color: var(--accent); color: var(--accent); font-weight: 600; }
 table.matrix tbody th.rowhead { text-align: left; font-weight: 400; position: sticky; left: 0; background: var(--bg-panel); z-index: 2; max-width: 360px; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid var(--border); }
 table.matrix tbody tr:nth-child(even) td, table.matrix tbody tr:nth-child(even) th.rowhead { background: var(--row-stripe); }
 table.matrix tbody tr:hover td, table.matrix tbody tr:hover th.rowhead { background: var(--row-hover); }
@@ -356,6 +364,15 @@ var App = (function () {
     return Math.round(n).toLocaleString("en-US");
   }
 
+  // 9.2: an ISO-8601 measured_utc timestamp's own DATE (YYYY-MM-DD),
+  // never a re-derivation -- `measured_utc` already sorts and slices
+  // correctly as a plain string (schema/record_schema.md's `run.
+  // timestamp` shape), so no Date object round-trip is needed.
+  function dateOnly(iso) {
+    if (!iso) return null;
+    return String(iso).slice(0, 10);
+  }
+
   function fmtMbps(row) {
     if (row.status !== "measured" || row.subject_bytes_total === null ||
         row.subject_bytes_total === undefined || !row.median_ns) return null;
@@ -380,7 +397,21 @@ var App = (function () {
   // ------------------------------------------------------ domain / rows
 
   function buildDomain() {
-    var families = Object.create(null); // fam -> {variants: {variant -> {pins:Set, n}}, n}
+    // fam -> {variants: {variant -> {pins: {pinStr -> testee_id}}}}. Each
+    // pin leaf stores the REAL testee_id straight from the row that
+    // produced it -- never reconstructed later by string-pasting or a
+    // reverse scan. [B67] 9.1's root cause: the OLD tree built pin leaves
+    // as a boolean Set and recovered a testee_id at click time via a
+    // linear scan over testeeIndex matching (family, variant, pin) --
+    // which silently returned the WRONG testee_id (or the same one
+    // twice) whenever two distinct testee_ids shared one variant LABEL
+    // (tools/viewer_export.py's old `_engine_variant` dropped the
+    // captures axis, so `pcrec-auto` and `pcrec-nocaps` both rendered
+    // "auto"). The exporter fix ([B67], `engine_variant_for`) makes
+    // (family, variant, pin) a genuine 1:1 key onto testee_id BY
+    // CONSTRUCTION (it IS testee_id's own config_slug segment); this
+    // tree now also stops guessing and just stores the id it was given.
+    var families = Object.create(null);
     var sets = Object.create(null);     // setKey -> {subbench, version, n_rows}
     var regimes = Object.create(null);
     var forms = Object.create(null);
@@ -396,11 +427,22 @@ var App = (function () {
         allRows.push(r);
         var fam = families[r.engine_family] || (families[r.engine_family] = { variants: Object.create(null) });
         var vv = fam.variants[r.engine_variant] || (fam.variants[r.engine_variant] = { pins: Object.create(null) });
-        vv.pins[r.pin || ""] = true;
+        vv.pins[r.pin || ""] = r.testee_id;
         regimes[r.regime || ""] = true;
         forms[r.form || "plain"] = true;
-        if (!testeeIndex[r.testee_id]) {
-          testeeIndex[r.testee_id] = { family: r.engine_family, variant: r.engine_variant, pin: r.pin || "" };
+        var ti = testeeIndex[r.testee_id];
+        if (!ti) {
+          ti = testeeIndex[r.testee_id] = { family: r.engine_family, variant: r.engine_variant, pin: r.pin || "", newestDate: null };
+        }
+        // 9.2: the column's own newest measured_utc, over EVERY row this
+        // testee_id carries across every loaded set -- domain-wide, not
+        // filter-dependent, so the header date and the pin-picker's own
+        // date order stay stable as filters change (9.3's coverage chip
+        // is the one thing here that IS filter-dependent, by its own
+        // design-note wording, computed separately in renderFilters/
+        // renderTable from the CURRENT `groups`).
+        if (r.measured_utc && (!ti.newestDate || r.measured_utc > ti.newestDate)) {
+          ti.newestDate = r.measured_utc;
         }
       });
     });
@@ -428,12 +470,27 @@ var App = (function () {
       forms: null,      // null = "all"
       q: "",
       showNonMeasured: true,
-      metric: "ns",      // ns | mbps | best
+      metrics: ["ns"],    // 9.4: any non-empty subset of ns|mbps|best, fixed display order
+      sortMetric: null,   // 9.5: which DISPLAYED metric a "testee" sort ranks by; null = first of `metrics`
       sortKind: null,    // null (natural: set,pattern,regime,form) | "testee" | "pattern" | "set" | "best"
       sortTestee: null,
       sortDir: 1,
       theme: "auto"
     };
+  }
+
+  var METRIC_ORDER = ["ns", "mbps", "best"];
+  var METRIC_LABEL = { ns: "ns", mbps: "MB/s", best: "×best" };
+
+  // 9.5: the metric a "testee" column sort ranks by -- the user's own
+  // choice (`state.sortMetric`) when it is still among the DISPLAYED
+  // metrics, else the first displayed one (design note default). A
+  // stale `sortMetric` left over from a since-unchecked metric is never
+  // used -- it falls back silently rather than sorting by a column
+  // nothing on screen shows.
+  function effectiveSortMetric() {
+    if (state.sortMetric && state.metrics.indexOf(state.sortMetric) !== -1) return state.sortMetric;
+    return state.metrics[0] || "ns";
   }
 
   function isSelected(setOrNull, value) {
@@ -465,7 +522,8 @@ var App = (function () {
     parts.push("forms=" + encodeSet(st.forms, Object.keys(domain.forms)));
     if (st.q) parts.push("q=" + encodeURIComponent(st.q));
     parts.push("nm=" + (st.showNonMeasured ? 1 : 0));
-    parts.push("metric=" + st.metric);
+    parts.push("metric=" + st.metrics.join(","));
+    if (st.sortMetric) parts.push("sortmetric=" + st.sortMetric);
     if (st.sortKind) {
       parts.push("sort=" + st.sortKind + (st.sortTestee ? (":" + encodeURIComponent(st.sortTestee)) : ""));
       parts.push("dir=" + st.sortDir);
@@ -491,7 +549,16 @@ var App = (function () {
     st.forms = decodeSet(q.forms, Object.keys(domain.forms));
     st.q = q.q ? decodeURIComponent(q.q) : "";
     st.showNonMeasured = q.nm === undefined ? true : q.nm === "1";
-    st.metric = q.metric || "ns";
+    // Comma-list, any non-empty subset of METRIC_ORDER; an unknown token
+    // (a hash edited by hand, or a future metric this build predates) is
+    // dropped rather than crashing the render, and an all-unknown/empty
+    // result falls back to the single-metric default -- never a blank
+    // metric row.
+    var metricTokens = (q.metric || "ns").split(",").filter(function (m) {
+      return METRIC_ORDER.indexOf(m) !== -1;
+    });
+    st.metrics = metricTokens.length ? metricTokens : ["ns"];
+    st.sortMetric = q.sortmetric && METRIC_ORDER.indexOf(q.sortmetric) !== -1 ? q.sortmetric : null;
     if (q.sort) {
       var sp = q.sort.split(":");
       st.sortKind = sp[0];
@@ -580,11 +647,22 @@ var App = (function () {
     return order;
   }
 
-  function metricValue(cellRow) {
+  // 9.5 fix: ranking by the "best" metric now genuinely ranks by EACH
+  // ROW's own ratio (median_ns / that row's bestNs) -- the row-relative
+  // quantity a reader actually reads off a `×best` cell -- instead of
+  // silently ranking by raw median_ns. Those two orders are NOT the same
+  // across rows: every row has its own bestNs denominator, so "smallest
+  // raw ns, globally" and "smallest ratio-to-this-row's-own-best" can
+  // disagree the moment two rows have different winners. `bestNs` is the
+  // CALLER's (the group being ranked) own best among the visible
+  // testees, computed once per group by `computeBest` -- passed in
+  // rather than recomputed, since `sortGroups` already has it.
+  function metricValue(cellRow, metric, bestNs) {
     if (!cellRow || cellRow.status !== "measured") return null;
-    if (state.metric === "ns") return cellRow.median_ns;
-    if (state.metric === "mbps") return fmtMbps(cellRow);
-    return cellRow.median_ns; // "best" metric still ranks by ns; ratio is a display transform
+    if (metric === "ns") return cellRow.median_ns;
+    if (metric === "mbps") return fmtMbps(cellRow);
+    if (metric === "best") return (bestNs && bestNs > 0) ? cellRow.median_ns / bestNs : null;
+    return cellRow.median_ns;
   }
 
   function computeBest(group, testees) {
@@ -612,7 +690,9 @@ var App = (function () {
         var c = g.cells[state.sortTestee];
         if (!c) return [2, statusRank("excluded")];
         if (c.status !== "measured") return [1, statusRank(c.status)];
-        var v = metricValue(c);
+        var sortMetric = effectiveSortMetric();
+        var vBestNs = sortMetric === "best" ? computeBest(g, testees).ns : null;
+        var v = metricValue(c, sortMetric, vBestNs);
         return [0, v === null ? Infinity : v];
       }
       return [0, 0];
@@ -634,7 +714,56 @@ var App = (function () {
 
   function familyLabel(fam) { return fam; }
 
-  function renderFilters() {
+  // 9.3: "what fraction of the CURRENT filtered rows [a testee] has
+  // measured data for" -- `groups` is THIS render's own
+  // `buildMatrixRows(filteredRows())` (computed once in `rerenderAll`
+  // and threaded through, never recomputed here), so the chip always
+  // answers against exactly the rows the table itself is showing.
+  function coverageFor(testeeId, groups) {
+    var n = groups.length, measured = 0;
+    for (var i = 0; i < n; i++) {
+      var c = groups[i].cells[testeeId];
+      if (c && c.status === "measured") measured++;
+    }
+    return { n: measured, N: n };
+  }
+
+  // Family-level coverage is an OR across its testees: a row counts as
+  // "covered" if ANY testee under this family measured it -- "does this
+  // engine have anything here at all", not an average of its variants.
+  function familyCoverage(testeeIds, groups) {
+    var n = groups.length, covered = 0;
+    for (var i = 0; i < n; i++) {
+      var g = groups[i], hit = false;
+      for (var j = 0; j < testeeIds.length && !hit; j++) {
+        var c = g.cells[testeeIds[j]];
+        if (c && c.status === "measured") hit = true;
+      }
+      if (hit) covered++;
+    }
+    return { n: covered, N: n };
+  }
+
+  function covChip(cov) {
+    var span = document.createElement("span");
+    span.className = "cov-chip tree-count";
+    span.textContent = cov.n + "/" + cov.N;
+    span.title = cov.n + " of " + cov.N + " current filtered row(s) have measured data";
+    return span;
+  }
+
+  // 9.2: pins of one variant, ORDERED BY DATE (newest first), never by
+  // sha -- "ordering anywhere pins are listed = by date, not sha".
+  function pinsByDate(pinsMap) {
+    return Object.keys(pinsMap).sort(function (a, b) {
+      var da = (testeeIndex[pinsMap[a]] && testeeIndex[pinsMap[a]].newestDate) || "";
+      var db = (testeeIndex[pinsMap[b]] && testeeIndex[pinsMap[b]].newestDate) || "";
+      if (da !== db) return da < db ? 1 : -1; // newest first
+      return a < b ? -1 : a > b ? 1 : 0;       // stable tiebreak
+    });
+  }
+
+  function renderFilters(groups) {
     var host = document.getElementById("filters");
     host.innerHTML = "";
 
@@ -648,9 +777,12 @@ var App = (function () {
     famNames.forEach(function (fam) {
       var variants = domain.families[fam].variants;
       var varNames = Object.keys(variants).sort();
+      // The REAL testee_id straight off each pin leaf -- see buildDomain's
+      // comment: this map is never reconstructed, so a family toggle can
+      // never miss a testee that shares another one's display label.
       var allTesteesOfFam = [];
       varNames.forEach(function (v) { Object.keys(variants[v].pins).forEach(function (p) {
-        allTesteesOfFam.push(testeeIdOf(fam, v, p));
+        allTesteesOfFam.push(variants[v].pins[p]);
       }); });
       var famChecked = allTesteesOfFam.filter(function (t) { return isSelected(state.testees, t); });
       var famState = famChecked.length === 0 ? "unchecked" : famChecked.length === allTesteesOfFam.length ? "checked" : "indeterminate";
@@ -669,12 +801,13 @@ var App = (function () {
       row.appendChild(cb); row.appendChild(lbl);
       var cnt = document.createElement("span"); cnt.className = "tree-count"; cnt.textContent = allTesteesOfFam.length;
       row.appendChild(cnt);
+      row.appendChild(covChip(familyCoverage(allTesteesOfFam, groups)));
       node.appendChild(row);
 
       var kids = document.createElement("div"); kids.className = "tree-children";
       varNames.forEach(function (v) {
-        var pins = Object.keys(variants[v].pins).sort();
-        var varTestees = pins.map(function (p) { return testeeIdOf(fam, v, p); });
+        var pins = pinsByDate(variants[v].pins);
+        var varTestees = pins.map(function (p) { return variants[v].pins[p]; });
         var vChecked = varTestees.filter(function (t) { return isSelected(state.testees, t); });
         var vState = vChecked.length === 0 ? "unchecked" : vChecked.length === varTestees.length ? "checked" : "indeterminate";
 
@@ -684,21 +817,27 @@ var App = (function () {
         vcb.checked = vState === "checked"; vcb.indeterminate = vState === "indeterminate";
         vcb.addEventListener("change", function () { setTesteesSelected(varTestees, vcb.checked); rerenderAll(); });
         var vlbl = document.createElement("label"); vlbl.textContent = v;
+        if (pins.length === 1) vlbl.title = varTestees[0];
         vlbl.addEventListener("click", function () { vcb.click(); });
         vrow.appendChild(vcb); vrow.appendChild(vlbl);
+        if (pins.length === 1) vrow.appendChild(covChip(coverageFor(varTestees[0], groups)));
         vnode.appendChild(vrow);
 
         if (pins.length > 1) {
           var pkids = document.createElement("div"); pkids.className = "tree-children";
           pins.forEach(function (p) {
-            var tid = testeeIdOf(fam, v, p);
+            var tid = variants[v].pins[p];
             var prow = document.createElement("div"); prow.className = "chk-row";
             var pcb = document.createElement("input"); pcb.type = "checkbox";
             pcb.checked = isSelected(state.testees, tid);
             pcb.addEventListener("change", function () { setTesteesSelected([tid], pcb.checked); rerenderAll(); });
-            var plbl = document.createElement("label"); plbl.textContent = p || "(no pin)"; plbl.title = tid;
+            var pDate = (testeeIndex[tid] && dateOnly(testeeIndex[tid].newestDate)) || "no date";
+            var plbl = document.createElement("label");
+            plbl.textContent = pDate + " (" + (p || "no pin") + ")";
+            plbl.title = tid + " · pin " + (p || "(no pin)");
             plbl.addEventListener("click", function () { pcb.click(); });
             prow.appendChild(pcb); prow.appendChild(plbl);
+            prow.appendChild(covChip(coverageFor(tid, groups)));
             pkids.appendChild(prow);
           });
           vnode.appendChild(pkids);
@@ -801,36 +940,58 @@ var App = (function () {
     else state.testees = cur;
   }
 
-  function testeeIdOf(fam, variant, pin) {
-    // Recovers the real testee_id for a (family, variant, pin) leaf from
-    // `testeeIndex` (built once per data load) -- the exported testee_id
-    // is each row's own field, never reconstructed by string-pasting (a
-    // pcrec config_extra token can itself contain "_", so pasting would
-    // not round-trip). O(testees), not O(rows): this used to scan
-    // `allRows` per leaf per render, the same class of cost renderTable's
-    // perf note fixes.
-    var ids = Object.keys(testeeIndex);
-    for (var i = 0; i < ids.length; i++) {
-      var info = testeeIndex[ids[i]];
-      if (info.family === fam && info.variant === variant && info.pin === pin) return ids[i];
-    }
-    return fam + "_" + pin + "_" + variant; // unreachable in practice
-  }
-
   // --------------------------------------------------------- render: controls
+
+  // 9.4: metric selection is now CHECKBOXES over any non-empty subset,
+  // in `METRIC_ORDER`'s fixed display order (the same order a stacked
+  // cell prints its lines in). Unchecking the last remaining metric is a
+  // no-op -- there is always at least one, so a cell can never render
+  // empty.
+  function renderMetricChecks(host) {
+    var mg = document.createElement("div"); mg.className = "metric-check-group";
+    METRIC_ORDER.forEach(function (m) {
+      var lbl = document.createElement("label");
+      var cb = document.createElement("input"); cb.type = "checkbox";
+      cb.checked = state.metrics.indexOf(m) !== -1;
+      cb.addEventListener("change", function () {
+        var cur = state.metrics.slice();
+        var i = cur.indexOf(m);
+        if (cb.checked) { if (i === -1) cur.push(m); }
+        else if (i !== -1 && cur.length > 1) { cur.splice(i, 1); }
+        else { cb.checked = true; return; } // refuse to empty the set
+        cur.sort(function (a, b) { return METRIC_ORDER.indexOf(a) - METRIC_ORDER.indexOf(b); });
+        state.metrics = cur;
+        rerenderAll();
+      });
+      lbl.appendChild(cb);
+      lbl.appendChild(document.createTextNode(METRIC_LABEL[m]));
+      mg.appendChild(lbl);
+    });
+    host.appendChild(mg);
+
+    // 9.5: only meaningful (and only shown) once more than one metric is
+    // on screen at once -- with one metric displayed, clicking a column
+    // header can only ever mean that metric, same as before this wave.
+    if (state.metrics.length > 1) {
+      var sr = document.createElement("div"); sr.className = "sort-metric-row";
+      sr.appendChild(document.createTextNode("sort by:"));
+      var eff = effectiveSortMetric();
+      state.metrics.forEach(function (m) {
+        var b = document.createElement("button"); b.type = "button"; b.className = "small-btn";
+        if (m === eff) b.className += " active";
+        b.textContent = METRIC_LABEL[m];
+        b.title = "rank a clicked engine column by " + METRIC_LABEL[m];
+        b.addEventListener("click", function () { state.sortMetric = m; rerenderAll(); });
+        sr.appendChild(b);
+      });
+      host.appendChild(sr);
+    }
+  }
 
   function renderControls() {
     var host = document.getElementById("controls-row");
     host.innerHTML = "";
-    var mg = document.createElement("div"); mg.className = "metric-group";
-    [["ns", "median ns"], ["mbps", "MB/s"], ["best", "× best-in-row"]].forEach(function (pair) {
-      var b = document.createElement("button"); b.type = "button";
-      b.textContent = pair[1];
-      if (state.metric === pair[0]) b.className = "active";
-      b.addEventListener("click", function () { state.metric = pair[0]; rerenderAll(); });
-      mg.appendChild(b);
-    });
-    host.appendChild(mg);
+    renderMetricChecks(host);
 
     var resetBtn = mkSmallBtn("reset view", function () {
       state = defaultState();
@@ -848,20 +1009,38 @@ var App = (function () {
     return '<span class="' + cls + '">' + escapeHtml(st) + "</span>";
   }
 
+  // 9.4: one line per DISPLAYED metric, in `METRIC_ORDER`'s fixed order,
+  // each terse-labeled; a single selected metric renders exactly as
+  // before this wave (no label, no stacking wrapper -- "single-metric
+  // selection keeps today's compact form"). "best" (the green highlight)
+  // is a fact about the CELL relative to its row, independent of which
+  // metric(s) are on screen -- computed once, not per displayed line, so
+  // a cell showing only MB/s can still be the row's winner-highlighted
+  // cell.
+  function metricLineHtml(cellRow, metric, bestNs) {
+    if (metric === "ns") return escapeHtml(fmtNs(cellRow.median_ns));
+    if (metric === "mbps") {
+      var m = fmtMbps(cellRow);
+      return m === null ? '<span class="dash">n/a (no size)</span>' : m.toFixed(1) + " MB/s";
+    }
+    // best
+    if (bestNs === null || !bestNs) return '<span class="dash">&ndash;</span>';
+    return (cellRow.median_ns / bestNs).toFixed(3) + "×";
+  }
+
   function cellDisplay(cellRow, bestNs) {
     if (!cellRow) return { html: '<span class="dash">&ndash;</span>', best: false };
     if (cellRow.status !== "measured") return { html: statusChipHtml(cellRow.status), best: false };
-    if (state.metric === "ns") {
-      return { html: escapeHtml(fmtNs(cellRow.median_ns)), best: bestNs !== null && cellRow.median_ns === bestNs };
+    var metrics = state.metrics.length ? state.metrics : ["ns"];
+    var isBest = bestNs !== null && bestNs !== undefined && cellRow.median_ns === bestNs;
+    if (metrics.length === 1) {
+      return { html: metricLineHtml(cellRow, metrics[0], bestNs), best: isBest };
     }
-    if (state.metric === "mbps") {
-      var m = fmtMbps(cellRow);
-      return { html: m === null ? '<span class="dash">n/a (no size)</span>' : (m).toFixed(1) + " MB/s", best: false };
-    }
-    // best
-    if (bestNs === null || !bestNs) return { html: '<span class="dash">&ndash;</span>', best: false };
-    var ratio = cellRow.median_ns / bestNs;
-    return { html: ratio.toFixed(3) + "×", best: ratio === 1 };
+    var html = metrics.map(function (m) {
+      return '<div class="metric-line"><span class="metric-lbl">' + METRIC_LABEL[m] + '</span>' +
+        metricLineHtml(cellRow, m, bestNs) + "</div>";
+    }).join("");
+    return { html: html, best: isBest };
   }
 
   function tooltipText(cellRow) {
@@ -947,9 +1126,8 @@ var App = (function () {
     });
   }
 
-  function renderTable() {
+  function renderTable(rows, groups) {
     var scroll = document.getElementById("table-scroll");
-    var rows = filteredRows();
     var testees = visibleTestees();
     cellRegistry = [];
 
@@ -962,7 +1140,6 @@ var App = (function () {
       return;
     }
 
-    var groups = buildMatrixRows(rows);
     groups = sortGroups(groups, testees);
 
     // family bands over the visible testee columns, in family/variant/pin
@@ -997,9 +1174,18 @@ var App = (function () {
       'title="click: sort by pattern name (shift-click: sort by set)">set / pattern' +
       sortIndicatorFor("pattern", null) + "</th>"];
     testees.forEach(function (t) {
+      // 9.2: the DATE leads (newest measured_utc, YYYY-MM-DD) -- the
+      // sha-like pin moves to the title tooltip, never the visible
+      // label. 9.3: a coverage chip rides beside it, against THIS
+      // render's own filtered `groups` (never the domain-wide total).
+      var ti = testeeIndex[t];
+      var dateLabel = (ti && dateOnly(ti.newestDate)) || "no date";
+      var cov = coverageFor(t, groups);
+      var titleTxt = t + " · pin " + (pinOf[t] || "(no pin)");
       labelHtml.push('<th class="cell-head sortable" data-sort="testee" data-testee="' +
-        escapeHtml(t) + '" title="' + escapeHtml(t) + '">' + escapeHtml(variantOf[t]) +
-        sortIndicatorFor("testee", t) + '<span class="variant">' + escapeHtml(pinOf[t]) + "</span></th>");
+        escapeHtml(t) + '" title="' + escapeHtml(titleTxt) + '">' + escapeHtml(variantOf[t]) +
+        sortIndicatorFor("testee", t) + '<span class="variant">' + escapeHtml(dateLabel) +
+        ' · <span class="cov-chip">' + cov.n + "/" + cov.N + "</span></span></th>");
     });
     labelHtml.push("</tr>");
 
@@ -1048,9 +1234,15 @@ var App = (function () {
   // -------------------------------------------------------------- glue
 
   function rerenderAll() {
-    renderFilters();
+    // Computed ONCE and threaded through both panels: 9.3's coverage
+    // chips (filters) and the matrix body (table) must agree on exactly
+    // which rows "current filtered" means, and computing it twice would
+    // both cost the perf budget again and risk the two disagreeing.
+    var rows = filteredRows();
+    var groups = buildMatrixRows(rows);
+    renderFilters(groups);
     renderControls();
-    renderTable();
+    renderTable(rows, groups);
     persist();
   }
 
