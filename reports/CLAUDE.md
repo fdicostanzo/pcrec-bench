@@ -2808,3 +2808,58 @@ the pattern (real named groups, unlike loglines/altwide) yet
 vs 82,643 B) is barely smaller, ×0.9978, a rounding-scale save, not the
 meaningful strip P6's own hypothesis predicted. Full verdict table and
 the P7-style direction discussion: `docs/dev/lanes/b64window_report.md`.
+
+**[B64] reports (2026-09-21, lane b64window) ADDED a second file group —
+`bench/syntax@0.1`'s pcrec canonical roster re-measured at 25b1984f**, the
+ONE PIN-UNIFORM set in this whole wave (all four canonical testees were
+already at d34c9131, so all four `delta_verdict` clauses are
+single-variable per [EMIT-VERB]). Window:
+`build/windows/window_syntax_20260921T072836Z.log` (03:29:06-06:13:50
+EDT, ~2h45m, 4/4 cells attempt 1 rc=0, all `agree`); store 202 -> 206.
+Predictions `docs/dev/predictions/syntax-0.1-pin-25b1984f-confirm.tsv`
+committed BEFORE the window (commit `78d5aa6`); scored via the same F27
+bypass + KB-24 workaround. `.tsv`/`.md`/`.subject-grain.md`/
+`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/`.interpretation.md`
+all rendered from the same ten-testee query (10 records, 0 superseded);
+the report/subject-grain renders on this 95-pattern corpus ran 2-5
+minutes each (well past KB-16's usual 15-46s for a narrow roster on a
+smaller set, still nowhere near the whole-store cost KB-16 warns about)
+— run DETACHED with a completion marker, foreground-polled, per the
+boilerplate's rule for a step that genuinely exceeds the two-minute
+single-command window.
+
+**THE HEADLINE FINDING: pcrec's compile-time REFUSAL SET on this
+census SHRANK from 15 patterns to 13, on ALL FOUR canonical routes,
+between d34c9131 and 25b1984f** — `unp-p-lc` (`\p{L}+`) and `unp-p-uc`
+(`\P{L}+`), the set's two Unicode-property-class witnesses, now COMPILE
+where they refused at d34c9131 (P7.a/.b's own predicted-stable 15-pattern
+set REFUTED on exactly these two names, confirmed independently by a
+direct `did_not_compile` read of this window's own TSV on all four
+testee ids). Read from the fresh records directly: both compile to a
+REAL `dfa` engine artifact (`unp-p-lc`/`unp-p-uc` plain form 26,266 B,
+whole-subject form 24,049 B — byte-IDENTICAL between the two patterns,
+consistent with one shared property-class table differing only in
+accept/reject polarity). None of this wave's own re-pin history reading
+(the [EMIT-VERB]/D112 comments-off pin, [OPT-DIAL]/K59's premul-drop
+rung) named Unicode-property support as a change — this is a genuinely
+NEW, unpredicted capability gain somewhere in the cd371441 ->
+a770139e -> cf0962e3 -> 25b1984f span, stated here as a finding for
+pcrec to confirm (an outbox candidate, not filed by this lane — scope is
+measure and report, per [B63]'s own precedent), not diagnosed to a
+mechanism.
+
+**P5/P6 (same-pin structural, `compile:emit_bytes` `eq 1`) BOTH REFUTE
+for real, on witnesses this file deliberately chose to be
+captureless** — unlike email-specimen's P5 above, this is not the
+mechanical blank-row artifact: `lit-cat`/`anc-caret` genuinely have no
+capturing group (direct read of the `.rx` files), yet **P5 (nocaps vs
+auto)** reads `lit-cat` ×0.916 and `anc-caret` ×0.629 — nocaps
+SUBSTANTIALLY smaller on both, up to -37.1% on the anchor witness, the
+SAME direction (though larger magnitude) as [B63]'s own captureless
+loglines/altwide findings. **P6 (vm-in vs vm)** reads `lit-cat` ×0.961 and
+`anc-caret` ×0.975 — vm-in SMALLER here, the OPPOSITE direction from
+[B63]'s loglines P6 (vm-in ×1.13-1.16 LARGER there) and from this same
+window's own email-specimen P5 (byte-identical). Three sets, three
+different vm-in-vs-vm relationships (larger / identical / smaller) on
+the identical structural claim — stated as an open finding, not
+resolved here.
